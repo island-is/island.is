@@ -43,7 +43,8 @@ import {
 import { apiConstants } from './constants'
 import { SmsService } from '@island.is/nova-sms'
 import { ChildrenService } from './children/children.service'
-import { ApplicationApiCoreModule } from '@island.is/application/api/core'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { PaymentService } from '@island.is/application/api/payment'
 
 const nationalId = '1234564321'
 let id = 0
@@ -142,7 +143,15 @@ describe('ParentalLeaveService', () => {
       providers: [
         ParentalLeaveService,
         {
+          provide: PaymentService,
+          useValue: {}, //not used
+        },
+        {
           provide: ChildrenService,
+          useValue: {},
+        },
+        {
+          provide: NationalRegistryClientService,
           useValue: {},
         },
         {
@@ -260,7 +269,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -290,7 +299,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.artificialInseminationRightsId,
@@ -315,7 +324,7 @@ describe('ParentalLeaveService', () => {
 
       expect(res).toEqual([
         {
-          from: '2021-05-17',
+          from: 'date_of_birth',
           to: '2021-11-16',
           ratio: '100',
           approved: false,
@@ -325,7 +334,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2021-11-17',
           to: '2022-01-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -369,7 +378,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2022-05-17',
           to: '2022-07-09',
-          ratio: '100',
+          ratio: 'D53',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.multipleBirthsOrlofRightsId,
@@ -412,7 +421,7 @@ describe('ParentalLeaveService', () => {
         {
           from: '2022-02-17',
           to: '2022-04-01',
-          ratio: '100',
+          ratio: 'D45',
           approved: false,
           paid: false,
           rightsCodePeriod: apiConstants.rights.receivingRightsId,
@@ -465,9 +474,9 @@ describe('ParentalLeaveService', () => {
   describe('sendApplication', () => {
     it('should send an email if applicant is employed by an employer and is not reciving benefits', async () => {
       const application = createApplication()
-      set(application.answers, 'employer.isSelfEmployed', NO)
+      set(application.answers, 'isSelfEmployed', NO)
       set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
-      set(application.answers, 'isRecivingUnemploymentBenefits', NO)
+      set(application.answers, 'isReceivingUnemploymentBenefits', NO)
       const mockedSendEmail = jest.fn()
 
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
@@ -491,9 +500,9 @@ describe('ParentalLeaveService', () => {
 
     it('should not send an email if applicant is reciving benefits', async () => {
       const application = createApplication()
-      set(application.answers, 'employer.isSelfEmployed', NO)
+      set(application.answers, 'isSelfEmployed', NO)
       set(application.answers, 'applicationType.option', PARENTAL_LEAVE)
-      set(application.answers, 'isRecivingUnemploymentBenefits', YES)
+      set(application.answers, 'isReceivingUnemploymentBenefits', YES)
       const mockedSendEmail = jest.fn()
 
       jest.spyOn(sharedService, 'sendEmail').mockImplementation(mockedSendEmail)
@@ -517,7 +526,7 @@ describe('ParentalLeaveService', () => {
 
     it('should not send an email if applicant is self employed', async () => {
       const application = createApplication()
-      set(application.answers, 'employer.isSelfEmployed', YES)
+      set(application.answers, 'isSelfEmployed', YES)
 
       const mockedSendEmail = jest.fn()
 

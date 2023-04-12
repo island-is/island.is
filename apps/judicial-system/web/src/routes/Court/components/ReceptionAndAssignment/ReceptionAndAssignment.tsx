@@ -12,28 +12,22 @@ import {
   SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  IndictmentsCourtSubsections,
   ReactSelectOption,
-  RestrictionCaseCourtSubsections,
-  Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
-  Case,
-  CaseState,
-  CaseTransition,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
-  NotificationType,
-  User,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
@@ -61,9 +55,6 @@ const ReceptionAndAssignment = () => {
   const {
     createCourtCase,
     isCreatingCourtCase,
-    transitionCase,
-    isTransitioningCase,
-    sendNotification,
     setAndSendCaseToServer,
   } = useCase()
 
@@ -75,21 +66,6 @@ const ReceptionAndAssignment = () => {
     },
   )
 
-  const receiveCase = async (workingCase: Case, courtCaseNumber: string) => {
-    if (workingCase.state === CaseState.SUBMITTED && !isTransitioningCase) {
-      // Transition case from SUBMITTED to RECEIVED when courtCaseNumber is set
-      const received = await transitionCase(
-        { ...workingCase, courtCaseNumber },
-        CaseTransition.RECEIVE,
-        setWorkingCase,
-      )
-
-      if (received) {
-        sendNotification(workingCase.id, NotificationType.RECEIVED_BY_COURT)
-      }
-    }
-  }
-
   const handleCreateCourtCase = async (workingCase: Case) => {
     const courtCaseNumber = await createCourtCase(
       workingCase,
@@ -99,7 +75,6 @@ const ReceptionAndAssignment = () => {
 
     if (courtCaseNumber !== '') {
       setCreateCourtCaseSuccess(true)
-      receiveCase(workingCase, courtCaseNumber)
     }
   }
 
@@ -131,13 +106,6 @@ const ReceptionAndAssignment = () => {
       : constants.INDICTMENTS_SUBPOENA_ROUTE
   }
 
-  const getActiveSubSection = () => {
-    return isIndictmentCase(workingCase.type)
-      ? IndictmentsCourtSubsections.RECEPTION_AND_ASSIGNMENT
-      : // Restriction cases and investigation cases have the same subsections
-        RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
-  }
-
   const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -147,8 +115,6 @@ const ReceptionAndAssignment = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
-      activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -178,7 +144,6 @@ const ReceptionAndAssignment = () => {
             setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
             handleCreateCourtCase={handleCreateCourtCase}
             isCreatingCourtCase={isCreatingCourtCase}
-            receiveCase={receiveCase}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -198,7 +163,12 @@ const ReceptionAndAssignment = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
+          nextButtonIcon="arrowForward"
+          previousUrl={
+            isIndictmentCase(workingCase.type)
+              ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
+              : constants.CASES_ROUTE
+          }
           onNextButtonClick={() => handleNavigationTo(getNextRoute())}
           nextIsDisabled={!stepIsValid}
         />

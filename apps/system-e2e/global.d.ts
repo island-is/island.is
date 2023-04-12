@@ -3,8 +3,10 @@ export {}
 
 declare global {
   namespace PlaywrightTest {
-    interface Matchers<R, T> {
-      toHaveCountGreaterThan(a: number): R
+    interface Matchers<R> {
+      toHaveCountGreaterThan(a: number): Promise<R>
+      toBeApplication(applicationType?: string): Promise<R>
     }
   }
 }
+export default {}

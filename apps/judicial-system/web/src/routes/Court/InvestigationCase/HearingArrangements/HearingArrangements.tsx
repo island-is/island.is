@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -15,20 +15,13 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { NotificationType } from '@island.is/judicial-system/types'
 import {
-  NotificationType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  titles,
-  icHearingArrangements as m,
-} from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   AlertMessage,
   RadioButton,
@@ -39,7 +32,11 @@ import {
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { icHearingArrangements as m } from './HearingArrangements.strings'
 
 const HearingArrangements = () => {
   const {
@@ -63,47 +60,32 @@ const HearingArrangements = () => {
     handleCourtDateChange,
   } = useCourtArrangements(workingCase)
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
 
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (!workingCase.courtDate) {
-        setCourtDate(workingCase.requestedCourtDate)
-
-        setInitialAutoFillDone(true)
-      }
-
-      setAndSendCaseToServer(
-        [
-          {
-            sessionArrangements: workingCase.defenderName
-              ? SessionArrangements.ALL_PRESENT
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      setInitialAutoFillDone(true)
+  const initialize = useCallback(() => {
+    if (!workingCase.courtDate) {
+      setCourtDate(workingCase.requestedCourtDate)
     }
-  }, [
-    setAndSendCaseToServer,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setCourtDate,
-    setWorkingCase,
-    workingCase,
-  ])
+
+    setAndSendCaseToServer(
+      [
+        {
+          sessionArrangements: workingCase.defenderName
+            ? SessionArrangements.AllPresent
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, setCourtDate, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const hasSentNotification = workingCase?.notifications?.find(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-
-      setAndSendCaseToServer(
+      await setAndSendCaseToServer(
         [
           {
             courtDate: courtDate
@@ -116,7 +98,18 @@ const HearingArrangements = () => {
         setWorkingCase,
       )
 
-      if (hasSentNotification && !courtDateHasChanged) {
+      const isCorrectingRuling = workingCase.notifications?.some(
+        (notification) => notification.type === NotificationType.RULING,
+      )
+
+      if (
+        isCorrectingRuling ||
+        (hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
+          !courtDateHasChanged)
+      ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
         setNavigateTo(destination)
@@ -139,10 +132,6 @@ const HearingArrangements = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
@@ -202,15 +191,17 @@ const HearingArrangements = () => {
                       m.sections.sessionArrangements.options.allPresent,
                     )}
                     checked={
-                      workingCase.sessionArrangements ===
-                      SessionArrangements.ALL_PRESENT
+                      checkedRadio === SessionArrangements.AllPresent ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.AllPresent)
                     }
                     onChange={() => {
+                      setCheckedRadio(SessionArrangements.AllPresent)
                       setAndSendCaseToServer(
                         [
                           {
-                            sessionArrangements:
-                              SessionArrangements.ALL_PRESENT,
+                            sessionArrangements: SessionArrangements.AllPresent,
                             force: true,
                           },
                         ],
@@ -231,15 +222,21 @@ const HearingArrangements = () => {
                         .allPresentSpokesperson,
                     )}
                     checked={
-                      workingCase.sessionArrangements ===
-                      SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                      checkedRadio ===
+                        SessionArrangements.AllPresentSpokesperson ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.AllPresentSpokesperson)
                     }
                     onChange={() => {
+                      setCheckedRadio(
+                        SessionArrangements.AllPresentSpokesperson,
+                      )
                       setAndSendCaseToServer(
                         [
                           {
                             sessionArrangements:
-                              SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                              SessionArrangements.AllPresentSpokesperson,
                             force: true,
                           },
                         ],
@@ -258,15 +255,18 @@ const HearingArrangements = () => {
                     m.sections.sessionArrangements.options.prosecutorPresent,
                   )}
                   checked={
-                    workingCase.sessionArrangements ===
-                    SessionArrangements.PROSECUTOR_PRESENT
+                    checkedRadio === SessionArrangements.ProsecutorPresent ||
+                    (!checkedRadio &&
+                      workingCase.sessionArrangements ===
+                        SessionArrangements.ProsecutorPresent)
                   }
                   onChange={() => {
+                    setCheckedRadio(SessionArrangements.ProsecutorPresent)
                     setAndSendCaseToServer(
                       [
                         {
                           sessionArrangements:
-                            SessionArrangements.PROSECUTOR_PRESENT,
+                            SessionArrangements.ProsecutorPresent,
                           force: true,
                         },
                       ],
@@ -295,9 +295,9 @@ const HearingArrangements = () => {
               </Box>
             </Box>
             {(workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT ||
+              SessionArrangements.AllPresent ||
               workingCase.sessionArrangements ===
-                SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
+                SessionArrangements.AllPresentSpokesperson) && (
               <Box component="section" marginBottom={8}>
                 <DefenderInfo
                   workingCase={workingCase}
@@ -308,6 +308,7 @@ const HearingArrangements = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
+              nextButtonIcon="arrowForward"
               previousUrl={`${constants.INVESTIGATION_CASE_OVERVIEW_ROUTE}/${workingCase.id}`}
               onNextButtonClick={() =>
                 handleNavigationTo(constants.INVESTIGATION_CASE_RULING_ROUTE)
@@ -321,10 +322,10 @@ const HearingArrangements = () => {
               title={formatMessage(m.modal.heading)}
               text={formatMessage(
                 workingCase.sessionArrangements ===
-                  SessionArrangements.ALL_PRESENT
+                  SessionArrangements.AllPresent
                   ? m.modal.allPresentText
                   : workingCase.sessionArrangements ===
-                    SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                    SessionArrangements.AllPresentSpokesperson
                   ? m.modal.allPresentSpokespersonText
                   : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },
@@ -343,7 +344,9 @@ const HearingArrangements = () => {
                 router.push(`${navigateTo}/${workingCase.id}`)
               }}
               primaryButtonText={formatMessage(m.modal.primaryButtonText)}
-              secondaryButtonText={formatMessage(m.modal.secondaryButtonText)}
+              secondaryButtonText={formatMessage(m.modal.secondaryButtonText, {
+                courtDateHasChanged,
+              })}
               isPrimaryButtonLoading={isSendingNotification}
             />
           )}

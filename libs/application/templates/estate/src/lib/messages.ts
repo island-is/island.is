@@ -125,18 +125,18 @@ export const m = defineMessages({
     defaultMessage: 'Tilkynnandi',
     description: '',
   },
-  announcerNoProperty: {
-    id: 'es.application:announcerNoProperty',
+  announcerNoAssets: {
+    id: 'es.application:announcerNoAssets',
     defaultMessage: 'Yfirlýsandi eignaleysis',
     description: '',
   },
-  announcerResidencePermit: {
-    id: 'es.application:announcerResidencePermit',
+  announcerPermitToPostpone: {
+    id: 'es.application:announcerPermitToPostpone',
     defaultMessage: 'Umsækjandi um leyfi til setu í óskiptu búi',
     description: '',
   },
-  announcerRP: {
-    id: 'es.application:announcerRP',
+  announcerPTP: {
+    id: 'es.application:announcerPTP',
     defaultMessage: 'Umsækjandi',
     description: '',
   },
@@ -192,6 +192,17 @@ export const m = defineMessages({
   estateMember: {
     id: 'es.application:estateMember',
     defaultMessage: 'Erfingi',
+    description: '',
+  },
+  estateMemberAdvocateWarningTitle: {
+    id: 'es.application:estateMemberAdvocateWarningTitle',
+    defaultMessage: 'Vinsamlegast athugið',
+    description: '',
+  },
+  estateMemberAdvocateWarningDescription: {
+    id: 'es.application:estateMemberAdvocateWarningDescription',
+    defaultMessage:
+      'Þegar viðkomandi aðili nær ekki 18 ára aldri, þarf að skrá málsvara fyrir hans hönd.',
     description: '',
   },
   estateMembersHeaderDescription: {
@@ -356,8 +367,8 @@ export const m = defineMessages({
     defaultMessage: 'Útgefandi',
     description: '',
   },
-  stocksSsn: {
-    id: 'es.application:stocksSsn',
+  stocksNationalId: {
+    id: 'es.application:stocksNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -438,8 +449,9 @@ export const m = defineMessages({
 
   // Debts
   acceptDebtsLabel: {
-    id: 'es.application:acceptDebtsLabel#markdown',
-    defaultMessage: `* Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför og að eignirnar séu tæmandi taldar hér að ofan. \\n\\n`,
+    id: 'es.application:acceptDebtsLabel',
+    defaultMessage:
+      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför og að eignirnar séu tæmandi taldar hér að ofan. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
     description: '',
   },
   debtsTitle: {
@@ -462,8 +474,8 @@ export const m = defineMessages({
     defaultMessage: 'Nafn kröfuhafa',
     description: '',
   },
-  debtsSsn: {
-    id: 'es.application:debtsSsn',
+  debtsNationalId: {
+    id: 'es.application:debtsNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -477,6 +489,17 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við skuldum',
     description: '',
   },
+  // Representative
+  representativeTitle: {
+    id: 'es.application:representativeTitle',
+    defaultMessage: 'Umboðsmenn',
+    description: '',
+  },
+  representativeDescription: {
+    id: 'es.application:representativeDescription',
+    defaultMessage: 'Vanalega er valinn umboðsmaður...',
+    description: '',
+  },
 
   // Overview
   overviewTitle: {
@@ -484,21 +507,42 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit',
     description: '',
   },
-  overviewSubtitleWithNoProperty: {
-    id: 'es.application:overviewSubtitle',
+  overviewSubtitleWithoutAssets: {
+    id: 'es.application:overviewSubtitleWithoutAssets',
     defaultMessage: 'Þú hefur lýst yfir eignaleysi dánarbús.',
     description: '',
   },
-  overviewSubtitleOfficialEstate: {
-    id: 'es.application:overviewSubtitleOfficialEstate#markdown',
+  overviewSubtitleDivisionOfEstate: {
+    id: 'es.application:overviewSubtitleDivisionOfEstate#markdown',
     defaultMessage:
       'Þú hefur valið að lýsa því yfir að þú óskir eftir að ofangreint dánarbú verði tekið til opinberra skipta. Nánari upplýsingar um skilyrði opinberra skipta má finna á eftirfarandi vefslóð á Ísland.is',
     description: '',
   },
-  overviewSubtitleResidencePermit: {
-    id: 'es.application:overviewSubtitleResidencePermit#markdown',
+  overviewSubtitlePermitToPostpone: {
+    id: 'es.application:overviewSubtitlePermitToPostpone#markdown',
     defaultMessage:
       'Þú hefur nú útfyllt beiðni um leyfi til setu í óskiptu búi.',
+    description: '',
+  },
+  overviewSubtitleDivisionOfEstateByHeirs: {
+    id: 'es.application:overviewSubtitleDivisionOfEstateByHeirs#markdown',
+    defaultMessage: 'Þú hefur nú útfyllt beiðni um einkaskipti.',
+    description: '',
+  },
+  divisionOfEstateByHeirsTerms: {
+    id: 'es.application:divisionOfEstateByHeirsTerms',
+    defaultMessage: 'Skilmálar',
+    description: '',
+  },
+  divisionOfEstateByHeirsText: {
+    id: 'es.application:divisionOfEstateByHeirsText#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  divisionOfEstateByHeirsSubmissionCheckbox: {
+    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
+    defaultMessage: 'Ég hef lesið skilmálana',
     description: '',
   },
 
@@ -511,26 +555,32 @@ export const m = defineMessages({
 
   // Done
   doneTitle: {
-    id: 'es.application:officialExchangeDoneTitle',
+    id: 'es.application:doneTitle',
     defaultMessage: 'Beiðni móttekin',
     description: '',
   },
-  officialExchangeDoneSubtitle: {
-    id: 'es.application:officialExchangeDoneSubtitle#markdown',
+  divisionOfEstateDoneSubtitle: {
+    id: 'es.application:divisionOfEstateDoneSubtitle#markdown',
     defaultMessage:
       'Sýslumaður hefur móttekið yfirlýsingu þína um að þú óskir eftir að dánarbúið verði tekið til opinberra skipta. Yfirlýsingin verður nú tekin til meðferðar hjá sýslumanni. Reynist skilyrði til þess að senda dánarbúið í opinber skipti verður það gert í framhaldinu. Þér mun berast tilkynning um slíkt inn á pósthólf þitt á Ísland.is.',
     description: '',
   },
-  estateWithNoPropertySubtitle: {
-    id: 'es.application:estateWithNoPropertySubtitle#markdown',
+  estateWithoutAssetsSubtitle: {
+    id: 'es.application:estateWithoutAssetsSubtitle#markdown',
     defaultMessage:
       'Sýslumaður hefur móttekið yfirlýsingu þína um eignaleysi dánarbús. Hún verður yfirfarin af sýslumanni og afgreiðsla sýslumanns í kjölfarið send í pósthólf þitt á Ísland.is.',
     description: '',
   },
-  residencePermitSubtitle: {
-    id: 'es.application:residencePermitSubtitle#markdown',
+  permitToPostponeEstateDivisionSubtitle: {
+    id: 'es.application:permitToPostponeEstateDivisionSubtitle#markdown',
     defaultMessage:
       'Sýslumaður hefur móttekið beiðni þína um leyfi til setu í óskiptu búi. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  divisionOfEstateByHeirsSubtitle: {
+    id: 'es.application:divisionOfEstateByHeirsSubtitle#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
     description: '',
   },
 
@@ -549,6 +599,11 @@ export const m = defineMessages({
     id: 'es.application:error.errorRelation',
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
+  },
+  fillOutRates: {
+    id: 'es.application:error.fillOutRates',
+    defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
+    description: '',
   },
 
   // Assets
@@ -602,7 +657,7 @@ export const m = defineMessages({
   inheritanceForeignCitizenshipLabel: {
     id: 'es.application:inheritanceForeignCitizenshipLabel',
     defaultMessage: 'Aðili án íslenskrar kennitölu',
-    description: 'No icelandic ssn label',
+    description: '',
   },
   inheritanceDayOfBirthLabel: {
     id: 'es.application:inheritanceDayOfBirthLabel',

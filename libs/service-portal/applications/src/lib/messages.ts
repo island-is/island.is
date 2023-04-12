@@ -94,4 +94,25 @@ export const m = defineMessages({
     description:
       'Error message when no applications are found in the overview for national id',
   },
+  noIncompleteApplicationsAvailable: {
+    id: 'sp.applications:no-incomplete-applications-available',
+    defaultMessage:
+      'Engar ókláraðar umsóknir fundust hjá Ísland.is á þessari kennitölu',
+    description:
+      'Error message when no incomplete applications are found in the overview for national id',
+  },
+  noInProgressApplicationsAvailable: {
+    id: 'sp.applications:no-in-progress-applications-available',
+    defaultMessage:
+      'Engar umsóknir í vinnslu fundust hjá Ísland.is á þessari kennitölu',
+    description:
+      'Error message when no in-progress applications are found in the overview for national id',
+  },
+  noCompletedApplicationsAvailable: {
+    id: 'sp.applications:no-completed-applications-available',
+    defaultMessage:
+      'Engar kláraðar umsóknir fundust hjá Ísland.is á þessari kennitölu',
+    description:
+      'Error message when no completed applications are found in the overview for national id',
+  },
 })

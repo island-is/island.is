@@ -27,6 +27,7 @@ export const useListDocuments = (
     opened,
     page,
     pageSize,
+    isLegalGuardian,
   } = input ?? {}
   const { data, loading, error } = useQuery<Query>(LIST_DOCUMENTS, {
     variables: {
@@ -42,6 +43,7 @@ export const useListDocuments = (
         opened,
         page,
         pageSize,
+        isLegalGuardian,
       },
     },
   })

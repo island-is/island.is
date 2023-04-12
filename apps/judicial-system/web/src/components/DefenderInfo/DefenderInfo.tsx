@@ -2,22 +2,18 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Tooltip } from '@island.is/island-ui/core'
-
 import {
-  Case,
   isCourtRole,
   isInvestigationCase,
   isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
   SessionArrangements,
   UserRole,
-} from '@island.is/judicial-system/types'
-import {
-  accused,
-  defendant,
-  rcHearingArrangements,
-  icHearingArrangements,
-} from '@island.is/judicial-system-web/messages'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { defenderInfo } from './DefenderInfo.strings'
 import { BlueBox, SectionHeading } from '..'
 import { useCase } from '../../utils/hooks'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -39,16 +35,16 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
   const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
-      if (user?.role === UserRole.PROSECUTOR) {
-        return accused.sections.defenderInfo.heading
+      if (user?.role === UserRole.Prosecutor) {
+        return defenderInfo.restrictionCases.sections.defender.heading
       } else {
-        return rcHearingArrangements.sections.defender.title
+        return defenderInfo.restrictionCases.sections.defender.title
       }
     } else {
-      if (user?.role === UserRole.PROSECUTOR) {
-        return defendant.sections.defenderInfo.heading
+      if (user?.role === UserRole.Prosecutor) {
+        return defenderInfo.investigationCases.sections.defender.heading
       } else {
-        return icHearingArrangements.sections.defender.title
+        return defenderInfo.investigationCases.sections.defender.title
       }
     }
   }
@@ -61,7 +57,9 @@ const DefenderInfo: React.FC<Props> = (props) => {
     ) {
       return (
         <Tooltip
-          text={formatMessage(rcHearingArrangements.sections.defender.tooltip)}
+          text={formatMessage(
+            defenderInfo.restrictionCases.sections.defender.tooltip,
+          )}
           placement="right"
         />
       )
@@ -72,13 +70,12 @@ const DefenderInfo: React.FC<Props> = (props) => {
     ) {
       return (
         <Tooltip
-          text={formatMessage(icHearingArrangements.sections.defender.tooltip, {
-            defenderType:
-              workingCase.sessionArrangements ===
-              SessionArrangements.ALL_PRESENT_SPOKESPERSON
-                ? 'talsmaður'
-                : 'verjandi',
-          })}
+          text={formatMessage(
+            defenderInfo.investigationCases.sections.defender.tooltip,
+            {
+              sessionArrangement: workingCase.sessionArrangements,
+            },
+          )}
           placement="right"
         />
       )
@@ -93,7 +90,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
         title={formatMessage(getSectionTitle(), {
           defenderType:
             workingCase.sessionArrangements ===
-            SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            SessionArrangements.AllPresentSpokesperson
               ? 'Talsmaður'
               : 'Verjandi',
         })}
@@ -102,25 +99,27 @@ const DefenderInfo: React.FC<Props> = (props) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
-        {user?.role === UserRole.PROSECUTOR && (
+        {user?.role === UserRole.Prosecutor && (
           <Box marginTop={2}>
             <Checkbox
               name="sendRequestToDefender"
               label={formatMessage(
                 isRestrictionCase(workingCase.type)
-                  ? accused.sections.defenderInfo.sendRequest.label
-                  : defendant.sections.defenderInfo.sendRequest.label,
+                  ? defenderInfo.restrictionCases.sections.sendRequest.label
+                  : defenderInfo.investigationCases.sections.sendRequest.label,
               )}
               tooltip={
                 isRestrictionCase(workingCase.type)
                   ? formatMessage(
-                      accused.sections.defenderInfo.sendRequest.tooltipV2,
+                      defenderInfo.restrictionCases.sections.sendRequest
+                        .tooltip,
                       {
                         caseType: workingCase.type,
                       },
                     )
                   : formatMessage(
-                      defendant.sections.defenderInfo.sendRequest.tooltip,
+                      defenderInfo.investigationCases.sections.sendRequest
+                        .tooltip,
                     )
               }
               checked={workingCase.sendRequestToDefender}

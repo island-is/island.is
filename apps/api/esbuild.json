@@ -21,6 +21,7 @@
     "graphql",
     "pg",
     "winston",
+    "util-deprecate",
     "source-map-resolve",
     "atob",
     "logform",
@@ -57,7 +58,8 @@
     "cacheable-request",
     "decompress-response",
     "lowercase-keys",
-    "mimic-response"
+    "mimic-response",
+    "pdfkit"
   ],
   "keepNames": true
 }

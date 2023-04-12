@@ -13,48 +13,44 @@ export const RulingSignatureConfirmationQuery = gql`
 `
 
 export const CasesQuery = gql`
-  query CasesQuery {
+  query CaseListQuery {
     cases {
       id
       created
-      modified
-      type
-      indictmentSubtypes
-      state
+      courtDate
       policeCaseNumbers
+      state
+      type
       defendants {
         id
         nationalId
         name
         noNationalId
       }
-      validToDate
-      decision
-      isValidToDateInThePast
       courtCaseNumber
-      courtDate
+      decision
+      validToDate
+      isValidToDateInThePast
+      initialRulingDate
       rulingDate
       courtEndTime
-      accusedAppealDecision
       prosecutorAppealDecision
-      accusedPostponedAppealDate
+      accusedAppealDecision
       prosecutorPostponedAppealDate
-      parentCase {
-        id
-      }
-      initialRulingDate
+      accusedPostponedAppealDate
       judge {
         id
       }
       prosecutor {
         id
       }
-      creatingProsecutor {
-        id
-      }
       registrar {
         id
       }
+      creatingProsecutor {
+        id
+      }
+      parentCaseId
     }
   }
 `

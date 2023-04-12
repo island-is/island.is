@@ -13,6 +13,7 @@ import { AccessListContainer } from './AccessList/AccessListContainer/AccessList
 import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
 import { AuthCustomDelegationOutgoing } from '../../types/customDelegation'
 import { m } from '../../lib/messages'
+import { useDynamicShadow } from '../../hooks/useDynamicShadow'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegationOutgoing
@@ -40,6 +41,11 @@ export const AccessConfirmModal = ({
   const { md } = useBreakpoint()
   const [error, setError] = useState(formError ?? false)
 
+  const { showShadow, pxProps } = useDynamicShadow({
+    rootMargin: '-128px',
+    isDisabled: !rest.isVisible,
+  })
+
   const onConfirmHandler = async () => {
     if (!delegation.id || !scopes) {
       setError(true)
@@ -62,10 +68,7 @@ export const AccessConfirmModal = ({
     <Modal
       id={`access-confirm-modal`}
       label={formatMessage(m.accessControl)}
-      title={formatMessage({
-        id: 'sp.settings-access-control:access-confirm-modal-title',
-        defaultMessage: 'Þú ert að veita aðgang',
-      })}
+      title={formatMessage(m.accessConfirmModalTitle)}
       {...rest}
       onClose={onClose}
       noPaddingBottom
@@ -74,11 +77,7 @@ export const AccessConfirmModal = ({
         {error && (
           <Box paddingBottom={3}>
             <AlertBanner
-              description={formatMessage({
-                id: 'sp.access-control-delegations:confirm-error',
-                defaultMessage:
-                  'Ekki tókst að vista réttindi. Vinsamlegast reyndu aftur',
-              })}
+              description={formatMessage(m.confirmError)}
               variant="error"
             />
           </Box>
@@ -92,10 +91,7 @@ export const AccessConfirmModal = ({
         >
           {fromName && fromNationalId && (
             <IdentityCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:delegation-to',
-                defaultMessage: 'Aðgangsveitandi',
-              })}
+              label={formatMessage(m.accessOwner)}
               title={fromName}
               description={formatNationalId(fromNationalId)}
               color="blue"
@@ -103,10 +99,7 @@ export const AccessConfirmModal = ({
           )}
           {toName && toNationalId && (
             <IdentityCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:access-holder',
-                defaultMessage: 'Aðgangshafi',
-              })}
+              label={formatMessage(m.accessHolder)}
               title={toName}
               description={formatNationalId(toNationalId)}
               color="purple"
@@ -115,10 +108,7 @@ export const AccessConfirmModal = ({
         </Box>
         {delegation.domain && (
           <IdentityCard
-            label={formatMessage({
-              id: 'sp.access-control-delegations:domain',
-              defaultMessage: 'Kerfi',
-            })}
+            label={formatMessage(m.domain)}
             title={delegation.domain.displayName}
             imgSrc={delegation.domain.organisationLogoUrl}
           />
@@ -131,10 +121,12 @@ export const AccessConfirmModal = ({
         validityPeriod={validityPeriod}
         listMarginBottom={[0, 0, 10]}
       />
+      <div {...pxProps} />
+
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md}
+          showShadow={md && showShadow}
           onCancel={onClose}
           onConfirm={onConfirmHandler}
           confirmLabel={formatMessage(coreMessages.codeConfirmation)}

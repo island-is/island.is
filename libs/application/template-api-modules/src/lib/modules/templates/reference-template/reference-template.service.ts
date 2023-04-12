@@ -9,6 +9,7 @@ import {
 } from './emailGenerators'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
@@ -49,7 +50,13 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
   async doStuffThatFails() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    throw new Error('This is the message that caused the failure')
+    throw new TemplateApiError(
+      {
+        title: 'This is a test error',
+        summary: 'This is the message that caused the failure',
+      },
+      500,
+    )
   }
 
   async createApplication({ application }: TemplateApiModuleActionProps) {

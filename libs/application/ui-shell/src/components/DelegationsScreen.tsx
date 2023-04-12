@@ -7,9 +7,9 @@ import {
   Text,
   Box,
   Page,
-  ActionCard,
   GridContainer,
   Stack,
+  Icon,
 } from '@island.is/island-ui/core'
 import {
   coreDelegationsMessages,
@@ -20,10 +20,19 @@ import { getApplicationTemplateByTypeId } from '@island.is/application/template-
 import { LoadingShell } from './LoadingShell'
 import { format as formatKennitala } from 'kennitala'
 import { useLocale } from '@island.is/localization'
-import { useHistory } from 'react-router-dom'
 import { ScreenType, DelegationsScreenDataType, Delegation } from '../types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useNavigate } from 'react-router-dom'
+import * as kennitala from 'kennitala'
+import * as styles from './DelegationsScreen.css'
+
+enum DelegationType {
+  LegalGuardian = 'LegalGuardian',
+  ProcurationHolder = 'ProcurationHolder',
+  PersonalRepresentative = 'PersonalRepresentative',
+  Custom = 'Custom',
+}
 
 interface DelegationsScreenProps {
   alternativeSubjects?: { nationalId: string }[]
@@ -42,8 +51,8 @@ export const DelegationsScreen = ({
   const { formatMessage } = useLocale()
   const type = getTypeFromSlug(slug)
   const { switchUser, userInfo: user } = useAuth()
-  const history = useHistory()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+  const navigate = useNavigate()
 
   // Check for user delegations if application supports delegations
   const { data: delegations, error } = useQuery(ACTOR_DELEGATIONS, {
@@ -170,10 +179,10 @@ export const DelegationsScreen = ({
   ])
 
   const handleClick = (nationalId?: string) => {
-    if (screenData.screenType !== ScreenType.ONGOING) {
-      history.push('?delegationChecked=true')
-    }
-    if (nationalId) {
+    if (screenData.screenType !== ScreenType.ONGOING && nationalId) {
+      navigate('?delegationChecked=true')
+      switchUser(nationalId)
+    } else if (nationalId) {
       switchUser(nationalId)
     } else {
       checkDelegation(true)
@@ -205,42 +214,165 @@ export const DelegationsScreen = ({
     ),
   }
 
+  const currentUser = screenData.authDelegations?.slice(0, 1)
+  const otherUsers = screenData.authDelegations?.slice(1)
+
+  const companyDelegations = otherUsers?.filter((delegation: Delegation) =>
+    kennitala.isCompany(delegation.from.nationalId),
+  )
+
+  const personDelegations = otherUsers?.filter((delegation: Delegation) =>
+    kennitala.isPerson(delegation.from.nationalId),
+  )
+
   return (
     <Page>
       <GridContainer>
         {screenData.screenType === ScreenType.LOADING ? (
           <LoadingShell />
         ) : (
-          <Box>
-            <Box marginTop={5} marginBottom={5}>
+          <Box paddingX="p5" className={styles.delegationContainer}>
+            <Box textAlign="center" marginTop={5} marginBottom={5}>
               <Text marginBottom={2} variant="h1">
                 {screenTexts.title}
               </Text>
               <Text>{screenTexts.subtitle}</Text>
             </Box>
-            <Stack space={2}>
-              {screenData.authDelegations?.map((delegation: Delegation) => (
-                <ActionCard
-                  key={delegation.from.nationalId}
-                  avatar
-                  heading={delegation.from.name}
-                  text={
-                    formatMessage(
-                      coreDelegationsMessages.delegationScreenNationalId,
-                    ) + formatKennitala(delegation.from.nationalId)
-                  }
-                  cta={{
-                    label: screenTexts.actionCardCtaLabel,
-                    variant: 'text',
-                    size: 'medium',
-                    onClick: () => handleClick(delegation.from.nationalId),
-                  }}
-                />
-              ))}
-            </Stack>
+            <DelegationList
+              handleClick={handleClick}
+              delegations={currentUser}
+            />
+            <DelegationList
+              isPerson={true}
+              handleClick={handleClick}
+              delegations={personDelegations}
+              header={formatMessage(coreDelegationsMessages.delegationPersons)}
+            />
+            <DelegationList
+              isPerson={false}
+              handleClick={handleClick}
+              delegations={companyDelegations}
+              header={formatMessage(
+                coreDelegationsMessages.delegationCompanies,
+              )}
+            />
           </Box>
         )}
       </GridContainer>
     </Page>
+  )
+}
+
+type DelegationListProps = {
+  isPerson?: boolean
+  header?: string
+  delegations?: Delegation[]
+  handleClick: (nationalId: string) => void
+}
+
+const DelegationList = ({
+  header,
+  delegations,
+  handleClick,
+  isPerson,
+}: DelegationListProps) => (
+  <>
+    {header && delegations && delegations?.length > 0 && (
+      <Box textAlign="center" marginY={1}>
+        <Text fontWeight="semiBold" variant="medium">
+          {header}
+        </Text>
+      </Box>
+    )}
+    {delegations && delegations?.length > 0 && (
+      <Stack space={2}>
+        {delegations?.map((delegation: Delegation, idx: number) => (
+          <DelegationItem
+            key={`delegation-${delegation.from.nationalId}-item-${idx}`}
+            name={delegation.from.name}
+            nationalId={delegation.from.nationalId}
+            handleClick={handleClick}
+            type={delegation.types[0] as DelegationType}
+            isPerson={isPerson}
+          />
+        ))}
+      </Stack>
+    )}
+  </>
+)
+
+type DelegationItemProps = {
+  isPerson?: boolean
+  name: string
+  nationalId: string
+  type?: DelegationType
+  handleClick: (nationalId: string) => void
+}
+
+const DelegationItem = ({
+  name,
+  nationalId,
+  type,
+  handleClick,
+  isPerson,
+}: DelegationItemProps) => {
+  const { formatMessage } = useLocale()
+  const getIcon = () => {
+    if (isPerson === true) {
+      return <Icon icon="people" type="outline" size="small" color="blue400" />
+    }
+    if (isPerson === false) {
+      return (
+        <Icon icon="business" type="outline" size="small" color="blue400" />
+      )
+    }
+    return null
+  }
+
+  const getType = () => {
+    if (type === DelegationType.Custom)
+      return (
+        <Text fontWeight="semiBold" color="blue400" variant="small">
+          {formatMessage(coreDelegationsMessages.custom)}
+        </Text>
+      )
+    if (type === DelegationType.LegalGuardian)
+      return (
+        <Text fontWeight="semiBold" color="blue400" variant="small">
+          {formatMessage(coreDelegationsMessages.legalGuardian)}
+        </Text>
+      )
+    if (type === DelegationType.PersonalRepresentative)
+      return (
+        <Text fontWeight="semiBold" color="blue400" variant="small">
+          {formatMessage(coreDelegationsMessages.personalRepresentative)}
+        </Text>
+      )
+    if (type === DelegationType.ProcurationHolder)
+      return (
+        <Text fontWeight="semiBold" color="blue400" variant="small">
+          {formatMessage(coreDelegationsMessages.procurationHolder)}
+        </Text>
+      )
+    return null
+  }
+
+  return (
+    <Box textAlign="center">
+      <button
+        aria-label={name}
+        onClick={() => handleClick(nationalId)}
+        className={styles.buttonStyle}
+      >
+        <Box display="flex" alignItems="center">
+          {getIcon()}
+          <Box marginLeft={1}>{getType()}</Box>
+        </Box>
+        <Text marginBottom="smallGutter" variant="h4">
+          {name}
+        </Text>
+        <Text variant="small">{formatKennitala(nationalId)}</Text>
+      </button>
+    </Box>
   )
 }

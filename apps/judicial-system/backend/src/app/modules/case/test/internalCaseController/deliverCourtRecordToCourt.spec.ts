@@ -1,12 +1,17 @@
 import { uuid } from 'uuidv4'
+import format from 'date-fns/format'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
-import { CourtDocumentFolder, CourtService } from '../../../court'
+import { CourtService } from '../../../court'
+import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
+import { randomDate } from '../../../../test'
+import { nowFactory } from '../../../../factories'
 
 jest.mock('../../../../formatters/courtRecordPdf')
+jest.mock('../../../../factories/date.factory')
 
 interface Then {
   result: DeliverResponse
@@ -16,6 +21,9 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver court record to court', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
@@ -29,14 +37,14 @@ describe('InternalCaseController - Deliver court record to court', () => {
     } = await createTestingCaseModule()
 
     mockCourtService = courtService
-    const mockCreateDocument = mockCourtService.createDocument as jest.Mock
-    mockCreateDocument.mockRejectedValue(new Error('Some error'))
+    const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
+    mockCreateCourtRecord.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverCourtRecordToCourt(caseId, theCase)
+        .deliverCourtRecordToCourt(caseId, user, theCase, { userId })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -50,13 +58,17 @@ describe('InternalCaseController - Deliver court record to court', () => {
     const courtCaseNumber = uuid()
     const theCase = { id: caseId, courtId, courtCaseNumber } as Case
     const pdf = Buffer.from('test court record')
+    const now = randomDate()
+
     let then: Then
 
     beforeEach(async () => {
+      const mockNowFactory = nowFactory as jest.Mock
+      mockNowFactory.mockReturnValue(now)
       const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
       mockGet.mockResolvedValueOnce(pdf)
-      const mockCreateDocument = mockCourtService.createDocument as jest.Mock
-      mockCreateDocument.mockResolvedValueOnce(uuid())
+      const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
+      mockCreateCourtRecord.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(caseId, theCase)
     })
@@ -69,13 +81,13 @@ describe('InternalCaseController - Deliver court record to court', () => {
     })
 
     it('should create a court record at court', async () => {
-      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+      expect(mockCourtService.createCourtRecord).toHaveBeenCalledWith(
+        user,
         caseId,
         courtId,
         courtCaseNumber,
-        CourtDocumentFolder.COURT_DOCUMENTS,
-        `Þingbók ${courtCaseNumber}`,
-        `Þingbók ${courtCaseNumber}.pdf`,
+        `Þingbók ${courtCaseNumber} ${format(now, 'yyyy-MM-dd HH:mm')}`,
+        `Þingbók ${courtCaseNumber} ${format(now, 'yyyy-MM-dd HH:mm')}.pdf`,
         'application/pdf',
         pdf,
       )

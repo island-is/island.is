@@ -31,6 +31,7 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Greinargerð skjá hjá saksóknara í rannsóknarheimildum',
       }),
+      // TODO: Remove caseFiles
       caseFiles: defineMessage({
         id:
           'judicial.system.core:titles.prosecutor.investigation_cases.case_files',
@@ -75,6 +76,7 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Greinargerð skjá hjá saksóknara í gæslu- og farbannsmálum',
       }),
+      // TODO: Remove caseFiles
       caseFiles: defineMessage({
         id:
           'judicial.system.core:titles.prosecutor.restriction_cases.case_files',
@@ -101,6 +103,12 @@ export const titles = {
         defaultMessage: 'Málsmeðferð - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Málsmeðferð skjá hjá saksóknara í ákærum',
+      }),
+      indictment: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.indictment',
+        defaultMessage: 'Ákæra - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Ákæra skjá hjá saksóknara í ákærum',
       }),
       caseFiles: defineMessage({
         id: 'judicial.system.core:titles.prosecutor.indictments.case_files',
@@ -256,6 +264,11 @@ export const titles = {
       defaultMessage: '{courtCaseNumber} - Réttarvörslugátt',
       description:
         'Notaður sem titill fyrir skjá sem birtir upplýsingar um lokið mál',
+    }),
+    appealToCourtOfAppeals: defineMessage({
+      id: 'judicial.system.core:titles.shared.appeal_to_court_of_appeals',
+      defaultMessage: 'Kæra til Landsréttar - Réttarvörslugátt',
+      description: 'Notaður sem titill fyrir Kæra til Landsréttar skjá',
     }),
   },
   admin: {

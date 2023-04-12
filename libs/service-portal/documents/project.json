@@ -23,9 +23,9 @@
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/documents/src/{lib,components,screens,utils,widgets}/**/*.{js,ts,tsx}'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/documents/src/{lib,components,screens,utils}/**/*.{js,ts,tsx}'"
       }
     }
   },
-  "tags": []
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
 }

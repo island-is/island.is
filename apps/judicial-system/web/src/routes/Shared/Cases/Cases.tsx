@@ -1,63 +1,53 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 import router from 'next/router'
 import partition from 'lodash/partition'
 
-import { AlertMessage, Box, Select, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import {
   CaseQuery,
   DropdownMenu,
   Logo,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
   CaseTransition,
-  InstitutionType,
-  NotificationType,
   isRestrictionCase,
-  UserRole,
   Feature,
   isInvestigationCase,
   isIndictmentCase,
   isExtendedCourtRole,
-  User,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseData } from '@island.is/judicial-system-web/src/types'
+import {
+  CaseData,
+  TempCase as Case,
+  TempCaseListEntry as CaseListEntry,
+} from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
-import type { Case } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
+import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import { FilterOption, useFilter } from './useFilter'
-
-const SectionTitle: React.FC = ({ children }) => {
-  return (
-    <>
-      <Box marginBottom={3} display={['block', 'block', 'none']}>
-        <Text variant="h2" as="h2">
-          {children}
-        </Text>
-      </Box>
-      <Box marginBottom={3} display={['none', 'none', 'block']}>
-        <Text variant="h3" as="h3">
-          {children}
-        </Text>
-      </Box>
-    </>
-  )
-}
 
 const CreateCaseButton: React.FC<{
   features: Feature[]
@@ -66,7 +56,7 @@ const CreateCaseButton: React.FC<{
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
-    if (user.role === UserRole.REPRESENTATIVE) {
+    if (user.role === UserRole.Representative) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -75,7 +65,7 @@ const CreateCaseButton: React.FC<{
       ]
     }
 
-    if (user.role === UserRole.PROSECUTOR) {
+    if (user.role === UserRole.Prosecutor) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -99,14 +89,16 @@ const CreateCaseButton: React.FC<{
     return []
   }, [formatMessage, user?.role])
 
-  // TODO Remove procecutor office id check when indictments are ready
+  // TODO Remove prosecutor office id check when indictments are ready
   const itemsFiltered = useMemo(() => {
     if (
       features.includes(Feature.INDICTMENTS) ||
+      user.name === 'Ásmundur Jónsson' ||
       [
         '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
         '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
         'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
+        '53581d7b-0591-45e5-9cbe-c96b2f82da85', // Lögreglustjórinn á höfuðborgarsvæðinu
       ].includes(user.institution?.id ?? '')
     ) {
       return items
@@ -137,20 +129,21 @@ export const Cases: React.FC = () => {
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
 
-  const isProsecutor = user?.role === UserRole.PROSECUTOR
-  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
-  const isHighCourtUser = user?.institution?.type === InstitutionType.HIGH_COURT
-  const isPrisonAdminUser =
-    user?.institution?.type === InstitutionType.PRISON_ADMIN
-  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
+  const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const { data, error, loading, refetch } = useQuery<{ cases?: Case[] }>(
-    CasesQuery,
-    {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const isProsecutor = user?.role === UserRole.Prosecutor
+  const isRepresentative = user?.role === UserRole.Representative
+  const isHighCourtUser = user?.institution?.type === InstitutionType.HighCourt
+  const isPrisonAdminUser =
+    user?.institution?.type === InstitutionType.PrisonAdmin
+  const isPrisonUser = user?.institution?.type === InstitutionType.Prison
+
+  const { data, error, loading, refetch } = useQuery<{
+    cases?: CaseListEntry[]
+  }>(CasesQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
     fetchPolicy: 'no-cache',
@@ -164,28 +157,40 @@ export const Cases: React.FC = () => {
   const {
     transitionCase,
     isTransitioningCase,
-    sendNotification,
     isSendingNotification,
   } = useCase()
 
+  useEffect(() => {
+    const loadingTimeout = setTimeout(() => {
+      setIsFiltering(false)
+    }, 250)
+
+    return () => {
+      clearTimeout(loadingTimeout)
+    }
+  }, [isFiltering])
+
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [Case[], Case[]] = useMemo(() => {
+  const [allActiveCases, allPastCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(() => {
     if (!resCases) {
       return [[], []]
     }
 
-    const casesWithoutDeleted = resCases.filter((c: Case) => {
+    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
       return c.state !== CaseState.DELETED
     })
 
-    return partition(casesWithoutDeleted, (c: Case) => {
-      if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
-        return false
+    return partition(casesWithoutDeleted, (c) => {
+      if (isIndictmentCase(c.type)) {
+        return !completedCaseStates.includes(c.state)
       } else if (isPrisonAdminUser || isPrisonUser) {
-        return !c.isValidToDateInThePast && c.rulingDate
+        return !c.isValidToDateInThePast
       } else {
-        return !c.rulingDate
+        return !(completedCaseStates.includes(c.state) && c.rulingDate)
       }
     })
   }, [resCases, isPrisonAdminUser, isPrisonUser])
@@ -198,15 +203,14 @@ export const Cases: React.FC = () => {
     pastCases,
   } = useFilter(allActiveCases, allPastCases, user)
 
-  const deleteCase = async (caseToDelete: Case) => {
+  const deleteCase = async (caseToDelete: CaseListEntry) => {
     if (
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT ||
       caseToDelete.state === CaseState.SUBMITTED ||
       caseToDelete.state === CaseState.RECEIVED
     ) {
-      await sendNotification(caseToDelete.id, NotificationType.REVOKED)
-      await transitionCase(caseToDelete, CaseTransition.DELETE)
+      await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
     }
   }
@@ -219,6 +223,11 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
+    const isTrafficViolation = isTrafficViolationCase(
+      caseToOpen,
+      features,
+      user,
+    )
 
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
@@ -227,6 +236,8 @@ export const Cases: React.FC = () => {
     ) {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      } else if (isHighCourtUser) {
+        routeTo = constants.COURT_OF_APPEAL_OVERVIEW
       } else {
         routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
       }
@@ -259,7 +270,7 @@ export const Cases: React.FC = () => {
         )
       } else {
         routeTo = findFirstInvalidStep(
-          constants.prosecutorIndictmentRoutes,
+          constants.prosecutorIndictmentRoutes(isTrafficViolation),
           caseToOpen,
         )
       }
@@ -276,29 +287,26 @@ export const Cases: React.FC = () => {
         marginY={[4, 4, 12]}
       >
         <PageHeader title={formatMessage(titles.shared.cases)} />
-
-        {loading || !user ? (
-          <TableSkeleton />
-        ) : (
-          <>
-            <div className={styles.logoContainer}>
-              <Logo />
-              {isProsecutor || isRepresentative ? (
-                <CreateCaseButton user={user} features={features} />
-              ) : null}
-            </div>
-            <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
-              <Select
-                name="filter-cases"
-                options={filterOptions}
-                label={formatMessage(m.filter.label)}
-                onChange={(value) => setFilter(value as FilterOption)}
-                value={filter}
-              />
-            </Box>
-          </>
+        <div className={styles.logoContainer}>
+          <Logo />
+          {isProsecutor || isRepresentative ? (
+            <CreateCaseButton user={user} features={features} />
+          ) : null}
+        </div>
+        {user?.role !== UserRole.Staff && (
+          <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
+            <Select
+              name="filter-cases"
+              options={filterOptions}
+              label={formatMessage(m.filter.label)}
+              onChange={(value) => {
+                setIsFiltering(true)
+                setFilter(value as FilterOption)
+              }}
+              value={filter}
+            />
+          </Box>
         )}
-
         {error ? (
           <div
             className={styles.infoContainer}
@@ -310,104 +318,92 @@ export const Cases: React.FC = () => {
               type="error"
             />
           </div>
+        ) : loading || isFiltering || !user ? (
+          <TableSkeleton />
         ) : (
-          <>
-            {!isHighCourtUser && (
-              <>
-                {/**
-                 * This should be a <caption> tag inside the table but
-                 * Safari has a bug that doesn't allow that. See more
-                 * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-                 */}
-                <SectionTitle>
-                  {formatMessage(
-                    isPrisonUser
-                      ? m.activeRequests.prisonStaffUsers.title
-                      : isPrisonAdminUser
-                      ? m.activeRequests.prisonStaffUsers.prisonAdminTitle
-                      : m.activeRequests.title,
-                  )}
-                </SectionTitle>
-                <Box marginBottom={[5, 5, 12]}>
-                  {activeCases.length > 0 ? (
-                    isPrisonUser || isPrisonAdminUser ? (
-                      <PastCases
-                        cases={activeCases}
-                        onRowClick={handleRowClick}
-                        isHighCourtUser={false}
-                      />
-                    ) : (
-                      <ActiveCases
-                        cases={activeCases}
-                        onRowClick={handleRowClick}
-                        isDeletingCase={
-                          isTransitioningCase || isSendingNotification
-                        }
-                        onDeleteCase={deleteCase}
-                      />
-                    )
-                  ) : (
-                    <div className={styles.infoContainer}>
-                      <AlertMessage
-                        type="info"
-                        title={formatMessage(
-                          isPrisonUser || isPrisonAdminUser
-                            ? m.activeRequests.prisonStaffUsers
-                                .infoContainerTitle
-                            : m.activeRequests.infoContainerTitle,
-                        )}
-                        message={formatMessage(
-                          isPrisonUser || isPrisonAdminUser
-                            ? m.activeRequests.prisonStaffUsers
-                                .infoContainerText
-                            : m.activeRequests.infoContainerText,
-                        )}
-                      />
-                    </div>
-                  )}
-                </Box>
-              </>
-            )}
-            {/**
-             * This should be a <caption> tag inside the table but
-             * Safari has a bug that doesn't allow that. See more
-             * https://stackoverflow.com/questions/49855899/solution-for-jumping-safari-table-caption
-             */}
-            <SectionTitle>
-              {formatMessage(
-                isHighCourtUser
-                  ? m.pastRequests.highCourtUsers.title
-                  : isPrisonUser
-                  ? m.pastRequests.prisonStaffUsers.title
-                  : isPrisonAdminUser
-                  ? m.pastRequests.prisonStaffUsers.prisonAdminTitle
-                  : m.pastRequests.title,
-              )}
-            </SectionTitle>
-            {pastCases.length > 0 ? (
-              <PastCases
-                cases={pastCases}
-                onRowClick={handleRowClick}
-                isHighCourtUser={isHighCourtUser}
+          !isHighCourtUser && (
+            <>
+              <SectionHeading
+                title={formatMessage(
+                  isPrisonUser
+                    ? m.activeRequests.prisonStaffUsers.title
+                    : isPrisonAdminUser
+                    ? m.activeRequests.prisonStaffUsers.prisonAdminTitle
+                    : m.activeRequests.title,
+                )}
               />
-            ) : (
-              <div className={styles.infoContainer}>
-                <AlertMessage
-                  type="info"
-                  title={formatMessage(
-                    isPrisonAdminUser || isPrisonUser
-                      ? m.activeRequests.prisonStaffUsers.infoContainerTitle
-                      : m.pastRequests.infoContainerTitle,
-                  )}
-                  message={formatMessage(
-                    isPrisonAdminUser || isPrisonUser
-                      ? m.activeRequests.prisonStaffUsers.infoContainerText
-                      : m.pastRequests.infoContainerText,
-                  )}
-                />
-              </div>
-            )}
-          </>
+              <Box marginBottom={[5, 5, 12]}>
+                {activeCases.length > 0 ? (
+                  isPrisonUser || isPrisonAdminUser ? (
+                    <PastCases
+                      cases={activeCases}
+                      onRowClick={handleRowClick}
+                      isHighCourtUser={false}
+                    />
+                  ) : (
+                    <ActiveCases
+                      cases={activeCases}
+                      onRowClick={handleRowClick}
+                      isDeletingCase={
+                        isTransitioningCase || isSendingNotification
+                      }
+                      onDeleteCase={deleteCase}
+                    />
+                  )
+                ) : (
+                  <div className={styles.infoContainer}>
+                    <AlertMessage
+                      type="info"
+                      title={formatMessage(
+                        isPrisonUser || isPrisonAdminUser
+                          ? m.activeRequests.prisonStaffUsers.infoContainerTitle
+                          : m.activeRequests.infoContainerTitle,
+                      )}
+                      message={formatMessage(
+                        isPrisonUser || isPrisonAdminUser
+                          ? m.activeRequests.prisonStaffUsers.infoContainerText
+                          : m.activeRequests.infoContainerText,
+                      )}
+                    />
+                  </div>
+                )}
+              </Box>
+            </>
+          )
+        )}
+        <SectionHeading
+          title={formatMessage(
+            isHighCourtUser
+              ? m.pastRequests.highCourtUsers.title
+              : isPrisonUser
+              ? m.pastRequests.prisonStaffUsers.title
+              : isPrisonAdminUser
+              ? m.pastRequests.prisonStaffUsers.prisonAdminTitle
+              : m.pastRequests.title,
+          )}
+        />
+        {pastCases.length > 0 ? (
+          <PastCases
+            cases={pastCases}
+            onRowClick={handleRowClick}
+            isHighCourtUser={isHighCourtUser}
+          />
+        ) : (
+          <div className={styles.infoContainer}>
+            <AlertMessage
+              type="info"
+              title={formatMessage(
+                isPrisonAdminUser || isPrisonUser
+                  ? m.activeRequests.prisonStaffUsers.infoContainerTitle
+                  : m.pastRequests.infoContainerTitle,
+              )}
+              message={formatMessage(
+                isPrisonAdminUser || isPrisonUser
+                  ? m.activeRequests.prisonStaffUsers.infoContainerText
+                  : m.pastRequests.infoContainerText,
+              )}
+            />
+          </div>
         )}
       </Box>
     </Box>

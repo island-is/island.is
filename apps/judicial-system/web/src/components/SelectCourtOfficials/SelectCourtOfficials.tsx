@@ -3,12 +3,12 @@ import { useIntl } from 'react-intl'
 import { ValueType } from 'react-select'
 
 import { Box, Select, Option, Tooltip } from '@island.is/island-ui/core'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  Case,
-  indictmentCases,
   User,
   UserRole,
-} from '@island.is/judicial-system/types'
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
 import { ReactSelectOption } from '../../types'
@@ -29,9 +29,9 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
   const judges = (users ?? [])
     .filter(
       (user: User) =>
-        (user.role === UserRole.JUDGE ||
-          (indictmentCases.includes(workingCase.type) &&
-            user.role === UserRole.ASSISTANT)) &&
+        (user.role === UserRole.Judge ||
+          (workingCase.type === CaseType.Indictment &&
+            user.role === UserRole.Assistant)) &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((judge: User) => {
@@ -41,19 +41,19 @@ const SelectCourtOfficials: React.FC<Props> = (props) => {
   const registrars = (users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.REGISTRAR &&
-        user.institution?.id === workingCase?.court?.id,
+        user.role === UserRole.Registrar &&
+        user.institution?.id === workingCase.court?.id,
     )
     .map((registrar: User) => {
       return { label: registrar.name, value: registrar.id, registrar }
     })
 
   const defaultJudge = judges?.find(
-    (judge: Option) => judge.value === workingCase?.judge?.id,
+    (judge: Option) => judge.value === workingCase.judge?.id,
   )
 
   const defaultRegistrar = registrars?.find(
-    (registrar: Option) => registrar.value === workingCase?.registrar?.id,
+    (registrar: Option) => registrar.value === workingCase.registrar?.id,
   )
 
   return (

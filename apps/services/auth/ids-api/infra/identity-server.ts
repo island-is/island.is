@@ -1,4 +1,4 @@
-import { service, ServiceBuilder, ref } from '../../../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 /**
  * This setup is for the Identity Server, which is hosted in a different repository - https://github.com/island-is/identity-server.web
@@ -71,10 +71,19 @@ export const serviceSetup = (services: {
       PersistenceSettings__BaseAddress: ref(
         (h) => `http://${h.svc(services.authIdsApi)}`,
       ),
-      PersistenceSettings__UserProfileBaseAddress:
-        'http://web-service-portal-api.service-portal.svc.cluster.local',
+      PersistenceSettings__SessionsBaseAddress: {
+        dev: 'http://web-services-sessions.services-sessions.svc.cluster.local',
+        staging:
+          'http://web-services-sessions.services-sessions.svc.cluster.local',
+        prod: 'https://sessions-api.internal.island.is',
+      },
       Application__MinCompletionPortThreads: '10',
       NO_UPDATE_NOTIFIER: 'true',
+      ContentfulSettings__BaseAddress: {
+        dev: 'https://preview.contentful.com',
+        staging: 'https://cdn.contentful.com',
+        prod: 'https://cdn.contentful.com',
+      },
     })
     .secrets({
       IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',
@@ -88,6 +97,8 @@ export const serviceSetup = (services: {
         '/k8s/identity-server/ClientSecret',
       Scopes__Admin__RootAccessList: '/k8s/identity-server/AdminRootAccessList',
       FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY',
+      ContentfulSettings__AccessToken:
+        '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN',
     })
     .ingress({
       primary: {

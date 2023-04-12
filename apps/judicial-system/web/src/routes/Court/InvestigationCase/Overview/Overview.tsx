@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -10,17 +10,15 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
-  MarkdownWrapper,
   PageLayout,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
   icCourtOverview,
@@ -46,6 +44,7 @@ import {
   caseTypes,
   capitalize,
 } from '@island.is/judicial-system/formatters'
+import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
@@ -64,31 +63,25 @@ const Overview = () => {
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
-  useEffect(() => {
-    if (isCaseUpToDate) {
-      setAndSendCaseToServer(
-        [
-          {
-            ruling: !workingCase.parentCase
-              ? `\n${formatMessage(ruling.autofill, {
-                  judgeName: workingCase.judge?.name,
-                })}`
-              : isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.parentCase.ruling
-              : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-    }
-  }, [
-    setAndSendCaseToServer,
-    formatMessage,
-    isCaseUpToDate,
-    setWorkingCase,
-    workingCase,
-  ])
+  const initialize = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          ruling: !workingCase.parentCase
+            ? `\n${formatMessage(ruling.autofill, {
+                judgeName: workingCase.judge?.name,
+              })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
+            : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, formatMessage, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -98,10 +91,6 @@ const Overview = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}
@@ -113,17 +102,8 @@ const Overview = () => {
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
           <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
-            <AlertMessage
-              title={formatMessage(
-                icCourtOverview.sections.caseResentExplanation.title,
-              )}
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.caseResentExplanation}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-              type="warning"
+            <CaseResentExplanation
+              explanation={workingCase.caseResentExplanation}
             />
           </Box>
         )}
@@ -193,13 +173,15 @@ const Overview = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         <>
@@ -301,6 +283,7 @@ const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>

@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/plausible"]
     }
   },
-  "tags": ["lib:js"]
+  "tags": ["lib:dom", "scope:dom"]
 }

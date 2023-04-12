@@ -17,15 +17,11 @@ import {
   getApplicationAnswers,
   calculateEndDateForPeriodWithStartAndLength,
   calculatePeriodLengthInMonths,
+  isParentalGrant,
 } from '../../lib/parentalLeaveUtils'
 import { errorMessages, parentalLeaveFormMessages } from '../../lib/messages'
 import { usageMaxMonths, usageMinMonths } from '../../config'
-import {
-  StartDateOptions,
-  DATE_FORMAT,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-} from '../../constants'
+import { StartDateOptions, DATE_FORMAT } from '../../constants'
 import * as styles from './Duration.css'
 
 const DEFAULT_PERIOD_LENGTH = usageMinMonths
@@ -36,14 +32,13 @@ export const Duration: FC<FieldBaseProps> = ({
   errors,
 }) => {
   const { id } = field
-  const { register, setError, clearErrors } = useFormContext()
+  const { register, setError, clearErrors, setValue } = useFormContext()
   const { formatMessage, formatDateFns } = useLocale()
   const { answers } = application
   const { rawPeriods } = getApplicationAnswers(answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const currentStartDateAnswer = currentPeriod.startDate
-  const appAnswers = getApplicationAnswers(application.answers)
 
   const [chosenEndDate, setChosenEndDate] = useState<string | undefined>(
     currentPeriod.endDate ?? NO_ANSWER,
@@ -69,7 +64,6 @@ export const Duration: FC<FieldBaseProps> = ({
         )
 
         setChosenEndDate(calculatedEndDate.toISOString())
-
         return calculatedEndDate
       } catch (e) {
         console.error((e as Error).message)
@@ -82,6 +76,12 @@ export const Duration: FC<FieldBaseProps> = ({
     },
     [currentStartDateAnswer, formatMessage, setError],
   )
+
+  useEffect(() => {
+    if (chosenEndDate) {
+      setValue(`periods[${currentIndex}].endDate`, chosenEndDate)
+    }
+  }, [chosenEndDate, setValue, currentIndex])
 
   const handleChange = async (months: number) => {
     clearErrors([id, 'component'])
@@ -107,10 +107,7 @@ export const Duration: FC<FieldBaseProps> = ({
     init()
   }, [])
 
-  const isGrant =
-    appAnswers.applicationType === PARENTAL_GRANT ||
-    appAnswers.applicationType === PARENTAL_GRANT_STUDENTS
-
+  const isGrant = isParentalGrant(application)
   const rangeDates =
     currentPeriod.firstPeriodStart !== StartDateOptions.ACTUAL_DATE_OF_BIRTH
       ? {
@@ -128,7 +125,6 @@ export const Duration: FC<FieldBaseProps> = ({
           },
         }
       : undefined
-
   return (
     <Box>
       <FieldDescription
@@ -150,7 +146,7 @@ export const Duration: FC<FieldBaseProps> = ({
           <Controller
             defaultValue={chosenEndDate}
             name={id}
-            render={({ onChange }) => (
+            render={({ field: { onChange } }) => (
               <Slider
                 min={usageMinMonths}
                 max={usageMaxMonths}
@@ -194,10 +190,9 @@ export const Duration: FC<FieldBaseProps> = ({
 
       <input
         readOnly
-        ref={register}
         type="hidden"
         value={chosenEndDate}
-        name={`periods[${currentIndex}].endDate`}
+        {...register(`periods[${currentIndex}].endDate`)}
       />
     </Box>
   )

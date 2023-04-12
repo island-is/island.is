@@ -6,6 +6,7 @@ import {
   Box,
   Breadcrumbs,
   GridContainer,
+  Inline,
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
@@ -14,7 +15,6 @@ import {
   getThemeConfig,
   SliceMachine,
   OrganizationWrapper,
-  SearchBox,
   IconTitleCard,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -33,19 +33,7 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
-import { getCustomAlertBanners } from './utils'
 import { LandingPage, LandingPageFooter } from './LandingPage'
-
-const WITH_SEARCH = [
-  'syslumenn',
-  'district-commissioner',
-
-  'sjukratryggingar',
-  'health-insurance-in-iceland',
-
-  'utlendingastofnun',
-  'directorate-of-immigration',
-]
 
 const parseOrganizationLinkHref = (organization: Query['getOrganization']) => {
   if (!organization?.link) return ''
@@ -135,9 +123,19 @@ const OrganizationHomePage: Screen<HomeProps> = ({
                 />
               </Box>
               <Box marginBottom={5}>
-                <Text variant="h1" color="blueberry600">
-                  {organizationPage.title}
-                </Text>
+                <Inline space={1} alignY="center">
+                  {organization.logo?.url && (
+                    <img
+                      width={70}
+                      height={70}
+                      src={organization.logo.url}
+                      alt="organization-logo"
+                    />
+                  )}
+                  <Text variant="h1" color="blueberry600">
+                    {organization.title}
+                  </Text>
+                </Inline>
               </Box>
 
               <Box marginBottom={8}>
@@ -188,23 +186,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
             )
           })}
         </Box>
-      }
-      sidebarContent={
-        WITH_SEARCH.includes(organizationPage.slug) && (
-          <SearchBox
-            id="sidebar"
-            organizationPage={organizationPage}
-            placeholder={n('searchServices', 'Leitaðu að þjónustu')}
-            noResultsText={n(
-              'noServicesFound',
-              'Engar niðurstöður í þjónustu sýslumanna',
-            )}
-            searchAllText={n(
-              'searchAllServices',
-              'Leita í öllu efni Ísland.is',
-            )}
-          />
-        )
       }
     >
       {organizationPage.bottomSlices.map((slice) => (
@@ -264,7 +245,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getOrganization },
     },
     namespace,
-    customAlertBanners,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetOrganizationPageArgs>({
       query: GET_ORGANIZATION_PAGE_QUERY,
@@ -299,7 +279,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
-    getCustomAlertBanners(query, apolloClient, locale),
   ])
 
   if (!getOrganizationPage && !getOrganization?.hasALandingPage) {
@@ -311,7 +290,6 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
     organization: getOrganization,
     namespace,
     showSearchInHeader: false,
-    customAlertBanners,
     ...getThemeConfig(
       getOrganizationPage?.theme ?? 'landing_page',
       getOrganizationPage?.slug ?? getOrganization?.slug,

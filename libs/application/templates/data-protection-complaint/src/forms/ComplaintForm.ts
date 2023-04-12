@@ -21,7 +21,10 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import { OnBehalf } from '../lib/dataSchema'
 import {
   application,
@@ -33,8 +36,15 @@ import {
   section,
   sharedFields,
 } from '../lib/messages'
+import { confirmation } from '../lib/messages/confirmation'
 import { externalData } from '../lib/messages/externalData'
-import { FILE_SIZE_LIMIT, NO, YES, SubjectOfComplaint } from '../shared'
+import {
+  FILE_SIZE_LIMIT,
+  NO,
+  YES,
+  SubjectOfComplaint,
+  SubmittedApplicationData,
+} from '../shared'
 
 const yesOption = { value: YES, label: sharedFields.yes }
 const noOption = { value: NO, label: sharedFields.no }
@@ -618,16 +628,17 @@ export const ComplaintForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'confirmation',
-      title: section.received,
-      children: [
-        buildCustomField({
-          id: 'confirmationCustomField',
-          title: overview.general.confirmationPageTitle,
-          component: 'ComplaintConfirmation',
-        }),
-      ],
+    buildFormConclusionSection({
+      alertTitle: confirmation.labels.alertTitle,
+      expandableHeader: confirmation.labels.expandableHeader,
+      expandableDescription: confirmation.labels.description,
+      s3FileKey: (application) => {
+        const submitData = application.externalData
+          .sendApplication as SubmittedApplicationData
+
+        return submitData.data?.applicationPdfKey ?? ''
+      },
+      buttonText: confirmation.labels.pdfLink,
     }),
   ],
 })

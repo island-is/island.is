@@ -31,6 +31,7 @@ import {
   footerEnabled,
   Stepper,
   stepperUtils,
+  Form,
 } from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
@@ -45,6 +46,7 @@ import {
   GetSingleArticleQuery,
   QueryGetSingleArticleArgs,
   Organization,
+  Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -254,7 +256,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 
   return (
     <Stack space={3}>
-      {!!article.category && (
+      {!!article.category?.slug && (
         <Box display={['none', 'none', 'block']} printHidden>
           <Link
             {...linkResolver('articlecategory', [article.category.slug])}
@@ -379,8 +381,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
   const metaTitle = `${article.title} | Ísland.is`
   const processEntry = article.processEntry
-  const categoryHref = linkResolver('articlecategory', [article.category.slug])
-    .href
+
+  // TODO: Revert https://github.com/island-is/island.is/pull/10575 when we have properly configured english article unpublish behaviour
+  const categoryHref = article.category.slug
+    ? linkResolver('articlecategory', [article.category.slug]).href
+    : ''
   const organizationTitle = article.organization[0]?.title
   const organizationShortTitle = article.organization[0]?.shortTitle
 
@@ -399,20 +404,21 @@ const ArticleScreen: Screen<ArticleProps> = ({
               typename: 'homepage',
               href: '/',
             },
-            !!article.category && {
+            !!article.category?.slug && {
               title: article.category.title,
               typename: 'articlecategory',
               slug: [article.category.slug],
             },
-            !!article.group && {
-              isTag: true,
-              title: article.group.title,
-              typename: 'articlecategory',
-              slug: [
-                article.category.slug +
-                  (article.group?.slug ? `#${article.group.slug}` : ''),
-              ],
-            },
+            !!article.category?.slug &&
+              !!article.group && {
+                isTag: true,
+                title: article.group.title,
+                typename: 'articlecategory',
+                slug: [
+                  article.category.slug +
+                    (article.group?.slug ? `#${article.group.slug}` : ''),
+                ],
+              },
           ],
     [article.category, article.group, inStepperView],
   )
@@ -474,7 +480,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           alignItems="center"
           printHidden
         >
-          {!!article.category && (
+          {!!article.category?.title && (
             <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
               <Link href={categoryHref} skipTab>
                 <Button
@@ -519,7 +525,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
             <Stepper
               namespace={stepperNamespace}
               optionsFromNamespace={stepOptionsFromNamespace}
-              stepper={article.stepper}
+              stepper={article.stepper as StepperSchema}
               showWebReader={true}
               webReaderClassName="rs_read"
             />
@@ -585,6 +591,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
                         />
                       </Box>
                     ),
+                    Form: (form) => <Form form={form} namespace={namespace} />,
                   },
                 },
                 activeLocale,
@@ -640,7 +647,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
             </Box>
           )}
           <Box display={['block', 'block', 'none']} printHidden>
-            {article.relatedArticles.length > 0 && (
+            {(article.relatedArticles.length > 0 ||
+              article.relatedContent.length > 0) && (
               <RelatedContent
                 title={n('relatedMaterial')}
                 articles={article.relatedArticles}
@@ -659,7 +667,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
             portalRef.current,
           )}
       </SidebarLayout>
-      <ArticleChatPanel article={article} pushUp={isVisible} />
+      <ArticleChatPanel
+        article={article}
+        pushUp={isVisible && processEntry?.processLink && mounted}
+      />
       <OrganizationFooter
         organizations={article.organization as Organization[]}
       />
@@ -725,7 +736,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   if (article.stepper)
     stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      article.stepper,
+      article.stepper as StepperSchema,
       apolloClient,
     )
 

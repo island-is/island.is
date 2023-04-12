@@ -160,6 +160,38 @@ export const defaultRenderNodeObject: RenderNode = {
     <T.HeadData>{children}</T.HeadData>
   ),
   [BLOCKS.TABLE_CELL]: (_node, children) => <T.Data>{children}</T.Data>,
+  [BLOCKS.EMBEDDED_ASSET]: (node) => {
+    const url = node?.data?.target?.fields?.file?.url
+    const title = node?.data?.target?.fields
+    return (
+      <Box marginTop={url ? 5 : 0}>
+        <img src={url} alt={title} />
+      </Box>
+    )
+  },
+  [INLINES.EMBEDDED_ENTRY]: (node) => {
+    // In case something other than the price content type is inline embedded we ignore it
+    if (node?.data?.target?.sys?.contentType?.sys?.id !== 'price') return null
+
+    const amount = node?.data?.target?.fields?.amount
+    if (typeof amount !== 'number') return null
+
+    let postfix = 'krónur'
+
+    const amountEndsWithOne = amount % 10 === 1
+    const amountEndsWithEleven = amount % 100 === 11
+
+    if (amountEndsWithOne && !amountEndsWithEleven) {
+      postfix = 'króna'
+    }
+
+    // Format the amount so it displays dots (Example of a displayed value: 2.700 krónur)
+    const formatter = new Intl.NumberFormat('de-DE')
+
+    const displayedValue = `${formatter.format(amount)} ${postfix}`
+
+    return <span>{displayedValue}</span>
+  },
   [INLINES.HYPERLINK]: (node, children) => (
     <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),

@@ -78,7 +78,7 @@ export const UserLicenses: FC<Props> = ({
   }
 
   return (
-    <Box marginTop={6}>
+    <Box marginTop={[2, 3, 6]}>
       {isLoading && (
         <Box marginBottom={2}>
           <CardLoader />

@@ -4,7 +4,8 @@ import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { Case, UpdateDefendant } from '@island.is/judicial-system/types'
+import { UpdateDefendant } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { CreateDefendantMutation } from './createDefendantGql'
 import { DeleteDefendantMutation } from './deleteDefendantGql'

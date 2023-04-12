@@ -34,7 +34,7 @@ describe('MessageService - Send messages to queue', () => {
       const then = {} as Then
 
       try {
-        then.result = await messageService.sendMessagesToQueue(messages)
+        then.result = await messageService.sendMessagesToQueue(messages, true)
       } catch (error) {
         then.error = error as Error
       }
@@ -46,8 +46,9 @@ describe('MessageService - Send messages to queue', () => {
   each(Object.values(MessageType)).describe(
     'message posted to queue',
     (type) => {
+      const userId = uuid()
       const caseId = uuid()
-      const message = { type, caseId }
+      const message = { type, userId, caseId }
       const messageId = uuid()
 
       beforeEach(async () => {
@@ -71,7 +72,7 @@ describe('MessageService - Send messages to queue', () => {
   )
 
   describe('message not posted to queue', () => {
-    const message = { caseId: uuid() } as CaseMessage
+    const message = { userId: uuid() } as CaseMessage
     let then: Then
 
     beforeEach(async () => {

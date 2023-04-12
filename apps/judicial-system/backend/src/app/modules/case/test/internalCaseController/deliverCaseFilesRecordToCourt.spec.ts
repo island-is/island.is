@@ -5,6 +5,7 @@ import { BadRequestException } from '@nestjs/common'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { createCaseFilesRecord } from '../../../../formatters'
 import { CourtDocumentFolder, CourtService } from '../../../court'
+import { User } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
 
@@ -22,6 +23,9 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalCaseController - Deliver case files record to court', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
@@ -46,7 +50,13 @@ describe('InternalCaseController - Deliver case files record to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverCaseFilesRecordToCourt(caseId, policeCaseNumber, theCase)
+        .deliverCaseFilesRecordToCourt(
+          caseId,
+          policeCaseNumber,
+          user,
+          theCase,
+          { userId },
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -88,6 +98,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
 
     it('should create a case files record at court', async () => {
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+        user,
         caseId,
         courtId,
         courtCaseNumber,

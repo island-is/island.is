@@ -7,7 +7,7 @@ describe(CASES_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
     cy.intercept('POST', '**/api/graphql', (req) => {
-      if (hasOperationName(req, Operation.CasesQuery)) {
+      if (hasOperationName(req, Operation.CaseListQuery)) {
         req.reply({
           fixture: 'cases',
         })

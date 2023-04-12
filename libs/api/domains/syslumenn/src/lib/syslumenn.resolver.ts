@@ -13,6 +13,7 @@ import { DistrictCommissionerAgencies } from './models/districtCommissionerAgenc
 import { AssetName } from './models/assetName'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
+import { PropertyDetail } from '@island.is/api/domains/assets'
 import {
   BypassAuth,
   CurrentUser,
@@ -21,9 +22,10 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { PropertyDetail } from '@island.is/api/domains/assets'
 import { SearchForPropertyInput } from './dto/searchForProperty.input'
 import { EstateRelations } from './models/relations'
+import { AlcoholLicence } from './models/alcoholLicence'
+import { TemporaryEventLicence } from './models/temporaryEventLicence'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -79,6 +81,20 @@ export class SyslumennResolver {
   @BypassAuth()
   getOperatingLicensesCSV(): Promise<OperatingLicensesCSV> {
     return this.syslumennService.getOperatingLicensesCSV()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [AlcoholLicence])
+  @BypassAuth()
+  getAlcoholLicences(): Promise<AlcoholLicence[]> {
+    return this.syslumennService.getAlcoholLicences()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [TemporaryEventLicence])
+  @BypassAuth()
+  getTemporaryEventLicences(): Promise<TemporaryEventLicence[]> {
+    return this.syslumennService.getTemporaryEventLicences()
   }
 
   @Query(() => CertificateInfoResponse)

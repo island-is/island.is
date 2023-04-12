@@ -22,13 +22,15 @@
                   "lib:api",
                   "lib:nest",
                   "lib:node",
-                  "lib:js"
+                  "lib:js",
+                  "lib:client"
                 ]
               },
               {
                 "sourceTag": "scope:portals-mypages",
                 "onlyDependOnLibsWithTags": [
                   "lib:portals-mypages",
+                  "lib:portals",
                   "lib:react-spa",
                   "lib:react",
                   "lib:dom",
@@ -39,10 +41,56 @@
                 "sourceTag": "scope:portals-admin",
                 "onlyDependOnLibsWithTags": [
                   "lib:portals-admin",
+                  "lib:application-system",
+                  "lib:portals",
                   "lib:react-spa",
                   "lib:react",
                   "lib:dom",
                   "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:portals",
+                "onlyDependOnLibsWithTags": [
+                  "lib:portals",
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:application-system-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:api",
+                  "lib:application-system-api",
+                  "lib:application-system",
+                  "lib:client",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:application-system-web",
+                "onlyDependOnLibsWithTags": [
+                  "lib:application-system",
+                  "lib:application-system-web",
+                  "lib:react-spa",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:application-system",
+                "onlyDependOnLibsWithTags": [
+                  "lib:application-system",
+                  "lib:react",
+                  "lib:react-spa",
+                  "lib:dom",
+                  "lib:js",
+                  "lib:client"
                 ]
               },
               {
@@ -60,12 +108,60 @@
                   "lib:react-next",
                   "lib:react",
                   "lib:dom",
+                  "lib:node",
                   "lib:js"
                 ]
               },
               {
+                "sourceTag": "scope:auth-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:auth-api"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:judicial-system-api",
+                  "lib:judicial-system",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:auth-api"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system-web",
+                "onlyDependOnLibsWithTags": [
+                  "lib:judicial-system-web",
+                  "lib:judicial-system",
+                  "lib:react-next",
+                  "lib:react",
+                  "lib:dom",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
+                "sourceTag": "scope:judicial-system",
+                "onlyDependOnLibsWithTags": ["lib:judicial-system", "lib:js"]
+              },
+              {
                 "sourceTag": "scope:react",
                 "onlyDependOnLibsWithTags": ["lib:react", "lib:dom", "lib:js"]
+              },
+              {
+                "sourceTag": "scope:client",
+                "onlyDependOnLibsWithTags": [
+                  "lib:client",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js"
+                ]
               },
               {
                 "sourceTag": "scope:dom",
@@ -73,7 +169,12 @@
               },
               {
                 "sourceTag": "scope:nest",
-                "onlyDependOnLibsWithTags": ["lib:nest", "lib:node", "lib:js"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client"
+                ]
               },
               {
                 "sourceTag": "scope:node",
@@ -82,6 +183,14 @@
               {
                 "sourceTag": "scope:js",
                 "onlyDependOnLibsWithTags": ["lib:js"]
+              },
+              {
+                "sourceTag": "scope:e2e",
+                "onlyDependOnLibsWithTags": [
+                  "lib:js",
+                  "lib:client",
+                  "lib:application-system"
+                ]
               }
             ]
           }

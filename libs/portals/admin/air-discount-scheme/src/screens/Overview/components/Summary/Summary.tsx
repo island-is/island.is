@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
-import { Text, Box, Stack } from '@island.is/island-ui/core'
+import { Text, Box, Stack, Button, Inline } from '@island.is/island-ui/core'
 
 import KeyValues from '../KeyValues/KeyValues'
 import { FlightLeg, TSummary } from '../../types'
@@ -11,9 +11,16 @@ import { getFilteredFlightLegs } from '../../utils'
 interface PropTypes {
   flightLegs: FlightLeg[]
   airline?: string
+  onClickRefund: () => void
+  onClickDownload: () => void
 }
 
-function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
+function Summary({
+  flightLegs,
+  airline: filteredAirline,
+  onClickDownload,
+  onClickRefund,
+}: PropTypes) {
   const sum = (
     arr: FlightLeg[],
     key: 'originalPrice' | 'discountPrice',
@@ -26,11 +33,33 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
   return (
     <Box marginBottom={6}>
       <Stack space={3}>
-        <Text variant="h1" as="h1">
-          Yfirlit
-        </Text>
-        <Text variant="intro">Samantektin byggist á núverandi síu</Text>
-        <Stack space={6}>
+        <Inline justifyContent="spaceBetween" alignY={'bottom'} space={2}>
+          <div>
+            <Text variant="h1" as="h1">
+              Yfirlit
+            </Text>
+            <Text variant="intro">Samantektin byggist á núverandi síu</Text>
+          </div>
+          <Inline space={2}>
+            <Button
+              icon="print"
+              variant="utility"
+              onClick={onClickDownload}
+              disabled={airlines.length === 0}
+            >
+              Sækja CSV
+            </Button>
+            <Button
+              variant="utility"
+              icon="receipt"
+              onClick={onClickRefund}
+              disabled={airlines.length === 0}
+            >
+              Gjaldfæra/endurgreiða
+            </Button>
+          </Inline>
+        </Inline>
+        <Stack space={3}>
           {airlines.map((airline) => {
             const legs = getFilteredFlightLegs(airline, flightLegs)
             const awaitingCredit = legs.filter(
@@ -78,38 +107,45 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
             }
 
             return (
-              <Stack space={2} key={airline}>
-                <Text variant="h3">
-                  <span className={styles.capitalize}>{airline}</span>
-                </Text>
-                <Stack space={1}>
-                  <Box background="blue100" borderRadius="standard" padding={2}>
-                    <KeyValues
-                      title="Í gjaldfærslubið"
-                      data={data.awaitingDebit}
-                    />
-                  </Box>
-                  <Box padding={2}>
-                    <KeyValues
-                      title="Í endurgreiðslubið"
-                      data={data.awaitingCredit}
-                    />
-                  </Box>
-                  <Box background="red100" borderRadius="standard" padding={2}>
-                    <KeyValues title="Afturkallaðir" data={data.cancelled} />
-                  </Box>
-                  <Box padding={2} background="mint100" borderRadius="standard">
-                    <KeyValues title="Gjaldfært" data={data.sentDebit} />
-                  </Box>
-                  <Box
-                    background="yellow100"
-                    borderRadius="standard"
-                    padding={2}
-                  >
-                    <KeyValues title="Endurgreitt" data={data.sentCredit} />
-                  </Box>
+              <Box
+                key={airline}
+                border="standard"
+                borderRadius="large"
+                padding={[2, 4]}
+              >
+                <Stack space={2} key={airline}>
+                  <Text variant="h4">
+                    <span className={styles.capitalize}>{airline}</span>
+                  </Text>
+                  <Stack space={3}>
+                    <Box background="blue100" borderRadius="large" padding={2}>
+                      <KeyValues
+                        title="Í gjaldfærslubið"
+                        data={data.awaitingDebit}
+                      />
+                    </Box>
+                    <Box padding={2}>
+                      <KeyValues
+                        title="Í endurgreiðslubið"
+                        data={data.awaitingCredit}
+                      />
+                    </Box>
+                    <Box background="red100" borderRadius="large" padding={2}>
+                      <KeyValues title="Afturkallaðir" data={data.cancelled} />
+                    </Box>
+                    <Box padding={2} background="mint100" borderRadius="large">
+                      <KeyValues title="Gjaldfært" data={data.sentDebit} />
+                    </Box>
+                    <Box
+                      background="yellow100"
+                      borderRadius="large"
+                      padding={2}
+                    >
+                      <KeyValues title="Endurgreitt" data={data.sentCredit} />
+                    </Box>
+                  </Stack>
                 </Stack>
-              </Stack>
+              </Box>
             )
           })}
         </Stack>

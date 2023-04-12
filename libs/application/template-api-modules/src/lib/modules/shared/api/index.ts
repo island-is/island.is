@@ -2,8 +2,8 @@ import { IdentityModule } from './identity/identity.module'
 import { IdentityService } from './identity/identity.service'
 import { NationalRegistryModule } from './national-registry/national-registry.module'
 import { NationalRegistryService } from './national-registry/national-registry.service'
-import { PaymentCatalogModule } from './payment-catalog/payment-catalog.module'
-import { PaymentCatalogService } from './payment-catalog/payment-catalog.service'
+import { PaymentApiModule } from './payment/payment.module'
+import { PaymentService } from './payment/payment.service'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UserProfileService } from './user-profile/user-profile.service'
 import { DrivingLicenseModule } from './driving-license/driving-license.module'
@@ -12,23 +12,27 @@ import { ApplicationModule } from './application/application.module'
 import { ApplicationService } from './application/application.service'
 import { SyslumennModule } from './syslumenn/syslumenn.module'
 import { SyslumennService } from './syslumenn/syslumenn.service'
+import { VehiclesModule } from './vehicles/vehicles.module'
+import { VehiclesService } from './vehicles/vehicles.service'
 
 export const modules = [
   NationalRegistryModule,
-  PaymentCatalogModule,
+  PaymentApiModule,
   UserProfileModule,
   IdentityModule,
   DrivingLicenseModule,
   ApplicationModule,
   SyslumennModule,
+  VehiclesModule,
 ]
 
 export const services = [
   NationalRegistryService,
-  PaymentCatalogService,
+  PaymentService,
   UserProfileService,
   IdentityService,
   DrivingLicenseProviderService,
   ApplicationService,
   SyslumennService,
+  VehiclesService,
 ]

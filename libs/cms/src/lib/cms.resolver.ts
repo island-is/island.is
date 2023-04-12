@@ -92,6 +92,9 @@ import { FeaturedArticles } from './models/featuredArticles.model'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { TabSection } from './models/tabSection.model'
+import { GenericTag } from './models/genericTag.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 
 const { cacheTime } = environment
 
@@ -524,6 +527,14 @@ export class CmsResolver {
   ): Promise<TabSection | null> {
     return this.cmsContentfulService.getTabSection(input)
   }
+
+  @Directive(cacheControlDirective())
+  @Query(() => GenericTag, { nullable: true })
+  getGenericTagBySlug(
+    @Args('input') input: GetGenericTagBySlugInput,
+  ): Promise<GenericTag | null> {
+    return this.cmsContentfulService.getGenericTagBySlug(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -573,7 +584,26 @@ export class FeaturedArticlesResolver {
     if (input.size === 0) {
       return []
     }
-    return await this.cmsElasticsearchService.getArticles(
+    return this.cmsElasticsearchService.getArticles(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+}
+
+@Resolver(() => FeaturedSupportQNAs)
+@Directive(cacheControlDirective())
+export class FeaturedSupportQNAsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [SupportQNA])
+  async resolvedSupportQNAs(
+    @Parent() { resolvedSupportQNAs: input }: FeaturedSupportQNAs,
+  ): Promise<SupportQNA[]> {
+    if (input.size === 0) {
+      return []
+    }
+    return this.cmsElasticsearchService.getFeaturedSupportQNAs(
       getElasticsearchIndex(input.lang),
       input,
     )

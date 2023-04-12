@@ -25,5 +25,5 @@
       }
     }
   },
-  "tags": ["lib:portals-admin", "lib:portals-mypages", "scope:react-spa"]
+  "tags": ["lib:portals", "scope:portals"]
 }

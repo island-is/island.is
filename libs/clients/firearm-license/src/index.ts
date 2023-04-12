@@ -1,5 +1,8 @@
 export * from '../gen/fetch'
 export * from './lib/firearmLicenseClient.config'
 export * from './lib/firearmLicenseClient.module'
+export * from './lib/openFirearmLicenseClient.module'
 export * from './lib/firearmApi.services'
+export * from './lib/openFirearmApi.services'
 export { FirearmLicenseApiProvider } from './lib/firearmApiProvider'
+export { OpenFirearmLicenseApiProvider } from './lib/openFirearmApiProvider'

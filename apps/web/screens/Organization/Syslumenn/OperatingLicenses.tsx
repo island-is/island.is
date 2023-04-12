@@ -26,13 +26,14 @@ import {
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_OPERATING_LICENSES_QUERY,
+  GET_OPERATING_LICENSES_CSV_QUERY,
 } from '../../queries'
 import { Screen } from '../../../types'
 import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   OrganizationWrapper,
-  OperatingLicensesCsvExport,
+  SyslumennListCsvExport,
   Webreader,
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -41,6 +42,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
+import { ApolloClient } from '@apollo/client'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -139,7 +141,11 @@ const searchReducer = (state: SearchState, action): SearchState => {
   }
 }
 
-const useSearch = (term: string, currentPageNumber: number): SearchState => {
+const useSearch = (
+  term: string,
+  currentPageNumber: number,
+  client: ApolloClient<object>,
+): SearchState => {
   const [state, dispatch] = useReducer(searchReducer, {
     currentTerm: term,
     results: [],
@@ -150,7 +156,6 @@ const useSearch = (term: string, currentPageNumber: number): SearchState => {
     isLoadingNextPage: false,
     hasError: false,
   })
-  const client = useApolloClient()
   const timer = useRef(null)
 
   useEffect(() => {
@@ -263,7 +268,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
 
   const [query, setQuery] = useState(' ')
   const [currentPageNumber, setCurrentPageNumber] = useState(1)
-  const search = useSearch(query, currentPageNumber)
+  const client = useApolloClient()
+  const search = useSearch(query, currentPageNumber, client)
 
   useEffect(() => {
     // Note: This is a workaround to fix an issue where the search input looses focus after the first keypress.
@@ -325,6 +331,21 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
     return address
   }
 
+  const csvStringProvider = () => {
+    return new Promise<string>((resolve, reject) => {
+      client
+        .query<Query>({
+          query: GET_OPERATING_LICENSES_CSV_QUERY,
+        })
+        .then(({ data: { getOperatingLicensesCSV } }) => {
+          return resolve(getOperatingLicensesCSV.value)
+        })
+        .catch(() => {
+          reject('Unable to fetch CSV data.')
+        })
+    })
+  }
+
   return (
     <OrganizationWrapper
       pageTitle={subpage.title}
@@ -361,12 +382,29 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
           placeholder={n('operatingLicensesFilterSearch', 'Leita')}
           backgroundColor={['blue', 'blue', 'white']}
           size="sm"
-          icon="search"
-          iconType="outline"
+          icon={{ name: 'search', type: 'outline' }}
           onChange={(event) => onSearch(event.target.value)}
         />
         <Box textAlign="right" marginRight={1} marginTop={1}>
-          <OperatingLicensesCsvExport namespace={namespace} />
+          <SyslumennListCsvExport
+            defaultLabel={n(
+              'operatingLicensesCSVButtonLabelDefault',
+              'Sækja öll rekstrarleyfi (CSV)',
+            )}
+            loadingLabel={n(
+              'operatingLicensesCSVButtonLabelLoading',
+              'Sæki öll rekstrarleyfi...',
+            )}
+            errorLabel={n(
+              'operatingLicensesCSVButtonLabelError',
+              'Ekki tókst að sækja rekstrarleyfi, reyndu aftur',
+            )}
+            csvFilenamePrefix={n(
+              'operatingLicensesCSVFileTitlePrefix',
+              'Rekstrarleyfi',
+            )}
+            csvStringProvider={csvStringProvider}
+          />
         </Box>
         <Box
           paddingTop={1}
@@ -496,8 +534,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
               {operatingLicense.maximumNumberOfGuests > 0 && (
                 <Text paddingBottom={0}>
                   {n(
-                    'operatingLicensesAlcoholMaximumNumberOfGuests',
-                    'Hámarksfjöldi gesta',
+                    'operatingLicensesMaximumNumberOfAccommodationGuests',
+                    'Hámarksfjöldi gesta í gistingu',
                   )}
                   : {operatingLicense.maximumNumberOfGuests}
                 </Text>
@@ -505,8 +543,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
               {operatingLicense.numberOfDiningGuests > 0 && (
                 <Text paddingBottom={0}>
                   {n(
-                    'operatingLicensesNumberOfDiningGuests',
-                    'Fjöldi gesta í veitingum',
+                    'operatingLicensesMaximumNumberOfDiningGuests',
+                    'Hámarksfjöldi gesta í veitingum',
                   )}
                   : {operatingLicense.numberOfDiningGuests}
                 </Text>

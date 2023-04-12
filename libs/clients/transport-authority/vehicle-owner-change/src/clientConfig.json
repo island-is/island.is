@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Ownerchange API developed in .Net6.0",
+    "description": "Ownerchange API developed in .Net6.0 - Release-6 : 20221202.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -18,7 +18,6 @@
     "/authenticate": {
       "post": {
         "tags": ["Authentication"],
-        "summary": "Authentication for Domain user",
         "parameters": [
           {
             "name": "api-version",
@@ -42,7 +41,6 @@
           }
         ],
         "requestBody": {
-          "description": "",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -148,8 +146,6 @@
     "/withcontract": {
       "post": {
         "tags": ["OwnerChange"],
-        "summary": "Post owner change",
-        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    201: operation is successful , object created is returned",
         "parameters": [
           {
             "name": "api-version",
@@ -173,7 +169,6 @@
           }
         ],
         "requestBody": {
-          "description": "Owner change model",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -354,8 +349,6 @@
     "/financialcompanies": {
       "post": {
         "tags": ["OwnerChange"],
-        "summary": "Post owner change",
-        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    201: operation is successful , object created is returned",
         "parameters": [
           {
             "name": "api-version",
@@ -379,7 +372,6 @@
           }
         ],
         "requestBody": {
-          "description": "Owner change model",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -560,8 +552,6 @@
     "/": {
       "post": {
         "tags": ["OwnerChange"],
-        "summary": "Post owner change",
-        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    201: operation is successful , object created is returned",
         "parameters": [
           {
             "name": "api-version",
@@ -585,7 +575,6 @@
           }
         ],
         "requestBody": {
-          "description": "Owner change model",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -724,8 +713,6 @@
     "/personcheck": {
       "post": {
         "tags": ["OwnerChange"],
-        "summary": "Test owner change for person",
-        "description": "Success status codes:\r\n\r\n    200: operation is successful but message needs to be returned, no object returned         \r\n    204: operation is successful",
         "parameters": [
           {
             "name": "api-version",
@@ -749,7 +736,6 @@
           }
         ],
         "requestBody": {
-          "description": "Model",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -790,49 +776,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              }
-            }
+            "description": ""
           },
           "204": {
             "description": "No Content"
@@ -903,7 +847,6 @@
     "/vehiclecheck": {
       "post": {
         "tags": ["OwnerChange"],
-        "summary": "Test owner change for vehicle",
         "parameters": [
           {
             "name": "api-version",
@@ -927,7 +870,6 @@
           }
         ],
         "requestBody": {
-          "description": "Model",
           "content": {
             "application/json-patch+json": {
               "schema": {
@@ -968,49 +910,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              },
-              "text/xml": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              }
-            }
+            "description": ""
           },
           "204": {
             "description": "No Content"
@@ -1081,13 +981,11 @@
     "/{permno}": {
       "get": {
         "tags": ["OwnerChange"],
-        "summary": "GET newest owne",
         "operationId": "GetOwnerChange",
         "parameters": [
           {
             "name": "permno",
             "in": "path",
-            "description": "Vehicle permno",
             "required": true,
             "schema": {
               "type": "string"
@@ -1770,6 +1668,11 @@
           },
           "permno": {
             "type": "string",
+            "nullable": true
+          },
+          "warningSerialNumber": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },

@@ -4,28 +4,30 @@ export const submitted = {
   general: defineMessages({
     pageTitle: {
       id: `affgp.application:section.submitted.pageTitle`,
-      defaultMessage: 'Takk fyrir umsóknina',
+      defaultMessage: 'Umsókn móttekin!',
       description: 'Submitted page title',
+    },
+    alertTitle: {
+      id: `affgp.application:section.submitted.alertTitle`,
+      defaultMessage: 'Takk fyrir umsóknina!',
+      description: 'Submitted alert title',
     },
   }),
   labels: defineMessages({
-    descriptionBulletOne: {
-      id: `affgp.application:section.submitted.descriptionBulletOne`,
-      defaultMessage:
-        'Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar.',
-      description: 'submitted descriptionBulletOne',
+    title: {
+      id: `affgp.application:section.submitted.title`,
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Title of conclusion information box',
     },
-    descriptionBulletTwo: {
-      id: `affgp.application:section.submitted.descriptionBulletTwo`,
-      defaultMessage:
-        'Við verðum í sambandi ef okkur vantar frekari upplýsingar.',
-      description: 'submitted descriptionBulletTwo',
+    intro: {
+      id: `affgp.application:section.submitted.intro#markdown`,
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Conclusion information box intro',
     },
-    descriptionBulletThree: {
-      id: `affgp.application:section.submitted.descriptionBulletThree`,
-      defaultMessage:
-        'Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma {tel} eða á netfangið',
-      description: 'submitted descriptionBulletThree',
+    bulletList: {
+      id: `affgp.application:section.submitted.bulletList#markdown`,
+      defaultMessage: `* Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar.\n* Við verðum í sambandi ef okkur vantar frekari upplýsingar.\n* Ef þú þarft frekari upplýsingar þá getur þú haft samband í síma 847 3759 eða á netfangið [island@island.is](mailto:island@island.is)`,
+      description: 'BulletList',
     },
   }),
 }

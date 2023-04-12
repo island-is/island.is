@@ -9,7 +9,7 @@
       "options": {
         "baseHref": "/umsoknir/",
         "outputPath": "dist/apps/application-system/form",
-        "index": "apps/application-system/form/src/index.src.html",
+        "index": "apps/application-system/form/src/index.html",
         "main": "apps/application-system/form/src/main.tsx",
         "polyfills": "apps/application-system/form/src/polyfills.ts",
         "tsConfig": "apps/application-system/form/tsconfig.app.json",
@@ -27,6 +27,7 @@
         "production": {
           "optimization": false,
           "outputHashing": "all",
+          "index": "apps/application-system/form/src/index.src.html",
           "sourceMap": false,
           "extractCss": true,
           "namedChunks": false,
@@ -41,18 +42,23 @@
           ]
         }
       },
-      "outputs": ["{options.outputPath}"]
+      "outputs": ["{options.outputPath}"],
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
-    "serve": {
+    "generateDevIndexHTML": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "node scripts/dockerfile-assets/bash/extract-environment.js apps/application-system/form/src",
-          "yarn nx run application-system-form:serveReal"
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/application-system/form/src"
         ]
       }
     },
-    "serveReal": {
+    "serve": {
       "executor": "@nrwl/web:dev-server",
       "options": {
         "port": 4242,
@@ -62,7 +68,13 @@
         "production": {
           "buildTarget": "application-system-form:build:production"
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML",
+          "projects": "self"
+        }
+      ]
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
@@ -108,5 +120,5 @@
     },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["scope:application-system-web"]
 }

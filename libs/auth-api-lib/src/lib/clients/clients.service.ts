@@ -1,6 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import sha256 from 'crypto-js/sha256'
@@ -25,6 +26,7 @@ import { ClientAllowedScopeDTO } from './dto/client-allowed-scope.dto'
 import { ClientClaimDTO } from './dto/client-claim.dto'
 import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirect-uri.dto'
 import { ClientSecretDTO } from './dto/client-secret.dto'
+import { ClientsTranslationService } from './clients-translation.service'
 
 @Injectable()
 export class ClientsService {
@@ -47,6 +49,9 @@ export class ClientsService {
     private clientClaim: typeof ClientClaim,
     @InjectModel(ClientPostLogoutRedirectUri)
     private clientPostLogoutUri: typeof ClientPostLogoutRedirectUri,
+
+    private readonly clientsTranslationService: ClientsTranslationService,
+
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -67,12 +72,30 @@ export class ClientsService {
     })
   }
 
+  async findAllWithTranslation(
+    clientIds?: string[],
+    lang?: string,
+  ): Promise<Client[]> {
+    const clients = await this.clientModel.findAll({
+      where: {
+        ...(clientIds && clientIds.length > 0 ? { clientId: clientIds } : {}),
+      },
+      attributes: ['clientId', 'clientName'],
+    })
+
+    if (lang) {
+      return this.clientsTranslationService.translateClients(clients, lang)
+    }
+
+    return clients
+  }
+
   /** Gets all clients with paging */
   async findAndCountAll(
     page: number,
     count: number,
     includeArchived: boolean,
-  ): Promise<{ rows: Client[]; count: number } | null> {
+  ): Promise<{ rows: Client[]; count: number }> {
     page--
     const offset = page * count
     return this.clientModel.findAndCountAll({
@@ -225,21 +248,24 @@ export class ClientsService {
   }
 
   /** Updates an existing client */
-  async update(client: ClientUpdateDTO, id: string): Promise<Client | null> {
+  async update(clientData: ClientUpdateDTO, id: string): Promise<Client> {
     this.logger.debug('Updating client with id: ', id)
 
     if (!id) {
       throw new BadRequestException('id must be provided')
     }
 
-    await this.clientModel.update(
-      { ...client },
-      {
-        where: { clientId: id },
-      },
-    )
+    const client = await this.findClientById(id)
+    if (!client) {
+      throw new NoContentException()
+    }
 
-    return await this.findClientById(id)
+    const [_, clients] = await this.clientModel.update(clientData, {
+      where: { clientId: id },
+      returning: true,
+    })
+
+    return clients[0]
   }
 
   /** Soft delete on a client by id */

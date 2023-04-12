@@ -14,7 +14,7 @@ import { TestSupport } from '@island.is/island-ui/utils'
 interface Option extends TestSupport {
   value: string
   label: React.ReactNode
-  subLabel?: string
+  subLabel?: React.ReactNode
   tooltip?: React.ReactNode
   tag?: {
     label: string
@@ -59,7 +59,7 @@ export const RadioController: FC<Props> = ({
     <Controller
       name={name}
       defaultValue={defaultValue}
-      render={({ value, onChange }) => (
+      render={({ field: { value, onChange } }) => (
         <GridRow>
           {options.map((option, index) => (
             <GridColumn

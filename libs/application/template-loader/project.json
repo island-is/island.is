@@ -21,5 +21,5 @@
       "outputs": ["coverage/libs/application/template-loader"]
     }
   },
-  "tags": []
+  "tags": ["scope:application-system", "lib:application-system"]
 }

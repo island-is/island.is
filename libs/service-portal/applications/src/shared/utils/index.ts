@@ -1,6 +1,6 @@
 import { Application, ApplicationStatus } from '@island.is/application/types'
 import { Option } from '@island.is/island-ui/core'
-import { institutionMapper } from '@island.is/application/core'
+import { institutionMapper } from '@island.is/application/types'
 import { Organization } from '@island.is/shared/types'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { ApplicationOverViewStatus, FilterValues } from '../types'
@@ -72,7 +72,7 @@ export const mapLinkToStatus = (link: string) => {
     return ApplicationOverViewStatus.incomplete
   }
   if (link === ServicePortalPath.ApplicationCompleteApplications) {
-    return ApplicationOverViewStatus.finished
+    return ApplicationOverViewStatus.completed
   }
   return ApplicationOverViewStatus.all
 }

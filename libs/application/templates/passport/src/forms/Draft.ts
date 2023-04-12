@@ -15,17 +15,20 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  MockProviderApi,
   NationalRegistryUserApi,
-  PaymentCatalogApi,
   UserProfileApi,
   DistrictsApi,
+  YES,
 } from '@island.is/application/types'
+import {
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import {
   DistrictCommissionerAgencies,
   Passport,
+  PersonalInfo,
   Services,
-  YES,
 } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
@@ -45,27 +48,27 @@ export const Draft: Form = buildForm({
       title: m.introTitle,
       children: [
         buildMultiField({
-          id: 'intro',
-          title: m.introSectionTitle,
-          description: m.introSectionDescription,
+          id: 'introApplicant',
+          title: m.passport,
+          description: m.introDescription,
           children: [
-            buildCustomField({
-              id: 'introInfo',
+            buildDescriptionField({
+              id: 'introDescription',
               title: '',
-              component: 'IntroInfo',
-              doesNotRequireAnswer: true,
+              description: '',
             }),
           ],
         }),
       ],
     }),
+
     buildSection({
       id: 'externalDataSection',
       title: m.dataCollectionTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: m.formName,
+          title: m.dataCollectionTitle,
           subTitle: m.dataCollectionSubtitle,
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
@@ -80,12 +83,12 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: MockProviderApi,
+              provider: IdentityDocumentApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
             buildDataProviderItem({
-              provider: PaymentCatalogApi,
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({
@@ -143,7 +146,7 @@ export const Draft: Form = buildForm({
                   ((application.answers.passport as Passport)?.userPassport !==
                     '' &&
                     (application.answers
-                      .personalInfo as any)?.hasDisabilityDiscount.includes(
+                      .personalInfo as PersonalInfo)?.hasDisabilityDiscount.includes(
                       YES,
                     )) ||
                   (application.answers.passport as Passport)?.childPassport !==

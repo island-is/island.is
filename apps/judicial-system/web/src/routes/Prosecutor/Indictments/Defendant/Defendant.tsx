@@ -12,15 +12,10 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles, core, errors } from '@island.is/judicial-system-web/messages'
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import {
-  Case,
   Defendant as TDefendant,
   UpdateDefendant,
   IndictmentSubtypeMap,
@@ -28,9 +23,11 @@ import {
   IndictmentSubtype,
   CrimeScene,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { DefendantInfo } from '../../components'
@@ -352,8 +349,6 @@ const Defendant: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={IndictmentsProsecutorSubsections.DEFENDANT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -394,11 +389,15 @@ const Defendant: React.FC = () => {
                     }
                     setPoliceCase={handleSetPoliceCase}
                     deletePoliceCase={
-                      workingCase.policeCaseNumbers.length > 1
+                      workingCase.policeCaseNumbers.length > 1 &&
+                      !(workingCase.origin === CaseOrigin.Loke && index === 0)
                         ? handleDeletePoliceCase
                         : undefined
                     }
                     updatePoliceCases={handleUpdatePoliceCases}
+                    policeCaseNumberImmutable={
+                      workingCase.origin === CaseOrigin.Loke && index === 0
+                    }
                   />
                 </Box>
               </motion.div>
@@ -438,12 +437,16 @@ const Defendant: React.FC = () => {
                     setWorkingCase={setWorkingCase}
                     onDelete={
                       workingCase.defendants &&
-                      workingCase.defendants.length > 1
+                      workingCase.defendants.length > 1 &&
+                      !(workingCase.origin === CaseOrigin.Loke && index === 0)
                         ? handleDeleteDefendant
                         : undefined
                     }
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
+                    nationalIdImmutable={
+                      workingCase.origin === CaseOrigin.Loke && index === 0
+                    }
                   />
                 </Box>
               </motion.div>
@@ -469,6 +472,7 @@ const Defendant: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)

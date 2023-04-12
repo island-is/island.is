@@ -19,7 +19,7 @@ import {
 
 export enum Operation {
   CaseQuery = 'CaseQuery',
-  CasesQuery = 'CasesQuery',
+  CaseListQuery = 'CaseListQuery',
   CurrentUserQuery = 'CurrentUserQuery',
   UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCaseMutation',
@@ -27,7 +27,7 @@ export enum Operation {
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
   CreateFileMutation = 'CreateFileMutation',
   UpdateDefendantMutation = 'UpdateDefendantMutation',
-  LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
+  LimitedAccessCaseQuery = 'LimitedAccessCase',
   ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
 }
 

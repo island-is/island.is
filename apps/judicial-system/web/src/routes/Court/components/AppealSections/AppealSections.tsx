@@ -1,13 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  Case,
-  CaseAppealDecision,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -15,6 +12,7 @@ import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
@@ -28,6 +26,14 @@ const AppealSections: React.FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
+  const [
+    checkedAccusedRadio,
+    setCheckedAccusedRadio,
+  ] = useState<CaseAppealDecision>()
+  const [
+    checkedProsecutorRadio,
+    setCheckedProsecutorRadio,
+  ] = useState<CaseAppealDecision>()
 
   return (
     <>
@@ -65,10 +71,13 @@ const AppealSections: React.FC<Props> = (props) => {
                 })}
                 value={CaseAppealDecision.APPEAL}
                 checked={
-                  workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.APPEAL
+                  checkedAccusedRadio === CaseAppealDecision.APPEAL ||
+                  (!checkedAccusedRadio &&
+                    workingCase.accusedAppealDecision ===
+                      CaseAppealDecision.APPEAL)
                 }
                 onChange={() => {
+                  setCheckedAccusedRadio(CaseAppealDecision.APPEAL)
                   setAndSendCaseToServer(
                     [
                       {
@@ -78,7 +87,7 @@ const AppealSections: React.FC<Props> = (props) => {
                       {
                         accusedAppealAnnouncement:
                           workingCase.sessionArrangements ===
-                          SessionArrangements.ALL_PRESENT_SPOKESPERSON
+                          SessionArrangements.AllPresentSpokesperson
                             ? formatMessage(
                                 m.defendantAnnouncementAutofillSpokespersonAppealV2,
                               )
@@ -102,10 +111,13 @@ const AppealSections: React.FC<Props> = (props) => {
                 label={formatMessage(m.defendantAcceptV2)}
                 value={CaseAppealDecision.ACCEPT}
                 checked={
-                  workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.ACCEPT
+                  checkedAccusedRadio === CaseAppealDecision.ACCEPT ||
+                  (!checkedAccusedRadio &&
+                    workingCase.accusedAppealDecision ===
+                      CaseAppealDecision.ACCEPT)
                 }
                 onChange={() => {
+                  setCheckedAccusedRadio(CaseAppealDecision.ACCEPT)
                   setAndSendCaseToServer(
                     [
                       {
@@ -132,10 +144,13 @@ const AppealSections: React.FC<Props> = (props) => {
                 label={formatMessage(m.defendantPostponeV2)}
                 value={CaseAppealDecision.POSTPONE}
                 checked={
-                  workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.POSTPONE
+                  checkedAccusedRadio === CaseAppealDecision.POSTPONE ||
+                  (!checkedAccusedRadio &&
+                    workingCase.accusedAppealDecision ===
+                      CaseAppealDecision.POSTPONE)
                 }
                 onChange={() => {
+                  setCheckedAccusedRadio(CaseAppealDecision.POSTPONE)
                   setAndSendCaseToServer(
                     [
                       {
@@ -160,10 +175,13 @@ const AppealSections: React.FC<Props> = (props) => {
                 label={formatMessage(m.defendantNotApplicableV2)}
                 value={CaseAppealDecision.NOT_APPLICABLE}
                 checked={
-                  workingCase.accusedAppealDecision ===
-                  CaseAppealDecision.NOT_APPLICABLE
+                  checkedAccusedRadio === CaseAppealDecision.NOT_APPLICABLE ||
+                  (!checkedAccusedRadio &&
+                    workingCase.accusedAppealDecision ===
+                      CaseAppealDecision.NOT_APPLICABLE)
                 }
                 onChange={() => {
+                  setCheckedAccusedRadio(CaseAppealDecision.NOT_APPLICABLE)
                   setAndSendCaseToServer(
                     [
                       {
@@ -232,10 +250,13 @@ const AppealSections: React.FC<Props> = (props) => {
               label={formatMessage(m.prosecutorAppealV2)}
               value={CaseAppealDecision.APPEAL}
               checked={
-                workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.APPEAL
+                checkedProsecutorRadio === CaseAppealDecision.APPEAL ||
+                (!checkedProsecutorRadio &&
+                  workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.APPEAL)
               }
               onChange={() => {
+                setCheckedProsecutorRadio(CaseAppealDecision.APPEAL)
                 setAndSendCaseToServer(
                   [
                     {
@@ -263,10 +284,13 @@ const AppealSections: React.FC<Props> = (props) => {
               label={formatMessage(m.prosecutorAcceptV2)}
               value={CaseAppealDecision.ACCEPT}
               checked={
-                workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.ACCEPT
+                checkedProsecutorRadio === CaseAppealDecision.ACCEPT ||
+                (!checkedProsecutorRadio &&
+                  workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.ACCEPT)
               }
               onChange={() => {
+                setCheckedProsecutorRadio(CaseAppealDecision.ACCEPT)
                 setAndSendCaseToServer(
                   [
                     {
@@ -293,10 +317,13 @@ const AppealSections: React.FC<Props> = (props) => {
               label={formatMessage(m.prosecutorPostponeV2)}
               value={CaseAppealDecision.POSTPONE}
               checked={
-                workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.POSTPONE
+                checkedProsecutorRadio === CaseAppealDecision.POSTPONE ||
+                (!checkedProsecutorRadio &&
+                  workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.POSTPONE)
               }
               onChange={() => {
+                setCheckedProsecutorRadio(CaseAppealDecision.POSTPONE)
                 setAndSendCaseToServer(
                   [
                     {
@@ -322,10 +349,13 @@ const AppealSections: React.FC<Props> = (props) => {
               label={formatMessage(m.prosecutorNotApplicableV2)}
               value={CaseAppealDecision.NOT_APPLICABLE}
               checked={
-                workingCase.prosecutorAppealDecision ===
-                CaseAppealDecision.NOT_APPLICABLE
+                checkedProsecutorRadio === CaseAppealDecision.NOT_APPLICABLE ||
+                (!checkedProsecutorRadio &&
+                  workingCase.prosecutorAppealDecision ===
+                    CaseAppealDecision.NOT_APPLICABLE)
               }
               onChange={() => {
+                setCheckedProsecutorRadio(CaseAppealDecision.NOT_APPLICABLE)
                 setAndSendCaseToServer(
                   [
                     {

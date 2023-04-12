@@ -26,7 +26,6 @@ import {
 
 import { BackendApi } from '../../data-sources'
 import { CaseInterceptor } from './interceptors/case.interceptor'
-import { CasesInterceptor } from './interceptors/cases.interceptor'
 import { CreateCaseInput } from './dto/createCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
@@ -50,22 +49,6 @@ export class CaseResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
-
-  @Query(() => [Case], { nullable: true })
-  @UseInterceptors(CasesInterceptor)
-  cases(
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
-  ): Promise<Case[]> {
-    this.logger.debug('Getting all cases')
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.GET_CASES,
-      backendApi.getCases(),
-      (cases: Case[]) => cases.map((aCase) => aCase.id),
-    )
-  }
 
   @Query(() => Case, { nullable: true })
   @UseInterceptors(CaseInterceptor)
@@ -255,6 +238,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
   createCourtCase(
     @Args('input', { type: () => CreateCourtCaseInput })
     input: CreateCourtCaseInput,
@@ -277,6 +261,8 @@ export class CaseResolver {
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
   ): Promise<Notification[]> {
     const { id } = theCase
+
+    this.logger.debug(`Resolving notifications for case ${id}`)
 
     return backendApi
       .getCaseNotifications(id)

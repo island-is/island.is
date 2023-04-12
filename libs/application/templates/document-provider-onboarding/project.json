@@ -25,9 +25,9 @@
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn ts-node libs/localization/scripts/extract libs/application/templates/document-provider-onboarding/src/forms/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/document-provider-onboarding/src/forms/messages.ts"
       }
     }
   },
-  "tags": []
+  "tags": ["scope:application-system", "lib:application-system"]
 }

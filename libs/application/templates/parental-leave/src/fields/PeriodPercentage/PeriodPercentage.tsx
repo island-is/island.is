@@ -1,9 +1,13 @@
 import React, { FC, useMemo, useState } from 'react'
-import { FieldErrors, FieldValues } from 'react-hook-form/dist/types/form'
+import { FieldValues } from 'react-hook-form/dist/types/fields'
+import { FieldErrors } from 'react-hook-form/dist/types/errors'
 import parseISO from 'date-fns/parseISO'
 import { useFormContext } from 'react-hook-form'
 
-import { extractRepeaterIndexFromField } from '@island.is/application/core'
+import {
+  extractRepeaterIndexFromField,
+  getErrorViaPath,
+} from '@island.is/application/core'
 import {
   FieldBaseProps,
   FieldComponents,
@@ -23,13 +27,12 @@ import {
   calculateMinPercentageForPeriod,
 } from '../../lib/directorateOfLabour.utils'
 import { parentalLeaveFormMessages, errorMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
-import { useRemainingRights } from '../../hooks/useRemainingRights'
 import {
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  StartDateOptions,
-} from '../../constants'
+  getApplicationAnswers,
+  isParentalGrant,
+} from '../../lib/parentalLeaveUtils'
+import { useRemainingRights } from '../../hooks/useRemainingRights'
+import { StartDateOptions } from '../../constants'
 
 type FieldBaseAndCustomField = FieldBaseProps & CustomField
 
@@ -45,9 +48,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
   const { formatMessage } = useLocale()
   const { setError, register } = useFormContext()
   const { description } = field
-  const { rawPeriods, applicationType } = getApplicationAnswers(
-    application.answers,
-  )
+  const { rawPeriods } = getApplicationAnswers(application.answers)
   const currentIndex = extractRepeaterIndexFromField(field)
   const currentPeriod = rawPeriods[currentIndex]
   const [selectedValue, setSelectedValue] = useState(currentPeriod.ratio)
@@ -58,13 +59,9 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
 
   const fieldId = `periods[${currentIndex}].ratio`
 
-  let error
-
-  if (errors?.periods?.[currentIndex]?.ratio?.message) {
-    error = errors?.periods?.[currentIndex]?.ratio?.message
-  } else if (errors?.[fieldId]) {
-    error = errors?.[fieldId]
-  }
+  const error =
+    getErrorViaPath(errors, `periods.[${currentIndex}].ratio?.message`) ??
+    getErrorViaPath(errors, fieldId)
 
   const options: SelectOption<string>[] = useMemo(() => {
     const start = parseISO(currentPeriod.startDate)
@@ -143,10 +140,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
     canChooseRemainingDays && selectedValue === maxPercentageValue
 
   const getRatioTitle = () => {
-    if (
-      applicationType === PARENTAL_GRANT ||
-      applicationType === PARENTAL_GRANT_STUDENTS
-    ) {
+    if (isParentalGrant(application)) {
       return parentalLeaveFormMessages.ratio.grantLabel
     }
     return parentalLeaveFormMessages.ratio.label
@@ -174,16 +168,16 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
           children: undefined,
           options,
           backgroundColor: 'blue',
-          defaultValue: null,
           onSelect,
         }}
       />
 
+      <input type="hidden" {...register(`periods[${currentIndex}].ratio`)} />
+
       {currentPeriod.firstPeriodStart === undefined && (
         <input
           type="hidden"
-          ref={register}
-          name={`periods[${currentIndex}].firstPeriodStart`}
+          {...register(`periods[${currentIndex}].firstPeriodStart`)}
           value={StartDateOptions.SPECIFIC_DATE}
         />
       )}
@@ -191,8 +185,7 @@ export const PeriodPercentage: FC<PeriodPercentageField> = ({
       {isUsingAllRemainingDays && (
         <input
           type="hidden"
-          ref={register}
-          name={`periods[${currentIndex}].daysToUse`}
+          {...register(`periods[${currentIndex}].daysToUse`)}
           value={remainingRights}
         />
       )}

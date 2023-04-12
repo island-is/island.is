@@ -11,6 +11,7 @@ import path from 'path'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -51,7 +52,7 @@ describe('Local setup', () => {
         '..',
         '..',
         '..',
-      )}/mountebank-imposter-config.json:/app/default.json bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
+      )}/mountebank-imposter-config.json:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`,
     )
   })
 })

@@ -1,1 +1,1 @@
-export { Draft } from './draft'
+export { getApplication } from './draft'

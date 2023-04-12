@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApolloError } from 'apollo-server-express'
 import { FetchError } from '@island.is/clients/middlewares'
-import { UsersApi as AirDiscountSchemeApi } from '@island.is/clients/air-discount-scheme'
+import { UsersApi } from '@island.is/clients/air-discount-scheme'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -12,22 +12,38 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { Discount as DiscountModel } from '../models/discount.model'
 
-const TWO_HOURS = 7200
 @Injectable()
 export class DiscountService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private airDiscountSchemeApi: AirDiscountSchemeApi,
+    private usersApi: UsersApi,
   ) {}
 
-  handleError(error: any): any {
+  handleError(error: FetchError | ApolloError): void {
     this.logger.error(error)
 
     throw new ApolloError(
       'Failed to resolve request',
       error?.message ?? error?.response?.message,
     )
+  }
+
+  discountIsValid(discount: TDiscount): boolean {
+    const TWO_HOURS = 7200
+    if (discount.expiresIn <= TWO_HOURS) {
+      return false
+    }
+
+    const { credit } = discount.user.fund
+    return credit >= 1
+  }
+
+  processDiscount(discount: TDiscount): TDiscount {
+    if (!this.discountIsValid(discount)) {
+      discount.discountCode = null
+    }
+    return discount
   }
 
   private handleJSONError(e: FetchError) {
@@ -46,7 +62,7 @@ export class DiscountService {
   }
 
   private getADSWithAuth(auth: Auth) {
-    return this.airDiscountSchemeApi.withMiddleware(
+    return this.usersApi.withMiddleware(
       new AuthMiddleware(auth, { forwardUserInfo: true }),
     )
   }
@@ -56,12 +72,13 @@ export class DiscountService {
 
     const discounts: DiscountModel[] = []
     for (const relation of relations) {
-      const discount: TDiscount = (await this.getDiscount(
+      const discount: TDiscount | null = await this.getDiscount(
         auth,
         relation.nationalId,
-      )) as TDiscount
-      const isValid = discount && discount.expiresIn > TWO_HOURS
-      if (isValid) {
+      )
+
+      if (discount) {
+        this.processDiscount(discount)
         discounts.push({
           ...discount,
           user: {
@@ -79,6 +96,7 @@ export class DiscountService {
       )
 
       if (createdDiscount) {
+        this.processDiscount(createdDiscount)
         discounts.push({
           ...createdDiscount,
           user: { ...relation, name: relation.firstName },
@@ -131,9 +149,6 @@ export class DiscountService {
       return []
     }
 
-    // Should not generate discountcodes for users who do not meet requirements
-    return getRelationsResponse.filter(
-      ({ fund: { credit, used, total } }) => credit <= total - used,
-    )
+    return getRelationsResponse
   }
 }

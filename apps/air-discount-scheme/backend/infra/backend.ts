@@ -6,6 +6,7 @@ const postgresInfo = {
   username: 'air_discount_scheme_backend',
   name: 'air_discount_scheme_backend',
 }
+
 export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
   service('air-discount-scheme-backend')
     .image('air-discount-scheme-backend')
@@ -30,14 +31,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         staging: 'staging',
         prod: 'prod',
       },
-      REDIS_URL_NODE_01: {
-        dev:
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        staging:
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        prod:
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -52,6 +45,16 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       postgres: postgresInfo,
       envs: {
         NO_UPDATE_NOTIFIER: 'true',
+      },
+    })
+    .redis({
+      host: {
+        dev:
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        staging:
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        prod:
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
     })
     .ingress({
@@ -79,5 +82,6 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
     .liveness('/liveness')
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '200m', memory: '256Mi' },
+      requests: { cpu: '50m', memory: '256Mi' },
     })
+    .grantNamespaces('nginx-ingress-external', 'islandis')

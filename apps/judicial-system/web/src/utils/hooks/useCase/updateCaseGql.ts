@@ -148,8 +148,15 @@ export const UpdateCaseMutation = gql`
         name
         size
         created
+        modified
         state
         key
+        category
+        policeCaseNumber
+        chapter
+        orderWithinChapter
+        userGeneratedFilename
+        displayDate
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -161,6 +168,9 @@ export const UpdateCaseMutation = gql`
       subpoenaType
       defendantWaivesRightToCounsel
       crimeScenes
+      indictmentIntroduction
+      requestDriversLicenseSuspension
+      appealState
     }
   }
 `

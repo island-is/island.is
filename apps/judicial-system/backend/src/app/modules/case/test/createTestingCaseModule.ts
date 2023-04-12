@@ -1,4 +1,3 @@
-import { uuid } from 'uuidv4'
 import { Sequelize } from 'sequelize-typescript'
 
 import { getModelToken } from '@nestjs/sequelize'
@@ -10,7 +9,6 @@ import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { IntlService } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 import { signingModuleConfig, SigningService } from '@island.is/dokobit-signing'
-import { EmailService } from '@island.is/email-service'
 import { MessageService } from '@island.is/judicial-system/message'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
@@ -22,6 +20,7 @@ import { UserService } from '../../user'
 import { FileService } from '../../file'
 import { AwsS3Service } from '../../aws-s3'
 import { DefendantService } from '../../defendant'
+import { IndictmentCountService } from '../../indictment-count'
 import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
 import { caseModuleConfig } from '../case.config'
@@ -32,7 +31,6 @@ import { CaseController } from '../case.controller'
 import { InternalCaseController } from '../internalCase.controller'
 import { LimitedAccessCaseController } from '../limitedAccessCase.controller'
 
-jest.mock('@island.is/email-service')
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
 jest.mock('../../police/police.service')
@@ -41,6 +39,7 @@ jest.mock('../../user/user.service')
 jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
 jest.mock('../../defendant/defendant.service')
+jest.mock('../../indictment-count/indictmentCount.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -66,10 +65,7 @@ export const createTestingCaseModule = async () => {
       EventService,
       SigningService,
       DefendantService,
-      {
-        provide: EmailService,
-        useValue: { sendEmail: jest.fn(async () => uuid()) },
-      },
+      IndictmentCountService,
       {
         provide: IntlService,
         useValue: {
@@ -129,6 +125,10 @@ export const createTestingCaseModule = async () => {
 
   const defendantService = caseModule.get<DefendantService>(DefendantService)
 
+  const indictmentCountService = caseModule.get<IndictmentCountService>(
+    IndictmentCountService,
+  )
+
   const logger = caseModule.get<Logger>(LOGGER_PROVIDER)
 
   const sequelize = caseModule.get<Sequelize>(Sequelize)
@@ -167,6 +167,7 @@ export const createTestingCaseModule = async () => {
     fileService,
     awsS3Service,
     defendantService,
+    indictmentCountService,
     logger,
     sequelize,
     caseModel,

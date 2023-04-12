@@ -40,8 +40,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,COURT_LITIGANT,POLICE_DOCUMENT,POLICE_CASE',
-        prod: 'COURT_LITIGANT,POLICE_CASE',
+        staging: 'COURT,COURT_LITIGANT,POLICE_CASE',
+        prod: 'COURT_LITIGANT',
       },
       NO_UPDATE_NOTIFIER: 'true',
     })
@@ -81,7 +81,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       limits: { cpu: '400m', memory: '512Mi' },
     })
     .replicaCount({
-      min: 4,
+      min: 2,
       max: 10,
-      default: 4,
+      default: 2,
     })

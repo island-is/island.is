@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from 'react'
+import React, { useContext, useState, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -17,22 +17,21 @@ import {
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CaseCustodyRestrictions,
-  CaseType,
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  rcHearingArrangements as m,
-  titles,
-} from '@island.is/judicial-system-web/messages'
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
 export const HearingArrangements: React.FC = () => {
   const {
@@ -45,7 +44,6 @@ export const HearingArrangements: React.FC = () => {
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const {
     setAndSendCaseToServer,
     sendNotification,
@@ -59,57 +57,44 @@ export const HearingArrangements: React.FC = () => {
     handleCourtDateChange,
   } = useCourtArrangements(workingCase)
 
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      if (!workingCase.courtDate) {
-        setCourtDate(workingCase.requestedCourtDate)
-
-        setInitialAutoFillDone(true)
-      }
-
-      setAndSendCaseToServer(
-        [
-          // validToDate, isolationToDate and isCustodyIsolation are autofilled here
-          // so they are ready for conclusion autofill later
-          {
-            validToDate: workingCase.requestedValidToDate,
-            isolationToDate:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                ? workingCase.requestedValidToDate
-                : undefined,
-            isCustodyIsolation:
-              workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
-                ? workingCase.requestedCustodyRestrictions &&
-                  workingCase.requestedCustodyRestrictions.includes(
-                    CaseCustodyRestrictions.ISOLATION,
-                  )
-                  ? true
-                  : false
-                : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+  const initialize = useCallback(() => {
+    if (!workingCase.courtDate) {
+      setCourtDate(workingCase.requestedCourtDate)
     }
-  }, [
-    setAndSendCaseToServer,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setCourtDate,
-    setWorkingCase,
-    workingCase,
-  ])
+
+    setAndSendCaseToServer(
+      [
+        // validToDate, isolationToDate and isCustodyIsolation are autofilled here
+        // so they are ready for conclusion autofill later
+        {
+          validToDate: workingCase.requestedValidToDate,
+          isolationToDate:
+            workingCase.type === CaseType.Custody ||
+            workingCase.type === CaseType.AdmissionToFacility
+              ? workingCase.requestedValidToDate
+              : undefined,
+          isCustodyIsolation:
+            workingCase.type === CaseType.Custody ||
+            workingCase.type === CaseType.AdmissionToFacility
+              ? workingCase.requestedCustodyRestrictions &&
+                workingCase.requestedCustodyRestrictions.includes(
+                  CaseCustodyRestrictions.ISOLATION,
+                )
+                ? true
+                : false
+              : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [setAndSendCaseToServer, setCourtDate, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const hasSentNotification = workingCase?.notifications?.find(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-
-      setAndSendCaseToServer(
+      await setAndSendCaseToServer(
         [
           {
             courtDate: courtDate
@@ -122,7 +107,18 @@ export const HearingArrangements: React.FC = () => {
         setWorkingCase,
       )
 
-      if (hasSentNotification && !courtDateHasChanged) {
+      const isCorrectingRuling = workingCase.notifications?.some(
+        (notification) => notification.type === NotificationType.RULING,
+      )
+
+      if (
+        isCorrectingRuling ||
+        (hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
+          !courtDateHasChanged)
+      ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
         setNavigateTo(constants.RESTRICTION_CASE_RULING_ROUTE)
@@ -145,10 +141,6 @@ export const HearingArrangements: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.HEARING_ARRANGEMENTS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
@@ -197,6 +189,7 @@ export const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_RULING_ROUTE)
@@ -208,14 +201,14 @@ export const HearingArrangements: React.FC = () => {
       {navigateTo !== undefined && (
         <Modal
           title={formatMessage(
-            workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+            workingCase.type === CaseType.Custody ||
+              workingCase.type === CaseType.AdmissionToFacility
               ? m.modal.custodyCases.heading
               : m.modal.travelBanCases.heading,
           )}
           text={formatMessage(
-            workingCase.type === CaseType.CUSTODY ||
-              workingCase.type === CaseType.ADMISSION_TO_FACILITY
+            workingCase.type === CaseType.Custody ||
+              workingCase.type === CaseType.AdmissionToFacility
               ? m.modal.custodyCases.text
               : m.modal.travelBanCases.text,
             {
@@ -241,6 +234,9 @@ export const HearingArrangements: React.FC = () => {
           primaryButtonText={formatMessage(m.modal.shared.primaryButtonText)}
           secondaryButtonText={formatMessage(
             m.modal.shared.secondaryButtonText,
+            {
+              courtDateHasChanged,
+            },
           )}
         />
       )}

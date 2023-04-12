@@ -19,11 +19,13 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver, LinkType } from '@island.is/web/hooks/useLinkResolver'
+import { LayoutProps } from '@island.is/web/layouts/main'
 
 type LanguageTogglerProps = {
   dialogId?: string
   hideWhenMobile?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
+  queryParams?: LayoutProps['languageToggleQueryParams']
 }
 
 export const LanguageToggler = ({
@@ -31,6 +33,7 @@ export const LanguageToggler = ({
   buttonColorScheme = 'default',
   dialogId = 'confirm-language-switch-dialog' +
     (!hideWhenMobile ? '-mobile' : ''),
+  queryParams,
 }: LanguageTogglerProps) => {
   const client = useApolloClient()
   const Router = useRouter()
@@ -85,7 +88,8 @@ export const LanguageToggler = ({
 
     const slugs = []
     let title: TextFieldLocales = { is: '', en: '' }
-    let type = ''
+    let type: LinkType | '' = ''
+    let activeTranslations = {}
 
     for (const res of responses) {
       const slug = res.data?.getContentSlug?.slug
@@ -95,6 +99,7 @@ export const LanguageToggler = ({
       slugs.push(slug)
       title = res.data?.getContentSlug?.title
       type = res.data?.getContentSlug?.type as LinkType
+      activeTranslations = res.data?.getContentSlug?.activeTranslations
     }
 
     if (resolveLinkTypeLocally) {
@@ -110,14 +115,21 @@ export const LanguageToggler = ({
     if (
       type &&
       slugs.every((s) => s?.[otherLanguage]) &&
-      title?.[otherLanguage]
+      title?.[otherLanguage] &&
+      (otherLanguage === 'is' || (activeTranslations?.[otherLanguage] ?? true))
     ) {
+      const queryParamsString = new URLSearchParams(
+        queryParams?.[otherLanguage],
+      ).toString()
+
       return goToOtherLanguagePage(
-        linkResolver(
-          type as LinkType,
-          slugs.map((s) => s[otherLanguage]),
-          otherLanguage,
-        ).href,
+        `${
+          linkResolver(
+            type as LinkType,
+            slugs.map((s) => s[otherLanguage]),
+            otherLanguage,
+          ).href
+        }${queryParamsString.length > 0 ? '?' : ''}${queryParamsString}`,
       )
     }
 

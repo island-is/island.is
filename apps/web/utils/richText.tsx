@@ -19,18 +19,24 @@ import {
   PowerBiSlice,
   SelectedShip,
   ShipSearch,
+  ShipSearchBoxedInput,
   SidebarShipSearchInput,
   StraddlingStockCalculator,
+  TwoColumnTextSlice,
+  AlcoholLicencesList,
+  TemporaryEventLicencesList,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
   Slice,
   AccordionSlice as AccordionSliceSchema,
+  FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
+import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 
-const webRenderConnectedComponent = (slice) => {
+export const webRenderConnectedComponent = (slice) => {
   const data = slice.json ?? {}
 
   switch (slice.componentType) {
@@ -46,6 +52,12 @@ const webRenderConnectedComponent = (slice) => {
       return <SelectedShip />
     case 'ElectronicRegistrations/MonthlyStatistics':
       return <MonthlyStatistics slice={slice} />
+    case 'Fiskistofa/ShipSearchBoxedInput':
+      return <ShipSearchBoxedInput namespace={data} />
+    case 'Áfengisleyfi/AlcoholLicences':
+      return <AlcoholLicencesList slice={slice} />
+    case 'Tækifærisleyfi/TemporaryEventLicences':
+      return <TemporaryEventLicencesList slice={slice} />
     default:
       break
   }
@@ -60,8 +72,12 @@ const defaultRenderComponent = {
   ConnectedComponent: (slice) => webRenderConnectedComponent(slice),
   GraphCard: (chart) => <ChartsCard chart={chart} />,
   OneColumnText: (slice) => <OneColumnTextSlice slice={slice} />,
+  TwoColumnText: (slice) => <TwoColumnTextSlice slice={slice} />,
   EmailSignup: (slice) => <EmailSignup slice={slice} />,
   FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
+  FeaturedSupportQNAs: (slice: FeaturedSupportQNAsSchema) => (
+    <FeaturedSupportQNAs slice={slice} />
+  ),
 }
 
 export const webRichText = (

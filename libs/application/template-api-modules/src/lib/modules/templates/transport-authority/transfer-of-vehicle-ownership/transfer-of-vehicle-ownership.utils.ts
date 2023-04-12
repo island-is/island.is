@@ -2,14 +2,6 @@ import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templa
 import { EmailRecipient, EmailRole } from './types'
 import { join } from 'path'
 
-// Returns date object with the timestamp 12:00 (UTC timezone)
-export const getDateAtNoonFromString = (dateStr: string): Date => {
-  const dateObj = new Date(dateStr)
-  const date =
-    dateObj instanceof Date && !isNaN(dateObj.getDate()) ? dateObj : new Date()
-  return new Date(date.toISOString().substring(0, 10) + 'T12:00:00Z')
-}
-
 export const pathToAsset = (file: string) => {
   return join(
     __dirname,
@@ -51,7 +43,13 @@ export const getApplicationPruneDateStr = (
   const date = new Date(applicationCreated)
   date.setDate(date.getDate() + expiresAfterDays)
 
-  return date.getDate() + '.' + date.getMonth() + '.' + date.getFullYear()
+  return (
+    ('0' + date.getDate()).slice(-2) +
+    '.' +
+    ('0' + (date.getMonth() + 1)).slice(-2) +
+    '.' +
+    date.getFullYear()
+  )
 }
 
 export const getRecipients = (
@@ -99,8 +97,12 @@ export const getRecipients = (
     })
   }
 
+  const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+
   // Buyer's co-owners
-  const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+  const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'coOwner',
   )
   if (roles.includes(EmailRole.buyerCoOwner) && buyerCoOwners) {
@@ -117,7 +119,7 @@ export const getRecipients = (
   }
 
   // Buyer's operators
-  const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+  const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'operator',
   )
   if (roles.includes(EmailRole.buyerOperator) && buyerOperators) {
@@ -181,8 +183,12 @@ export const getRecipientBySsn = (
     }
   }
 
+  const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
+  )
+
   // Buyer's co-owners
-  const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+  const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'coOwner',
   )
   if (buyerCoOwners) {
@@ -201,7 +207,7 @@ export const getRecipientBySsn = (
   }
 
   // Buyer's operators
-  const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+  const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
     (x) => x.type === 'operator',
   )
   if (buyerOperators) {

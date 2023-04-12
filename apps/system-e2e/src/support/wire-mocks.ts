@@ -9,17 +9,72 @@ import {
   Response,
   Stub,
 } from '@anev/ts-mountebank'
-import { XroadConf, XRoadEnvs } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  XroadConf,
+  XRoadEnvs,
+  XroadSectionConfig,
+} from '../../../../infra/src/dsl/xroad'
 import { getEnvVariables } from '../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { XRoadMemberClass } from '@island.is/shared/utils/server'
+import { serializeValueSource } from '../../../../infra/src/dsl/output-generators/serialization-helpers'
+import { Localhost } from '../../../../infra/src/dsl/localhost-runtime'
+import {
+  EnvironmentVariableValue,
+  ServiceDefinitionForEnv,
+  ValueSource,
+} from '../../../../infra/src/dsl/types/input-types'
+import { Envs } from '../../../../infra/src/environments'
+import { env, TestEnvironment } from './urls'
 
-const defaultMock = (port: number) => {
-  const imposter = new Imposter().withPort(port).withRecordRequests(true)
-  return { port, imposter }
+const getServiceMock = (envVariableRef: ValueSource) => {
+  const resolver = new Localhost()
+  serializeValueSource(
+    envVariableRef,
+    resolver,
+    ({} as unknown) as ServiceDefinitionForEnv,
+    Envs.dev01,
+  )
+  const ports = Object.values(resolver.ports)
+  if (ports.length !== 1)
+    throw new Error('Error discovering the port for Xroad service')
+  const imposter = new Imposter().withPort(ports[0]).withRecordRequests(true)
+  return { port: ports[0], imposter }
+}
+
+const getVariableValue = (
+  envVar: EnvironmentVariableValue,
+  env: TestEnvironment,
+) => {
+  switch (typeof envVar) {
+    case 'object': {
+      const envValues: { [name in TestEnvironment]: ValueSource } = {
+        local: envVar.local ?? envVar.dev,
+        dev: envVar.dev,
+        staging: envVar.staging,
+        prod: 'no mocking in prod',
+      }
+      const result = envValues[env]
+      if (typeof result === 'string') {
+        throw new Error('Should have been a reference, not a string value')
+      } else {
+        return result
+      }
+    }
+    case 'function':
+      return envVar
+    default:
+      throw new Error('Env variable should have been a reference')
+  }
 }
 
 const mockedServices = {
-  xroad: defaultMock(9545),
+  xroad: getServiceMock(
+    getVariableValue(
+      Base.getEnvVarByName('XROAD_BASE_PATH') ?? 'missing var',
+      env,
+    ),
+  ),
 }
 
 const mb = new Mountebank().withURL(
@@ -49,7 +104,7 @@ export const wildcard = async () => {
   )
   await mb.createImposter(mockedServices.xroad.imposter)
 }
-export const addXroadMock = async <Conf>(
+export const addXroadMock = async <Conf extends XroadSectionConfig>(
   options:
     | {
         config: XroadConf<Conf>

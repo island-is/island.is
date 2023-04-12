@@ -13,8 +13,11 @@ auth-admin-web:
     NEXT_PUBLIC_BACKEND_URL: '/backend'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -28,7 +31,7 @@ auth-admin-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -97,6 +100,7 @@ identity-server:
     CacheSettings__Memcached__Port: '11211'
     CacheSettings__Redis__Address: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
     CacheSettings__Redis__Port: '6379'
+    ContentfulSettings__BaseAddress: 'https://cdn.contentful.com'
     DD_DOTNET_TRACER_HOME: '/opt/datadog'
     DD_INTEGRATIONS: '/opt/datadog/integrations.json'
     Datadog__Metrics__Port: '5003'
@@ -107,7 +111,7 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=2000'
     NO_UPDATE_NOTIFIER: 'true'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
-    PersistenceSettings__UserProfileBaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    PersistenceSettings__SessionsBaseAddress: 'https://sessions-api.internal.island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   files:
     - 'ids-signing.pfx'
@@ -127,7 +131,7 @@ identity-server:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -167,6 +171,7 @@ identity-server:
     AudkenniSettings__ClientId: '/k8s/identity-server/AudkenniClientId'
     AudkenniSettings__ClientSecret: '/k8s/identity-server/AudkenniClientSecret'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    ContentfulSettings__AccessToken: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
     FeatureFlags__ConfigCatSdkKey: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     IdentityServer__FakePersons: '/k8s/identity-server/FakePersons'
     IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey'
@@ -198,24 +203,28 @@ services-auth-admin-api:
     DB_REPLICAS_HOST: 'postgres-ids.internal'
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    IDENTITY_SERVER_ISSUER_URL_LIST: '["https://innskra.island.is"]'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/backend/liveness'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/backend/liveness'
       timeoutSeconds: 3
   hpa:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -225,6 +234,7 @@ services-auth-admin-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
       hosts:
         - host: 'innskra.island.is'
           paths:
@@ -286,7 +296,7 @@ services-auth-delegation-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -364,7 +374,7 @@ services-auth-ids-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 15
         min: 2
@@ -383,7 +393,7 @@ services-auth-ids-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
@@ -396,7 +406,7 @@ services-auth-ids-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-ids.internal'
@@ -453,7 +463,7 @@ services-auth-personal-representative:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -511,7 +521,7 @@ services-auth-personal-representative-public:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -575,8 +585,11 @@ services-auth-public-api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -590,7 +603,7 @@ services-auth-public-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2

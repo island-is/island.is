@@ -1,12 +1,11 @@
 import React, { FC } from 'react'
-
+import { useNavigate } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { getValueViaPath, formatText } from '@island.is/application/core'
 import { FieldBaseProps, Application } from '@island.is/application/types'
 import { ApplicationList } from '@island.is/application/ui-components'
 import { m } from '../lib/messages'
-import { useHistory } from 'react-router-dom'
 
 export const LinkExistingApplication: FC<FieldBaseProps> = ({
   application,
@@ -14,7 +13,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { description } = field
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const existing =
     getValueViaPath<Application[]>(
@@ -43,7 +42,7 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
               formatMessage,
             ),
           }))}
-          onClick={(url) => history.push(`../../${url}`)}
+          onClick={(url) => navigate(`../../${url}`)}
         />
       </Box>
     </>

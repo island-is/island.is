@@ -1,3 +1,4 @@
+import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -89,29 +90,24 @@ export class TranslationService {
   }
 
   /** Adds a new Language */
-  async createLanguage(language: LanguageDTO): Promise<Language | undefined> {
-    try {
-      return this.sequelize.transaction((_) => {
-        return this.langugeModel.create(language)
-      })
-    } catch {
-      this.logger.warn('Error when executing transaction, rollbacked.')
-    }
+  async createLanguage(language: LanguageDTO): Promise<Language> {
+    return this.langugeModel.create(language)
   }
 
   /** Updates an existing Language */
-  async updateLanguage(language: LanguageDTO): Promise<Language | null> {
-    this.logger.debug(`Updating language: ${language.isoKey}`)
+  async updateLanguage(languageData: LanguageDTO): Promise<Language> {
+    this.logger.debug(`Updating language: ${languageData.isoKey}`)
 
-    await this.langugeModel.update(language, {
-      where: { isoKey: language.isoKey },
-    })
+    const language = await this.findLanguage(languageData.isoKey)
+    if (!language) {
+      throw new NoContentException()
+    }
 
-    return this.findLanguage(language.isoKey)
+    return language.update(languageData)
   }
 
   /** Deletes a language */
-  async deleteLanguage(isoKey: string): Promise<number | null> {
+  async deleteLanguage(isoKey: string): Promise<number> {
     this.logger.debug(`Deleting language: ${isoKey}`)
 
     return this.langugeModel.destroy({ where: { isoKey: isoKey } })
@@ -135,17 +131,9 @@ export class TranslationService {
   }
 
   /** Creates a new Translation */
-  async createTranslation(
-    translation: TranslationDTO,
-  ): Promise<Translation | undefined> {
+  async createTranslation(translation: TranslationDTO): Promise<Translation> {
     this.logger.debug(`Creating translation for id - ${translation.key}`)
-    try {
-      return this.sequelize.transaction((_) => {
-        return this.translationModel.create(translation)
-      })
-    } catch {
-      this.logger.warn('Error when executing transaction, rollbacked.')
-    }
+    return this.translationModel.create(translation)
   }
 
   async findLanguage(isoKey: string): Promise<Language | null> {
@@ -154,32 +142,28 @@ export class TranslationService {
 
   /** Updates an existing translation */
   async updateTranslation(
-    translate: TranslationDTO,
-  ): Promise<Translation | null> {
-    this.logger.debug('Updating the translation with key: ', translate.key)
-
-    await this.translationModel.update(
-      { ...translate },
-      {
-        where: {
-          language: translate.language,
-          className: translate.className,
-          key: translate.key,
-          property: translate.property,
-        },
-      },
+    translationData: TranslationDTO,
+  ): Promise<Translation> {
+    this.logger.debug(
+      'Updating the translation with key: ',
+      translationData.key,
     )
 
-    return this.findTranslation(
-      translate.language,
-      translate.className,
-      translate.property,
-      translate.key,
+    const translation = await this.findTranslation(
+      translationData.language,
+      translationData.className,
+      translationData.property,
+      translationData.key,
     )
+    if (!translation) {
+      throw new NoContentException()
+    }
+
+    return translation.update({ ...translationData })
   }
 
   /** Deletes a translation */
-  async deleteTranslation(translate: TranslationDTO): Promise<number | null> {
+  async deleteTranslation(translate: TranslationDTO): Promise<number> {
     this.logger.debug(`Deleting translation with key: ${translate.key}`)
 
     if (!translate) {
@@ -197,20 +181,35 @@ export class TranslationService {
   }
 
   /**
-   * Returns a map of translations for a given set of class instances.
+   * Returns a map of translations for a given set of class instances for all languages.
+   */
+  async findTranslationMap(
+    className: string,
+    keys: string[],
+  ): Promise<Map<string, Map<string, Map<string, string>>>>
+  /**
+   * Returns a map of translations for a given set of class instances for specific language.
    */
   async findTranslationMap(
     className: string,
     keys: string[],
     language: string,
-  ): Promise<Map<string, Map<string, string>>> {
+  ): Promise<Map<string, Map<string, string>>>
+  async findTranslationMap(
+    className: string,
+    keys: string[],
+    language?: string,
+  ): Promise<
+    | Map<string, Map<string, string>>
+    | Map<string, Map<string, Map<string, string>>>
+  > {
     if (keys.length === 0) {
       return new Map()
     }
 
     const translations = await this.translationModel.findAll({
       where: {
-        language,
+        ...(language && { language }),
         className,
         key: keys,
       },
@@ -221,8 +220,18 @@ export class TranslationService {
         acc.set(translation.key, new Map())
       }
 
+      let translationMap
+      if (!language) {
+        if (!acc.get(translation.key).has(translation.language)) {
+          acc.get(translation.key).set(translation.language, new Map())
+        }
+        translationMap = acc.get(translation.key).get(translation.language)
+      } else {
+        translationMap = acc.get(translation.key)
+      }
+
       if (translation.value) {
-        acc.get(translation.key).set(translation.property, translation.value)
+        translationMap.set(translation.property, translation.value)
       }
       return acc
     }, new Map())

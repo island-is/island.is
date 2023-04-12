@@ -1,38 +1,41 @@
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import type { User } from '@island.is/auth-nest-tools'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { ConfigType } from '@island.is/nest/config'
-import { literal, Op, WhereOptions } from 'sequelize'
+import Base64 from 'crypto-js/enc-base64'
+import sha256 from 'crypto-js/sha256'
+import { Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
+import { uuid } from 'uuidv4'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+import { NoContentException } from '@island.is/nest/problem'
+
+import { PagedRowsDto } from '../core/types/paged-rows.dto'
 import { DelegationConfig } from '../delegations/DelegationConfig'
-import { IdentityResource } from './models/identity-resource.model'
-import { ApiScope } from './models/api-scope.model'
-import { ApiResource } from './models/api-resource.model'
+import { DEFAULT_DOMAIN } from '../types'
+import { ApiResourceAllowedScopeDTO } from './dto/api-resource-allowed-scope.dto'
+import { ApiResourceSecretDTO } from './dto/api-resource-secret.dto'
+import { ApiResourcesDTO } from './dto/api-resources.dto'
+import { ApiScopeGroupDTO } from './dto/api-scope-group.dto'
+import { ApiScopesDTO } from './dto/api-scopes.dto'
+import { DomainDTO } from './dto/domain.dto'
+import { IdentityResourcesDTO } from './dto/identity-resources.dto'
+import { UserClaimDTO } from './dto/user-claim.dto'
 import { ApiResourceScope } from './models/api-resource-scope.model'
-import { IdentityResourceUserClaim } from './models/identity-resource-user-claim.model'
 import { ApiResourceSecret } from './models/api-resource-secret.model'
 import { ApiResourceUserClaim } from './models/api-resource-user-claim.model'
-import { ApiScopeUserClaim } from './models/api-scope-user-claim.model'
-import { IdentityResourcesDTO } from './dto/identity-resources.dto'
-import { ApiScopesDTO } from './dto/api-scopes.dto'
-import { ApiResourcesDTO } from './dto/api-resources.dto'
-import sha256 from 'crypto-js/sha256'
-import Base64 from 'crypto-js/enc-base64'
-import { ApiResourceSecretDTO } from './dto/api-resource-secret.dto'
-import { ApiResourceAllowedScopeDTO } from './dto/api-resource-allowed-scope.dto'
-import { UserClaimDTO } from './dto/user-claim.dto'
-import { ApiScopeGroupDTO } from './dto/api-scope-group.dto'
+import { ApiResource } from './models/api-resource.model'
 import { ApiScopeGroup } from './models/api-scope-group.model'
-import { uuid } from 'uuidv4'
+import { ApiScopeUserClaim } from './models/api-scope-user-claim.model'
+import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
-import { PagedRowsDto } from '../core/types/paged-rows.dto'
-import { DomainDTO } from './dto/domain.dto'
+import { IdentityResourceUserClaim } from './models/identity-resource-user-claim.model'
+import { IdentityResource } from './models/identity-resource.model'
 import { ResourceTranslationService } from './resource-translation.service'
 
+import type { User } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 @Injectable()
 export class ResourcesService {
   constructor(
@@ -73,7 +76,7 @@ export class ResourcesService {
   ): Promise<{
     rows: IdentityResource[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.identityResourceModel.findAndCountAll({
@@ -117,7 +120,7 @@ export class ResourcesService {
   }
 
   /** Finds all Api resources without paging */
-  async findAllApiResources(): Promise<ApiResource[] | null> {
+  async findAllApiResources(): Promise<ApiResource[]> {
     return this.apiResourceModel.findAll({ order: [['name', 'asc']] })
   }
 
@@ -177,7 +180,7 @@ export class ResourcesService {
   ): Promise<{
     rows: ApiResource[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.apiResourceModel.findAndCountAll({
@@ -198,7 +201,7 @@ export class ResourcesService {
   ): Promise<{
     rows: ApiScope[]
     count: number
-  } | null> {
+  }> {
     page--
     const offset = page * count
     return this.apiScopeModel.findAndCountAll({
@@ -236,17 +239,8 @@ export class ResourcesService {
     }
 
     const identityResource = await this.identityResourceModel.findByPk(name, {
-      raw: true,
+      include: [IdentityResourceUserClaim],
     })
-
-    if (identityResource) {
-      identityResource.userClaims = await this.identityResourceUserClaimModel.findAll(
-        {
-          where: { identityResourceName: identityResource.name },
-          raw: true,
-        },
-      )
-    }
 
     return identityResource
   }
@@ -260,16 +254,8 @@ export class ResourcesService {
     }
 
     const apiScope = await this.apiScopeModel.findByPk(name, {
-      raw: true,
-      include: [ApiScopeGroup],
+      include: [ApiScopeGroup, ApiScopeUserClaim],
     })
-
-    if (apiScope) {
-      apiScope.userClaims = await this.apiScopeUserClaimModel.findAll({
-        where: { apiScopeName: apiScope.name },
-        raw: true,
-      })
-    }
 
     return apiScope
   }
@@ -354,9 +340,16 @@ export class ResourcesService {
       },
     }
 
-    return this.identityResourceModel.findAll({
+    const result = await this.identityResourceModel.findAll({
       where: scopeNames ? whereOptions : undefined,
       include: [IdentityResourceUserClaim],
+    })
+
+    const identityDomain = await this.findDomainByPk(DEFAULT_DOMAIN)
+
+    return result.map((r) => {
+      r.domain = identityDomain ?? undefined
+      return r
     })
   }
 
@@ -372,7 +365,7 @@ export class ResourcesService {
 
     return this.apiScopeModel.findAll({
       where: scopeNames ? whereOptions : undefined,
-      include: [ApiScopeUserClaim, ApiScopeGroup],
+      include: [ApiScopeUserClaim, ApiScopeGroup, Domain, ApiScopeGroup],
     })
   }
 
@@ -390,48 +383,6 @@ export class ResourcesService {
     arrJoined.push(...apiScopes)
     arrJoined.push(...(identityResources as ApiScope[]))
     return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
-  }
-
-  /** Gets Api scopes with Explicit Delegation Grant */
-  async findApiScopesWithExplicitDelegationGrant(): Promise<ApiScope[]> {
-    this.logger.debug(`Finding api scopes with Explicit Delegation Grant`)
-
-    return this.apiScopeModel.findAll({
-      where: { allowExplicitDelegationGrant: true },
-      include: [ApiScopeGroup],
-    })
-  }
-
-  /** Filters out scopes that don't have delegation grant and are access controlled */
-  async findAllowedDelegationApiScopeListForUser(
-    scope: string[],
-    user: User,
-    language?: string,
-  ) {
-    this.logger.debug(`Finding allowed api scopes for scopes ${scope}`)
-    const filteredScope = this.filterScopeForCustomDelegation(scope, user)
-    const scopes = await this.apiScopeModel.findAll({
-      where: {
-        name: {
-          [Op.in]: filteredScope,
-        },
-        allowExplicitDelegationGrant: true,
-      },
-      order: [
-        // Sort results by ApiScopeGroup and ApiScope order.
-        // This raw SQL literal depends on internal Sequelize join naming.
-        // It is regression tested in services-auth-public-api/.../scopes.controller.spec.ts
-        literal(
-          'COALESCE("group"."order", "ApiScope"."order") * 1000 + "ApiScope"."order"',
-        ),
-      ],
-      include: [ApiScopeGroup],
-    })
-
-    if (language) {
-      await this.resourceTranslationService.translateApiScopes(scopes, language)
-    }
-    return scopes
   }
 
   /** Returns the count of scopes that are allowed for delegations */
@@ -501,7 +452,6 @@ export class ResourcesService {
       },
     }
     const scopes = await this.apiResourceScopeModel.findAll({
-      raw: true,
       where: apiResourceScopeNames ? scopesWhereOptions : undefined,
     })
 
@@ -526,20 +476,20 @@ export class ResourcesService {
 
   /** Updates an existing Identity resource */
   async updateIdentityResource(
-    identityResource: IdentityResourcesDTO,
+    identityResourceData: IdentityResourcesDTO,
     name: string,
-  ): Promise<IdentityResource | null> {
+  ): Promise<IdentityResource> {
     this.logger.debug('Updating identity resource with name: ', name)
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
 
-    await this.identityResourceModel.update(
-      { ...identityResource },
-      { where: { name: name } },
-    )
+    const identityResource = await this.getIdentityResourceByName(name)
+    if (!identityResource) {
+      throw new NoContentException()
+    }
 
-    return await this.getIdentityResourceByName(name)
+    return identityResource.update({ ...identityResourceData })
   }
 
   /** Soft delete on an identity resource by name */
@@ -562,7 +512,7 @@ export class ResourcesService {
   async createApiResource(apiResource: ApiResourcesDTO): Promise<ApiResource> {
     this.logger.debug('Creating a new api resource')
 
-    return await this.apiResourceModel.create({ ...apiResource })
+    return this.apiResourceModel.create({ ...apiResource })
   }
 
   /** Creates a new Api Scope */
@@ -571,44 +521,47 @@ export class ResourcesService {
 
     await this.assertSameAsGroup(apiScope)
 
-    return await this.apiScopeModel.create({ ...apiScope })
+    return this.apiScopeModel.create({ ...apiScope })
   }
 
   /** Updates an existing API scope */
   async updateApiScope(
-    apiScope: ApiScopesDTO,
+    apiScopeData: ApiScopesDTO,
     name: string,
-  ): Promise<ApiScope | null> {
+  ): Promise<ApiScope> {
     this.logger.debug('Updating api scope with name: ', name)
 
-    if (!name) {
-      throw new BadRequestException('Name must be provided')
+    const apiScope = await this.getApiScopeByName(name)
+    if (!apiScope) {
+      throw new NoContentException()
     }
 
-    await this.assertSameAsGroup(apiScope)
+    await this.assertSameAsGroup(apiScopeData)
 
-    await this.apiScopeModel.update({ ...apiScope }, { where: { name: name } })
-
-    return this.getApiScopeByName(name)
+    return apiScope.update({ ...apiScopeData })
   }
 
   /** Updates an existing API scope */
   async updateApiResource(
-    apiResource: ApiResourcesDTO,
+    apiResourceData: ApiResourcesDTO,
     name: string,
-  ): Promise<ApiResource | null> {
+  ): Promise<ApiResource> {
     this.logger.debug('Updating api resource with name: ', name)
 
     if (!name) {
       throw new BadRequestException('Name must be provided')
     }
+    const apiResource = await this.getApiResourceByName(name)
+    if (!apiResource) {
+      throw new NoContentException()
+    }
 
-    await this.apiResourceModel.update(
-      { ...apiResource },
-      { where: { name: name } },
+    const [_, apiResources] = await this.apiResourceModel.update(
+      { ...apiResourceData },
+      { where: { name }, returning: true },
     )
 
-    return this.getApiResourceByName(name)
+    return apiResources[0]
   }
 
   /** Soft delete on an API scope */
@@ -913,7 +866,7 @@ export class ResourcesService {
 
   /** Returns all ApiScopeGroups by name if specified with Paging */
   async findAndCountAllApiScopeGroups(
-    searchString: string,
+    searchString: string | undefined,
     page: number,
     count: number,
   ): Promise<{

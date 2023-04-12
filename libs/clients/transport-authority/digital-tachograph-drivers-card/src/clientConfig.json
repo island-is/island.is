@@ -1,0 +1,672 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "TachoNet API",
+    "description": "Vefþjónustur fyrir umsóknir um ökuritakort hjá island.is",
+    "version": "1.2.0"
+  },
+  "servers": [
+    {
+      "url": "/tachonet/okuritar"
+    }
+  ],
+  "paths": {
+    "/v1/drivercards/{persidno}/newest": {
+      "get": {
+        "tags": ["DriverCardsApi"],
+        "parameters": [
+          {
+            "name": "persidno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "maxLength": 10,
+              "minLength": 10,
+              "pattern": "[0-9]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewestIcelandicDriverCardResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/drivercards": {
+      "post": {
+        "tags": ["DriverCardsApi"],
+        "requestBody": {
+          "content": {
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DriverCardApplicationRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DriverCardApplicationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverCardApplicationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/drivercards/tachonetcheck": {
+      "post": {
+        "tags": ["DriverCardsApi"],
+        "requestBody": {
+          "content": {
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TachonetCheckRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TachonetCheckRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TachonetCheckResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/individual/{persidno}/photoandsignature": {
+      "get": {
+        "tags": ["IndividualApi"],
+        "parameters": [
+          {
+            "name": "persidno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PhotoAndSignatureResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CardIssueType": {
+        "enum": ["Primary", "Renewal", "Reissue", "Republication"],
+        "type": "string"
+      },
+      "CardTypeEnum": {
+        "enum": ["DriverCard"],
+        "type": "string"
+      },
+      "DeliveryMethodEnum": {
+        "enum": ["Send", "PickUp"],
+        "type": "string"
+      },
+      "DriverCardApplicationRequest": {
+        "required": [
+          "address",
+          "birth_country",
+          "birth_place",
+          "delivery_method",
+          "full_name",
+          "payment_datetime",
+          "person_id_number",
+          "photo",
+          "place",
+          "postal_code",
+          "signature"
+        ],
+        "type": "object",
+        "properties": {
+          "person_id_number": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "^[0-9]+",
+            "type": "string"
+          },
+          "full_name": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "address": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "postal_code": {
+            "maxLength": 16,
+            "minLength": 1,
+            "type": "string"
+          },
+          "place": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "birth_country": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "birth_place": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "email_address": {
+            "maxLength": 256,
+            "type": "string",
+            "nullable": true
+          },
+          "phone_number": {
+            "maxLength": 32,
+            "type": "string",
+            "nullable": true
+          },
+          "delivery_method": {
+            "$ref": "#/components/schemas/DeliveryMethodEnum"
+          },
+          "card_issue_type": {
+            "$ref": "#/components/schemas/CardIssueType"
+          },
+          "payment_datetime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "photo": {
+            "minLength": 1,
+            "pattern": "^data:image\\/(png|jpg|jpeg);base64,[a-zA-Z0-9+\\/]+={0,2}$",
+            "type": "string"
+          },
+          "signature": {
+            "minLength": 1,
+            "pattern": "^data:image\\/(png|jpg|jpeg);base64,[a-zA-Z0-9+\\/]+={0,2}$",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DriverCardApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "person_id_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "application_datetime": {
+            "type": "string",
+            "nullable": true
+          },
+          "card_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "card_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "card_valid_from_datetime": {
+            "type": "string",
+            "nullable": true
+          },
+          "card_valid_to_datetime": {
+            "type": "string",
+            "nullable": true
+          },
+          "delivery_method": {
+            "$ref": "#/components/schemas/DeliveryMethodEnum"
+          },
+          "delivery_if_send": {
+            "$ref": "#/components/schemas/DriverCardApplicationResponseDeliveryIfSend"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DriverCardApplicationResponseDeliveryIfSend": {
+        "type": "object",
+        "properties": {
+          "recipient_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postal_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "place": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "properties": {
+          "tracking_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "param": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IsActiveEnum": {
+        "enum": ["Yes", "No"],
+        "type": "string"
+      },
+      "IsTemporaryEnum": {
+        "enum": ["Yes", "No"],
+        "type": "string"
+      },
+      "IsValidEnum": {
+        "enum": ["Yes", "No"],
+        "type": "string"
+      },
+      "NewestIcelandicDriverCardResponse": {
+        "type": "object",
+        "properties": {
+          "person_id_number": {
+            "maxLength": 10,
+            "minLength": 10,
+            "pattern": "/[0-9]+/",
+            "type": "string",
+            "nullable": true
+          },
+          "datetime_of_application": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "card_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "card_type": {
+            "$ref": "#/components/schemas/CardTypeEnum"
+          },
+          "card_valid_from_datetime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "card_valid_to_datetime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "is_valid": {
+            "$ref": "#/components/schemas/IsValidEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PhotoAndSignatureResponse": {
+        "type": "object",
+        "properties": {
+          "person_id_number": {
+            "pattern": "/^[0-9]+/",
+            "type": "string",
+            "nullable": true
+          },
+          "photo": {
+            "pattern": "/^data:image\\/(png|jpg|jpeg);base64,[a-zA-Z0-9+\\/]+={0,2}$/",
+            "type": "string",
+            "nullable": true
+          },
+          "signature": {
+            "pattern": "/^data:image\\/(png|jpg|jpeg);base64,[a-zA-Z0-9+\\/]+={0,2}$/",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TachonetCheckRequest": {
+        "required": ["birth_date", "last_name"],
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "maxLength": 256,
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "birth_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "birth_place": {
+            "maxLength": 256,
+            "type": "string",
+            "nullable": true
+          },
+          "driving_licence_number": {
+            "maxLength": 256,
+            "type": "string",
+            "nullable": true
+          },
+          "driving_licence_issuing_country": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TachonetCheckResponse": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "birth_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "birth_place": {
+            "type": "string",
+            "nullable": true
+          },
+          "driving_licence_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "driving_licence_issuing_country": {
+            "type": "string",
+            "nullable": true
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TachonetCheckResponseCards"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TachonetCheckResponseCards": {
+        "type": "object",
+        "properties": {
+          "country_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "card_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "card_valid_from_datetime": {
+            "type": "string",
+            "nullable": true
+          },
+          "card_valid_to_datetime": {
+            "type": "string",
+            "nullable": true
+          },
+          "issuing_authority": {
+            "type": "string",
+            "nullable": true
+          },
+          "is_temporary": {
+            "$ref": "#/components/schemas/IsTemporaryEnum"
+          },
+          "is_active": {
+            "$ref": "#/components/schemas/IsActiveEnum"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

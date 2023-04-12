@@ -1,8 +1,10 @@
 import each from 'jest-each'
 import { uuid } from 'uuidv4'
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
+  CaseAppealState,
+  CaseFileState,
   CaseState,
   CaseTransition,
   completedCaseStates,
@@ -11,13 +13,18 @@ import {
   isIndictmentCase,
   restrictionCases,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
-import { MessageService } from '@island.is/judicial-system/message'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
+import { nowFactory } from '../../../../factories'
+import { randomDate } from '../../../../test'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { order, include } from '../../case.service'
+
+jest.mock('../../../factories')
 
 interface Then {
   result: Case
@@ -28,9 +35,14 @@ type GivenWhenThen = (
   caseId: string,
   theCase: Case,
   transition: TransitionCaseDto,
+  user?: User,
 ) => Promise<Then>
 
 describe('CaseController - Transition', () => {
+  const date = randomDate()
+  const userId = uuid()
+  const defaultUser = { id: userId } as User
+
   let mockMessageService: MessageService
   let transaction: Transaction
   let mockCaseModel: typeof Case
@@ -53,6 +65,8 @@ describe('CaseController - Transition', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
+    const mockToday = nowFactory as jest.Mock
+    mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
 
@@ -60,13 +74,14 @@ describe('CaseController - Transition', () => {
       caseId: string,
       theCase: Case,
       transition: TransitionCaseDto,
+      user?: User,
     ) => {
       const then = {} as Then
 
       try {
         then.result = await caseController.transition(
           caseId,
-          { id: uuid() } as User,
+          user ?? defaultUser,
           theCase,
           transition,
         )
@@ -99,7 +114,25 @@ describe('CaseController - Transition', () => {
         ...indictmentCases,
       ]).describe('%s case', (type) => {
         const caseId = uuid()
-        const theCase = { id: caseId, type, state: oldState } as Case
+        const caseFileId1 = uuid()
+        const caseFileId2 = uuid()
+        const theCase = {
+          id: caseId,
+          type,
+          state: oldState,
+          caseFiles: [
+            {
+              id: caseFileId1,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+            },
+            {
+              id: caseFileId2,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_COURT,
+            },
+          ],
+        } as Case
         const updatedCase = { id: caseId, type, state: newState } as Case
         let then: Then
 
@@ -118,6 +151,10 @@ describe('CaseController - Transition', () => {
               state: newState,
               parentCaseId:
                 transition === CaseTransition.DELETE ? null : undefined,
+              courtRecordSignatoryId:
+                transition === CaseTransition.REOPEN ? null : undefined,
+              courtRecordSignatureDate:
+                transition === CaseTransition.REOPEN ? null : undefined,
             },
             { where: { id: caseId }, transaction },
           )
@@ -126,7 +163,78 @@ describe('CaseController - Transition', () => {
             isIndictmentCase(type) &&
             completedCaseStates.includes(newState)
           ) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalled()
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
+                  caseId,
+                  caseFileId: caseFileId1,
+                },
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
+                  caseId,
+                  caseFileId: caseFileId2,
+                },
+                { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
+              ],
+            )
+          } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
+                  caseId,
+                  caseFileId: caseFileId1,
+                },
+                {
+                  type: MessageType.ARCHIVE_CASE_FILE,
+                  userId,
+                  caseId,
+                  caseFileId: caseFileId2,
+                },
+              ],
+            )
+          } else if (
+            isIndictmentCase(type) &&
+            newState === CaseState.SUBMITTED
+          ) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ],
+            )
+          } else if (newState === CaseState.RECEIVED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ],
+            )
+          } else if (newState === CaseState.DELETED) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.SEND_REVOKED_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ],
+            )
           } else {
             expect(
               mockMessageService.sendMessagesToQueue,
@@ -141,7 +249,6 @@ describe('CaseController - Transition', () => {
               order,
               where: {
                 id: caseId,
-                state: { [Op.not]: CaseState.DELETED },
                 isArchived: false,
               },
             })
@@ -149,6 +256,83 @@ describe('CaseController - Transition', () => {
           }
         })
       })
+    },
+  )
+
+  each`
+      transition                        | caseState                    | currentAppealState           | newAppealState
+      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${CaseAppealState.APPEALED}
+      ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
+      ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
+
+
+    `.describe(
+    '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
+    ({ transition, caseState, currentAppealState, newAppealState }) => {
+      each([...restrictionCases, ...investigationCases]).describe(
+        '%s case',
+        (type) => {
+          const caseId = uuid()
+          const theCase = {
+            id: caseId,
+            type,
+            state: caseState,
+            appealState: currentAppealState,
+          } as Case
+
+          const updatedCase = {
+            id: caseId,
+            type,
+            state: caseState,
+            appealState: CaseAppealState.APPEALED,
+            prosecutorPostponedAppealDate: date,
+          } as Case
+
+          const prosecutorUser = {
+            id: userId,
+            role: UserRole.PROSECUTOR,
+          } as User
+
+          beforeEach(async () => {
+            const mockFindOne = mockCaseModel.findOne as jest.Mock
+            mockFindOne.mockResolvedValueOnce(updatedCase)
+
+            await givenWhenThen(
+              caseId,
+              theCase,
+              {
+                transition,
+              },
+              prosecutorUser,
+            )
+          })
+
+          it('should transition the case', () => {
+            expect(mockCaseModel.update).toHaveBeenCalledWith(
+              {
+                appealState: newAppealState,
+                prosecutorPostponedAppealDate: currentAppealState
+                  ? undefined
+                  : date,
+              },
+              { where: { id: caseId }, transaction },
+            )
+
+            if (transition === CaseTransition.APPEAL) {
+              expect(
+                mockMessageService.sendMessagesToQueue,
+              ).toHaveBeenCalledWith([
+                {
+                  type:
+                    MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+                  userId,
+                  caseId,
+                },
+              ])
+            }
+          })
+        },
+      )
     },
   )
 })

@@ -1,10 +1,12 @@
+const audience = ['@island.is', '@admin.island.is']
+
 const devConfig = {
   audit: {
     defaultNamespace: '@island.is/auth/delegation-api',
   },
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
+    audience,
   },
   port: 5333,
 }
@@ -16,7 +18,7 @@ const prodConfig = {
     serviceName: 'services-auth-public-api',
   },
   auth: {
-    audience: '@island.is',
+    audience,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
   },

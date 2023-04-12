@@ -1,8 +1,9 @@
 import { uuid } from 'uuidv4'
-import { Op, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import {
   CaseFileCategory,
+  CaseFileState,
   CaseState,
   CaseType,
   indictmentCases,
@@ -32,6 +33,8 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Create court case', () => {
+  const userId = uuid()
+  const user = { id: userId } as TUser
   const courtCaseNumber = uuid()
 
   let mockMessageService: MessageService
@@ -82,7 +85,6 @@ describe('CaseController - Create court case', () => {
   })
 
   describe('court case created', () => {
-    const user = { id: uuid() } as TUser
     const caseId = uuid()
     const type = randomEnum(CaseType)
     const policeCaseNumber = uuid()
@@ -143,7 +145,6 @@ describe('CaseController - Create court case', () => {
         where: {
           id: caseId,
           isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
         },
       })
     })
@@ -153,10 +154,40 @@ describe('CaseController - Create court case', () => {
     })
   })
 
+  describe('court case received', () => {
+    const caseId = uuid()
+    const type = randomEnum(CaseType)
+    const courtId = uuid()
+    const theCase = {
+      id: caseId,
+      type,
+      state: CaseState.SUBMITTED,
+      courtId,
+    } as Case
+    const returnedCase = {
+      id: caseId,
+      courtId,
+      courtCaseNumber,
+    } as Case
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should update the court case number', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        { state: CaseState.RECEIVED, courtCaseNumber },
+        { where: { id: caseId }, transaction },
+      )
+    })
+  })
+
   describe.each([...restrictionCases, ...investigationCases])(
     '%s case queued',
     (type) => {
-      const user = {} as TUser
       const defendantId1 = uuid()
       const defendantId2 = uuid()
       const caseId = uuid()
@@ -181,24 +212,25 @@ describe('CaseController - Create court case', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_REQUEST_TO_COURT,
+            userId,
             caseId,
           },
           {
             type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            userId,
             caseId,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId1,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId2,
-            userId: user.id,
           },
         ])
       })
@@ -206,7 +238,6 @@ describe('CaseController - Create court case', () => {
   )
 
   describe.each(indictmentCases)('%s case queued', (type) => {
-    const user = {} as TUser
     const caseId = uuid()
     const policeCaseNumber1 = uuid()
     const policeCaseNumber2 = uuid()
@@ -214,6 +245,7 @@ describe('CaseController - Create court case', () => {
     const indictmentId = uuid()
     const criminalRecordId = uuid()
     const costBreakdownId = uuid()
+    const uncategorisedId = uuid()
     const theCase = {
       id: caseId,
     } as Case
@@ -222,10 +254,42 @@ describe('CaseController - Create court case', () => {
       type,
       policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
       caseFiles: [
-        { id: coverLetterId, category: CaseFileCategory.COVER_LETTER },
-        { id: indictmentId, category: CaseFileCategory.INDICTMENT },
-        { id: criminalRecordId, category: CaseFileCategory.CRIMINAL_RECORD },
-        { id: costBreakdownId, category: CaseFileCategory.COST_BREAKDOWN },
+        {
+          id: coverLetterId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.COVER_LETTER,
+        },
+        {
+          id: indictmentId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.INDICTMENT,
+        },
+        {
+          id: criminalRecordId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.CRIMINAL_RECORD,
+        },
+        {
+          id: costBreakdownId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.COST_BREAKDOWN,
+        },
+        {
+          id: uncategorisedId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.CASE_FILE,
+        },
+        {
+          id: uuid(),
+          key: uuid(),
+          state: CaseFileState.STORED_IN_COURT,
+          category: CaseFileCategory.CASE_FILE,
+        },
       ],
       courtCaseNumber,
     } as Case
@@ -241,45 +305,56 @@ describe('CaseController - Create court case', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+          userId,
           caseId: theCase.id,
-          userId: user.id,
         },
         {
           type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          userId,
           caseId,
           policeCaseNumber: policeCaseNumber1,
         },
         {
           type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+          userId,
           caseId,
           policeCaseNumber: policeCaseNumber2,
         },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
           caseId,
           caseFileId: coverLetterId,
         },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
           caseId,
           caseFileId: indictmentId,
         },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
           caseId,
           caseFileId: criminalRecordId,
         },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
           caseId,
           caseFileId: costBreakdownId,
+        },
+        {
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          userId,
+          caseId,
+          caseFileId: uncategorisedId,
         },
       ])
     })
   })
 
   describe('court case number update fails', () => {
-    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     let then: Then
@@ -298,7 +373,6 @@ describe('CaseController - Create court case', () => {
   })
 
   describe('case lookup fails', () => {
-    const user = {} as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     let then: Then

@@ -17,6 +17,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorModal } from '@island.is/application/templates/public-debt-payment-plan'
+import { ProviderErrorReason } from '@island.is/shared/problem'
 
 @Injectable()
 export class PrerequisitesService {
@@ -69,13 +70,8 @@ export class PrerequisitesService {
     }
 
     if (this.companyConditionsAreNotMetForApplicaiton(conditions, debts)) {
-      throw new TemplateApiError(
-        {
-          title: errorModal.noDebts.title,
-          summary: errorModal.noDebts.summary,
-        },
-        404,
-      )
+      const reasons = this.getCompanyErrorReason(conditions)
+      throw new TemplateApiError(reasons, 404)
     }
 
     return {
@@ -105,13 +101,8 @@ export class PrerequisitesService {
     }
 
     if (this.conditionsAreNotMetForApplicaiton(conditions, debts)) {
-      throw new TemplateApiError(
-        {
-          title: errorModal.noDebts.title,
-          summary: errorModal.noDebts.summary,
-        },
-        404,
-      )
+      const reasons = this.getErrorReason(conditions)
+      throw new TemplateApiError(reasons, 404)
     }
 
     return {
@@ -130,7 +121,7 @@ export class PrerequisitesService {
       conditions.maxDebt ||
       !conditions.taxReturns ||
       !conditions.vatReturns ||
-      !conditions.citReturns || // person only
+      !conditions.citReturns ||
       !conditions.accommodationTaxReturns ||
       !conditions.withholdingTaxReturns ||
       !conditions.wageReturns ||
@@ -147,7 +138,8 @@ export class PrerequisitesService {
     return (
       conditions.maxDebt ||
       !conditions.taxReturns ||
-      !conditions.vatReturns || // !conditions.citReturns || TODO: Ask if we should include this check (corporate income tax)
+      !conditions.vatReturns ||
+      !conditions.citReturns ||
       !conditions.accommodationTaxReturns ||
       !conditions.withholdingTaxReturns ||
       conditions.collectionActions ||
@@ -276,6 +268,95 @@ export class PrerequisitesService {
       name: wagesDeduction.employerName,
       nationalId: wagesDeduction.employerNationalId,
     }
+  }
+
+  private getErrorReason(conditions: ConditionsDT): ProviderErrorReason[] {
+    const errors: ProviderErrorReason[] = []
+    if (conditions.maxDebt) {
+      errors.push({
+        title: errorModal.maxDebtModal.title,
+        summary: errorModal.maxDebtModal.summary,
+      })
+    }
+
+    if (conditions.collectionActions) {
+      errors.push({
+        title: errorModal.defaultPaymentCollection.title,
+        summary: errorModal.defaultPaymentCollection.summary,
+      })
+    }
+
+    if (!conditions.doNotOwe) {
+      errors.push({
+        title: errorModal.doNotOwe.title,
+        summary: errorModal.doNotOwe.summary,
+      })
+    }
+
+    if (
+      !conditions.taxReturns ||
+      !conditions.vatReturns ||
+      !conditions.citReturns ||
+      !conditions.accommodationTaxReturns ||
+      !conditions.withholdingTaxReturns ||
+      !conditions.wageReturns
+    ) {
+      errors.push({
+        title: errorModal.estimationOfReturns.title,
+        summary: errorModal.estimationOfReturns.summary,
+      })
+    }
+    errors.push({
+      title: errorModal.noDebts.title,
+      summary: errorModal.noDebts.summary,
+    })
+    return errors
+  }
+
+  private getCompanyErrorReason(
+    conditions: CompanyConditionsDT,
+  ): ProviderErrorReason[] {
+    const errors: ProviderErrorReason[] = []
+
+    if (conditions.maxDebt) {
+      errors.push({
+        title: errorModal.maxDebtModal.title,
+        summary: errorModal.maxDebtModal.summary,
+      })
+    }
+
+    if (conditions.collectionActions) {
+      errors.push({
+        title: errorModal.defaultPaymentCollection.title,
+        summary: errorModal.defaultPaymentCollection.summary,
+      })
+    }
+
+    if (!conditions.doNotOwe) {
+      errors.push({
+        title: errorModal.doNotOwe.title,
+        summary: errorModal.doNotOwe.summary,
+      })
+    }
+
+    if (
+      !conditions.taxReturns ||
+      !conditions.vatReturns ||
+      !conditions.citReturns ||
+      !conditions.accommodationTaxReturns ||
+      !conditions.withholdingTaxReturns
+    ) {
+      errors.push({
+        title: errorModal.estimationOfReturns.title,
+        summary: errorModal.estimationOfReturns.summary,
+      })
+    }
+
+    errors.push({
+      title: errorModal.noDebts.title,
+      summary: errorModal.noDebts.summary,
+    })
+    return errors
   }
 
   private getMockData() {

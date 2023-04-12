@@ -1,7 +1,7 @@
 import { FC, useEffect } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -23,10 +23,9 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<EstateMember>({
+  const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-  const { setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
@@ -56,7 +55,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2} marginBottom={5}>
       <GridRow>
-        {fields.reduce((acc, member, index) => {
+        {fields.reduce((acc, member: GenericFormField<EstateMember>, index) => {
           if (member.nationalId === application.applicant) {
             const relation = getValueViaPath<string>(
               application.answers,
@@ -89,7 +88,11 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       size="small"
                       iconType="outline"
                       onClick={() => {
-                        setValue(`${id}[${index}].enabled`, !member.enabled)
+                        const updatedMember = {
+                          ...member,
+                          enabled: !member.enabled,
+                        }
+                        update(index, updatedMember)
                       }}
                     >
                       {member.enabled
@@ -103,7 +106,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((member, index) => (
+      {fields.map((member: GenericFormField<EstateMember>, index) => (
         <Box key={member.id} hidden={member.initial || member?.dummy}>
           <AdditionalEstateMember
             application={application}

@@ -1,81 +1,169 @@
-import { Inject } from '@nestjs/common'
 import {
-  Controller,
-  Post,
+  Inject,
+  Body,
+  Get,
+  Param,
+  Query,
+  CacheInterceptor,
+  UseInterceptors,
   BadRequestException,
-  Req,
-  HttpCode,
+  Version,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
+import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
   ApiOkResponse,
   ApiBody,
   ApiExtraModels,
   getSchemaPath,
+  ApiOperation,
 } from '@nestjs/swagger'
-import { validate, ValidationError } from 'class-validator'
-import { Request } from 'express'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  NewDocumentMessage,
-  Message,
-  TypeValidator,
-  ValidatorTypeMap,
-} from './dto/createNotification.dto'
+import { CreateNotificationDto } from './dto/createNotification.dto'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
 
-const throwIfError = (errors: ValidationError[]): void => {
-  if (errors.length > 0) {
-    throw new BadRequestException(
-      errors.reduce(
-        (acc, e) => acc.concat(Object.values(e.constraints ?? {})),
-        [] as string[],
-      ),
-    )
-  }
-}
+import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { Documentation } from '@island.is/nest/swagger'
+import { HnippTemplate } from './dto/hnippTemplate.response'
 
-// Validates the message POST parameter. The top-level message object has a
-// `type` attribute that defines how the rest of the object is validated.
-// class-validator doesn't seem to support that and this is the best solution
-// I could find.
-const validateMessage = async (body: Request['body']): Promise<Message> => {
-  const type = new TypeValidator()
-  Object.assign(type, body)
-  throwIfError(await validate(type, { forbidUnknownValues: false }))
-
-  const ValidatorClass = ValidatorTypeMap[type.type]
-  const message = new ValidatorClass()
-  Object.assign(message, body)
-  throwIfError(await validate(message, { forbidUnknownValues: true }))
-
-  return message
-}
+import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
-@ApiExtraModels(NewDocumentMessage)
+@ApiExtraModels(CreateNotificationDto)
+@UseInterceptors(CacheInterceptor) // auto-caching GET responses
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @InjectQueue('notifications') private queue: QueueService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
-  @Post()
+  // redirecting legacy endpoint to new one with fixed values
   @ApiBody({
     schema: {
       type: 'object',
-      oneOf: [{ $ref: getSchemaPath(NewDocumentMessage) }],
+      oneOf: [{ $ref: getSchemaPath(CreateNotificationDto) }],
     },
   })
   @ApiOkResponse({ type: CreateNotificationResponse })
+  @ApiOperation({ deprecated: true })
   @HttpCode(201)
+  @Post()
+  @Version(VERSION_NEUTRAL)
   async createNotification(
-    @Req() req: Request,
+    @Body() body: CreateNotificationDto,
   ): Promise<CreateNotificationResponse> {
-    const message = await validateMessage(req.body)
-    const id = await this.queue.add(message)
-    this.logger.info('Message queued', { messageId: id, ...message })
+    return this.createHnippNotification({
+      recipient: body.recipient,
+      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+      args: [
+        {
+          key: 'organization',
+          value: body.organization,
+        },
+        {
+          key: 'documentId',
+          value: body.documentId,
+        },
+      ],
+    })
+  }
+
+  @Documentation({
+    description: 'Fetches all templates',
+    summary: 'Fetches all templates',
+    includeNoContentResponse: true,
+    response: { status: 200, type: [HnippTemplate] },
+    request: {
+      query: {
+        locale: {
+          required: false,
+          type: 'string',
+          example: 'is-IS',
+        },
+      },
+    },
+  })
+  @Get('/templates')
+  @Version('1')
+  async getNotificationTemplates(
+    @Query('locale') locale: string,
+  ): Promise<HnippTemplate[]> {
+    return await this.notificationsService.getTemplates(locale)
+  }
+
+  @Documentation({
+    description: 'Fetches a single template',
+    summary: 'Fetches a single template',
+    includeNoContentResponse: true,
+    response: { status: 200, type: HnippTemplate },
+    request: {
+      query: {
+        locale: {
+          required: false,
+          type: 'string',
+          example: 'is-IS',
+        },
+      },
+      params: {
+        templateId: {
+          type: 'string',
+          description: 'ID of the template',
+          example: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        },
+      },
+    },
+  })
+  @Get('/template/:templateId')
+  @Version('1')
+  async getNotificationTemplate(
+    @Param('templateId')
+    templateId: string,
+    @Query('locale') locale: string,
+  ): Promise<HnippTemplate> {
+    return await this.notificationsService.getTemplate(templateId, locale)
+  }
+
+  @Documentation({
+    description: 'Creates a new notification and adds to queue',
+    summary: 'Creates a new notification and adds to queue',
+    includeNoContentResponse: true,
+    response: { status: 201, type: CreateNotificationResponse },
+  })
+  @Post('/')
+  @Version('1')
+  async createHnippNotification(
+    @Body() body: CreateHnippNotificationDto,
+  ): Promise<CreateNotificationResponse> {
+    const template = await this.notificationsService.getTemplate(
+      body.templateId,
+    )
+    // check counts
+    if (!this.notificationsService.validateArgCounts(body, template)) {
+      throw new BadRequestException(
+        "Number of arguments doesn't match - template requires " +
+          template.args.length +
+          ' arguments but ' +
+          body.args.length +
+          ' were provided',
+      )
+    }
+    // check keys/args/properties
+    for (const arg of body.args) {
+      if (!template.args.includes(arg.key)) {
+        throw new BadRequestException(
+          arg.key +
+            ' is not a valid argument for template: ' +
+            template.templateId,
+        )
+      }
+    }
+
+    // add to queue
+    const id = await this.queue.add(body)
+    this.logger.info('Message queued ... ...', { messageId: id, ...body })
     return { id }
   }
 }

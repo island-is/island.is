@@ -78,25 +78,15 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla',
     description: 'payment',
   },
-  paymentCapital: {
-    id: 'cr.application:awaitingPayment',
-    defaultMessage: 'Staðfesting á greiðslu',
-    description: 'Payment',
-  },
-  forwardingToPayment: {
-    id: 'cr.application:forwardingToPayment',
-    defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
-    description: 'Forwarding you to payment handler...',
-  },
   confirmation: {
     id: 'cr.application:confirmation',
     defaultMessage: 'Staðfesting',
-    description: 'payment',
+    description: 'confirmation',
   },
   confirm: {
     id: 'cr.application:confirm',
     defaultMessage: 'Staðfesta',
-    description: 'payment',
+    description: 'confirm',
   },
   institutionName: {
     id: 'cr.application:institution',
@@ -112,6 +102,11 @@ export const m = defineMessages({
     id: 'cr.application:overview.paymentcharge',
     defaultMessage: 'Til greiðslu',
     description: 'Cost',
+  },
+  overviewPaymentTotal: {
+    id: 'cr.application:overview.paymentTotal',
+    defaultMessage: 'Samtals',
+    description: 'Total',
   },
   draftDescription: {
     id: 'cr.application:draft.description',
@@ -137,26 +132,6 @@ export const m = defineMessages({
     id: 'cr.application:criminalrecord.subTitle',
     defaultMessage: 'Skjal sem inniheldur sakavottorðið þitt.',
     description: 'Document that contains your criminal record.',
-  },
-  examplePaymentPendingFieldError: {
-    id: 'cr.application:example.waitingForPaymentError',
-    defaultMessage: 'Villa kom upp við að sækja upplýsingar um greiðslu',
-    description: 'An error came up while getting payment information',
-  },
-  examplePaymentPendingDescription: {
-    id: 'cr.application:example.waitingDescription',
-    defaultMessage: 'Texti um hvað er að gerast',
-    description: 'Text about current payment proceedures.',
-  },
-  paymentPendingDescription: {
-    id: 'cr.application:paymentPendingDescription',
-    defaultMessage: 'Augnablik meðan beðið er eftir staðfestingu',
-    description: 'Please wait until the payment is confirmed',
-  },
-  paymentImage: {
-    id: 'dl.application:paymentImage',
-    defaultMessage: `Skrautmynd`,
-    description: 'Company Image',
   },
   submitErrorButtonCaption: {
     id: 'cr.application:submitErrorButtonCaption',
@@ -208,11 +183,6 @@ export const m = defineMessages({
     id: 'cr.application:criminalRecordInboxText',
     defaultMessage: 'Þú getur einning fundið sakavottorðið í pósthólfinu þínu',
     description: 'You can also find the criminal record in your inbox',
-  },
-  criminalRecordInboxLink: {
-    id: 'cr.application:criminalRecordInboxLink',
-    defaultMessage: 'https://island.is/minarsidur/postholf',
-    description: 'Link to the island.is inbox',
   },
   downloadCriminalRecord: {
     id: 'cr.application:downloadCriminalRecord',

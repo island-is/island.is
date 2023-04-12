@@ -9,6 +9,7 @@ import {
   NotImplementedException,
   UnsupportedMediaTypeException,
   ServiceUnavailableException,
+  UnprocessableEntityException,
 } from '@nestjs/common'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -23,8 +24,8 @@ import {
   Configuration,
   FetchParams,
   RequestContext,
-  AuthenticateApi,
-  AuthenticateRequest,
+  AuthenticateUserApi,
+  CredentialsData,
   CreateCaseApi,
   CreateDocumentApi,
   CreateThingbokApi,
@@ -75,11 +76,11 @@ function stripResult(str: string): string {
 }
 
 interface CourtsCredentials {
-  [key: string]: AuthenticateRequest
+  [key: string]: CredentialsData
 }
 
 interface ConnectionState {
-  credentials: AuthenticateRequest
+  credentials: CredentialsData
   authenticationToken: string
 
   // The service has a 'logged in' state per court id and at most one in-progress
@@ -120,7 +121,7 @@ export abstract class CourtClientService {
 
 @Injectable()
 export class CourtClientServiceImplementation implements CourtClientService {
-  private readonly authenticateApi: AuthenticateApi
+  private readonly authenticateUserApi: AuthenticateUserApi
   private readonly createCaseApi: CreateCaseApi
   private readonly createDocumentApi: CreateDocumentApi
   private readonly createThingbokApi: CreateThingbokApi
@@ -161,7 +162,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
 
           throw {
             status: res.status,
-            message: res.statusText,
+            message: await res.text(),
           }
         }),
       basePath,
@@ -169,7 +170,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
       middleware,
     })
 
-    this.authenticateApi = new AuthenticateApi(providerConfiguration)
+    this.authenticateUserApi = new AuthenticateUserApi(providerConfiguration)
     this.createCaseApi = new CreateCaseApi(providerConfiguration)
     this.createDocumentApi = new CreateDocumentApi(providerConfiguration)
     this.createThingbokApi = new CreateThingbokApi(providerConfiguration)
@@ -218,8 +219,8 @@ export class CourtClientServiceImplementation implements CourtClientService {
       return connectionState.loginPromise
     }
 
-    connectionState.loginPromise = this.authenticateApi
-      .authenticate(connectionState.credentials)
+    connectionState.loginPromise = this.authenticateUserApi
+      .authenticateUser({ credentials: connectionState.credentials })
       .then((res) => {
         // Reset the error counter
         connectionState.errorCount = 0
@@ -228,16 +229,10 @@ export class CourtClientServiceImplementation implements CourtClientService {
         connectionState.authenticationToken = stripResult(res)
       })
       .catch((reason) => {
-        // The error may contain username and password in plain text
-        const maskedDetail = reason.message?.replace(
-          /&password=.*? /,
-          '&password=xxxxx ',
-        )
-
         throw new BadGatewayException({
           ...reason,
           message: 'Unable to log into the court service',
-          detail: maskedDetail,
+          detail: reason.message,
         })
       })
       .finally(() => (connectionState.loginPromise = undefined))
@@ -245,39 +240,13 @@ export class CourtClientServiceImplementation implements CourtClientService {
     return connectionState.loginPromise
   }
 
-  private handleError(
-    connectionState: ConnectionState,
-    reason: { status: string; message: string },
-  ): Error {
-    this.logger.error('Court client error', { reason })
-
-    // Check for known errors
-    if (reason.message === 'FileNotSupported') {
-      return new UnsupportedMediaTypeException(reason)
-    }
-
-    if (
-      reason.message?.startsWith('Case Not Found') ||
-      reason.message ===
-        "Incorrect 'CaseId/Number' - Search returned no results - update failed"
-    ) {
-      return new NotFoundException(reason)
-    }
-
-    // One step closer to forced relogin because of unknown errors.
-    connectionState.errorCount++
-
-    return new BadGatewayException({
-      ...reason,
-      message: 'Error while calling the court service',
-      detail: reason.message,
-    })
-  }
-
   private async authenticatedRequest(
-    connectionState: ConnectionState,
+    courtId: string,
     request: (authenticationToken: string) => Promise<string>,
   ): Promise<string> {
+    // Get the connection state
+    const connectionState = this.getConnectionState(courtId)
+
     // Login if there is no authentication token for the court id
     if (!connectionState.authenticationToken) {
       await this.login(connectionState)
@@ -314,85 +283,195 @@ export class CourtClientServiceImplementation implements CourtClientService {
         })
 
         return this.login(connectionState).then(() =>
-          request(connectionState.authenticationToken)
-            .then((res) => stripResult(res))
-            .catch((reason) => {
-              // Throw an appropriate eception
-              throw this.handleError(connectionState, reason)
-            }),
+          request(connectionState.authenticationToken).then((res) =>
+            stripResult(res),
+          ),
         )
       }
 
-      // Throw an appropriate eception
-      throw this.handleError(connectionState, reason)
+      throw reason
     }
   }
 
-  private throwOn200Error(result: string): string {
-    if (result === 'The userIdNumber is not correct') {
-      throw new BadRequestException(result)
+  private handleUnknownError(
+    courtId: string,
+    reason: { status: string; message: string },
+  ) {
+    // Get the connection state
+    const connectionState = this.getConnectionState(courtId)
+
+    // One step closer to forced relogin because of unknown errors.
+    connectionState.errorCount++
+
+    return new BadGatewayException({
+      ...reason,
+      message: 'Error while calling the court service',
+      detail: reason.message,
+    })
+  }
+
+  private handleCaseError(
+    courtId: string,
+    reason: { status: string; message: string },
+  ): Error {
+    // Check for known errors
+    if (reason.message?.startsWith('Case Not Found')) {
+      return new NotFoundException(reason)
     }
 
-    return result
+    return this.handleUnknownError(courtId, reason)
   }
 
-  createCase(courtId: string, args: CreateCaseArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.createCaseApi.createCase({
-          createCaseData: { ...args, authenticationToken },
-        }),
-    )
+  private handleParticipantError(
+    courtId: string,
+    reason: { status: string; message: string },
+  ): Error {
+    // Check for known errors
+    if (reason.message?.startsWith("Incorrect 'CaseId/Number'")) {
+      return new NotFoundException({
+        ...reason,
+        message: 'Case not found',
+        detail: reason.message,
+      })
+    }
+
+    if (reason.message === 'The userIdNumber is not correct') {
+      throw new NotFoundException({
+        ...reason,
+        message: 'User not found',
+        detail: reason.message,
+      })
+    }
+
+    return this.handleUnknownError(courtId, reason)
   }
 
-  createDocument(courtId: string, args: CreateDocumentArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.createDocumentApi.createDocument({
-          createDocumentData: { ...args, authenticationToken },
-        }),
-    )
+  async createCase(courtId: string, args: CreateCaseArgs): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.createCaseApi.createCase({
+        createCaseData: { ...args, authenticationToken },
+      }),
+    ).catch((reason) => {
+      this.logger.error('Court client error - createCase', { courtId, reason })
+
+      throw this.handleUnknownError(courtId, reason)
+    })
   }
 
-  createThingbok(courtId: string, args: CreateThingbokArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.createThingbokApi.createThingbok({ ...args, authenticationToken }),
-    )
+  async createDocument(
+    courtId: string,
+    args: CreateDocumentArgs,
+  ): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.createDocumentApi.createDocument({
+        createDocumentData: { ...args, authenticationToken },
+      }),
+    ).catch((reason: { status: string; message: string }) => {
+      this.logger.error('Court client error - createDocument', {
+        courtId,
+        reason,
+      })
+
+      if (reason.message === 'FileNotSupported') {
+        throw new UnsupportedMediaTypeException(reason)
+      }
+
+      throw this.handleCaseError(courtId, reason)
+    })
   }
 
-  createEmail(courtId: string, args: CreateEmailArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.createEmailApi.createEmail({
-          createEmailData: { ...args, authenticationToken },
-        }),
-    )
+  async createThingbok(
+    courtId: string,
+    args: CreateThingbokArgs,
+  ): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.createThingbokApi.createThingbok({ ...args, authenticationToken }),
+    ).catch((reason) => {
+      this.logger.error('Court client error - createThingbok', {
+        courtId,
+        reason,
+      })
+
+      throw this.handleCaseError(courtId, reason)
+    })
+  }
+
+  async createEmail(courtId: string, args: CreateEmailArgs): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.createEmailApi.createEmail({
+        createEmailData: { ...args, authenticationToken },
+      }),
+    ).catch((reason) => {
+      this.logger.error('Court client error - createEmail', { courtId, reason })
+
+      throw this.handleCaseError(courtId, reason)
+    })
   }
 
   async updateCaseWithProsecutor(
     courtId: string,
     args: UpdateCaseWithProsecutorArgs,
   ): Promise<string> {
-    if (!this.config.courtLitigantApiAvailable) {
-      throw new ServiceUnavailableException(
-        'Court litigant API is not available',
-      )
-    }
-
     const result = await this.authenticatedRequest(
-      this.getConnectionState(courtId),
+      courtId,
       (authenticationToken) =>
         this.updateCaseWithProsecutorApi.updateCaseWithProsecutor({
           updateCaseWithProsecutorData: { ...args, authenticationToken },
         }),
-    )
+    ).catch((reason) => {
+      this.logger.error('Court client error - updateCaseWithProsecutor', {
+        courtId,
+        reason,
+      })
 
-    return this.throwOn200Error(result)
+      throw this.handleParticipantError(courtId, reason)
+    })
+
+    if (
+      result.startsWith('Participant with id') &&
+      result.includes('and company id') &&
+      result.includes('is added or updated successfully as prosecutor to case')
+    ) {
+      return result
+    }
+
+    // Handle errors reported in 200 OK responses
+    if (result === 'The userIdNumber is not correct') {
+      throw new NotFoundException({
+        status: 200,
+        message: 'User not found',
+        detail: result,
+      })
+    }
+
+    if (
+      result.startsWith('ClientContact with idNumber') &&
+      result.endsWith('could not be found')
+    ) {
+      throw new NotFoundException({
+        status: 200,
+        message: 'Prosecutor not found',
+        detail: result,
+      })
+    }
+
+    if (
+      result.startsWith('Prosecutor with IdNumber') &&
+      result.includes('and companyIdNumber') &&
+      result.endsWith('was not found')
+    ) {
+      throw new NotFoundException({
+        status: 200,
+        message: 'Prosecutor not found in prosecutors office',
+        detail: result,
+      })
+    }
+
+    throw new UnprocessableEntityException({
+      status: 200,
+      message: 'Unexpected result',
+      detail: result,
+    })
   }
 
   async updateCaseWithDefendant(
@@ -405,23 +484,56 @@ export class CourtClientServiceImplementation implements CourtClientService {
       )
     }
 
-    const result = await this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.updateCaseWithDefendantApi.updateCaseWithDefendant({
-          updateCaseWithDefendantData: { ...args, authenticationToken },
-        }),
-    )
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.updateCaseWithDefendantApi.updateCaseWithDefendant({
+        updateCaseWithDefendantData: { ...args, authenticationToken },
+      }),
+    ).catch((reason: { status: string; message: string }) => {
+      this.logger.error('Court client error - updateCaseWithDefendant', {
+        courtId,
+        reason,
+      })
 
-    return this.throwOn200Error(result)
+      if (reason.message.startsWith("Can't find defendant with IdNumber")) {
+        throw new NotFoundException(reason)
+      }
+
+      if (
+        reason.message ===
+        "UpdateCaseWithDefendant: 'Defendant.IdNumber' parameter is required and should be valid and provided"
+      ) {
+        throw new BadRequestException({
+          ...reason,
+          message: 'Defendant national id is missing',
+          detail: reason.message,
+        })
+      }
+
+      if (
+        reason.message ===
+        "UpdateCaseWithDefendant: 'Defendant.IdNumber' parameter is NOT valid."
+      ) {
+        throw new BadRequestException(
+          reason,
+          'Defendant national id is not valid',
+        )
+      }
+
+      throw this.handleParticipantError(courtId, reason)
+    })
   }
 
-  uploadStream(courtId: string, args: UploadStreamArgs): Promise<string> {
-    return this.authenticatedRequest(
-      this.getConnectionState(courtId),
-      (authenticationToken) =>
-        this.uploadStreamApi.uploadStream(authenticationToken, args),
-    )
+  async uploadStream(courtId: string, args: UploadStreamArgs): Promise<string> {
+    return this.authenticatedRequest(courtId, (authenticationToken) =>
+      this.uploadStreamApi.uploadStream(authenticationToken, args),
+    ).catch((reason) => {
+      this.logger.error('Court client error - uploadStream', {
+        courtId,
+        reason,
+      })
+
+      throw this.handleCaseError(courtId, reason)
+    })
   }
 }
 

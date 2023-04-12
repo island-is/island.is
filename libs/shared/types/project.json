@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/shared/types"]
     }
   },
-  "tags": ["lib:js"]
+  "tags": ["lib:js", "scope:js"]
 }

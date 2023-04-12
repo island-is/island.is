@@ -22,11 +22,13 @@ import {
   CaseState,
   CaseType,
   IndictmentSubtype,
-  User,
+  isIndictmentCase,
+  User as TUser,
 } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
+import { User } from '../user'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
@@ -61,7 +63,7 @@ export class PoliceService {
   }
 
   private async fetchPoliceDocumentApi(url: string): Promise<Response> {
-    if (!this.config.policeDocumentApiAvailable) {
+    if (!this.config.policeCaseApiAvailable) {
       throw 'Police document API not available'
     }
 
@@ -87,8 +89,9 @@ export class PoliceService {
 
   private async throttleUploadPoliceCaseFile(
     caseId: string,
+    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-    user: User,
+    user: TUser,
   ): Promise<UploadPoliceCaseFileResponse> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -116,6 +119,15 @@ export class PoliceService {
           throw reason
         }
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the file was not found
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+            detail: reason.message,
+          })
+        }
+
         this.eventService.postErrorEvent(
           'Failed to get police case file',
           {
@@ -128,15 +140,6 @@ export class PoliceService {
           reason,
         )
 
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the file was not found
-          throw new NotFoundException({
-            ...reason,
-            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
-            detail: reason.message,
-          })
-        }
-
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
@@ -144,7 +147,9 @@ export class PoliceService {
         })
       })
 
-    const key = `uploads/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `${
+      isIndictmentCase(caseType) ? 'indictments' : 'uploads'
+    }/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
     await this.awsS3Service.putObject(key, pdf)
 
@@ -153,7 +158,7 @@ export class PoliceService {
 
   async getAllPoliceCaseFiles(
     caseId: string,
-    user: User,
+    user: TUser,
   ): Promise<PoliceCaseFile[]> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetDocumentListById/${caseId}`,
@@ -163,11 +168,16 @@ export class PoliceService {
           const response = await res.json()
 
           return response.map(
-            (file: { rvMalSkjolMals_ID: string; heitiSkjals: string }) => ({
+            (file: {
+              rvMalSkjolMals_ID: string
+              heitiSkjals: string
+              malsnumer: string
+            }) => ({
               id: file.rvMalSkjolMals_ID,
               name: file.heitiSkjals.endsWith('.pdf')
                 ? file.heitiSkjals
                 : `${file.heitiSkjals}.pdf`,
+              policeCaseNumber: file.malsnumer,
             }),
           )
         }
@@ -175,7 +185,7 @@ export class PoliceService {
         const reason = await res.text()
 
         // The police system does not provide a structured error response.
-        // When police case does not exist, a stack trace is returned.
+        // When a police case does not exist, a stack trace is returned.
         throw new NotFoundException({
           message: `Police case for case ${caseId} does not exist`,
           detail: reason,
@@ -184,6 +194,15 @@ export class PoliceService {
       .catch((reason) => {
         if (reason instanceof NotFoundException) {
           throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case for case ${caseId} does not exist`,
+            detail: reason.message,
+          })
         }
 
         this.eventService.postErrorEvent(
@@ -196,11 +215,6 @@ export class PoliceService {
           reason,
         )
 
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case has no files
-          return []
-        }
-
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case files for case ${caseId}`,
@@ -211,11 +225,13 @@ export class PoliceService {
 
   async uploadPoliceCaseFile(
     caseId: string,
+    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-    user: User,
+    user: TUser,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
+      caseType,
       uploadPoliceCaseFile,
       user,
     )
@@ -224,6 +240,7 @@ export class PoliceService {
   }
 
   async updatePoliceCase(
+    user: User,
     caseId: string,
     caseType: CaseType | IndictmentSubtype,
     caseState: CaseState,
@@ -246,7 +263,7 @@ export class PoliceService {
         caseNumber: policeCaseNumber,
         ssn:
           defendantNationalIds && defendantNationalIds[0]
-            ? defendantNationalIds[0]
+            ? defendantNationalIds[0].replace('-', '')
             : '',
         type: caseType,
         courtVerdict: caseState,
@@ -264,8 +281,11 @@ export class PoliceService {
         throw response
       })
       .catch((reason) => {
-        // Do not spam the logs with errors
-        if (!(reason instanceof ServiceUnavailableException)) {
+        if (reason instanceof ServiceUnavailableException) {
+          // Do not spam the logs with errors
+          // Act as if the case was updated
+          return true
+        } else {
           this.logger.error(`Failed to update police case ${caseId}`, {
             reason,
           })
@@ -275,6 +295,8 @@ export class PoliceService {
           'Failed to update police case',
           {
             caseId,
+            actor: user.name,
+            institution: user.institution?.name,
             caseType,
             caseState,
             policeCaseNumber,

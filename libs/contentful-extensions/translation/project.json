@@ -30,5 +30,5 @@
     },
     "docker-static": {}
   },
-  "tags": []
+  "tags": ["lib:react", "scope:react"]
 }

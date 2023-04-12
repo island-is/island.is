@@ -39,7 +39,8 @@ describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id submitted`, () => {
     const caseData = mockCase(CaseType.INDICTMENT)
     const caseDataAddition = {
       ...caseData,
-      state: CaseState.SUBMITTED,
+      state: CaseState.RECEIVED,
+      courtCaseNumber: 'S-test/2023',
       prosecutor: makeProsecutor(),
       creatingProsecutor: makeProsecutor(),
       court: makeCourt(),

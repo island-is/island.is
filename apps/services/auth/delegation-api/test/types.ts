@@ -1,13 +1,10 @@
 import { DelegationConfig } from '@island.is/auth-api-lib'
 import { User } from '@island.is/auth-nest-tools'
 import { ConfigType } from '@island.is/nest/config'
-
-import { CreateCustomDelegation, CreateDomain } from './fixtures/types'
-
-export interface TestEndpointOptions {
-  method: string
-  endpoint: string
-}
+import {
+  CreateCustomDelegation,
+  CreateDomain,
+} from '@island.is/services/auth/testing'
 
 export interface DomainAssertion {
   name: string
@@ -21,4 +18,5 @@ export interface TestCase {
   accessTo?: string[]
   domains: CreateDomain[]
   expected: DomainAssertion[]
+  query?: Record<string, string | string[]>
 }

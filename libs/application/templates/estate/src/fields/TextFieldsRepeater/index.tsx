@@ -1,5 +1,5 @@
-import { FC, useEffect } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { FC, useEffect, useState } from 'react'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -24,21 +24,31 @@ type Props = {
 
 export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   field,
+  errors,
 }) => {
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
     name: id,
   })
 
+  const [rateOfExchange, setRateOfExchange] = useState(0)
+  const [faceValue, setFaceValue] = useState(0)
+  const [index, setIndex] = useState('0')
+
+  const { setValue } = useFormContext()
+
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
 
-    const repeaterFields = values.reduce((acc: any, elem: any) => {
-      acc[elem] = ''
-      return acc
-    }, {})
+    const repeaterFields = values.reduce(
+      (acc: Record<string, string>, elem: string) => {
+        acc[elem] = ''
+        return acc
+      },
+      {},
+    )
 
     append(repeaterFields)
   }
@@ -47,11 +57,13 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     if (fields.length === 0) {
       handleAddRepeaterFields()
     }
-  }, [])
+
+    setValue(`${index}.value`, String(faceValue * rateOfExchange))
+  }, [fields, faceValue, rateOfExchange, setValue])
 
   return (
     <Box>
-      {fields.map((repeaterField, index) => {
+      {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
 
         return (
@@ -97,6 +109,20 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       currency={field.currency}
                       readOnly={field.readOnly}
                       type={field.type}
+                      error={
+                        !!errors && errors[id] && (errors[id] as any)[index]
+                          ? (errors[id] as any)[index][field.id] ?? ''
+                          : undefined
+                      }
+                      onChange={(e) => {
+                        setIndex(fieldIndex)
+                        const value = Math.max(0, Number(e.target.value))
+                        if (field.id === 'rateOfExchange') {
+                          setRateOfExchange(value)
+                        } else if (field.id === 'faceValue') {
+                          setFaceValue(value)
+                        }
+                      }}
                     />
                   </GridColumn>
                 )

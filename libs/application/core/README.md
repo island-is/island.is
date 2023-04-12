@@ -168,6 +168,7 @@ You can see a simple example from the reference-template [here](https://github.c
 
 We have a few different statuses that an application can be in. They are:
 
+- `notstarted` The user has opened the application / it is saved in the database, but is not listed yet (eg. still in prerequisites)
 - `draft` - The application has been created but not submitted.
 - `inprogress` - The application has been submitted to another entity other than the applicant and has yet to receive some information from that party in order to be completed.
 - `completed` - The application has been submitted and requires no further action and is finished.
@@ -176,6 +177,7 @@ We have a few different statuses that an application can be in. They are:
 
 ```typescript
 export enum ApplicationStatus {
+  NOT_STARTED = 'notstarted',
   IN_PROGRESS = 'inprogress',
   COMPLETED = 'completed',
   REJECTED = 'rejected',
@@ -272,6 +274,73 @@ stateMachineConfig: {
 },
 ```
 
+### Pending Action
+
+![image](../../../handbook/misc/assets/application-pending-action.jpeg)
+
+For each state, you have the option to set a "pendingAction". This will appear as the top item in the application history logs, along with a user prompt. This is not persisted between states.
+
+```ts
+[States.waitingToAssign]: {
+  meta: {
+    name: 'Waiting to assign',
+    ...
+    actionCard: {
+      pendingAction: {
+        title: 'Skráning yfirferðaraðila',
+        content:
+          'Umsóknin bíður nú þess að yfirferðaraðili sé skráður á umsóknina. Þú getur líka skráð þig sjálfur inn og farið yfir umsóknina.',
+        displayStatus: 'warning',
+      },
+      ...
+    },
+```
+
+You can pass a function that uses the application answers and the user's role to determine the color, content, and title of the box to display to the user.
+
+```ts
+  ...
+    actionCard: {
+      pendingAction: (answers, role) => {
+        let title, content, displayStatus
+        if (role === 'applicant') {
+          title = 'Waiting for Reviewer'
+          content =
+            'Your application is waiting for a reviewer to be assigned.'
+          displayStatus = 'info'
+        } else if (role === 'reviewer') {
+          title = 'Applications to Review'
+          content = 'You have applications waiting to be reviewed.'
+          displayStatus = 'warning'
+        } else {
+          //display something else
+          ...
+        }
+        return { title, content, displayStatus }
+      },
+  ...
+```
+
+### Application History
+
+You can display a history log for each state that the application passes through, both on entry and exit. The logs will be ordered below the current [Pending Action](###-Pending-Action) (if present) with the most recent entries at the top.
+
+```ts
+[States.inReview]: {
+  meta: {
+    name: 'In review',
+    ...
+    actionCard: {
+      ...
+	    onEntryHistoryLog: 'Review started',
+			onExitHistoryLog: 'Review finished'
+      ...
+    },
+```
+
+An display example of a history log (with no [Pending Action](###-Pending-Action) present)
+![image](../../../handbook/misc/assets/application-history.jpeg)
+
 ### Delete Application
 
 In order to enable users to delete applications within a state simply add `delete: true` to the desired role and state.
@@ -301,8 +370,7 @@ stateMachineConfig: {
 ```
 
 This will add a delete button in the Draft state available only to the `Applicant` role like so:
-
-![image](https://user-images.githubusercontent.com/2643113/165759979-a267dd6f-dbe4-4bc9-b2b8-dad5508a44c0.png)
+application-pending-action.jpeg
 
 ## Form
 
@@ -313,6 +381,60 @@ The structure of a form describes how questions and other fields are displayed, 
 ### Fields
 
 A form field can be a question that the applicant needs to answer, or just something purely cosmetic or informational. This library provides prebuilt reusable fields (such as TextField, CheckboxField, RadioField and more), and also an interface for a custom field. In order to get data schema validation for a field, the `id` of the field needs to be present in the application template `dataSchema` object. It is even possible to provide a field with pure `defaultValue` if no answer has been provided by the user.
+
+### How to create a new field component
+
+1. Add the new name of your field to both `FieldTypes` and `FieldComponents` enums in `libs/application/types/src/lib/fields.ts`
+2. Create a new interface in `libs/application/types/src/lib/fields.ts` that extends `BaseField`. Add your custom props to the interface along with type and component.
+
+```typescript
+export interface NewField extends BaseField {
+  readonly type: FieldTypes.NEW_FIELD
+  component: FieldComponents.NEW_FIELD
+  myProp: string
+  myOtherProp: number
+}
+```
+
+3. In the same file, add your new field to the exported `Field` type.
+
+4. Create a new function in `libs/application/core/src/lib/fieldBuilders.ts`. This function accepts a parameter of the new type we created, `NewField`, but we have to omit `type`, `component` and `children`. Then add the props as follows.
+
+```typescript
+export function buildNewField(
+  data: Omit<NewField, 'type' | 'component' | 'children'>,
+): NewField {
+  const { myProp, myOtherProp } = data
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    myProp,
+    myOtherProp,
+    type: FieldTypes.NEW_FIELD,
+    component: FieldComponents.NEW_FIELD,
+  }
+}
+```
+
+5. Create a new folder with the name of your field in `libs/application/ui-fields/src/lib/`. Also create your react component there with the same name and with `.tsx` file ending.
+
+![image](https://user-images.githubusercontent.com/16030946/217768803-ddf18c5a-21e6-4542-a704-0e770403c997.png)
+
+6. Create new function in the new file with the same name you created in step 1 in the `FieldComponents` enum. This functions props should extend `FieldBaseProps`. Add Field to your props with the type of the interface you created in step 2.
+
+```typescript
+interface Props extends FieldBaseProps {
+  field: NewField
+}
+
+export const NewFormField: FC<Props> = ({ application, field }) => {
+  return <Box>Your new component.</Box>
+}
+```
+
+7. Remember to add your new component as a new export in the parent `index.ts` file.
+
+8. You have now created a new field component. You can now use it in your application forms.
 
 ### Conditions
 
@@ -413,6 +535,60 @@ template: {
 This will then return the name for the application depending on the answers provided in the overview and at the top of the application shell.
 Keep in mind when using dynamic names that there should not be any personal information in the name.
 
+## Draft status bar for application action cards
+
+Default behaviour and custom behavior is explained below.  
+The reason default behavior does not work for all applications is because it counts all screens, including the dynamic ones, which results in too many screens listed for some applications.
+
+### Default draft status bar behavior
+
+- draftFinishedSteps
+  - Uses form screens, current active index as default value
+- draftTotalSteps
+  - Uses form screens.length as default value
+
+### Custom draft status bar behavior
+
+- draftFinishedSteps
+  - Uses the draftPageNumber for the current section
+- draftTotalSteps
+  - Searches all sections, returns the max value for draftPageNumber
+- You can add the page number for each section in the form builder which overrides the default behavior.
+  - If you have for example 10 screens that are dynamic, and only one of them is shown during the application fill out process (some logic chooses between them). Then you can put the same draftPageNumber to all of them. For example here below we have two screens with same number but only one is rendered based on a condition.
+
+```diff
+  buildSection({
+    id: 'id-1',
+    title: 'demo-title',
++   draftPageNumber: 1,
+  children: [],
+  }),
+  buildSection({
+    id: 'id-2',
+    title: 'demo-title',
++   draftPageNumber: 2,
+    children: [],
+  }),
+  buildSection({
+    id: 'id-3',
+    title: 'payment-transcation',
++   draftPageNumber: 3,
+    children: [],
+    condition: (_formValue) => {
+      return _formValue.paymentMethod === "TRANSACTION"
+    }
+  }),
+  buildSection({
+    id: 'id-4',
+    title: 'payment-visa',
++   draftPageNumber: 3,
+    children: [],
+    condition: (_formValue) => {
+      return _formValue.paymentMethod === "VISA"
+    }
+  }),
+```
+
 ## Code owners and maintainers
 
-- [Sendiradid](https://github.com/orgs/island-is/teams/sendiradid-applications/members)
+- [Norda](https://github.com/orgs/island-is/teams/norda-applications/members)

@@ -4,6 +4,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { FlightService, ADS_POSTAL_CODES } from '../../flight.service'
 import { Flight, FlightLeg } from '../../flight.model'
 import { ExplicitCode } from '../../../discount/discount.model'
+import { NationalRegistryService } from '../../../nationalRegistry'
 
 describe('PublicFlightController', () => {
   let flightService: FlightService
@@ -13,6 +14,12 @@ describe('PublicFlightController', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         FlightService,
+        {
+          provide: NationalRegistryService,
+          useClass: jest.fn(() => ({
+            getUser: () => ({}),
+          })),
+        },
         {
           provide: getModelToken(Flight),
           useClass: jest.fn(() => ({

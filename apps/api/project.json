@@ -85,5 +85,5 @@
     },
     "docker-express": {}
   },
-  "tags": []
+  "tags": ["scope:api"]
 }

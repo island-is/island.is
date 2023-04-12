@@ -19,6 +19,7 @@ import {
   AuthCustomDelegationOutgoing,
 } from '../../../types/customDelegation'
 import { m } from '../../../lib/messages'
+import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation?: AuthCustomDelegation
@@ -75,12 +76,7 @@ export const AccessDeleteModal = ({
 
       onDelete()
 
-      toast.success(
-        formatMessage({
-          id: 'sp.access-control-delegations:delete-success',
-          defaultMessage: 'Aðgangi eytt',
-        }),
-      )
+      toast.success(formatMessage(m.deleteSuccess))
     } catch (error) {
       setError(true)
     }
@@ -92,14 +88,16 @@ export const AccessDeleteModal = ({
   const fromName = userInfo?.profile.name
   const fromNationalId = userInfo?.profile.nationalId
 
+  const { showShadow, pxProps } = useDynamicShadow({
+    rootMargin: '-128px',
+    isDisabled: !rest.isVisible,
+  })
+
   return (
     <Modal
       id={`access-delete-modal`}
       label={formatMessage(m.accessControl)}
-      title={formatMessage({
-        id: 'sp.settings-access-control:access-remove-modal-content',
-        defaultMessage: 'Ertu viss um að þú viljir eyða þessum aðgangi?',
-      })}
+      title={formatMessage(m.accessRemoveModalTitle)}
       onClose={onClose}
       noPaddingBottom
       {...rest}
@@ -112,14 +110,7 @@ export const AccessDeleteModal = ({
       >
         {error && (
           <Box paddingBottom={3}>
-            <AlertMessage
-              message={formatMessage({
-                id: 'sp.access-control-delegations:delete-error',
-                defaultMessage:
-                  'Ekki tókst að eyða umboði. Vinsamlegast reyndu aftur',
-              })}
-              type="error"
-            />
+            <AlertMessage message={formatMessage(m.deleteError)} type="error" />
           </Box>
         )}
         <Box
@@ -131,10 +122,7 @@ export const AccessDeleteModal = ({
         >
           {fromName && fromNationalId && (
             <IdentityCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:delegation-to',
-                defaultMessage: 'Aðgangsveitandi',
-              })}
+              label={formatMessage(m.accessOwner)}
               title={fromName}
               description={formatNationalId(fromNationalId)}
               color="blue"
@@ -142,10 +130,7 @@ export const AccessDeleteModal = ({
           )}
           {toName && toNationalId && (
             <IdentityCard
-              label={formatMessage({
-                id: 'sp.access-control-delegations:access-holder',
-                defaultMessage: 'Aðgangshafi',
-              })}
+              label={formatMessage(m.accessHolder)}
               title={toName}
               description={formatNationalId(toNationalId)}
               color="purple"
@@ -154,10 +139,7 @@ export const AccessDeleteModal = ({
         </Box>
         {delegation?.domain && (
           <IdentityCard
-            label={formatMessage({
-              id: 'sp.access-control-delegations:domain',
-              defaultMessage: 'Kerfi',
-            })}
+            label={formatMessage(m.domain)}
             title={delegation.domain.displayName}
             imgSrc={delegation.domain.organisationLogoUrl}
           />
@@ -169,19 +151,17 @@ export const AccessDeleteModal = ({
           loading={scopeTreeLoading}
           listMarginBottom={[0, 0, 10]}
         />
+        <div {...pxProps} />
       </Box>
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md}
+          showShadow={md && showShadow}
           confirmButtonColorScheme="destructive"
           onCancel={onClose}
           onConfirm={onDeleteHandler}
           containerPaddingBottom={[3, 3, 6]}
-          confirmLabel={formatMessage({
-            id: 'sp.access-control-delegations:delete-access',
-            defaultMessage: 'Eyða aðgangi',
-          })}
+          confirmLabel={formatMessage(m.deleteAccess)}
         />
       </Box>
     </Modal>

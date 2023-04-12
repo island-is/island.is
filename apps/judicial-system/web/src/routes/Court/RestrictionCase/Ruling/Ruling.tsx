@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl, IntlShape } from 'react-intl'
 import { useRouter } from 'next/router'
 import formatISO from 'date-fns/formatISO'
@@ -6,7 +6,6 @@ import formatISO from 'date-fns/formatISO'
 import {
   Accordion,
   AccordionItem,
-  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -25,35 +24,26 @@ import {
   RulingInput,
   PdfButton,
   FormContext,
-  useRequestRulingSignature,
-  SigningModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  Case,
   CaseDecision,
-  CaseType,
   completedCaseStates,
   Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  core,
-  rcRuling as m,
-  titles,
-  ruling,
-} from '@island.is/judicial-system-web/messages'
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { core, titles, ruling } from '@island.is/judicial-system-web/messages'
 import {
   capitalize,
   formatDate,
@@ -61,7 +51,10 @@ import {
 } from '@island.is/judicial-system/formatters'
 import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
+
+import { rcRuling as m } from './Ruling.strings'
 
 export function getConclusionAutofill(
   formatMessage: IntlShape['formatMessage'],
@@ -109,7 +102,7 @@ export function getConclusionAutofill(
           decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         caseType:
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TRAVEL_BAN
+            ? CaseType.TravelBan
             : workingCase.type,
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
@@ -121,8 +114,6 @@ export function getConclusionAutofill(
           ?.replace(' kl.', ', kl.'),
       })
 }
-
-type availableModals = 'NoModal' | 'SigningModal'
 
 export const Ruling: React.FC = () => {
   const {
@@ -152,98 +143,76 @@ export const Ruling: React.FC = () => {
 
   const router = useRouter()
 
-  const isModifyingRuling = router.pathname.includes(
-    constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE,
-  )
-  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
-
   const { user } = useContext(UserContext)
-  const [initialAutoFillDone, setInitialAutoFillDone] = useState(false)
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  useDeb(workingCase, 'prosecutorDemands')
-  useDeb(workingCase, 'courtCaseFacts')
-  useDeb(workingCase, 'courtLegalArguments')
-  useDeb(workingCase, 'conclusion')
-
-  const {
-    requestRulingSignature,
-    requestRulingSignatureResponse,
-    isRequestingRulingSignature,
-  } = useRequestRulingSignature(workingCase.id, () =>
-    setModalVisible('SigningModal'),
-  )
-
-  useEffect(() => {
-    if (isCaseUpToDate && !initialAutoFillDone) {
-      setAndSendCaseToServer(
-        [
-          {
-            introduction: formatMessage(m.sections.introduction.autofill, {
-              date: formatDate(workingCase.courtDate, 'PPP'),
-            }),
-            prosecutorDemands: workingCase.demands,
-            courtCaseFacts: workingCase.caseFacts,
-            courtLegalArguments: workingCase.legalArguments,
-            ruling: !workingCase.parentCase
-              ? `\n${formatMessage(ruling.autofill, {
-                  judgeName: workingCase.judge?.name,
-                })}`
-              : isAcceptingCaseDecision(workingCase.decision)
-              ? workingCase.parentCase.ruling
-              : undefined,
-            conclusion:
-              workingCase.decision &&
-              workingCase.defendants &&
-              workingCase.defendants.length > 0
-                ? getConclusionAutofill(
-                    formatMessage,
-                    workingCase,
-                    workingCase.decision,
-                    workingCase.defendants[0],
-                    workingCase.validToDate,
-                    workingCase.isCustodyIsolation,
-                    workingCase.isolationToDate,
-                  )
-                : undefined,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      setInitialAutoFillDone(true)
-    }
-  }, [
-    setAndSendCaseToServer,
-    formatMessage,
-    initialAutoFillDone,
-    isCaseUpToDate,
-    setWorkingCase,
-    updateCase,
-    workingCase,
+  useDeb(workingCase, [
+    'prosecutorDemands',
+    'courtCaseFacts',
+    'courtLegalArguments',
+    'conclusion',
   ])
+
+  const initialize = useCallback(() => {
+    setAndSendCaseToServer(
+      [
+        {
+          introduction: formatMessage(m.sections.introduction.autofill, {
+            date: formatDate(workingCase.courtDate, 'PPP'),
+          }),
+          prosecutorDemands: workingCase.demands,
+          courtCaseFacts: formatMessage(
+            ruling.sections.courtCaseFacts.prefill,
+            {
+              caseFacts: workingCase.caseFacts,
+            },
+          ),
+          courtLegalArguments: formatMessage(
+            ruling.sections.courtLegalArguments.prefill,
+            { legalArguments: workingCase.legalArguments },
+          ),
+          ruling: !workingCase.parentCase
+            ? `\n${formatMessage(ruling.autofill, {
+                judgeName: workingCase.judge?.name,
+              })}`
+            : isAcceptingCaseDecision(workingCase.decision)
+            ? workingCase.parentCase.ruling
+            : undefined,
+          conclusion:
+            workingCase.decision &&
+            workingCase.defendants &&
+            workingCase.defendants.length > 0
+              ? getConclusionAutofill(
+                  formatMessage,
+                  workingCase,
+                  workingCase.decision,
+                  workingCase.defendants[0],
+                  workingCase.validToDate,
+                  workingCase.isCustodyIsolation,
+                  workingCase.isolationToDate,
+                )
+              : undefined,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (isModifyingRuling) {
-        requestRulingSignature()
-      } else {
-        router.push(`${destination}/${workingCase.id}`)
-      }
+      router.push(`${destination}/${workingCase.id}`)
     },
-    [isModifyingRuling, requestRulingSignature, router, workingCase.id],
+    [router, workingCase.id],
   )
   const stepIsValid = isRulingValidRC(workingCase)
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -251,16 +220,6 @@ export const Ruling: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
-        {isModifyingRuling && (
-          <Box marginBottom={3}>
-            <AlertMessage
-              type="warning"
-              title={formatMessage(m.sections.alertMessage.title)}
-              message={formatMessage(m.sections.alertMessage.message)}
-              testid="alertMessageModifyingRuling"
-            />
-          </Box>
-        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -488,43 +447,59 @@ export const Ruling: React.FC = () => {
             <Decision
               workingCase={workingCase}
               acceptedLabelText={formatMessage(
-                m.sections.decision.acceptLabel,
+                ruling.restrictionCases.sections.decision.acceptLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               rejectedLabelText={formatMessage(
-                m.sections.decision.rejectLabel,
+                ruling.restrictionCases.sections.decision.rejectLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               partiallyAcceptedLabelText={formatMessage(
-                m.sections.decision.partiallyAcceptLabelV2,
+                ruling.restrictionCases.sections.decision.partiallyAcceptLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               dismissLabelText={formatMessage(
-                m.sections.decision.dismissLabel,
+                ruling.restrictionCases.sections.decision.dismissLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               acceptingAlternativeTravelBanLabelText={formatMessage(
-                m.sections.decision.acceptingAlternativeTravelBanLabelV2,
+                ruling.restrictionCases.sections.decision
+                  .acceptingAlternativeTravelBanLabel,
                 {
-                  caseType: formatMessage(m.sections.decision.caseType, {
-                    caseType: workingCase.type,
-                  }),
+                  caseType: formatMessage(
+                    ruling.restrictionCases.sections.decision.caseType,
+                    {
+                      caseType: workingCase.type,
+                    },
+                  ),
                 },
               )}
               onChange={(decision) => {
@@ -551,7 +526,6 @@ export const Ruling: React.FC = () => {
                   setWorkingCase,
                 )
               }}
-              disabled={isModifyingRuling}
             />
           </Box>
         </Box>
@@ -566,13 +540,16 @@ export const Ruling: React.FC = () => {
               <Box marginBottom={2}>
                 <Text as="h3" variant="h3">
                   {capitalize(
-                    formatMessage(m.sections.decision.caseType, {
-                      caseType:
-                        workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                          ? CaseType.TRAVEL_BAN
-                          : workingCase.type,
-                    }),
+                    formatMessage(
+                      ruling.restrictionCases.sections.decision.caseType,
+                      {
+                        caseType:
+                          workingCase.decision ===
+                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                            ? CaseType.TravelBan
+                            : workingCase.type,
+                      },
+                    ),
                   )}
                 </Text>
               </Box>
@@ -582,13 +559,16 @@ export const Ruling: React.FC = () => {
                   m.sections.decision.validToDate,
                   {
                     caseType: capitalize(
-                      formatMessage(m.sections.decision.caseType, {
-                        caseType:
-                          workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TRAVEL_BAN
-                            : workingCase.type,
-                      }),
+                      formatMessage(
+                        ruling.restrictionCases.sections.decision.caseType,
+                        {
+                          caseType:
+                            workingCase.decision ===
+                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+                              ? CaseType.TravelBan
+                              : workingCase.type,
+                        },
+                      ),
                     ),
                   },
                 )}
@@ -639,13 +619,12 @@ export const Ruling: React.FC = () => {
                     setWorkingCase,
                   )
                 }}
-                disabled={isModifyingRuling}
                 required
               />
             </Box>
           )}
-        {(workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
+        {(workingCase.type === CaseType.Custody ||
+          workingCase.type === CaseType.AdmissionToFacility) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={2}>
@@ -658,10 +637,9 @@ export const Ruling: React.FC = () => {
                   <Checkbox
                     name="isCustodyIsolation"
                     label={formatMessage(
-                      m.sections.custodyRestrictions.isolationV1,
+                      m.sections.custodyRestrictions.isolation,
                     )}
                     checked={workingCase.isCustodyIsolation}
-                    disabled={isModifyingRuling}
                     onChange={() => {
                       let conclusion = undefined
 
@@ -703,9 +681,7 @@ export const Ruling: React.FC = () => {
                 <DateTime
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
-                  disabled={
-                    isModifyingRuling || !workingCase.isCustodyIsolation
-                  }
+                  disabled={!workingCase.isCustodyIsolation}
                   selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
@@ -801,7 +777,6 @@ export const Ruling: React.FC = () => {
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
-            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>
@@ -809,39 +784,19 @@ export const Ruling: React.FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
-            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={
-            isModifyingRuling
-              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
-              : `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
-          }
-          nextIsLoading={
-            isModifyingRuling ? isRequestingRulingSignature : false
-          }
+          nextButtonIcon="arrowForward"
+          previousUrl={`${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_COURT_RECORD_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
-          nextButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingButtonLabel)
-              : undefined
-          }
         />
       </FormContentContainer>
-      {modalVisible === 'SigningModal' && (
-        <SigningModal
-          workingCase={workingCase}
-          requestRulingSignature={requestRulingSignature}
-          requestRulingSignatureResponse={requestRulingSignatureResponse}
-          onClose={() => setModalVisible('NoModal')}
-        />
-      )}
     </PageLayout>
   )
 }

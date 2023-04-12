@@ -391,7 +391,7 @@ export const m = defineMessages({
   },
   familyNumber: {
     id: 'service.portal:family-number',
-    defaultMessage: 'Fjölskyldunúmer',
+    defaultMessage: 'Lögheimilistengsl',
   },
   familySpouse: {
     id: 'service.portal:family-spouse',
@@ -401,9 +401,13 @@ export const m = defineMessages({
     id: 'service.portal:family-child',
     defaultMessage: 'Barn',
   },
-  endorsements: {
-    id: 'service.portal:endorsements',
-    defaultMessage: 'Meðmæli',
+  petitions: {
+    id: 'service.portal:petitions',
+    defaultMessage: 'Listar',
+  },
+  viewPetition: {
+    id: 'service.portal:viewPetition',
+    defaultMessage: 'Nánar um lista',
   },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',
@@ -424,6 +428,26 @@ export const m = defineMessages({
   educationDescription: {
     id: 'service.portal:education-description',
     defaultMessage: 'Hér mun birtast námsferill þinn og barnanna þinna',
+  },
+  educationGrunnskoli: {
+    id: 'service.portal:education-grunnskoli',
+    defaultMessage: 'Grunnskóli',
+  },
+  educationAssessment: {
+    id: 'service.portal:education-assessment',
+    defaultMessage: 'Námsmat',
+  },
+  educationFramhskoli: {
+    id: 'service.portal:education-framhskoli',
+    defaultMessage: 'Framhaldsskóli',
+  },
+  educationHaskoli: {
+    id: 'service.portal:education-haskoli',
+    defaultMessage: 'Háskóli',
+  },
+  educationGraduation: {
+    id: 'service.portal:education-graduation',
+    defaultMessage: 'Brautskráning',
   },
   documentProvider: {
     id: 'service.portal:document-provider',
@@ -480,6 +504,10 @@ export const m = defineMessages({
   searchPlaceholder: {
     id: 'service.portal:search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
+  },
+  searchByNationalId: {
+    id: 'service.portal:search-by-national-id',
+    defaultMessage: 'Leita eftir kennitölu',
   },
   actions: {
     id: 'service.portal:actions',
@@ -832,5 +860,34 @@ export const m = defineMessages({
   errorTitle: {
     id: 'service.portal:error-screen-title',
     defaultMessage: 'Villa',
+  },
+  buttonCancel: {
+    id: 'service.portal:button.cancel',
+    defaultMessage: 'Hætta við',
+    description: 'Cancel',
+  },
+  buttonEdit: {
+    id: 'service.portal:button.edit',
+    defaultMessage: 'Breyta',
+    description: 'Edit',
+  },
+  buttonDestroy: {
+    id: 'service.portal:button.delete',
+    defaultMessage: 'Eyða',
+    description: 'Delete',
+  },
+  buttonRenew: {
+    id: 'service.portal:button.renew',
+    defaultMessage: 'Endurnýja',
+    description: 'Renew',
+  },
+  airDiscount: {
+    id: 'service.portal:air-discount',
+    defaultMessage: 'Loftbrú',
+    description: 'Airfare discount',
+  },
+  sessions: {
+    id: 'service.portal:sessions',
+    defaultMessage: 'Notkun',
   },
 })

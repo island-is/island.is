@@ -1,4 +1,10 @@
-import React, { useCallback, useContext } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -9,16 +15,26 @@ import {
   PageLayout,
   FormContext,
   SectionHeading,
+  PdfButton,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
-import { Box, InputFileUpload, Text } from '@island.is/island-ui/core'
-import { useS3Upload } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  Box,
+  InputFileUpload,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
+import {
+  TUploadFile,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
@@ -27,14 +43,34 @@ const CaseFiles: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
   const {
-    files,
-    handleS3Upload,
-    handleRemoveFromS3,
+    handleChange,
+    handleRemove,
     handleRetry,
-    allFilesUploaded,
-  } = useS3Upload(workingCase)
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
+  const { features } = useContext(FeatureContext)
+  const { user } = useContext(UserContext)
+
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(
+    workingCase,
+    features,
+    user,
+  )
+
+  useEffect(() => {
+    if (workingCase.caseFiles) {
+      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
+    }
+  }, [workingCase.caseFiles])
+
+  const allFilesUploaded = useMemo(() => {
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
+  }, [displayFiles])
 
   const stepIsValid = allFilesUploaded
   const handleNavigationTo = useCallback(
@@ -42,11 +78,24 @@ const CaseFiles: React.FC = () => {
     [workingCase.id],
   )
 
+  const handleUIUpdate = useCallback(
+    (displayFile: TUploadFile, newId?: string) => {
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
+    },
+    [generateSingleFileUpdate],
+  )
+
+  const removeFileCB = useCallback((file: UploadFile) => {
+    setDisplayFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+  }, [])
+
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={IndictmentsProsecutorSubsections.CASE_FILES}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -64,97 +113,143 @@ const CaseFiles: React.FC = () => {
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.coverLetter)}
+            title={formatMessage(strings.caseFiles.coverLetterSection)}
           />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COVER_LETTER,
             )}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            accept={Object.values(fileExtensionWhitelist)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             multiple={false}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.COVER_LETTER)
+              handleChange(
+                files,
+                CaseFileCategory.COVER_LETTER,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
+        {!isTrafficViolationCaseCheck && (
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.caseFiles.indictmentSection)}
+            />
+            <InputFileUpload
+              fileList={displayFiles.filter(
+                (file) => file.category === CaseFileCategory.INDICTMENT,
+              )}
+              accept={Object.values(fileExtensionWhitelist)}
+              header={formatMessage(strings.caseFiles.inputFieldLabel)}
+              buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
+              multiple={false}
+              onChange={(files) =>
+                handleChange(
+                  files,
+                  CaseFileCategory.INDICTMENT,
+                  setDisplayFiles,
+                  handleUIUpdate,
+                )
+              }
+              onRemove={(file) => handleRemove(file, removeFileCB)}
+              onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            />
+          </Box>
+        )}
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.indictment)}
+            title={formatMessage(strings.caseFiles.criminalRecordSection)}
           />
           <InputFileUpload
-            fileList={files.filter(
-              (file) => file.category === CaseFileCategory.INDICTMENT,
-            )}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
-            multiple={false}
-            onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.INDICTMENT)
-            }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.criminalRecord)}
-          />
-          <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
             )}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            accept={Object.values(fileExtensionWhitelist)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.CRIMINAL_RECORD)
+              handleChange(
+                files,
+                CaseFileCategory.CRIMINAL_RECORD,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.costBreakdown)}
+            title={formatMessage(strings.caseFiles.costBreakdownSection)}
           />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
             )}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            accept={Object.values(fileExtensionWhitelist)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.COST_BREAKDOWN)
+              handleChange(
+                files,
+                CaseFileCategory.COST_BREAKDOWN,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading
-            title={formatMessage(strings.caseFiles.sections.otherDocuments)}
+            title={formatMessage(strings.caseFiles.otherDocumentsSection)}
           />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) =>
                 file.category === CaseFileCategory.CASE_FILE &&
                 !file.policeCaseNumber,
             )}
-            header={formatMessage(strings.caseFiles.sections.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.sections.buttonLabel)}
+            accept={Object.values(fileExtensionWhitelist)}
+            header={formatMessage(strings.caseFiles.inputFieldLabel)}
+            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.CASE_FILE)
+              handleChange(
+                files,
+                CaseFileCategory.CASE_FILE,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
+        {isTrafficViolationCaseCheck && (
+          <Box marginBottom={10}>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(strings.caseFiles.pdfButtonIndictment)}
+              pdfType="indictment"
+            />
+          </Box>
+        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
+          nextButtonIcon="arrowForward"
+          previousUrl={`${
+            isTrafficViolationCaseCheck
+              ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE
+              : constants.INDICTMENTS_PROCESSING_ROUTE
+          }/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_OVERVIEW_ROUTE)
           }

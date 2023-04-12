@@ -1,16 +1,19 @@
-import { Colors } from '@island.is/island-ui/theme'
 import type {
-  DatePickerBackgroundColor,
-  InputBackgroundColor,
   BoxProps,
+  DatePickerBackgroundColor,
+  IconProps,
+  InputBackgroundColor,
   SpanType,
 } from '@island.is/island-ui/core/types'
+import { FormItem, FormText, FormTextArray, StaticText } from './Form'
+
 import { ApolloClient } from '@apollo/client'
-import { FormText, FormTextArray, FormItem } from './Form'
-import { Condition } from './Condition'
-import { CallToAction } from './StateMachine'
 import { Application } from './Application'
+import { CallToAction } from './StateMachine'
+import { Colors } from '@island.is/island-ui/theme'
+import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
+import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 
 export type RecordObject<T = unknown> = Record<string, T>
@@ -48,7 +51,7 @@ export type TagVariant =
 export interface Option extends TestSupport {
   value: string
   label: FormText
-  subLabel?: string
+  subLabel?: FormText
   tooltip?: FormText
   excludeOthers?: boolean
   illustration?: React.FC
@@ -99,6 +102,11 @@ export enum FieldTypes {
   PAYMENT_PENDING = 'PAYMENT_PENDING',
   COMPANY_SEARCH = 'COMPANY_SEARCH',
   REDIRECT_TO_SERVICE_PORTAL = 'REDIRECT_TO_SERVICE_PORTAL',
+  PHONE = 'PHONE',
+  MESSAGE_WITH_LINK_BUTTON_FIELD = 'MESSAGE_WITH_LINK_BUTTON_FIELD',
+  EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
+  ALERT_MESSAGE = 'ALERT_MESSAGE',
+  LINK = 'LINK',
 }
 
 export enum FieldComponents {
@@ -113,9 +121,14 @@ export enum FieldComponents {
   KEY_VALUE = 'KeyValueFormField',
   SUBMIT = 'SubmitFormField',
   ASYNC_SELECT = 'AsyncSelectFormField',
-  PAYMENT_PENDING = 'PaymentPendingField',
   COMPANY_SEARCH = 'CompanySearchFormField',
   REDIRECT_TO_SERVICE_PORTAL = 'RedirectToServicePortalFormField',
+  PAYMENT_PENDING = 'PaymentPendingFormField',
+  PHONE = 'PhoneFormField',
+  MESSAGE_WITH_LINK_BUTTON_FIELD = 'MessageWithLinkButtonFormField',
+  EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
+  ALERT_MESSAGE = 'AlertMessageFormField',
+  LINK = 'LinkFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -180,6 +193,7 @@ export interface CompanySearchField extends BaseField {
   setLabelToDataSchema?: boolean
   shouldIncludeIsatNumber?: boolean
   checkIfEmployerIsOnForbiddenList?: boolean
+  required?: boolean
 }
 
 export interface AsyncSelectField extends BaseField {
@@ -208,6 +222,20 @@ export interface TextField extends BaseField {
   format?: string | FormatInputValueFunction
   suffix?: string
   rows?: number
+  required?: boolean
+  onChange?: (...event: any[]) => void
+}
+
+export interface PhoneField extends BaseField {
+  readonly type: FieldTypes.PHONE
+  component: FieldComponents.PHONE
+  disabled?: boolean
+  readOnly?: boolean
+  rightAlign?: boolean
+  placeholder?: FormText
+  backgroundColor?: InputBackgroundColor
+  allowedCountryCodes?: string[]
+  disableDropdown?: boolean
   required?: boolean
   onChange?: (...event: any[]) => void
 }
@@ -251,6 +279,7 @@ export interface KeyValueField extends BaseField {
   label: FormText
   value: FormText | FormTextArray
   component: FieldComponents.KEY_VALUE
+  display?: 'block' | 'flex'
 }
 
 export interface CustomField extends BaseField {
@@ -263,6 +292,42 @@ export interface CustomField extends BaseField {
 export interface RedirectToServicePortalField extends BaseField {
   readonly type: FieldTypes.REDIRECT_TO_SERVICE_PORTAL
   component: FieldComponents.REDIRECT_TO_SERVICE_PORTAL
+}
+
+export interface PaymentPendingField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_PENDING
+  component: FieldComponents.PAYMENT_PENDING
+}
+
+export interface MessageWithLinkButtonField extends BaseField {
+  readonly type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD
+  component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD
+  url: string
+  buttonTitle: FormText
+  message: FormText
+}
+
+export interface ExpandableDescriptionField extends BaseField {
+  readonly type: FieldTypes.EXPANDABLE_DESCRIPTION
+  component: FieldComponents.EXPANDABLE_DESCRIPTION
+  introText?: StaticText
+  description: StaticText
+  startExpanded?: boolean
+}
+
+export interface AlertMessageField extends BaseField {
+  readonly type: FieldTypes.ALERT_MESSAGE
+  component: FieldComponents.ALERT_MESSAGE
+  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
+  message?: FormText
+}
+
+export interface LinkField extends BaseField {
+  readonly type: FieldTypes.LINK
+  component: FieldComponents.LINK
+  s3key?: FormText
+  link?: string
+  iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
 export type Field =
@@ -280,3 +345,9 @@ export type Field =
   | AsyncSelectField
   | CompanySearchField
   | RedirectToServicePortalField
+  | PaymentPendingField
+  | PhoneField
+  | MessageWithLinkButtonField
+  | ExpandableDescriptionField
+  | AlertMessageField
+  | LinkField

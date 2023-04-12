@@ -11,5 +11,5 @@
       }
     }
   },
-  "tags": ["lib:dom"]
+  "tags": ["lib:dom", "scope:dom"]
 }

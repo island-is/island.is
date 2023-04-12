@@ -1,13 +1,16 @@
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { IntlShape, useIntl } from 'react-intl'
+
 import {
-  Case,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import {
   User,
   UserRole,
-} from '@island.is/judicial-system/types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useFilter as m } from './useFilter.strings'
 
@@ -34,7 +37,10 @@ const filterOptions = (
   },
 ]
 
-function myCasesFilter(theCase: Case, user: User | undefined): boolean {
+function myCasesFilter(
+  theCase: CaseListEntry,
+  user: User | undefined,
+): boolean {
   if (!user) {
     return false
   }
@@ -49,9 +55,9 @@ function myCasesFilter(theCase: Case, user: User | undefined): boolean {
 
 export function filterCases(
   filter: Filter,
-  cases: Case[],
+  cases: CaseListEntry[],
   user?: User,
-): Case[] {
+): CaseListEntry[] {
   if (filter === 'MY_CASES') {
     return cases.filter((c) => myCasesFilter(c, user))
   }
@@ -74,8 +80,8 @@ export function filterOptionsForUser(
 ) {
   return options.filter((option) => {
     if (
-      user?.role === UserRole.REGISTRAR ||
-      user?.role === UserRole.ASSISTANT
+      user?.role === UserRole.Representative ||
+      user?.role === UserRole.Assistant
     ) {
       return option.value !== 'INVESTIGATION'
     }
@@ -88,14 +94,14 @@ export type UserFilter = {
   filter: FilterOption
   setFilter: (filter: FilterOption) => void
   options: FilterOption[]
-  activeCases: Case[]
-  pastCases: Case[]
+  activeCases: CaseListEntry[]
+  pastCases: CaseListEntry[]
 }
 
 export const useFilter = (
-  allActiveCases: Case[],
-  allPastCases: Case[],
-  user?: User | undefined,
+  allActiveCases: CaseListEntry[],
+  allPastCases: CaseListEntry[],
+  user?: User,
 ): UserFilter => {
   const { formatMessage } = useIntl()
   const optionsMemo = useMemo(
@@ -124,7 +130,10 @@ export const useFilter = (
     [setFilter],
   )
 
-  const [activeCases, pastCases]: [Case[], Case[]] = useMemo(
+  const [activeCases, pastCases]: [
+    CaseListEntry[],
+    CaseListEntry[],
+  ] = useMemo(
     () => [
       filterCases(filter.value, allActiveCases, user),
       filterCases(filter.value, allPastCases, user),

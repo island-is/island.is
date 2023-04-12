@@ -1,16 +1,16 @@
 # Skjalaveita API
 
-Service that document providers need to implement. All of the document providers need to implement the same interface. The backend system in island.is will call this service to retrieve document from document provider when a user wants to view the document.
+Service that document providers need to implement. All of the document providers need to implement the same interface. The backend system in Island.is will call this service to retrieve documents from the document provider when a user wants to view the document.
 
-Https communication is required. The backend system will identify itself with JWT in the Authorization header using the Bearer schema. The service MUST validate the signature, issuer, expiry dates, audience and scope
+HTTPS communication is required. The backend system will identify itself with JWT in the Authorization header using the Bearer schema. The service MUST validate the signature, issuer, expiry dates, audience and scope
 
 ## Document
 
-The operation returns a owner's document. The service should only return a document if the identifier (SkjalId) and owner kennitala matches in the document provider systems.
+The operation returns an owner's document. The service should only return a document if the identifier (SkjalId) and owner kennitala matches in the document provider systems.
 
 > GET \$BASE_URL\$/{kennitala}/documents/{documentId}?authenticationType={authenticationType}
 
-Request Paramters:
+Request Parameters:
 
 | Variable           | Type   | Description                                                                                                                                                                                            |
 | ------------------ | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -40,7 +40,7 @@ Response:
 
 # Sequence Diagram
 
-Sequence diagram that describes how island.is retrieves a document and displays the user. This is valid when documents that are in the form of a non-external connection are required, such as pdf.
+Sequence diagram that describes how Island.is retrieves a document and displays the user. This is valid when documents that are in the form of a non-external connection are required, such as pdf.
 
 ![](./assets/sequence-diagram.png)
 
@@ -66,7 +66,7 @@ Response:
 
 ## DocumentIndex
 
-A document provider submits(registers) reference to documents. A reference consists of the name of the document, its identifier, owner kennitala (e. icelandic person/corp identity), along with other information. An organization may submit more than one reference that are referring to the same document, e.g. when a couple should see the same document. After the operation, the document becomes visible to the user of the web site(island.is).
+A document provider submits(registers) references to documents. A reference consists of the name of the document, its identifier, owner kennitala (e. icelandic person/corp identity), along with other information. An organization may submit more than one reference that are referring to the same document, e.g. when a couple should see the same document. After the operation, the document becomes visible to the user of the web site(Island.is).
 
 > POST /api/v1/documentindexes
 
@@ -134,7 +134,7 @@ Response:
 
 ## Withdrawn
 
-Opereration to withdraw document that is no longer available for publication. For example if an error was in the document and the document provider therefore wants to disable the document. The reference to the document will not be removed from the user's list, but will be marked withdrawn. The user sees that it is no longer for display.
+Operation to withdraw document that is no longer available for publication. For example if an error occurred in the document and the document provider wants to disable the document. The reference to the document will not be removed from the user's list, but will be marked withdrawn. The user sees that it is no longer available for display.
 
 > POST /api/v1/documentindexes/withdraw
 
@@ -180,7 +180,7 @@ Response:
 
 ## Read
 
-> POST /api/v1/documentindexes/withdraw
+> POST /api/v1/documentindexes/read
 
 If a document provider has published a document in a location other than island.is, the document can be marked as read. Thus, the user can see that he has opened the document regardless of where he opened it.
 

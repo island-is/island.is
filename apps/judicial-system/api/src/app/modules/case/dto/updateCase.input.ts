@@ -81,11 +81,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly requestedValidToDate?: string
+  readonly translator?: string
 
   @Allow()
   @Field({ nullable: true })
-  readonly translator?: string
+  readonly requestedValidToDate?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -276,10 +276,6 @@ export class UpdateCaseInput implements UpdateCase {
   readonly caseResentExplanation?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly seenByDefender?: string
-
-  @Allow()
   @Field(() => String, { nullable: true })
   readonly subpoenaType?: SubpoenaType
 
@@ -290,4 +286,12 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly indictmentIntroduction?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly requestDriversLicenseSuspension?: boolean
 }

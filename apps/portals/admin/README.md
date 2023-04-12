@@ -6,10 +6,6 @@ The admin portal allows government organisations to manage everything they need 
 
 It shares technical architecture and module system with the [service portal](../../service-portal/README.md).
 
-## Docs
-
-[How to start implementing a new module into the Admin Portal](../../libs/service-portal/core/README.md)
-
 ## URLs
 
 - [Development] (http://localhost:4201)
@@ -30,6 +26,10 @@ You can then proceed and start [the GraphQL API](../api/README.md#getting-starte
 ```bash
 yarn start portals-admin
 ```
+
+## Docs
+
+The admin portal shares a portal module system with the service portal. Read more about it [here](../../libs/portals/core/README.md).
 
 ## Code owners and maintainers
 

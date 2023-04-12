@@ -1,10 +1,8 @@
 import { CanActivate } from '@nestjs/common'
 
-import {
-  CaseExistsGuard,
-  CaseNotCompletedGuard,
-  CaseWriteGuard,
-} from '../../../case'
+import { RolesGuard } from '@island.is/judicial-system/auth'
+
+import { CaseExistsGuard, CaseWriteGuard } from '../../../case'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Create case file guards', () => {
@@ -22,14 +20,26 @@ describe('FileController - Create case file guards', () => {
     expect(guards).toHaveLength(3)
   })
 
-  describe('CaseExistsGuard', () => {
+  describe('RolesGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as quard 1', () => {
+    it('should have RolesGuard as quard 1', () => {
+      expect(guard).toBeInstanceOf(RolesGuard)
+    })
+  })
+
+  describe('CaseExistsGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[1]()
+    })
+
+    it('should have CaseExistsGuard as quard 2', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -38,23 +48,11 @@ describe('FileController - Create case file guards', () => {
     let guard: CanActivate
 
     beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have CaseWriteGuard as quard 2', () => {
-      expect(guard).toBeInstanceOf(CaseWriteGuard)
-    })
-  })
-
-  describe('CaseNotCompletedGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
       guard = new guards[2]()
     })
 
-    it('should have CaseNotCompletedGuard as quard 3', () => {
-      expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
+    it('should have CaseWriteGuard as quard 3', () => {
+      expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })
 })

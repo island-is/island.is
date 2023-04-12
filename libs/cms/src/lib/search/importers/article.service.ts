@@ -1,8 +1,10 @@
-import { MappedData } from '@island.is/content-search-indexer/types'
-import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
+
+import { MappedData } from '@island.is/content-search-indexer/types'
+import { logger } from '@island.is/logging'
+
 import { IArticle, IArticleFields } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
@@ -28,11 +30,18 @@ interface MetaData {
 
 @Injectable()
 export class ArticleSyncService implements CmsSyncProvider<IArticle> {
-  // only process articles that we consider not to be empty
+  // Only process articles that we consider not to be empty
   validateArticle(singleEntry: Entry<any> | IArticle): singleEntry is IArticle {
+    const isDefaultLocale = singleEntry.sys.locale === 'is-IS'
+
+    const otherLocaleThanDefaultLocaleIsActive =
+      !isDefaultLocale &&
+      (singleEntry.fields.activeTranslations?.[singleEntry.sys.locale] ?? true)
+
     return (
       singleEntry.sys.contentType.sys.id === 'article' &&
-      !!singleEntry.fields.title
+      !!singleEntry.fields.title &&
+      (isDefaultLocale || otherLocaleThanDefaultLocaleIsActive)
     )
   }
 
@@ -65,14 +74,19 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
             if (!fields?.parent || !fields?.title) {
               return undefined
             }
-            const { title, url, content, showTableOfContents } = fields
+
+            const parent = {
+              ...fields.parent,
+              fields: { ...fields.parent.fields },
+            }
+
+            delete parent['fields']['subArticles']
+
             return {
               sys,
               fields: {
-                title,
-                slug: url,
-                content,
-                showTableOfContents,
+                ...fields,
+                parent,
               },
             }
           })
@@ -198,6 +212,16 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
                 key: x.slug,
                 value: x.title,
                 type: 'category',
+              })),
+              ...(mapped.otherGroups ?? []).map((x) => ({
+                key: x.slug,
+                value: x.title,
+                type: 'group',
+              })),
+              ...(mapped.otherSubgroups ?? []).map((x) => ({
+                key: x.slug,
+                value: x.title,
+                type: 'subgroup',
               })),
               ...(entry.fields?.organization ?? []).map((x) => ({
                 key: x.fields?.slug ?? '',

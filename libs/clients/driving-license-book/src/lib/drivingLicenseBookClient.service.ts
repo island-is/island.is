@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common'
 import { AuthHeaderMiddleware, User } from '@island.is/auth-nest-tools'
 import {
+  AllowedPractieDrivingInput,
   CreateDrivingSchoolTestResultInput,
   CreatePracticalDrivingLessonInput,
   DeletePracticalDrivingLessonInput,
@@ -206,11 +207,10 @@ export class DrivingLicenseBookClientApiFactory {
       ssn: nationalId,
       showInactiveBooks: false,
     })
-    const activeBook = await this.getActiveBookId(nationalId)
 
-    const book = data?.books?.filter((b) => b.id === activeBook && !!b.id)[0]
+    const book = data?.books?.[0]
 
-    if (!book) {
+    if (!book || !data) {
       this.logger.error(
         `${LOGTAG} Error fetching student, student has no active book`,
       )
@@ -230,9 +230,11 @@ export class DrivingLicenseBookClientApiFactory {
       showInactiveBooks: true,
     })
     if (data?.books) {
-      const book = data.books.reduce((a, b) =>
-        new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
-      )
+      const book = data.books
+        .filter((item) => item.status !== 9)
+        .reduce((a, b) =>
+          new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+        )
 
       return getStudentAndBookMapper(data, book)
     }
@@ -334,5 +336,71 @@ export class DrivingLicenseBookClientApiFactory {
       licenseCategory: LICENSE_CATEGORY_B,
     })
     return data?.bookId || null
+  }
+
+  private async hasPracticeDriving(id: string): Promise<boolean> {
+    const api = await this.create()
+    const { data } = await api.apiStudentGetLicenseBookIdGet({ id })
+    return data?.practiceDriving || false
+  }
+
+  async allowPracticeDriving({
+    teacherNationalId,
+    studentNationalId,
+  }: AllowedPractieDrivingInput) {
+    const api = await this.create()
+    try {
+      await api.apiTeacherCreateAllowedPracticeDrivingPost({
+        createAllowedPractieDrivingRequestBody: {
+          teacherSsn: teacherNationalId,
+          studentSsn: studentNationalId,
+        },
+      })
+      return { success: true }
+    } catch (e) {
+      return { success: false }
+    }
+  }
+
+  async updateActiveStudentBookInstructor(
+    user: User,
+    newTeacherSsn: string,
+  ): Promise<{ success: boolean }> {
+    const api = await this.create()
+
+    const { data } = await api.apiStudentGetStudentOverviewSsnGet({
+      ssn: user.nationalId,
+      showInactiveBooks: false,
+    })
+
+    const activeBook = data?.books?.reduce((a, b) =>
+      new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+    )
+
+    if (!activeBook?.id || !activeBook?.createdOn) {
+      throw new NotFoundException(
+        `Active book for national id ${user.nationalId} not found`,
+      )
+    }
+
+    const hasPracticeDriving = await this.hasPracticeDriving(activeBook.id)
+
+    try {
+      await api.apiStudentUpdateLicenseBookIdPut({
+        id: activeBook.id,
+        digitalBookUpdateRequestBody: {
+          createdOn: activeBook.createdOn,
+          teacherSsn: newTeacherSsn,
+          schoolSsn: activeBook.schoolSsn,
+          studentEmail: data?.email,
+          studentPrimaryPhoneNumber: data?.primaryPhoneNumber,
+          studentSecondaryPhoneNumber: data?.secondaryPhoneNumber,
+          practiceDriving: hasPracticeDriving,
+        },
+      })
+      return { success: true }
+    } catch (e) {
+      return { success: false }
+    }
   }
 }

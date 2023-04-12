@@ -58,12 +58,12 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
-import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { ApplicationService } from '@island.is/application/api/core'
 import { FileService } from '@island.is/application/api/files'
+import { HistoryService } from '@island.is/application/api/history'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
@@ -95,12 +95,11 @@ import { EventObject } from 'xstate'
 import { TemplateApiActionRunner } from './tools/templateApiActionRunner.service'
 import { DelegationGuard } from './guards/delegation.guard'
 import { isNewActor } from './utils/delegationUtils'
-import { PaymentService } from '../payment/payment.service'
+import { PaymentService } from '@island.is/application/api/payment'
 import { ApplicationChargeService } from './charge/application-charge.service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { logger as islandis_logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 
@@ -118,7 +117,6 @@ import { BypassDelegation } from './guards/bypass-delegation.decorator'
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly templateAPIService: TemplateAPIService,
     private readonly fileService: FileService,
     private readonly auditService: AuditService,
     private readonly validationService: ApplicationValidationService,
@@ -128,6 +126,7 @@ export class ApplicationController {
     private intlService: IntlService,
     private paymentService: PaymentService,
     private applicationChargeService: ApplicationChargeService,
+    private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
   ) {}
 
@@ -191,6 +190,7 @@ export class ApplicationController {
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
     if (nationalId !== user.nationalId) {
+      this.logger.debug('User is not authorized to get applications')
       throw new UnauthorizedException()
     }
 
@@ -216,49 +216,59 @@ export class ApplicationController {
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
     for (const application of applications) {
+      const typeId = application.typeId
+      const isTemplateTypeReady = templateTypeToIsReady[typeId]
       // We've already checked an application with this type and it is ready
       // now we just need to check if it should be displayed for the user
       if (
-        templateTypeToIsReady[application.typeId] &&
-        templates[application.typeId] !== undefined &&
+        isTemplateTypeReady &&
+        templates[typeId] !== undefined &&
         (await this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
           user,
-          templates[application.typeId],
+          templates[typeId],
         ))
       ) {
         filteredApplications.push(application)
         continue
-      } else if (templateTypeToIsReady[application.typeId] === false) {
+      } else if (isTemplateTypeReady === false) {
         // We've already checked an application with this type
         // and it is NOT ready so we will skip it
         continue
       }
 
-      const applicationTemplate = await getApplicationTemplateByTypeId(
-        application.typeId,
-      )
+      try {
+        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
+        // Add template to avoid fetching it again for the same types
+        templates[typeId] = applicationTemplate
 
-      // Add template to avoid fetching it again for the same types
-      templates[application.typeId] = applicationTemplate
-
-      if (
-        await this.validationService.isTemplateReady(user, applicationTemplate)
-      ) {
-        templateTypeToIsReady[application.typeId] = true
         if (
-          await this.applicationAccessService.shouldShowApplicationOnOverview(
-            application as BaseApplication,
-            user,
+          await this.validationService.isTemplateReady(
             applicationTemplate,
+            user,
           )
         ) {
-          filteredApplications.push(application)
+          templateTypeToIsReady[typeId] = true
+          if (
+            await this.applicationAccessService.shouldShowApplicationOnOverview(
+              application as BaseApplication,
+              user,
+              applicationTemplate,
+            )
+          ) {
+            filteredApplications.push(application)
+          }
+        } else {
+          templateTypeToIsReady[typeId] = false
         }
-      } else {
-        templateTypeToIsReady[application.typeId] = false
+      } catch (e) {
+        this.logger.error(
+          `Could not get application template for type ${typeId}`,
+          e,
+        )
       }
     }
+
     return filteredApplications
   }
 
@@ -350,6 +360,11 @@ export class ApplicationController {
       attachments: {},
     }
 
+    await this.historyService.saveStateTransition(
+      updatedApplication.id,
+      updatedApplication.state,
+    )
+
     // Trigger meta.onEntry for initial state on application creation
     const onEnterStateAction = new ApplicationTemplateHelper(
       actionDto,
@@ -440,7 +455,7 @@ export class ApplicationController {
       )
     }
 
-    await this.validationService.validateThatTemplateIsReady(user, template)
+    await this.validationService.validateThatTemplateIsReady(template, user)
 
     const assignees = [user.nationalId]
 
@@ -499,6 +514,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      { shouldThrowIfPruned: true },
     )
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
@@ -532,6 +548,8 @@ export class ApplicationController {
       {
         answers: mergedAnswers,
         applicantActors: applicantActors,
+        draftFinishedSteps: application.draftProgress?.stepsFinished ?? 0,
+        draftTotalSteps: application.draftProgress?.totalSteps ?? 0,
       },
     )
 
@@ -654,6 +672,7 @@ export class ApplicationController {
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
+      { shouldThrowIfPruned: true },
     )
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -722,9 +741,6 @@ export class ApplicationController {
     })
 
     if (hasError && error) {
-      this.logger.error(
-        `Application submission ended with an error: ${JSON.stringify(error)}`,
-      )
       throw new TemplateApiError(error, 500)
     }
     this.logger.info(`Application submission ended successfully`)
@@ -740,40 +756,52 @@ export class ApplicationController {
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     auth: User,
-    api: TemplateApi,
+    apis: TemplateApi | TemplateApi[],
     locale: Locale,
   ): Promise<TemplateAPIModuleActionResult> {
-    const { action, externalDataId, throwOnError } = api
+    if (!Array.isArray(apis)) {
+      apis = [apis]
+    }
+
     this.logger.debug(
-      `Performing action ${action} on ${JSON.stringify(template.name)}`,
+      `Performing actions ${apis
+        .map((api) => api.action)
+        .join(', ')} on ${JSON.stringify(template.name)}`,
     )
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
 
     const updatedApplication = await this.templateApiActionRunner.run(
       application,
-      [api],
+      apis,
       auth,
       locale,
       intl.formatMessage,
     )
 
-    const result = updatedApplication.externalData[externalDataId || action]
-    this.logger.debug(
-      `Performing action ${action} on ${JSON.stringify(
-        template.name,
-      )} ended with ${result.status}`,
-    )
-    if (result.status === 'failure' && throwOnError) {
-      return {
-        updatedApplication,
-        hasError: true,
-        error: result.reason,
+    for (const api of apis) {
+      const result =
+        updatedApplication.externalData[api.externalDataId || api.action]
+
+      this.logger.debug(
+        `Performing action ${api.action} on ${JSON.stringify(
+          template.name,
+        )} ended with ${result.status}`,
+      )
+
+      if (result.status === 'failure' && api.throwOnError) {
+        return {
+          updatedApplication,
+          hasError: true,
+          error: result.reason,
+        }
       }
     }
+
     this.logger.debug(
       `Updated external data for application with ID ${updatedApplication.id}`,
     )
+
     return {
       updatedApplication,
       hasError: false,
@@ -883,7 +911,9 @@ export class ApplicationController {
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
+      await this.historyService.saveStateTransition(application.id, newState)
     } catch (e) {
+      this.logger.error(e)
       return {
         hasChanged: false,
         hasError: true,
@@ -1209,6 +1239,11 @@ export class ApplicationController {
     await this.paymentService.delete(existingApplication.id, user)
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
+
+    // delete history for application
+    await this.historyService.deleteHistoryByApplicationId(
+      existingApplication.id,
+    )
 
     await this.applicationService.delete(existingApplication.id)
   }

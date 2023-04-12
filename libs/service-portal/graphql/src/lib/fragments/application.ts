@@ -15,7 +15,18 @@ export const ApplicationFragment = gql`
         label
         variant
       }
+      pendingAction {
+        displayStatus
+        content
+        title
+      }
+      history {
+        log
+        date
+      }
       deleteButton
+      draftTotalSteps
+      draftFinishedSteps
     }
     typeId
     name

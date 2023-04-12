@@ -38,6 +38,10 @@ export const SliceDropdown: React.FC<SliceProps> = ({
 
   useEffect(() => {
     const hashString = window.location.hash.replace('#', '')
+    if (!options.length) {
+      return
+    }
+
     setSelectedId(
       hashString
         ? options.find((x) => x.slug === hashString).value

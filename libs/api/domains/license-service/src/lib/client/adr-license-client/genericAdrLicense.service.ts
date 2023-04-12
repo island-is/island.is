@@ -8,7 +8,6 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
-  PkPassVerificationError,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
@@ -40,10 +39,8 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
   private adrApiWithAuth = (user: User) =>
     this.adrApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async fetchLicense(user: User) {
-    const license = await this.adrApiWithAuth(user).getAdr().catch(handle404)
-    return license
-  }
+  fetchLicense = (user: User) =>
+    this.adrApiWithAuth(user).getAdr().catch(handle404)
 
   async getLicense(
     user: User,
@@ -55,6 +52,7 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     if (!licenseData) {
       return null
     }
+
     const payload = parseAdrLicensePayload(licenseData, locale, labels)
 
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
@@ -115,14 +113,37 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     const payload = await this.createPkPassPayload(user)
 
     if (!payload) {
+      this.logger.warn('Pkpass payload creation failed', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
-    return pass ?? null
+
+    if (pass.ok) {
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
+    }
+    /**
+     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
+     * For now we return null, just to keep existing behavior unchanged
+     */
+    if (pass.error) {
+      this.logger.warn('Pkpass url generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
+    return null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
     const payload = await this.createPkPassPayload(user)
@@ -130,12 +151,32 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     if (!payload) {
       return null
     }
-    const pass = await this.smartApi.generatePkPassQrCode(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
 
-    return pass ?? null
+    if (pass.ok) {
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn('Missing pkpass distribution qr code', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
+    }
+    /**
+     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
+     * For now we return null, just to keep existing behavior unchanged
+     */
+
+    if (pass.error) {
+      this.logger.warn('Pkpass qr code generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
+    return null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
@@ -148,33 +189,20 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
       return null
     }
 
-    let error: PkPassVerificationError | undefined
-
-    if (result.error) {
-      let data = ''
-
-      try {
-        data = JSON.stringify(result.error.serviceError?.data)
-      } catch {
-        // noop
-      }
-
-      // Is there a status code from the service?
-      const serviceErrorStatus = result.error.serviceError?.status
-
-      // Use status code, or http status code from serivce, or "0" for unknown
-      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
-
-      error = {
-        status: status.toString(),
-        message: result.error.serviceError?.message || 'Unknown error',
-        data,
-      }
+    if (!result.ok) {
+      this.logger.warn('Pkpass verification failed', {
+        ...result.error,
+        category: LOG_CATEGORY,
+      })
 
       return {
         valid: false,
         data: undefined,
-        error,
+        error: {
+          status: result.error.code.toString(),
+          message: result.error.message ?? '',
+          data: result.error.data,
+        },
       }
     }
 
@@ -189,8 +217,7 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     */
 
     return {
-      valid: result.valid,
-      error,
+      valid: result.data.valid,
     }
   }
 }

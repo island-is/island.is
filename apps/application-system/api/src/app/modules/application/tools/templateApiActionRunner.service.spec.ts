@@ -12,10 +12,6 @@ import {
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { TemplateApiModuleActionProps } from '@island.is/application/template-api-modules'
-import {
-  createApplication,
-  createCurrentUser,
-} from '@island.is/testing/fixtures'
 import { TemplateApiActionRunner } from './templateApiActionRunner.service'
 
 let app: INestApplication

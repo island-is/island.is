@@ -5,7 +5,6 @@ import {
   GenericUserLicensePkPassStatus,
   GenericUserLicenseStatus,
   PkPassVerification,
-  PkPassVerificationError,
   PkPassVerificationInputData,
 } from '../../licenceService.type'
 import type { Logger } from '@island.is/logging'
@@ -39,10 +38,17 @@ export class GenericFirearmLicenseService
 
   async fetchLicenseData(user: User) {
     const licenseInfo = await this.firearmApi.getLicenseInfo(user)
-    if (!licenseInfo) return null
+    if (!licenseInfo) {
+      return null
+    }
 
     const categories = await this.firearmApi.getCategories(user)
-    if (!categories) return null
+    if (!categories) {
+      this.logger.warn('No category info found for user', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     const properties = await this.firearmApi.getPropertyInfo(user)
 
@@ -110,13 +116,25 @@ export class GenericFirearmLicenseService
   async getPkPassUrl(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
 
-    if (!data) return null
+    if (!data) {
+      this.logger.warn('Missing pkpass distribution url', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     const inputValues = createPkPassDataInput(
       data.licenseInfo,
       data.properties,
       user.nationalId,
     )
+
+    if (!inputValues) {
+      this.logger.warn('PkPassDataInput creation failed', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     //slice out headers from base64 image string
     const image = data.licenseInfo?.licenseImgBase64
@@ -132,12 +150,35 @@ export class GenericFirearmLicenseService
         : null,
     }
 
-    const pass = await this.smartApi.generatePkPassUrl(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
-    return pass ?? null
+
+    if (pass.ok) {
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
+    }
+
+    /**
+     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
+     * For now we return null, just to keep existing behavior unchanged
+     */
+    if (pass.error) {
+      this.logger.warn('Pkpass url generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
+
+    return null
   }
+
   async getPkPassQRCode(user: User): Promise<string | null> {
     const data = await this.fetchLicenseData(user)
     if (!data) return null
@@ -163,11 +204,34 @@ export class GenericFirearmLicenseService
         : null,
     }
 
-    const pass = await this.smartApi.generatePkPassQrCode(
+    const pass = await this.smartApi.generatePkPass(
       payload,
       format(user.nationalId),
     )
-    return pass ?? null
+
+    if (pass.ok) {
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn('Missing pkpass distribution QR Code', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionQRCode
+    }
+
+    /**
+     * TODO: Leverage the extra error data SmartApi now returns in a future branch!
+     * For now we return null, just to keep existing behavior unchanged
+     */
+
+    if (pass.error) {
+      this.logger.warn('Pkpass qr code generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
+
+    return null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
@@ -180,33 +244,20 @@ export class GenericFirearmLicenseService
       return null
     }
 
-    let error: PkPassVerificationError | undefined
-
-    if (result.error) {
-      let data = ''
-
-      try {
-        data = JSON.stringify(result.error.serviceError?.data)
-      } catch {
-        // noop
-      }
-
-      // Is there a status code from the service?
-      const serviceErrorStatus = result.error.serviceError?.status
-
-      // Use status code, or http status code from serivce, or "0" for unknown
-      const status = serviceErrorStatus ?? (result.error.statusCode || 0)
-
-      error = {
-        status: status.toString(),
-        message: result.error.serviceError?.message || 'Unknown error',
-        data,
-      }
+    if (!result.ok) {
+      this.logger.warn('Pkpass verification failed', {
+        ...result.error,
+        category: LOG_CATEGORY,
+      })
 
       return {
         valid: false,
         data: undefined,
-        error,
+        error: {
+          status: result.error.code.toString(),
+          message: result.error.message ?? '',
+          data: result.error.data,
+        },
       }
     }
 
@@ -225,8 +276,7 @@ export class GenericFirearmLicenseService
     */
 
     return {
-      valid: result.valid,
-      error,
+      valid: result.data.valid,
     }
   }
 }

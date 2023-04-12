@@ -321,6 +321,11 @@ export const institutionApplicationMessages = {
       description: 'Section description',
     },
 
+    constraintsReqSubLabel: {
+      id: 'ia.application:applicant.constraints.req.label',
+      defaultMessage: 'Öll gagnasamskipti fara í gegnum Strauminn',
+      description: 'Form label for constraints technical formfield',
+    },
     constraintsMailLabel: {
       id: 'ia.application:applicant.constraints.mail.label',
       defaultMessage: 'Stafrænt Pósthólf',
@@ -404,6 +409,22 @@ export const institutionApplicationMessages = {
     },
     constraintsConsultPlaceholder: {
       id: 'ia.application:applicant.constraints.consult.placeholder',
+      defaultMessage: 'Stutt lýsing',
+      description: 'Form placeholder for constraints other formfield',
+    },
+
+    constraintRobotLabel: {
+      id: 'ia.application:applicant.constraints.robot.placeholder',
+      defaultMessage: 'Spjallmenni',
+      description: 'Form placeholder for constraints other formfield',
+    },
+    constraintLegacyLabel: {
+      id: 'ia.application:applicant.constraints.legacy.label',
+      defaultMessage: 'Arfleifðarkerfi (e. legacy system)',
+      description: 'Form placeholder for constraints other formfield',
+    },
+    constraintLegacyPlaceholder: {
+      id: 'ia.application:applicant.constraints.legacy.placeholder',
       defaultMessage: 'Stutt lýsing',
       description: 'Form placeholder for constraints other formfield',
     },
@@ -541,6 +562,17 @@ export const institutionApplicationMessages = {
       id: 'ia.application:confirmation.section.title',
       defaultMessage: 'Takk fyrir umsóknina!',
       description: 'Section title',
+    },
+    sectionInfoHeader: {
+      id: 'ia.application:confirmation.section.infoHeader',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Information header',
+    },
+    sectionInfoBulletPoints: {
+      id: 'ia.application:confirmation.section.infoBulletPoints#markdown',
+      defaultMessage:
+        '* Við munum nú fara yfir verkefnið og við sendum á þig svör innan tíðar.\n* Við verðum í sambandi ef okkur vantar frekari upplýsingar.\n* Ef þú þarft frekari upplýsingar þá getur þú sent okkur tölvupóst á netfangið [island@island.is](mailto:island@island.is)',
+      description: 'Information bullet points',
     },
     sectionInfoBulletFirst: {
       id: 'ia.application:confirmation.section.infoBullet.first',

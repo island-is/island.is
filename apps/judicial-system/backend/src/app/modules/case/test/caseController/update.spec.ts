@@ -4,6 +4,8 @@ import { Transaction } from 'sequelize/types'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CaseFileState,
+  CaseState,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -106,7 +108,10 @@ describe('CaseController - Update', () => {
 
   describe('case updated', () => {
     const caseToUpdate = { field1: uuid(), field2: uuid() } as UpdateCaseDto
-    const updatedCase = { ...theCase, ...caseToUpdate } as Case
+    const updatedCase = {
+      ...theCase,
+      ...caseToUpdate,
+    } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -125,6 +130,27 @@ describe('CaseController - Update', () => {
 
     it('should return the updated case', () => {
       expect(then.result).toEqual(updatedCase)
+    })
+  })
+
+  describe('court case number added', () => {
+    const caseToUpdate = {
+      state: CaseState.RECEIVED,
+      courtCaseNumber: 'R-2020-1234',
+    } as UpdateCaseDto
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should transition the case from SUBMITTED to RECEIVED', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        {
+          courtCaseNumber: caseToUpdate.courtCaseNumber,
+          state: CaseState.RECEIVED,
+        },
+        { where: { id: caseId }, transaction },
+      )
     })
   })
 
@@ -187,24 +213,25 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_REQUEST_TO_COURT,
+            userId,
             caseId,
           },
           {
             type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            userId,
             caseId,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId1,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId2,
-            userId: user.id,
           },
         ])
       })
@@ -229,15 +256,15 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId1,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            userId,
             caseId,
             defendantId: defendantId2,
-            userId: user.id,
           },
         ])
       })
@@ -265,8 +292,8 @@ describe('CaseController - Update', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+          userId,
           caseId,
-          userId: user.id,
         },
       ])
     })
@@ -283,15 +310,48 @@ describe('CaseController - Update', () => {
       const indictmentId = uuid()
       const criminalRecordId = uuid()
       const costBreakdownId = uuid()
+      const uncategorisedId = uuid()
       const updatedCase = {
         ...theCase,
         type,
         policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
         caseFiles: [
-          { id: coverLetterId, category: CaseFileCategory.COVER_LETTER },
-          { id: indictmentId, category: CaseFileCategory.INDICTMENT },
-          { id: criminalRecordId, category: CaseFileCategory.CRIMINAL_RECORD },
-          { id: costBreakdownId, category: CaseFileCategory.COST_BREAKDOWN },
+          {
+            id: coverLetterId,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COVER_LETTER,
+          },
+          {
+            id: indictmentId,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.INDICTMENT,
+          },
+          {
+            id: criminalRecordId,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.CRIMINAL_RECORD,
+          },
+          {
+            id: costBreakdownId,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.COST_BREAKDOWN,
+          },
+          {
+            id: uncategorisedId,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_RVG,
+            category: CaseFileCategory.CASE_FILE,
+          },
+          {
+            id: uuid(),
+            key: uuid(),
+            state: CaseFileState.STORED_IN_COURT,
+            category: CaseFileCategory.CASE_FILE,
+          },
         ],
         courtCaseNumber,
       }
@@ -307,53 +367,93 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
+            userId,
             caseId,
-            userId: user.id,
           },
           {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+            userId,
             caseId,
             policeCaseNumber: policeCaseNumber1,
           },
           {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
+            userId,
             caseId,
             policeCaseNumber: policeCaseNumber2,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: coverLetterId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: indictmentId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: criminalRecordId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
             caseId,
             caseFileId: costBreakdownId,
+          },
+          {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            userId,
+            caseId,
+            caseFileId: uncategorisedId,
           },
         ])
       })
     },
   )
 
-  describe('neither court case number nor defender email nor prosecutorId updated', () => {
-    const caseToUpdate = { courtCaseNumber }
+  describe.each(restrictionCases)(
+    'case modified explanation is updated for %s case',
+    (type) => {
+      const originalCase = { ...theCase, type } as Case
+      const caseToUdate = { caseModifiedExplanation: 'some explanation' }
+      const updatedCase = {
+        ...theCase,
+        type,
+        caseModifiedExplanation: 'some explanation',
+      }
 
+      beforeEach(async () => {
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        await givenWhenThen(caseId, user, originalCase, caseToUdate)
+      })
+
+      it('should post modified notification to queue', async () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.SEND_MODIFIED_NOTIFICATION,
+            userId,
+            caseId,
+          },
+        ])
+      })
+    },
+  )
+
+  describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation updated', () => {
     beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(caseId, user, theCase, {})
     })
 
     it('should not post to queue', () => {
-      expect(mockMessageService.sendMessageToQueue).not.toHaveBeenCalled()
+      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 })

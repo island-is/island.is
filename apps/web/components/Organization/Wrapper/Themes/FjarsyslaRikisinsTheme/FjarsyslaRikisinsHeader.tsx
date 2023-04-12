@@ -1,23 +1,44 @@
 import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { OrganizationPage } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+import { useMemo } from 'react'
 
 import * as styles from './FjarsyslaRikisinsHeader.css'
+
+const getDefaultStyle = () => {
+  return {
+    backgroundBlendMode: 'saturation',
+    backgroundImage:
+      'url(https://images.ctfassets.net/8k0h54kbe6bj/GNOgfSn6O7XL9KC7Ma7P7/4f258a424ee5533913044e40255c8792/fjs-header-mynd.png)',
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat !important',
+  }
+}
 
 interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
 const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
-  const { width } = useWindowSize()
   const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
+    [organizationPage.organization.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+  const { width } = useWindowSize()
+
+  const screenWidth = getScreenWidthString(width)
 
   return (
-    <Box className={styles.headerBg}>
-      <Box className={styles.headerWrapper}>
+    <div
+      style={n(`fjarsyslanHeader-${screenWidth}`, getDefaultStyle())}
+      className={styles.headerBg}
+    >
+      <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization.logo && (
@@ -64,17 +85,15 @@ const FjarsyslaRikisinsHeader = ({ organizationPage }: HeaderProps) => {
                 </Text>
               </Hidden>
               <Hidden below="md">
-                <img
-                  width="253px"
-                  src="https://images.ctfassets.net/8k0h54kbe6bj/TqkgXfX1Zv8DGPDpNFA6U/e4fd87176da12c972df40512ee323d84/fjs-header-texti.svg"
-                  alt="Fjársýsla ríkisins"
-                />
+                <Text fontWeight="semiBold" variant="h1" as="h1" color="white">
+                  {organizationPage.title}
+                </Text>
               </Hidden>
             </Link>
           </Box>
         </SidebarLayout>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }
 

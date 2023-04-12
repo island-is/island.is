@@ -26,6 +26,9 @@ import { TextModes } from '../types'
 
 import * as styles from './Header.css'
 
+const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
+const minarsidurLink = '/minarsidur/'
+
 interface HeaderProps {
   title?: string
   hideSearch?: boolean
@@ -33,8 +36,6 @@ interface HeaderProps {
   searchPlaceholder?: string
   namespace: Record<string, string>
 }
-
-const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header = ({
   title = '',
@@ -68,16 +69,24 @@ export const Header = ({
                                 id="serviceweb-logo-1"
                                 width={40}
                                 iconOnly
-                                solid={!dark}
-                                solidColor={dark ? 'dark400' : 'white'}
+                                solid={!dark && textMode !== 'blueberry'}
+                                solidColor={
+                                  dark || textMode === 'blueberry'
+                                    ? 'dark400'
+                                    : 'white'
+                                }
                               />
                             </Hidden>
                             <Hidden below="lg">
                               <Logo
                                 id="header-logo-2"
                                 width={160}
-                                solid={!dark}
-                                solidColor={dark ? 'dark400' : 'white'}
+                                solid={!dark && textMode !== 'blueberry'}
+                                solidColor={
+                                  dark || textMode === 'blueberry'
+                                    ? 'dark400'
+                                    : 'white'
+                                }
                               />
                             </Hidden>
                           </Link>
@@ -102,7 +111,11 @@ export const Header = ({
                                   className={cn(
                                     getTextStyles({
                                       variant: 'h4',
-                                      color: dark ? 'dark400' : 'white',
+                                      color: dark
+                                        ? 'dark400'
+                                        : textMode === 'blueberry'
+                                        ? 'blueberry600'
+                                        : 'white',
                                     }),
                                     styles.headingLink,
                                   )}
@@ -138,21 +151,33 @@ export const Header = ({
 
                         <Hidden below="sm">
                           <Box marginLeft={marginLeft}>
-                            <Link {...linkResolver('login')} skipTab>
+                            <a tabIndex={-1} href={minarsidurLink}>
                               <Button
-                                colorScheme={dark ? 'default' : 'negative'}
+                                colorScheme={
+                                  dark
+                                    ? 'default'
+                                    : textMode === 'blueberry'
+                                    ? 'blueberry'
+                                    : 'negative'
+                                }
                                 variant="utility"
                                 icon="person"
                                 as="span"
                               >
                                 {t?.login ?? 'Login'}
                               </Button>
-                            </Link>
+                            </a>
                           </Box>
                         </Hidden>
                         <Box marginLeft={marginLeft}>
                           <LanguageToggler
-                            buttonColorScheme={dark ? 'default' : 'negative'}
+                            buttonColorScheme={
+                              dark
+                                ? 'default'
+                                : textMode === 'blueberry'
+                                ? 'blueberry'
+                                : 'negative'
+                            }
                           />
                         </Box>
                       </Box>

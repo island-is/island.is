@@ -1,7 +1,7 @@
 import { validateAnswers } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { FormatMessage } from '@island.is/localization'
-import { ResolverError, ResolverResult } from 'react-hook-form/dist/types/form'
+import { ResolverError, ResolverResult } from 'react-hook-form'
 
 import { ResolverContext } from '../types'
 
@@ -15,7 +15,7 @@ type Resolver = ({
   context?: ResolverContext
   validateAllFieldCriteria?: boolean
   formatMessage: FormatMessage
-}) => Promise<ResolverResult<FormValue>> | ResolverResult<FormValue>
+}) => Promise<ResolverResult> | ResolverResult | ResolverError
 
 export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
   if (!context) {
@@ -38,16 +38,16 @@ export const resolver: Resolver = ({ formValue, context, formatMessage }) => {
      * which doesn't follow the ResolverError type:
      *
      * export declare type FieldError = {
-     *   type: LiteralUnion<keyof ValidationRules, string>;
+     *   type: LiteralUnion<keyof ValidationRule, string>;
      *   ref?: Ref;
      *   types?: MultipleFieldErrors;
      *   message?: Message;
      * };
      **/
-    return ({
+    return {
       values: {},
       errors: validationError,
-    } as unknown) as ResolverError<FormValue>
+    } as ResolverError
   }
 
   return {

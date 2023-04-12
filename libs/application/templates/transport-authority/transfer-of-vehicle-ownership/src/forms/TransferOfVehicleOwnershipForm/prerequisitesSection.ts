@@ -4,6 +4,13 @@ import {
   buildDataProviderItem,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
+import {
+  IdentityApi,
+  UserProfileApi,
+  SamgongustofaPaymentCatalogApi,
+  CurrentVehiclesApi,
+  InsuranceCompaniesApi,
+} from '../../dataProviders'
 
 export const prerequisitesSection = buildSection({
   id: 'externalData',
@@ -16,32 +23,27 @@ export const prerequisitesSection = buildSection({
       checkboxLabel: externalData.dataProvider.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
-          id: 'nationalRegistry',
-          type: 'NationalRegistryProvider',
+          provider: IdentityApi,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.subTitle,
         }),
         buildDataProviderItem({
-          id: 'userProfile',
-          type: 'UserProfileProvider',
+          provider: UserProfileApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.subTitle,
         }),
         buildDataProviderItem({
-          id: 'currentVehicleList',
-          type: 'CurrentVehiclesProvider',
+          provider: CurrentVehiclesApi,
           title: externalData.currentVehicles.title,
           subTitle: externalData.currentVehicles.subTitle,
         }),
         buildDataProviderItem({
-          id: 'payment',
-          type: 'PaymentChargeInfoProvider',
+          provider: SamgongustofaPaymentCatalogApi,
           title: externalData.payment.title,
           subTitle: externalData.payment.subTitle,
         }),
         buildDataProviderItem({
-          id: 'insuranceCompanyList',
-          type: 'InsuranceCompaniesProvider',
+          provider: InsuranceCompaniesApi,
           title: '',
         }),
       ],

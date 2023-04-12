@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
 import { ApolloDriver } from '@nestjs/apollo'
 import { GraphQLModule } from '@nestjs/graphql'
 import { TerminusModule } from '@nestjs/terminus'
@@ -6,6 +7,8 @@ import { TerminusModule } from '@nestjs/terminus'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/cms'
+import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
+import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
@@ -36,6 +39,9 @@ import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
+import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
+import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
@@ -49,6 +55,7 @@ import {
   GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
+  GenericDisabilityLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
@@ -70,6 +77,7 @@ import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municip
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
+import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { PowerBiModule } from '@island.is/api/domains/powerbi'
 import { PowerBiConfig } from '@island.is/api/domains/powerbi'
 
@@ -82,11 +90,23 @@ import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
+import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { PassportsClientConfig } from '@island.is/clients/passports'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
+import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
+import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
+import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
+import { SessionsModule } from '@island.is/api/domains/sessions'
+import { CommunicationsConfig } from '@island.is/api/domains/communications'
+import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
+import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
+import { SessionsApiClientConfig } from '@island.is/clients/sessions'
+import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
+import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -97,6 +117,12 @@ const autoSchemaFile = environment.production
 
 @Module({
   controllers: [HealthController],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataLoaderInterceptor,
+    },
+  ],
   imports: [
     GraphQLModule.forRoot({
       driver: ApolloDriver,
@@ -122,6 +148,7 @@ const autoSchemaFile = environment.production
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
+    ConsultationPortalModule,
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
@@ -209,6 +236,7 @@ const autoSchemaFile = environment.production
     IdentityModule,
     AuthModule.register(environment.auth as AuthConfig),
     SyslumennModule,
+    DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
     PowerBiModule,
@@ -219,9 +247,8 @@ const autoSchemaFile = environment.production
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl!,
     }),
-    RegulationsModule.register({
-      url: environment.regulationsDomain.url!,
-    }),
+    RegulationsModule,
+    RegulationsAdminModule,
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
@@ -229,23 +256,8 @@ const autoSchemaFile = environment.production
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
-    ApiDomainsPaymentModule.register({
-      xRoadProviderId: environment.paymentDomain.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentDomain.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentDomain.password!,
-      username: environment.paymentDomain.username!,
-      callbackBaseUrl: environment.paymentDomain.callbackBaseUrl!,
-      callbackAdditionUrl: environment.paymentDomain.callbackAdditionUrl!,
-      arkBaseUrl: environment.paymentDomain.arkBaseUrl!,
-    }),
-    PaymentScheduleModule.register({
-      xRoadProviderId: environment.paymentSchedule.xRoadProviderId!,
-      xRoadBaseUrl: environment.paymentSchedule.xRoadBaseUrl!,
-      xRoadClientId: environment.xroad.clientId!,
-      password: environment.paymentSchedule.password!,
-      username: environment.paymentSchedule.username!,
-    }),
+    ApiDomainsPaymentModule,
+    PaymentScheduleModule,
     ProblemModule,
     CriminalRecordModule.register({
       clientConfig: {
@@ -258,23 +270,31 @@ const autoSchemaFile = environment.production
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
+    UniversityOfIcelandModule,
+    SessionsModule,
+    AuthAdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         AdrAndMachineLicenseClientConfig,
         AirDiscountSchemeClientConfig,
+        ConsultationPortalClientConfig,
         AssetsClientConfig,
         FirearmLicenseClientConfig,
+        DisabilityLicenseClientConfig,
         GenericFirearmLicenseConfig,
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
+        GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,
+        RegulationsAdminClientConfig,
+        RegulationsClientConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
@@ -291,7 +311,15 @@ const autoSchemaFile = environment.production
         FileStorageConfig,
         FiskistofaClientConfig,
         PowerBiConfig,
+        ChargeFjsV2ClientConfig,
+        DisabilityLicenseClientConfig,
         ZenterSignupConfig,
+        PaymentScheduleClientConfig,
+        JudicialAdministrationClientConfig,
+        CommunicationsConfig,
+        UniversityOfIcelandClientConfig,
+        SessionsApiClientConfig,
+        AuthAdminApiClientConfig,
       ],
     }),
   ],

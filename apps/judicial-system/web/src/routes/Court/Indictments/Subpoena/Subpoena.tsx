@@ -16,10 +16,6 @@ import {
   SelectSubpoenaType,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -29,6 +25,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 
@@ -60,11 +57,7 @@ const Subpoena: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const hasSentNotification = workingCase?.notifications?.find(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-
-      setAndSendCaseToServer(
+      await setAndSendCaseToServer(
         [
           {
             courtDate: courtDate
@@ -77,7 +70,13 @@ const Subpoena: React.FC = () => {
         setWorkingCase,
       )
 
-      if (hasSentNotification && !courtDateHasChanged) {
+      if (
+        hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
+        !courtDateHasChanged
+      ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
         setNavigateTo(destination)
@@ -97,8 +96,6 @@ const Subpoena: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
-      activeSubSection={IndictmentsCourtSubsections.SUBPEONA}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -132,6 +129,7 @@ const Subpoena: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>

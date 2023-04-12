@@ -3,7 +3,6 @@ import {
   ActionCardLoader,
   EmptyState,
   IntroHeader,
-  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -37,10 +36,9 @@ const defaultFilterValues: FilterValues = {
   searchQuery: '',
 }
 
-const Overview: ServicePortalModuleComponent = () => {
+const Overview = () => {
   useNamespaces('sp.applications')
   useNamespaces('application.system')
-
   const { formatMessage } = useLocale()
   const { data: applications, loading, error, refetch } = useApplications()
   const location = useLocation()
@@ -106,7 +104,7 @@ const Overview: ServicePortalModuleComponent = () => {
     heading = false,
   ) => {
     switch (status) {
-      case ApplicationOverViewStatus.finished:
+      case ApplicationOverViewStatus.completed:
         return heading ? m.headingFinished : m.introCopyFinished
       case ApplicationOverViewStatus.inProgress:
         return heading ? m.headingInProgress : m.introCopyInProgress
@@ -117,6 +115,28 @@ const Overview: ServicePortalModuleComponent = () => {
     }
   }
 
+  const getNoApplicationsError = (status: ApplicationOverViewStatus) => {
+    switch (status) {
+      case ApplicationOverViewStatus.completed:
+        return m.noCompletedApplicationsAvailable
+      case ApplicationOverViewStatus.inProgress:
+        return m.noInProgressApplicationsAvailable
+      case ApplicationOverViewStatus.incomplete:
+        return m.noIncompleteApplicationsAvailable
+      default:
+        return m.noApplicationsAvailable
+    }
+  }
+
+  const noApplications =
+    (applications.length === 0 && !focusedApplication) ||
+    (statusToShow === ApplicationOverViewStatus.incomplete &&
+      applicationsSortedByStatus.incomplete.length === 0) ||
+    (statusToShow === ApplicationOverViewStatus.inProgress &&
+      applicationsSortedByStatus.inProgress.length === 0) ||
+    (statusToShow === ApplicationOverViewStatus.completed &&
+      applicationsSortedByStatus.finished.length === 0)
+
   return (
     <>
       <IntroHeader
@@ -125,10 +145,6 @@ const Overview: ServicePortalModuleComponent = () => {
       />
 
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
-
-      {!error && !loading && applications.length === 0 && (
-        <EmptyState description={m.noApplicationsAvailable} />
-      )}
 
       {applications &&
         applications.length > 0 &&
@@ -142,7 +158,7 @@ const Overview: ServicePortalModuleComponent = () => {
                 <GridColumn span={['1/1', '1/2']}>
                   <Box height="full">
                     <Input
-                      icon="search"
+                      icon={{ name: 'search' }}
                       backgroundColor="blue"
                       size="xs"
                       value={filterValue.searchQuery}
@@ -202,7 +218,7 @@ const Overview: ServicePortalModuleComponent = () => {
               )}
             {applicationsSortedByStatus.finished?.length > 0 &&
               (statusToShow === ApplicationOverViewStatus.all ||
-                statusToShow === ApplicationOverViewStatus.finished) && (
+                statusToShow === ApplicationOverViewStatus.completed) && (
                 <ApplicationGroup
                   applications={applicationsSortedByStatus.finished}
                   label={formatMessage(m.finishedApplications)}
@@ -212,6 +228,9 @@ const Overview: ServicePortalModuleComponent = () => {
               )}
           </>
         )}
+      {!error && !loading && noApplications && (
+        <EmptyState description={getNoApplicationsError(statusToShow)} />
+      )}
     </>
   )
 }

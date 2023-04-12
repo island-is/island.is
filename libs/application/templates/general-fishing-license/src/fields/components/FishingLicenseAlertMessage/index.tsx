@@ -28,7 +28,7 @@ export const FishingLicenseAlertMessage: FC<FishingLicenseAlertMessageProps> = (
   const handleExpandClick = () => setIsExpanded(!isExpanded)
   return (
     <AlertMessage
-      type="warning"
+      type="info"
       title={title}
       message={
         <Box paddingBottom={1}>

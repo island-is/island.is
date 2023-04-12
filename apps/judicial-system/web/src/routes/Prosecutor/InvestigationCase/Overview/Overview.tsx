@@ -30,10 +30,6 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
@@ -84,7 +80,11 @@ export const Overview: React.FC = () => {
     const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
     const caseSubmitted = shouldSubmitCase
-      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      ? await transitionCase(
+          workingCase.id,
+          CaseTransition.SUBMIT,
+          setWorkingCase,
+        )
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
@@ -113,12 +113,6 @@ export const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={
-        RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -241,13 +235,15 @@ export const Overview: React.FC = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         {workingCase.description && (
@@ -349,6 +345,10 @@ export const Overview: React.FC = () => {
               <CopyLinkForDefenderButton
                 caseId={workingCase.id}
                 type={workingCase.type}
+                disabled={
+                  workingCase.state !== CaseState.RECEIVED ||
+                  !workingCase.courtDate
+                }
               >
                 {formatMessage(m.sections.copyLinkForDefenderButton)}
               </CopyLinkForDefenderButton>
@@ -358,6 +358,7 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
           nextButtonText={
             workingCase.state === CaseState.NEW ||

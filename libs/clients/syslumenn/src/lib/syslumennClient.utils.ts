@@ -15,9 +15,12 @@ import {
   EignirDanarbus,
   Fasteignasalar,
   Logmenn,
+  Afengisleyfi,
+  Taekifaerisleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
+  AlcoholLicence,
   SyslumennAuction,
   DataUploadResponse,
   Homestay,
@@ -38,8 +41,15 @@ import {
   RealEstateAgent,
   Lawyer,
   OperatingLicensesCSV,
+  TemporaryEventLicence,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
+
+export const cleanPropertyNumber = (propertyNumber: string): string => {
+  return propertyNumber[0] == 'F'
+    ? propertyNumber.substring(1, propertyNumber.length)
+    : propertyNumber
+}
 
 export const mapDistrictCommissionersAgenciesResponse = (
   response: EmbaettiOgStarfsstodvar,
@@ -78,7 +88,7 @@ export const mapHomestay = (homestay: VirkarHeimagistingar): Homestay => {
     name: homestay.heitiHeimagistingar ?? '',
     address: homestay.heimilisfang ?? '',
     manager: homestay.abyrgdarmadur ?? '',
-    year: homestay.umsoknarAr ? parseFloat(homestay.umsoknarAr) : undefined,
+    year: homestay.umsoknarAr ? parseInt(homestay.umsoknarAr) : undefined,
     city: homestay.sveitarfelag ?? '',
     guests: homestay.gestafjoldi,
     rooms: homestay.fjoldiHerbergja,
@@ -173,6 +183,46 @@ export const mapOperatingLicensesCSV = (
   responseStringCSV: string,
 ): OperatingLicensesCSV => ({
   value: responseStringCSV,
+})
+
+export const mapAlcoholLicence = (
+  alcoholLicence: Afengisleyfi,
+): AlcoholLicence => ({
+  licenceType: alcoholLicence.tegund?.trim() ?? '',
+  licenceSubType: alcoholLicence.tegundLeyfis?.trim() ?? '',
+  licenseNumber: alcoholLicence.leyfisnumer?.trim() ?? '',
+  issuedBy: alcoholLicence.utgefidAf?.trim() ?? '',
+  year: alcoholLicence.skraningarAr
+    ? parseInt(alcoholLicence.skraningarAr)
+    : undefined,
+  validFrom: alcoholLicence.gildirFra ? alcoholLicence.gildirFra : undefined,
+  validTo: alcoholLicence.gildirTil ? alcoholLicence.gildirTil : undefined,
+  licenseHolder: alcoholLicence.leyfishafi?.trim() ?? '',
+  licenseResponsible: alcoholLicence.abyrgdarmadur?.trim() ?? '',
+  office: alcoholLicence.embaetti?.trim() ?? '',
+  location: alcoholLicence.starfsstodEmbaettis?.trim() ?? '',
+})
+
+export const mapTemporaryEventLicence = (
+  temporaryEventLicence: Taekifaerisleyfi,
+): TemporaryEventLicence => ({
+  licenceType: temporaryEventLicence.tegund?.trim() ?? '',
+  licenceSubType: temporaryEventLicence.tegundLeyfis?.trim() ?? '',
+  licenseNumber: temporaryEventLicence.leyfisnumer?.trim() ?? '',
+  issuedBy: temporaryEventLicence.utgefidAf?.trim() ?? '',
+  year: temporaryEventLicence.skraningarAr
+    ? parseInt(temporaryEventLicence.skraningarAr)
+    : undefined,
+  validFrom: temporaryEventLicence.gildirFra
+    ? temporaryEventLicence.gildirFra
+    : undefined,
+  validTo: temporaryEventLicence.gildirTil
+    ? temporaryEventLicence.gildirTil
+    : undefined,
+  licenseHolder: temporaryEventLicence.leyfishafi?.trim() ?? '',
+  licenseResponsible: temporaryEventLicence.abyrgdarmadur?.trim() ?? '',
+  maximumNumberOfGuests: temporaryEventLicence.hamarksfjoldi,
+  estimatedNumberOfGuests: temporaryEventLicence.aaetladurFjoldi,
 })
 
 export function constructUploadDataObject(

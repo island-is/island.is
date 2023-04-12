@@ -39,7 +39,11 @@ export const testServer = async ({
   const moduleRef = await builder.compile()
   const app = moduleRef.createNestApplication()
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
+    }),
   )
 
   return app.init()
@@ -66,7 +70,11 @@ export const testServerActivateAuthGuards = async ({
 
   const app = moduleFixture.createNestApplication()
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: false,
+    }),
   )
 
   return app.init()

@@ -1,14 +1,14 @@
 import {
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
-  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { format as formatKennitala } from 'kennitala'
-import { Passport, YES } from '../../lib/constants'
+import { Passport, PersonalInfo, YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const personalInfo = buildMultiField({
@@ -47,6 +47,7 @@ export const personalInfo = buildMultiField({
       id: 'personalInfo.email',
       title: m.email,
       width: 'half',
+      required: true,
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           email?: string
@@ -58,6 +59,7 @@ export const personalInfo = buildMultiField({
       width: 'half',
       variant: 'tel',
       format: '###-####',
+      required: true,
       defaultValue: (application: Application) => {
         const phone =
           (application.externalData.userProfile?.data as {
@@ -70,8 +72,7 @@ export const personalInfo = buildMultiField({
     buildDescriptionField({
       id: 'personalInfo.space',
       title: '',
-      description: '',
-      space: 'gutter',
+      space: 'containerGutter',
     }),
     buildCheckboxField({
       id: 'personalInfo.hasDisabilityDiscount',
@@ -86,17 +87,14 @@ export const personalInfo = buildMultiField({
         },
       ],
     }),
-    buildSubmitField({
-      id: 'approveCheckForDisability',
-      placement: 'footer',
+    buildCustomField({
+      id: 'noDisabilityInfo',
       title: '',
-      actions: [
-        {
-          event: DefaultEvents.SUBMIT,
-          name: 'Staðfesta',
-          type: 'primary',
-        },
-      ],
+      component: 'NoDisabilityRecordInfo',
+      doesNotRequireAnswer: true,
+      condition: (answers) =>
+        (answers.personalInfo as PersonalInfo)?.hasDisabilityDiscount[0] ===
+        YES,
     }),
   ],
 })
