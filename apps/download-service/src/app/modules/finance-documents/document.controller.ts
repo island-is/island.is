@@ -7,7 +7,7 @@ import {
   Param,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
+import { ApiOkResponse, ApiHeader } from '@nestjs/swagger'
 import { Response } from 'express'
 import { FinanceClientService } from '@island.is/clients/finance'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -42,20 +42,16 @@ export class FinanceDocumentController {
     @Body() resource: GetFinanceDocumentDto,
     @Res() res: Response,
   ) {
-    const authUser: User = {
-      ...user,
-      authorization: `Bearer ${resource.__accessToken}`,
-    }
     const documentResponse = resource.annualDoc
       ? await this.financeService.getAnnualStatusDocument(
           user.nationalId,
           pdfId,
-          authUser,
+          user,
         )
       : await this.financeService.getFinanceDocument(
           user.nationalId,
           pdfId,
-          authUser,
+          user,
         )
 
     const documentBase64 = documentResponse?.docment?.document
