@@ -16,6 +16,7 @@ import {
   schema,
 } from '../forms/EditApplication/EditApplication.action'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
+import { useReadableSeconds } from './ReadableSeconds'
 
 interface LifetimeProps {
   absoluteLifetime: number
@@ -81,6 +82,11 @@ const Lifetime = ({
     }
   }
 
+  const readableAbsoluteLifetime = useReadableSeconds(lifetime.absoluteLifetime)
+  const readableInactivityLifetime = useReadableSeconds(
+    lifetime.inactivityLifetime,
+  )
+
   return (
     <ContentCard
       title={formatMessage(m.lifetime)}
@@ -107,6 +113,8 @@ const Lifetime = ({
           />
           <Text variant={'small'}>
             {formatMessage(m.absoluteLifetimeDescription)}
+            <br />
+            {readableAbsoluteLifetime}
           </Text>
         </Stack>
         <Stack space={1}>
@@ -142,6 +150,8 @@ const Lifetime = ({
             />
             <Text variant={'small'}>
               {formatMessage(m.inactivityLifetimeDescription)}
+              <br />
+              {readableInactivityLifetime}
             </Text>
           </Stack>
         </Box>
