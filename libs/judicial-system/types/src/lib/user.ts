@@ -45,7 +45,8 @@ export interface UpdateUser {
   institutionId?: string
   active?: boolean
 }
-const extendedCourtRoles: string[] = [
+
+export const extendedCourtRoles: string[] = [
   UserRole.JUDGE,
   UserRole.REGISTRAR,
   UserRole.ASSISTANT,

@@ -1,5 +1,14 @@
-import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -10,15 +19,32 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { defenderRule } from '../../guards'
-import { LimitedAccessCaseExistsGuard, CaseDefenderGuard } from '../case'
+import {
+  LimitedAccessCaseExistsGuard,
+  CaseDefenderGuard,
+  CaseCompletedGuard,
+  CurrentCase,
+  Case,
+} from '../case'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
-import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
+import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
+import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
-import { CaseFile } from './models/file.model'
+import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
+import { CreateFileDto } from './dto/createFile.dto'
+import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(
+  JwtAuthGuard,
+  RolesGuard,
+  LimitedAccessCaseExistsGuard,
+  CaseCompletedGuard,
+  CaseDefenderGuard,
+)
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
 export class LimitedAccessFileController {
@@ -27,13 +53,40 @@ export class LimitedAccessFileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(
-    RolesGuard,
-    LimitedAccessCaseExistsGuard,
-    CaseDefenderGuard,
-    CaseFileExistsGuard,
-    ViewCaseFileGuard,
-  )
+  @RolesRules(defenderRule)
+  @Post('file/url')
+  @ApiCreatedResponse({
+    type: PresignedPost,
+    description: 'Creates a new presigned post',
+  })
+  createPresignedPost(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() createPresignedPost: CreatePresignedPostDto,
+  ): Promise<PresignedPost> {
+    this.logger.debug(`Creating a presigned post for case ${caseId}`)
+
+    return this.fileService.createPresignedPost(theCase, createPresignedPost)
+  }
+
+  @UseGuards(LimitedAccessWriteCaseFileGuard)
+  @RolesRules(defenderRule)
+  @Post('file')
+  @ApiCreatedResponse({
+    type: CaseFile,
+    description: 'Creates a new case file',
+  })
+  async createCaseFile(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() createFile: CreateFileDto,
+  ): Promise<CaseFile> {
+    this.logger.debug(`Creating a file for case ${caseId}`)
+
+    return this.fileService.createCaseFile(theCase, createFile)
+  }
+
+  @UseGuards(CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
   @RolesRules(defenderRule)
   @Get('file/:fileId/url')
   @ApiOkResponse({
@@ -50,5 +103,22 @@ export class LimitedAccessFileController {
     )
 
     return this.fileService.getCaseFileSignedUrl(caseFile)
+  }
+
+  @UseGuards(CaseFileExistsGuard, LimitedAccessWriteCaseFileGuard)
+  @RolesRules(defenderRule)
+  @Delete('file/:fileId')
+  @ApiOkResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a case file',
+  })
+  deleteCaseFile(
+    @Param('caseId') caseId: string,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
+
+    return this.fileService.deleteCaseFile(caseFile)
   }
 }

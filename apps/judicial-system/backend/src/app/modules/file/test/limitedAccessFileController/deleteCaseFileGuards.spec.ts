@@ -1,17 +1,17 @@
 import { CanActivate } from '@nestjs/common'
 
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
-import { LimitedAccessViewCaseFileGuard } from '../../guards/limitedAccessViewCaseFile.guard'
+import { LimitedAccessWriteCaseFileGuard } from '../../guards/limitedAccessWriteCaseFile.guard'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
-describe('LimitedAccessFileController - Get case file signed url guards', () => {
+describe('LimitedAccessFileController - Delete case file guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      LimitedAccessFileController.prototype.getCaseFileSignedUrl,
+      LimitedAccessFileController.prototype.deleteCaseFile,
     )
   })
 
@@ -31,15 +31,15 @@ describe('LimitedAccessFileController - Get case file signed url guards', () => 
     })
   })
 
-  describe('LimitedAccessViewCaseFileGuard', () => {
+  describe('LimitedAccessWriteCaseFileGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[1]()
     })
 
-    it('should have LimitedAccessViewCaseFileGuard as quard 2', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessViewCaseFileGuard)
+    it('should have LimitedAccessWriteCaseFileGuard as quard 2', () => {
+      expect(guard).toBeInstanceOf(LimitedAccessWriteCaseFileGuard)
     })
   })
 })
