@@ -14,10 +14,13 @@ import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
   DEFENDER_ROUTE,
+  STATEMENT_ROUTE,
+  DEFENDER_STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
+  isCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 
@@ -32,8 +35,14 @@ interface AppealInfo {
   canBeAppealed: boolean
   hasBeenAppealed: boolean
   appealDeadline?: string
+  statementDeadline?: string
+  isStatementDeadlineExpired?: boolean
   appealedByRole?: UserRole
   appealedDate?: string
+  hasProsecutionStatement?: boolean
+  hasDefenderStatement?: boolean
+  prosecutionStatementDate?: string
+  defenderStatementDate?: string
 }
 
 export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
@@ -55,6 +64,11 @@ export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
         prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
   )
 
+  // I know this is a very basic thing to wrap in its own variable but I
+  // did it because there are currently 2 ways in which a case
+  // can be recognized as appealed, so this will become more complex
+  // when we begin listening to whether a case was appealed in court.
+  // Currently we only check whether it was appealed after court
   const hasBeenAppealed = Boolean(
     appealState && appealState === CaseAppealState.Appealed,
   )
@@ -74,12 +88,27 @@ export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
     ? getAppealEndDate(courtEndTime ?? '')
     : undefined
 
+  //TODO: Put correct info in these variables when we have them
+  //implemented
+  const statementDeadline = new Date().toISOString()
+  const isStatementDeadlineExpired = false
+  const hasProsecutionStatement = false
+  const prosecutionStatementDate = undefined
+  const hasDefenderStatement = true
+  const defenderStatementDate = new Date().toISOString()
+
   return {
     hasBeenAppealed,
     canBeAppealed,
     appealedByRole,
     appealedDate,
     appealDeadline,
+    statementDeadline,
+    isStatementDeadlineExpired,
+    prosecutionStatementDate,
+    hasProsecutionStatement,
+    hasDefenderStatement,
+    defenderStatementDate,
   } as AppealInfo
 }
 
@@ -96,11 +125,51 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     canBeAppealed,
     hasBeenAppealed,
     appealDeadline,
+    statementDeadline,
+    hasProsecutionStatement,
+    hasDefenderStatement,
+    prosecutionStatementDate,
+    defenderStatementDate,
   } = getAppealInfo(workingCase)
 
   let alertTitle, alertLinkTitle, alertLinkHref, alertDescription
 
-  if (hasBeenAppealed) {
+  const isCourtRoleUser = isCourtRole(user?.role)
+  const isProsecutionRoleUser = isProsecutionRole(user?.role)
+  const isDefenderRoleUser = user?.role === UserRole.Defender
+
+  // Deal with banners after case has been marked as Received by the judge
+  if (workingCase.appealState === CaseAppealState.Received) {
+    alertTitle = formatMessage(strings.statementTitle)
+    alertDescription = formatMessage(strings.statementDeadlineDescription, {
+      isStatementDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
+      statementDeadline: formatDate(statementDeadline, 'PPPp'),
+    })
+    if (
+      (isProsecutionRoleUser && hasProsecutionStatement) ||
+      (isDefenderRoleUser && hasDefenderStatement)
+    ) {
+      //TODO: Make this text separate and green like in the design
+      //Needs to be implemented in island-ui component
+      alertDescription += ` ${formatMessage(strings.statementSentDescription, {
+        statementSentDate: isProsecutionRoleUser
+          ? formatDate(prosecutionStatementDate, 'PPPp')
+          : formatDate(defenderStatementDate, 'PPPp'),
+      })}`
+    } else if (isCourtRoleUser) {
+      alertDescription += ` ${formatMessage(
+        strings.appealReceivedNotificationLinkText,
+        { statementSentDate: new Date() },
+      )}`
+    } else {
+      alertLinkTitle = formatMessage(strings.statementLinkText)
+      alertLinkHref = limitedAccess
+        ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
+        : `${STATEMENT_ROUTE}/${workingCase.id}`
+    }
+    // Handle banners when case has been appealed by either defendant or prosecutor
+    // but the judge has not yet marked it as received
+  } else if (hasBeenAppealed) {
     alertTitle = formatMessage(strings.statementTitle)
     alertDescription = formatMessage(strings.statementDescription, {
       actor:
@@ -109,15 +178,23 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
           : formatMessage(core.defender),
       appealDate: formatDate(appealedDate, 'PPPp'),
     })
-    alertLinkTitle = formatMessage(strings.statementLinkText)
-    alertLinkHref = '/krofur'
-  } else if (canBeAppealed) {
+    if (isProsecutionRoleUser || isDefenderRoleUser) {
+      alertLinkTitle = formatMessage(strings.statementLinkText)
+      alertLinkHref = limitedAccess
+        ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
+        : `${STATEMENT_ROUTE}/${workingCase.id}`
+    } else if (isCourtRoleUser) {
+      alertLinkTitle = formatMessage(strings.appealReceivedNotificationLinkText)
+      alertLinkHref = '/krofur' // TODO: Implement notification link
+    }
+  } // Handle banners when case has been postponed but no official appeal has been made
+  else if (canBeAppealed) {
     alertTitle = formatMessage(strings.appealTitle, {
       appealDeadline,
     })
     // We only want to display the appeal link to prosecution roles and the defender
     // not the judge
-    if (isProsecutionRole(user?.role) || user?.role === UserRole.Defender) {
+    if (isProsecutionRoleUser || isDefenderRoleUser) {
       alertLinkTitle = formatMessage(strings.appealLinkText)
       alertLinkHref = limitedAccess
         ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
