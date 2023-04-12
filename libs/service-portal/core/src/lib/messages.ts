@@ -878,8 +878,8 @@ export const m = defineMessages({
     id: 'service.portal:therapies',
     defaultMessage: 'Þjálfun',
   },
-  supportProducts: {
-    id: 'service.portal:support-products',
-    defaultMessage: 'Stuðningsvörur',
+  aidsAndNutrition: {
+    id: 'service.portal:aids-and-nutrition',
+    defaultMessage: 'Hjálpartæki og næring',
   },
 })

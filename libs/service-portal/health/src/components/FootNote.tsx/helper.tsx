@@ -26,7 +26,7 @@ export const getFootNoteByType = (
   switch (type) {
     case SUPPORT_PRODUCTS:
       return {
-        first: formatMessage(messages['supportProductsDisclaimer']),
+        first: formatMessage(messages['aidsAndNutritionDisclaimer']),
       }
     case PHYSIO_THERAPY:
       return {

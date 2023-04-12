@@ -10,29 +10,25 @@ export const messages = defineMessages({
     defaultMessage:
       'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá sjúkraþjálfara.',
   },
-  mySupportProducts: {
-    id: 'sp.health:my-support-products',
-    defaultMessage: 'Stuðningsvörurnar mínar',
+  aidsAndNutritionTitle: {
+    id: 'sp.health:aids-and-nutrition-title',
+    defaultMessage: 'Hjálpartæki og næring',
   },
-  supportProductsTitle: {
-    id: 'sp.health:support-title',
-    defaultMessage: 'Stuðningsvörur',
-  },
-  supportProductsDescription: {
-    id: 'sp.health:support-title',
+  aidsAndNutritionDescription: {
+    id: 'sp.health:aids-and-nutrition-title',
     defaultMessage:
       'Hjálpartækjamiðstöð Sjúkratrygginga Íslands annast afgreiðslu umsókna um styrki vegna stuðningsvara, næringar og sérfæðis, veitir faglega ráðgjöf um val á þeim og sinnir viðgerðarþjónustu.',
   },
-  supportProductsDescriptionInfo1: {
-    id: 'sp.health:support-description-info-1',
+  aidsAndNutritionDescriptionInfo1: {
+    id: 'sp.health:aids-and-nutrition-description-info-1',
     defaultMessage: 'Nánar um næringu og sérfæði',
   },
-  supportProductsDescriptionInfo2: {
-    id: 'sp.health:support-description-info-2',
+  aidsAndNutritionDescriptionInfo2: {
+    id: 'sp.health:aids-and-nutrition-description-info-2',
     defaultMessage: 'Nánar um hjálpartæki',
   },
-  supportProductsDisclaimer: {
-    id: 'sp.health:support-disclaimer',
+  aidsAndNutritionDisclaimer: {
+    id: 'sp.health:aids-and-nutrition-disclaimer',
     defaultMessage:
       'Styrkur getur ýmist verið greiddur sem ákveðið hlutfall af verði hjálpartækis og næringar og/eða ákveðin fjárhæð til kaupa á hjálpartæki eða næringu. Í neðangreindri töflu birta SÍ þín réttindi til notkunar/úttektar á hjálpartækjum og næringu sem sótt hefur verið um til Hjálpartækjamiðstöðvar. Þegar innan við 60 dagar eru eftir af heimild, þá litast viðkomandi lína gul í töflu. Sjá frekari upplýsingar um hjálpartæki',
   },

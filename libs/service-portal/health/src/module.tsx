@@ -9,8 +9,8 @@ const HealthOverview = lazy(() =>
 )
 
 const Therapies = lazy(() => import('./screens/Therapies/Therapies'))
-const SupportProducts = lazy(() =>
-  import('./screens/SupportProducts/SupportProducts'),
+const AidsAndNutrition = lazy(() =>
+  import('./screens/AidsAndNutrition/AidsAndNutrition'),
 )
 
 export const healthModule: PortalModule = {
@@ -29,10 +29,10 @@ export const healthModule: PortalModule = {
       element: <Therapies />,
     },
     {
-      name: 'Stuðningsvörur',
-      path: HealthPaths.HealthSupportProducts,
+      name: 'Hjálpartæki og næring',
+      path: HealthPaths.HealthAidsAndNutrition,
       enabled: userInfo.scopes.includes(ApiScope.internal),
-      element: <SupportProducts />,
+      element: <AidsAndNutrition />,
     },
   ],
 }
