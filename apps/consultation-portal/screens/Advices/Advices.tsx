@@ -15,7 +15,7 @@ import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobile
 import { sorting, useLogIn } from '../../utils/helpers'
 import EmptyState from '../../components/EmptyState/EmptyState'
 import Pagination from '../../components/Pagination/Pagination'
-import { SubscriptionActionCard } from '@island.is/consultation-portal/components/Card'
+import { SubscriptionActionCard } from '../../components/Card'
 
 const CARDS_PER_PAGE = 12
 
