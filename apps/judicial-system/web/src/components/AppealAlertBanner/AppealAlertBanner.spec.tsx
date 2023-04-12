@@ -1,10 +1,9 @@
-import { getAppealInfo } from './AppealAlertBanner'
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
+
 import { CaseAppealState, UserRole } from '../../graphql/schema'
 import { TempCase } from '../../types'
+
+import { getAppealInfo } from './AppealAlertBanner'
 
 describe('getAppealInfo', () => {
   test('should return that case can be appealed and the correct appeal deadline', () => {

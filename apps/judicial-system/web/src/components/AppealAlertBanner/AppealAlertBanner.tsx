@@ -1,4 +1,3 @@
-import router from 'next/router'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -13,7 +12,6 @@ import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepH
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
-  DEFENDER_ROUTE,
   STATEMENT_ROUTE,
   DEFENDER_STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -116,8 +114,6 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
   const { workingCase } = props
   const {
     appealedByRole,
@@ -163,7 +159,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
       )}`
     } else {
       alertLinkTitle = formatMessage(strings.statementLinkText)
-      alertLinkHref = limitedAccess
+      alertLinkHref = isDefenderRoleUser
         ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
         : `${STATEMENT_ROUTE}/${workingCase.id}`
     }
@@ -180,7 +176,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     })
     if (isProsecutionRoleUser || isDefenderRoleUser) {
       alertLinkTitle = formatMessage(strings.statementLinkText)
-      alertLinkHref = limitedAccess
+      alertLinkHref = isDefenderRoleUser
         ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
         : `${STATEMENT_ROUTE}/${workingCase.id}`
     } else if (isCourtRoleUser) {
@@ -197,7 +193,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     // not the judge
     if (isProsecutionRoleUser || isDefenderRoleUser) {
       alertLinkTitle = formatMessage(strings.appealLinkText)
-      alertLinkHref = limitedAccess
+      alertLinkHref = isDefenderRoleUser
         ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
         : `${APPEAL_ROUTE}/${workingCase.id}`
     }
