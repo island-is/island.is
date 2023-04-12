@@ -1,26 +1,31 @@
 import initApollo from '@island.is/web/graphql/client'
 import { GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN } from '@island.is/web/screens/queries/WatsonAssistantChat'
+import { storageFactory } from '@island.is/shared/utils'
+import {
+  Query,
+  QueryWatsonAssistantChatIdentityTokenArgs,
+} from '@island.is/web/graphql/schema'
 
-export const onDirectorateOfImmigrationChatLoad = (instance) => {
-  const apolloClient = initApollo({})
+const emailInputId = 'utlendingastofnun-chat-email'
+const nameInputId = 'utlendingastofnun-chat-name'
+const submitButtonId = 'utlendingastofnun-chat-submit-button'
 
-  instance.on({
-    type: 'identityTokenExpired',
-    handler: (event) => {
-      console.log('TOKEN EXPIRED')
-    },
-  })
+const storage = storageFactory(() => sessionStorage)
 
-  instance.on({
-    type: 'window:open',
-    handler: () => {
-      const customPanel = instance.customPanels.getPanel()
+const getUserInformation = async (instance, callback) => {
+  const storedName = storage.getItem(nameInputId)
+  const storedEmail = storage.getItem(emailInputId)
 
-      const emailInputId = 'email'
-      const nameInputId = 'name'
-      const submitButtonId = 'submit-button'
+  // If we have stored the user information previously we simply return that
+  if (storedName && storedEmail) {
+    callback({ name: storedName, email: storedEmail })
+    return
+  }
 
-      customPanel.hostElement.innerHTML = `
+  // Otherwise we prompt the user to enter his information
+  const customPanel = instance.customPanels.getPanel()
+
+  customPanel.hostElement.innerHTML = `
           <div style="padding: 8px">
   
             <div class="bx--form-item">
@@ -43,36 +48,79 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
           </div>
         `
 
-      customPanel.open({
-        title: 'Netspjall Útlendingastofnunar',
-        hideBackButton: true,
+  customPanel.open({
+    title: 'Netspjall Útlendingastofnunar',
+    hideBackButton: true,
+  })
+
+  const emailInput = document.getElementById(emailInputId) as HTMLInputElement
+  const nameInput = document.getElementById(nameInputId) as HTMLInputElement
+  const submitButton = document.getElementById(submitButtonId)
+
+  submitButton.onclick = () => {
+    const email = emailInput?.value ?? ''
+    const name = nameInput?.value ?? ''
+
+    storage.setItem(emailInputId, email)
+    storage.setItem(nameInputId, name)
+
+    callback({ email, name })
+
+    customPanel.close()
+  }
+}
+
+export const onDirectorateOfImmigrationChatLoad = (instance) => {
+  const apolloClient = initApollo({})
+
+  instance.on({
+    type: 'identityTokenExpired',
+    handler: (event) => {
+      return new Promise((resolve, reject) => {
+        getUserInformation(instance, ({ email, name }) => {
+          apolloClient
+            .query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
+              query: GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
+              variables: {
+                input: {
+                  name,
+                  email,
+                },
+              },
+            })
+            .then((response) => {
+              const token = response.data.watsonAssistantChatIdentityToken.token
+              instance.updateIdentityToken(token)
+              event.identityToken = token
+              resolve(token)
+            })
+            .catch(reject)
+        })
       })
+    },
+  })
 
-      const emailInput = document.getElementById(
-        emailInputId,
-      ) as HTMLInputElement
-      const nameInput = document.getElementById(nameInputId) as HTMLInputElement
-      const submitButton = document.getElementById(submitButtonId)
+  instance.on({
+    type: 'window:open',
+    handler: () => {
+      if (storage.getItem(nameInputId) && storage.getItem(emailInputId)) return
 
-      submitButton.onclick = () => {
-        const emailValue = emailInput?.value ?? ''
-        const nameValue = nameInput?.value ?? ''
-
+      getUserInformation(instance, ({ email, name }) => {
         apolloClient
-          .query({
+          .query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
             query: GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
             variables: {
-              name: nameValue,
-              email: emailValue,
+              input: {
+                name,
+                email,
+              },
             },
           })
           .then((response) => {
-            console.log('Received', response)
+            const token = response.data.watsonAssistantChatIdentityToken.token
+            instance.updateIdentityToken(token)
           })
-
-        console.log('email entered:', emailValue)
-        console.log('name entered:', nameValue)
-      }
+      })
     },
   })
 }

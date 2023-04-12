@@ -1,2 +1,2 @@
-export * from './watson-assistant-chat.module'
-export * from './watson-assistant-chat.config'
+export * from './lib/watson-assistant-chat.module'
+export * from './lib/watson-assistant-chat.config'
