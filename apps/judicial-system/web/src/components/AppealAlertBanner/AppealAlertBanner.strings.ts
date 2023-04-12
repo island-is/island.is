@@ -1,9 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
-  appealTitle: {
-    id: 'judicial.system.core:appeal_alert_banner.appeal_title',
-    defaultMessage: 'Kærufrestur rennur út {appealDeadline}',
+  appealDeadlineTitle: {
+    id: 'judicial.system.core:appeal_alert_banner.appeal_deadline_title',
+    defaultMessage:
+      'Kærufrestur {isAppealDeadlineExpired, select, true {rann} other {rennur}} út {appealDeadline}',
     description: 'Texti í viðvörunarglugga um kærufrest',
   },
   appealLinkText: {

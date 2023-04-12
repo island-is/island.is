@@ -189,7 +189,8 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     }
   } // Handle banners when case has been postponed but no official appeal has been made
   else if (canBeAppealed) {
-    alertTitle = formatMessage(strings.appealTitle, {
+    alertTitle = formatMessage(strings.appealDeadlineTitle, {
+      isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
       appealDeadline,
     })
     // We only want to display the appeal link to prosecution roles and the defender
