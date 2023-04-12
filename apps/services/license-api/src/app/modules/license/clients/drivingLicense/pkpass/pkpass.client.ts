@@ -2,7 +2,8 @@ import FormData from 'form-data'
 import fetch, { Response } from 'node-fetch'
 
 import { Cache as CacheManager } from 'cache-manager'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   PkPassServiceErrorResponse,
