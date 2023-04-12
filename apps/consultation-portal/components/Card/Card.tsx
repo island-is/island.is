@@ -1,4 +1,8 @@
 import {
+  getDateBeginDateEnd,
+  getShortDate,
+} from '../../utils/helpers/dateFormatter'
+import {
   Tag,
   Box,
   Divider,
@@ -9,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 import getTagVariants from '../../utils/helpers/getTagVariants'
-import EyebrowsWithSeperator from '../EybrowsWithSeperator/EybrowsWithSeperator'
+import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
 
 import * as styles from './Card.css'
 
@@ -17,6 +21,9 @@ type CardInfo = {
   tag?: string
   id: number
   title: string
+  published?: string
+  processBegins?: string
+  processEnds?: string
   eyebrows: Array<string>
 }
 type CardProps = {
@@ -25,6 +32,7 @@ type CardProps = {
   showAttachment?: boolean
   frontPage: boolean
   children: any
+  showPublished?: boolean
 }
 
 export const Card = ({
@@ -32,6 +40,7 @@ export const Card = ({
   showAttachment,
   dropdown,
   frontPage,
+  showPublished,
   children,
 }: CardProps) => {
   const child = (
@@ -49,15 +58,14 @@ export const Card = ({
             Nr. S-{card.id}
           </Text>
         </Box>
-        <Inline space={1} alignY="center">
-          <Text as="p" variant="eyebrow" color="blue600">
-            {card.eyebrows[0]}
-          </Text>
-          <div className={styles.seperator} />
-          <Text as="p" variant="eyebrow" color="blue600" truncate>
-            {card.eyebrows[1]}
-          </Text>
-        </Inline>
+        <EyebrowsWithSeperator
+          instances={[card.eyebrows[0], card.eyebrows[1]]}
+          color="blue600"
+          style={styles.seperator}
+          wrap={true}
+          truncate={false}
+        />
+
         <Box
           style={{ height: showAttachment ? '100px' : '100px' }}
           className={styles.title}
@@ -69,10 +77,10 @@ export const Card = ({
         </Box>
         <Inline space={1} alignY={'center'}>
           <Text variant="eyebrow" color="dark400">
-            Umsagnartímabil:
+            Umsagnarfrestur:
           </Text>
           <Text variant="eyebrow" color="blue600">
-            01.09.22 – 01.12.22
+            {getDateBeginDateEnd(card.processBegins, card.processEnds)}
           </Text>
         </Inline>
         <Box paddingY={1}>
@@ -85,6 +93,11 @@ export const Card = ({
         <Box>
           <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
         </Box>
+        {showPublished && (
+          <Text variant="eyebrow" color="purple400">{`Birt: ${getShortDate(
+            card.published,
+          )}`}</Text>
+        )}
       </Inline>
     </>
   )

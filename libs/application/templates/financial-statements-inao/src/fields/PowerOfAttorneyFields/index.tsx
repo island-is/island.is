@@ -20,7 +20,10 @@ import { IdentityQuery } from '../../graphql'
 
 export const PowerOfAttorneyFields = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const { errors, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext()
 
   const currentActor =
     application.applicantActors[application.applicantActors.length - 1]

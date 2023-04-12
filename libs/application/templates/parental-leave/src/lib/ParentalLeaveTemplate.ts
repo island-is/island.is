@@ -109,11 +109,11 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: EphemeralStateLifeCycle,
+          lifecycle: pruneAfterDays(9),
           progress: 0.25,
           onExit: defineTemplateApi({
-            action: ApiModuleActions.setBirthDateForNoPrimaryParent,
-            externalDataId: 'noPrimaryChildren',
+            action: ApiModuleActions.setChildrenInformation,
+            externalDataId: 'children',
             throwOnError: true,
           }),
           roles: [
@@ -141,7 +141,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['clearAssignees', 'clearEmployers'],
+        entry: 'clearAssignees',
         exit: [
           'clearOtherParentDataIfSelectedNo',
           'setOtherParentIdIfSelectedSpouse',
@@ -154,6 +154,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'removeNullPeriod',
           'setNavId',
           'correctTransferRights',
+          'clearEmployers',
         ],
         meta: {
           name: States.DRAFT,
@@ -361,12 +362,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: [
-                  'children',
-                  'noPrimaryChildren',
-                  'navId',
-                  'sendApplication',
-                ],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
@@ -618,7 +614,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         meta: {
           status: 'inprogress',
           name: States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE,
-          lifecycle: pruneAfterDays(1),
+          lifecycle: pruneAfterDays(970),
           onEntry: defineTemplateApi({
             action: ApiModuleActions.setBirthDate,
             externalDataId: 'dateOfBirth',
@@ -671,7 +667,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           actionCard: {
             description: statesMessages.residenceGrantInProgress,
           },
-          lifecycle: pruneAfterDays(1),
+          lifecycle: pruneAfterDays(970),
           progress: 1,
           onExit: defineTemplateApi({
             action: ApiModuleActions.validateApplication,
@@ -820,8 +816,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
-          'clearEmployers',
           'setActionName',
+          'clearEmployers',
         ],
         meta: {
           name: States.EDIT_OR_ADD_PERIODS,
@@ -938,12 +934,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'payments',
                   'firstPeriodStart',
                 ],
-                externalData: [
-                  'children',
-                  'noPrimaryChildren',
-                  'navId',
-                  'sendApplication',
-                ],
+                externalData: ['children', 'navId', 'sendApplication'],
               },
               write: {
                 answers: [
@@ -1171,18 +1162,49 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       clearEmployers: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { employers, isSelfEmployed } = getApplicationAnswers(answers)
+        const {
+          employers,
+          isSelfEmployed,
+          employerLastSixMonths,
+        } = getApplicationAnswers(answers)
 
         if (isSelfEmployed === NO) {
           employers?.forEach((val, i) => {
             if (val.phoneNumber) {
               set(answers, `employers[${i}].phoneNumber`, val.phoneNumber)
             }
+            if (val.phoneNumber === '') {
+              unset(answers, `employers[${i}].phoneNumber`)
+            }
+            set(answers, `employers[${i}].ratio`, val.ratio)
+            set(answers, `employers[${i}].email`, val.email)
+            set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
+            set(
+              answers,
+              `employers[${i}].companyNationalRegistryId`,
+              val.companyNationalRegistryId,
+            )
+            set(answers, `employers[${i}].isApproved`, false)
+          })
+        }
+
+        if (employerLastSixMonths === YES) {
+          employers?.forEach((val, i) => {
+            if (val.phoneNumber) {
+              set(answers, `employers[${i}].phoneNumber`, val.phoneNumber)
+            }
+            if (val.stillEmployed) {
+              set(answers, `employers[${i}].stillEmployed`, val.stillEmployed)
+              if (val.stillEmployed === YES) {
+                set(answers, `employers[${i}].isApproved`, false)
+              } else {
+                set(answers, `employers[${i}].isApproved`, true)
+              }
+            }
             set(answers, `employers[${i}].ratio`, val.ratio)
             set(answers, `employers[${i}].email`, val.email)
             set(answers, `employers[${i}].reviewerNationalRegistryId`, '')
             set(answers, `employers[${i}].companyNationalRegistryId`, '')
-            set(answers, `employers[${i}].isApproved`, false)
           })
         }
 
@@ -1365,6 +1387,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.answers, 'personalAllowance', {
             useAsMuchAsPossible: YES,
             usage: '100',
+            usePersonalAllowance: YES,
           })
         }
 
@@ -1382,6 +1405,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           set(application.answers, 'personalAllowanceFromSpouse', {
             useAsMuchAsPossible: YES,
             usage: '100',
+            usePersonalAllowance: YES,
           })
         }
 

@@ -314,63 +314,63 @@ const LOT_TYPES_OPTIONS: LotTypeOption[] = [
     value: 'okutaeki',
     lotType: LOT_TYPES.VEHICLE,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.AIRCRAFT,
     value: 'loftfar',
     lotType: LOT_TYPES.AIRCRAFT,
     auctionType: '...',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.SHIP,
     value: 'skip',
     lotType: LOT_TYPES.SHIP,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.LIQUID_ASSETS,
     value: 'lausafjarmunir',
     lotType: LOT_TYPES.LIQUID_ASSETS,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING,
     value: 'hlutafjareign',
     lotType: LOT_TYPES.SHAREHOLDING,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_PLC,
     value: 'hlutafjareign-i-einkahlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_PLC,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.SHAREHOLDING_LLC,
     value: 'hlutafjareign-i-hlutafelagi',
     lotType: LOT_TYPES.SHAREHOLDING_LLC,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.STOCKS,
     value: 'verdbref',
     lotType: LOT_TYPES.STOCKS,
     auctionType: '...',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: LOT_TYPES.CLAIMS,
     value: 'krofurettindi',
     lotType: LOT_TYPES.CLAIMS,
     auctionType: '',
-    excludeAuctionType: '',
+    excludeAuctionType: AUCTION_TYPES.SOLD,
   },
   {
     filterLabel: AUCTION_TYPES.SOLD,
@@ -739,8 +739,7 @@ const Auctions: Screen<AuctionsProps> = ({
               name="homestaySearchInput"
               placeholder={n('auctionFilterSearch', 'Leita eftir uppboði')}
               size="sm"
-              icon="search"
-              iconType="outline"
+              icon={{ name: 'search', type: 'outline' }}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -827,7 +826,10 @@ const Auctions: Screen<AuctionsProps> = ({
                           'Fasteign nr. ',
                         )}
                         linkText={auction.lotId}
-                        href={`https://www.skra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname=${auction.lotId}&submitbutton=Leita`}
+                        href={(n(
+                          'realEstateRegistryLinkTemplate',
+                          'https://fasteignaskra.is/default.aspx?pageid=d5db1b6d-0650-11e6-943c-005056851dd2&selector=streetname&streetname={{ID}}&submitbutton=Leita',
+                        ) as string).replace('{{ID}}', auction.lotId)}
                       />
                     )}
 
@@ -836,7 +838,10 @@ const Auctions: Screen<AuctionsProps> = ({
                     <LotLink
                       prefix={n('auctionVehicleNumberPrefix', 'Bílnúmer: ')}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq=${auction.lotId}`}
+                      href={(n(
+                        'carRegistryLinkTemplate',
+                        'https://www.samgongustofa.is/umferd/okutaeki/okutaekjaskra/uppfletting?vq={{ID}}',
+                      ) as string).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -848,7 +853,10 @@ const Auctions: Screen<AuctionsProps> = ({
                         'Númer loftfars: ',
                       )}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq=${auction.lotId}`}
+                      href={(n(
+                        'aircraftRegistryLinkTemplate',
+                        'https://www.samgongustofa.is/flug/loftfor/loftfaraskra?aq={{ID}}',
+                      ) as string).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 
@@ -857,7 +865,10 @@ const Auctions: Screen<AuctionsProps> = ({
                     <LotLink
                       prefix={n('auctionShipNumberPrefix', 'Númer skips: ')}
                       linkText={auction.lotId}
-                      href={`https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq=${auction.lotId}`}
+                      href={(n(
+                        'shipRegistryLinkTemplate',
+                        'https://www.samgongustofa.is/siglingar/skrar-og-utgafa/skipaskra/uppfletting?sq={{ID}}',
+                      ) as string).replace('{{ID}}', auction.lotId)}
                     />
                   )}
 

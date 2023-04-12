@@ -23,6 +23,10 @@ export type StaticTextObject = MessageDescriptor & {
   values?: RecordObject<any>
 }
 
+export type GenericFormField<T> = Partial<
+  T & { id: string; initial: boolean; dummy?: boolean }
+>
+
 export type StaticText = StaticTextObject | string
 
 export type FormText =

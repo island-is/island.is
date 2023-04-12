@@ -125,7 +125,7 @@ export const UserForm: React.FC<Props> = (props) => {
   }
 
   return (
-    <div>
+    <div className={styles.userFormContainer}>
       <FormContentContainer>
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
@@ -195,7 +195,7 @@ export const UserForm: React.FC<Props> = (props) => {
           </InputMask>
         </Box>
         <Box>
-          <Box marginBottom={2} className={styles.roleContainer}>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -219,7 +219,7 @@ export const UserForm: React.FC<Props> = (props) => {
               />
             </Box>
           </Box>
-          <Box marginBottom={2} className={styles.roleContainer}>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -241,7 +241,7 @@ export const UserForm: React.FC<Props> = (props) => {
               />
             </Box>
           </Box>
-          <Box marginBottom={2} className={styles.roleContainer}>
+          <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
               <RadioButton
                 name="role"
@@ -380,6 +380,7 @@ export const UserForm: React.FC<Props> = (props) => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           onNextButtonClick={() => props.onSave(user)}
           nextIsDisabled={!isValid()}
           nextIsLoading={props.loading}

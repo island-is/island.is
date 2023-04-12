@@ -7,10 +7,10 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
-import { ArrayField, useFormContext } from 'react-hook-form'
+import { FC, useEffect } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
-import { OldOperatorInformation } from '../../shared'
+import { OldOperatorInformationFormField } from '../../shared'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
 
@@ -18,7 +18,7 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<OldOperatorInformation, 'id'>>
+  repeaterField: OldOperatorInformationFormField
   handleRemove: (index: number) => void
 }
 
@@ -31,12 +31,20 @@ export const OldOperatorItem: FC<Props & FieldBaseProps> = ({
   errors,
 }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
   const fieldIndex = `${id}[${index}]`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
   const startDateField = `${fieldIndex}.startDate`
   const nationaIdField = `${fieldIndex}.nationalId`
   const nameField = `${fieldIndex}.name`
+
+  useEffect(() => {
+    setValue(wasRemovedField, `${repeaterField.wasRemoved || 'false'}`)
+    setValue(
+      startDateField,
+      `${repeaterField.startDate || new Date().toString()}`,
+    )
+  }, [repeaterField.wasRemoved, repeaterField.startDate, setValue])
 
   return (
     <Box
@@ -81,18 +89,6 @@ export const OldOperatorItem: FC<Props & FieldBaseProps> = ({
           />
         </GridColumn>
       </GridRow>
-      <input
-        type="hidden"
-        value={`${repeaterField.wasRemoved || 'false'}`}
-        ref={register({ required: true })}
-        name={wasRemovedField}
-      />
-      <input
-        type="hidden"
-        value={`${repeaterField.startDate || new Date().toString()}`}
-        ref={register({ required: true })}
-        name={startDateField}
-      />
     </Box>
   )
 }

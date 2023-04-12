@@ -1,6 +1,6 @@
 import { expect, Page } from '@playwright/test'
-import { urls } from './urls'
-import { sleep } from './utils'
+import { JUDICIAL_SYSTEM_HOME_URL, urls } from './urls'
+import { debug } from './utils'
 
 export type CognitoCreds = {
   username: string
@@ -31,6 +31,9 @@ export const cognitoLogin = async (
   await passwordInput.selectText()
   await passwordInput.type(password)
   await cognito.locator('input[name="signInSubmitButton"]:visible').click()
+  if (home === JUDICIAL_SYSTEM_HOME_URL) {
+    return
+  }
   await page.waitForURL(new RegExp(`${home}|${authUrl}/delegation`))
 }
 
@@ -52,8 +55,8 @@ export async function idsLogin(
   })
 
   // Handle delegation on login
-  if (await page.url().startsWith(urls.authUrl)) {
-    console.log('Still on auth site')
+  if (page.url().startsWith(urls.authUrl)) {
+    debug('Still on auth site')
     const delegations = page.locator('button[name="SelectedNationalId"]')
     await expect(delegations).toHaveCountGreaterThan(0)
     // Default to the first delegation

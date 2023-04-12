@@ -14,7 +14,7 @@ const configFactory = (
   basePath: string,
 ) => ({
   fetchApi: createEnhancedFetch({
-    name: 'clients-transport-authority-vehicle-printing',
+    name: 'clients-transport-authority-vehicle-plate-ordering',
     autoAuth: idsClientConfig.isConfigured
       ? {
           mode: 'tokenExchange',

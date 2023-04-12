@@ -29,7 +29,7 @@ export const VehicleRadioField: FC<
   VehicleSearchFieldProps & FieldBaseProps
 > = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
-  const { register } = useFormContext()
+  const { setValue } = useFormContext()
 
   const [plate, setPlate] = useState<string>(
     getValueViaPath(application.answers, 'pickVehicle.plate', '') as string,
@@ -38,6 +38,7 @@ export const VehicleRadioField: FC<
   const onRadioControllerSelect = (s: string) => {
     const currentVehicle = currentVehicleList[parseInt(s, 10)]
     setPlate(currentVehicle.permno || '')
+    setValue('pickVehicle.plate', currentVehicle.permno || '')
   }
 
   const vehicleOptions = (
@@ -109,12 +110,6 @@ export const VehicleRadioField: FC<
         options={vehicleOptions(
           currentVehicleList as VehiclesCurrentVehicleWithPlateOrderChecks[],
         )}
-      />
-      <input
-        type="hidden"
-        value={plate}
-        ref={register({ required: true })}
-        name="pickVehicle.plate"
       />
       {plate.length === 0 && errors && errors.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

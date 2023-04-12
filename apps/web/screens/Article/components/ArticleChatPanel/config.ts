@@ -5,21 +5,14 @@ import {
 } from '@island.is/web/components'
 import { Locale } from 'locale'
 
-export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
-  // Útlendingastofnun - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
-  '77rXck3sISbMsUv7BO1PG2': {
-    license: 13822368,
-    version: '2.0',
-  },
-}
+export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {}
 
 interface WatsonInstance {
   on: (_: {
     type: string
     handler: (event: WatsonPreSendEvent) => void
   }) => void
-  updateHomeScreenConfig: ({ is_on: boolean }) => void
+  updateHomeScreenConfig: (params: { is_on: boolean }) => void
 }
 
 interface WatsonPreSendEvent {
@@ -159,6 +152,17 @@ export const watsonConfig: Record<
           'electronicID',
           '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
         ),
+    },
+
+    // Útlendingastofnun - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
+    '77rXck3sISbMsUv7BO1PG2': {
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
     },
   },
   is: {
@@ -364,6 +368,17 @@ export const watsonConfig: Record<
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
     kENblMMMvZ3DlyXw1dwxQ: {
       integrationID: '0c96e8fb-d4dc-420e-97db-18b0f8bb4e3f',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
+    // Útlendingastofnun - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
+    '77rXck3sISbMsUv7BO1PG2': {
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,

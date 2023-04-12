@@ -1,45 +1,65 @@
-import {
-  ConsultationPortalCaseItemResult,
-  QueryConsultationPortalCaseByIdArgs,
-} from '@island.is/api/schema'
+import { QueryConsultationPortalCaseByIdArgs } from '@island.is/api/schema'
 import initApollo from '../../graphql/client'
 import CaseScreen from '../../screens/Case/Case'
 import {
-  ConsultationPortalCaseByIdQuery,
-  ConsultationPortalCaseByIdDocument,
-} from '../../screens/Case/getCase.generated'
-import { GET_CASE_BY_ID } from '../../screens/Case/getCase'
+  CASE_GET_CASE_BY_ID,
+  CASE_GET_ADVICES_BY_ID,
+} from '../../graphql/queries.graphql'
+import {
+  CaseGetCaseByIdQuery,
+  CaseGetAdvicesByIdQuery,
+  CaseGetAdvicesByIdQueryVariables,
+} from '../../graphql/queries.graphql.generated'
 import { Advice, Case } from '../../types/viewModels'
 interface CaseProps {
   case: Case
-  advices: Advice
+  advices: Advice[]
 }
 const CaseDetails: React.FC<CaseProps> = ({ case: Case, advices }) => {
-  return <CaseScreen chosenCase={Case} advices={advices} isLoggedIn={true} />
+  return <CaseScreen chosenCase={Case} advices={advices} />
 }
 export default CaseDetails
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const slug = parseInt(ctx.query.slug)
-  const [
-    {
-      data: { consultationPortalCaseById },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalCaseByIdQuery,
-      QueryConsultationPortalCaseByIdArgs
-    >({
-      query: GET_CASE_BY_ID,
-      variables: {
-        input: {
-          caseId: slug,
-        },
+  try {
+    const [
+      {
+        data: { consultationPortalCaseById },
       },
-    }),
-  ])
+      {
+        data: { consultationPortalAdviceByCaseId },
+      },
+    ] = await Promise.all([
+      client.query<CaseGetCaseByIdQuery, QueryConsultationPortalCaseByIdArgs>({
+        query: CASE_GET_CASE_BY_ID,
+        variables: {
+          input: {
+            caseId: parseInt(ctx.query['slug']),
+          },
+        },
+      }),
+      client.query<CaseGetAdvicesByIdQuery, CaseGetAdvicesByIdQueryVariables>({
+        query: CASE_GET_ADVICES_BY_ID,
+        variables: {
+          input: {
+            caseId: parseInt(ctx.query['slug']),
+          },
+        },
+      }),
+    ])
+    return {
+      props: {
+        case: consultationPortalCaseById,
+        advices: consultationPortalAdviceByCaseId,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: { case: consultationPortalCaseById },
+    redirect: {
+      destination: '/500',
+    },
   }
 }

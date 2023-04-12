@@ -1,35 +1,53 @@
 import initApollo from '../graphql/client'
+import { HOME_GET_TYPES, HOME_GET_STATISTICS } from '../graphql/queries.graphql'
 import {
-  ConsultationPortalAllCasesQuery,
-  ConsultationPortalAllCasesQueryVariables,
-  ConsultationPortalAllCasesDocument,
-} from '../screens/Home/getAllCases.generated'
+  HomeGetTypesQuery,
+  HomeGetStatisticsQuery,
+} from '../graphql/queries.graphql.generated'
+import { ArrOfStatistics, ArrOfTypes } from '../types/interfaces'
 import Home from '../screens/Home/Home'
-import { Case } from '../types/interfaces'
-import FilterBox from '../components/Filterbox/Filterbox'
 
 interface HomeProps {
-  cases: Case[]
+  types: ArrOfTypes
+  statistics: ArrOfStatistics
 }
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const [
-    {
-      data: { consultationPortalAllCases },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalAllCasesQuery,
-      ConsultationPortalAllCasesQueryVariables
-    >({
-      query: ConsultationPortalAllCasesDocument,
-    }),
-  ])
+
+  try {
+    const [
+      {
+        data: { consultationPortalAllTypes },
+      },
+      {
+        data: { consultationPortalStatistics },
+      },
+    ] = await Promise.all([
+      client.query<HomeGetTypesQuery>({
+        query: HOME_GET_TYPES,
+      }),
+      client.query<HomeGetStatisticsQuery>({
+        query: HOME_GET_STATISTICS,
+      }),
+    ])
+    return {
+      props: {
+        types: consultationPortalAllTypes,
+        statistics: consultationPortalStatistics,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: { cases: consultationPortalAllCases },
+    redirect: {
+      destination: '/500',
+    },
   }
 }
-export const Index = ({ cases }: HomeProps) => {
-  return <Home cases={cases} />
+
+export const Index = ({ types, statistics }: HomeProps) => {
+  return <Home types={types} statistics={statistics} />
 }
+
 export default Index

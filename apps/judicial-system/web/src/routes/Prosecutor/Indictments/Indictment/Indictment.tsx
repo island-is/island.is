@@ -17,11 +17,7 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-  TempIndictmentCount as TIndictmentCount,
-} from '@island.is/judicial-system-web/src/types'
+import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
@@ -77,18 +73,15 @@ const Indictment: React.FC = () => {
   const setDriversLicenseSuspensionRequest = useCallback(
     (indictmentCounts?: TIndictmentCount[]) => {
       // If the case has:
-      // at least one count with the offence "Driving under the influence of alcohol" and the alcohol level is 1,20 or higher or
-      // at least one count with the offence "Driving under the influence of illegal drugs" or "Driving under the influence of prescription drugs"
+      // at least one count with the offence driving under the influence of alcohol, illegal drugs or prescription drugs
       // then by default the prosecutor requests a suspension of the driver's licence.
       const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
-        count.offenses?.some(
-          (offense) =>
-            (offense === IndictmentCountOffense.DrunkDriving &&
-              (count.substances?.ALCOHOL ?? '') >= '1,20') ||
-            [
-              IndictmentCountOffense.IllegalDrugsDriving,
-              IndictmentCountOffense.PrescriptionDrugsDriving,
-            ].includes(offense),
+        count.offenses?.some((offense) =>
+          [
+            IndictmentCountOffense.DrunkDriving,
+            IndictmentCountOffense.IllegalDrugsDriving,
+            IndictmentCountOffense.PrescriptionDrugsDriving,
+          ].includes(offense),
         ),
       )
 
@@ -260,8 +253,6 @@ const Indictment: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={IndictmentsProsecutorSubsections.INDICTMENT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -424,6 +415,7 @@ const Indictment: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_PROCESSING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_CASE_FILES_ROUTE)

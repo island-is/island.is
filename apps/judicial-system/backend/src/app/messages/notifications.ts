@@ -600,4 +600,21 @@ export const notifications = {
         'Texti í pósti til dómara og dómritara þegar ekki tekst að skrá varnaraðila/verjendur á mál.',
     },
   }),
+  caseAppealedToCourtOfAppeals: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.case_appealed_to_court_of_appeals.subject',
+      defaultMessage: 'Kæra í máli {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og dómritara þegar að mál er kært til landsréttar',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.case_appealed_to_court_of_appeals.body',
+      defaultMessage:
+        'Úrskurður hefur verið kærður í máli {courtCaseNumber}. Hægt er að nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum.',
+      description:
+        'Texti í pósti til dómara og dómritara þegar að mál er kært til landsréttar',
+    },
+  }),
 }

@@ -58,20 +58,25 @@ const IDSAdmin = () => {
     navigate(IDSAdminPaths.IDSAdmin)
   }
 
+  const showBackButton = location.pathname !== IDSAdminPaths.IDSAdmin
+
   return (
-    <Stack space={'containerGutter'}>
-      <Button
-        colorScheme="default"
-        iconType="filled"
-        onClick={navigateBack}
-        preTextIcon="arrowBack"
-        preTextIconType="filled"
-        size="small"
-        type="button"
-        variant="text"
-      >
-        {formatMessage(m.back)}
-      </Button>
+    <Stack space={'gutter'}>
+      {showBackButton && (
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          onClick={navigateBack}
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+        >
+          {formatMessage(m.back)}
+        </Button>
+      )}
+
       <Outlet />
     </Stack>
   )

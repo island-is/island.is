@@ -2,8 +2,7 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
-import type {
-  Case as TCase,
+import {
   CaseAppealDecision,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
@@ -13,10 +12,14 @@ import type {
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
+  CaseType,
+  CaseAppealState,
+} from '@island.is/judicial-system/types'
+import type {
+  Case as TCase,
   IndictmentSubtypeMap,
   CrimeSceneMap,
 } from '@island.is/judicial-system/types'
-import { CaseType } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
 import { IndictmentCount } from '../../indictment-count'
@@ -26,6 +29,9 @@ import { CaseFile } from '../../file'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
+registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
+registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
+registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -38,7 +44,7 @@ export class Case implements TCase {
   @Field()
   readonly modified!: string
 
-  @Field(() => String)
+  @Field(() => CaseOrigin)
   readonly origin!: CaseOrigin
 
   @Field(() => CaseType)
@@ -143,7 +149,7 @@ export class Case implements TCase {
   @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => SessionArrangements, { nullable: true })
   readonly sessionArrangements?: SessionArrangements
 
   @Field({ nullable: true })
@@ -292,4 +298,10 @@ export class Case implements TCase {
 
   @Field(() => Boolean, { nullable: true })
   readonly requestDriversLicenseSuspension?: boolean
+
+  @Field(() => CaseAppealState, { nullable: true })
+  readonly appealState?: CaseAppealState
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isStatementDeadlineExpired?: boolean
 }

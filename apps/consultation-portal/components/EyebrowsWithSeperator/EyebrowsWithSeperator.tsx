@@ -11,7 +11,7 @@ export const EyebrowsWithSeperator = ({
     return (
       <>
         <Text variant="eyebrow" color={color} truncate={truncate} key={index}>
-          {item.text}
+          {item}
         </Text>
         {instances[index + 1] && <div className={style} />}
       </>

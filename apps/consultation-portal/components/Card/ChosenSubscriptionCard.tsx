@@ -1,4 +1,10 @@
-import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Checkbox,
+  FocusableBox,
+  Icon,
+  Text,
+} from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../utils/helpers'
 import { useState } from 'react'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
@@ -51,18 +57,24 @@ export const ChosenSubscriptionCard = ({
             checked={true}
             onChange={() => onCheckboxChange(parseInt(data?.id))}
           />
-          <Text
-            lineHeight="sm"
-            variant="h5"
-            color={data?.area === 'Mál' ? 'dark400' : 'blue400'}
-          >
-            {data?.area === 'Mál' ? data?.caseNumber : data?.name}
-          </Text>
-          {data?.area === 'Mál' && <Text variant="medium">{data?.name}</Text>}
+          <FocusableBox onClick={onClick}>
+            <Text
+              lineHeight="sm"
+              variant="h5"
+              color={data?.area === 'Mál' ? 'dark400' : 'blue400'}
+            >
+              {data?.area === 'Mál' ? data?.caseNumber : data?.name}
+            </Text>
+          </FocusableBox>
+          {data?.area === 'Mál' && (
+            <FocusableBox onClick={onClick}>
+              <Text variant="medium">{data?.name}</Text>
+            </FocusableBox>
+          )}
         </Box>
-        <div onClick={onClick} style={{ height: '24px' }}>
+        <FocusableBox onClick={onClick} style={{ height: '24px' }}>
           <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
-        </div>
+        </FocusableBox>
       </Box>
       {isOpen && (
         <Box paddingTop={3}>

@@ -1,5 +1,9 @@
+import { Case } from '../../types/interfaces'
 import {
-  ActionCard,
+  getDateBeginDateEnd,
+  getShortDate,
+} from '../../utils/helpers/dateFormatter'
+import {
   Box,
   Input,
   Text,
@@ -8,22 +12,24 @@ import {
   Inline,
   Divider,
   UploadFile,
-  fileToObject,
   Hidden,
+  fileToObject,
 } from '@island.is/island-ui/core'
 
-import format from 'date-fns/format'
+import Link from 'next/link'
 import { useReducer, useState } from 'react'
-
-type CardInfo = {
-  caseNumber: string
-  nameOfReviewer: string
-  reviewPeriod: string
-}
+import { useLogIn } from '../../utils/helpers'
+import { SubscriptionActionBox } from '../Card'
+import { CASE_POST_ADVICE } from '../../graphql/queries.graphql'
+import { useMutation } from '@apollo/client'
+import initApollo from '../../graphql/client'
+import { resolveFileToObject } from '../../utils/helpers'
 
 type CardProps = {
-  card: CardInfo
+  card: Case
   isLoggedIn: boolean
+  username: string
+  caseId: number
 }
 
 enum ActionTypes {
@@ -37,7 +43,16 @@ type Action = {
   payload: any
 }
 
-// taken from InputFileUpload.stories.tsx
+const REVIEW_MINIMUM_LENGTH = 10
+
+const fileExtensionWhitelist = {
+  '.pdf': 'application/pdf',
+  '.doc': 'application/msword',
+  '.docx':
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+}
+
+// InputFileUpload.stories.tsx
 const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
   return new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()
@@ -72,9 +87,7 @@ const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
     const formData = new FormData()
     formData.append('file', file.originalFileObj || '', file.name)
 
-    // TODO: add backend url
-    //req.open('POST', 'http://localhost:5000/')
-    //req.send(formData)
+    // TODO: add backend url if multipart upload
   })
 }
 
@@ -106,12 +119,55 @@ function reducer(state: UploadFile[], action: Action) {
   }
 }
 
-const date = format(new Date(Date.now()), 'dd.MM.yyyy')
+const date = getShortDate(new Date())
 
-export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
+export const WriteReviewCard = ({
+  card,
+  isLoggedIn,
+  username,
+  caseId,
+}: CardProps) => {
   const [showUpload, setShowUpload] = useState<boolean>(false)
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
+  const [showInputError, setShowInputError] = useState(false)
+  const LogIn = useLogIn()
+  const [review, setReview] = useState('')
+
+  const client = initApollo()
+  const [postAdviceMutation, { loading: postAdviceLoading }] = useMutation(
+    CASE_POST_ADVICE,
+    {
+      client: client,
+    },
+  )
+
+  const onClick = async () => {
+    if (review.length >= REVIEW_MINIMUM_LENGTH) {
+      setShowInputError(false)
+      const files = await Promise.all(
+        state.map((item: UploadFile) =>
+          resolveFileToObject(item.originalFileObj as File),
+        ),
+      )
+      const objToSend = {
+        caseId: caseId,
+        adviceRequest: {
+          content: review,
+          adviceFiles: files,
+        },
+      }
+      const posting = await postAdviceMutation({
+        variables: {
+          input: objToSend,
+        },
+      })
+      // reloading page, would be better if we got the object back
+      // from the server or sent a refetch request for data
+      location.reload()
+    }
+    setShowInputError(true)
+  }
 
   const onChange = (newFiles: File[]) => {
     const newUploadFiles = newFiles.map((f) => fileToObject(f))
@@ -149,6 +205,7 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
       borderWidth="standard"
       borderColor="blue300"
       flexDirection="column"
+      id="write-review"
     >
       <Inline
         justifyContent="spaceBetween"
@@ -157,7 +214,7 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
       >
         <Inline alignY="center" collapseBelow="lg">
           <Text variant="eyebrow" color="purple400">
-            Mál nr. {card.caseNumber}
+            Mál nr. S-{card.caseNumber}
           </Text>
           <Hidden below="lg">
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
@@ -166,7 +223,8 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
           </Hidden>
           <Box>
             <Text variant="eyebrow" color="purple400">
-              Til umsagnar: {card.reviewPeriod}
+              Til umsagnar:{' '}
+              {getDateBeginDateEnd(card.processBegins, card.processEnds)}
             </Text>
           </Box>
         </Inline>
@@ -175,13 +233,25 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
       <Text variant="h3" marginTop={1}>
         Skrifa umsögn
       </Text>
-      <Text marginBottom={2}>Umsagnaraðili: {card.nameOfReviewer}</Text>
+
+      <Text marginBottom={2}>
+        Hér er hægt að senda inn umsögn. Umsagnir í þessu máli birtast jafnóðum
+        og þær berast. Upplýsingalög gilda, sjá nánar í{' '}
+        <Link href="/um">um samráðsgáttina.</Link>
+      </Text>
+
+      <Text marginBottom={2}>Umsagnaraðili: {username}</Text>
+
       <Input
         textarea
         label="Umsögn"
         name="Test"
         placeholder="Hér skal skrifa umsögn"
         rows={10}
+        value={review}
+        onChange={(e) => setReview(e.target.value)}
+        hasError={showInputError && review.length <= REVIEW_MINIMUM_LENGTH}
+        errorMessage="Texti þarf að vera að minnsta kosti 10 stafbil."
       />
       <Box paddingTop={3}>
         {showUpload && (
@@ -189,13 +259,13 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
             <InputFileUpload
               name="fileUpload"
               fileList={state}
+              accept={Object.values(fileExtensionWhitelist)}
               header="Dragðu skrár hingað til að hlaða upp"
               description="Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn"
               buttonLabel="Velja skrár til að hlaða upp"
               showFileSize
               onChange={onChange}
               onRemove={onRemove}
-              errorMessage={state.length > 0 ? error : undefined}
             />
           </Box>
         )}
@@ -214,21 +284,35 @@ export const WriteReviewCard = ({ card, isLoggedIn }: CardProps) => {
           ) : (
             <div />
           )}
-          <Button fluid size="small">
+          <Button fluid size="small" onClick={onClick}>
             Staðfesta umsögn
           </Button>
         </Inline>
       </Box>
+      <Text marginTop={2} variant="small">
+        Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er
+        10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.
+      </Text>
     </Box>
   ) : (
-    <ActionCard
-      headingVariant="h4"
-      heading="Skrifa umsögn"
-      text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur"
-      cta={{ label: 'Skrá mig inn' }}
-    >
-      {' '}
-    </ActionCard>
+    <Box>
+      <SubscriptionActionBox
+        heading="Skrifa umsögn"
+        text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur."
+        cta={{ label: 'Skrá mig inn', onClick: LogIn }}
+      />
+      <Text marginTop={2}>
+        Ef umsögnin er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf
+        umboð þaðan,{' '}
+        <a
+          target="_blank"
+          href="https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf"
+          rel="noopener noreferrer"
+        >
+          sjá nánar hér.
+        </a>
+      </Text>
+    </Box>
   )
 }
 

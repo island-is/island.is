@@ -5,12 +5,14 @@ const dev01: EnvironmentConfig = {
   auroraHost: 'postgres-applications.internal',
   auroraReplica:
     'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com',
-  redisHost: JSON.stringify(['redis-applications.internal:6379']),
+  redisHost: JSON.stringify([
+    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+  ]),
   domain: 'dev01.devland.is',
   type: 'dev',
   featuresOn: [],
   defaultMaxReplicas: 3,
-  defaultMinReplicas: 2,
+  defaultMinReplicas: 1,
   releaseName: 'web',
   awsAccountId: '013313053092',
   awsAccountRegion: 'eu-west-1',
@@ -40,9 +42,11 @@ const staging01: EnvironmentConfig = {
   type: 'staging',
   featuresOn: [],
   defaultMaxReplicas: 3,
-  defaultMinReplicas: 2,
+  defaultMinReplicas: 1,
   releaseName: 'web',
-  redisHost: JSON.stringify(['redis-applications.internal:6379']),
+  redisHost: JSON.stringify([
+    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+  ]),
   awsAccountId: '261174024191',
   awsAccountRegion: 'eu-west-1',
   global: {
@@ -87,7 +91,9 @@ export let Envs: EnvironmentConfigs = {
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
     releaseName: 'web',
-    redisHost: JSON.stringify(['redis-applications.internal:6379']),
+    redisHost: JSON.stringify([
+      'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+    ]),
     awsAccountId: '251502586493',
     awsAccountRegion: 'eu-west-1',
     global: {
@@ -118,7 +124,9 @@ export let Envs: EnvironmentConfigs = {
     defaultMaxReplicas: 10,
     defaultMinReplicas: 3,
     releaseName: 'web',
-    redisHost: JSON.stringify(['redis-applications.internal:6379']),
+    redisHost: JSON.stringify([
+      'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+    ]),
     awsAccountId: '567113216315',
     awsAccountRegion: 'eu-west-1',
     global: {

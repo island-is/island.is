@@ -168,7 +168,6 @@ const fromDir = async (startPath, res = [], readmeAsRoot = false) => {
     }
     const filename = path.join(startPath, orderedFiles[file])
     const stat = fs.lstatSync(filename)
-
     if (stat.isDirectory()) {
       fromDir(filename, res, readmeAsRoot)
     } else if (/\.md$/.test(filename)) {

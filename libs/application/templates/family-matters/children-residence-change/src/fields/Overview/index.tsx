@@ -69,7 +69,7 @@ const Overview = ({
 
   const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
 
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
 
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
@@ -128,6 +128,13 @@ const Overview = ({
   const controlCode =
     requestFileSignatureData?.requestFileSignature?.controlCode
   const isDraft = application.state === 'draft'
+  if (isDraft) {
+    setValue(
+      confirmContractTimestamp,
+      format(addDays(new Date(), 28), 'dd.MM.yyyy'),
+    )
+  }
+
   return (
     <Box className={style.descriptionOffset}>
       <SignatureModal
@@ -193,14 +200,6 @@ const Overview = ({
           ]}
         />
       </Box>
-      {isDraft && (
-        <input
-          name={confirmContractTimestamp}
-          type="hidden"
-          value={format(addDays(new Date(), 28), 'dd.MM.yyyy')}
-          ref={register}
-        />
-      )}
     </Box>
   )
 }

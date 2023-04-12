@@ -19,6 +19,7 @@ import { estateSchema } from './dataSchema'
 import { EstateEvent, EstateTypes, Roles, States } from './constants'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
+import { EstateApi } from '../dataProviders'
 
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -91,7 +92,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
             },
             {
               id: Roles.APPLICANT_DIVISION_OF_ESTATE,
@@ -102,7 +103,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
             },
             {
               id: Roles.APPLICANT_POSTPONE_ESTATE_DIVISION,
@@ -113,7 +114,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
             },
             {
               id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
@@ -124,7 +125,7 @@ const EstateTemplate: ApplicationTemplate<
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryUserApi, UserProfileApi, EstateApi],
             },
           ],
         },
@@ -142,6 +143,10 @@ const EstateTemplate: ApplicationTemplate<
           status: 'approved',
           progress: 1,
           lifecycle: EphemeralStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.completeApplication,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,

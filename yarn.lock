@@ -5597,16 +5597,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@datadog/mobile-react-native@npm:1.3.0":
-  version: 1.3.0
-  resolution: "@datadog/mobile-react-native@npm:1.3.0"
-  peerDependencies:
-    react: ">=16.13.1"
-    react-native: ">=0.63.4 <1.0"
-  checksum: 890b09b68efab125aada1891a1d4858bdde1ad71f3bf8545fba2a1880cc9897cc968b079bbf5cf320259db3e43f1c44ad1a44db70ec0e5ea47d478c5febbe502
-  languageName: node
-  linkType: hard
-
 "@datadog/native-appsec@npm:2.0.0":
   version: 2.0.0
   resolution: "@datadog/native-appsec@npm:2.0.0"
@@ -7588,22 +7578,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hapi/hoek@npm:^9.0.0":
-  version: 9.3.0
-  resolution: "@hapi/hoek@npm:9.3.0"
-  checksum: 4771c7a776242c3c022b168046af4e324d116a9d2e1d60631ee64f474c6e38d1bb07092d898bf95c7bc5d334c5582798a1456321b2e53ca817d4e7c88bc25b43
-  languageName: node
-  linkType: hard
-
-"@hapi/topo@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "@hapi/topo@npm:5.1.0"
-  dependencies:
-    "@hapi/hoek": ^9.0.0
-  checksum: 604dfd5dde76d5c334bd03f9001fce69c7ce529883acf92da96f4fe7e51221bf5e5110e964caca287a6a616ba027c071748ab636ff178ad750547fba611d6014
-  languageName: node
-  linkType: hard
-
 "@hookform/error-message@npm:2.0.1":
   version: 2.0.1
   resolution: "@hookform/error-message@npm:2.0.1"
@@ -7677,81 +7651,6 @@ __metadata:
   checksum: 26b134b17e8b4bff60426309a1c2efa2b231c4f647c0dd73aba2961fc5bfa56f0d2257dcbc4ecf37975b774767f30c8c8dc15269246fc2237ed8040321ad4cfe
   languageName: node
   linkType: hard
-
-"@island.is/native-app@workspace:apps/native/app":
-  version: 0.0.0-use.local
-  resolution: "@island.is/native-app@workspace:apps/native/app"
-  dependencies:
-    "@apollo/client": 3.7.7
-    "@babel/core": ^7.20.0
-    "@babel/preset-env": ^7.20.0
-    "@babel/runtime": ^7.20.0
-    "@datadog/mobile-react-native": 1.3.0
-    "@formatjs/intl-datetimeformat": 4.2.4
-    "@formatjs/intl-getcanonicallocales": 1.7.3
-    "@formatjs/intl-locale": 2.4.38
-    "@formatjs/intl-numberformat": 7.1.5
-    "@formatjs/intl-pluralrules": 4.1.4
-    "@formatjs/intl-relativetimeformat": 11.1.8
-    "@react-native-community/async-storage": 1.12.1
-    "@react-native-community/progress-bar-android": 1.0.5
-    "@react-native-community/progress-view": 1.3.1
-    "@react-native-cookies/cookies": 6.2.1
-    "@react-native-firebase/analytics": 16.7.0
-    "@react-native-firebase/app": 16.7.0
-    "@react-native-firebase/messaging": 16.7.0
-    "@react-native-firebase/perf": 16.7.0
-    "@tsconfig/react-native": ^2.0.2
-    "@types/intl": ^1
-    "@types/jest": ^29.2.1
-    "@types/react": ^18.0.24
-    "@types/react-dom": ^18
-    "@types/react-test-renderer": ^18.0.0
-    "@types/styled-components": ^5
-    "@types/styled-components-react-native": 5.2.1
-    babel-jest: ^29.2.1
-    babel-loader: ^8.3.0
-    babel-plugin-formatjs: 10.3.9
-    configcat-js: 7.0.0
-    dynamic-color: 0.3.0
-    expo: 47.0.13
-    expo-barcode-scanner: 12.2.0
-    expo-camera: 13.1.0
-    expo-file-system: 15.1.1
-    expo-haptics: 12.0.1
-    expo-image-loader: 4.0.0
-    expo-local-authentication: 13.0.2
-    expo-notifications: 0.17.0
-    intl: 1.2.5
-    jest: ^29.2.1
-    metro-react-native-babel-preset: 0.72.3
-    react: 18.2.0
-    react-dom: 18.2.0
-    react-intl: 5.20.12
-    react-native: 0.71.1
-    react-native-app-auth: 6.4.3
-    react-native-blob-util: 0.16.4
-    react-native-code-push: 7.1.0
-    react-native-device-info: 10.3.0
-    react-native-dialogs: 1.1.1
-    react-native-inappbrowser-reborn: 3.7.0
-    react-native-interactable: 2.0.1
-    react-native-keyboard-manager: 6.5.4-3
-    react-native-keychain: 8.1.1
-    react-native-navigation: 7.32.1
-    react-native-navigation-hooks: 6.3.0
-    react-native-passkit-wallet: 0.1.6
-    react-native-pdf: 6.6.2
-    react-native-quick-actions: 0.3.13
-    react-native-share: 7.1.1
-    react-native-spotlight-search: 2.0.0
-    react-native-webview: 11.26.1
-    react-test-renderer: 18.2.0
-    styled-components: 5.3.6
-    typescript: 4.8.4
-    zustand: 3.5.12
-  languageName: unknown
-  linkType: soft
 
 "@island.is/regulations-tools@npm:0.7.9":
   version: 0.7.9
@@ -13763,7 +13662,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:*, @types/hoist-non-react-statics@npm:^3.3.1":
+"@types/hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.1
   resolution: "@types/hoist-non-react-statics@npm:3.3.1"
   dependencies:
@@ -16406,13 +16305,6 @@ __metadata:
   version: 0.0.3
   resolution: "amazon-s3-uri@npm:0.0.3"
   checksum: 62ce3a9361dd07a7729609607e66f2c1e096c192481528240c1e7feb58e89d2469c3bfb8c7cebec95ca4a875d5fcbb292bd37cac98b524008f3db51d6ef06ee6
-  languageName: node
-  linkType: hard
-
-"anser@npm:^1.4.9":
-  version: 1.4.10
-  resolution: "anser@npm:1.4.10"
-  checksum: 3823c64f8930d3d97f36e56cdf646fa6351f1227e25eee70c3a17697447cae4238fc3a309bb3bc2003cf930687fa72aed71426dbcf3c0a15565e120a7fee5507
   languageName: node
   linkType: hard
 
@@ -22845,7 +22737,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deep-extend@npm:^0.6.0, deep-extend@npm:~0.6.0":
+"deep-extend@npm:~0.6.0":
   version: 0.6.0
   resolution: "deep-extend@npm:0.6.0"
   checksum: 7be7e5a8d468d6b10e6a67c3de828f55001b6eb515d014f7aeb9066ce36bd5717161eb47d6a0f7bed8a9083935b465bc163ee2581c8b128d29bf61092fdf57a7
@@ -26493,15 +26385,6 @@ __metadata:
     locate-path: ^5.0.0
     path-exists: ^4.0.0
   checksum: 4c172680e8f8c1f78839486e14a43ef82e9decd0e74145f40707cc42e7420506d5ec92d9a11c22bd2c48fb0c384ea05dd30e10dd152fefeec6f2f75282a8b844
-  languageName: node
-  linkType: hard
-
-"find-yarn-workspace-root@npm:~2.0.0":
-  version: 2.0.0
-  resolution: "find-yarn-workspace-root@npm:2.0.0"
-  dependencies:
-    micromatch: ^4.0.2
-  checksum: fa5ca8f9d08fe7a54ce7c0a5931ff9b7e36f9ee7b9475fb13752bcea80ec6b5f180fa5102d60b376d5526ce924ea3fc6b19301262efa0a5d248dd710f3644242
   languageName: node
   linkType: hard
 
@@ -37769,7 +37652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object-is@npm:^1.0.1, object-is@npm:^1.1.4":
+"object-is@npm:^1.1.4":
   version: 1.1.5
   resolution: "object-is@npm:1.1.5"
   dependencies:
@@ -38868,16 +38751,6 @@ __metadata:
     pause: 0.0.1
     utils-merge: ^1.0.1
   checksum: ef932ad671d50de34765c7a53cd1e058d8331a82a6df09265a9c6c1168911aee4a7b5215803d0101110ab7f317e096b4954ca7e18fb2c33b9929f0bd17dbe159
-  languageName: node
-  linkType: hard
-
-"password-prompt@npm:^1.0.4":
-  version: 1.1.2
-  resolution: "password-prompt@npm:1.1.2"
-  dependencies:
-    ansi-escapes: ^3.1.0
-    cross-spawn: ^6.0.5
-  checksum: 4763ec1b48cb311d60df37186e31f1b85ec3249a21cc17bbf8407d66c5b55cffe34b4eb529ebd044ed4ced7f3ea3fad744fe15e30a5de31645433e94cd444266
   languageName: node
   linkType: hard
 
@@ -43520,13 +43393,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve.exports@npm:^2.0.0":
-  version: 2.0.2
-  resolution: "resolve.exports@npm:2.0.2"
-  checksum: 1c7778ca1b86a94f8ab4055d196c7d87d1874b96df4d7c3e67bbf793140f0717fd506dcafd62785b079cd6086b9264424ad634fb904409764c3509c3df1653f2
-  languageName: node
-  linkType: hard
-
 "resolve@npm:^1.1.5, resolve@npm:^1.1.7, resolve@npm:^1.10.0, resolve@npm:^1.12.0, resolve@npm:^1.14.2, resolve@npm:^1.17.0, resolve@npm:^1.18.1, resolve@npm:^1.19.0, resolve@npm:^1.20.0, resolve@npm:^1.22.0, resolve@npm:^1.3.2, resolve@npm:^1.4.0":
   version: 1.22.0
   resolution: "resolve@npm:1.22.0"
@@ -43560,15 +43426,6 @@ __metadata:
     is-core-module: ^2.2.0
     path-parse: ^1.0.6
   checksum: f34b3b93ada77d64a6d590c06a83e198f3a827624c4ec972260905fa6c4d612164fbf0200d16d2beefea4ad1755b001f4a9a1293d8fc2322a8f7d6bf692c4ff5
-  languageName: node
-  linkType: hard
-
-"resolve@npm:~1.7.1":
-  version: 1.7.1
-  resolution: "resolve@npm:1.7.1"
-  dependencies:
-    path-parse: ^1.0.5
-  checksum: afb829d4b923f9b17aaf55320c2feaf8d44577674a3a71510d299f832fb80f6703e5a701e01cf774c3241fe8663d4b2b99053cfbca7995488d18ea9f8c7ac309
   languageName: node
   linkType: hard
 
@@ -48514,13 +48371,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unicode-match-property-value-ecmascript@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "unicode-match-property-value-ecmascript@npm:2.1.0"
-  checksum: 8d6f5f586b9ce1ed0e84a37df6b42fdba1317a05b5df0c249962bd5da89528771e2d149837cad11aa26bcb84c35355cb9f58a10c3d41fa3b899181ece6c85220
-  languageName: node
-  linkType: hard
-
 "unicode-properties@npm:^1.3.1":
   version: 1.4.1
   resolution: "unicode-properties@npm:1.4.1"
@@ -51007,18 +50857,6 @@ __metadata:
   version: 3.21.2
   resolution: "zod@npm:3.21.2"
   checksum: 6a5fa0992827b61440de7087038ec737f76074efbdc1b3594630ecdad314fd566439f7900aa05d4938222a5f739e599c61a848f794a8264f80909720b96ed764
-  languageName: node
-  linkType: hard
-
-"zustand@npm:3.5.12":
-  version: 3.5.12
-  resolution: "zustand@npm:3.5.12"
-  peerDependencies:
-    react: ">=16.8"
-  peerDependenciesMeta:
-    react:
-      optional: true
-  checksum: e249840ddd3e957e10d31c540520e57055de2b7ca32631332febe6d1e6afed13f34f241e0e1c57ebdab31dd9ed7fd415412e1b19342e812b39eba60d7291e991
   languageName: node
   linkType: hard
 

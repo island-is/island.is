@@ -208,8 +208,6 @@ export class FinancialStatementsInaoClientService {
 
     if (!data || !data.value) return null
 
-    console.log('getClientFinancialLimit', data)
-
     const found = data.value.find((x: any) => x.star_year == year)
 
     if (found) {

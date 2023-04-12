@@ -3,6 +3,7 @@ import { ConfigType } from '@nestjs/config'
 import { ApiV1, ConfigV1 } from '../v1'
 import { ApiV2, ConfigV2 } from '../v2'
 import { DrivingLicenseApiConfig } from './drivingLicenseApi.config'
+import { ApiV5, ConfigV5 } from '../v5'
 
 const configFactory = (
   config: ConfigType<typeof DrivingLicenseApiConfig>,
@@ -38,6 +39,17 @@ export const exportedApis = [
       return new ApiV2(
         new ConfigV2(
           configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV2}`),
+        ),
+      )
+    },
+    inject: [DrivingLicenseApiConfig.KEY],
+  },
+  {
+    provide: ApiV5,
+    useFactory: (config: ConfigType<typeof DrivingLicenseApiConfig>) => {
+      return new ApiV5(
+        new ConfigV5(
+          configFactory(config, `${config.xroadBaseUrl}/${config.xroadPathV5}`),
         ),
       )
     },

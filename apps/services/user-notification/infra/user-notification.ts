@@ -45,6 +45,16 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
         },
       },
     })
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '15m',
+        memory: '256Mi',
+      },
+    })
     .grantNamespaces('nginx-ingress-internal')
 
 export const userNotificationWorkerSetup = (services: {
@@ -69,7 +79,7 @@ export const userNotificationWorkerSetup = (services: {
       ),
       USER_NOTIFICATION_APP_PROTOCOL: {
         dev: 'is.island.app.dev',
-        staging: 'is.island.app.staging',
+        staging: 'is.island.app.dev', // intentionally set to dev - see firebase setup
         prod: 'is.island.app',
       },
       CONTENTFUL_HOST: {

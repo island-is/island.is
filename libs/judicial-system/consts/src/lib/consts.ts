@@ -94,6 +94,9 @@ export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
 export const DEFENDER_ROUTE = '/verjandi'
+export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
+
+export const APPEAL_ROUTE = '/kaera'
 
 /* PROSECUTOR ROUTES START */
 export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'
@@ -134,7 +137,6 @@ export const RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE =
 export const RESTRICTION_CASE_RULING_ROUTE = '/domur/urskurdur'
 export const RESTRICTION_CASE_COURT_RECORD_ROUTE = '/domur/thingbok'
 export const RESTRICTION_CASE_CONFIRMATION_ROUTE = '/domur/stadfesta'
-export const RESTRICTION_CASE_MODIFY_RULING_ROUTE = '/domur/urskurdur/leidretta'
 
 export const INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/rannsoknarheimild/mottaka'
@@ -146,8 +148,6 @@ export const INVESTIGATION_CASE_COURT_RECORD_ROUTE =
   '/domur/rannsoknarheimild/thingbok'
 export const INVESTIGATION_CASE_RULING_ROUTE =
   '/domur/rannsoknarheimild/urskurdur'
-export const INVESTIGATION_CASE_MODIFY_RULING_ROUTE =
-  '/domur/rannsoknarheimild/urskurdur/leidretta'
 export const INVESTIGATION_CASE_CONFIRMATION_ROUTE =
   '/domur/rannsoknarheimild/stadfesta'
 
@@ -159,6 +159,10 @@ export const INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE =
   '/domur/akaera/malflytjendur'
 export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
+
+/* COURT OF APPEAL ROUTES START */
+export const COURT_OF_APPEAL_OVERVIEW = '/landsrettur/yfirlit'
+/* COURT OF APPEAL ROUTES END */
 
 export const prosecutorRestrictionCasesRoutes = [
   RESTRICTION_CASE_DEFENDANT_ROUTE,
@@ -178,11 +182,12 @@ export const prosecutorInvestigationCasesRoutes = [
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
 ]
 
-export const prosecutorIndictmentRoutes = [
+export const prosecutorIndictmentRoutes = (isTrafficViolation: boolean) => [
   INDICTMENTS_DEFENDANT_ROUTE,
   INDICTMENTS_POLICE_CASE_FILES_ROUTE,
   INDICTMENTS_CASE_FILE_ROUTE,
   INDICTMENTS_PROCESSING_ROUTE,
+  ...(isTrafficViolation ? [INDICTMENTS_TRAFFIC_VIOLATION_ROUTE] : []),
   INDICTMENTS_CASE_FILES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 ]
@@ -202,11 +207,19 @@ export const courtInvestigationCasesRoutes = [
   INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
   INVESTIGATION_CASE_COURT_RECORD_ROUTE,
   INVESTIGATION_CASE_RULING_ROUTE,
-  INVESTIGATION_CASE_MODIFY_RULING_ROUTE,
   INVESTIGATION_CASE_CONFIRMATION_ROUTE,
 ]
 
+export const courtIndictmentRoutes = [
+  INDICTMENTS_COURT_OVERVIEW_ROUTE,
+  INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
+  INDICTMENTS_SUBPOENA_ROUTE,
+  INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+  INDICTMENTS_COURT_RECORD_ROUTE,
+]
+
+export const courtOfAppealRoutes = [COURT_OF_APPEAL_OVERVIEW]
+
 // Feedback
-export const FEEDBACK_FORM_ROUTE = '/feedback-from'
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'

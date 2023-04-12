@@ -1,112 +1,99 @@
 import { Injectable } from '@nestjs/common'
 
-import { Environment } from '../models/environment'
+import { User } from '@island.is/auth-nest-tools'
+import { Environment } from '@island.is/shared/types'
+
+import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import { TenantEnvironment } from './models/tenant-environment.model'
+import { TenantsPayload } from './dto/tenants.payload'
+import { Tenant } from './models/tenant.model'
 
 @Injectable()
-export class TenantsService {
-  getTenants() {
+export class TenantsService extends MultiEnvironmentService {
+  async getTenants(user: User): Promise<TenantsPayload> {
+    const tenants = await Promise.all([
+      this.adminDevApiWithAuth(user)
+        ?.meTenantsControllerFindAll()
+        .catch((error) => this.handleError(error, Environment.Development)),
+      this.adminStagingApiWithAuth(user)
+        ?.meTenantsControllerFindAll()
+        .catch((error) => this.handleError(error, Environment.Staging)),
+      this.adminProdApiWithAuth(user)
+        ?.meTenantsControllerFindAll()
+        .catch((error) => this.handleError(error, Environment.Production)),
+    ])
+
+    const tenantMap = new Map<string, TenantEnvironment[]>()
+
+    for (const [index, env] of [
+      Environment.Development,
+      Environment.Staging,
+      Environment.Production,
+    ].entries()) {
+      for (const tenant of tenants[index] ?? []) {
+        if (!tenantMap.has(tenant.name)) {
+          tenantMap.set(tenant.name, [])
+        }
+
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        tenantMap.get(tenant.name)!.push({
+          name: tenant.name,
+          environment: env,
+          displayName: tenant.displayName,
+        })
+      }
+    }
+
+    const tenantArray: Tenant[] = []
+    for (const [id, environments] of tenantMap.entries()) {
+      tenantArray.push({
+        id,
+        environments,
+      })
+    }
+
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    tenantArray.sort((a, b) => a.id!.localeCompare(b.id!))
+
     return {
-      data: [
-        {
-          id: '@admin.island.is',
-          environments: [
-            {
-              name: '@admin.island.is',
-              environment: Environment.Production,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is stjórnborð',
-                },
-              ],
-            },
-            {
-              name: '@admin.island.is',
-              environment: Environment.Staging,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is stjórnborð',
-                },
-              ],
-            },
-            {
-              name: '@admin.island.is',
-              environment: Environment.Dev,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is stjórnborð',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: '@island.is',
-          environments: [
-            {
-              name: '@island.is',
-              environment: Environment.Production,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is mínar síður',
-                },
-              ],
-            },
-            {
-              name: '@island.is',
-              environment: Environment.Staging,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is mínar síður',
-                },
-              ],
-            },
-            {
-              name: '@island.is',
-              environment: Environment.Dev,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Ísland.is mínar síður',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          id: '@reykjavik.is',
-          environments: [
-            {
-              name: '@reykjavik.is',
-              environment: Environment.Production,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Reykjavík mínar síður',
-                },
-              ],
-            },
-            {
-              name: '@reykjavik.is',
-              environment: Environment.Staging,
-              displayName: [
-                {
-                  locale: 'is',
-                  value: 'Reykjavík mínar síður',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-      totalCount: 3,
-      pageInfo: {
-        hasNextPage: false,
-      },
+      data: tenantArray,
+      totalCount: tenantArray.length,
+      pageInfo: { hasNextPage: false },
+    }
+  }
+
+  async getTenantById(id: string, user: User): Promise<Tenant> {
+    const tenants = await Promise.all([
+      this.adminDevApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch((error) => this.handleError(error, Environment.Development)),
+      this.adminStagingApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch((error) => this.handleError(error, Environment.Staging)),
+      this.adminProdApiWithAuth(user)
+        ?.meTenantsControllerFindById({ tenantId: id })
+        .catch((error) => this.handleError(error, Environment.Production)),
+    ])
+
+    const tenantMap: TenantEnvironment[] = []
+
+    for (const [index, env] of [
+      Environment.Development,
+      Environment.Staging,
+      Environment.Production,
+    ].entries()) {
+      const tenant = tenants[index]
+      if (tenant) {
+        tenantMap.push({
+          name: tenant.name,
+          environment: env,
+          displayName: tenant.displayName,
+        })
+      }
+    }
+    return {
+      id: id,
+      environments: tenantMap,
     }
   }
 }

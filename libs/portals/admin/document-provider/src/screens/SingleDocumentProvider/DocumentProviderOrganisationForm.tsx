@@ -21,7 +21,11 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
   setOrganisationName,
 }) => {
   const { formatMessage } = useLocale()
-  const { handleSubmit, control, errors } = useForm()
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<Organisation>()
 
   const { updateOrganisation, loading } = useUpdateOrganisation(
     (data: OnCompletedArgumentsType) => {
@@ -63,8 +67,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionNamePlaceholder,
             )}
-            hasError={errors.name}
-            errorMessage={errors.name?.message}
+            hasError={errors?.name !== undefined}
+            errorMessage={errors?.name?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -88,8 +92,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionNationalIdPlaceholder,
             )}
-            hasError={errors.nationalId}
-            errorMessage={errors.nationalId?.message}
+            hasError={errors.nationalId !== undefined}
+            errorMessage={errors.nationalId?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -105,8 +109,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionAddressPlaceholder,
             )}
-            hasError={errors.address}
-            errorMessage={errors.address?.message}
+            hasError={errors.address !== undefined}
+            errorMessage={errors.address?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -128,8 +132,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionEmailPlaceholder,
             )}
-            hasError={errors.email}
-            errorMessage={errors.email?.message}
+            hasError={errors?.email !== undefined}
+            errorMessage={errors?.email?.message ?? ''}
           />
           <DocumentProviderInput
             control={control}
@@ -165,8 +169,8 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
             placeholder={formatMessage(
               m.SingleProviderInstitutionPhonenumberPlaceholder,
             )}
-            hasError={errors.phoneNumber}
-            errorMessage={errors.phoneNumber?.message}
+            hasError={errors?.phoneNumber !== undefined}
+            errorMessage={errors?.phoneNumber?.message ?? ''}
           />
           <Box
             display="flex"

@@ -1,19 +1,14 @@
-import { Outlet, useParams } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { applicationNav } from '../lib/navigation'
 import React from 'react'
-import MockApplications from '../lib/MockApplications'
 import Layout from '../components/Layout/Layout'
+import { useLocale } from '@island.is/localization'
+import { m } from '../lib/messages'
 
 const ApplicationsScreen = () => {
-  const { application } = useParams()
-  const findMockDataById = (id: string) => {
-    return MockApplications.find((item) => item.id === id)
-  }
-
-  const applicationData = findMockDataById(application as string)
-
+  const { formatMessage } = useLocale()
   return (
-    <Layout navTitle={applicationData?.name ?? ''} navItems={applicationNav}>
+    <Layout navTitle={formatMessage(m.idsAdmin)} navItems={applicationNav}>
       <Outlet />
     </Layout>
   )
