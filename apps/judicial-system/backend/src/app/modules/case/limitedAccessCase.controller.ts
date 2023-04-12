@@ -87,7 +87,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderTransitionRule)
-  @Patch('state/limitedAccess')
+  @Patch('state')
   @ApiOkResponse({
     type: Case,
     description: 'Updates the state of a case',

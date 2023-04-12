@@ -30,7 +30,7 @@ import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
-import { TransitionLimitedAccessCaseMutation } from './transitionLimitedAccessCaseGql'
+import { LimitedAccessTransitionCaseMutation } from './limitedAccessTransitionCaseGql'
 
 type ChildKeys = Pick<
   UpdateCase,
@@ -67,8 +67,8 @@ interface TransitionCaseMutationResponse {
   transitionCase: Case
 }
 
-interface TransitionLimitedAccessCaseMutationResponse {
-  transitionLimitedAccessCase: Case
+interface LimitedAccessTransitionCaseMutationResponse {
+  limitedAccessTransitionCase: Case
 }
 
 interface SendNotificationMutationResponse {
@@ -176,10 +176,10 @@ const useCase = () => {
     { loading: isTransitioningCase },
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
   const [
-    transitionLimitedAccessCaseMutation,
-    { loading: isTransitioningLimitedAccessCase },
-  ] = useMutation<TransitionLimitedAccessCaseMutationResponse>(
-    TransitionLimitedAccessCaseMutation,
+    limitedAccessTransitionCaseMutation,
+    { loading: isLimitedAccessTransitioningCase },
+  ] = useMutation<LimitedAccessTransitionCaseMutationResponse>(
+    LimitedAccessTransitionCaseMutation,
   )
   const [
     sendNotificationMutation,
@@ -295,10 +295,10 @@ const useCase = () => {
 
       const mutation = !limitedAccess
         ? transitionCaseMutation
-        : transitionLimitedAccessCaseMutation
+        : limitedAccessTransitionCaseMutation
 
       const resultType = limitedAccess
-        ? 'transitionLimitedAccessCase'
+        ? 'limitedAccessTransitionCase'
         : 'transitionCase'
 
       try {
@@ -312,7 +312,7 @@ const useCase = () => {
         })
 
         const res = data as TransitionCaseMutationResponse &
-          TransitionLimitedAccessCaseMutationResponse
+          LimitedAccessTransitionCaseMutationResponse
 
         const state = res[resultType].state
         const appealState = res[resultType].appealState
@@ -336,9 +336,9 @@ const useCase = () => {
       }
     },
     [
-      formatMessage,
       transitionCaseMutation,
-      transitionLimitedAccessCaseMutation,
+      limitedAccessTransitionCaseMutation,
+      formatMessage,
     ],
   )
 
@@ -437,7 +437,7 @@ const useCase = () => {
     isUpdatingCase,
     transitionCase,
     isTransitioningCase,
-    isTransitioningLimitedAccessCase,
+    isLimitedAccessTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,

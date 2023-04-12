@@ -64,7 +64,6 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
-    limitedAccess: user?.role === UserRole.Defender,
   })
 
   const showTrafficViolationCaseFiles = isTrafficViolationCase(

@@ -1,25 +1,24 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
+import router from 'next/router'
 
-import {
-  GetLimitedAccessSignedUrlQuery,
-  GetSignedUrlQuery,
-} from '@island.is/judicial-system-web/graphql/sharedGql'
+import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { CaseFileState } from '@island.is/judicial-system/types'
 import {
-  GetLimitedAccessSignedUrlQueryQuery,
-  GetLimitedAccessSignedUrlQueryQueryVariables,
+  LimitedAccessGetSignedUrlQueryQuery,
+  LimitedAccessGetSignedUrlQueryQueryVariables,
   GetSignedUrlQueryQuery,
   GetSignedUrlQueryQueryVariables,
+  GetSignedUrlQueryDocument,
+  LimitedAccessGetSignedUrlQueryDocument,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
 
 interface Parameters {
   caseId: string
-  limitedAccess?: boolean
 }
 
-const useFileList = ({ caseId, limitedAccess = false }: Parameters) => {
+const useFileList = ({ caseId }: Parameters) => {
   const { setWorkingCase } = useContext(FormContext)
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
@@ -27,7 +26,7 @@ const useFileList = ({ caseId, limitedAccess = false }: Parameters) => {
     getSignedUrl,
     { error: fullAccessError, variables: fullAccessVariables },
   ] = useLazyQuery<GetSignedUrlQueryQuery, GetSignedUrlQueryQueryVariables>(
-    GetSignedUrlQuery,
+    GetSignedUrlQueryDocument,
     {
       fetchPolicy: 'no-cache',
       onCompleted(data) {
@@ -39,22 +38,25 @@ const useFileList = ({ caseId, limitedAccess = false }: Parameters) => {
   )
 
   const [
-    getLimitedAccessSignedUrl,
+    limitedAccessGetSignedUrl,
     { error: limitedAccessError, variables: limitedAccessVariables },
   ] = useLazyQuery<
-    GetLimitedAccessSignedUrlQueryQuery,
-    GetLimitedAccessSignedUrlQueryQueryVariables
-  >(GetLimitedAccessSignedUrlQuery, {
+    LimitedAccessGetSignedUrlQueryQuery,
+    LimitedAccessGetSignedUrlQueryQueryVariables
+  >(LimitedAccessGetSignedUrlQueryDocument, {
     fetchPolicy: 'no-cache',
     onCompleted(data) {
-      if (data?.getLimitedAccessSignedUrl?.url) {
-        window.open(data.getLimitedAccessSignedUrl.url, '_blank')
+      if (data?.limitedAccessGetSignedUrl?.url) {
+        window.open(data.limitedAccessGetSignedUrl.url, '_blank')
       }
     },
   })
 
   useEffect(() => {
+    const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
+
     const error = limitedAccess ? limitedAccessError : fullAccessError
+
     const variables = limitedAccess
       ? limitedAccessVariables
       : fullAccessVariables
@@ -88,21 +90,23 @@ const useFileList = ({ caseId, limitedAccess = false }: Parameters) => {
   }, [
     fullAccessError,
     fullAccessVariables,
-    limitedAccess,
     limitedAccessError,
     limitedAccessVariables,
     setWorkingCase,
   ])
 
-  const onOpen = (fileId: string) => {
-    if (limitedAccess) {
-      getLimitedAccessSignedUrl({
+  const onOpen = useMemo(
+    () => (fileId: string) => {
+      const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
+
+      const mutation = !limitedAccess ? getSignedUrl : limitedAccessGetSignedUrl
+
+      mutation({
         variables: { input: { id: fileId, caseId } },
       })
-    } else {
-      getSignedUrl({ variables: { input: { id: fileId, caseId } } })
-    }
-  }
+    },
+    [caseId, getSignedUrl, limitedAccessGetSignedUrl],
+  )
 
   const dismissFileNotFound = () => {
     setFileNotFound(false)
