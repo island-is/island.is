@@ -58,9 +58,9 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
       AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
-        dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
-        staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
-        prod: ref((h) => h.svc('loftbru.island.is')),
+        dev: 'loftbru.dev01.devland.is',
+        staging: 'loftbru.staging01.devland.is',
+        prod: 'loftbru.island.is',
       },
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
@@ -173,9 +173,9 @@ export const serviceSetup = (services: {
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
-        dev: 'https://samradapi-test.island.is',
-        staging: 'https://samradapi-test.island.is',
-        prod: 'https://samradapi-test.island.is',
+        dev: 'https://samradapi-test.devland.is',
+        staging: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi-test.devland.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
