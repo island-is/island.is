@@ -335,7 +335,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
       return nationalId
     })
     operators?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
+      if (nationalId) reviewerNationalIdList.push(nationalId)
       return nationalId
     })
     return reviewerNationalIdList
