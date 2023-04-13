@@ -98,11 +98,9 @@ const useFileList = ({ caseId }: Parameters) => {
 
   const onOpen = useMemo(
     () => (fileId: string) => {
-      const mutation = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
+      const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 
-      mutation({
-        variables: { input: { id: fileId, caseId } },
-      })
+      query({ variables: { input: { id: fileId, caseId } } })
     },
     [caseId, getSignedUrl, limitedAccess, limitedAccessGetSignedUrl],
   )
