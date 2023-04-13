@@ -64,6 +64,15 @@ export const input = recipe({
     ...mixins.input,
     '::placeholder': mixins.inputPlaceholder,
     ':focus': mixins.inputFocus,
+    selectors: {
+      '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+        margin: 0,
+        WebkitAppearance: 'none',
+      },
+      '&[type=number]': {
+        MozAppearance: 'textfield',
+      },
+    },
   },
 
   variants: {
