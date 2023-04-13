@@ -18,14 +18,13 @@ import {
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertBanner, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
-import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
@@ -94,13 +93,7 @@ const CourtOfAppealOverview: React.FC = () => {
           ),
         })}
         variant="warning"
-      >
-        <Box marginLeft={2}>
-          <Button variant="text" size="small">
-            Senda eitthvað
-          </Button>
-        </Box>
-      </AlertBanner>
+      />
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
