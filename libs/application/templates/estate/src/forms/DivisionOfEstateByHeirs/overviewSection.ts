@@ -173,6 +173,38 @@ export const overview = buildSection({
         ),
         buildDividerField({}),
         buildDescriptionField({
+          id: 'overviewFirearms',
+          title: m.firearms,
+          description: m.firearmsDescription,
+          titleVariant: 'h3',
+          space: 'gutter',
+        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'estateFirearmsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              (
+                ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
+                  (guns) => (guns as any).enabled,
+                ) ?? []
+              ).map((gun) => ({
+                title: gun.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + gun.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    formatCurrency((gun as any).marketValue),
+                ],
+              })),
+          },
+        ),
+        buildDividerField({}),
+        buildDescriptionField({
           id: 'overviewEstateBankInfoTitle',
           title: m.estateBankInfo,
           description: m.estateBankInfoDescription,
