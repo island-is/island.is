@@ -17,6 +17,7 @@ import {
   ESTATE_REGISTRANT_RESPONSE,
   REAL_ESTATE_AGENTS,
   LAWYERS,
+  BROKERS,
   ALCOHOL_LICENCES,
   TEMPORARY_EVENT_LICENCES,
 } from './responses'
@@ -72,6 +73,14 @@ export const requestHandlers = [
     const success = req.url.searchParams.get('audkenni') ? true : false
     if (success) {
       return res(ctx.status(200), ctx.json(LAWYERS))
+    } else {
+      return res(ctx.status(401), ctx.json(VHFAIL))
+    }
+  }),
+  rest.get(url('/api/Verdbrefamidlarar/'), (req, res, ctx) => {
+    const success = req.url.searchParams.get('audkenni') ? true : false
+    if (success) {
+      return res(ctx.status(200), ctx.json(BROKERS))
     } else {
       return res(ctx.status(401), ctx.json(VHFAIL))
     }
