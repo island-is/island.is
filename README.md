@@ -161,7 +161,7 @@ And you would get something similar to this:
   mocks: 'docker run -it --rm -p 2525:2525 -p 9388:9388 -p 9372:9372 -v ./infra/mountebank-imposter-config.json:/app/default.json:z docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json'
 }
 ```
-Each service will get the secrets it is configured to use, still you will need to run local DB setup for the services you are running - dev-init, etc. Additionally, any local dev proxies will also need to be run manually.
+Each service will get the secrets it is configured to use, still you will need to run local DB setup for the services you are running - dev-init, etc. Additionally, any local dev proxies will also need to be run manually (e.g. `run-xroad-proxy.sh`).
 
 It is not necessary to run all the dependencies/services, only the one that will be actually used.
 
