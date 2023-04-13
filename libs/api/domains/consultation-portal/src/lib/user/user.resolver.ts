@@ -4,7 +4,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { UseGuards } from '@nestjs/common'
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
 import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
@@ -40,6 +40,20 @@ export class UserResolver {
     const userEmail = await this.userService.getUserEmail(user)
 
     return userEmail
+  }
+  @Mutation(() => String, {
+    nullable: true,
+    name: 'consultationPortalPostUserEmail',
+  })
+  @FeatureFlag(Features.consultationPortalApplication)
+  @UseGuards(IdsUserGuard)
+  @Scopes(ConsultationPortalScope.default)
+  async postUserEmail(
+    @Args('input') input: string,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    const response = await this.userService.postUserEmail(user, input)
+    return response
   }
 
   @Query(() => UserSubscriptionsAggregate, {

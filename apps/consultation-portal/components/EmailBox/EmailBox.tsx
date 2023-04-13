@@ -1,7 +1,7 @@
 import SubscriptionActionCard from '../Card/SubscriptionActionCard'
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import initApollo from '../../graphql/client'
-import { SUB_GET_EMAIL } from '../../graphql/queries.graphql'
+import { SUB_GET_EMAIL, SUB_POST_EMAIL } from '../../graphql/queries.graphql'
 import { useLogIn, useUser } from '../../utils/helpers'
 import { useState } from 'react'
 
@@ -17,6 +17,12 @@ export const EmailBox = () => {
   const [inputVal, setInputVal] = useState('')
 
   const client = initApollo()
+  const [postEmailMutation, { loading: postEmailLoading }] = useMutation(
+    SUB_POST_EMAIL,
+    {
+      client: client,
+    },
+  )
 
   const { data: datame } = useQuery(SUB_GET_EMAIL, {
     client: client,
@@ -27,11 +33,17 @@ export const EmailBox = () => {
 
   const onChangeEmail = (e) => {
     const nextInputVal = e.target.value
+
     setInputVal(nextInputVal)
   }
 
-  const onSetEmail = () => {
+  const onSetEmail = async () => {
     const nextEmail = inputVal
+    const post = await postEmailMutation({
+      variables: {
+        input: nextEmail,
+      },
+    })
     setEmail(nextEmail)
   }
 

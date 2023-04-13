@@ -1,5 +1,6 @@
 import {
   ApiUserAdvicesGetRequest,
+  ApiUserEmailPostRequest,
   UserApi,
 } from '@island.is/clients/consultation-portal'
 import { Injectable } from '@nestjs/common'
@@ -37,6 +38,16 @@ export class UserService {
   async getUserEmail(auth: User): Promise<UserEmailResult> {
     const emailResponse = await this.userApiWithAuth(auth).apiUserEmailGet()
     return emailResponse
+  }
+
+  async postUserEmail(auth: User, input: string) {
+    const request: ApiUserEmailPostRequest = {
+      postEmailCommand: {
+        email: input,
+      },
+    }
+    const response = await this.userApiWithAuth(auth).apiUserEmailPost(request)
+    return response
   }
 
   async getUserSubscriptions(auth: User): Promise<UserSubscriptionsAggregate> {
