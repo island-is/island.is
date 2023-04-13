@@ -1,11 +1,9 @@
-import { useCallback } from 'react'
+import { useCallback, useContext } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
-import router from 'next/router'
 import { uuid } from 'uuidv4'
 
 import { toast, UploadFile } from '@island.is/island-ui/core'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import {
   CreateFileMutationDocument,
@@ -31,6 +29,7 @@ import {
   UploadPoliceCaseFileMutationMutation,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { errors } from '@island.is/judicial-system-web/messages'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 
 export interface TUploadFile extends UploadFile {
   category?: CaseFileCategory
@@ -84,7 +83,9 @@ const uploadToS3 = (
 }
 
 export const useS3Upload = (caseId: string) => {
+  const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
+
   const [createPresignedPostMutation] = useMutation<
     CreatePresignedPostMutationMutation,
     CreatePresignedPostMutationMutationVariables
@@ -122,8 +123,6 @@ export const useS3Upload = (caseId: string) => {
       category?: CaseFileCategory,
       policeCaseNumber?: string,
     ) => {
-      const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPostMutation
         : createPresignedPostMutation
@@ -157,8 +156,6 @@ export const useS3Upload = (caseId: string) => {
         category?: CaseFileCategory,
         policeCaseNumber?: string,
       ) => {
-        const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
         const mutation = limitedAccess
           ? limitedAccessCreateFileMutation
           : createFileMutation
@@ -231,6 +228,7 @@ export const useS3Upload = (caseId: string) => {
       })
     },
     [
+      limitedAccess,
       limitedAccessCreatePresignedPostMutation,
       createPresignedPostMutation,
       caseId,
@@ -336,8 +334,6 @@ export const useS3Upload = (caseId: string) => {
 
   const remove = useCallback(
     (fileId: string) => {
-      const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
       const variables = {
         input: {
           caseId: caseId,
@@ -359,7 +355,12 @@ export const useS3Upload = (caseId: string) => {
             optimisticResponse: { deleteFile: resopnse },
           })
     },
-    [caseId, limitedAccessDeleteFileMutation, deleteFileMutation],
+    [
+      caseId,
+      limitedAccess,
+      limitedAccessDeleteFileMutation,
+      deleteFileMutation,
+    ],
   )
 
   const handleRetry = useCallback(
@@ -389,8 +390,6 @@ export const useS3Upload = (caseId: string) => {
 
   const handleRemove = useCallback(
     async (file: UploadFile, cb?: (file: UploadFile) => void) => {
-      const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
       try {
         if (file.id) {
           const { data } = await remove(file.id)
@@ -412,7 +411,7 @@ export const useS3Upload = (caseId: string) => {
         toast.error(formatMessage(errors.general))
       }
     },
-    [formatMessage, remove],
+    [formatMessage, limitedAccess, remove],
   )
 
   const generateSingleFileUpdate = useCallback(

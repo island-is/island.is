@@ -1,8 +1,6 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
-import router from 'next/router'
 
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { CaseFileState } from '@island.is/judicial-system/types'
 import {
   LimitedAccessGetSignedUrlQueryQuery,
@@ -12,13 +10,17 @@ import {
   GetSignedUrlQueryDocument,
   LimitedAccessGetSignedUrlQueryDocument,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 
 interface Parameters {
   caseId: string
 }
 
 const useFileList = ({ caseId }: Parameters) => {
+  const { limitedAccess } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
@@ -53,8 +55,6 @@ const useFileList = ({ caseId }: Parameters) => {
   })
 
   useEffect(() => {
-    const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
     const error = limitedAccess ? limitedAccessError : fullAccessError
 
     const variables = limitedAccess
@@ -90,6 +90,7 @@ const useFileList = ({ caseId }: Parameters) => {
   }, [
     fullAccessError,
     fullAccessVariables,
+    limitedAccess,
     limitedAccessError,
     limitedAccessVariables,
     setWorkingCase,
@@ -97,15 +98,13 @@ const useFileList = ({ caseId }: Parameters) => {
 
   const onOpen = useMemo(
     () => (fileId: string) => {
-      const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
-      const mutation = !limitedAccess ? getSignedUrl : limitedAccessGetSignedUrl
+      const mutation = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 
       mutation({
         variables: { input: { id: fileId, caseId } },
       })
     },
-    [caseId, getSignedUrl, limitedAccessGetSignedUrl],
+    [caseId, getSignedUrl, limitedAccess, limitedAccessGetSignedUrl],
   )
 
   const dismissFileNotFound = () => {

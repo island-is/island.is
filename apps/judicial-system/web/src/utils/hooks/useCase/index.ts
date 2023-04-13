@@ -1,11 +1,10 @@
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
 import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
-import router from 'next/router'
 
 import type {
   NotificationType,
@@ -20,8 +19,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 
 import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
@@ -156,7 +154,9 @@ export const formatDateForServer = (date: Date) => {
 }
 
 const useCase = () => {
+  const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
+
   const [
     createCaseMutation,
     { loading: isCreatingCase },
@@ -291,11 +291,9 @@ const useCase = () => {
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
-      const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
-      const mutation = !limitedAccess
-        ? transitionCaseMutation
-        : limitedAccessTransitionCaseMutation
+      const mutation = limitedAccess
+        ? limitedAccessTransitionCaseMutation
+        : transitionCaseMutation
 
       const resultType = limitedAccess
         ? 'limitedAccessTransitionCase'
@@ -336,8 +334,9 @@ const useCase = () => {
       }
     },
     [
-      transitionCaseMutation,
+      limitedAccess,
       limitedAccessTransitionCaseMutation,
+      transitionCaseMutation,
       formatMessage,
     ],
   )
