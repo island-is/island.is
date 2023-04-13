@@ -139,8 +139,8 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
               },
               buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator.map(
                 (x) => ({
-                  nationalId: x.nationalId,
-                  email: x.email,
+                  nationalId: x.nationalId!,
+                  email: x.email!,
                   type: x.type,
                   wasRemoved: x.wasRemoved,
                 }),
