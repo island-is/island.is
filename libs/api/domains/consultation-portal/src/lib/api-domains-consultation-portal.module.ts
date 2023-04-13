@@ -33,7 +33,7 @@ import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
     AuthModule,
     FeatureFlagModule,
     ConfigModule.forRoot({ isGlobal: true, load: [FileStorageConfig] }),
-    FileStorageModule
+    FileStorageModule,
   ],
   exports: [],
 })

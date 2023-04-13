@@ -234,21 +234,20 @@ export const WriteReviewCard = ({
         })
       }),
     )
-    
+
     const objToSend = {
       caseId: caseId,
       adviceRequest: {
         content: review,
-        adviceFiles: mappedFileList
-      }
+        adviceFiles: mappedFileList,
+      },
     }
 
     const posting = await postAdviceMutation({
       variables: {
-        input: objToSend
-      }
+        input: objToSend,
+      },
     })
-
   }
   const onChange = (files: File[]) => {
     const uploadFiles = files.map((f) => fileToObject(f))
