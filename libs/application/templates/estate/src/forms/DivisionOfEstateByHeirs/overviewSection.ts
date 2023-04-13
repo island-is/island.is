@@ -164,6 +164,8 @@ export const overview = buildSection({
                 title: vehicle.description,
                 description: [
                   m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
+                  'Markaðsverð: ' +
+                    formatCurrency((vehicle as any).marketValue),
                 ],
               })),
           },

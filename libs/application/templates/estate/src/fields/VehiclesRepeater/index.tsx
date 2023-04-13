@@ -45,6 +45,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
     append({
       assetNumber: '',
       description: '',
+      marketValue: '',
     })
   const handleRemoveVehicle = (index: number) => remove(index)
 
@@ -88,8 +89,18 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                     </Button>
                   </Box>,
                 ]}
-                heightFull
               />
+              <Box marginTop={2}>
+                <InputController
+                  id={`estate.vehicles[${index}].marketValue`}
+                  name={`estate.vehicles[${index}].marketValue`}
+                  label={'Markaðsvirði á dánardegi'}
+                  backgroundColor="blue"
+                  placeholder="0 kr."
+                  currency
+                  defaultValue={(asset as any).marketValue}
+                />
+              </Box>
             </GridColumn>,
           ]
         }, [] as JSX.Element[])}
