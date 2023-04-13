@@ -151,8 +151,9 @@ describe('getAppealInfo', () => {
     )
   })
 
-  test('should return that case has been appealed by the prosecutor, and return the correct appeal date', () => {
+  test('should return that case has been appealed by the prosecutor, and return the correct appealed date', () => {
     const workingCase = {
+      courtEndTime: '2022-06-15T19:50:08.033Z',
       appealState: CaseAppealState.APPEALED,
       prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
     } as Case
@@ -169,8 +170,9 @@ describe('getAppealInfo', () => {
     )
   })
 
-  test('should return that case has been appealed by the defender', () => {
+  test('should return that case has been appealed by the defender, and return the correct appealed date', () => {
     const workingCase = {
+      courtEndTime: '2022-06-15T19:50:08.033Z',
       appealState: CaseAppealState.APPEALED,
       accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
     } as Case
@@ -233,6 +235,12 @@ describe('getAppealInfo', () => {
           category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
         },
         {
+          id: '123',
+          created: '2021-06-14T19:55:08.033Z',
+          name: 'ProsecutorStatement',
+          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        },
+        {
           id: '1234',
           created: '2021-06-15T19:50:08.033Z',
           name: 'DefenderStatement',
@@ -248,6 +256,25 @@ describe('getAppealInfo', () => {
       expect.objectContaining({
         prosecutorStatementDate: '2021-06-14T19:50:08.033Z',
         defenderStatementDate: '2021-06-15T19:50:08.033Z',
+      }),
+    )
+  })
+
+  test('should return all appeal fields as undefined if case has not been closed', () => {
+    const workingCase = {} as Case
+
+    const appealInfo = getAppealInfo(workingCase)
+
+    expect(appealInfo).toEqual(
+      expect.not.objectContaining({
+        canBeAppealed: undefined,
+        hasBeenAppealed: undefined,
+        appealedByRole: undefined,
+        appealedDate: undefined,
+        prosecutorStatementDate: undefined,
+        defenderStatementDate: undefined,
+        appealDeadline: undefined,
+        statementDeadline: undefined,
       }),
     )
   })

@@ -242,8 +242,8 @@ describe('transformCase', () => {
       expect(res.appealDeadline).toBeUndefined()
       expect(res.appealedByRole).toBeUndefined()
       expect(res.appealedDate).toBeUndefined()
-      expect(res.hasBeenAppealed).toBe(false)
-      expect(res.canBeAppealed).toBe(false)
+      expect(res.hasBeenAppealed).toBeUndefined()
+      expect(res.canBeAppealed).toBeUndefined()
     })
 
     it('should return appeal deadline and hasBeenAppealed set to false when case has not yet been appealed', () => {
@@ -283,7 +283,9 @@ describe('transformCase', () => {
       // Arrange
       const courtEndTime = new Date()
       courtEndTime.setDate(courtEndTime.getDate() - 1)
+
       const theCase = {
+        courtEndTime: courtEndTime.toISOString(),
         caseFiles: [
           {
             id: '123',

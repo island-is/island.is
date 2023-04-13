@@ -481,6 +481,8 @@ export function getAppealInfo(theCase: Case): Case {
 
   const appealInfo = {} as Case
 
+  if (!courtEndTime) return appealInfo
+
   appealInfo.canBeAppealed = Boolean(
     courtEndTime &&
       !appealState &&
@@ -516,13 +518,11 @@ export function getAppealInfo(theCase: Case): Case {
     appealInfo.statementDeadline = new Date(
       appealedDate.setDate(appealedDate.getDate() + 1),
     ).toISOString()
-
-    //TODO: These dates should likely be set differently but we haven't
-    //implemented the ability to record when the statement was sent
-    //also this doesn't work for defenders yet because they don't have
-    //file access
   }
-
+  //TODO: These dates should likely be set differently but we haven't
+  //implemented the ability to record when the statement was sent
+  //also this doesn't work for defenders yet because they don't have
+  //file access
   appealInfo.defenderStatementDate = caseFiles?.find(
     (cf) => cf.category === CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
   )?.created
