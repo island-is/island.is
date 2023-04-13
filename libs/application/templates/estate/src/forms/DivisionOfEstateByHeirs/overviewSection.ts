@@ -166,7 +166,9 @@ export const overview = buildSection({
                   m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
                   m.overviewMarketValue.defaultMessage +
                     ': ' +
-                    formatCurrency((vehicle as any).marketValue),
+                    ((vehicle as any).marketValue
+                      ? formatCurrency((vehicle as any).marketValue)
+                      : '0 kr.'),
                 ],
               })),
           },
@@ -198,7 +200,9 @@ export const overview = buildSection({
                   m.propertyNumber.defaultMessage + ': ' + gun.assetNumber,
                   m.overviewMarketValue.defaultMessage +
                     ': ' +
-                    formatCurrency((gun as any).marketValue),
+                    ((gun as any).marketValue
+                      ? formatCurrency((gun as any).marketValue)
+                      : '0 kr.'),
                 ],
               })),
           },
