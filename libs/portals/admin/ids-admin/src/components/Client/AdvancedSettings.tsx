@@ -13,6 +13,7 @@ import { useActionData } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
+import { useReadableSeconds } from './ReadableSeconds'
 
 interface AdvancedSettingsProps {
   requirePkce: boolean
@@ -23,6 +24,7 @@ interface AdvancedSettingsProps {
   customClaims: string[]
   selectedEnvironment: AuthAdminEnvironment
 }
+
 const AdvancedSettings = ({
   requirePkce,
   allowOfflineAccess,
@@ -52,6 +54,10 @@ const AdvancedSettings = ({
   })
 
   const { formatErrorMessage } = useErrorFormatMessage()
+
+  const readableSlidingRefreshToken = useReadableSeconds(
+    slidingRefreshTokenLifetime,
+  )
 
   return (
     <ContentCard
@@ -153,6 +159,8 @@ const AdvancedSettings = ({
           />
           <Text variant={'small'}>
             {formatMessage(m.accessTokenExpirationDescription)}
+            <br />
+            {readableSlidingRefreshToken}
           </Text>
         </Stack>
         <Stack space={1}>
