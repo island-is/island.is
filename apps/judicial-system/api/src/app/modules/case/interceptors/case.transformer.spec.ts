@@ -246,7 +246,7 @@ describe('transformCase', () => {
       expect(res.canBeAppealed).toBe(false)
     })
 
-    it('should have appeal deadline and hasBeenAppealed set to false', () => {
+    it('should return appeal deadline and hasBeenAppealed set to false when case has not yet been appealed', () => {
       // Arrange
       const courtEndTime = new Date()
       courtEndTime.setDate(courtEndTime.getDate())
@@ -261,7 +261,7 @@ describe('transformCase', () => {
       expect(res.hasBeenAppealed).toBe(false)
     })
 
-    it('should have hasBeenAppealed set to true and appealed date set', () => {
+    it('should return hasBeenAppealed true and the correct appealed date when case has been appealed', () => {
       // Arrange
       const courtEndTime = new Date()
       courtEndTime.setDate(courtEndTime.getDate() - 1)
@@ -279,7 +279,7 @@ describe('transformCase', () => {
       expect(res.hasBeenAppealed).toBe(true)
     })
 
-    it('should have correct prosecutor and defender statement dates', () => {
+    it('should have correct prosecutor and defender statement dates when both parties have sent in their statements', () => {
       // Arrange
       const courtEndTime = new Date()
       courtEndTime.setDate(courtEndTime.getDate() - 1)
