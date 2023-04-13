@@ -18,11 +18,13 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
 import { ClientSecretsService } from './client-secrets.service'
 import { ClientSecretDto } from './dto/client-secret.dto'
+
+const namespace = '@island.is/auth/admin-api/v2/clients'
 
 @UseGuards(IdsUserGuard, ScopesGuard, MeTenantGuard)
 @Scopes(...idsAdminScopes)
@@ -32,9 +34,12 @@ import { ClientSecretDto } from './dto/client-secret.dto'
   path: 'me/tenants/:tenantId/clients/:clientId/secrets',
   version: ['2'],
 })
-@Audit({ namespace: '@island.is/auth/admin-api/v2/clients' })
+@Audit({ namespace })
 export class MeClientSecretsController {
-  constructor(private readonly clientSecretsService: ClientSecretsService) {}
+  constructor(
+    private readonly clientSecretsService: ClientSecretsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Get()
   @Documentation({
@@ -42,7 +47,7 @@ export class MeClientSecretsController {
     response: { status: 200, type: [ClientSecretDto] },
   })
   @Audit<ClientSecretDto[]>({
-    resources: (secrets) => secrets.map((secret) => secret.id),
+    resources: (secrets) => secrets.map((secret) => secret.secretId),
   })
   find(
     @CurrentUser() user: User,
@@ -59,7 +64,7 @@ export class MeClientSecretsController {
     response: { status: 201, type: ClientSecretDto },
   })
   @Audit<ClientSecretDto>({
-    resources: (secret) => secret.id,
+    resources: (secret) => secret.secretId,
   })
   create(
     @CurrentUser() user: User,
@@ -69,7 +74,7 @@ export class MeClientSecretsController {
     return this.clientSecretsService.create(tenantId, clientId)
   }
 
-  @Delete(':id')
+  @Delete(':secretId')
   @Documentation({
     description: 'Delete a client secret for the specified tenant and client.',
     response: { status: 204 },
@@ -79,8 +84,19 @@ export class MeClientSecretsController {
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
-    @Param('id') id: string,
-  ) {
-    await this.clientSecretsService.delete(tenantId, clientId, id)
+    @Param('secretId') secretId: string,
+  ): Promise<number> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'delete',
+        resources: secretId,
+        meta: (deleted) => ({
+          deleted,
+        }),
+      },
+      this.clientSecretsService.delete(tenantId, clientId, secretId),
+    )
   }
 }

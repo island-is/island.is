@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class ClientSecretDto {
   @ApiProperty()
-  id!: string
+  secretId!: string
 
   @ApiProperty()
   clientId!: string

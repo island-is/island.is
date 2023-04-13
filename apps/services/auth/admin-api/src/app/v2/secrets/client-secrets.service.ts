@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { randomInt } from 'crypto'
 import CryptoJS from 'crypto-js'
@@ -76,16 +76,16 @@ export class ClientSecretsService {
   async delete(
     tenantId: string,
     clientId: string,
-    id: string,
+    secretId: string,
   ): Promise<number> {
-    if (!(await this.belongsToTenant(clientId, tenantId)) || !id) {
+    if (!(await this.belongsToTenant(clientId, tenantId)) || !secretId) {
       throw new NoContentException()
     }
 
     return this.clientSecretModel.destroy({
       where: {
         clientId,
-        id,
+        id: secretId,
       },
     })
   }
@@ -114,7 +114,7 @@ export class ClientSecretsService {
       : undefined
 
     return {
-      id: secret.id,
+      secretId: secret.id,
       clientId: secret.clientId,
       decryptedValue: decryptedValue,
     }

@@ -261,7 +261,7 @@ describe('MeClientSecretsController', () => {
 
         const secret = await app
           .get(getModelToken(ClientSecret))
-          .findByPk(response.body.id)
+          .findByPk(response.body.secretId)
 
         if (response.status == 201) {
           expect(secret).not.toBeNull()
