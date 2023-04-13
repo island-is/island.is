@@ -370,7 +370,7 @@ const template: ApplicationTemplate<
     buyerCoOwnerAndOperator
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        if (nationalId) reviewerNationalIdList.push(nationalId)
+        reviewerNationalIdList.push(nationalId!)
         return nationalId
       })
     if (id === application.applicant) {
@@ -417,7 +417,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
     buyerCoOwnerAndOperator
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        if (nationalId) reviewerNationalIdList.push(nationalId)
+        reviewerNationalIdList.push(nationalId!)
         return nationalId
       })
     return reviewerNationalIdList

@@ -163,8 +163,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
           isMainOperator: operator.isMainOperator || false,
         })),
         coOwners: filteredCoOwners.map((x) => ({
-          ssn: x.nationalId || '',
-          email: x.email || '',
+          ssn: x.nationalId!,
+          email: x.email!,
         })),
       },
     )
@@ -431,7 +431,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       saleAmount: currentOwnerChange?.saleAmount,
       insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
       operators: currentOperators?.map((operator) => ({
-        ssn: operator.ssn || '',
+        ssn: operator.ssn!,
         // Note: It should be ok that the email we send in is empty, since we dont get
         // the email when fetching current operators, and according to them (SGS), they
         // are not using the operator email in their API (not being saved in their DB)
@@ -439,8 +439,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         isMainOperator: operator.isMainOperator || false,
       })),
       coOwners: filteredCoOwners.map((x) => ({
-        ssn: x.nationalId || '',
-        email: x.email || '',
+        ssn: x.nationalId!,
+        email: x.email!,
       })),
     })
 

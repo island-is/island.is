@@ -108,8 +108,8 @@ export const getRecipients = (
   if (roles.includes(EmailRole.buyerCoOwner) && buyerCoOwners) {
     for (let i = 0; i < buyerCoOwners.length; i++) {
       recipientList.push({
-        ssn: buyerCoOwners[i].nationalId || '',
-        name: buyerCoOwners[i].name || '',
+        ssn: buyerCoOwners[i].nationalId!,
+        name: buyerCoOwners[i].name!,
         email: buyerCoOwners[i].email,
         phone: buyerCoOwners[i].phone,
         role: EmailRole.buyerCoOwner,
@@ -125,8 +125,8 @@ export const getRecipients = (
   if (roles.includes(EmailRole.buyerOperator) && buyerOperators) {
     for (let i = 0; i < buyerOperators.length; i++) {
       recipientList.push({
-        ssn: buyerOperators[i].nationalId || '',
-        name: buyerOperators[i].name || '',
+        ssn: buyerOperators[i].nationalId!,
+        name: buyerOperators[i].name!,
         email: buyerOperators[i].email,
         phone: buyerOperators[i].phone,
         role: EmailRole.buyerOperator,
@@ -195,8 +195,8 @@ export const getRecipientBySsn = (
     for (let i = 0; i < buyerCoOwners.length; i++) {
       if (buyerCoOwners[i].nationalId === ssn) {
         return {
-          ssn: buyerCoOwners[i].nationalId || '',
-          name: buyerCoOwners[i].name || '',
+          ssn: buyerCoOwners[i].nationalId!,
+          name: buyerCoOwners[i].name!,
           email: buyerCoOwners[i].email,
           phone: buyerCoOwners[i].phone,
           role: EmailRole.buyerCoOwner,
@@ -214,8 +214,8 @@ export const getRecipientBySsn = (
     for (let i = 0; i < buyerOperators.length; i++) {
       if (buyerOperators[i].nationalId === ssn) {
         return {
-          ssn: buyerOperators[i].nationalId || '',
-          name: buyerOperators[i].name || '',
+          ssn: buyerOperators[i].nationalId!,
+          name: buyerOperators[i].name!,
           email: buyerOperators[i].email,
           phone: buyerOperators[i].phone,
           role: EmailRole.buyerOperator,

@@ -85,8 +85,8 @@ export const getRecipients = (
   if (roles.includes(EmailRole.operator) && operators) {
     for (let i = 0; i < operators.length; i++) {
       recipientList.push({
-        ssn: operators[i].nationalId || '',
-        name: operators[i].name || '',
+        ssn: operators[i].nationalId!,
+        name: operators[i].name!,
         email: operators[i].email,
         phone: operators[i].phone,
         role: EmailRole.operator,
@@ -141,8 +141,8 @@ export const getRecipientBySsn = (
     for (let i = 0; i < operators.length; i++) {
       if (operators[i].nationalId === ssn) {
         return {
-          ssn: operators[i].nationalId || '',
-          name: operators[i].name || '',
+          ssn: operators[i].nationalId!,
+          name: operators[i].name!,
           email: operators[i].email,
           phone: operators[i].phone,
           role: EmailRole.operator,
