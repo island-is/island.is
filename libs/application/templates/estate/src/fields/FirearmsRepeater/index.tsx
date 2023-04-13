@@ -18,12 +18,12 @@ import { EstateAsset } from '@island.is/clients/syslumenn'
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 
-export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
+export const FirearmsRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
   field,
   errors,
 }) => {
-  const error = (errors as any)?.estate?.vehicles
+  const error = (errors as any)?.estate?.guns
   const { id } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove, update } = useFieldArray({
@@ -32,22 +32,22 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   const { control } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
-    estate: { vehicles: EstateAsset[] }
+    estate: { guns: EstateAsset[] }
   }
 
   useEffect(() => {
-    if (fields.length === 0 && externalData.estate.vehicles) {
-      append(externalData.estate.vehicles)
+    if (fields.length === 0 && externalData.estate.guns) {
+      append(externalData.estate.guns)
     }
   }, [])
 
-  const handleAddVehicle = () =>
+  const handleAddFirearm = () =>
     append({
       assetNumber: '',
       description: '',
       marketValue: '',
     })
-  const handleRemoveVehicle = (index: number) => remove(index)
+  const handleRemoveFirearm = (index: number) => remove(index)
 
   return (
     <Box marginTop={2}>
@@ -109,8 +109,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
       </GridRow>
       {fields.map((field: AssetFormField, index) => {
         const fieldIndex = `${id}[${index}]`
-        const vehicleNumberField = `${fieldIndex}.assetNumber`
-        const vehicleTypeField = `${fieldIndex}.description`
+        const firearmNumberField = `${fieldIndex}.assetNumber`
+        const firearmTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const dummyField = `${fieldIndex}.dummy`
@@ -143,7 +143,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               render={() => <input type="hidden" />}
             />
             <Text variant="h4">
-              {formatMessage(m.vehiclesTitle) + ' ' + (index + 1)}
+              {formatMessage(m.firearmTitle) + ' ' + (index + 1)}
             </Text>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
@@ -151,7 +151,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                 size="small"
                 circle
                 icon="remove"
-                onClick={handleRemoveVehicle.bind(null, index)}
+                onClick={handleRemoveFirearm.bind(null, index)}
               />
             </Box>
             <GridRow>
@@ -161,9 +161,9 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                 paddingTop={2}
               >
                 <InputController
-                  id={vehicleNumberField}
-                  name={vehicleNumberField}
-                  label={formatMessage(m.vehicleNumberLabel)}
+                  id={firearmNumberField}
+                  name={firearmNumberField}
+                  label={formatMessage(m.firearmNumberLabel)}
                   backgroundColor="blue"
                   defaultValue={field.assetNumber}
                   error={fieldError?.assetNumber}
@@ -176,14 +176,12 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                 paddingTop={2}
               >
                 <InputController
-                  id={vehicleTypeField}
-                  name={vehicleTypeField}
-                  label={formatMessage(m.vehicleTypeLabel)}
+                  id={firearmTypeField}
+                  name={firearmTypeField}
+                  label={formatMessage(m.firearmTypeLabel)}
                   defaultValue={field.description}
-                  placeholder={formatMessage(m.vehiclesPlaceholder)}
+                  placeholder={''}
                   size="sm"
-                  //Make readOnly again when Vehicle Registry query is available
-                  //readOnly
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']}>
@@ -206,14 +204,14 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
           variant="text"
           icon="add"
           iconType="outline"
-          onClick={handleAddVehicle}
+          onClick={handleAddFirearm}
           size="small"
         >
-          {formatMessage(m.addVehicle)}
+          {formatMessage(m.addFirearm)}
         </Button>
       </Box>
     </Box>
   )
 }
 
-export default VehiclesRepeater
+export default FirearmsRepeater

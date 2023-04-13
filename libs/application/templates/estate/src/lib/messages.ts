@@ -290,6 +290,16 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
     description: '',
   },
+  firearms: {
+    id: 'es.application:firearms',
+    defaultMessage: 'Skotvopn',
+    description: '',
+  },
+  firearmsDescription: {
+    id: 'es.application:firearmsDescription',
+    defaultMessage: 'Til dæmis haglabyssa, riffill og skammbyssa',
+    description: '',
+  },
 
   // Bank Info
   estateBankInfo: {
@@ -681,6 +691,11 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: 'Real estates and lands description',
   },
+  firearmTitle: {
+    id: 'es.application:firearmTitle',
+    defaultMessage: 'Skotvopn',
+    description: 'Vehicles title',
+  },
   vehiclesTitle: {
     id: 'es.application:vehiclesTitle',
     defaultMessage: 'Faratæki',
@@ -689,11 +704,6 @@ export const m = defineMessages({
   vehiclesPlaceholder: {
     id: 'es.application:vehiclesPlaceholder',
     defaultMessage: 't.d. Toyota Yaris',
-    description: 'Placeholder for vehicles type',
-  },
-  vehiclesMarketValueTitle: {
-    id: 'es.application:vehiclesMarketValueTitle',
-    defaultMessage: 'Markaðsvirði á dánardegi',
     description: 'Placeholder for vehicles type',
   },
   otherPropertiesTitle: {
@@ -755,5 +765,25 @@ export const m = defineMessages({
     id: 'es.application:vehicleTypeLabel',
     defaultMessage: 'Tegund faratækis',
     description: 'Vehicle type label',
+  },
+  addFirearm: {
+    id: 'es.application:addFirearm',
+    defaultMessage: 'Bæta við skotvopni',
+    description: '',
+  },
+  firearmNumberLabel: {
+    id: 'es.application:firearmNumberLabel',
+    defaultMessage: 'Raðnúmer ökutækis',
+    description: 'Firearm number label',
+  },
+  firearmTypeLabel: {
+    id: 'es.application:firearmTypeLabel',
+    defaultMessage: 'Tegund skotvopns',
+    description: 'Firearm type label',
+  },
+  marketValueTitle: {
+    id: 'es.application:marketValueTitle',
+    defaultMessage: 'Markaðsvirði á dánardegi',
+    description: 'Placeholder for vehicles type',
   },
 })
