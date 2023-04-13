@@ -1,28 +1,16 @@
-import React, { useReducer } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
-import { useMutation, ApolloError } from '@apollo/client'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
 import { PdfTypes } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
-import {
-  REQUEST_FILE_SIGNATURE,
-  UPLOAD_SIGNED_FILE,
-} from '@island.is/application/graphql'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
 import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
 import * as m from '../../lib/messages'
 import { Roles } from '../../lib/constants'
-import {
-  fileSignatureReducer,
-  initialFileSignatureState,
-  FileSignatureActionTypes,
-  FileSignatureStatus,
-} from './fileSignatureReducer'
-import SignatureModal from './SignatureModal'
 import { CRCFieldBaseProps } from '../../types'
 import { ContractOverview } from '../components'
 import * as style from '../Shared.css'
@@ -35,13 +23,7 @@ export const confirmContractIds = [
   confirmContractTimestamp,
 ]
 
-const Overview = ({
-  field,
-  error,
-  errors,
-  application,
-  setBeforeSubmitCallback,
-}: CRCFieldBaseProps) => {
+const Overview = ({ field, error, errors, application }: CRCFieldBaseProps) => {
   const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
   const { pdfUrl, loading: pdfLoading } = useGeneratePdfUrl(
     application.id,
@@ -49,10 +31,6 @@ const Overview = ({
   )
   const { id, disabled } = field
   const { answers, externalData } = application
-  const [fileSignatureState, dispatchFileSignature] = useReducer(
-    fileSignatureReducer,
-    initialFileSignatureState,
-  )
   const applicant = externalData.nationalRegistry.data
   const children = getSelectedChildrenFromExternalData(
     externalData.childrenCustodyInformation.data,
@@ -61,72 +39,8 @@ const Overview = ({
   const parentB = children[0].otherParent
 
   const { formatMessage } = useIntl()
+  const { setValue } = useFormContext()
 
-  const [
-    requestFileSignature,
-    { data: requestFileSignatureData },
-  ] = useMutation(REQUEST_FILE_SIGNATURE)
-
-  const [uploadSignedFile] = useMutation(UPLOAD_SIGNED_FILE)
-
-  const { register, setValue } = useFormContext()
-
-  setBeforeSubmitCallback &&
-    setBeforeSubmitCallback(async () => {
-      if (!pdfUrl) {
-        return [false, 'no pdf url']
-      }
-      dispatchFileSignature({ type: FileSignatureActionTypes.REQUEST })
-      const documentToken = await requestFileSignature({
-        variables: {
-          input: {
-            id: application.id,
-            type: pdfType,
-          },
-        },
-      })
-        .then((response) => {
-          return response.data?.requestFileSignature?.documentToken
-        })
-        .catch((error: ApolloError) => {
-          dispatchFileSignature({
-            type: FileSignatureActionTypes.ERROR,
-            status: FileSignatureStatus.REQUEST_ERROR,
-            error: (error.graphQLErrors[0].extensions?.code as number) ?? 500,
-          })
-        })
-      if (documentToken) {
-        dispatchFileSignature({ type: FileSignatureActionTypes.UPLOAD })
-        const success = await uploadSignedFile({
-          variables: {
-            input: {
-              id: application.id,
-              documentToken: documentToken,
-              type: pdfType,
-            },
-          },
-        })
-          .then(() => {
-            return true
-          })
-          .catch((error: ApolloError) => {
-            dispatchFileSignature({
-              type: FileSignatureActionTypes.ERROR,
-              status: FileSignatureStatus.UPLOAD_ERROR,
-              error: (error.graphQLErrors[0].extensions?.code as number) ?? 500,
-            })
-          })
-
-        if (success) {
-          dispatchFileSignature({ type: FileSignatureActionTypes.SUCCESS })
-          return [true, null]
-        }
-      }
-      return [false, 'Failed to update application']
-    })
-
-  const controlCode =
-    requestFileSignatureData?.requestFileSignature?.controlCode
   const isDraft = application.state === 'draft'
   if (isDraft) {
     setValue(
@@ -137,15 +51,6 @@ const Overview = ({
 
   return (
     <Box className={style.descriptionOffset}>
-      <SignatureModal
-        controlCode={controlCode}
-        onClose={() =>
-          dispatchFileSignature({
-            type: FileSignatureActionTypes.CLOSE_MODAL,
-          })
-        }
-        fileSignatureState={fileSignatureState}
-      />
       <Box>
         {isDraft ? (
           <DescriptionText
