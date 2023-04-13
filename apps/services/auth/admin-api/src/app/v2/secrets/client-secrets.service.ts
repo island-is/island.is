@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { randomInt } from 'crypto'
 import CryptoJS from 'crypto-js'
 import Base64 from 'crypto-js/enc-base64'
 import sha256 from 'crypto-js/sha256'
@@ -9,7 +10,6 @@ import { Client, ClientSecret } from '@island.is/auth-api-lib'
 
 import { environment } from '../../../environments'
 import { ClientSecretDto } from './dto/client-secret.dto'
-import { CreateClientSecretDto } from './dto/create-client-secret.dto'
 
 const secretType = 'SharedSecret'
 
@@ -41,11 +41,7 @@ export class ClientSecretsService {
     return secrets.map((secret) => this.formatSecret(secret))
   }
 
-  async create(
-    tenantId: string,
-    clientId: string,
-    clientSecret: CreateClientSecretDto,
-  ): Promise<ClientSecretDto> {
+  async create(tenantId: string, clientId: string): Promise<ClientSecretDto> {
     if (!(await this.belongsToTenant(clientId, tenantId))) {
       throw new BadRequestException('Client does not belong to tenant')
     }
@@ -54,9 +50,10 @@ export class ClientSecretsService {
       throw new Error('Client secret encryption key is not defined')
     }
 
-    const hash = Base64.stringify(sha256(clientSecret.decryptedValue))
+    const decryptedValue = this.generateSecret()
+    const hash = Base64.stringify(sha256(decryptedValue))
     const encryptedValue = CryptoJS.AES.encrypt(
-      clientSecret.decryptedValue,
+      decryptedValue,
       environment.clientSecretEncryptionKey,
       { iv: CryptoJS.enc.Hex.parse(uuid()) },
     ).toString()
@@ -116,5 +113,23 @@ export class ClientSecretsService {
       clientId: secret.clientId,
       decryptedValue: decryptedValue,
     }
+  }
+
+  generateSecret() {
+    let generatedSecret = ''
+
+    const length = randomInt(20, 30)
+
+    const validChars =
+      '0123456789' +
+      'abcdefghijklmnopqrstuvwxyz' +
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+      ',.-{}+!"#$%/()=?'
+
+    for (let i = 0; i < length; i++) {
+      generatedSecret += validChars[randomInt(0, validChars.length)]
+    }
+
+    return generatedSecret
   }
 }

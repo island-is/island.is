@@ -1,5 +1,4 @@
 import { getModelToken } from '@nestjs/sequelize'
-import CryptoJS from 'crypto-js'
 import request from 'supertest'
 
 import { ClientSecret, SequelizeConfigService } from '@island.is/auth-api-lib'
@@ -71,10 +70,8 @@ interface TestCase {
   tenant: string
   client: string
   post: {
-    secret: { decryptedValue: string }
     expected: {
       status: number
-      result: { decryptedValue: string } | {}
     }
   }
   get: {
@@ -99,10 +96,8 @@ const testCases: Record<string, TestCase> = {
     tenant: tenants[0].name,
     client: clients[0].clientId,
     post: {
-      secret: { decryptedValue: 'secret-1' },
       expected: {
         status: 201,
-        result: { decryptedValue: 'secret-1' },
       },
     },
     get: {
@@ -127,10 +122,8 @@ const testCases: Record<string, TestCase> = {
     tenant: tenants[1].name,
     client: clients[1].clientId,
     post: {
-      secret: { decryptedValue: 'secret-1' },
       expected: {
         status: 204,
-        result: {},
       },
     },
     get: {
@@ -152,10 +145,8 @@ const testCases: Record<string, TestCase> = {
     tenant: tenants[0].name,
     client: clients[0].clientId,
     post: {
-      secret: { decryptedValue: 'secret-1' },
       expected: {
         status: 201,
-        result: { decryptedValue: 'secret-1' },
       },
     },
     get: {
@@ -180,10 +171,8 @@ const testCases: Record<string, TestCase> = {
     tenant: tenants[0].name,
     client: clients[1].clientId,
     post: {
-      secret: { decryptedValue: 'secret-1' },
       expected: {
         status: 400,
-        result: {},
       },
     },
     get: {
@@ -265,21 +254,19 @@ describe('MeClientSecretsController', () => {
               testCase.tenant,
             )}/clients/${encodeURIComponent(testCase.client)}/secrets`,
           )
-          .send(testCase.post.secret)
+          .send()
 
         // Assert
         expect(response.status).toEqual(testCase.post.expected.status)
-        expect(response.body).toMatchObject(testCase.post.expected.result)
+
+        const secret = await app
+          .get(getModelToken(ClientSecret))
+          .findByPk(response.body.id)
 
         if (response.status == 201) {
-          const model = app.get(getModelToken(ClientSecret))
-
-          const secret = await model.findByPk(response.body.id)
-          const decryptedValue = CryptoJS.AES.decrypt(
-            secret.encryptedValue,
-            'secret',
-          ).toString(CryptoJS.enc.Utf8)
-          expect(decryptedValue).toEqual(testCase.post.secret.decryptedValue)
+          expect(secret).not.toBeNull()
+        } else {
+          expect(secret).toBeNull()
         }
       })
 

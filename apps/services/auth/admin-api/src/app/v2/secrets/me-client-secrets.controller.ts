@@ -23,7 +23,6 @@ import { Documentation } from '@island.is/nest/swagger'
 
 import { ClientSecretsService } from './client-secrets.service'
 import { ClientSecretDto } from './dto/client-secret.dto'
-import { CreateClientSecretDto } from './dto/create-client-secret.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, MeTenantGuard)
 @Scopes(...idsAdminScopes)
@@ -66,9 +65,8 @@ export class MeClientSecretsController {
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
-    @Body() input: CreateClientSecretDto,
   ): Promise<ClientSecretDto> {
-    return this.clientSecretsService.create(tenantId, clientId, input)
+    return this.clientSecretsService.create(tenantId, clientId)
   }
 
   @Delete(':id')
