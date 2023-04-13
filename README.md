@@ -163,7 +163,7 @@ And you would get something similar to this:
 ```
 Each service will get the secrets it is configured to use, still you will need to run local DB setup for the services you are running - dev-init, etc. Additionally, any local dev proxies will also need to be run manually (e.g. `run-xroad-proxy.sh`).
 
-It is not necessary to run all the dependencies/services, only the one that will be actually used.
+It is not necessary to run all the dependencies/services, only the ones that will be actually used.
 
 Make sure to have an [AWS session](handbook/repository/aws-secrets.md#using-aws-session) loaded in the shell, so the script is able to retrieve the secrets from AWS Dev environment.
 
