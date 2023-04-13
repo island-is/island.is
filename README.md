@@ -144,17 +144,17 @@ You will get output similar to this one:
 ```bash
 {
   services: {
-    'application-system-form': '(source /Users/petar/src/andes/customers/si/island.is/.env.application-system-form && yarn start application-system-form)',
-    'services-documents': '(source /Users/petar/src/andes/customers/si/island.is/.env.services-documents && yarn start services-documents)',
-    'endorsement-system-api': '(source /Users/petar/src/andes/customers/si/island.is/.env.endorsement-system-api && yarn start endorsement-system-api)',
-    'application-system-api': '(source /Users/petar/src/andes/customers/si/island.is/.env.application-system-api && yarn start application-system-api)',
-    'icelandic-names-registry-backend': '(source /Users/petar/src/andes/customers/si/island.is/.env.icelandic-names-registry-backend && yarn start icelandic-names-registry-backend)',
-    'air-discount-scheme-backend': '(source /Users/petar/src/andes/customers/si/island.is/.env.air-discount-scheme-backend && yarn start air-discount-scheme-backend)',
-    'service-portal-api': '(source /Users/petar/src/andes/customers/si/island.is/.env.services-user-profile && yarn start services-user-profile)',
-    'services-sessions': '(source /Users/petar/src/andes/customers/si/island.is/.env.services-sessions && yarn start services-sessions)',
-    api: '(source /Users/petar/src/andes/customers/si/island.is/.env.api && yarn start api)'
+    'application-system-form': '(source ./.env.application-system-form && yarn start application-system-form)',
+    'services-documents': '(source ./.env.services-documents && yarn start services-documents)',
+    'endorsement-system-api': '(source ./.env.endorsement-system-api && yarn start endorsement-system-api)',
+    'application-system-api': '(source ./.env.application-system-api && yarn start application-system-api)',
+    'icelandic-names-registry-backend': '(source ./.env.icelandic-names-registry-backend && yarn start icelandic-names-registry-backend)',
+    'air-discount-scheme-backend': '(source ./.env.air-discount-scheme-backend && yarn start air-discount-scheme-backend)',
+    'service-portal-api': '(source ./.env.services-user-profile && yarn start services-user-profile)',
+    'services-sessions': '(source ./.env.services-sessions && yarn start services-sessions)',
+    api: '(source ./.env.api && yarn start api)'
   },
-  mocks: 'docker run -it --rm -p 2525:2525 -p 9388:9388 -p 9372:9372 -v /Users/petar/src/andes/customers/si/island.is/infra/mountebank-imposter-config.json:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json'
+  mocks: 'docker run -it --rm -p 2525:2525 -p 9388:9388 -p 9372:9372 -v ./infra/mountebank-imposter-config.json:/app/default.json:z docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json'
 }
 ```
 Each service will get the secrets it is configured to use, still you will need to run local DB setup for the services you are running - dev-init, etc. Additionally, any local dev proxies will also need to be run manually.
