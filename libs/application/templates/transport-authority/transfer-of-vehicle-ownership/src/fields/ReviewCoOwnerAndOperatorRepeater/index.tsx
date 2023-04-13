@@ -117,14 +117,10 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
       if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
         const notValid = filteredCoOwnersAndOperators.find((field) => {
           if (
-            !field.email ||
-            field.email.length === 0 ||
-            !field.name ||
-            field.name.length === 0 ||
-            !field.nationalId ||
-            field.nationalId.length === 0 ||
-            !field.phone ||
-            field.phone.length === 0
+            !(field.email && field.email.length > 0) ||
+            !(field.name && field.name.length > 0) ||
+            !(field.nationalId && field.nationalId.length > 0) ||
+            !(field.phone && field.phone.length > 0)
           ) {
             return true
           }
