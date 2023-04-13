@@ -24,6 +24,11 @@ export interface Lawyer {
   licenceType: string
 }
 
+export interface Broker {
+  name: string
+  nationalId: string
+}
+
 export interface DataUploadResponse {
   success: boolean
   message?: string

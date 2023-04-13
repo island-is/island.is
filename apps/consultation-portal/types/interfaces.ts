@@ -47,6 +47,7 @@ export interface SubscriptionArray {
   caseIds: Array<number>
   institutionIds: Array<number>
   policyAreaIds: Array<number>
+  generalSubscription: string
 }
 
 export interface SortTitle {
@@ -145,4 +146,11 @@ export interface User {
   name?: string
   email?: string
   image?: string
+}
+
+export interface TypeForSubscriptions {
+  id: string
+  type: string
+  name: string
+  nr: any
 }
