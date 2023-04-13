@@ -133,7 +133,7 @@ export const m = defineMessages({
   listCreatedSubtitle: {
     id: 'gpl.application:listCreatedSubtitle#markdown',
     defaultMessage:
-      'Hægt er að sjá stöðu lista, undirskriftir og einnig er hægt að breyta gildisdagsetningu lista inná Mínum Síðum.',
+      'Hægt er að sjá stöðu lista, undirskriftir og breyta gildistíma lista inná Mínum Síðum.',
     description: '',
   },
   linkToList: {
