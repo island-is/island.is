@@ -186,18 +186,18 @@ export const WriteReviewCard = ({
   // }
 
   const onClick = async () => {
-    console.log("clicked on click")
+    console.log('clicked on click')
     const mappedFileList = fileList.map((file) => {
       return new Promise((resolve, reject) => {
         createUploadUrl({
           variables: {
-            filename: file.name
-          }
+            filename: file.name,
+          },
         })
-        .then((response) => {
-          console.log("response", response)
-        })
-        .catch((e) => console.log("error", e))
+          .then((response) => {
+            console.log('response', response)
+          })
+          .catch((e) => console.log('error', e))
       })
     })
   }
