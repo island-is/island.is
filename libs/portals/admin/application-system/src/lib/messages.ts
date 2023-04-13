@@ -18,6 +18,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:applications',
     defaultMessage: 'Umsóknir',
   },
+  pleaseEnterValueToBeingSearch: {
+    id: 'admin-portal.application-system:pleaseEnterValueToBeingSearch',
+    defaultMessage: 'Sláðu inn kennitölu til að byrja leit',
+  },
   createDiscount: {
     id: 'admin-portal.application-system:createDiscount',
     defaultMessage: 'Handvirkir kóðar',
