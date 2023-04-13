@@ -13,14 +13,20 @@ import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
 import { PostAdviceInput } from '../dto/postAdvice.input'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { FileStorageService } from '@island.is/file-storage'
 
 @Injectable()
 export class CaseResultService {
-  constructor(private casesApi: CasesApi) {}
+  constructor(
+    private casesApi: CasesApi,
+    private readonly fileStorageService: FileStorageService,
+  ) { }
 
   private casesApiWithAuth(auth: User) {
     return this.casesApi.withMiddleware(new AuthMiddleware(auth))
   }
+
+
 
   async getCases(input: GetCasesInput): Promise<CasesAggregateResult> {
     const request: ApiCasesGetRequest = {
@@ -57,14 +63,53 @@ export class CaseResultService {
     return response
   }
 
-  async postAdvice(auth: User, input: PostAdviceInput) {
-    const request: ApiCasesCaseIdAdvicesPostRequest = {
+  // async postAdvice(auth: User, input: PostAdviceInput) {
+  //   const request: ApiCasesCaseIdAdvicesPostRequest = {
+  //     caseId: input.caseId,
+  //     adviceRequest: input.adviceRequest,
+  //   }
+  //   const response = await this.casesApiWithAuth(
+  //     auth,
+  //   ).apiCasesCaseIdAdvicesPost(request)
+  //   return response
+  // }
+
+  private async prepareDownloads(files: Array<string>): Promise<Array<string>> {
+    const hasFiles = files?.length > 0
+
+    if(!hasFiles) {
+      return []
+    }
+
+    return await Promise.all(
+      files.map(async (item) => {
+        const objUrl = this.fileStorageService.getObjectUrl(item)
+        const signedUrl = await this.fileStorageService.generateSignedUrl(objUrl)
+        return signedUrl
+      })
+    )
+
+  }
+
+
+  async postAdvice(input: PostAdviceInput) {
+    console.log('adviceRequest', input.adviceRequest)
+    const adviceFiles = input.adviceRequest?.adviceFiles as Array<string>
+    const test = await this.prepareDownloads(adviceFiles)
+    console.log("test", test)
+    // const mapped = input?.adviceRequest?.adviceFiles?.map((item) => {
+    //   const objUrl = this.fileStorageService.getObjectUrl(item)
+
+    //   const signedUrl = (this.fileStorageService.generateSignedUrl(objUrl))
+    // })
+
+
+
+    const request: any = {
       caseId: input.caseId,
       adviceRequest: input.adviceRequest,
     }
-    const response = await this.casesApiWithAuth(
-      auth,
-    ).apiCasesCaseIdAdvicesPost(request)
+    const response = await this.casesApi.apiCasesCaseIdAdvicesPost(request)
     return response
   }
 }

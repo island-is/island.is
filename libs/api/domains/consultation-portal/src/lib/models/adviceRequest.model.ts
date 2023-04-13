@@ -7,6 +7,6 @@ export class AdviceRequest {
   @Field(() => String, { nullable: true })
   content?: string | null
 
-  @Field(() => [AdviceFileRequest], { nullable: true })
-  adviceFiles?: AdviceFileRequest[] | null
+  @Field(() => [String], { nullable: true })
+  adviceFiles?: string[] | null
 }

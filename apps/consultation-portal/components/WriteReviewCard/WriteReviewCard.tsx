@@ -24,6 +24,7 @@ import { CASE_POST_ADVICE } from '../../graphql/queries.graphql'
 import { gql, useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { resolveFileToObject } from '../../utils/helpers'
+import { PresignedPost } from '@island.is/api/schema'
 
 const CREATE_UPLOAD_URL = gql`
   mutation CreateUploadUrl($filename: String!) {
@@ -136,6 +137,7 @@ export const WriteReviewCard = ({
   username,
   caseId,
 }: CardProps) => {
+  isLoggedIn = true
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
   const [showInputError, setShowInputError] = useState(false)
@@ -158,48 +160,95 @@ export const WriteReviewCard = ({
 
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL, { client: client })
 
-  // const onClick = async () => {
-  //   if (review.length >= REVIEW_MINIMUM_LENGTH) {
-  //     setShowInputError(false)
-  //     const files = await Promise.all(
-  //       state.map((item: UploadFile) =>
-  //         resolveFileToObject(item.originalFileObj as File),
-  //       ),
-  //     )
-  //     const objToSend = {
-  //       caseId: caseId,
-  //       adviceRequest: {
-  //         content: review,
-  //         adviceFiles: files,
-  //       },
-  //     }
-  //     const posting = await postAdviceMutation({
-  //       variables: {
-  //         input: objToSend,
-  //       },
-  //     })
-  //     // reloading page, would be better if we got the object back
-  //     // from the server or sent a refetch request for data
-  //     location.reload()
-  //   }
-  //   setShowInputError(true)
-  // }
-
-  const onClick = async () => {
-    console.log("clicked on click")
-    const mappedFileList = fileList.map((file) => {
+  const uploadFile = async (file: UploadFile, response: PresignedPost) => {
+    if (review.length >= REVIEW_MINIMUM_LENGTH) {
+      setShowInputError(false)
       return new Promise((resolve, reject) => {
-        createUploadUrl({
-          variables: {
-            filename: file.name
+        const request = new XMLHttpRequest()
+        request.withCredentials = true
+        request.responseType = 'json'
+
+        request.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable) {
+            file.percent = (event.loaded / event.total) * 100
+            file.status = 'uploading'
+
+            const withoutThisFile = fileList.filter((f) => f.key !== file.key)
+            const newFileList = [...withoutThisFile, file]
+            setFileList(newFileList)
           }
         })
-        .then((response) => {
-          console.log("response", response)
+
+        request.upload.addEventListener('error', () => {
+          file.percent = 0
+          file.status = 'error'
+
+          const withoutThisFile = fileList.filter((f) => f.key !== file.key)
+          const newFileList = [...withoutThisFile, file]
+          setFileList(newFileList)
+          reject()
         })
-        .catch((e) => console.log("error", e))
+        request.open('POST', response.url)
+
+        const formData = new FormData()
+
+        Object.keys(response.fields).forEach((key) =>
+          formData.append(key, response.fields[key]),
+        )
+        formData.append('file', file as File)
+
+        request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
+
+        request.onload = () => {
+          resolve(request.response)
+        }
+
+        request.onerror = () => {
+          reject()
+        }
+
+        request.send(formData)
       })
+    } else {
+      setShowInputError(true)
+    }
+  }
+
+  const onClick = async () => {
+    console.log('clicked on click')
+    setIsSubmitting(true)
+    const mappedFileList = await Promise.all(
+      fileList.map((file) => {
+        return new Promise((resolve, reject) => {
+          createUploadUrl({
+            variables: {
+              filename: file.name,
+            },
+          })
+            .then((response) =>
+              uploadFile(file, response.data.createUploadUrl).then(() =>
+                resolve(response.data.createUploadUrl.fields.key),
+              ),
+            )
+            .catch(() => reject())
+        })
+      }),
+    )
+    
+    const objToSend = {
+      caseId: caseId,
+      adviceRequest: {
+        content: review,
+        adviceFiles: mappedFileList
+      }
+    }
+
+    const posting = await postAdviceMutation({
+      variables: {
+        input: objToSend
+      }
     })
+
   }
   const onChange = (files: File[]) => {
     const uploadFiles = files.map((f) => fileToObject(f))

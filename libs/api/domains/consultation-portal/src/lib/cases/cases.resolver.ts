@@ -51,18 +51,33 @@ export class CaseResultResolver {
     return advices
   }
 
+  // @Mutation(() => Boolean!, {
+  //   nullable: true,
+  //   name: 'consultationPortalPostAdvice',
+  // })
+  // @FeatureFlag(Features.consultationPortalApplication)
+  // @UseGuards(IdsUserGuard)
+  // @Scopes(ConsultationPortalScope.default)
+  // async postAdvice(
+  //   @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<void> {
+  //   const response = await this.caseResultService.postAdvice(user, input)
+  //   return response
+  // }
+
   @Mutation(() => Boolean!, {
     nullable: true,
     name: 'consultationPortalPostAdvice',
   })
   @FeatureFlag(Features.consultationPortalApplication)
-  @UseGuards(IdsUserGuard)
+  // @UseGuards(IdsUserGuard)
   @Scopes(ConsultationPortalScope.default)
   async postAdvice(
     @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
-    @CurrentUser() user: User,
+    // @CurrentUser() user: User,
   ): Promise<void> {
-    const response = await this.caseResultService.postAdvice(user, input)
+    const response = await this.caseResultService.postAdvice(input)
     return response
   }
 }
