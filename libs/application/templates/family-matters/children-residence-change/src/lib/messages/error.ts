@@ -44,6 +44,12 @@ export const error = {
       description:
         'Error message when durationType is temporary and no date is selected',
     },
+    childSupportPayment: {
+      id: 'crc.application:error.childSupportPayment',
+      defaultMessage: 'Velja þarf valmöguleika',
+      description:
+        'Error message when child support payment option is not selected',
+    },
     counterParty: {
       id: 'crc.application:error.counterParty',
       defaultMessage: 'Fylla þarf út netfang eða símanúmer',

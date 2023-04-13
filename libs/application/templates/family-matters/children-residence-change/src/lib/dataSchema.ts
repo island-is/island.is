@@ -11,6 +11,11 @@ enum Duration {
   Temporary = 'temporary',
 }
 
+enum ChildSupportPayment {
+  Agreement = 'agreement',
+  ChildSupport = 'childSupport',
+}
+
 export enum ApproveContract {
   Yes = 'yes',
   No = 'no',
@@ -63,6 +68,9 @@ export const dataSchema = z.object({
     terms: validateTerms(approveTerms),
     timestamp: z.string(),
   }),
+  selectChildSupportPayment: z
+    .enum([ChildSupportPayment.Agreement, ChildSupportPayment.ChildSupport])
+    .refine((v) => v, { params: error.validation.childSupportPayment }),
   confirmContractParentB: validateTerms(approveTerms),
   acceptContract: z
     .enum([ApproveContract.Yes, ApproveContract.No])

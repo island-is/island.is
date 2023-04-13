@@ -80,6 +80,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'counterParty',
                   'selectDuration',
                   'selectedChildren',
+                  'selectChildSupportPayment',
                   'approveExternalData',
                   'residenceChangeReason',
                   'approveChildSupportTerms',
