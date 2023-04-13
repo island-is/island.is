@@ -21,7 +21,7 @@ import { idsAdminScopes } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
-import { ClientSecretsService } from './client-secrets.services'
+import { ClientSecretsService } from './client-secrets.service'
 import { ClientSecretDto } from './dto/client-secret.dto'
 import { CreateClientSecretDto } from './dto/create-client-secret.dto'
 
@@ -77,12 +77,12 @@ export class MeClientSecretsController {
     response: { status: 204 },
   })
   @Audit()
-  delete(
+  async delete(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
     @Param('id') id: string,
   ) {
-    this.clientSecretsService.delete(tenantId, clientId, id)
+    await this.clientSecretsService.delete(tenantId, clientId, id)
   }
 }

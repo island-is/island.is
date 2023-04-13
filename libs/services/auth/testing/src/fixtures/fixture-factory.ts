@@ -1,10 +1,9 @@
-import faker from 'faker'
-import addYears from 'date-fns/addYears'
 import { getModelToken } from '@nestjs/sequelize'
+import addYears from 'date-fns/addYears'
+import startOfDay from 'date-fns/startOfDay'
+import faker from 'faker'
 import { Model } from 'sequelize'
 
-import { TestApp } from '@island.is/testing/nest'
-import { createNationalId } from '@island.is/testing/fixtures'
 import {
   ApiScope,
   ApiScopeGroup,
@@ -12,23 +11,26 @@ import {
   ApiScopeUserAccess,
   Client,
   ClientAllowedScope,
+  ClientSecret,
   Delegation,
   DelegationScope,
   Domain,
   Translation,
 } from '@island.is/auth-api-lib'
-import {
-  CreateApiScope,
-  CreateApiScopeUserAccess,
-  CreateCustomDelegation,
-} from './types'
-import startOfDay from 'date-fns/startOfDay'
-import { CreateDomain } from './domain.fixture'
+import { createNationalId } from '@island.is/testing/fixtures'
+import { TestApp } from '@island.is/testing/nest'
+
 import { CreateApiScopeGroup } from './apiScopeGroup.fixture'
 import {
   CreateClient,
   createClient as createClientFixture,
 } from './client.fixture'
+import { CreateDomain } from './domain.fixture'
+import {
+  CreateApiScope,
+  CreateApiScopeUserAccess,
+  CreateCustomDelegation,
+} from './types'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -66,6 +68,10 @@ export class FixtureFactory {
     scope: Partial<ClientAllowedScope>,
   ): Promise<ClientAllowedScope> {
     return this.get(ClientAllowedScope).create(scope)
+  }
+
+  async createSecret(secret: Partial<ClientSecret>): Promise<ClientSecret> {
+    return this.get(ClientSecret).create(secret)
   }
 
   async createApiScope({

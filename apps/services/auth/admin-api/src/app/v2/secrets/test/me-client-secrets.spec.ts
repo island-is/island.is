@@ -1,4 +1,5 @@
 import { getModelToken } from '@nestjs/sequelize'
+import CryptoJS from 'crypto-js'
 import request from 'supertest'
 
 import { ClientSecret, SequelizeConfigService } from '@island.is/auth-api-lib'
@@ -48,6 +49,23 @@ const clients = [
   },
 ]
 
+const secrets = [
+  {
+    clientId: 'client-1',
+    encryptedValue:
+      'U2FsdGVkX18CfF8ReTFiO97OYKfFs/TEIFpVFLedKawf2WHnc/uXMjMhR4A1zsja',
+    type: 'SharedSecret',
+    value: 'DY5f1A0iSam7QpraBhn6/O9bRVo1j/l08L44d9D6LQk=',
+  },
+  {
+    clientId: 'client-1',
+    encryptedValue:
+      'U2FsdGVkX19WWRmJPXjqSTxe7nt1YAE7Z+mvZqIREiw5XOKhHYudeI6IFCG4wkNg',
+    type: 'SharedSecret',
+    value: '/MRMQaBOT7xRlRJMw7AkjkKhhTPwxTqjDQkJngtHloo=',
+  },
+]
+
 interface TestCase {
   user: User
   tenant: string
@@ -69,12 +87,7 @@ interface TestCase {
     id?: string
     expected: {
       status: number
-    }
-  }
-  getAfterDelete: {
-    expected: {
-      status: number
-      result: { decryptedValue: string }[] | {}
+      deleted: boolean
     }
   }
 }
@@ -95,18 +108,16 @@ const testCases: Record<string, TestCase> = {
     get: {
       expected: {
         status: 200,
-        result: [{ decryptedValue: 'secret-1' }],
+        result: [
+          { decryptedValue: 'existing-secret-1' },
+          { decryptedValue: 'existing-secret-2' },
+        ],
       },
     },
     delete: {
       expected: {
         status: 204,
-      },
-    },
-    getAfterDelete: {
-      expected: {
-        status: 200,
-        result: [],
+        deleted: true,
       },
     },
   },
@@ -131,12 +142,7 @@ const testCases: Record<string, TestCase> = {
     delete: {
       expected: {
         status: 204,
-      },
-    },
-    getAfterDelete: {
-      expected: {
-        status: 204,
-        result: {},
+        deleted: false,
       },
     },
   },
@@ -155,18 +161,16 @@ const testCases: Record<string, TestCase> = {
     get: {
       expected: {
         status: 200,
-        result: [{ decryptedValue: 'secret-1' }],
+        result: [
+          { decryptedValue: 'existing-secret-1' },
+          { decryptedValue: 'existing-secret-2' },
+        ],
       },
     },
     delete: {
       expected: {
         status: 204,
-      },
-    },
-    getAfterDelete: {
-      expected: {
-        status: 200,
-        result: [],
+        deleted: true,
       },
     },
   },
@@ -191,12 +195,7 @@ const testCases: Record<string, TestCase> = {
     delete: {
       expected: {
         status: 204,
-      },
-    },
-    getAfterDelete: {
-      expected: {
-        status: 200,
-        result: [],
+        deleted: false,
       },
     },
   },
@@ -208,6 +207,7 @@ describe('MeClientSecretsController', () => {
       const testCase = testCases[testCaseName]
       let app: TestApp
       let server: request.SuperTest<request.Test>
+      let fixtureFactory: FixtureFactory
 
       beforeAll(async () => {
         app = await setupApp({
@@ -217,7 +217,7 @@ describe('MeClientSecretsController', () => {
         })
         server = request(app.getHttpServer())
 
-        const fixtureFactory = new FixtureFactory(app)
+        fixtureFactory = new FixtureFactory(app)
 
         await Promise.all(
           tenants.map(async (tenant) => fixtureFactory.createDomain(tenant)),
@@ -228,8 +228,33 @@ describe('MeClientSecretsController', () => {
         )
       })
 
+      beforeEach(async () => {
+        await Promise.all(
+          secrets.map(async (secret: { encryptedValue: string }) =>
+            fixtureFactory.createSecret(secret),
+          ),
+        )
+      })
+
+      afterEach(async () => {
+        await app.get(getModelToken(ClientSecret)).destroy({ truncate: true })
+      })
+
       afterAll(async () => {
         await app.cleanUp()
+      })
+
+      it('should pass get', async () => {
+        // Act
+        const response = await server.get(
+          `/v2/me/tenants/${encodeURIComponent(
+            testCase.tenant,
+          )}/clients/${encodeURIComponent(testCase.client)}/secrets`,
+        )
+
+        // Assert
+        expect(response.status).toEqual(testCase.get.expected.status)
+        expect(response.body).toMatchObject(testCase.get.expected.result)
       })
 
       it('should pass post', async () => {
@@ -249,53 +274,40 @@ describe('MeClientSecretsController', () => {
         if (response.status == 201) {
           const model = app.get(getModelToken(ClientSecret))
 
-          const secret = await model.findOne(response.body.id)
-          expect(secret.encryptedValue).not.toEqual(testCase.post.secret)
+          const secret = await model.findByPk(response.body.id)
+          const decryptedValue = CryptoJS.AES.decrypt(
+            secret.encryptedValue,
+            'secret',
+          ).toString(CryptoJS.enc.Utf8)
+          expect(decryptedValue).toEqual(testCase.post.secret.decryptedValue)
         }
       })
 
-      it('should pass get', async () => {
-        // Act
-        const response = await server.get(
-          `/v2/me/tenants/${encodeURIComponent(
-            testCase.tenant,
-          )}/clients/${encodeURIComponent(testCase.client)}/secrets`,
-        )
-
-        // Assert
-        expect(response.status).toEqual(testCase.get.expected.status)
-        expect(response.body).toMatchObject(testCase.get.expected.result)
-
-        if (response.body.length > 0) testCase.delete.id = response.body[0].id
-      })
-
       it('should pass delete', async () => {
+        // Arrange
+        const secretToDelete = await app
+          .get(getModelToken(ClientSecret))
+          .findOne()
+
         // Act
         const response = await server.delete(
           `/v2/me/tenants/${encodeURIComponent(
             testCase.tenant,
           )}/clients/${encodeURIComponent(testCase.client)}/secrets/${
-            testCase.delete.id
+            secretToDelete.id
           }`,
         )
 
         // Assert
         expect(response.status).toEqual(testCase.delete.expected.status)
-      })
-
-      it('should pass get after delete', async () => {
-        // Act
-        const response = await server.get(
-          `/v2/me/tenants/${encodeURIComponent(
-            testCase.tenant,
-          )}/clients/${encodeURIComponent(testCase.client)}/secrets`,
-        )
-
-        // Assert
-        expect(response.status).toEqual(testCase.getAfterDelete.expected.status)
-        expect(response.body).toMatchObject(
-          testCase.getAfterDelete.expected.result,
-        )
+        const deleted = await app
+          .get(getModelToken(ClientSecret))
+          .findByPk(secretToDelete.id)
+        if (testCase.delete.expected.deleted) {
+          expect(deleted).toBeNull()
+        } else {
+          expect(deleted).toEqual(secretToDelete)
+        }
       })
     })
   })

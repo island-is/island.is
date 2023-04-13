@@ -8,7 +8,7 @@ import {
   ResourcesModule as ResourcesLibModule,
 } from '@island.is/auth-api-lib'
 
-import { ClientSecretsService } from './client-secrets.services'
+import { ClientSecretsService } from './client-secrets.service'
 import { MeClientSecretsController } from './me-client-secrets.controller'
 
 @Module({
