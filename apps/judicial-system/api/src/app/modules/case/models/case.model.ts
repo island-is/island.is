@@ -13,6 +13,7 @@ import {
   CaseOrigin,
   SubpoenaType,
   CaseType,
+  CaseAppealState,
 } from '@island.is/judicial-system/types'
 import type {
   Case as TCase,
@@ -29,6 +30,7 @@ import { Notification } from './notification.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
+registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 
 @ObjectType()
@@ -296,4 +298,10 @@ export class Case implements TCase {
 
   @Field(() => Boolean, { nullable: true })
   readonly requestDriversLicenseSuspension?: boolean
+
+  @Field(() => CaseAppealState, { nullable: true })
+  readonly appealState?: CaseAppealState
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isStatementDeadlineExpired?: boolean
 }

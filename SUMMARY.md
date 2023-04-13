@@ -206,6 +206,7 @@
     - [Procuring](libs/clients/rsk/procuring/README.md)
   - [Smart Solutions](libs/clients/smartsolutions/README.md)
   - [Syslumenn](libs/clients/syslumenn/README.md)
+  - [University of Iceland](libs/clients/university-of-iceland/README.md)
   - [User Profile](libs/clients/user-profile/README.md)
   - [Driving License](libs/clients/vehicles/README.md)
   - [VMST](libs/clients/vmst/README.md)

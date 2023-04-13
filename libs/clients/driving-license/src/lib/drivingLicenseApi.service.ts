@@ -8,6 +8,7 @@ import {
 } from '..'
 import * as v1 from '../v1'
 import * as v2 from '../v2'
+import * as v5 from '../v5'
 import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
@@ -18,8 +19,11 @@ import { handleCreateResponse } from './utils/handleCreateResponse'
 
 @Injectable()
 export class DrivingLicenseApi {
-  constructor(private readonly v1: v1.ApiV1, private readonly v2: v2.ApiV2) {}
-
+  constructor(
+    private readonly v1: v1.ApiV1,
+    private readonly v2: v2.ApiV2,
+    private readonly v5: v5.ApiV5,
+  ) {}
   public async getCurrentLicense(input: {
     nationalId: string
   }): Promise<DriversLicense | null> {

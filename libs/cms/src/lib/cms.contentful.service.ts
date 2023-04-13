@@ -453,6 +453,7 @@ export class CmsContentfulService {
         url: Record<string, string>
         question?: Record<string, string>
         activeTranslations?: { 'is-IS': Record<string, boolean> }
+        parent?: { 'is-IS': { fields: { slug: Record<string, string> } } }
       }>(id, {
         locale: '*',
         include: 1,
@@ -462,6 +463,8 @@ export class CmsContentfulService {
     let slugs: TextFieldLocales = { is: '', en: '' }
     let titles: TextFieldLocales = { is: '', en: '' }
     let urls: TextFieldLocales = { is: '', en: '' }
+
+    const type = result?.sys?.contentType?.sys?.id ?? ''
 
     if (
       (result?.fields?.title || result?.fields?.question) &&
@@ -474,7 +477,21 @@ export class CmsContentfulService {
             (result?.fields?.title ?? result?.fields?.question)?.[
               localeMap[k]
             ] ?? ''
-          obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
+
+          if (type === 'subArticle') {
+            const parentSlug =
+              result?.fields?.parent?.['is-IS']?.fields?.slug?.[localeMap[k]] ??
+              ''
+
+            const url = result?.fields?.url?.[localeMap[k]] ?? ''
+
+            obj.urls[k] = parentSlug
+              ? `${parentSlug}/${url?.split('/')?.pop() ?? ''}`
+              : ''
+          } else {
+            obj.urls[k] = result?.fields?.url?.[localeMap[k]] ?? ''
+          }
+
           return obj
         },
         {
@@ -490,7 +507,7 @@ export class CmsContentfulService {
       slug: slugs,
       title: titles,
       url: urls,
-      type: result?.sys?.contentType?.sys?.id ?? '',
+      type,
       activeTranslations: result?.fields?.activeTranslations?.['is-IS'] ?? {
         en: true,
       },

@@ -14,24 +14,26 @@ import {
   UserMenu,
 } from '@island.is/island-ui/core'
 import * as styles from './Menu.css'
-import React from 'react'
+import React, { useContext } from 'react'
 import { MenuLogo, MenuLogoMobile } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
-import { checkActiveHeaderLink, useLogin } from '../../utils/helpers'
+import { checkActiveHeaderLink, useLogIn, useLogOut } from '../../utils/helpers'
 import { useRouter } from 'next/router'
-import { useUser } from '../../context/UserContext'
+import { UserContext } from '../../context'
 type MenuProps = {
   isFrontPage: boolean
 }
 
 export const Menu = ({ isFrontPage = false }: MenuProps) => {
-  const { LogIn, loginLoading } = useLogin()
-  const { isAuthenticated, user, logoutUser } = useUser()
+  const { isAuthenticated, user } = useContext(UserContext)
 
   const router = useRouter()
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
   const biggerMarginLeft = [3, 3, 3, 4] as ResponsiveSpace
+
+  const LogIn = useLogIn()
+  const LogOut = useLogOut()
 
   return (
     <header className={styles.menu}>
@@ -127,15 +129,11 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                             username={user?.name}
                             authenticated={isAuthenticated}
                             language={'IS'}
-                            onLogout={logoutUser}
+                            onLogout={LogOut}
                             dropdownItems={<Divider />}
                           />
                         ) : (
-                          <Button
-                            size="small"
-                            onClick={LogIn}
-                            loading={loginLoading}
-                          >
+                          <Button size="small" onClick={LogIn}>
                             Innskráning
                           </Button>
                         )}
@@ -154,7 +152,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                         modalLabel="Menu modal"
                         isLoggedIn={isAuthenticated}
                         logIn={LogIn}
-                        logOut={logoutUser}
+                        logOut={LogOut}
                         router={router}
                         isFrontPage={isFrontPage}
                       />

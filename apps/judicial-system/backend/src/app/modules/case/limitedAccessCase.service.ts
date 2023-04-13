@@ -1,8 +1,15 @@
 import { Includeable, Op, OrderItem } from 'sequelize'
 
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -53,7 +60,15 @@ export const attributes: (keyof Case)[] = [
   'caseModifiedExplanation',
   'seenByDefender',
   'caseResentExplanation',
+  'appealState',
+  'accusedAppealDecision',
+  'prosecutorAppealDecision',
+  'accusedPostponedAppealDate',
+  'prosecutorPostponedAppealDate',
 ]
+
+export interface LimitedUpdateCase
+  extends Pick<Case, 'accusedPostponedAppealDate' | 'appealState'> {}
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -102,7 +117,10 @@ export const order: OrderItem[] = [
 
 @Injectable()
 export class LimitedAccessCaseService {
-  constructor(@InjectModel(Case) private readonly caseModel: typeof Case) {}
+  constructor(
+    @InjectModel(Case) private readonly caseModel: typeof Case,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
@@ -128,6 +146,26 @@ export class LimitedAccessCaseService {
     }
 
     return theCase
+  }
+
+  async update(theCase: Case, update: LimitedUpdateCase): Promise<Case> {
+    const [numberOfAffectedRows, cases] = await this.caseModel.update(update, {
+      where: { id: theCase.id },
+      returning: true,
+    })
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update case ${theCase.id}`,
+      )
+    }
+
+    return cases[0]
   }
 
   findDefenderNationalId(theCase: Case, nationalId: string): User {

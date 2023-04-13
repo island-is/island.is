@@ -192,7 +192,7 @@ export const Input = forwardRef(
                   styles.inputBackgroundLg,
                   styles.inputBackgroundXl,
                 ),
-                styles.inputSize[size],
+                { [styles.inputSize[size]]: !textarea },
               )}
               id={id}
               disabled={disabled}

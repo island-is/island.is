@@ -44,7 +44,12 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
-import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
+import {
+  CO_OWNER_LINK,
+  OPERATOR_LINK,
+  REGISTRATION_NUMBER_LINK,
+  SAMGONGUSTOFA_LINK,
+} from '../../utils/constants'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -225,6 +230,30 @@ const VehicleDetail = () => {
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
 
+  const dropdownArray = [
+    {
+      title: formatMessage(messages.orderRegistrationNumber),
+      href: REGISTRATION_NUMBER_LINK,
+    },
+    {
+      title: formatMessage(messages.orderRegistrationLicense),
+      href: REGISTRATION_NUMBER_LINK,
+    },
+    {
+      title: formatMessage(messages.addCoOwner),
+      href: CO_OWNER_LINK,
+    },
+    {
+      title: formatMessage(messages.addOperator),
+      href: OPERATOR_LINK,
+    },
+  ]
+  if (basicInfo?.permno !== basicInfo?.regno) {
+    dropdownArray.push({
+      title: formatMessage(messages.renewPrivateRegistration),
+      href: OPERATOR_LINK,
+    })
+  }
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -295,26 +324,7 @@ const VehicleDetail = () => {
                   </a>
                 </Box>
                 <Box paddingRight={2}>
-                  <Dropdown
-                    dropdownItems={[
-                      {
-                        title: formatMessage(messages.orderRegistrationNumber),
-                        href: SAMGONGUSTOFA_LINK,
-                      },
-                      {
-                        title: formatMessage(messages.orderRegistrationLicense),
-                        href: SAMGONGUSTOFA_LINK,
-                      },
-                      {
-                        title: formatMessage(messages.addCoOwner),
-                        href: SAMGONGUSTOFA_LINK,
-                      },
-                      {
-                        title: formatMessage(messages.addOperator),
-                        href: SAMGONGUSTOFA_LINK,
-                      },
-                    ]}
-                  />
+                  <Dropdown dropdownItems={dropdownArray} />
                 </Box>
               </Box>
             </GridColumn>
@@ -327,7 +337,7 @@ const VehicleDetail = () => {
           content={mainInfo?.regno ?? ''}
           editLink={{
             title: messages.orderRegistrationNumber,
-            url: SAMGONGUSTOFA_LINK,
+            url: REGISTRATION_NUMBER_LINK,
             external: true,
           }}
           loading={loading}

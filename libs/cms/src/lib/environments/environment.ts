@@ -70,6 +70,10 @@ export default {
     'uiConfiguration',
     'organizationTag',
     'logoListSlice',
+    'article',
+    'overviewLinks',
+    'introLinkImage',
+    'price',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],
