@@ -1,15 +1,10 @@
-import { useQuery } from '@apollo/client'
-import {
-  Alert,
-  TableViewAccessory,
-  TableViewCell,
-  TableViewGroup,
-} from '@ui'
-import messaging from '@react-native-firebase/messaging'
-import { authenticateAsync } from 'expo-local-authentication'
-import gql from 'graphql-tag'
-import React, { useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import {useQuery} from '@apollo/client';
+import {Alert, TableViewAccessory, TableViewCell, TableViewGroup} from '@ui';
+import messaging from '@react-native-firebase/messaging';
+import {authenticateAsync} from 'expo-local-authentication';
+import gql from 'graphql-tag';
+import React, {useEffect, useRef, useState} from 'react';
+import {useIntl} from 'react-intl';
 import {
   Alert as RNAlert,
   Linking,
@@ -21,51 +16,51 @@ import {
   View,
   Text,
   Image,
-} from 'react-native'
-import { Navigation } from 'react-native-navigation'
-import { useTheme } from 'styled-components/native'
-import CodePush, { LocalPackage } from 'react-native-code-push'
-import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { client } from '../../graphql/client'
-import { showPicker } from '../../lib/show-picker'
-import { authStore } from '../../stores/auth-store'
+} from 'react-native';
+import {Navigation} from 'react-native-navigation';
+import {useTheme} from 'styled-components/native';
+import CodePush, {LocalPackage} from 'react-native-code-push';
+import {PressableHighlight} from '../../components/pressable-highlight/pressable-highlight';
+import {client} from '../../graphql/client';
+import {showPicker} from '../../lib/show-picker';
+import {authStore} from '../../stores/auth-store';
 import {
   PreferencesStore,
   preferencesStore,
   usePreferencesStore,
-} from '../../stores/preferences-store'
-import { useUiStore } from '../../stores/ui-store'
-import { ComponentRegistry } from '../../utils/component-registry'
-import { config } from '../../utils/config'
-import { getAppRoot } from '../../utils/lifecycle/get-app-root'
-import { testIDs } from '../../utils/test-ids'
-import { useBiometricType } from '../onboarding/onboarding-biometrics'
-import { navigateTo } from '../../lib/deep-linking'
-import editIcon from '../../assets/icons/edit.png'
-import { USER_PROFILE_QUERY } from '../../graphql/queries/user-profile.query'
+} from '../../stores/preferences-store';
+import {useUiStore} from '../../stores/ui-store';
+import {ComponentRegistry} from '../../utils/component-registry';
+import {config} from '../../utils/config';
+import {getAppRoot} from '../../utils/lifecycle/get-app-root';
+import {testIDs} from '../../utils/test-ids';
+import {useBiometricType} from '../onboarding/onboarding-biometrics';
+import {navigateTo} from '../../lib/deep-linking';
+import editIcon from '../../assets/icons/edit.png';
+import {USER_PROFILE_QUERY} from '../../graphql/queries/user-profile.query';
 
 const PreferencesSwitch = React.memo(
-  ({ name }: { name: keyof PreferencesStore }) => {
-    const theme = useTheme()
+  ({name}: {name: keyof PreferencesStore}) => {
+    const theme = useTheme();
     return (
       <Switch
-        onValueChange={(value) =>
-          preferencesStore.setState({ [name]: value } as any)
+        onValueChange={value =>
+          preferencesStore.setState({[name]: value} as any)
         }
         value={preferencesStore.getState()[name] as boolean}
-        thumbColor={Platform.select({ android: theme.color.dark100 })}
+        thumbColor={Platform.select({android: theme.color.dark100})}
         trackColor={{
           false: theme.color.dark200,
           true: theme.color.blue400,
         }}
       />
-    )
+    );
   },
-)
+);
 
 export function TabSettings() {
-  const intl = useIntl()
-  const theme = useTheme()
+  const intl = useIntl();
+  const theme = useTheme();
   const {
     dismiss,
     dismissed,
@@ -77,30 +72,30 @@ export function TabSettings() {
     useBiometrics,
     setUseBiometrics,
     appLockTimeout,
-  } = usePreferencesStore()
-  const [loadingCP, setLoadingCP] = useState(false)
-  const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
-  const [pushToken, setPushToken] = useState('loading...')
-  const efficient = useRef<any>({}).current
-  const isInfoDismissed = dismissed.includes('userSettingsInformational')
-  const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
-  const biometricType = useBiometricType(authenticationTypes)
+  } = usePreferencesStore();
+  const [loadingCP, setLoadingCP] = useState(false);
+  const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null);
+  const [pushToken, setPushToken] = useState('loading...');
+  const efficient = useRef<any>({}).current;
+  const isInfoDismissed = dismissed.includes('userSettingsInformational');
+  const {authenticationTypes, isEnrolledBiometrics} = useUiStore();
+  const biometricType = useBiometricType(authenticationTypes);
 
   const onLogoutPress = async () => {
-    await authStore.getState().logout()
-    await Navigation.dismissAllModals()
+    await authStore.getState().logout();
+    await Navigation.dismissAllModals();
     await Navigation.setRoot({
       root: await getAppRoot(),
-    })
-  }
+    });
+  };
 
   const userProfile = useQuery(USER_PROFILE_QUERY, {
     client,
-  })
+  });
 
   const [documentNotifications, setDocumentNotifications] = useState(
     userProfile.data?.getUserProfile?.documentNotifications,
-  )
+  );
 
   const onLanguagePress = () => {
     showPicker({
@@ -109,32 +104,32 @@ export function TabSettings() {
         id: 'settings.accessibilityLayout.language',
       }),
       items: [
-        { label: 'Íslenska', id: 'is-IS' },
-        { label: 'English', id: 'en-US' },
+        {label: 'Íslenska', id: 'is-IS'},
+        {label: 'English', id: 'en-US'},
       ],
       selectedId: locale,
       cancel: true,
-    }).then(({ selectedItem }: any) => {
+    }).then(({selectedItem}: any) => {
       if (selectedItem) {
-        setLocale(selectedItem.id)
+        setLocale(selectedItem.id);
       }
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     setTimeout(() => {
       // @todo move to ui store, persist somehow
-      setLoadingCP(true)
-      CodePush.getUpdateMetadata().then((p) => {
-        setLoadingCP(false)
-        setLocalPackage(p)
-      })
+      setLoadingCP(true);
+      CodePush.getUpdateMetadata().then(p => {
+        setLoadingCP(false);
+        setLocalPackage(p);
+      });
       messaging()
         .getToken()
-        .then((token) => setPushToken(token))
-        .catch(() => setPushToken('no token in simulator'))
-    }, 330)
-  }, [])
+        .then(token => setPushToken(token))
+        .catch(() => setPushToken('no token in simulator'));
+    }, 330);
+  }, []);
 
   function updateDocumentNotifications(value: boolean) {
     client
@@ -148,14 +143,14 @@ export function TabSettings() {
             }
           }
         `,
-        update(cache, { data: { updateProfile } }) {
+        update(cache, {data: {updateProfile}}) {
           cache.modify({
             fields: {
-              getUserProfile: (existing) => {
-                return { ...existing, ...updateProfile }
+              getUserProfile: existing => {
+                return {...existing, ...updateProfile};
               },
             },
-          })
+          });
         },
         variables: {
           input: {
@@ -163,30 +158,30 @@ export function TabSettings() {
           },
         },
       })
-      .catch((err) => {
-        console.log(JSON.stringify(err))
-        RNAlert.alert('Villa', err.message)
-      })
+      .catch(err => {
+        console.log(JSON.stringify(err));
+        RNAlert.alert('Villa', err.message);
+      });
   }
 
   useEffect(() => {
     if (userProfile) {
       setDocumentNotifications(
         userProfile.data?.getUserProfile?.documentNotifications,
-      )
+      );
     }
-  }, [userProfile])
+  }, [userProfile]);
 
   return (
-    <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
+    <ScrollView style={{flex: 1}} testID={testIDs.USER_SCREEN_SETTINGS}>
       <Alert
         type="info"
         visible={!isInfoDismissed}
-        message={intl.formatMessage({ id: 'settings.infoBoxText' })}
+        message={intl.formatMessage({id: 'settings.infoBoxText'})}
         onClose={() => dismiss('userSettingsInformational')}
         hideIcon
       />
-      <View style={{ height: 32 }} />
+      <View style={{height: 32}} />
       <TableViewGroup
         header={intl.formatMessage({
           id: 'settings.usersettings.groupTitle',
@@ -200,12 +195,15 @@ export function TabSettings() {
           accessory={
             <TouchableOpacity
               onPress={() => navigateTo(`/editphone`)}
-              style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10, paddingRight: 16, marginRight: -16 }}
+              style={{
+                paddingLeft: 16,
+                paddingBottom: 10,
+                paddingTop: 10,
+                paddingRight: 16,
+                marginRight: -16,
+              }}
             >
-              <Image
-                source={editIcon as any}
-                style={{ width: 19, height: 19 }}
-              />
+              <Image source={editIcon as any} style={{width: 19, height: 19}} />
             </TouchableOpacity>
           }
         />
@@ -217,12 +215,15 @@ export function TabSettings() {
           accessory={
             <TouchableOpacity
               onPress={() => navigateTo(`/editemail`)}
-              style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10, paddingRight: 16, marginRight: -16 }}
+              style={{
+                paddingLeft: 16,
+                paddingBottom: 10,
+                paddingTop: 10,
+                paddingRight: 16,
+                marginRight: -16,
+              }}
             >
-              <Image
-                source={editIcon as any}
-                style={{ width: 19, height: 19 }}
-              />
+              <Image source={editIcon as any} style={{width: 19, height: 19}} />
             </TouchableOpacity>
           }
         />
@@ -233,15 +234,16 @@ export function TabSettings() {
           subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
           accessory={
             <TouchableOpacity
-              onPress={() =>
-                navigateTo(`/editbankinfo`)
-              }
-              style={{ paddingLeft: 16, paddingBottom: 10, paddingTop: 10, paddingRight: 16, marginRight: -16 }}
+              onPress={() => navigateTo(`/editbankinfo`)}
+              style={{
+                paddingLeft: 16,
+                paddingBottom: 10,
+                paddingTop: 10,
+                paddingRight: 16,
+                marginRight: -16,
+              }}
             >
-              <Image
-                source={editIcon as any}
-                style={{ width: 19, height: 19 }}
-              />
+              <Image source={editIcon as any} style={{width: 19, height: 19}} />
             </TouchableOpacity>
           }
         />
@@ -257,13 +259,13 @@ export function TabSettings() {
           })}
           accessory={
             <Switch
-              onValueChange={(value) => {
-                updateDocumentNotifications(value)
-                setDocumentNotifications(value)
+              onValueChange={value => {
+                updateDocumentNotifications(value);
+                setDocumentNotifications(value);
               }}
               disabled={userProfile.loading && !userProfile.data}
               value={documentNotifications}
-              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              thumbColor={Platform.select({android: theme.color.dark100})}
               trackColor={{
                 false: theme.color.dark200,
                 true: theme.color.blue400,
@@ -297,11 +299,11 @@ export function TabSettings() {
           })}
           accessory={
             <Switch
-              onValueChange={(value) => {
-                setAppearanceMode(value ? 'automatic' : 'light')
+              onValueChange={value => {
+                setAppearanceMode(value ? 'automatic' : 'light');
               }}
               value={appearanceMode === 'automatic'}
-              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              thumbColor={Platform.select({android: theme.color.dark100})}
               trackColor={{
                 false: theme.color.dark200,
                 true: theme.color.blue400,
@@ -311,14 +313,14 @@ export function TabSettings() {
         />
         <Pressable
           onPress={() => {
-            clearTimeout(efficient.ts)
-            efficient.count = (efficient.count ?? 0) + 1
+            clearTimeout(efficient.ts);
+            efficient.count = (efficient.count ?? 0) + 1;
             if (efficient.count === 11) {
-              setAppearanceMode('efficient')
+              setAppearanceMode('efficient');
             }
             efficient.ts = setTimeout(() => {
-              efficient.count = 0
-            }, 500)
+              efficient.count = 0;
+            }, 500);
           }}
         >
           <TableViewCell
@@ -327,11 +329,11 @@ export function TabSettings() {
             })}
             accessory={
               <Switch
-                onValueChange={(value) =>
+                onValueChange={value =>
                   setAppearanceMode(value ? 'dark' : 'light')
                 }
                 value={appearanceMode === 'dark'}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                thumbColor={Platform.select({android: theme.color.dark100})}
                 trackColor={{
                   false: theme.color.dark200,
                   true: theme.color.blue400,
@@ -373,7 +375,7 @@ export function TabSettings() {
                   },
                 ],
               },
-            })
+            });
           }}
         >
           <TableViewCell
@@ -404,32 +406,32 @@ export function TabSettings() {
                   {
                     id: 'settings.security.useBiometricsDescription',
                   },
-                  { biometricType: biometricType.text },
+                  {biometricType: biometricType.text},
                 )
               : intl.formatMessage(
                   {
                     id: 'onboarding.biometrics.notEnrolled',
                   },
-                  { biometricType: biometricType.text },
+                  {biometricType: biometricType.text},
                 )
           }
           accessory={
             <Switch
-              onValueChange={(value) => {
+              onValueChange={value => {
                 if (value === true && !hasAcceptedBiometrics) {
-                  authenticateAsync().then((authenticate) => {
+                  authenticateAsync().then(authenticate => {
                     if (authenticate.success) {
-                      setUseBiometrics(true)
-                      preferencesStore.setState({ hasAcceptedBiometrics: true })
+                      setUseBiometrics(true);
+                      preferencesStore.setState({hasAcceptedBiometrics: true});
                     }
-                  })
+                  });
                 } else {
-                  setUseBiometrics(value)
+                  setUseBiometrics(value);
                 }
               }}
               disabled={!isEnrolledBiometrics}
               value={useBiometrics}
-              thumbColor={Platform.select({ android: theme.color.dark100 })}
+              thumbColor={Platform.select({android: theme.color.dark100})}
               trackColor={{
                 false: theme.color.dark200,
                 true: theme.color.blue400,
@@ -470,12 +472,12 @@ export function TabSettings() {
                 },
               ],
               cancel: true,
-            }).then((res) => {
+            }).then(res => {
               if (res.selectedItem) {
-                const appLockTimeout = Number(res.selectedItem.id)
-                preferencesStore.setState({ appLockTimeout })
+                const appLockTimeout = Number(res.selectedItem.id);
+                preferencesStore.setState({appLockTimeout});
               }
-            })
+            });
           }}
         >
           <TableViewCell
@@ -501,11 +503,11 @@ export function TabSettings() {
           onPress={() => {
             Linking.openURL(
               'https://island.is/personuverndarstefna-stafraent-islands',
-            )
+            );
           }}
         >
           <TableViewCell
-            title={intl.formatMessage({ id: 'settings.security.privacyTitle' })}
+            title={intl.formatMessage({id: 'settings.security.privacyTitle'})}
             subtitle={intl.formatMessage({
               id: 'settings.security.privacySubTitle',
             })}
@@ -513,21 +515,21 @@ export function TabSettings() {
         </PressableHighlight>
       </TableViewGroup>
       <TableViewGroup
-        header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
+        header={intl.formatMessage({id: 'settings.about.groupTitle'})}
       >
         <TableViewCell
-          title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
+          title={intl.formatMessage({id: 'settings.about.versionLabel'})}
           subtitle={`${config.constants.nativeAppVersion} build ${
             config.constants.nativeBuildVersion
           } ${config.constants.debugMode ? '(debug)' : ''}`}
         />
         <TableViewCell
-          title={intl.formatMessage({ id: 'settings.about.codePushLabel' })}
+          title={intl.formatMessage({id: 'settings.about.codePushLabel'})}
           subtitle={
             loadingCP
-              ? intl.formatMessage({ id: 'settings.about.codePushLoading' })
+              ? intl.formatMessage({id: 'settings.about.codePushLoading'})
               : !localPackage
-              ? intl.formatMessage({ id: 'settings.about.codePushUpToDate' })
+              ? intl.formatMessage({id: 'settings.about.codePushUpToDate'})
               : `${localPackage?.label}`
           }
         />
@@ -543,7 +545,7 @@ export function TabSettings() {
           testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}
         >
           <TableViewCell
-            title={intl.formatMessage({ id: 'settings.about.logoutLabel' })}
+            title={intl.formatMessage({id: 'settings.about.logoutLabel'})}
             subtitle={intl.formatMessage({
               id: 'settings.about.logoutDescription',
             })}
@@ -551,5 +553,5 @@ export function TabSettings() {
         </PressableHighlight>
       </TableViewGroup>
     </ScrollView>
-  )
+  );
 }

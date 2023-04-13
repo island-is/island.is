@@ -6,11 +6,13 @@ export const is = {
   'login.languageButtonText': 'English',
   'login.needHelpButtonText': 'Þarftu aðstoð?',
   'login.outdatedBrowserTitle': 'Gamall vafri',
-  'login.outdatedBrowserMessage': 'Vafrinn þinn er of gamall, vinsamlegast uppfærið hann í gegnum Play Store',
+  'login.outdatedBrowserMessage':
+    'Vafrinn þinn er of gamall, vinsamlegast uppfærið hann í gegnum Play Store',
   'login.outdatedBrowserUpdateButton': 'Uppfæra',
   'login.outdatedBrowserCancelButton': 'Hætta við',
   'login.networkErrorTitle': 'Villa kom upp',
-  'login.networkErrorMessage': '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
+  'login.networkErrorMessage':
+    '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
@@ -33,7 +35,8 @@ export const is = {
     'Þú getur einnig notað {biometricType} til að opna appið án þess að slá inn PIN.',
   'onboarding.biometrics.notEnrolled':
     'Tækið þitt styður {biometricType} en þú hefur ekki virkjað það.',
-  'onboarding.biometrics.noAuthenticationTypes': 'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
+  'onboarding.biometrics.noAuthenticationTypes':
+    'Tækið hjá þér er ekki með stuðning fyrir lífkenni',
   'onboarding.biometrics.useBiometricsButtonText': 'Nota {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Sleppa því í bili',
   'onboarding.biometrics.type.faceId': 'Face ID',
@@ -41,7 +44,8 @@ export const is = {
   'onboarding.biometrics.type.fingerprint': 'fingrafar',
   'onboarding.biometrics.type.iris': 'augnskanna',
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Nota augnskannaauðkenningu',
-  'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Nota fingrafarsauðkenningu',
+  'onboarding.pinKeypad.accessibilityLabel.fingerprint':
+    'Nota fingrafarsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
 
@@ -171,7 +175,8 @@ export const is = {
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
   'vehicles.emptyListTitle': 'Engin ökutæki finnast fyrir notanda',
-  'vehicles.emptyListDescription': 'Ökutæki sem eru skráð á þig munu birtast hér.',
+  'vehicles.emptyListDescription':
+    'Ökutæki sem eru skráð á þig munu birtast hér.',
 
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
@@ -196,7 +201,8 @@ export const is = {
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
   'assetsOverview.emptyListTitle': 'Engar fasteignir finnast fyrir notanda',
-  'assetsOverview.emptyListDescription': 'Fasteignir sem skráðar eru á þig munu birtast hér.',
+  'assetsOverview.emptyListDescription':
+    'Fasteignir sem skráðar eru á þig munu birtast hér.',
 
   // assets details
   'assetsDetail.propertyNumber': 'Fastanúmer',
@@ -212,7 +218,8 @@ export const is = {
   // family
   'family.screenTitle': 'Fjölskylda',
   'family.emptyListTitle': 'Fjölskyldu upplýsingar',
-  'family.emptyListDescription': 'Hér munu birtast upplýsingar um fjölskyldu þína frá Þjóðskrá.',
+  'family.emptyListDescription':
+    'Hér munu birtast upplýsingar um fjölskyldu þína frá Þjóðskrá.',
 
   // family details
   'familyDetail.title': 'Upplýsingar',
@@ -249,9 +256,11 @@ export const is = {
   // wallet passport
   'walletPassport.screenTitle': 'Vefabréf',
   'walletPassport.infoTitle': 'Mundu eftir vegabréfinu!',
-  'walletPassport.infoDescription': 'Þetta yfirlit gildir ekki sem ferðaskilríki.',
+  'walletPassport.infoDescription':
+    'Þetta yfirlit gildir ekki sem ferðaskilríki.',
   'walletPassport.warningTitle': 'Rennur út innan 6 mánaða',
-  'walletPassport.warningDescription': 'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
+  'walletPassport.warningDescription':
+    'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
   'walletPassport.displayName': 'Nafn einstaklings',
   'walletPassport.number': 'Númer vefabréfs',
   'walletPassport.issuingDate': 'Útgáfudagur',
@@ -265,8 +274,10 @@ export const is = {
   'licenseScanner.noCameraAccess': 'Myndavél ekki aðgengileg',
   'licenseScannerDetail.driverLicenseNumber': 'Númer ökuskírteinis',
   'licenseScannerDetail.invalidBarcode': 'Ógilt strikamerki',
-  'licenseScannerResult.androidHelp': 'Smellið á hnapp neðan við skírteini til þess að fá uppfært strikamerki.',
-  'licenseScannerResult.iosHelp': 'Smellið á hnapp með þremur punktum fyrir neðan skírteinið. Dragið því næst niður með fingur á miðjum skjánum til þess að uppfæra strikamerkið.',
+  'licenseScannerResult.androidHelp':
+    'Smellið á hnapp neðan við skírteini til þess að fá uppfært strikamerki.',
+  'licenseScannerResult.iosHelp':
+    'Smellið á hnapp með þremur punktum fyrir neðan skírteinið. Dragið því næst niður með fingur á miðjum skjánum til þess að uppfæra strikamerkið.',
 
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Óþekkt villa',
@@ -280,22 +291,24 @@ export const is = {
     4 {Strikamerki ógilt}
     other {Óþekkt villa}
   }`,
-  'licenseScanDetail.errorTryToRefresh': 'Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.',
-  'licenseScanDetail.barcodeExpired': 'Útrunnið strikamerki. Uppfærið skírteinið og reynið aftur.',
+  'licenseScanDetail.errorTryToRefresh':
+    'Villa við að sannreyna ökuskírteinið. Uppfærið skírteinið og reynið aftur.',
+  'licenseScanDetail.barcodeExpired':
+    'Útrunnið strikamerki. Uppfærið skírteinið og reynið aftur.',
 
-   // license scan results
-   'licenseScannerResult.loading': 'Hleð upplýsingum',
-   'licenseScannerResult.error': 'Villa við skönnun',
-   'licenseScannerResult.valid': 'Í gildi',
-   'licenseScannerResult.driverLicenseTitle': 'Ökuskírteini (IS)',
-   'licenseScannerResult.firarmsLicenseTitle': 'Skotvopnaskírteini',
-   'licenseScannerResult.adrLicenseTitle': 'ADR skírteini',
-   'licenseScannerResult.vvrLicenseTitle': 'Vinnuvélaskírteini',
-   'licenseScannerResult.errorMessage': 'Villuskilaboð',
-   'licenseScannerResult.name': 'Nafn',
-   'licenseScannerResult.birthDate': 'Fæðingardagur',
-   'licenseScannerResult.nationalId': 'Kennitala',
-   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
+  // license scan results
+  'licenseScannerResult.loading': 'Hleð upplýsingum',
+  'licenseScannerResult.error': 'Villa við skönnun',
+  'licenseScannerResult.valid': 'Í gildi',
+  'licenseScannerResult.driverLicenseTitle': 'Ökuskírteini (IS)',
+  'licenseScannerResult.firarmsLicenseTitle': 'Skotvopnaskírteini',
+  'licenseScannerResult.adrLicenseTitle': 'ADR skírteini',
+  'licenseScannerResult.vvrLicenseTitle': 'Vinnuvélaskírteini',
+  'licenseScannerResult.errorMessage': 'Villuskilaboð',
+  'licenseScannerResult.name': 'Nafn',
+  'licenseScannerResult.birthDate': 'Fæðingardagur',
+  'licenseScannerResult.nationalId': 'Kennitala',
+  'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
@@ -343,7 +356,8 @@ export const is = {
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',
-  'edit.bankinfo.description': 'Hér getur þú gert breytingar á þeim bankareikningi sem þú vilt að Fjársýsla ríkisins noti til endurgreiðslu',
+  'edit.bankinfo.description':
+    'Hér getur þú gert breytingar á þeim bankareikningi sem þú vilt að Fjársýsla ríkisins noti til endurgreiðslu',
   'edit.bankinfo.inputlabel.bank': 'Banki',
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Reikningsnúmer',
@@ -360,5 +374,5 @@ export const is = {
   }.`,
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
-  'edit.confirm.button': 'Staðfesta'
-}
+  'edit.confirm.button': 'Staðfesta',
+};

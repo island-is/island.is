@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components/native";
-import { font } from "../../utils";
+import React from 'react';
+import styled from 'styled-components/native';
+import {font} from '../../utils';
 
 const Host = styled.Text`
   ${font({
@@ -11,13 +11,9 @@ const Host = styled.Text`
 `;
 
 interface TypographyProps {
-  children: string
+  children: string;
 }
 
-export const Typography = ({ children }: TypographyProps) => {
-  return (
-    <Host>
-      {children}
-    </Host>
-  );
-}
+export const Typography = ({children}: TypographyProps) => {
+  return <Host>{children}</Host>;
+};

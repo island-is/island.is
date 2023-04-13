@@ -1,53 +1,53 @@
-import { theme } from '../../utils/theme'
-import { impactAsync, ImpactFeedbackStyle, selectionAsync } from 'expo-haptics'
-import React, { useRef, useState } from 'react'
-import { FormattedDate } from 'react-intl'
-import { Animated, StyleSheet } from 'react-native'
-import Interactable from 'react-native-interactable'
-import styled from 'styled-components/native'
-import checkmarkIcon from '../../assets/icons/checkmark.png'
-import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
+import {theme} from '../../utils/theme';
+import {impactAsync, ImpactFeedbackStyle, selectionAsync} from 'expo-haptics';
+import React, {useRef, useState} from 'react';
+import {FormattedDate} from 'react-intl';
+import {Animated, StyleSheet} from 'react-native';
+import Interactable from 'react-native-interactable';
+import styled from 'styled-components/native';
+import checkmarkIcon from '../../assets/icons/checkmark.png';
+import {dynamicColor} from '../../utils';
+import {font} from '../../utils/font';
 
-const Host = styled.SafeAreaView<{ background: boolean }>`
+const Host = styled.SafeAreaView<{background: boolean}>`
   margin-right: 16px;
   flex-direction: row;
-  background-color: ${dynamicColor((props) =>
+  background-color: ${dynamicColor(props =>
     props.background ? 'background' : 'transparent',
   )};
-`
+`;
 
 const Icon = styled.View`
   padding: 22px;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const Logo = styled.Image`
   width: 24px;
   height: 24px;
-`
+`;
 
 const Content = styled.View`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-  padding-top: ${({ theme }) => theme.spacing[2]}px;
-`
+  padding-bottom: ${({theme}) => theme.spacing[1]}px;
+  padding-top: ${({theme}) => theme.spacing[2]}px;
+`;
 
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-`
+  padding-bottom: ${({theme}) => theme.spacing[1]}px;
+`;
 
 const Title = styled.View`
   flex-direction: row;
   align-items: center;
   flex: 1;
-  padding-right: ${({ theme }) => theme.spacing[1]}px;
-`
+  padding-right: ${({theme}) => theme.spacing[1]}px;
+`;
 
 const TitleText = styled.Text`
   flex: 1;
@@ -55,55 +55,55 @@ const TitleText = styled.Text`
     fontWeight: '600',
     fontSize: 13,
     lineHeight: 17,
-    color: ({ theme }) => ({
+    color: ({theme}) => ({
       light: theme.color.dark400,
       dark: theme.shades.dark.foreground,
     }),
   })}
-`
+`;
 
 const Date = styled.View`
   flex-direction: row;
   align-items: center;
-`
+`;
 
-const DateText = styled.Text<{ unread?: boolean }>`
+const DateText = styled.Text<{unread?: boolean}>`
   ${font({
-    fontWeight: (props) => (props.unread ? '600' : '300'),
+    fontWeight: props => (props.unread ? '600' : '300'),
     fontSize: 13,
     lineHeight: 17,
-    color: ({ theme }) => ({
+    color: ({theme}) => ({
       light: theme.color.dark400,
       dark: theme.shades.dark.foreground,
     }),
   })}
-`
+`;
 
 const Dot = styled.View`
-  width: ${({ theme }) => theme.spacing[1]}px;
-  height: ${({ theme }) => theme.spacing[1]}px;
-  border-radius: ${({ theme }) => theme.spacing[1]}px;
-  background-color: ${dynamicColor(({ theme }) => theme.color.blueberry400)};
-  margin-left: ${({ theme }) => theme.spacing[1]}px;
-`
+  width: ${({theme}) => theme.spacing[1]}px;
+  height: ${({theme}) => theme.spacing[1]}px;
+  border-radius: ${({theme}) => theme.spacing[1]}px;
+  background-color: ${dynamicColor(({theme}) => theme.color.blueberry400)};
+  margin-left: ${({theme}) => theme.spacing[1]}px;
+`;
 
 const Message = styled.Text`
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+  padding-bottom: ${({theme}) => theme.spacing[1]}px;
 
   ${font({
     fontWeight: '300',
     lineHeight: 24,
-    color: ({ theme }) => ({
+    color: ({theme}) => ({
       light: theme.color.dark400,
       dark: theme.shades.dark.foreground,
     }),
   })}
-`
+`;
 
 const Actions = styled.View`
   flex-direction: row;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-`
+  padding-bottom: ${({theme}) => theme.spacing[1]}px;
+`;
 
 const Button = styled.TouchableHighlight`
   display: flex;
@@ -111,22 +111,22 @@ const Button = styled.TouchableHighlight`
   justify-content: center;
   align-items: center;
   padding: 10px 16px;
-  background-color: ${dynamicColor(({ theme }) => theme.color.blue400)};
-  border-radius: ${({ theme }) => theme.spacing[1]}px;
-  margin-right: ${({ theme }) => theme.spacing[2]}px;
-`
+  background-color: ${dynamicColor(({theme}) => theme.color.blue400)};
+  border-radius: ${({theme}) => theme.spacing[1]}px;
+  margin-right: ${({theme}) => theme.spacing[2]}px;
+`;
 
 const ButtonText = styled.Text`
   ${font({
     fontWeight: '600',
     fontSize: 12,
     lineHeight: 16,
-    color: ({ theme }) => theme.color.white,
+    color: ({theme}) => theme.color.white,
   })}
-`
+`;
 const Action = styled(Animated.View)`
   position: absolute;
-  background-color: ${dynamicColor((props) => ({
+  background-color: ${dynamicColor(props => ({
     dark: '#001333',
     light: props.theme.color.blue200,
   }))};
@@ -134,12 +134,12 @@ const Action = styled(Animated.View)`
   right: 100%;
   bottom: 0;
   width: 100%;
-`
+`;
 
 const Checkmark = styled.Image`
   width: 32px;
   height: 32px;
-`
+`;
 
 const ActionPress = styled.TouchableOpacity`
   position: absolute;
@@ -149,32 +149,32 @@ const ActionPress = styled.TouchableOpacity`
   bottom: 0;
   top: 0;
   justify-content: center;
-`
+`;
 
-const Cell = styled.View``
+const Cell = styled.View``;
 
 const Divider = styled.View`
-  background-color: ${dynamicColor(({ theme }) => ({
+  background-color: ${dynamicColor(({theme}) => ({
     dark: theme.shades.dark.shade100,
     light: theme.color.blue200,
   }))};
-`
+`;
 
 interface ListItemAction {
-  id: string
-  text: string
-  onPress(props: ListItemAction): any
+  id: string;
+  text: string;
+  onPress(props: ListItemAction): any;
 }
 
 interface ListItemProps {
-  title: string
-  date: Date | string
-  subtitle: string
-  unread?: boolean
-  swipable?: boolean
-  onToggleUnread?(): void
-  actions?: ListItemAction[]
-  icon?: React.ReactNode
+  title: string;
+  date: Date | string;
+  subtitle: string;
+  unread?: boolean;
+  swipable?: boolean;
+  onToggleUnread?(): void;
+  actions?: ListItemAction[];
+  icon?: React.ReactNode;
 }
 
 export function ListItem({
@@ -187,13 +187,13 @@ export function ListItem({
   onToggleUnread,
   unread = false,
 }: ListItemProps) {
-  const interactableRef = useRef<any>()
-  const deltaX = useRef(new Animated.Value(0)).current
-  const deltaY = useRef(new Animated.Value(0)).current
-  const markOnRelease = useRef(false)
-  const canMarkOnRelease = useRef(false)
-  const offset = 64
-  const [background, setBackground] = useState(false)
+  const interactableRef = useRef<any>();
+  const deltaX = useRef(new Animated.Value(0)).current;
+  const deltaY = useRef(new Animated.Value(0)).current;
+  const markOnRelease = useRef(false);
+  const canMarkOnRelease = useRef(false);
+  const offset = 64;
+  const [background, setBackground] = useState(false);
 
   const content = (
     <Host background={background}>
@@ -215,7 +215,7 @@ export function ListItem({
         <Message>{subtitle}</Message>
         {actions?.length ? (
           <Actions>
-            {actions.map((action) => (
+            {actions.map(action => (
               <Button
                 key={action.id}
                 underlayColor={theme.color.blue600}
@@ -228,7 +228,7 @@ export function ListItem({
         ) : null}
       </Content>
     </Host>
-  )
+  );
 
   return (
     <Cell>
@@ -253,8 +253,8 @@ export function ListItem({
           >
             <ActionPress
               onPress={() => {
-                onToggleUnread?.()
-                interactableRef.current.snapTo({ index: 0 })
+                onToggleUnread?.();
+                interactableRef.current.snapTo({index: 0});
               }}
             >
               <Checkmark source={checkmarkIcon} />
@@ -263,8 +263,8 @@ export function ListItem({
           <Interactable.View
             ref={interactableRef}
             horizontalOnly={true}
-            snapPoints={[{ x: 0 }, { x: offset }]}
-            alertAreas={[{ id: 'status', influenceArea: { left: offset * 3 } }]}
+            snapPoints={[{x: 0}, {x: offset}]}
+            alertAreas={[{id: 'status', influenceArea: {left: offset * 3}}]}
             boundaries={{
               left: 0,
             }}
@@ -272,33 +272,33 @@ export function ListItem({
             animatedValueX={deltaX}
             animatedValueY={deltaY}
             animatedNativeDriver={true}
-            onDrag={(e) => {
-              const isStart = e.nativeEvent.state === 'start'
-              canMarkOnRelease.current = isStart
+            onDrag={e => {
+              const isStart = e.nativeEvent.state === 'start';
+              canMarkOnRelease.current = isStart;
               if (isStart) {
-                setBackground(true)
-                markOnRelease.current = false
+                setBackground(true);
+                markOnRelease.current = false;
               } else {
                 if (markOnRelease.current) {
-                  impactAsync(ImpactFeedbackStyle.Medium)
-                  interactableRef.current.snapTo({ index: 0 })
-                  onToggleUnread?.()
+                  impactAsync(ImpactFeedbackStyle.Medium);
+                  interactableRef.current.snapTo({index: 0});
+                  onToggleUnread?.();
                 }
               }
             }}
-            onSnap={(e) => {
+            onSnap={e => {
               if (e.nativeEvent.index === 0) {
-                setBackground(false)
+                setBackground(false);
               }
             }}
-            onAlert={(e) => {
+            onAlert={e => {
               if (canMarkOnRelease.current) {
                 if (e.nativeEvent?.status === 'enter') {
-                  selectionAsync()
-                  markOnRelease.current = true
+                  selectionAsync();
+                  markOnRelease.current = true;
                 } else if (e.nativeEvent?.status === 'leave') {
-                  selectionAsync()
-                  markOnRelease.current = false
+                  selectionAsync();
+                  markOnRelease.current = false;
                 }
               }
             }}
@@ -309,7 +309,7 @@ export function ListItem({
       ) : (
         content
       )}
-      <Divider style={{ height: StyleSheet.hairlineWidth }} />
+      <Divider style={{height: StyleSheet.hairlineWidth}} />
     </Cell>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 
 export const GenericLicenseDataFieldFragment = gql`
   fragment GenericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -60,9 +60,9 @@ export interface IGenericLicenseDataField {
 }
 
 export type GenericUserLicenseMetaLinks = {
-  label?: string
-  value?: string
-}
+  label?: string;
+  value?: string;
+};
 
 export interface GenericUserLicenseMetadata {
   links?: GenericUserLicenseMetaLinks[];
@@ -90,7 +90,6 @@ export enum GenericUserLicenseFetchStatus {
   Stale = 'Stale',
 }
 
-
 export interface IGenericUserLicense {
   __typename: 'GenericUserLicense';
   nationalId: string;
@@ -98,19 +97,19 @@ export interface IGenericUserLicense {
     type: string;
     provider: {
       id: string;
-    }
+    };
     pkpass: boolean;
     pkpassStatus: GenericUserLicensePkPassStatus;
     timeout: number;
     status: GenericUserLicenseStatus;
-  }
+  };
   fetch: {
     status: GenericUserLicenseFetchStatus;
     updated: string;
-  }
+  };
   payload: {
     data: IGenericLicenseDataField;
     rawData: string;
     metadata?: GenericUserLicenseMetadata;
-  }
+  };
 }

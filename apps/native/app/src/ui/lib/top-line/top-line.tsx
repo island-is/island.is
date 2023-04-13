@@ -1,23 +1,23 @@
-import React, { useRef, useEffect } from 'react'
-import { Platform, Animated, SafeAreaView, StyleSheet } from 'react-native'
-import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
+import React, {useRef, useEffect} from 'react';
+import {Platform, Animated, SafeAreaView, StyleSheet} from 'react-native';
+import styled from 'styled-components/native';
+import {dynamicColor} from '../../utils';
 
 const Host = styled(Animated.View)`
-  background-color: ${dynamicColor(({ theme }) => ({
+  background-color: ${dynamicColor(({theme}) => ({
     light: theme.color.blue200,
     dark: theme.shades.dark.shade600,
   }))};
-`
+`;
 
 interface TopLineProps {
-  scrollY: Animated.Value
-  offset?: number
+  scrollY: Animated.Value;
+  offset?: number;
 }
 
-export function TopLine({ scrollY }: TopLineProps) {
+export function TopLine({scrollY}: TopLineProps) {
   const ref = useRef<SafeAreaView>(null);
-  const offset = useRef(new Animated.Value(0)).current
+  const offset = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (Platform.OS === 'ios' && scrollY) {
@@ -28,7 +28,9 @@ export function TopLine({ scrollY }: TopLineProps) {
   }, [scrollY]);
 
   return (
-    <SafeAreaView style={{ width: '100%', position: 'absolute', top: 0, zIndex: 10 }}>
+    <SafeAreaView
+      style={{width: '100%', position: 'absolute', top: 0, zIndex: 10}}
+    >
       <Host
         style={{
           flex: 1,
@@ -40,5 +42,5 @@ export function TopLine({ scrollY }: TopLineProps) {
         }}
       />
     </SafeAreaView>
-  )
+  );
 }

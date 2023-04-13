@@ -3,20 +3,18 @@
   "ignorePatterns": ["!**/*", "node_modules"],
   "rules": {},
   "overrides": [
-    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {
-      "no-restricted-imports": [
-        "error",
-        {
-          "paths": [
-            "lodash",
-            "date-fns",
-            "date-fns/locale",
-            "."
-          ]
-        }
-      ]
-    } },
-    { "files": ["*.ts", "*.tsx"], "rules": {} },
-    { "files": ["*.js", "*.jsx"], "rules": {} }
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": ["lodash", "date-fns", "date-fns/locale", "."]
+          }
+        ]
+      }
+    },
+    {"files": ["*.ts", "*.tsx"], "rules": {}},
+    {"files": ["*.js", "*.jsx"], "rules": {}}
   ]
 }

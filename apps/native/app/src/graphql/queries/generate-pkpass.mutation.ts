@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client'
-import { IApplication } from '../fragments/application.fragment'
+import {gql} from '@apollo/client';
+import {IApplication} from '../fragments/application.fragment';
 
 export const GENERATE_PKPASS_MUTATION = gql`
   mutation generatePkPass($input: GeneratePkPassInput!) {
@@ -7,10 +7,10 @@ export const GENERATE_PKPASS_MUTATION = gql`
       pkpassUrl
     }
   }
-`
+`;
 
 export interface GeneratePkpassMutationResponse {
   generatePkPass: {
-    pkpassUrl: string
-  }
+    pkpassUrl: string;
+  };
 }

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 
 export const NATION_REGISTRY_USER_QUERY = gql`
   query nationalRegistryUser {

@@ -1,4 +1,4 @@
-import perf, { FirebasePerformanceTypes } from '@react-native-firebase/perf';
+import perf, {FirebasePerformanceTypes} from '@react-native-firebase/perf';
 
 let appLaunchTrace: FirebasePerformanceTypes.Trace;
 

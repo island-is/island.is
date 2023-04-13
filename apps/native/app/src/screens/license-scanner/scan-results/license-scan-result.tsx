@@ -1,21 +1,28 @@
-import { ScanResultCard } from '@ui'
-import React, { useEffect, useState } from 'react'
-import { useIntl } from 'react-intl'
-import { client } from '../../../graphql/client'
-import { VERIFY_PKPASS_MUTATION } from '../../../graphql/queries/verify-pkpass.mutation'
+import {ScanResultCard} from '@ui';
+import React, {useEffect, useState} from 'react';
+import {useIntl} from 'react-intl';
+import {client} from '../../../graphql/client';
+import {VERIFY_PKPASS_MUTATION} from '../../../graphql/queries/verify-pkpass.mutation';
 
-export const LicenseScanResult = ({ data, onLoad, isExpired, title, hasNoData, type }: any) => {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string>()
-  const [name, setName] = useState<string>()
-  const [nationalId, setNationalId] = useState<string>()
-  const [photo, setPhoto] = useState<string>()
-  const intl = useIntl()
+export const LicenseScanResult = ({
+  data,
+  onLoad,
+  isExpired,
+  title,
+  hasNoData,
+  type,
+}: any) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [name, setName] = useState<string>();
+  const [nationalId, setNationalId] = useState<string>();
+  const [photo, setPhoto] = useState<string>();
+  const intl = useIntl();
 
   useEffect(() => {
-    onLoad(!loading)
-  }, [loading])
+    onLoad(!loading);
+  }, [loading]);
 
   useEffect(() => {
     client
@@ -27,54 +34,54 @@ export const LicenseScanResult = ({ data, onLoad, isExpired, title, hasNoData, t
           },
         },
       })
-      .then((res) => {
+      .then(res => {
         if (res.errors) {
-          setError(true)
+          setError(true);
           setErrorMessage(
-            intl.formatMessage({ id: 'licenseScanDetail.errorUnknown' }),
-          )
-          setLoading(false)
+            intl.formatMessage({id: 'licenseScanDetail.errorUnknown'}),
+          );
+          setLoading(false);
         } else {
-          const { data, valid, error: smartError } = res.data.verifyPkPass
+          const {data, valid, error: smartError} = res.data.verifyPkPass;
 
           if (!valid && smartError) {
-            setError(true)
+            setError(true);
             setErrorMessage(
               intl.formatMessage(
-                { id: 'licenseScanDetail.errorCodeMessage' },
-                { errorCode: smartError?.status },
+                {id: 'licenseScanDetail.errorCodeMessage'},
+                {errorCode: smartError?.status},
               ),
-            )
-            setLoading(false)
+            );
+            setLoading(false);
           } else {
             try {
-              const { name, nationalId, photo } = JSON.parse(data)
-              setError(false)
-              setErrorMessage(undefined)
-              setNationalId(nationalId)
-              setName(name)
-              setPhoto(photo.mynd)
+              const {name, nationalId, photo} = JSON.parse(data);
+              setError(false);
+              setErrorMessage(undefined);
+              setNationalId(nationalId);
+              setName(name);
+              setPhoto(photo.mynd);
             } catch (err) {
               // whoops
             }
-            setError(false)
-            setLoading(false)
+            setError(false);
+            setLoading(false);
           }
         }
       })
-      .catch((err) => {
-        setError(true)
+      .catch(err => {
+        setError(true);
         setErrorMessage(
-          intl.formatMessage({ id: 'licenseScanDetail.errorNetwork' }),
-        )
-        setLoading(false)
-      })
-  }, [data])
+          intl.formatMessage({id: 'licenseScanDetail.errorNetwork'}),
+        );
+        setLoading(false);
+      });
+  }, [data]);
 
-  let driverLicenseNumber
+  let driverLicenseNumber;
   try {
-    const parsed = JSON.parse(data)
-    driverLicenseNumber = parsed?.TGLJZW
+    const parsed = JSON.parse(data);
+    driverLicenseNumber = parsed?.TGLJZW;
   } catch (err) {
     // noop
   }
@@ -93,5 +100,5 @@ export const LicenseScanResult = ({ data, onLoad, isExpired, title, hasNoData, t
       hasNoData={!driverLicenseNumber}
       type={type}
     />
-  )
-}
+  );
+};

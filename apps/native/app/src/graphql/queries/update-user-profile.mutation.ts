@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 
 export const UPDATE_USER_PROFILE = gql`
   mutation updateProfile($input: UpdateUserProfileInput!) {
@@ -9,4 +9,4 @@ export const UPDATE_USER_PROFILE = gql`
       email
     }
   }
-`
+`;

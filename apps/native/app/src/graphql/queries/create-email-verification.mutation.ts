@@ -1,5 +1,4 @@
-
-import { gql } from '@apollo/client'
+import {gql} from '@apollo/client';
 
 export const CREATE_EMAIL_VERIFICATION = gql`
   mutation createEmailVerification($input: CreateEmailVerificationInput!) {
@@ -7,4 +6,4 @@ export const CREATE_EMAIL_VERIFICATION = gql`
       created
     }
   }
-`
+`;
