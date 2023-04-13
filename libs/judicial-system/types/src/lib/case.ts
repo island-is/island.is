@@ -255,6 +255,7 @@ export interface Case {
   indictmentIntroduction?: string
   requestDriversLicenseSuspension?: boolean
   appealState?: CaseAppealState
+  isStatementDeadlineExpired?: boolean
 }
 
 export interface CaseListEntry

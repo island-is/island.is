@@ -11,6 +11,8 @@ import { mapIsToEn } from '../../utils/helpers'
 import SubscriptionTableItem from './SubscriptionTableItem'
 import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
 import { Area } from '../../types/enums'
+import SubscriptionTableAllItem from './SubscriptionTableAllItems'
+import { GeneralSubscriptionArray } from '../../utils/dummydata'
 
 export interface SubscriptionTableProps {
   data: Array<Case> | Array<ArrOfIdAndName>
@@ -31,8 +33,9 @@ const SubscriptionTable = ({
   subscriptionArray,
   setSubscriptionArray,
 }: SubscriptionTableProps) => {
-  const onCheckboxChange = (id: number, action: boolean) => {
+  const onCheckboxChange = (id: string | number, action: boolean) => {
     const sub = [...subscriptionArray[mapIsToEn[currentTab]]]
+
     const subArr = { ...subscriptionArray }
     if (action) {
       sub.push(id)
@@ -43,9 +46,23 @@ const SubscriptionTable = ({
     subArr[mapIsToEn[currentTab]] = sub
     return setSubscriptionArray(subArr)
   }
+  const onAllChecked = (item, action) => {
+    let sub = subscriptionArray['generalSubscription']
+    const subArr = { ...subscriptionArray }
+    if (action) {
+      sub = item.id
+    } else {
+      sub = ''
+    }
+    subArr['generalSubscription'] = sub
 
-  const checkboxStatus = (id: number) => {
+    return setSubscriptionArray(subArr)
+  }
+  const checkboxStatus = (id: string | number) => {
     return subscriptionArray[mapIsToEn[currentTab]].includes(id)
+  }
+  const checkboxAllStatus = (id: string | number) => {
+    return subscriptionArray['generalSubscription'] == id
   }
 
   const paddingTop = [3, 3, 3, 5, 5] as ResponsiveSpace
@@ -119,6 +136,18 @@ const SubscriptionTable = ({
           </Row>
         </Head>
         <Body>
+          {GeneralSubscriptionArray.map((item, index) => {
+            return (
+              <SubscriptionTableAllItem
+                key={index}
+                item={item}
+                checkboxStatus={checkboxAllStatus}
+                onCheckboxChange={onAllChecked}
+                currentTab={currentTab}
+                mdBreakpoint={mdBreakpoint}
+              />
+            )
+          })}
           {data.map((item, idx: number) => (
             <SubscriptionTableItem
               key={item.id}
