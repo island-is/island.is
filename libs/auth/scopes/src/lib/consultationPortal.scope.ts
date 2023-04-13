@@ -1,3 +1,3 @@
 export enum ConsultationPortalScope {
-  default = '@island.is/samradsgatt',
+  default = '@stjornarradid.is/samradsgatt',
 }

@@ -12,6 +12,11 @@ export const sections = {
     defaultMessage: 'Sakamál',
     description: 'Notaður sem titill á hliðarstiku í sakamálum',
   }),
+  appealedCaseTitle: defineMessage({
+    id: 'judicial.system.core:sections.appealed_case_title',
+    defaultMessage: 'Kærumál',
+    description: 'Notaður sem titill á hliðarstiku í kærumálum',
+  }),
   restrictionCaseProsecutorSection: defineMessages({
     caseTitle: {
       id:
