@@ -106,7 +106,7 @@ describe('isAppealed', () => {
     expect(res).toBe(true)
   })
 
-  it('should be false when noone has appealed', () => {
+  it('should be false when no one has appealed', () => {
     // Arrange
     const theCase = {
       accusedAppealDecision: CaseAppealDecision.POSTPONE,
@@ -134,7 +134,7 @@ describe('isAppealed', () => {
 })
 
 describe('getAppealInfo', () => {
-  test('should return that case can be appealed and the correct appeal deadline', () => {
+  test('should return that case can be appealed and the correct appeal deadline when case appeal decision was postponed', () => {
     const workingCase = {
       courtEndTime: '2022-06-15T19:50:08.033Z',
       prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
@@ -187,7 +187,7 @@ describe('getAppealInfo', () => {
     )
   })
 
-  test('should return that case has not been appealed', () => {
+  test('should return that case has not yet been appealed if case appeal decision was postponed and the case has not been appealed yet', () => {
     const workingCase = {
       courtEndTime: '2022-06-15T19:50:08.033Z',
       prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
@@ -222,7 +222,7 @@ describe('getAppealInfo', () => {
     )
   })
 
-  test('should return the correct statement dates', () => {
+  test('should return the correct statement dates when statements have been sent by prosecutor and defender', () => {
     const workingCase = {
       courtEndTime: '2022-06-15T19:50:08.033Z',
       caseFiles: [
