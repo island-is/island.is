@@ -73,6 +73,7 @@ export const form: Form = buildForm({
               variant: 'textarea',
               rows: 5,
               backgroundColor: 'white',
+              maxLength: 1000,
               defaultValue: () => '',
             }),
             buildDateField({
