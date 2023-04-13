@@ -7,7 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import { uuid } from 'uuidv4'
 
 import {
   ProsecutorCaseInfo,
@@ -19,24 +18,19 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { errors, titles } from '@island.is/judicial-system-web/messages'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   Box,
   InputFileUpload,
   Text,
-  toast,
   UploadFile,
 } from '@island.is/island-ui/core'
 import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CaseFileCategory, Feature } from '@island.is/judicial-system/types'
+import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -51,17 +45,20 @@ const CaseFiles: React.FC = () => {
   )
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
   const { formatMessage } = useIntl()
-  const { upload, remove, generateSingleFileUpdate } = useS3Upload(
-    workingCase.id,
-  )
+  const {
+    handleChange,
+    handleRemove,
+    handleRetry,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
   const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
 
-  const isTrafficViolationCaseCheck =
-    (features.includes(Feature.INDICTMENT_ROUTE) ||
-      user?.name === 'Árni Bergur Sigurðsson' ||
-      user?.name === 'Ásmundur Jónsson') &&
-    isTrafficViolationCase(workingCase.indictmentSubtypes)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(
+    workingCase,
+    features,
+    user,
+  )
 
   useEffect(() => {
     if (workingCase.caseFiles) {
@@ -81,7 +78,7 @@ const CaseFiles: React.FC = () => {
     [workingCase.id],
   )
 
-  const uploadCallback = useCallback(
+  const handleUIUpdate = useCallback(
     (displayFile: TUploadFile, newId?: string) => {
       setDisplayFiles((previous) =>
         generateSingleFileUpdate(previous, displayFile, newId),
@@ -90,81 +87,15 @@ const CaseFiles: React.FC = () => {
     [generateSingleFileUpdate],
   )
 
-  const handleChange = useCallback(
-    (files: File[], category: CaseFileCategory) => {
-      // We generate an id for each file so that we find the file again when
-      // updating the file's progress and onRetry.
-      // Also we cannot spread File since it contains read-only properties.
-      const filesWithId: Array<[File, string]> = files.map((file) => [
-        file,
-        `${file.name}-${uuid()}`,
-      ])
-      setDisplayFiles((previous) => [
-        ...filesWithId.map(
-          ([file, id]): TUploadFile => ({
-            status: 'uploading',
-            percent: 1,
-            name: file.name,
-            id: id,
-            type: file.type,
-            category,
-          }),
-        ),
-        ...previous,
-      ])
-      upload(filesWithId, uploadCallback, category)
-    },
-    [upload, uploadCallback],
-  )
-
-  const handleRemove = useCallback(
-    async (file: UploadFile) => {
-      try {
-        if (file.id) {
-          await remove(file.id)
-          setDisplayFiles((prev) => {
-            return prev.filter((caseFile) => caseFile.id !== file.id)
-          })
-        }
-      } catch {
-        toast.error(formatMessage(errors.general))
-      }
-    },
-    [formatMessage, remove, setDisplayFiles],
-  )
-
-  const handleRetry = useCallback(
-    (file: TUploadFile) => {
-      uploadCallback({
-        name: file.name,
-        id: file.id,
-        percent: 1,
-        status: 'uploading',
-        type: file.type,
-        category: file.category,
-      })
-      upload(
-        [
-          [
-            { name: file.name, type: file.type ?? '' } as File,
-            file.id ?? file.name,
-          ],
-        ],
-        uploadCallback,
-        file.category,
-      )
-    },
-    [uploadCallback, upload],
-  )
+  const removeFileCB = useCallback((file: UploadFile) => {
+    setDisplayFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+  }, [])
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={
-        IndictmentsProsecutorSubsections.CASE_FILES +
-        (isTrafficViolationCaseCheck ? 1 : 0)
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -193,10 +124,15 @@ const CaseFiles: React.FC = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             multiple={false}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.COVER_LETTER)
+              handleChange(
+                files,
+                CaseFileCategory.COVER_LETTER,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
         {!isTrafficViolationCaseCheck && (
@@ -213,10 +149,15 @@ const CaseFiles: React.FC = () => {
               buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
               multiple={false}
               onChange={(files) =>
-                handleChange(files, CaseFileCategory.INDICTMENT)
+                handleChange(
+                  files,
+                  CaseFileCategory.INDICTMENT,
+                  setDisplayFiles,
+                  handleUIUpdate,
+                )
               }
-              onRemove={handleRemove}
-              onRetry={handleRetry}
+              onRemove={(file) => handleRemove(file, removeFileCB)}
+              onRetry={(file) => handleRetry(file, handleUIUpdate)}
             />
           </Box>
         )}
@@ -232,10 +173,15 @@ const CaseFiles: React.FC = () => {
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.CRIMINAL_RECORD)
+              handleChange(
+                files,
+                CaseFileCategory.CRIMINAL_RECORD,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
         <Box component="section" marginBottom={5}>
@@ -250,10 +196,15 @@ const CaseFiles: React.FC = () => {
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.COST_BREAKDOWN)
+              handleChange(
+                files,
+                CaseFileCategory.COST_BREAKDOWN,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
         <Box component="section" marginBottom={10}>
@@ -270,10 +221,15 @@ const CaseFiles: React.FC = () => {
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
-              handleChange(files, CaseFileCategory.CASE_FILE)
+              handleChange(
+                files,
+                CaseFileCategory.CASE_FILE,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemove}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
         {isTrafficViolationCaseCheck && (
@@ -288,6 +244,7 @@ const CaseFiles: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${
             isTrafficViolationCaseCheck
               ? constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE

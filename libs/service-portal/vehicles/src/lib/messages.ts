@@ -604,10 +604,22 @@ export const messages = defineMessages({
   },
   addCoOwner: {
     id: 'sp.vehicles:add-co-owner',
-    defaultMessage: 'Bæta við meðeigenda',
+    defaultMessage: 'Breyta meðeiganda',
   },
   addOperator: {
     id: 'sp.vehicles:add-operator',
-    defaultMessage: 'Bæta við umráðamanni',
+    defaultMessage: 'Breyta umráðamanni',
+  },
+  renewPrivateRegistration: {
+    id: 'sp.vehicles:renew-private-registration',
+    defaultMessage: 'Endurnýja einkamerki',
+  },
+  changeInstructor: {
+    id: 'sp.vehicles:change-driving-instructor',
+    defaultMessage: 'Skipta um ökukennara',
+  },
+  signupToDrivingSchool: {
+    id: 'sp.vehicles:signup-to-driving-school',
+    defaultMessage: 'Skrá mig í ökunám',
   },
 })

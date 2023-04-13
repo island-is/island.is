@@ -24,20 +24,20 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
+import { useLogIn } from '../../utils/helpers'
+import { useContext } from 'react'
+import { UserContext } from '../../context'
 
-const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
-  // Remove following lines after connecting to API
+const CaseScreen = ({ chosenCase, advices }) => {
   const { contactEmail, contactName } = chosenCase
-
-  const api = process.env.API_URL ?? 'https://localhost:4444/'
-
-  isLoggedIn = true // remove when functionality for logged in has been implemented
+  const { isAuthenticated, user } = useContext(UserContext)
+  const LogIn = useLogIn()
 
   return (
     <Layout
       seo={{
         title: `Mál: S-${chosenCase?.caseNumber}`,
-        url: `mal/${chosenCase?.caseNumber}`,
+        url: `mal/${chosenCase?.id}`,
       }}
     >
       <GridContainer>
@@ -93,7 +93,12 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   {advices?.map((advice: Advice) => {
                     return <ReviewCard advice={advice} key={advice.number} />
                   })}
-                  <WriteReviewCard card={chosenCase} isLoggedIn={isLoggedIn} />
+                  <WriteReviewCard
+                    card={chosenCase}
+                    isLoggedIn={isAuthenticated}
+                    username={user?.name}
+                    caseId={chosenCase.id}
+                  />
                 </Stack>
               </Box>
             </Stack>
@@ -108,11 +113,11 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.documents
+                  {chosenCase.documents.length > 0
                     ? chosenCase.documents.map((doc, index) => {
                         return (
                           <LinkV2
-                            href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                            href={`https://samradapi-test.devland.is/api/Documents/${doc.id}`}
                             color="blue400"
                             underline="normal"
                             underlineVisibility="always"
@@ -123,7 +128,7 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                           </LinkV2>
                         )
                       })
-                    : 'Engin skjöl'}
+                    : 'Engin skjöl fundust'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
@@ -131,15 +136,21 @@ const CaseScreen = ({ chosenCase, advices, isLoggedIn }) => {
                   headingColor="blue400"
                   title="Viltu senda umsögn?"
                 >
-                  Öllum er frjálst að taka þátt í samráðinu. Skráðu þig inn og
-                  sendu umsögn.
+                  Öllum er frjálst að taka þátt í samráðinu.
+                  {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
                 </StackedTitleAndDescription>
                 <Box paddingTop={2}>
-                  <Link href="#write-review" shallow>
-                    <Button fluid iconType="outline" nowrap as="a">
-                      Senda umsögn
+                  {isAuthenticated ? (
+                    <Link href="#write-review" shallow>
+                      <Button fluid iconType="outline" nowrap as="a">
+                        Senda umsögn
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button fluid iconType="outline" nowrap onClick={LogIn}>
+                      Skrá mig inn
                     </Button>
-                  </Link>
+                  )}
                 </Box>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>

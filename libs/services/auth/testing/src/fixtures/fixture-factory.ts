@@ -11,12 +11,18 @@ import {
   ApiScopeUserAccess,
   Client,
   ClientAllowedScope,
+  ClientClaim,
+  ClientGrantType,
+  ClientPostLogoutRedirectUri,
+  ClientRedirectUri,
   ClientSecret,
   Delegation,
   DelegationScope,
   Domain,
+  IdentityResource,
   Translation,
 } from '@island.is/auth-api-lib'
+import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
@@ -29,7 +35,11 @@ import { CreateDomain } from './domain.fixture'
 import {
   CreateApiScope,
   CreateApiScopeUserAccess,
+  CreateClientClaim,
+  CreateClientGrantType,
+  CreateClientUri,
   CreateCustomDelegation,
+  CreateIdentityResource,
 } from './types'
 
 export class FixtureFactory {
@@ -61,13 +71,120 @@ export class FixtureFactory {
   }
 
   async createClient(client?: Partial<CreateClient>): Promise<Client> {
-    return this.get(Client).create(createClientFixture(client))
+    const createdClient = await this.get(Client).create(
+      createClientFixture(client),
+    )
+
+    createdClient.redirectUris = await Promise.all(
+      client?.redirectUris
+        ?.map((redirectUri) =>
+          this.createClientRedirectUri({
+            clientId: createdClient.clientId,
+            uri: redirectUri,
+          }),
+        )
+        .filter(isDefined) ?? [],
+    )
+
+    createdClient.postLogoutRedirectUris = await Promise.all(
+      client?.postLogoutRedirectUris
+        ?.map((redirectUri) =>
+          this.createClientPostLogoutRedirectUri({
+            clientId: createdClient.clientId,
+            uri: redirectUri,
+          }),
+        )
+        .filter(isDefined) ?? [],
+    )
+
+    createdClient.allowedGrantTypes = await Promise.all(
+      client?.allowedGrantTypes
+        ?.map((grantType) =>
+          this.createClientGrantType({
+            clientId: createdClient.clientId,
+            grantType,
+          }),
+        )
+        .filter(isDefined) ?? [],
+    )
+
+    createdClient.claims = await Promise.all(
+      client?.claims
+        ?.map((claim) =>
+          this.createClientClaim({
+            clientId: createdClient.clientId,
+            type: claim.type,
+            value: claim.value,
+          }),
+        )
+        .filter(isDefined) ?? [],
+    )
+
+    return createdClient
   }
 
   async createClientAllowedScope(
     scope: Partial<ClientAllowedScope>,
   ): Promise<ClientAllowedScope> {
     return this.get(ClientAllowedScope).create(scope)
+  }
+
+  async createIdentityResource(
+    identityResource: CreateIdentityResource = {},
+  ): Promise<IdentityResource> {
+    return this.get(IdentityResource).create({
+      enabled: identityResource.enabled ?? true,
+      name: identityResource.name ?? faker.random.word(),
+      displayName: identityResource.displayName ?? faker.random.word(),
+      description: identityResource.description ?? faker.random.word(),
+      showInDiscoveryDocument: identityResource.showInDiscoveryDocument ?? true,
+      required: identityResource.required ?? false,
+      emphasize: identityResource.emphasize ?? false,
+      automaticDelegationGrant:
+        identityResource.automaticDelegationGrant ?? false,
+    })
+  }
+
+  async createClientRedirectUri({
+    clientId,
+    uri,
+  }: CreateClientUri): Promise<ClientRedirectUri> {
+    return this.get(ClientRedirectUri).create({
+      clientId,
+      redirectUri: uri ?? faker.internet.url(),
+    })
+  }
+
+  async createClientPostLogoutRedirectUri({
+    clientId,
+    uri,
+  }: CreateClientUri): Promise<ClientPostLogoutRedirectUri> {
+    return this.get(ClientPostLogoutRedirectUri).create({
+      clientId,
+      redirectUri: uri ?? faker.internet.url(),
+    })
+  }
+
+  async createClientClaim({
+    clientId,
+    type,
+    value,
+  }: CreateClientClaim): Promise<ClientClaim> {
+    return this.get(ClientClaim).create({
+      clientId,
+      type: type ?? faker.random.word(),
+      value: value ?? faker.random.word(),
+    })
+  }
+
+  async createClientGrantType({
+    clientId,
+    grantType,
+  }: CreateClientGrantType): Promise<ClientGrantType> {
+    return this.get(ClientGrantType).create({
+      clientId,
+      grantType: grantType ?? faker.random.word(),
+    })
   }
 
   async createSecret(secret: Partial<ClientSecret>): Promise<ClientSecret> {

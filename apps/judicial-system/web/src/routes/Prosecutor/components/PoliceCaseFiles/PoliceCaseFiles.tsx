@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
-import { CaseOrigin, PoliceCaseFile } from '@island.is/judicial-system/types'
+import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
@@ -12,6 +12,7 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { FormContext } from '@island.is/judicial-system-web/src/components'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
@@ -129,7 +130,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
 
   return (
     <Box marginBottom={5}>
-      {workingCase.origin === CaseOrigin.LOKE && (
+      {workingCase.origin === CaseOrigin.Loke && (
         <LayoutGroup>
           <motion.div layout className={styles.policeCaseFilesContainer}>
             <motion.ul layout>
@@ -207,7 +208,7 @@ const PoliceCaseFiles: React.FC<Props> = ({
           </motion.div>
         </LayoutGroup>
       )}
-      {workingCase.origin !== CaseOrigin.LOKE && (
+      {workingCase.origin !== CaseOrigin.Loke && (
         <AlertMessage
           type="info"
           title={formatMessage(m.originNotLokeTitle)}

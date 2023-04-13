@@ -115,7 +115,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
   }
   result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 3
+    serviceDef.replicaCount?.scalingMagicNumber || 5
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
@@ -452,6 +452,15 @@ const serviceMockDef = (options: {
       min: 1,
       max: 1,
       default: 1,
+    },
+    hpa: {
+      scaling: {
+        replicas: {
+          min: 1,
+          max: 1,
+        },
+        metric: { cpuAverageUtilization: 70 },
+      },
     },
     securityContext: {
       privileged: false,

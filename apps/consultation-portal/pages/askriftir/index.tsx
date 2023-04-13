@@ -5,17 +5,13 @@ import {
   CaseForSubscriptions,
 } from '../../types/interfaces'
 import { QueryConsultationPortalGetCasesArgs } from '@island.is/api/schema'
+import { SUB_GET_CASES, SUB_GET_TYPES } from '../../graphql/queries.graphql'
 import {
-  GET_CASES,
-  GET_TYPES,
-} from '../../screens/Subscriptions/queries.graphql'
-import {
-  ConsultationPortalGetCasesQuery,
-  ConsultationPortalAllTypesQuery,
-} from '../../screens/Subscriptions/queries.graphql.generated'
+  SubGetCasesQuery,
+  SubGetTypesQuery,
+} from '../../graphql/queries.graphql.generated'
 
 const STATUSES_TO_FETCH = [1, 2, 3]
-const PAGE_SIZE = 2000
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -24,34 +20,39 @@ interface SubProps {
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const [
-    {
-      data: { consultationPortalGetCases },
-    },
-    {
-      data: { consultationPortalAllTypes },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalGetCasesQuery,
-      QueryConsultationPortalGetCasesArgs
-    >({
-      query: GET_CASES,
-      variables: {
-        input: {
-          caseStatuses: STATUSES_TO_FETCH,
-          // pageSize: PAGE_SIZE,
-        },
+  try {
+    const [
+      {
+        data: { consultationPortalGetCases },
       },
-    }),
-    client.query<ConsultationPortalAllTypesQuery>({
-      query: GET_TYPES,
-    }),
-  ])
+      {
+        data: { consultationPortalAllTypes },
+      },
+    ] = await Promise.all([
+      client.query<SubGetCasesQuery, QueryConsultationPortalGetCasesArgs>({
+        query: SUB_GET_CASES,
+        variables: {
+          input: {
+            caseStatuses: STATUSES_TO_FETCH,
+          },
+        },
+      }),
+      client.query<SubGetTypesQuery>({
+        query: SUB_GET_TYPES,
+      }),
+    ])
+    return {
+      props: {
+        cases: consultationPortalGetCases.cases,
+        types: consultationPortalAllTypes,
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: {
-      cases: consultationPortalGetCases.cases,
-      types: consultationPortalAllTypes,
+    redirect: {
+      destination: '/500',
     },
   }
 }

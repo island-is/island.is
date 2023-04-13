@@ -47,6 +47,7 @@ export interface SubscriptionArray {
   caseIds: Array<number>
   institutionIds: Array<number>
   policyAreaIds: Array<number>
+  generalSubscription: string
 }
 
 export interface SortTitle {
@@ -117,4 +118,39 @@ export interface FilterGroups {
 export interface ValueCountPair {
   value?: string
   count?: string
+}
+
+export interface AdviceFileRequest {
+  filename?: string
+  base64Document?: string
+}
+
+export interface AdviceRequest {
+  content?: string
+  adviceFiles?: AdviceFileRequest
+}
+
+export interface PostAdviceForm {
+  caseId?: number
+  adviceRequest?: AdviceRequest
+}
+
+export interface FileObject {
+  name: string
+  originalFileObj: File
+  size?: number
+  type?: string
+}
+
+export interface User {
+  name?: string
+  email?: string
+  image?: string
+}
+
+export interface TypeForSubscriptions {
+  id: string
+  type: string
+  name: string
+  nr: any
 }
