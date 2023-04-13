@@ -92,13 +92,15 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               />
               <Box marginTop={2}>
                 <InputController
-                  id={`estate.vehicles[${index}].marketValue`}
-                  name={`estate.vehicles[${index}].marketValue`}
-                  label={'Markaðsvirði á dánardegi'}
+                  id={`${id}[${index}].marketValue`}
+                  name={`${id}[${index}].marketValue`}
+                  label={formatMessage(m.vehiclesMarketValueTitle)}
+                  disabled={!asset.enabled}
                   backgroundColor="blue"
                   placeholder="0 kr."
-                  currency
                   defaultValue={(asset as any).marketValue}
+                  currency
+                  size="sm"
                 />
               </Box>
             </GridColumn>,
@@ -112,6 +114,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const dummyField = `${fieldIndex}.dummy`
+        const marketValueField = `${fieldIndex}.marketValue`
         const fieldError = error && error[index] ? error[index] : null
 
         return (
@@ -130,7 +133,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={field.enabled || false}
+              defaultValue={true}
               render={() => <input type="hidden" />}
             />
             <Controller
@@ -181,6 +184,17 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   size="sm"
                   //Make readOnly again when Vehicle Registry query is available
                   //readOnly
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']}>
+                <InputController
+                  id={marketValueField}
+                  name={marketValueField}
+                  label={formatMessage(m.vehiclesMarketValueTitle)}
+                  defaultValue={(field as any).marketValue}
+                  placeholder={'0 kr.'}
+                  currency
+                  size="sm"
                 />
               </GridColumn>
             </GridRow>

@@ -529,6 +529,11 @@ export const m = defineMessages({
     defaultMessage: 'Þú hefur nú útfyllt beiðni um einkaskipti.',
     description: '',
   },
+  overviewMarketValue: {
+    id: 'es.application:overviewMarketValue',
+    defaultMessage: 'Markaðsverð',
+    description: '',
+  },
   divisionOfEstateByHeirsTerms: {
     id: 'es.application:divisionOfEstateByHeirsTerms',
     defaultMessage: 'Skilmálar',
@@ -684,6 +689,11 @@ export const m = defineMessages({
   vehiclesPlaceholder: {
     id: 'es.application:vehiclesPlaceholder',
     defaultMessage: 't.d. Toyota Yaris',
+    description: 'Placeholder for vehicles type',
+  },
+  vehiclesMarketValueTitle: {
+    id: 'es.application:vehiclesMarketValueTitle',
+    defaultMessage: 'Markaðsverð á dánardegi',
     description: 'Placeholder for vehicles type',
   },
   otherPropertiesTitle: {
