@@ -1,15 +1,14 @@
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
-import { RLSScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
-  fetch: z.object({
-    scope: z.array(z.string()),
-  }),
+  xRoadFirearmOpenApiKey: z.string(),
 })
 
-export const FirearmLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
+export const OpenFirearmLicenseClientConfig = defineConfig<
+  z.infer<typeof schema>
+>({
   name: 'FirearmLicenseClient',
   schema,
   load: (env) => ({
@@ -17,8 +16,6 @@ export const FirearmLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
       'XROAD_FIREARM_LICENSE_PATH',
       'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1',
     ),
-    fetch: {
-      scope: [RLSScope.firearmPermit],
-    },
+    xRoadFirearmOpenApiKey: env.required('RLS_OPEN_LOOKUP_API_KEY', ''),
   }),
 })
