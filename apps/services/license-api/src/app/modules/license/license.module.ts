@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { Cache as CacheManager } from 'cache-manager'
 import {
   LicensesController,
   UserLicensesController,
