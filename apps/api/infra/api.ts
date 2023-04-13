@@ -173,9 +173,9 @@ export const serviceSetup = (services: {
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
-        dev: 'https://samradapi-test.island.is',
-        staging: 'https://samradapi-test.island.is',
-        prod: 'https://samradapi-test.island.is',
+        dev: 'https://samradapi-test.devland.is',
+        staging: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi-test.devland.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
