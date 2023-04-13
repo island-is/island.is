@@ -55,11 +55,6 @@ export class LicenseServiceService {
     licenseType: GenericLicenseType,
     error: Partial<FetchError>,
   ): unknown {
-    // Ignore 403/404
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-
     this.logger.warn(`${licenseType} fetch failed`, {
       exception: error,
       message: (error as Error)?.message,
@@ -332,6 +327,9 @@ export class LicenseServiceService {
     if (licenseService) {
       pkpassUrl = await licenseService.getPkPassUrl(user, licenseType, locale)
     } else {
+      this.logger.warn('Invalid license type for pkpass generation', {
+        category: LOG_CATEGORY,
+      })
       throw new Error(`${licenseType} not supported`)
     }
 
@@ -360,6 +358,9 @@ export class LicenseServiceService {
         locale,
       )
     } else {
+      this.logger.warn('Invalid license type for pkpass generation', {
+        category: LOG_CATEGORY,
+      })
       throw new Error(`${licenseType} not supported`)
     }
     if (!pkpassQRCode) {
@@ -379,6 +380,9 @@ export class LicenseServiceService {
     let verification: PkPassVerification | null = null
 
     if (!data) {
+      this.logger.warn('Missing input data for pkpass verification', {
+        category: LOG_CATEGORY,
+      })
       throw new Error(`Missing input data`)
     }
 
@@ -397,6 +401,9 @@ export class LicenseServiceService {
       : GenericLicenseType.DriversLicense
 
     if (!licenseType) {
+      this.logger.warn('Invalid pass template id for pkpass verification', {
+        category: LOG_CATEGORY,
+      })
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
     }
 
@@ -408,10 +415,16 @@ export class LicenseServiceService {
     if (licenseService) {
       verification = await licenseService.verifyPkPass(data, passTemplateId)
     } else {
+      this.logger.warn('Invalid license type for pkpass verifcation', {
+        category: LOG_CATEGORY,
+      })
       throw new Error(`${licenseType} not supported`)
     }
 
     if (!verification) {
+      this.logger.warn('pkpass verification failed', {
+        category: LOG_CATEGORY,
+      })
       throw new Error(`Unable to verify pkpass for ${licenseType} for user`)
     }
     return verification
@@ -430,6 +443,9 @@ export class LicenseServiceService {
           GenericLicenseType[keyAsEnumKey as GenericLicenseTypeType]
 
         if (!valueFromEnum) {
+          this.logger.warn('Invalid license type in verication input', {
+            category: LOG_CATEGORY,
+          })
           throw new Error(`Invalid license type: ${key}`)
         }
         return valueFromEnum

@@ -18,11 +18,16 @@ import { DocumentsInfraController } from './modules/infra/documentsInfra.control
 import { FinanceDocumentController } from './modules/finance-documents/document.controller'
 import { environment } from '../environments'
 import { VehicleController } from './modules/vehicles-documents/vehicle-document.controller'
+import { EducationController } from './modules/education-documents/education-document.controller'
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import {
   VehiclesClientConfig,
   VehiclesClientModule,
 } from '@island.is/clients/vehicles'
+import {
+  UniversityOfIcelandClientConfig,
+  UniversityOfIcelandClientModule,
+} from '@island.is/clients/university-of-iceland'
 import {
   RegulationsClientConfig,
   RegulationsClientModule,
@@ -38,6 +43,7 @@ import {
     DocumentsInfraController,
     FinanceDocumentController,
     VehicleController,
+    EducationController,
     RegulationDocumentsController,
   ],
   imports: [
@@ -51,6 +57,7 @@ import {
     }),
     FinanceClientModule,
     VehiclesClientModule,
+    UniversityOfIcelandClientModule,
     RegulationsAdminClientModule,
     RegulationsClientModule,
     ConfigModule.forRoot({
@@ -60,6 +67,7 @@ import {
         IdsClientConfig,
         XRoadConfig,
         VehiclesClientConfig,
+        UniversityOfIcelandClientConfig,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
       ],

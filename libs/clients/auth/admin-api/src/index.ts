@@ -1,9 +1,11 @@
 export {
   AdminApi,
-  TenantDto,
-  AdminCreateClientDtoClientTypeEnum,
   AdminCreateClientDto,
+  ClientType,
+  CreateClientType,
   MeClientsControllerCreateRequest,
+  RefreshTokenExpiration,
+  TenantDto,
 } from '../gen/fetch'
 export * from './lib/apis'
 export * from './lib/auth-admin-api-client.config'

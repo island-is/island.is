@@ -374,6 +374,98 @@
         ]
       }
     },
+    "/api/Afengisleyfi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Afengisleyfi_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Afengisleyfi"
+              }
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/Taekifaerisleyfi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Taekifaerisleyfi_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Taekifaerisleyfi"
+              }
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/VirkLeyfi/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -626,6 +718,50 @@
         ]
       }
     },
+    "/v1/NyskraAdfaraBeidni": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "NyskraAdfaraBeidni_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NyskraAdfaraBeidniSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NyskraAdfaraBeidniSvar"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/v1/Fullnustusvid/Naudungarsala/UppbodFaFasteignir": {
       "get": {
         "tags": ["Syslumenn"],
@@ -639,6 +775,50 @@
               "items": {
                 "$ref": "#/definitions/UppbodFasteignir"
               }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/v1/AfturkallaAdfarabeidni": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "AfturkallaAdfarabeidni_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AdfarabeidniSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/NyskraAdfaraBeidniSvar"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
             }
           }
         },
@@ -676,6 +856,50 @@
             "description": "",
             "schema": {
               "$ref": "#/definitions/AranuslausFraTilSvar"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/v1/Danarbu/BankaupplysingarDanarbus": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "BankaupplysingarDanarbus_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skeyti",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BankaupplysingarDanarbusSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/BankaupplysingarDanarbusSkeyti"
             }
           },
           "401": {
@@ -1244,6 +1468,53 @@
         ]
       }
     },
+    "/api/LeitaAdKennitoluIThjodskra": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "LeitaAdKennitoluIThjodskra_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skeyti",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ThjodskraSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/v1/Almennt/MottakaRafraentSkjal": {
       "post": {
         "tags": ["Syslumenn"],
@@ -1399,6 +1670,117 @@
             "description": "",
             "schema": {
               "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/v1/SkraMottakaGogn": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "SkraMottakaGogn_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SyslSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Skilabod"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/StadaUndirritunarSkjals": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "StadaUndirritunarSkjals_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StadaUndirritunarSkjalsSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/StadaUndirritunarSkjalsSvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/StofnaskjalOgSendaTilUndirritunar": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "StofnaskjalOgSendaTilUndirritunar_Post",
+        "consumes": [
+          "application/json-patch+json",
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "payload",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StofnaskjalOgSendaTilUndirritunarSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/StofnaskjalOgSendaTilUndirritunarSvarSkeyti"
             }
           }
         },
@@ -1583,6 +1965,52 @@
         "security": [
           {
             "JWT Token": ["Vedbokarvottord"]
+          }
+        ]
+      }
+    },
+    "/api/Verdbrefamidlarar/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Verdbrefamidlarar_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Verdbrefamidlari"
+              }
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
           }
         ]
       }
@@ -1794,6 +2222,97 @@
         }
       }
     },
+    "Afengisleyfi": {
+      "type": "object",
+      "properties": {
+        "tegund": {
+          "type": "string"
+        },
+        "tegundLeyfis": {
+          "type": "string"
+        },
+        "leyfisnumer": {
+          "type": "string"
+        },
+        "utgefidAf": {
+          "type": "string"
+        },
+        "skraningarAr": {
+          "type": "string"
+        },
+        "gildirFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "gildirTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "leyfishafi": {
+          "type": "string"
+        },
+        "abyrgdarmadur": {
+          "type": "string"
+        },
+        "embaetti": {
+          "type": "string"
+        },
+        "starfsstodEmbaettis": {
+          "type": "string"
+        }
+      }
+    },
+    "Taekifaerisleyfi": {
+      "type": "object",
+      "required": [
+        "gildirFra",
+        "gildirTil",
+        "hamarksfjoldi",
+        "aaetladurFjoldi"
+      ],
+      "properties": {
+        "malategund": {
+          "type": "string"
+        },
+        "tegund": {
+          "type": "string"
+        },
+        "tegundLeyfis": {
+          "type": "string"
+        },
+        "leyfisnumer": {
+          "type": "string"
+        },
+        "utgefidAf": {
+          "type": "string"
+        },
+        "skraningarAr": {
+          "type": "string"
+        },
+        "gildirFra": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "gildirTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "leyfishafi": {
+          "type": "string"
+        },
+        "abyrgdarmadur": {
+          "type": "string"
+        },
+        "hamarksfjoldi": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "aaetladurFjoldi": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
     "VirkLeyfi": {
       "type": "object",
       "required": ["rowNum"],
@@ -1975,6 +2494,175 @@
         }
       }
     },
+    "NyskraAdfaraBeidniSvar": {
+      "type": "object",
+      "properties": {
+        "audkenniSvars": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        },
+        "texti": {
+          "type": "string"
+        }
+      }
+    },
+    "NyskraAdfaraBeidniSkeyti": {
+      "type": "object",
+      "properties": {
+        "beidni": {
+          "$ref": "#/definitions/AdfaraBeidni"
+        },
+        "audkenni": {
+          "type": "string"
+        }
+      }
+    },
+    "AdfaraBeidni": {
+      "type": "object",
+      "required": [
+        "bendaNumer",
+        "dags",
+        "dagsBunka",
+        "upphaedKrofu",
+        "dagsetningLoksAðdararfrests",
+        "fallidFraForgangi"
+      ],
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "embaetti": {
+          "type": "string"
+        },
+        "bendaNumer": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "adilar": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdfaraAdili"
+          }
+        },
+        "gerdarbeidandi": {
+          "$ref": "#/definitions/AdfaraAdili"
+        },
+        "umbodsmadur": {
+          "$ref": "#/definitions/AdfaraAdili"
+        },
+        "dags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dagsBunka": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "flokkur": {
+          "type": "string"
+        },
+        "upphaedKrofu": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "malsnumerGerdarbeidanda": {
+          "type": "string"
+        },
+        "krofulysing": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdfaraKrofulysing"
+          }
+        },
+        "fylgiskjol": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdfaraFylgiskjol"
+          }
+        },
+        "dagsetningLoksAðdararfrests": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "fallidFraForgangi": {
+          "type": "boolean"
+        },
+        "fyrirsvarsmadur": {
+          "$ref": "#/definitions/Fyrirsvarsmadur"
+        }
+      }
+    },
+    "AdfaraAdili": {
+      "type": "object",
+      "required": ["notarKyn", "kyn"],
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "heimili": {
+          "type": "string"
+        },
+        "postfang": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "notarKyn": {
+          "type": "boolean"
+        },
+        "kyn": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "AdfaraKrofulysing": {
+      "type": "object",
+      "required": ["upphaed"],
+      "properties": {
+        "lysing": {
+          "type": "string"
+        },
+        "upphaed": {
+          "type": "number",
+          "format": "decimal"
+        }
+      }
+    },
+    "AdfaraFylgiskjol": {
+      "type": "object",
+      "properties": {
+        "numer": {
+          "type": "string"
+        },
+        "heiti": {
+          "type": "string"
+        }
+      }
+    },
+    "Fyrirsvarsmadur": {
+      "type": "object",
+      "properties": {
+        "nafn": {
+          "type": "string"
+        },
+        "heimilisfang": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "postnumerStadur": {
+          "type": "string"
+        }
+      }
+    },
     "UppbodFasteignir": {
       "type": "object",
       "required": ["dagsUppbods"],
@@ -1991,6 +2679,20 @@
         "dagsUppbods": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "AdfarabeidniSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        },
+        "kennitalaVinnsluadila": {
+          "type": "string"
         }
       }
     },
@@ -2030,6 +2732,228 @@
           "format": "date-time"
         },
         "audkenni": {
+          "type": "string"
+        }
+      }
+    },
+    "BankaupplysingarDanarbusSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "stadaVidskiptamanns": {
+          "$ref": "#/definitions/Stadavidskiptamanns"
+        }
+      }
+    },
+    "Stadavidskiptamanns": {
+      "type": "object",
+      "required": ["keyrsluDags", "dagsetningYfirlits"],
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "keyrsluDags": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dagsetningYfirlits": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "innstaedurIBonkumOgSparisjodum": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Innstaeduribonkumogsparisjodum"
+          }
+        },
+        "verdbrefaOgSkuldabref": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Verdbrefaogskuldabref"
+          }
+        },
+        "hlutabref": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Hlutabref"
+          }
+        },
+        "utlan": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Utlan"
+          }
+        },
+        "tryggingarbref": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tryggingarbref"
+          }
+        },
+        "abyrgdVegna3jaAdila": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Abyrgdvegna3jaadila"
+          }
+        },
+        "geymsluholf": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Geymsluholf"
+          }
+        },
+        "skjol": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Skjol"
+          }
+        }
+      }
+    },
+    "Innstaeduribonkumogsparisjodum": {
+      "type": "object",
+      "required": ["stadaISK", "afallnirVextir", "stadaSamtals"],
+      "properties": {
+        "banki": {
+          "type": "string"
+        },
+        "hofudbok": {
+          "type": "string"
+        },
+        "reikningsnumer": {
+          "type": "string"
+        },
+        "stadaISK": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "afallnirVextir": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "stadaSamtals": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "mynt": {
+          "type": "string"
+        }
+      }
+    },
+    "Verdbrefaogskuldabref": {
+      "type": "object",
+      "required": ["stadaIsk"],
+      "properties": {
+        "utgefandi": {
+          "type": "string"
+        },
+        "audkenni": {
+          "type": "string"
+        },
+        "stadaIsk": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Hlutabref": {
+      "type": "object",
+      "required": ["stadaISK"],
+      "properties": {
+        "heiti": {
+          "type": "string"
+        },
+        "stadaISK": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Utlan": {
+      "type": "object",
+      "required": ["tegund", "stadaISK"],
+      "properties": {
+        "tegund": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lansnumer": {
+          "type": "string"
+        },
+        "stadaISK": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "mynt": {
+          "type": "string"
+        }
+      }
+    },
+    "Tryggingarbref": {
+      "type": "object",
+      "required": ["stadaIsk"],
+      "properties": {
+        "numer": {
+          "type": "string"
+        },
+        "stadaIsk": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "mynt": {
+          "type": "string"
+        }
+      }
+    },
+    "Abyrgdvegna3jaadila": {
+      "type": "object",
+      "required": ["tegund", "stadaISK", "erISkilum"],
+      "properties": {
+        "tegund": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "numer": {
+          "type": "string"
+        },
+        "stadaISK": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "erISkilum": {
+          "type": "boolean"
+        },
+        "mynt": {
+          "type": "string"
+        }
+      }
+    },
+    "Geymsluholf": {
+      "type": "object",
+      "properties": {
+        "stadsetning": {
+          "type": "string"
+        },
+        "audkenni": {
+          "type": "string"
+        }
+      }
+    },
+    "Skjol": {
+      "type": "object",
+      "properties": {
+        "nafn": {
+          "type": "string"
+        },
+        "lysing": {
+          "type": "string"
+        },
+        "tegund": {
+          "type": "string"
+        },
+        "fileDataBase64": {
           "type": "string"
         }
       }
@@ -2346,6 +3270,17 @@
         }
       }
     },
+    "ThjodskraSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        }
+      }
+    },
     "WebhookEventPayload": {
       "type": "object",
       "required": ["id"],
@@ -2580,6 +3515,86 @@
         }
       }
     },
+    "StadaUndirritunarSkjalsSvarSkeyti": {
+      "type": "object",
+      "required": ["stadaUndirritunar"],
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "stadaUndirritunar": {
+          "$ref": "#/definitions/StadaUndirritunar"
+        }
+      }
+    },
+    "StadaUndirritunar": {
+      "type": "integer",
+      "description": "0 = EkkiUndirritad\n1 = Hafnad\n2 = Undirritad\n3 = EkkiUndirritadVilla\n4 = EkkiUndirritadUtrunnid",
+      "x-enumNames": [
+        "EkkiUndirritad",
+        "Hafnad",
+        "Undirritad",
+        "EkkiUndirritadVilla",
+        "EkkiUndirritadUtrunnid"
+      ],
+      "enum": [0, 1, 2, 3, 4]
+    },
+    "StadaUndirritunarSkjalsSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        },
+        "skjalasnid": {
+          "type": "string"
+        },
+        "kennitalaUndirritanda": {
+          "type": "string"
+        }
+      }
+    },
+    "StofnaskjalOgSendaTilUndirritunarSvarSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        }
+      }
+    },
+    "StofnaskjalOgSendaTilUndirritunarSkeyti": {
+      "type": "object",
+      "required": ["gildirTil"],
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "malsnumer": {
+          "type": "string"
+        },
+        "kennitalaMalsadila": {
+          "type": "string"
+        },
+        "skjalasnid": {
+          "type": "string"
+        },
+        "gildirTil": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "smsTexti": {
+          "type": "string"
+        }
+      }
+    },
     "SyslSekjaSkra": {
       "type": "object",
       "properties": {
@@ -2659,6 +3674,17 @@
           "type": "string"
         },
         "embaettiNumer": {
+          "type": "string"
+        }
+      }
+    },
+    "Verdbrefamidlari": {
+      "type": "object",
+      "properties": {
+        "nafn": {
+          "type": "string"
+        },
+        "kennitala": {
           "type": "string"
         }
       }

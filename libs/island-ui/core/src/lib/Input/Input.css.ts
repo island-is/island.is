@@ -64,9 +64,23 @@ export const input = recipe({
     ...mixins.input,
     '::placeholder': mixins.inputPlaceholder,
     ':focus': mixins.inputFocus,
+    selectors: {
+      '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+        margin: 0,
+        WebkitAppearance: 'none',
+      },
+      '&[type=number]': {
+        MozAppearance: 'textfield',
+      },
+    },
   },
 
   variants: {
+    disabled: {
+      true: {
+        color: theme.color.dark300,
+      },
+    },
     hasLabel: {
       false: {
         color: theme.color.dark400,
@@ -128,7 +142,7 @@ export const label = recipe({
     hasError: {
       true: mixins.labelErrorState,
     },
-    disabledEmptyInput: {
+    disabled: {
       true: mixins.labelDisabledEmptyInput,
     },
   },

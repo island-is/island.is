@@ -15,15 +15,13 @@ import {
   LinkV2,
 } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-import {
-  Sections,
-  TempCase as Case,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   sections as formStepperSections,
   pageLayout,
 } from '@island.is/judicial-system-web/messages'
 import {
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -38,9 +36,11 @@ import { stepValidationsType } from '../../utils/formHelper'
 
 export interface RouteSection {
   name: string
+  isActive: boolean
   children: {
     name: string
     href?: string
+    isActive: boolean
     onClick?: () => void
   }[]
 }
@@ -69,7 +69,7 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
     <Section
       section={section.name}
       sectionIndex={index}
-      isActive={index === activeSection}
+      isActive={section.isActive}
       isComplete={activeSection ? index < activeSection : false}
       subSections={section.children.map((subSection, index) =>
         subSection.href && activeSubSection && activeSubSection > index ? (
@@ -78,7 +78,7 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
             underline="small"
             key={`${subSection.name}-${index}`}
           >
-            <SubsectionChild isActive={index === activeSubSection}>
+            <SubsectionChild isActive={subSection.isActive}>
               {subSection.name}
             </SubsectionChild>
           </LinkV2>
@@ -92,14 +92,14 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
               linkStyles.underlines['small'],
             )}
           >
-            <SubsectionChild isActive={index === activeSubSection}>
+            <SubsectionChild isActive={subSection.isActive}>
               {subSection.name}
             </SubsectionChild>
           </Box>
         ) : (
           <SubsectionChild
             key={`${subSection.name}-${index}`}
-            isActive={index === activeSubSection}
+            isActive={subSection.isActive}
           >
             {subSection.name}
           </SubsectionChild>
@@ -112,8 +112,6 @@ const DisplaySection: React.FC<SectionProps> = (props) => {
 interface SidePanelProps {
   workingCase: Case
   user?: User
-  activeSection?: number
-  activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
   isValid?: boolean
 }
@@ -122,18 +120,15 @@ const SidePanel: React.FC<SidePanelProps> = ({
   user,
   isValid,
   onNavigationTo,
-  activeSection,
   workingCase,
-  activeSubSection,
 }) => {
   const { getSections } = useSections(isValid, onNavigationTo)
+  const sections = getSections(workingCase, user)
   const { formatMessage } = useIntl()
-  // Remove the extension parts of the formstepper if the user is not applying for an extension
-  const sections =
-    activeSection === Sections.EXTENSION ||
-    activeSection === Sections.JUDGE_EXTENSION
-      ? getSections(workingCase, user)
-      : getSections(workingCase, user).filter((_, index) => index <= 2)
+  const activeSection = sections.findIndex((s) => s.isActive)
+  const activeSubSection = sections[activeSection]?.children.findIndex(
+    (s) => s.isActive,
+  )
 
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
@@ -145,7 +140,9 @@ const SidePanel: React.FC<SidePanelProps> = ({
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                workingCase && isIndictmentCase(workingCase.type)
+                user?.institution?.type === InstitutionType.HighCourt
+                  ? formStepperSections.appealedCaseTitle
+                  : isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
                   : formStepperSections.title,
                 { caseType: workingCase.type },
@@ -171,12 +168,10 @@ const SidePanel: React.FC<SidePanelProps> = ({
 interface PageProps {
   children: ReactNode
   workingCase: Case
-  activeSection?: number
   isLoading: boolean
   notFound: boolean
   isExtension?: boolean
   // These props are optional because not all pages need them, f.x. SignedVerdictOverview page
-  activeSubSection?: number
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
   isValid?: boolean
 }
@@ -184,8 +179,6 @@ interface PageProps {
 const PageLayout: React.FC<PageProps> = ({
   workingCase,
   children,
-  activeSection,
-  activeSubSection,
   isLoading,
   notFound,
   onNavigationTo,
@@ -245,9 +238,7 @@ const PageLayout: React.FC<PageProps> = ({
             user={user}
             isValid={isValid}
             onNavigationTo={onNavigationTo}
-            activeSection={activeSection}
             workingCase={workingCase}
-            activeSubSection={activeSubSection}
           />
         </GridRow>
       </GridContainer>

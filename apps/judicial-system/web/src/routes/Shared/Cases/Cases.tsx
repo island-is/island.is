@@ -39,14 +39,15 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
+import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import { FilterOption, useFilter } from './useFilter'
 
 const CreateCaseButton: React.FC<{
   features: Feature[]
@@ -222,6 +223,11 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
+    const isTrafficViolation = isTrafficViolationCase(
+      caseToOpen,
+      features,
+      user,
+    )
 
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
@@ -230,6 +236,8 @@ export const Cases: React.FC = () => {
     ) {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      } else if (isHighCourtUser) {
+        routeTo = constants.COURT_OF_APPEAL_OVERVIEW
       } else {
         routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
       }
@@ -262,7 +270,7 @@ export const Cases: React.FC = () => {
         )
       } else {
         routeTo = findFirstInvalidStep(
-          constants.prosecutorIndictmentRoutes,
+          constants.prosecutorIndictmentRoutes(isTrafficViolation),
           caseToOpen,
         )
       }
@@ -285,18 +293,20 @@ export const Cases: React.FC = () => {
             <CreateCaseButton user={user} features={features} />
           ) : null}
         </div>
-        <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
-          <Select
-            name="filter-cases"
-            options={filterOptions}
-            label={formatMessage(m.filter.label)}
-            onChange={(value) => {
-              setIsFiltering(true)
-              setFilter(value as FilterOption)
-            }}
-            value={filter}
-          />
-        </Box>
+        {user?.role !== UserRole.Staff && (
+          <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
+            <Select
+              name="filter-cases"
+              options={filterOptions}
+              label={formatMessage(m.filter.label)}
+              onChange={(value) => {
+                setIsFiltering(true)
+                setFilter(value as FilterOption)
+              }}
+              value={filter}
+            />
+          </Box>
+        )}
         {error ? (
           <div
             className={styles.infoContainer}

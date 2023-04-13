@@ -115,6 +115,15 @@ Disabled.args = {
   disabled: true,
 }
 
+export const DisabledWithValue = Template.bind({})
+DisabledWithValue.args = {
+  label: 'This is the label',
+  placeholder: 'This is the placeholder',
+  name: 'DisabledWithValue',
+  defaultValue: 'This is the value',
+  disabled: true,
+}
+
 export const ReadOnly = Template.bind({})
 ReadOnly.args = {
   label: 'Read only label',
@@ -277,4 +286,20 @@ WithADisabledButton.args = {
       disabled: true,
     },
   ],
+}
+
+export const Numbers = Template.bind({})
+Numbers.args = {
+  label: 'Numbers Label',
+  placeholder: 'This is the placeholder for numbers',
+  name: 'numbers',
+  type: 'number',
+}
+
+export const InputMode = Template.bind({})
+InputMode.args = {
+  label: 'Kennital',
+  placeholder: 'Placeholder',
+  name: 'inputmode',
+  inputMode: 'numeric',
 }

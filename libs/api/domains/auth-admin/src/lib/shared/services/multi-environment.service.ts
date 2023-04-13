@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import {
   AdminApi,
   AdminDevApi,
   AdminProdApi,
   AdminStagingApi,
 } from '@island.is/clients/auth/admin-api'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Environment } from '@island.is/shared/types'
 
 @Injectable()
@@ -53,5 +54,12 @@ export abstract class MultiEnvironmentService {
       default:
         return null
     }
+  }
+
+  protected handleError(error: Error, environment: Environment) {
+    this.logger.error(`Error while fetching data from ${environment}`, error)
+
+    // We swallow the errors
+    return undefined
   }
 }

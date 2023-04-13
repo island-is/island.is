@@ -12,6 +12,7 @@ module.exports = {
     '../../core/src/**/*.stories.@(tsx|mdx)',
     '../../../application/ui-fields/src/lib/AsGuide.stories.mdx',
     '../../../application/ui-fields/**/*.stories.@(tsx|mdx)',
+    '../../../application/ui-components/**/*.stories.@(tsx|mdx)',
   ],
   addons: [
     '@storybook/addon-a11y',
