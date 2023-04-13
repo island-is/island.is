@@ -10,6 +10,9 @@ const emailInputId = 'utlendingastofnun-chat-email'
 const nameInputId = 'utlendingastofnun-chat-name'
 const submitButtonId = 'utlendingastofnun-chat-submit-button'
 
+let name = ''
+let email = ''
+
 const storage = storageFactory(() => sessionStorage)
 
 const getUserInformation = async (instance, callback) => {
@@ -85,6 +88,7 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
                 input: {
                   name,
                   email,
+                  userID: `${email}`,
                 },
               },
             })
@@ -101,6 +105,15 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
   })
 
   instance.on({
+    type: 'window:close',
+    handler: () => {
+      // TODO: Perhaps only remove from storage if user presses x rather than -
+      storage.removeItem(nameInputId)
+      storage.removeItem(emailInputId)
+    },
+  })
+
+  instance.on({
     type: 'window:open',
     handler: () => {
       if (storage.getItem(nameInputId) && storage.getItem(emailInputId)) return
@@ -113,6 +126,7 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
               input: {
                 name,
                 email,
+                userID: `${email}`,
               },
             },
           })

@@ -7,4 +7,7 @@ export class WatsonAssistantChatIdentityTokenInput {
 
   @Field()
   name!: string
+
+  @Field()
+  userID!: string
 }

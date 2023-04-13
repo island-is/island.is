@@ -24,7 +24,7 @@ export class WatsonAssistantChatService {
       user_payload: encryptedUserPayload,
       iss: 'www.ibm.com',
       acr: 'loa1',
-      sub: 'test-user',
+      sub: input.userID,
     }
 
     return {
