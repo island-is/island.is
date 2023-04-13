@@ -56,6 +56,7 @@ interface TooltipProps {
   iconSize?: Size
   color?: Colors
   children?: ReactElement
+  fullWidth?: boolean
   renderInPortal?: boolean
   as?: ElementType
 }
@@ -67,6 +68,7 @@ export const Tooltip: FC<TooltipProps> = ({
   color = 'dark200',
   children,
   as = 'span',
+  fullWidth,
   renderInPortal = true,
 }) => {
   const tooltip = useTooltipState({
@@ -90,7 +92,11 @@ export const Tooltip: FC<TooltipProps> = ({
         </TooltipReference>
       )}
       <ReakitTooltip {...tooltip} unstable_portal={renderInPortal}>
-        <div className={styles.tooltip}>
+        <div
+          className={cn(styles.tooltip, {
+            [styles.fullWidth]: fullWidth,
+          })}
+        >
           <TooltipArrow {...tooltip}>
             <ArrowIcon placement={tooltip.placement} />
           </TooltipArrow>
