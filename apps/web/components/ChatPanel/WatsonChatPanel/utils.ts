@@ -10,9 +10,6 @@ const emailInputId = 'utlendingastofnun-chat-email'
 const nameInputId = 'utlendingastofnun-chat-name'
 const submitButtonId = 'utlendingastofnun-chat-submit-button'
 
-let name = ''
-let email = ''
-
 const storage = storageFactory(() => sessionStorage)
 
 const getUserInformation = async (instance, callback) => {
@@ -88,7 +85,7 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
                 input: {
                   name,
                   email,
-                  userID: `${email}`,
+                  userID: email,
                 },
               },
             })
@@ -126,7 +123,7 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
               input: {
                 name,
                 email,
-                userID: `${email}`,
+                userID: email,
               },
             },
           })
