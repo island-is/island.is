@@ -472,7 +472,7 @@
       "@island.is/clients/national-registry-v2": [
         "libs/clients/national-registry/v2/src/index.ts"
       ],
-      "@island.is/clients/national-registry/v3": [
+      "@island.is/clients/national-registry-v3": [
         "libs/clients/national-registry/v3/src/index.ts"
       ],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],

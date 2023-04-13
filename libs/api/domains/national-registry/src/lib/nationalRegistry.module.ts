@@ -12,6 +12,7 @@ import {
   NationalRegistryApi,
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 
 export interface Config {
   nationalRegistry: NationalRegistryConfig
@@ -25,6 +26,7 @@ export class NationalRegistryModule {
         HttpModule.register({
           timeout: 20000,
         }),
+        NationalRegistryV3ClientModule,
       ],
       providers: [
         NationalRegistryService,
