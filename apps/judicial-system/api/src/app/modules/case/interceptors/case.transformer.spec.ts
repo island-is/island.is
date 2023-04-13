@@ -1,6 +1,8 @@
+import {
+  CaseAppealState,
+  CaseFileCategory,
+} from '@island.is/judicial-system/types'
 import each from 'jest-each'
-
-import { CaseAppealState } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
@@ -225,5 +227,87 @@ describe('transformCase', () => {
       // Assert
       expect(res.isStatementDeadlineExpired).toBe(false)
     })
+  })
+
+  describe('appealInfo', () => {
+    it('should be undefined when no court end time is set', () => {
+      // Arrange
+      const theCase = {} as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+
+      expect(res.appealDeadline).toBeUndefined()
+      expect(res.appealedByRole).toBeUndefined()
+      expect(res.appealedDate).toBeUndefined()
+      expect(res.hasBeenAppealed).toBe(false)
+      expect(res.canBeAppealed).toBe(false)
+    })
+
+    it('should have appeal deadline and hasBeenAppealed set to false', () => {
+      // Arrange
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate())
+      courtEndTime.setSeconds(courtEndTime.getSeconds())
+      const theCase = { courtEndTime: courtEndTime.toISOString() } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.appealDeadline).toBeDefined()
+      expect(res.hasBeenAppealed).toBe(false)
+    })
+
+    it('should have hasBeenAppealed set to true and appealed date set', () => {
+      // Arrange
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 1)
+      const theCase = {
+        courtEndTime: courtEndTime.toISOString(),
+        accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+        appealState: CaseAppealState.APPEALED,
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.appealedDate).toBeDefined()
+      expect(res.hasBeenAppealed).toBe(true)
+    })
+
+    // it('should have correct prosecutor and defender statement dates', () => {
+    //   // Arrange
+    //   const courtEndTime = new Date()
+    //   courtEndTime.setDate(courtEndTime.getDate() - 1)
+    //   const theCase = {
+    //     caseFiles: [
+    //       {
+    //         id: '123',
+    //         created: '2021-06-14T19:50:08.033Z',
+    //         name: 'ProsecutorStatement',
+    //         category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+    //       },
+    //       {
+    //         id: '1234',
+    //         created: '2021-06-15T19:50:08.033Z',
+    //         name: 'DefenderStatement',
+    //         category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+    //       },
+    //     ],
+    //   } as Case
+
+    //   // Act
+    //   const res = transformCase(theCase)
+
+    //   // Assert
+    //   //expect(res.defenderStatementDate).toBeDefined()
+    //   //expect(res.isStatementDeadlineExpired).toBe(true)
+
+    //   expect(res.prosecutorStatementDate).toBeDefined()
+    // })
   })
 })

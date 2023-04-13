@@ -8,7 +8,6 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase } from '@island.is/judicial-system-web/src/types'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
@@ -17,7 +16,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
   isCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
@@ -29,104 +27,22 @@ interface Props {
   workingCase: TempCase
 }
 
-interface AppealInfo {
-  canBeAppealed: boolean
-  hasBeenAppealed: boolean
-  appealDeadline?: string
-  statementDeadline?: string
-  isStatementDeadlineExpired?: boolean
-  appealedByRole?: UserRole
-  appealedDate?: string
-  hasProsecutionStatement?: boolean
-  hasDefenderStatement?: boolean
-  prosecutionStatementDate?: string
-  defenderStatementDate?: string
-}
-
-export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
-  const {
-    courtEndTime,
-    appealState,
-    isAppealDeadlineExpired,
-    accusedAppealDecision,
-    prosecutorAppealDecision,
-    prosecutorPostponedAppealDate,
-    accusedPostponedAppealDate,
-  } = workingCase
-
-  const canBeAppealed = Boolean(
-    courtEndTime &&
-      !appealState &&
-      !isAppealDeadlineExpired &&
-      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
-  )
-
-  // I know this is a very basic thing to wrap in its own variable but I
-  // did it because there are currently 2 ways in which a case
-  // can be recognized as appealed, so this will become more complex
-  // when we begin listening to whether a case was appealed in court.
-  // Currently we only check whether it was appealed after court
-  const hasBeenAppealed = Boolean(
-    appealState && appealState === CaseAppealState.Appealed,
-  )
-
-  const appealedByRole = prosecutorPostponedAppealDate
-    ? UserRole.Prosecutor
-    : accusedPostponedAppealDate
-    ? UserRole.Defender
-    : undefined
-
-  const appealedDate =
-    appealedByRole === UserRole.Prosecutor
-      ? prosecutorPostponedAppealDate ?? undefined
-      : accusedPostponedAppealDate ?? undefined
-
-  const appealDeadline = courtEndTime
-    ? getAppealEndDate(courtEndTime ?? '')
-    : undefined
-
-  //TODO: Put correct info in these variables when we have them
-  //implemented
-  const statementDeadline = new Date().toISOString()
-  const isStatementDeadlineExpired = false
-  const hasProsecutionStatement = false
-  const prosecutionStatementDate = undefined
-  const hasDefenderStatement = true
-  const defenderStatementDate = new Date().toISOString()
-
-  return {
-    hasBeenAppealed,
-    canBeAppealed,
-    appealedByRole,
-    appealedDate,
-    appealDeadline,
-    statementDeadline,
-    isStatementDeadlineExpired,
-    prosecutionStatementDate,
-    hasProsecutionStatement,
-    hasDefenderStatement,
-    defenderStatementDate,
-  } as AppealInfo
-}
-
 const AppealAlertBanner: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
   const { workingCase } = props
+
   const {
+    prosecutorStatementDate,
+    defenderStatementDate,
+    statementDeadline,
+    hasBeenAppealed,
     appealedByRole,
     appealedDate,
     canBeAppealed,
-    hasBeenAppealed,
     appealDeadline,
-    statementDeadline,
-    hasProsecutionStatement,
-    hasDefenderStatement,
-    prosecutionStatementDate,
-    defenderStatementDate,
-  } = getAppealInfo(workingCase)
+  } = workingCase
 
   let alertTitle, alertLinkTitle, alertLinkHref, alertDescription
 
@@ -142,20 +58,20 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
     if (
-      (isProsecutionRoleUser && hasProsecutionStatement) ||
-      (isDefenderRoleUser && hasDefenderStatement)
+      (isProsecutionRoleUser && prosecutorStatementDate) ||
+      (isDefenderRoleUser && defenderStatementDate)
     ) {
       //TODO: Make this text separate and green like in the design
       //Needs to be implemented in island-ui component
       alertDescription += ` ${formatMessage(strings.statementSentDescription, {
         statementSentDate: isProsecutionRoleUser
-          ? formatDate(prosecutionStatementDate, 'PPPp')
+          ? formatDate(prosecutorStatementDate, 'PPPp')
           : formatDate(defenderStatementDate, 'PPPp'),
       })}`
     } else if (isCourtRoleUser) {
       alertDescription += ` ${formatMessage(
-        strings.appealReceivedNotificationLinkText,
-        { statementSentDate: new Date() },
+        strings.appealReceivedNotificationSent,
+        { appealReceivedDate: formatDate(new Date(), 'PPPp') },
       )}`
     } else {
       alertLinkTitle = formatMessage(strings.statementLinkText)
@@ -187,7 +103,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
   else if (canBeAppealed) {
     alertTitle = formatMessage(strings.appealDeadlineTitle, {
       isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
-      appealDeadline,
+      appealDeadline: formatDate(appealDeadline, 'PPPp'),
     })
     // We only want to display the appeal link to prosecution roles and the defender
     // not the judge

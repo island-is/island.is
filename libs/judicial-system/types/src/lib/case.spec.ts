@@ -7,8 +7,12 @@ import {
   hasCaseBeenAppealed,
   isInvestigationCase,
   isRestrictionCase,
+  getAppealInfo,
+  CaseAppealState,
 } from './case'
 import type { Case } from './case'
+import { UserRole } from './user'
+import { CaseFileCategory } from './file'
 
 describe('Case Type', () => {
   each`
@@ -126,5 +130,125 @@ describe('isAppealed', () => {
 
     // Assert
     expect(res).toBe(false)
+  })
+})
+
+describe('getAppealInfo', () => {
+  test('should return that case can be appealed and the correct appeal deadline', () => {
+    const workingCase = {
+      courtEndTime: '2022-06-15T19:50:08.033Z',
+      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+    } as Case
+
+    const appealInfo = getAppealInfo(workingCase)
+
+    expect(appealInfo).toEqual(
+      expect.objectContaining({
+        canBeAppealed: true,
+        appealDeadline: '2022-06-18T19:50:08.033Z',
+        hasBeenAppealed: false,
+      }),
+    )
+  })
+
+  test('should return that case has been appealed by the prosecutor, and return the correct appeal date', () => {
+    const workingCase = {
+      appealState: CaseAppealState.APPEALED,
+      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getAppealInfo(workingCase)
+
+    expect(appealInfo).toEqual(
+      expect.objectContaining({
+        canBeAppealed: false,
+        appealedByRole: UserRole.PROSECUTOR,
+        appealedDate: '2022-06-15T19:50:08.033Z',
+        hasBeenAppealed: true,
+      }),
+    )
+  })
+
+  test('should return that case has been appealed by the defender', () => {
+    const workingCase = {
+      appealState: CaseAppealState.APPEALED,
+      accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getAppealInfo(workingCase)
+
+    expect(appealInfo).toEqual(
+      expect.objectContaining({
+        canBeAppealed: false,
+        appealedByRole: UserRole.DEFENDER,
+        appealedDate: '2022-06-15T19:50:08.033Z',
+        hasBeenAppealed: true,
+      }),
+    )
+  })
+
+  test('should return that case has not been appealed', () => {
+    const workingCase = {
+      courtEndTime: '2022-06-15T19:50:08.033Z',
+      prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
+    } as Case
+
+    const appealInfo = getAppealInfo(workingCase)
+
+    expect(appealInfo).toEqual(
+      expect.objectContaining({
+        appealDeadline: '2022-06-18T19:50:08.033Z',
+        canBeAppealed: true,
+        hasBeenAppealed: false,
+      }),
+    )
+  })
+
+  test('should return that the case cannot be appealed if neither party has postponed the appeal', () => {
+    const workingCase = {
+      courtEndTime: '2022-06-15T19:50:08.033Z',
+      prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
+      accusedAppealDecision: CaseAppealDecision.NOT_APPLICABLE,
+    } as Case
+
+    const appealInfo = getAppealInfo(workingCase)
+
+    expect(appealInfo).toEqual(
+      expect.objectContaining({
+        appealDeadline: '2022-06-18T19:50:08.033Z',
+        canBeAppealed: false,
+        hasBeenAppealed: false,
+      }),
+    )
+  })
+
+  test('should return the correct statement dates', () => {
+    const workingCase = {
+      courtEndTime: '2022-06-15T19:50:08.033Z',
+      caseFiles: [
+        {
+          id: '123',
+          created: '2021-06-14T19:50:08.033Z',
+          name: 'ProsecutorStatement',
+          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        },
+        {
+          id: '1234',
+          created: '2021-06-15T19:50:08.033Z',
+          name: 'DefenderStatement',
+          category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        },
+      ],
+      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+    } as Case
+
+    const appealInfo = getAppealInfo(workingCase)
+
+    expect(appealInfo).toEqual(
+      expect.objectContaining({
+        prosecutorStatementDate: '2021-06-14T19:50:08.033Z',
+        defenderStatementDate: '2021-06-15T19:50:08.033Z',
+      }),
+    )
   })
 })
