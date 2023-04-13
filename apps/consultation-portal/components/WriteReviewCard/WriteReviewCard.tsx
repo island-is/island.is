@@ -21,9 +21,18 @@ import { useReducer, useState } from 'react'
 import { useLogIn } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
 import { CASE_POST_ADVICE } from '../../graphql/queries.graphql'
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { resolveFileToObject } from '../../utils/helpers'
+
+const CREATE_UPLOAD_URL = gql`
+  mutation CreateUploadUrl($filename: String!) {
+    createUploadUrl(filename: $filename) {
+      url
+      fields
+    }
+  }
+`
 
 type CardProps = {
   card: Case
@@ -127,12 +136,17 @@ export const WriteReviewCard = ({
   username,
   caseId,
 }: CardProps) => {
-  const [showUpload, setShowUpload] = useState<boolean>(false)
-  const [state, dispatch] = useReducer(reducer, initialUploadFiles)
-  const [error, setError] = useState<string | undefined>(undefined)
-  const [showInputError, setShowInputError] = useState(false)
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
+  const [showInputError, setShowInputError] = useState(false)
+  const [showUpload, setShowUpload] = useState(false)
+  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [errors, setErrors] = useState<string[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(false)
+
+  // const [state, dispatch] = useReducer(reducer, initialUploadFiles)
+  // const [error, setError] = useState<string | undefined>(undefined)
 
   const client = initApollo()
   const [postAdviceMutation, { loading: postAdviceLoading }] = useMutation(
@@ -142,59 +156,64 @@ export const WriteReviewCard = ({
     },
   )
 
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL, { client: client })
+
+  // const onClick = async () => {
+  //   if (review.length >= REVIEW_MINIMUM_LENGTH) {
+  //     setShowInputError(false)
+  //     const files = await Promise.all(
+  //       state.map((item: UploadFile) =>
+  //         resolveFileToObject(item.originalFileObj as File),
+  //       ),
+  //     )
+  //     const objToSend = {
+  //       caseId: caseId,
+  //       adviceRequest: {
+  //         content: review,
+  //         adviceFiles: files,
+  //       },
+  //     }
+  //     const posting = await postAdviceMutation({
+  //       variables: {
+  //         input: objToSend,
+  //       },
+  //     })
+  //     // reloading page, would be better if we got the object back
+  //     // from the server or sent a refetch request for data
+  //     location.reload()
+  //   }
+  //   setShowInputError(true)
+  // }
+
   const onClick = async () => {
-    if (review.length >= REVIEW_MINIMUM_LENGTH) {
-      setShowInputError(false)
-      const files = await Promise.all(
-        state.map((item: UploadFile) =>
-          resolveFileToObject(item.originalFileObj as File),
-        ),
-      )
-      const objToSend = {
-        caseId: caseId,
-        adviceRequest: {
-          content: review,
-          adviceFiles: files,
-        },
-      }
-      const posting = await postAdviceMutation({
-        variables: {
-          input: objToSend,
-        },
+    console.log("clicked on click")
+    const mappedFileList = fileList.map((file) => {
+      return new Promise((resolve, reject) => {
+        createUploadUrl({
+          variables: {
+            filename: file.name
+          }
+        })
+        .then((response) => {
+          console.log("response", response)
+        })
+        .catch((e) => console.log("error", e))
       })
-      // reloading page, would be better if we got the object back
-      // from the server or sent a refetch request for data
-      location.reload()
-    }
-    setShowInputError(true)
+    })
   }
-
-  const onChange = (newFiles: File[]) => {
-    const newUploadFiles = newFiles.map((f) => fileToObject(f))
-
-    setError(undefined)
-
-    newUploadFiles.forEach((f: UploadFile) => {
-      uploadFile(f, dispatch).catch((e) => {
-        setError('An error occured uploading one or more files')
-      })
-    })
-
-    dispatch({
-      type: ActionTypes.ADD,
-      payload: {
-        newFiles: newUploadFiles,
-      },
-    })
+  const onChange = (files: File[]) => {
+    const uploadFiles = files.map((f) => fileToObject(f))
+    const uploadFilesWithKey = uploadFiles.map((f) => ({
+      ...f,
+      key: crypto.randomUUID(),
+    }))
+    const newFileList = [...fileList, ...uploadFilesWithKey]
+    setFileList(newFileList)
   }
 
   const onRemove = (fileToRemove: UploadFile) => {
-    dispatch({
-      type: ActionTypes.REMOVE,
-      payload: {
-        fileToRemove,
-      },
-    })
+    const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
+    setFileList(newFileList)
   }
 
   return isLoggedIn ? (
@@ -258,7 +277,7 @@ export const WriteReviewCard = ({
           <Box marginBottom={3}>
             <InputFileUpload
               name="fileUpload"
-              fileList={state}
+              fileList={fileList}
               accept={Object.values(fileExtensionWhitelist)}
               header="Dragðu skrár hingað til að hlaða upp"
               description="Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn"
