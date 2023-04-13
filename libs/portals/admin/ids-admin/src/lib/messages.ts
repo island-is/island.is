@@ -174,6 +174,13 @@ export const m = defineMessages({
     defaultMessage:
       'Sets the absolute lifetime of a refresh token (in seconds).',
   },
+  readableSeconds: {
+    id: 'ap.ids-admin:readable-seconds',
+    defaultMessage:
+      '{sec} seconds is {isExact, select, true {equal to} other {more than}} {value} {unit, select, years {{value, plural, =1 {year} other {years}}} months {{value, plural, =1 {month} other {months}}} days {{value, plural, =1 {day} other {days}}} hours {{value, plural, =1 {hour} other {hours}}} minutes {{value, plural, =1 {minute} other {minutes}}} other {{value, plural, =1 {second} other {seconds}}}}.',
+    description:
+      'For transforming seconds to more human readable format. The end of the string displays the unit in singular or plural form.',
+  },
   inactivityExpiration: {
     id: 'ap.ids-admin:inactivity-expiration',
     defaultMessage: 'Inactivity expiration',

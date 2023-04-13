@@ -287,3 +287,19 @@ WithADisabledButton.args = {
     },
   ],
 }
+
+export const Numbers = Template.bind({})
+Numbers.args = {
+  label: 'Numbers Label',
+  placeholder: 'This is the placeholder for numbers',
+  name: 'numbers',
+  type: 'number',
+}
+
+export const InputMode = Template.bind({})
+InputMode.args = {
+  label: 'Kennital',
+  placeholder: 'Placeholder',
+  name: 'inputmode',
+  inputMode: 'numeric',
+}

@@ -43,6 +43,8 @@ type Action = {
   payload: any
 }
 
+const REVIEW_MINIMUM_LENGTH = 10
+
 const fileExtensionWhitelist = {
   '.pdf': 'application/pdf',
   '.doc': 'application/msword',
@@ -128,6 +130,7 @@ export const WriteReviewCard = ({
   const [showUpload, setShowUpload] = useState<boolean>(false)
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
+  const [showInputError, setShowInputError] = useState(false)
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
 
@@ -140,7 +143,8 @@ export const WriteReviewCard = ({
   )
 
   const onClick = async () => {
-    if (review.length >= 10) {
+    if (review.length >= REVIEW_MINIMUM_LENGTH) {
+      setShowInputError(false)
       const files = await Promise.all(
         state.map((item: UploadFile) =>
           resolveFileToObject(item.originalFileObj as File),
@@ -162,6 +166,7 @@ export const WriteReviewCard = ({
       // from the server or sent a refetch request for data
       location.reload()
     }
+    setShowInputError(true)
   }
 
   const onChange = (newFiles: File[]) => {
@@ -245,6 +250,8 @@ export const WriteReviewCard = ({
         rows={10}
         value={review}
         onChange={(e) => setReview(e.target.value)}
+        hasError={showInputError && review.length <= REVIEW_MINIMUM_LENGTH}
+        errorMessage="Texti þarf að vera að minnsta kosti 10 stafbil."
       />
       <Box paddingTop={3}>
         {showUpload && (
@@ -277,12 +284,7 @@ export const WriteReviewCard = ({
           ) : (
             <div />
           )}
-          <Button
-            disabled={review.length <= 10}
-            fluid
-            size="small"
-            onClick={onClick}
-          >
+          <Button fluid size="small" onClick={onClick}>
             Staðfesta umsögn
           </Button>
         </Inline>

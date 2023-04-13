@@ -15,7 +15,11 @@ interface CaseProps {
   case: Case
   advices: Advice[]
 }
-const CaseDetails: React.FC<CaseProps> = ({ case: Case, advices }) => {
+
+const CaseDetails: React.FC<CaseProps> = ({
+  case: Case,
+  advices,
+}: CaseProps) => {
   return <CaseScreen chosenCase={Case} advices={advices} />
 }
 export default CaseDetails
@@ -48,6 +52,7 @@ export const getServerSideProps = async (ctx) => {
         },
       }),
     ])
+
     return {
       props: {
         case: consultationPortalCaseById,
