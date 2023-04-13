@@ -32,7 +32,7 @@ export const ChosenSubscriptionCard = ({
     setIsOpen(!isOpen)
   }
 
-  const onCheckboxChange = (id: any) => {
+  const onCheckboxChange = (id: string | number) => {
     const sub = [...subscriptionArray[mapIsToEn[data.area]]]
     const subArr = { ...subscriptionArray }
     if (typeof id === 'string') {

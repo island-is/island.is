@@ -33,7 +33,7 @@ const SubscriptionTable = ({
   subscriptionArray,
   setSubscriptionArray,
 }: SubscriptionTableProps) => {
-  const onCheckboxChange = (id: any, action: boolean) => {
+  const onCheckboxChange = (id: string | number, action: boolean) => {
     const sub = [...subscriptionArray[mapIsToEn[currentTab]]]
 
     const subArr = { ...subscriptionArray }
@@ -58,10 +58,10 @@ const SubscriptionTable = ({
 
     return setSubscriptionArray(subArr)
   }
-  const checkboxStatus = (id: any) => {
+  const checkboxStatus = (id: string | number) => {
     return subscriptionArray[mapIsToEn[currentTab]].includes(id)
   }
-  const checkboxAllStatus = (id: any) => {
+  const checkboxAllStatus = (id: string | number) => {
     return subscriptionArray['generalSubscription'].includes(id)
   }
 
