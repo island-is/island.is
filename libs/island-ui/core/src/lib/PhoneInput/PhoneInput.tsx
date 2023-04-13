@@ -290,6 +290,7 @@ export const PhoneInput = forwardRef(
                       styles.inputBackgroundXl,
                     ),
                     styles.inputSize[size],
+                    styles.inputNoPaddingRight,
                     {
                       [styles.inputDisabled]:
                         disabled || readOnly || disableDropdown,

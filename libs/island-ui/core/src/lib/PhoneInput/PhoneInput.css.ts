@@ -57,6 +57,9 @@ export const inputDisabled = style({
 })
 
 export const inputSize = styleVariants(inputMixins.inputSizes)
+export const inputNoPaddingRight = style({
+  paddingRight: 0,
+})
 
 const backgroundColorRules = {
   white: theme.color.white,
