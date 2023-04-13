@@ -134,7 +134,7 @@ For a more detailed guide on writing System E2E tests, please see this [internal
 
 ### Running System E2E tests with mocks
 
-Running System E2E tests which rely on mocking external dependencies is the same, except the local development environment must support wire-mocking(mountebank). To prepare such a local environment it is best to use the command that discovers the dependencies of the component(s) you will be testing and prepares configuration for running them. To get a list of the services you might need to run as well as the mountebank configuration:
+Running System E2E tests which rely on mocking external dependencies is the same, except the local development environment must support wire-mocking (mountebank). To prepare such a local environment it is best to use the command that discovers the dependencies of the component(s) you will be testing and prepares configuration for running them. To get a list of the services you might need to run in addition to the mountebank configuration:
 
 ```bash
 yarn infra render-local-env  --service=<service-name-1> ... --service=<service-name-N> 
