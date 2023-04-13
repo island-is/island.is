@@ -25,7 +25,7 @@ import { CaseFile } from './models/file.model'
 
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
-export class LimitiedAccessFileResolver {
+export class LimitedAccessFileResolver {
   constructor(
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER)
