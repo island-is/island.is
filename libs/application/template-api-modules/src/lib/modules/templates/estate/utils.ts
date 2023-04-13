@@ -31,6 +31,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
   )
   const ships = estate.ships.map((el) => initialMapper<EstateAsset>(el))
   const vehicles = estate.vehicles.map((el) => initialMapper<EstateAsset>(el))
+  const guns = estate.guns.map((el) => initialMapper<EstateAsset>(el))
 
   return {
     ...estate,
@@ -39,6 +40,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     flyers,
     ships,
     vehicles,
+    guns
   }
 }
 
