@@ -79,12 +79,36 @@ test.describe('Fjármál overview', () => {
       await expect(page.locator('role=table')).not.toContainText('11.04.2023')
     })
   })
+
+  test('Finance Launagreidendakröfur', async () => {
+    const page = await context.newPage()
+
+    await test.step('Can filter table and find a claim', async () => {
+      // Arrange
+      await page.goto('/minarsidur/fjarmal/laungreidendakrofur')
+
+      // Act
+      const filterButton = page.locator('role=button[name="Opna síu"]').first()
+      await filterButton.click()
+
+      const inputField = page.getByPlaceholder('Veldu dagsetningu').first()
+      await inputField.click()
+      await inputField.fill('')
+      await inputField.type('15.10.2021', { delay: 200 })
+
+      // Assert
+      await expect(page.locator('role=table')).toContainText('15.10.2021')
+      await expect(page.locator('role=table')).toContainText(
+        'Launagreiðandakröfur',
+      )
+      await expect(page.locator('role=table')).not.toContainText('11.04.2023')
+    })
+  })
 })
 
 test.describe.skip('Fjármál', () => {
   for (const { testCase } of [
     { testCase: 'Fjármál Greiðslukvittanir - sjá pdf' },
-    { testCase: 'Fjármál Launagreidendakröfur - birtist' },
     { testCase: 'Fjármál Útsvar sveitafélaga - birtist ???' },
   ]) {
     test(testCase, () => {
