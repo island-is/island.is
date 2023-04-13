@@ -4,7 +4,7 @@ import {
   Table as T,
   Box,
   ResponsiveSpace,
-  Hidden,
+  useBreakpoint,
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionTable.css'
 import { mapIsToEn } from '../../utils/helpers'
@@ -31,8 +31,6 @@ const SubscriptionTable = ({
   subscriptionArray,
   setSubscriptionArray,
 }: SubscriptionTableProps) => {
-  let headerKey = 0
-
   const onCheckboxChange = (id: number, action: boolean) => {
     const sub = [...subscriptionArray[mapIsToEn[currentTab]]]
     const subArr = { ...subscriptionArray }
@@ -52,53 +50,75 @@ const SubscriptionTable = ({
 
   const paddingTop = [3, 3, 3, 5, 5] as ResponsiveSpace
 
+  const { md: mdBreakpoint } = useBreakpoint()
+  const { Table, Head, Row, HeadData, Body } = T
+
   return (
     <Box paddingTop={paddingTop}>
-      <T.Table>
-        <T.Head>
-          <T.HeadData
-            width="10"
-            key={headerKey++}
-            box={{ background: 'transparent', borderColor: 'transparent' }}
-          >
-            <Icon
-              icon="checkmark"
-              color="blue400"
-              className={styles.checkmarkIcon}
-            />
-          </T.HeadData>
-          {currentTab !== Area.case ? (
-            <T.HeadData
-              text={{ variant: 'h4' }}
-              box={{ background: 'transparent', borderColor: 'transparent' }}
+      <Table>
+        <Head>
+          <Row>
+            <HeadData
+              width="10"
+              key={'tableHeaderKey_checkmark'}
+              box={{
+                background: 'transparent',
+                borderColor: 'transparent',
+              }}
             >
-              {Headers[currentTab][0]}
-            </T.HeadData>
-          ) : (
-            <>
-              <T.HeadData
+              <Icon
+                icon="checkmark"
+                color="blue400"
+                className={styles.checkmarkIcon}
+              />
+            </HeadData>
+            {currentTab !== Area.case ? (
+              <HeadData
                 text={{ variant: 'h4' }}
+                key={'tableHeaderKey_0'}
                 box={{
                   background: 'transparent',
                   borderColor: 'transparent',
                 }}
               >
-                <Hidden below="lg">{Headers[currentTab][0]}</Hidden>
-                <Hidden above="md">{Headers[currentTab][2]}</Hidden>
-              </T.HeadData>
-              <T.HeadData
+                {Headers[currentTab][0]}
+              </HeadData>
+            ) : mdBreakpoint ? (
+              <>
+                <HeadData
+                  width="120"
+                  text={{ variant: 'h4' }}
+                  box={{
+                    background: 'transparent',
+                    borderColor: 'transparent',
+                  }}
+                  key={'tableHeaderKey_1'}
+                >
+                  {Headers[currentTab][0]}
+                </HeadData>
+                <HeadData
+                  text={{ variant: 'h4' }}
+                  box={{
+                    background: 'transparent',
+                    borderColor: 'transparent',
+                  }}
+                  key={'tableHeaderKey_2'}
+                >
+                  {Headers[currentTab][1]}
+                </HeadData>
+              </>
+            ) : (
+              <HeadData
                 text={{ variant: 'h4' }}
-                box={{
-                  background: 'transparent',
-                  borderColor: 'transparent',
-                }}
+                box={{ background: 'transparent', borderColor: 'transparent' }}
+                key={'tableHeaderKey_3'}
               >
-                <Hidden below="lg">{Headers[currentTab][1]}</Hidden>
-              </T.HeadData>
-            </>
-          )}
-        </T.Head>
-        <T.Body>
+                {Headers[currentTab][2]}
+              </HeadData>
+            )}
+          </Row>
+        </Head>
+        <Body>
           {data.map((item, idx: number) => (
             <SubscriptionTableItem
               key={item.id}
@@ -107,10 +127,11 @@ const SubscriptionTable = ({
               checkboxStatus={checkboxStatus}
               onCheckboxChange={onCheckboxChange}
               currentTab={currentTab}
+              mdBreakpoint={mdBreakpoint}
             />
           ))}
-        </T.Body>
-      </T.Table>
+        </Body>
+      </Table>
     </Box>
   )
 }

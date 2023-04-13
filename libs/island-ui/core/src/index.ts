@@ -56,6 +56,8 @@ export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
 export * from './lib/Filter/FilterInput/FilterInput'
 export * from './lib/PdfViewer/PdfViewer'
 export * from './lib/PageLoader'
+export * from './lib/VisuallyHidden/VisuallyHidden'
+export * from './lib/Drawer/Drawer'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
@@ -89,6 +91,7 @@ export * from './lib/Input/Input'
 export * from './lib/InputFileUpload/InputFileUpload'
 export * from './lib/InputError/InputError'
 export * from './lib/ToggleSwitch'
+export * from './lib/PhoneInput/PhoneInput'
 
 // Navigation
 export { BreadcrumbsDeprecated } from './lib/BreadcrumbsDeprecated/Breadcrumbs'
@@ -97,6 +100,8 @@ export * from './lib/Navigation/Navigation'
 export * from './lib/FormStepper/FormStepper'
 export * from './lib/FormStepper/FormStepperV2'
 export * from './lib/FormStepper/Section'
+export * from './lib/FormStepper/HistorySection'
+export * from './lib/FormStepper/HistoryStepper'
 export * from './lib/FormStepper/types'
 export * from './lib/Pagination/Pagination'
 export * from './lib/Tabs/Tabs'
@@ -122,3 +127,4 @@ export * as linkStyles from './lib/Link/Link.css'
 
 // Hooks
 export * from './hooks/useBreakpoint'
+export { ErrorMessage } from './lib/Input/ErrorMessage'

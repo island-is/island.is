@@ -33,6 +33,7 @@ import {
   usePortalMeta,
   useRoutes,
 } from '@island.is/portals/core'
+import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
 
 type AccessFormProps = {
   delegation: AuthCustomDelegationOutgoing
@@ -60,6 +61,8 @@ export const AccessForm = ({
   const [formError, setFormError] = useState(false)
   const [updateError, setUpdateError] = useState(false)
 
+  const { showShadow, pxProps } = useDynamicShadow({ rootMargin: '-112px' })
+
   const onError = () => {
     toast.error(formatMessage(portalMessages.somethingWrong))
   }
@@ -75,7 +78,7 @@ export const AccessForm = ({
     scope: AccessFormScope[]
     validityPeriod: Date | null
   }>()
-  const { handleSubmit, getValues } = methods
+  const { handleSubmit, watch } = methods
 
   const onSubmit = handleSubmit(async (values) => {
     if (formError) {
@@ -124,10 +127,8 @@ export const AccessForm = ({
   })
 
   // Map format and flatten scopes to be used in the confirm modal
-  const scopes: MappedScope[] | undefined = getValues()
-    ?.scope?.map((item) =>
-      formatScopeTreeToScope({ item, scopeTree, validityPeriod }),
-    )
+  const scopes: MappedScope[] | undefined = watch('scope')
+    ?.map((item) => formatScopeTreeToScope({ item, scopeTree, validityPeriod }))
     .filter(isDefined)
 
   return (
@@ -163,6 +164,7 @@ export const AccessForm = ({
               />
             ))}
           </div>
+          <div {...pxProps} />
         </form>
         <Box position="sticky" bottom={0} marginTop={20}>
           <DelegationsFormFooter
@@ -177,6 +179,7 @@ export const AccessForm = ({
               }
             }}
             confirmLabel={formatMessage(m.saveAccess)}
+            showShadow={showShadow}
             confirmIcon="arrowForward"
             disabled={
               delegation.scopes.length === 0 && (!scopes || scopes.length === 0)

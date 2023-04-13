@@ -95,6 +95,7 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
           prod: 'prod-es-custom-packages',
         },
         ELASTIC_DOMAIN: 'search',
+        NODE_OPTIONS: '--max-old-space-size=2048',
       }),
       secrets: {
         CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN',
@@ -133,4 +134,9 @@ export const serviceSetup = (): ServiceBuilder<'search-indexer-service'> =>
       min: 1,
       max: 1,
       default: 1,
+    })
+    .extraAttributes({
+      dev: { progressDeadlineSeconds: 25 * 60 },
+      staging: { progressDeadlineSeconds: 25 * 60 },
+      prod: { progressDeadlineSeconds: 25 * 60 },
     })

@@ -16,27 +16,22 @@ export const HiddenInformation: FC<FieldBaseProps & HiddenInformationProps> = ({
   application,
   field,
 }) => {
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
   const { id } = field.props
 
   const answers = application.answers as AccidentNotification
+
+  if (isInjuredAndRepresentativeOfCompanyOrInstitute(application.answers)) {
+    setValue(`${id}.name`, answers.applicant.name)
+    setValue(`${id}.email`, answers.applicant.email)
+  }
 
   return !isInjuredAndRepresentativeOfCompanyOrInstitute(
     application.answers,
   ) ? null : (
     <>
-      <input
-        type="hidden"
-        value={answers.applicant.name}
-        ref={register({ required: true })}
-        name={`${id}.name`}
-      />
-      <input
-        type="hidden"
-        value={answers.applicant.email}
-        ref={register({ required: true })}
-        name={`${id}.email`}
-      />
+      <input type="hidden" {...register(`${id}.name`, { required: true })} />
+      <input type="hidden" {...register(`${id}.email`, { required: true })} />
     </>
   )
 }

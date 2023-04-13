@@ -13,7 +13,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (eventOnly?: boolean) => Promise<Then>
+type GivenWhenThen = () => Promise<Then>
 
 describe('InternalNotificationController - Send court date notification', () => {
   const userId = uuid()
@@ -34,7 +34,7 @@ describe('InternalNotificationController - Send court date notification', () => 
 
     mockEmailService = emailService
 
-    givenWhenThen = async (eventOnly?) => {
+    givenWhenThen = async () => {
       const then = {} as Then
 
       await internalNotificationController

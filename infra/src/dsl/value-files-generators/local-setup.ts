@@ -7,6 +7,7 @@ import { Localhost } from '../localhost-runtime'
 import { EXCLUDED_ENVIRONMENT_NAMES } from '../../cli/render-env-vars'
 import { readFile, writeFile } from 'fs/promises'
 import { join } from 'path'
+import { rootDir } from '../consts'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
@@ -42,24 +43,61 @@ const mapServiceToNXname = async (serviceName: string) => {
     )
   return nxName.length === 1 ? nxName[0] : serviceName
 }
-
 export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
 ): Promise<LocalrunValueFile> => {
-  const dockerComposeServices: Services<LocalrunService> = await Object.entries(
-    services,
-  ).reduce(async (acc, [name, service]) => {
-    return {
-      ...(await acc),
-      [name]: ` ${
-        runtime.ports[name] ? `PORT=${runtime.ports[name]} ` : ''
-      } PROD_MODE=true ${Object.entries(service.env)
-        .filter(([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name))
-        .map(([key, value]) => `${key}="${value}"`)
-        .join(' ')} yarn start ${await mapServiceToNXname(name)}`,
-    }
-  }, Promise.resolve({}))
+  const dockerComposeServices = await Object.entries(services).reduce(
+    async (acc, [name, service]) => {
+      const portConfig = runtime.ports[name]
+        ? { PORT: runtime.ports[name].toString() }
+        : {}
+      const serviceNXName = await mapServiceToNXname(name)
+      return {
+        ...(await acc),
+        [name]: {
+          env: Object.assign(
+            {},
+            Object.entries(service.env)
+              .filter(
+                ([name, val]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(name),
+              )
+              .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
+            { PROD_MODE: 'true' },
+            portConfig,
+          ) as Record<string, string>,
+          command: `(source ${join(
+            rootDir,
+            '.env.' + serviceNXName,
+          )} && yarn start ${serviceNXName})`,
+        },
+      }
+    },
+    Promise.resolve(
+      {} as {
+        [name: string]: { env: Record<string, string>; command: string }
+      },
+    ),
+  )
+
+  // dump all env values to files
+  await Promise.all(
+    Object.entries(dockerComposeServices).map(async ([name, svc]) => {
+      const serviceNXName = await mapServiceToNXname(name)
+      await writeFile(
+        join(rootDir, `.env.${serviceNXName}`),
+        Object.entries(svc.env)
+          .map(
+            ([name, value]) =>
+              `export ${name}='${value
+                .replace(/'/g, "'\\''")
+                .replace(/[\n\r]/g, '')}'`,
+          )
+          .join('\n'),
+        { encoding: 'utf-8' },
+      )
+    }),
+  )
   const mocksConfigs = Object.entries(runtime.mocks).reduce(
     (acc, [name, target]) => {
       return {
@@ -118,10 +156,13 @@ export const getLocalrunValueFile = async (
     .map((port) => `-p ${port}:${port}`)
     .join(
       ' ',
-    )} -v ${process.cwd()}/${defaultMountebankConfig}:/app/default.json bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
+    )} -v ${process.cwd()}/${defaultMountebankConfig}:/app/default.json docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json`
 
   return {
-    services: { ...dockerComposeServices },
+    services: Object.entries(dockerComposeServices).reduce(
+      (acc, [name, service]) => ({ ...acc, [name]: service.command }),
+      {},
+    ),
     mocks: mocks,
   }
 }

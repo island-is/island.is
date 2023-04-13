@@ -13,10 +13,6 @@ import {
   ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import {
-  IndictmentsCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { isProsecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
@@ -72,8 +68,6 @@ const HearingArrangements: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
-      activeSubSection={IndictmentsCourtSubsections.PROSECUTOR_AND_DEFENDER}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -107,6 +101,7 @@ const HearingArrangements: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase || isSendingNotification}
           nextButtonText={formatMessage(m.nextButtonText)}

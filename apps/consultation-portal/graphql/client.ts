@@ -5,11 +5,14 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client'
+import { setContext } from '@apollo/client/link/context'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { onError } from '@apollo/client/link/error'
 import { GraphQLError } from 'graphql'
 import { graphQLResultHasError } from '@apollo/client/utilities'
 import getConfig from 'next/config'
+import authLink from './authLink'
+import httpLink from './httpLink'
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
@@ -19,6 +22,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 })
 const isBrowser: boolean = process.browser
+
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 function create(initialState?: any) {
@@ -33,8 +37,8 @@ function create(initialState?: any) {
   } = publicRuntimeConfig
   // const graphqlUrl = graphqlServerUrl || graphqlClientUrl
   const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
-  const httpLink = new BatchHttpLink({ uri: `${graphqlEndpoint}` })
-  const link = ApolloLink.from([errorLink, httpLink])
+  // const httpLink = new BatchHttpLink({ uri: `${graphqlEndpoint}`, credentials: "include" })
+  const link = ApolloLink.from([errorLink, authLink, httpLink])
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({

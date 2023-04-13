@@ -7,6 +7,8 @@ import {
   SkraningaradiliDanarbusSkeyti,
   Fasteignasalar,
   Logmenn,
+  Afengisleyfi,
+  Taekifaerisleyfi,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -118,6 +120,38 @@ export const OPERATING_LICENSE_SERVICE_RES = [
     afgr_Afgengis_Adfaranott_Fridaga_Utiveitingar: 'string',
   },
 ] as any[] // This return object has no type, see clientConfig.json
+
+export const ALCOHOL_LICENCES = [
+  {
+    tegund: 'string',
+    tegundLeyfis: 'string',
+    leyfisnumer: 'string',
+    utgefidAf: 'string',
+    skraningarAr: '2021',
+    gildirFra: new Date('2022-05-01'),
+    gildirTil: new Date('2023-05-01'),
+    leyfishafi: 'string',
+    abyrgdarmadur: 'string',
+    embaetti: 'string',
+    starfsstodEmbaettis: 'string',
+  },
+] as Afengisleyfi[]
+
+export const TEMPORARY_EVENT_LICENCES = [
+  {
+    tegund: 'string',
+    tegundLeyfis: 'string',
+    leyfisnumer: 'string',
+    utgefidAf: 'string',
+    skraningarAr: '2021',
+    gildirFra: new Date('2022-05-01'),
+    gildirTil: new Date('2023-05-01'),
+    leyfishafi: 'string',
+    abyrgdarmadur: 'string',
+    hamarksfjoldi: 0,
+    aaetladurFjoldi: 0,
+  },
+] as Taekifaerisleyfi[]
 
 export const DATA_UPLOAD: Skilabod = {
   skilabod: 'Gögn móttekin',

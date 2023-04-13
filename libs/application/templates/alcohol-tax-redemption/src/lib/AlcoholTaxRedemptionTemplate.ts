@@ -1,7 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -63,7 +60,7 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.DONE,
+            target: States.DRAFT,
           },
         },
       },
@@ -72,11 +69,7 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
           name: 'Draft state',
           status: 'inprogress',
           progress: 0.4,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            whenToPrune: 3600 * 1000,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -101,7 +94,7 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
           status: 'completed',
           name: 'Done',
           progress: 1,
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,

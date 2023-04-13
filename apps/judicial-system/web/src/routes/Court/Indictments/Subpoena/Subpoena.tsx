@@ -1,8 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
-import compareAsc from 'date-fns/compareAsc'
-import parseISO from 'date-fns/parseISO'
 
 import {
   CourtArrangements,
@@ -18,10 +16,6 @@ import {
   SelectSubpoenaType,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -31,6 +25,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 
@@ -62,18 +57,6 @@ const Subpoena: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      const courtDateNotifications = workingCase.notifications?.filter(
-        (notification) => notification.type === NotificationType.COURT_DATE,
-      )
-
-      const latestCourtDateNotification = courtDateNotifications?.sort((a, b) =>
-        compareAsc(parseISO(b.created), parseISO(a.created)),
-      )[0]
-
-      const hasSentNotification = latestCourtDateNotification?.recipients.some(
-        (recipient) => recipient.success,
-      )
-
       await setAndSendCaseToServer(
         [
           {
@@ -87,7 +70,13 @@ const Subpoena: React.FC = () => {
         setWorkingCase,
       )
 
-      if (hasSentNotification && !courtDateHasChanged) {
+      if (
+        hasSentNotification(
+          NotificationType.COURT_DATE,
+          workingCase.notifications,
+        ) &&
+        !courtDateHasChanged
+      ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
         setNavigateTo(destination)
@@ -107,8 +96,6 @@ const Subpoena: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
-      activeSubSection={IndictmentsCourtSubsections.SUBPEONA}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -142,6 +129,7 @@ const Subpoena: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>

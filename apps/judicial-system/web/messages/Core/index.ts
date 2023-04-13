@@ -85,6 +85,11 @@ export const core = defineMessages({
     defaultMessage: 'Sækjandi',
     description: 'Notað fyrir orðið sækjandi í öllum flæðum.',
   },
+  defender: {
+    id: 'judicial.system.core:defender_v2',
+    defaultMessage: 'Verjandi',
+    description: 'Notað fyrir orðið verjandi í öllum flæðum.',
+  },
   accused: {
     id: 'judicial.system.core:accused-v3',
     defaultMessage: 'kærð{suffix}',
@@ -261,5 +266,20 @@ export const core = defineMessages({
     id: 'judicial.system.core:close_modal',
     defaultMessage: 'Loka glugga',
     description: 'Notaður fyrir texta í Loka glugga takka í modölum.',
+  },
+  uploadBoxTitle: {
+    id: 'judicial.system.core:upload_box_title',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+  },
+  uploadBoxButtonLabel: {
+    id: 'judicial.system.core:upload_box_button_label',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+  },
+  uploadBoxDescription: {
+    id: 'judicial.system.core:upload_box_description',
+    defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
+    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
   },
 })

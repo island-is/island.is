@@ -60,12 +60,20 @@ export const prosecutionRoles: string[] = [
   UserRole.REPRESENTATIVE,
 ]
 
-export function isProsecutionRole(role: string): boolean {
+export function isProsecutionRole(role?: string): boolean {
+  if (!role) {
+    return false
+  }
+
   return prosecutionRoles.includes(role)
 }
 
 export const courtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
 
-export function isCourtRole(role: string): boolean {
+export function isCourtRole(role?: string): boolean {
+  if (!role) {
+    return false
+  }
+
   return courtRoles.includes(role)
 }

@@ -6,7 +6,7 @@ export const getReviewerInfo = (
   reviewerNationalId: string,
   answers: FormValue,
 ) => {
-  // If reviewer is owner coowner
+  // If reviewer is old co-owner
   const ownerCoOwners = getValueViaPath(
     answers,
     'ownerCoOwners',
@@ -14,18 +14,18 @@ export const getReviewerInfo = (
   ) as OwnerCoOwnersInformation[]
 
   const ownerCoOwner = ownerCoOwners.find(
-    (ownerCoOwner) => ownerCoOwner.nationalId === reviewerNationalId,
+    (x) => x.nationalId === reviewerNationalId,
   )
   if (ownerCoOwner) {
     return ownerCoOwner
   }
 
-  // If reviewer is operator
+  // If reviewer is new co-owner
   const coOwners = getValueViaPath(answers, 'coOwners', []) as UserInformation[]
 
   const coOwner = coOwners
     .filter(({ wasRemoved }) => wasRemoved !== 'true')
-    .find((operator) => operator.nationalId === reviewerNationalId)
+    .find((x) => x.nationalId === reviewerNationalId)
   if (coOwner) {
     return coOwner
   }

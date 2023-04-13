@@ -1,6 +1,5 @@
 import React, { FC, useEffect } from 'react'
 import {
-  ArrayField,
   Controller,
   useFieldArray,
   useFormContext,
@@ -21,7 +20,7 @@ import {
   Button,
   ProfileCard,
 } from '@island.is/island-ui/core'
-import { Answers, EstateMember } from '../../types'
+import { Answers, EstateMemberField } from '../../types'
 import { format as formatNationalId } from 'kennitala'
 import * as styles from './styles.css'
 import { useLazyQuery } from '@apollo/client'
@@ -30,7 +29,7 @@ import { IDENTITY_QUERY } from '../../graphql'
 import * as kennitala from 'kennitala'
 import { m } from '../../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { hasYes } from '@island.is/application/core'
+import { getValueViaPath, hasYes } from '@island.is/application/core'
 
 export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -51,7 +50,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
     })) || []
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<EstateMember>({
+  const { fields, append, remove } = useFieldArray({
     name: `${id}.members`,
   })
 
@@ -62,7 +61,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
         !application.answers.estateMembers?.encountered) &&
       externalData.estate.estateMembers
     ) {
-      append(externalData.estate.estateMembers)
+      append(getValueViaPath(externalData, 'estate.estateMembers'))
       setValue('estateMembers.encountered', true)
     }
   }, [])
@@ -77,7 +76,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, member, index) => {
+        {fields.reduce((acc, member: EstateMemberField, index) => {
           if (member.nationalId === application.applicant) {
             if (application.answers.applicantRelation !== member.relation) {
               member.relation = application.answers.applicantRelation
@@ -115,7 +114,7 @@ export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((member, index) => (
+      {fields.map((member: EstateMemberField, index) => (
         <Box key={member.id} hidden={member.initial || member?.dummy}>
           <Item
             field={member}
@@ -150,7 +149,7 @@ const Item = ({
   relationOptions,
   error,
 }: {
-  field: Partial<ArrayField<EstateMember, 'id'>>
+  field: EstateMemberField
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
@@ -194,11 +193,6 @@ const Item = ({
           },
         },
       })
-    } else if (
-      name !== '' &&
-      (!foreignCitizenship || foreignCitizenship.length == 0)
-    ) {
-      setValue(nameField, '')
     }
   }, [getIdentity, name, nameField, nationalIdInput, setValue])
 
@@ -208,11 +202,13 @@ const Item = ({
         name={initialField}
         control={control}
         defaultValue={field.initial || false}
+        render={() => <input type="hidden" />}
       />
       <Controller
         name={dummyField}
         control={control}
         defaultValue={field.dummy || false}
+        render={() => <input type="hidden" />}
       />
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
@@ -314,18 +310,20 @@ const Item = ({
           </>
         )}
         <GridColumn span="1/1" paddingBottom={2}>
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: 'yes',
-              },
-            ]}
-          />
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: 'yes',
+                },
+              ]}
+            />
+          </Box>
         </GridColumn>
       </GridRow>
     </Box>

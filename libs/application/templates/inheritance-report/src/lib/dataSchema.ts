@@ -3,6 +3,12 @@ import * as z from 'zod'
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
+  applicant: z.object({
+    email: z.string().email(),
+    phone: z.string(),
+    nationalId: z.string(),
+  }),
+
   /* assets */
   assets: z.object({
     realEstate: z
@@ -191,6 +197,10 @@ export const inheritanceReportSchema = z.object({
       .refine((v) => v === 100)
       .optional(),
   }),
+
+  heirsAdditionalInfo: z.string().optional(),
+
+  totalDeduction: z.string(),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>

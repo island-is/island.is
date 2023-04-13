@@ -1,4 +1,4 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
   Box,
   Text,
@@ -9,7 +9,6 @@ import {
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
-import { ArrayField } from 'react-hook-form'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
@@ -22,7 +21,7 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<CoOwnerAndOperator, 'id'>>
+  repeaterField: GenericFormField<CoOwnerAndOperator>
   handleRemove: (index: number) => void
   setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
   coOwnersAndOperators?: CoOwnerAndOperator[]
@@ -49,7 +48,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   )
   const [name, setName] = useState<string>(repeaterField.name || '')
 
-  const { setValue, register } = useFormContext()
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const fieldIndex = `${id}[${index}]`
   const userMessageId = repeaterField.type ?? 'coOwner'
@@ -77,6 +76,8 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
       setValue(nameField, name)
       setValue(emailField, email)
       setValue(phoneField, phone)
+      setValue(wasRemovedField, repeaterField.wasRemoved)
+      setValue(typeField, userMessageId)
     }
   }, [email, phone, nationalId, name, userMessageId])
 
@@ -148,18 +149,6 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
           />
         </GridColumn>
       </GridRow>
-      <input
-        type="hidden"
-        value={userMessageId}
-        ref={register({ required: true })}
-        name={typeField}
-      />
-      <input
-        type="hidden"
-        value={repeaterField.wasRemoved}
-        ref={register({ required: true })}
-        name={wasRemovedField}
-      />
     </Box>
   )
 }

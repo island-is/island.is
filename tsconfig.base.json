@@ -161,6 +161,9 @@
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
+      "@island.is/api/domains/regulations-admin": [
+        "libs/api/domains/regulations-admin/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -172,6 +175,9 @@
       ],
       "@island.is/api/domains/transport-authority": [
         "libs/api/domains/transport-authority/src/index.ts"
+      ],
+      "@island.is/api/domains/university-of-iceland": [
+        "libs/api/domains/university-of-iceland/src/index.ts"
       ],
       "@island.is/api/domains/user-profile": [
         "libs/api/domains/user-profile/src/index.ts"
@@ -357,6 +363,9 @@
       "@island.is/application/templates/transport-authority/digital-tachograph-workshop-card": [
         "libs/application/templates/transport-authority/digital-tachograph-workshop-card/src/index.ts"
       ],
+      "@island.is/application/templates/transport-authority/license-plate-renewal": [
+        "libs/application/templates/transport-authority/license-plate-renewal/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/order-vehicle-license-plate": [
         "libs/application/templates/transport-authority/order-vehicle-license-plate/src/index.ts"
       ],
@@ -470,6 +479,9 @@
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
+      "@island.is/clients/regulations-admin": [
+        "libs/clients/regulations-admin/src/index.ts"
+      ],
       "@island.is/clients/rsk/company-registry": [
         "libs/clients/rsk/company-registry/src/index.ts"
       ],
@@ -502,8 +514,14 @@
       "@island.is/clients/transport-authority/vehicle-plate-ordering": [
         "libs/clients/transport-authority/vehicle-plate-ordering/src/index.ts"
       ],
+      "@island.is/clients/transport-authority/vehicle-plate-renewal": [
+        "libs/clients/transport-authority/vehicle-plate-renewal/src/index.ts"
+      ],
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
+      ],
+      "@island.is/clients/university-of-iceland": [
+        "libs/clients/university-of-iceland/src/index.ts"
       ],
       "@island.is/clients/user-profile": [
         "libs/clients/user-profile/src/index.ts"
@@ -601,18 +619,21 @@
       "@island.is/nest/audit": ["libs/nest/audit/src/index.ts"],
       "@island.is/nest/aws": ["libs/nest/aws/src/index.ts"],
       "@island.is/nest/config": ["libs/nest/config/src/index.ts"],
+      "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
       "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
       "@island.is/nest/swagger": ["libs/nest/swagger/src/index.ts"],
-      "@island.is/nest/validators": ["libs/nest/validators/src/index.ts"],
       "@island.is/next-ids-auth": ["libs/next-ids-auth/src/index.ts"],
       "@island.is/nova-sms": ["libs/nova-sms/src/index.ts"],
       "@island.is/plausible": ["libs/plausible/src/index.ts"],
       "@island.is/portals/admin/air-discount-scheme": [
         "libs/portals/admin/air-discount-scheme/src/index.ts"
+      ],
+      "@island.is/portals/admin/application-system": [
+        "libs/portals/admin/application-system/src/index.ts"
       ],
       "@island.is/portals/admin/core": ["libs/portals/admin/core/src/index.ts"],
       "@island.is/portals/admin/document-provider": [
@@ -623,6 +644,9 @@
       ],
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/regulations-admin": [
+        "libs/portals/admin/regulations-admin/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
