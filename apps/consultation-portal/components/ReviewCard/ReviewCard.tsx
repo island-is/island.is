@@ -59,7 +59,7 @@ export const ReviewCard = ({ advice }) => {
           advice?.adviceDocuments.map((doc, index) => {
             return (
               <LinkV2
-                href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                href={`https://samradapi-test.devland.is/api/Documents/${doc.id}`}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="always"
