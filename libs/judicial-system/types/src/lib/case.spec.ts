@@ -260,6 +260,22 @@ describe('getAppealInfo', () => {
     )
   })
 
+  test('should return a statement deadline if the case has been marked as received by the court', () => {
+    const workingCase = {
+      courtEndTime: '2022-06-15T19:50:08.033Z',
+      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+      state: CaseState.RECEIVED,
+    } as Case
+
+    const appealInfo = getAppealInfo(workingCase)
+
+    expect(appealInfo).toEqual(
+      expect.objectContaining({
+        statementDeadline: '2022-06-16T19:50:08.033Z',
+      }),
+    )
+  })
+
   test('should return all appeal fields as undefined if case has not been closed', () => {
     const workingCase = {} as Case
 
