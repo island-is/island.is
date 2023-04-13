@@ -531,7 +531,7 @@ export const m = defineMessages({
   },
   overviewMarketValue: {
     id: 'es.application:overviewMarketValue',
-    defaultMessage: 'Markaðsverð',
+    defaultMessage: 'Markaðsvirði',
     description: '',
   },
   divisionOfEstateByHeirsTerms: {
@@ -693,7 +693,7 @@ export const m = defineMessages({
   },
   vehiclesMarketValueTitle: {
     id: 'es.application:vehiclesMarketValueTitle',
-    defaultMessage: 'Markaðsverð á dánardegi',
+    defaultMessage: 'Markaðsvirði á dánardegi',
     description: 'Placeholder for vehicles type',
   },
   otherPropertiesTitle: {

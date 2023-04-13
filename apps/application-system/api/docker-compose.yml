@@ -11,7 +11,7 @@ services:
       - POSTGRES_USER=dev_db
       - POSTGRES_PASSWORD=dev_db
     ports:
-      - 5432:5432
+      - 5433:5433
 
   redis_cluster:
     container_name: redis_cluster
@@ -22,7 +22,7 @@ services:
     environment:
       - IP=0.0.0.0
     ports:
-      - '7000-7005:7000-7005'
+      - '7001-7005:7001-7005'
 
 networks:
   local:
