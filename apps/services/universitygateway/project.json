@@ -46,6 +46,14 @@
         "jestConfig": "apps/services/universitygateway/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/universitygateway/src/openapi.yaml",
+        "command": "yarn ts-node -P apps/services/universitygateway/tsconfig.app.json apps/services/universitygateway/src/buildOpenApi.ts"
+      }
     }
   },
   "tags": []
