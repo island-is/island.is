@@ -33,8 +33,8 @@ export const ChosenSubscriptionCard = ({
   }
 
   const onCheckboxChange = (id: any) => {
-    let sub = [...subscriptionArray[mapIsToEn[data.area]]]
-    let subArr = { ...subscriptionArray }
+    const sub = [...subscriptionArray[mapIsToEn[data.area]]]
+    const subArr = { ...subscriptionArray }
     if (typeof id === 'string') {
       let generalsub = subscriptionArray['generalSubscription']
       generalsub = ''

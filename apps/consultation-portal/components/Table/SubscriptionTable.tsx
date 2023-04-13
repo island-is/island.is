@@ -34,8 +34,7 @@ const SubscriptionTable = ({
   setSubscriptionArray,
 }: SubscriptionTableProps) => {
   const onCheckboxChange = (id: any, action: boolean) => {
-    let sub: any[]
-    sub = [...subscriptionArray[mapIsToEn[currentTab]]]
+    const sub = [...subscriptionArray[mapIsToEn[currentTab]]]
 
     const subArr = { ...subscriptionArray }
     if (action) {
