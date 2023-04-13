@@ -5,7 +5,7 @@ import {
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
@@ -16,36 +16,31 @@ import {
   schema,
 } from '../forms/EditApplication/EditApplication.action'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 interface LifetimeProps {
-  absoluteLifetime: number
-  inactivityExpiration: boolean
-  inactivityLifetime: number
+  absoluteRefreshTokenLifetime: number
+  refreshTokenExpiration: boolean
+  slidingRefreshTokenLifetime: number
+  selectedEnvironment: AuthAdminEnvironment
 }
 
 const Lifetime = ({
-  absoluteLifetime,
-  inactivityLifetime,
-  inactivityExpiration,
+  absoluteRefreshTokenLifetime,
+  slidingRefreshTokenLifetime,
+  refreshTokenExpiration,
+  selectedEnvironment,
 }: LifetimeProps) => {
   const { formatMessage } = useLocale()
   const [lifetime, setLifetime] = useState({
-    absoluteLifetime,
-    inactivityExpiration,
-    inactivityLifetime,
+    absoluteRefreshTokenLifetime,
+    refreshTokenExpiration,
+    slidingRefreshTokenLifetime,
   })
   const { formatErrorMessage } = useErrorFormatMessage()
   const actionData = useActionData() as EditApplicationResult<
     typeof schema.lifeTime
   >
-
-  useEffect(() => {
-    setLifetime({
-      absoluteLifetime,
-      inactivityExpiration,
-      inactivityLifetime,
-    })
-  }, [absoluteLifetime, inactivityExpiration, inactivityLifetime])
 
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -61,22 +56,22 @@ const Lifetime = ({
     originalValue: FormData,
   ): boolean => {
     if (
-      currentValue.get('inactivityExpiration') !==
-      originalValue.get('inactivityExpiration')
+      currentValue.get('refreshTokenExpiration') !==
+      originalValue.get('refreshTokenExpiration')
     ) {
       return true
     }
-    if (currentValue.get('inactivityExpiration')) {
+    if (currentValue.get('refreshTokenExpiration')) {
       return (
-        currentValue.get('absoluteLifetime') !==
-          originalValue.get('absoluteLifetime') ||
-        currentValue.get('inactivityLifetime') !==
-          originalValue.get('inactivityLifetime')
+        currentValue.get('absoluteRefreshTokenLifetime') !==
+          originalValue.get('absoluteRefreshTokenLifetime') ||
+        currentValue.get('slidingRefreshTokenLifetime') !==
+          originalValue.get('slidingRefreshTokenLifetime')
       )
     } else {
       return (
-        currentValue.get('absoluteLifetime') !==
-        originalValue.get('absoluteLifetime')
+        currentValue.get('absoluteRefreshTokenLifetime') !==
+        originalValue.get('absoluteRefreshTokenLifetime')
       )
     }
   }
@@ -90,19 +85,21 @@ const Lifetime = ({
       }}
       isDirty={customChangedValidation}
       intent={ClientFormTypes.lifeTime}
+      selectedEnvironment={selectedEnvironment}
     >
       <Stack space={3}>
         <Stack space={1}>
           <Input
             size="sm"
             type="number"
-            name="absoluteLifetime"
-            value={lifetime.absoluteLifetime}
+            name="absoluteRefreshTokenLifetime"
+            value={lifetime.absoluteRefreshTokenLifetime}
             backgroundColor="blue"
             onChange={setLifeTimeLength}
             label={formatMessage(m.absoluteLifetime)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors?.absoluteLifetime as unknown) as string,
+              (actionData?.errors
+                ?.absoluteRefreshTokenLifetime as unknown) as string,
             )}
           />
           <Text variant={'small'}>
@@ -112,13 +109,13 @@ const Lifetime = ({
         <Stack space={1}>
           <ToggleSwitchCheckbox
             label={formatMessage(m.inactivityExpiration)}
-            checked={lifetime.inactivityExpiration}
-            name="inactivityExpiration"
-            value={lifetime.inactivityExpiration.toString()}
+            checked={lifetime.refreshTokenExpiration}
+            name="refreshTokenExpiration"
+            value={lifetime.refreshTokenExpiration.toString()}
             onChange={() =>
               setLifetime((prev) => ({
                 ...prev,
-                inactivityExpiration: !lifetime.inactivityExpiration,
+                refreshTokenExpiration: !lifetime.refreshTokenExpiration,
               }))
             }
           />
@@ -126,18 +123,19 @@ const Lifetime = ({
             {formatMessage(m.inactivityExpirationDescription)}
           </Text>
         </Stack>
-        <Box hidden={!lifetime.inactivityExpiration}>
+        <Box hidden={!lifetime.refreshTokenExpiration}>
           <Stack space={1}>
             <Input
               size="sm"
               type="number"
-              name="inactivityLifetime"
-              value={lifetime.inactivityLifetime}
+              name="slidingRefreshTokenLifetime"
+              value={lifetime.slidingRefreshTokenLifetime}
               backgroundColor="blue"
               onChange={setLifeTimeLength}
               label={formatMessage(m.inactivityLifetime)}
               errorMessage={formatErrorMessage(
-                (actionData?.errors?.inactivityLifetime as unknown) as string,
+                (actionData?.errors
+                  ?.slidingRefreshTokenLifetime as unknown) as string,
               )}
             />
             <Text variant={'small'}>

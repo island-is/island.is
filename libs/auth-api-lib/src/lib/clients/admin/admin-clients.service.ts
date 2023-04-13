@@ -36,7 +36,7 @@ export const clientBaseAttributes: Partial<Client> = {
   alwaysIncludeUserClaimsInIdToken: true,
   alwaysSendClientClaims: true,
   identityTokenLifetime: 5 * 60, // 5 minutes
-  refreshTokenExpiration: RefreshTokenExpiration.Absolute,
+  refreshTokenExpiration: 1, //RefreshTokenExpiration.Absolute,
   refreshTokenUsage: 1, // Single usage
   requireClientSecret: true,
   requirePkce: true,
@@ -170,18 +170,26 @@ export class AdminClientsService {
       redirectUris,
       postLogoutRedirectUris,
       supportTokenExchange,
+      refreshTokenExpiration,
       ...clientAttributes
     } = input
 
     await this.sequelize.transaction(async (transaction) => {
       if (Object.keys(clientAttributes).length > 0) {
         // Update includes client base attributes
-        await this.clientModel.update(clientAttributes, {
-          where: {
-            clientId,
+        await this.clientModel.update(
+          {
+            ...clientAttributes,
+            refreshTokenExpiration:
+              refreshTokenExpiration === RefreshTokenExpiration.Sliding ? 0 : 1,
           },
-          transaction,
-        })
+          {
+            where: {
+              clientId,
+            },
+            transaction,
+          },
+        )
       }
 
       if (displayName && displayName.length > 0) {
@@ -209,6 +217,28 @@ export class AdminClientsService {
       if (customClaims && customClaims.length > 0) {
         await this.updateCustomClaims(clientId, customClaims, transaction)
       }
+
+      // Checking if the value is true and boolean to avoid undefined
+      if (supportTokenExchange === true) {
+        await this.clientGrantType.upsert(
+          {
+            clientId,
+            grantType: GrantTypeEnum.TokenExchange,
+          },
+          { transaction, fields: ['grant_type'] },
+        )
+      }
+
+      // Checking if the value is false and boolean to avoid undefined
+      if (supportTokenExchange === false) {
+        await this.clientGrantType.destroy({
+          where: {
+            clientId,
+            grantType: GrantTypeEnum.TokenExchange,
+          },
+          transaction,
+        })
+      }
     })
 
     return this.findByTenantIdAndClientId(tenantId, clientId)
@@ -227,7 +257,7 @@ export class AdminClientsService {
             clientId,
             redirectUri: uri,
           },
-          { transaction },
+          { transaction, fields: ['redirect_uri'] },
         ),
       ),
     )
@@ -256,7 +286,7 @@ export class AdminClientsService {
             type: claim.type,
             value: claim.value,
           },
-          { transaction },
+          { transaction, fields: ['value'] },
         ),
       ),
     )
@@ -305,7 +335,10 @@ export class AdminClientsService {
       displayName: this.formatDisplayName(client.clientName, translations),
       absoluteRefreshTokenLifetime: client.absoluteRefreshTokenLifetime,
       slidingRefreshTokenLifetime: client.slidingRefreshTokenLifetime,
-      refreshTokenExpiration: client.refreshTokenExpiration,
+      refreshTokenExpiration:
+        client.refreshTokenExpiration === 0
+          ? RefreshTokenExpiration.Sliding
+          : RefreshTokenExpiration.Absolute,
       supportsCustomDelegation: client.supportsCustomDelegation,
       supportsLegalGuardians: client.supportsLegalGuardians,
       supportsProcuringHolders: client.supportsProcuringHolders,
@@ -424,15 +457,17 @@ export class AdminClientsService {
 
     // Update or create translations
     await Promise.all(
-      translationNames.map((name) =>
-        this.translationService.upsertTranslation({
-          className: 'client',
-          key: clientId,
-          language: name.locale,
-          property: 'clientName',
-          value: name.value,
-        }),
-      ),
+      translationNames.map((name) => {
+        if (name.value) {
+          this.translationService.upsertTranslation({
+            className: 'client',
+            key: clientId,
+            language: name.locale,
+            property: 'clientName',
+            value: name.value,
+          })
+        }
+      }),
     )
   }
 }

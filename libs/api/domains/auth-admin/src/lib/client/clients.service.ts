@@ -4,6 +4,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   CreateClientType,
   MeClientsControllerCreateRequest,
+  MeClientsControllerUpdateRequest,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
 
@@ -12,6 +13,7 @@ import { CreateClientInput } from './dto/create-client.input'
 import { CreateClientResponse } from './dto/create-client.response'
 import { ClientEnvironment } from './models/client-environment.model'
 import { Client } from './models/client.model'
+import { PatchClientInput } from './dto/patch-client.input'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -152,6 +154,50 @@ export class ClientsService extends MultiEnvironmentService {
     })
 
     return createApplicationResponse
+  }
+
+  async patchClient(
+    user: User,
+    input: PatchClientInput,
+  ): Promise<ClientEnvironment[]> {
+    const { clientId, tenantId, environments, ...adminPatchClientDto } = input
+
+    if (Object.keys(adminPatchClientDto).length === 0) {
+      throw new Error('Nothing provided to update')
+    }
+
+    const updateData: MeClientsControllerUpdateRequest = {
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+      adminPatchClientDto: adminPatchClientDto,
+    }
+
+    const updated = await Promise.allSettled(
+      input.environments.map(async (environment) => {
+        return this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meClientsControllerUpdate(updateData)
+      }),
+    )
+
+    const patchClientResponses = [] as ClientEnvironment[]
+
+    updated.map((resp, index) => {
+      if (resp.status === 'fulfilled' && resp.value) {
+        patchClientResponses.push({
+          ...resp.value,
+          environment: input.environments[index],
+        } as ClientEnvironment)
+      } else if (resp.status === 'rejected') {
+        this.logger.error(
+          `Failed to update application ${input.clientId} in environment ${input.environments[index]}`,
+          resp.reason,
+        )
+      }
+    })
+
+    return patchClientResponses
   }
 
   private formatClientId(clientId: string, environment: Environment) {

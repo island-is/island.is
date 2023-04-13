@@ -3,17 +3,12 @@ import request from 'supertest'
 
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
-  AdminClientDto,
   AdminPatchClientDto,
   Client,
   clientBaseAttributes,
   ClientGrantType,
-  ClientType,
-  GrantTypeEnum,
   RefreshTokenExpiration,
   SequelizeConfigService,
-  superUserFields,
-  TranslatedValueDto,
 } from '@island.is/auth-api-lib'
 import { User } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
@@ -38,7 +33,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
     domainName: tenantId,
     redirectUris: [faker.internet.url()],
     postLogoutRedirectUris: [faker.internet.url()],
-    allowedGrantTypes: [GrantTypeEnum.TokenExchange],
+    allowedGrantTypes: [],
     claims: [{ type: faker.random.word(), value: faker.random.word() }],
   })
   const [translation] = await fixtureFactory.createTranslations(client, 'en', {
@@ -72,11 +67,11 @@ const createTestClientData = async (app: TestApp, user: User) => {
       client.postLogoutRedirectUris?.map(
         (postLogoutRedirectUri) => postLogoutRedirectUri.redirectUri,
       ) ?? [],
-    refreshTokenExpiration: 1,
+    refreshTokenExpiration: RefreshTokenExpiration.Absolute,
     requireApiScopes: false,
     requireConsent: false,
     requirePkce: true,
-    supportTokenExchange: true,
+    supportTokenExchange: false,
     supportsCustomDelegation: false,
     supportsLegalGuardians: false,
     supportsPersonalRepresentatives: false,

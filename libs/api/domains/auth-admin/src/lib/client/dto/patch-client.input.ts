@@ -1,74 +1,72 @@
-import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType, Int } from '@nestjs/graphql'
 
-import { RefreshTokenExpiration } from '@island.is/auth-api-lib'
 import { Environment } from '@island.is/shared/types'
 
 import { TranslatedValue } from '../../models/translated-value.model'
 import { ClientClaim } from '../models/client-claim.model'
+import { RefreshTokenExpiration } from '../../models/refreshTokenExpiration.enum'
 
-registerEnumType(RefreshTokenExpiration, { name: 'RefreshTokenExpiration' })
-
-@ObjectType('AuthAdminPatchClientInput')
+@InputType('AuthAdminPatchClientInput')
 export class PatchClientInput {
   @Field(() => [Environment], { nullable: false })
   environments!: Environment[]
 
-  @Field(() => String)
+  @Field(() => String, { nullable: false })
   clientId!: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: false })
   tenantId!: string
 
-  @Field(() => [TranslatedValue])
-  displayName!: TranslatedValue[]
+  @Field(() => [TranslatedValue], { nullable: true })
+  displayName?: TranslatedValue[]
 
-  @Field(() => [String])
-  redirectUris!: string[]
+  @Field(() => [String], { nullable: true })
+  redirectUris?: string[]
 
-  @Field(() => [String])
-  postLogoutRedirectUris!: string[]
+  @Field(() => [String], { nullable: true })
+  postLogoutRedirectUris?: string[]
 
-  @Field(() => Int)
-  absoluteRefreshTokenLifetime!: number
+  @Field(() => Int, { nullable: true })
+  absoluteRefreshTokenLifetime?: number
 
-  @Field(() => Int)
-  slidingRefreshTokenLifetime!: number
+  @Field(() => Int, { nullable: true })
+  slidingRefreshTokenLifetime?: number
 
-  @Field(() => RefreshTokenExpiration)
-  refreshTokenExpiration!: RefreshTokenExpiration
+  @Field(() => RefreshTokenExpiration, { nullable: true })
+  refreshTokenExpiration?: RefreshTokenExpiration
 
-  @Field(() => Boolean)
-  supportsCustomDelegation!: boolean
+  @Field(() => Boolean, { nullable: true })
+  supportsCustomDelegation?: boolean
 
-  @Field(() => Boolean)
-  supportsLegalGuardians!: boolean
+  @Field(() => Boolean, { nullable: true })
+  supportsLegalGuardians?: boolean
 
-  @Field(() => Boolean)
-  supportsProcuringHolders!: boolean
+  @Field(() => Boolean, { nullable: true })
+  supportsProcuringHolders?: boolean
 
-  @Field(() => Boolean)
-  supportsPersonalRepresentatives!: boolean
+  @Field(() => Boolean, { nullable: true })
+  supportsPersonalRepresentatives?: boolean
 
-  @Field(() => Boolean)
-  promptDelegations!: boolean
+  @Field(() => Boolean, { nullable: true })
+  promptDelegations?: boolean
 
-  @Field(() => Boolean)
-  requireApiScopes!: boolean
+  @Field(() => Boolean, { nullable: true })
+  requireApiScopes?: boolean
 
-  @Field(() => Boolean)
-  requireConsent!: boolean
+  @Field(() => Boolean, { nullable: true })
+  requireConsent?: boolean
 
-  @Field(() => Boolean)
-  allowOfflineAccess!: boolean
+  @Field(() => Boolean, { nullable: true })
+  allowOfflineAccess?: boolean
 
-  @Field(() => Boolean)
-  requirePkce!: boolean
+  @Field(() => Boolean, { nullable: true })
+  requirePkce?: boolean
 
-  @Field(() => Boolean)
-  supportTokenExchange!: boolean
+  @Field(() => Boolean, { nullable: true })
+  supportTokenExchange?: boolean
 
-  @Field(() => Int)
-  accessTokenLifetime!: number
+  @Field(() => Int, { nullable: true })
+  accessTokenLifetime?: number
 
   @Field(() => [ClientClaim], { nullable: true })
   customClaims?: ClientClaim[]

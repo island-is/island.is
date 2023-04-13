@@ -1,13 +1,11 @@
-import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
-import { RefreshTokenExpiration } from '@island.is/auth-api-lib'
+import { RefreshTokenExpiration } from '../../models/refreshTokenExpiration.enum'
 import { Environment } from '@island.is/shared/types'
 
 import { ClientType } from '../../models/client-type.enum'
 import { TranslatedValue } from '../../models/translated-value.model'
 import { ClientClaim } from './client-claim.model'
-
-registerEnumType(RefreshTokenExpiration, { name: 'RefreshTokenExpiration' })
 
 @ObjectType('AuthAdminClientEnvironment')
 export class ClientEnvironment {

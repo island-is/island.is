@@ -1,6 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('AuthAdminClientClaim')
+@InputType('AuthAdminClientClaimInput')
 export class ClientClaim {
   @Field(() => String)
   type!: string

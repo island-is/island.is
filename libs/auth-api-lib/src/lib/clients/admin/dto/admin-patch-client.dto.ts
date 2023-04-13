@@ -148,6 +148,7 @@ export class AdminPatchClientDto {
   @ApiPropertyOptional({
     description:
       'Dictionary of custom claims added to access tokens. Only super users can update this value.',
+    type: [AdminClientClaimDto],
   })
   @IsOptional()
   @Type(() => AdminClientClaimDto)
