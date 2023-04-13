@@ -269,7 +269,7 @@ const ViewOwnedList = () => {
                         >
                           {formatMessage(m.modalButtonNo)}
                         </Button>
-                        <Button 
+                        <Button
                           onClick={() => onOpenList()}
                           disabled={!selectedDateToOpenList}
                           loading={openLoading}
