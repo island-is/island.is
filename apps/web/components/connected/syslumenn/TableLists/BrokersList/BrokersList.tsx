@@ -103,7 +103,10 @@ const BrokersList: FC<BrokersListProps> = ({ slice }) => {
       {listState === 'error' && (
         <AlertMessage
           title={n('errorTitle', 'Villa')}
-          message={n('errorMessage', 'Ekki tókst að sækja lista yfir verðbréfamiðlara.')}
+          message={n(
+            'errorMessage',
+            'Ekki tókst að sækja lista yfir verðbréfamiðlara.',
+          )}
           type="error"
         />
       )}
@@ -153,9 +156,7 @@ const BrokersList: FC<BrokersListProps> = ({ slice }) => {
                         </T.Data>
                         <T.Data>
                           <Box>
-                            <Text variant="small">
-                              {broker.nationalId }
-                            </Text>
+                            <Text variant="small">{broker.nationalId}</Text>
                           </Box>
                         </T.Data>
                       </T.Row>
