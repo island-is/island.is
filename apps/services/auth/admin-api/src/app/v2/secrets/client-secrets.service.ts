@@ -16,12 +16,20 @@ const secretType = 'SharedSecret'
 
 @Injectable()
 export class ClientSecretsService {
+  private encryptionKey: string
+
   constructor(
     @InjectModel(ClientSecret)
     private clientSecretModel: typeof ClientSecret,
     @InjectModel(Client)
     private clientModel: typeof Client,
-  ) {}
+  ) {
+    if (environment.clientSecretEncryptionKey === undefined) {
+      throw new Error('Client secret encryption key is not defined')
+    }
+
+    this.encryptionKey = environment.clientSecretEncryptionKey
+  }
 
   async find(tenantId: string, clientId: string): Promise<ClientSecretDto[]> {
     const secrets = await this.clientSecretModel.findAll({
@@ -47,15 +55,11 @@ export class ClientSecretsService {
       throw new NoContentException()
     }
 
-    if (environment.clientSecretEncryptionKey === undefined) {
-      throw new Error('Client secret encryption key is not defined')
-    }
-
     const decryptedValue = this.generateSecret()
     const hash = Base64.stringify(sha256(decryptedValue))
     const encryptedValue = CryptoJS.AES.encrypt(
       decryptedValue,
-      environment.clientSecretEncryptionKey,
+      this.encryptionKey,
       { iv: CryptoJS.enc.Hex.parse(uuid()) },
     ).toString()
 
@@ -86,7 +90,7 @@ export class ClientSecretsService {
     })
   }
 
-  async belongsToTenant(clientId: string, tenantId: string) {
+  private async belongsToTenant(clientId: string, tenantId: string) {
     const client = await this.clientModel.findOne({
       where: {
         clientId,
@@ -97,7 +101,7 @@ export class ClientSecretsService {
     return Boolean(client)
   }
 
-  formatSecret(secret: ClientSecret): ClientSecretDto {
+  private formatSecret(secret: ClientSecret): ClientSecretDto {
     if (environment.clientSecretEncryptionKey === undefined) {
       throw new Error('Client secret encryption key is not defined')
     }
@@ -105,7 +109,7 @@ export class ClientSecretsService {
     const decryptedValue = secret.encryptedValue
       ? CryptoJS.AES.decrypt(
           secret.encryptedValue,
-          environment.clientSecretEncryptionKey,
+          this.encryptionKey,
         ).toString(CryptoJS.enc.Utf8)
       : undefined
 
@@ -116,7 +120,7 @@ export class ClientSecretsService {
     }
   }
 
-  generateSecret() {
+  private generateSecret() {
     let generatedSecret = ''
 
     const length = randomInt(20, 30)
