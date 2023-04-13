@@ -46,8 +46,10 @@ export enum ServicePortalPath {
   MyInfoRoot = '/min-gogn',
   UserInfo = '/min-gogn/minar-upplysingar',
   Endorsements = '/min-gogn/medmaeli',
+
   // Education License
   EducationLicense = '/min-gogn/leyfisbref',
+
   // Education
   EducationRoot = '/min-gogn/menntun',
   EducationDegree = '/min-gogn/menntun/profgradur',
@@ -94,6 +96,9 @@ export enum ServicePortalPath {
   TransportVehiclesHistory = '/samgongur/okutaeki/okutaekjaferill',
   TransportVehiclesDrivingLessons = '/samgongur/okutaeki/okunam',
   TransportLowerAirfare = '/samgongur/loftbru',
+  // Education
+  EducationHaskoliGraduation = '/menntun/haskoli/brautskraning',
+  EducationHaskoliGraduationDetail = '/menntun/haskoli/brautskraning/:id',
 
   // Assets
   AssetsRoot = '/fasteignir',

@@ -32,7 +32,7 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -118,7 +118,7 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -213,7 +213,7 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -274,7 +274,7 @@ api:
     AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
-    CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.island.is'
+    CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
@@ -319,6 +319,7 @@ api:
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
@@ -332,7 +333,7 @@ api:
     XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
     XROAD_PASSPORT_LICENSE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
-    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/'
+    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
@@ -341,6 +342,7 @@ api:
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
@@ -374,7 +376,7 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 50
         min: 2
@@ -401,10 +403,10 @@ api:
     min: 2
   resources:
     limits:
-      cpu: '800m'
+      cpu: '400m'
       memory: '2048Mi'
     requests:
-      cpu: '50m'
+      cpu: '150m'
       memory: '512Mi'
   secrets:
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
@@ -458,7 +460,6 @@ api:
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
-    RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
@@ -540,6 +541,7 @@ application-system-api:
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
@@ -548,7 +550,7 @@ application-system-api:
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1'
     XROAD_PASSPORT_LICENSE_PATH: 'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
-    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/'
+    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
@@ -586,7 +588,7 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 60
         min: 2
@@ -720,7 +722,7 @@ application-system-api-worker:
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
-    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-payment-v1/'
+    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -741,7 +743,7 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -814,7 +816,7 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -874,7 +876,7 @@ consultation-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -913,6 +915,9 @@ consultation-portal:
 contentful-apps:
   enabled: true
   env:
+    CONTENTFUL_ENVIRONMENT: 'master'
+    CONTENTFUL_SPACE: '8k0h54kbe6bj'
+    MIDEIND_TRANSLATION_API_BASE_URL: 'https://stafraentisland.greynir.is/translate'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -930,7 +935,7 @@ contentful-apps:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 1
@@ -991,7 +996,7 @@ contentful-entry-tagger-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1054,7 +1059,7 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1101,6 +1106,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Mitt-Svaedi-V1'
   grantNamespaces:
     - 'islandis'
@@ -1119,7 +1125,7 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1197,7 +1203,7 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1285,7 +1291,7 @@ external-contracts-tests:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1341,7 +1347,7 @@ github-actions-cache:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 8
         min: 3
@@ -1420,7 +1426,7 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1503,7 +1509,7 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1564,7 +1570,7 @@ license-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -1589,12 +1595,18 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '10m'
+      cpu: '15m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
+    PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
+    PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
+    PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES'
+    PKPASS_CACHE_KEY: '/k8s/api/PKPASS_CACHE_KEY'
+    PKPASS_CACHE_TOKEN_EXPIRY_DELTA: '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
+    PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY'
     RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
@@ -1651,7 +1663,7 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1725,7 +1737,7 @@ regulations-admin-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -1805,7 +1817,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 1
         min: 1
@@ -1930,7 +1942,7 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1999,7 +2011,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -2097,7 +2109,7 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2175,7 +2187,7 @@ services-sessions:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 1
@@ -2197,10 +2209,10 @@ services-sessions:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '250m'
       memory: '512Mi'
     requests:
-      cpu: '10m'
+      cpu: '25m'
       memory: '300Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2243,7 +2255,7 @@ services-sessions-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2322,7 +2334,7 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2349,7 +2361,7 @@ skilavottord-web:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '10m'
+      cpu: '20m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2389,7 +2401,7 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2465,7 +2477,7 @@ user-notification:
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=336'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2483,7 +2495,7 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2510,10 +2522,10 @@ user-notification:
   resources:
     limits:
       cpu: '200m'
-      memory: '256Mi'
+      memory: '384Mi'
     requests:
-      cpu: '10m'
-      memory: '128Mi'
+      cpu: '15m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
@@ -2559,7 +2571,7 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
@@ -2624,7 +2636,7 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 50
         min: 2
@@ -2692,7 +2704,7 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 3
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1

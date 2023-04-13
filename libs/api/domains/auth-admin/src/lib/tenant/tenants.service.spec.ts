@@ -81,9 +81,7 @@ const mockAdminProdApi = createMockAdminApi([mockTenants.tenant1])
       load: [AuthAdminApiClientConfig],
     }),
   ],
-  controllers: [],
   providers: [TenantResolver, TenantEnvironmentResolver, TenantsService],
-  exports: [TenantResolver, TenantEnvironmentResolver],
 })
 class TestModule {}
 

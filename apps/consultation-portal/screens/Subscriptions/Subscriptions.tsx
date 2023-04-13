@@ -9,11 +9,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
-import { SubscriptionsArray } from '../../utils/dummydata'
 import {
-  SubscriptionActionCard,
-  ChosenSubscriptionCard,
-} from '../../components/Card'
+  GeneralSubscriptionArray,
+  SubscriptionsArray,
+} from '../../utils/dummydata'
+import { ChosenSubscriptionCard } from '../../components/Card'
 import { Area, SortOptions } from '../../types/enums'
 import {
   ArrOfIdAndName,
@@ -21,11 +21,13 @@ import {
   CaseForSubscriptions,
   SortTitle,
   SubscriptionArray,
+  TypeForSubscriptions,
 } from '../../types/interfaces'
 import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
 import getInitValues from './getInitValues'
 import TabsList from './tabsList'
+import EmailBox from '../../components/EmailBox/EmailBox'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -33,16 +35,15 @@ interface SubProps {
 }
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
-  // user logged in logic needed
-  const [loggedIn, setLoggedIn] = useState(false)
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
 
   const [searchValue, setSearchValue] = useState('')
 
   const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>(cases)
-
   const { Institutions, PolicyAreas } = getInitValues({ types: types })
-
+  const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
+    GeneralSubscriptionArray,
+  )
   const [institutionsData, setInstitutionsData] = useState(Institutions)
 
   const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
@@ -50,7 +51,6 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
     SubscriptionsArray,
   )
-
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,
     Stofnanir: SortOptions.aToZ,
@@ -121,7 +121,6 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       setSortTitle(_sortTitle)
     },
   })
-
   return (
     <Layout seo={{ title: 'Áskriftir', url: 'askriftir' }}>
       <Divider />
@@ -130,7 +129,6 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
           items={[
             { title: 'Samráðsgátt', href: '/samradsgatt' },
             { title: 'Mínar áskriftir ', href: '/samradsgatt/askriftir' },
-            { title: currentTab },
           ]}
         />
 
@@ -155,43 +153,42 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                   </Text>
                 </Stack>
               </Stack>
-              {loggedIn ? (
-                <SubscriptionActionCard
-                  userIsLoggedIn={true}
-                  heading="Skrá áskrift"
-                  text="Skráðu netfang hérna og svo hefst staðfestingaferlið. Þú færð tölvupóst sem þú þarft að staðfesta til að áskriftin taki gildi."
-                  button={{
-                    label: 'Skrá áskrift',
-                    onClick: () => setLoggedIn(false),
-                  }}
-                  input={{
-                    name: 'subscriptionEmail',
-                    label: 'Netfang',
-                    placeholder: 'Hér skal skrifa netfang',
-                  }}
-                />
-              ) : (
-                <SubscriptionActionCard
-                  userIsLoggedIn={false}
-                  heading="Skrá áskrift"
-                  text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
-                  button={{
-                    label: 'Skrá mig inn',
-                    onClick: () => setLoggedIn(true),
-                  }}
-                />
-              )}
+              <EmailBox />
             </Stack>
             <Stack space={0}>
               {!(
                 subscriptionArray.caseIds.length === 0 &&
                 subscriptionArray.institutionIds.length === 0 &&
-                subscriptionArray.policyAreaIds.length === 0
+                subscriptionArray.policyAreaIds.length === 0 &&
+                subscriptionArray.generalSubscription.length === 0
               ) && (
                 <>
                   <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
                     Valin mál
                   </Text>
+                  {subscriptionArray.generalSubscription.length !== 0 &&
+                    typeData
+                      .filter(
+                        (item) =>
+                          subscriptionArray.generalSubscription == item.id,
+                      )
+                      .map((filteredItem) => {
+                        return (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name,
+                              caseNumber: filteredItem.nr,
+                              id: filteredItem.id.toString(),
+                              area: Area.case,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`type-${filteredItem.nr}`}
+                          />
+                        )
+                      })}
                   {subscriptionArray.caseIds.length !== 0 &&
                     subscriptionArray.caseIds.map((caseId) => {
                       return casesData

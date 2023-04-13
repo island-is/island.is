@@ -122,7 +122,7 @@ export const overview = buildSection({
           id: 'overviewInventory',
           title: m.inventoryTextField,
           description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'inventory'),
+            getValueViaPath<string>(application.answers, 'inventory.info'),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -131,7 +131,7 @@ export const overview = buildSection({
           title: m.inventoryValueTitle,
           description: (application: Application) => {
             const value =
-              getValueViaPath<string>(application.answers, 'inventoryValue') ??
+              getValueViaPath<string>(application.answers, 'inventory.value') ??
               ''
             return formatCurrency(value)
           },
@@ -250,8 +250,8 @@ export const overview = buildSection({
                 (stock) => ({
                   title: stock.organization,
                   description: [
-                    `${m.stocksSsn.defaultMessage}: ${formatNationalId(
-                      stock.ssn ?? '',
+                    `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
+                      stock.nationalId ?? '',
                     )}`,
                     `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
                     `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
@@ -275,7 +275,7 @@ export const overview = buildSection({
           id: 'overviewOtherAssets',
           title: m.moneyAndDepositText,
           description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'otherAssets'),
+            getValueViaPath<string>(application.answers, 'otherAssets.info'),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -286,7 +286,7 @@ export const overview = buildSection({
             const value =
               getValueViaPath<string>(
                 application.answers,
-                'otherAssetsValue',
+                'otherAssets.value',
               ) ?? ''
             return formatCurrency(value)
           },
@@ -308,7 +308,7 @@ export const overview = buildSection({
           description: (application: Application) =>
             getValueViaPath<string>(
               application.answers,
-              'moneyAndDepositBoxesInfo',
+              'moneyAndDeposit.info',
             ),
           titleVariant: 'h4',
           space: 'gutter',
@@ -320,7 +320,7 @@ export const overview = buildSection({
             const value =
               getValueViaPath<string>(
                 application.answers,
-                'moneyAndDepositBoxesValue',
+                'moneyAndDeposit.value',
               ) ?? ''
 
             return formatCurrency(value)
@@ -355,8 +355,8 @@ export const overview = buildSection({
                 (debt) => ({
                   title: debt.creditorName,
                   description: [
-                    `${m.debtsSsn.defaultMessage}: ${formatNationalId(
-                      debt.ssn ?? '',
+                    `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
+                      debt.nationalId ?? '',
                     )}`,
                     `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                       debt.balance ?? '',

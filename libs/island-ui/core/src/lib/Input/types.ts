@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { HTMLAttributes } from 'react'
 
 import * as styles from './Input.css'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
@@ -42,7 +42,6 @@ export interface InputComponentProps {
   ) => void
   rows?: number
   type?: 'text' | 'number' | 'email' | 'tel' | 'password'
-  icon?: { name: IconType; type?: Type; onClick?: () => void }
 
   /**
    * While true hover state will not show and focus state will be always on
@@ -53,6 +52,20 @@ export interface InputComponentProps {
     on: boolean
     maxHeight?: number
   }
+  inputMode?: HTMLAttributes<HTMLInputElement>['inputMode']
+}
+
+export type InputButton = {
+  name: IconType
+  type?: Type
+  label: string
+  onClick?: React.HTMLAttributes<HTMLButtonElement>['onClick']
+  disabled?: boolean
+}
+
+export type InputIcon = {
+  name: IconType
+  type?: Type
 }
 
 export interface InputProps extends InputComponentProps {
@@ -64,4 +77,15 @@ export interface InputProps extends InputComponentProps {
   textarea?: boolean
   maxLength?: number
   loading?: boolean
+  icon?: InputIcon
+  buttons?: InputButton[]
+}
+
+export interface AsideProps {
+  icon: InputProps['icon']
+  buttons: InputProps['buttons']
+  size: InputProps['size']
+  loading: boolean
+  hasError: boolean
+  hasLabel: boolean
 }

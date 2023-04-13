@@ -1,4 +1,5 @@
 import {
+  AlcoholLicence,
   SyslumennAuction,
   Homestay,
   PaginatedOperatingLicenses,
@@ -17,7 +18,9 @@ import {
   EstateInfo,
   RealEstateAgent,
   Lawyer,
+  Broker,
   PropertyDetail,
+  TemporaryEventLicence,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -33,7 +36,10 @@ import {
   mapEstateInfo,
   mapRealEstateAgent,
   mapLawyer,
+  mapBroker,
+  mapAlcoholLicence,
   cleanPropertyNumber,
+  mapTemporaryEventLicence,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -133,6 +139,14 @@ export class SyslumennService {
     return (lawyers ?? []).map(mapLawyer)
   }
 
+  async getBrokers(): Promise<Broker[]> {
+    const { id, api } = await this.createApi()
+    const brokers = await api.verdbrefamidlararGet({
+      audkenni: id,
+    })
+    return (brokers ?? []).map(mapBroker)
+  }
+
   async getOperatingLicenses(
     searchQuery?: string,
     pageNumber?: number,
@@ -193,6 +207,26 @@ export class SyslumennService {
         audkenni: id,
       })
     return mapOperatingLicensesCSV(csv)
+  }
+
+  async getAlcoholLicences(): Promise<AlcoholLicence[]> {
+    const { id, api } = await this.createApi()
+
+    const alcoholLicences = await api.afengisleyfiGet({
+      audkenni: id,
+    })
+
+    return (alcoholLicences ?? []).map(mapAlcoholLicence)
+  }
+
+  async getTemporaryEventLicences(): Promise<TemporaryEventLicence[]> {
+    const { id, api } = await this.createApi()
+
+    const temporaryEventLicences = await api.taekifaerisleyfiGet({
+      audkenni: id,
+    })
+
+    return (temporaryEventLicences ?? []).map(mapTemporaryEventLicence)
   }
 
   async sealDocument(document: string): Promise<SvarSkeyti> {

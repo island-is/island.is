@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { UserSubscriptionResult } from './userSubscriptionResult.model'
 import { UserCaseSubscriptionResult } from './userCaseSubscriptionResult.model'
 
 @ObjectType('ConsultationPortalUserSubscriptionsAggregate')
@@ -12,9 +13,9 @@ export class UserSubscriptionsAggregate {
   @Field(() => [UserCaseSubscriptionResult], { nullable: true })
   cases?: UserCaseSubscriptionResult[] | null
 
-  @Field(() => [UserCaseSubscriptionResult], { nullable: true })
-  institutions?: UserCaseSubscriptionResult[] | null
+  @Field(() => [UserSubscriptionResult], { nullable: true })
+  institutions?: UserSubscriptionResult[] | null
 
-  @Field(() => [UserCaseSubscriptionResult], { nullable: true })
-  policyAreas?: UserCaseSubscriptionResult[] | null
+  @Field(() => [UserSubscriptionResult], { nullable: true })
+  policyAreas?: UserSubscriptionResult[] | null
 }

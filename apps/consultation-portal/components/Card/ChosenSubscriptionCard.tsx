@@ -32,15 +32,58 @@ export const ChosenSubscriptionCard = ({
     setIsOpen(!isOpen)
   }
 
-  const onCheckboxChange = (id: number) => {
+  const onCheckboxChange = (id: string | number) => {
     const sub = [...subscriptionArray[mapIsToEn[data.area]]]
     const subArr = { ...subscriptionArray }
-    const idx = sub.indexOf(id)
-    sub.splice(idx, 1)
-    subArr[mapIsToEn[data.area]] = sub
+    if (typeof id === 'string') {
+      let generalsub = subscriptionArray['generalSubscription']
+      generalsub = ''
+      subArr['generalSubscription'] = generalsub
+    } else {
+      const idx = sub.indexOf(id)
+      sub.splice(idx, 1)
+      subArr[mapIsToEn[data.area]] = sub
+    }
+
     return setSubscriptionArray(subArr)
   }
-
+  if (typeof data?.id === 'string') {
+    return (
+      <Box
+        borderColor={'blue400'}
+        borderRadius="large"
+        borderWidth="standard"
+        background="white"
+        paddingX={3}
+        paddingY={3}
+        rowGap={3}
+      >
+        <Box display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
+          <Box display="flex" flexDirection="row" columnGap={3}>
+            <Checkbox
+              checked={true}
+              onChange={() => onCheckboxChange(data?.id)}
+            />
+            <Box>
+              <Text
+                lineHeight="sm"
+                variant="h5"
+                color={data?.area === 'Mál' ? 'dark400' : 'blue400'}
+              >
+                {data?.area === 'Mál' ? data?.caseNumber : data?.name}
+              </Text>
+            </Box>
+            {data?.area === 'Mál' && (
+              <Box>
+                <Text variant="medium">{data?.name}</Text>
+              </Box>
+            )}
+          </Box>
+          <Box style={{ height: '24px' }}></Box>
+        </Box>
+      </Box>
+    )
+  }
   return (
     <Box
       borderColor={'blue400'}
@@ -55,7 +98,7 @@ export const ChosenSubscriptionCard = ({
         <Box display="flex" flexDirection="row" columnGap={3}>
           <Checkbox
             checked={true}
-            onChange={() => onCheckboxChange(parseInt(data?.id))}
+            onChange={() => onCheckboxChange(data?.id)}
           />
           <FocusableBox onClick={onClick}>
             <Text
@@ -66,7 +109,11 @@ export const ChosenSubscriptionCard = ({
               {data?.area === 'Mál' ? data?.caseNumber : data?.name}
             </Text>
           </FocusableBox>
-          {data?.area === 'Mál' && <Text variant="medium">{data?.name}</Text>}
+          {data?.area === 'Mál' && (
+            <FocusableBox onClick={onClick}>
+              <Text variant="medium">{data?.name}</Text>
+            </FocusableBox>
+          )}
         </Box>
         <FocusableBox onClick={onClick} style={{ height: '24px' }}>
           <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />

@@ -32,3 +32,12 @@ WithSubLabel.args = {
 
 export const WithTooltip = Template.bind({})
 WithTooltip.args = { label: 'With a tooltip', tooltip: 'This is the tooltip' }
+
+export const WithError = Template.bind({})
+WithError.args = {
+  label: 'My label',
+  large: false,
+  errorMessage: 'This is the error message',
+  hasError: true,
+  id: 'errormsg',
+}

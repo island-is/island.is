@@ -4,15 +4,15 @@ import {
   Table as T,
   Box,
   ResponsiveSpace,
-  Hidden,
-  GridColumn,
-  GridRow,
+  useBreakpoint,
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionTable.css'
 import { mapIsToEn } from '../../utils/helpers'
 import SubscriptionTableItem from './SubscriptionTableItem'
 import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
 import { Area } from '../../types/enums'
+import SubscriptionTableAllItem from './SubscriptionTableAllItems'
+import { GeneralSubscriptionArray } from '../../utils/dummydata'
 
 export interface SubscriptionTableProps {
   data: Array<Case> | Array<ArrOfIdAndName>
@@ -33,10 +33,9 @@ const SubscriptionTable = ({
   subscriptionArray,
   setSubscriptionArray,
 }: SubscriptionTableProps) => {
-  let headerKey = 0
-
-  const onCheckboxChange = (id: number, action: boolean) => {
+  const onCheckboxChange = (id: string | number, action: boolean) => {
     const sub = [...subscriptionArray[mapIsToEn[currentTab]]]
+
     const subArr = { ...subscriptionArray }
     if (action) {
       sub.push(id)
@@ -47,79 +46,121 @@ const SubscriptionTable = ({
     subArr[mapIsToEn[currentTab]] = sub
     return setSubscriptionArray(subArr)
   }
+  const onAllChecked = (item, action) => {
+    let sub = subscriptionArray['generalSubscription']
+    const subArr = { ...subscriptionArray }
+    if (action) {
+      sub = item.id
+    } else {
+      sub = ''
+    }
+    subArr['generalSubscription'] = sub
 
-  const checkboxStatus = (id: number) => {
+    return setSubscriptionArray(subArr)
+  }
+  const checkboxStatus = (id: string | number) => {
     return subscriptionArray[mapIsToEn[currentTab]].includes(id)
+  }
+  const checkboxAllStatus = (id: string | number) => {
+    return subscriptionArray['generalSubscription'] == id
   }
 
   const paddingTop = [3, 3, 3, 5, 5] as ResponsiveSpace
 
+  const { md: mdBreakpoint } = useBreakpoint()
+  const { Table, Head, Row, HeadData, Body } = T
+
   return (
     <Box paddingTop={paddingTop}>
-      <GridRow>
-        <GridColumn span={'12/12'}>
-          <T.Table>
-            <T.Head>
-              <T.HeadData
-                width="10"
-                key={headerKey++}
-                box={{ background: 'transparent', borderColor: 'transparent' }}
+      <Table>
+        <Head>
+          <Row>
+            <HeadData
+              width="10"
+              key={'tableHeaderKey_checkmark'}
+              box={{
+                background: 'transparent',
+                borderColor: 'transparent',
+              }}
+            >
+              <Icon
+                icon="checkmark"
+                color="blue400"
+                className={styles.checkmarkIcon}
+              />
+            </HeadData>
+            {currentTab !== Area.case ? (
+              <HeadData
+                text={{ variant: 'h4' }}
+                key={'tableHeaderKey_0'}
+                box={{
+                  background: 'transparent',
+                  borderColor: 'transparent',
+                }}
               >
-                <Icon
-                  icon="checkmark"
-                  color="blue400"
-                  className={styles.checkmarkIcon}
-                />
-              </T.HeadData>
-              {currentTab !== Area.case ? (
-                <T.HeadData
+                {Headers[currentTab][0]}
+              </HeadData>
+            ) : mdBreakpoint ? (
+              <>
+                <HeadData
+                  width="120"
                   text={{ variant: 'h4' }}
                   box={{
                     background: 'transparent',
                     borderColor: 'transparent',
                   }}
+                  key={'tableHeaderKey_1'}
                 >
                   {Headers[currentTab][0]}
-                </T.HeadData>
-              ) : (
-                <>
-                  <T.HeadData
-                    text={{ variant: 'h4' }}
-                    box={{
-                      background: 'transparent',
-                      borderColor: 'transparent',
-                    }}
-                  >
-                    <Hidden below="lg">{Headers[currentTab][0]}</Hidden>
-                    <Hidden above="md">{Headers[currentTab][2]}</Hidden>
-                  </T.HeadData>
-                  <T.HeadData
-                    text={{ variant: 'h4' }}
-                    box={{
-                      background: 'transparent',
-                      borderColor: 'transparent',
-                    }}
-                  >
-                    <Hidden below="lg">{Headers[currentTab][1]}</Hidden>
-                  </T.HeadData>
-                </>
-              )}
-            </T.Head>
-            <T.Body>
-              {data.map((item, idx: number) => (
-                <SubscriptionTableItem
-                  key={item.id}
-                  item={item}
-                  idx={idx}
-                  checkboxStatus={checkboxStatus}
-                  onCheckboxChange={onCheckboxChange}
-                  currentTab={currentTab}
-                />
-              ))}
-            </T.Body>
-          </T.Table>
-        </GridColumn>
-      </GridRow>
+                </HeadData>
+                <HeadData
+                  text={{ variant: 'h4' }}
+                  box={{
+                    background: 'transparent',
+                    borderColor: 'transparent',
+                  }}
+                  key={'tableHeaderKey_2'}
+                >
+                  {Headers[currentTab][1]}
+                </HeadData>
+              </>
+            ) : (
+              <HeadData
+                text={{ variant: 'h4' }}
+                box={{ background: 'transparent', borderColor: 'transparent' }}
+                key={'tableHeaderKey_3'}
+              >
+                {Headers[currentTab][2]}
+              </HeadData>
+            )}
+          </Row>
+        </Head>
+        <Body>
+          {GeneralSubscriptionArray.map((item, index) => {
+            return (
+              <SubscriptionTableAllItem
+                key={index}
+                item={item}
+                checkboxStatus={checkboxAllStatus}
+                onCheckboxChange={onAllChecked}
+                currentTab={currentTab}
+                mdBreakpoint={mdBreakpoint}
+              />
+            )
+          })}
+          {data.map((item, idx: number) => (
+            <SubscriptionTableItem
+              key={item.id}
+              item={item}
+              idx={idx}
+              checkboxStatus={checkboxStatus}
+              onCheckboxChange={onCheckboxChange}
+              currentTab={currentTab}
+              mdBreakpoint={mdBreakpoint}
+            />
+          ))}
+        </Body>
+      </Table>
     </Box>
   )
 }

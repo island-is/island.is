@@ -14,5 +14,13 @@ export const educationNavigation: PortalNavigationItem = {
       name: m.myEducation,
       path: EducationPaths.EducationRoot,
     },
+    {
+      name: m.educationAssessment,
+      path: EducationPaths.EducationAssessment,
+    },
+    {
+      name: m.educationGraduation,
+      path: EducationPaths.EducationHaskoliGraduation,
+    },
   ],
 }
