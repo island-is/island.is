@@ -275,36 +275,5 @@ describe('transformCase', () => {
       expect(res.appealedDate).toBeDefined()
       expect(res.hasBeenAppealed).toBe(true)
     })
-
-    // it('should have correct prosecutor and defender statement dates', () => {
-    //   // Arrange
-    //   const courtEndTime = new Date()
-    //   courtEndTime.setDate(courtEndTime.getDate() - 1)
-    //   const theCase = {
-    //     caseFiles: [
-    //       {
-    //         id: '123',
-    //         created: '2021-06-14T19:50:08.033Z',
-    //         name: 'ProsecutorStatement',
-    //         category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-    //       },
-    //       {
-    //         id: '1234',
-    //         created: '2021-06-15T19:50:08.033Z',
-    //         name: 'DefenderStatement',
-    //         category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-    //       },
-    //     ],
-    //   } as Case
-
-    //   // Act
-    //   const res = transformCase(theCase)
-
-    //   // Assert
-    //   //expect(res.defenderStatementDate).toBeDefined()
-    //   //expect(res.isStatementDeadlineExpired).toBe(true)
-
-    //   expect(res.prosecutorStatementDate).toBeDefined()
-    // })
   })
 })
