@@ -58,9 +58,9 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
       AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
-        dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
-        staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
-        prod: ref((h) => h.svc('loftbru.island.is')),
+        dev: 'loftbru.dev01.devland.is',
+        staging: 'loftbru.staging01.devland.is',
+        prod: 'loftbru.island.is',
       },
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
@@ -247,7 +247,6 @@ export const serviceSetup = (services: {
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
-      RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
