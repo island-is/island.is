@@ -40,7 +40,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     flyers,
     ships,
     vehicles,
-    guns
+    guns,
   }
 }
 
