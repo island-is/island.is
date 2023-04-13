@@ -114,7 +114,7 @@ yarn affected:e2e
 
 ### Running System E2E tests
 
-To execute end-to-end tests via [Playwright](https://playwright.dev), run one or more files. The way to specify these, is similar as described in the docs [here](https://playwright.dev/docs/running-tests). 
+To execute end-to-end tests via [Playwright](https://playwright.dev), run one or more files. The way to specify these, is similar as described in the docs [here](https://playwright.dev/docs/running-tests). `yarn system-e2e` is a convenience script which runs `playwright test` with the `system-e2e` Playwright config.
 
 ```bash
 yarn system-e2e myfile.spec.ts
