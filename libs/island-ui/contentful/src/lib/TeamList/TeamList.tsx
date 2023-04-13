@@ -52,15 +52,14 @@ export const TeamList: FC<TeamListProps> = ({ teamMembers }) => {
   return (
     <GridRow>
       {teamMembers.map((member, index) => {
-        let image = member.image.url + imagePostfix
+        let image = `${member.image.url}${imagePostfix}`
 
-        if (selectedIndex === index) {
-          let selectedImageUrl = member.imageOnSelect?.url
-          if (selectedImageUrl) {
-            selectedImageUrl += imagePostfix
-            if (loadedImageUrls[selectedImageUrl] === true) {
-              image = selectedImageUrl
-            }
+        if (selectedIndex === index && member.imageOnSelect?.url) {
+          const selectedImageUrl = `${member.imageOnSelect.url}${imagePostfix}`
+          const selectedImageHasLoaded = loadedImageUrls[selectedImageUrl]
+
+          if (selectedImageHasLoaded) {
+            image = selectedImageUrl
           }
         }
 
