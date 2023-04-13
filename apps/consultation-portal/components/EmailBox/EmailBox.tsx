@@ -4,6 +4,7 @@ import initApollo from '../../graphql/client'
 import { SUB_GET_EMAIL } from '../../graphql/queries.graphql'
 import { useLogIn, useUser } from '../../utils/helpers'
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 const emailIsValid = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -24,7 +25,7 @@ export const EmailBox = () => {
     fetchPolicy: 'cache-first',
     variables: {},
   })
-
+  const router = useRouter()
   const onChangeEmail = (e) => {
     const nextInputVal = e.target.value
     setInputVal(nextInputVal)
@@ -93,7 +94,7 @@ export const EmailBox = () => {
         },
         {
           label: 'Sjá áskriftir',
-          onClick: () => console.log('should render a list of subscriptions'),
+          onClick: () => router.push('/minaraskriftir'),
         },
       ]}
     />
