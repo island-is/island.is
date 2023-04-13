@@ -74,6 +74,8 @@ export default {
     'overviewLinks',
     'introLinkImage',
     'price',
+    'teamList',
+    'teamMember',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],
