@@ -12,7 +12,7 @@ export const ConsultationPortalClientConfig = defineConfig({
     return {
       basePath: env.required(
         'CONSULTATION_PORTAL_CLIENT_BASE_PATH',
-        'https://samradapi-test.island.is',
+        'https://samradapi-test.devland.is',
       ),
     }
   },

@@ -39,7 +39,6 @@ export class DisabilityLicenseClientService implements GenericLicenseClient {
     let parsedInput
     try {
       parsedInput = JSON.parse(inputData) as VerifyInputData
-      this.logger.debug(JSON.stringify(parsedInput))
     } catch (ex) {
       return {
         ok: false,

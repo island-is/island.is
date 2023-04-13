@@ -10,7 +10,7 @@ export const buildHistoryItems = (
   application: ApplicationCardFields,
   formatMessage: FormatMessage,
   dateFormat: string,
-  openApplication: () => void,
+  openApplication?: () => void,
 ): ApplicationCardHistoryItem[] | undefined => {
   if (application.status === ApplicationStatus.DRAFT) return
 
@@ -31,17 +31,19 @@ export const buildHistoryItems = (
             application.actionCard.pendingAction.content ?? '',
           )}
           action={
-            <Box>
-              <Button
-                variant="text"
-                size="small"
-                nowrap
-                onClick={openApplication}
-                icon="pencil"
-              >
-                {formatMessage(coreMessages.cardButtonDraft)}
-              </Button>
-            </Box>
+            openApplication !== undefined ? (
+              <Box>
+                <Button
+                  variant="text"
+                  size="small"
+                  nowrap
+                  onClick={openApplication}
+                  icon="pencil"
+                >
+                  {formatMessage(coreMessages.cardButtonDraft)}
+                </Button>
+              </Box>
+            ) : undefined
           }
         />
       ) : undefined,

@@ -10,3 +10,8 @@ export const TemporaryEventLicencesList = dynamic(
     import('./CardLists/TemporaryEventLicencesList/TemporaryEventLicencesList'),
   { ssr: true },
 )
+
+export const BrokersList = dynamic(
+  () => import('./TableLists/BrokersList/BrokersList'),
+  { ssr: true },
+)

@@ -24,11 +24,14 @@ import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
-import { useUser } from '../../utils/helpers'
+import { useLogIn } from '../../utils/helpers'
+import { useContext } from 'react'
+import { UserContext } from '../../context'
 
 const CaseScreen = ({ chosenCase, advices }) => {
   const { contactEmail, contactName } = chosenCase
-  const { isAuthenticated, user } = useUser()
+  const { isAuthenticated, user } = useContext(UserContext)
+  const LogIn = useLogIn()
 
   return (
     <Layout
@@ -114,7 +117,7 @@ const CaseScreen = ({ chosenCase, advices }) => {
                     ? chosenCase.documents.map((doc, index) => {
                         return (
                           <LinkV2
-                            href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                            href={`https://samradapi-test.devland.is/api/Documents/${doc.id}`}
                             color="blue400"
                             underline="normal"
                             underlineVisibility="always"
@@ -133,15 +136,21 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   headingColor="blue400"
                   title="Viltu senda umsögn?"
                 >
-                  Öllum er frjálst að taka þátt í samráðinu. Skráðu þig inn og
-                  sendu umsögn.
+                  Öllum er frjálst að taka þátt í samráðinu.
+                  {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
                 </StackedTitleAndDescription>
                 <Box paddingTop={2}>
-                  <Link href="#write-review" shallow>
-                    <Button fluid iconType="outline" nowrap as="a">
-                      Senda umsögn
+                  {isAuthenticated ? (
+                    <Link href="#write-review" shallow>
+                      <Button fluid iconType="outline" nowrap as="a">
+                        Senda umsögn
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button fluid iconType="outline" nowrap onClick={LogIn}>
+                      Skrá mig inn
                     </Button>
-                  </Link>
+                  )}
                 </Box>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
