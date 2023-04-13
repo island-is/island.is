@@ -7,6 +7,7 @@ import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
 import { UserEmailResult } from '../models/userEmailResult.model'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
 
 @Injectable()
 export class UserService {
@@ -36,5 +37,10 @@ export class UserService {
   async getUserEmail(auth: User): Promise<UserEmailResult> {
     const emailResponse = await this.userApiWithAuth(auth).apiUserEmailGet()
     return emailResponse
+  }
+
+  async getUserSubscriptions(auth: User): Promise<UserSubscriptionsAggregate> {
+    const response = await this.userApiWithAuth(auth).apiUserSubscriptionsGet()
+    return response
   }
 }
