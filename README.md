@@ -140,7 +140,11 @@ Running System E2E tests which rely on mocking external dependencies is the same
 yarn infra render-local-env  --service=<service-name-1> ... --service=<service-name-N> 
 ```
 
-You will get output similar to this one:
+For example, if you are running `application-system-form` you would run
+```bash
+yarn infra render-local-env  --service=application-system-form
+```
+And you would get something similar to this:
 ```bash
 {
   services: {
