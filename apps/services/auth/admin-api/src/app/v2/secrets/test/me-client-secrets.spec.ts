@@ -172,7 +172,7 @@ const testCases: Record<string, TestCase> = {
     client: clients[1].clientId,
     post: {
       expected: {
-        status: 400,
+        status: 204,
       },
     },
     get: {

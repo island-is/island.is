@@ -7,6 +7,7 @@ import sha256 from 'crypto-js/sha256'
 import { uuid } from 'uuidv4'
 
 import { Client, ClientSecret } from '@island.is/auth-api-lib'
+import { NoContentException } from '@island.is/nest/problem'
 
 import { environment } from '../../../environments'
 import { ClientSecretDto } from './dto/client-secret.dto'
@@ -43,7 +44,7 @@ export class ClientSecretsService {
 
   async create(tenantId: string, clientId: string): Promise<ClientSecretDto> {
     if (!(await this.belongsToTenant(clientId, tenantId))) {
-      throw new BadRequestException('Client does not belong to tenant')
+      throw new NoContentException()
     }
 
     if (environment.clientSecretEncryptionKey === undefined) {
@@ -74,7 +75,7 @@ export class ClientSecretsService {
     id: string,
   ): Promise<number> {
     if (!(await this.belongsToTenant(clientId, tenantId)) || !id) {
-      return new Promise<number>((resolve) => resolve(0))
+      throw new NoContentException()
     }
 
     return this.clientSecretModel.destroy({
