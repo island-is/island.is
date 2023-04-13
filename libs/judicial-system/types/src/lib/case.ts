@@ -521,13 +521,14 @@ export function getAppealInfo(theCase: Case): Case {
     //implemented the ability to record when the statement was sent
     //also this doesn't work for defenders yet because they don't have
     //file access
-    appealInfo.defenderStatementDate = caseFiles?.find(
-      (cf) => cf.category === CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-    )?.created
-    appealInfo.prosecutorStatementDate = caseFiles?.find(
-      (cf) => cf.category === CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-    )?.created
   }
+
+  appealInfo.defenderStatementDate = caseFiles?.find(
+    (cf) => cf.category === CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+  )?.created
+  appealInfo.prosecutorStatementDate = caseFiles?.find(
+    (cf) => cf.category === CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  )?.created
 
   return appealInfo
 }
