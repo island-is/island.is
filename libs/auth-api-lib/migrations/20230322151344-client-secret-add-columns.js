@@ -33,6 +33,12 @@ module.exports = {
       type: 'primary key',
       name: 'client_secret_pkey',
     })
+
+    await queryInterface.addConstraint('client_secret', {
+      fields: ['client_id', 'value'],
+      type: 'unique',
+      name: 'client_secret_unique',
+    })
   },
 
   async down(queryInterface, Sequelize) {
@@ -45,6 +51,11 @@ module.exports = {
         transaction,
       })
     })
+
+    await queryInterface.removeConstraint(
+      'client_secret',
+      'client_secret_unique',
+    )
 
     await queryInterface.addConstraint('client_secret', {
       fields: ['client_id', 'value'],
