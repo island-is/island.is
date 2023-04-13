@@ -55,8 +55,11 @@ const SubscriptionTableAllItem = ({
         {currentTab !== Area.case ? (
           <Data>
             <FocusableBox>
-              <Text variant="h5">
-                {item.nr}: {item.name}
+              <Text variant="h5">{item.nr}</Text>
+            </FocusableBox>
+            <FocusableBox>
+              <Text variant="medium" fontWeight="light">
+                {item.name}
               </Text>
             </FocusableBox>
           </Data>

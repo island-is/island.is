@@ -62,7 +62,7 @@ const SubscriptionTable = ({
     return subscriptionArray[mapIsToEn[currentTab]].includes(id)
   }
   const checkboxAllStatus = (id: string | number) => {
-    return subscriptionArray['generalSubscription'].includes(id)
+    return subscriptionArray['generalSubscription'] == id
   }
 
   const paddingTop = [3, 3, 3, 5, 5] as ResponsiveSpace
