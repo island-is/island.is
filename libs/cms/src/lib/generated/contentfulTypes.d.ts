@@ -2563,6 +2563,37 @@ export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
   }
 }
 
+export interface IPriceFields {
+  /** Title */
+  title: string
+
+  /** Reference Identifier */
+  referenceIdentifier: string
+
+  /** Amount */
+  amount: number
+
+  /** Organization */
+  organization: IOrganization
+}
+
+export interface IPrice extends Entry<IPriceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'price'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProcessEntryFields {
   /** Type */
   type:
@@ -4047,6 +4078,7 @@ export type CONTENT_TYPE =
   | 'overviewLinks'
   | 'pageHeader'
   | 'powerBiSlice'
+  | 'price'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'
