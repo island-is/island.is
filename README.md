@@ -98,6 +98,7 @@ yarn affected:test
 ```
 
 ### Running end-to-end tests (deprecated)
+
 **Note: We no longer encourage writing these tests, please consider writing System E2E test (see below)**
 
 To execute end-to-end tests via [Cypress](https://www.cypress.io):
@@ -121,30 +122,35 @@ yarn system-e2e myfile.spec.ts
 ```
 
 To see the execution of your tests in the browser:
+
 ```bash
 yarn system-e2e myfile.spec.ts --headed
 ```
+
 To run in debug mode:
+
 ```bash
 yarn system-e2e myfile.spec.ts --debug
 ```
 
 For a more detailed guide on writing System E2E tests, please see this [internal Notion page](https://www.notion.so/System-E2E-testing-workshop-29c089c182844933b992015c4ef24791?pvs=4).
 
-
 ### Running System E2E tests with mocks
 
 Running System E2E tests which rely on mocking external dependencies is the same, except the local development environment must support wire-mocking (mountebank). To prepare such a local environment it is best to use the command that discovers the dependencies of the component(s) you will be testing and prepares configuration for running them. To get a list of the services you might need to run in addition to the mountebank configuration:
 
 ```bash
-yarn infra render-local-env  --service=<service-name-1> ... --service=<service-name-N> 
+yarn infra render-local-env  --service=<service-name-1> ... --service=<service-name-N>
 ```
 
 For example, if you are running `application-system-form` you would run
+
 ```bash
 yarn infra render-local-env  --service=application-system-form
 ```
+
 And you would get something similar to this:
+
 ```bash
 {
   services: {
@@ -161,6 +167,7 @@ And you would get something similar to this:
   mocks: 'docker run -it --rm -p 2525:2525 -p 9388:9388 -p 9372:9372 -v ./infra/mountebank-imposter-config.json:/app/default.json:z docker.io/bbyars/mountebank:2.8.1 start --configfile=/app/default.json'
 }
 ```
+
 Each service will get the secrets it is configured to use, still you will need to run local DB setup for the services you are running - dev-init, etc. Additionally, any local dev proxies will also need to be run manually (e.g. `run-xroad-proxy.sh`).
 
 It is not necessary to run all the dependencies/services, only the ones that will be actually used.
