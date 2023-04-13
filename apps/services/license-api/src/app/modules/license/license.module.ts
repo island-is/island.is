@@ -20,8 +20,15 @@ import { ConfigType } from '@nestjs/config'
 import { FirearmLicenseApiClientConfig } from './clients/firearmLicense/firearmLicenseApiClient.config'
 import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/disabilityLicenseClient.config'
 
+import { DrivingLicenseApiClientService } from './clients/drivingLicense/drivingLicenseApiClient.service'
+import { DrivingLicenseApiClientModule } from './clients/drivingLicense/drivingLicenseApiClient.module'
+
 @Module({
-  imports: [DisabilityLicenseApiClientModule, FirearmLicenseApiClientModule],
+  imports: [
+    DisabilityLicenseApiClientModule,
+    FirearmLicenseApiClientModule,
+    DrivingLicenseApiClientModule,
+  ],
   controllers: [LicensesController, UserLicensesController],
   providers: [
     {
@@ -50,8 +57,11 @@ import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/di
       useFactory: (
         disabilityClient: DisabilityLicenseClientService,
         firearmClient: FirearmLicenseApiClientService,
+        drivingClient: DrivingLicenseApiClientService,
       ) => async (type: LicenseId): Promise<GenericLicenseClient | null> => {
         switch (type) {
+          case LicenseId.DRIVING_LICENSE:
+            return drivingClient
           case LicenseId.DISABILITY_LICENSE:
             return disabilityClient
           case LicenseId.FIREARM_LICENSE:
@@ -60,7 +70,11 @@ import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/di
             return null
         }
       },
-      inject: [DisabilityLicenseClientService, FirearmLicenseApiClientService],
+      inject: [
+        DisabilityLicenseClientService,
+        FirearmLicenseApiClientService,
+        DrivingLicenseApiClientService,
+      ],
     },
     LicenseService,
   ],
