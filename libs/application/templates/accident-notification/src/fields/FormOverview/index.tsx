@@ -1,9 +1,6 @@
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps, FormValue } from '@island.is/application/types'
-import {
-  formatPhoneNumber,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { ReviewGroup } from '@island.is/application/ui-components'
 import {
   AlertMessage,
   Box,
@@ -39,6 +36,7 @@ import {
   workMachine,
 } from '../../lib/messages'
 import {
+  formatPhonenumber,
   getAttachmentTitles,
   getWorkplaceData,
   hideLocationAndPurpose,
@@ -169,7 +167,7 @@ export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
             <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
               <ValueLine
                 label={applicantInformation.labels.tel}
-                value={formatPhoneNumber(answers.applicant.phoneNumber)}
+                value={formatPhonenumber(answers.applicant.phoneNumber)}
               />
             </GridColumn>
           )}
@@ -215,7 +213,7 @@ export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
                 <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
                   <ValueLine
                     label={injuredPersonInformation.labels.tel}
-                    value={formatPhoneNumber(
+                    value={formatPhonenumber(
                       answers.injuredPersonInformation.phoneNumber,
                     )}
                   />
@@ -449,7 +447,7 @@ export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
                     <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
                       <ValueLine
                         label={workplaceData.representitiveMsg.labels.tel}
-                        value={formatPhoneNumber(
+                        value={formatPhonenumber(
                           workplaceData.representitive.phoneNumber,
                         )}
                       />
