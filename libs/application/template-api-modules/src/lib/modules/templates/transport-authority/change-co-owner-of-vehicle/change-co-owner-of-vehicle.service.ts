@@ -163,8 +163,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
           isMainOperator: operator.isMainOperator || false,
         })),
         coOwners: filteredCoOwners.map((x) => ({
-          ssn: x.nationalId,
-          email: x.email,
+          ssn: x.nationalId!,
+          email: x.email!,
         })),
       },
     )
@@ -439,8 +439,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         isMainOperator: operator.isMainOperator || false,
       })),
       coOwners: filteredCoOwners.map((x) => ({
-        ssn: x.nationalId,
-        email: x.email,
+        ssn: x.nationalId!,
+        email: x.email!,
       })),
     })
 
