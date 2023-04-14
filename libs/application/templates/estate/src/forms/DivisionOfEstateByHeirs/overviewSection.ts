@@ -191,8 +191,8 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
-                  (guns) => (guns as any).enabled,
+                ((answers.estate as unknown) as EstateInfo)?.guns.filter(
+                  (guns) => guns.enabled,
                 ) ?? []
               ).map((gun) => ({
                 title: gun.description,
@@ -200,8 +200,8 @@ export const overview = buildSection({
                   m.propertyNumber.defaultMessage + ': ' + gun.assetNumber,
                   m.overviewMarketValue.defaultMessage +
                     ': ' +
-                    ((gun as any).marketValue
-                      ? formatCurrency((gun as any).marketValue)
+                    (gun.marketValue
+                      ? formatCurrency(gun.marketValue)
                       : '0 kr.'),
                 ],
               })),

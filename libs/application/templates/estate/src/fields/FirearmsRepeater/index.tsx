@@ -98,7 +98,7 @@ export const FirearmsRepeater: FC<FieldBaseProps<Answers>> = ({
                   disabled={!asset.enabled}
                   backgroundColor="blue"
                   placeholder="0 kr."
-                  defaultValue={(asset as any).marketValue}
+                  defaultValue={asset.marketValue}
                   currency
                   size="sm"
                 />
@@ -189,7 +189,7 @@ export const FirearmsRepeater: FC<FieldBaseProps<Answers>> = ({
                   id={marketValueField}
                   name={marketValueField}
                   label={formatMessage(m.marketValueTitle)}
-                  defaultValue={(field as any).marketValue}
+                  defaultValue={field.marketValue}
                   placeholder={'0 kr.'}
                   currency
                   size="sm"

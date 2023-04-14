@@ -212,6 +212,7 @@ export type EstateAsset = {
   assetNumber: string
   share: number
   enabled?: boolean
+  marketValue?: string
 }
 
 export interface EstateRegistrant extends EstateCommon {
