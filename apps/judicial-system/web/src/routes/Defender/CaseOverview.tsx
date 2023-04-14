@@ -15,7 +15,6 @@ import {
   SignedDocument,
   PageHeader,
   Modal,
-  AppealAlertBanner,
 } from '@island.is/judicial-system-web/src/components'
 import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -46,18 +45,21 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components/Fe
 import * as constants from '@island.is/judicial-system/consts'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
+import { AlertBanner } from '../../components/AlertBanner'
+import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
 
 type availableModals = 'NoModal' | 'ConfirmAppealAfterDeadline'
 
 export const CaseOverview: React.FC = () => {
-  const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
-  const router = useRouter()
-  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
-
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
+
+  const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
+  const { title, description, child } = useAppealAlertBanner(workingCase)
+  const router = useRouter()
+  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const titleForCase = (theCase: Case) => {
     if (theCase.state === CaseState.REJECTED) {
@@ -100,7 +102,9 @@ export const CaseOverview: React.FC = () => {
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
-        <AppealAlertBanner workingCase={workingCase} />
+        <AlertBanner title={title} description={description}>
+          {child}
+        </AlertBanner>
       )}
       <PageLayout
         workingCase={workingCase}

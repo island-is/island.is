@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import React, { ReactNode, useCallback, useContext, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
@@ -46,7 +40,6 @@ import {
   useRequestRulingSignature,
   SigningModal,
   UserContext,
-  AppealAlertBanner,
 } from '@island.is/judicial-system-web/src/components'
 import {
   useCase,
@@ -84,6 +77,8 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components/Fe
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import * as constants from '@island.is/judicial-system/consts'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -271,6 +266,9 @@ export const SignedVerdictOverview: React.FC = () => {
     isExtendingCase,
     isSendingNotification,
   } = useCase()
+  const { title, description, child } = useAppealAlertBanner(workingCase, () =>
+    setModalVisible('ConfirmAppealAfterDeadline'),
+  )
 
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
@@ -507,33 +505,13 @@ export const SignedVerdictOverview: React.FC = () => {
     return true
   }
 
-  const removeHash = async () => {
-    await router.replace(
-      `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}${appealDeadlineHash}`,
-      `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`,
-      { scroll: false },
-    )
-  }
-
-  useEffect(() => {
-    const onHashChangeStart = (url: string) => {
-      if (url.includes(appealDeadlineHash)) {
-        setModalVisible('ConfirmAppealAfterDeadline')
-      }
-    }
-
-    router.events.on('hashChangeStart', onHashChangeStart)
-
-    return () => {
-      router.events.off('hashChangeStart', onHashChangeStart)
-    }
-  }, [router.events, router.query])
-
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
         (isProsecutionRole(user?.role) || isCourtRole(user?.role)) && (
-          <AppealAlertBanner workingCase={workingCase} />
+          <AlertBanner title={title} description={description}>
+            {child}
+          </AlertBanner>
         )}
       <PageLayout
         workingCase={workingCase}
@@ -1019,11 +997,9 @@ export const SignedVerdictOverview: React.FC = () => {
               m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
             )}
             onPrimaryButtonClick={async () => {
-              await removeHash()
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
             }}
             onSecondaryButtonClick={async () => {
-              await removeHash()
               setModalVisible('NoModal')
             }}
           />
