@@ -225,7 +225,6 @@ export const SignedVerdictOverview: React.FC = () => {
     refreshCase,
   } = useContext(FormContext)
 
-  const appealDeadlineHash = '#kaerufrestur_utrunninn'
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
   const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
   const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
