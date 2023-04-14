@@ -13,13 +13,13 @@ import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
-import { UserInformation } from '../../shared'
+import { CoOwnersInformation } from '../../shared'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: UserInformation
+  repeaterField: CoOwnersInformation
   handleRemove: (index: number) => void
   addNationalIdToCoOwners: (nationalId: string, index: number) => void
 }

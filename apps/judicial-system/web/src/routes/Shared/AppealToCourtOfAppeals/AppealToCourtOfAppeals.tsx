@@ -44,7 +44,7 @@ import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.stri
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
-  const { user } = useContext(UserContext)
+  const { limitedAccess, user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
@@ -64,9 +64,9 @@ const AppealToCourtOfAppeals = () => {
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
     : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const previousUrl = `${
-    isProsecutionRole(user?.role)
-      ? constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-      : constants.DEFENDER_ROUTE
+    limitedAccess
+      ? constants.DEFENDER_ROUTE
+      : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
   const allFilesUploaded = useMemo(() => {
     return displayFiles.every(

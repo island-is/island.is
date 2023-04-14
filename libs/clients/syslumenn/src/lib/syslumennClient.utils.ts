@@ -17,6 +17,7 @@ import {
   Logmenn,
   Afengisleyfi,
   Taekifaerisleyfi,
+  Verdbrefamidlari,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -42,6 +43,7 @@ import {
   Lawyer,
   OperatingLicensesCSV,
   TemporaryEventLicence,
+  Broker,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -121,6 +123,11 @@ export const mapRealEstateAgent = (agent: Fasteignasalar): RealEstateAgent => ({
 export const mapLawyer = (lawyer: Logmenn): Lawyer => ({
   name: lawyer.nafn?.trim() ?? '',
   licenceType: lawyer.tegundRettinda?.trim() ?? '',
+})
+
+export const mapBroker = (broker: Verdbrefamidlari): Broker => ({
+  name: broker.nafn?.trim() ?? '',
+  nationalId: broker.kennitala?.trim() ?? '',
 })
 
 export const mapOperatingLicense = (
@@ -341,6 +348,8 @@ export const mapEstateRegistrant = (
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
+    // TODO: update once implemented in District Commissioner's backend
+    guns: [],
     estateMembers: syslaData.adilarDanarbus
       ? syslaData.adilarDanarbus.map(estateMemberMapper)
       : [],
@@ -391,6 +400,8 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
+    // TODO: update once implemented in District Commissioner's backend
+    guns: [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],

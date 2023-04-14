@@ -125,6 +125,7 @@ export type { TabType } from './lib/Tabs/Tabs'
 
 // Styles
 export * as linkStyles from './lib/Link/Link.css'
+export * as alertBannerStyles from './lib/AlertBanner/AlertBanner.css'
 
 // Hooks
 export * from './hooks/useBreakpoint'

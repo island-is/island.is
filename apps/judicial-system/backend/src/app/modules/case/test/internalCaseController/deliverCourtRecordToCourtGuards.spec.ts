@@ -38,7 +38,7 @@ describe('InternalCaseController - Deliver court record to court guards', () => 
     })
   })
 
-  describe('CaseTypeGuerd', () => {
+  describe('CaseTypeGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
