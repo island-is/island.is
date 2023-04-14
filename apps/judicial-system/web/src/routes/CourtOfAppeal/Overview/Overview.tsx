@@ -25,11 +25,11 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
-import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
-import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 export const getStatementDeadline = (appealDate?: string) => {
   if (appealDate === undefined) {
