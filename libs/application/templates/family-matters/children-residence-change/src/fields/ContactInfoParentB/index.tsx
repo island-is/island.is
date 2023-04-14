@@ -31,14 +31,14 @@ const ContactInfoParentB = ({ errors, application }: CRCFieldBaseProps) => {
             id: emailId,
             label: formatMessage(contactInfo.inputs.emailLabel),
             error: emailError,
-            defaultValue: answers?.parentB?.email,
+            defaultValue: answers?.counterParty?.email,
           }}
           phoneNumber={{
             id: phoneNumberId,
             presentationId: phoneNumberPres,
             label: formatMessage(contactInfo.inputs.phoneNumberLabel),
             error: phoneNumberError,
-            defaultValue: answers?.parentB?.phoneNumber,
+            defaultValue: answers?.counterParty?.phoneNumber,
           }}
         />
       </Box>
