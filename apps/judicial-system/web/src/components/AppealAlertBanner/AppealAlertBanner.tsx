@@ -1,4 +1,3 @@
-import router from 'next/router'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -8,15 +7,15 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase } from '@island.is/judicial-system-web/src/types'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
-  DEFENDER_ROUTE,
+  STATEMENT_ROUTE,
+  DEFENDER_STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
+  isCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 import { LinkContext, LinkV2, Text } from '@island.is/island-ui/core'
@@ -28,61 +27,6 @@ import { AlertBanner } from '../AlertBanner'
 
 interface Props {
   workingCase: TempCase
-}
-
-interface AppealInfo {
-  canBeAppealed: boolean
-  hasBeenAppealed: boolean
-  appealDeadline?: string
-  appealedByRole?: UserRole
-  appealedDate?: string
-}
-
-export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
-  const {
-    courtEndTime,
-    appealState,
-    isAppealGracePeriodExpired,
-    accusedAppealDecision,
-    prosecutorAppealDecision,
-    prosecutorPostponedAppealDate,
-    accusedPostponedAppealDate,
-  } = workingCase
-
-  const canBeAppealed = Boolean(
-    courtEndTime &&
-      !appealState &&
-      !isAppealGracePeriodExpired &&
-      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
-  )
-
-  const hasBeenAppealed = Boolean(
-    appealState && appealState === CaseAppealState.Appealed,
-  )
-
-  const appealedByRole = prosecutorPostponedAppealDate
-    ? UserRole.Prosecutor
-    : accusedPostponedAppealDate
-    ? UserRole.Defender
-    : undefined
-
-  const appealedDate =
-    appealedByRole === UserRole.Prosecutor
-      ? prosecutorPostponedAppealDate ?? undefined
-      : accusedPostponedAppealDate ?? undefined
-
-  const appealDeadline = courtEndTime
-    ? getAppealEndDate(courtEndTime ?? '')
-    : undefined
-
-  return {
-    hasBeenAppealed,
-    canBeAppealed,
-    appealedByRole,
-    appealedDate,
-    appealDeadline,
-  } as AppealInfo
 }
 
 const renderLink = (text: string, href: string) => {
@@ -113,20 +57,57 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const appealDeadlineHash = '#kaerufrestur_utrunninn'
 
-  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
   const { workingCase } = props
+
   const {
+    prosecutorStatementDate,
+    defenderStatementDate,
+    statementDeadline,
+    hasBeenAppealed,
     appealedByRole,
     appealedDate,
     canBeAppealed,
-    hasBeenAppealed,
     appealDeadline,
-  } = getAppealInfo(workingCase)
+  } = workingCase
 
   let alertTitle, alertLinkTitle, alertLinkHref, alertDescription
 
-  if (hasBeenAppealed) {
+  const isCourtRoleUser = isCourtRole(user?.role)
+  const isProsecutionRoleUser = isProsecutionRole(user?.role)
+  const isDefenderRoleUser = user?.role === UserRole.Defender
+
+  // Deal with banners after case has been marked as Received by the judge
+  if (workingCase.appealState === CaseAppealState.Received) {
+    alertTitle = formatMessage(strings.statementTitle)
+    alertDescription = formatMessage(strings.statementDeadlineDescription, {
+      isStatementDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
+      statementDeadline: formatDate(statementDeadline, 'PPPp'),
+    })
+    if (
+      (isProsecutionRoleUser && prosecutorStatementDate) ||
+      (isDefenderRoleUser && defenderStatementDate)
+    ) {
+      //TODO: Make this text separate and green like in the design
+      //Needs to be implemented in island-ui component
+      alertDescription += ` ${formatMessage(strings.statementSentDescription, {
+        statementSentDate: isProsecutionRoleUser
+          ? formatDate(prosecutorStatementDate, 'PPPp')
+          : formatDate(defenderStatementDate, 'PPPp'),
+      })}`
+    } else if (isCourtRoleUser) {
+      alertDescription += ` ${formatMessage(
+        strings.appealReceivedNotificationSent,
+        { appealReceivedDate: formatDate(new Date(), 'PPPp') },
+      )}`
+    } else {
+      alertLinkTitle = formatMessage(strings.statementLinkText)
+      alertLinkHref = isDefenderRoleUser
+        ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
+        : `${STATEMENT_ROUTE}/${workingCase.id}`
+    }
+    // Handle banners when case has been appealed by either defendant or prosecutor
+    // but the judge has not yet marked it as received
+  } else if (hasBeenAppealed) {
     alertTitle = formatMessage(strings.statementTitle)
     alertDescription = formatMessage(strings.statementDescription, {
       actor:
@@ -140,7 +121,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
       ? renderLink(
           alertLinkTitle,
           `${
-            limitedAccess
+            isDefenderRoleUser
               ? constants.DEFENDER_ROUTE
               : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
           }/${workingCase.id}${appealDeadlineHash}`,
@@ -148,23 +129,23 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
       : renderLink(
           alertLinkTitle,
           `${
-            limitedAccess
+            isDefenderRoleUser
               ? constants.DEFENDER_APPEAL_ROUTE
               : constants.APPEAL_ROUTE
           }/${workingCase.id}`,
         )
   } else if (canBeAppealed) {
-    alertTitle = formatMessage(strings.appealTitle, {
+    alertTitle = formatMessage(strings.appealDeadlineTitle, {
       appealDeadline,
       isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired,
     })
     // We only want to display the appeal link to prosecution roles and the defender
     // not the judge
-    if (isProsecutionRole(user?.role) || user?.role === UserRole.Defender) {
+    if (isProsecutionRoleUser || isDefenderRoleUser) {
       alertLinkTitle = formatMessage(strings.appealLinkText)
       alertLinkHref = renderLink(
         alertLinkTitle,
-        limitedAccess
+        isDefenderRoleUser
           ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
           : `${APPEAL_ROUTE}/${workingCase.id}`,
       )

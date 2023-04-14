@@ -95,6 +95,7 @@ export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
 export const DEFENDER_ROUTE = '/verjandi'
 export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
+export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
 
 export const APPEAL_ROUTE = '/kaera'
 export const STATEMENT_ROUTE = '/greinargerd'
