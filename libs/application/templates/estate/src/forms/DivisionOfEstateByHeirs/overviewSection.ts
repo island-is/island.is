@@ -157,7 +157,7 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
+                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
                   (vehicle) => vehicle.enabled,
                 ) ?? []
               ).map((vehicle) => ({
@@ -191,7 +191,7 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.guns.filter(
+                ((answers.estate as unknown) as EstateInfo)?.guns?.filter(
                   (guns) => guns.enabled,
                 ) ?? []
               ).map((gun) => ({
