@@ -320,11 +320,11 @@ export const CaseOverview: React.FC = () => {
               m.confirmAppealAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={async () => {
-              await removeHash() // TODO REUSE THIS FUNTION FROM SIGNED VERDICT OVERVIWE PAGE
+              // await removeHash() // TODO REUSE THIS FUNTION FROM SIGNED VERDICT OVERVIWE PAGE
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
             }}
             onSecondaryButtonClick={async () => {
-              await removeHash()
+              // await removeHash()
               setModalVisible('NoModal')
             }}
           />

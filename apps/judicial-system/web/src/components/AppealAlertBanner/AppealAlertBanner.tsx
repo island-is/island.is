@@ -2,7 +2,6 @@ import router from 'next/router'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertBanner } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseAppealState,
@@ -20,10 +19,12 @@ import {
   CaseAppealDecision,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
+import { LinkContext, LinkV2, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { strings } from './AppealAlertBanner.strings'
 import { UserContext } from '../UserProvider/UserProvider'
+import { AlertBanner } from '../AlertBanner'
 
 interface Props {
   workingCase: TempCase
@@ -41,7 +42,7 @@ export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
   const {
     courtEndTime,
     appealState,
-    isAppealDeadlineExpired,
+    isAppealGracePeriodExpired,
     accusedAppealDecision,
     prosecutorAppealDecision,
     prosecutorPostponedAppealDate,
@@ -51,7 +52,7 @@ export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
   const canBeAppealed = Boolean(
     courtEndTime &&
       !appealState &&
-      !isAppealDeadlineExpired &&
+      !isAppealGracePeriodExpired &&
       (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
         prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
   )
@@ -84,6 +85,29 @@ export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
   } as AppealInfo
 }
 
+const renderLink = (text: string, href: string) => {
+  return (
+    <LinkContext.Provider
+      value={{
+        linkRenderer: (href, children) => (
+          <LinkV2
+            href={href}
+            color="blue400"
+            underline="small"
+            underlineVisibility="always"
+          >
+            {children}
+          </LinkV2>
+        ),
+      }}
+    >
+      <Text>
+        <a href={href}>{text}</a>
+      </Text>
+    </LinkContext.Provider>
+  )
+}
+
 const AppealAlertBanner: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -113,27 +137,37 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     })
     alertLinkTitle = formatMessage(strings.statementLinkText)
     alertLinkHref = workingCase.isAppealDeadlineExpired
-      ? `${
-          limitedAccess
-            ? constants.DEFENDER_ROUTE
-            : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-        }/${workingCase.id}${appealDeadlineHash}`
-      : `${
-          limitedAccess
-            ? constants.DEFENDER_APPEAL_ROUTE
-            : constants.APPEAL_ROUTE
-        }/${workingCase.id}`
+      ? renderLink(
+          alertLinkTitle,
+          `${
+            limitedAccess
+              ? constants.DEFENDER_ROUTE
+              : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+          }/${workingCase.id}${appealDeadlineHash}`,
+        )
+      : renderLink(
+          alertLinkTitle,
+          `${
+            limitedAccess
+              ? constants.DEFENDER_APPEAL_ROUTE
+              : constants.APPEAL_ROUTE
+          }/${workingCase.id}`,
+        )
   } else if (canBeAppealed) {
     alertTitle = formatMessage(strings.appealTitle, {
       appealDeadline,
+      isAppealDeadlineExpired: workingCase.isAppealDeadlineExpired,
     })
     // We only want to display the appeal link to prosecution roles and the defender
     // not the judge
     if (isProsecutionRole(user?.role) || user?.role === UserRole.Defender) {
       alertLinkTitle = formatMessage(strings.appealLinkText)
-      alertLinkHref = limitedAccess
-        ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
-        : `${APPEAL_ROUTE}/${workingCase.id}`
+      alertLinkHref = renderLink(
+        alertLinkTitle,
+        limitedAccess
+          ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
+          : `${APPEAL_ROUTE}/${workingCase.id}`,
+      )
     }
   } else return null
 
@@ -142,15 +176,9 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
       title={alertTitle}
       description={alertDescription}
       variant="warning"
-      link={
-        alertLinkHref && alertLinkTitle
-          ? {
-              href: alertLinkHref,
-              title: alertLinkTitle,
-            }
-          : undefined
-      }
-    />
+    >
+      {alertLinkHref}
+    </AlertBanner>
   )
 }
 
