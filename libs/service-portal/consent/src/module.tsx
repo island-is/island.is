@@ -7,8 +7,6 @@ import { m } from '@island.is/service-portal/core'
 
 import { ConsentPaths } from './lib/paths'
 
-const allowedScopes: string[] = [ApiScope.internal, ApiScope.internalProcuring]
-
 const Consent = lazy(() => import('./screens/Consent/Consent'))
 
 export const consentModule: PortalModule = {
