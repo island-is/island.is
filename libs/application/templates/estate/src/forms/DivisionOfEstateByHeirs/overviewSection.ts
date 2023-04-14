@@ -63,7 +63,7 @@ export const overview = buildSection({
             cards: ({ answers }: Application) =>
               (
                 ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
-                  (member) => (member as any).enabled,
+                  (member) => member.enabled,
                 ) ?? []
               ).map((member) => ({
                 title: member.name,
@@ -100,7 +100,7 @@ export const overview = buildSection({
             cards: ({ answers }: Application) =>
               (
                 ((answers.estate as unknown) as EstateInfo).assets.filter(
-                  (asset) => (asset as any).enabled,
+                  (asset) => asset.enabled,
                 ) ?? []
               ).map((asset) => ({
                 title: asset.description,
@@ -158,7 +158,7 @@ export const overview = buildSection({
             cards: ({ answers }: Application) =>
               (
                 ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
-                  (vehicle) => (vehicle as any).enabled,
+                  (vehicle) => vehicle.enabled,
                 ) ?? []
               ).map((vehicle) => ({
                 title: vehicle.description,
@@ -166,8 +166,8 @@ export const overview = buildSection({
                   m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
                   m.overviewMarketValue.defaultMessage +
                     ': ' +
-                    ((vehicle as any).marketValue
-                      ? formatCurrency((vehicle as any).marketValue)
+                    (vehicle.marketValue
+                      ? formatCurrency(vehicle.marketValue)
                       : '0 kr.'),
                 ],
               })),

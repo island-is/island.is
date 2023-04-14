@@ -205,6 +205,7 @@ export type EstateMember = {
   nationalId: string
   relation: string
   dateOfBirth?: string
+  enabled?: boolean
 }
 
 export type EstateAsset = {
