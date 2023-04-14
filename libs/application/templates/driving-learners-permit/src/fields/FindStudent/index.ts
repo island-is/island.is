@@ -1,1 +1,0 @@
-export { FindStudent } from './FindStudent'
