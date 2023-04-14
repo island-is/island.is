@@ -279,8 +279,6 @@ export const Cases: React.FC = () => {
     if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
   }
 
-  console.log(allPastCases, allActiveCases)
-
   return (
     <Box paddingX={[2, 2, 4]}>
       <Box
