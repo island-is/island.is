@@ -102,7 +102,7 @@ export const CaseOverview: React.FC = () => {
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
-        <AlertBanner title={title} description={description}>
+        <AlertBanner variant="warning" title={title} description={description}>
           {child}
         </AlertBanner>
       )}

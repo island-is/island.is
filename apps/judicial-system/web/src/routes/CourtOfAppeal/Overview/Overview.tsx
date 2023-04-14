@@ -18,7 +18,7 @@ import {
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { AlertBanner, Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
@@ -28,6 +28,8 @@ import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 export const getStatementDeadline = (appealDate?: string) => {
   if (appealDate === undefined) {
@@ -54,6 +56,7 @@ const CourtOfAppealOverview: React.FC = () => {
     caseId: workingCase.id,
   })
 
+  const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const router = useRouter()
@@ -79,21 +82,7 @@ const CourtOfAppealOverview: React.FC = () => {
 
   return (
     <>
-      <AlertBanner
-        title={formatMessage(strings.alertBannerTitle)}
-        description={formatMessage(strings.alertBannerMessage, {
-          isStatementDeadlineExpired:
-            workingCase.isStatementDeadlineExpired || false,
-          statementDeadline: formatDate(
-            getStatementDeadline(
-              workingCase.prosecutorPostponedAppealDate ??
-                workingCase.accusedPostponedAppealDate,
-            ),
-            'PPPp',
-          ),
-        })}
-        variant="warning"
-      />
+      <AlertBanner variant="warning" title={title} description={description} />
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

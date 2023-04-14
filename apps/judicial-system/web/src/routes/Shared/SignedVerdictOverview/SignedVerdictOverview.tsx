@@ -509,7 +509,11 @@ export const SignedVerdictOverview: React.FC = () => {
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
         (isProsecutionRole(user?.role) || isCourtRole(user?.role)) && (
-          <AlertBanner title={title} description={description}>
+          <AlertBanner
+            variant="warning"
+            title={title}
+            description={description}
+          >
             {child}
           </AlertBanner>
         )}

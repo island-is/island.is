@@ -19,6 +19,7 @@ import {
 import {
   CaseAppealState,
   UserRole,
+  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './strings'
@@ -77,7 +78,13 @@ const useAppealAlertBanner = (
     isAppealDeadlineExpired,
   } = workingCase
 
-  if (appealState === CaseAppealState.Received) {
+  if (user?.institution?.type === InstitutionType.HighCourt) {
+    title = formatMessage(strings.statementTitle)
+    description = formatMessage(strings.statementDeadlineDescription, {
+      isStatementDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
+      statementDeadline: formatDate(statementDeadline, 'PPPp'),
+    })
+  } else if (appealState === CaseAppealState.Received) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
