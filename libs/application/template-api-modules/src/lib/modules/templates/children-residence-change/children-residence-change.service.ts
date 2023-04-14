@@ -26,6 +26,7 @@ import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { isValidNumberForRegion } from 'libphonenumber-js'
 
 export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
@@ -138,6 +139,15 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
 
     if (!childResidenceInfo.future?.address?.postalCode) {
       throw new Error('Future residence postal code was not found')
+    }
+
+    // Validate phone numbers of parents before sending to syslumenn
+    if (!isValidNumberForRegion(parentA.phoneNumber ?? '', 'IS')) {
+      throw new Error('Parent A phone number is not valid')
+    }
+
+    if (!isValidNumberForRegion(parentB.phoneNumber ?? '', 'IS')) {
+      throw new Error('Parent B phone number is not valid')
     }
 
     const syslumennData = syslumennDataFromPostalCode(
