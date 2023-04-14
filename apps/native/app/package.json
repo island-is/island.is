@@ -9,6 +9,7 @@
     "build-mock": "echo FIXME",
     "start": "react-native start",
     "test": "jest",
+    "test-mock": "echo FIXME",
     "storybook": "start-storybook -p 7007",
     "build-storybook": "build-storybook",
     "nx:codegen": "yarn run -T nx run native-app:schemas/codegen",
