@@ -45,8 +45,8 @@ const SubArticleUrlField = () => {
     cma.entry
       .get({
         entryId: parentArticleId,
-        environmentId: process.env.CONTENTFUL_ENVIRONMENT,
-        spaceId: process.env.CONTENTFUL_SPACE,
+        environmentId: process.env.NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT,
+        spaceId: process.env.NEXT_PUBLIC_CONTENTFUL_SPACE,
       })
       .then((parentArticle: Article) => {
         const subArticles =
