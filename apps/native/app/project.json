@@ -15,7 +15,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "cwd": "apps/native/app",
-        "command": "yarn typecheck"
+        "command": "yarn build-mock"
       }
     },
     "lint": {

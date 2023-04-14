@@ -6,6 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "typecheck": "tsc --noEmit",
+    "build-mock": "echo FIXME",
     "start": "react-native start",
     "test": "jest",
     "storybook": "start-storybook -p 7007",
