@@ -12,6 +12,7 @@ import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
 import { useActionData } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { useReadableSeconds } from './ReadableSeconds'
 
 interface AdvancedSettingsProps {
   requirePkce: boolean
@@ -21,6 +22,7 @@ interface AdvancedSettingsProps {
   slidingRefreshTokenLifetime: number
   customClaims: string[]
 }
+
 const AdvancedSettings = ({
   requirePkce,
   allowOfflineAccess,
@@ -65,6 +67,8 @@ const AdvancedSettings = ({
   ])
 
   const { formatErrorMessage } = useErrorFormatMessage()
+
+  const readableSlidingRefreshToken = useReadableSeconds(slidingRefreshToken)
 
   return (
     <ContentCard
@@ -137,6 +141,8 @@ const AdvancedSettings = ({
           />
           <Text variant={'small'}>
             {formatMessage(m.accessTokenExpirationDescription)}
+            <br />
+            {readableSlidingRefreshToken}
           </Text>
         </Stack>
         <Stack space={1}>
