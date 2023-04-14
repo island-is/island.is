@@ -11,9 +11,6 @@
     "type": "git",
     "url": "https://github.com/island-is/island.is.git"
   },
-  "workspaces": [
-    "apps/native/*"
-  ],
   "scripts": {
     "nx": "nx",
     "start": "nx serve",
