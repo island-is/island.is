@@ -601,6 +601,7 @@ export class CaseService {
       },
     ])
   }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,

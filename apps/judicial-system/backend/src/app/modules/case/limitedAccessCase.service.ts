@@ -157,9 +157,8 @@ export class LimitedAccessCaseService {
   }
 
   async update(theCase: Case, update: LimitedUpdateCase): Promise<Case> {
-    const [numberOfAffectedRows, cases] = await this.caseModel.update(update, {
+    const [numberOfAffectedRows] = await this.caseModel.update(update, {
       where: { id: theCase.id },
-      returning: true,
     })
 
     if (numberOfAffectedRows > 1) {
@@ -173,7 +172,8 @@ export class LimitedAccessCaseService {
       )
     }
 
-    return cases[0]
+    // Return limited access case
+    return this.findById(theCase.id)
   }
 
   findDefenderNationalId(theCase: Case, nationalId: string): User {
