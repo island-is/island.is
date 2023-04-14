@@ -315,7 +315,7 @@ export class FixtureFactory {
       }),
     )
 
-    await this.get(Language).create({
+    await this.get(Language).upsert({
       isoKey: language,
       description: 'Lang description',
       englishDescription: 'Lang en description',
