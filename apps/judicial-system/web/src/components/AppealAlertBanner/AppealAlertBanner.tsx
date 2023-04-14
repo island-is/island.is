@@ -18,7 +18,7 @@ import {
   isCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import { LinkContext, LinkV2, Text } from '@island.is/island-ui/core'
+import { Button, LinkContext, LinkV2, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { strings } from './AppealAlertBanner.strings'
@@ -54,7 +54,7 @@ const renderLink = (text: string, href: string) => {
 
 const AppealAlertBanner: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
-  const { limitedAccess, user } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const appealDeadlineHash = '#kaerufrestur_utrunninn'
 
   const { workingCase } = props
@@ -70,7 +70,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     appealDeadline,
   } = workingCase
 
-  let alertTitle, alertLinkTitle, alertLinkHref, alertDescription
+  let alertTitle, alertLinkHref, alertDescription
 
   const isCourtRoleUser = isCourtRole(user?.role)
   const isProsecutionRoleUser = isProsecutionRole(user?.role)
@@ -100,10 +100,12 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
         { appealReceivedDate: formatDate(new Date(), 'PPPp') },
       )}`
     } else {
-      alertLinkTitle = formatMessage(strings.statementLinkText)
-      alertLinkHref = isDefenderRoleUser
-        ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
-        : `${STATEMENT_ROUTE}/${workingCase.id}`
+      alertLinkHref = renderLink(
+        formatMessage(strings.statementLinkText),
+        isDefenderRoleUser
+          ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
+          : `${STATEMENT_ROUTE}/${workingCase.id}`,
+      )
     }
     // Handle banners when case has been appealed by either defendant or prosecutor
     // but the judge has not yet marked it as received
@@ -116,10 +118,9 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
           : formatMessage(core.defender),
       appealDate: formatDate(appealedDate, 'PPPp'),
     })
-    alertLinkTitle = formatMessage(strings.statementLinkText)
     alertLinkHref = workingCase.isAppealDeadlineExpired
       ? renderLink(
-          alertLinkTitle,
+          formatMessage(strings.statementLinkText),
           `${
             isDefenderRoleUser
               ? constants.DEFENDER_ROUTE
@@ -127,7 +128,7 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
           }/${workingCase.id}${appealDeadlineHash}`,
         )
       : renderLink(
-          alertLinkTitle,
+          formatMessage(strings.statementLinkText),
           `${
             isDefenderRoleUser
               ? constants.DEFENDER_APPEAL_ROUTE
@@ -142,12 +143,21 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     // We only want to display the appeal link to prosecution roles and the defender
     // not the judge
     if (isProsecutionRoleUser || isDefenderRoleUser) {
-      alertLinkTitle = formatMessage(strings.appealLinkText)
-      alertLinkHref = renderLink(
-        alertLinkTitle,
-        isDefenderRoleUser
-          ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
-          : `${APPEAL_ROUTE}/${workingCase.id}`,
+      alertLinkHref = workingCase.isAppealDeadlineExpired ? (
+        <Button
+          variant="text"
+          size="small"
+          onClick={() => console.log('opna modal')}
+        >
+          {formatMessage(strings.appealLinkText)}
+        </Button>
+      ) : (
+        renderLink(
+          formatMessage(strings.appealLinkText),
+          isDefenderRoleUser
+            ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
+            : `${APPEAL_ROUTE}/${workingCase.id}`,
+        )
       )
     }
   } else {
