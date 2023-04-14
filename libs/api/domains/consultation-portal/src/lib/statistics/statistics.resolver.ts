@@ -7,12 +7,9 @@ import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 import { StatisticsResult } from '../models/statisticsResult.model'
 import { StatisticsService } from './statistics.service'
-import { Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { ApiScope } from '@island.is/auth/scopes'
 
 @Resolver()
-@UseGuards(FeatureFlagGuard, ScopesGuard)
-@Scopes(ApiScope.samradsgatt)
+@UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.consultationPortalApplication)
 export class StatisticsResolver {
   constructor(private statisticsResultService: StatisticsService) {}

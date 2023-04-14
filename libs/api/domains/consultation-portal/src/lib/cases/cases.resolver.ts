@@ -22,8 +22,7 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 
 @Resolver()
-@UseGuards(FeatureFlagGuard, ScopesGuard)
-@Scopes(ApiScope.samradsgatt)
+@UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.consultationPortalApplication)
 export class CasesResolver {
   constructor(private caseResultService: CasesService) {}
@@ -40,7 +39,8 @@ export class CasesResolver {
     nullable: true,
     name: 'consultationPortalPostAdvice',
   })
-  @UseGuards(IdsUserGuard)
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(ApiScope.samradsgatt)
   async postAdvice(
     @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
     @CurrentUser() user: User,
