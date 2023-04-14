@@ -54,7 +54,7 @@ const renderLink = (text: string, href: string) => {
 
 const AppealAlertBanner: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
+  const { limitedAccess, user } = useContext(UserContext)
   const appealDeadlineHash = '#kaerufrestur_utrunninn'
 
   const { workingCase } = props
@@ -150,7 +150,9 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
           : `${APPEAL_ROUTE}/${workingCase.id}`,
       )
     }
-  } else return null
+  } else {
+    return null
+  }
 
   return (
     <AlertBanner

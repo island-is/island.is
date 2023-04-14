@@ -37,6 +37,7 @@ export type {
 export {
   UserRole,
   isExtendedCourtRole,
+  extendedCourtRoles,
   isCourtRole,
   courtRoles,
   isProsecutionRole,

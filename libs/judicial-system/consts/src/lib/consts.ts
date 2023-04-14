@@ -94,6 +94,7 @@ export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
 export const DEFENDER_ROUTE = '/verjandi'
+export const DEFENDER_INDICTMENT_ROUTE = '/verjandi/akaera'
 export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
 export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
 

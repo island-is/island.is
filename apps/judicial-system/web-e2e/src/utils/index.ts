@@ -27,7 +27,7 @@ export enum Operation {
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
   CreateFileMutation = 'CreateFileMutation',
   UpdateDefendantMutation = 'UpdateDefendantMutation',
-  LimitedAccessCaseQuery = 'LimitedAccessCase',
+  LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
   ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
 }
 
