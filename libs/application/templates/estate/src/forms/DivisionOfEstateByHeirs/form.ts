@@ -150,7 +150,7 @@ export const form: Form = buildForm({
                 }),
                 buildCustomField({
                   title: '',
-                  id: 'estate.firearms',
+                  id: 'estate.guns',
                   component: 'FirearmsRepeater',
                 }),
               ],
