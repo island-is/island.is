@@ -7,14 +7,17 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @Resolver(() => DocumentInfoResult)
-@UseGuards(FeatureFlagGuard)
+@UseGuards(FeatureFlagGuard, ScopesGuard)
+@Scopes(ApiScope.samradsgatt)
+@FeatureFlag(Features.consultationPortalApplication)
 export class DocumentResolver {
   constructor(private documentService: DocumentService) {}
 
   @Query(() => [DocumentInfoResult], { name: 'consultationPortalDocument' })
-  @FeatureFlag(Features.consultationPortalApplication)
   async getCaseDocument(@Args('documentId') documentId: string): Promise<void> {
     return this.documentService.getCaseDocument(documentId)
   }

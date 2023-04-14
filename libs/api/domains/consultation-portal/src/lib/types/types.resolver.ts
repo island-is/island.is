@@ -6,14 +6,17 @@ import {
 import { UseGuards } from '@nestjs/common'
 import { Resolver, Query } from '@nestjs/graphql'
 import { AllTypesResult } from '../models/allTypesResult.model'
-import { AllTypesResultService } from './types.service'
+import { TypesService } from './types.service'
+import { Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @Resolver()
-@UseGuards(FeatureFlagGuard)
-export class AllTypesResultResolver {
-  constructor(private allTypesResultService: AllTypesResultService) {}
+@UseGuards(FeatureFlagGuard, ScopesGuard)
+@Scopes(ApiScope.samradsgatt)
+@FeatureFlag(Features.consultationPortalApplication)
+export class TypesResolver {
+  constructor(private allTypesResultService: TypesService) {}
   @Query(() => AllTypesResult, { name: 'consultationPortalAllTypes' })
-  @FeatureFlag(Features.consultationPortalApplication)
   async getAllTypes(): Promise<AllTypesResult> {
     const allTypes = await this.allTypesResultService.getAllTypes()
     return allTypes
