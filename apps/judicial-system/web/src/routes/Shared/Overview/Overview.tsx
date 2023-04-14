@@ -12,6 +12,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { titles, core } from '@island.is/judicial-system-web/messages'
 import { Box } from '@island.is/island-ui/core'
@@ -23,13 +24,13 @@ import { overview as m } from './Overview.strings'
 
 const Overview = () => {
   const router = useRouter()
+  const { limitedAccess } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
   const { formatMessage } = useIntl()
 
   const caseIsClosed = completedCaseStates.includes(workingCase.state)
-  const isDefender = router.pathname.includes(constants.DEFENDER_ROUTE)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -69,7 +70,7 @@ const Overview = () => {
           </Box>
         )}
       </FormContentContainer>
-      {!caseIsClosed && !isDefender && (
+      {!caseIsClosed && !limitedAccess && (
         <FormContentContainer isFooter>
           <FormFooter
             nextButtonIcon="arrowForward"
