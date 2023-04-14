@@ -1,7 +1,7 @@
 import { GridContainer, Text, Stack } from '@island.is/island-ui/core'
 import Layout from '../../components/Layout/Layout'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
-import { useLogIn } from '../../utils/helpers'
+import { useLogIn, useUser } from '../../utils/helpers'
 import { SubscriptionActionCard } from '../../components/Card'
 
 export const AdvicesLayout = ({ children }) => {
@@ -32,6 +32,7 @@ export const AdvicesLayout = ({ children }) => {
 
 export const AdvicesScreen = () => {
   const LogIn = useLogIn()
+  const { user, isAuthenticated, userLoading } = useUser()
   
   // if (isNotAuthorized) {
   //   return (
