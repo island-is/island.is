@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 
 export const ApplicationFragment = gql`
   fragment ApplicationFragment on Application {
@@ -42,10 +42,10 @@ export interface IApplication {
   assignees: string[];
   state: string;
   attachments: any;
-  typeId: ApplicationTypeId
+  typeId: ApplicationTypeId;
   answers: any;
   externalData: any;
   name?: string;
   progress: number;
-  status: ApplicationStatus
+  status: ApplicationStatus;
 }

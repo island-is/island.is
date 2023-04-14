@@ -1,13 +1,13 @@
-import React from 'react'
-import { useIntl } from 'react-intl';
-import { ScrollView, View, Text } from "react-native";
-import { testIDs } from '../../utils/test-ids'
-import { Navigation, NavigationFunctionComponent } from "react-native-navigation";
-import { Input, InputRow, NavigationBarSheet } from '@ui';
-import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks';
-import { GET_USERS_VEHICLE_DETAIL } from '../../graphql/queries/get-users-vehicles-detail';
-import { useQuery } from '@apollo/client';
-import { client } from '../../graphql/client'
+import React from 'react';
+import {useIntl} from 'react-intl';
+import {ScrollView, View, Text} from 'react-native';
+import {testIDs} from '../../utils/test-ids';
+import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
+import {Input, InputRow, NavigationBarSheet} from '@ui';
+import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {GET_USERS_VEHICLE_DETAIL} from '../../graphql/queries/get-users-vehicles-detail';
+import {useQuery} from '@apollo/client';
+import {client} from '../../graphql/client';
 
 const {
   getNavigationOptions,
@@ -16,14 +16,16 @@ const {
   topBar: {
     visible: false,
   },
-}))
+}));
 
-export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, id: string }> = ({ componentId, title, id }) => {
-  useNavigationOptions(componentId)
-  const intl = useIntl()
+export const VehicleDetailScreen: NavigationFunctionComponent<{
+  title?: string;
+  id: string;
+}> = ({componentId, title, id}) => {
+  useNavigationOptions(componentId);
+  const intl = useIntl();
 
-  const { data, loading, error } = useQuery(GET_USERS_VEHICLE_DETAIL,
-    {
+  const {data, loading, error} = useQuery(GET_USERS_VEHICLE_DETAIL, {
     client,
     fetchPolicy: 'cache-first',
     variables: {
@@ -33,63 +35,63 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, 
         vin: '',
       },
     },
-  })
+  });
 
-  const {
-    mainInfo,
-    basicInfo,
-    registrationInfo,
-    inspectionInfo,
-    technicalInfo,
-  } = data?.vehiclesDetail || {}
+  const {mainInfo, basicInfo, registrationInfo, inspectionInfo, technicalInfo} =
+    data?.vehiclesDetail || {};
 
   const isError = !!error;
-  const noInfo = data?.vehiclesDetail === null
+  const noInfo = data?.vehiclesDetail === null;
 
   if (noInfo && !loading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
         <Text>Engin gögn bárust</Text>
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
+    <View style={{flex: 1}} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
       <NavigationBarSheet
         componentId={componentId}
         title={title ? title : `${mainInfo?.model} ${mainInfo?.subModel}`}
         onClosePress={() => Navigation.dismissModal(componentId)}
-        style={{ marginHorizontal: 16 }}
+        style={{marginHorizontal: 16}}
       />
-      <ScrollView style={{ flex: 1 }} >
+      <ScrollView style={{flex: 1}}>
         <View>
           <InputRow>
             <Input
               loading={loading}
               error={isError}
-              label={intl.formatMessage({ id: 'vehicleDetail.regno' })}
+              label={intl.formatMessage({id: 'vehicleDetail.regno'})}
               value={mainInfo?.regno}
             />
             <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({ id: 'vehicleDetail.permno' })}
-                value={basicInfo?.permno}
-              />
-
+              loading={loading}
+              error={isError}
+              label={intl.formatMessage({id: 'vehicleDetail.permno'})}
+              value={basicInfo?.permno}
+            />
           </InputRow>
           <InputRow>
             <Input
               loading={loading}
               error={isError}
-              label={intl.formatMessage({ id: 'vehicleDetail.firstReg' })}
-              value={registrationInfo?.firstRegistrationDate ? intl.formatDate(new Date(registrationInfo?.firstRegistrationDate)) : '-'}
+              label={intl.formatMessage({id: 'vehicleDetail.firstReg'})}
+              value={
+                registrationInfo?.firstRegistrationDate
+                  ? intl.formatDate(
+                      new Date(registrationInfo?.firstRegistrationDate),
+                    )
+                  : '-'
+              }
             />
             <Input
               loading={loading}
               error={isError}
-              label={intl.formatMessage({ id: 'vehicleDetail.color' })}
+              label={intl.formatMessage({id: 'vehicleDetail.color'})}
               value={registrationInfo?.color}
             />
           </InputRow>
@@ -97,44 +99,51 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, 
             <Input
               loading={loading}
               error={isError}
-              label={intl.formatMessage({ id: 'vehicleDetail.nextInspectionDate' })}
-              value={inspectionInfo?.nextInspectionDate ? intl.formatDate(new Date(inspectionInfo?.nextInspectionDate)) : '-'}
+              label={intl.formatMessage({
+                id: 'vehicleDetail.nextInspectionDate',
+              })}
+              value={
+                inspectionInfo?.nextInspectionDate
+                  ? intl.formatDate(
+                      new Date(inspectionInfo?.nextInspectionDate),
+                    )
+                  : '-'
+              }
             />
             <Input
               loading={loading}
               error={isError}
-              label={intl.formatMessage({ id: 'vehicleDetail.vehicleWeight' })}
+              label={intl.formatMessage({id: 'vehicleDetail.vehicleWeight'})}
               value={`${technicalInfo?.vehicleWeight} kg`}
             />
           </InputRow>
 
-           <InputRow>
+          <InputRow>
             <Input
               loading={loading}
               error={isError}
-              label={intl.formatMessage({ id: 'vehicleDetail.insured' })}
+              label={intl.formatMessage({id: 'vehicleDetail.insured'})}
               value={intl.formatMessage(
-                { id: 'vehicleDetail.insuredValue' },
-                { isInsured: inspectionInfo?.insuranceStatus }
+                {id: 'vehicleDetail.insuredValue'},
+                {isInsured: inspectionInfo?.insuranceStatus},
               )}
             />
             <Input
               loading={loading}
               error={isError}
-              label={intl.formatMessage({ id: 'vehicleDetail.unpaidVehicleFee' })}
+              label={intl.formatMessage({id: 'vehicleDetail.unpaidVehicleFee'})}
               value={`${inspectionInfo?.carTax} kr.`}
             />
           </InputRow>
 
-
           {mainInfo?.co2 ? (
             <InputRow>
-                <Input
-                  loading={loading}
-                  error={isError}
-                  label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
-                  value={`${mainInfo?.co2} g/km`}
-                />
+              <Input
+                loading={loading}
+                error={isError}
+                label={intl.formatMessage({id: 'vehicleDetail.nedc'})}
+                value={`${mainInfo?.co2} g/km`}
+              />
             </InputRow>
           ) : null}
 
@@ -144,7 +153,9 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, 
                 <Input
                   loading={loading}
                   error={isError}
-                  label={intl.formatMessage({ id: 'vehicleDetail.trailerWithBrakes' })}
+                  label={intl.formatMessage({
+                    id: 'vehicleDetail.trailerWithBrakes',
+                  })}
                   value={`${mainInfo?.trailerWithBrakesWeight} kg`}
                 />
               ) : null}
@@ -152,7 +163,9 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, 
                 <Input
                   loading={loading}
                   error={isError}
-                  label={intl.formatMessage({ id: 'vehicleDetail.trailerWithoutBrakes' })}
+                  label={intl.formatMessage({
+                    id: 'vehicleDetail.trailerWithoutBrakes',
+                  })}
                   value={`${mainInfo?.trailerWithoutBrakesWeight} kg`}
                 />
               ) : null}
@@ -162,6 +175,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{ title?: string, 
       </ScrollView>
     </View>
   );
-}
+};
 
-VehicleDetailScreen.options = getNavigationOptions
+VehicleDetailScreen.options = getNavigationOptions;

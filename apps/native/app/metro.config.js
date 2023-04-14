@@ -19,5 +19,5 @@ module.exports = {
     extraNodeModules: {
       '@ui': path.resolve(__dirname + '/src/ui'),
     },
-  }
+  },
 };

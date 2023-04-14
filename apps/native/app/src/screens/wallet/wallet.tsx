@@ -1,14 +1,14 @@
-import { useQuery } from '@apollo/client'
+import {useQuery} from '@apollo/client';
 import {
   Alert,
   EmptyList,
   LicenceCard,
   LicenseCardType,
   Skeleton,
-  TopLine
-} from '@ui'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+  TopLine,
+} from '@ui';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {useIntl} from 'react-intl';
 import {
   Animated,
   FlatList,
@@ -17,33 +17,37 @@ import {
   Platform,
   RefreshControl,
   SafeAreaView,
-  TouchableHighlight, View
-} from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
-import SpotlightSearch from 'react-native-spotlight-search'
-import { useTheme } from 'styled-components/native'
-import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+  TouchableHighlight,
+  View,
+} from 'react-native';
+import {NavigationFunctionComponent} from 'react-native-navigation';
+import SpotlightSearch from 'react-native-spotlight-search';
+import {useTheme} from 'styled-components/native';
+import illustrationSrc from '../../assets/illustrations/le-moving-s6.png';
+import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
 // import { useFeatureFlag } from '../../contexts/feature-flag-provider'
-import { client } from '../../graphql/client'
-import { IGenericUserLicense } from '../../graphql/fragments/license.fragment'
-import { IIdentityDocumentModel } from "../../graphql/fragments/passport.fragment";
-import { GET_IDENTITY_DOCUMENT_QUERY } from '../../graphql/queries/get-identity-document.query'
-import { GenericLicenseType } from '../../graphql/queries/get-license.query'
+import {client} from '../../graphql/client';
+import {IGenericUserLicense} from '../../graphql/fragments/license.fragment';
+import {IIdentityDocumentModel} from '../../graphql/fragments/passport.fragment';
+import {GET_IDENTITY_DOCUMENT_QUERY} from '../../graphql/queries/get-identity-document.query';
+import {GenericLicenseType} from '../../graphql/queries/get-license.query';
 import {
   ListGenericLicensesResponse,
-  LIST_GENERIC_LICENSES_QUERY
-} from '../../graphql/queries/list-licenses.query'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { navigateTo } from '../../lib/deep-linking'
-import { usePreferencesStore } from '../../stores/preferences-store'
-import { LicenseStatus, LicenseType } from '../../types/license-type'
-import { ButtonRegistry } from '../../utils/component-registry'
-import { getRightButtons } from '../../utils/get-main-root'
-import { testIDs } from '../../utils/test-ids'
+  LIST_GENERIC_LICENSES_QUERY,
+} from '../../graphql/queries/list-licenses.query';
+import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
+import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {navigateTo} from '../../lib/deep-linking';
+import {usePreferencesStore} from '../../stores/preferences-store';
+import {LicenseStatus, LicenseType} from '../../types/license-type';
+import {ButtonRegistry} from '../../utils/component-registry';
+import {getRightButtons} from '../../utils/get-main-root';
+import {testIDs} from '../../utils/test-ids';
 
-type WalletItem = (IGenericUserLicense & { type: undefined }) | IIdentityDocumentModel | { id: string, type: 'empty' | 'skeleton' | 'error' }
+type WalletItem =
+  | (IGenericUserLicense & {type: undefined})
+  | IIdentityDocumentModel
+  | {id: string; type: 'empty' | 'skeleton' | 'error'};
 
 const {
   useNavigationOptions,
@@ -52,9 +56,9 @@ const {
   (theme, intl, initialized) => ({
     topBar: {
       title: {
-        text: intl.formatMessage({ id: 'wallet.screenTitle' }),
+        text: intl.formatMessage({id: 'wallet.screenTitle'}),
       },
-      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+      rightButtons: initialized ? getRightButtons({theme} as any) : [],
       leftButtons: [
         {
           id: ButtonRegistry.ScanLicenseButton,
@@ -66,9 +70,7 @@ const {
     },
     bottomTab: {
       iconColor: theme.color.blue400,
-      text: initialized
-        ? intl.formatMessage({ id: 'wallet.bottomTabText' })
-        : '',
+      text: initialized ? intl.formatMessage({id: 'wallet.bottomTabText'}) : '',
     },
   }),
   {
@@ -90,88 +92,88 @@ const {
       selectedIcon: require('../../assets/icons/tabbar-wallet-selected.png'),
     },
   },
-)
+);
 
-const WalletItem = React.memo(({ item }: { item: IGenericUserLicense | IIdentityDocumentModel }) => {
-  let cardHeight = 140
+const WalletItem = React.memo(
+  ({item}: {item: IGenericUserLicense | IIdentityDocumentModel}) => {
+    let cardHeight = 140;
 
-  // Passport card
-  if (item.__typename === 'IdentityDocumentModel') {
-    const isInvalid = item?.status?.toLowerCase() === 'invalid'
+    // Passport card
+    if (item.__typename === 'IdentityDocumentModel') {
+      const isInvalid = item?.status?.toLowerCase() === 'invalid';
+      return (
+        <View
+          style={{paddingHorizontal: 16}}
+          onLayout={e => {
+            cardHeight = Math.round(e.nativeEvent.layout.height);
+          }}
+        >
+          <TouchableHighlight
+            style={{marginBottom: 16, borderRadius: 16}}
+            onPress={() => {
+              navigateTo(`/walletpassport/${item?.number}`, {
+                fromId: `license-${LicenseType.PASSPORT}_source`,
+                toId: `license-${LicenseType.PASSPORT}_destination`,
+                cardHeight: cardHeight,
+              });
+            }}
+          >
+            <SafeAreaView>
+              <LicenceCard
+                nativeID={`license-${LicenseType.PASSPORT}_source`}
+                type={LicenseType.PASSPORT}
+                date={new Date(item?.expirationDate)}
+                status={
+                  isInvalid ? LicenseStatus.NOT_VALID : LicenseStatus.VALID
+                }
+              />
+            </SafeAreaView>
+          </TouchableHighlight>
+        </View>
+      );
+    }
+
     return (
       <View
-        style={{ paddingHorizontal: 16 }}
-        onLayout={(e) => {
-          cardHeight = Math.round(e.nativeEvent.layout.height)
+        style={{paddingHorizontal: 16}}
+        onLayout={e => {
+          cardHeight = Math.round(e.nativeEvent.layout.height);
         }}
       >
         <TouchableHighlight
-          style={{ marginBottom: 16, borderRadius: 16 }}
+          style={{marginBottom: 16, borderRadius: 16}}
           onPress={() => {
-            navigateTo(`/walletpassport/${item?.number}`, {
-              fromId: `license-${LicenseType.PASSPORT}_source`,
-              toId: `license-${LicenseType.PASSPORT}_destination`,
+            navigateTo(`/wallet/${item?.license?.type}`, {
+              item,
+              fromId: `license-${item?.license?.type}_source`,
+              toId: `license-${item?.license?.type}_destination`,
               cardHeight: cardHeight,
-            })
+            });
           }}
         >
           <SafeAreaView>
             <LicenceCard
-              nativeID={`license-${LicenseType.PASSPORT}_source`}
-              type={LicenseType.PASSPORT}
-              date={new Date(item?.expirationDate)}
+              nativeID={`license-${item?.license?.type}_source`}
+              type={item?.license?.type as LicenseCardType}
+              date={new Date(Number(item.fetch.updated))}
               status={
-                isInvalid
-                  ? LicenseStatus.NOT_VALID
-                  : LicenseStatus.VALID
+                !item?.payload?.metadata?.expired
+                  ? LicenseStatus.VALID
+                  : LicenseStatus.NOT_VALID
               }
             />
           </SafeAreaView>
         </TouchableHighlight>
       </View>
-    )
-  }
+    );
+  },
+);
 
-  return (
-    <View
-      style={{ paddingHorizontal: 16 }}
-      onLayout={(e) => {
-        cardHeight = Math.round(e.nativeEvent.layout.height)
-      }}
-    >
-      <TouchableHighlight
-        style={{ marginBottom: 16, borderRadius: 16 }}
-        onPress={() => {
-          navigateTo(`/wallet/${item?.license?.type}`, {
-            item,
-            fromId: `license-${item?.license?.type}_source`,
-            toId: `license-${item?.license?.type}_destination`,
-            cardHeight: cardHeight,
-          })
-        }}
-      >
-        <SafeAreaView>
-          <LicenceCard
-            nativeID={`license-${item?.license?.type }_source`}
-            type={item?.license?.type as LicenseCardType}
-            date={new Date(Number(item.fetch.updated))}
-            status={
-              !item?.payload?.metadata?.expired
-                ? LicenseStatus.VALID
-                : LicenseStatus.NOT_VALID
-            }
-          />
-        </SafeAreaView>
-      </TouchableHighlight>
-    </View>
-  )
-})
+export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
+  useNavigationOptions(componentId);
 
-export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
-  useNavigationOptions(componentId)
-
-  const theme = useTheme()
-  const { dismiss, dismissed } = usePreferencesStore()
+  const theme = useTheme();
+  const {dismiss, dismissed} = usePreferencesStore();
   const showPassport = false; // useFeatureFlag('isPassportEnabled', false);
   const showDisability = false; // useFeatureFlag('isDisabilityFlagEnabled', false);
 
@@ -188,42 +190,49 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
             GenericLicenseType.MachineLicense,
             GenericLicenseType.FirearmLicense,
             showDisability ? GenericLicenseType.DisabilityLicense : null,
-          ].filter(Boolean)
-        }
-      }
+          ].filter(Boolean),
+        },
+      },
     },
-  )
+  );
 
-  const { data: identityDocumentData } = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {client, fetchPolicy: 'network-only'})
-  const [licenseItems, setLicenseItems] = useState<any>([])
-  const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
-  const isSkeleton = res.loading && !res.data
-  const loadingTimeout = useRef<number>()
-  const intl = useIntl()
-  const scrollY = useRef(new Animated.Value(0)).current
+  const {data: identityDocumentData} = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {
+    client,
+    fetchPolicy: 'network-only',
+  });
+  const [licenseItems, setLicenseItems] = useState<any>([]);
+  const flatListRef = useRef<FlatList>(null);
+  const [loading, setLoading] = useState(false);
+  const isSkeleton = res.loading && !res.data;
+  const loadingTimeout = useRef<number>();
+  const intl = useIntl();
+  const scrollY = useRef(new Animated.Value(0)).current;
 
-  const passportData = showPassport ? identityDocumentData?.getIdentityDocument ?? [] : [];
+  const passportData = showPassport
+    ? identityDocumentData?.getIdentityDocument ?? []
+    : [];
 
   useActiveTabItemPress(1, () => {
     flatListRef.current?.scrollToOffset({
       offset: -150,
       animated: true,
-    })
-  })
+    });
+  });
 
   useEffect(() => {
     if (!res.loading) {
       if (!res.error) {
-        const license = res.data?.genericLicenses || []
-        let items = license.filter((item) => item.license.status !== 'Unknown');
+        const license = res.data?.genericLicenses || [];
+        let items = license.filter(item => item.license.status !== 'Unknown');
         if (!showDisability) {
-          items = items.filter((item) => item.license.type !== GenericLicenseType.DisabilityLicense);
+          items = items.filter(
+            item => item.license.type !== GenericLicenseType.DisabilityLicense,
+          );
         }
-        setLicenseItems(items)
+        setLicenseItems(items);
       }
     }
-  }, [res, showDisability])
+  }, [res, showDisability]);
 
   // indexing list for spotlight search IOS
   useEffect(() => {
@@ -233,39 +242,39 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         uniqueIdentifier: `/wallet/${item.license.type}`,
         contentDescription: item.license.provider.id,
         domain: 'licences',
-      }
-    })
+      };
+    });
     if (Platform.OS === 'ios') {
-      SpotlightSearch.indexItems(indexItems)
+      SpotlightSearch.indexItems(indexItems);
     }
-  }, [licenseItems.length])
+  }, [licenseItems.length]);
 
   const onRefresh = useCallback(() => {
     try {
       if (loadingTimeout.current) {
-        clearTimeout(loadingTimeout.current)
+        clearTimeout(loadingTimeout.current);
       }
-      setLoading(true)
+      setLoading(true);
       res
         .refetch()
         .then(() => {
-          ;(loadingTimeout as any).current = setTimeout(() => {
-            setLoading(false)
-          }, 1331)
+          (loadingTimeout as any).current = setTimeout(() => {
+            setLoading(false);
+          }, 1331);
         })
         .catch(() => {
-          setLoading(false)
-        })
+          setLoading(false);
+        });
     } catch (err) {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<WalletItem>) => {
+    ({item}: ListRenderItemInfo<WalletItem>) => {
       if (item.type === 'skeleton') {
         return (
-          <View style={{ paddingHorizontal: 16 }}>
+          <View style={{paddingHorizontal: 16}}>
             <Skeleton
               active
               backgroundColor={theme.color.blue100}
@@ -278,54 +287,61 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
               }}
             />
           </View>
-        )
+        );
       }
 
       if (item.type === 'empty') {
         return (
-          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+          <View style={{marginTop: 80, paddingHorizontal: 16}}>
             <EmptyList
-              title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
+              title={intl.formatMessage({id: 'wallet.emptyListTitle'})}
               description={intl.formatMessage({
                 id: 'wallet.emptyListDescription',
               })}
               image={
-                <Image source={illustrationSrc} style={{ width: 198, height: 146 }} />
+                <Image
+                  source={illustrationSrc}
+                  style={{width: 198, height: 146}}
+                />
               }
             />
           </View>
-        )
+        );
       }
 
       if (item.type === 'alert') {
         return Platform.OS === 'ios' ? (
-          <View style={{ marginBottom: 16 }}>
+          <View style={{marginBottom: 16}}>
             <Alert
               type="info"
               visible={!dismissed.includes('howToUseLicence')}
-              message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+              message={intl.formatMessage({id: 'wallet.alertMessage'})}
               onClose={() => dismiss('howToUseLicence')}
             />
           </View>
-        ) : null
+        ) : null;
       }
 
-      return <WalletItem item={item as IGenericUserLicense | IIdentityDocumentModel} />
+      return (
+        <WalletItem
+          item={item as IGenericUserLicense | IIdentityDocumentModel}
+        />
+      );
     },
     [dismissed],
-  )
+  );
 
   const keyExtractor = useCallback(
     (item: any) => item?.license?.type ?? item?.id ?? item?.number,
     [],
-  )
+  );
 
-  const emptyItems = [{ id: '0', type: 'empty' }]
-  const skeletonItems = Array.from({ length: 5 }).map((_, id) => ({
+  const emptyItems = [{id: '0', type: 'empty'}];
+  const skeletonItems = Array.from({length: 5}).map((_, id) => ({
     id,
     type: 'skeleton',
-  }))
-  const alertItems = [{ id: '99', type: 'alert' }]
+  }));
+  const alertItems = [{id: '99', type: 'alert'}];
 
   const isEmpty = licenseItems?.length === 0 && passportData?.length === 0;
 
@@ -346,7 +362,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
           {
             useNativeDriver: true,
           },
@@ -364,7 +380,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={1} total={5} />
     </>
-  )
-}
+  );
+};
 
-WalletScreen.options = getNavigationOptions
+WalletScreen.options = getNavigationOptions;

@@ -1,11 +1,11 @@
-import { withKnobs, text, boolean } from '@storybook/addon-knobs'
-import { storiesOf } from '@storybook/react-native'
-import React from 'react'
-import { View } from 'react-native'
-import { Input } from './input'
-import { InputRow } from './input-row'
+import {withKnobs, text, boolean} from '@storybook/addon-knobs';
+import {storiesOf} from '@storybook/react-native';
+import React from 'react';
+import {View} from 'react-native';
+import {Input} from './input';
+import {InputRow} from './input-row';
 
-const CenterView = ({ children }: any) => (
+const CenterView = ({children}: any) => (
   <View
     style={{
       flex: 1,
@@ -16,10 +16,10 @@ const CenterView = ({ children }: any) => (
   >
     {children}
   </View>
-)
+);
 
 storiesOf('Input', module)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
+  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Input', () => {
     const label = text('Input Label', 'Birtingarnafn');
@@ -33,7 +33,7 @@ storiesOf('Input', module)
           value={value}
         />
       </InputRow>
-    )
+    );
   })
   .add('2 Input Row', () => {
     const label = text('2 Input Row Label', 'Kennitala');
@@ -42,21 +42,11 @@ storiesOf('Input', module)
     const label2 = text('2 Input Row Label 2', 'Fæðingastaður');
     const value2 = text('2 Input Row Value 2', 'Reykjavík');
     return (
-      <View style={{ width: '100%' }}>
+      <View style={{width: '100%'}}>
         <InputRow>
-          <Input
-            loading={false}
-            error={false}
-            label={label}
-            value={value}
-          />
-          <Input
-            loading={false}
-            error={false}
-            label={label2}
-            value={value2}
-          />
+          <Input loading={false} error={false} label={label} value={value} />
+          <Input loading={false} error={false} label={label2} value={value2} />
         </InputRow>
       </View>
-    )
-  })
+    );
+  });

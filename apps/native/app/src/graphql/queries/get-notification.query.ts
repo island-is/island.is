@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client'
-import { INotification } from '../fragments/notification.fragment'
+import {gql} from '@apollo/client';
+import {INotification} from '../fragments/notification.fragment';
 
 export const GET_NOTIFICATION_QUERY = gql`
   query getNotification($id: ID!) {
@@ -17,8 +17,8 @@ export const GET_NOTIFICATION_QUERY = gql`
       link
     }
   }
-`
+`;
 
 export interface GetNotificationResponse {
-  Notification?: INotification
+  Notification?: INotification;
 }

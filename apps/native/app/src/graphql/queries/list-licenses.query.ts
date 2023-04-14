@@ -1,6 +1,10 @@
-import { gql } from '@apollo/client';
-import { GenericLicenseDataFieldFragment, GenericUserLicenseFragment, IGenericUserLicense } from '../fragments/license.fragment';
-import { GenericLicenseType } from './get-license.query';
+import {gql} from '@apollo/client';
+import {
+  GenericLicenseDataFieldFragment,
+  GenericUserLicenseFragment,
+  IGenericUserLicense,
+} from '../fragments/license.fragment';
+import {GenericLicenseType} from './get-license.query';
 
 export const LIST_GENERIC_LICENSES_QUERY = gql`
   query genericLicenses($input: GetGenericLicensesInput!, $locale: String) {
@@ -24,5 +28,5 @@ export interface GetGenericLicensesInput {
     excludedTypes?: GenericLicenseTypeType[];
     force?: boolean;
     onlyList: boolean;
-  }
+  };
 }

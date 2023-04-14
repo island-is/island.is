@@ -1,18 +1,24 @@
-import { ActionSheetIOS, Linking, Text, View } from 'react-native';
-import { Navigation, NavigationFunctionComponent } from 'react-native-navigation';
-import { ApolloClient, ApolloLink, gql, HttpLink, InMemoryCache } from '@apollo/client/core';
-import { useAsyncStorage } from '@react-native-community/async-storage';
-import { Button } from '@ui';
-import { useEffect, useState } from 'react';
+import {ActionSheetIOS, Linking, Text, View} from 'react-native';
+import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
+import {
+  ApolloClient,
+  ApolloLink,
+  gql,
+  HttpLink,
+  InMemoryCache,
+} from '@apollo/client/core';
+import {useAsyncStorage} from '@react-native-community/async-storage';
+import {Button} from '@ui';
+import {useEffect, useState} from 'react';
 import {
   AuthConfiguration,
   authorize,
-  AuthorizeResult
+  AuthorizeResult,
 } from 'react-native-app-auth';
-import { config } from '../../config';
-import { openBrowser } from '../../lib/rn-island';
-import { cognitoAuthUrl, configs } from './config-switcher';
-import { setContext } from '@apollo/client/link/context';
+import {config} from '../../config';
+import {openBrowser} from '../../lib/rn-island';
+import {cognitoAuthUrl, configs} from './config-switcher';
+import {setContext} from '@apollo/client/link/context';
 
 const apolloConfig = {
   url: '',
@@ -25,7 +31,7 @@ const httpLink = new HttpLink({
     return `${apolloConfig.url}/graphql`;
   },
   fetch,
-})
+});
 
 const authLink = setContext(async (_, {headers}) => ({
   headers: {
@@ -121,7 +127,8 @@ export const CognitoAuthScreen: NavigationFunctionComponent = ({
           marginRight: 'auto',
           marginTop: 20,
           marginBottom: 20,
-        }}>
+        }}
+      >
         Cognito: {cognito ? 'Logged in' : 'Not logged in'}
         {'\n'}
         IDS: {user ? 'Logged in' : 'Not logged in'}

@@ -1,37 +1,37 @@
-import React from 'react'
-import styled from 'styled-components/native'
-import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
+import React from 'react';
+import styled from 'styled-components/native';
+import {dynamicColor} from '../../utils';
+import {font} from '../../utils/font';
 
-const Host = styled.View<{ isAndroid?: boolean }>`
+const Host = styled.View<{isAndroid?: boolean}>`
   width: 100%;
-  height: ${({ theme }) => theme.spacing[8]}px;
+  height: ${({theme}) => theme.spacing[8]}px;
   align-items: center;
   justify-content: center;
   border-bottom-color: ${dynamicColor(
-    ({ theme }) => ({
+    ({theme}) => ({
       dark: theme.shades.dark.shade200,
       light: theme.color.blue200,
     }),
     true,
   )};
-  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-width: ${({theme}) => theme.border.width.standard}px;
   background-color: ${dynamicColor('background')};
-  ${(props) => props.isAndroid && 'margin-top: -16px;'}
-`
+  ${props => props.isAndroid && 'margin-top: -16px;'}
+`;
 
 const Text = styled.Text`
   ${font({
     fontWeight: '600',
   })}
-`
+`;
 
 interface SearchHeaderProps {
-  count: number
-  loading: boolean
-  loadingText: string
-  resultText: string
-  isAndroid?: boolean
+  count: number;
+  loading: boolean;
+  loadingText: string;
+  resultText: string;
+  isAndroid?: boolean;
 }
 
 export function SearchHeader({
@@ -39,7 +39,7 @@ export function SearchHeader({
   loading,
   loadingText,
   resultText,
-  isAndroid
+  isAndroid,
 }: SearchHeaderProps) {
   return (
     <Host isAndroid={isAndroid}>
@@ -47,5 +47,5 @@ export function SearchHeader({
         {loading ? loadingText : `${count > 0 ? count : ''} ${resultText}`}
       </Text>
     </Host>
-  )
+  );
 }

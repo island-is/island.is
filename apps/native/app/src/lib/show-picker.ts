@@ -78,13 +78,18 @@ export function showPicker(
         {
           title,
           message,
-          cancelButtonIndex: Math.max(0, Math.min(items.length, options.length - 1)),
+          cancelButtonIndex: Math.max(
+            0,
+            Math.min(items.length, options.length - 1),
+          ),
           disabledButtonIndices: [
-            Math.max(0,
-            Math.min(
-              options.length - 1,
-              items.findIndex(item => item.id === selectedId),
-            )),
+            Math.max(
+              0,
+              Math.min(
+                options.length - 1,
+                items.findIndex(item => item.id === selectedId),
+              ),
+            ),
           ],
           options,
         },

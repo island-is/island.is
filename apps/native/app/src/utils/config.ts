@@ -1,26 +1,26 @@
-import { Platform } from 'react-native'
+import {Platform} from 'react-native';
 // import env from 'react-native-ultimate-config'
 // import { Constants } from 'react-native-unimodules'
 
 const env: Record<string, string> = {};
-const Constants = { WebManifest: {} };
+const Constants = {WebManifest: {}};
 
 export interface Config {
   identityServer: {
-    issuer: string
-    clientId: string
-    scopes: string[]
-  }
-  apiEndpoint: string
-  bundleId: string
-  datadogClientToken: string
-  sentryDsn: string
-  configCat: string
-  constants: any
-  env: typeof env
+    issuer: string;
+    clientId: string;
+    scopes: string[];
+  };
+  apiEndpoint: string;
+  bundleId: string;
+  datadogClientToken: string;
+  sentryDsn: string;
+  configCat: string;
+  constants: any;
+  env: typeof env;
 }
 
-const { WebManifest, ...ConstantsRest } = Constants
+const {WebManifest, ...ConstantsRest} = Constants;
 
 const defaults = {
   identityServer: {
@@ -33,12 +33,12 @@ const defaults = {
       '@island.is/documents',
       '@island.is/user-profile:read',
       '@island.is/internal',
-      '@island.is/me:details'
+      '@island.is/me:details',
     ],
     clientId: '@island.is/app',
   },
   apiEndpoint: 'https://island.is/api',
-}
+};
 
 export const config: Config = {
   identityServer: {
@@ -58,8 +58,8 @@ export const config: Config = {
   configCat: env.CONFIGCAT_CLIENT_TOKEN,
   constants: ConstantsRest,
   env,
-}
+};
 
 if (__DEV__) {
-  console.log(config)
+  console.log(config);
 }

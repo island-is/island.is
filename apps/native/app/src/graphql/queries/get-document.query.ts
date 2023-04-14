@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client'
-import { DocumentFragment, IDocument } from '../fragments/document.fragment'
+import {gql} from '@apollo/client';
+import {DocumentFragment, IDocument} from '../fragments/document.fragment';
 
 export const GET_DOCUMENT_QUERY = gql`
   query getDocument($input: GetDocumentInput!) {
@@ -10,7 +10,7 @@ export const GET_DOCUMENT_QUERY = gql`
       html
     }
   }
-`
+`;
 
 export interface GetDocumentResponse {
   getDocument?: IDocument;

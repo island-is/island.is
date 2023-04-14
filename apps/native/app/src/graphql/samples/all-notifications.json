@@ -7,7 +7,8 @@
     "message": "Nú er hægt að nálgast öll skírteini frá Ríkislögreglustjóra í appinu, en þar má nefna ökuskírteini, siglingaleyfi, skotvopnaleyfi og ...\nRíkislögreglustjóri er fyrst stofnana til að tengjast Straumnum að fullu með því að tengja gagnagátt ökuskírteina. Eftir því sem fleiri stofnanir tengjast Straumnum eykst hagræðing og stafræn þjónusta batnar bæði milli stofnana sem og við almenning.\nUm er að ræða tveggja ára ferli frá því innleiðing hófst formlega þar fyrsta stofnun tengdist að fullu enda mikil vinna að baki í uppbyggingu grunnkerfa. Stafrænt Ísland fer fyrir verkefninu fyrir hönd fjármálaráðuneytisins.",
     "actions": [],
     "link": null
-  }, {
+  },
+  {
     "id": "2",
     "serviceProvider": "Umhverfisstofnun",
     "date": "2021-02-06T10:33:52.448Z",
@@ -15,19 +16,23 @@
     "message": null,
     "actions": [],
     "link": null
-  }, {
+  },
+  {
     "id": "3",
     "serviceProvider": "Sýslumaðurinn á höfuðborgarsvæðinu",
     "date": "2021-01-22T10:33:52.448Z",
     "title": "Vegabréfið þitt rennur út 4. apríl nk.",
     "message": null,
-    "actions": [{
-      "id": "renew",
-      "text": "Endurnýja á Ísland.is",
-      "link": "https://www.island.is"
-    }],
+    "actions": [
+      {
+        "id": "renew",
+        "text": "Endurnýja á Ísland.is",
+        "link": "https://www.island.is"
+      }
+    ],
     "link": null
-  }, {
+  },
+  {
     "id": "4",
     "serviceProvider": "Þjóðskrá Íslands",
     "date": "2020-12-28T10:33:52.448Z",
@@ -35,7 +40,8 @@
     "message": null,
     "actions": [],
     "link": null
-  }, {
+  },
+  {
     "id": "5",
     "serviceProvider": "Stafrænt Ísland",
     "date": "2020-11-01T10:33:52.448Z",

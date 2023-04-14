@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import {gql} from '@apollo/client';
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
     vehiclesList {
@@ -46,4 +46,4 @@ export const GET_USERS_VEHICLES = gql`
       createdTimestamp
     }
   }
-`
+`;

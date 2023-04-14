@@ -1,8 +1,7 @@
 import 'styled-components';
-import { Theme } from '@ui'
+import {Theme} from '@ui';
 
 declare module 'styled-components' {
-
   export interface Shade {
     background: string;
     foreground: string;
@@ -23,6 +22,6 @@ declare module 'styled-components' {
     shades: {
       dark: Shade;
       light: Shade;
-    }
+    };
   }
 }
