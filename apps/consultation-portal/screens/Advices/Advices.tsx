@@ -30,21 +30,22 @@ export const AdvicesLayout = ({ children }) => {
   )
 }
 
-export const AdvicesScreen = ({ allUserAdvices, isNotAuthorized }) => {
+export const AdvicesScreen = () => {
   const LogIn = useLogIn()
-  if (isNotAuthorized) {
-    return (
-      <AdvicesLayout>
-        <SubscriptionActionCard
-          heading="Mínar umsagnir"
-          text="Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir."
-          button={[{ label: 'Skrá mig inn', onClick: LogIn }]}
-        />
-      </AdvicesLayout>
-    )
-  }
+  
+  // if (isNotAuthorized) {
+  //   return (
+  //     <AdvicesLayout>
+  //       <SubscriptionActionCard
+  //         heading="Mínar umsagnir"
+  //         text="Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir."
+  //         button={[{ label: 'Skrá mig inn', onClick: LogIn }]}
+  //       />
+  //     </AdvicesLayout>
+  //   )
+  // }
 
-  return <AdvicesLayout>{allUserAdvices}</AdvicesLayout>
+  return <AdvicesLayout>{}</AdvicesLayout>
 }
 
 export default AdvicesScreen
