@@ -19,7 +19,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { ConsultationPortalScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @UseGuards(FeatureFlagGuard)
 @Resolver()
@@ -57,7 +57,7 @@ export class CaseResultResolver {
   })
   @FeatureFlag(Features.consultationPortalApplication)
   @UseGuards(IdsUserGuard)
-  @Scopes(ConsultationPortalScope.default)
+  @Scopes(ApiScope.samradsgatt)
   async postAdvice(
     @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
     @CurrentUser() user: User,

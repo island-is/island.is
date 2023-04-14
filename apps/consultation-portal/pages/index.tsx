@@ -11,43 +11,46 @@ interface HomeProps {
   types: ArrOfTypes
   statistics: ArrOfStatistics
 }
-export const getServerSideProps = async (ctx) => {
-  const client = initApollo()
+// export const getServerSideProps = async (ctx) => {
+//   const client = initApollo()
 
-  try {
-    const [
-      {
-        data: { consultationPortalAllTypes },
-      },
-      {
-        data: { consultationPortalStatistics },
-      },
-    ] = await Promise.all([
-      client.query<HomeGetTypesQuery>({
-        query: HOME_GET_TYPES,
-      }),
-      client.query<HomeGetStatisticsQuery>({
-        query: HOME_GET_STATISTICS,
-      }),
-    ])
-    return {
-      props: {
-        types: consultationPortalAllTypes,
-        statistics: consultationPortalStatistics,
-      },
-    }
-  } catch (e) {
-    console.error(e)
-  }
-  return {
-    redirect: {
-      destination: '/500',
-    },
-  }
-}
+//   try {
+//     const [
+//       {
+//         data: { consultationPortalAllTypes },
+//       },
+//       {
+//         data: { consultationPortalStatistics },
+//       },
+//     ] = await Promise.all([
+//       client.query<HomeGetTypesQuery>({
+//         query: HOME_GET_TYPES,
+//       }),
+//       client.query<HomeGetStatisticsQuery>({
+//         query: HOME_GET_STATISTICS,
+//       }),
+//     ])
+//     return {
+//       props: {
+//         types: consultationPortalAllTypes,
+//         statistics: consultationPortalStatistics,
+//       },
+//     }
+//   } catch (e) {
+//     console.error(e)
+//   }
+//   return {
+//     redirect: {
+//       destination: '/500',
+//     },
+//   }
+// }
 
-export const Index = ({ types, statistics }: HomeProps) => {
-  return <Home types={types} statistics={statistics} />
+// export const Index = ({ types, statistics }: HomeProps) => {
+//   return <Home types={types} statistics={statistics} />
+// }
+export const Index = () => {
+  return <Home />
 }
 
 export default Index

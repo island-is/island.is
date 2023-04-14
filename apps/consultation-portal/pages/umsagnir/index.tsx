@@ -3,6 +3,7 @@ import { ADVICES_GET_ALL_USER_ADVICES } from '../../graphql/queries.graphql'
 import { AdvicesGetAllUserAdvicesQuery } from '../../graphql/queries.graphql.generated'
 import { UserAdvice } from '../../types/interfaces'
 import Advices from '../../screens/Advices/Advices'
+import { getSession } from 'next-auth/client'
 
 interface UserAdvicesProps {
   allUserAdvices: UserAdvice
@@ -10,6 +11,7 @@ interface UserAdvicesProps {
 }
 
 export const getServerSideProps = async (ctx) => {
+  const session = await getSession(ctx)
   const input = {
     oldestFirst: false,
     pageNumber: 1,
@@ -18,6 +20,7 @@ export const getServerSideProps = async (ctx) => {
   }
 
   const client = initApollo()
+
   try {
     const [
       {
