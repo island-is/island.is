@@ -95,6 +95,18 @@ export class EstateTemplateService extends BaseTemplateApiService {
         knowledgeOfOtherWills: 'Yes',
         ships: [],
         flyers: [],
+        guns: [
+          {
+            assetNumber: '009-2018-0505',
+            description: 'Framhlaðningur (púður)',
+            share: 1,
+          },
+          {
+            assetNumber: '007-2018-1380',
+            description: 'Mauser P38',
+            share: 1,
+          },
+        ],
         estateMembers: [
           {
             name: 'Stúfur Mack',
