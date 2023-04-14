@@ -1,8 +1,9 @@
+import each from 'jest-each'
+
 import {
   CaseAppealState,
   CaseFileCategory,
 } from '@island.is/judicial-system/types'
-import each from 'jest-each'
 
 import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
