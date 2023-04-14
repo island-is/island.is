@@ -1,6 +1,6 @@
 import initApollo from '@island.is/web/graphql/client'
 import { GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN } from '@island.is/web/screens/queries/WatsonAssistantChat'
-import { storageFactory } from '@island.is/shared/utils'
+import { storageFactory, stringHash } from '@island.is/shared/utils'
 import {
   Query,
   QueryWatsonAssistantChatIdentityTokenArgs,
@@ -11,6 +11,11 @@ const nameInputId = 'utlendingastofnun-chat-name'
 const submitButtonId = 'utlendingastofnun-chat-submit-button'
 
 const storage = storageFactory(() => sessionStorage)
+
+const getUserID = () => {
+  const email = storage.getItem(emailInputId)
+  return String(stringHash(storage.getItem('IBM_WAC_DEVICE_ID') ?? email))
+}
 
 const getUserInformation = async (instance, callback) => {
   const storedName = storage.getItem(nameInputId)
@@ -85,7 +90,7 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
                 input: {
                   name,
                   email,
-                  userID: email,
+                  userID: getUserID(),
                 },
               },
             })
@@ -102,15 +107,6 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
   })
 
   instance.on({
-    type: 'window:close',
-    handler: () => {
-      // TODO: Perhaps only remove from storage if user presses x rather than -
-      storage.removeItem(nameInputId)
-      storage.removeItem(emailInputId)
-    },
-  })
-
-  instance.on({
     type: 'window:open',
     handler: () => {
       if (storage.getItem(nameInputId) && storage.getItem(emailInputId)) return
@@ -123,7 +119,7 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
               input: {
                 name,
                 email,
-                userID: email,
+                userID: getUserID(),
               },
             },
           })

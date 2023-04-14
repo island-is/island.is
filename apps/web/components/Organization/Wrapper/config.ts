@@ -34,8 +34,7 @@ export const watsonConfig: Record<
     // Útlendingastofnun - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
     '77rXck3sISbMsUv7BO1PG2': {
-      // integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
-      integrationID: '9aed32e0-8009-49ef-8c26-1220ed86e250' as any, // TODO: replace
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
@@ -82,9 +81,7 @@ export const watsonConfig: Record<
     // Útlendingastofnun - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
     '77rXck3sISbMsUv7BO1PG2': {
-      //integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
-      integrationID: '9aed32e0-8009-49ef-8c26-1220ed86e250' as any, // TODO: replace
-
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
