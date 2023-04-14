@@ -56,7 +56,7 @@ export class CaseResultResolver {
     name: 'consultationPortalPostAdvice',
   })
   @FeatureFlag(Features.consultationPortalApplication)
-  @UseGuards(IdsUserGuard)
+  @UseGuards(IdsUserGuard, ScopesGuard)
   @Scopes(ApiScope.samradsgatt)
   async postAdvice(
     @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
