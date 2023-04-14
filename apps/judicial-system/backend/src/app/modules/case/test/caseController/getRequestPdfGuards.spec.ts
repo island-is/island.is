@@ -62,7 +62,7 @@ describe('CaseController - Get request pdf guards', () => {
     })
   })
 
-  describe('CaseTypeGuerd', () => {
+  describe('CaseTypeGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
