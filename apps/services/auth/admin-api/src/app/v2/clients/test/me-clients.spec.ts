@@ -238,7 +238,10 @@ describe('MeClientsController with auth', () => {
             value: newClient.clientName,
           },
         ],
-        refreshTokenExpiration: clientBaseAttributes.refreshTokenExpiration,
+        refreshTokenExpiration:
+          clientBaseAttributes.refreshTokenExpiration === 1
+            ? RefreshTokenExpiration.Absolute
+            : RefreshTokenExpiration.Sliding,
         absoluteRefreshTokenLifetime:
           typeSpecificDefaults.absoluteRefreshTokenLifetime ??
           clientBaseAttributes.absoluteRefreshTokenLifetime,
