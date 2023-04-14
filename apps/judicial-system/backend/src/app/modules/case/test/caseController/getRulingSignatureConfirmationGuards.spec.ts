@@ -62,7 +62,7 @@ describe('CaseController - Get ruling signature confirmation guards', () => {
     })
   })
 
-  describe('CaseTypeGuerd', () => {
+  describe('CaseTypeGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {

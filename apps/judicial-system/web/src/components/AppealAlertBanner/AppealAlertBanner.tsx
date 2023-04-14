@@ -29,7 +29,7 @@ interface Props {
 
 const AppealAlertBanner: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
+  const { limitedAccess, user } = useContext(UserContext)
 
   const { workingCase } = props
 
@@ -113,7 +113,9 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
         ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
         : `${APPEAL_ROUTE}/${workingCase.id}`
     }
-  } else return null
+  } else {
+    return null
+  }
 
   return (
     <AlertBanner
