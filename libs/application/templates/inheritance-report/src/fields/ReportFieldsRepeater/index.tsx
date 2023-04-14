@@ -38,7 +38,7 @@ function setIfValueIsNotNan(
   fieldId: string,
   value: string | number,
 ) {
-  if (typeof value === 'number' && !isNaN(value)) {
+  if (typeof value === 'number' && isNaN(value)) {
     return
   }
   setValue(fieldId, value)
