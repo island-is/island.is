@@ -3,22 +3,40 @@ import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { customZodError } from './utils/customZodError'
 import { EstateTypes, YES, NO } from './constants'
-import * as kennitala from 'kennitala'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
 }
 
+const checkIfFilledOut = (arr: Array<string | undefined>) => {
+  if (arr.every((v) => v === '')) {
+    return true
+  } else if (arr.every((v) => v !== '')) {
+    return true
+  } else {
+    return false
+  }
+}
+
 const asset = z
   .object({
-    assetNumber: customZodError(z.string().min(1), m.errorNumberEmpty),
+    assetNumber: z.string().optional(),
     description: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
     dummy: z.boolean().optional(),
     share: z.number().optional(),
   })
+  .refine(
+    ({ assetNumber, description }) => {
+      return checkIfFilledOut([assetNumber, description])
+    },
+    {
+      params: m.fillOutRates,
+      path: ['assetNumber'],
+    },
+  )
   .array()
   .optional()
 
@@ -59,11 +77,11 @@ export const estateSchema = z.object({
       })
       .array()
       .optional(),
-
     assets: asset,
     flyers: asset,
     vehicles: asset,
     ships: asset,
+    guns: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
@@ -73,8 +91,21 @@ export const estateSchema = z.object({
   }),
 
   // is: Innbú
-  inventory: z.string().optional(),
-  inventoryValue: z.string().optional(),
+  inventory: z
+    .object({
+      info: z.string().optional(),
+      value: z.string().optional(),
+    })
+    .refine(
+      ({ info, value }) => {
+        return checkIfFilledOut([info, value])
+      },
+      {
+        params: m.fillOutRates,
+        path: ['value'],
+      },
+    )
+    .optional(),
 
   // is: Innistæður í bönkum
   bankAccounts: z
@@ -82,15 +113,15 @@ export const estateSchema = z.object({
       accountNumber: z.string().optional(),
       balance: z.string().optional(),
     })
-    .refine(({ accountNumber, balance }) => {
-      if (accountNumber !== '' && balance !== '') {
-        return true
-      } else if (accountNumber === '' && balance === '') {
-        return true
-      } else {
-        return false
-      }
-    })
+    .refine(
+      ({ accountNumber, balance }) => {
+        return checkIfFilledOut([accountNumber, balance])
+      },
+      {
+        params: m.fillOutRates,
+        path: ['balance'],
+      },
+    )
     .array()
     .optional(),
 
@@ -100,6 +131,15 @@ export const estateSchema = z.object({
       publisher: z.string().optional(),
       value: z.string().optional(),
     })
+    .refine(
+      ({ publisher, value }) => {
+        return checkIfFilledOut([publisher, value])
+      },
+      {
+        params: m.fillOutRates,
+        path: ['value'],
+      },
+    )
     .array()
     .optional(),
 
@@ -107,29 +147,73 @@ export const estateSchema = z.object({
   stocks: z
     .object({
       organization: z.string().optional(),
-      ssn: z.string().optional(),
+      nationalId: z.string().optional(),
       faceValue: z.string().optional(),
       rateOfExchange: z.string().optional(),
       value: z.string().optional(),
     })
+    .refine(
+      ({ organization, nationalId, value }) => {
+        return checkIfFilledOut([organization, nationalId, value])
+      },
+      {
+        params: m.fillOutRates,
+        path: ['value'],
+      },
+    )
     .array()
     .optional(),
 
   // is: Peningar og bankahólf
-  moneyAndDepositBoxesInfo: z.string().optional(),
-  moneyAndDepositBoxesValue: z.string().optional(),
+  moneyAndDeposit: z
+    .object({
+      info: z.string().optional(),
+      value: z.string().optional(),
+    })
+    .refine(
+      ({ info, value }) => {
+        return checkIfFilledOut([info, value])
+      },
+      {
+        params: m.fillOutRates,
+        path: ['value'],
+      },
+    )
+    .optional(),
 
   // is: Aðrar eignir
-  otherAssets: z.string().optional(),
-  otherAssetsValue: z.string().optional(),
+  otherAssets: z
+    .object({
+      info: z.string().optional(),
+      value: z.string().optional(),
+    })
+    .refine(
+      ({ info, value }) => {
+        return checkIfFilledOut([info, value])
+      },
+      {
+        params: m.fillOutRates,
+        path: ['value'],
+      },
+    )
+    .optional(),
 
   // is: Skuldir
   debts: z
     .object({
       creditorName: z.string().optional(),
-      ssn: z.string().optional(),
+      nationalId: z.string().optional(),
       balance: z.string().optional(),
     })
+    .refine(
+      ({ creditorName, nationalId, balance }) => {
+        return checkIfFilledOut([creditorName, nationalId, balance])
+      },
+      {
+        params: m.fillOutRates,
+        path: ['balance'],
+      },
+    )
     .array()
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
@@ -150,6 +234,25 @@ export const estateSchema = z.object({
         m.errorEmail,
       ).optional(),
     })
+    .refine(
+      ({
+        representativeName,
+        representativeNationalId,
+        representativePhoneNumber,
+        representativeEmail,
+      }) => {
+        return checkIfFilledOut([
+          representativeName,
+          representativeNationalId,
+          representativePhoneNumber,
+          representativeEmail,
+        ])
+      },
+      {
+        params: m.fillOutRates,
+        path: ['balance'],
+      },
+    )
     .optional(),
 
   // is: Heimild til setu í óskiptu búi skv. erfðaskrá

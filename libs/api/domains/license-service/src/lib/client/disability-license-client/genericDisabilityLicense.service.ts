@@ -39,10 +39,8 @@ export class GenericDisabilityLicenseService
     private smartApi: SmartSolutionsApi,
   ) {}
 
-  async fetchLicense(user: User) {
-    const license = await this.disabilityLicenseApi.getDisabilityLicense(user)
-    return license
-  }
+  fetchLicense = (user: User) =>
+    this.disabilityLicenseApi.getDisabilityLicense(user)
 
   async getLicense(
     user: User,
@@ -126,6 +124,9 @@ export class GenericDisabilityLicenseService
     const payload = await this.createPkPassPayload(user)
 
     if (!payload) {
+      this.logger.warn('Pkpass payload creation failed', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -147,6 +148,14 @@ export class GenericDisabilityLicenseService
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
      * For now we return null, just to keep existing behavior unchanged
      */
+
+    if (pass.error) {
+      this.logger.warn('Pkpass generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
+
     return null
   }
 
@@ -160,12 +169,9 @@ export class GenericDisabilityLicenseService
 
     if (pass.ok) {
       if (!pass.data.distributionQRCode) {
-        this.logger.warn(
-          'Missing pkpass distribution QR Code in disability license',
-          {
-            category: LOG_CATEGORY,
-          },
-        )
+        this.logger.warn('Missing pkpass distribution QR Code', {
+          category: LOG_CATEGORY,
+        })
         return null
       }
       return pass.data.distributionQRCode
@@ -174,6 +180,13 @@ export class GenericDisabilityLicenseService
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
      * For now we return null, just to keep existing behavior unchanged
      */
+
+    if (pass.error) {
+      this.logger.warn('Pkpass qrcode generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
     return null
   }
 
@@ -188,9 +201,12 @@ export class GenericDisabilityLicenseService
       return null
     }
 
-    let error: PkPassVerificationError | undefined
-
     if (!result.ok) {
+      this.logger.warn('Pkpass verification failed', {
+        ...result.error,
+        category: LOG_CATEGORY,
+      })
+
       return {
         valid: false,
         data: undefined,

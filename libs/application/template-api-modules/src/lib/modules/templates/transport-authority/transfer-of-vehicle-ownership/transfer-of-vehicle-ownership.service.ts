@@ -114,16 +114,20 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
-    const createdStr = application.created.toISOString()
 
     const sellerSsn = answers?.seller?.nationalId
+    const sellerEmail = answers?.seller?.email
     const buyerSsn = answers?.buyer?.nationalId
+    const buyerEmail = answers?.buyer?.email
+
+    const createdStr = application.created.toISOString()
 
     // No need to continue with this validation in user is neither seller nor buyer
     // (only time application data changes is on state change from these roles)
     if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
       return
     }
+
     const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
       ({ wasRemoved }) => wasRemoved !== 'true',
     )
@@ -140,23 +144,23 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
-          email: answers?.seller?.email,
+          email: sellerEmail,
         },
         buyer: {
           ssn: buyerSsn,
-          email: answers?.buyer?.email,
+          email: buyerEmail,
         },
         dateOfPurchase: new Date(answers?.vehicle?.date),
         dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
         insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
-          ssn: coOwner.nationalId,
-          email: coOwner.email,
+          ssn: coOwner.nationalId!,
+          email: coOwner.email!,
         })),
         operators: buyerOperators?.map((operator) => ({
-          ssn: operator.nationalId,
-          email: operator.email,
+          ssn: operator.nationalId!,
+          email: operator.email!,
           isMainOperator:
             buyerOperators.length > 1
               ? operator.nationalId === answers?.buyerMainOperator?.nationalId
@@ -308,9 +312,11 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       []) as Array<EmailRecipient>
 
     const newlyAddedRecipientList: Array<EmailRecipient> = []
+
     const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
       ({ wasRemoved }) => wasRemoved !== 'true',
     )
+
     // Buyer's co-owners
     const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
@@ -329,8 +335,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : false
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerCoOwners[i].nationalId,
-            name: buyerCoOwners[i].name,
+            ssn: buyerCoOwners[i].nationalId!,
+            name: buyerCoOwners[i].name!,
             email: emailChanged ? buyerCoOwners[i].email : undefined,
             phone: phoneChanged ? buyerCoOwners[i].phone : undefined,
             role: EmailRole.buyerCoOwner,
@@ -357,8 +363,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : false
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerOperators[i].nationalId,
-            name: buyerOperators[i].name,
+            ssn: buyerOperators[i].nationalId!,
+            name: buyerOperators[i].name!,
             email: emailChanged ? buyerOperators[i].email : undefined,
             phone: phoneChanged ? buyerOperators[i].phone : undefined,
             role: EmailRole.buyerOperator,
@@ -536,12 +542,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
+        ssn: coOwner.nationalId!,
+        email: coOwner.email!,
       })),
       operators: buyerOperators?.map((operator) => ({
-        ssn: operator.nationalId,
-        email: operator.email,
+        ssn: operator.nationalId!,
+        email: operator.email!,
         isMainOperator:
           buyerOperators.length > 1
             ? operator.nationalId === answers.buyerMainOperator?.nationalId

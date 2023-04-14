@@ -25,6 +25,7 @@ import {
   VehicleServiceFjsV1,
   TransportAuthority,
   ChargeFjsV2,
+  UniversityOfIceland,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -57,9 +58,9 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
       AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
-        dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
-        staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
-        prod: ref((h) => h.svc('loftbru.island.is')),
+        dev: 'loftbru.dev01.devland.is',
+        staging: 'loftbru.staging01.devland.is',
+        prod: 'loftbru.island.is',
       },
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
@@ -172,9 +173,9 @@ export const serviceSetup = (services: {
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
-        dev: 'https://samradapi-test.island.is',
-        staging: 'https://samradapi-test.island.is',
-        prod: 'https://samradapi-test.island.is',
+        dev: 'https://samradapi-test.devland.is',
+        staging: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi-test.devland.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
@@ -246,7 +247,6 @@ export const serviceSetup = (services: {
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
-      RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
@@ -309,6 +309,7 @@ export const serviceSetup = (services: {
       VehicleServiceFjsV1,
       TransportAuthority,
       ChargeFjsV2,
+      UniversityOfIceland,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -332,8 +333,8 @@ export const serviceSetup = (services: {
     .readiness('/health')
     .liveness('/liveness')
     .resources({
-      limits: { cpu: '800m', memory: '2048Mi' },
-      requests: { cpu: '50m', memory: '512Mi' },
+      limits: { cpu: '400m', memory: '2048Mi' },
+      requests: { cpu: '150m', memory: '512Mi' },
     })
     .replicaCount({
       default: 2,

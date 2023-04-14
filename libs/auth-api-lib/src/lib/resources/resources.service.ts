@@ -12,7 +12,7 @@ import { NoContentException } from '@island.is/nest/problem'
 
 import { PagedRowsDto } from '../core/types/paged-rows.dto'
 import { DelegationConfig } from '../delegations/DelegationConfig'
-import { DEFAULT_DOMAIN } from '../types/defaultDomain'
+import { DEFAULT_DOMAIN } from '../types'
 import { ApiResourceAllowedScopeDTO } from './dto/api-resource-allowed-scope.dto'
 import { ApiResourceSecretDTO } from './dto/api-resource-secret.dto'
 import { ApiResourcesDTO } from './dto/api-resources.dto'

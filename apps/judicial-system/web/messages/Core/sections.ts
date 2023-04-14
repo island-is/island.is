@@ -12,6 +12,11 @@ export const sections = {
     defaultMessage: 'Sakamál',
     description: 'Notaður sem titill á hliðarstiku í sakamálum',
   }),
+  appealedCaseTitle: defineMessage({
+    id: 'judicial.system.core:sections.appealed_case_title',
+    defaultMessage: 'Kærumál',
+    description: 'Notaður sem titill á hliðarstiku í kærumálum',
+  }),
   restrictionCaseProsecutorSection: defineMessages({
     caseTitle: {
       id:
@@ -361,6 +366,34 @@ export const sections = {
       defaultMessage: 'Yfirlit kröfu',
       description:
         'Notaður sem texti fyrir Yfirlit kröfu skref í hliðarstiku í framlengdum rannsóknarheimildum hjá sækjendum',
+    },
+  }),
+  courtOfAppealSection: defineMessages({
+    appealed: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.appealed',
+      defaultMessage: 'Kærumál',
+      description:
+        'Notaður sem texti í skrefum á hliðarstiku þegar krafa er kærð',
+    },
+    result: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.appealed',
+      defaultMessage: 'Úrskurður Landsréttar',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
+    },
+    overview: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.overview',
+      defaultMessage: 'Yfirlit',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
+    },
+    reception: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.reception',
+      defaultMessage: 'Skráning',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
+    },
+    ruling: {
+      id: 'judicial.system.core:sections.court_of_appeal_section.ruling',
+      defaultMessage: 'Úrskurður',
+      description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
     },
   }),
   caseResults: defineMessages({

@@ -5,6 +5,7 @@ module.exports = {
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
+  testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '<rootDir>/coverage/libs/auth-api-lib',
   globals: { 'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` } },

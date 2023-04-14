@@ -310,18 +310,20 @@ const Item = ({
           </>
         )}
         <GridColumn span="1/1" paddingBottom={2}>
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: 'yes',
-              },
-            ]}
-          />
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: 'yes',
+                },
+              ]}
+            />
+          </Box>
         </GridColumn>
       </GridRow>
     </Box>

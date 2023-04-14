@@ -11,10 +11,18 @@ import {
 import { GetCaseInput } from '../dto/case.input'
 import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
-import { AdviceRequest } from '../models/adviceRequest.model'
+import { PostAdviceInput } from '../dto/postAdvice.input'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { ConsultationPortalScope } from '@island.is/auth/scopes'
 
-@Resolver()
 @UseGuards(FeatureFlagGuard)
+@Resolver()
 export class CaseResultResolver {
   constructor(private caseResultService: CaseResultService) {}
 
@@ -43,10 +51,18 @@ export class CaseResultResolver {
     return advices
   }
 
-  @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })
+  @Mutation(() => Boolean!, {
+    nullable: true,
+    name: 'consultationPortalPostAdvice',
+  })
   @FeatureFlag(Features.consultationPortalApplication)
-  async postAdvice(@Args('caseId') caseId: number): Promise<void> {
-    const response = await this.caseResultService.postAdvice(caseId)
+  @UseGuards(IdsUserGuard)
+  @Scopes(ConsultationPortalScope.default)
+  async postAdvice(
+    @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    const response = await this.caseResultService.postAdvice(user, input)
     return response
   }
 }

@@ -11,11 +11,16 @@ import { CaseResult } from '../models/caseResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
 import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
-import { AdviceRequest } from '../models/adviceRequest.model'
+import { PostAdviceInput } from '../dto/postAdvice.input'
+import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class CaseResultService {
   constructor(private casesApi: CasesApi) {}
+
+  private casesApiWithAuth(auth: User) {
+    return this.casesApi.withMiddleware(new AuthMiddleware(auth))
+  }
 
   async getCases(input: GetCasesInput): Promise<CasesAggregateResult> {
     const request: ApiCasesGetRequest = {
@@ -52,12 +57,14 @@ export class CaseResultService {
     return response
   }
 
-  async postAdvice(caseId: number) {
+  async postAdvice(auth: User, input: PostAdviceInput) {
     const request: ApiCasesCaseIdAdvicesPostRequest = {
-      caseId: caseId,
+      caseId: input.caseId,
+      adviceRequest: input.adviceRequest,
     }
-
-    const response = await this.casesApi.apiCasesCaseIdAdvicesPost(request)
+    const response = await this.casesApiWithAuth(
+      auth,
+    ).apiCasesCaseIdAdvicesPost(request)
     return response
   }
 }
