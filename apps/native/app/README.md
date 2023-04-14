@@ -1,4 +1,4 @@
-# Native App
+# Ísland.is App
 
 This is the native app Ísland.is for iOS and Android.
 
