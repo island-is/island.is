@@ -3,6 +3,6 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('ConsultationPortalPostCaseSubscriptionCommand')
 export class PostCaseSubscriptionCommand {
-  @Field(() => PostCaseSubscriptionCommand, { nullable: true })
+  @Field(() => CaseSubscriptionType, { nullable: true })
   subscriptionType?: CaseSubscriptionType
 }
