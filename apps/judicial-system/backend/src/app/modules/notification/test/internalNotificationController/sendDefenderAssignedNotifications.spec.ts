@@ -35,6 +35,7 @@ type GivenWhenThen = (
 
 describe('InternalNotificationController - Send defender assigned notifications', () => {
   const userId = uuid()
+  const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
@@ -85,7 +86,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
       type: NotificationType.DEFENDER_ASSIGNED,
     }
     const caseId = uuid()
-    const court = { name: 'Héraðsdómur Reykjavíkur' } as Case['court']
     const theCase = {
       id: caseId,
       court,
@@ -269,24 +269,31 @@ describe('InternalNotificationController - Send defender assigned notifications'
       then = await givenWhenThen(caseId, user, theCase, notification)
     })
 
-    it('should return notification was not sent', () => {
+    it('should return notification was sent', () => {
       expect(mockNotificationModel.create).toHaveBeenCalled()
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
       expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
     })
   })
+
   describe('should only send one email to each defender', () => {
     const notification: SendInternalNotificationDto = {
       userId: userId,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
     const caseId = uuid()
-    const defender1 = { defenderEmail: 'some-email@island.is' } as Defendant
+    const defender1 = {
+      defenderNationalId: '1234567890',
+      defenderEmail: 'some-email@island.is',
+      defenderName: 'Saul',
+    } as Defendant
     const defendants = [defender1, defender1] as Defendant[] | undefined
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
       defendants,
+      court,
+      courtCaseNumber: 'S-123/2022',
     } as Case
     const user = {} as User
     let then: Then
@@ -297,9 +304,30 @@ describe('InternalNotificationController - Send defender assigned notifications'
       then = await givenWhenThen(caseId, user, theCase, notification)
     })
 
-    it('should return notification was not sent', () => {
+    it('should return notification was sent', () => {
       expect(mockNotificationModel.create).toHaveBeenCalled()
       expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
+        from: {
+          name: mockConfig.email.fromName,
+          address: mockConfig.email.fromEmail,
+        },
+        to: [
+          {
+            name: defender1.defenderName,
+            address: defender1.defenderEmail,
+          },
+        ],
+        replyTo: {
+          name: mockConfig.email.replyToName,
+          address: mockConfig.email.replyToEmail,
+        },
+        attachments: undefined,
+        subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
+        text: expect.anything(), // same as hmtl but stripped hmtl tags
+        html:
+          'Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli S-123/2022.<br /><br />Þú getur nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.',
+      })
       expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
     })
   })
