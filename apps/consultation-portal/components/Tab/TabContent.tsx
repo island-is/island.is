@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { Area, SortOptions } from '../../types/enums'
 import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
 import SearchAndSort from '../SearchAndSort/SearchAndSort'
@@ -38,12 +38,18 @@ export const TabContent = ({
         setSortTitle={setSortTitle}
         currentTab={currentTab}
       />
-      <SubscriptionTable
-        data={data}
-        currentTab={currentTab}
-        subscriptionArray={subscriptionArray}
-        setSubscriptionArray={setSubscriptionArray}
-      />
+      {data && data.length > 0 ? (
+        <SubscriptionTable
+          data={data}
+          currentTab={currentTab}
+          subscriptionArray={subscriptionArray}
+          setSubscriptionArray={setSubscriptionArray}
+        />
+      ) : (
+        <Text paddingY={4} variant="h3">
+          Engin áskrift fannst
+        </Text>
+      )}
     </Box>
   )
 }

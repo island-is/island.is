@@ -1,22 +1,28 @@
 import initApollo from '../../graphql/client'
-import SubscriptionScreen from '../../screens/Subscriptions/Subscriptions'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
 } from '../../types/interfaces'
 import { QueryConsultationPortalGetCasesArgs } from '@island.is/api/schema'
-import { SUB_GET_CASES, SUB_GET_TYPES } from '../../graphql/queries.graphql'
+import {
+  SUB_GET_CASES,
+  SUB_GET_TYPES,
+  SUB_GET_USERSUBS,
+} from '../../graphql/queries.graphql'
 import {
   SubGetCasesQuery,
   SubGetTypesQuery,
+  SubGetUsersubsQuery,
 } from '../../graphql/queries.graphql.generated'
 import UserSubscriptions from '../../screens/UserSubscriptions/UserSubscriptions'
 
 const STATUSES_TO_FETCH = [1, 2, 3]
 
 interface SubProps {
-  subscriptions: CaseForSubscriptions[]
+  subscriptions: any
+  cases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
+  isNotAuthorized?: boolean
 }
 
 export const getServerSideProps = async (ctx) => {
@@ -25,6 +31,9 @@ export const getServerSideProps = async (ctx) => {
     const [
       {
         data: { consultationPortalGetCases },
+      },
+      {
+        data: { consultationPortalUserSubscriptions },
       },
       {
         data: { consultationPortalAllTypes },
@@ -38,18 +47,32 @@ export const getServerSideProps = async (ctx) => {
           },
         },
       }),
+      client.query<SubGetUsersubsQuery>({
+        query: SUB_GET_USERSUBS,
+      }),
       client.query<SubGetTypesQuery>({
         query: SUB_GET_TYPES,
       }),
     ])
     return {
       props: {
-        subscriptions: consultationPortalGetCases.cases,
+        cases: consultationPortalGetCases.cases,
+        subscriptions: consultationPortalUserSubscriptions,
         types: consultationPortalAllTypes,
       },
     }
   } catch (e) {
     console.error(e)
+    if (e.message === 'Unauthorized') {
+      return {
+        props: {
+          cases: {},
+          subscriptions: {},
+          types: null,
+          isNotAuthorized: true,
+        },
+      }
+    }
   }
   return {
     redirect: {
@@ -57,7 +80,19 @@ export const getServerSideProps = async (ctx) => {
     },
   }
 }
-export const Index = ({ subscriptions, types }: SubProps) => {
-  return <UserSubscriptions subscriptions={subscriptions} types={types} />
+export const Index = ({
+  subscriptions,
+  cases,
+  types,
+  isNotAuthorized,
+}: SubProps) => {
+  return (
+    <UserSubscriptions
+      cases={cases}
+      subscriptions={subscriptions}
+      types={types}
+      isNotAuthorized={isNotAuthorized}
+    />
+  )
 }
 export default Index

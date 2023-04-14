@@ -32,6 +32,27 @@ export const SUB_GET_EMAIL = gql`
     }
   }
 `
+// screens/UserSubscriptions
+export const SUB_GET_USERSUBS = gql`
+  query SUB_GET_USERSUBS {
+    consultationPortalUserSubscriptions {
+      subscribedToAll
+      subscribedToAllNew
+      cases {
+        id
+        subscriptionType
+      }
+      institutions {
+        id
+        subscriptionType
+      }
+      policyAreas {
+        id
+        subscriptionType
+      }
+    }
+  }
+`
 
 // screens/Home
 export const HOME_GET_STATISTICS = gql`

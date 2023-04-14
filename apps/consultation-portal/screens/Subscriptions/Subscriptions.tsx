@@ -128,7 +128,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
         <BreadcrumbsWithMobileDivider
           items={[
             { title: 'Samráðsgátt', href: '/samradsgatt' },
-            { title: 'Mínar áskriftir ', href: '/samradsgatt/askriftir' },
+            { title: 'Áskriftir ', href: '/samradsgatt/askriftir' },
           ]}
         />
 
@@ -211,26 +211,30 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                     })}
                   {subscriptionArray.institutionIds.length !== 0 &&
                     subscriptionArray.institutionIds.map((institutionId) => {
-                      return institutionsData
-                        .filter((item) => institutionId.toString() === item.id)
-                        .map((filteredItem) => (
-                          <ChosenSubscriptionCard
-                            data={{
-                              name: filteredItem.name.toString(),
-                              id: filteredItem.id,
-                              area: Area.institution,
-                            }}
-                            subscriptionArray={subscriptionArray}
-                            setSubscriptionArray={(
-                              newSubscriptionArray: SubscriptionArray,
-                            ) => setSubscriptionArray(newSubscriptionArray)}
-                            key={`institution-${institutionId}`}
-                          />
-                        ))
+                      return Object.values(institutionsData).map(
+                        (filteredItem) => {
+                          if (filteredItem.id == institutionId.toString()) {
+                            return (
+                              <ChosenSubscriptionCard
+                                data={{
+                                  name: filteredItem.name.toString(),
+                                  id: filteredItem.id,
+                                  area: Area.institution,
+                                }}
+                                subscriptionArray={subscriptionArray}
+                                setSubscriptionArray={(
+                                  newSubscriptionArray: SubscriptionArray,
+                                ) => setSubscriptionArray(newSubscriptionArray)}
+                                key={`institution-${institutionId}`}
+                              />
+                            )
+                          }
+                        },
+                      )
                     })}
                   {subscriptionArray.policyAreaIds.length !== 0 &&
                     subscriptionArray.policyAreaIds.map((policyAreaId) => {
-                      return policyAreasData
+                      return Object.values(policyAreasData)
                         .filter((item) => policyAreaId.toString() === item.id)
                         .map((filteredItem) => (
                           <ChosenSubscriptionCard

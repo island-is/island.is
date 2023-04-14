@@ -135,31 +135,33 @@ const SubscriptionTable = ({
             )}
           </Row>
         </Head>
-        <Body>
-          {GeneralSubscriptionArray.map((item, index) => {
-            return (
-              <SubscriptionTableAllItem
-                key={index}
+        {data && data.length > 0 && (
+          <Body>
+            {GeneralSubscriptionArray.map((item, index) => {
+              return (
+                <SubscriptionTableAllItem
+                  key={index}
+                  item={item}
+                  checkboxStatus={checkboxAllStatus}
+                  onCheckboxChange={onAllChecked}
+                  currentTab={currentTab}
+                  mdBreakpoint={mdBreakpoint}
+                />
+              )
+            })}
+            {data.map((item, idx: number) => (
+              <SubscriptionTableItem
+                key={item.id}
                 item={item}
-                checkboxStatus={checkboxAllStatus}
-                onCheckboxChange={onAllChecked}
+                idx={idx}
+                checkboxStatus={checkboxStatus}
+                onCheckboxChange={onCheckboxChange}
                 currentTab={currentTab}
                 mdBreakpoint={mdBreakpoint}
               />
-            )
-          })}
-          {data.map((item, idx: number) => (
-            <SubscriptionTableItem
-              key={item.id}
-              item={item}
-              idx={idx}
-              checkboxStatus={checkboxStatus}
-              onCheckboxChange={onCheckboxChange}
-              currentTab={currentTab}
-              mdBreakpoint={mdBreakpoint}
-            />
-          ))}
-        </Body>
+            ))}
+          </Body>
+        )}
       </Table>
     </Box>
   )

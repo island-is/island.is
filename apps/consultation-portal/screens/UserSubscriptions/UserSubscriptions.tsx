@@ -28,11 +28,18 @@ import { sorting } from '../../utils/helpers'
 import getInitValues from '../Subscriptions/getInitValues'
 import TabsList from '../Subscriptions/tabsList'
 interface SubProps {
-  subscriptions: CaseForSubscriptions[]
+  subscriptions: any
+  cases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
+  isNotAuthorized: boolean
 }
 
-export const UserSubscriptions = ({ subscriptions, types }: SubProps) => {
+export const UserSubscriptions = ({
+  cases,
+  subscriptions,
+  types,
+  isNotAuthorized,
+}: SubProps) => {
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
 
   const [searchValue, setSearchValue] = useState('')
@@ -44,6 +51,7 @@ export const UserSubscriptions = ({ subscriptions, types }: SubProps) => {
   const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
     GeneralSubscriptionArray,
   )
+
   const [institutionsData, setInstitutionsData] = useState(Institutions)
 
   const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
@@ -122,13 +130,19 @@ export const UserSubscriptions = ({ subscriptions, types }: SubProps) => {
     },
   })
   return (
-    <Layout seo={{ title: 'Mínar áskriftir', url: 'minaraskriftir' }}>
+    <Layout
+      seo={{ title: 'Mínar áskriftir', url: 'minaraskriftir' }}
+      justifyContent="flexStart"
+    >
       <Divider />
       <Box background="blue100">
         <BreadcrumbsWithMobileDivider
           items={[
             { title: 'Samráðsgátt', href: '/samradsgatt' },
-            { title: 'Mínar áskriftir ', href: '/samradsgatt/minaraskriftir' },
+            {
+              title: 'Mínar áskriftir ',
+              href: '/samradsgatt/minaraskriftir',
+            },
           ]}
         />
 
