@@ -999,10 +999,10 @@ export const SignedVerdictOverview: React.FC = () => {
             secondaryButtonText={formatMessage(
               m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
             )}
-            onPrimaryButtonClick={async () => {
+            onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
             }}
-            onSecondaryButtonClick={async () => {
+            onSecondaryButtonClick={() => {
               setModalVisible('NoModal')
             }}
           />

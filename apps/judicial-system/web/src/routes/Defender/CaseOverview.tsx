@@ -323,10 +323,10 @@ export const CaseOverview: React.FC = () => {
             secondaryButtonText={formatMessage(
               m.confirmAppealAfterDeadlineModalSecondaryButtonText,
             )}
-            onPrimaryButtonClick={async () => {
+            onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
             }}
-            onSecondaryButtonClick={async () => {
+            onSecondaryButtonClick={() => {
               setModalVisible('NoModal')
             }}
           />
