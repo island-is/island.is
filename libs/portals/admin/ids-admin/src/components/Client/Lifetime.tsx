@@ -24,6 +24,7 @@ interface LifetimeProps {
   refreshTokenExpiration: boolean
   slidingRefreshTokenLifetime: number
   selectedEnvironment: AuthAdminEnvironment
+  inSync?: boolean
 }
 
 const Lifetime = ({
@@ -31,6 +32,7 @@ const Lifetime = ({
   slidingRefreshTokenLifetime,
   refreshTokenExpiration,
   selectedEnvironment,
+  inSync = true,
 }: LifetimeProps) => {
   const { formatMessage } = useLocale()
   const [lifetime, setLifetime] = useState({
@@ -94,6 +96,7 @@ const Lifetime = ({
       isDirty={customChangedValidation}
       intent={ClientFormTypes.lifeTime}
       selectedEnvironment={selectedEnvironment}
+      inSync={inSync}
     >
       <Stack space={3}>
         <Stack space={1}>

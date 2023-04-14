@@ -1,16 +1,26 @@
 import React, { FC, useEffect, useRef, useState } from 'react'
-import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  DropdownMenu,
+  Icon,
+  Text,
+} from '@island.is/island-ui/core'
 import { Form } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ClientFormTypes } from '../../components/forms/EditApplication/EditApplication.action'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
+import * as styles from './ContentCard.css'
 
 interface ContentCardProps {
   title: string
   onSave?: (saveOnAllEnvironments: boolean) => void
   description?: string
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
+  inSync?: boolean
   intent?: ClientFormTypes | 'none'
   selectedEnvironment?: AuthAdminEnvironment
 }
@@ -31,6 +41,7 @@ const ContentCard: FC<ContentCardProps> = ({
   description,
   onSave,
   isDirty = defaultIsDirty,
+  inSync = false,
   intent = 'none',
   selectedEnvironment,
 }) => {
@@ -39,6 +50,8 @@ const ContentCard: FC<ContentCardProps> = ({
   const originalFormData = useRef<FormData>()
   const [dirty, setDirty] = useState<boolean>(false)
   const ref = useRef<HTMLFormElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const [offset, setOffset] = useState<number>(0)
 
   // On change, check if the form has changed, use custom validation if provided
   const onChange = () => {
@@ -55,6 +68,10 @@ const ContentCard: FC<ContentCardProps> = ({
     setDirty(isDirty(newFormData, originalFormData.current ?? new FormData()))
   }
 
+  useEffect(() => {
+    setOffset(titleRef.current?.offsetTop ?? 0)
+  }, [titleRef])
+
   // On mount, set the original form data
   useEffect(() => {
     originalFormData.current = new FormData(ref.current as HTMLFormElement)
@@ -69,15 +86,92 @@ const ContentCard: FC<ContentCardProps> = ({
       justifyContent="spaceBetween"
       height="full"
       width="full"
-      border={'standard'}
+      border="standard"
+      position="relative"
     >
       <Box>
-        <Text marginTop={2} marginBottom={4} variant="h3">
-          {title}
-        </Text>
+        <Box className={styles.title}>
+          <Text ref={titleRef} marginTop={2} marginBottom={4} variant="h3">
+            {title}
+          </Text>
+        </Box>
         {description && <Text marginBottom={4}>{description}</Text>}
       </Box>
       <Form ref={ref} onChange={onChange} method="post">
+        {intent !== 'none' && (
+          <Box
+            justifyContent="flexEnd"
+            style={{ top: offset }}
+            display="flex"
+            position="absolute"
+            right={4}
+          >
+            <DropdownMenu
+              title="Sync"
+              icon="chevronDown"
+              menuClassName={styles.menu}
+              items={[
+                {
+                  title: '',
+                  render: () => (
+                    <>
+                      <Box
+                        justifyContent="center"
+                        alignItems="center"
+                        display="flex"
+                        columnGap={1}
+                        className={styles.menuItem}
+                      >
+                        <Icon
+                          icon={inSync ? 'checkmark' : 'warning'}
+                          color={inSync ? 'blue400' : 'red400'}
+                          size="small"
+                          type="outline"
+                        />
+                        <Text variant="small" color="blue400">
+                          {inSync
+                            ? 'Settings are the same in all environments.'
+                            : 'SyncSettings are different in some enviroments'}
+                        </Text>
+                      </Box>
+                      <Divider />
+                    </>
+                  ),
+                },
+                ...(inSync || dirty
+                  ? []
+                  : [
+                    {
+                      title: '',
+                      render: () => (
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          padding={2}
+                        >
+                          <button
+                            className={styles.syncButton}
+                            type="submit"
+                            value={intent}
+                            name="intent"
+                          >
+                            <Text
+                              variant="small"
+                              color="blue400"
+                              fontWeight="semiBold"
+                            >
+                              Sync settings (from this environment)
+                            </Text>
+                          </button>
+                        </Box>
+                      ),
+                    },
+                  ]),
+              ]}
+              key="sync-environment"
+            />
+          </Box>
+        )}
         {children}
         {onSave && (
           <Box

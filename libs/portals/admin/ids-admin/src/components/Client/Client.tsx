@@ -42,6 +42,26 @@ const Client = () => {
     AuthClient['environments'][0]
   >(client.environments[0])
 
+  const checkIfInSync = (variables: string[]) => {
+    for (const variable of variables) {
+      for (const env of client.environments) {
+        if (
+          JSON.stringify(
+            env[variable as keyof AuthClient['environments'][0]],
+          ) !==
+          JSON.stringify(
+            selectedEnvironment[
+              variable as keyof AuthClient['environments'][0]
+            ],
+          )
+        ) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
   return (
     <GridContainer>
       <Stack space={4}>
@@ -92,12 +112,14 @@ const Client = () => {
           key={`${selectedEnvironment.environment}-Translations`}
           translations={selectedEnvironment.displayName}
           selectedEnvironment={selectedEnvironment.environment}
+          inSync={checkIfInSync(['displayName'])}
         />
         <ClientsUrl
           key={`${selectedEnvironment.environment}-ClientsUrl`}
           redirectUris={selectedEnvironment.redirectUris}
           postLogoutRedirectUris={selectedEnvironment.postLogoutRedirectUris}
           selectedEnvironment={selectedEnvironment.environment}
+          inSync={checkIfInSync(['redirectUris', 'postLogoutRedirectUris'])}
         />
         <Lifetime
           key={`${selectedEnvironment.environment}-Lifetime`}
@@ -112,6 +134,11 @@ const Client = () => {
             AuthAdminRefreshTokenExpiration.Sliding
           }
           selectedEnvironment={selectedEnvironment.environment}
+          inSync={checkIfInSync([
+            'absoluteRefreshTokenLifetime',
+            'slidingRefreshTokenLifetime',
+            'refreshTokenExpiration',
+          ])}
         />
         <Delegation
           key={`${selectedEnvironment.environment}-Delegation`}
@@ -127,6 +154,14 @@ const Client = () => {
             selectedEnvironment.supportsCustomDelegation
           }
           requireApiScopes={selectedEnvironment.requireApiScopes}
+          inSync={checkIfInSync([
+            'supportsProcuringHolders',
+            'supportsLegalGuardians',
+            'promptDelegations',
+            'supportsPersonalRepresentatives',
+            'supportsCustomDelegation',
+            'requireApiScopes',
+          ])}
           selectedEnvironment={selectedEnvironment.environment}
         />
         <AdvancedSettings
@@ -144,6 +179,14 @@ const Client = () => {
             }) ?? []
           }
           selectedEnvironment={selectedEnvironment.environment}
+          inSync={checkIfInSync([
+            'supportsProcuringHolders',
+            'supportsLegalGuardians',
+            'promptDelegations',
+            'supportsPersonalRepresentatives',
+            'supportsCustomDelegation',
+            'requireApiScopes',
+          ])}
         />
       </Stack>
     </GridContainer>

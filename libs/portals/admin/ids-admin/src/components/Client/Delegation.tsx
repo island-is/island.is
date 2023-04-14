@@ -16,6 +16,7 @@ interface DelegationProps {
   supportsCustomDelegation: boolean
   requireApiScopes: boolean
   selectedEnvironment: AuthAdminEnvironment
+  inSync?: boolean
 }
 
 const Delegation = ({
@@ -26,6 +27,7 @@ const Delegation = ({
   promptDelegations,
   requireApiScopes,
   selectedEnvironment,
+  inSync = true,
 }: DelegationProps) => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
@@ -50,6 +52,7 @@ const Delegation = ({
       onSave={() => Promise.resolve()}
       intent={ClientFormTypes.delegations}
       selectedEnvironment={selectedEnvironment}
+      inSync={inSync}
     >
       <Stack space={2}>
         <Checkbox

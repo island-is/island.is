@@ -10,10 +10,12 @@ import { AuthApplicationTranslation } from './Client.loader'
 interface TranslationsProps {
   translations: AuthApplicationTranslation[]
   selectedEnvironment: AuthAdminEnvironment
+  inSync?: boolean
 }
 const Translations = ({
   translations,
   selectedEnvironment,
+  inSync = true
 }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
@@ -40,6 +42,7 @@ const Translations = ({
       }}
       intent={ClientFormTypes.translations}
       selectedEnvironment={selectedEnvironment}
+      inSync={inSync}
     >
       <Stack space={3}>
         <Tabs

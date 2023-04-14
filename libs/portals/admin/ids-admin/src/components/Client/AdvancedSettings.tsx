@@ -23,6 +23,7 @@ interface AdvancedSettingsProps {
   slidingRefreshTokenLifetime: number
   customClaims: string[]
   selectedEnvironment: AuthAdminEnvironment
+  inSync: boolean
 }
 
 const AdvancedSettings = ({
@@ -33,6 +34,7 @@ const AdvancedSettings = ({
   slidingRefreshTokenLifetime,
   customClaims,
   selectedEnvironment,
+  inSync,
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
   const actionData = useActionData() as EditApplicationResult<
@@ -67,6 +69,7 @@ const AdvancedSettings = ({
       }}
       intent={ClientFormTypes.advancedSettings}
       selectedEnvironment={selectedEnvironment}
+      inSync={inSync}
     >
       <Stack space={3}>
         <Checkbox

@@ -18,11 +18,13 @@ interface ClientsUrlProps {
   redirectUris: string[]
   postLogoutRedirectUris: string[]
   selectedEnvironment: AuthAdminEnvironment
+  inSync?: boolean
 }
 const ClientsUrl = ({
   redirectUris,
   postLogoutRedirectUris,
   selectedEnvironment,
+  inSync = true,
 }: ClientsUrlProps) => {
   const actionData = useActionData() as EditApplicationResult<
     typeof schema.applicationUrl
@@ -52,6 +54,7 @@ const ClientsUrl = ({
       }}
       intent={ClientFormTypes.applicationUrls}
       selectedEnvironment={selectedEnvironment}
+      inSync={inSync}
     >
       <Stack space={3}>
         <Stack space={1}>
