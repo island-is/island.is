@@ -1,32 +1,59 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Accordion,
-  AccordionItem,
+  AccordionCard,
   Box,
+  Divider,
   GridColumn,
-  GridContainer,
   GridRow,
   Text,
+  toast,
   ToggleSwitchButton,
 } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import { useQuery } from '@apollo/client'
+import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 
 const data = [
   {
-    domain: 'Skatturinn',
+    tenant: 'Reykjavíkurborg',
+    client: 'Mínar síður Reykjavíkurborgar',
     items: [
-      { title: 'Sími', description: 'Meiri details um síma', hasConsent: true },
+      {
+        provider: 'Ísland.is',
+        providerLogo: 'Ísland.is',
+        permissions: [
+          {
+            title: 'Netfang',
+            description: 'Meira um netfang',
+            hasConsent: false,
+          },
+          {
+            title: 'Sími',
+            description: 'Meira um síma',
+            hasConsent: true,
+          },
+        ],
+      },
     ],
   },
   {
-    domain: 'Reykjavíkurborg',
+    tenant: 'Skatturinn',
+    client: 'Mínar síður RSK',
     items: [
       {
-        title: 'Netfang',
-        description: 'Meiri details um netfang',
-        hasConsent: true,
+        provider: 'Stafraent Ísland',
+        providerLogo: 'Stafraent Ísland',
+        permissions: [
+          {
+            title: 'Sími',
+            description: 'Meira um síma',
+            hasConsent: true,
+          },
+        ],
       },
     ],
   },
@@ -35,48 +62,156 @@ const data = [
 function Consent() {
   const { formatMessage } = useLocale()
 
+  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
+  const organizations = orgData?.getOrganizations?.items || {}
+
   return (
     <GridRow>
-      <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+      <GridColumn span={['12/12', '12/12', '12/12', '10/12', '8/12']}>
         <IntroHeader
           title={m.consent}
           intro={m.consentHeaderIntro}
           marginBottom={1}
         />
-        <Text variant="small">{formatMessage(m.consentHeaderDetails)}</Text>
+        <Box marginBottom={8}>
+          <Text variant="small">{formatMessage(m.consentHeaderDetails)}</Text>
+        </Box>
 
-        <Text variant="h4" as="h2">
-          Kerfi
-        </Text>
-
-        <Accordion singleExpand={false}>
-          {data.map(({ domain, items }) => (
-            <AccordionItem id={domain} label={domain}>
-              <Box background="blue100" borderRadius="standard">
-                {items.map(({ title, description, hasConsent }) => {
-                  const id = domain + title
+        <Accordion
+          singleExpand={false}
+          dividers={false}
+          dividerOnTop={false}
+          dividerOnBottom={false}
+        >
+          {data.map(({ tenant, client, items }) => (
+            <AccordionCard
+              id={tenant}
+              label={
+                <Box
+                  display="flex"
+                  columnGap={2}
+                  alignItems="center"
+                  component="span"
+                >
+                  <img
+                    src={getOrganizationLogoUrl(tenant, organizations)}
+                    alt={''}
+                    width={24}
+                  />
+                  <Box component="span">
+                    <Text variant="eyebrow" color="purple400">
+                      {tenant}
+                    </Text>
+                    <Text variant="h4">{client}</Text>
+                  </Box>
+                </Box>
+              }
+            >
+              <Box paddingTop={5} paddingBottom={3} paddingLeft={4}>
+                {items.map(({ provider, providerLogo, permissions }) => {
                   return (
-                    <Box component="article" key={title} id={id}>
-                      <Text id={id}>{title}</Text>
-                      <Text>{description}</Text>
-                      <ToggleSwitchButton
-                        label={hasConsent ? 'Virkja' : 'Gera óvirkt'}
-                        hiddenLabel
-                        checked={hasConsent}
-                        onChange={() => {
-                          console.log('toggle')
-                        }}
-                        aria-controls={id}
-                      />
-                    </Box>
+                    <>
+                      <Box display="flex" columnGap={1} marginBottom={2}>
+                        <img
+                          src={getOrganizationLogoUrl(
+                            providerLogo,
+                            organizations,
+                          )}
+                          alt={''}
+                          width={24}
+                        />
+                        <Box flexGrow={1}>
+                          <Text variant="h5">{provider}</Text>
+                        </Box>
+                      </Box>
+                      <Box>
+                        {permissions.map(
+                          ({ title, description, hasConsent }, index) => {
+                            const id = `${title}-${provider}`
+                            return (
+                              <ConsentLine
+                                id={id}
+                                hasConsent={hasConsent}
+                                title={title}
+                                description={description}
+                                key={id + hasConsent}
+                                onChange={() => console.log('change')}
+                                isLast={permissions.length === index + 1}
+                              />
+                            )
+                          },
+                        )}
+                      </Box>
+                    </>
                   )
                 })}
               </Box>
-            </AccordionItem>
+            </AccordionCard>
           ))}
         </Accordion>
       </GridColumn>
     </GridRow>
+  )
+}
+
+interface ConsentLineProps {
+  title: string
+  description: string
+  hasConsent: boolean
+  id: string
+  onChange: (newChecked: boolean) => void
+  isLast: boolean
+}
+
+function ConsentLine({
+  title,
+  description,
+  hasConsent,
+  onChange,
+  id,
+  isLast,
+}: ConsentLineProps) {
+  const [localConsent, setLocalConsent] = useState(hasConsent)
+
+  const handleChange = (newChecked: boolean) => {
+    try {
+      onChange(newChecked)
+      if (Math.random() < 0.3) {
+        throw new Error('error')
+      }
+      setLocalConsent(newChecked)
+    } catch (error) {
+      toast.error('Ó nei villa. Alla malla')
+      setLocalConsent(hasConsent)
+    }
+  }
+
+  return (
+    <>
+      <Box
+        component="article"
+        key={title}
+        id={id}
+        display="flex"
+        columnGap={2}
+        paddingY={3}
+      >
+        <Box flexGrow={1}>
+          <Text id={id}>{title}</Text>
+          <Text variant="small">{description}</Text>
+        </Box>
+        <Box>
+          <ToggleSwitchButton
+            label={hasConsent ? 'Virkja' : 'Gera óvirkt'}
+            hiddenLabel
+            checked={localConsent}
+            onChange={handleChange}
+            aria-controls={id}
+          />
+        </Box>
+      </Box>
+      {!isLast && <Divider />}
+    </>
   )
 }
 
