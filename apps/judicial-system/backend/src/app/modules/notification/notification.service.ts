@@ -21,7 +21,6 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
-  DEFENDER_ROUTE,
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
@@ -1231,9 +1230,8 @@ export class NotificationService {
     const { subject, body } = formatDefenderAssignedEmailNotification(
       this.formatMessage,
       theCase,
-      defenderNationalId
-        ? `${this.config.clientUrl}${DEFENDER_ROUTE}/${theCase.id}`
-        : undefined,
+      defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
     return this.sendEmail(subject, body, defenderName, defenderEmail)

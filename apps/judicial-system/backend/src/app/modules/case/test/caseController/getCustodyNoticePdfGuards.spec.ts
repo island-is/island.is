@@ -59,7 +59,7 @@ describe('CaseController - Get custody notice pdf guards', () => {
     })
   })
 
-  describe('CaseTypeGuerd', () => {
+  describe('CaseTypeGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
