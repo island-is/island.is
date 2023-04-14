@@ -102,10 +102,6 @@ export class ClientSecretsService {
   }
 
   private formatSecret(secret: ClientSecret): ClientSecretDto {
-    if (environment.clientSecretEncryptionKey === undefined) {
-      throw new Error('Client secret encryption key is not defined')
-    }
-
     const decryptedValue = secret.encryptedValue
       ? CryptoJS.AES.decrypt(
           secret.encryptedValue,
