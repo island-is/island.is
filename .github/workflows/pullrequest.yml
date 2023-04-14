@@ -361,7 +361,9 @@ jobs:
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@2.0.0
         with:
-          ignore_paths: node_modules,apps/native/app/android
+          ignore_paths: >-
+            node_modules
+            apps/native/app/android
           severity: warning
 
   formatting:
