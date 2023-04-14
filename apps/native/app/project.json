@@ -31,5 +31,6 @@
         "command": "graphql-codegen --config apps/native/app/codegen.yml"
       }
     }
-  }
+  },
+  "tags": []
 }
