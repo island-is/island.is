@@ -141,32 +141,32 @@ const ContentCard: FC<ContentCardProps> = ({
                 ...(inSync || dirty
                   ? []
                   : [
-                    {
-                      title: '',
-                      render: () => (
-                        <Box
-                          display="flex"
-                          justifyContent="center"
-                          padding={2}
-                        >
-                          <button
-                            className={styles.syncButton}
-                            type="submit"
-                            value={intent}
-                            name="intent"
+                      {
+                        title: '',
+                        render: () => (
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            padding={2}
                           >
-                            <Text
-                              variant="small"
-                              color="blue400"
-                              fontWeight="semiBold"
+                            <button
+                              className={styles.syncButton}
+                              type="submit"
+                              value={intent}
+                              name="intent"
                             >
-                              Sync settings (from this environment)
-                            </Text>
-                          </button>
-                        </Box>
-                      ),
-                    },
-                  ]),
+                              <Text
+                                variant="small"
+                                color="blue400"
+                                fontWeight="semiBold"
+                              >
+                                Sync settings (from this environment)
+                              </Text>
+                            </button>
+                          </Box>
+                        ),
+                      },
+                    ]),
               ]}
               key="sync-environment"
             />

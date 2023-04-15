@@ -15,7 +15,7 @@ interface TranslationsProps {
 const Translations = ({
   translations,
   selectedEnvironment,
-  inSync = true
+  inSync = true,
 }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
