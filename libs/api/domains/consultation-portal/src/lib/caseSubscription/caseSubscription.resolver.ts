@@ -12,13 +12,14 @@ import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
+  ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { ConsultationPortalScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @Resolver()
-@UseGuards(FeatureFlagGuard, IdsUserGuard)
-@Scopes(ConsultationPortalScope.default)
+@UseGuards(FeatureFlagGuard, IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.samradsgatt)
 export class CaseSubscriptionResolver {
   constructor(private caseSubscriptionService: CaseSubscriptionService) {}
 

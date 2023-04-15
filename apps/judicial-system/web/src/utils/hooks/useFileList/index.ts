@@ -1,35 +1,66 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useLazyQuery } from '@apollo/client'
 
-import { GetSignedUrlQuery } from '@island.is/judicial-system-web/graphql/sharedGql'
 import { CaseFileState } from '@island.is/judicial-system/types'
 import {
+  LimitedAccessGetSignedUrlQueryQuery,
+  LimitedAccessGetSignedUrlQueryQueryVariables,
   GetSignedUrlQueryQuery,
   GetSignedUrlQueryQueryVariables,
+  GetSignedUrlQueryDocument,
+  LimitedAccessGetSignedUrlQueryDocument,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 
 interface Parameters {
   caseId: string
 }
 
 const useFileList = ({ caseId }: Parameters) => {
+  const { limitedAccess } = useContext(UserContext)
   const { setWorkingCase } = useContext(FormContext)
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
-  const [getSignedUrl, { error, variables }] = useLazyQuery<
-    GetSignedUrlQueryQuery,
-    GetSignedUrlQueryQueryVariables
-  >(GetSignedUrlQuery, {
+  const [
+    getSignedUrl,
+    { error: fullAccessError, variables: fullAccessVariables },
+  ] = useLazyQuery<GetSignedUrlQueryQuery, GetSignedUrlQueryQueryVariables>(
+    GetSignedUrlQueryDocument,
+    {
+      fetchPolicy: 'no-cache',
+      onCompleted(data) {
+        if (data?.getSignedUrl?.url) {
+          window.open(data.getSignedUrl.url, '_blank')
+        }
+      },
+    },
+  )
+
+  const [
+    limitedAccessGetSignedUrl,
+    { error: limitedAccessError, variables: limitedAccessVariables },
+  ] = useLazyQuery<
+    LimitedAccessGetSignedUrlQueryQuery,
+    LimitedAccessGetSignedUrlQueryQueryVariables
+  >(LimitedAccessGetSignedUrlQueryDocument, {
     fetchPolicy: 'no-cache',
     onCompleted(data) {
-      if (data?.getSignedUrl?.url) {
-        window.open(data.getSignedUrl.url, '_blank')
+      if (data?.limitedAccessGetSignedUrl?.url) {
+        window.open(data.limitedAccessGetSignedUrl.url, '_blank')
       }
     },
   })
 
   useEffect(() => {
+    const error = limitedAccess ? limitedAccessError : fullAccessError
+
+    const variables = limitedAccess
+      ? limitedAccessVariables
+      : fullAccessVariables
+
     if (error && variables) {
       const code = error?.graphQLErrors[0].extensions?.code
 
@@ -56,11 +87,23 @@ const useFileList = ({ caseId }: Parameters) => {
         }))
       }
     }
-  }, [error, setWorkingCase, variables])
+  }, [
+    fullAccessError,
+    fullAccessVariables,
+    limitedAccess,
+    limitedAccessError,
+    limitedAccessVariables,
+    setWorkingCase,
+  ])
 
-  const onOpen = (fileId: string) => {
-    getSignedUrl({ variables: { input: { id: fileId, caseId } } })
-  }
+  const onOpen = useMemo(
+    () => (fileId: string) => {
+      const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
+
+      query({ variables: { input: { id: fileId, caseId } } })
+    },
+    [caseId, getSignedUrl, limitedAccess, limitedAccessGetSignedUrl],
+  )
 
   const dismissFileNotFound = () => {
     setFileNotFound(false)
