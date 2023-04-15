@@ -180,12 +180,12 @@ const Client = () => {
           }
           selectedEnvironment={selectedEnvironment.environment}
           inSync={checkIfInSync([
-            'supportsProcuringHolders',
-            'supportsLegalGuardians',
-            'promptDelegations',
-            'supportsPersonalRepresentatives',
-            'supportsCustomDelegation',
-            'requireApiScopes',
+            'requirePkce',
+            'allowOfflineAccess',
+            'requireConsent',
+            'supportTokenExchange',
+            'slidingRefreshTokenLifetime',
+            'customClaims',
           ])}
         />
       </Stack>
