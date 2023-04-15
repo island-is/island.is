@@ -1,6 +1,6 @@
 'use strict'
 
-const englishLanguage = [
+const languages = [
   {
     iso_key: 'en',
     description: 'Enska',
@@ -17,14 +17,7 @@ module.exports = {
   up: async (queryInterface) => {
     const transaction = await queryInterface.sequelize.transaction()
 
-    try {
-      await queryInterface.bulkInsert('language', englishLanguage, {
-        transaction,
-      })
-    } catch (err) {
-      await transaction.rollback()
-      throw err
-    }
+    await queryInterface.bulkInsert('language', languages, { transaction })
 
     transaction.commit()
   },

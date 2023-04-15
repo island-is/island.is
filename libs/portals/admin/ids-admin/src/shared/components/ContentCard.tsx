@@ -8,7 +8,6 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 interface ContentCardProps {
   title: string
-  onSave?: (saveOnAllEnvironments: boolean) => void
   description?: string
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
   intent?: ClientFormTypes | 'none'
@@ -29,7 +28,6 @@ const ContentCard: FC<ContentCardProps> = ({
   children,
   title,
   description,
-  onSave,
   isDirty = defaultIsDirty,
   intent = 'none',
   selectedEnvironment,
@@ -79,13 +77,14 @@ const ContentCard: FC<ContentCardProps> = ({
       </Box>
       <Form ref={ref} onChange={onChange} method="post">
         {children}
-        {onSave && (
+        {intent !== 'none' && (
           <Box
             alignItems="center"
             marginTop="containerGutter"
             display="flex"
             justifyContent="spaceBetween"
           >
+            {}
             <Checkbox
               label={formatMessage(m.saveForAllEnvironments)}
               value={`${allEnvironments}`}
@@ -96,7 +95,6 @@ const ContentCard: FC<ContentCardProps> = ({
             <Button
               disabled={!dirty}
               type="submit"
-              onClick={() => onSave(allEnvironments)}
               name="intent"
               value={intent}
             >

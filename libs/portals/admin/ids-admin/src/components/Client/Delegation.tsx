@@ -47,7 +47,6 @@ const Delegation = ({
     <ContentCard
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
-      onSave={() => Promise.resolve()}
       intent={ClientFormTypes.delegations}
       selectedEnvironment={selectedEnvironment}
     >
@@ -57,7 +56,7 @@ const Delegation = ({
           backgroundColor={'blue'}
           large
           name="supportsCustomDelegation"
-          value={'true'}
+          value="true"
           disabled={!isSuperAdmin}
           defaultChecked={inputValues.supportsCustomDelegation}
           checked={inputValues.supportsCustomDelegation}
@@ -75,7 +74,7 @@ const Delegation = ({
           large
           name="supportsLegalGuardians"
           disabled={!isSuperAdmin}
-          value={'true'}
+          value="true"
           checked={inputValues.supportsLegalGuardians}
           defaultChecked={inputValues.supportsLegalGuardians}
           onChange={() => {
@@ -92,7 +91,7 @@ const Delegation = ({
           large
           disabled={!isSuperAdmin}
           name="supportsPersonalRepresentatives"
-          value={'true'}
+          value="true"
           defaultChecked={inputValues.supportsPersonalRepresentatives}
           checked={inputValues.supportsPersonalRepresentatives}
           onChange={() => {
@@ -111,7 +110,7 @@ const Delegation = ({
           large
           disabled={!isSuperAdmin}
           name="supportsProcuringHolders"
-          value={'true'}
+          value="true"
           defaultChecked={inputValues.supportsProcuringHolders}
           checked={inputValues.supportsProcuringHolders}
           onChange={() => {
@@ -130,7 +129,7 @@ const Delegation = ({
           large
           disabled={!isSuperAdmin}
           name="promptDelegations"
-          value={'true'}
+          value="true"
           defaultChecked={inputValues.promptDelegations}
           checked={inputValues.promptDelegations}
           onChange={() => {
@@ -147,7 +146,7 @@ const Delegation = ({
           large
           disabled={!isSuperAdmin}
           name="requireApiScopes"
-          value={'true'}
+          value="true"
           defaultChecked={inputValues.requireApiScopes}
           checked={inputValues.requireApiScopes}
           onChange={() => {

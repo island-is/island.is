@@ -187,8 +187,12 @@ export class ClientsService extends MultiEnvironmentService {
       if (resp.status === 'fulfilled' && resp.value) {
         patchClientResponses.push({
           ...resp.value,
+          id: this.formatClientId(
+            resp.value.clientId,
+            input.environments[index],
+          ),
           environment: input.environments[index],
-        } as ClientEnvironment)
+        })
       } else if (resp.status === 'rejected') {
         this.logger.error(
           `Failed to update application ${input.clientId} in environment ${input.environments[index]}`,

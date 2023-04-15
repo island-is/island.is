@@ -88,9 +88,6 @@ const Lifetime = ({
     <ContentCard
       title={formatMessage(m.lifetime)}
       description={formatMessage(m.lifeTimeDescription)}
-      onSave={(saveOnAllEnvironments) => {
-        return saveOnAllEnvironments
-      }}
       isDirty={customChangedValidation}
       intent={ClientFormTypes.lifeTime}
       selectedEnvironment={selectedEnvironment}
