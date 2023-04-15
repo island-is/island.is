@@ -1,7 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
 import { ClientType, RefreshTokenExpiration } from '../../../types'
+import { AdminClientClaimDto } from './admin-client-claim.dto'
 
 export class AdminClientDto {
   @ApiProperty()
@@ -95,8 +96,9 @@ export class AdminClientDto {
   @ApiProperty()
   accessTokenLifetime!: number
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Dictionary of custom claims added to access tokens.',
+    type: [AdminClientClaimDto],
   })
-  customClaims?: Record<string, string>
+  customClaims?: AdminClientClaimDto[]
 }
