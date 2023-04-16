@@ -17,7 +17,6 @@ import * as styles from './ContentCard.css'
 
 interface ContentCardProps {
   title: string
-  onSave?: (saveOnAllEnvironments: boolean) => void
   description?: string
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
   inSync?: boolean
@@ -39,7 +38,6 @@ const ContentCard: FC<ContentCardProps> = ({
   children,
   title,
   description,
-  onSave,
   isDirty = defaultIsDirty,
   inSync = false,
   intent = 'none',
@@ -173,7 +171,7 @@ const ContentCard: FC<ContentCardProps> = ({
           </Box>
         )}
         {children}
-        {onSave && (
+        {intent !== 'none' && (
           <Box
             alignItems="center"
             marginTop="containerGutter"
@@ -190,7 +188,6 @@ const ContentCard: FC<ContentCardProps> = ({
             <Button
               disabled={!dirty}
               type="submit"
-              onClick={() => onSave(allEnvironments)}
               name="intent"
               value={intent}
             >

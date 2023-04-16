@@ -190,11 +190,13 @@ describe('ClientsService', () => {
         ],
       }
 
-      try {
-        await clientsService.patchClient(currentUser, patchClientsInput)
-      } catch (error) {
-        expect(error.message).toEqual('Nothing provided to update')
-      }
+      // act
+      const actPromise = clientsService.patchClient(
+        currentUser,
+        patchClientsInput,
+      )
+      // assert
+      await expect(actPromise).rejects.toThrow('Nothing provided to update')
     })
 
     it('should update the postLogoutRedirectUris for all environments', async function () {
@@ -224,6 +226,9 @@ describe('ClientsService', () => {
         {
           environment: Environment.Development,
           ...baseResponse,
+          id: `${
+            baseResponse.clientId
+          }#${Environment.Development.toLowerCase()}`,
           postLogoutRedirectUris: [
             'https://test.island.is',
             'https://test2.island.is',
@@ -232,6 +237,7 @@ describe('ClientsService', () => {
         {
           environment: Environment.Staging,
           ...baseResponse,
+          id: `${baseResponse.clientId}#${Environment.Staging.toLowerCase()}`,
           postLogoutRedirectUris: [
             'https://test.island.is',
             'https://test2.island.is',
@@ -240,6 +246,9 @@ describe('ClientsService', () => {
         {
           environment: Environment.Production,
           ...baseResponse,
+          id: `${
+            baseResponse.clientId
+          }#${Environment.Production.toLowerCase()}`,
           postLogoutRedirectUris: [
             'https://test.island.is',
             'https://test2.island.is',
@@ -271,6 +280,9 @@ describe('ClientsService', () => {
         {
           environment: Environment.Development,
           ...baseResponse,
+          id: `${
+            baseResponse.clientId
+          }#${Environment.Development.toLowerCase()}`,
           postLogoutRedirectUris: [
             'https://test.island.is',
             'https://test2.island.is',

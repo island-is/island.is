@@ -37,9 +37,6 @@ const Translations = ({
   return (
     <ContentCard
       title={formatMessage(m.translations)}
-      onSave={() => {
-        return Promise.resolve()
-      }}
       intent={ClientFormTypes.translations}
       selectedEnvironment={selectedEnvironment}
       inSync={inSync}

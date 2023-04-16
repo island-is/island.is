@@ -64,9 +64,6 @@ const AdvancedSettings = ({
   return (
     <ContentCard
       title={formatMessage(m.advancedSettings)}
-      onSave={() => {
-        return
-      }}
       intent={ClientFormTypes.advancedSettings}
       selectedEnvironment={selectedEnvironment}
       inSync={inSync}
@@ -74,7 +71,7 @@ const AdvancedSettings = ({
       <Stack space={3}>
         <Checkbox
           label={formatMessage(m.requireConsent)}
-          backgroundColor={'blue'}
+          backgroundColor="blue"
           large
           disabled={!isSuperAdmin}
           name="requireConsent"
@@ -86,18 +83,18 @@ const AdvancedSettings = ({
               requireConsent: e.target.checked,
             })
           }}
-          value={'true'}
+          value="true"
           subLabel={formatMessage(m.requireConsentDescription)}
         />
         <Checkbox
           label={formatMessage(m.allowOfflineAccess)}
-          backgroundColor={'blue'}
+          backgroundColor="blue"
           large
           disabled={!isSuperAdmin}
           name="allowOfflineAccess"
           defaultChecked={inputValues.allowOfflineAccess}
           checked={inputValues.allowOfflineAccess}
-          value={'true'}
+          value="true"
           onChange={(e) => {
             setInputValues({
               ...inputValues,
@@ -108,13 +105,13 @@ const AdvancedSettings = ({
         />
         <Checkbox
           label={formatMessage(m.requirePkce)}
-          backgroundColor={'blue'}
+          backgroundColor="blue"
           large
           disabled={!isSuperAdmin}
           defaultChecked={inputValues.requirePkce}
           checked={inputValues.requirePkce}
           name="requirePkce"
-          value={'true'}
+          value="true"
           onChange={(e) => {
             setInputValues({
               ...inputValues,
@@ -125,13 +122,13 @@ const AdvancedSettings = ({
         />
         <Checkbox
           label={formatMessage(m.supportsTokenExchange)}
-          backgroundColor={'blue'}
+          backgroundColor="blue"
           large
           disabled={!isSuperAdmin}
           defaultChecked={inputValues.supportTokenExchange}
           checked={inputValues.supportTokenExchange}
           name="supportTokenExchange"
-          value={'true'}
+          value="true"
           onChange={(e) => {
             setInputValues({
               ...inputValues,

@@ -171,7 +171,3 @@ export const superUserFields = [
   'accessTokenLifetime',
   'customClaims',
 ]
-
-export const normalUserFields = Object.keys(new AdminPatchClientDto()).filter(
-  (key) => !superUserFields.includes(key),
-)

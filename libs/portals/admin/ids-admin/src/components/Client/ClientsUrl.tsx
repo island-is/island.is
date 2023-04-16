@@ -49,9 +49,6 @@ const ClientsUrl = ({
   return (
     <ContentCard
       title={formatMessage(m.clientUris)}
-      onSave={(saveOnAllEnvironments) => {
-        console.log('saveOnAllEnvironments: ', saveOnAllEnvironments, uris)
-      }}
       intent={ClientFormTypes.applicationUrls}
       selectedEnvironment={selectedEnvironment}
       inSync={inSync}
