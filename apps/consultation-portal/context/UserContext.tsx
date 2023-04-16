@@ -6,7 +6,7 @@ const UserContext = createContext({
   setIsAuthenticated: (_: boolean) => undefined,
   user: null as User,
   setUser: (_: User) => undefined,
-  userLoading: false
+  userLoading: false,
 })
 
 export default UserContext
