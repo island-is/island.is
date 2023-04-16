@@ -20,6 +20,7 @@ import { ClientInput } from './dto/client.input'
 import { ClientsInput } from './dto/clients.input'
 import { CreateClientResponse } from './dto/create-client.response'
 import { CreateClientInput } from './dto/create-client.input'
+import { PatchClientInput } from './dto/patch-client.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Client)
@@ -55,6 +56,16 @@ export class ClientsResolver {
     input: CreateClientInput,
   ) {
     return this.clientsService.createClient(user, input)
+  }
+
+  @Mutation(() => [ClientEnvironment], {
+    name: 'patchAuthAdminClient',
+  })
+  patchClient(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => PatchClientInput }) input: PatchClientInput,
+  ) {
+    return this.clientsService.patchClient(user, input)
   }
 
   @ResolveField('defaultEnvironment', () => ClientEnvironment)
