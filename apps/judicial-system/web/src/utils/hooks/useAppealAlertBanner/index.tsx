@@ -52,10 +52,10 @@ const useAppealAlertBanner = (
   onAppealAfterDeadline?: () => void,
 ) => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
+  const { user, limitedAccess } = useContext(UserContext)
   const isCourtRoleUser = isCourtRole(user?.role)
   const isProsecutionRoleUser = isProsecutionRole(user?.role)
-  const isDefenderRoleUser = user?.role === UserRole.Defender
+  const isDefenderRoleUser = limitedAccess
   let title = ''
   let description: string | undefined = undefined
   let child: React.ReactElement | null = null
@@ -77,6 +77,7 @@ const useAppealAlertBanner = (
     (isProsecutionRoleUser && prosecutorStatementDate) ||
     (isDefenderRoleUser && defenderStatementDate)
 
+  // HIGH COURT BANNER INFO IS HANDLED HERE
   if (user?.institution?.type === InstitutionType.HighCourt) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
@@ -84,13 +85,16 @@ const useAppealAlertBanner = (
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
   }
-  // APPEAL HAS BEEN RECEIVED
+  // DEFENDER, PROSECUTOR AND COURT BANNER INFO IS HANDLED HERE:
+  // When appeal has been received
   else if (appealState === CaseAppealState.Received) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
+    // if the current user has already sent a statement, we don't want to display
+    // the link to send a statement, instead we want to display the date it was sent
     if (hasCurrentUserSentStatement) {
       child = (
         <Text variant="h4" color="mint800">
@@ -118,7 +122,7 @@ const useAppealAlertBanner = (
       )
     }
   }
-  // CASE HAS BEEN APPEALED
+  // When case has been appealed by prosecuor or defender
   else if (hasBeenAppealed) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDescription, {
@@ -154,7 +158,7 @@ const useAppealAlertBanner = (
       )
     }
   }
-  //
+  // When case can be appealed
   else if (canBeAppealed) {
     title = formatMessage(strings.appealDeadlineTitle, {
       appealDeadline,
