@@ -209,7 +209,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     if (counterParty.phoneNumber) {
       await this.smsService.sendSms(
         counterParty.phoneNumber,
-        'Þér hafa borist drög að samningi um breytt lögheimili barna og meðlag á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
+        'Þér hafa borist drög að samningi um breytt lögheimili barns á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
       )
     }
   }
