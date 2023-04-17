@@ -111,6 +111,18 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: () =>
     import('@island.is/application/templates/alcohol-tax-redemption'),
+  [ApplicationTypes.CITIZENSHIP]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-immigration/citizenship'
+    ),
+  [ApplicationTypes.RESIDENCE_PERMIT_PERMANENT]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-immigration/residence-permit-permanent'
+    ),
+  [ApplicationTypes.RESIDENCE_PERMIT_RENEWAL]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-immigration/residence-permit-renewal'
+    ),
 }
 
 export default templates

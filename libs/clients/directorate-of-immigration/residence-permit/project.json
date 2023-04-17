@@ -1,0 +1,27 @@
+{
+  "root": "libs/clients/directorate-of-immigration/residence-permit",
+  "sourceRoot": "libs/clients/directorate-of-immigration/residence-permit/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/directorate-of-immigration/residence-permit/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/directorate-of-immigration/residence-permit"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/directorate-of-immigration/residence-permit/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

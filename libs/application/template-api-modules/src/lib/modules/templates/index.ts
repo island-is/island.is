@@ -78,9 +78,12 @@ import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
 import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book-update-instructor/driving-license-book-update-instructor.module'
 import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
-
-//TODO: ADD These templates.
-import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
+import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
+import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
+import { ResidencePermitPermanentModule } from './directorate-of-immigration/residence-permit-permanent/residence-permit-permanent.module'
+import { ResidencePermitPermanentService } from './directorate-of-immigration/residence-permit-permanent/residence-permit-permanent.service'
+import { ResidencePermitRenewalModule } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.module'
+import { ResidencePermitRenewalService } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -125,6 +128,9 @@ export const modules = [
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
   DrivingLicenseBookUpdateInstructorModule,
+  CitizenshipModule,
+  ResidencePermitPermanentModule,
+  ResidencePermitRenewalModule,
 ]
 
 export const services = [
@@ -170,4 +176,7 @@ export const services = [
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
   DrivingLicenseBookUpdateInstructorService,
+  CitizenshipService,
+  ResidencePermitPermanentService,
+  ResidencePermitRenewalService,
 ]

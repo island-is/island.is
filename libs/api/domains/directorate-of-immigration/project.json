@@ -1,0 +1,25 @@
+{
+  "root": "libs/api/domains/directorate-of-immigration",
+  "sourceRoot": "libs/api/domains/directorate-of-immigration/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/api/domains/directorate-of-immigration/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/directorate-of-immigration"],
+      "options": {
+        "jestConfig": "libs/api/domains/directorate-of-immigration/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}

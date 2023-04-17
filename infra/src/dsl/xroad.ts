@@ -511,3 +511,19 @@ export const TransportAuthority = new XroadConf({
     },
   },
 })
+
+export const DirectorateOfImmigration = new XroadConf({
+  env: {
+    XROAD_CITIZENSHIP_PATH: {
+      dev: 'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Citizenship-V1',
+      staging: 'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Citizenship-V1',
+      prod: 'IS/GOV/5405131040/Utlendingastofnun-Protected/Citizenship-V1',
+    },
+    XROAD_RESIDENCE_PERMIT_PATH: {
+      dev: 'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Residence-Permit-V1',
+      staging:
+        'IS-DEV/GOV/10017/Utlendingastofnun-Protected/Residence-Permit-V1',
+      prod: 'IS/GOV/5405131040/Utlendingastofnun-Protected/Residence-Permit-V1',
+    },
+  },
+})

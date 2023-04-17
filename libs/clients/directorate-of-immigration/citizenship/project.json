@@ -1,0 +1,27 @@
+{
+  "root": "libs/clients/directorate-of-immigration/citizenship",
+  "sourceRoot": "libs/clients/directorate-of-immigration/citizenship/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/directorate-of-immigration/citizenship/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/directorate-of-immigration/citizenship"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/directorate-of-immigration/citizenship/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

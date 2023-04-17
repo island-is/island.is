@@ -43,6 +43,9 @@ export enum ApplicationTypes {
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
+  CITIZENSHIP = 'Citizenship',
+  RESIDENCE_PERMIT_PERMANENT = 'ResidencePermitPermanent',
+  RESIDENCE_PERMIT_RENEWAL = 'ResidencePermitRenewal',
 }
 
 export const ApplicationConfigurations = {
@@ -221,5 +224,17 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
     slug: 'endugreidsla-afengisutgjalda',
     translation: 'atr.application',
+  },
+  [ApplicationTypes.CITIZENSHIP]: {
+    slug: 'rikisborgararettur',
+    translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.RESIDENCE_PERMIT_PERMANENT]: {
+    slug: 'otimabundid-dvalarleyfi',
+    translation: 'doi.rpp.application',
+  },
+  [ApplicationTypes.RESIDENCE_PERMIT_RENEWAL]: {
+    slug: 'endurnyja-dvalarleyfi',
+    translation: 'doi.rpr.application',
   },
 }

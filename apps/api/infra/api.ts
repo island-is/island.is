@@ -26,6 +26,7 @@ import {
   TransportAuthority,
   ChargeFjsV2,
   UniversityOfIceland,
+  DirectorateOfImmigration,
 } from '../../../infra/src/dsl/xroad'
 import { settings } from '../../../infra/src/dsl/settings'
 import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
@@ -310,6 +311,7 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       UniversityOfIceland,
+      DirectorateOfImmigration,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
