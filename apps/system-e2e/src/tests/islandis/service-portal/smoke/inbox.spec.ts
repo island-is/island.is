@@ -65,7 +65,6 @@ test.describe('Pósthólf overview', () => {
 test.describe.skip('Pósthólf', () => {
   for (const { testCase, home } of [
     { testCase: 'Pósthólf skjal opnast', home: '/en' },
-    { testCase: 'Pósthólf skilar gögnum', home: '/' },
   ]) {
     test(testCase, () => {
       return

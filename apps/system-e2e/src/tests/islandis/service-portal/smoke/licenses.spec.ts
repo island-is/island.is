@@ -13,17 +13,7 @@ test.describe('Licenses', () => {
       browser: browser,
       storageState: 'service-portal-licenses.json',
       homeUrl,
-      phoneNumber: '0105069',
-      idsLoginOn: true,
-    })
-  })
-
-  test.beforeAll(async ({ browser }) => {
-    context = await session({
-      browser: browser,
-      storageState: 'service-portal-licenses.json',
-      homeUrl,
-      phoneNumber: '0105069',
+      phoneNumber: '0102989',
       idsLoginOn: true,
     })
   })
@@ -44,6 +34,47 @@ test.describe('Licenses', () => {
       await expect(headline).toContainText('Skírteinin þín')
     })
   })
+
+  test('should display passport in overview', async () => {
+    const page = await context.newPage()
+    await page.goto('/minarsidur/skirteini')
+    await page.waitForLoadState('networkidle')
+
+    // Act
+    const passportLink = page.locator('a:right-of(:text("Vegabréf"))').first()
+    await passportLink.click()
+    const title1 = page.getByText('Nafn einstaklings')
+
+    // Assert
+    await expect(page).toHaveURL(
+      /minarsidur\/skirteini\/tjodskra\/vegabref\/.+/,
+    )
+    await expect(title1).toBeVisible()
+  })
+
+  test('should display child passports', async () => {
+    const page = await context.newPage()
+    await page.goto('/minarsidur/skirteini')
+    await page.waitForLoadState('networkidle')
+
+    // Act
+    const tabButton = page.getByRole('tab', {
+      name: 'Skírteini barna þinna',
+    })
+    await tabButton.click()
+
+    const childPassportLink = page
+      .locator('role=button[name="Skoða upplýsingar"]')
+      .last()
+    await childPassportLink.click()
+    const title1 = page.getByText('Nafn einstaklings')
+
+    // Assert
+    await expect(page).toHaveURL(
+      /minarsidur\/skirteini\/tjodskra\/vegabref\/.+/,
+    )
+    await expect(title1).toBeVisible()
+  })
 })
 
 test.describe.skip('Skírteini', () => {
@@ -56,10 +87,6 @@ test.describe.skip('Skírteini', () => {
     { testCase: 'Skírteini sjá ADR skírteini' },
     { testCase: 'Skírteini sjá Skotvopna detail + byssueign' },
     { testCase: 'Skírteini sjá Skotvopna skírteini' },
-    { testCase: 'Skírteini sjá Vegabréf barna detail' },
-    { testCase: 'Skírteini sjá Vegabréf barna' },
-    { testCase: 'Skírteini sjá Vegabréf mitt detail' },
-    { testCase: 'Skírteini sjá Vegabréf' },
     { testCase: 'Skírteini sjá Vinnuvéla detail' },
     { testCase: 'Skírteini sjá Vinnuvéla skírteini' },
     { testCase: 'Skírteini sjá Ökuskírteini detail' },
