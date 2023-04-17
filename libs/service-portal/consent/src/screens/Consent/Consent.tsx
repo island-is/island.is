@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import {
   Accordion,
   AccordionCard,
+  AlertBanner,
   Box,
   Divider,
   GridColumn,
   GridRow,
+  SkeletonLoader,
   Text,
   toast,
   ToggleSwitchButton,
@@ -13,11 +15,26 @@ import {
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { useQuery } from '@apollo/client'
-import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
 
-const data = [
+import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql' // Temp
+import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+
+interface MData {
+  tenant: string
+  client: string
+  items: {
+    provider: string
+    providerLogo: string
+    permissions: {
+      title: string
+      description: string
+      hasConsent: boolean
+    }[]
+  }[]
+}
+
+const mock: MData[] = [
   {
     tenant: 'Reykjavíkurborg',
     client: 'Mínar síður Reykjavíkurborgar',
@@ -28,12 +45,30 @@ const data = [
         permissions: [
           {
             title: 'Netfang',
-            description: 'Meira um netfang',
+            description: 'Netfang þitt á Ísland.is',
             hasConsent: false,
           },
           {
             title: 'Sími',
-            description: 'Meira um síma',
+            description:
+              'Símanúmer þitt á Ísland.is ásamt símanúmerinu sem var notað til að auðkenna þig með rafrænu skilríki.',
+            hasConsent: true,
+          },
+        ],
+      },
+      {
+        provider: 'Annað',
+        providerLogo: 'Ísland.is',
+        permissions: [
+          {
+            title: 'Netfang',
+            description: 'Netfang þitt á Ísland.is',
+            hasConsent: false,
+          },
+          {
+            title: 'Sími',
+            description:
+              'Símanúmer þitt á Ísland.is ásamt símanúmerinu sem var notað til að auðkenna þig með rafrænu skilríki.',
             hasConsent: true,
           },
         ],
@@ -50,7 +85,8 @@ const data = [
         permissions: [
           {
             title: 'Sími',
-            description: 'Meira um síma',
+            description:
+              'Símanúmer þitt á Ísland.is ásamt símanúmerinu sem var notað til að auðkenna þig með rafrænu skilríki.',
             hasConsent: true,
           },
         ],
@@ -59,9 +95,34 @@ const data = [
   },
 ]
 
+interface MockData<T> {
+  data: T | undefined
+  isLoading: boolean
+}
+
+function useMockData<T>(mock: T, time: number): MockData<T> {
+  const [isLoaded, setIsLoaded] = useState(false)
+  const hasStarted = React.useRef(false)
+
+  if (!hasStarted.current) {
+    hasStarted.current = true
+    setTimeout(() => {
+      setIsLoaded(true)
+    }, time)
+  }
+
+  return isLoaded
+    ? { data: mock, isLoading: false }
+    : { data: undefined, isLoading: true }
+}
+
 function Consent() {
   const { formatMessage } = useLocale()
 
+  // const { data, isLoading } = useMockData<MData[]>([], 1000)
+  const { data, isLoading } = useMockData(mock, 1000)
+
+  // Mock organizations for icons.
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
   const organizations = orgData?.getOrganizations?.items || {}
 
@@ -71,11 +132,16 @@ function Consent() {
         <IntroHeader
           title={m.consent}
           intro={m.consentHeaderIntro}
-          marginBottom={1}
-        />
-        <Box marginBottom={8}>
-          <Text variant="small">{formatMessage(m.consentHeaderDetails)}</Text>
-        </Box>
+          marginBottom={8}
+        >
+          <GridColumn span={['8/8', '5/8']}>
+            <Box marginTop={1}>
+              <Text variant="small">
+                {formatMessage(m.consentHeaderDetails)}
+              </Text>
+            </Box>
+          </GridColumn>
+        </IntroHeader>
 
         <Accordion
           singleExpand={false}
@@ -83,74 +149,130 @@ function Consent() {
           dividerOnTop={false}
           dividerOnBottom={false}
         >
-          {data.map(({ tenant, client, items }) => (
-            <AccordionCard
-              id={tenant}
-              label={
-                <Box
-                  display="flex"
-                  columnGap={2}
-                  alignItems="center"
-                  component="span"
-                >
-                  <img
-                    src={getOrganizationLogoUrl(tenant, organizations)}
-                    alt={''}
-                    width={24}
-                  />
-                  <Box component="span">
-                    <Text variant="eyebrow" color="purple400">
-                      {tenant}
-                    </Text>
-                    <Text variant="h4">{client}</Text>
+          {isLoading ? (
+            <Box>
+              <SkeletonLoader
+                display="block"
+                height={117}
+                repeat={2}
+                space={2}
+                borderRadius="large"
+              />
+            </Box>
+          ) : Array.isArray(data) && data.length > 0 ? (
+            data.map(({ tenant, client, items = [] }) => (
+              <AccordionCard
+                id={tenant}
+                key={tenant}
+                labelUse="h2"
+                label={
+                  <Box
+                    display="flex"
+                    columnGap={2}
+                    alignItems="center"
+                    component="span"
+                  >
+                    <img
+                      src={getOrganizationLogoUrl(tenant, organizations)}
+                      alt={''}
+                      width={24}
+                    />
+                    <Box component="span">
+                      <Text variant="eyebrow" color="purple400">
+                        {tenant}
+                      </Text>
+                      <Text as="h2" variant="h4">
+                        {client}
+                      </Text>
+                    </Box>
                   </Box>
+                }
+              >
+                <Box
+                  paddingTop={3}
+                  paddingBottom={3}
+                  paddingLeft={4}
+                  component="ul"
+                >
+                  <Text variant="eyebrow" marginBottom={4}>
+                    {formatMessage(m.consentExplanation)}
+                  </Text>
+                  {items.map((item) => {
+                    return (
+                      <ConsentSection
+                        key={item.provider}
+                        organizations={organizations}
+                        {...item}
+                      />
+                    )
+                  })}
                 </Box>
-              }
-            >
-              <Box paddingTop={5} paddingBottom={3} paddingLeft={4}>
-                {items.map(({ provider, providerLogo, permissions }) => {
-                  return (
-                    <>
-                      <Box display="flex" columnGap={1} marginBottom={2}>
-                        <img
-                          src={getOrganizationLogoUrl(
-                            providerLogo,
-                            organizations,
-                          )}
-                          alt={''}
-                          width={24}
-                        />
-                        <Box flexGrow={1}>
-                          <Text variant="h5">{provider}</Text>
-                        </Box>
-                      </Box>
-                      <Box>
-                        {permissions.map(
-                          ({ title, description, hasConsent }, index) => {
-                            const id = `${title}-${provider}`
-                            return (
-                              <ConsentLine
-                                id={id}
-                                hasConsent={hasConsent}
-                                title={title}
-                                description={description}
-                                key={id + hasConsent}
-                                onChange={() => console.log('change')}
-                                isLast={permissions.length === index + 1}
-                              />
-                            )
-                          },
-                        )}
-                      </Box>
-                    </>
-                  )
-                })}
-              </Box>
-            </AccordionCard>
-          ))}
+              </AccordionCard>
+            ))
+          ) : (
+            <AlertBanner
+              variant="info"
+              description={formatMessage(m.consentEmptyInfo)}
+            />
+          )}
         </Accordion>
       </GridColumn>
     </GridRow>
+  )
+}
+
+interface ConsentSectionProps {
+  provider: string
+  providerLogo: string
+  permissions: {
+    title: string
+    description: string
+    hasConsent: boolean
+  }[]
+  organizations: any[]
+}
+
+function ConsentSection({
+  provider,
+  providerLogo,
+  permissions,
+  organizations,
+}: ConsentSectionProps) {
+  return (
+    <Box marginBottom={1}>
+      <Box display="flex" columnGap={1}>
+        <img
+          src={getOrganizationLogoUrl(providerLogo, organizations)}
+          alt={''}
+          width={24}
+        />
+        <Box flexGrow={1}>
+          <Text as="h3" variant="h5">
+            {provider}
+          </Text>
+        </Box>
+      </Box>
+      <Box component="ul">
+        {permissions.map(({ title, description, hasConsent }, index) => {
+          const id = `${title}-${provider}`
+
+          const handleChange = (newChecked: boolean) => {
+            console.log('change', newChecked)
+          }
+          return (
+            <ConsentLine
+              id={id}
+              hasConsent={hasConsent}
+              title={title}
+              description={description}
+              key={id + hasConsent}
+              onChange={handleChange}
+              isLast={permissions.length === index + 1}
+            />
+          )
+        })}
+      </Box>
+    </Box>
   )
 }
 
@@ -171,6 +293,8 @@ function ConsentLine({
   id,
   isLast,
 }: ConsentLineProps) {
+  const { formatMessage } = useLocale()
+
   const [localConsent, setLocalConsent] = useState(hasConsent)
 
   const handleChange = (newChecked: boolean) => {
@@ -181,37 +305,31 @@ function ConsentLine({
       }
       setLocalConsent(newChecked)
     } catch (error) {
-      toast.error('Ó nei villa. Alla malla')
+      toast.error(formatMessage(m.consentUpdateError))
       setLocalConsent(hasConsent)
     }
   }
 
   return (
-    <>
-      <Box
-        component="article"
-        key={title}
-        id={id}
-        display="flex"
-        columnGap={2}
-        paddingY={3}
-      >
+    <li>
+      <Box key={title} display="flex" columnGap={2} paddingY={3}>
         <Box flexGrow={1}>
-          <Text id={id}>{title}</Text>
+          <Text as="h4" id={id}>
+            {title}
+          </Text>
           <Text variant="small">{description}</Text>
         </Box>
         <Box>
           <ToggleSwitchButton
-            label={hasConsent ? 'Virkja' : 'Gera óvirkt'}
+            label={formatMessage(m.consentToggleButton, { item: title })}
             hiddenLabel
             checked={localConsent}
             onChange={handleChange}
-            aria-controls={id}
           />
         </Box>
       </Box>
       {!isLast && <Divider />}
-    </>
+    </li>
   )
 }
 
