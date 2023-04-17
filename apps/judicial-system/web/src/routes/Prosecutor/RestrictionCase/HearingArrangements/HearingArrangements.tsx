@@ -8,10 +8,6 @@ import {
   NotificationType,
 } from '@island.is/judicial-system/types'
 import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
   ProsecutorCaseInfo,
   FormContentContainer,
   FormFooter,
@@ -130,12 +126,6 @@ export const HearingArrangements: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={
-        RestrictionCaseProsecutorSubsections.HEARING_ARRANGEMENTS
-      }
       isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}

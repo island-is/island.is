@@ -56,6 +56,7 @@ export * from './lib/Filter/FilterMultiChoice/FilterMultiChoice'
 export * from './lib/Filter/FilterInput/FilterInput'
 export * from './lib/PdfViewer/PdfViewer'
 export * from './lib/PageLoader'
+export * from './lib/VisuallyHidden/VisuallyHidden'
 export * from './lib/Drawer/Drawer'
 
 // Cards
@@ -123,6 +124,7 @@ export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'
 
 // Styles
 export * as linkStyles from './lib/Link/Link.css'
+export * as alertBannerStyles from './lib/AlertBanner/AlertBanner.css'
 
 // Hooks
 export * from './hooks/useBreakpoint'

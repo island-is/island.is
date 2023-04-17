@@ -10,6 +10,5 @@ import { MeClientsController } from './me-clients.controller'
 @Module({
   imports: [ClientsLibModule, ResourcesLibModule],
   controllers: [MeClientsController],
-  providers: [],
 })
 export class ClientsModule {}

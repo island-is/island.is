@@ -37,6 +37,7 @@ export type {
 export {
   UserRole,
   isExtendedCourtRole,
+  extendedCourtRoles,
   isCourtRole,
   courtRoles,
   isProsecutionRole,
@@ -65,6 +66,7 @@ export {
   completedCaseStates,
   hasCaseBeenAppealed,
   SubpoenaType,
+  CaseAppealState,
 } from './lib/case'
 export type {
   Case,

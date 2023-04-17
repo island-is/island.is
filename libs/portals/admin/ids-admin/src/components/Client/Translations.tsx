@@ -1,3 +1,4 @@
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
@@ -8,8 +9,12 @@ import { AuthApplicationTranslation } from './Client.loader'
 
 interface TranslationsProps {
   translations: AuthApplicationTranslation[]
+  selectedEnvironment: AuthAdminEnvironment
 }
-const Translations = ({ translations }: TranslationsProps) => {
+const Translations = ({
+  translations,
+  selectedEnvironment,
+}: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
   const [copyTranslations, setCopyTranslations] = useState(
@@ -30,10 +35,8 @@ const Translations = ({ translations }: TranslationsProps) => {
   return (
     <ContentCard
       title={formatMessage(m.translations)}
-      onSave={(saveOnAllEnvironments) => {
-        console.log('saveOnAllEnvironments: ', saveOnAllEnvironments)
-      }}
       intent={ClientFormTypes.translations}
+      selectedEnvironment={selectedEnvironment}
     >
       <Stack space={3}>
         <Tabs

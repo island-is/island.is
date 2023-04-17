@@ -13,7 +13,7 @@ export const serviceSetup = (services: {
         memory: '256Mi',
       },
       requests: {
-        cpu: '10m',
+        cpu: '20m',
         memory: '128Mi',
       },
     })

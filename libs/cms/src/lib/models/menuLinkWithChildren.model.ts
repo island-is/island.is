@@ -20,5 +20,7 @@ export const mapMenuLinkWithChildren = ({
 }: IMenuLinkWithChildren): MenuLinkWithChildren => ({
   title: fields.title ?? '',
   link: fields.link ? mapReferenceLink(fields.link) : null,
-  childLinks: (fields.childLinks ?? []).map(mapMenuLink),
+  childLinks: (fields.childLinks ?? [])
+    .map(mapMenuLink)
+    .filter((childLink) => !!childLink?.link?.slug && !!childLink?.title),
 })

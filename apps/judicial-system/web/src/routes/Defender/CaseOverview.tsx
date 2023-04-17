@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Sections } from '@island.is/judicial-system-web/src/types'
 import {
   BlueBox,
   CaseDates,
@@ -14,6 +13,7 @@ import {
   RestrictionTags,
   SignedDocument,
   PageHeader,
+  AppealAlertBanner,
 } from '@island.is/judicial-system-web/src/components'
 import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -28,7 +28,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  AlertBanner,
   AlertMessage,
   Box,
   Divider,
@@ -42,8 +41,6 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
-
 import { defenderCaseOverview as m } from './CaseOverview.strings'
 
 export const CaseOverview: React.FC = () => {
@@ -95,29 +92,11 @@ export const CaseOverview: React.FC = () => {
 
   return (
     <>
-      {workingCase.courtEndTime &&
-        !workingCase.isAppealDeadlineExpired &&
-        features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
-          <AlertBanner
-            title={formatMessage(m.appealAlertBannerTitle, {
-              appealDeadline: getAppealEndDate(workingCase.courtEndTime),
-            })}
-            variant="warning"
-            link={{
-              href: '/krofur',
-              title: formatMessage(m.appealAlertBannerLinkText),
-            }}
-          />
-        )}
+      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
+        <AppealAlertBanner workingCase={workingCase} />
+      )}
       <PageLayout
         workingCase={workingCase}
-        activeSection={
-          completedCaseStates.includes(workingCase.state)
-            ? 2
-            : workingCase.parentCase
-            ? Sections.JUDGE_EXTENSION
-            : Sections.JUDGE
-        }
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >
@@ -284,7 +263,7 @@ export const CaseOverview: React.FC = () => {
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'request/limitedAccess'}
+                  pdfType={'limitedAccess/request'}
                 />
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
@@ -292,7 +271,7 @@ export const CaseOverview: React.FC = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'courtRecord/limitedAccess'}
+                      pdfType={'limitedAccess/courtRecord'}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -305,7 +284,7 @@ export const CaseOverview: React.FC = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'ruling/limitedAccess'}
+                      pdfType={'limitedAccess/ruling'}
                     >
                       {workingCase.rulingDate ? (
                         <SignedDocument

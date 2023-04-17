@@ -3,7 +3,7 @@ import { useLoaderData } from 'react-router-dom'
 
 import {
   AuthAdminEnvironment,
-  RefreshTokenExpiration,
+  AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
 import {
   GridColumn,
@@ -24,6 +24,7 @@ import ClientsUrl from './ClientsUrl'
 import Lifetime from './Lifetime'
 import Translations from './Translations'
 import Delegation from './Delegation'
+import AdvancedSettings from './AdvancedSettings'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -83,23 +84,37 @@ const Client = () => {
           </GridColumn>
         </GridRow>
         <BasicInfo
+          key={`${selectedEnvironment.environment}-BasicInfo`}
           clientId={selectedEnvironment.clientId}
           issuerUrl={IssuerUrls[selectedEnvironment.environment]}
         />
-        <Translations translations={selectedEnvironment.displayName} />
+        <Translations
+          key={`${selectedEnvironment.environment}-Translations`}
+          translations={selectedEnvironment.displayName}
+          selectedEnvironment={selectedEnvironment.environment}
+        />
         <ClientsUrl
+          key={`${selectedEnvironment.environment}-ClientsUrl`}
           redirectUris={selectedEnvironment.redirectUris}
           postLogoutRedirectUris={selectedEnvironment.postLogoutRedirectUris}
+          selectedEnvironment={selectedEnvironment.environment}
         />
         <Lifetime
-          absoluteLifetime={selectedEnvironment.absoluteRefreshTokenLifetime}
-          inactivityLifetime={selectedEnvironment.slidingRefreshTokenLifetime}
-          inactivityExpiration={
-            selectedEnvironment.refreshTokenExpiration ===
-            RefreshTokenExpiration.Sliding
+          key={`${selectedEnvironment.environment}-Lifetime`}
+          absoluteRefreshTokenLifetime={
+            selectedEnvironment.absoluteRefreshTokenLifetime
           }
+          slidingRefreshTokenLifetime={
+            selectedEnvironment.slidingRefreshTokenLifetime
+          }
+          refreshTokenExpiration={
+            selectedEnvironment.refreshTokenExpiration ===
+            AuthAdminRefreshTokenExpiration.Sliding
+          }
+          selectedEnvironment={selectedEnvironment.environment}
         />
         <Delegation
+          key={`${selectedEnvironment.environment}-Delegation`}
           supportsProcuringHolders={
             selectedEnvironment.supportsProcuringHolders
           }
@@ -112,6 +127,23 @@ const Client = () => {
             selectedEnvironment.supportsCustomDelegation
           }
           requireApiScopes={selectedEnvironment.requireApiScopes}
+          selectedEnvironment={selectedEnvironment.environment}
+        />
+        <AdvancedSettings
+          key={`${selectedEnvironment.environment}-AdvancedSettings`}
+          requirePkce={selectedEnvironment.requirePkce}
+          allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
+          requireConsent={selectedEnvironment.requireConsent}
+          supportTokenExchange={selectedEnvironment.supportTokenExchange}
+          slidingRefreshTokenLifetime={
+            selectedEnvironment.slidingRefreshTokenLifetime
+          }
+          customClaims={
+            selectedEnvironment.customClaims?.map((claim) => {
+              return `${claim.type}=${claim.value}`
+            }) ?? []
+          }
+          selectedEnvironment={selectedEnvironment.environment}
         />
       </Stack>
     </GridContainer>

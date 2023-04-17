@@ -6,6 +6,6 @@ export class UserCaseSubscriptionResult {
   @Field({ nullable: true })
   id?: number
 
-  @Field({ nullable: true })
+  @Field(() => CaseSubscriptionType, { nullable: true })
   subscriptionType?: CaseSubscriptionType
 }

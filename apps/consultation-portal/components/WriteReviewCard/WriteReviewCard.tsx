@@ -18,9 +18,9 @@ import {
 
 import Link from 'next/link'
 import { useReducer, useState } from 'react'
-import { useLogin } from '../../utils/helpers'
+import { useLogIn } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
-import { POST_ADVICE } from '../../graphql/queries.graphql'
+import { CASE_POST_ADVICE } from '../../graphql/queries.graphql'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { resolveFileToObject } from '../../utils/helpers'
@@ -42,6 +42,8 @@ type Action = {
   type: ActionTypes
   payload: any
 }
+
+const REVIEW_MINIMUM_LENGTH = 10
 
 const fileExtensionWhitelist = {
   '.pdf': 'application/pdf',
@@ -86,8 +88,6 @@ const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
     formData.append('file', file.originalFileObj || '', file.name)
 
     // TODO: add backend url if multipart upload
-    //req.open('POST', 'http://localhost:5000/')
-    //req.send(formData)
   })
 }
 
@@ -130,25 +130,26 @@ export const WriteReviewCard = ({
   const [showUpload, setShowUpload] = useState<boolean>(false)
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
   const [error, setError] = useState<string | undefined>(undefined)
-  const { LogIn, loginLoading } = useLogin()
+  const [showInputError, setShowInputError] = useState(false)
+  const LogIn = useLogIn()
   const [review, setReview] = useState('')
 
   const client = initApollo()
   const [postAdviceMutation, { loading: postAdviceLoading }] = useMutation(
-    POST_ADVICE,
+    CASE_POST_ADVICE,
     {
       client: client,
     },
   )
 
   const onClick = async () => {
-    if (review.length >= 10) {
+    if (review.length >= REVIEW_MINIMUM_LENGTH) {
+      setShowInputError(false)
       const files = await Promise.all(
         state.map((item: UploadFile) =>
           resolveFileToObject(item.originalFileObj as File),
         ),
       )
-
       const objToSend = {
         caseId: caseId,
         adviceRequest: {
@@ -156,22 +157,16 @@ export const WriteReviewCard = ({
           adviceFiles: files,
         },
       }
-
-      const req = await fetch('/consultation-portal/api/auth/check')
-      const data = await req.json()
-      const token = data?.token
-
       const posting = await postAdviceMutation({
         variables: {
           input: objToSend,
-          context: { token },
         },
       })
-
       // reloading page, would be better if we got the object back
       // from the server or sent a refetch request for data
       location.reload()
     }
+    setShowInputError(true)
   }
 
   const onChange = (newFiles: File[]) => {
@@ -255,6 +250,8 @@ export const WriteReviewCard = ({
         rows={10}
         value={review}
         onChange={(e) => setReview(e.target.value)}
+        hasError={showInputError && review.length <= REVIEW_MINIMUM_LENGTH}
+        errorMessage="Texti þarf að vera að minnsta kosti 10 stafbil."
       />
       <Box paddingTop={3}>
         {showUpload && (
@@ -287,12 +284,7 @@ export const WriteReviewCard = ({
           ) : (
             <div />
           )}
-          <Button
-            disabled={review.length <= 10}
-            fluid
-            size="small"
-            onClick={onClick}
-          >
+          <Button fluid size="small" onClick={onClick}>
             Staðfesta umsögn
           </Button>
         </Inline>
@@ -307,7 +299,7 @@ export const WriteReviewCard = ({
       <SubscriptionActionBox
         heading="Skrifa umsögn"
         text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur."
-        cta={{ label: 'Skrá mig inn', onClick: LogIn, isLoading: loginLoading }}
+        cta={{ label: 'Skrá mig inn', onClick: LogIn }}
       />
       <Text marginTop={2}>
         Ef umsögnin er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf

@@ -4,19 +4,20 @@ import { Form } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ClientFormTypes } from '../../components/forms/EditApplication/EditApplication.action'
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 interface ContentCardProps {
   title: string
-  onSave?: (saveOnAllEnvironments: boolean) => void
   description?: string
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
   intent?: ClientFormTypes | 'none'
+  selectedEnvironment?: AuthAdminEnvironment
 }
 
 function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
   let tempChanged = false
-  for (const [key, value] of newFormData.entries()) {
-    if (originalFormData?.get(key) !== value) {
+  for (const [key, value] of originalFormData.entries()) {
+    if (newFormData?.get(key) !== value) {
       tempChanged = true
     }
   }
@@ -27,9 +28,9 @@ const ContentCard: FC<ContentCardProps> = ({
   children,
   title,
   description,
-  onSave,
   isDirty = defaultIsDirty,
   intent = 'none',
+  selectedEnvironment,
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
@@ -40,6 +41,14 @@ const ContentCard: FC<ContentCardProps> = ({
   // On change, check if the form has changed, use custom validation if provided
   const onChange = () => {
     const newFormData = new FormData(ref.current as HTMLFormElement)
+
+    const newData = [...newFormData.entries()]
+    const originalData = [...(originalFormData.current?.entries() ?? [])]
+
+    if (newData.length !== originalData.length) {
+      setDirty(true)
+      return
+    }
 
     setDirty(isDirty(newFormData, originalFormData.current ?? new FormData()))
   }
@@ -68,13 +77,14 @@ const ContentCard: FC<ContentCardProps> = ({
       </Box>
       <Form ref={ref} onChange={onChange} method="post">
         {children}
-        {onSave && (
+        {intent !== 'none' && (
           <Box
             alignItems="center"
             marginTop="containerGutter"
             display="flex"
             justifyContent="spaceBetween"
           >
+            {}
             <Checkbox
               label={formatMessage(m.saveForAllEnvironments)}
               value={`${allEnvironments}`}
@@ -85,12 +95,17 @@ const ContentCard: FC<ContentCardProps> = ({
             <Button
               disabled={!dirty}
               type="submit"
-              onClick={() => onSave(allEnvironments)}
               name="intent"
               value={intent}
             >
               {formatMessage(m.saveSettings)}
             </Button>
+            {/*hidden input to pass the selected environment to the form*/}
+            <input
+              type="hidden"
+              name="environment"
+              value={selectedEnvironment}
+            />
           </Box>
         )}
       </Form>

@@ -4,16 +4,40 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
+import {
+  UpdateClientDocument,
+  UpdateClientMutation,
+  UpdateClientMutationVariables,
+} from './EditClient.generated'
+import {
+  AuthAdminEnvironment,
+  AuthAdminTranslatedValue,
+  AuthAdminRefreshTokenExpiration,
+} from '@island.is/api/schema'
 
 export enum ClientFormTypes {
   applicationUrls = 'applicationUrl',
   lifeTime = 'lifeTime',
   translations = 'translations',
   delegations = 'delegations',
+  advancedSettings = 'advancedSettings',
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
   return s.split(/\s*,\s*|\s+|\n+/)
+}
+
+const transformCustomClaims = (s: string) => {
+  if (!s) {
+    return []
+  }
+
+  const array = splitStringOnCommaOrSpaceOrNewLine(s)
+
+  return array.map((claim) => {
+    const [type, value] = claim.split('=')
+    return { type, value } as { type: string; value: string }
+  })
 }
 
 const checkIfStringIsListOfUrls = (urls: string) => {
@@ -34,6 +58,23 @@ const checkIfStringIsListOfUrls = (urls: string) => {
   return true
 }
 
+const checkIfStringIsArrayOfValidClaims = (claims: string) => {
+  if (!claims) {
+    return true
+  }
+
+  const array = splitStringOnCommaOrSpaceOrNewLine(claims)
+
+  const regex = /^\w+=\w+$/
+
+  for (const claim of array) {
+    if (!regex.test(claim)) {
+      return false
+    }
+  }
+  return true
+}
+
 const checkIfStringIsPositiveNumber = (number: string) => {
   return /^[0-9]+$/.test(number.trim())
 }
@@ -42,12 +83,13 @@ const defaultSchema = z.object({
   allEnvironments: z.optional(z.string()).transform((s) => {
     return s === 'true'
   }),
+  environment: z.nativeEnum(AuthAdminEnvironment),
 })
 
 export const schema = {
   [ClientFormTypes.lifeTime]: z
     .object({
-      absoluteLifetime: z
+      absoluteRefreshTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {
           message: 'errorPositiveNumber',
@@ -55,19 +97,21 @@ export const schema = {
         .transform((s) => {
           return Number(s)
         }),
-      inactivityExpiration: z.optional(z.string()).transform((s) => {
+      refreshTokenExpiration: z.optional(z.string()).transform((s) => {
         return s === 'on'
+          ? AuthAdminRefreshTokenExpiration.Sliding
+          : AuthAdminRefreshTokenExpiration.Absolute
       }),
-      inactivityLifetime: z.string().transform((s) => {
+      slidingRefreshTokenLifetime: z.string().transform((s) => {
         return Number(s)
       }),
     })
     .merge(defaultSchema)
     .refine(
       (data) => {
-        if (data.inactivityExpiration) {
+        if (data.refreshTokenExpiration) {
           return checkIfStringIsPositiveNumber(
-            data.inactivityLifetime.toString(),
+            data.slidingRefreshTokenLifetime.toString(),
           )
         }
         return true
@@ -101,16 +145,18 @@ export const schema = {
     .merge(defaultSchema)
     .transform((data) => {
       return {
-        translation: [
+        allEnvironments: data.allEnvironments,
+        environment: data.environment,
+        displayName: [
           {
             locale: 'is',
-            displayName: data.is_displayName,
+            value: data.is_displayName,
           },
           {
             locale: 'en',
-            displayName: data.en_displayName,
+            value: data.en_displayName,
           },
-        ],
+        ] as AuthAdminTranslatedValue[],
       }
     }),
   [ClientFormTypes.delegations]: z
@@ -135,6 +181,38 @@ export const schema = {
       }),
     })
     .merge(defaultSchema),
+  [ClientFormTypes.advancedSettings]: z
+    .object({
+      requirePkce: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      allowOfflineAccess: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      supportTokenExchange: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      requireConsent: z.optional(z.string()).transform((s) => {
+        return s === 'true'
+      }),
+      slidingRefreshTokenLifetime: z
+        .string()
+        .refine(checkIfStringIsPositiveNumber, {
+          message: 'errorPositiveNumber',
+        })
+        .transform((s) => {
+          return Number(s)
+        }),
+      customClaims: z
+        .string()
+        .refine(checkIfStringIsArrayOfValidClaims, {
+          message: 'errorInvalidClaims',
+        })
+        .transform((s) => {
+          return transformCustomClaims(s)
+        }),
+    })
+    .merge(defaultSchema),
 }
 
 export type EditApplicationResult<T extends ZodType> =
@@ -148,6 +226,7 @@ export type EditApplicationResult<T extends ZodType> =
 
 export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
   request,
+  params,
 }) => {
   const formData = await request.formData()
   const intent = formData.get('intent') as ClientFormTypes
@@ -163,7 +242,36 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
     return result
   }
 
-  //Todo: call graphql mutation for the given intent
+  const { allEnvironments, environment, ...rest } = data
 
-  return result
+  try {
+    const response = await client.mutate<
+      UpdateClientMutation,
+      UpdateClientMutationVariables
+    >({
+      mutation: UpdateClientDocument,
+      variables: {
+        input: {
+          clientId: params['client'] as string,
+          tenantId: params['tenant'] as string,
+          environments: allEnvironments
+            ? [
+                AuthAdminEnvironment.Development,
+                AuthAdminEnvironment.Staging,
+                AuthAdminEnvironment.Production,
+              ]
+            : [environment],
+          ...rest,
+        },
+      },
+    })
+
+    return response.data
+  } catch (error) {
+    return {
+      errors: null,
+      data: null,
+      globalError: true,
+    }
+  }
 }
