@@ -14,11 +14,6 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '15m', memory: '256Mi' },
     })
-    .env({
-      DRIVING_LICENSE_FETCH_TIMEOUT: '10000',
-      FIREARM_LICENSE_FETCH_TIMEOUT: '10000',
-      DISABILITY_LICENSE_FETCH_TIMEOUT: '10000',
-    })
     .secrets({
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
@@ -28,6 +23,10 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       DISABILITY_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID',
+      DISABILITY_LICENSE_FETCH_TIMEOUT:
+        '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
+      DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT',
       PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
       PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
