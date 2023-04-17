@@ -20,7 +20,8 @@ export const CalculateTotalAssets: FC<FieldBaseProps> = ({ application }) => {
       (getValueViaPath<number>(answers, 'assets.bankAccounts.total') || 0) +
       (getValueViaPath<number>(answers, 'assets.inventory.total') || 0) +
       (getValueViaPath<number>(answers, 'assets.vehicles.total') || 0) +
-      (getValueViaPath<number>(answers, 'assets.realEstate.total') || 0),
+      (getValueViaPath<number>(answers, 'assets.realEstate.total') || 0) +
+      (getValueViaPath<number>(answers, 'assets.guns.total') || 0),
   )
 
   useEffect(() => {

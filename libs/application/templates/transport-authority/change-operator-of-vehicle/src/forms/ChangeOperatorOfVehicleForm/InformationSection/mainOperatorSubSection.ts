@@ -52,7 +52,7 @@ export const mainOperatorSubSection = buildSubSection({
               ...oldOperators.filter(({ wasRemoved }) => wasRemoved !== 'true'),
             ].map((operator) => {
               return {
-                value: operator.nationalId,
+                value: operator.nationalId!,
                 label: `${operator.name} - ${operator.nationalId}`,
               }
             })

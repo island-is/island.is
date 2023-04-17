@@ -9,6 +9,7 @@ import {
   Logmenn,
   Afengisleyfi,
   Taekifaerisleyfi,
+  Verdbrefamidlari,
 } from '../../../gen/fetch'
 import { AssetName, SyslumennApiPaginationInfo } from '../syslumennClient.types'
 
@@ -66,6 +67,13 @@ export const LAWYERS = [
     tegundRettinda: 'string',
   },
 ] as Logmenn[]
+
+export const BROKERS = [
+  {
+    nafn: 'string',
+    kennitala: 'string',
+  },
+] as Verdbrefamidlari[]
 
 export const OPERATING_LICENSE = [
   {

@@ -2954,6 +2954,7 @@ export interface ISliceConnectedComponentFields {
     | 'Áfengisleyfi/AlcoholLicences'
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
+    | 'Verðbréfamiðlarar/Brokers'
     | undefined
 
   /** Localized JSON */

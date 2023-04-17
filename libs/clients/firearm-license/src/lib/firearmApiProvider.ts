@@ -22,7 +22,6 @@ export const FirearmLicenseApiProvider: Provider<FirearmApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-firearm-license',
-          logErrorResponseBody: true,
           autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'tokenExchange',

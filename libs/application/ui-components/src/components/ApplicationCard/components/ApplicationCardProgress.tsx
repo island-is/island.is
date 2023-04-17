@@ -15,12 +15,14 @@ interface Props {
   defaultData: DefaultCardData
   onOpenApplication: () => void
   forceDefault?: boolean
+  shouldShowCardButtons?: boolean
 }
 
 const DraftProgressMeter = ({
   application,
   defaultData,
   onOpenApplication,
+  shouldShowCardButtons = true,
 }: Props) => {
   const { progress, actionCard } = application
   const { formatMessage } = useLocale()
@@ -47,11 +49,13 @@ const DraftProgressMeter = ({
           draftFinishedSteps={draftFinishedSteps}
         />
       </Box>
-      <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-        <Button variant="ghost" onClick={onOpenApplication} size="small">
-          {formatMessage(defaultData.cta.label)}
-        </Button>
-      </Box>
+      {shouldShowCardButtons && (
+        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+          <Button variant="ghost" onClick={onOpenApplication} size="small">
+            {formatMessage(defaultData.cta.label)}
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }
@@ -60,6 +64,7 @@ const DefaultProgressMeter = ({
   application,
   defaultData,
   onOpenApplication,
+  shouldShowCardButtons = true,
 }: Props) => {
   const { progress } = application
   const { formatMessage } = useLocale()
@@ -79,12 +84,13 @@ const DefaultProgressMeter = ({
         progress={progress ?? 0}
         className={styles.progressMeter}
       />
-
-      <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
-        <Button variant="ghost" onClick={onOpenApplication} size="small">
-          {formatMessage(defaultData.cta.label)}
-        </Button>
-      </Box>
+      {shouldShowCardButtons && (
+        <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
+          <Button variant="ghost" onClick={onOpenApplication} size="small">
+            {formatMessage(defaultData.cta.label)}
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }

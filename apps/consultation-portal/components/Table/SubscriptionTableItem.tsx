@@ -36,7 +36,6 @@ const SubscriptionTableItem = ({
   }
 
   const borderColor = 'transparent'
-
   const checkboxChange = (itemId: number, checked: boolean) => {
     onClick()
     onCheckboxChange(itemId, checked)
