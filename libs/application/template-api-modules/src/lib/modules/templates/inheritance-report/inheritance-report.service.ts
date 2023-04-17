@@ -78,6 +78,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
         knowledgeOfOtherWills: 'Yes',
         ships: [],
         flyers: [],
+        guns: [],
         estateMembers: [
           {
             name: 'Stúfur Mack',

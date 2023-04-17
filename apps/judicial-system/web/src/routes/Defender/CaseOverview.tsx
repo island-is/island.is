@@ -263,7 +263,7 @@ export const CaseOverview: React.FC = () => {
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'request/limitedAccess'}
+                  pdfType={'limitedAccess/request'}
                 />
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
@@ -271,7 +271,7 @@ export const CaseOverview: React.FC = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'courtRecord/limitedAccess'}
+                      pdfType={'limitedAccess/courtRecord'}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -284,7 +284,7 @@ export const CaseOverview: React.FC = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'ruling/limitedAccess'}
+                      pdfType={'limitedAccess/ruling'}
                     >
                       {workingCase.rulingDate ? (
                         <SignedDocument

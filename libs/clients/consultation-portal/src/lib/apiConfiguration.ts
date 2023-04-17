@@ -13,17 +13,30 @@ import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 import { ConsultationPortalClientConfig } from './consultationPortalClient.config'
 import { ConfigType } from '@nestjs/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { IdsClientConfig } from '@island.is/nest/config'
 
 const provideApi = <T>(
   Api: new (configuration: Configuration) => T,
 ): Provider<T> => ({
   provide: Api,
-  useFactory: (config: ConfigType<typeof ConsultationPortalClientConfig>) =>
+  useFactory: (
+    config: ConfigType<typeof ConsultationPortalClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) =>
     new Api(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'consultation-portal',
           logErrorResponseBody: true,
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'auto',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: config.tokenExchangeScope,
+              }
+            : undefined,
         }),
         basePath: config.basePath,
         headers: {
@@ -31,7 +44,7 @@ const provideApi = <T>(
         },
       }),
     ),
-  inject: [ConsultationPortalClientConfig.KEY],
+  inject: [ConsultationPortalClientConfig.KEY, IdsClientConfig.KEY],
 })
 
 export const AuthenticationApiProvider = provideApi(AuthenticationApi)
