@@ -140,6 +140,7 @@ export const Input: ComponentType<InputProps> = (
       {...ariaError}
       data-testid={props?.selectProps?.dataTestId}
       role="combobox"
+      autoComplete="none"
     />
   )
 }

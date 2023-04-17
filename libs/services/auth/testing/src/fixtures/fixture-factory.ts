@@ -20,6 +20,7 @@ import {
   DelegationScope,
   Domain,
   IdentityResource,
+  Language,
   Translation,
 } from '@island.is/auth-api-lib'
 import { isDefined } from '@island.is/shared/utils'
@@ -319,6 +320,11 @@ export class FixtureFactory {
       }),
     )
 
+    await this.get(Language).upsert({
+      isoKey: language,
+      description: 'Lang description',
+      englishDescription: 'Lang en description',
+    })
     return this.get(Translation).bulkCreate(translationObjs)
   }
 }
