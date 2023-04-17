@@ -27,7 +27,10 @@ query GetClient($input: ClientInput!) {
       requireConsent
       requirePkce
       accessTokenLifetime
-      customClaims
+      customClaims {
+        type
+        value
+      }
       allowOfflineAccess
     }
   }
