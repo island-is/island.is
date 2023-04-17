@@ -160,12 +160,12 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
-    if (props.fromExternalData && fields.length === 0) {
-      append(
-        (externalData.syslumennOnEntry?.data as any).estate[
-          props.fromExternalData
-        ],
-      )
+    const extData = (externalData.syslumennOnEntry?.data as any).estate[
+      props.fromExternalData ? props.fromExternalData : ''
+    ]
+
+    if (props.fromExternalData && fields.length === 0 && extData.length) {
+      append(extData)
     }
   }, [props, fields, append])
 
