@@ -31,19 +31,6 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
 
-export const getStatementDeadline = (appealDate?: string) => {
-  if (appealDate === undefined) {
-    return
-  }
-
-  const appealDateAsDate = new Date(appealDate)
-  if (!isValid(appealDateAsDate)) {
-    return
-  }
-
-  return addDays(appealDateAsDate, 1)
-}
-
 const CourtOfAppealOverview: React.FC = () => {
   const {
     workingCase,

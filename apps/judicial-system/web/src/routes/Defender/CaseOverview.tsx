@@ -19,6 +19,7 @@ import {
 import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CaseAppealDecision,
   CaseDecision,
   CaseState,
   CaseType,
@@ -99,13 +100,22 @@ export const CaseOverview: React.FC = () => {
         })
   }
 
+  const shouldDisplayAlertBanner =
+    workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+    workingCase.hasBeenAppealed
+
   return (
     <>
-      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
-        <AlertBanner variant="warning" title={title} description={description}>
-          {child}
-        </AlertBanner>
-      )}
+      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
+        shouldDisplayAlertBanner && (
+          <AlertBanner
+            variant="warning"
+            title={title}
+            description={description}
+          >
+            {child}
+          </AlertBanner>
+        )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

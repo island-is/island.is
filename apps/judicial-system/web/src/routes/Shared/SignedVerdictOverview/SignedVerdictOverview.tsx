@@ -504,10 +504,16 @@ export const SignedVerdictOverview: React.FC = () => {
     return true
   }
 
+  const shouldDisplayAlertBanner =
+    (workingCase.hasBeenAppealed &&
+      (isProsecutionRole(user?.role) || isCourtRole(user?.role))) ||
+    (isProsecutionRole(user?.role) &&
+      workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
+
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        (isProsecutionRole(user?.role) || isCourtRole(user?.role)) && (
+        shouldDisplayAlertBanner && (
           <AlertBanner
             variant="warning"
             title={title}
