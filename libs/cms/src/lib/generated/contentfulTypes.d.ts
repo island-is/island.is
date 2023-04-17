@@ -3511,6 +3511,9 @@ export interface ITeamMemberFields {
 
   /** Mynd */
   mynd: Asset
+
+  /** Image On Select */
+  imageOnSelect?: Asset | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {
