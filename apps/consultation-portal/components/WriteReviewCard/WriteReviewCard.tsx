@@ -17,30 +17,22 @@ import {
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
-import { useReducer, useState } from 'react'
+import { useState } from 'react'
 import { useLogIn } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
-import { CASE_POST_ADVICE } from '../../graphql/queries.graphql'
+import {
+  CASE_POST_ADVICE,
+  CREATE_UPLOAD_URL,
+} from '../../graphql/queries.graphql'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
-import { resolveFileToObject } from '../../utils/helpers'
+import { PresignedPost } from '@island.is/api/schema'
 
 type CardProps = {
   card: Case
   isLoggedIn: boolean
   username: string
   caseId: number
-}
-
-enum ActionTypes {
-  ADD = 'ADD',
-  REMOVE = 'REMOVE',
-  UPDATE = 'UPDATE',
-}
-
-type Action = {
-  type: ActionTypes
-  payload: any
 }
 
 const REVIEW_MINIMUM_LENGTH = 10
@@ -52,73 +44,6 @@ const fileExtensionWhitelist = {
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 }
 
-// InputFileUpload.stories.tsx
-const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
-  return new Promise((resolve, reject) => {
-    const req = new XMLHttpRequest()
-
-    req.upload.addEventListener('progress', (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100)
-
-        dispatch({
-          type: ActionTypes.UPDATE,
-          payload: { file, status: 'uploading', percent },
-        })
-      }
-    })
-
-    req.upload.addEventListener('load', (event) => {
-      dispatch({
-        type: ActionTypes.UPDATE,
-        payload: { file, status: 'done', percent: 100 },
-      })
-      resolve(req.response)
-    })
-
-    req.upload.addEventListener('error', (event) => {
-      dispatch({
-        type: ActionTypes.UPDATE,
-        payload: { file, status: 'error', percent: 0 },
-      })
-      reject(req.response)
-    })
-
-    const formData = new FormData()
-    formData.append('file', file.originalFileObj || '', file.name)
-
-    // TODO: add backend url if multipart upload
-  })
-}
-
-const initialUploadFiles: UploadFile[] = []
-
-function reducer(state: UploadFile[], action: Action) {
-  switch (action.type) {
-    case ActionTypes.ADD:
-      return state.concat(action.payload.newFiles)
-
-    case ActionTypes.REMOVE:
-      return state.filter(
-        (file) => file.name !== action.payload.fileToRemove.name,
-      )
-
-    case ActionTypes.UPDATE:
-      return [
-        ...state.map((file: UploadFile) => {
-          if (file.name === action.payload.file.name) {
-            file.status = action.payload.status
-            file.percent = action.payload.percent
-          }
-          return file
-        }),
-      ]
-
-    default:
-      throw new Error()
-  }
-}
-
 const date = getShortDate(new Date())
 
 export const WriteReviewCard = ({
@@ -127,12 +52,13 @@ export const WriteReviewCard = ({
   username,
   caseId,
 }: CardProps) => {
-  const [showUpload, setShowUpload] = useState<boolean>(false)
-  const [state, dispatch] = useReducer(reducer, initialUploadFiles)
-  const [error, setError] = useState<string | undefined>(undefined)
-  const [showInputError, setShowInputError] = useState(false)
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
+  const [showInputError, setShowInputError] = useState(false)
+  const [showUpload, setShowUpload] = useState(false)
+  const [fileList, setFileList] = useState<Array<UploadFile>>([])
+  const [error, setError] = useState<string[] | undefined>(undefined)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const client = initApollo()
   const [postAdviceMutation, { loading: postAdviceLoading }] = useMutation(
@@ -142,59 +68,112 @@ export const WriteReviewCard = ({
     },
   )
 
-  const onClick = async () => {
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL, { client: client })
+
+  const uploadFile = async (file: UploadFile, response: PresignedPost) => {
     if (review.length >= REVIEW_MINIMUM_LENGTH) {
       setShowInputError(false)
-      const files = await Promise.all(
-        state.map((item: UploadFile) =>
-          resolveFileToObject(item.originalFileObj as File),
-        ),
-      )
-      const objToSend = {
-        caseId: caseId,
-        adviceRequest: {
-          content: review,
-          adviceFiles: files,
-        },
-      }
-      const posting = await postAdviceMutation({
-        variables: {
-          input: objToSend,
-        },
+      return new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest()
+        request.withCredentials = true
+        request.responseType = 'json'
+
+        request.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable) {
+            file.percent = (event.loaded / event.total) * 100
+            file.status = 'uploading'
+
+            const withoutThisFile = fileList.filter((f) => f.key !== file.key)
+            const newFileList = [...withoutThisFile, file]
+            setFileList(newFileList)
+          }
+        })
+
+        request.upload.addEventListener('error', () => {
+          file.percent = 0
+          file.status = 'error'
+
+          const withoutThisFile = fileList.filter((f) => f.key !== file.key)
+          const newFileList = [...withoutThisFile, file]
+          setFileList(newFileList)
+          reject()
+        })
+        request.open('POST', response.url)
+
+        const formData = new FormData()
+
+        Object.keys(response.fields).forEach((key) =>
+          formData.append(key, response.fields[key]),
+        )
+        formData.append('file', file as File)
+
+        request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
+
+        request.onload = () => {
+          resolve(request.response)
+        }
+
+        request.onerror = () => {
+          reject()
+        }
+
+        request.send(formData)
       })
-      // reloading page, would be better if we got the object back
-      // from the server or sent a refetch request for data
-      location.reload()
+    } else {
+      setShowInputError(true)
     }
-    setShowInputError(true)
   }
 
-  const onChange = (newFiles: File[]) => {
-    const newUploadFiles = newFiles.map((f) => fileToObject(f))
+  const onClick = async () => {
+    setIsSubmitting(true)
+    const mappedFileList = await Promise.all(
+      fileList.map((file) => {
+        return new Promise((resolve, reject) => {
+          createUploadUrl({
+            variables: {
+              filename: file.name,
+            },
+          })
+            .then((response) => {
+              uploadFile(file, response.data.createUploadUrl).then(() => {
+                resolve(response.data.createUploadUrl.fields.key)
+              })
+            })
+            .catch(() => reject())
+        })
+      }),
+    )
 
-    setError(undefined)
+    const objToSend = {
+      caseId: caseId,
+      caseAdviceCommand: {
+        content: review,
+        fileUrls: mappedFileList,
+      },
+    }
 
-    newUploadFiles.forEach((f: UploadFile) => {
-      uploadFile(f, dispatch).catch((e) => {
-        setError('An error occured uploading one or more files')
-      })
-    })
-
-    dispatch({
-      type: ActionTypes.ADD,
-      payload: {
-        newFiles: newUploadFiles,
+    const posting = await postAdviceMutation({
+      variables: {
+        input: objToSend,
       },
     })
+
+    setIsSubmitting(false)
+  }
+
+  const onChange = (files: File[]) => {
+    const uploadFiles = files.map((file) => fileToObject(file))
+    const uploadFilesWithKey = uploadFiles.map((f) => ({
+      ...f,
+      key: crypto.randomUUID(),
+    }))
+    const newFileList = [...fileList, ...uploadFilesWithKey]
+    setFileList(newFileList)
   }
 
   const onRemove = (fileToRemove: UploadFile) => {
-    dispatch({
-      type: ActionTypes.REMOVE,
-      payload: {
-        fileToRemove,
-      },
-    })
+    const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
+    setFileList(newFileList)
   }
 
   return isLoggedIn ? (
@@ -258,7 +237,7 @@ export const WriteReviewCard = ({
           <Box marginBottom={3}>
             <InputFileUpload
               name="fileUpload"
-              fileList={state}
+              fileList={fileList}
               accept={Object.values(fileExtensionWhitelist)}
               header="Dragðu skrár hingað til að hlaða upp"
               description="Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn"
@@ -284,7 +263,7 @@ export const WriteReviewCard = ({
           ) : (
             <div />
           )}
-          <Button fluid size="small" onClick={onClick}>
+          <Button fluid size="small" onClick={onClick} loading={isSubmitting}>
             Staðfesta umsögn
           </Button>
         </Inline>
