@@ -58,7 +58,9 @@ export const CaseOverview: React.FC = () => {
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
-  const { title, description, child } = useAppealAlertBanner(workingCase)
+  const { title, description, child } = useAppealAlertBanner(workingCase, () =>
+    setModalVisible('ConfirmAppealAfterDeadline'),
+  )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
