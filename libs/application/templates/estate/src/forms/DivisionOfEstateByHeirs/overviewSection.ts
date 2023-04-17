@@ -175,16 +175,16 @@ export const overview = buildSection({
         ),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'overviewFirearms',
-          title: m.firearms,
-          description: m.firearmsDescription,
+          id: 'overviewGuns',
+          title: m.guns,
+          description: m.gunsDescription,
           titleVariant: 'h3',
           space: 'gutter',
         }),
         buildCustomField(
           {
             title: '',
-            id: 'estateFirearmsCards',
+            id: 'estateGunsCards',
             component: 'Cards',
             doesNotRequireAnswer: true,
           },
