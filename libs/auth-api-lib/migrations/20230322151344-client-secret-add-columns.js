@@ -24,24 +24,30 @@ module.exports = {
         },
         { transaction },
       )
-    })
 
-    await queryInterface.removeConstraint('client_secret', 'client_secret_pkey')
+      await queryInterface.removeConstraint(
+        'client_secret',
+        'client_secret_pkey',
+        { transaction },
+      )
 
-    await queryInterface.addConstraint('client_secret', {
-      fields: ['id'],
-      type: 'primary key',
-      name: 'client_secret_pkey',
-    })
+      await queryInterface.addConstraint('client_secret', {
+        fields: ['id'],
+        type: 'primary key',
+        name: 'client_secret_pkey',
+        transaction,
+      })
 
-    await queryInterface.addConstraint('client_secret', {
-      fields: ['client_id', 'value'],
-      type: 'unique',
-      name: 'client_secret_unique',
+      await queryInterface.addConstraint('client_secret', {
+        fields: ['client_id', 'value'],
+        type: 'unique',
+        name: 'client_secret_unique',
+        transaction,
+      })
     })
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.removeColumn('client_secret', 'id', {
         transaction,
@@ -50,17 +56,19 @@ module.exports = {
       await queryInterface.removeColumn('client_secret', 'encrypted_value', {
         transaction,
       })
-    })
 
-    await queryInterface.removeConstraint(
-      'client_secret',
-      'client_secret_unique',
-    )
+      await queryInterface.removeConstraint(
+        'client_secret',
+        'client_secret_unique',
+        { transaction },
+      )
 
-    await queryInterface.addConstraint('client_secret', {
-      fields: ['client_id', 'value'],
-      type: 'primary key',
-      name: 'client_secret_pkey',
+      await queryInterface.addConstraint('client_secret', {
+        fields: ['client_id', 'value'],
+        type: 'primary key',
+        name: 'client_secret_pkey',
+        transaction,
+      })
     })
   },
 }
