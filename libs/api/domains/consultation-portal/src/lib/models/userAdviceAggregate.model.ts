@@ -7,5 +7,5 @@ export class UserAdviceAggregate {
   total?: number
 
   @Field(() => [UserAdviceResult], { nullable: true })
-  cases?: Array<UserAdviceResult> | null
+  advices?: Array<UserAdviceResult> | null
 }
