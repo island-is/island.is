@@ -752,6 +752,7 @@ export class CmsContentfulService {
       ['content_type']: 'supportQNA',
       'fields.category.sys.contentType.sys.id': 'supportCategory',
       'fields.category.fields.slug': slug,
+      limit: 1000,
     }
 
     const result = await this.contentfulRepository
