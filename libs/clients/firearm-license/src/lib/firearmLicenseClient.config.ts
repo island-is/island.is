@@ -5,6 +5,7 @@ import { RLSScope } from '@island.is/auth/scopes'
 const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
+    timeout: z.number().int(),
     scope: z.array(z.string()),
   }),
 })
