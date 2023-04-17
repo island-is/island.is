@@ -37,6 +37,7 @@ import {
   isIndictmentCase,
   CaseState,
   Recipient,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -1357,6 +1358,7 @@ export class NotificationService {
 
   private async sendAppealToCourtOfAppealsNotifications(
     theCase: Case,
+    user: User,
   ): Promise<SendNotificationResponse> {
     const subject = this.formatMessage(
       notifications.caseAppealedToCourtOfAppeals.subject,
@@ -1377,6 +1379,28 @@ export class NotificationService {
     const promises = [
       this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
     ]
+
+    if (user.role === UserRole.DEFENDER && theCase.prosecutor?.email) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.prosecutor.name,
+          theCase.prosecutor.email,
+        ),
+      )
+    }
+
+    if (user.role === UserRole.PROSECUTOR && theCase.defenderEmail) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
+    }
 
     const recipients = await Promise.all(promises)
 
@@ -1458,7 +1482,7 @@ export class NotificationService {
       case NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
         return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
       case NotificationType.APPEAL_TO_COURT_OF_APPEALS:
-        return this.sendAppealToCourtOfAppealsNotifications(theCase)
+        return this.sendAppealToCourtOfAppealsNotifications(theCase, user)
     }
   }
 
