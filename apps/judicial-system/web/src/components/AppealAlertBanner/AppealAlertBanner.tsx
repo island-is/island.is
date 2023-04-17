@@ -1,4 +1,3 @@
-import router from 'next/router'
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
@@ -13,7 +12,6 @@ import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepH
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
-  DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -85,9 +83,7 @@ export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
 
 const AppealAlertBanner: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
-
-  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
+  const { limitedAccess, user } = useContext(UserContext)
 
   const { workingCase } = props
   const {
@@ -123,7 +119,9 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
         ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
         : `${APPEAL_ROUTE}/${workingCase.id}`
     }
-  } else return null
+  } else {
+    return null
+  }
 
   return (
     <AlertBanner
