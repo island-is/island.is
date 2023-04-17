@@ -131,6 +131,30 @@ export const form: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'guns',
+          title: m.guns,
+          children: [
+            buildMultiField({
+              id: 'realEstate',
+              title: m.propertiesTitle,
+              description: m.propertiesDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'gunsTitle',
+                  title: m.guns,
+                  description: m.gunsDescription,
+                  titleVariant: 'h3',
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.guns',
+                  component: 'GunsRepeater',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'estateBankInfo',
           title: m.estateBankInfo,
           children: [

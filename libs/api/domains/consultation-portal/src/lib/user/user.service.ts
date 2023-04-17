@@ -1,5 +1,7 @@
 import {
   ApiUserAdvicesGetRequest,
+  ApiUserEmailPostRequest,
+  ApiUserSubscriptionsPostRequest,
   UserApi,
 } from '@island.is/clients/consultation-portal'
 import { Injectable } from '@nestjs/common'
@@ -8,6 +10,8 @@ import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
 import { UserEmailResult } from '../models/userEmailResult.model'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
+import { PostEmailCommand } from '../models/postEmailCommand.model'
+import { UserSubscriptionsCommand } from '../models/userSubscriptionsCommand.model'
 
 @Injectable()
 export class UserService {
@@ -39,8 +43,34 @@ export class UserService {
     return emailResponse
   }
 
+  async postUserEmail(
+    auth: User,
+    postEmailCommand: PostEmailCommand,
+  ): Promise<void> {
+    const request: ApiUserEmailPostRequest = {
+      postEmailCommand: postEmailCommand,
+    }
+
+    const response = await this.userApiWithAuth(auth).apiUserEmailPost(request)
+    return response
+  }
+
   async getUserSubscriptions(auth: User): Promise<UserSubscriptionsAggregate> {
     const response = await this.userApiWithAuth(auth).apiUserSubscriptionsGet()
+    return response
+  }
+
+  async postUserSubscriptions(
+    auth: User,
+    userSubscriptionsCommand: UserSubscriptionsCommand,
+  ): Promise<void> {
+    const request: ApiUserSubscriptionsPostRequest = {
+      userSubscriptionsCommand: userSubscriptionsCommand,
+    }
+
+    const response = await this.userApiWithAuth(auth).apiUserSubscriptionsPost(
+      request,
+    )
     return response
   }
 }

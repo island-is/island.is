@@ -1,7 +1,8 @@
 import { CaseSubscriptionType } from '@island.is/clients/consultation-portal'
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, InputType, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('ConsultationPortalCaseSubscriptionCommand')
+@InputType('ConsultationPortalCaseSubscriptionCommandInput')
 export class CaseSubscriptionCommand {
   @Field({ nullable: true })
   id?: number
