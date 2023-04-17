@@ -24,7 +24,6 @@ import {
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 import {
-  CaseAppealState,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -48,7 +47,6 @@ import {
 import { defenderTransitionRule } from './guards/rolesRules'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { transitionCase } from './state/case.state'
-import { nowFactory } from '../../factories'
 
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('limited access cases')
@@ -94,6 +92,7 @@ export class LimitedAccessCaseController {
   })
   transition(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: TUser,
     @CurrentCase() theCase: Case,
     @Body() transition: TransitionCaseDto,
   ): Promise<Case> {
@@ -107,11 +106,7 @@ export class LimitedAccessCaseController {
       theCase.appealState,
     )
 
-    if (update.appealState === CaseAppealState.APPEALED) {
-      update.accusedPostponedAppealDate = nowFactory()
-    }
-
-    return this.limitedAccessCaseService.update(theCase, update)
+    return this.limitedAccessCaseService.update(theCase, update, user)
   }
 
   @UseGuards(TokenGuard, LimitedAccessCaseExistsGuard)

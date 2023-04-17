@@ -167,17 +167,21 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId2,
                 },
-                { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
+                {
+                  type: MessageType.SEND_RULING_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
+                },
               ],
             )
           } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
@@ -185,18 +189,18 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId2,
                 },
@@ -210,7 +214,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -220,7 +224,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -230,7 +234,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -325,7 +329,7 @@ describe('CaseController - Transition', () => {
                 {
                   type:
                     MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
-                  userId,
+                  user: prosecutorUser,
                   caseId,
                 },
               ])

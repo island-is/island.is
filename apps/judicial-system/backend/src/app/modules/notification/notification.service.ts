@@ -33,12 +33,12 @@ import {
   NotificationType,
   isRestrictionCase,
   SessionArrangements,
-  User as TUser,
   isInvestigationCase,
   isIndictmentCase,
   CaseState,
   Recipient,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   formatDate,
   formatDefenderRoute,
@@ -64,7 +64,6 @@ import {
   formatCourtIndictmentReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
-import { User } from '../user'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
@@ -1392,14 +1391,14 @@ export class NotificationService {
 
   private getNotificationMessage(
     type: MessageType,
-    user: TUser,
+    user: User,
     theCase: Case,
   ): CaseMessage {
-    return { type, userId: user.id, caseId: theCase.id }
+    return { type, user, caseId: theCase.id }
   }
 
   private getReadyForCourtNotificationMessages(
-    user: TUser,
+    user: User,
     theCase: Case,
   ): CaseMessage[] {
     const messages = [
@@ -1433,13 +1432,13 @@ export class NotificationService {
   }
 
   async sendCaseNotification(
-    notification: SendNotificationDto,
+    type: NotificationType,
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
     await this.refreshFormatMessage()
 
-    switch (notification.type) {
+    switch (type) {
       case NotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(theCase)
       case NotificationType.READY_FOR_COURT:
@@ -1466,7 +1465,7 @@ export class NotificationService {
   async addMessagesForNotificationToQueue(
     notification: SendNotificationDto,
     theCase: Case,
-    user: TUser,
+    user: User,
   ): Promise<SendNotificationResponse> {
     let messages: CaseMessage[]
 
