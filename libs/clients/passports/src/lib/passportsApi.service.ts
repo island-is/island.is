@@ -3,6 +3,7 @@ import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { Injectable, Inject } from '@nestjs/common'
 import {
+  DeliveryAddressApi,
   IdentityDocumentApi,
   IdentityDocumentResponse,
   PreregistrationApi,
@@ -12,6 +13,7 @@ import {
   IdentityDocument,
   IdentityDocumentChild,
   Passport,
+  DeliveryAddress,
   PreregisterResponse,
   PreregistrationInput,
 } from './passportsApi.types'
@@ -36,6 +38,7 @@ export class PassportsService {
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private identityDocumentApi: IdentityDocumentApi,
     private preregistrationApi: PreregistrationApi,
+    private deliveryAddressApi: DeliveryAddressApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -150,6 +153,15 @@ export class PassportsService {
     } catch (e) {
       this.handleError(e)
     }
+  }
+
+  async getDeliveryAddress(user: User): Promise<DeliveryAddress[]> {
+    const response = await this.deliveryAddressApi
+      .withMiddleware(new AuthMiddleware(user))
+      .deliveryAddressGetLookupTables({
+        xRoadClient: this.xroadConfig.xRoadClient,
+      })
+    return response as DeliveryAddress[]
   }
 
   async preregisterIdentityDocument(
