@@ -5,7 +5,7 @@ import { session } from '../../../../support/session'
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Licenses', () => {
+test.describe('Work licenses', () => {
   let context: BrowserContext
 
   test.beforeAll(async ({ browser }) => {
