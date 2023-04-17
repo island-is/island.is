@@ -14,18 +14,13 @@ import {
   UploadFile,
   Hidden,
   fileToObject,
+  toast,
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { useLogIn } from '../../utils/helpers'
+import { useLogIn, usePostAdvice } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
-import {
-  CASE_POST_ADVICE,
-  CREATE_UPLOAD_URL,
-} from '../../graphql/queries.graphql'
-import { useMutation } from '@apollo/client'
-import initApollo from '../../graphql/client'
 import { PresignedPost } from '@island.is/api/schema'
 
 type CardProps = {
@@ -33,6 +28,7 @@ type CardProps = {
   isLoggedIn: boolean
   username: string
   caseId: number
+  refetchAdvices: any
 }
 
 const REVIEW_MINIMUM_LENGTH = 10
@@ -51,6 +47,7 @@ export const WriteReviewCard = ({
   isLoggedIn,
   username,
   caseId,
+  refetchAdvices,
 }: CardProps) => {
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
@@ -60,15 +57,7 @@ export const WriteReviewCard = ({
   const [error, setError] = useState<string[] | undefined>(undefined)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const client = initApollo()
-  const [postAdviceMutation, { loading: postAdviceLoading }] = useMutation(
-    CASE_POST_ADVICE,
-    {
-      client: client,
-    },
-  )
-
-  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL, { client: client })
+  const { createUploadUrl, postAdviceMutation } = usePostAdvice()
 
   const uploadFile = async (file: UploadFile, response: PresignedPost) => {
     if (review.length >= REVIEW_MINIMUM_LENGTH) {
@@ -157,6 +146,18 @@ export const WriteReviewCard = ({
         input: objToSend,
       },
     })
+
+    // consultationPortalPostAdvice sends back null now
+    // but the idea is that is should send true for
+    // success and false for fail
+    if (posting?.data?.consultationPortalPostAdvice === null) {
+      setReview('')
+      setFileList([])
+      refetchAdvices()
+      toast.success('Umsögn send inn')
+    } else {
+      toast.error('Ekki tókst að senda inn umsögn')
+    }
 
     setIsSubmitting(false)
   }
