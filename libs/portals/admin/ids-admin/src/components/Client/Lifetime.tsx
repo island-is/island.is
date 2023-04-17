@@ -16,23 +16,18 @@ import {
   schema,
 } from '../forms/EditApplication/EditApplication.action'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { useReadableSeconds } from './ReadableSeconds'
 
 interface LifetimeProps {
   absoluteRefreshTokenLifetime: number
   refreshTokenExpiration: boolean
   slidingRefreshTokenLifetime: number
-  selectedEnvironment: AuthAdminEnvironment
-  inSync?: boolean
 }
 
 const Lifetime = ({
   absoluteRefreshTokenLifetime,
   slidingRefreshTokenLifetime,
   refreshTokenExpiration,
-  selectedEnvironment,
-  inSync = true,
 }: LifetimeProps) => {
   const { formatMessage } = useLocale()
   const [lifetime, setLifetime] = useState({
@@ -92,8 +87,6 @@ const Lifetime = ({
       description={formatMessage(m.lifeTimeDescription)}
       isDirty={customChangedValidation}
       intent={ClientFormTypes.lifeTime}
-      selectedEnvironment={selectedEnvironment}
-      inSync={inSync}
     >
       <Stack space={3}>
         <Stack space={1}>

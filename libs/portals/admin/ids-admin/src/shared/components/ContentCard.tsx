@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import {
   Box,
   Button,
@@ -12,8 +12,8 @@ import { Form } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ClientFormTypes } from '../../components/forms/EditApplication/EditApplication.action'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 import * as styles from './ContentCard.css'
+import { ClientContext } from '../context/ClientContext'
 
 interface ContentCardProps {
   title: string
@@ -21,7 +21,6 @@ interface ContentCardProps {
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
   inSync?: boolean
   intent?: ClientFormTypes | 'none'
-  selectedEnvironment?: AuthAdminEnvironment
 }
 
 function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
@@ -39,9 +38,7 @@ const ContentCard: FC<ContentCardProps> = ({
   title,
   description,
   isDirty = defaultIsDirty,
-  inSync = false,
   intent = 'none',
-  selectedEnvironment,
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
@@ -50,6 +47,16 @@ const ContentCard: FC<ContentCardProps> = ({
   const ref = useRef<HTMLFormElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
   const [offset, setOffset] = useState<number>(0)
+  const {
+    checkIfInSync,
+    variablesToCheckSync,
+    selectedEnvironment,
+    availableEnvironments,
+  } = useContext(ClientContext)
+
+  const inSync = checkIfInSync(
+    variablesToCheckSync?.[intent as keyof typeof ClientFormTypes] ?? [],
+  )
 
   // On change, check if the form has changed, use custom validation if provided
   const onChange = () => {
@@ -150,7 +157,7 @@ const ContentCard: FC<ContentCardProps> = ({
                             <button
                               className={styles.syncButton}
                               type="submit"
-                              value={intent}
+                              value={`${intent}-sync`}
                               name="intent"
                             >
                               <Text
@@ -197,7 +204,14 @@ const ContentCard: FC<ContentCardProps> = ({
             <input
               type="hidden"
               name="environment"
-              value={selectedEnvironment}
+              value={selectedEnvironment.environment}
+            />
+            <input
+              type="hidden"
+              name="syncEnvironments"
+              value={`${availableEnvironments
+                ?.filter((env) => env !== selectedEnvironment.environment)
+                .join(',')}`}
             />
           </Box>
         )}
