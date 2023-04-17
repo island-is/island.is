@@ -24,11 +24,6 @@ import {
 
 import { strings } from './strings'
 
-interface Props {
-  workingCase: TempCase
-  onAppealAfterDeadline?: () => void
-}
-
 const renderLink = (text: string, href: string) => {
   return (
     <LinkContext.Provider
@@ -61,7 +56,7 @@ const useAppealAlertBanner = (
   const isCourtRoleUser = isCourtRole(user?.role)
   const isProsecutionRoleUser = isProsecutionRole(user?.role)
   const isDefenderRoleUser = user?.role === UserRole.Defender
-  let title: string = ''
+  let title = ''
   let description: string | undefined = undefined
   let child: React.ReactElement | null = null
 
@@ -78,23 +73,25 @@ const useAppealAlertBanner = (
     isAppealDeadlineExpired,
   } = workingCase
 
+  const hasCurrentUserSentStatement =
+    (isProsecutionRoleUser && prosecutorStatementDate) ||
+    (isDefenderRoleUser && defenderStatementDate)
+
   if (user?.institution?.type === InstitutionType.HighCourt) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
-  } else if (appealState === CaseAppealState.Received) {
+  }
+  // APPEAL HAS BEEN RECEIVED
+  else if (appealState === CaseAppealState.Received) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired: workingCase.isAppealDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
-
-    if (
-      (isProsecutionRoleUser && prosecutorStatementDate) ||
-      (isDefenderRoleUser && defenderStatementDate)
-    ) {
+    if (hasCurrentUserSentStatement) {
       child = (
         <Text variant="h4" color="mint800">
           {formatMessage(strings.statementSentDescription, {
@@ -120,7 +117,9 @@ const useAppealAlertBanner = (
           : `${STATEMENT_ROUTE}/${workingCase.id}`,
       )
     }
-  } else if (hasBeenAppealed) {
+  }
+  // CASE HAS BEEN APPEALED
+  else if (hasBeenAppealed) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDescription, {
       actor:
@@ -129,7 +128,34 @@ const useAppealAlertBanner = (
           : formatMessage(core.defender),
       appealDate: formatDate(appealedDate, 'PPPp'),
     })
-  } else if (canBeAppealed) {
+    if (isProsecutionRoleUser || isDefenderRoleUser) {
+      child = hasCurrentUserSentStatement
+        ? (child = (
+            <Text variant="h4" color="mint800">
+              {formatMessage(strings.statementSentDescription, {
+                statementSentDate: isProsecutionRoleUser
+                  ? formatDate(prosecutorStatementDate, 'PPPp')
+                  : formatDate(defenderStatementDate, 'PPPp'),
+              })}
+            </Text>
+          ))
+        : renderLink(
+            formatMessage(strings.statementLinkText),
+            `${
+              isDefenderRoleUser ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
+            }/${workingCase.id}`,
+          )
+    } else if (isCourtRoleUser) {
+      child = (
+        //TODO: Call transform function when ready
+        <Button variant="text" size="small" onClick={onAppealAfterDeadline}>
+          {formatMessage(strings.appealReceivedNotificationLinkText)}
+        </Button>
+      )
+    }
+  }
+  //
+  else if (canBeAppealed) {
     title = formatMessage(strings.appealDeadlineTitle, {
       appealDeadline,
       isAppealDeadlineExpired: isAppealDeadlineExpired,
@@ -140,7 +166,7 @@ const useAppealAlertBanner = (
       </Button>
     ) : (
       renderLink(
-        formatMessage(strings.statementLinkText),
+        formatMessage(strings.appealLinkText),
         `${isDefenderRoleUser ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
           workingCase.id
         }`,
