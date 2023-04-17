@@ -8,7 +8,6 @@ test.describe.skip('Óflokkað', () => {
     },
     { testCase: 'Mínar síður fyrirtæki - Um fyrirtæki', home: '/' },
     { testCase: 'Mínar síður á ensku ', home: '/en' },
-    { testCase: 'Starfsleyfi kennara birtast', home: '/en' },
     { testCase: 'Útsvar sveitafélaga - birtist ???', home: '/' },
   ]) {
     test(testCase, () => {
