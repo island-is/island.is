@@ -18,6 +18,7 @@ export const FirearmLicenseClientConfig = defineConfig<z.infer<typeof schema>>({
       'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1',
     ),
     fetch: {
+      timeout: env.optionalJSON('FIREARM_LICENSE_FETCH_TIMEOUT') ?? 10000,
       scope: [RLSScope.firearmPermit],
     },
   }),

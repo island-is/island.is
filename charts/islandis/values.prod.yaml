@@ -255,6 +255,7 @@ api:
     - 'node'
   enabled: true
   env:
+    ADR_MACHINE_LICENSE_FETCH_TIMEOUT: '10000'
     AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
@@ -267,7 +268,9 @@ api:
     CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '10000'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '10000'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com/'
     ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://api.thinglysing.is/business/tolfraedi'
     ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
@@ -277,6 +280,7 @@ api:
     FINANCIAL_STATEMENTS_INAO_ISSUER: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/v2.0'
     FINANCIAL_STATEMENTS_INAO_SCOPE: 'https://star-re.crm4.dynamics.com/.default'
     FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '10000'
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
@@ -1227,6 +1231,9 @@ island-ui-storybook:
 license-api:
   enabled: true
   env:
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '10000'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '10000'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '10000'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
