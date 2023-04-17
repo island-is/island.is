@@ -28,6 +28,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         prod: json(['https://innskra.island.is']),
       },
     })
+    .secrets({
+      CLIENT_SECRET_ENCRYPTION_KEY:
+        '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
+    })
     .ingress({
       primary: {
         host: {

@@ -45,14 +45,15 @@ export interface UpdateUser {
   institutionId?: string
   active?: boolean
 }
-const extendedCourtRoles: string[] = [
+
+export const extendedCourtRoles: string[] = [
   UserRole.JUDGE,
   UserRole.REGISTRAR,
   UserRole.ASSISTANT,
 ]
 
 export function isExtendedCourtRole(role: string): boolean {
-  return Object.values(extendedCourtRoles).includes(role)
+  return extendedCourtRoles.includes(role)
 }
 
 export const prosecutionRoles: string[] = [
