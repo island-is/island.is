@@ -92,7 +92,6 @@ export const CASE_GET_CASE_BY_ID = gql`
       typeName
       shortDescription
       detailedDescription
-
       contactName
       contactEmail
       institutionName
@@ -145,7 +144,7 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
   ) {
     consultationPortalAllUserAdvices(input: $input) {
       total
-      cases {
+      advices {
         id
         caseId
         participantName
@@ -155,6 +154,7 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
         _case {
           caseNumber
           name
+          statusName
           institutionName
           typeName
           policyAreaName
