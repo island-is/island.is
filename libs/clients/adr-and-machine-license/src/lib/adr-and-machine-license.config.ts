@@ -20,7 +20,7 @@ export const AdrAndMachineLicenseClientConfig = defineConfig<
       'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/rettindi-token-v1',
     ),
     fetch: {
-      timeout: env.optionalJSON('ADR_MACHINE_LICENSE_FETCH_TIMEOUT') ?? 10000,
+      timeout: env.optionalJSON('ADR_LICENSE_FETCH_TIMEOUT') ?? 10000,
       scope: ['@ver.is/rettindaskra'],
     },
   }),
