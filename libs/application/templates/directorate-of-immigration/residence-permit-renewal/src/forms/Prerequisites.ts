@@ -2,8 +2,8 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
   buildSection,
+  buildSubSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
@@ -31,9 +31,10 @@ export const Prerequisites: Form = buildForm({
       title: externalData.dataProvider.sectionTitle,
       children: [
         buildExternalDataProvider({
-          title: externalData.dataProvider.pageTitle,
           id: 'approveExternalData',
+          title: externalData.dataProvider.pageTitle,
           subTitle: externalData.dataProvider.subTitle,
+          description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',

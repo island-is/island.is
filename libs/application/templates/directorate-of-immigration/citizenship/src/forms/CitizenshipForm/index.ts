@@ -18,7 +18,6 @@ export const CitizenshipForm: Form = buildForm({
       title: externalData.dataProvider.sectionTitle,
       children: [],
     }),
-    // TODOx fix so it is possible to go back to prerequisite section when in state=DRAFT
     InformationSection,
     PaymentSection,
     buildSection({

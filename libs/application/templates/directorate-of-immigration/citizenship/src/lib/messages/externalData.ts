@@ -17,6 +17,12 @@ export const externalData = {
       defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
       description: 'he following data will be retrieved electronically',
     },
+    description: {
+      id: 'doi.cs.application:externalData.dataProvider.description',
+      defaultMessage:
+        'Integer id augue in erat ultrices pharetra a vel neque. Integer pellentesque, erat vel varius imperdiet, nisl turpis imperdiet augue, at vulputate lorem mauris in nibh. ',
+      description: `External data description`,
+    },
     checkboxLabel: {
       id: 'doi.cs.application:externalData.dataProvider.checkboxLabel',
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',

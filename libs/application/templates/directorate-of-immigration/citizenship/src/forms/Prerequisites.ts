@@ -34,6 +34,7 @@ export const Prerequisites: Form = buildForm({
           title: externalData.dataProvider.pageTitle,
           id: 'approveExternalData',
           subTitle: externalData.dataProvider.subTitle,
+          description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',

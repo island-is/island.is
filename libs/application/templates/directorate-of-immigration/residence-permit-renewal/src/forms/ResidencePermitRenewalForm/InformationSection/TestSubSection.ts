@@ -10,12 +10,12 @@ export const TestSubSection = buildSubSection({
   title: information.labels.test.sectionTitle,
   children: [
     buildMultiField({
-      id: 'vehicleMultiField',
+      id: 'testMultiField',
       title: information.labels.test.pageTitle,
       description: information.general.description,
       children: [
         buildDescriptionField({
-          id: 'vehicle.title',
+          id: 'test.title',
           title: information.labels.test.title,
           titleVariant: 'h5',
         }),
