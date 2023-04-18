@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 import iconMap from './iconMap'
 import { Box } from '../Box/Box'
 import * as styles from './Icon.css'
-import { IconProps, SvgProps } from './types'
+import type { IconProps, SvgProps, PlaceholderProps } from './types'
 
 const colors = theme.color
 
@@ -18,12 +18,12 @@ const Placeholder = ({
   skipPlaceholderSize,
   size,
   className,
-}: Pick<IconProps, 'skipPlaceholderSize' | 'size' | 'className'>) => (
+}: PlaceholderProps) => (
   <Box
     component="span"
     display="inlineBlock"
     className={cn(className, {
-      [styles.placeholder[size!]]: !skipPlaceholderSize && size,
+      [styles.placeholder[size]]: !skipPlaceholderSize && size,
     })}
   />
 )

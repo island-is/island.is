@@ -32,7 +32,11 @@ export const SUB_GET_EMAIL = gql`
     }
   }
 `
-
+export const SUB_POST_EMAIL = gql`
+  mutation SUB_POST_EMAIL($input: ConsultationPortalPostEmailCommandInput!) {
+    consultationPortalPostUserEmail(input: $input)
+  }
+`
 // screens/Home
 export const HOME_GET_STATISTICS = gql`
   query HOME_GET_STATISTICS {
@@ -130,6 +134,15 @@ export const CASE_GET_ADVICES_BY_ID = gql`
 export const CASE_POST_ADVICE = gql`
   mutation CASE_POST_ADVICE($input: ConsultationPortalPostAdviceInput!) {
     consultationPortalPostAdvice(input: $input)
+  }
+`
+
+export const CREATE_UPLOAD_URL = gql`
+  mutation CreateUploadUrl($filename: String!) {
+    createUploadUrl(filename: $filename) {
+      url
+      fields
+    }
   }
 `
 
