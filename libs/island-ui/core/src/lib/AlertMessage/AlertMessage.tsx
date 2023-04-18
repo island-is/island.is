@@ -84,6 +84,8 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
 }) => {
   const variant = variantStyles[type]
 
+  const onlyMessage = !title && !!message
+
   return (
     <Box
       padding={[1, 1, 2]}
@@ -93,10 +95,15 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
       borderWidth="standard"
       data-testid={testid ?? 'alertMessage'}
     >
-      <Box display="flex">
+      <Box display="flex" alignItems={onlyMessage ? 'center' : 'flexStart'}>
         {variant.icon && (
           <Box display="flex" marginRight={[1, 1, 2]}>
-            <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
+            <Icon
+              size="large"
+              type="filled"
+              color={variant.iconColor}
+              icon={variant.icon}
+            />
           </Box>
         )}
         <Box display="flex" width="full" flexDirection="column">
