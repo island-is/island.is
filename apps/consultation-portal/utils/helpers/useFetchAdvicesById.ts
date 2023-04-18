@@ -18,8 +18,6 @@ export const useFetchAdvicesById = ({ caseId }: Props) => {
         caseId: caseId,
       },
     },
-    
-    
   })
 
   const { consultationPortalAdviceByCaseId: advices = [] } = data ?? {}
