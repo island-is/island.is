@@ -11,17 +11,8 @@ import {
   NationalRegistryUserApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
-import {
-  EhicApplyForPhysicalAndTemporary,
-  EhicApplyForPhysicalCardApi,
-  EhicApplyForTemporaryCardApi,
-  EhicCardResponseApi,
-  EhicGetTemporaryCardApi,
-} from '../dataProviders'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { EhicCardResponseApi, EhicGetTemporaryCardApi } from '../dataProviders'
 
 import { ApiActions } from '../dataProviders/apiActions.enum'
 import { States } from './types'
@@ -33,12 +24,6 @@ type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
 enum Roles {
   APPLICANT = 'applicant',
-}
-
-enum TEMPLATE_API_ACTIONS {
-  // Has to match name of action in template API module
-  // (will be refactored when state machine is a part of API module)
-  sendApplication = 'sendApplication',
 }
 
 const template: ApplicationTemplate<
@@ -90,7 +75,7 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               cond: canApply(true),
-              target: States.PLASTIC,
+              target: States.DRAFT,
             },
             {
               cond: canApply(false),
@@ -100,11 +85,16 @@ const template: ApplicationTemplate<
         },
       },
 
-      [States.PLASTIC]: {
+      [States.DRAFT]: {
         meta: {
           name: 'EHIC-FORM',
           status: 'draft',
           progress: 0.4,
+          onExit: defineTemplateApi({
+            action: ApiActions.applyForPhysicalAndTemporary,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
+          }),
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -120,48 +110,6 @@ const template: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              write: 'all',
-              read: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.REVIEW,
-          },
-        },
-      },
-
-      [States.REVIEW]: {
-        meta: {
-          name: 'EHIC-Review',
-          status: 'draft',
-          progress: 0.8,
-          onExit: defineTemplateApi({
-            action: ApiActions.applyForPhysicalAndTemporary,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-
-              formLoader: () =>
-                import(
-                  '../forms/EuropeanHealthInsuranceCardReview'
-                ).then((val) =>
-                  Promise.resolve(val.EuropeanHealthInsuranceCardReview),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'EHIC-Approved-Submit',
-                  type: 'primary',
-                },
-              ],
-              api: [EhicApplyForPhysicalAndTemporary],
               write: 'all',
               read: 'all',
               delete: true,

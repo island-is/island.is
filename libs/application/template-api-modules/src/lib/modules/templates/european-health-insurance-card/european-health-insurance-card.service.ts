@@ -233,6 +233,8 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
         throw error
       }
     }
+    this.logger.info('pdf array length')
+    this.logger.info(pdfArray.length)
     return pdfArray
   }
 }

@@ -13,9 +13,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 
-import {
-  EhicCardResponseApi,
-} from '../dataProviders'
+import { EhicCardResponseApi } from '../dataProviders'
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
@@ -117,7 +115,6 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
       title: e.confirmation.sectionLabel,
       children: [],
     }),
-
   ],
 })
 

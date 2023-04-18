@@ -1,5 +1,12 @@
-import { Address, NationalRegistry, TempData, } from '../../lib/types'
-import { Box, Bullet, BulletList, Button, Inline, Stack } from '@island.is/island-ui/core'
+import { Address, NationalRegistry, TempData } from '../../lib/types'
+import {
+  Box,
+  Bullet,
+  BulletList,
+  Button,
+  Inline,
+  Stack,
+} from '@island.is/island-ui/core'
 
 import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -41,7 +48,7 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
           >
             {tempData[i].fileName}
           </Button>
-        </Box>
+        </Box>,
       )
     }
   }
@@ -62,17 +69,16 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
               e.confirmation.sectionInfoBulletSecondOne,
               application,
               formatMessage,
-            )}
-            {" "}
-            {residence.address.streetAddress}, {residence.address.postalCode} {residence.address.locality}
-            {" "}
+            )}{' '}
+            {residence.address.streetAddress}, {residence.address.postalCode}{' '}
+            {residence.address.locality}{' '}
             {formatText(
               e.confirmation.sectionInfoBulletSecondTwo,
               application,
               formatMessage,
             )}
           </Bullet>
-          {tempData.length > 0  && (
+          {tempData.length > 0 && (
             <>
               <Bullet>
                 {formatText(
@@ -91,9 +97,7 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
             </>
           )}
         </BulletList>
-        <Inline>
-          {links}
-        </Inline>
+        <Inline>{links}</Inline>
       </Stack>
     </Box>
   )

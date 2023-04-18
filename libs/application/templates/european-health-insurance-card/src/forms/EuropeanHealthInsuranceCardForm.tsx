@@ -1,10 +1,8 @@
-import {
-  Application,
-  DefaultEvents,
-} from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -33,6 +31,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
   title: '',
   logo: Sjukra,
   mode: FormModes.DRAFT,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'intro',
@@ -69,8 +69,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
-                      subLabel:
-                        e.applicants.sectionHasNoPlasticLabel,
+                      subLabel: e.applicants.sectionHasNoPlasticLabel,
                     })
                   }
                 })
@@ -80,7 +79,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
 
             buildDescriptionField({
               id: 'break',
-              title: "",
+              title: '',
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
@@ -90,7 +89,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'addForPDF',
               backgroundColor: 'white',
               title: e.temp.sectionCanTitle,
-              description: "",
+              description: '',
               condition: (_, externalData) =>
                 someHavePlasticButNotPdf(externalData),
               options: (application: Application) => {
@@ -101,8 +100,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
-                      subLabel:
-                        e.temp.sectionHasPlasticLabel,
+                      subLabel: e.temp.sectionHasPlasticLabel,
                     })
                   }
                 })
@@ -113,7 +111,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
 
             buildDescriptionField({
               id: 'break',
-              title: "",
+              title: '',
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
@@ -123,7 +121,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               id: 'havePdf',
               backgroundColor: 'white',
               title: 'Eiga pdf',
-              description: "",
+              description: '',
               condition: (_, externalData) => someHavePDF(externalData),
               options: (application: Application) => {
                 const applying: Array<any> = []
@@ -133,7 +131,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
                       subLabel:
-                        "m.noDeprivedDrivingLicenseInOtherCountryDescription.defaultMessage",
+                        'm.noDeprivedDrivingLicenseInOtherCountryDescription.defaultMessage',
                       disabled: true,
                     })
                   }
@@ -142,8 +140,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               },
             }),
 
-
-            
             buildCheckboxField({
               id: 'notApplicable',
               backgroundColor: 'white',
@@ -221,27 +217,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               defaultValue: (application: Application) =>
                 getDefaultValuesForPDFApplicants(application),
             }),
-            buildSubmitField({
-              id: 'submit-pdf',
-              title: e.review.submitButtonLabel,
-              refetchApplicationAfterSubmit: true,
-              placement: 'footer',
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: e.temp.submitButtonLabel,
-                  type: 'primary',
-                },
-              ],
-            }),
           ],
-        }),
-        // Has to be here so that the submit button appears (does not appear if no screen is left).
-        // Tackle that as AS task.
-        buildDescriptionField({
-          id: 'pdf-Unused',
-          title: '',
-          description: '',
         }),
       ],
     }),
@@ -249,7 +225,38 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
     buildSection({
       id: 'applicationReviewSection',
       title: e.review.sectionLabel,
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'applicationReviewSection.applicationReview',
+          title: e.review.sectionReviewTitle,
+          description: e.review.sectionReviewDescription,
+          children: [
+            buildCustomField({
+              id: 'reviewScreen',
+              title: '',
+              component: 'ReviewScreen',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              title: e.review.submitButtonLabel,
+              refetchApplicationAfterSubmit: true,
+              placement: 'footer',
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: e.review.submitButtonLabel,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+        buildDescriptionField({
+          id: 'unused4',
+          title: '',
+          description: '',
+        }),
+      ],
     }),
 
     buildSection({
