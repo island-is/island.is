@@ -15,12 +15,15 @@ import {
   ClientGrantType,
   ClientPostLogoutRedirectUri,
   ClientRedirectUri,
+  ClientSecret,
   Delegation,
   DelegationScope,
   Domain,
   IdentityResource,
+  Language,
   Translation,
 } from '@island.is/auth-api-lib'
+import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
@@ -33,13 +36,12 @@ import { CreateDomain } from './domain.fixture'
 import {
   CreateApiScope,
   CreateApiScopeUserAccess,
-  CreateCustomDelegation,
-  CreateClientUri,
   CreateClientClaim,
   CreateClientGrantType,
+  CreateClientUri,
+  CreateCustomDelegation,
   CreateIdentityResource,
 } from './types'
-import { isDefined } from '@island.is/shared/utils'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -186,6 +188,10 @@ export class FixtureFactory {
     })
   }
 
+  async createSecret(secret: Partial<ClientSecret>): Promise<ClientSecret> {
+    return this.get(ClientSecret).create(secret)
+  }
+
   async createApiScope({
     domainName,
     ...apiScope
@@ -314,6 +320,11 @@ export class FixtureFactory {
       }),
     )
 
+    await this.get(Language).upsert({
+      isoKey: language,
+      description: 'Lang description',
+      englishDescription: 'Lang en description',
+    })
     return this.get(Translation).bulkCreate(translationObjs)
   }
 }

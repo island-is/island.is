@@ -5,7 +5,6 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { UserExistsGuard } from '../../../user'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { InternalCaseController } from '../../internalCase.controller'
@@ -22,8 +21,8 @@ describe('InternalCaseController - Deliver case to police guards', () => {
     )
   })
 
-  it('should have four guards', () => {
-    expect(guards).toHaveLength(4)
+  it('should have three guards', () => {
+    expect(guards).toHaveLength(3)
   })
 
   describe('CaseExistsGuard', () => {
@@ -62,18 +61,6 @@ describe('InternalCaseController - Deliver case to police guards', () => {
 
     it('should have CaseCompletedGuard as quard 3', () => {
       expect(guard).toBeInstanceOf(CaseCompletedGuard)
-    })
-  })
-
-  describe('UserExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[3]()
-    })
-
-    it('should have UserExistsGuard as guard 4', () => {
-      expect(guard).toBeInstanceOf(UserExistsGuard)
     })
   })
 })

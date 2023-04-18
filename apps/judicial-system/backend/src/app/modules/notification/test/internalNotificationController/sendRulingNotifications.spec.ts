@@ -6,6 +6,7 @@ import {
   CaseDecision,
   CaseType,
   NotificationType,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
@@ -13,7 +14,6 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
-import { User } from '../../../user'
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -31,13 +31,13 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notification: SendInternalNotificationDto,
+  notificationDto: SendInternalNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
-  const notification: SendInternalNotificationDto = {
-    userId,
+  const notificationDto: SendInternalNotificationDto = {
+    user: { id: userId } as User,
     type: NotificationType.RULING,
   }
 
@@ -71,9 +71,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       try {
         then.result = await internalNotificationController.sendCaseNotification(
           caseId,
-          { id: userId } as User,
           theCase,
-          notification,
+          notificationDto,
         )
       } catch (error) {
         then.error = error as Error
@@ -95,7 +94,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prosecutor', () => {
@@ -123,7 +122,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prosecutor', () => {
@@ -153,7 +152,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prosecutor', () => {
@@ -185,7 +184,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       } as Case
 
       beforeEach(async () => {
-        await givenWhenThen(caseId, theCase, notification)
+        await givenWhenThen(caseId, theCase, notificationDto)
       })
 
       it('should send email to prison', () => {
@@ -230,7 +229,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should not send email to prison', () => {
@@ -254,7 +253,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should not send email to prison', () => {
@@ -279,7 +278,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(true)
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prison', () => {
@@ -319,7 +318,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prison', () => {
