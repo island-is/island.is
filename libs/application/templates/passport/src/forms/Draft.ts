@@ -194,8 +194,8 @@ export const Draft: Form = buildForm({
               }) => {
                 return (data as DistrictCommissionerAgencies[])?.map(
                   ({ key, name }) => ({
-                    value: `${key}`,
-                    label: `${name}`,
+                    value: key,
+                    label: name,
                   }),
                 )
               },
