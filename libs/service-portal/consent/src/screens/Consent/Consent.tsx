@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import {
   Accordion,
   AccordionCard,
-  AlertBanner,
   AlertMessage,
   Box,
   Divider,
@@ -17,112 +16,17 @@ import { IntroHeader } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useQuery } from '@apollo/client'
+import type { ConsentLineProps, ConsentSectionProps } from './types'
 
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql' // Temp
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import type { ConsentLineProps, ConsentSectionProps } from './types'
-
-interface MData {
-  tenant: string
-  client: string
-  items: {
-    provider: string
-    providerLogo: string
-    permissions: {
-      title: string
-      description: string
-      hasConsent: boolean
-    }[]
-  }[]
-}
-
-const mock: MData[] = [
-  {
-    tenant: 'Reykjavíkurborg',
-    client: 'Mínar síður Reykjavíkurborgar',
-    items: [
-      {
-        provider: 'Ísland.is',
-        providerLogo: 'Ísland.is',
-        permissions: [
-          {
-            title: 'Netfang',
-            description: 'Netfang þitt á Ísland.is',
-            hasConsent: false,
-          },
-          {
-            title: 'Sími',
-            description:
-              'Símanúmer þitt á Ísland.is ásamt símanúmerinu sem var notað til að auðkenna þig með rafrænu skilríki.',
-            hasConsent: true,
-          },
-        ],
-      },
-      {
-        provider: 'Annað',
-        providerLogo: 'Ísland.is',
-        permissions: [
-          {
-            title: 'Netfang',
-            description: 'Netfang þitt á Ísland.is',
-            hasConsent: false,
-          },
-          {
-            title: 'Sími',
-            description:
-              'Símanúmer þitt á Ísland.is ásamt símanúmerinu sem var notað til að auðkenna þig með rafrænu skilríki.',
-            hasConsent: true,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    tenant: 'Skatturinn',
-    client: 'Mínar síður RSK',
-    items: [
-      {
-        provider: 'Stafraent Ísland',
-        providerLogo: 'Stafraent Ísland',
-        permissions: [
-          {
-            title: 'Sími',
-            description:
-              'Símanúmer þitt á Ísland.is ásamt símanúmerinu sem var notað til að auðkenna þig með rafrænu skilríki.',
-            hasConsent: true,
-          },
-        ],
-      },
-    ],
-  },
-]
-
-interface MockData<T> {
-  data: T | undefined
-  isLoading: boolean
-}
-
-function useMockData<T>(mock: T, time: number): MockData<T> {
-  const [isLoaded, setIsLoaded] = useState(false)
-  const hasStarted = React.useRef(false)
-
-  if (!hasStarted.current) {
-    hasStarted.current = true
-    setTimeout(() => {
-      setIsLoaded(true)
-    }, time)
-  }
-
-  return isLoaded
-    ? { data: mock, isLoading: false }
-    : { data: undefined, isLoading: true }
-}
+import { mock, useMockData } from './mockData'
 
 function Consent() {
   const { formatMessage } = useLocale()
 
   // const { data, isLoading } = useMockData<MData[]>([], 1000)
-  const { data, isLoading } = useMockData(mock, 1000)
+  const { data, isLoading } = useMockData(mock, 5000)
 
   // Mock organizations for icons.
   const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
