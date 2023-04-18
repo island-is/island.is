@@ -1,3 +1,5 @@
+import type { User } from '@island.is/judicial-system/types'
+
 export enum MessageType {
   DELIVER_PROSECUTOR_TO_COURT = 'DELIVER_PROSECUTOR_TO_COURT',
   DELIVER_DEFENDANT_TO_COURT = 'DELIVER_DEFENDANT_TO_COURT',
@@ -23,7 +25,7 @@ export enum MessageType {
 
 export type CaseMessage = {
   type: MessageType
-  userId: string
+  user: User
   caseId: string
   numberOfRetries?: number
   nextRetry?: number

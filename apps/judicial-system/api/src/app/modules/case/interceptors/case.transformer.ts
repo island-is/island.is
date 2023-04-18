@@ -22,7 +22,6 @@ export function transformCase(theCase: Case): Case {
     isAppealGracePeriodExpired: theCase.courtEndTime
       ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(31)
       : false,
-    // TODO: Use appealInfo.statementDeadline
     isStatementDeadlineExpired: appealInfo.statementDeadline
       ? Date.now() >= new Date(appealInfo.statementDeadline).getTime()
       : false,

@@ -229,6 +229,13 @@ export const SignedVerdictOverview: React.FC = () => {
     caseNotFound,
     refreshCase,
   } = useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    refreshCase,
+  } = useContext(FormContext)
 
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
   const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()

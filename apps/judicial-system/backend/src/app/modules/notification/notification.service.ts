@@ -33,13 +33,14 @@ import {
   NotificationType,
   isRestrictionCase,
   SessionArrangements,
-  User as TUser,
   isInvestigationCase,
   isIndictmentCase,
   CaseState,
   Recipient,
+  UserRole,
   getStatementDeadline,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   formatDate,
   formatDefenderRoute,
@@ -65,7 +66,6 @@ import {
   formatCourtIndictmentReadyForCourtEmailNotification,
 } from '../../formatters'
 import { notifications } from '../../messages'
-import { User } from '../user'
 import { Case } from '../case'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
@@ -1359,6 +1359,7 @@ export class NotificationService {
 
   private async sendAppealToCourtOfAppealsNotifications(
     theCase: Case,
+    user: User,
   ): Promise<SendNotificationResponse> {
     const subject = this.formatMessage(
       notifications.caseAppealedToCourtOfAppeals.subject,
@@ -1379,6 +1380,28 @@ export class NotificationService {
     const promises = [
       this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
     ]
+
+    if (user.role === UserRole.DEFENDER && theCase.prosecutor?.email) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.prosecutor.name,
+          theCase.prosecutor.email,
+        ),
+      )
+    }
+
+    if (user.role === UserRole.PROSECUTOR && theCase.defenderEmail) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
+    }
 
     const recipients = await Promise.all(promises)
 
@@ -1441,14 +1464,14 @@ export class NotificationService {
 
   private getNotificationMessage(
     type: MessageType,
-    user: TUser,
+    user: User,
     theCase: Case,
   ): CaseMessage {
-    return { type, userId: user.id, caseId: theCase.id }
+    return { type, user, caseId: theCase.id }
   }
 
   private getReadyForCourtNotificationMessages(
-    user: TUser,
+    user: User,
     theCase: Case,
   ): CaseMessage[] {
     const messages = [
@@ -1482,13 +1505,13 @@ export class NotificationService {
   }
 
   async sendCaseNotification(
-    notification: SendNotificationDto,
+    type: NotificationType,
     theCase: Case,
     user: User,
   ): Promise<SendNotificationResponse> {
     await this.refreshFormatMessage()
 
-    switch (notification.type) {
+    switch (type) {
       case NotificationType.HEADS_UP:
         return this.sendHeadsUpNotifications(theCase)
       case NotificationType.READY_FOR_COURT:
@@ -1508,7 +1531,7 @@ export class NotificationService {
       case NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT:
         return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
       case NotificationType.APPEAL_TO_COURT_OF_APPEALS:
-        return this.sendAppealToCourtOfAppealsNotifications(theCase)
+        return this.sendAppealToCourtOfAppealsNotifications(theCase, user)
       case NotificationType.APPEAL_RECEIVED_BY_COURT:
         return this.sendAppealReceivedByCourtNotifications(theCase)
     }
@@ -1517,7 +1540,7 @@ export class NotificationService {
   async addMessagesForNotificationToQueue(
     notification: SendNotificationDto,
     theCase: Case,
-    user: TUser,
+    user: User,
   ): Promise<SendNotificationResponse> {
     let messages: CaseMessage[]
 
