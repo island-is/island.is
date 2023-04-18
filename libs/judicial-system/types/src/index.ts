@@ -67,6 +67,7 @@ export {
   hasCaseBeenAppealed,
   SubpoenaType,
   CaseAppealState,
+  getAppealInfo,
 } from './lib/case'
 export type {
   Case,
