@@ -1,14 +1,11 @@
-import {
-  MIDEIND_TRANSLATION_API_BASE_URL,
-  MIDEIND_TRANSLATION_API_KEY,
-} from '../../../constants'
+import { MIDEIND_TRANSLATION_API_BASE_URL } from '../../../constants'
 
 const defaultParams = {
   sourceLanguageCode: 'is',
   targetLanguageCode: 'en',
 }
 
-async function translateTexts(texts: string[]) {
+async function translateTexts(texts: string[], apiKey: string) {
   const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
 
   const translations = []
@@ -21,7 +18,7 @@ async function translateTexts(texts: string[]) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': MIDEIND_TRANSLATION_API_KEY,
+      'X-API-Key': apiKey,
     },
     body: JSON.stringify(body),
   }).then((res) => res.json())
@@ -37,6 +34,7 @@ async function sendTexts(
   iceTexts: string[],
   enTexts: string[],
   reference: string,
+  apiKey: string,
 ) {
   const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
 
@@ -53,7 +51,7 @@ async function sendTexts(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': MIDEIND_TRANSLATION_API_KEY,
+      'X-API-Key': apiKey,
     },
     body: JSON.stringify(body),
   })
