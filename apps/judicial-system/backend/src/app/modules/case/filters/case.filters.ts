@@ -1,7 +1,6 @@
 import { literal, Op, WhereOptions } from 'sequelize'
 
 import {
-  CaseAppealDecision,
   CaseDecision,
   CaseState,
   CaseType,
@@ -16,6 +15,7 @@ import {
   isExtendedCourtRole,
   isProsecutionRole,
   isCourtRole,
+  CaseAppealState,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
@@ -337,10 +337,8 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     : user.institution?.type === InstitutionType.HIGH_COURT
     ? {
         [Op.or]: [
-          { accused_appeal_decision: CaseAppealDecision.APPEAL },
-          { prosecutor_appeal_decision: CaseAppealDecision.APPEAL },
-          { accused_postponed_appeal_date: { [Op.not]: null } },
-          { prosecutor_postponed_appeal_date: { [Op.not]: null } },
+          { appeal_state: CaseAppealState.APPEALED },
+          { appeal_state: CaseAppealState.COMPLETED },
         ],
       }
     : {
