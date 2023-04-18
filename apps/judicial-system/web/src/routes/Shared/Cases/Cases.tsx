@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
-import router from 'next/router'
+import { useQuery } from '@apollo/client'
 import partition from 'lodash/partition'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import {
-  CaseQuery,
   DropdownMenu,
   Logo,
   SectionHeading,
@@ -15,31 +13,22 @@ import {
 import {
   CaseState,
   CaseTransition,
-  isRestrictionCase,
   Feature,
-  isInvestigationCase,
   isIndictmentCase,
-  isExtendedCourtRole,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseData,
-  TempCase as Case,
-  TempCaseListEntry as CaseListEntry,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ActiveCases from './ActiveCases'
@@ -125,10 +114,8 @@ const CreateCaseButton: React.FC<{
 // Credit for sorting solution: https://www.smashingmagazine.com/2020/03/sortable-tables-react/
 export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
-
   const { user } = useContext(UserContext)
   const { features } = useContext(FeatureContext)
-
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
   const isProsecutor = user?.role === UserRole.Prosecutor
@@ -138,27 +125,19 @@ export const Cases: React.FC = () => {
     user?.institution?.type === InstitutionType.PrisonAdmin
   const isPrisonUser = user?.institution?.type === InstitutionType.Prison
 
+  const {
+    transitionCase,
+    isTransitioningCase,
+    isSendingNotification,
+    getCaseToOpen,
+  } = useCase()
+
   const { data, error, loading, refetch } = useQuery<{
     cases?: CaseListEntry[]
   }>(CasesQuery, {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
-
-  const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
-    fetchPolicy: 'no-cache',
-    onCompleted: (caseData) => {
-      if (user?.role && caseData?.case) {
-        openCase(caseData.case, user.role)
-      }
-    },
-  })
-
-  const {
-    transitionCase,
-    isTransitioningCase,
-    isSendingNotification,
-  } = useCase()
 
   useEffect(() => {
     const loadingTimeout = setTimeout(() => {
@@ -219,64 +198,6 @@ export const Cases: React.FC = () => {
     getCaseToOpen({
       variables: { input: { id } },
     })
-  }
-
-  const openCase = (caseToOpen: Case, role: UserRole) => {
-    let routeTo = null
-    const isTrafficViolation = isTrafficViolationCase(
-      caseToOpen,
-      features,
-      user,
-    )
-
-    if (
-      caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED ||
-      caseToOpen.state === CaseState.DISMISSED
-    ) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      } else if (isHighCourtUser) {
-        routeTo = constants.COURT_OF_APPEAL_OVERVIEW
-      } else {
-        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-      }
-    } else if (isExtendedCourtRole(role)) {
-      if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.courtRestrictionCasesRoutes,
-          caseToOpen,
-        )
-      } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.courtInvestigationCasesRoutes,
-          caseToOpen,
-        )
-      } else {
-        // Route to Indictment Overview section since it always a valid step and
-        // would be skipped if we route to the last valid step
-        routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
-      }
-    } else {
-      if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorRestrictionCasesRoutes,
-          caseToOpen,
-        )
-      } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorInvestigationCasesRoutes,
-          caseToOpen,
-        )
-      } else {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorIndictmentRoutes(isTrafficViolation),
-          caseToOpen,
-        )
-      }
-    }
-
-    if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
   }
 
   return (
