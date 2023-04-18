@@ -1,5 +1,6 @@
 import {
   defineTemplateApi,
+  InstitutionNationalIds,
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
@@ -18,11 +19,9 @@ export const NationalRegistryUserApi = defineTemplateApi<NationalRegistryUserApi
   },
 )
 
-const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
 export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
-    organizationId: SAMGONGUSTOFA_NATIONAL_ID,
+    organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
   },
   externalDataId: 'payment',
 })
