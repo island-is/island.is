@@ -23,12 +23,8 @@ export function transformCase(theCase: Case): Case {
       ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(31)
       : false,
     // TODO: Use appealInfo.statementDeadline
-    isStatementDeadlineExpired: theCase.prosecutorPostponedAppealDate
-      ? Date.now() >=
-        new Date(theCase.prosecutorPostponedAppealDate).getTime() + getDays(1)
-      : theCase.accusedPostponedAppealDate
-      ? Date.now() >=
-        new Date(theCase.accusedPostponedAppealDate).getTime() + getDays(1)
+    isStatementDeadlineExpired: appealInfo.statementDeadline
+      ? Date.now() >= new Date(appealInfo.statementDeadline).getTime()
       : false,
     ...appealInfo,
   }

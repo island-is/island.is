@@ -132,6 +132,7 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
     | 'appealState'
+    | 'appealReceivedByCourtDate'
   > {
   type?: CaseType
   state?: CaseState
@@ -601,6 +602,17 @@ export class CaseService {
       },
     ])
   }
+
+  addMessagesForReceivedAppealCaseToQueue(theCase: Case, user: TUser) {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
+        userId: user.id,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -628,6 +640,8 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(theCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+        await this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
       }
     }
 
