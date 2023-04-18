@@ -10,7 +10,7 @@
     }
   ],
   "paths": {
-    "/ehic/v1/cardstatus/{applicantnationalids}": {
+    "/v1/cardstatus/{applicantnationalids}": {
       "get": {
         "tags": ["ehic"],
         "operationId": "CardStatus",
@@ -58,7 +58,7 @@
         }
       }
     },
-    "/ehic/v1/requestcard/{applicantnationalid}/{cardtype}": {
+    "/v1/requestcard/{applicantnationalid}/{cardtype}": {
       "post": {
         "tags": ["ehic"],
         "operationId": "RequestCard",
@@ -112,7 +112,7 @@
         }
       }
     },
-    "/ehic/v1/fetchtemppdfcard/{applicantnationalid}/{cardnumber}": {
+    "/v1/fetchtemppdfcard/{applicantnationalid}/{cardnumber}": {
       "get": {
         "tags": ["ehic"],
         "operationId": "FetchTempPDFCard",

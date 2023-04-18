@@ -22,16 +22,11 @@ export interface NationalRegistry {
   data: any
 }
 
-
 export enum States {
   PREREQUISITES = 'prerequisites',
-  PLASTIC = 'plastic',
-  PDF = 'pdf',
   DRAFT = 'draft',
-  REVIEW = 'review',
-  SUBMITTED = 'submitted',
   COMPLETED = 'completed',
-  DECLINED = "declined"
+  DECLINED = 'declined',
 }
 
 export interface CardInfo {

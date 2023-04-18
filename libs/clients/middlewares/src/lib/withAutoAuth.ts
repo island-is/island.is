@@ -210,6 +210,8 @@ export const withAutoAuth = ({
 
     const result: TokenResponse = await response.json()
 
+    console.log(result)
+
     if (result.token_type !== 'Bearer') {
       throw new Error(
         `Fetch (${name}): Token exchange failed, invalid token type (${result.token_type})`,
