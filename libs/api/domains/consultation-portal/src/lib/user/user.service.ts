@@ -61,4 +61,11 @@ export class UserService {
     )
     return response
   }
+  async postUserEmail(auth: User, input: PostEmailCommand): Promise<void> {
+    const request: ApiUserEmailPostRequest = {
+      postEmailCommand: input,
+    }
+    const response = await this.userApiWithAuth(auth).apiUserEmailPost(request)
+    return response
+  }
 }

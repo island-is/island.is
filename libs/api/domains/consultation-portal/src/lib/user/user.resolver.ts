@@ -48,33 +48,15 @@ export class UserResolver {
 
     return userEmail
   }
-  @Mutation(() => String, {
+  @Mutation(() => Boolean!, {
     nullable: true,
     name: 'consultationPortalPostUserEmail',
   })
-  @FeatureFlag(Features.consultationPortalApplication)
-  @UseGuards(IdsUserGuard)
-  @Scopes(ConsultationPortalScope.default)
   async postUserEmail(
-    @Args('input') input: string,
     @CurrentUser() user: User,
+    @Args('input', { type: () => PostEmailCommand }) input: PostEmailCommand,
   ): Promise<void> {
     const response = await this.userService.postUserEmail(user, input)
-    return response
-  }
-
-  @Mutation(() => Boolean!, {
-    nullable: true,
-    name: 'consultationPortalPostEmail',
-  })
-  async postUserEmail(
-    @CurrentUser() user: User,
-    @Args('postEmailCommand') postEmailCommand: PostEmailCommand,
-  ): Promise<void> {
-    const response = await this.userService.postUserEmail(
-      user,
-      postEmailCommand,
-    )
     return response
   }
 
