@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { EmailRecipient, EmailRole } from './types'
 import {
   getAllRoles,
@@ -154,8 +157,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as ChangeOperatorOfVehicleAnswers
 
       const chargeItemCodes = getChargeItemCodes(answers)
@@ -167,7 +168,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
