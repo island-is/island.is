@@ -9,10 +9,10 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import { MessageService } from '@island.is/judicial-system/message'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
-import { User } from '../user'
 import { CourtService } from '../court'
 import { Case } from '../case/models/case.model'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
