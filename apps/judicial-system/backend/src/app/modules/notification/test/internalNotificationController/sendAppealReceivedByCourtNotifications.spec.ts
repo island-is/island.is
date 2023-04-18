@@ -1,10 +1,9 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
-import { CaseType, NotificationType } from '@island.is/judicial-system/types'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
-import { User } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -43,7 +42,6 @@ describe('InternalNotificationController - Send appeal received by court notific
       await internalNotificationController
         .sendCaseNotification(
           caseId,
-          { id: userId } as User,
           {
             id: caseId,
             prosecutor: { name: prosecutorName, email: prosecutorEmail },
@@ -52,7 +50,10 @@ describe('InternalNotificationController - Send appeal received by court notific
             courtCaseNumber,
             appealReceivedByCourtDate: receivedDate,
           } as Case,
-          { userId, type: NotificationType.APPEAL_RECEIVED_BY_COURT },
+          {
+            user: { id: userId } as User,
+            type: NotificationType.APPEAL_RECEIVED_BY_COURT,
+          },
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))

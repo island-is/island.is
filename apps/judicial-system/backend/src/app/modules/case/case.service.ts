@@ -607,7 +607,7 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue([
       {
         type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
-        userId: user.id,
+        user,
         caseId: theCase.id,
       },
     ])
