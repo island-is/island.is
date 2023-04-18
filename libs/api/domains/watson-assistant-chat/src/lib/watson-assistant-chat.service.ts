@@ -2,14 +2,18 @@ import jwt from 'jsonwebtoken'
 import { ConfigType } from '@island.is/nest/config'
 import { WatsonAssistantChatIdentityTokenInput } from './dto/watsonAssistantChatIdentityToken.input'
 import { WatsonAssistantChatConfig } from './watson-assistant-chat.config'
-import { publicEncrypt } from 'crypto'
+import { publicEncrypt, constants } from 'crypto'
 
 export class WatsonAssistantChatService {
   constructor(private config: ConfigType<typeof WatsonAssistantChatConfig>) {}
 
   async createIdentityToken(input: WatsonAssistantChatIdentityTokenInput) {
     const encryptedUserPayload = publicEncrypt(
-      this.config.directorateOfImmigrationPublicIBMKey,
+      {
+        key: this.config.directorateOfImmigrationPublicIBMKey,
+        padding: constants.RSA_PKCS1_OAEP_PADDING,
+        oaepHash: 'sha256',
+      },
       Buffer.from(
         JSON.stringify({
           name: input.name,
