@@ -587,14 +587,14 @@ const ViewStudent = ({
                               box={{ className: bgr, textAlign: 'center' }}
                             >
                               {entry.teacherNationalId === userNationalId && (
-                                <Box>
+                                <Box display="flex" alignItems="center">
                                   <Button
                                     variant="text"
                                     size="small"
                                     icon={
                                       editingRegistration &&
                                       editingRegistration.id === entry.id
-                                        ? 'checkmark'
+                                        ? 'close'
                                         : undefined
                                     }
                                     onClick={() => {
