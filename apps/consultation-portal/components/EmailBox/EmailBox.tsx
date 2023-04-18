@@ -4,7 +4,7 @@ import initApollo from '../../graphql/client'
 import { SUB_POST_EMAIL } from '../../graphql/queries.graphql'
 import { useLogIn, useUser } from '../../utils/helpers'
 import { useEffect, useState } from 'react'
-import { useFetchEmail } from '@island.is/consultation-portal/utils/helpers/api/useFetchEmail'
+import { useFetchEmail } from '../../utils/helpers/api/useFetchEmail'
 import { LoadingDots } from '@island.is/island-ui/core'
 
 const emailIsValid = (email: string) => {
