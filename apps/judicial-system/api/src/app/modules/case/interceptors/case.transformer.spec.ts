@@ -196,12 +196,10 @@ describe('transformCase', () => {
 
     it('should be true when more than one day has passed since the case was appealed', () => {
       // Arrange
-      const prosecutorPostponedAppealDate = new Date()
-      prosecutorPostponedAppealDate.setDate(
-        prosecutorPostponedAppealDate.getDate() - 2,
-      )
+      const appealReceivedByCourtDate = new Date()
+      appealReceivedByCourtDate.setDate(appealReceivedByCourtDate.getDate() - 2)
       const theCase = {
-        prosecutorPostponedAppealDate: prosecutorPostponedAppealDate.toISOString(),
+        appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
       } as Case
 
       // Act
@@ -278,6 +276,24 @@ describe('transformCase', () => {
       // Assert
       expect(res.appealedDate).toBeDefined()
       expect(res.hasBeenAppealed).toBe(true)
+    })
+
+    it('should return statement deadline when case has been received by the court', () => {
+      // Arrange
+      const courtEndTime = new Date()
+      courtEndTime.setDate(courtEndTime.getDate() - 1)
+      const theCase = {
+        courtEndTime: courtEndTime.toISOString(),
+        accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+        appealState: CaseAppealState.RECEIVED,
+        appealReceivedByCourtDate: '2022-06-15T19:50:08.033Z',
+      } as Case
+
+      // Act
+      const res = transformCase(theCase)
+
+      // Assert
+      expect(res.statementDeadline).toBeDefined()
     })
 
     it('should have correct prosecutor and defender statement dates when both parties have sent in their statements', () => {

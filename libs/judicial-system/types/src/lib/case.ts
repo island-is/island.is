@@ -514,7 +514,9 @@ export function getAppealInfo(theCase: Case): Case {
   }
 
   if (appealReceivedByCourtDate) {
-    getStatementDeadline(new Date(appealReceivedByCourtDate))
+    appealInfo.statementDeadline = getStatementDeadline(
+      new Date(appealReceivedByCourtDate),
+    )
   }
   //TODO: These dates should likely be set differently but we haven't
   //implemented the ability to record when the statement was sent
