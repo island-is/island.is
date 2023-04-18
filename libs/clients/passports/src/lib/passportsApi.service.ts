@@ -301,7 +301,7 @@ export class PassportsService {
 
       .moveDown()
       .text('guId: ' + guid)
-      
+
     doc.end()
     return await getStream.buffer(doc)
   }
