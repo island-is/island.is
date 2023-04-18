@@ -3,7 +3,10 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 
 @Injectable()
 export class DigitalTachographCompanyCardService extends BaseTemplateApiService {
@@ -18,12 +21,10 @@ export class DigitalTachographCompanyCardService extends BaseTemplateApiService 
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         [ChargeItemCode.TRANSPORT_AUTHORITY_DIGITAL_TACHOGRAPH_COMPANY_CARD],
       )
       return result

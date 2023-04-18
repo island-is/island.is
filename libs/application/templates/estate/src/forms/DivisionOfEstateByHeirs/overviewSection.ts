@@ -157,7 +157,7 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
+                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
                   (vehicle) => vehicle.enabled,
                 ) ?? []
               ).map((vehicle) => ({
@@ -175,23 +175,23 @@ export const overview = buildSection({
         ),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'overviewFirearms',
-          title: m.firearms,
-          description: m.firearmsDescription,
+          id: 'overviewGuns',
+          title: m.guns,
+          description: m.gunsDescription,
           titleVariant: 'h3',
           space: 'gutter',
         }),
         buildCustomField(
           {
             title: '',
-            id: 'estateFirearmsCards',
+            id: 'estateGunsCards',
             component: 'Cards',
             doesNotRequireAnswer: true,
           },
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.guns.filter(
+                ((answers.estate as unknown) as EstateInfo)?.guns?.filter(
                   (guns) => guns.enabled,
                 ) ?? []
               ).map((gun) => ({

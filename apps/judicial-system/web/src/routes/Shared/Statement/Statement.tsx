@@ -43,7 +43,7 @@ import { statement as strings } from './Statement.strings'
 
 const Statement = () => {
   const { workingCase } = useContext(FormContext)
-  const { user } = useContext(UserContext)
+  const { limitedAccess, user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
@@ -65,9 +65,9 @@ const Statement = () => {
     : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE
 
   const previousUrl = `${
-    isProsecutionRole(user?.role)
-      ? constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-      : constants.DEFENDER_ROUTE
+    limitedAccess
+      ? constants.DEFENDER_ROUTE
+      : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
   const allFilesUploaded = useMemo(() => {
