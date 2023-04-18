@@ -1,5 +1,4 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
-
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
 import {
@@ -14,6 +13,7 @@ import {
   SubpoenaType,
   CaseType,
   CaseAppealState,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import type {
   Case as TCase,
@@ -32,6 +32,7 @@ registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
 registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
+registerEnumType(UserRole, { name: 'UserRole' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -304,4 +305,28 @@ export class Case implements TCase {
 
   @Field(() => Boolean, { nullable: true })
   readonly isStatementDeadlineExpired?: boolean
+
+  @Field({ nullable: true })
+  readonly statementDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly canBeAppealed?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly hasBeenAppealed?: boolean
+
+  @Field({ nullable: true })
+  readonly appealDeadline?: string
+
+  @Field(() => UserRole, { nullable: true })
+  readonly appealedByRole?: UserRole
+
+  @Field({ nullable: true })
+  readonly appealedDate?: string
+
+  @Field({ nullable: true })
+  readonly prosecutorStatementDate?: string
+
+  @Field({ nullable: true })
+  readonly defenderStatementDate?: string
 }
