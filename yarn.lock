@@ -11512,15 +11512,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-rsa@npm:1.1.1":
-  version: 1.1.1
-  resolution: "@types/node-rsa@npm:1.1.1"
-  dependencies:
-    "@types/node": "*"
-  checksum: dee0c318618991f115b6e757c54980324c3b2f7dfec8137dcb31e8e88955e7c048d5e89e1e3a572148697783f323dbf9af5738ac5bbe9069666663ad3737284d
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:>=6":
   version: 17.0.25
   resolution: "@types/node@npm:17.0.25"
@@ -26697,7 +26688,6 @@ __metadata:
     "@types/mailparser": 3.4.0
     "@types/memoizee": 0.4.5
     "@types/node": 18.14.2
-    "@types/node-rsa": 1.1.1
     "@types/nodemailer": 6.4.1
     "@types/opossum": 4.1.1
     "@types/passport-jwt": 3.0.8
@@ -26864,7 +26854,6 @@ __metadata:
     next-secure-headers: 2.1.0
     node-fetch: 2.6.7
     node-gyp: 9.1.0
-    node-rsa: 1.1.1
     nodemailer: 6.7.2
     nx: 13.10.3
     oidc-client-ts: 2.0.3
@@ -32120,15 +32109,6 @@ __metadata:
     debug: ^4.3.0
     headers-utils: ^1.2.0
   checksum: 1fbe81d08e3f169d2ca8b7c69335e66b25d78a75d61f299f842eb280affbe8ffc435e462f6de509191aaea4c837b3f5e4396a84ef5e832a0a4bb688bef990fd2
-  languageName: node
-  linkType: hard
-
-"node-rsa@npm:1.1.1":
-  version: 1.1.1
-  resolution: "node-rsa@npm:1.1.1"
-  dependencies:
-    asn1: ^0.2.4
-  checksum: c03a6c8f69557326d2110086ce9610b4b17ef0fd594f76202225b7eb93fc0b342fb31714f6b3cf8d38320cf63c4790a3034e5d47a12f2c27d1900599ec9bd545
   languageName: node
   linkType: hard
 
