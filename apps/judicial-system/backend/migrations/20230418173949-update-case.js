@@ -1,28 +1,28 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface) => {
+  async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.renameColumn(
+        queryInterface.addColumn(
           'case',
-          'court_received_appeal_date',
           'appeal_received_by_court_date',
+          {
+            type: Sequelize.DATE,
+            allowNull: true,
+          },
           { transaction: t },
         ),
       ]),
     )
   },
 
-  down: (queryInterface) => {
+  async down(queryInterface) {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
-        queryInterface.renameColumn(
-          'case',
-          'appeal_received_by_court_date',
-          'court_received_appeal_date',
-          { transaction: t },
-        ),
+        queryInterface.removeColumn('case', 'appeal_received_by_court_date', {
+          transaction: t,
+        }),
       ]),
     )
   },
