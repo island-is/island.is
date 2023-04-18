@@ -2,8 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 
-apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+// @todo implement CodePush
 
 import com.android.build.OutputFile
 
@@ -92,12 +91,24 @@ def reactNativeArchitectures() {
     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
 }
 
+Properties properties = new Properties()
+if (project.rootProject.file('local.properties').exists()) {
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+} else {
+    println "WARN: Missing local.properties file"
+}
+
 android {
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace "is.island.app"
+
+    packagingOptions {
+        pickFirst 'lib/*/*.so'
+    }
+
     defaultConfig {
         applicationId "is.island.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -124,6 +135,12 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            storeFile file(properties.getProperty('ISLANDAPP_UPLOAD_STORE_FILE'))
+            storePassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
+            keyAlias properties.getProperty('ISLANDAPP_UPLOAD_KEY_ALIAS')
+            keyPassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
+        }
     }
     buildTypes {
         debug {
@@ -132,10 +149,22 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
+    }
+
+    flavorDimensions "env"
+    productFlavors {
+      dev {
+        resValue "string", "app_name", "Ísland.dev"
+        applicationIdSuffix ".dev"
+      }
+      prod {
+        resValue "string", "app_name", "Ísland.is"
+        applicationIdSuffix ""
+      }
     }
 
     // applicationVariants are e.g. debug, release

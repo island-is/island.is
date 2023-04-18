@@ -170,7 +170,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   return (
     <>
-
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_APPLICATIONS}

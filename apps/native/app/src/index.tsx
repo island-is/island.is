@@ -38,32 +38,33 @@ async function startApp() {
   registerAllComponents()
   console.log('register all components')
 
+  // Set default navigation theme options
+  Navigation.setDefaultOptions(getDefaultOptions())
+
   // Wait until React Native is initialized
   Navigation.events().registerAppLaunchedListener(async () => {
-    Navigation.setRoot({
-      root: {
-        stack: {
-          id: StackRegistry.LoginStack,
-          children: [
-            {
-              component: {
-                id: ComponentRegistry.LoginScreen,
-                name: ComponentRegistry.LoginScreen,
-              },
-            },
-          ],
-        }
-      }
-    })
-    return;
+    // Navigation.setRoot({
+    //   root: {
+    //     stack: {
+    //       id: StackRegistry.LoginStack,
+    //       children: [
+    //         {
+    //           component: {
+    //             id: ComponentRegistry.LoginScreen,
+    //             name: ComponentRegistry.LoginScreen,
+    //           },
+    //         },
+    //       ],
+    //     }
+    //   }
+    // })
+    // return;
 
     console.log('app launched');
     // Read authorize result from keychain
     await readAuthorizeResult();
     console.log('auth result read');
 
-    // Set default navigation theme options
-    Navigation.setDefaultOptions(getDefaultOptions())
 
     // Get app root
     const root = await getAppRoot();
