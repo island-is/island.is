@@ -7,24 +7,19 @@ interface Props {
 }
 
 export const useFetchAdvicesById = ({ caseId }: Props) => {
-  if (!caseId) {
-    return {
-      advices: [],
-      advicesLoading: false,
-      refetchAdvices: null,
-    }
-  }
-
   const client = initApollo()
   const { data, loading, refetch } = useQuery(CASE_GET_ADVICES_BY_ID, {
     client: client,
     ssr: false,
     fetchPolicy: 'cache-and-network',
+    skip: caseId ? false : true,
     variables: {
       input: {
         caseId: caseId,
       },
     },
+    
+    
   })
 
   const { consultationPortalAdviceByCaseId: advices = [] } = data ?? {}

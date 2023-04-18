@@ -94,7 +94,7 @@ export const WriteReviewCard = ({
         Object.keys(response.fields).forEach((key) =>
           formData.append(key, response.fields[key]),
         )
-        formData.append('file', file as File)
+        formData.append('file', file.originalFileObj as File)
 
         request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
 
@@ -105,7 +105,6 @@ export const WriteReviewCard = ({
         request.onerror = () => {
           reject()
         }
-
         request.send(formData)
       })
     } else {
