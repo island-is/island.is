@@ -4,7 +4,6 @@ import { Sequelize } from 'sequelize-typescript'
 import format from 'date-fns/format'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
