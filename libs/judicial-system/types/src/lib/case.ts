@@ -283,6 +283,7 @@ export interface CaseListEntry
     | 'prosecutor'
     | 'registrar'
     | 'creatingProsecutor'
+    | 'appealState'
   > {
   parentCaseId?: string
 }

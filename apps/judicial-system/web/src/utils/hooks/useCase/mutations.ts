@@ -63,6 +63,21 @@ export const TransitionCaseMutation = gql`
   }
 `
 
+export const AppealedCasesQuery = gql`
+  query AppealedCases {
+    cases {
+      courtCaseNumber
+      defendants {
+        name
+      }
+      type
+      decision
+      state
+      appealState
+    }
+  }
+`
+
 export const UpdateCaseMutation = gql`
   mutation UpdateCase($input: UpdateCaseInput!) {
     updateCase(input: $input) {

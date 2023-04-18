@@ -1,17 +1,18 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import type {
+import {
   CaseAppealDecision,
   CaseDecision,
-  CaseListEntry as TCaseListEntry,
   CaseState,
   CaseType,
+  CaseAppealState,
 } from '@island.is/judicial-system/types'
+
 import { Defendant } from '../../defendant'
 import { User } from '../../user'
 
 @ObjectType()
-export class CaseListEntry implements TCaseListEntry {
+export class CaseListEntry {
   @Field(() => ID)
   readonly id!: string
 
@@ -80,4 +81,7 @@ export class CaseListEntry implements TCaseListEntry {
 
   @Field({ nullable: true })
   readonly parentCaseId?: string
+
+  @Field(() => CaseAppealState, { nullable: true })
+  readonly appealState?: CaseAppealState
 }
