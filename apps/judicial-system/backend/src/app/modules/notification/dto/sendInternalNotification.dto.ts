@@ -1,14 +1,15 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
+import { IsEnum, IsNotEmpty, IsObject } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
 import { NotificationType } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 export class SendInternalNotificationDto {
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  readonly userId!: string
+  @IsObject()
+  @ApiProperty({ type: Object })
+  readonly user!: User
 
   @IsNotEmpty()
   @IsEnum(NotificationType)

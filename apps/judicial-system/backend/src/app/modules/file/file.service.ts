@@ -19,11 +19,10 @@ import {
   CaseFileState,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { User } from '../user'
 import { Case } from '../case'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
@@ -151,7 +150,7 @@ export class FileService {
   private async throttleUpload(
     file: CaseFile,
     theCase: Case,
-    user: TUser | User,
+    user: User,
   ): Promise<string> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -266,7 +265,7 @@ export class FileService {
   async uploadCaseFileToCourt(
     file: CaseFile,
     theCase: Case,
-    user: TUser | User,
+    user: User,
   ): Promise<UploadFileToCourtResponse> {
     await this.refreshFormatMessage()
 

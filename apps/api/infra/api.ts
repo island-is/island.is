@@ -58,9 +58,9 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
       ),
       AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
-        dev: ref((h) => h.svc('loftbru.dev01.devland.is')),
-        staging: ref((h) => h.svc('loftbru.staging01.devland.is')),
-        prod: ref((h) => h.svc('loftbru.island.is')),
+        dev: 'loftbru.dev01.devland.is',
+        staging: 'loftbru.staging01.devland.is',
+        prod: 'loftbru.island.is',
       },
       FILE_STORAGE_UPLOAD_BUCKET: {
         dev: 'island-is-dev-upload-api',
@@ -173,9 +173,9 @@ export const serviceSetup = (services: {
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
-        dev: 'https://samradapi-test.island.is',
-        staging: 'https://samradapi-test.island.is',
-        prod: 'https://samradapi-test.island.is',
+        dev: 'https://samradapi-test.devland.is',
+        staging: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi-test.devland.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
@@ -247,7 +247,6 @@ export const serviceSetup = (services: {
       PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
       VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
-      RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY',
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       FIREARM_LICENSE_PASS_TEMPLATE_ID:
@@ -257,6 +256,11 @@ export const serviceSetup = (services: {
       MACHINE_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
+      ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT',
+      DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT',
+      FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
+      DISABILITY_LICENSE_FETCH_TIMEOUT:
+        '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',

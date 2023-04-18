@@ -2954,6 +2954,7 @@ export interface ISliceConnectedComponentFields {
     | 'Áfengisleyfi/AlcoholLicences'
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
+    | 'Verðbréfamiðlarar/Brokers'
     | undefined
 
   /** Localized JSON */
@@ -3510,6 +3511,9 @@ export interface ITeamMemberFields {
 
   /** Mynd */
   mynd: Asset
+
+  /** Image On Select */
+  imageOnSelect?: Asset | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {

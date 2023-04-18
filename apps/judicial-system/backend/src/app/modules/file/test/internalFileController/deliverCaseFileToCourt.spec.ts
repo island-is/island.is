@@ -6,12 +6,12 @@ import { NotFoundException } from '@nestjs/common'
 import {
   CaseFileCategory,
   CaseFileState,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { User } from '../../../user'
 import { Case } from '../../../case'
 import { CaseFile } from '../../models/file.model'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -58,9 +58,7 @@ describe('InternalFileController - Deliver case file to court', () => {
       const then = {} as Then
 
       await internalFileController
-        .deliverCaseFileToCourt(caseId, fileId, user, theCase, caseFile, {
-          userId,
-        })
+        .deliverCaseFileToCourt(caseId, fileId, theCase, caseFile, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

@@ -1,8 +1,6 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { Inject, UseGuards } from '@nestjs/common'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
 
 import {
   CurrentUser,
@@ -19,16 +17,16 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
+import { StudentInfoInput } from './dto/studentInfo.input'
 import {
-  StudentModel,
+  StudentInfo,
+  Student,
   StudentTrackModel,
-  UniversityOfIcelandStudentInfoModel,
-} from './models/universityOfIcelandStudentInfo.model'
-import { UniversityOfIcelandStudentInfoQueryInput } from './dto/universityOfIcelandStudentInfo.input'
+} from './models/studentInfo.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
-@Resolver(() => UniversityOfIcelandStudentInfoModel)
+@Resolver(() => StudentInfo)
 export class UniversityOfIcelandResolver {
   constructor(
     private universityOfIcelandApi: UniversityOfIcelandService,
@@ -38,23 +36,23 @@ export class UniversityOfIcelandResolver {
     >,
   ) {}
 
-  @Query(() => UniversityOfIcelandStudentInfoModel)
-  async universityOfIcelandStudentInfo(
+  @Query(() => StudentInfo, { name: 'universityOfIcelandStudentInfo' })
+  async studentInfo(
     @CurrentUser() user: User,
-    @Args('input') input: UniversityOfIcelandStudentInfoQueryInput,
-  ): Promise<UniversityOfIcelandStudentInfoModel> {
+    @Args('input') input: StudentInfoInput,
+  ): Promise<StudentInfo | null> {
     const data = await this.universityOfIcelandApi.studentInfo(
       user,
       input.locale as NemandiGetLocaleEnum,
     )
     return {
-      transcripts: data.transcripts as Array<StudentModel>,
+      transcripts: data?.transcripts as Array<Student>,
     }
   }
 
   @ResolveField('track', () => StudentTrackModel)
   async resolveTrack(
-    @Args('input') input: UniversityOfIcelandStudentInfoQueryInput,
+    @Args('input') input: StudentInfoInput,
     @CurrentUser() user: User,
   ): Promise<StudentTrackModel | null> {
     if (!input.trackNumber) {
