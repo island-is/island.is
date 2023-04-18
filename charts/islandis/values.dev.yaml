@@ -915,9 +915,9 @@ consultation-portal:
 contentful-apps:
   enabled: true
   env:
-    CONTENTFUL_ENVIRONMENT: 'master'
-    CONTENTFUL_SPACE: '8k0h54kbe6bj'
-    MIDEIND_TRANSLATION_API_BASE_URL: 'https://stafraentisland.greynir.is/translate'
+    NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT: 'master'
+    NEXT_PUBLIC_CONTENTFUL_SPACE: '8k0h54kbe6bj'
+    NEXT_PUBLIC_MIDEIND_TRANSLATION_API_BASE_URL: 'https://stafraentisland.greynir.is/translate'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -967,7 +967,7 @@ contentful-apps:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    MIDEIND_TRANSLATION_API_KEY: '/k8s/contentful-apps/MIDEIND_TRANSLATION_API_KEY'
+    NEXT_PUBLIC_MIDEIND_TRANSLATION_API_KEY: '/k8s/contentful-apps/MIDEIND_TRANSLATION_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
