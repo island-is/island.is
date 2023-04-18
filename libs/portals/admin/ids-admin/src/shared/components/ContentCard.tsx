@@ -6,21 +6,30 @@ import {
   Divider,
   DropdownMenu,
   Icon,
+  LoadingDots,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
-import { Form } from 'react-router-dom'
+import { Form, useActionData } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { ClientFormTypes } from '../../components/forms/EditApplication/EditApplication.action'
+import {
+  ClientFormTypes,
+  EditApplicationResult,
+  getIntentWithSyncCheck,
+  schema,
+} from '../../components/forms/EditApplication/EditApplication.action'
 import * as styles from './ContentCard.css'
 import { ClientContext } from '../context/ClientContext'
+import { useSubmitting } from '@island.is/react-spa/shared'
+import isEqual from 'lodash/isEqual'
 
 interface ContentCardProps {
   title: string
   description?: string
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
   inSync?: boolean
-  intent?: ClientFormTypes | 'none'
+  intent?: ClientFormTypes
 }
 
 function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
@@ -38,7 +47,7 @@ const ContentCard: FC<ContentCardProps> = ({
   title,
   description,
   isDirty = defaultIsDirty,
-  intent = 'none',
+  intent = ClientFormTypes.none,
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
@@ -46,13 +55,52 @@ const ContentCard: FC<ContentCardProps> = ({
   const [dirty, setDirty] = useState<boolean>(false)
   const ref = useRef<HTMLFormElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
-  const [offset, setOffset] = useState<number>(0)
+
+  const { isLoading, isSubmitting, formData } = useSubmitting()
+
+  const actionData = useActionData() as EditApplicationResult<
+    typeof schema[typeof intent]
+  >
+
+  const actionDataRef = useRef(actionData?.data)
+
+  useEffect(() => {
+    if (actionData?.intent === intent) {
+      if (!isEqual(actionData?.data, actionDataRef?.current)) {
+        if (actionData?.data) {
+          actionDataRef.current = actionData?.data
+          originalFormData.current = new FormData(
+            ref.current as HTMLFormElement,
+          )
+          toast.success(formatMessage(m.successfullySaved))
+        }
+        if (actionData?.globalError) {
+          toast.error(formatMessage(m.globalErrorMessage))
+        }
+      }
+    }
+  }, [actionData, intent, formatMessage])
+
   const {
     checkIfInSync,
     variablesToCheckSync,
     selectedEnvironment,
     availableEnvironments,
   } = useContext(ClientContext)
+
+  const checkIfLoadingForIntent = () => {
+    if (intent === ClientFormTypes.none) {
+      return false
+    }
+
+    if (formData === undefined) {
+      return false
+    }
+
+    const intentToCheck = getIntentWithSyncCheck(formData)
+
+    return (isSubmitting || isLoading) && intentToCheck.name === intent
+  }
 
   const inSync = checkIfInSync(
     variablesToCheckSync?.[intent as keyof typeof ClientFormTypes] ?? [],
@@ -73,110 +121,110 @@ const ContentCard: FC<ContentCardProps> = ({
     setDirty(isDirty(newFormData, originalFormData.current ?? new FormData()))
   }
 
-  useEffect(() => {
-    setOffset(titleRef.current?.offsetTop ?? 0)
-  }, [titleRef])
-
   // On mount, set the original form data
   useEffect(() => {
     originalFormData.current = new FormData(ref.current as HTMLFormElement)
   }, [ref])
+
   return (
-    <Box
-      borderRadius="large"
-      paddingY={2}
-      paddingX={4}
-      display="flex"
-      flexDirection="column"
-      justifyContent="spaceBetween"
-      height="full"
-      width="full"
-      border="standard"
-      position="relative"
-    >
-      <Box>
-        <Box className={styles.title}>
-          <Text ref={titleRef} marginTop={2} marginBottom={4} variant="h3">
-            {title}
-          </Text>
-        </Box>
-        {description && <Text marginBottom={4}>{description}</Text>}
-      </Box>
-      <Form ref={ref} onChange={onChange} method="post">
-        {intent !== 'none' && (
+    <Form ref={ref} onChange={onChange} method="post">
+      <Box
+        borderRadius="large"
+        paddingY={2}
+        paddingX={4}
+        display="flex"
+        flexDirection="column"
+        justifyContent="spaceBetween"
+        height="full"
+        width="full"
+        border="standard"
+        position="relative"
+      >
+        <Box>
           <Box
-            justifyContent="flexEnd"
-            style={{ top: offset }}
+            className={styles.title}
             display="flex"
-            position="absolute"
-            right={4}
+            justifyContent="spaceBetween"
+            alignItems="baseline"
           >
-            <DropdownMenu
-              title="Sync"
-              icon="chevronDown"
-              menuClassName={styles.menu}
-              items={[
-                {
-                  title: '',
-                  render: () => (
-                    <>
-                      <Box
-                        justifyContent="center"
-                        alignItems="center"
-                        display="flex"
-                        columnGap={1}
-                        className={styles.menuItem}
-                      >
-                        <Icon
-                          icon={inSync ? 'checkmark' : 'warning'}
-                          color={inSync ? 'blue400' : 'red400'}
-                          size="small"
-                          type="outline"
-                        />
-                        <Text variant="small" color="blue400">
-                          {inSync
-                            ? 'Settings are the same in all environments.'
-                            : 'SyncSettings are different in some enviroments'}
-                        </Text>
-                      </Box>
-                      <Divider />
-                    </>
-                  ),
-                },
-                ...(inSync || dirty
-                  ? []
-                  : [
-                      {
-                        title: '',
-                        render: () => (
+            <Text ref={titleRef} marginTop={2} marginBottom={4} variant="h3">
+              {title}
+            </Text>
+            {intent !== 'none' && (
+              <Box>
+                <DropdownMenu
+                  title="Sync"
+                  icon="chevronDown"
+                  menuClassName={styles.menu}
+                  items={[
+                    {
+                      title: '',
+                      render: () => (
+                        <>
                           <Box
-                            display="flex"
                             justifyContent="center"
-                            padding={2}
+                            alignItems="center"
+                            display="flex"
+                            columnGap={1}
+                            className={styles.menuItem}
                           >
-                            <button
-                              className={styles.syncButton}
-                              type="submit"
-                              value={`${intent}-sync`}
-                              name="intent"
-                            >
-                              <Text
-                                variant="small"
-                                color="blue400"
-                                fontWeight="semiBold"
-                              >
-                                Sync settings (from this environment)
-                              </Text>
-                            </button>
+                            <Icon
+                              icon={inSync ? 'checkmark' : 'warning'}
+                              color={inSync ? 'blue400' : 'red400'}
+                              size="small"
+                              type="outline"
+                            />
+                            <Text variant="small" color="blue400">
+                              {inSync
+                                ? 'Settings are the same in all environments.'
+                                : 'SyncSettings are different in some enviroments'}
+                            </Text>
                           </Box>
-                        ),
-                      },
-                    ]),
-              ]}
-              key="sync-environment"
-            />
+                          <Divider />
+                        </>
+                      ),
+                    },
+                    ...(inSync || dirty
+                      ? []
+                      : [
+                          {
+                            title: '',
+                            render: () => (
+                              <Box
+                                display="flex"
+                                justifyContent="center"
+                                padding={2}
+                              >
+                                {checkIfLoadingForIntent() ? (
+                                  <LoadingDots large />
+                                ) : (
+                                  <button
+                                    className={styles.syncButton}
+                                    type="submit"
+                                    value={`${intent}-sync`}
+                                    name="intent"
+                                  >
+                                    <Text
+                                      variant="small"
+                                      fontWeight="semiBold"
+                                      color={'blue400'}
+                                    >
+                                      Sync settings (from this environment)
+                                    </Text>
+                                  </button>
+                                )}
+                              </Box>
+                            ),
+                          },
+                        ]),
+                  ]}
+                  key="sync-environment"
+                />
+              </Box>
+            )}
           </Box>
-        )}
+          {description && <Text marginBottom={4}>{description}</Text>}
+        </Box>
         {children}
         {intent !== 'none' && (
           <Box
@@ -197,6 +245,7 @@ const ContentCard: FC<ContentCardProps> = ({
               type="submit"
               name="intent"
               value={intent}
+              loading={checkIfLoadingForIntent()}
             >
               {formatMessage(m.saveSettings)}
             </Button>
@@ -215,8 +264,8 @@ const ContentCard: FC<ContentCardProps> = ({
             />
           </Box>
         )}
-      </Form>
-    </Box>
+      </Box>
+    </Form>
   )
 }
 

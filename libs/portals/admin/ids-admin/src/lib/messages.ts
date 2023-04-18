@@ -444,4 +444,12 @@ export const m = defineMessages({
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
   },
+  successfullySaved: {
+    id: 'ap.ids-admin:successfully-saved',
+    defaultMessage: 'Successfully saved',
+  },
+  globalErrorMessage: {
+    id: 'ap.ids-admin:global-error-message',
+    defaultMessage: 'An error occurred',
+  },
 })

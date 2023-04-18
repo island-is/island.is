@@ -21,6 +21,7 @@ export enum ClientFormTypes {
   translations = 'translations',
   delegations = 'delegations',
   advancedSettings = 'advancedSettings',
+  none = 'none',
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
@@ -217,6 +218,7 @@ export const schema = {
         }),
     })
     .merge(defaultSchema),
+  [ClientFormTypes.none]: defaultSchema,
 }
 
 export type EditApplicationResult<T extends ZodType> =
@@ -225,10 +227,14 @@ export type EditApplicationResult<T extends ZodType> =
        * Global error message if the mutation fails
        */
       globalError?: boolean
+      /**
+       * Intent of the form
+       */
+      intent?: string
     })
   | undefined
 
-const getIntent = (
+export const getIntentWithSyncCheck = (
   formData: FormData,
 ): { name: ClientFormTypes; sync: boolean } => {
   const getIntent = formData.get('intent') as string
@@ -245,7 +251,7 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
   params,
 }) => {
   const formData = await request.formData()
-  const intent = getIntent(formData)
+  const intent = getIntentWithSyncCheck(formData)
 
   const result = await validateFormData({
     formData,
@@ -284,11 +290,15 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
       },
     })
 
-    return response.data
+    return {
+      data: response.data?.patchAuthAdminClient,
+      intent: intent.name,
+    }
   } catch (error) {
     return {
       errors: null,
       data: null,
+      intent: intent.name,
       globalError: true,
     }
   }

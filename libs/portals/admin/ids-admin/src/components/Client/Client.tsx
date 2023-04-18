@@ -5,16 +5,7 @@ import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import {
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Tag,
-  Text,
-  Stack,
-  Box,
-  Select,
-} from '@island.is/island-ui/core'
+import { Tag, Text, Stack, Box, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
@@ -102,6 +93,7 @@ const Client = () => {
             'slidingRefreshTokenLifetime',
             'customClaims',
           ],
+          [ClientFormTypes.none]: [],
         },
       }}
     >
