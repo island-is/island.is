@@ -1,8 +1,8 @@
 import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import type { CaseFile } from './file'
-import type { User } from './user'
+import { CaseFile, CaseFileCategory } from './file'
+import { User, UserRole } from './user'
 import type { CourtDocument } from './courtDocument'
 
 export enum CaseOrigin {
@@ -256,6 +256,14 @@ export interface Case {
   requestDriversLicenseSuspension?: boolean
   appealState?: CaseAppealState
   isStatementDeadlineExpired?: boolean
+  canBeAppealed?: boolean
+  hasBeenAppealed?: boolean
+  appealDeadline?: string
+  appealedByRole?: UserRole
+  appealedDate?: string
+  statementDeadline?: string
+  prosecutorStatementDate?: string
+  defenderStatementDate?: string
 }
 
 export interface CaseListEntry
@@ -459,4 +467,69 @@ export function hasCaseBeenAppealed(theCase: Case): boolean {
       Boolean(theCase.accusedPostponedAppealDate) ||
       Boolean(theCase.prosecutorPostponedAppealDate))
   )
+}
+
+export function getAppealInfo(theCase: Case): Case {
+  const {
+    courtEndTime,
+    appealState,
+    accusedAppealDecision,
+    prosecutorAppealDecision,
+    prosecutorPostponedAppealDate,
+    accusedPostponedAppealDate,
+    caseFiles,
+  } = theCase
+
+  const appealInfo = {} as Case
+
+  if (!courtEndTime) return appealInfo
+
+  appealInfo.canBeAppealed = Boolean(
+    courtEndTime &&
+      !appealState &&
+      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
+  )
+
+  appealInfo.hasBeenAppealed = Boolean(
+    appealState && appealState === CaseAppealState.APPEALED,
+  )
+
+  appealInfo.appealedByRole = prosecutorPostponedAppealDate
+    ? UserRole.PROSECUTOR
+    : accusedPostponedAppealDate
+    ? UserRole.DEFENDER
+    : undefined
+
+  appealInfo.appealedDate =
+    appealInfo.appealedByRole === UserRole.PROSECUTOR
+      ? prosecutorPostponedAppealDate ?? undefined
+      : accusedPostponedAppealDate ?? undefined
+
+  if (courtEndTime) {
+    const courtEndDate = new Date(courtEndTime)
+    appealInfo.appealDeadline = new Date(
+      courtEndDate.setDate(courtEndDate.getDate() + 3),
+    ).toISOString()
+  }
+  //TODO: This date should be set differently but we haven't implemented
+  //the statement deadline notifiction yet
+  if (appealInfo.appealedDate) {
+    const appealedDate = new Date(appealInfo.appealedDate)
+    appealInfo.statementDeadline = new Date(
+      appealedDate.setDate(appealedDate.getDate() + 1),
+    ).toISOString()
+  }
+  //TODO: These dates should likely be set differently but we haven't
+  //implemented the ability to record when the statement was sent
+  //also this doesn't work for defenders yet because they don't have
+  //file access
+  appealInfo.defenderStatementDate = caseFiles?.find(
+    (cf) => cf.category === CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+  )?.created
+  appealInfo.prosecutorStatementDate = caseFiles?.find(
+    (cf) => cf.category === CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+  )?.created
+
+  return appealInfo
 }
