@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const CreateCaseMutation = gql`
-  mutation CreateCaseMutation($input: CreateCaseInput!) {
+  mutation CreateCase($input: CreateCaseInput!) {
     createCase(input: $input) {
       id
       defendants {
@@ -12,7 +12,7 @@ export const CreateCaseMutation = gql`
 `
 
 export const CreateCourtCaseMutation = gql`
-  mutation CreateCourtCaseMutation($input: CreateCourtCaseInput!) {
+  mutation CreateCourtCase($input: CreateCourtCaseInput!) {
     createCourtCase(input: $input) {
       courtCaseNumber
     }
@@ -20,7 +20,7 @@ export const CreateCourtCaseMutation = gql`
 `
 
 export const ExtendCaseMutation = gql`
-  mutation ExtendCaseMutation($input: ExtendCaseInput!) {
+  mutation ExtendCase($input: ExtendCaseInput!) {
     extendCase(input: $input) {
       id
       type
@@ -29,7 +29,7 @@ export const ExtendCaseMutation = gql`
 `
 
 export const LimitedAccessTransitionCaseMutation = gql`
-  mutation LimitedAccessTransitionCaseMutation($input: TransitionCaseInput!) {
+  mutation LimitedAccessTransitionCase($input: TransitionCaseInput!) {
     limitedAccessTransitionCase(input: $input) {
       state
       appealState
@@ -38,7 +38,7 @@ export const LimitedAccessTransitionCaseMutation = gql`
 `
 
 export const RequestCourtRecordSignatureMutation = gql`
-  mutation RequestCourtRecordSignatureMutation($input: RequestSignatureInput!) {
+  mutation RequestCourtRecordSignature($input: RequestSignatureInput!) {
     requestCourtRecordSignature(input: $input) {
       controlCode
       documentToken
@@ -47,7 +47,7 @@ export const RequestCourtRecordSignatureMutation = gql`
 `
 
 export const SendNotificationMutation = gql`
-  mutation SendNotificationMutation($input: SendNotificationInput!) {
+  mutation SendNotification($input: SendNotificationInput!) {
     sendNotification(input: $input) {
       notificationSent
     }
@@ -55,7 +55,7 @@ export const SendNotificationMutation = gql`
 `
 
 export const TransitionCaseMutation = gql`
-  mutation TransitionCaseMutation($input: TransitionCaseInput!) {
+  mutation TransitionCase($input: TransitionCaseInput!) {
     transitionCase(input: $input) {
       state
       appealState
@@ -64,7 +64,7 @@ export const TransitionCaseMutation = gql`
 `
 
 export const UpdateCaseMutation = gql`
-  mutation UpdateCaseMutation($input: UpdateCaseInput!) {
+  mutation UpdateCase($input: UpdateCaseInput!) {
     updateCase(input: $input) {
       id
       created
