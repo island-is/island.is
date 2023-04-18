@@ -41,7 +41,7 @@ async function startApp() {
   console.log('register all components');
 
   // Set default navigation theme options
-  Navigation.setDefaultOptions(getDefaultOptions())
+  Navigation.setDefaultOptions(getDefaultOptions());
 
   // Wait until React Native is initialized
   Navigation.events().registerAppLaunchedListener(async () => {
@@ -66,7 +66,6 @@ async function startApp() {
     // Read authorize result from keychain
     await readAuthorizeResult();
     console.log('auth result read');
-
 
     // Get app root
     const root = await getAppRoot();
