@@ -290,13 +290,13 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
     description: '',
   },
-  firearms: {
-    id: 'es.application:firearms',
+  guns: {
+    id: 'es.application:guns',
     defaultMessage: 'Skotvopn',
     description: '',
   },
-  firearmsDescription: {
-    id: 'es.application:firearmsDescription',
+  gunsDescription: {
+    id: 'es.application:gunsDescription',
     defaultMessage: 'Til dæmis haglabyssa, riffill og skammbyssa',
     description: '',
   },
@@ -691,8 +691,8 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: 'Real estates and lands description',
   },
-  firearmTitle: {
-    id: 'es.application:firearmTitle',
+  gunTitle: {
+    id: 'es.application:gunTitle',
     defaultMessage: 'Skotvopn',
     description: 'Vehicles title',
   },
@@ -766,20 +766,20 @@ export const m = defineMessages({
     defaultMessage: 'Tegund faratækis',
     description: 'Vehicle type label',
   },
-  addFirearm: {
-    id: 'es.application:addFirearm',
+  addGun: {
+    id: 'es.application:addGun',
     defaultMessage: 'Bæta við skotvopni',
     description: '',
   },
-  firearmNumberLabel: {
-    id: 'es.application:firearmNumberLabel',
+  gunNumberLabel: {
+    id: 'es.application:gunNumberLabel',
     defaultMessage: 'Raðnúmer ökutækis',
-    description: 'Firearm number label',
+    description: 'Gun number label',
   },
-  firearmTypeLabel: {
-    id: 'es.application:firearmTypeLabel',
+  gunTypeLabel: {
+    id: 'es.application:gunTypeLabel',
     defaultMessage: 'Tegund skotvopns',
-    description: 'Firearm type label',
+    description: 'Gun type label',
   },
   marketValueTitle: {
     id: 'es.application:marketValueTitle',
