@@ -1,19 +1,21 @@
-import React, { useRef } from "react";
-import { TextInput, TextInputProps } from "react-native";
-import styled from "styled-components/native";
-import { dynamicColor, font } from "../../utils";
-
+import React, {useRef} from 'react';
+import {TextInput, TextInputProps} from 'react-native';
+import styled from 'styled-components/native';
+import {dynamicColor, font} from '../../utils';
 
 const Host = styled.Pressable`
-  padding: ${({ theme }) => theme.spacing[1]}px;
-  border-radius: ${({ theme }) => theme.border.radius.large};
+  padding: ${({theme}) => theme.spacing[1]}px;
+  border-radius: ${({theme}) => theme.border.radius.large};
   border-width: 1px;
   border-style: solid;
-  border-color: ${dynamicColor((props) => ({
-    dark: 'shade500',
-    light: props.theme.color.blue200,
-  }), true)};
-  background-color: ${dynamicColor((props) => ({
+  border-color: ${dynamicColor(
+    props => ({
+      dark: 'shade500',
+      light: props.theme.color.blue200,
+    }),
+    true,
+  )};
+  background-color: ${dynamicColor(props => ({
     dark: 'shade300',
     light: props.theme.color.blue100,
   }))};
@@ -26,7 +28,7 @@ const Label = styled.Text`
     fontWeight: '600',
   })}
 
-  color: ${dynamicColor((props) => ({
+  color: ${dynamicColor(props => ({
     dark: 'foreground',
     light: props.theme.color.blue400,
   }))};
@@ -34,7 +36,7 @@ const Label = styled.Text`
 `;
 
 const Input = styled.TextInput`
-  padding-left: ${({ theme }) => theme.spacing[1]}px;
+  padding-left: ${({theme}) => theme.spacing[1]}px;
   ${font({
     fontSize: 16,
     lineHeight: 20,
@@ -50,18 +52,19 @@ interface TextFieldProps extends TIProps {
   onChange: (e: string) => void;
 }
 
-export const TextField = ({ label, onChange, value, style, ...rest }: TextFieldProps) => {
-  const inputRef = useRef<TextInput>(null)
+export const TextField = ({
+  label,
+  onChange,
+  value,
+  style,
+  ...rest
+}: TextFieldProps) => {
+  const inputRef = useRef<TextInput>(null);
 
   return (
     <Host onPress={() => inputRef.current?.focus()} style={style}>
       <Label>{label}</Label>
-      <Input
-        onChangeText={onChange}
-        value={value}
-        ref={inputRef}
-        {...rest}
-      />
+      <Input onChangeText={onChange} value={value} ref={inputRef} {...rest} />
     </Host>
   );
 };

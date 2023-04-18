@@ -1,5 +1,8 @@
-import { gql } from '@apollo/client';
-import { SearchFragment, IArticleSearchResults } from '../fragments/search.fragment';
+import {gql} from '@apollo/client';
+import {
+  SearchFragment,
+  IArticleSearchResults,
+} from '../fragments/search.fragment';
 
 export const LIST_SEARCH_QUERY = gql`
   query listSearch($input: SearcherInput!) {
@@ -17,5 +20,5 @@ export interface ListApplicationsResponse {
   searchResults: {
     total: number;
     items: IArticleSearchResults[];
-  }
+  };
 }

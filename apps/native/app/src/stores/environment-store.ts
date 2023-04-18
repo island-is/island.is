@@ -28,7 +28,7 @@ export interface EnvironmentResponse {
       host: string;
       path: string;
     }>;
-  }
+  };
 }
 
 export interface EnvironmentStore extends State {

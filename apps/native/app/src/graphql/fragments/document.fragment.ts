@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 
 export const DocumentFragment = gql`
   fragment DocumentFragment on Document {
@@ -14,14 +14,14 @@ export const DocumentFragment = gql`
 `;
 
 export interface IDocument {
-  id: string
-  date: string
-  subject: string
-  senderName: string
-  senderNatReg: string
-  opened: boolean
-  fileType: string
-  url: string
+  id: string;
+  date: string;
+  subject: string;
+  senderName: string;
+  senderNatReg: string;
+  opened: boolean;
+  fileType: string;
+  url: string;
   content?: string;
   html?: string;
 }

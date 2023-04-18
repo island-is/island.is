@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import {gql} from '@apollo/client';
 
 export const addressFragment = gql`
   fragment Address on PropertyLocation {
@@ -9,7 +9,7 @@ export const addressFragment = gql`
     display
     displayShort
   }
-`
+`;
 
 export const appraisalFragment = gql`
   fragment Appraisal on Appraisal {
@@ -22,7 +22,7 @@ export const appraisalFragment = gql`
     activeYear
     plannedYear
   }
-`
+`;
 
 export const unitsOfUseFragment = gql`
   fragment unitsOfUse on UnitOfUse {
@@ -43,7 +43,7 @@ export const unitsOfUseFragment = gql`
   }
   ${addressFragment}
   ${appraisalFragment}
-`
+`;
 
 export const pagingFragment = gql`
   fragment Paging on PagingData {
@@ -55,4 +55,4 @@ export const pagingFragment = gql`
     hasPreviousPage
     hasNextPage
   }
-`
+`;

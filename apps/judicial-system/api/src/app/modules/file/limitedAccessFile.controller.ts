@@ -23,15 +23,14 @@ import type { User } from '@island.is/judicial-system/types'
 import { FileService } from './file.service'
 
 @UseGuards(new JwtInjectBearerAuthGuard(true))
-@Controller('api/case/:id')
+@Controller('api/case/:id/limitedAccess')
 export class LimitedAccessFileController {
   constructor(
     private readonly fileService: FileService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Get('request/limitedAccess')
+  @Get('request')
   @Header('Content-Type', 'application/pdf')
   async getRequestPdf(
     @Param('id') id: string,
@@ -45,13 +44,13 @@ export class LimitedAccessFileController {
       user.id,
       AuditedAction.GET_REQUEST_PDF,
       id,
-      'request/limitedAccess',
+      'limitedAccess/request',
       req,
       res,
     )
   }
 
-  @Get('courtRecord/limitedAccess')
+  @Get('courtRecord')
   @Header('Content-Type', 'application/pdf')
   async getCourtRecordPdf(
     @Param('id') id: string,
@@ -67,13 +66,13 @@ export class LimitedAccessFileController {
       user.id,
       AuditedAction.GET_COURT_RECORD,
       id,
-      'courtRecord/limitedAccess',
+      'limitedAccess/courtRecord',
       req,
       res,
     )
   }
 
-  @Get('ruling/limitedAccess')
+  @Get('ruling')
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
@@ -87,7 +86,7 @@ export class LimitedAccessFileController {
       user.id,
       AuditedAction.GET_RULING_PDF,
       id,
-      'ruling/limitedAccess',
+      'limitedAccess/ruling',
       req,
       res,
     )

@@ -1,4 +1,4 @@
-import { TranslatedMessages } from './index'
+import {TranslatedMessages} from './index';
 
 export const en: TranslatedMessages = {
   // login
@@ -7,11 +7,13 @@ export const en: TranslatedMessages = {
   'login.languageButtonText': 'Íslenska',
   'login.needHelpButtonText': 'Need help?',
   'login.outdatedBrowserTitle': 'Outdated browser',
-  'login.outdatedBrowserMessage': 'You have an unsupported browser version, please update it through the Play Store.',
+  'login.outdatedBrowserMessage':
+    'You have an unsupported browser version, please update it through the Play Store.',
   'login.outdatedBrowserUpdateButton': 'Update',
   'login.outdatedBrowserCancelButton': 'Cancel',
   'login.networkErrorTitle': 'Network error',
-  'login.networkErrorMessage': '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
+  'login.networkErrorMessage':
+    '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -35,7 +37,8 @@ export const en: TranslatedMessages = {
     'You can also use {biometricType} to access the app without entering a PIN.',
   'onboarding.biometrics.notEnrolled':
     "Your device supports {biometricType} but you haven't enrolled into it yet.",
-  'onboarding.biometrics.noAuthenticationTypes': 'Your device does not support biometrics',
+  'onboarding.biometrics.noAuthenticationTypes':
+    'Your device does not support biometrics',
   'onboarding.biometrics.useBiometricsButtonText': 'Use {biometricType}',
   'onboarding.biometrics.skipButtonText': 'Skip for now',
   'onboarding.biometrics.type.faceId': 'Face ID',
@@ -145,7 +148,6 @@ export const en: TranslatedMessages = {
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
 
-
   // inbox
   'inbox.screenTitle': 'Inbox',
   'inbox.bottomTabText': 'Inbox',
@@ -175,9 +177,11 @@ export const en: TranslatedMessages = {
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
   'walletPassport.infoTitle': 'Remember the passport!',
-  'walletPassport.infoDescription': 'This summary is not valid as a travel document.',
+  'walletPassport.infoDescription':
+    'This summary is not valid as a travel document.',
   'walletPassport.warningTitle': 'Expires within 6 months',
-  'walletPassport.warningDescription': 'Note that your passport will expire within the next 6 months.',
+  'walletPassport.warningDescription':
+    'Note that your passport will expire within the next 6 months.',
   'walletPassport.displayName': 'Name',
   'walletPassport.number': 'Number',
   'walletPassport.issuingDate': 'Date issued',
@@ -191,8 +195,10 @@ export const en: TranslatedMessages = {
   'licenseScanner.noCameraAccess': 'Camera not available',
   'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
   'licenseScannerDetail.invalidBarcode': 'Invalid barcode',
-  'licenseScannerResult.androidHelp': 'Press button below the license to get updated barcode.',
-  'licenseScannerResult.iosHelp': 'Press three-dot button below the license. Next, refresh the screen by pulling down from the center to update the barcode.',
+  'licenseScannerResult.androidHelp':
+    'Press button below the license to get updated barcode.',
+  'licenseScannerResult.iosHelp':
+    'Press three-dot button below the license. Next, refresh the screen by pulling down from the center to update the barcode.',
 
   // license scan detail
   'licenseScanDetail.errorUnknown': 'Unknown error',
@@ -206,8 +212,10 @@ export const en: TranslatedMessages = {
     4 {Request contains some field errors}
     other {Unknown error}
   }`,
-  'licenseScanDetail.errorTryToRefresh': 'Failed to validate driving license. Try to refresh the barcode and scan again.',
-  'licenseScanDetail.barcodeExpired': 'License barcode expired. Try to refresh the barcode and scan again.',
+  'licenseScanDetail.errorTryToRefresh':
+    'Failed to validate driving license. Try to refresh the barcode and scan again.',
+  'licenseScanDetail.barcodeExpired':
+    'License barcode expired. Try to refresh the barcode and scan again.',
 
   // license scan results
   'licenseScannerResult.loading': 'Loading data',
@@ -245,7 +253,8 @@ export const en: TranslatedMessages = {
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
   'vehicles.emptyListTitle': 'No vehicles found for the user',
-  'vehicles.emptyListDescription': 'Vehicles registered to you will appear here.',
+  'vehicles.emptyListDescription':
+    'Vehicles registered to you will appear here.',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -262,15 +271,18 @@ export const en: TranslatedMessages = {
     other {Unknown}
   }`,
   'vehicleDetail.unpaidVehicleFee': 'Unpaid vehicle tax',
-  'vehicleDetail.trailerWithBrakes': 'Permissible maximum towable mass of trailer (braked)',
-  'vehicleDetail.trailerWithoutBrakes': 'Permissible maximum towable mass of trailer (unbraked)',
+  'vehicleDetail.trailerWithBrakes':
+    'Permissible maximum towable mass of trailer (braked)',
+  'vehicleDetail.trailerWithoutBrakes':
+    'Permissible maximum towable mass of trailer (unbraked)',
   'vehicleDetail.nedc': 'Exhaust emissions value (NEDC)',
   'vehicleDetail.vehicleWeight': 'Vehicle weight',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
   'assetsOverview.emptyListTitle': 'No assets found for the user',
-  'assetsOverview.emptyListDescription': 'Assets registered to you will appear here.',
+  'assetsOverview.emptyListDescription':
+    'Assets registered to you will appear here.',
 
   // assets details
   'assetsDetail.propertyNumber': 'Property number',
@@ -286,7 +298,8 @@ export const en: TranslatedMessages = {
   // family
   'family.screenTitle': 'Family',
   'family.emptyListTitle': 'Family information',
-  'family.emptyListDescription': 'Information about your family from the National Registry will appear here.',
+  'family.emptyListDescription':
+    'Information about your family from the National Registry will appear here.',
 
   // family details
   'familyDetail.title': 'Info',
@@ -294,7 +307,7 @@ export const en: TranslatedMessages = {
   'familyDetail.natreg.displayName': 'Full name',
   'familyDetail.natreg.nationalId': 'Social ID',
   'familyDetail.natreg.familyRelation': 'Family Relation',
-  'familyDetail.natreg.familyRelationValue' : `{
+  'familyDetail.natreg.familyRelationValue': `{
     type,
     select,
     spouse {Spouse}
@@ -345,7 +358,8 @@ export const en: TranslatedMessages = {
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Edit Bank Info',
-  'edit.bankinfo.description': 'Here you can make changes to the bank account that you want the National Administration of Finance to use for reimbursement',
+  'edit.bankinfo.description':
+    'Here you can make changes to the bank account that you want the National Administration of Finance to use for reimbursement',
   'edit.bankinfo.inputlabel.bank': 'Bank',
   'edit.bankinfo.inputlabel.book': 'Hb.',
   'edit.bankinfo.inputlabel.number': 'Account number',
@@ -362,5 +376,5 @@ export const en: TranslatedMessages = {
   }.`,
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
-  'edit.confirm.button': 'Confirm'
-}
+  'edit.confirm.button': 'Confirm',
+};

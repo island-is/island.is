@@ -1,9 +1,9 @@
-import { gql } from '@apollo/client'
+import {gql} from '@apollo/client';
 import {
   GenericLicenseDataFieldFragment,
   GenericUserLicenseFragment,
   IGenericUserLicense,
-} from '../fragments/license.fragment'
+} from '../fragments/license.fragment';
 
 export const GET_GENERIC_LICENSE_QUERY = gql`
   query getGenericLicense($input: GetGenericLicenseInput!) {
@@ -13,10 +13,10 @@ export const GET_GENERIC_LICENSE_QUERY = gql`
   }
   ${GenericUserLicenseFragment}
   ${GenericLicenseDataFieldFragment}
-`
+`;
 
 export interface GetLicenseResponse {
-  genericLicense?: IGenericUserLicense
+  genericLicense?: IGenericUserLicense;
 }
 
 export enum GenericLicenseType {
@@ -30,6 +30,6 @@ export enum GenericLicenseType {
 
 export interface GetGenericLicenseInput {
   input: {
-    licenseType: GenericLicenseType
-  }
+    licenseType: GenericLicenseType;
+  };
 }

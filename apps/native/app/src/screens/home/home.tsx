@@ -1,40 +1,46 @@
-import { useQuery } from '@apollo/client'
-import { TopLine } from '@ui'
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from 'react'
+import {useQuery} from '@apollo/client';
+import {TopLine} from '@ui';
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Animated,
   FlatList,
   ListRenderItemInfo,
   Platform,
-  RefreshControl
-} from 'react-native'
-import CodePush from 'react-native-code-push'
-import { NavigationFunctionComponent } from 'react-native-navigation'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { client } from '../../graphql/client'
+  RefreshControl,
+} from 'react-native';
+import CodePush from 'react-native-code-push';
+import {NavigationFunctionComponent} from 'react-native-navigation';
+import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
+import {client} from '../../graphql/client';
 import {
   ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY
-} from '../../graphql/queries/list-applications.query'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { notificationsStore } from '../../stores/notifications-store'
-import { useUiStore } from '../../stores/ui-store'
-import { getRightButtons } from '../../utils/get-main-root'
-import { testIDs } from '../../utils/test-ids'
-import { ApplicationsModule } from './applications-module'
-import { NotificationsModule } from './notifications-module'
-import { OnboardingModule } from './onboarding-module'
+  LIST_APPLICATIONS_QUERY,
+} from '../../graphql/queries/list-applications.query';
+import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
+import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {notificationsStore} from '../../stores/notifications-store';
+import {useUiStore} from '../../stores/ui-store';
+import {getRightButtons} from '../../utils/get-main-root';
+import {testIDs} from '../../utils/test-ids';
+import {ApplicationsModule} from './applications-module';
+import {NotificationsModule} from './notifications-module';
+import {OnboardingModule} from './onboarding-module';
 
 interface ListItem {
-  id: string
-  component: ReactElement
+  id: string;
+  component: ReactElement;
 }
 
 const iconInsets = {
   top: Platform.OS === 'ios' && Platform.isPad ? 8 : 16,
   bottom: Platform.OS === 'ios' && Platform.isPad ? 8 : -4,
-}
+};
 
 const {
   useNavigationOptions,
@@ -43,20 +49,20 @@ const {
   (theme, intl, initialized) => ({
     topBar: {
       title: {
-        text: initialized ? intl.formatMessage({ id: 'home.screenTitle' }) : '',
+        text: initialized ? intl.formatMessage({id: 'home.screenTitle'}) : '',
       },
-      rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+      rightButtons: initialized ? getRightButtons({theme} as any) : [],
     },
     bottomTab: {
       ...({
-        accessibilityLabel: intl.formatMessage({ id: 'home.screenTitle' }),
+        accessibilityLabel: intl.formatMessage({id: 'home.screenTitle'}),
       } as any),
       // selectedIconColor: null as any,
       // iconColor: null as any,
       textColor: initialized
         ? Platform.OS === 'android'
           ? theme.shade.foreground
-          : { light: 'black', dark: 'white' }
+          : {light: 'black', dark: 'white'}
         : theme.shade.background,
       icon: initialized
         ? require('../../assets/icons/tabbar-home.png')
@@ -86,29 +92,30 @@ const {
       selectedIconColor: null as any,
     },
   },
-)
+);
 
-export const MainHomeScreen: NavigationFunctionComponent = ({
-  componentId,
-}) => {
-  useNavigationOptions(componentId)
-  const flatListRef = useRef<FlatList>(null)
-  const ui = useUiStore()
+export const MainHomeScreen: NavigationFunctionComponent = ({componentId}) => {
+  useNavigationOptions(componentId);
+  const flatListRef = useRef<FlatList>(null);
+  const ui = useUiStore();
 
   useActiveTabItemPress(2, () => {
-    flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
-  })
+    flatListRef.current?.scrollToOffset({offset: -150, animated: true});
+  });
 
   const applicationsRes = useQuery<ListApplicationsResponse>(
     LIST_APPLICATIONS_QUERY,
-    { client },
-  )
+    {client},
+  );
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
-  const renderItem = useCallback(({ item }: ListRenderItemInfo<ListItem>) => item.component, [])
-  const keyExtractor = useCallback((item: ListItem) => item.id, [])
-  const scrollY = useRef(new Animated.Value(0)).current
+  const renderItem = useCallback(
+    ({item}: ListRenderItemInfo<ListItem>) => item.component,
+    [],
+  );
+  const keyExtractor = useCallback((item: ListItem) => item.id, []);
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Sync push tokens
@@ -116,17 +123,17 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   }, []);
 
   const refetch = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await applicationsRes.refetch()
+      await applicationsRes.refetch();
     } catch (err) {
       // noop
     }
-    setLoading(false)
-  }
+    setLoading(false);
+  };
 
   if (!ui.initializedApp) {
-    return null
+    return null;
   }
 
   const data = [
@@ -148,7 +155,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
       id: 'notifications',
       component: <NotificationsModule componentId={componentId} />,
     },
-  ]
+  ];
 
   return (
     <>
@@ -161,11 +168,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         }}
         data={data}
         renderItem={renderItem}
-        style={{ flex: 1 }}
+        style={{flex: 1}}
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          [{nativeEvent: {contentOffset: {y: scrollY}}}],
           {
             useNativeDriver: true,
           },
@@ -177,14 +184,14 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={2} total={5} />
     </>
-  )
-}
+  );
+};
 
-MainHomeScreen.options = getNavigationOptions
+MainHomeScreen.options = getNavigationOptions;
 
 export const HomeScreen = CodePush({
   checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
   installMode: CodePush.InstallMode.ON_NEXT_RESUME,
-})(MainHomeScreen)
+})(MainHomeScreen);
 
-HomeScreen.options = MainHomeScreen.options
+HomeScreen.options = MainHomeScreen.options;

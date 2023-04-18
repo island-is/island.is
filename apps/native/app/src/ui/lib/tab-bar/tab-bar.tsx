@@ -1,33 +1,38 @@
-import { selectionAsync } from 'expo-haptics'
-import React, { useEffect, useRef, useState } from 'react'
-import { Animated, LayoutChangeEvent, useWindowDimensions, View } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
-import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
+import {selectionAsync} from 'expo-haptics';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  Animated,
+  LayoutChangeEvent,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import styled, {useTheme} from 'styled-components/native';
+import {dynamicColor} from '../../utils';
+import {font} from '../../utils/font';
 
 interface TabBarValue {
-  label: string
-  testID?: string
+  label: string;
+  testID?: string;
 }
 
 interface TabBarProps {
-  values: TabBarValue[]
-  selectedIndex: number
-  onChange(index: number): void
+  values: TabBarValue[];
+  selectedIndex: number;
+  onChange(index: number): void;
 }
 
-const Host = styled.SafeAreaView``
+const Host = styled.SafeAreaView``;
 
 const Tabs = styled.View`
   flex-direction: row;
-`
+`;
 
 const Tab = styled.Pressable`
   flex: 1;
   padding: 20px 15px;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const TabTitle = styled(Animated.Text)`
   ${font({
@@ -35,68 +40,68 @@ const TabTitle = styled(Animated.Text)`
     fontSize: 14,
     lineHeight: 19,
   })}
-`
+`;
 
 const Line = styled.View`
   width: 100%;
-  height: ${({ theme }) => theme.border.width.standard}px;
-  background-color: ${dynamicColor(({ theme }) => ({
+  height: ${({theme}) => theme.border.width.standard}px;
+  background-color: ${dynamicColor(({theme}) => ({
     dark: theme.shades.dark.shade200,
     light: theme.color.blue200,
   }))};
-`
+`;
 
 const ActiveLine = styled(Animated.View)`
   width: 50%;
-  height: ${({ theme }) => theme.border.width.standard}px;
-  background-color: ${dynamicColor((props) => props.theme.color.blue400)};
-`
+  height: ${({theme}) => theme.border.width.standard}px;
+  background-color: ${dynamicColor(props => props.theme.color.blue400)};
+`;
 
 export function TabBar(props: TabBarProps) {
-  const win = useWindowDimensions()
-  const [width, setWidth] = useState(win.width)
-  const { values, selectedIndex, onChange } = props
-  const theme = useTheme()
-  const animatedIndex = useRef(new Animated.Value(selectedIndex))
-  const indexes = useRef(new Map<number, Animated.Value>())
-  const tabWidth = width / props.values.length
-  const animRef = useRef<Animated.CompositeAnimation>()
+  const win = useWindowDimensions();
+  const [width, setWidth] = useState(win.width);
+  const {values, selectedIndex, onChange} = props;
+  const theme = useTheme();
+  const animatedIndex = useRef(new Animated.Value(selectedIndex));
+  const indexes = useRef(new Map<number, Animated.Value>());
+  const tabWidth = width / props.values.length;
+  const animRef = useRef<Animated.CompositeAnimation>();
 
   const animateIndex = (toValue: number) => {
     animRef.current = Animated.spring(animatedIndex.current, {
       toValue,
       useNativeDriver: true,
-    })
-    animRef.current.start()
-  }
+    });
+    animRef.current.start();
+  };
 
   useEffect(() => {
-    animateIndex(selectedIndex)
-  }, [selectedIndex])
+    animateIndex(selectedIndex);
+  }, [selectedIndex]);
 
   useEffect(() => {
     return () => {
       if (animRef.current) {
-        animRef.current.stop()
+        animRef.current.stop();
       }
-    }
-  }, [])
+    };
+  }, []);
 
-  const inputRange = [-1, 0, 1]
+  const inputRange = [-1, 0, 1];
 
   return (
     <Host
       onLayout={(e: LayoutChangeEvent) => {
-        setWidth(e.nativeEvent.layout.width)
+        setWidth(e.nativeEvent.layout.width);
       }}
       accessibilityRole="tablist"
     >
       <Tabs>
         {values.map((item, i) => {
-          let currentIdx = indexes.current.get(i)
+          let currentIdx = indexes.current.get(i);
           if (!currentIdx) {
-            currentIdx = new Animated.Value(i)
-            indexes.current.set(i, currentIdx)
+            currentIdx = new Animated.Value(i);
+            indexes.current.set(i, currentIdx);
           }
           return (
             <Tab
@@ -105,9 +110,9 @@ export function TabBar(props: TabBarProps) {
               }}
               key={item.label + i}
               onPress={() => {
-                onChange(i)
-                animateIndex(i)
-                selectionAsync()
+                onChange(i);
+                animateIndex(i);
+                selectionAsync();
               }}
               testID={item.testID}
               accessibilityRole="tab"
@@ -118,7 +123,7 @@ export function TabBar(props: TabBarProps) {
                   opacity: Animated.subtract(
                     animatedIndex.current ?? 1,
                     currentIdx,
-                  ).interpolate({ inputRange, outputRange: [1, 0, 1] }),
+                  ).interpolate({inputRange, outputRange: [1, 0, 1]}),
                 }}
               >
                 {item.label}
@@ -139,7 +144,7 @@ export function TabBar(props: TabBarProps) {
                 {item.label}
               </TabTitle>
             </Tab>
-          )
+          );
         })}
       </Tabs>
       <Line>
@@ -158,5 +163,5 @@ export function TabBar(props: TabBarProps) {
         />
       </Line>
     </Host>
-  )
+  );
 }

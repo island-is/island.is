@@ -19,7 +19,10 @@ const Row = styled.View`
   flex-direction: row;
 `;
 
-const {useNavigationOptions, getNavigationOptions} = createNavigationOptionHooks(
+const {
+  useNavigationOptions,
+  getNavigationOptions,
+} = createNavigationOptionHooks(
   (theme, intl, initialized) => ({
     topBar: {
       title: {

@@ -155,12 +155,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
         insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
-          ssn: coOwner.nationalId,
-          email: coOwner.email,
+          ssn: coOwner.nationalId!,
+          email: coOwner.email!,
         })),
         operators: buyerOperators?.map((operator) => ({
-          ssn: operator.nationalId,
-          email: operator.email,
+          ssn: operator.nationalId!,
+          email: operator.email!,
           isMainOperator:
             buyerOperators.length > 1
               ? operator.nationalId === answers?.buyerMainOperator?.nationalId
@@ -335,8 +335,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : false
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerCoOwners[i].nationalId,
-            name: buyerCoOwners[i].name,
+            ssn: buyerCoOwners[i].nationalId!,
+            name: buyerCoOwners[i].name!,
             email: emailChanged ? buyerCoOwners[i].email : undefined,
             phone: phoneChanged ? buyerCoOwners[i].phone : undefined,
             role: EmailRole.buyerCoOwner,
@@ -363,8 +363,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : false
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerOperators[i].nationalId,
-            name: buyerOperators[i].name,
+            ssn: buyerOperators[i].nationalId!,
+            name: buyerOperators[i].name!,
             email: emailChanged ? buyerOperators[i].email : undefined,
             phone: phoneChanged ? buyerOperators[i].phone : undefined,
             role: EmailRole.buyerOperator,
@@ -542,12 +542,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
+        ssn: coOwner.nationalId!,
+        email: coOwner.email!,
       })),
       operators: buyerOperators?.map((operator) => ({
-        ssn: operator.nationalId,
-        email: operator.email,
+        ssn: operator.nationalId!,
+        email: operator.email!,
         isMainOperator:
           buyerOperators.length > 1
             ? operator.nationalId === answers.buyerMainOperator?.nationalId

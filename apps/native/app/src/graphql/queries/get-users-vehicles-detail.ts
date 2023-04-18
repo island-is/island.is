@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client'
+import {gql} from '@apollo/client';
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -113,4 +113,4 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
       downloadServiceURL
     }
   }
-`
+`;

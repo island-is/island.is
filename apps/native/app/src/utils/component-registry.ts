@@ -1,6 +1,6 @@
-import { config } from './config'
+import {config} from './config';
 
-const prefix = config.bundleId
+const prefix = config.bundleId;
 
 export const ComponentRegistry = {
   // dev screens
@@ -42,7 +42,7 @@ export const ComponentRegistry = {
 
   // ui components
   AndroidSearchBar: `${prefix}.ui.AndroidSearchBar`,
-}
+};
 
 export const ButtonRegistry = {
   SettingsButton: `${prefix}.button.SettingsButton`,
@@ -52,7 +52,7 @@ export const ButtonRegistry = {
   ShareButton: `${prefix}.button.ShareButton`,
   ScanLicenseButton: `${prefix}.button.ScanLicenseButton`,
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
-}
+};
 
 export const StackRegistry = {
   LoginStack: `${prefix}.stack.LoginStack`,
@@ -64,6 +64,4 @@ export const StackRegistry = {
   ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
 };
 
-
 export const MainBottomTabs = `${prefix}.bottomTabs.MainBottomTabs`;
-

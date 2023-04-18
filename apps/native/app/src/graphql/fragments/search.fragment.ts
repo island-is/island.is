@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import {gql} from '@apollo/client';
 
 export const SearchFragment = gql`
   fragment SearchFragment on Article {
@@ -14,12 +14,12 @@ export const SearchFragment = gql`
 `;
 
 export interface IArticleSearchResults {
-  id: string
-  title: string
-  slug: string
+  id: string;
+  title: string;
+  slug: string;
   category: {
-    id: string
-    title: string
-    slub: string
-  }
+    id: string;
+    title: string;
+    slub: string;
+  };
 }

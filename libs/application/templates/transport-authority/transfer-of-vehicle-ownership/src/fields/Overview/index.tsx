@@ -137,10 +137,10 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
                 email: answers?.buyer?.email,
                 nationalId: answers?.buyer?.nationalId,
               },
-              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator.map(
+              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
                 (x) => ({
-                  nationalId: x.nationalId,
-                  email: x.email,
+                  nationalId: x.nationalId!,
+                  email: x.email!,
                   type: x.type,
                   wasRemoved: x.wasRemoved,
                 }),

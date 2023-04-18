@@ -1,5 +1,8 @@
-import { gql } from '@apollo/client'
-import { ApplicationFragment, IApplication } from '../fragments/application.fragment'
+import {gql} from '@apollo/client';
+import {
+  ApplicationFragment,
+  IApplication,
+} from '../fragments/application.fragment';
 
 export const GET_APPLICATION_QUERY = gql`
   query getApplication($input: ApplicationApplicationInput!) {
@@ -8,8 +11,8 @@ export const GET_APPLICATION_QUERY = gql`
     }
   }
   ${ApplicationFragment}
-`
+`;
 
 export interface GetDocumentResponse {
-  applicationApplication?: IApplication
+  applicationApplication?: IApplication;
 }
