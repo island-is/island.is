@@ -3,6 +3,7 @@ import {
   Accordion,
   AccordionCard,
   AlertBanner,
+  AlertMessage,
   Box,
   Divider,
   GridColumn,
@@ -19,6 +20,7 @@ import { useQuery } from '@apollo/client'
 
 import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql' // Temp
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
+import type { ConsentLineProps, ConsentSectionProps } from './types'
 
 interface MData {
   tenant: string
@@ -210,26 +212,15 @@ function Consent() {
               </AccordionCard>
             ))
           ) : (
-            <AlertBanner
-              variant="info"
-              description={formatMessage(m.consentEmptyInfo)}
+            <AlertMessage
+              type="info"
+              message={formatMessage(m.consentEmptyInfo)}
             />
           )}
         </Accordion>
       </GridColumn>
     </GridRow>
   )
-}
-
-interface ConsentSectionProps {
-  provider: string
-  providerLogo: string
-  permissions: {
-    title: string
-    description: string
-    hasConsent: boolean
-  }[]
-  organizations: any[]
 }
 
 function ConsentSection({
@@ -276,15 +267,6 @@ function ConsentSection({
   )
 }
 
-interface ConsentLineProps {
-  title: string
-  description: string
-  hasConsent: boolean
-  id: string
-  onChange: (newChecked: boolean) => void
-  isLast: boolean
-}
-
 function ConsentLine({
   title,
   description,
@@ -312,7 +294,7 @@ function ConsentLine({
 
   return (
     <li>
-      <Box key={title} display="flex" columnGap={2} paddingY={3}>
+      <Box key={title} display="flex" paddingY={3}>
         <Box flexGrow={1}>
           <Text as="h4" id={id}>
             {title}

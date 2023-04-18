@@ -18,7 +18,7 @@ export const m = defineMessages({
   consentEmptyInfo: {
     id: 'portals-my-pages.consent:consent-empty-info',
     defaultMessage:
-      'Þegar þú hefur veitt samþykki fyrir gagnaöflun birtast upplýsingar um það hér.',
+      'Þegar þú hefur gefið aðila leyfi til gagnaöflunar birtist það hér.',
   },
   consentUpdateError: {
     id: 'portals-my-pages.consent:consent-update-error',
