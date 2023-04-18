@@ -1,18 +1,15 @@
-import getConfig from 'next/config'
-const { publicRuntimeConfig } = getConfig()
+import {
+  MIDEIND_TRANSLATION_API_BASE_URL,
+  MIDEIND_TRANSLATION_API_KEY,
+} from '../../../constants'
 
 const defaultParams = {
   sourceLanguageCode: 'is',
   targetLanguageCode: 'en',
 }
 
-const {
-  mideindTranslationApiKey,
-  mideindTranslationApiBaseUrl,
-} = publicRuntimeConfig
-
 async function translateTexts(texts: string[]) {
-  const baseUrl = mideindTranslationApiBaseUrl
+  const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
 
   const translations = []
   const body = {
@@ -24,7 +21,7 @@ async function translateTexts(texts: string[]) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': mideindTranslationApiKey,
+      'X-API-Key': MIDEIND_TRANSLATION_API_KEY,
     },
     body: JSON.stringify(body),
   }).then((res) => res.json())
@@ -41,7 +38,7 @@ async function sendTexts(
   enTexts: string[],
   reference: string,
 ) {
-  const baseUrl = mideindTranslationApiBaseUrl
+  const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
 
   const body = {
     machineTranslatedText: '', // Required even if empty
@@ -56,7 +53,7 @@ async function sendTexts(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': mideindTranslationApiKey,
+      'X-API-Key': MIDEIND_TRANSLATION_API_KEY,
     },
     body: JSON.stringify(body),
   })
