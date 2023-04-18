@@ -116,6 +116,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const durationType = answers.selectDuration?.type
     const durationDate = answers.selectDuration?.date
     const extraData = {
+      // TODO: add new screen data here?
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
         durationType === 'temporary' && durationDate

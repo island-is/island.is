@@ -3,12 +3,10 @@ import { useIntl } from 'react-intl'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import { useFormContext } from 'react-hook-form'
-import { PdfTypes } from '@island.is/application/types'
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { CheckboxController } from '@island.is/shared/form-fields'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { DescriptionText } from '@island.is/application/templates/family-matters-core/components'
-import { useGeneratePdfUrl } from '@island.is/application/templates/family-matters-core/hooks'
 import * as m from '../../lib/messages'
 import { Roles } from '../../lib/constants'
 import { CRCFieldBaseProps } from '../../types'
@@ -24,11 +22,6 @@ export const confirmContractIds = [
 ]
 
 const Overview = ({ field, error, errors, application }: CRCFieldBaseProps) => {
-  const pdfType = PdfTypes.CHILDREN_RESIDENCE_CHANGE
-  const { pdfUrl, loading: pdfLoading } = useGeneratePdfUrl(
-    application.id,
-    pdfType,
-  )
   const { id, disabled } = field
   const { answers, externalData } = application
   const applicant = externalData.nationalRegistry.data
@@ -75,25 +68,9 @@ const Overview = ({ field, error, errors, application }: CRCFieldBaseProps) => {
         />
       </Box>
       <Box marginTop={5}>
-        <Button
-          colorScheme="default"
-          icon="open"
-          iconType="outline"
-          onClick={() => window.open(pdfUrl, '_blank')}
-          preTextIconType="filled"
-          size="default"
-          type="button"
-          variant="ghost"
-          loading={pdfLoading}
-          disabled={!pdfUrl}
-        >
-          {formatMessage(m.contract.pdfButton.label)}
-        </Button>
-      </Box>
-      <Box marginTop={5}>
         <CheckboxController
           id={isDraft ? confirmContractTerms : id}
-          disabled={disabled || pdfLoading}
+          disabled={disabled}
           error={isDraft ? errors?.confirmContract?.terms : error}
           large={true}
           defaultValue={[]}

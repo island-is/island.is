@@ -42,14 +42,6 @@ const ContractOverview = ({ application, parentKey }: Props) => {
         </Box>
       )}
       <Text marginTop={4} variant="h4">
-        {formatMessage(m.childSupportPayments.general.sectionTitle)}
-      </Text>
-      <Text marginTop={1}>
-        {answers.selectChildSupportPayment === 'agreement'
-          ? formatMessage(m.childSupportPayments.radioAgreement.title)
-          : formatMessage(m.childSupportPayments.radioChildSupport.title)}
-      </Text>
-      <Text marginTop={4} variant="h4">
         {formatMessage(m.duration.general.sectionTitle)}
       </Text>
       <Text marginTop={1}>
@@ -68,7 +60,11 @@ const ContractOverview = ({ application, parentKey }: Props) => {
           {formatMessage(m.contract.childBenefit.label)}
         </Text>
         <DescriptionText
-          text={m.contract.childBenefit.text}
+          text={
+            answers.selectChildSupportPayment === 'agreement'
+              ? m.contract.childBenefit.agreementText
+              : m.contract.childBenefit.text
+          }
           textProps={{ marginBottom: 0 }}
           format={{
             currentResidenceParentName:
