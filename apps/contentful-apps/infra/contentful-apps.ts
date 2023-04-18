@@ -3,16 +3,6 @@ export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
   service('contentful-apps')
     .image('contentful-apps')
     .namespace('contentful-apps')
-    .env({
-      NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT: 'master',
-      NEXT_PUBLIC_CONTENTFUL_SPACE: '8k0h54kbe6bj',
-      NEXT_PUBLIC_MIDEIND_TRANSLATION_API_BASE_URL:
-        'https://stafraentisland.greynir.is/translate',
-    })
-    .secrets({
-      NEXT_PUBLIC_MIDEIND_TRANSLATION_API_KEY:
-        '/k8s/contentful-apps/MIDEIND_TRANSLATION_API_KEY',
-    })
     .serviceAccount('contentful-apps')
     .ingress({
       primary: {

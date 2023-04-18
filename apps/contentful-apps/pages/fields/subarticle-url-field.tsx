@@ -1,9 +1,14 @@
+import getConfig from 'next/config'
+const {  publicRuntimeConfig } = getConfig()
+
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { TextInput, Text, Spinner } from '@contentful/f36-components'
 import { EntryProps, SysLink } from 'contentful-management'
+
+const {  contentfulSpace, contentfulEnvironment } = publicRuntimeConfig
 
 type Article = EntryProps<{
   subArticles: { 'is-IS': SysLink[] }
@@ -45,8 +50,8 @@ const SubArticleUrlField = () => {
     cma.entry
       .get({
         entryId: parentArticleId,
-        environmentId: process.env.NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT,
-        spaceId: process.env.NEXT_PUBLIC_CONTENTFUL_SPACE,
+        environmentId: contentfulEnvironment,
+        spaceId: contentfulSpace,
       })
       .then((parentArticle: Article) => {
         const subArticles =
