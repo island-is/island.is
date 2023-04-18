@@ -4,7 +4,7 @@ import {
   useBoxStyles,
   Button,
 } from '@island.is/island-ui/core'
-import { SortOptions } from '../../types/enums'
+import { SortOptions, SortOptionsAdvices } from '../../types/enums'
 import cn from 'classnames'
 import { ReactElement } from 'react'
 import { useMenuState, Menu, MenuItem, MenuButton } from 'reakit/Menu'
@@ -14,16 +14,16 @@ import * as styles from './DropdownSort.css'
 export interface DropdownMenuProps {
   menuAriaLabel?: string
   items: {
-    title: SortOptions
+    title: SortOptions | SortOptionsAdvices
     render?: (
       element: ReactElement,
       index: number,
       className: string,
     ) => ReactElement
   }[]
-  title: SortOptions
+  title: SortOptions | SortOptionsAdvices
   icon?: ButtonProps['icon']
-  setTitle: (newTitle: SortOptions) => void
+  setTitle: (newTitle: SortOptions | SortOptionsAdvices) => void
 }
 
 const DropdownSort = ({

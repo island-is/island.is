@@ -89,6 +89,7 @@ export class GenericDrivingLicenseApi
     try {
       res = await fetch(`${this.xroadApiUrl}/${url}`, {
         headers: this.headers(),
+        timeout: this.config.fetch.timeout,
       })
 
       if (!res.ok) {

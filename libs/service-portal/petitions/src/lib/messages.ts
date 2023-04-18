@@ -132,9 +132,14 @@ export const m = defineMessages({
     defaultMessage: 'Setja nafn mitt á þennan lista',
     description: '',
   },
-  modalButtonYes: {
-    id: 'sp.petitions:modalButtonYes',
-    defaultMessage: 'Já',
+  modalButtonCloseListYes: {
+    id: 'sp.petitions:modalButtonCloseListYes',
+    defaultMessage: 'Ljúka lista',
+    description: '',
+  },
+  modalButtonOpenListYes: {
+    id: 'sp.petitions:modalButtonOpenListYes',
+    defaultMessage: 'Opna lista',
     description: '',
   },
   modalButtonNo: {
