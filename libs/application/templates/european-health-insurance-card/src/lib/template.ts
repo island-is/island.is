@@ -11,17 +11,8 @@ import {
   NationalRegistryUserApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
-import {
-  EhicApplyForPhysicalAndTemporary,
-  EhicApplyForPhysicalCardApi,
-  EhicApplyForTemporaryCardApi,
-  EhicCardResponseApi,
-  EhicGetTemporaryCardApi,
-} from '../dataProviders'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { EhicCardResponseApi, EhicGetTemporaryCardApi } from '../dataProviders'
 
 import { ApiActions } from '../dataProviders/apiActions.enum'
 import { States } from './types'
