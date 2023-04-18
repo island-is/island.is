@@ -1,14 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
-export class InstitutionModel {
+@ObjectType('UniversityOfIcelandInstitution')
+export class Institution {
   @Field(() => String)
   id!: string
 
   @Field(() => String)
   displayName!: string
 }
-@ObjectType()
+@ObjectType('UniversityOfIcelandStudentDescription')
 export class StudentDescription {
   @Field(() => String)
   description!: string
@@ -17,8 +17,8 @@ export class StudentDescription {
   footer!: string
 }
 
-@ObjectType()
-export class StudentModel {
+@ObjectType('UniversityOfIcelandStudent')
+export class Student {
   @Field(() => String)
   name!: string
 
@@ -31,8 +31,8 @@ export class StudentModel {
   @Field(() => Number)
   trackNumber!: number
 
-  @Field(() => InstitutionModel, { nullable: true })
-  institution?: InstitutionModel
+  @Field(() => Institution, { nullable: true })
+  institution?: Institution
 
   @Field(() => String)
   school!: string
@@ -46,10 +46,10 @@ export class StudentModel {
   @Field(() => String)
   degree!: string
 }
-@ObjectType()
+@ObjectType('UniversityOfIcelandStudentTrack')
 export class StudentTrackModel {
-  @Field(() => StudentModel)
-  transcript!: StudentModel
+  @Field(() => Student)
+  transcript!: Student
 
   @Field(() => [StudentFiles])
   files!: StudentFiles[]
@@ -61,14 +61,14 @@ export class StudentTrackModel {
   downloadServiceURL?: string
 }
 
-@ObjectType()
-export class UniversityOfIcelandStudentInfoModel {
-  @Field(() => [StudentModel], { nullable: true })
-  transcripts?: StudentModel[]
+@ObjectType('UniversityOfIcelandStudentInfo')
+export class StudentInfo {
+  @Field(() => [Student], { nullable: true })
+  transcripts?: Student[]
   @Field(() => StudentTrackModel, { nullable: true })
   track?: StudentTrackModel
 }
-@ObjectType()
+@ObjectType('UniversityOfIcelandStudentFiles')
 export class StudentFiles {
   @Field(() => String)
   type!: string

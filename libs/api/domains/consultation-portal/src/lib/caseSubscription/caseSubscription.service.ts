@@ -3,11 +3,11 @@ import {
   CaseSubscriptionApi,
   ApiCaseSubscriptionCaseIdGetRequest,
   ApiCaseSubscriptionCaseIdPostRequest,
-  PostCaseSubscriptionCommand,
   ApiCaseSubscriptionCaseIdDeleteRequest,
 } from '@island.is/clients/consultation-portal'
 import { CaseSubscriptionResult } from '../models/caseSubscriptionResult.model'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { PostCaseSubscriptionTypeInput } from '../dto/postCaseSubscriptionType.input'
 
 @Injectable()
 export class CaseSubscriptionService {
@@ -15,6 +15,18 @@ export class CaseSubscriptionService {
 
   private caseSubscriptionApiWithAuth(auth: User) {
     return this.caseSubscriptionApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async deleteCaseSubscription(auth: User, caseId: number): Promise<void> {
+    const requestParams: ApiCaseSubscriptionCaseIdDeleteRequest = {
+      caseId: caseId,
+    }
+
+    const response = await this.caseSubscriptionApiWithAuth(
+      auth,
+    ).apiCaseSubscriptionCaseIdDelete(requestParams)
+
+    return response
   }
 
   async getCaseSubscriptionType(
@@ -33,28 +45,15 @@ export class CaseSubscriptionService {
 
   async postCaseSubscriptionType(
     auth: User,
-    caseId: number,
-    input: PostCaseSubscriptionCommand,
+    input: PostCaseSubscriptionTypeInput,
   ): Promise<void> {
     const requestParams: ApiCaseSubscriptionCaseIdPostRequest = {
-      caseId: caseId,
-      postCaseSubscriptionCommand: input,
+      caseId: input.caseId,
+      postCaseSubscriptionCommand: input.postCaseSubscriptionCommand,
     }
     const response = await this.caseSubscriptionApiWithAuth(
       auth,
     ).apiCaseSubscriptionCaseIdPost(requestParams)
-    return response
-  }
-
-  async deleteCaseSubscription(auth: User, caseId: number): Promise<void> {
-    const requestParams: ApiCaseSubscriptionCaseIdDeleteRequest = {
-      caseId: caseId,
-    }
-
-    const response = await this.caseSubscriptionApiWithAuth(
-      auth,
-    ).apiCaseSubscriptionCaseIdDelete(requestParams)
-
     return response
   }
 }
