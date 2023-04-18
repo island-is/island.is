@@ -17,6 +17,8 @@ import {
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { Defendant } from '../defendant'
@@ -106,7 +108,15 @@ export const include: Includeable[] = [
     required: false,
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
-      category: CaseFileCategory.RULING,
+      category: [
+        CaseFileCategory.RULING,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+      ],
     },
   },
 ]
@@ -118,6 +128,7 @@ export const order: OrderItem[] = [
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
+    private readonly messageService: MessageService,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -148,11 +159,16 @@ export class LimitedAccessCaseService {
     return theCase
   }
 
-  async update(theCase: Case, update: LimitedUpdateCase): Promise<Case> {
-    const [numberOfAffectedRows, cases] = await this.caseModel.update(update, {
-      where: { id: theCase.id },
-      returning: true,
-    })
+  async update(
+    theCase: Case,
+    update: LimitedUpdateCase,
+    user: TUser,
+  ): Promise<Case> {
+    // Here we assume that the case is being appealed
+    const [numberOfAffectedRows] = await this.caseModel.update(
+      { ...update, accusedPostponedAppealDate: nowFactory() },
+      { where: { id: theCase.id } },
+    )
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -165,7 +181,17 @@ export class LimitedAccessCaseService {
       )
     }
 
-    return cases[0]
+    // Here we assume that the case is being appealed
+    this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+
+    // Return limited access case
+    return await this.findById(theCase.id)
   }
 
   findDefenderNationalId(theCase: Case, nationalId: string): User {

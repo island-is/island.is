@@ -37,6 +37,19 @@ export const inheritanceReportSchema = z.object({
         total: z.number().optional(),
       })
       .optional(),
+    guns: z
+      .object({
+        data: z
+          .object({
+            assetNumber: z.string(),
+            description: z.string(),
+            propertyValuation: z.string().refine((v) => v),
+          })
+          .array()
+          .optional(),
+        total: z.number().optional(),
+      })
+      .optional(),
     inventory: z
       .object({
         data: z

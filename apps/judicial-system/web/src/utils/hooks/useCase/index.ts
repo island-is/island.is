@@ -1,11 +1,10 @@
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
 import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
-import router from 'next/router'
 
 import type {
   NotificationType,
@@ -20,8 +19,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 
 import { CreateCaseMutation } from './createCaseGql'
 import { CreateCourtCaseMutation } from './createCourtCaseGql'
@@ -30,7 +28,7 @@ import { SendNotificationMutation } from './sendNotificationGql'
 import { TransitionCaseMutation } from './transitionCaseGql'
 import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
 import { ExtendCaseMutation } from './extendCaseGql'
-import { TransitionLimitedAccessCaseMutation } from './transitionLimitedAccessCaseGql'
+import { LimitedAccessTransitionCaseMutation } from './limitedAccessTransitionCaseGql'
 
 type ChildKeys = Pick<
   UpdateCase,
@@ -67,8 +65,8 @@ interface TransitionCaseMutationResponse {
   transitionCase: Case
 }
 
-interface TransitionLimitedAccessCaseMutationResponse {
-  transitionLimitedAccessCase: Case
+interface LimitedAccessTransitionCaseMutationResponse {
+  limitedAccessTransitionCase: Case
 }
 
 interface SendNotificationMutationResponse {
@@ -156,7 +154,9 @@ export const formatDateForServer = (date: Date) => {
 }
 
 const useCase = () => {
+  const { limitedAccess } = useContext(UserContext)
   const { formatMessage } = useIntl()
+
   const [
     createCaseMutation,
     { loading: isCreatingCase },
@@ -176,10 +176,10 @@ const useCase = () => {
     { loading: isTransitioningCase },
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
   const [
-    transitionLimitedAccessCaseMutation,
-    { loading: isTransitioningLimitedAccessCase },
-  ] = useMutation<TransitionLimitedAccessCaseMutationResponse>(
-    TransitionLimitedAccessCaseMutation,
+    limitedAccessTransitionCaseMutation,
+    { loading: isLimitedAccessTransitioningCase },
+  ] = useMutation<LimitedAccessTransitionCaseMutationResponse>(
+    LimitedAccessTransitionCaseMutation,
   )
   const [
     sendNotificationMutation,
@@ -291,14 +291,12 @@ const useCase = () => {
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
-      const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
-
-      const mutation = !limitedAccess
-        ? transitionCaseMutation
-        : transitionLimitedAccessCaseMutation
+      const mutation = limitedAccess
+        ? limitedAccessTransitionCaseMutation
+        : transitionCaseMutation
 
       const resultType = limitedAccess
-        ? 'transitionLimitedAccessCase'
+        ? 'limitedAccessTransitionCase'
         : 'transitionCase'
 
       try {
@@ -312,7 +310,7 @@ const useCase = () => {
         })
 
         const res = data as TransitionCaseMutationResponse &
-          TransitionLimitedAccessCaseMutationResponse
+          LimitedAccessTransitionCaseMutationResponse
 
         const state = res[resultType].state
         const appealState = res[resultType].appealState
@@ -336,9 +334,10 @@ const useCase = () => {
       }
     },
     [
-      formatMessage,
+      limitedAccess,
+      limitedAccessTransitionCaseMutation,
       transitionCaseMutation,
-      transitionLimitedAccessCaseMutation,
+      formatMessage,
     ],
   )
 
@@ -437,7 +436,7 @@ const useCase = () => {
     isUpdatingCase,
     transitionCase,
     isTransitioningCase,
-    isTransitioningLimitedAccessCase,
+    isLimitedAccessTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,

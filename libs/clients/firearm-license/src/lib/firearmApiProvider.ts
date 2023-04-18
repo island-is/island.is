@@ -31,6 +31,7 @@ export const FirearmLicenseApiProvider: Provider<FirearmApi> = {
                 scope: config.fetch.scope,
               }
             : undefined,
+          timeout: config.fetch.timeout,
         }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {

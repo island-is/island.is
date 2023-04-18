@@ -1,11 +1,13 @@
 import {
   Box,
+  Button,
   Divider,
   GridContainer,
   ResponsiveSpace,
   Stack,
   Tabs,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
@@ -28,6 +30,7 @@ import { sorting } from '../../utils/helpers'
 import getInitValues from './getInitValues'
 import TabsList from './tabsList'
 import EmailBox from '../../components/EmailBox/EmailBox'
+import { IconLink } from '../../components/IconLink/IconLink'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -56,7 +59,13 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
     Stofnanir: SortOptions.aToZ,
     Málefnasvið: SortOptions.aToZ,
   })
-
+  const onSubmit = () => {
+    toast.success('Áskrift skráð')
+    setSubscriptionArray(SubscriptionsArray)
+  }
+  const onClear = () => {
+    setSubscriptionArray(SubscriptionsArray)
+  }
   const paddingX = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   useEffect(() => {
@@ -251,6 +260,24 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                           />
                         ))
                     })}
+                  <Box
+                    marginTop={1}
+                    display={'flex'}
+                    justifyContent={'flexEnd'}
+                    alignItems="center"
+                  >
+                    <Box marginRight={3}>
+                      <IconLink
+                        icon={{ icon: 'reload', size: 'small' }}
+                        onClick={onClear}
+                      >
+                        Hreinsa val
+                      </IconLink>
+                    </Box>
+                    <Button size="small" onClick={onSubmit}>
+                      Skrá í áskrift
+                    </Button>
+                  </Box>
                 </>
               )}
             </Stack>

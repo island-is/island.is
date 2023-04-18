@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import Footer from '../Footer/Footer'
 import Menu from '../Menu/Menu'
 import SEO from '../SEO/SEO'
-import { Box, Divider } from '@island.is/island-ui/core'
+import { Box, Divider, ToastContainer } from '@island.is/island-ui/core'
 import * as styles from './Layout.css'
 
 type LayoutProps = {
@@ -29,6 +29,7 @@ export const Layout: FC<LayoutProps> = ({
         <Menu isFrontPage={isFrontPage} />
         <Divider />
       </Box>
+      <ToastContainer />
 
       {children}
       <Footer />

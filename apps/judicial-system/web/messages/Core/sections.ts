@@ -376,7 +376,7 @@ export const sections = {
         'Notaður sem texti í skrefum á hliðarstiku þegar krafa er kærð',
     },
     result: {
-      id: 'judicial.system.core:sections.court_of_appeal_section.appealed',
+      id: 'judicial.system.core:sections.court_of_appeal_section.result',
       defaultMessage: 'Úrskurður Landsréttar',
       description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
     },
