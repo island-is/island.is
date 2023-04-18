@@ -100,8 +100,15 @@ const LimitedAccessCaseQuery = gql`
       accusedAppealDecision
       prosecutorAppealDecision
       isAppealDeadlineExpired
-      accusedPostponedAppealDate
-      prosecutorPostponedAppealDate
+      isStatementDeadlineExpired
+      statementDeadline
+      canBeAppealed
+      hasBeenAppealed
+      appealedByRole
+      appealedDate
+      appealDeadline
+      prosecutorStatementDate
+      defenderStatementDate
     }
   }
 `
