@@ -139,7 +139,7 @@ export class PassportService extends BaseTemplateApiService {
       let result
       if (forUser) {
         result = await this.passportApi.preregisterIdentityDocument(auth, {
-          guId: application.id,
+          guid: application.id,
           appliedForPersonId: auth.nationalId,
           priority: service.type === 'regular' ? 0 : 1,
           deliveryName: service.dropLocation,
@@ -152,7 +152,7 @@ export class PassportService extends BaseTemplateApiService {
         })
       } else {
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
-          guId: application.id,
+          guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
           priority: service.type === 'regular' ? 0 : 1,
           deliveryName: service.dropLocation,

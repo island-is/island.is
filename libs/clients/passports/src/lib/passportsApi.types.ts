@@ -55,7 +55,7 @@ export interface Approval {
   name: string
 }
 export interface PreregistrationInput {
-  guId?: string
+  guid?: string
   priority?: number
   appliedForPersonId?: string
   approvalA?: Approval
