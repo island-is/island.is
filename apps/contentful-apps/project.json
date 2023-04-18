@@ -73,8 +73,7 @@
       "options": {
         "lintFilePatterns": ["apps/contentful-apps/**/*.{ts,tsx,js,jsx}"]
       }
-    },
-    "docker-next": {}
+    }
   },
   "tags": ["scope:react-next"]
 }
