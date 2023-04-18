@@ -8,6 +8,7 @@ import {
   StudentTrackOverview,
   NemandiFerillFerillFileTranscriptGetLocaleEnum,
 } from '../../gen/fetch'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class UniversityOfIcelandService {
@@ -16,37 +17,37 @@ export class UniversityOfIcelandService {
   private universityOfIcelandApiWithAuth = (user: User) =>
     this.universityOfIcelandApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async studentInfo(
+  studentInfo = (
     user: User,
     locale?: NemandiGetLocaleEnum,
-  ): Promise<Transcripts> {
-    return await this.universityOfIcelandApiWithAuth(user).nemandiGet({
-      locale: locale,
-    })
-  }
-  async studentCareer(
+  ): Promise<Transcripts | null> =>
+    this.universityOfIcelandApiWithAuth(user)
+      .nemandiGet({
+        locale: locale,
+      })
+      .catch(handle404)
+
+  studentCareer = (
     user: User,
     trackNumber: number,
     locale?: NemandiFerillFerillGetLocaleEnum,
-  ): Promise<StudentTrackOverview> {
-    return await this.universityOfIcelandApiWithAuth(
-      user,
-    ).nemandiFerillFerillGet({
-      ferill: trackNumber,
-      locale: locale,
-    })
-  }
+  ): Promise<StudentTrackOverview | null> =>
+    this.universityOfIcelandApiWithAuth(user)
+      .nemandiFerillFerillGet({
+        ferill: trackNumber,
+        locale: locale,
+      })
+      .catch(handle404)
 
-  async studentCareerPDF(
+  studentCareerPDF = (
     user: User,
     trackNumber: number,
     locale?: NemandiFerillFerillFileTranscriptGetLocaleEnum,
-  ): Promise<Blob> {
-    return await this.universityOfIcelandApiWithAuth(
-      user,
-    ).nemandiFerillFerillFileTranscriptGet({
-      ferill: trackNumber,
-      locale: locale,
-    })
-  }
+  ): Promise<Blob | null> =>
+    this.universityOfIcelandApiWithAuth(user)
+      .nemandiFerillFerillFileTranscriptGet({
+        ferill: trackNumber,
+        locale: locale,
+      })
+      .catch(handle404)
 }
