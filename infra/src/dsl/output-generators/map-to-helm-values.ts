@@ -422,8 +422,8 @@ const serviceMockDef = (options: {
 }) => {
   const result: HelmService = {
     enabled: true,
-    grantNamespaces: [],
-    grantNamespacesEnabled: false,
+    grantNamespaces: ['e2e-dev', 'e2e-staging'],
+    grantNamespacesEnabled: true,
     namespace: getFeatureDeploymentNamespace(options.env),
     image: {
       repository: `bbyars/mountebank`,

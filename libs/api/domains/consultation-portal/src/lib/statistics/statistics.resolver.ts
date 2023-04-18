@@ -6,15 +6,15 @@ import {
 import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
 import { StatisticsResult } from '../models/statisticsResult.model'
-import { StatisticsResultService } from './statistics.service'
+import { StatisticsService } from './statistics.service'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
-export class StatisticsResultResolver {
-  constructor(private statisticsResultService: StatisticsResultService) {}
+@FeatureFlag(Features.consultationPortalApplication)
+export class StatisticsResolver {
+  constructor(private statisticsResultService: StatisticsService) {}
 
   @Query(() => StatisticsResult, { name: 'consultationPortalStatistics' })
-  @FeatureFlag(Features.consultationPortalApplication)
   async getStatistics(): Promise<StatisticsResult> {
     const statistics = await this.statisticsResultService.getStatistics()
     return statistics

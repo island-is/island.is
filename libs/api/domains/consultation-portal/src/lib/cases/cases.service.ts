@@ -15,11 +15,39 @@ import { PostAdviceInput } from '../dto/postAdvice.input'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 @Injectable()
-export class CaseResultService {
+export class CasesService {
   constructor(private casesApi: CasesApi) {}
 
   private casesApiWithAuth(auth: User) {
     return this.casesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getAdvices(input: GetCaseInput): Promise<AdviceResult[]> {
+    const request: ApiCasesCaseIdAdvicesGetRequest = {
+      caseId: input.caseId,
+    }
+    const response = await this.casesApi.apiCasesCaseIdAdvicesGet(request)
+    return response
+  }
+
+  async postAdvice(auth: User, input: PostAdviceInput) {
+    const request: ApiCasesCaseIdAdvicesPostRequest = {
+      caseId: input.caseId,
+      caseAdviceCommand: input.caseAdviceCommand,
+    }
+    const response = await this.casesApiWithAuth(
+      auth,
+    ).apiCasesCaseIdAdvicesPost(request)
+    return response
+  }
+
+  async getCase(input: GetCaseInput): Promise<CaseResult> {
+    const request: ApiCasesCaseIdGetRequest = {
+      caseId: input.caseId,
+    }
+
+    const response = await this.casesApi.apiCasesCaseIdGet(request)
+    return response
   }
 
   async getCases(input: GetCasesInput): Promise<CasesAggregateResult> {
@@ -37,34 +65,6 @@ export class CaseResultService {
     }
 
     const response = await this.casesApi.apiCasesGet(request)
-    return response
-  }
-
-  async getCase(input: GetCaseInput): Promise<CaseResult> {
-    const request: ApiCasesCaseIdGetRequest = {
-      caseId: input.caseId,
-    }
-
-    const response = await this.casesApi.apiCasesCaseIdGet(request)
-    return response
-  }
-
-  async getAdvices(input: GetCaseInput): Promise<AdviceResult[]> {
-    const request: ApiCasesCaseIdAdvicesGetRequest = {
-      caseId: input.caseId,
-    }
-    const response = await this.casesApi.apiCasesCaseIdAdvicesGet(request)
-    return response
-  }
-
-  async postAdvice(auth: User, input: PostAdviceInput) {
-    const request: ApiCasesCaseIdAdvicesPostRequest = {
-      caseId: input.caseId,
-      adviceRequest: input.adviceRequest,
-    }
-    const response = await this.casesApiWithAuth(
-      auth,
-    ).apiCasesCaseIdAdvicesPost(request)
     return response
   }
 }
