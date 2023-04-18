@@ -508,7 +508,7 @@ export const SignedVerdictOverview: React.FC = () => {
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        isProsecutionRole(user?.role) && (
+        (isProsecutionRole(user?.role) || isCourtRole(user?.role)) && (
           <AppealAlertBanner workingCase={workingCase} />
         )}
       <PageLayout

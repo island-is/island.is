@@ -135,15 +135,15 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, userId, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
         {
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-          userId,
+          user,
           caseId,
           caseFileId,
         },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, userId, caseId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })
@@ -176,10 +176,10 @@ describe('CaseController - Get ruling signature confirmation', () => {
     it('should return success', () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, userId, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, userId, caseId },
-        { type: MessageType.DELIVER_CASE_TO_POLICE, userId, caseId },
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
+        { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })
@@ -204,9 +204,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should return success', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, userId, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, userId, caseId },
+        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
+        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
+        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
       ])
     })
   })

@@ -1,5 +1,4 @@
-import router from 'next/router'
-import React from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertBanner } from '@island.is/island-ui/core'
@@ -13,12 +12,15 @@ import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepH
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
-  DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  isProsecutionRole,
+} from '@island.is/judicial-system/types'
 
 import { strings } from './AppealAlertBanner.strings'
+import { UserContext } from '../UserProvider/UserProvider'
 
 interface Props {
   workingCase: TempCase
@@ -81,7 +83,7 @@ export const getAppealInfo = (workingCase: TempCase): AppealInfo => {
 
 const AppealAlertBanner: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
-  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
+  const { limitedAccess, user } = useContext(UserContext)
 
   const { workingCase } = props
   const {
@@ -109,11 +111,17 @@ const AppealAlertBanner: React.FC<Props> = (props) => {
     alertTitle = formatMessage(strings.appealTitle, {
       appealDeadline,
     })
-    alertLinkTitle = formatMessage(strings.appealLinkText)
-    alertLinkHref = limitedAccess
-      ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
-      : `${APPEAL_ROUTE}/${workingCase.id}`
-  } else return null
+    // We only want to display the appeal link to prosecution roles and the defender
+    // not the judge
+    if (isProsecutionRole(user?.role) || user?.role === UserRole.Defender) {
+      alertLinkTitle = formatMessage(strings.appealLinkText)
+      alertLinkHref = limitedAccess
+        ? `${DEFENDER_APPEAL_ROUTE}/${workingCase.id}`
+        : `${APPEAL_ROUTE}/${workingCase.id}`
+    }
+  } else {
+    return null
+  }
 
   return (
     <AlertBanner
