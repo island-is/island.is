@@ -60,7 +60,7 @@ describe('NotificationController - Send defender assigned notification', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
-          userId,
+          user,
           caseId,
         },
       ])
