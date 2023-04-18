@@ -1,14 +1,16 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
+  PrimaryKey,
   Table,
   UpdatedAt,
-  ForeignKey,
-  PrimaryKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+
 import { Client } from './client.model'
 
 @Table({
@@ -17,6 +19,13 @@ import { Client } from './client.model'
 export class ClientSecret extends Model {
   @PrimaryKey
   @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  id!: string
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
@@ -24,13 +33,18 @@ export class ClientSecret extends Model {
   @ApiProperty()
   clientId!: string
 
-  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
   value!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  encryptedValue?: string
 
   @Column({
     type: DataType.STRING,
@@ -60,4 +74,7 @@ export class ClientSecret extends Model {
   @UpdatedAt
   @ApiProperty()
   readonly modified?: Date
+
+  @BelongsTo(() => Client)
+  client?: Client
 }

@@ -1,10 +1,20 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   AdminClientDto,
   AdminClientsService,
   AdminCreateClientDto,
+  AdminPatchClientDto,
   MeTenantGuard,
 } from '@island.is/auth-api-lib'
 import {
@@ -15,8 +25,10 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
+
+const namespace = '@island.is/auth/admin-api/v2/clients'
 
 @UseGuards(IdsUserGuard, ScopesGuard, MeTenantGuard)
 @Scopes(...idsAdminScopes)
@@ -26,9 +38,12 @@ import { Documentation } from '@island.is/nest/swagger'
   path: 'me/tenants/:tenantId/clients',
   version: ['2'],
 })
-@Audit({ namespace: '@island.is/auth/admin-api/v2/clients' })
+@Audit({ namespace })
 export class MeClientsController {
-  constructor(private readonly clientsService: AdminClientsService) {}
+  constructor(
+    private readonly clientsService: AdminClientsService,
+    private readonly auditService: AuditService,
+  ) {}
 
   @Get()
   @Documentation({
@@ -74,5 +89,30 @@ export class MeClientsController {
     @Body() input: AdminCreateClientDto,
   ): Promise<AdminClientDto> {
     return this.clientsService.create(input, user, tenantId)
+  }
+
+  @Patch(':clientId')
+  @Documentation({
+    description: 'Update a client with partial set of properties.',
+    response: { status: 200, type: AdminClientDto },
+  })
+  update(
+    @CurrentUser() user: User,
+    @Param('tenantId') tenantId: string,
+    @Param('clientId') clientId: string,
+    @Body() input: AdminPatchClientDto,
+  ): Promise<AdminClientDto> {
+    return this.auditService.auditPromise<AdminClientDto>(
+      {
+        namespace,
+        auth: user,
+        action: 'update',
+        resources: (client) => client.clientId,
+        meta: {
+          fields: Object.keys(input),
+        },
+      },
+      this.clientsService.update(user, tenantId, clientId, input),
+    )
   }
 }

@@ -32,6 +32,7 @@ interface Props {
   setPage: (n: number) => void
   pageSize: number
   organizations: Organization[]
+  shouldShowCardButtons?: boolean
 }
 
 export const ApplicationsTable = ({
@@ -40,6 +41,7 @@ export const ApplicationsTable = ({
   setPage,
   pageSize,
   organizations,
+  shouldShowCardButtons = true,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -167,6 +169,7 @@ export const ApplicationsTable = ({
                     application={application}
                     organizations={organizations}
                     onCopyButtonClick={copyApplicationLink}
+                    shouldShowCardButtons={shouldShowCardButtons}
                   />
                 </Drawer>
               )

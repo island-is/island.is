@@ -6,6 +6,7 @@ import { OperatingLicensesCSV } from './models/operatingLicensesCSV'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { RealEstateAgent } from './models/realEstateAgent'
 import { Lawyer } from './models/lawyer'
+import { Broker } from './models/broker'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
@@ -61,6 +62,13 @@ export class SyslumennResolver {
   @BypassAuth()
   getLawyers(): Promise<Lawyer[]> {
     return this.syslumennService.getLawyers()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [Broker])
+  @BypassAuth()
+  getBrokers(): Promise<Broker[]> {
+    return this.syslumennService.getBrokers()
   }
 
   @Directive(cacheControlDirective())

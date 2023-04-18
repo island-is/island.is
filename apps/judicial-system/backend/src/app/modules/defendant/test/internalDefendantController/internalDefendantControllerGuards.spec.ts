@@ -6,7 +6,6 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { UserExistsGuard } from '../../../user'
 import { CaseExistsGuard, CaseTypeGuard } from '../../../case'
 import { InternalDefendantController } from '../../internalDefendant.controller'
 import { DefendantExistsGuard } from '../../guards/defendantExists.guard'
@@ -19,8 +18,8 @@ describe('InternalDefendantController - guards', () => {
     guards = Reflect.getMetadata('__guards__', InternalDefendantController)
   })
 
-  it('should have two guards', () => {
-    expect(guards).toHaveLength(5)
+  it('should have four guards', () => {
+    expect(guards).toHaveLength(4)
   })
 
   describe('TokenGuard', () => {
@@ -47,7 +46,7 @@ describe('InternalDefendantController - guards', () => {
     })
   })
 
-  describe('CaseTypeGuerd', () => {
+  describe('CaseTypeGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
@@ -71,18 +70,6 @@ describe('InternalDefendantController - guards', () => {
 
     it('should have DefendantExistsGuard as quard 4', () => {
       expect(guard).toBeInstanceOf(DefendantExistsGuard)
-    })
-  })
-
-  describe('UserExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[4]()
-    })
-
-    it('should have UserExistsGuard as quard 5', () => {
-      expect(guard).toBeInstanceOf(UserExistsGuard)
     })
   })
 })
