@@ -48,19 +48,15 @@ export class UserResolver {
 
     return userEmail
   }
-
   @Mutation(() => Boolean!, {
     nullable: true,
-    name: 'consultationPortalPostEmail',
+    name: 'consultationPortalPostUserEmail',
   })
   async postUserEmail(
     @CurrentUser() user: User,
-    @Args('postEmailCommand') postEmailCommand: PostEmailCommand,
+    @Args('input', { type: () => PostEmailCommand }) input: PostEmailCommand,
   ): Promise<void> {
-    const response = await this.userService.postUserEmail(
-      user,
-      postEmailCommand,
-    )
+    const response = await this.userService.postUserEmail(user, input)
     return response
   }
 
