@@ -19,4 +19,5 @@ if (!isRunningOnEnvironment('local')) {
   })
 }
 
+// Render app.
 ReactDOM.render(<App />, document.getElementById('root'))
