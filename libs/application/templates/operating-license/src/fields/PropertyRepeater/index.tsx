@@ -21,11 +21,12 @@ import { Query } from '@island.is/api/schema'
 import { GET_REAL_ESTATE_ADDRESS } from '../../graphql'
 import { PropertyField } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
-import { formatText } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 
 export const PropertyRepeater: FC<FieldBaseProps> = ({
   field,
   application,
+  errors,
 }) => {
   const { formatMessage } = useLocale()
   const { id, title } = field
@@ -33,6 +34,13 @@ export const PropertyRepeater: FC<FieldBaseProps> = ({
   const { fields, append, remove } = useFieldArray({
     name: `${id}`,
   })
+
+  // Errors come in with `properties.id` as the key
+  // We need to get the last part of the id to get the correct error for the fields
+  let error: undefined | string = undefined
+  if (errors) {
+    error = getValueViaPath(errors, `properties.${id.split('.').pop() ?? ''}`)
+  }
 
   const repeaterTitle = formatText(title, application, formatMessage)
   const handleAddProperty = () =>
@@ -53,6 +61,7 @@ export const PropertyRepeater: FC<FieldBaseProps> = ({
     <Box>
       {fields.map((item, index) => (
         <PropertyItem
+          error={error}
           field={item}
           fieldName={id}
           index={index}
@@ -131,6 +140,8 @@ const PropertyItem = ({
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
 
+  const hasPropertyNumberButEmptyAddress = propertyNumberInput && !address
+
   return (
     <Box position="relative" marginTop={2}>
       <Controller
@@ -164,7 +175,11 @@ const PropertyItem = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.propertyNumber}
-            error={error?.assetNumber ?? undefined}
+            error={
+              error?.assetNumber || hasPropertyNumberButEmptyAddress
+                ? error
+                : undefined
+            }
             placeholder="F1234567"
           />
         </GridColumn>
