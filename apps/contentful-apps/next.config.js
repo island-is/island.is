@@ -3,7 +3,6 @@ const withNx = require('@nrwl/next/plugins/with-nx')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 
-
 module.exports = withNx(
   withVanillaExtract({
     webpack: (config, options) => {
@@ -14,7 +13,7 @@ module.exports = withNx(
       contentfulSpace: '8k0h54kbe6bj',
       mideindTranslationApiBaseUrl:
         'https://stafraentisland.greynir.is/translate',
-      mideindTranslationApiKey: "foo",
+      mideindTranslationApiKey: 'foo',
     },
   }),
 )

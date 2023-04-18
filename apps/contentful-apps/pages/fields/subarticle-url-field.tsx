@@ -1,5 +1,5 @@
 import getConfig from 'next/config'
-const {  publicRuntimeConfig } = getConfig()
+const { publicRuntimeConfig } = getConfig()
 
 import { useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
@@ -8,7 +8,7 @@ import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { TextInput, Text, Spinner } from '@contentful/f36-components'
 import { EntryProps, SysLink } from 'contentful-management'
 
-const {  contentfulSpace, contentfulEnvironment } = publicRuntimeConfig
+const { contentfulSpace, contentfulEnvironment } = publicRuntimeConfig
 
 type Article = EntryProps<{
   subArticles: { 'is-IS': SysLink[] }
