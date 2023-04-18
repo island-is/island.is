@@ -12,7 +12,7 @@ test.describe('Pósthólf overview', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'service-portal-inbox.json',
+      storageState: 'service-portal-bandarikin.json',
       homeUrl,
       phoneNumber: '0105069',
       idsLoginOn: true,

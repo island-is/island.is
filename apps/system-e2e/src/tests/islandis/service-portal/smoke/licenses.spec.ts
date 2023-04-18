@@ -11,7 +11,7 @@ test.describe('Licenses', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'service-portal-licenses.json',
+      storageState: 'service-portal-amerika.json',
       homeUrl,
       phoneNumber: '0102989',
       idsLoginOn: true,

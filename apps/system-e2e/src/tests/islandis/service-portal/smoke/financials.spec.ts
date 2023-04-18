@@ -9,7 +9,7 @@ test.describe('Fjármál overview', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      storageState: 'service-portal-finance.json',
+      storageState: 'service-portal-bretland.json',
       homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
       phoneNumber: '0104929',
       idsLoginOn: true,
