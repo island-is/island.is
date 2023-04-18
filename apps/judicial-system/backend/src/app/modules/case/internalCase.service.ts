@@ -367,20 +367,21 @@ export class InternalCaseService {
     let courtId: string | undefined
 
     if (caseToCreate.prosecutorNationalId) {
-      const prosecutor = await this.userService.findByNationalId(
-        caseToCreate.prosecutorNationalId,
-      )
+      const prosecutor = await this.userService
+        .findByNationalId(caseToCreate.prosecutorNationalId)
+        .catch(() => undefined) // Tolerate failure
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        throw new BadRequestException(
+        // Tolerate failure, but log error
+        this.logger.error(
           `User ${
             prosecutor?.id ?? 'unknown'
           } is not registered as a prosecutor`,
         )
+      } else {
+        prosecutorId = prosecutor.id
+        courtId = prosecutor.institution?.defaultCourtId
       }
-
-      prosecutorId = prosecutor.id
-      courtId = prosecutor.institution?.defaultCourtId
     }
 
     return this.sequelize.transaction(async (transaction) => {
