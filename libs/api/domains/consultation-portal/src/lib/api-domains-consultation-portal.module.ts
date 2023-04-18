@@ -12,6 +12,8 @@ import { StatisticsService } from './statistics/statistics.service'
 import { StatisticsResolver } from './statistics/statistics.resolver'
 import { UserService } from './user/user.service'
 import { UserResolver } from './user/user.resolver'
+import { ConfigModule } from '@nestjs/config'
+import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
 
 @Module({
   providers: [
@@ -26,7 +28,13 @@ import { UserResolver } from './user/user.resolver'
     UserService,
     UserResolver,
   ],
-  imports: [ConsultationPortalClientModule, AuthModule, FeatureFlagModule],
+  imports: [
+    ConsultationPortalClientModule,
+    AuthModule,
+    FeatureFlagModule,
+    ConfigModule.forRoot({ isGlobal: true, load: [FileStorageConfig] }),
+    FileStorageModule,
+  ],
   exports: [],
 })
 export class ConsultationPortalModule {}

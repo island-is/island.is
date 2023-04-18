@@ -19,7 +19,7 @@ import { EducationPaths } from '../../lib/paths'
 
 const GetStudentInfoQuery = gql`
   query universityOfIcelandStudentInfo(
-    $input: UniversityOfIcelandStudentInfoQueryInput!
+    $input: UniversityOfIcelandStudentInfoInput!
   ) {
     universityOfIcelandStudentInfo(input: $input) {
       transcripts {

@@ -137,6 +137,15 @@ export const CASE_POST_ADVICE = gql`
   }
 `
 
+export const CREATE_UPLOAD_URL = gql`
+  mutation CreateUploadUrl($filename: String!) {
+    createUploadUrl(filename: $filename) {
+      url
+      fields
+    }
+  }
+`
+
 // Screens/Advices
 export const ADVICES_GET_ALL_USER_ADVICES = gql`
   query ADVICES_GET_ALL_USER_ADVICES(

@@ -13,13 +13,34 @@ import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
 import { PostAdviceInput } from '../dto/postAdvice.input'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { FileStorageService } from '@island.is/file-storage'
+import { CaseAdviceCommand } from '../models/caseAdviceCommand.model'
 
 @Injectable()
 export class CasesService {
-  constructor(private casesApi: CasesApi) {}
+  constructor(
+    private casesApi: CasesApi,
+    private readonly fileStorageService: FileStorageService,
+  ) {}
 
   private casesApiWithAuth(auth: User) {
     return this.casesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private async prepareDownloads(files: Array<string>): Promise<Array<string>> {
+    if (files?.length < 1) {
+      return []
+    }
+
+    return await Promise.all(
+      files.map(async (item) => {
+        const objUrl = this.fileStorageService.getObjectUrl(item)
+        const signedUrl = await this.fileStorageService.generateSignedUrl(
+          objUrl,
+        )
+        return signedUrl
+      }),
+    )
   }
 
   async getAdvices(input: GetCaseInput): Promise<AdviceResult[]> {
@@ -31,9 +52,18 @@ export class CasesService {
   }
 
   async postAdvice(auth: User, input: PostAdviceInput) {
+    const uploadUrls = await this.prepareDownloads(
+      input.caseAdviceCommand?.fileUrls ? input.caseAdviceCommand.fileUrls : [],
+    )
+
+    const caseAdviceCommand: CaseAdviceCommand = {
+      content: input.caseAdviceCommand?.content,
+      fileUrls: uploadUrls,
+    }
+
     const request: ApiCasesCaseIdAdvicesPostRequest = {
       caseId: input.caseId,
-      caseAdviceCommand: input.caseAdviceCommand,
+      caseAdviceCommand: caseAdviceCommand,
     }
     const response = await this.casesApiWithAuth(
       auth,
