@@ -38,16 +38,18 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { CreateCaseMutation } from './createCaseGql'
-import { CreateCourtCaseMutation } from './createCourtCaseGql'
-import { UpdateCaseMutation } from './updateCaseGql'
-import { SendNotificationMutation } from './sendNotificationGql'
-import { TransitionCaseMutation } from './transitionCaseGql'
-import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
-import { ExtendCaseMutation } from './extendCaseGql'
-import { LimitedAccessTransitionCaseMutation } from './limitedAccessTransitionCaseGql'
 import { isTrafficViolationCase } from '../../stepHelper'
 import { findFirstInvalidStep } from '../../formHelper'
+import {
+  CreateCaseMutation,
+  CreateCourtCaseMutation,
+  UpdateCaseMutation,
+  TransitionCaseMutation,
+  LimitedAccessTransitionCaseMutation,
+  SendNotificationMutation,
+  RequestCourtRecordSignatureMutation,
+  ExtendCaseMutation,
+} from './mutations'
 
 type ChildKeys = Pick<
   UpdateCase,

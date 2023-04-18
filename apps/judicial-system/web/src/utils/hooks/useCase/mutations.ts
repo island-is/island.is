@@ -1,5 +1,68 @@
 import { gql } from '@apollo/client'
 
+export const CreateCaseMutation = gql`
+  mutation CreateCaseMutation($input: CreateCaseInput!) {
+    createCase(input: $input) {
+      id
+      defendants {
+        id
+      }
+    }
+  }
+`
+
+export const CreateCourtCaseMutation = gql`
+  mutation CreateCourtCaseMutation($input: CreateCourtCaseInput!) {
+    createCourtCase(input: $input) {
+      courtCaseNumber
+    }
+  }
+`
+
+export const ExtendCaseMutation = gql`
+  mutation ExtendCaseMutation($input: ExtendCaseInput!) {
+    extendCase(input: $input) {
+      id
+      type
+    }
+  }
+`
+
+export const LimitedAccessTransitionCaseMutation = gql`
+  mutation LimitedAccessTransitionCaseMutation($input: TransitionCaseInput!) {
+    limitedAccessTransitionCase(input: $input) {
+      state
+      appealState
+    }
+  }
+`
+
+export const RequestCourtRecordSignatureMutation = gql`
+  mutation RequestCourtRecordSignatureMutation($input: RequestSignatureInput!) {
+    requestCourtRecordSignature(input: $input) {
+      controlCode
+      documentToken
+    }
+  }
+`
+
+export const SendNotificationMutation = gql`
+  mutation SendNotificationMutation($input: SendNotificationInput!) {
+    sendNotification(input: $input) {
+      notificationSent
+    }
+  }
+`
+
+export const TransitionCaseMutation = gql`
+  mutation TransitionCaseMutation($input: TransitionCaseInput!) {
+    transitionCase(input: $input) {
+      state
+      appealState
+    }
+  }
+`
+
 export const UpdateCaseMutation = gql`
   mutation UpdateCaseMutation($input: UpdateCaseInput!) {
     updateCase(input: $input) {
