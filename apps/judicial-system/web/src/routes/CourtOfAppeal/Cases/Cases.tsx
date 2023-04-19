@@ -182,7 +182,7 @@ const CourtOfAppealCases = () => {
           }
         />
       </Box>
-      <SectionHeading title={formatMessage(strings.completedCasesTitle)} />
+      <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
       <Table
         handleRowClick={(id) =>
           getCaseToOpen({

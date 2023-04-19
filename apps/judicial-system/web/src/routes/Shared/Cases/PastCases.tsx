@@ -5,7 +5,6 @@ import parseISO from 'date-fns/parseISO'
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 import {
-  CaseAppealDecision,
   CaseDecision,
   CaseState,
   Defendant,
@@ -26,14 +25,10 @@ import {
   Table,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import {
-  displayCaseType,
-  getAppealDate,
-  mapCaseStateToTagVariant,
-} from './utils'
+import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
@@ -41,7 +36,6 @@ import { cases as m } from './Cases.strings'
 interface Props {
   cases: CaseListEntry[]
   onRowClick: (id: string) => void
-  isHighCourtUser: boolean
 }
 
 export function getDurationDate(
@@ -79,13 +73,13 @@ const DurationDate = ({ date }: { date: string | null }) => {
 
   return (
     <Text fontWeight={'medium'} variant="small">
-      {`${formatMessage(m.pastRequests.table.headers.duration)} ${date}`}
+      {`${formatMessage(tables.duration)} ${date}`}
     </Text>
   )
 }
 
 const PastCases: React.FC<Props> = (props) => {
-  const { cases, onRowClick, isHighCourtUser } = props
+  const { cases, onRowClick } = props
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -93,7 +87,7 @@ const PastCases: React.FC<Props> = (props) => {
   const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
 
   const pastCasesColumns = useMemo(() => {
-    const prColumns = [
+    return [
       {
         Header: formatMessage(m.pastRequests.table.headers.caseNumber),
         accessor: 'courtCaseNumber' as keyof CaseListEntry,
@@ -204,7 +198,7 @@ const PastCases: React.FC<Props> = (props) => {
         },
       },
       {
-        Header: formatMessage(m.pastRequests.table.headers.duration),
+        Header: formatMessage(tables.duration),
         accessor: 'rulingDate' as keyof CaseListEntry,
         disableSortBy: true,
         Cell: (row: {
@@ -228,55 +222,12 @@ const PastCases: React.FC<Props> = (props) => {
             state,
             validToDate,
             initialRulingDate,
-            rulingDate,
             courtEndTime,
           )
         },
       },
     ]
-
-    const highCourtPrColumns = {
-      Header: 'Kært',
-      accessor: 'accusedAppeal' as keyof CaseListEntry,
-      disableSortBy: true,
-      Cell: (row: {
-        row: {
-          original: {
-            prosecutorAppealDecision: CaseAppealDecision
-            accusedAppealDecision: CaseAppealDecision
-            prosecutorPostponedAppealDate: string
-            accusedPostponedAppealDate: string
-            rulingDate: string
-          }
-        }
-      }) => {
-        const prosecutorAppealDecision =
-          row.row.original.prosecutorAppealDecision
-        const accusedAppealDecision = row.row.original.accusedAppealDecision
-
-        const prosecutorPostponedAppealDate =
-          row.row.original.prosecutorPostponedAppealDate
-        const accusedPostponedAppealDate =
-          row.row.original.accusedPostponedAppealDate
-        const rulingDate = row.row.original.rulingDate
-
-        return formatDate(
-          getAppealDate(
-            prosecutorAppealDecision,
-            accusedAppealDecision,
-            prosecutorPostponedAppealDate,
-            accusedPostponedAppealDate,
-            rulingDate,
-          ),
-          'd.M.y',
-        )
-      },
-    }
-
-    return isHighCourtUser
-      ? [...prColumns.slice(0, -1), { ...highCourtPrColumns }]
-      : prColumns
-  }, [formatMessage, isHighCourtUser, user?.role])
+  }, [formatMessage, user?.role])
 
   const pastCasesData = useMemo(
     () =>
@@ -303,7 +254,6 @@ const PastCases: React.FC<Props> = (props) => {
                 theCase.state,
                 theCase.validToDate,
                 theCase.initialRulingDate,
-                theCase.rulingDate,
                 theCase.courtEndTime,
               )}
             />

@@ -36,4 +36,10 @@ export const tables = defineMessages({
     defaultMessage: 'Móttekið',
     description: 'Notað sem merki þegar mál í stöðu "Móttekið" í málalista',
   },
+  completedCasesTitle: {
+    id: 'judicial.system.core:tables.completed_cases_title',
+    defaultMessage: 'Afgreidd mál',
+    description:
+      'Notaður sem titill á lista yfir afgreidd mál á heimaskjá landsréttarnotanda.',
+  },
 })

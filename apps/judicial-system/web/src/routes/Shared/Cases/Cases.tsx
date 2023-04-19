@@ -20,7 +20,7 @@ import {
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+import { core, tables, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
@@ -121,7 +121,6 @@ export const Cases: React.FC = () => {
 
   const isProsecutor = user?.role === UserRole.Prosecutor
   const isRepresentative = user?.role === UserRole.Representative
-  const isHighCourtUser = user?.institution?.type === InstitutionType.HighCourt
   const isPrisonAdminUser =
     user?.institution?.type === InstitutionType.PrisonAdmin
   const isPrisonUser = user?.institution?.type === InstitutionType.Prison
@@ -238,73 +237,59 @@ export const Cases: React.FC = () => {
       ) : loading || isFiltering || !user ? (
         <TableSkeleton />
       ) : (
-        !isHighCourtUser && (
-          <>
-            <SectionHeading
-              title={formatMessage(
-                isPrisonUser
-                  ? m.activeRequests.prisonStaffUsers.title
-                  : isPrisonAdminUser
-                  ? m.activeRequests.prisonStaffUsers.prisonAdminTitle
-                  : m.activeRequests.title,
-              )}
-            />
-            <Box marginBottom={[5, 5, 12]}>
-              {activeCases.length > 0 ? (
-                isPrisonUser || isPrisonAdminUser ? (
-                  <PastCases
-                    cases={activeCases}
-                    onRowClick={handleRowClick}
-                    isHighCourtUser={false}
-                  />
-                ) : (
-                  <ActiveCases
-                    cases={activeCases}
-                    onRowClick={handleRowClick}
-                    isDeletingCase={
-                      isTransitioningCase || isSendingNotification
-                    }
-                    onDeleteCase={deleteCase}
-                  />
-                )
+        <>
+          <SectionHeading
+            title={formatMessage(
+              isPrisonUser
+                ? m.activeRequests.prisonStaffUsers.title
+                : isPrisonAdminUser
+                ? m.activeRequests.prisonStaffUsers.prisonAdminTitle
+                : m.activeRequests.title,
+            )}
+          />
+          <Box marginBottom={[5, 5, 12]}>
+            {activeCases.length > 0 ? (
+              isPrisonUser || isPrisonAdminUser ? (
+                <PastCases cases={activeCases} onRowClick={handleRowClick} />
               ) : (
-                <div className={styles.infoContainer}>
-                  <AlertMessage
-                    type="info"
-                    title={formatMessage(
-                      isPrisonUser || isPrisonAdminUser
-                        ? m.activeRequests.prisonStaffUsers.infoContainerTitle
-                        : m.activeRequests.infoContainerTitle,
-                    )}
-                    message={formatMessage(
-                      isPrisonUser || isPrisonAdminUser
-                        ? m.activeRequests.prisonStaffUsers.infoContainerText
-                        : m.activeRequests.infoContainerText,
-                    )}
-                  />
-                </div>
-              )}
-            </Box>
-          </>
-        )
+                <ActiveCases
+                  cases={activeCases}
+                  onRowClick={handleRowClick}
+                  isDeletingCase={isTransitioningCase || isSendingNotification}
+                  onDeleteCase={deleteCase}
+                />
+              )
+            ) : (
+              <div className={styles.infoContainer}>
+                <AlertMessage
+                  type="info"
+                  title={formatMessage(
+                    isPrisonUser || isPrisonAdminUser
+                      ? m.activeRequests.prisonStaffUsers.infoContainerTitle
+                      : m.activeRequests.infoContainerTitle,
+                  )}
+                  message={formatMessage(
+                    isPrisonUser || isPrisonAdminUser
+                      ? m.activeRequests.prisonStaffUsers.infoContainerText
+                      : m.activeRequests.infoContainerText,
+                  )}
+                />
+              </div>
+            )}
+          </Box>
+        </>
       )}
       <SectionHeading
         title={formatMessage(
-          isHighCourtUser
-            ? m.pastRequests.highCourtUsers.title
-            : isPrisonUser
+          isPrisonUser
             ? m.pastRequests.prisonStaffUsers.title
             : isPrisonAdminUser
             ? m.pastRequests.prisonStaffUsers.prisonAdminTitle
-            : m.pastRequests.title,
+            : tables.completedCasesTitle,
         )}
       />
       {pastCases.length > 0 ? (
-        <PastCases
-          cases={pastCases}
-          onRowClick={handleRowClick}
-          isHighCourtUser={isHighCourtUser}
-        />
+        <PastCases cases={pastCases} onRowClick={handleRowClick} />
       ) : (
         <div className={styles.infoContainer}>
           <AlertMessage
