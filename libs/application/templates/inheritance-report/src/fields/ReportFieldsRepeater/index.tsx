@@ -141,11 +141,11 @@ export const ReportFieldsRepeater: FC<
         percentage,
     )
     setTaxableInheritance(inheritance - taxFreeInheritance)
-    setInheritanceTax(Math.round(taxableInheritance * 0.01))
+    setInheritanceTax(Math.round(taxableInheritance * 0.1))
 
     setValue(`${index}.taxFreeInheritance`, taxFreeInheritance)
     setValue(`${index}.inheritance`, inheritance)
-    setValue(`${index}.inheritanceTax`, Math.round(taxableInheritance * 0.01))
+    setValue(`${index}.inheritanceTax`, Math.round(taxableInheritance * 0.1))
     setValue(`${index}.taxableInheritance`, taxableInheritance)
   }, [
     index,
@@ -207,7 +207,7 @@ export const ReportFieldsRepeater: FC<
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
               <Text variant="h4" marginBottom={2}>
-                {props.repeaterHeaderText + ' ' + (index + 1)}
+                {props.repeaterHeaderText}
               </Text>
               <Box position="absolute" className={styles.removeFieldButton}>
                 <Button

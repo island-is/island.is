@@ -773,7 +773,7 @@ export const m = defineMessages({
   },
   gunNumberLabel: {
     id: 'es.application:gunNumberLabel',
-    defaultMessage: 'Raðnúmer ökutækis',
+    defaultMessage: 'Raðnúmer skotvopns',
     description: 'Gun number label',
   },
   gunTypeLabel: {

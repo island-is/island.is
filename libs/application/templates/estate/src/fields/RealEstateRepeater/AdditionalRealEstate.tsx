@@ -103,7 +103,7 @@ export const AdditionalRealEstate = ({
         render={() => <input type="hidden" />}
       />
       <Text variant="h4">
-        {formatMessage(m.realEstateRepeaterHeader) + ' ' + (index + 1)}
+        {formatMessage(m.realEstateRepeaterHeader)}
       </Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
