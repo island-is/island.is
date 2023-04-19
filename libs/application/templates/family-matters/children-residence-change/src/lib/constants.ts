@@ -5,9 +5,11 @@ export enum ApplicationStates {
   REJECTED = 'rejected',
   COMPLETED = 'completed',
   REJECTEDBYPARENTB = 'rejectedbyparentb',
+  WAITINGFORORGANIZATION = 'waitingfororganization',
 }
 
 export enum Roles {
   ParentA = 'parentA',
   ParentB = 'parentB',
+  Organization = 'organization',
 }

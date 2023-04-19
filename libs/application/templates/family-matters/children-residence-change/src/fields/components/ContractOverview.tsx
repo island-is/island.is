@@ -14,7 +14,7 @@ import { Roles } from '../../lib/constants'
 
 interface Props {
   application: CRCApplication
-  parentKey: Roles
+  parentKey: Roles.ParentA | Roles.ParentB
 }
 
 const ContractOverview = ({ application, parentKey }: Props) => {

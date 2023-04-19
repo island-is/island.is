@@ -64,6 +64,11 @@ export const section = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'Application Received',
   },
+  waiting: {
+    id: 'crc.application:section.waiting',
+    defaultMessage: 'Beðið eftir sýslumanni',
+    description: 'Application waiting for organization',
+  },
   rejected: {
     id: 'crc.application:section.rejected',
     defaultMessage: 'Umsókn hafnað',

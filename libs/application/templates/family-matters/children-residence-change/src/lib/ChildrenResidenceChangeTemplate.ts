@@ -20,6 +20,7 @@ import {
   UserProfileApi,
 } from '../dataProviders'
 import { pruneAfterDays } from '@island.is/application/core'
+import set from 'lodash/set'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -35,6 +36,7 @@ enum TemplateApiActions {
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
+const institutionID = 'xxxxxx-xxxx'
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -161,11 +163,44 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: ApplicationStates.SUBMITTED,
+            target: ApplicationStates.WAITINGFORORGANIZATION,
           },
           REJECT: {
             target: ApplicationStates.REJECTEDBYPARENTB,
           },
+        },
+      },
+      [ApplicationStates.WAITINGFORORGANIZATION]: {
+        entry: 'assignToOrganization',
+        meta: {
+          name: applicationName,
+          status: 'inprogress',
+          lifecycle: pruneAfterDays(365),
+          actionCard: {
+            description: stateDescriptions.submitted,
+            tag: {
+              variant: 'blueberry',
+              label: stateLabels.submitted,
+            },
+          },
+          roles: [
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/WaitingForOrganization').then((module) =>
+                  Promise.resolve(module.WaitingForOrganization),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import('../forms/WaitingForOrganization').then((module) =>
+                  Promise.resolve(module.WaitingForOrganization),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [ApplicationStates.SUBMITTED]: {
@@ -325,6 +360,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           },
         }
       }),
+      assignToOrganization: assign((context) => {
+        const { application } = context
+
+        set(application, 'assignees', [institutionID])
+
+        return context
+      }),
     },
   },
 
@@ -345,6 +387,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     }
     if (application.assignees.includes(id)) {
       return Roles.ParentB
+    }
+    if (id === institutionID) {
+      // The nationalId added as claim in the Ids
+      return Roles.Organization
     }
     return undefined
   },

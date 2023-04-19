@@ -141,7 +141,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       childResidenceInfo.future.address.postalCode,
     )
 
-    const uploadDataName = 'Lögheimilisbreyting barns'
+    /* const uploadDataName = 'Lögheimilisbreyting barns'
 
     const response = await this.syslumennService
       .uploadData(participants, attachments, extraData, uploadDataName)
@@ -153,7 +153,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
           syslumennData.email,
         )
         return undefined
-      })
+      }) */
 
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
@@ -162,7 +162,8 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
           pdf.toString('binary'),
           answers.parentA.email,
           syslumennData.name,
-          response?.caseNumber,
+          '1337',
+          /* response?.caseNumber, */
         ),
       (application as unknown) as Application,
     )
@@ -174,12 +175,18 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
           pdf.toString('binary'),
           answers.parentB.email,
           syslumennData.name,
-          response?.caseNumber,
+          '1337',
+          /* response?.caseNumber, */
         ),
       (application as unknown) as Application,
     )
 
-    return response
+    return {
+      success: true,
+      message: 'Flott',
+      id: '1234',
+      caseNumber: '1337',
+    }
   }
 
   async sendNotificationToCounterParty({ application }: Props) {
