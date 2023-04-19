@@ -63,8 +63,6 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   getValueViaPath(answers, 'fishingLicense.chargeType', '') as string
 
   useEffect(() => {
-    console.log('catalogItems', catalogItems)
-    console.log('answers', answers)
     catalogItems?.map((item) => {
       if (item.chargeItemCode === chargeItemCode)
         setFishingLicensePrice(item.priceAmount)
