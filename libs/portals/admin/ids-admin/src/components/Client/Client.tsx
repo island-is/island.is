@@ -99,7 +99,6 @@ const Client = () => {
     >
       <Stack space={4}>
         <Box
-          id="TEST"
           display="flex"
           columnGap={2}
           rowGap={2}

@@ -98,7 +98,6 @@ const ContentCard: FC<ContentCardProps> = ({
     }
 
     const intentToCheck = getIntentWithSyncCheck(formData)
-
     return (isSubmitting || isLoading) && intentToCheck.name === intent
   }
 
@@ -176,8 +175,10 @@ const ContentCard: FC<ContentCardProps> = ({
                             />
                             <Text variant="small" color="blue400">
                               {inSync
-                                ? 'Settings are the same in all environments.'
-                                : 'SyncSettings are different in some enviroments'}
+                                ? formatMessage(m.inSyncAcrossAllEnvironments)
+                                : formatMessage(
+                                    m.notInSyncAcrossAllEnvironments,
+                                  )}
                             </Text>
                           </Box>
                           <Divider />
@@ -209,7 +210,7 @@ const ContentCard: FC<ContentCardProps> = ({
                                       fontWeight="semiBold"
                                       color={'blue400'}
                                     >
-                                      Sync settings (from this environment)
+                                      {formatMessage(m.syncSettings)}
                                     </Text>
                                   </button>
                                 )}

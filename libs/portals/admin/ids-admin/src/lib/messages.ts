@@ -452,4 +452,16 @@ export const m = defineMessages({
     id: 'ap.ids-admin:global-error-message',
     defaultMessage: 'An error occurred',
   },
+  syncSettings: {
+    id: 'ap.ids-admin:sync-settings',
+    defaultMessage: 'Sync settings (from this environment)',
+  },
+  inSyncAcrossAllEnvironments: {
+    id: 'ap.ids-admin:in-sync-across-all-environments',
+    defaultMessage: 'Settings are the same in all environments.',
+  },
+  notInSyncAcrossAllEnvironments: {
+    id: 'ap.ids-admin:not-in-sync-across-all-environments',
+    defaultMessage: 'SyncSettings are different in some environments',
+  },
 })
