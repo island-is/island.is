@@ -10,11 +10,11 @@ import {
 
 @Resolver(() => DocumentInfoResult)
 @UseGuards(FeatureFlagGuard)
+@FeatureFlag(Features.consultationPortalApplication)
 export class DocumentResolver {
   constructor(private documentService: DocumentService) {}
 
   @Query(() => [DocumentInfoResult], { name: 'consultationPortalDocument' })
-  @FeatureFlag(Features.consultationPortalApplication)
   async getCaseDocument(@Args('documentId') documentId: string): Promise<void> {
     return this.documentService.getCaseDocument(documentId)
   }

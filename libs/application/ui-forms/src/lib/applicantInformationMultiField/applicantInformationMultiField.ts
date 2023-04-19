@@ -79,6 +79,7 @@ export const applicantInformationMultiField = buildMultiField({
       title: applicantInformation.labels.email,
       width: 'half',
       variant: 'email',
+      backgroundColor: 'blue',
       required: true,
       defaultValue: '',
       maxLength: 100,
