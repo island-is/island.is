@@ -10,10 +10,6 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { icReportForm, titles } from '@island.is/judicial-system-web/messages'
 import { isPoliceReportStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
@@ -72,10 +68,6 @@ const PoliceReport = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_REPORT}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       onNavigationTo={handleNavigationTo}
@@ -258,6 +250,7 @@ const PoliceReport = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INVESTIGATION_CASE_CASE_FILES_ROUTE)

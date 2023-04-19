@@ -1,10 +1,12 @@
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsObject } from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
+import type { User } from '@island.is/judicial-system/types'
+
 export class DeliverDefendantToCourtDto {
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty()
-  userId!: string
+  @IsObject()
+  @ApiProperty({ type: Object })
+  readonly user!: User
 }

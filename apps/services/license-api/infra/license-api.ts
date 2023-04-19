@@ -4,6 +4,7 @@ import {
   Client,
   Disability,
   Firearm,
+  DrivingLicense,
 } from '../../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (): ServiceBuilder<'license-api'> =>
@@ -11,7 +12,7 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     .namespace('license-api')
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
-      requests: { cpu: '200m', memory: '256Mi' },
+      requests: { cpu: '15m', memory: '256Mi' },
     })
     .secrets({
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
@@ -22,8 +23,19 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       DISABILITY_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID',
+      DISABILITY_LICENSE_FETCH_TIMEOUT:
+        '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
+      DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT',
+      PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY',
+      PKPASS_API_URL: '/k8s/api/PKPASS_API_URL',
+      PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY',
+      PKPASS_CACHE_KEY: '/k8s/api/PKPASS_CACHE_KEY',
+      PKPASS_CACHE_TOKEN_EXPIRY_DELTA:
+        '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA',
+      PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES',
     })
-    .xroad(Base, Client, Firearm, Disability)
+    .xroad(Base, Client, Firearm, Disability, DrivingLicense)
     .ingress({
       primary: {
         host: {

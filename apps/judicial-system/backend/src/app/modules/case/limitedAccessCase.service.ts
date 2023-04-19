@@ -1,8 +1,15 @@
 import { Includeable, Op, OrderItem } from 'sequelize'
 
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -10,6 +17,8 @@ import {
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { Defendant } from '../defendant'
@@ -52,7 +61,16 @@ export const attributes: (keyof Case)[] = [
   'parentCaseId',
   'caseModifiedExplanation',
   'seenByDefender',
+  'caseResentExplanation',
+  'appealState',
+  'accusedAppealDecision',
+  'prosecutorAppealDecision',
+  'accusedPostponedAppealDate',
+  'prosecutorPostponedAppealDate',
 ]
+
+export interface LimitedUpdateCase
+  extends Pick<Case, 'accusedPostponedAppealDate' | 'appealState'> {}
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -90,7 +108,15 @@ export const include: Includeable[] = [
     required: false,
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
-      category: CaseFileCategory.RULING,
+      category: [
+        CaseFileCategory.RULING,
+        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+      ],
     },
   },
 ]
@@ -101,7 +127,11 @@ export const order: OrderItem[] = [
 
 @Injectable()
 export class LimitedAccessCaseService {
-  constructor(@InjectModel(Case) private readonly caseModel: typeof Case) {}
+  constructor(
+    private readonly messageService: MessageService,
+    @InjectModel(Case) private readonly caseModel: typeof Case,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async findById(caseId: string): Promise<Case> {
     const theCase = await this.caseModel.findOne({
@@ -127,6 +157,41 @@ export class LimitedAccessCaseService {
     }
 
     return theCase
+  }
+
+  async update(
+    theCase: Case,
+    update: LimitedUpdateCase,
+    user: TUser,
+  ): Promise<Case> {
+    // Here we assume that the case is being appealed
+    const [numberOfAffectedRows] = await this.caseModel.update(
+      { ...update, accusedPostponedAppealDate: nowFactory() },
+      { where: { id: theCase.id } },
+    )
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating case ${theCase.id}`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update case ${theCase.id}`,
+      )
+    }
+
+    // Here we assume that the case is being appealed
+    this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+
+    // Return limited access case
+    return await this.findById(theCase.id)
   }
 
   findDefenderNationalId(theCase: Case, nationalId: string): User {

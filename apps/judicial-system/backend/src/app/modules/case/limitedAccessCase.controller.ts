@@ -1,11 +1,13 @@
 import { Response } from 'express'
 
 import {
+  Body,
   Controller,
   Get,
   Header,
   Inject,
   Param,
+  Patch,
   Query,
   Res,
   UseGuards,
@@ -38,9 +40,15 @@ import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import { Case } from './models/case.model'
 import { CaseService } from './case.service'
-import { LimitedAccessCaseService } from './limitedAccessCase.service'
+import {
+  LimitedAccessCaseService,
+  LimitedUpdateCase,
+} from './limitedAccessCase.service'
+import { defenderTransitionRule } from './guards/rolesRules'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
+import { transitionCase } from './state/case.state'
 
-@Controller('api/case/:caseId')
+@Controller('api/case/:caseId/limitedAccess')
 @ApiTags('limited access cases')
 export class LimitedAccessCaseController {
   constructor(
@@ -57,7 +65,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('limitedAccess')
+  @Get()
   @ApiOkResponse({
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
@@ -68,8 +76,41 @@ export class LimitedAccessCaseController {
     return theCase
   }
 
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    LimitedAccessCaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderTransitionRule)
+  @Patch('state')
+  @ApiOkResponse({
+    type: Case,
+    description: 'Updates the state of a case',
+  })
+  transition(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: TUser,
+    @CurrentCase() theCase: Case,
+    @Body() transition: TransitionCaseDto,
+  ): Promise<Case> {
+    this.logger.debug(
+      `Transitioning case ${caseId} to ${transition.transition}`,
+    )
+
+    const update: LimitedUpdateCase = transitionCase(
+      transition.transition,
+      theCase.state,
+      theCase.appealState,
+    )
+
+    return this.limitedAccessCaseService.update(theCase, update, user)
+  }
+
   @UseGuards(TokenGuard, LimitedAccessCaseExistsGuard)
-  @Get('defender/limitedAccess')
+  @Get('defender')
   @ApiOkResponse({
     type: User,
     description: 'Gets a case defender by national id',
@@ -96,7 +137,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('request/limitedAccess')
+  @Get('request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -125,7 +166,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('courtRecord/limitedAccess')
+  @Get('courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -155,7 +196,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('ruling/limitedAccess')
+  @Get('ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },

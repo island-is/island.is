@@ -7,6 +7,7 @@ import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -39,7 +40,7 @@ describe('HPA definitions', () => {
           min: 2,
           max: 3,
         },
-        metric: { cpuAverageUtilization: 70, nginxRequestsIrate: 2 },
+        metric: { cpuAverageUtilization: 70, nginxRequestsIrate: 5 },
       },
     })
   })

@@ -37,6 +37,14 @@ export type OperatorField = {
   approved?: boolean
 }
 
+export type OperatorFormField = Partial<
+  OperatorField & {
+    id: string
+    initial: boolean
+    dummy?: boolean
+  }
+>
+
 interface ReviewerProps {
   nationalId: string
   name: string
@@ -65,4 +73,11 @@ export type OperatorInformation = z.TypeOf<typeof OperatorInformationSchema>
 export type Rejecter = z.TypeOf<typeof RejecterSchema>
 export type OldOperatorInformation = z.TypeOf<
   typeof OldOperatorInformationSchema
+>
+export type OldOperatorInformationFormField = Partial<
+  OldOperatorInformation & {
+    id: string
+    initial: boolean
+    dummy?: boolean
+  }
 >

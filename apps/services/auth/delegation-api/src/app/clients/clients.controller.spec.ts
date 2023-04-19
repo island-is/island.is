@@ -3,6 +3,7 @@ import request from 'supertest'
 import { AuthScope } from '@island.is/auth/scopes'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
+import { TestEndpointOptions } from '@island.is/testing/nest'
 import {
   buildQueryString,
   getRequestMethod,
@@ -14,7 +15,6 @@ import {
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../test/setup'
-import { TestEndpointOptions } from '../../../test/types'
 
 interface TestCase {
   domains: {
@@ -191,6 +191,7 @@ describe('ClientsController', () => {
         await factory.createDomain({ name: domainName })
         const client = await factory.createClient({
           clientId: `${domainName}/c1`,
+          domainName,
         })
 
         await factory.createTranslations(client, 'en', clientTranslations)

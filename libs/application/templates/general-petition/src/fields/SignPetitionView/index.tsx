@@ -73,7 +73,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
           <Box position="absolute" bottom={0} right={0}>
             <Button
               icon="arrowForward"
-              onClick={() => navigate('/../minarsidur/umsoknir')}
+              onClick={() => navigate('/../minarsidur/min-gogn/listar')}
             >
               {formatMessage(m.backtoSP)}
             </Button>

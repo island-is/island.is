@@ -24,6 +24,7 @@ import type {
   PersonalElectionSubmitInput,
 } from './types'
 import { ClientTypes, ContactType } from './types'
+import { hasReachedAge } from './utils/ageUtil'
 import {
   getCemeteryFileName,
   getPersonalElectionFileName,
@@ -52,6 +53,7 @@ export class FinancialStatementsInaoClientService {
       mode: 'token',
       tokenEndpoint: this.config.tokenEndpoint,
     },
+    timeout: 30000,
   })
 
   async getClientTypes(): Promise<ClientType[] | null> {
@@ -179,7 +181,7 @@ export class FinancialStatementsInaoClientService {
       })
 
     return elections.filter((x) =>
-      this.hasReachedAge(nationalId, x.electionDate, x.minimumAge),
+      hasReachedAge(nationalId, x.electionDate, x.minimumAge),
     )
   }
 
@@ -206,8 +208,6 @@ export class FinancialStatementsInaoClientService {
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
-
-    console.log('getClientFinancialLimit', data)
 
     const found = data.value.find((x: any) => x.star_year == year)
 
@@ -567,18 +567,5 @@ export class FinancialStatementsInaoClientService {
   async getData(url: string) {
     const response = await this.fetch(url)
     return await response.json()
-  }
-
-  private hasReachedAge(
-    nationalId: string,
-    electionDate: Date,
-    minimumAge: number,
-  ) {
-    const year =
-      (nationalId.substring(9, 10) === '0' ? 20 : 19) +
-      nationalId.substring(4, 6)
-    const electionYear = electionDate.getFullYear()
-    const age = electionYear - Number(year)
-    return age >= minimumAge
   }
 }

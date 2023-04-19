@@ -12,16 +12,6 @@ export const payment = {
       defaultMessage: 'Greiðsla',
       description: 'Title of for payment page',
     },
-    tryAgain: {
-      id: 'ta.ovlp.application:payment.general.tryAgain',
-      defaultMessage: 'Reyna aftur',
-      description: '',
-    },
-    forwardingToPayment: {
-      id: 'ta.ovlp.application:payment.general.forwardingToPayment',
-      defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
-      description: 'Forwarding you to payment handler...',
-    },
   }),
   paymentChargeOverview: defineMessages({
     forPayment: {
@@ -33,6 +23,16 @@ export const payment = {
       id: 'ta.ovlp.application:payment.paymentChargeOverview.total',
       defaultMessage: 'Samtals',
       description: 'Total amount label',
+    },
+    frontLabel: {
+      id: 'ta.ovlp.application:payment.paymentChargeOverview.frontLabel',
+      defaultMessage: 'merki að framan',
+      description: 'Front plate label',
+    },
+    rearLabel: {
+      id: 'ta.ovlp.application:payment.paymentChargeOverview.rearLabel',
+      defaultMessage: 'merki að aftan',
+      description: 'Rear plate label',
     },
   }),
   confirmation: defineMessages({

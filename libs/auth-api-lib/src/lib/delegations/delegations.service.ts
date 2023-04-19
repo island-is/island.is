@@ -31,7 +31,7 @@ import type { PersonalRepresentativeDTO } from '../personal-representative/dto/p
 import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { ResourcesService } from '../resources/resources.service'
-import { DEFAULT_DOMAIN } from '../types/defaultDomain'
+import { DEFAULT_DOMAIN } from '../types'
 import { DelegationConfig } from './DelegationConfig'
 import { DelegationScopeService } from './delegation-scope.service'
 import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'

@@ -2,6 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const icCourtOverview = {
   sections: {
+    // TODO: REMOVE caseResentExplanation
     caseResentExplanation: defineMessages({
       title: {
         id:

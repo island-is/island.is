@@ -6,6 +6,11 @@ export const m = defineMessages({
     defaultMessage: 'Undirskriftalistar',
     description: '',
   },
+  createList: {
+    id: 'sp.petitions:createList',
+    defaultMessage: 'Stofna nýjan lista',
+    description: '',
+  },
   intro: {
     id: 'sp.petitions:intro',
     defaultMessage: 'Yfirlit yfir undirskriftalista og lista í þinni umsjá.',
@@ -127,9 +132,14 @@ export const m = defineMessages({
     defaultMessage: 'Setja nafn mitt á þennan lista',
     description: '',
   },
-  modalButtonYes: {
-    id: 'sp.petitions:modalButtonYes',
-    defaultMessage: 'Já',
+  modalButtonCloseListYes: {
+    id: 'sp.petitions:modalButtonCloseListYes',
+    defaultMessage: 'Ljúka lista',
+    description: '',
+  },
+  modalButtonOpenListYes: {
+    id: 'sp.petitions:modalButtonOpenListYes',
+    defaultMessage: 'Opna lista',
     description: '',
   },
   modalButtonNo: {

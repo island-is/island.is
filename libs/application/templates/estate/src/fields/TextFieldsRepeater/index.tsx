@@ -11,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 import * as styles from '../styles.css'
-import { formatCurrency } from '@island.is/application/ui-components'
 
 type Props = {
   field: {
@@ -25,6 +24,7 @@ type Props = {
 
 export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   field,
+  errors,
 }) => {
   const { id, props } = field
   const { fields, append, remove } = useFieldArray<any>({
@@ -63,7 +63,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
 
   return (
     <Box>
-      {fields.map((repeaterField, index) => {
+      {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
 
         return (
@@ -109,12 +109,18 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       currency={field.currency}
                       readOnly={field.readOnly}
                       type={field.type}
+                      error={
+                        !!errors && errors[id] && (errors[id] as any)[index]
+                          ? (errors[id] as any)[index][field.id] ?? ''
+                          : undefined
+                      }
                       onChange={(e) => {
                         setIndex(fieldIndex)
+                        const value = Math.max(0, Number(e.target.value))
                         if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(Number(e.target.value))
+                          setRateOfExchange(value)
                         } else if (field.id === 'faceValue') {
-                          setFaceValue(Number(e.target.value))
+                          setFaceValue(value)
                         }
                       }}
                     />

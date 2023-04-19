@@ -1,26 +1,29 @@
-import React, {
-  forwardRef,
-  useState,
-  ReactElement,
-  HTMLProps,
-  ButtonHTMLAttributes,
-  LabelHTMLAttributes,
-  ReactNode,
-  useContext,
-} from 'react'
+import * as inputStyles from '../Input/Input.css'
+import * as styles from './AsyncSearch.css'
+
 import Downshift, { DownshiftProps } from 'downshift'
+import { Input, InputProps } from './shared/Input/Input'
+import { Menu, MenuProps } from './shared/Menu/Menu'
+import React, {
+  ButtonHTMLAttributes,
+  HTMLProps,
+  LabelHTMLAttributes,
+  ReactElement,
+  ReactNode,
+  forwardRef,
+  useContext,
+  useState,
+} from 'react'
+
+import { ColorSchemeContext } from '../context'
 import { ControllerStateAndHelpers } from 'downshift/typings'
+import { ErrorMessage } from '../Input/ErrorMessage'
+import { Icon } from '../IconRC/Icon'
+import { Item } from './shared/Item/Item'
+import { Label } from './shared/Label/Label'
+import { TestSupport } from '@island.is/island-ui/utils'
 import cn from 'classnames'
 import { helperStyles } from '@island.is/island-ui/theme'
-import { Input, InputProps } from './shared/Input/Input'
-import { Label } from './shared/Label/Label'
-import { Menu, MenuProps } from './shared/Menu/Menu'
-import { Item } from './shared/Item/Item'
-import { Icon } from '../IconRC/Icon'
-import { ColorSchemeContext } from '../context'
-
-import * as styles from './AsyncSearch.css'
-import { TestSupport } from '@island.is/island-ui/utils'
 
 export type AsyncSearchSizes = 'medium' | 'large'
 
@@ -50,6 +53,9 @@ export interface AsyncSearchProps {
   size?: AsyncSearchSizes
   loading?: boolean
   closeMenuOnSubmit?: boolean
+  required?: boolean
+  errorMessage?: string
+  hasError?: boolean
   white?: boolean
   onSubmit?: (
     inputValue: string,
@@ -68,11 +74,14 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       size = 'medium',
       colored,
       options,
+      errorMessage,
+      hasError = errorMessage !== undefined,
       filter = false,
       loading,
       inputValue,
       initialInputValue,
       white,
+      required,
       closeMenuOnSubmit,
       onChange,
       onSubmit,
@@ -86,11 +95,8 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
 
     const onFocus = () => setFocused(true)
     const onBlur = () => setFocused(false)
-
     const hasLabel = Boolean(size === 'large' && label)
-
     const whiteColorScheme = colorScheme === 'white' || white
-
     return (
       <Downshift
         id={id}
@@ -179,6 +185,8 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             <AsyncSearchInput
               hasFocus={focused}
               loading={loading}
+              hasError={hasError}
+              errorMessage={errorMessage}
               rootProps={getRootProps(
                 { refKey: 'ref' },
                 { suppressRefError: true },
@@ -212,6 +220,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                   : getToggleButtonProps()),
               }}
               label={label}
+              required={required}
               labelProps={getLabelProps()}
               menuProps={{
                 ...getMenuProps(),
@@ -264,7 +273,10 @@ export interface AsyncSearchInputProps {
   buttonProps: ButtonHTMLAttributes<HTMLButtonElement>
   menuProps?: Partial<MenuProps>
   white?: boolean
+  hasError?: boolean
+  required?: boolean
   label?: string
+  errorMessage?: string
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>
   loading?: boolean
   children?: ReactNode
@@ -284,9 +296,12 @@ export const AsyncSearchInput = forwardRef<
       loading = false,
       white = false,
       label,
+      hasError,
       labelProps = {},
+      required,
       menuProps = {},
       children,
+      errorMessage,
       skipContext,
       dataTestId,
     },
@@ -316,55 +331,70 @@ export const AsyncSearchInput = forwardRef<
     }
 
     return (
-      <div
-        {...rootProps}
-        className={cn(styles.wrapper, {
-          [styles.focused]: hasFocus || isOpen,
-          [styles.open]: isOpen,
-          [styles.white]: whiteColorScheme,
-        })}
-      >
-        <Input
-          {...inputProps}
-          data-testid={dataTestId}
-          color={inputColor}
-          isOpen={isOpen}
-          ref={ref}
-        />
-        {!loading ? (
-          <button
-            className={cn(styles.icon, styles.iconSizes[size], {
-              [styles.transparentBackground]:
-                whiteColorScheme || blueberryColorScheme,
-              [styles.focusable]: value,
-            })}
-            tabIndex={value ? 0 : -1}
-            {...buttonProps}
-          >
-            <Icon size={size} icon="search" color={iconColor} />
-          </button>
-        ) : (
-          <span
-            className={cn(styles.loadingIcon, styles.loadingIconSizes[size])}
-            aria-hidden="false"
-            aria-label="Loading"
-          >
-            <Icon icon="reload" color={iconColor} />
-          </span>
-        )}
-        {showLabel && <Label {...labelProps}>{label}</Label>}
-        {!showLabel && (
-          <label
-            className={helperStyles.srOnly}
-            id={inputProps['aria-labelledby']}
-          >
-            {inputProps.placeholder}
-          </label>
-        )}
-        <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
-          {children}
-        </Menu>
-      </div>
+      <>
+        <div
+          {...rootProps}
+          className={cn(styles.wrapper, {
+            [styles.focused]: hasFocus || isOpen,
+            [styles.open]: isOpen,
+            [styles.white]: whiteColorScheme,
+            [styles.hasError]: hasError,
+          })}
+        >
+          <Input
+            {...inputProps}
+            data-testid={dataTestId}
+            color={inputColor}
+            isOpen={isOpen}
+            ref={ref}
+            hasError={hasError}
+          />
+          {!loading ? (
+            <button
+              className={cn(styles.icon, styles.iconSizes[size], {
+                [styles.transparentBackground]:
+                  whiteColorScheme || blueberryColorScheme,
+                [styles.focusable]: value,
+              })}
+              tabIndex={value ? 0 : -1}
+              {...buttonProps}
+            >
+              <Icon size={size} icon="search" color={iconColor} />
+            </button>
+          ) : (
+            <span
+              className={cn(styles.loadingIcon, styles.loadingIconSizes[size])}
+              aria-hidden="false"
+              aria-label="Loading"
+            >
+              <Icon icon="reload" color={iconColor} />
+            </span>
+          )}
+          {showLabel && (
+            <Label {...labelProps} hasError={hasError}>
+              {label}
+              {required && (
+                <span aria-hidden="true" className={inputStyles.isRequiredStar}>
+                  {' '}
+                  *
+                </span>
+              )}
+            </Label>
+          )}
+          {!showLabel && (
+            <label
+              className={helperStyles.srOnly}
+              id={inputProps['aria-labelledby']}
+            >
+              {inputProps.placeholder}
+            </label>
+          )}
+          <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
+            {children}
+          </Menu>
+        </div>
+        {hasError && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      </>
     )
   },
 )

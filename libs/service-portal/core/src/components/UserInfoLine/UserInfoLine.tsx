@@ -5,10 +5,10 @@ import {
   Button,
   GridRow,
   GridColumn,
-  LoadingDots,
   GridColumnProps,
   Tooltip,
   ResponsiveSpace,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -90,7 +90,10 @@ export const UserInfoLine: FC<Props> = ({
             overflow="hidden"
           >
             <Text variant="h5" as="span" lineHeight="lg">
-              {formatMessage(label)} {tooltip && <Tooltip text={tooltip} />}
+              {formatMessage(label)}{' '}
+              {tooltip && (
+                <Tooltip placement="right" fullWidth text={tooltip} />
+              )}
             </Text>
           </Box>
         </GridColumn>
@@ -104,7 +107,7 @@ export const UserInfoLine: FC<Props> = ({
             overflow="hidden"
           >
             {loading ? (
-              <LoadingDots />
+              <SkeletonLoader width="70%" height={27} />
             ) : renderContent ? (
               renderContent()
             ) : (

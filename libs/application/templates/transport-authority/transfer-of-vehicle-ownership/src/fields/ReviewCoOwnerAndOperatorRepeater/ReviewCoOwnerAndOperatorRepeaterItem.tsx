@@ -1,9 +1,14 @@
-import { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text, Button } from '@island.is/island-ui/core'
+import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
+import {
+  Box,
+  Text,
+  Button,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
-import { ArrayField } from 'react-hook-form'
 import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
@@ -16,7 +21,7 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: Partial<ArrayField<CoOwnerAndOperator, 'id'>>
+  repeaterField: GenericFormField<CoOwnerAndOperator>
   handleRemove: (index: number) => void
   setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
   coOwnersAndOperators?: CoOwnerAndOperator[]
@@ -43,7 +48,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
   )
   const [name, setName] = useState<string>(repeaterField.name || '')
 
-  const { setValue, register } = useFormContext()
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const fieldIndex = `${id}[${index}]`
   const userMessageId = repeaterField.type ?? 'coOwner'
@@ -71,6 +76,8 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
       setValue(nameField, name)
       setValue(emailField, email)
       setValue(phoneField, phone)
+      setValue(wasRemovedField, repeaterField.wasRemoved)
+      setValue(typeField, userMessageId)
     }
   }, [email, phone, nationalId, name, userMessageId])
 
@@ -103,51 +110,45 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         nameDefaultValue={name}
         errorMessage={errorMessage}
       />
-      <Box marginTop={2}>
-        <InputController
-          id={emailField}
-          name={emailField}
-          type="email"
-          label={formatMessage(information.labels[userMessageId].email)}
-          error={errorMessage && email.length === 0 ? errorMessage : undefined}
-          backgroundColor="blue"
-          required
-          defaultValue={email}
-          onChange={debounce(
-            (event) => setEmail(event.target.value),
-            DEBOUNCE_INTERVAL,
-          )}
-        />
-      </Box>
-      <Box marginTop={2}>
-        <InputController
-          id={phoneField}
-          name={phoneField}
-          type="tel"
-          format="###-####"
-          label={formatMessage(information.labels[userMessageId].phone)}
-          error={errorMessage && phone.length === 0 ? errorMessage : undefined}
-          backgroundColor="blue"
-          required
-          defaultValue={phone}
-          onChange={debounce(
-            (event) => setPhone(event.target.value),
-            DEBOUNCE_INTERVAL,
-          )}
-        />
-      </Box>
-      <input
-        type="hidden"
-        value={userMessageId}
-        ref={register({ required: true })}
-        name={typeField}
-      />
-      <input
-        type="hidden"
-        value={repeaterField.wasRemoved}
-        ref={register({ required: true })}
-        name={wasRemovedField}
-      />
+      <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={emailField}
+            name={emailField}
+            type="email"
+            label={formatMessage(information.labels[userMessageId].email)}
+            error={
+              errorMessage && email.length === 0 ? errorMessage : undefined
+            }
+            backgroundColor="blue"
+            required
+            defaultValue={email}
+            onChange={debounce(
+              (event) => setEmail(event.target.value),
+              DEBOUNCE_INTERVAL,
+            )}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id={phoneField}
+            name={phoneField}
+            type="tel"
+            format="###-####"
+            label={formatMessage(information.labels[userMessageId].phone)}
+            error={
+              errorMessage && phone.length === 0 ? errorMessage : undefined
+            }
+            backgroundColor="blue"
+            required
+            defaultValue={phone}
+            onChange={debounce(
+              (event) => setPhone(event.target.value),
+              DEBOUNCE_INTERVAL,
+            )}
+          />
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }

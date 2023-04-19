@@ -115,6 +115,15 @@ Disabled.args = {
   disabled: true,
 }
 
+export const DisabledWithValue = Template.bind({})
+DisabledWithValue.args = {
+  label: 'This is the label',
+  placeholder: 'This is the placeholder',
+  name: 'DisabledWithValue',
+  defaultValue: 'This is the value',
+  disabled: true,
+}
+
 export const ReadOnly = Template.bind({})
 ReadOnly.args = {
   label: 'Read only label',
@@ -132,4 +141,165 @@ RightAligned.args = {
   name: 'Test14',
   backgroundColor: 'blue',
   rightAlign: true,
+}
+
+export const CopyPasswordButton = (args) => {
+  const [showPassword, setShowPassword] = React.useState(false)
+  const ref = React.useRef<HTMLInputElement>(null)
+  const handleCopy = (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    if (!ref.current) return
+
+    ref.current.select()
+    document.execCommand('copy')
+    if (ev.target instanceof HTMLElement) {
+      ev.target.focus()
+    }
+
+    // Maybee trigger a toast here.
+    console.log('Copy value', ref.current.value)
+  }
+
+  const handleShow = () => {
+    setShowPassword(!showPassword)
+  }
+
+  return (
+    <Input
+      ref={ref}
+      {...args}
+      type={showPassword ? 'text' : 'password'}
+      buttons={[
+        {
+          name: 'copy',
+          type: 'outline',
+          onClick: handleCopy,
+          label: 'Copy value',
+        },
+        {
+          name: showPassword ? 'eyeOff' : 'eye',
+          onClick: handleShow,
+          label: showPassword ? 'Hide password' : 'Show password',
+        },
+      ]}
+    />
+  )
+}
+CopyPasswordButton.args = {
+  label: 'Read only label',
+  name: 'Test15',
+  readOnly: true,
+  value: 'AStingThatShouldBeCopied',
+}
+
+export const WithButtonsAndAnError = Template.bind({})
+WithButtonsAndAnError.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test17',
+  errorMessage: 'This is the error message',
+  buttons: [
+    { name: 'copy', type: 'outline', onClick: () => console.log('Copy value') },
+    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' },
+  ],
+}
+
+export const MediumWithIconAndButton = Template.bind({})
+MediumWithIconAndButton.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test16',
+
+  icon: { name: 'informationCircle' },
+  buttons: [
+    {
+      name: 'copy',
+      type: 'outline',
+      onClick: () => console.log('Copy value'),
+      label: 'Copy value',
+      disabled: true,
+    },
+  ],
+}
+
+export const SmallWithIconAndButton = Template.bind({})
+SmallWithIconAndButton.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test18',
+  size: 'sm',
+  backgroundColor: 'blue',
+  icon: { name: 'informationCircle' },
+  buttons: [
+    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' },
+    {
+      name: 'copy',
+      type: 'outline',
+      onClick: () => console.log('Copy value'),
+      label: 'Copy value',
+    },
+  ],
+}
+export const ExtraSmallWithIconAndButton = Template.bind({})
+ExtraSmallWithIconAndButton.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test19',
+  size: 'xs',
+  icon: { name: 'informationCircle' },
+  buttons: [
+    { name: 'eye', onClick: () => console.log('Show'), label: 'Show password' },
+    {
+      name: 'copy',
+      type: 'outline',
+      onClick: () => console.log('Copy value'),
+      label: 'Copy value',
+    },
+  ],
+}
+
+export const Tiny = Template.bind({})
+Tiny.args = {
+  label: 'Etízólam (ng/ml)',
+  placeholder: 'This is the placeholder',
+  name: '2222',
+  size: 'xs',
+  buttons: [
+    {
+      name: 'close',
+      onClick: () => console.log('Show'),
+      label: 'Show password',
+    },
+  ],
+}
+
+export const WithADisabledButton = Template.bind({})
+WithADisabledButton.args = {
+  label: 'Label',
+  placeholder: 'This is the placeholder',
+  name: 'Test20',
+  buttons: [
+    {
+      name: 'copy',
+      type: 'outline',
+      onClick: () => console.log('Copy value'),
+      label: 'Copy value',
+      disabled: true,
+    },
+  ],
+}
+
+export const Numbers = Template.bind({})
+Numbers.args = {
+  label: 'Numbers Label',
+  placeholder: 'This is the placeholder for numbers',
+  name: 'numbers',
+  type: 'number',
+}
+
+export const InputMode = Template.bind({})
+InputMode.args = {
+  label: 'Kennital',
+  placeholder: 'Placeholder',
+  name: 'inputmode',
+  inputMode: 'numeric',
 }

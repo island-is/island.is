@@ -6,6 +6,7 @@ import { Message } from '@island.is/email-service'
 import {
   getApplicationAnswers,
   Period,
+  NO,
 } from '@island.is/application/templates/parental-leave'
 import { EmailTemplateGeneratorProps } from '../../../../types'
 import { pathToAsset } from '../parental-leave.utils'
@@ -35,6 +36,9 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
   const employersArray: EmailToType[] = []
 
   employers?.forEach((e) => {
+    if (e.stillEmployed === NO) {
+      return
+    }
     employersArray.push({
       name: '',
       address: e.email,
@@ -104,7 +108,7 @@ export const generateApplicationApprovedByEmployerToEmployerEmail: EmployerRejec
                     new Date(period.startDate),
                     dateFormat.is,
                   )} til ${format(new Date(period.endDate), dateFormat.is)}<br/>
-                  ( Raunfæðingardagur til ${format(
+                  ( Fæðingadagur til ${format(
                     new Date(period.endDate),
                     dateFormat.is,
                   )} )`

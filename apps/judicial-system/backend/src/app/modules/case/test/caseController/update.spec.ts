@@ -213,23 +213,23 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_REQUEST_TO_COURT,
-            userId,
+            user,
             caseId,
           },
           {
             type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
-            userId,
+            user,
             caseId,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
-            userId,
+            user,
             caseId,
             defendantId: defendantId1,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
-            userId,
+            user,
             caseId,
             defendantId: defendantId2,
           },
@@ -256,13 +256,13 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
-            userId,
+            user,
             caseId,
             defendantId: defendantId1,
           },
           {
             type: MessageType.DELIVER_DEFENDANT_TO_COURT,
-            userId,
+            user,
             caseId,
             defendantId: defendantId2,
           },
@@ -292,7 +292,7 @@ describe('CaseController - Update', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
-          userId,
+          user,
           caseId,
         },
       ])
@@ -367,48 +367,48 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.DELIVER_PROSECUTOR_TO_COURT,
-            userId,
+            user,
             caseId,
           },
           {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
-            userId,
+            user,
             caseId,
             policeCaseNumber: policeCaseNumber1,
           },
           {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
-            userId,
+            user,
             caseId,
             policeCaseNumber: policeCaseNumber2,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            userId,
+            user,
             caseId,
             caseFileId: coverLetterId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            userId,
+            user,
             caseId,
             caseFileId: indictmentId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            userId,
+            user,
             caseId,
             caseFileId: criminalRecordId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            userId,
+            user,
             caseId,
             caseFileId: costBreakdownId,
           },
           {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            userId,
+            user,
             caseId,
             caseFileId: uncategorisedId,
           },
@@ -439,7 +439,7 @@ describe('CaseController - Update', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
             type: MessageType.SEND_MODIFIED_NOTIFICATION,
-            userId,
+            user,
             caseId,
           },
         ])

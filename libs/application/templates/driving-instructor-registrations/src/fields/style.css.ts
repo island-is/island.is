@@ -15,7 +15,13 @@ export const showSuccessIcon = style({
   animation: `10s ${icon}`,
   opacity: 0,
   position: 'absolute',
-  right: -25,
+  right: 25,
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.sm}px)`]: {
+      display: 'none',
+    },
+  },
 })
 
 export const successBackground = style({

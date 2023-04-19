@@ -3,6 +3,7 @@ import {
   UserIdentity,
   ActiveDTO,
 } from '@island.is/auth-api-lib'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   BadRequestException,
   Body,
@@ -29,7 +30,7 @@ const namespace = `${environment.audit.defaultNamespace}/user-identities`
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
 @Controller({
-  path: 'backend/user-identities',
+  path: 'user-identities',
   version: [VERSION_NEUTRAL, '1'],
 })
 @Audit({ namespace })
@@ -87,6 +88,13 @@ export class UserIdentitiesController {
       throw new BadRequestException('Id must be provided')
     }
 
-    return this.userIdentityService.setActive(subjectId, req.active)
+    const userIdentity = await this.userIdentityService.setActive(
+      subjectId,
+      req.active,
+    )
+    if (!userIdentity) {
+      throw new NoContentException()
+    }
+    return userIdentity
   }
 }

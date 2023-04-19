@@ -95,7 +95,7 @@ const PetitionView = (namespace) => {
                 <GridRow>
                   <GridColumn span={['12/12', '4/12', '4/12']}>
                     <Text variant="h4">
-                      {n('listIsOpenTil', 'Meðmælendalistinn er opinn til:')}
+                      {n('listIsOpenTil', 'Undirskriftalistinn er opinn til:')}
                     </Text>
                     <Text variant="default">{formatDate(list.closedDate)}</Text>
                   </GridColumn>
@@ -117,7 +117,7 @@ const PetitionView = (namespace) => {
                       icon="arrowForward"
                       onClick={() =>
                         window?.open(
-                          `${getBaseUrl()}/medmaelendalisti/${
+                          `${getBaseUrl()}/undirskriftalisti/${
                             list.meta.applicationId
                           }`,
                         )
@@ -183,7 +183,7 @@ const PetitionView = (namespace) => {
             ) : (
               <GridColumn span="10/12" offset="1/12">
                 <Text marginY={7} variant="h3">
-                  {n('listIsClosed', 'Meðmælendalistinn er lokaður')}
+                  {n('listIsClosed', 'Undirskriftalistinn er lokaður')}
                 </Text>
               </GridColumn>
             )}

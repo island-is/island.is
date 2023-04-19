@@ -58,6 +58,7 @@ const variantStyles: VariantStyles = {
 export interface AlertMessageProps {
   type: AlertMessageType
   testid?: string
+  action?: React.ReactNode
 }
 
 type TitleAndOrMessage =
@@ -78,9 +79,12 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
   type,
   title,
   message,
+  action,
   testid,
 }) => {
   const variant = variantStyles[type]
+
+  const onlyMessage = !title && !!message
 
   return (
     <Box
@@ -91,10 +95,15 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
       borderWidth="standard"
       data-testid={testid ?? 'alertMessage'}
     >
-      <Box display="flex">
+      <Box display="flex" alignItems={onlyMessage ? 'center' : 'flexStart'}>
         {variant.icon && (
           <Box display="flex" marginRight={[1, 1, 2]}>
-            <Icon type="filled" color={variant.iconColor} icon={variant.icon} />
+            <Icon
+              size="large"
+              type="filled"
+              color={variant.iconColor}
+              icon={variant.icon}
+            />
           </Box>
         )}
         <Box display="flex" width="full" flexDirection="column">
@@ -104,12 +113,26 @@ export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
                 {title}
               </Text>
             )}
-            {message &&
-              (React.isValidElement(message) ? (
-                message
-              ) : (
-                <Text variant="small">{message}</Text>
-              ))}
+            <Box display="flex" alignItems="center">
+              {message &&
+                (React.isValidElement(message) ? (
+                  message
+                ) : (
+                  <Box flexGrow={1}>
+                    <Text variant="small">{message}</Text>
+                  </Box>
+                ))}
+              {action && (
+                <Box
+                  display="flex"
+                  style={{ alignSelf: 'flex-end' }}
+                  justifyContent="flexEnd"
+                  alignItems="flexEnd"
+                >
+                  {action}
+                </Box>
+              )}
+            </Box>
           </Stack>
         </Box>
       </Box>

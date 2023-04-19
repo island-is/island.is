@@ -31,21 +31,11 @@ export const searchQuery = (
   const mustNot: TagQuery[] = []
   let minimumShouldMatch = 1
 
-  const fieldsWeights = [
-    'title^6', // note boosting ..
-    'title.stemmed^2', // note boosting ..
-    'content',
-    'content.stemmed',
-  ]
-  const words = queryString.split(' ')
-  const lastWord = words.pop()
-
   // * wildcard support for internal clients - eg. used by island.is app
   if (queryString.trim() === '*') {
     should.push({
       simple_query_string: {
         query: queryString,
-        fields: fieldsWeights,
         analyze_wildcard: true,
         default_operator: 'and',
       },
@@ -55,10 +45,26 @@ export const searchQuery = (
       // the search logic used for search drop down suggestions
       // term and prefix queries on content title
       case 'suggestions':
-        should.push({ prefix: { title: lastWord } })
-        words.forEach((word) => {
-          should.push({ term: { title: word } })
-        })
+        if (queryString.split(' ').length > 1) {
+          should.push({
+            multi_match: {
+              query: queryString + '*',
+              fields: ['title'],
+
+              fuzziness: 1,
+              operator: 'and',
+              type: 'best_fields',
+            },
+          })
+        } else {
+          should.push({ prefix: { title: queryString } })
+          should.push({
+            fuzzy: {
+              title: { value: queryString, fuzziness: 1, prefix_length: 0 },
+            },
+          })
+        }
+
         break
 
       // the search logic used for general site search
@@ -67,9 +73,12 @@ export const searchQuery = (
       default:
         should.push({
           multi_match: {
-            fields: fieldsWeights,
+            fields: [
+              'title^100', // note boosting ..
+              'content',
+            ],
             query: queryString,
-            fuzziness: 'AUTO',
+            fuzziness: 1,
             operator: 'and',
             type: 'best_fields',
           },
