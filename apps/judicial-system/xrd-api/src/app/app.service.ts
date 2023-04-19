@@ -81,6 +81,10 @@ export class AppService {
         throw response
       })
       .catch((reason) => {
+        if (reason instanceof BadRequestException) {
+          throw reason
+        }
+
         throw new BadGatewayException({
           ...reason,
           message: 'Failed to create a new case',
