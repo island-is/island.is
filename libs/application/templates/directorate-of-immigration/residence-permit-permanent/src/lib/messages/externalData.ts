@@ -9,19 +9,19 @@ export const externalData = {
     },
     pageTitle: {
       id: 'doi.rpp.application:externalData.dataProvider.pageTitle',
-      defaultMessage: 'Ótímabundið dvalarleyfi',
-      description: `Application's name`,
+      defaultMessage: 'Gagnaöflun',
+      description: 'Page title of external data section',
     },
     subTitle: {
       id: 'doi.rpp.application:externalData.dataProvider.subTitle',
       defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
-      description: 'he following data will be retrieved electronically',
+      description: 'The following data will be retrieved electronically',
     },
     description: {
       id: 'doi.rpp.application:externalData.dataProvider.description',
       defaultMessage:
         'Integer id augue in erat ultrices pharetra a vel neque. Integer pellentesque, erat vel varius imperdiet, nisl turpis imperdiet augue, at vulputate lorem mauris in nibh. ',
-      description: `External data description`,
+      description: 'External data description',
     },
     checkboxLabel: {
       id: 'doi.rpp.application:externalData.dataProvider.checkboxLabel',
@@ -58,6 +58,31 @@ export const externalData = {
         'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
       description:
         'In order to apply for this application we need your email and phone number',
+    },
+  }),
+  directorateOfImmigration: defineMessages({
+    title: {
+      id: 'doi.rpp.application:externalData.directorateOfImmigration.title',
+      defaultMessage: 'Upplýsingar til Útlendingastofnunar',
+      description: 'Directorate of immigration title',
+    },
+    subTitle: {
+      id: 'doi.rpp.application:externalData.directorateOfImmigration.subTitle',
+      defaultMessage:
+        'Upplýsingar um núverandi dvalarleyfi þitt, maka og barna þinna ef við á',
+      description: 'Directorate of immigration sub title',
+    },
+  }),
+  icelandRevenueAndCustoms: defineMessages({
+    title: {
+      id: 'doi.rpp.application:externalData.icelandRevenueAndCustoms.title',
+      defaultMessage: 'Upplýsingar frá Skattinum',
+      description: 'Iceland revenue and customs title',
+    },
+    subTitle: {
+      id: 'doi.rpp.application:externalData.icelandRevenueAndCustoms.subTitle',
+      defaultMessage: 'Upplýsingar um framfærslu þína',
+      description: 'Iceland revenue and customs sub title',
     },
   }),
 }

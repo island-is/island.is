@@ -3,7 +3,6 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildSection,
-  buildSubSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
@@ -63,6 +62,16 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               provider: UtlendingastofnunPaymentCatalogApi,
               title: '',
+            }),
+            buildDataProviderItem({
+              id: 'currentResidencePermit',
+              title: externalData.directorateOfImmigration.title,
+              subTitle: externalData.directorateOfImmigration.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'meansOfSupport',
+              title: externalData.icelandRevenueAndCustoms.title,
+              subTitle: externalData.icelandRevenueAndCustoms.subTitle,
             }),
           ],
         }),

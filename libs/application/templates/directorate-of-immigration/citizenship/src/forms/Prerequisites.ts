@@ -64,6 +64,16 @@ export const Prerequisites: Form = buildForm({
               provider: UtlendingastofnunPaymentCatalogApi,
               title: '',
             }),
+            buildDataProviderItem({
+              id: 'currentResidencePermit',
+              title: externalData.directorateOfImmigration.title,
+              subTitle: externalData.directorateOfImmigration.subTitle,
+            }),
+            buildDataProviderItem({
+              id: 'meansOfSupport',
+              title: externalData.icelandRevenueAndCustoms.title,
+              subTitle: externalData.icelandRevenueAndCustoms.subTitle,
+            }),
           ],
         }),
       ],
