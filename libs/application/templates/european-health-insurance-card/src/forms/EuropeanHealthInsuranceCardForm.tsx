@@ -4,7 +4,6 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
-  buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -101,7 +100,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
-                      // subLabel: e.temp.sectionHasPlasticLabel,
                     })
                   }
                 })
