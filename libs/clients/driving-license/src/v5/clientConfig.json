@@ -1672,7 +1672,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/canapplyfor/practicepermit": {
+    "/api/drivinglicense/v5/canapplyfor/practicepermit": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Post practice permit",
@@ -1753,6 +1753,588 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PracticePermitDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/applications/{SSN}/renewal65": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Post renewal request for people 65 year old or older",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with person social security number",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SSN",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Model with information about the person",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostRenewal65AndOver"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Renewal65AndOver"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Renewal65AndOver"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Renewal65AndOver"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Renewal65AndOver"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Renewal65AndOver"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Renewal65AndOver"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/statistics/temporarylicenses/created/detailed/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a list of temporary licenses created from year/month",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2022
+            }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsDetailedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsDetailedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsDetailedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/statistics/temporarylicenses/created/grouped/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a grouped list (year/month/count) of temporary licenses created",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2022
+            }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsGroupedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsGroupedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsGroupedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/statistics/licenses/created/detailed/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a list of full licenses created from year/month",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2022
+            }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsDetailedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsDetailedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsDetailedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/statistics/licenses/created/grouped/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a grouped list (year/month/count) of full licenses created",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2022
+            }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsGroupedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsGroupedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsGroupedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/statistics/drivingassessments/created/detailed/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a list of driving assessments created",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2022
+            }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsDetailedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsDetailedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsDetailedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v5/statistics/drivingassessments/created/grouped/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a grouped list (year/month/count) of driving ass licenses created",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 2022
+            }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsGroupedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsGroupedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsGroupedDto"
+                  }
                 }
               }
             }
@@ -1865,7 +2447,7 @@
             "format": "int32",
             "nullable": true
           },
-          "liecenseExpired": {
+          "licenseExpired": {
             "type": "boolean",
             "description": "Is the license expired",
             "nullable": true
@@ -2071,6 +2653,112 @@
         },
         "additionalProperties": false,
         "description": "Driving assessment"
+      },
+      "DrivingAssessmentStatisticsDetailedDto": {
+        "type": "object",
+        "properties": {
+          "studentSSN": {
+            "type": "string",
+            "description": "Student social security number",
+            "nullable": true
+          },
+          "instructorSSN": {
+            "type": "string",
+            "description": "Driving instructor social security number",
+            "nullable": true
+          },
+          "assessmentDate": {
+            "type": "string",
+            "description": "Date of driving assessment",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer class for driving assessment statistics"
+      },
+      "DrivingAssessmentStatisticsGroupedDto": {
+        "type": "object",
+        "properties": {
+          "assessmentYear": {
+            "type": "integer",
+            "description": "Year",
+            "format": "int32"
+          },
+          "assessmentMonth": {
+            "type": "integer",
+            "description": "Month",
+            "format": "int32"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Count",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer class for driving assessment statistics"
+      },
+      "FullLicenseStatisticsDetailedDto": {
+        "type": "object",
+        "properties": {
+          "publishDate": {
+            "type": "string",
+            "description": "Publish date",
+            "format": "date-time",
+            "nullable": true
+          },
+          "employee": {
+            "type": "string",
+            "description": "Employee who created the license",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Social security number of person in question",
+            "nullable": true
+          },
+          "validTo": {
+            "type": "string",
+            "description": "Valid to",
+            "format": "date-time",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "description": "Origin of creation",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for statistics about full licenses created"
+      },
+      "FullLicenseStatisticsGroupedDto": {
+        "type": "object",
+        "properties": {
+          "publishYear": {
+            "type": "integer",
+            "description": "Year when published",
+            "format": "int32"
+          },
+          "publishMonth": {
+            "type": "integer",
+            "description": "Month when published",
+            "format": "int32"
+          },
+          "originIslandIs": {
+            "type": "integer",
+            "description": "Count when origin is Island.is",
+            "format": "int32"
+          },
+          "originPaper": {
+            "type": "integer",
+            "description": "Count when origin is paper",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for statistics about licenses created, grouped by year and month"
       },
       "HasFinishedDrivingSchool3Dto": {
         "type": "object",
@@ -2423,6 +3111,29 @@
         "additionalProperties": false,
         "description": "Post practice permit"
       },
+      "PostRenewal65AndOver": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User id",
+            "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District Id",
+            "format": "int32"
+          },
+          "renewalDate": {
+            "type": "string",
+            "description": "Person social security number",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post renewal request for person 65 year old or older"
+      },
       "PostTeachingDoneForTempLicense": {
         "required": ["dateCompleted", "driverLicenseId", "ssn"],
         "type": "object",
@@ -2572,6 +3283,83 @@
           }
         },
         "additionalProperties": false
+      },
+      "Renewal65AndOver": {
+        "type": "object",
+        "properties": {
+          "licenseId": {
+            "type": "integer",
+            "description": "New license id",
+            "format": "int32",
+            "nullable": true
+          },
+          "isOk": {
+            "type": "boolean",
+            "description": "Did transaction go ok ?"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code returned from system",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "DTO for renewal for people 65 and older"
+      },
+      "TemporaryLicenseStatisticsDetailedDto": {
+        "type": "object",
+        "properties": {
+          "publishDate": {
+            "type": "string",
+            "description": "Publish date",
+            "format": "date-time",
+            "nullable": true
+          },
+          "employee": {
+            "type": "string",
+            "description": "Employee who created the license",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Social security number of person in question",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "description": "Origin of creation",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for statistics about temporary licenses created"
+      },
+      "TemporaryLicenseStatisticsGroupedDto": {
+        "type": "object",
+        "properties": {
+          "publishYear": {
+            "type": "integer",
+            "description": "Year when published",
+            "format": "int32"
+          },
+          "publishMonth": {
+            "type": "integer",
+            "description": "Month when published",
+            "format": "int32"
+          },
+          "originIslandIs": {
+            "type": "integer",
+            "description": "Count when origin is Island.is",
+            "format": "int32"
+          },
+          "originPaper": {
+            "type": "integer",
+            "description": "Count when origin is paper",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for statistics about temporary licenses created, grouped by year and month"
       }
     }
   }
