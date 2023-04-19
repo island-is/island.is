@@ -163,19 +163,8 @@ export const cases = {
           description:
             'Notaður sem titill fyrir staða dálk í lista yfir afgreidd mál.',
         },
-        duration: {
-          id: 'judicial.system.core:cases.past_requests.table.headers.duration',
-          defaultMessage: 'Gildistími',
-          description:
-            'Notaður sem titill fyrir gildistíma dálk í lista yfir afgreidd mál.',
-        },
       }),
     },
-    title: defineMessage({
-      id: 'judicial.system.core:cases.past_requests.title',
-      defaultMessage: 'Afgreidd mál',
-      description: 'Notaður sem titill í seinni málalista á heimaskjá.',
-    }),
     infoContainerTitle: defineMessage({
       id: 'judicial.system.core:cases.past_requests.info_container_title',
       defaultMessage: 'Engin mál hafa verið afgreidd.',

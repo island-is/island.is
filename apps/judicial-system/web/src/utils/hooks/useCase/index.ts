@@ -108,20 +108,19 @@ interface ExtendCaseMutationResponse {
   extendCase: Case
 }
 
-interface AppealedCasesQueryResponse {
-  appealedCases: {
-    courtCaseNumber: string
-    defendants: Defendant[]
-    type: CaseType
-    decision: CaseDecision
-    state: CaseState
-    appealState: CaseAppealState
-    accusedAppealDecision: CaseAppealDecision
-    prosecutorAppealDecision: CaseAppealDecision
-    courtEndTime: string
-    accusedPostponedAppealDate: string
-    prosecutorPostponedAppealDate: string
-  }[]
+export interface AppealedCasesQueryResponse {
+  courtCaseNumber: string
+  defendants: Defendant[]
+  type: CaseType
+  decision: CaseDecision
+  state: CaseState
+  appealState: CaseAppealState
+  accusedAppealDecision: CaseAppealDecision
+  prosecutorAppealDecision: CaseAppealDecision
+  courtEndTime: string
+  accusedPostponedAppealDate: string
+  prosecutorPostponedAppealDate: string
+  validToDate: string
 }
 
 function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
@@ -302,7 +301,7 @@ const useCase = () => {
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
   const { data: appealedCases } = useQuery<{
-    cases?: AppealedCasesQueryResponse
+    cases: AppealedCasesQueryResponse[]
   }>(AppealedCasesQuery)
 
   const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {

@@ -21,7 +21,8 @@ import {
   CaseDecision,
   CaseState,
 } from '@island.is/judicial-system/types'
-import { Tag, TagVariant } from '@island.is/island-ui/core'
+import { Box, Tag, TagVariant } from '@island.is/island-ui/core'
+import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType, getAppealDate } from '../../Shared/Cases/utils'
@@ -29,13 +30,13 @@ import { courtOfAppealCases as strings } from './Cases.strings'
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
-  const { appealedCases } = useCase()
+  const { appealedCases, getCaseToOpen } = useCase()
 
   const appealedCasesColumns = useMemo(() => {
     return [
       {
         Header: formatMessage(tables.caseNumber),
-        accessor: 'courtCaseNumber',
+        accessor: 'courtCaseNumber' as keyof AppealedCasesQueryResponse,
         Cell: (row: {
           row: {
             original: { courtCaseNumber: string }
@@ -46,7 +47,7 @@ const CourtOfAppealCases = () => {
       },
       {
         Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-        accessor: 'accusedName',
+        accessor: 'accusedName' as keyof AppealedCasesQueryResponse,
         Cell: (row: {
           row: {
             original: { defendants: Defendant[] }
@@ -57,7 +58,7 @@ const CourtOfAppealCases = () => {
       },
       {
         Header: formatMessage(tables.type),
-        accessor: 'type',
+        accessor: 'type' as keyof AppealedCasesQueryResponse,
         Cell: (row: {
           row: {
             original: {
@@ -73,7 +74,7 @@ const CourtOfAppealCases = () => {
       },
       {
         Header: formatMessage(tables.state),
-        accessor: 'state',
+        accessor: 'state' as keyof AppealedCasesQueryResponse,
         Cell: (row: {
           row: {
             original: {
@@ -100,7 +101,7 @@ const CourtOfAppealCases = () => {
       },
       {
         Header: formatMessage(tables.appealDate),
-        accessor: 'appealDate',
+        accessor: 'appealDate' as keyof AppealedCasesQueryResponse,
         Cell: (row: {
           row: {
             original: {
@@ -136,17 +137,28 @@ const CourtOfAppealCases = () => {
   }, [formatMessage])
 
   const completedCasesColumns = useMemo(() => {
-    return []
+    return [
+      ...appealedCasesColumns.slice(0, -1),
+      {
+        Header: formatMessage(tables.duration),
+        accessor: 'duration' as keyof AppealedCasesQueryResponse,
+        Cell: (row: {
+          row: {
+            original: { courtEndTime: string; validToDate: string }
+          }
+        }) => {
+          const thisRow = row.row.original
+
+          return `${formatDate(thisRow.courtEndTime, 'd.M.y')} - ${formatDate(
+            thisRow.validToDate,
+            'd.M.y',
+          )}`
+        },
+      },
+    ]
   }, [])
 
-  const appealedCasesData = useMemo(() => appealedCases?.cases || ([] as any), [
-    appealedCases,
-  ])
-
-  const completedCasesData = useMemo(
-    () => appealedCases?.cases || ([] as any),
-    [appealedCases],
-  )
+  const appealedCasesData = useMemo(() => appealedCases?.cases, [appealedCases])
 
   return (
     <SharedPageLayout>
@@ -155,10 +167,34 @@ const CourtOfAppealCases = () => {
         <Logo />
       </div>
       <SectionHeading title={formatMessage(strings.appealedCasesTitle)} />
+      <Box marginBottom={7}>
+        <Table
+          handleRowClick={(id) =>
+            getCaseToOpen({
+              variables: { input: { id } },
+            })
+          }
+          columns={appealedCasesColumns}
+          data={
+            appealedCasesData?.filter(
+              (a) => a.appealState !== CaseAppealState.Completed,
+            ) || []
+          }
+        />
+      </Box>
+      <SectionHeading title={formatMessage(strings.completedCasesTitle)} />
       <Table
-        handleRowClick={() => console.log('asd')}
-        columns={appealedCasesColumns}
-        data={appealedCasesData ?? []}
+        handleRowClick={(id) =>
+          getCaseToOpen({
+            variables: { input: { id } },
+          })
+        }
+        columns={completedCasesColumns}
+        data={
+          appealedCasesData?.filter(
+            (a) => a.appealState === CaseAppealState.Completed,
+          ) || []
+        }
       />
     </SharedPageLayout>
   )

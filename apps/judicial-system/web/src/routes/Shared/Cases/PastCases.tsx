@@ -48,7 +48,6 @@ export function getDurationDate(
   state: Case['state'],
   validToDate?: Case['validToDate'],
   initialRulingDate?: Case['initialRulingDate'],
-  rulingDate?: Case['rulingDate'],
   courtEndTime?: Case['courtEndTime'],
 ): string | null {
   if (
@@ -58,11 +57,6 @@ export function getDurationDate(
     return null
   } else if (initialRulingDate) {
     return `${formatDate(parseISO(initialRulingDate), 'd.M.y')} - ${formatDate(
-      parseISO(validToDate),
-      'd.M.y',
-    )}`
-  } else if (rulingDate) {
-    return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
       parseISO(validToDate),
       'd.M.y',
     )}`

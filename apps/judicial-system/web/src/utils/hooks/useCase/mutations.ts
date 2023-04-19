@@ -1,5 +1,7 @@
 import { gql } from '@apollo/client'
 
+import { coreCaseListFields } from '../../mutations'
+
 export const CreateCaseMutation = gql`
   mutation CreateCase($input: CreateCaseInput!) {
     createCase(input: $input) {
@@ -64,21 +66,14 @@ export const TransitionCaseMutation = gql`
 `
 
 export const AppealedCasesQuery = gql`
+  ${coreCaseListFields}
   query AppealedCases {
     cases {
-      courtCaseNumber
       defendants {
         name
       }
-      type
-      decision
-      state
       appealState
-      accusedAppealDecision
-      prosecutorAppealDecision
-      accusedPostponedAppealDate
-      prosecutorPostponedAppealDate
-      courtEndTime
+      ...CoreCaseListFields
     }
   }
 `

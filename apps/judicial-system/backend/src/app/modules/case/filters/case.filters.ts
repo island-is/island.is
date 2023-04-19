@@ -338,6 +338,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     ? {
         [Op.or]: [
           { appeal_state: CaseAppealState.APPEALED },
+          { appeal_state: CaseAppealState.RECEIVED },
           { appeal_state: CaseAppealState.COMPLETED },
         ],
       }

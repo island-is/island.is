@@ -12,32 +12,37 @@ export const RulingSignatureConfirmationQuery = gql`
   }
 `
 
+export const coreCaseListFields = gql`
+  fragment CoreCaseListFields on CaseListEntry {
+    id
+    type
+    decision
+    state
+    courtCaseNumber
+    accusedAppealDecision
+    prosecutorAppealDecision
+    accusedPostponedAppealDate
+    prosecutorPostponedAppealDate
+    courtEndTime
+    validToDate
+  }
+`
+
 export const CasesQuery = gql`
+  ${coreCaseListFields}
   query CaseListQuery {
     cases {
-      id
       created
       courtDate
       policeCaseNumbers
-      state
-      type
       defendants {
         id
         nationalId
         name
         noNationalId
       }
-      courtCaseNumber
-      decision
-      validToDate
       isValidToDateInThePast
       initialRulingDate
-      rulingDate
-      courtEndTime
-      prosecutorAppealDecision
-      accusedAppealDecision
-      prosecutorPostponedAppealDate
-      accusedPostponedAppealDate
       judge {
         id
       }
@@ -51,6 +56,7 @@ export const CasesQuery = gql`
         id
       }
       parentCaseId
+      ...CoreCaseListFields
     }
   }
 `
