@@ -39,7 +39,12 @@ export const tables = defineMessages({
   completedCasesTitle: {
     id: 'judicial.system.core:tables.completed_cases_title',
     defaultMessage: 'Afgreidd mál',
+    description: 'Notaður sem titill á lista yfir afgreidd mál.',
+  },
+  extension: {
+    id: 'judicial.system.core:tables.extension',
+    defaultMessage: 'Framlenging',
     description:
-      'Notaður sem titill á lista yfir afgreidd mál á heimaskjá landsréttarnotanda.',
+      'Notaður sem texti sem segir til um hvort mál sé framlenging í málalista.',
   },
 })

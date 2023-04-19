@@ -121,6 +121,8 @@ export interface AppealedCasesQueryResponse {
   accusedPostponedAppealDate: string
   prosecutorPostponedAppealDate: string
   validToDate: string
+  policeCaseNumbers: string[]
+  parentCaseId: string
 }
 
 function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {

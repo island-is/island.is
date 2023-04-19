@@ -15,18 +15,25 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  displayFirstPlusRemaining,
+  formatDate,
+  formatDOB,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseDecision,
   CaseState,
 } from '@island.is/judicial-system/types'
-import { Box, Tag, TagVariant } from '@island.is/island-ui/core'
+import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType, getAppealDate } from '../../Shared/Cases/utils'
 import { courtOfAppealCases as strings } from './Cases.strings'
+import DefendantInfo from '@island.is/judicial-system-web/src/components/CasesTableComponents/DefendantInfo/DefendantInfo'
+import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
@@ -39,10 +46,17 @@ const CourtOfAppealCases = () => {
         accessor: 'courtCaseNumber' as keyof AppealedCasesQueryResponse,
         Cell: (row: {
           row: {
-            original: { courtCaseNumber: string }
+            original: { courtCaseNumber: string; policeCaseNumbers: string[] }
           }
         }) => {
-          return row.row.original.courtCaseNumber
+          const thisRow = row.row.original
+
+          return (
+            <BigTextSmallText
+              bigText={thisRow.courtCaseNumber}
+              smallText={displayFirstPlusRemaining(thisRow.policeCaseNumbers)}
+            />
+          )
         },
       },
       {
@@ -53,7 +67,22 @@ const CourtOfAppealCases = () => {
             original: { defendants: Defendant[] }
           }
         }) => {
-          return row.row.original.defendants[0].name
+          const thisRow = row.row.original
+          return thisRow.defendants && thisRow.defendants.length > 0 ? (
+            <BigTextSmallText
+              bigText={thisRow.defendants[0].name || ''}
+              smallText={
+                thisRow.defendants.length === 1
+                  ? formatDOB(
+                      thisRow.defendants[0].nationalId,
+                      thisRow.defendants[0].noNationalId,
+                    )
+                  : `+ ${thisRow.defendants.length - 1}`
+              }
+            />
+          ) : (
+            <Text as="span">-</Text>
+          )
         },
       },
       {
@@ -64,12 +93,26 @@ const CourtOfAppealCases = () => {
             original: {
               type: CaseType
               decision: CaseDecision
+              parentCaseId: string
             }
           }
         }) => {
           const thisRow = row.row.original
 
-          return displayCaseType(formatMessage, thisRow.type, thisRow.decision)
+          return (
+            <BigTextSmallText
+              bigText={displayCaseType(
+                formatMessage,
+                thisRow.type,
+                thisRow.decision,
+              )}
+              smallText={
+                thisRow.parentCaseId
+                  ? formatMessage(tables.extension)
+                  : undefined
+              }
+            />
+          )
         },
       },
       {

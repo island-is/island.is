@@ -32,6 +32,8 @@ import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
+import DefendantInfo from '@island.is/judicial-system-web/src/components/CasesTableComponents/DefendantInfo/DefendantInfo'
+import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
 
 interface Props {
   cases: CaseListEntry[]
@@ -96,44 +98,33 @@ const PastCases: React.FC<Props> = (props) => {
             original: { courtCaseNumber: string; policeCaseNumbers: string[] }
           }
         }) => {
+          const theRow = row.row.original
           return (
-            <>
-              <Box component="span" display="block">
-                {row.row.original.courtCaseNumber}
-              </Box>
-              <Text
-                as="span"
-                variant="small"
-                title={row.row.original.policeCaseNumbers.join(', ')}
-              >
-                {displayFirstPlusRemaining(row.row.original.policeCaseNumbers)}
-              </Text>
-            </>
+            <BigTextSmallText
+              bigText={theRow.courtCaseNumber}
+              smallText={displayFirstPlusRemaining(theRow.policeCaseNumbers)}
+            />
           )
         },
       },
       {
         Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
         accessor: 'accusedName' as keyof CaseListEntry,
-        Cell: (row: {
-          row: { original: { accusedName: string; defendants: Defendant[] } }
-        }) => {
+        Cell: (row: { row: { original: { defendants: Defendant[] } } }) => {
           const theCase = row.row.original
 
           return theCase.defendants && theCase.defendants.length > 0 ? (
-            <>
-              <Box component="span" display="block">
-                {theCase.defendants[0].name}
-              </Box>
-              <Text as="span" variant="small">
-                {theCase.defendants.length === 1
+            <BigTextSmallText
+              bigText={theCase.defendants[0].name || ''}
+              smallText={
+                theCase.defendants.length === 1
                   ? formatDOB(
                       theCase.defendants[0].nationalId,
                       theCase.defendants[0].noNationalId,
                     )
-                  : `+ ${theCase.defendants.length - 1}`}
-              </Text>
-            </>
+                  : `+ ${theCase.defendants.length - 1}`
+              }
+            />
           ) : (
             <Text as="span">-</Text>
           )

@@ -25,6 +25,14 @@ export const coreCaseListFields = gql`
     prosecutorPostponedAppealDate
     courtEndTime
     validToDate
+    policeCaseNumbers
+    parentCaseId
+    defendants {
+      id
+      nationalId
+      name
+      noNationalId
+    }
   }
 `
 
@@ -34,13 +42,6 @@ export const CasesQuery = gql`
     cases {
       created
       courtDate
-      policeCaseNumbers
-      defendants {
-        id
-        nationalId
-        name
-        noNationalId
-      }
       isValidToDateInThePast
       initialRulingDate
       judge {
@@ -55,7 +56,6 @@ export const CasesQuery = gql`
       creatingProsecutor {
         id
       }
-      parentCaseId
       ...CoreCaseListFields
     }
   }
