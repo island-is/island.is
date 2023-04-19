@@ -1,0 +1,23 @@
+{
+  "root": "libs/api/domains/watson-assistant-chat",
+  "sourceRoot": "libs/api/domains/watson-assistant-chat/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/watson-assistant-chat/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/watson-assistant-chat"],
+      "options": {
+        "jestConfig": "libs/api/domains/watson-assistant-chat/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:api"]
+}
