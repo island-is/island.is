@@ -76,13 +76,13 @@ export const getAppealDate = (
   accusedAppealDecision: CaseAppealDecision,
   prosecutorPostponedAppealDate: string,
   accusedPostponedAppealDate: string,
-  rulingDate: string,
+  courtEndTime: string,
 ) => {
   if (
     prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
     accusedAppealDecision === CaseAppealDecision.APPEAL
   ) {
-    return rulingDate
+    return courtEndTime
   } else if (accusedPostponedAppealDate && !prosecutorPostponedAppealDate) {
     return accusedPostponedAppealDate
   } else if (prosecutorPostponedAppealDate && !accusedPostponedAppealDate) {

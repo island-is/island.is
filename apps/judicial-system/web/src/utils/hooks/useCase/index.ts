@@ -19,6 +19,7 @@ import {
   isInvestigationCase,
   Feature,
   CaseDecision,
+  CaseAppealDecision,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -115,6 +116,11 @@ interface AppealedCasesQueryResponse {
     decision: CaseDecision
     state: CaseState
     appealState: CaseAppealState
+    accusedAppealDecision: CaseAppealDecision
+    prosecutorAppealDecision: CaseAppealDecision
+    courtEndTime: string
+    accusedPostponedAppealDate: string
+    prosecutorPostponedAppealDate: string
   }[]
 }
 

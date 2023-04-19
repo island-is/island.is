@@ -5,6 +5,7 @@ import SharedPageLayout from '@island.is/judicial-system-web/src/components/Shar
 import {
   Logo,
   PageHeader,
+  SectionHeading,
   Table,
 } from '@island.is/judicial-system-web/src/components'
 import { titles, tables, core } from '@island.is/judicial-system-web/messages'
@@ -14,12 +15,17 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseAppealDecision,
+  CaseDecision,
+  CaseState,
+} from '@island.is/judicial-system/types'
+import { Tag, TagVariant } from '@island.is/island-ui/core'
 
 import { logoContainer } from '../../Shared/Cases/Cases.css'
-import { displayCaseType } from '../../Shared/Cases/utils'
-import { CaseDecision, CaseState } from '@island.is/judicial-system/types'
-import { Tag, TagVariant } from '@island.is/island-ui/core'
+import { displayCaseType, getAppealDate } from '../../Shared/Cases/utils'
+import { courtOfAppealCases as strings } from './Cases.strings'
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
@@ -92,12 +98,55 @@ const CourtOfAppealCases = () => {
           )
         },
       },
+      {
+        Header: formatMessage(tables.appealDate),
+        accessor: 'appealDate',
+        Cell: (row: {
+          row: {
+            original: {
+              prosecutorAppealDecision: CaseAppealDecision
+              accusedAppealDecision: CaseAppealDecision
+              prosecutorPostponedAppealDate: string
+              accusedPostponedAppealDate: string
+              courtEndTime: string
+            }
+          }
+        }) => {
+          const thisRow = row.row.original
+          const prosecutorAppealDecision = thisRow.prosecutorAppealDecision
+          const accusedAppealDecision = thisRow.accusedAppealDecision
+          const prosecutorPostponedAppealDate =
+            thisRow.prosecutorPostponedAppealDate
+          const accusedPostponedAppealDate = thisRow.accusedPostponedAppealDate
+          const rulingDate = thisRow.courtEndTime
+
+          return formatDate(
+            getAppealDate(
+              prosecutorAppealDecision,
+              accusedAppealDecision,
+              prosecutorPostponedAppealDate,
+              accusedPostponedAppealDate,
+              rulingDate,
+            ),
+            'd.M.y',
+          )
+        },
+      },
     ]
   }, [formatMessage])
+
+  const completedCasesColumns = useMemo(() => {
+    return []
+  }, [])
 
   const appealedCasesData = useMemo(() => appealedCases?.cases || ([] as any), [
     appealedCases,
   ])
+
+  const completedCasesData = useMemo(
+    () => appealedCases?.cases || ([] as any),
+    [appealedCases],
+  )
 
   return (
     <SharedPageLayout>
@@ -105,6 +154,7 @@ const CourtOfAppealCases = () => {
       <div className={logoContainer}>
         <Logo />
       </div>
+      <SectionHeading title={formatMessage(strings.appealedCasesTitle)} />
       <Table
         handleRowClick={() => console.log('asd')}
         columns={appealedCasesColumns}

@@ -16,6 +16,11 @@ export const tables = defineMessages({
     defaultMessage: 'Staða',
     description: 'Notaður sem titill fyrir staða dálk í lista yfir mál.',
   },
+  appealDate: {
+    id: 'judicial.system.core:tables.appeal_date',
+    defaultMessage: 'Kært',
+    description: 'Notaður sem titill fyrir kært dálk í lista yfir mál.',
+  },
   newTag: {
     id: 'judicial.system.core:tables.new_tag',
     defaultMessage: 'Nýtt',

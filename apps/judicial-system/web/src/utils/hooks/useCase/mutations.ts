@@ -74,6 +74,11 @@ export const AppealedCasesQuery = gql`
       decision
       state
       appealState
+      accusedAppealDecision
+      prosecutorAppealDecision
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
+      courtEndTime
     }
   }
 `
