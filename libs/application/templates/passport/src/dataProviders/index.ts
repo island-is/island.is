@@ -7,7 +7,6 @@ export {
   NationalRegistryUserApi,
   UserProfileApi,
   MockProviderApi,
-  DistrictsApi,
 } from '@island.is/application/types'
 
 export const IdentityDocumentApi = defineTemplateApi({
@@ -19,4 +18,8 @@ export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
     organizationId: SYSLUMADUR_NATIONAL_ID,
   },
   externalDataId: 'payment',
+})
+
+export const DeliveryAddressApi = defineTemplateApi({
+  action: 'deliveryAddress',
 })

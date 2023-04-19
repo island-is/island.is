@@ -201,14 +201,14 @@ export const childsOverview = buildMultiField({
       width: 'half',
       value: ({
         externalData: {
-          districtCommissioners: { data },
+          deliveryAddress: { data },
         },
         answers,
       }) => {
         const district = (data as DistrictCommissionerAgencies[]).find(
-          (d) => d.id === (answers.service as Service).dropLocation,
+          (d) => d.key === (answers.service as Service).dropLocation,
         )
-        return `${district?.name}, ${district?.place}`
+        return `${district?.name}`
       },
     }),
   ],
