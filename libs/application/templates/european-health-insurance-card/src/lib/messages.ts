@@ -96,29 +96,28 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     sectionLabel: {
       id: 'ehic.application:no.label',
       defaultMessage:
-      'Því miður hefur þú ekki rétt á Evrópska Sjúkratrygginakortinu',
+        'Því miður hefur þú ekki rétt á Evrópska Sjúkratrygginakortinu',
       description: 'Section description',
     },
     sectionTitle: {
       id: 'ehic.application:no.description',
       defaultMessage:
-      'Því miður er ekki heimild til að sækja um ES kort fyrir eftirfarandi einstaklinga.',
+        'Því miður er ekki heimild til að sækja um ES kort fyrir eftirfarandi einstaklinga.',
       description: 'Section description',
     },
     sectionDescription: {
       id: 'ehic.application:no.description#markdown',
       defaultMessage:
-      'Ástæður fyrir því gætu verið eftirfarandi.\n* Einstaklingur er ekki sjúkratryggð/ur á Íslandi. \n* Einstaklingur er ekki með lögheimili á Íslandi. \n* Einstaklingur er ekki með ríkisborgararétt frá EES landi.\n\nEf þú telur þessi atriði ekki eiga við, vinsamlegast hafið samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)',
+        'Ástæður fyrir því gætu verið eftirfarandi.\n* Einstaklingur er ekki sjúkratryggð/ur á Íslandi. \n* Einstaklingur er ekki með lögheimili á Íslandi. \n* Einstaklingur er ekki með ríkisborgararétt frá EES landi.\n\nEf þú telur þessi atriði ekki eiga við, vinsamlegast hafið samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)',
 
       description: 'Section description',
     },
     sectionSubDescription: {
       id: 'ehic.application:no.sectionSubDescription',
-      defaultMessage:
-      ' Ekki heimild til að sækja um ES kort',
+      defaultMessage: ' Ekki heimild til að sækja um ES kort',
       description: 'Section description',
     },
-  }), 
+  }),
 
   // Plastic
   applicants: defineMessages({
@@ -175,16 +174,22 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
     sectionCanTitle: {
       id: 'ehic.application:temp.sectionCanTitle',
-      defaultMessage: 'Einstaklingar sem eiga ES kort í gildi',
-      description: 'Button label for PDF step',
+      defaultMessage:
+        'Einstaklingar sem eiga ES kort í gildi og geta sótt um bráðabirgðakort',
+      description: 'Title for users who can apply for PDF',
     },
     sectionHasPlasticLabel: {
       id: 'ehic.application:temp.sectionSubLabel',
       defaultMessage: 'Heimild til að sækja um bráðabirgðakort',
       description: 'Button label for PDF step',
     },
+    sectionHasPDFLabel: {
+      id: 'ehic.application:temp.sectionHasPDFLabel',
+      defaultMessage:
+        'Einstaklingar sem eiga bráðabirgðaskírteini í gildi í stafrænu pósthólfi',
+      description: 'Label that indicates a user already has a PDF',
+    },
   }),
-
 
   // Review Screen
   review: defineMessages({

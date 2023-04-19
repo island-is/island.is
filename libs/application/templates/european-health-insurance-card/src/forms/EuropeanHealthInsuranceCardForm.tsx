@@ -69,7 +69,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
-                      subLabel: e.applicants.sectionHasNoPlasticLabel,
                     })
                   }
                 })
@@ -83,6 +82,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
+              condition: (_, externalData) =>
+                someHavePlasticButNotPdf(externalData),
             }),
 
             buildCheckboxField({
@@ -100,7 +101,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
-                      subLabel: e.temp.sectionHasPlasticLabel,
+                      // subLabel: e.temp.sectionHasPlasticLabel,
                     })
                   }
                 })
@@ -115,12 +116,13 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               titleVariant: 'h3',
               marginBottom: 'gutter',
               space: 'gutter',
+              condition: (_, externalData) => someHavePDF(externalData),
             }),
 
             buildCheckboxField({
               id: 'havePdf',
               backgroundColor: 'white',
-              title: 'Eiga pdf',
+              title: e.temp.sectionHasPDFLabel,
               description: '',
               condition: (_, externalData) => someHavePDF(externalData),
               options: (application: Application) => {
@@ -130,14 +132,21 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
-                      subLabel:
-                        'm.noDeprivedDrivingLicenseInOtherCountryDescription.defaultMessage',
                       disabled: true,
                     })
                   }
                 })
                 return applying as Array<{ value: any; label: string }>
               },
+            }),
+
+            buildDescriptionField({
+              id: 'break',
+              title: '',
+              titleVariant: 'h3',
+              marginBottom: 'gutter',
+              space: 'gutter',
+              condition: (_, externalData) => someAreNotInsured(externalData),
             }),
 
             buildCheckboxField({
@@ -153,7 +162,6 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                     applying.push({
                       value: x.applicantNationalId,
                       label: getFullName(application, x.applicantNationalId),
-                      subLabel: e.no.sectionSubDescription,
                       disabled: true,
                     })
                   }
