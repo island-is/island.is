@@ -14,6 +14,9 @@ export const schema = z.object({
     cacheTokenExpiryDelta: z.string(),
     authRetries: z.string(),
   }),
+  fetch: z.object({
+    timeout: z.number().int(),
+  }),
 })
 
 export const GenericDrivingLicenseConfig = defineConfig<z.infer<typeof schema>>(
@@ -38,6 +41,9 @@ export const GenericDrivingLicenseConfig = defineConfig<z.infer<typeof schema>>(
           '2000',
         ),
         authRetries: env.required('PKPASS_AUTH_RETRIES', '1'),
+      },
+      fetch: {
+        timeout: env.optionalJSON('DRIVING_LICENSE_FETCH_TIMEOUT') ?? 10000,
       },
     }),
   },
