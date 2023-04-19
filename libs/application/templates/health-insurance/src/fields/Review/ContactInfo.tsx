@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
@@ -11,14 +11,10 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { m } from '../../forms/messages'
-import {
-  ExternalDataNationalRegistry,
-  ExternalDataUserProfile,
-  ReviewFieldProps,
-} from '../../types'
+import { ExternalDataNationalRegistry, ReviewFieldProps } from '../../types'
 
 const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
   const { data: nationalRegistry } = getValueViaPath(
@@ -26,10 +22,16 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
     'nationalRegistry',
   ) as ExternalDataNationalRegistry
 
-  const { data: userProfile } = getValueViaPath(
-    application.externalData,
-    'userProfile',
-  ) as ExternalDataUserProfile
+  useEffect(() => {
+    setValue(
+      'applicant.phoneNumber',
+      getValueViaPath(application.answers, 'applicant.phoneNumber'),
+    )
+    setValue(
+      'applicant.email',
+      getValueViaPath(application.answers, 'applicant.email'),
+    )
+  }, [application.answers, setValue])
 
   return (
     <Box marginTop={[0, 0, 1]} marginBottom={[1, 1, 3]}>
@@ -106,7 +108,10 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
                 {...register('applicant.email')}
                 label={formatText(m.email, application, formatMessage)}
                 disabled
-                defaultValue={userProfile?.email as string}
+                defaultValue={getValueViaPath(
+                  application.answers,
+                  'applicant.email',
+                )}
               />
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
@@ -115,7 +120,10 @@ const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
                 {...register('applicant.phoneNumber')}
                 label={formatText(m.phoneNumber, application, formatMessage)}
                 disabled
-                defaultValue={userProfile?.mobilePhoneNumber as string}
+                defaultValue={getValueViaPath(
+                  application.answers,
+                  'applicant.phoneNumber',
+                )}
               />
             </GridColumn>
           </GridRow>

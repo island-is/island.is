@@ -7,7 +7,12 @@ import {
   buildCustomField,
   buildDividerField,
 } from '@island.is/application/core'
-import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
+import {
+  Form,
+  ApplicationTypes,
+  FormModes,
+  Application,
+} from '@island.is/application/types'
 import { m } from './messages'
 
 export const DocumentProviderOnboarding: Form = buildForm({
@@ -174,17 +179,26 @@ export const DocumentProviderOnboarding: Form = buildForm({
               title: m.applicantNationalId,
               format: '######-####',
               placeholder: m.applicantNationalIdPlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).applicant.nationalId
+              },
             }),
             buildTextField({
               id: 'applicant.name',
               title: m.applicantName,
               placeholder: m.applicantNamePlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).applicant.name
+              },
             }),
             buildTextField({
               id: 'applicant.email',
               title: m.applicantEmail,
               variant: 'email',
               placeholder: m.applicantEmailPlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).applicant.email
+              },
             }),
             buildTextField({
               id: 'applicant.phoneNumber',
@@ -192,6 +206,9 @@ export const DocumentProviderOnboarding: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               placeholder: m.applicantPhoneNumberPlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).applicant.phoneNumber
+              },
             }),
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
@@ -202,12 +219,18 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'administrativeContact.name',
               title: m.administrativeContactName,
               placeholder: m.administrativeContactNamePlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).administrativeContact.name
+              },
             }),
             buildTextField({
               id: 'administrativeContact.email',
               title: m.administrativeContactEmail,
               variant: 'email',
               placeholder: m.administrativeContactEmailPlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).administrativeContact.email
+              },
             }),
             buildTextField({
               id: 'administrativeContact.phoneNumber',
@@ -215,6 +238,10 @@ export const DocumentProviderOnboarding: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               placeholder: m.administrativeContactPhoneNumberPlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).administrativeContact
+                  .phoneNumber
+              },
             }),
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
@@ -225,12 +252,18 @@ export const DocumentProviderOnboarding: Form = buildForm({
               id: 'technicalContact.name',
               title: m.technicalContactName,
               placeholder: m.technicalContactNamePlaceHolder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).technicalContact.name
+              },
             }),
             buildTextField({
               id: 'technicalContact.email',
               title: m.technicalContactEmail,
               variant: 'email',
               placeholder: m.technicalContactEmailPlaceHolder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).technicalContact.email
+              },
             }),
             buildTextField({
               id: 'technicalContact.phoneNumber',
@@ -238,6 +271,9 @@ export const DocumentProviderOnboarding: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               placeholder: m.technicalContactPhoneNumberPlaceHolder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).technicalContact.phoneNumber
+              },
             }),
             //Error in dev tools, missing keys on divider fields...
             buildDividerField({
@@ -250,12 +286,18 @@ export const DocumentProviderOnboarding: Form = buildForm({
               variant: 'tel',
               format: '###-####',
               placeholder: m.helpDeskPhoneNumberPlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).helpDesk.phoneNumber
+              },
             }),
             buildTextField({
               id: 'helpDesk.email',
               title: m.helpDeskEmail,
               variant: 'email',
               placeholder: m.helpDeskEmailPlaceholder,
+              defaultValue: (application: Application) => {
+                return (application.answers as any).helpDesk.email
+              },
             }),
             buildSubmitField({
               id: 'submit',

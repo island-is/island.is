@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -13,6 +13,7 @@ import TextWithTooltip from '../TextWithTooltip/TextWithTooltip'
 
 import { m } from '../../forms/messages'
 import { FileUploadController } from '@island.is/application/ui-components'
+import { useFormContext } from 'react-hook-form'
 
 const StatusAndChildren: FC<ReviewFieldProps> = ({
   application,
@@ -20,6 +21,7 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
   field,
 }) => {
   const { formatMessage } = useLocale()
+  const { setValue } = useFormContext()
 
   const [status, setStatus] = useState(
     getValueViaPath(application.answers, 'status') as Status,
@@ -28,6 +30,24 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
   const [children, setChildren] = useState(
     getValueViaPath(application.answers, 'children') as string,
   )
+
+  useEffect(() => {
+    setValue(
+      'children',
+      getValueViaPath(application.answers, 'children') as string,
+    )
+    setValue(
+      'status.type',
+      getValueViaPath(application.answers, 'status.type') as string,
+    )
+    setValue(
+      'status.confirmationOfStudies',
+      getValueViaPath(
+        application.answers,
+        'status.confirmationOfStudies',
+      ) as string,
+    )
+  }, [application.answers, setValue])
 
   return (
     <Box>
@@ -42,6 +62,9 @@ const StatusAndChildren: FC<ReviewFieldProps> = ({
             disabled={!isEditable}
             largeButtons={true}
             split={'1/2'}
+            defaultValue={
+              getValueViaPath(application.answers, 'status.type') as string[]
+            }
             onSelect={(value) =>
               setStatus({ ...status, type: value as StatusTypes })
             }

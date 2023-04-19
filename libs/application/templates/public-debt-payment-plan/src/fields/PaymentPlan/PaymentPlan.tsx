@@ -39,7 +39,7 @@ import { useDebouncedSliderValues } from './useDebouncedSliderValues'
 // Might need to define specific fields for each one
 export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
-  const { register, setValue } = useFormContext()
+  const { register, setValue, watch } = useFormContext()
   const getDistribution = useLazyDistribution()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -227,16 +227,17 @@ export const PaymentPlan = ({ application, field }: FieldBaseProps) => {
   }
   return (
     <div>
-      <input
-        type="hidden"
-        value={payment.type}
-        {...register(`${entry}.id`, { required: true })}
-      />
+      <input type="hidden" {...register(`${entry}.distribution`)}></input>
       <input
         type="hidden"
         value={payment.totalAmount}
-        {...register(`${entry}.totalAmount`, { required: true })}
-      />
+        {...register(`${entry}.totalAmount`)}
+      ></input>
+      <input
+        type="hidden"
+        value={payment.type}
+        {...register(`${entry}.id`)}
+      ></input>
       {isPerson && (
         <Text marginBottom={5}>
           {formatMessage(paymentPlan.general.paymentPlanDescription)}

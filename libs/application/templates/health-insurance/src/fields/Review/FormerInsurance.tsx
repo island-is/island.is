@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
@@ -33,20 +33,38 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
   field,
   error,
 }) => {
-  const { register } = useFormContext()
+  const { register, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-
-  const [entitlement, setEntitlement] = useState(
-    getValueViaPath(
-      application.answers,
-      'formerInsurance.entitlement',
-    ) as string,
-  )
 
   const defaultValues = getValueViaPath(
     application.answers,
     'formerInsurance',
   ) as FormerInsuranceType
+
+  useEffect(() => {
+    setValue('formerInsurance.country', defaultValues.country)
+    setValue('formerInsurance.personalId', defaultValues.personalId)
+    setValue('formerInsurance.entitlement', defaultValues.entitlement)
+    setValue(
+      'formerInsurance.entitlementReason',
+      defaultValues.entitlementReason,
+    )
+    setValue('formerInsurance.registration', defaultValues.registration)
+    setValue(
+      'formerInsurance.confirmationOfResidencyDocument',
+      defaultValues.confirmationOfResidencyDocument,
+    )
+    setValue('formerInsurance.institution', defaultValues.institution)
+  }, [
+    defaultValues.confirmationOfResidencyDocument,
+    defaultValues.country,
+    defaultValues.entitlement,
+    defaultValues.entitlementReason,
+    defaultValues.institution,
+    defaultValues.personalId,
+    defaultValues.registration,
+    setValue,
+  ])
 
   return (
     <Box>
@@ -209,7 +227,6 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
         <RadioController
           id="formerInsurance.entitlement"
           name="formerInsurance.entitlement"
-          onSelect={(value) => setEntitlement(value as string)}
           disabled={!isEditable}
           largeButtons={true}
           split="1/2"
@@ -224,29 +241,27 @@ const FormerInsurance: FC<ReviewFieldProps> = ({
             },
           ]}
         />
-        {entitlement === YES && (
-          <Box marginBottom={[2, 2, 4]}>
-            <Input
-              id="formerInsurance.entitlementReason"
-              {...register('formerInsurance.entitlementReason')}
-              label={formatText(
-                m.formerInsuranceAdditionalInformation,
-                application,
-                formatMessage,
-              )}
-              placeholder={formatText(
-                m.formerInsuranceAdditionalInformationPlaceholder,
-                application,
-                formatMessage,
-              )}
-              disabled={!isEditable}
-              backgroundColor="blue"
-              textarea={true}
-              defaultValue={defaultValues?.entitlementReason}
-              rows={4}
-            />
-          </Box>
-        )}
+        <Box marginBottom={[2, 2, 4]}>
+          <Input
+            id="formerInsurance.entitlementReason"
+            {...register('formerInsurance.entitlementReason')}
+            label={formatText(
+              m.formerInsuranceAdditionalInformation,
+              application,
+              formatMessage,
+            )}
+            placeholder={formatText(
+              m.formerInsuranceAdditionalInformationPlaceholder,
+              application,
+              formatMessage,
+            )}
+            disabled={!isEditable}
+            backgroundColor="blue"
+            defaultValue={defaultValues?.entitlementReason}
+            textarea={true}
+            rows={4}
+          />
+        </Box>
       </Stack>
     </Box>
   )

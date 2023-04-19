@@ -15,7 +15,7 @@ const ReviewMissingInfo: FC<Props> = ({
   application,
   field,
   isEditable,
-  missingInfo = {},
+  missingInfo = {} as MissingInfoType,
   index: missingInfoIndex,
 }) => {
   const { formatMessage } = useLocale()

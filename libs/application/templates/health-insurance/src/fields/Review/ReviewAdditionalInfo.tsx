@@ -24,7 +24,7 @@ interface Props extends ReviewFieldProps {
 const ReviewMissingInfo: FC<Props> = ({
   application,
   isEditable,
-  additionalInfo = {},
+  additionalInfo = {} as AdditionalInfoType,
 }) => {
   const { formatMessage } = useLocale()
 
