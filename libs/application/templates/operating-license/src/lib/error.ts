@@ -53,4 +53,9 @@ export const error = defineMessages({
       'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Dómstólasýslu ríkisins',
     description: '',
   },
+  missingAddressForPropertyNumber: {
+    id: 'ol.application:missingAddressForPropertyNumber',
+    defaultMessage: 'Fasteignanúmer ekki til eða villa við að sækja gögn.',
+    description: 'Error message when a value is invalid for property.',
+  },
 })
