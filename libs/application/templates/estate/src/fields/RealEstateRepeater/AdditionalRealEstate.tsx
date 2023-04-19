@@ -102,9 +102,7 @@ export const AdditionalRealEstate = ({
         defaultValue={field.share || ''}
         render={() => <input type="hidden" />}
       />
-      <Text variant="h4">
-        {formatMessage(m.realEstateRepeaterHeader)}
-      </Text>
+      <Text variant="h4">{formatMessage(m.realEstateRepeaterHeader)}</Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"

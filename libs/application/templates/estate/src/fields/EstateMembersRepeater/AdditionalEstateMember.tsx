@@ -110,9 +110,7 @@ export const AdditionalEstateMember = ({
         defaultValue={field.enabled || false}
         render={() => <input type="hidden" />}
       />
-      <Text variant="h4">
-        {formatMessage(m.estateMember)}
-      </Text>
+      <Text variant="h4">{formatMessage(m.estateMember)}</Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"

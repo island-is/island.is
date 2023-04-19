@@ -142,9 +142,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
               defaultValue={field.dummy || false}
               render={() => <input type="hidden" />}
             />
-            <Text variant="h4">
-              {formatMessage(m.gunTitle)}
-            </Text>
+            <Text variant="h4">{formatMessage(m.gunTitle)}</Text>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
