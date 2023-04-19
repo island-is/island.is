@@ -31,11 +31,12 @@ const getUserInformation = async (instance, callback) => {
   const customPanel = instance.customPanels.getPanel()
 
   customPanel.hostElement.innerHTML = `
-          <div style="padding: 8px">
+          <div style="padding: 16px">
   
             <div class="bx--form-item">
               <label for="${emailInputId}" class="bx--label">Netfang/Email</label>
               <input id="${emailInputId}" name="${emailInputId}" type="text" class="bx--text-input">
+              <span id="${emailInputId}-error" style="color: red; min-height: 18px"></span>
             </div>
   
             <br />
@@ -43,12 +44,13 @@ const getUserInformation = async (instance, callback) => {
             <div class="bx--form-item">
               <label for="${nameInputId}" class="bx--label">Nafn/Name</label>
               <input id="${nameInputId}" type="text" class="bx--text-input">
+              <span id="${nameInputId}-error" style="color: red; min-height: 18px"></span>
             </div>
   
             <br />
             
-            <div class="bx--form-item" style="display: flex; justify-content: center">
-              <button id="${submitButtonId}" class="bx--btn" type="button">Áfram / Continue</button>
+            <div style="display: flex; justify-content: center">
+              <button id="${submitButtonId}" type="button" style="display: flex; justify-content: center; border-radius: 4px; padding: 12px; background-color: var(--WatsonAssistantChat-PRIMARY-color); color: var(--WatsonAssistantChat-CARBON-ui-03); font-weight: bold; font-size: 16px; cursor:pointer">Áfram / Continue</button>
             </div>
           </div>
         `
@@ -62,9 +64,21 @@ const getUserInformation = async (instance, callback) => {
   const nameInput = document.getElementById(nameInputId) as HTMLInputElement
   const submitButton = document.getElementById(submitButtonId)
 
+  const emailInputErrorMessage = document.getElementById(
+    `${emailInputId}-error`,
+  )
+  const nameInputErrorMessage = document.getElementById(`${nameInputId}-error`)
+
   submitButton.onclick = () => {
     const email = emailInput?.value ?? ''
     const name = nameInput?.value ?? ''
+
+    emailInputErrorMessage.innerText = !email ? 'Email is missing' : ''
+    nameInputErrorMessage.innerText = !name ? 'Name is missing' : ''
+
+    if (!email || !name) {
+      return
+    }
 
     storage.setItem(emailInputId, email)
     storage.setItem(nameInputId, name)
