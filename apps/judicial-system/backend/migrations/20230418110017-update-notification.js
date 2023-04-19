@@ -40,6 +40,7 @@ module.exports = {
         'MODIFIED',
         'REVOKED',
         'DEFENDER_ASSIGNED',
+        'DEFENDANTS_NOT_UPDATED_AT_COURT',
         'APPEAL_TO_COURT_OF_APPEALS',
       ],
       enumName: 'enum_notification_type',
