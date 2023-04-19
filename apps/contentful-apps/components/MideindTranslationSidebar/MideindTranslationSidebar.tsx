@@ -48,7 +48,10 @@ const handleClick = async (sdk: any) => {
   }
 
   // 2 - Translate
-  const translatedTexts = await translateTexts(texts)
+  const translatedTexts = await translateTexts(
+    texts,
+    sdk.parameters.instance['MIDEIND_TRANSLATION_API_KEY'],
+  )
 
   // 3 - Reverse populate the fields
   translatedTexts.reverse()
@@ -113,7 +116,12 @@ export const MideindTranslationSidebar = () => {
         enTexts = [...enTexts, ...enExtractedTexts]
       }
 
-      sendTexts(iceTexts, enTexts, translationReference)
+      sendTexts(
+        iceTexts,
+        enTexts,
+        translationReference,
+        sdk.parameters.instance['MIDEIND_TRANSLATION_API_KEY'],
+      )
     }
   }
 
