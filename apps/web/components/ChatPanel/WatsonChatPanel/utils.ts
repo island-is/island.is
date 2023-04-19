@@ -34,7 +34,7 @@ const getUserInformation = async (instance, callback) => {
           <div style="padding: 16px">
   
             <div class="bx--form-item">
-              <label for="${emailInputId}" class="bx--label">Netfang/Email</label>
+              <label for="${emailInputId}" class="bx--label">Netfang/Email <span style="color: red">*</span></label>
               <input id="${emailInputId}" name="${emailInputId}" type="text" class="bx--text-input">
               <span id="${emailInputId}-error" style="color: red; min-height: 18px"></span>
             </div>
@@ -42,7 +42,7 @@ const getUserInformation = async (instance, callback) => {
             <br />
   
             <div class="bx--form-item">
-              <label for="${nameInputId}" class="bx--label">Nafn/Name</label>
+              <label for="${nameInputId}" class="bx--label">Nafn/Name <span style="color: red">*</span></label>
               <input id="${nameInputId}" type="text" class="bx--text-input">
               <span id="${nameInputId}-error" style="color: red; min-height: 18px"></span>
             </div>
