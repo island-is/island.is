@@ -132,15 +132,17 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    setTaxFreeInheritance(taxFreeLimit * percentage)
+    setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
     setInheritance(
-      (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-        Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-        Number(getValueViaPath(answers, 'business.businessTotal')) -
-        Number(getValueViaPath(answers, 'totalDeduction'))) *
-        percentage,
+      Math.round(
+        (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+          Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+          Number(getValueViaPath(answers, 'business.businessTotal')) -
+          Number(getValueViaPath(answers, 'totalDeduction'))) *
+          percentage,
+      ),
     )
-    setTaxableInheritance(inheritance - taxFreeInheritance)
+    setTaxableInheritance(Math.round(inheritance - taxFreeInheritance))
     setInheritanceTax(Math.round(taxableInheritance * 0.1))
 
     setValue(`${index}.taxFreeInheritance`, taxFreeInheritance)
