@@ -1,5 +1,4 @@
 import {
-  AuthenticationApi,
   CasesApi,
   CaseSubscriptionApi,
   Configuration,
@@ -47,7 +46,6 @@ const provideApi = <T>(
   inject: [ConsultationPortalClientConfig.KEY, IdsClientConfig.KEY],
 })
 
-export const AuthenticationApiProvider = provideApi(AuthenticationApi)
 export const CasesApiProvider = provideApi(CasesApi)
 export const CaseSubscriptionApiProvider = provideApi(CaseSubscriptionApi)
 export const DocumentsApiProvider = provideApi(DocumentsApi)

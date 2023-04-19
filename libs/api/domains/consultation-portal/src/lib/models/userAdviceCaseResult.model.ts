@@ -9,6 +9,9 @@ export class UserAdviceCaseResult {
   name?: string | null
 
   @Field(() => String, { nullable: true })
+  statusName?: string | null
+
+  @Field(() => String, { nullable: true })
   institutionName?: string | null
 
   @Field(() => String, { nullable: true })

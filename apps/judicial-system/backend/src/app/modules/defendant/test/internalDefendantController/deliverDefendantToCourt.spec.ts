@@ -1,8 +1,8 @@
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { User } from '@island.is/judicial-system/types'
 
-import { User } from '../../../user'
 import { CourtService } from '../../../court'
 import { Case } from '../../../case'
 import { DeliverDefendantToCourtDto } from '../../dto/deliverDefendantToCourt.dto'
@@ -19,7 +19,6 @@ type GivenWhenThen = (
   caseId: string,
   defendantId: string,
   body: DeliverDefendantToCourtDto,
-  user: User,
   theCase: Case,
   defendant: Defendant,
 ) => Promise<Then>
@@ -27,6 +26,7 @@ type GivenWhenThen = (
 describe('InternalDefendantController - Deliver defendant to court', () => {
   const userId = uuid()
   const user = { id: userId } as User
+  const deliverDefendantToCourtDto = { user }
   const defendantId = uuid()
   const defendantNationalId = '1234567890'
   const defendant = {
@@ -64,21 +64,13 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
       caseId: string,
       defendantId: string,
       body: DeliverDefendantToCourtDto,
-      user: User,
       theCase: Case,
       defendant: Defendant,
     ) => {
       const then = {} as Then
 
       await internalDefendantController
-        .deliverDefendantToCourt(
-          caseId,
-          defendantId,
-          user,
-          theCase,
-          defendant,
-          body,
-        )
+        .deliverDefendantToCourt(caseId, defendantId, theCase, defendant, body)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -96,8 +88,7 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
       then = await givenWhenThen(
         caseId,
         defendantId,
-        { userId },
-        user,
+        deliverDefendantToCourtDto,
         theCase,
         defendant,
       )
@@ -119,10 +110,16 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   // TODO: Run test when ready to send notifications
   describe.skip('no national id', () => {
     beforeEach(async () => {
-      await givenWhenThen(caseId, defendantId, { userId }, user, theCase, {
-        ...defendant,
-        noNationalId: true,
-      } as Defendant)
+      await givenWhenThen(
+        caseId,
+        defendantId,
+        deliverDefendantToCourtDto,
+        theCase,
+        {
+          ...defendant,
+          noNationalId: true,
+        } as Defendant,
+      )
     })
 
     it('should send email to court', () => {
@@ -143,8 +140,7 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
       then = await givenWhenThen(
         caseId,
         defendantId,
-        { userId },
-        user,
+        deliverDefendantToCourtDto,
         theCase,
         defendant,
       )

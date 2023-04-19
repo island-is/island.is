@@ -83,4 +83,32 @@ export const defenderCaseOverview = defineMessages({
     description:
       'Texti sem birtist ef úrskurður er ekki undirritaður á yfirlitsskjá verjanda',
   },
+  confirmAppealAfterDeadlineModalTitle: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_title',
+    defaultMessage: 'Kærufrestur er liðinn',
+    description:
+      'Notaður sem titill modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_text',
+    defaultMessage: 'Viltu halda áfram og senda kæru?',
+    description:
+      'Notaður sem texti í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalPrimaryButtonText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_primary_button_text',
+    defaultMessage: 'Já, senda kæru',
+    description:
+      'Notaður sem texti í staðfesta takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalSecondaryButtonText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description:
+      'Notaður sem texti í Hætta við takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
 })
