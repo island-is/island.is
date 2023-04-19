@@ -17,29 +17,11 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
     super(ApplicationTypes.DRIVING_LEARNERS_PERMIT)
   }
 
-  async completeApplication({ application }: TemplateApiModuleActionProps) {
-    // Pretend to be doing stuff for a short while
-
-    const studentMentorability = (application.answers
-      .studentMentorability as unknown) as StudentMentorability
-
-    //TODO: submit this to the driving license service once an endpoint has been created
-    const applicationData = {
-      student: studentMentorability.studentNationalId,
-      mentor: application.applicant,
-    }
-
-    return {
-      id: 1337,
-      applicationData,
-    }
-  }
-
-  async canApplyForPracticePermit({
-    auth,
+  async completeApplication({
     application,
-  }: TemplateApiModuleActionProps): Promise<boolean> {
-    const canApply = await this.drivingLicenseService.canApplyForPracticePermit(
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const practicePermitApplication = await this.drivingLicenseService.postPracticePermitApplication(
       {
         token: auth.authorization.split(' ')[1],
         mentorSSN: application.applicant,
@@ -47,8 +29,22 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
       },
     )
 
-    console.log('canApply', canApply)
+    return {
+      practicePermitApplication,
+    }
+  }
 
-    return false
+  async canApplyForPracticePermit({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps): Promise<boolean> {
+    const canApply = await this.drivingLicenseService.postCanApplyForPracticePermit(
+      {
+        token: auth.authorization.split(' ')[1],
+        mentorSSN: application.applicant,
+        studentSSN: (application.answers.intro as any).studentSSN,
+      },
+    )
+    return canApply.isOk ?? false
   }
 }
