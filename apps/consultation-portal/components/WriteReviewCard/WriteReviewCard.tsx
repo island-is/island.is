@@ -54,110 +54,105 @@ export const WriteReviewCard = ({
   const [showInputError, setShowInputError] = useState(false)
   const [showUpload, setShowUpload] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
-  const [error, setError] = useState<string[] | undefined>(undefined)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { createUploadUrl, postAdviceMutation } = usePostAdvice()
 
   const uploadFile = async (file: UploadFile, response: PresignedPost) => {
-    if (review.length >= REVIEW_MINIMUM_LENGTH) {
-      setShowInputError(false)
-      return new Promise((resolve, reject) => {
-        const request = new XMLHttpRequest()
-        request.withCredentials = true
-        request.responseType = 'json'
+    return new Promise((resolve, reject) => {
+      const request = new XMLHttpRequest()
+      request.withCredentials = true
+      request.responseType = 'json'
 
-        request.upload.addEventListener('progress', (event) => {
-          if (event.lengthComputable) {
-            file.percent = (event.loaded / event.total) * 100
-            file.status = 'uploading'
-
-            const withoutThisFile = fileList.filter((f) => f.key !== file.key)
-            const newFileList = [...withoutThisFile, file]
-            setFileList(newFileList)
-          }
-        })
-
-        request.upload.addEventListener('error', () => {
-          file.percent = 0
-          file.status = 'error'
+      request.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          file.percent = (event.loaded / event.total) * 100
+          file.status = 'uploading'
 
           const withoutThisFile = fileList.filter((f) => f.key !== file.key)
           const newFileList = [...withoutThisFile, file]
           setFileList(newFileList)
-          reject()
-        })
-        request.open('POST', response.url)
-
-        const formData = new FormData()
-
-        Object.keys(response.fields).forEach((key) =>
-          formData.append(key, response.fields[key]),
-        )
-        formData.append('file', file.originalFileObj as File)
-
-        request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
-
-        request.onload = () => {
-          resolve(request.response)
         }
-
-        request.onerror = () => {
-          reject()
-        }
-        request.send(formData)
       })
-    } else {
-      setShowInputError(true)
-    }
+
+      request.upload.addEventListener('error', () => {
+        file.percent = 0
+        file.status = 'error'
+
+        const withoutThisFile = fileList.filter((f) => f.key !== file.key)
+        const newFileList = [...withoutThisFile, file]
+        setFileList(newFileList)
+        reject()
+      })
+      request.open('POST', response.url)
+
+      const formData = new FormData()
+
+      Object.keys(response.fields).forEach((key) =>
+        formData.append(key, response.fields[key]),
+      )
+      formData.append('file', file.originalFileObj as File)
+
+      request.setRequestHeader('x-amz-acl', 'bucket-owner-full-control')
+
+      request.onload = () => {
+        resolve(request.response)
+      }
+
+      request.onerror = () => {
+        reject()
+      }
+      request.send(formData)
+    })
   }
 
   const onClick = async () => {
     setIsSubmitting(true)
-    const mappedFileList = await Promise.all(
-      fileList.map((file) => {
-        return new Promise((resolve, reject) => {
-          createUploadUrl({
-            variables: {
-              filename: file.name,
-            },
-          })
-            .then((response) => {
-              uploadFile(file, response.data.createUploadUrl).then(() => {
-                resolve(response.data.createUploadUrl.fields.key)
-              })
+    if (review.length > 10) {
+      setShowInputError(false)
+      const mappedFileList = await Promise.all(
+        fileList.map((file) => {
+          return new Promise((resolve, reject) => {
+            createUploadUrl({
+              variables: {
+                filename: file.name,
+              },
             })
-            .catch(() => reject())
+              .then((response) => {
+                uploadFile(file, response.data.createUploadUrl)
+                  .then(() => {
+                    resolve(response.data.createUploadUrl.fields.key)
+                  })
+                  .catch(() => reject())
+              })
+              .catch(() => reject())
+          })
+        }),
+      )
+
+      const objToSend = {
+        caseId: caseId,
+        caseAdviceCommand: {
+          content: review,
+          fileUrls: mappedFileList,
+        },
+      }
+
+      await postAdviceMutation({
+        variables: {
+          input: objToSend,
+        },
+      })
+        .then(() => {
+          setReview('')
+          setFileList([])
+          refetchAdvices()
+          toast.success('Umsögn send inn')
         })
-      }),
-    )
-
-    const objToSend = {
-      caseId: caseId,
-      caseAdviceCommand: {
-        content: review,
-        fileUrls: mappedFileList,
-      },
-    }
-
-    const posting = await postAdviceMutation({
-      variables: {
-        input: objToSend,
-      },
-    })
-
-    // consultationPortalPostAdvice sends back null now
-    // but the idea is that is should send true for
-    // success and false for fail
-    if (posting?.data?.consultationPortalPostAdvice === null) {
-      setReview('')
-      setFileList([])
-      refetchAdvices()
-      toast.success('Umsögn send inn')
+        .catch(() => toast.error('Ekki tókst að senda inn umsögn'))
     } else {
-      toast.error('Ekki tókst að senda inn umsögn')
+      setShowInputError(true)
     }
-
     setIsSubmitting(false)
   }
 
@@ -245,6 +240,7 @@ export const WriteReviewCard = ({
               showFileSize
               onChange={onChange}
               onRemove={onRemove}
+              maxSize={10000000}
             />
           </Box>
         )}
