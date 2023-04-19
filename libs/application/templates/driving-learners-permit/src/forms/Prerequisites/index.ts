@@ -10,7 +10,6 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { sectionRequirements } from './sectionRequirements'
-import { sectionLookupStudent } from './sectionLookupStudent'
 import { sectionFakeData } from './sectionFakeData'
 import { CanApplyForPracticePermitApi } from '../../dataProviders'
 
@@ -64,7 +63,6 @@ export const getForm = ({ allowFakeData = false }): Form => {
               }),
             ],
           }),
-          sectionLookupStudent,
           sectionRequirements,
         ],
       }),
