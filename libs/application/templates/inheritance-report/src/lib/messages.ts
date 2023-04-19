@@ -99,6 +99,17 @@ export const m = defineMessages({
       'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
     description: '',
   },
+  funeralExpensesTitle: {
+    id: 'ir.application:funeralExpensesTitle',
+    defaultMessage: 'Yfirlit um útfarakostnað',
+    description: '',
+  },
+  funeralExpensesSubtitle: {
+    id: 'ir.application:funeralExpensesSubtitle',
+    defaultMessage:
+      'Athugað er hvort að skráningaraðili sé búinn að fylla út yfirlit um útfarakostnað',
+    description: '',
+  },
 
   // Applicant's Information
   applicantsInfo: {
