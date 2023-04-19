@@ -211,13 +211,13 @@ describe('transformCase', () => {
 
     it('should be false when less that one day has passed since the case was appealed', () => {
       // Arrange
-      const accusedPostponedAppealDate = new Date()
-      accusedPostponedAppealDate.setDate(accusedPostponedAppealDate.getDate())
-      accusedPostponedAppealDate.setSeconds(
-        accusedPostponedAppealDate.getSeconds() - 100,
+      const appealReceivedByCourtDate = new Date()
+      appealReceivedByCourtDate.setDate(appealReceivedByCourtDate.getDate())
+      appealReceivedByCourtDate.setSeconds(
+        appealReceivedByCourtDate.getSeconds() - 100,
       )
       const theCase = {
-        accusedPostponedAppealDate: accusedPostponedAppealDate.toISOString(),
+        appealReceivedByCourtDate: appealReceivedByCourtDate.toISOString(),
       } as Case
 
       // Act
@@ -243,6 +243,7 @@ describe('transformCase', () => {
       expect(res.appealedDate).toBeUndefined()
       expect(res.hasBeenAppealed).toBeUndefined()
       expect(res.canBeAppealed).toBeUndefined()
+      expect(res.appealReceivedByCourtDate).toBeUndefined()
     })
 
     it('should return appeal deadline and hasBeenAppealed set to false when case has not yet been appealed', () => {
@@ -284,16 +285,15 @@ describe('transformCase', () => {
       courtEndTime.setDate(courtEndTime.getDate() - 1)
       const theCase = {
         courtEndTime: courtEndTime.toISOString(),
-        accusedPostponedAppealDate: '2022-06-15T19:50:08.033Z',
         appealState: CaseAppealState.RECEIVED,
-        appealReceivedByCourtDate: '2022-06-15T19:50:08.033Z',
+        appealReceivedByCourtDate: '2021-06-15T19:50:08.033Z',
       } as Case
 
       // Act
       const res = transformCase(theCase)
 
       // Assert
-      expect(res.statementDeadline).toBeDefined()
+      expect(res.statementDeadline).toBe('2021-06-16T19:50:08.033Z')
     })
 
     it('should have correct prosecutor and defender statement dates when both parties have sent in their statements', () => {
@@ -323,8 +323,6 @@ describe('transformCase', () => {
       const res = transformCase(theCase)
 
       //Assert
-      expect(res.defenderStatementDate).toBeDefined()
-      expect(res.prosecutorStatementDate).toBeDefined()
       expect(res.defenderStatementDate).toBe('2021-06-15T19:50:08.033Z')
       expect(res.prosecutorStatementDate).toBe('2021-06-14T19:50:08.033Z')
     })
