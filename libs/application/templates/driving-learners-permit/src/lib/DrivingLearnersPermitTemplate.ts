@@ -9,9 +9,10 @@ import {
   Application,
   DefaultEvents,
   CurrentLicenseApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
-import { FakeDataFeature } from '../shared'
+import { ApiActions, FakeDataFeature } from '../shared'
 import { m } from './messages'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
@@ -95,6 +96,10 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
       },
       [States.approved]: {
         meta: {
+          onEntry: defineTemplateApi({
+            action: ApiActions.completeApplication,
+            shouldPersistToExternalData: true,
+          }),
           status: 'approved',
           name: 'Approved',
           progress: 1,

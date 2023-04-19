@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 
-import { StudentMentorability } from './types'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'

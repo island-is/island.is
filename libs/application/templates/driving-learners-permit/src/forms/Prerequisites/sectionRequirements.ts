@@ -24,12 +24,12 @@ export const sectionRequirements = buildSubSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: 'Lorem ipsum',
+          title: 'Senda inn umsókn',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: 'Dolor sit amet',
+              name: 'Senda inn umsókn',
               type: 'primary',
             },
           ],
