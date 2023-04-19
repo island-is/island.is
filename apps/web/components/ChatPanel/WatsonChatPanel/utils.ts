@@ -50,7 +50,7 @@ const getUserInformation = async (instance, callback) => {
             <br />
             
             <div style="display: flex; justify-content: center">
-              <button id="${submitButtonId}" type="button" style="display: flex; justify-content: center; border-radius: 4px; padding: 12px; background-color: var(--WatsonAssistantChat-PRIMARY-color); color: var(--WatsonAssistantChat-CARBON-ui-03); font-weight: bold; font-size: 16px; cursor:pointer; border:none">Áfram / Continue</button>
+              <button id="${submitButtonId}" type="button" style="display: flex; justify-content: center; border-radius: 4px; padding: 12px; background-color: #0061FF; color: white; font-weight: bold; font-size: 16px; cursor:pointer; border:none">Áfram / Continue</button>
             </div>
           </div>
         `
