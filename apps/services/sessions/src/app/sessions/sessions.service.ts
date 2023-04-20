@@ -86,8 +86,18 @@ export class SessionsService {
   }
 
   create(session: CreateSessionDto): Promise<Session> {
+    const { id, sessionId, ...rest } = session
+
+    // Todo: Remove this when we have migrated IDS to use sessionId
+    const sid = sessionId || id
+
+    if (!sid) {
+      throw new Error('Missing sessionId.')
+    }
+
     return this.sessionModel.create({
-      ...session,
+      ...rest,
+      sessionId: sid,
       device: this.formatUserAgent(session.userAgent),
       ipLocation: this.formatIp(session.ip),
     })

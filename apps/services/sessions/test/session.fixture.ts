@@ -14,7 +14,7 @@ export interface CreateSessionDtoOptions {
 export const createSessionDto = (
   options?: CreateSessionDtoOptions,
 ): CreateSessionDto => ({
-  id: faker.datatype.uuid(),
+  sessionId: faker.datatype.uuid(),
   actorNationalId: options?.actorNationalId ?? createNationalId('person'),
   subjectNationalId:
     options?.subjectNationalId ??
