@@ -8,6 +8,7 @@ import uaParser from 'ua-parser-js'
 import { User } from '@island.is/auth-nest-tools'
 import { paginate } from '@island.is/nest/pagination'
 
+import { CreateSessionDto } from './create-session.dto'
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
@@ -84,7 +85,7 @@ export class SessionsService {
     })
   }
 
-  create(session: Session): Promise<Session> {
+  create(session: CreateSessionDto): Promise<Session> {
     return this.sessionModel.create({
       ...session,
       device: this.formatUserAgent(session.userAgent),
