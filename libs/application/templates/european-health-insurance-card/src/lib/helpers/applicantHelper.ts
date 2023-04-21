@@ -216,7 +216,7 @@ export function getDefaultValuesForPDFApplicants(
 
 export function hasAPDF(cardInfo: CardResponse) {
   if (cardInfo && cardInfo.cards && cardInfo.cards.length > 0) {
-    const card = cardInfo.cards.find((x) => x.cardType === 'pdf')
+    const card = cardInfo.cards.find((x) => x.isTemp)
     if (card) {
       return true
     }
