@@ -50,6 +50,7 @@ import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-sch
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3Module } from '@island.is/api/domains/national-registry-v3'
 import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import {
   GenericAdrLicenseConfig,
@@ -257,6 +258,7 @@ const autoSchemaFile = environment.production
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
+    NationalRegistryV3Module,
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
