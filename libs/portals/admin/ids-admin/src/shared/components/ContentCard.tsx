@@ -152,14 +152,18 @@ const ContentCard: FC<ContentCardProps> = ({
             {intent !== 'none' && (
               <Box>
                 <DropdownMenu
-                  title="Sync"
+                  title={
+                    inSync
+                      ? formatMessage(m.inSync)
+                      : formatMessage(m.outOfSync)
+                  }
                   icon="chevronDown"
                   menuClassName={styles.menu}
                   items={[
                     {
                       title: '',
                       render: () => (
-                        <>
+                        <div key={`${intent}-syncText`}>
                           <Box
                             justifyContent="center"
                             alignItems="center"
@@ -182,7 +186,7 @@ const ContentCard: FC<ContentCardProps> = ({
                             </Text>
                           </Box>
                           <Divider />
-                        </>
+                        </div>
                       ),
                     },
                     ...(inSync || dirty
@@ -192,6 +196,7 @@ const ContentCard: FC<ContentCardProps> = ({
                             title: '',
                             render: () => (
                               <Box
+                                key={`${intent}-syncButton`}
                                 display="flex"
                                 justifyContent="center"
                                 padding={2}
@@ -219,7 +224,6 @@ const ContentCard: FC<ContentCardProps> = ({
                           },
                         ]),
                   ]}
-                  key="sync-environment"
                 />
               </Box>
             )}
