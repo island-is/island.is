@@ -502,6 +502,57 @@ jobs:
       - name: Building
         run: ./scripts/ci/run-in-parallel-native.sh build
 
+
+  build-prod:
+    needs:
+      - prepare
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    timeout-minutes: 25
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      MAX_JOBS: 10
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+    if: needs.prepare.outputs.BUILD_CHUNKS && contains(github.event.pull_request.labels.*.name, 'build-prod')
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Setup yarn
+        run: npm install -g yarn
+      - name: Cache for NodeJS dependencies - host OS
+        id: node-modules
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: node_modules
+          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
+
+      - name: Check cache success
+        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+
+      - name: Cache for generated files
+        id: generated-files-cache
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: generated_files.tar.gz
+          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
+
+      - name: Check cache success
+        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
+
+      - name: Untar generated files
+        run: tar zxvf generated_files.tar.gz
+
+      - name: Building
+        run: ./scripts/ci/run-in-parallel-native.sh build --prod
+
+
   success:
     runs-on: ec2-runners
     container:
