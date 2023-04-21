@@ -4,7 +4,7 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 buildOpenApi({
-  path: 'apps/services/universitygateway/src/openapi.yaml',
+  path: 'apps/services/university-gateway/src/openapi.yaml',
   appModule: AppModule,
   openApi,
 })

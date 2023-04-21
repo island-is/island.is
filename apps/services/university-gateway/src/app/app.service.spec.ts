@@ -14,9 +14,9 @@ describe('AppService', () => {
   })
 
   describe('getData', () => {
-    it('should return "Welcome to services/universitygateway!"', () => {
+    it('should return "Welcome to services/university-gateway!"', () => {
       expect(service.getData()).toEqual({
-        message: 'Welcome to services/universitygateway!',
+        message: 'Welcome to services/university-gateway!',
       })
     })
   })

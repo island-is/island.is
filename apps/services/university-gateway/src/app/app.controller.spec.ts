@@ -14,10 +14,10 @@ describe('AppController', () => {
   })
 
   describe('getData', () => {
-    it('should return "Welcome to services/universitygateway!"', () => {
+    it('should return "Welcome to services/university-gateway!"', () => {
       const appController = app.get<AppController>(AppController)
       expect(appController.getData()).toEqual({
-        message: 'Welcome to services/universitygateway!',
+        message: 'Welcome to services/university-gateway!',
       })
     })
   })

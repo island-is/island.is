@@ -303,7 +303,7 @@
     "services-endorsements-api": "apps/services/endorsements/api",
     "services-search-indexer": "apps/services/search-indexer",
     "services-sessions": "apps/services/sessions",
-    "services-universitygateway": "apps/services/universitygateway",
+    "services-university-gateway": "apps/services/university-gateway",
     "services-user-notification": "apps/services/user-notification",
     "services-user-profile": "apps/services/user-profile",
     "services-xroad-collector": "apps/services/xroad-collector",
