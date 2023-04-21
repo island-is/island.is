@@ -17,7 +17,6 @@ import { m } from './messages'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { truthyFeatureFromClient } from '../shared/utils'
-import { CanApplyForPracticePermitApi } from '../dataProviders'
 
 const States = {
   prerequisites: 'prerequisites',
@@ -79,7 +78,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
                   allowFakeData,
                 })
               },
-              api: [CurrentLicenseApi, CanApplyForPracticePermitApi],
+              api: [CurrentLicenseApi],
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
@@ -113,7 +112,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Done').then((module) =>
-                  Promise.resolve(module.Draft),
+                  Promise.resolve(module.Done),
                 ),
               write: 'all',
               delete: true,

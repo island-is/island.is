@@ -49,25 +49,6 @@ export const m = defineMessages({
       "Message to display when user's Driver License Data cannot be retrieved",
   },
 
-  /* Can Apply For Practice Permit Provider */
-  titleCanApplyForPracticePermit: {
-    id: 'dlp.application:titleCanApplyForPracticePermit',
-    defaultMessage: 'Upplýsinggaar úr Ökuskírteinaskrá',
-    description: 'Can Apply For Practice Permit Provider Title',
-  },
-  descriptionCanApplyForPracticePermit: {
-    id: 'dlp.application:descriptionCanApplyForPracticePermit',
-    defaultMessage:
-      'Sóttar eru upplýsingar um réttindi til að vera leiðbeinandi í æfingarakstri.',
-    description: 'Can Apply For Practice Permit Provider Title',
-  },
-  errorCanApplyForPracticePermit: {
-    id: 'dlp.application:errorCanApplyForPracticePermit',
-    defaultMessage: 'Tókst ekki að sækja upplýsingar um réttindi',
-    description:
-      "Message to display when user's Practice Permit Application Data cannot be retrieved",
-  },
-
   /* Requirements Subsection */
   applicationEligibilityTitle: {
     id: 'dlp.application:applicationEligibilityTitle',

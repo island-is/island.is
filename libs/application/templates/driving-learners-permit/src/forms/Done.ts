@@ -6,16 +6,16 @@ import {
 import { m } from '../lib/messages'
 import { Form, FormModes } from '@island.is/application/types'
 
-export const Draft: Form = buildForm({
+export const Done: Form = buildForm({
   id: 'Done',
   title: m.doneTitle.defaultMessage,
-  mode: FormModes.DRAFT,
+  mode: FormModes.COMPLETED,
   children: [
     buildMultiField({
       title: '',
       children: [
         buildDescriptionField({
-          id: 'waitingToAssign',
+          id: 'done',
           title: m.doneTitle,
           description: m.doneInfo,
         }),

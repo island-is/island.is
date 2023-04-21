@@ -8,10 +8,13 @@ export const IDENTITY_QUERY = gql`
   }
 `
 
-export const STUDENT_MENTORABILITY_QUERY = gql`
-  query StudentMentorability($input: StudentMentorabilityInput!) {
-    studentMentorability(input: $input) {
-      eligible
+export const LOOKUP_STUDENT_QUERY = gql`
+  query DrivingLicenseStudentCanGetPracticePermit(
+    $input: StudentCanGetPracticePermitInput!
+  ) {
+    drivingLicenseStudentCanGetPracticePermit(input: $input) {
+      errorCode
+      isOk
     }
   }
 `
