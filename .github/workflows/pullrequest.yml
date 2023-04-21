@@ -549,9 +549,15 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
+      - name: Patch nx.json to use nx cloud runner
+        run: |
+          tmp=$(mktemp)
+          jq '.tasksRunnerOptions.default.runner = "@nrwl/nx-cloud"' nx.json > "$tmp" && mv "$tmp" nx.json
+
       - name: Building
         run: |
           echo "Running prod build because auto-merge label is set"
+          export NX_CLOUD_AUTH_TOKEN=${{ secrets.NX_CLOUD_AUTH_TOKEN }}
           ./scripts/ci/run-in-parallel-native.sh build --prod
 
 
