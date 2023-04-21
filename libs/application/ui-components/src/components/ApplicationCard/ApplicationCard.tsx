@@ -84,6 +84,7 @@ export const ApplicationCard = ({
       paddingX={[3, 3, 4]}
       paddingY={3}
       background="white"
+      dataTestId={`application-card`}
     >
       <Box
         alignItems="center"
@@ -142,7 +143,6 @@ export const ApplicationCard = ({
           <Text paddingTop={heading ? 1 : 0}>{actionCard.description}</Text>
         )}
       </Box>
-
       {shouldRenderProgress ? (
         <ApplicationCardProgress
           application={application}
