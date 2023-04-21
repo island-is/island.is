@@ -28,7 +28,7 @@ export const ApiConfiguration = {
             }
           : undefined,
       }),
-      basePath: `https://midgardur-test.sjukra.is/ehic`, // `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+      basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
         Accept: 'application/json',
         'X-Road-Client': xRoadConfig.xRoadClient,
