@@ -7,16 +7,16 @@ import { information } from '../../../lib/messages'
 
 export const TestSubSection = buildSubSection({
   id: 'test',
-  title: information.labels.test.sectionTitle,
+  title: 'test',
   children: [
     buildMultiField({
       id: 'testMultiField',
-      title: information.labels.test.pageTitle,
-      description: information.general.description,
+      title: 'test',
+      description: 'test',
       children: [
         buildDescriptionField({
           id: 'test.title',
-          title: information.labels.test.title,
+          title: 'test',
           titleVariant: 'h5',
         }),
       ],

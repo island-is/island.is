@@ -5,18 +5,18 @@ export const confirmation = {
     sectionTitle: {
       id: 'doi.rpp.application:confirmation.general.sectionTitle',
       defaultMessage: 'Staðfesting',
-      description: 'Title of confirmation screen',
+      description: 'Confirmation section title',
     },
     alertTitle: {
       id: 'doi.rpp.application:confirmation.general.alertTitle',
       defaultMessage: 'Umsókn þín hefur verið móttekin',
-      description: 'Confirmation general alert title',
+      description: 'Confirmation alert title',
     },
     alertMessage: {
       id: 'doi.rpp.application:confirmation.general.alertMessage',
       defaultMessage:
-        'Umsókn þín um ótímabundið á dvalarleyfi hefur verið móttekin',
-      description: 'Confirmation general alert message',
+        'Umsókn þín um ótímabundið dvalarleyfi hefur verið móttekin',
+      description: 'Confirmation alert message',
     },
     accordionTitle: {
       id: 'doi.rpp.application:confirmation.general.accordionTitle',

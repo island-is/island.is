@@ -5,12 +5,12 @@ export const payment = {
     sectionTitle: {
       id: 'doi.cs.application:payment.general.sectionTitle',
       defaultMessage: 'Greiðsla',
-      description: 'Title of for payment section',
+      description: 'Payment section title',
     },
     pageTitle: {
       id: 'doi.cs.application:payment.general.pageTitle',
       defaultMessage: 'Greiðsla',
-      description: 'Title of for payment page',
+      description: 'Payment page title',
     },
   }),
   paymentChargeOverview: defineMessages({
@@ -29,7 +29,7 @@ export const payment = {
     confirm: {
       id: 'doi.cs.application:payment.confirmation.confirm',
       defaultMessage: 'Áfram',
-      description: 'Continue',
+      description: 'Confirm label',
     },
   }),
 }

@@ -1,9 +1,12 @@
 import { buildForm, buildSection } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes, Section } from '@island.is/application/types'
 import { confirmation, externalData } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
 import { PaymentSection } from './PaymentSection'
 import { Logo } from '../../assets/Logo'
+
+const buildInformationSections = (): Section[] =>
+  [...Array(2)].map((_key, index) => InformationSection(index))
 
 export const ResidencePermitPermanentForm: Form = buildForm({
   id: 'ResidencePermitPermanentFormDraft',
@@ -18,7 +21,7 @@ export const ResidencePermitPermanentForm: Form = buildForm({
       title: externalData.dataProvider.sectionTitle,
       children: [],
     }),
-    InformationSection,
+    ...buildInformationSections(),
     PaymentSection,
     buildSection({
       id: 'confirmation',

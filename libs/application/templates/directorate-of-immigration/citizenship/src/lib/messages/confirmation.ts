@@ -5,17 +5,17 @@ export const confirmation = {
     sectionTitle: {
       id: 'doi.cs.application:confirmation.general.sectionTitle',
       defaultMessage: 'Staðfesting',
-      description: 'Title of confirmation screen',
+      description: 'Confirmation section title',
     },
     alertTitle: {
       id: 'doi.cs.application:confirmation.general.alertTitle',
       defaultMessage: 'Umsókn þín hefur verið móttekin',
-      description: 'Confirmation general alert title',
+      description: 'Confirmation alert title',
     },
     alertMessage: {
       id: 'doi.cs.application:confirmation.general.alertMessage',
       defaultMessage: 'Umsókn þín um ríkisborgararétt hefur verið móttekin',
-      description: 'Confirmation general alert message',
+      description: 'Confirmation alert message',
     },
     accordionTitle: {
       id: 'doi.cs.application:confirmation.general.accordionTitle',
