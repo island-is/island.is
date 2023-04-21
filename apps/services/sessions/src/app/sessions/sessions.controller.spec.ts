@@ -203,21 +203,11 @@ describe('SessionsController', () => {
         expect(res.body.data.every(filterRelatedSession(user)))
         expect(res.body.data).toMatchObject(
           sortBy(sessions, 'timestamp')
-            // .filter(
-            //   (session) =>
-            //     session.actorNationalId === user.nationalId ||
-            //     session.subjectNationalId === user.nationalId,
-            // )
             .filter(filterRelatedSession(user))
             .map((session) => ({ id: session.id }))
             .slice(0, 10),
         )
         expect(res.body.totalCount).toEqual(
-          // sessions.filter(
-          //   (session) =>
-          //     session.actorNationalId === user.nationalId ||
-          //     session.subjectNationalId == user.nationalId,
-          // ).length,
           sessions.filter(filterRelatedSession(user)).length,
         )
       })
@@ -261,8 +251,6 @@ describe('SessionsController', () => {
         const res = await server
           .post(`/v1/me/sessions`)
           .send(createSessionDto({ actorNationalId: user.nationalId }))
-
-        console.log(res.body)
 
         // Assert
         expect(res.status).toEqual(202)
