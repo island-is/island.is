@@ -27,13 +27,12 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
-import DefendantInfo from '@island.is/judicial-system-web/src/components/CasesTableComponents/DefendantInfo/DefendantInfo'
-import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
 
 interface Props {
   cases: CaseListEntry[]
