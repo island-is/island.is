@@ -11,7 +11,7 @@ source "$DIR"/_common.sh
 MAX_JOBS=${MAX_JOBS:-2}
 
 AFFECTED_PROJECTS=$(echo "${AFFECTED_PROJECTS}" | tr -d '\n[:space:]')
-echo "Running '$AFFECTED_PROJECTS' in parallel of ${MAX_JOBS} for target $1"
+echo "Running '$AFFECTED_PROJECTS' in parallel of ${MAX_JOBS} for target $target"
 
 if [ -n "$AFFECTED_PROJECTS" ]
 then
