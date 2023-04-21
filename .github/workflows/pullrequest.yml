@@ -512,6 +512,7 @@ jobs:
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
+      GEOIP_LICENSE_KEY: ${{ secrets.GEOIP_LICENSE_KEY }}
       MAX_JOBS: 10
     strategy:
       fail-fast: false
@@ -558,7 +559,7 @@ jobs:
         run: |
           echo "Running prod build because auto-merge label is set"
           export NX_CLOUD_AUTH_TOKEN=${{ secrets.NX_CLOUD_AUTH_TOKEN }}
-          ./scripts/ci/run-in-parallel-native.sh build --prod
+          ./scripts/ci/run-in-parallel-native.sh build --prod --check=true
 
 
   success:
