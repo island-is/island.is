@@ -16,6 +16,9 @@ env:
 jobs:
   prepare:
     runs-on: ec2-runners
+    permissions:
+      contents: 'read'
+      actions: 'read'
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
@@ -40,6 +43,9 @@ jobs:
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
+      - run: |
+          echo "BASE: ${{ env.NX_BASE }}"
+          echo "HEAD: ${{ env.NX_HEAD }}"
       - uses: actions/setup-node@v3
         with:
           node-version: '18.8.0'
