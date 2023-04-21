@@ -1500,8 +1500,11 @@ export interface ILifeEventPageFields {
   /** see more text */
   seeMoreText?: string | undefined
 
-  /** Page Type */
+  /** page type */
   pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
+
+  /** featured image */
+  featuredImage?: Asset | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
