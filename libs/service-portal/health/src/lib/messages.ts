@@ -164,7 +164,7 @@ export const messages = defineMessages({
     defaultMessage: 'Afgr. staður',
   },
   insuranceRatio: {
-    id: 'sp.health:max-unit-refund',
-    defaultMessage: 'Hámarksgr. af stk.',
+    id: 'sp.health:insurance-ratio',
+    defaultMessage: 'Hlutfall trygginga',
   },
 })

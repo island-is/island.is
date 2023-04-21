@@ -23,6 +23,7 @@ const GetAidsAndNutrition = gql`
         location
         maxUnitRefund
         refund {
+          type
           value
         }
       }
@@ -33,6 +34,7 @@ const GetAidsAndNutrition = gql`
         location
         maxUnitRefund
         refund {
+          type
           value
         }
       }
@@ -50,13 +52,12 @@ const generateRow = (rowItem: AidOrNutrition) => {
         <Text variant="medium">{rowItem.maxUnitRefund}</Text>
       </T.Data>
       <T.Data>
-        <Text variant="medium">0 kr.</Text>
+        <Text variant="medium">{`${rowItem.refund.value}${
+          rowItem.refund.type === 'amount' ? ' kr.' : '%'
+        }`}</Text>
       </T.Data>
       <T.Data>
         <Text variant="medium">{rowItem.available}</Text>
-      </T.Data>
-      <T.Data>
-        <Text variant="medium">{rowItem.refund.value ?? '0 kr.'}</Text>
       </T.Data>
       <T.Data>
         <Text variant="medium">{rowItem.location}</Text>
@@ -64,7 +65,6 @@ const generateRow = (rowItem: AidOrNutrition) => {
     </T.Row>
   )
 
-  console.log(row)
   return row
 }
 
@@ -155,7 +155,6 @@ const AidsAndNutrition = () => {
                 </T.HeadData>
                 <T.HeadData>
                   <Text variant="medium" fontWeight="semiBold">
-                    {' '}
                     {formatMessage(messages.location)}
                   </Text>
                 </T.HeadData>
