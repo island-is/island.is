@@ -11,6 +11,7 @@ defaults:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  NX_CLOUD_AUTH_TOKEN: ${{ secrets.NX_CLOUD_AUTH_TOKEN }}
 
 jobs:
   prepare:
@@ -451,7 +452,7 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Linting
-        run: ./scripts/ci/run-in-parallel-native.sh lint
+        run: USE_NX_CLOUD=true ./scripts/ci/run-in-parallel-native.sh lint
 
   build:
     needs:
@@ -499,15 +500,8 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      - name: Patch nx.json to use nx cloud runner
-        run: |
-          tmp=$(mktemp)
-          jq '.tasksRunnerOptions.default.runner = "@nrwl/nx-cloud"' nx.json > "$tmp" && mv "$tmp" nx.json
-
       - name: Building
-        run: |
-          export NX_CLOUD_AUTH_TOKEN=${{ secrets.NX_CLOUD_AUTH_TOKEN }}
-          ./scripts/ci/run-in-parallel-native.sh build
+        run: USE_NX_CLOUD=true ./scripts/ci/run-in-parallel-native.sh build
 
   build-prod:
     needs:
@@ -519,7 +513,7 @@ jobs:
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GEOIP_LICENSE_KEY: ${{ secrets.GEOIP_LICENSE_KEY }}
-      MAX_JOBS: 10
+      MAX_JOBS: 2
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
@@ -556,17 +550,10 @@ jobs:
       - name: Untar generated files
         run: tar zxvf generated_files.tar.gz
 
-      - name: Patch nx.json to use nx cloud runner
-        run: |
-          tmp=$(mktemp)
-          jq '.tasksRunnerOptions.default.runner = "@nrwl/nx-cloud"' nx.json > "$tmp" && mv "$tmp" nx.json
-
       - name: Building
         run: |
           echo "Running prod build because auto-merge label is set"
-          export NX_CLOUD_AUTH_TOKEN=${{ secrets.NX_CLOUD_AUTH_TOKEN }}
-          ./scripts/ci/run-in-parallel-native.sh build --prod --check=true
-
+          USE_NX_CLOUD=true ./scripts/ci/run-in-parallel-native.sh build --prod --check=true
 
   success:
     runs-on: ec2-runners
