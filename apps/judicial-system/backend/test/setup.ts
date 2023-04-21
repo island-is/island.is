@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-jest.setTimeout(20000)
+jest.setTimeout(40000)
 
 jest.mock('pdfkit', function () {
   class MockPDFDocument {

@@ -334,7 +334,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
     coOwners
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId)
+        reviewerNationalIdList.push(nationalId!)
         return nationalId
       })
     return reviewerNationalIdList

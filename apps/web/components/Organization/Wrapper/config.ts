@@ -3,6 +3,7 @@ import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
 } from '../../ChatPanel'
+import { onDirectorateOfImmigrationChatLoad } from '../../ChatPanel/WatsonChatPanel'
 
 export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
   // HSN - Organization
@@ -39,6 +40,9 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
+      onLoad(instance) {
+        onDirectorateOfImmigrationChatLoad(instance)
+      },
     },
   },
   is: {
@@ -83,6 +87,9 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
+      onLoad(instance) {
+        onDirectorateOfImmigrationChatLoad(instance)
+      },
     },
   },
 }

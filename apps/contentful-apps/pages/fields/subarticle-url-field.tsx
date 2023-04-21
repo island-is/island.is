@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import getConfig from 'next/config'
 import { useDebounce } from 'react-use'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { TextInput, Text, Spinner } from '@contentful/f36-components'
 import { EntryProps, SysLink } from 'contentful-management'
+import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
 
 type Article = EntryProps<{
   subArticles: { 'is-IS': SysLink[] }
@@ -15,10 +15,6 @@ type Article = EntryProps<{
 }>
 
 const SubArticleUrlField = () => {
-  const { publicRuntimeConfig } = getConfig()
-  const environmentId = publicRuntimeConfig.CONTENTFUL_ENVIRONMENT
-  const spaceId = publicRuntimeConfig.CONTENTFUL_SPACE
-
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
 
@@ -50,8 +46,8 @@ const SubArticleUrlField = () => {
     cma.entry
       .get({
         entryId: parentArticleId,
-        environmentId,
-        spaceId,
+        environmentId: CONTENTFUL_ENVIRONMENT,
+        spaceId: CONTENTFUL_SPACE,
       })
       .then((parentArticle: Article) => {
         const subArticles =

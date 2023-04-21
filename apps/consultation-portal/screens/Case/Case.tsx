@@ -12,23 +12,25 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import SubscriptionBox from '../../components/SubscriptionBox/SubscriptionBox'
-import {
-  CaseOverview,
-  CaseTimeline,
-  ReviewCard,
-  WriteReviewCard,
-} from '../../components'
+import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
-import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
-import { useUser } from '../../utils/helpers'
+import { useFetchAdvicesById, useLogIn } from '../../utils/helpers'
+import { useContext } from 'react'
+import { UserContext } from '../../context'
+import Advices from '../../components/Advices/Advices'
 
-const CaseScreen = ({ chosenCase, advices }) => {
+const CaseScreen = ({ chosenCase, caseId }) => {
   const { contactEmail, contactName } = chosenCase
-  const { isAuthenticated, user } = useUser()
+  const { isAuthenticated, user } = useContext(UserContext)
+  const LogIn = useLogIn()
+
+  const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
+    caseId: caseId,
+  })
 
   return (
     <Layout
@@ -87,14 +89,13 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   <Text variant="h1" color="blue400">
                     Innsendar umsagnir
                   </Text>
-                  {advices?.map((advice: Advice) => {
-                    return <ReviewCard advice={advice} key={advice.number} />
-                  })}
+                  <Advices advices={advices} advicesLoading={advicesLoading} />
                   <WriteReviewCard
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}
                     username={user?.name}
                     caseId={chosenCase.id}
+                    refetchAdvices={refetchAdvices}
                   />
                 </Stack>
               </Box>
@@ -110,11 +111,11 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   headingColor="blue400"
                   title="Skjöl til samráðs"
                 >
-                  {chosenCase.documents
+                  {chosenCase.documents.length > 0
                     ? chosenCase.documents.map((doc, index) => {
                         return (
                           <LinkV2
-                            href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                            href={`https://samradapi-test.devland.is/api/Documents/${doc.id}`}
                             color="blue400"
                             underline="normal"
                             underlineVisibility="always"
@@ -125,7 +126,7 @@ const CaseScreen = ({ chosenCase, advices }) => {
                           </LinkV2>
                         )
                       })
-                    : 'Engin skjöl'}
+                    : 'Engin skjöl fundust'}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
@@ -133,15 +134,21 @@ const CaseScreen = ({ chosenCase, advices }) => {
                   headingColor="blue400"
                   title="Viltu senda umsögn?"
                 >
-                  Öllum er frjálst að taka þátt í samráðinu. Skráðu þig inn og
-                  sendu umsögn.
+                  Öllum er frjálst að taka þátt í samráðinu.
+                  {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
                 </StackedTitleAndDescription>
                 <Box paddingTop={2}>
-                  <Link href="#write-review" shallow>
-                    <Button fluid iconType="outline" nowrap as="a">
-                      Senda umsögn
+                  {isAuthenticated ? (
+                    <Link href="#write-review" shallow>
+                      <Button fluid iconType="outline" nowrap as="a">
+                        Senda umsögn
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button fluid iconType="outline" nowrap onClick={LogIn}>
+                      Skrá mig inn
                     </Button>
-                  </Link>
+                  )}
                 </Box>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>

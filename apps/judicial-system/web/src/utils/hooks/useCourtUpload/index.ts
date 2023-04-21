@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
 
-import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
 import {
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  UploadFileToCourtMutationDocument,
+  UploadFileToCourtMutationMutation,
+  UploadFileToCourtMutationMutationVariables,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
@@ -37,7 +41,10 @@ export const useCourtUpload = (
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
-  const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
+  const [uploadFileToCourtMutation] = useMutation<
+    UploadFileToCourtMutationMutation,
+    UploadFileToCourtMutationMutationVariables
+  >(UploadFileToCourtMutationDocument)
 
   const setFileUploadStatus = useCallback(
     (theCase: Case, file: CaseFile, status: CaseFileStatus) => {

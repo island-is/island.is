@@ -4,12 +4,12 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCourtRecordPdfAsString } from '../../../../formatters'
 import { PoliceService } from '../../../police'
-import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -41,7 +41,7 @@ describe('InternalCaseController - Deliver case to police', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverCaseToPolice(caseId, user, theCase, { userId })
+        .deliverCaseToPolice(caseId, theCase, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

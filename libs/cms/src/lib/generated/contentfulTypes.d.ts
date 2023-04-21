@@ -2563,6 +2563,37 @@ export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
   }
 }
 
+export interface IPriceFields {
+  /** Title */
+  title: string
+
+  /** Reference Identifier */
+  referenceIdentifier: string
+
+  /** Amount */
+  amount: number
+
+  /** Organization */
+  organization: IOrganization
+}
+
+export interface IPrice extends Entry<IPriceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'price'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProcessEntryFields {
   /** Type */
   type:
@@ -2923,6 +2954,7 @@ export interface ISliceConnectedComponentFields {
     | 'Áfengisleyfi/AlcoholLicences'
     | 'Tækifærisleyfi/TemporaryEventLicences'
     | 'OrganizationSearchBox'
+    | 'Verðbréfamiðlarar/Brokers'
     | undefined
 
   /** Localized JSON */
@@ -3479,6 +3511,9 @@ export interface ITeamMemberFields {
 
   /** Mynd */
   mynd: Asset
+
+  /** Image On Select */
+  imageOnSelect?: Asset | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {
@@ -4047,6 +4082,7 @@ export type CONTENT_TYPE =
   | 'overviewLinks'
   | 'pageHeader'
   | 'powerBiSlice'
+  | 'price'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'

@@ -11,7 +11,11 @@ import {
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   Identity,
   UserProfile,
@@ -36,12 +40,10 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         id,
-        SYSLUMADUR_NATIONAL_ID,
+        InstitutionNationalIds.SYSLUMENN,
         [ChargeItemCode.MORTGAGE_CERTIFICATE],
       )
       return result

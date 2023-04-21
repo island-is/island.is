@@ -7,6 +7,7 @@ import {
   GridRow,
   Stack,
   Tag,
+  GridColumn,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './TenantsList.css'
@@ -47,7 +48,7 @@ const TenantsList = () => {
   }
 
   return (
-    <>
+    <GridColumn span={['12/12', '12/12', '10/12']} offset={['0', '0', '1/12']}>
       <IntroHeader
         title={formatMessage(m.idsAdmin)}
         intro={formatMessage(m.idsAdminDescription)}
@@ -117,7 +118,7 @@ const TenantsList = () => {
           </Stack>
         </Stack>
       </GridContainer>
-    </>
+    </GridColumn>
   )
 }
 

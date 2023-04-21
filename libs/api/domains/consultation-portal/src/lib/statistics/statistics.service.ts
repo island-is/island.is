@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { StatisticsResult } from '../models/statisticsResult.model'
 
 @Injectable()
-export class StatisticsResultService {
+export class StatisticsService {
   constructor(private statisticsApi: StatisticsApi) {}
 
   async getStatistics(): Promise<StatisticsResult> {

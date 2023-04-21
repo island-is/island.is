@@ -10,6 +10,11 @@ export enum SortOptions {
   oldest = 'Elst efst',
 }
 
+export enum SortOptionsAdvices {
+  oldest = 'Elst efst',
+  latest = 'Nýjast efst',
+}
+
 export enum CaseStatusFilterOptions {
   forReview = 'Til umsagnar',
   resultsInProgress = 'Niðurstöður í vinnslu',

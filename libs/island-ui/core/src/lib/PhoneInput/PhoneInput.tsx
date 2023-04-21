@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState } from 'react'
+import React, { forwardRef, SyntheticEvent, useRef, useState } from 'react'
 import { AriaError, InputBackgroundColor, InputProps } from '../Input/types'
 import * as styles from './PhoneInput.css'
 import cn from 'classnames'
@@ -39,9 +39,10 @@ const getDefaultValue = (
   defaultValue?: string,
   defaultCountryCode?: string,
 ) => {
-  return !defaultValue || defaultValue?.startsWith('+')
-    ? defaultValue
-    : `${defaultCountryCode ?? ''}${defaultValue}`
+  const cleanedValue = defaultValue?.replace(/-/g, '')
+  return !cleanedValue || cleanedValue?.startsWith('+')
+    ? cleanedValue
+    : `${defaultCountryCode ?? ''}${cleanedValue}`
 }
 
 /**
@@ -151,6 +152,25 @@ export const PhoneInput = forwardRef(
     const containerBackground = Array.isArray(backgroundColor)
       ? backgroundColor.map(mapBlue)
       : mapBlue(backgroundColor as InputBackgroundColor)
+
+    /**
+      Used to handle autofill and paste events.
+      Value cannot start with '+' unless it is from autofill or paste,
+      because NumberFormat doesn't allow it.
+      So we know that if the value starts with '+', then we need to
+      extract the country code from it and set it as the selected country code.
+     */
+    const handleInputChange = (e: SyntheticEvent<HTMLInputElement>) => {
+      if (e.currentTarget.value.startsWith('+')) {
+        const updatedCC = getDefaultCountryCode(e.currentTarget.value)
+        e.currentTarget.value = e.currentTarget.value.replace(updatedCC, '')
+        if (!disableDropdown) {
+          setSelectedCountryCode(
+            countryCodes.find((x) => x.value === updatedCC),
+          )
+        }
+      }
+    }
 
     const handleSelectChange = (option: ValueType<OptionType>) => {
       const newCc = (option as Option)?.value?.toString()
@@ -270,6 +290,11 @@ export const PhoneInput = forwardRef(
                       styles.inputBackgroundXl,
                     ),
                     styles.inputSize[size],
+                    styles.inputNoPaddingRight,
+                    {
+                      [styles.inputDisabled]:
+                        disabled || readOnly || disableDropdown,
+                    },
                   )}
                   id={id}
                   name={name}
@@ -277,6 +302,7 @@ export const PhoneInput = forwardRef(
                   disabled={disabled}
                   getInputRef={mergedRefs}
                   placeholder={placeholder}
+                  onInput={handleInputChange}
                   value={value?.replace(cc, '')}
                   defaultValue={getDefaultValue(
                     defaultValue,

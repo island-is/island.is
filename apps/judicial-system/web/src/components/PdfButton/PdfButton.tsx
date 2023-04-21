@@ -14,9 +14,9 @@ interface Props {
     | 'courtRecord'
     | 'request'
     | 'custodyNotice'
-    | 'ruling/limitedAccess'
-    | 'courtRecord/limitedAccess'
-    | 'request/limitedAccess'
+    | 'limitedAccess/ruling'
+    | 'limitedAccess/courtRecord'
+    | 'limitedAccess/request'
     | 'indictment'
   disabled?: boolean
   renderAs?: 'button' | 'row'

@@ -4,6 +4,7 @@ import { Transaction } from 'sequelize'
 
 import {
   CaseAppealState,
+  CaseFileCategory,
   CaseFileState,
   CaseState,
   CaseTransition,
@@ -167,17 +168,21 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId2,
                 },
-                { type: MessageType.SEND_RULING_NOTIFICATION, userId, caseId },
+                {
+                  type: MessageType.SEND_RULING_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
+                },
               ],
             )
           } else if (isIndictmentCase(type) && newState === CaseState.DELETED) {
@@ -185,18 +190,18 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId1,
                 },
                 {
                   type: MessageType.ARCHIVE_CASE_FILE,
-                  userId,
+                  user: defaultUser,
                   caseId,
                   caseFileId: caseFileId2,
                 },
@@ -210,7 +215,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_READY_FOR_COURT_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -220,7 +225,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_RECEIVED_BY_COURT_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -230,7 +235,7 @@ describe('CaseController - Transition', () => {
               [
                 {
                   type: MessageType.SEND_REVOKED_NOTIFICATION,
-                  userId,
+                  user: defaultUser,
                   caseId,
                 },
               ],
@@ -264,8 +269,6 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${CaseAppealState.APPEALED}
       ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
       ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
-
-
     `.describe(
     '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
     ({ transition, caseState, currentAppealState, newAppealState }) => {
@@ -273,10 +276,34 @@ describe('CaseController - Transition', () => {
         '%s case',
         (type) => {
           const caseId = uuid()
+          const prosecutorAppealBriefId = uuid()
+          const prosecutorAppealBriefCaseFileId1 = uuid()
+          const prosecutorAppealBriefCaseFileId2 = uuid()
+          const caseFiles = [
+            {
+              id: prosecutorAppealBriefId,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+            },
+            {
+              id: prosecutorAppealBriefCaseFileId1,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+            },
+            {
+              id: prosecutorAppealBriefCaseFileId2,
+              key: uuid(),
+              state: CaseFileState.STORED_IN_RVG,
+              category: CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+            },
+          ]
           const theCase = {
             id: caseId,
             type,
             state: caseState,
+            caseFiles,
             appealState: currentAppealState,
           } as Case
 
@@ -284,6 +311,7 @@ describe('CaseController - Transition', () => {
             id: caseId,
             type,
             state: caseState,
+            caseFiles,
             appealState: CaseAppealState.APPEALED,
             prosecutorPostponedAppealDate: date,
           } as Case
@@ -322,10 +350,32 @@ describe('CaseController - Transition', () => {
               expect(
                 mockMessageService.sendMessagesToQueue,
               ).toHaveBeenCalledWith([
+                ...(currentAppealState
+                  ? []
+                  : [
+                      {
+                        type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                        user: prosecutorUser,
+                        caseId,
+                        caseFileId: prosecutorAppealBriefId,
+                      },
+                      {
+                        type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                        user: prosecutorUser,
+                        caseId,
+                        caseFileId: prosecutorAppealBriefCaseFileId1,
+                      },
+                      {
+                        type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+                        user: prosecutorUser,
+                        caseId,
+                        caseFileId: prosecutorAppealBriefCaseFileId2,
+                      },
+                    ]),
                 {
                   type:
                     MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
-                  userId,
+                  user: prosecutorUser,
                   caseId,
                 },
               ])

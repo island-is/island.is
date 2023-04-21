@@ -109,18 +109,36 @@ globalStyle(`${wrapper} .css-1g6gooi`, {
   padding: 0,
   margin: 0,
 })
+
 globalStyle(`${wrapper} .country-code-select__control${container}`, {
   ...inputMixins.container,
   backgroundColor: 'transparent',
   boxShadow: 'inset 0 0 0 1px transparent',
-  width: '140px',
+  width: '120px',
   borderBottomRightRadius: 0,
   borderTopRightRadius: 0,
   border: 0,
+  ...themeUtils.responsiveStyle({
+    xl: {
+      width: '140px',
+    },
+  }),
 })
+globalStyle(
+  `${wrapper} .country-code-select__control--is-disabled${container}`,
+  {
+    width: '110px',
+    ...themeUtils.responsiveStyle({
+      xl: {
+        width: '110px',
+      },
+    }),
+  },
+)
 globalStyle(`${wrapper} .country-code-select__control${containerXS}`, {
   width: '120px',
 })
+
 globalStyle(
   `${wrapper}${wrapperColor.blue} .country-code-select__control${container}`,
   {

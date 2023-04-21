@@ -290,6 +290,16 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
     description: '',
   },
+  guns: {
+    id: 'es.application:guns',
+    defaultMessage: 'Skotvopn',
+    description: '',
+  },
+  gunsDescription: {
+    id: 'es.application:gunsDescription',
+    defaultMessage: 'Til dæmis haglabyssa, riffill og skammbyssa',
+    description: '',
+  },
 
   // Bank Info
   estateBankInfo: {
@@ -529,6 +539,11 @@ export const m = defineMessages({
     defaultMessage: 'Þú hefur nú útfyllt beiðni um einkaskipti.',
     description: '',
   },
+  overviewMarketValue: {
+    id: 'es.application:overviewMarketValue',
+    defaultMessage: 'Markaðsvirði',
+    description: '',
+  },
   divisionOfEstateByHeirsTerms: {
     id: 'es.application:divisionOfEstateByHeirsTerms',
     defaultMessage: 'Skilmálar',
@@ -676,6 +691,11 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: 'Real estates and lands description',
   },
+  gunTitle: {
+    id: 'es.application:gunTitle',
+    defaultMessage: 'Skotvopn',
+    description: 'Vehicles title',
+  },
   vehiclesTitle: {
     id: 'es.application:vehiclesTitle',
     defaultMessage: 'Faratæki',
@@ -745,5 +765,25 @@ export const m = defineMessages({
     id: 'es.application:vehicleTypeLabel',
     defaultMessage: 'Tegund faratækis',
     description: 'Vehicle type label',
+  },
+  addGun: {
+    id: 'es.application:addGun',
+    defaultMessage: 'Bæta við skotvopni',
+    description: '',
+  },
+  gunNumberLabel: {
+    id: 'es.application:gunNumberLabel',
+    defaultMessage: 'Raðnúmer ökutækis',
+    description: 'Gun number label',
+  },
+  gunTypeLabel: {
+    id: 'es.application:gunTypeLabel',
+    defaultMessage: 'Tegund skotvopns',
+    description: 'Gun type label',
+  },
+  marketValueTitle: {
+    id: 'es.application:marketValueTitle',
+    defaultMessage: 'Markaðsvirði á dánardegi',
+    description: 'Placeholder for vehicles type',
   },
 })

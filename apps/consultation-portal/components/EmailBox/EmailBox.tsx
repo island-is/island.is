@@ -1,50 +1,64 @@
 import SubscriptionActionCard from '../Card/SubscriptionActionCard'
-import { useQuery } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
-import { SUB_GET_EMAIL } from '../../graphql/queries.graphql'
+import { SUB_POST_EMAIL } from '../../graphql/queries.graphql'
 import { useLogIn, useUser } from '../../utils/helpers'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useFetchEmail } from '../../utils/helpers/api/useFetchEmail'
+import { LoadingDots } from '@island.is/island-ui/core'
 
 const emailIsValid = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
 export const EmailBox = () => {
-  const { isAuthenticated, user } = useUser()
+  const { isAuthenticated } = useUser()
   const [isVerified, setIsVerified] = useState<boolean>(false)
   const LogIn = useLogIn()
-  const [email, setEmail] = useState('')
+  const [userEmail, setUserEmail] = useState('')
   const [inputVal, setInputVal] = useState('')
 
   const client = initApollo()
+  const [postEmailMutation, { loading: postEmailLoading }] = useMutation(
+    SUB_POST_EMAIL,
+    {
+      client: client,
+    },
+  )
 
-  const { data: datame } = useQuery(SUB_GET_EMAIL, {
-    client: client,
-    ssr: true,
-    fetchPolicy: 'cache-first',
-    variables: {},
-  })
-
+  const { email, emailVerified, getUserEmailLoading } = useFetchEmail()
+  useEffect(() => {
+    if (!getUserEmailLoading) {
+      setUserEmail(email)
+      setIsVerified(emailVerified)
+    }
+  }, [getUserEmailLoading])
   const onChangeEmail = (e) => {
     const nextInputVal = e.target.value
+
     setInputVal(nextInputVal)
   }
 
-  const onSetEmail = () => {
+  const onSetEmail = async () => {
     const nextEmail = inputVal
-    setEmail(nextEmail)
+    const post = await postEmailMutation({
+      variables: {
+        input: { email: nextEmail },
+      },
+    })
+    setUserEmail(nextEmail)
   }
 
   const resetEmail = () => {
     const nextInputVal = ''
     setInputVal(nextInputVal)
-    setEmail(nextInputVal)
+    setUserEmail(nextInputVal)
+    setIsVerified(false)
   }
 
-  const verifyEmail = () => {
-    setIsVerified(true)
+  if (getUserEmailLoading) {
+    return <LoadingDots></LoadingDots>
   }
-
   if (!isAuthenticated) {
     return (
       <SubscriptionActionCard
@@ -60,7 +74,7 @@ export const EmailBox = () => {
     )
   }
 
-  if (!email) {
+  if (!userEmail) {
     return (
       <SubscriptionActionCard
         heading="Skrá netfang"
@@ -85,7 +99,7 @@ export const EmailBox = () => {
 
   return isVerified ? (
     <SubscriptionActionCard
-      text={`Núverandi skráð netfang: ${email}`}
+      text={`Núverandi skráð netfang: ${userEmail}`}
       button={[
         {
           label: 'Breyta netfangi',
@@ -99,15 +113,11 @@ export const EmailBox = () => {
     />
   ) : (
     <SubscriptionActionCard
-      text={`Beðið er eftir staðfestingu fyrir netfangið ${email}`}
+      text={`Beðið er eftir staðfestingu fyrir netfangið ${userEmail}`}
       button={[
         {
           label: 'Breyta netfangi',
           onClick: resetEmail,
-        },
-        {
-          label: 'Staðfesta',
-          onClick: verifyEmail,
         },
       ]}
     />
