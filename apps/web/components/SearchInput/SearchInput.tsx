@@ -31,6 +31,7 @@ import {
   SearchableContentTypes,
   LifeEventPage,
   News,
+  OrganizationSubpage,
 } from '@island.is/web/graphql/schema'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -416,16 +417,25 @@ const Results = ({
             {(search.results.items as Article[] &
               LifeEventPage[] &
               News[] &
-              SubArticle[])
+              SubArticle[] &
+              OrganizationSubpage[])
               .slice(0, 5)
               .map((item, i) => {
+                const typename = item.__typename?.toLowerCase() as LinkType
+                let variables = item.slug?.split('/')
+
+                if (typename === 'organizationsubpage') {
+                  variables = [
+                    ((item as unknown) as OrganizationSubpage)?.organizationPage
+                      ?.slug,
+                    item.slug,
+                  ]
+                }
+
                 const { onClick, ...itemProps } = getItemProps({
                   item: {
                     type: 'link',
-                    string: linkResolver(
-                      item.__typename as LinkType,
-                      item.slug?.split('/'),
-                    )?.href,
+                    string: linkResolver(typename, variables)?.href,
                   },
                 })
                 return (
