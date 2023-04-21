@@ -550,7 +550,9 @@ jobs:
         run: tar zxvf generated_files.tar.gz
 
       - name: Building
-        run: ./scripts/ci/run-in-parallel-native.sh build --prod
+        run: |
+          echo "Running prod build because auto-merge label is set"
+          ./scripts/ci/run-in-parallel-native.sh build --prod
 
 
   success:
