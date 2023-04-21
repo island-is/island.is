@@ -553,7 +553,7 @@ jobs:
       - name: Building
         run: |
           echo "Running prod build because auto-merge label is set"
-          USE_NX_CLOUD=true ./scripts/ci/run-in-parallel-native.sh build --prod --check=true
+          USE_NX_CLOUD=true ./scripts/ci/run-in-parallel-native.sh build --prod
 
   success:
     runs-on: ec2-runners
