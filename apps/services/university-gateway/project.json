@@ -47,7 +47,7 @@
         "passWithNoTests": true
       }
     },
-    
+
     "schemas/build-openapi": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {

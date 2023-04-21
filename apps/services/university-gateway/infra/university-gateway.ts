@@ -8,7 +8,7 @@ export const serviceSetup = (): ServiceBuilder<'university-gateway'> =>
       requests: { cpu: '15m', memory: '256Mi' },
     })
     .image('university-gateway')
-    .secrets({ })
+    .secrets({})
     .postgres({
       username: 'university-gateway',
       name: 'university-gateway',
@@ -22,7 +22,7 @@ export const serviceSetup = (): ServiceBuilder<'university-gateway'> =>
           prod: 'university-gateway',
         },
         paths: ['/'],
-        public: true
+        public: true,
       },
     })
     .replicaCount({
