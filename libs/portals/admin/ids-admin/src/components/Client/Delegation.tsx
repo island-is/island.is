@@ -6,7 +6,6 @@ import { Checkbox, Stack } from '@island.is/island-ui/core'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -15,7 +14,6 @@ interface DelegationProps {
   supportsPersonalRepresentatives: boolean
   supportsCustomDelegation: boolean
   requireApiScopes: boolean
-  selectedEnvironment: AuthAdminEnvironment
 }
 
 const Delegation = ({
@@ -25,7 +23,6 @@ const Delegation = ({
   supportsProcuringHolders,
   promptDelegations,
   requireApiScopes,
-  selectedEnvironment,
 }: DelegationProps) => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
@@ -48,7 +45,6 @@ const Delegation = ({
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
-      selectedEnvironment={selectedEnvironment}
     >
       <Stack space={2}>
         <Checkbox
