@@ -15,7 +15,7 @@ export const EhicClientConfig = defineConfig<z.infer<typeof schema>>({
       scope: [SjukraScope.europeanHealthInsuranceCard],
       xRoadServicePath: env.required(
         'EHIC_XROAD_PROVIDER_ID',
-        'IS-DEV/GOV/10007/SJUKRA-Protected',
+        'IS-DEV/GOV/10007/SJUKRA-Protected/ehic/',
       ),
     }
   },
