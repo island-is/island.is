@@ -444,4 +444,32 @@ export const m = defineMessages({
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
   },
+  successfullySaved: {
+    id: 'ap.ids-admin:successfully-saved',
+    defaultMessage: 'Successfully saved',
+  },
+  globalErrorMessage: {
+    id: 'ap.ids-admin:global-error-message',
+    defaultMessage: 'An error occurred',
+  },
+  syncSettings: {
+    id: 'ap.ids-admin:sync-settings',
+    defaultMessage: 'Sync settings (from this environment)',
+  },
+  inSyncAcrossAllEnvironments: {
+    id: 'ap.ids-admin:in-sync-across-all-environments',
+    defaultMessage: 'Settings are the same in all environments.',
+  },
+  notInSyncAcrossAllEnvironments: {
+    id: 'ap.ids-admin:not-in-sync-across-all-environments',
+    defaultMessage: 'SyncSettings are different in some environments',
+  },
+  inSync: {
+    id: 'ap.ids-admin:in-sync',
+    defaultMessage: 'In sync',
+  },
+  outOfSync: {
+    id: 'ap.ids-admin:out-of-sync',
+    defaultMessage: 'Out of sync',
+  },
 })

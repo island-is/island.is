@@ -12,7 +12,6 @@ import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
 import { useActionData } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { useReadableSeconds } from './ReadableSeconds'
 
 interface AdvancedSettingsProps {
@@ -22,7 +21,6 @@ interface AdvancedSettingsProps {
   supportTokenExchange: boolean
   slidingRefreshTokenLifetime: number
   customClaims: string[]
-  selectedEnvironment: AuthAdminEnvironment
 }
 
 const AdvancedSettings = ({
@@ -32,7 +30,6 @@ const AdvancedSettings = ({
   supportTokenExchange,
   slidingRefreshTokenLifetime,
   customClaims,
-  selectedEnvironment,
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
   const actionData = useActionData() as EditApplicationResult<
@@ -63,7 +60,6 @@ const AdvancedSettings = ({
     <ContentCard
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
-      selectedEnvironment={selectedEnvironment}
     >
       <Stack space={3}>
         <Checkbox
