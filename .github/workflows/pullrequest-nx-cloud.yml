@@ -195,7 +195,6 @@ jobs:
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 1
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -416,7 +415,6 @@ jobs:
     if: contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     env:
       NODE_OPTIONS: --max-old-space-size=4096
-      MAX_JOBS: 1
     strategy:
       fail-fast: false
     steps:
@@ -467,8 +465,6 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
-    env:
-      MAX_JOBS: 2
     strategy:
       fail-fast: false
     if: contains(github.event.pull_request.labels.*.name, 'nx-cloud')
@@ -522,7 +518,6 @@ jobs:
     timeout-minutes: 25
     env:
       GEOIP_LICENSE_KEY: ${{ secrets.GEOIP_LICENSE_KEY }}
-      MAX_JOBS: 2
     strategy:
       fail-fast: false
     if: contains(github.event.pull_request.labels.*.name, 'nx-cloud')
