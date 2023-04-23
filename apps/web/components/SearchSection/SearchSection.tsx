@@ -22,7 +22,7 @@ import * as styles from './SearchSection.css'
 import { TestSupport } from '@island.is/island-ui/utils'
 
 const DefaultIllustration = dynamic(() => import('./Illustration'), {
-  ssr: false,
+  ssr: true,
 })
 
 type SearchSectionProps = {

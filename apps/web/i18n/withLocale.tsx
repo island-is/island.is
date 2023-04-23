@@ -8,6 +8,7 @@ import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { defaultLanguage } from '@island.is/shared/constants'
 import type { Screen } from '../types'
+import { safelyExtractPathnameFromUrl } from '../utils/safelyExtractPathnameFromUrl'
 
 export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)
@@ -41,7 +42,9 @@ export const withLocale = <Props,>(locale?: Locale) => (
   NewComponent.getProps = async (ctx) => {
     const newContext = {
       ...ctx,
-      locale: locale || getLocaleFromPath(ctx.asPath),
+      locale:
+        locale ||
+        getLocaleFromPath(safelyExtractPathnameFromUrl(ctx?.req?.url)),
     } as any
     const [props, translations] = await Promise.all([
       getProps(newContext),

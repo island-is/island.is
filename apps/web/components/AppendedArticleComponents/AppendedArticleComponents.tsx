@@ -5,7 +5,7 @@ import { GetSingleArticleQuery } from '@island.is/web/graphql/schema'
 const IcelandicNamesSearcher = dynamic(
   () => import('../IcelandicNamesSearcher/IcelandicNamesSearcher'),
   {
-    ssr: false,
+    ssr: true,
   },
 )
 

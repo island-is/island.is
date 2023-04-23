@@ -41,6 +41,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { useRouter } from 'next/router'
 import { theme } from '@island.is/island-ui/theme'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
@@ -981,7 +982,8 @@ const LotLink = ({
   </LinkContext.Provider>
 )
 
-Auctions.getProps = async ({ apolloClient, locale, pathname }) => {
+Auctions.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'uppbod'

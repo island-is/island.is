@@ -7,30 +7,30 @@ import { BackgroundProps } from '../types'
 import * as styles from './Background.css'
 
 const Default = dynamic(() => import('./Variations/Default/Default'), {
-  ssr: false,
+  ssr: true,
 })
 
 const Syslumenn = dynamic(() => import('./Variations/Syslumenn/Syslumenn'), {
-  ssr: false,
+  ssr: true,
 })
 
 const StafraentIsland = dynamic(
   () => import('./Variations/StafraentIsland/StafraentIsland'),
   {
-    ssr: false,
+    ssr: true,
   },
 )
 
 const Mannaudstorg = dynamic(
   () => import('./Variations/Mannaudstorg/Mannaudstorg'),
   {
-    ssr: false,
+    ssr: true,
   },
 )
 
 const Sjukratryggingar = dynamic(
   () => import('./Variations/Sjukratryggingar/Sjukratryggingar'),
-  { ssr: false },
+  { ssr: true },
 )
 
 const Utlendingastofnun = dynamic(

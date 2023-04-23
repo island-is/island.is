@@ -43,6 +43,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
 import { ApolloClient } from '@apollo/client'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const DEBOUNCE_TIMER = 400
 const PAGE_SIZE = 10
@@ -595,7 +596,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
   )
 }
 
-OperatingLicenses.getProps = async ({ apolloClient, locale, pathname }) => {
+OperatingLicenses.getProps = async ({ apolloClient, locale, req }) => {
+  const pathname = safelyExtractPathnameFromUrl(req.url)
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'rekstrarleyfi'
