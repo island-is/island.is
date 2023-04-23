@@ -12,9 +12,9 @@ defaults:
   run:
     shell: bash
 
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-  cancel-in-progress: true
+# concurrency:
+#   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+#   cancel-in-progress: true
 
 permissions:
   contents: read
@@ -549,7 +549,7 @@ jobs:
 
       - name: Building
         run: |
-          ./scripts/ci/run-nx-affected.sh ${{ matrix.nx-target }} --verbose
+          ./scripts/ci/run-nx-affected.sh ${{ matrix.nx-target }}
 
   # build-prod:
   #   needs:
