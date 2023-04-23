@@ -549,7 +549,7 @@ jobs:
 
       - name: Building
         run: |
-          ./scripts/ci/run-nx-affected.sh ${{ matrix.nx-target }}
+          ./scripts/ci/run-nx-affected.sh ${{ matrix.nx-target }} --verbose
 
   # build-prod:
   #   needs:
@@ -610,6 +610,9 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    strategy:
+      matrix:
+        option: ${{ needs.nx.* }}
     if: always() && contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     needs:
       # - prepare
@@ -619,7 +622,7 @@ jobs:
       # - run-shellcheck
       # - formatting
       # - e2e
-      - build
+      - nx
     steps:
       # - name: Check prepare success
       #   run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
@@ -633,7 +636,7 @@ jobs:
       #   run: '[[ ${{ needs.run-shellcheck.result }} != "failure" ]] || exit 1'
       # - name: Check formatting success
       #   run: '[[ ${{ needs.formatting.result }} != "failure" ]] || exit 1'
-      - name: Check build success
-        run: '[[ ${{ needs.build.result }} != "failure" ]] || exit 1'
+      - name: Check nx success
+        run: '[[ ${{ toJSON(needs.nx.result) }} != "failure" ]] || exit 1'
       - name: Announce success
-        run: echo "Build is successful"
+        run: echo "${{ toJSON(needs.nx) }} is successful"
