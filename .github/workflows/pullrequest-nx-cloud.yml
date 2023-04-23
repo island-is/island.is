@@ -12,6 +12,15 @@ defaults:
   run:
     shell: bash
 
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  actions: read
+
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
@@ -467,6 +476,10 @@ jobs:
     timeout-minutes: 25
     strategy:
       fail-fast: false
+      matrix:
+        nx-target:
+          - build
+          - lint
     if: contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     steps:
       - uses: actions/checkout@v3
@@ -536,7 +549,7 @@ jobs:
 
       - name: Building
         run: |
-          ./scripts/ci/run-nx-affected.sh build
+          ./scripts/ci/run-nx-affected.sh ${{ matrix.nx-target }}
 
   # build-prod:
   #   needs:
