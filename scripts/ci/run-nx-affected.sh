@@ -16,4 +16,4 @@ source "$DIR"/_common.sh
 source "$DIR"/patch-nx-json.sh
 
 MAX_JOBS=${MAX_JOBS:-2}
-yarn run nx affected --target="$target" --parallel="$MAX_JOBS" "$@"
+yarn dlx -p @nrwl/nx-cloud@v13.3.1 -p nx@13.10.3 nx affected --target="$target" --parallel="$MAX_JOBS" "$@"

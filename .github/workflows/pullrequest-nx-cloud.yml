@@ -530,7 +530,6 @@ jobs:
 
       - name: Building
         run: |
-          yarn add  @nrwl/nx-cloud@v13.3.1
           ./scripts/ci/run-nx-affected.sh build
 
   # build-prod:
