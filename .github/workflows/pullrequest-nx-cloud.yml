@@ -480,7 +480,7 @@ jobs:
         with:
           node-version: '18'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: npm install -g yarn @nrwl/nx-cloud
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
@@ -518,6 +518,10 @@ jobs:
 
       - name: Check cache success
         run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
+
+      - name: Building NodeJS dependencies
+        if: steps.node-modules.outputs.cache-hit != 'true'
+        run: ./scripts/ci/10_prepare-host-deps.sh
 
       - name: Generate schemas
         if: steps.generated-files-cache.outputs.cache-hit != 'true'
