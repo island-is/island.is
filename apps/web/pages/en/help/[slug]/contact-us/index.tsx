@@ -3,7 +3,7 @@ import { withLocale } from '@island.is/web/i18n'
 import serviceWebFormsPage from '@island.is/web/screens/ServiceWeb/Forms/Forms'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(withLocale('is')(serviceWebFormsPage))
+const Screen = withApollo(withLocale('en')(serviceWebFormsPage))
 
 export default Screen
 

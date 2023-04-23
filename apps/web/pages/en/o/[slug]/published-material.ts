@@ -3,7 +3,7 @@ import { withLocale } from '@island.is/web/i18n'
 import PublishedMaterial from '@island.is/web/screens/Organization/PublishedMaterial'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(withLocale('is')(PublishedMaterial))
+const Screen = withApollo(withLocale('en')(PublishedMaterial))
 
 export default Screen
 

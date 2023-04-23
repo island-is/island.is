@@ -3,7 +3,7 @@ import { withLocale } from '@island.is/web/i18n'
 import ApiCatalogue from '@island.is/web/screens/Organization/StafraentIsland/ApiCatalogue'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(withLocale('is')(ApiCatalogue))
+const Screen = withApollo(withLocale('en')(ApiCatalogue))
 
 export default Screen
 

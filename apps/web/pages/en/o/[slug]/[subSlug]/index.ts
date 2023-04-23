@@ -5,7 +5,7 @@ import { withLocale } from '@island.is/web/i18n'
 import subPage from '@island.is/web/screens/Organization/SubPage'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(withLocale('is')(subPage))
+const Screen = withApollo(withLocale('en')(subPage))
 
 export default Screen
 

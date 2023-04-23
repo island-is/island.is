@@ -3,7 +3,7 @@ import { withLocale } from '@island.is/web/i18n'
 import Homestay from '@island.is/web/screens/Organization/Syslumenn/Homestay'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(withLocale('is')(Homestay))
+const Screen = withApollo(withLocale('en')(Homestay))
 
 export default Screen
 

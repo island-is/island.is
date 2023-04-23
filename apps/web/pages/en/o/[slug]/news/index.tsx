@@ -3,7 +3,7 @@ import { withLocale } from '@island.is/web/i18n'
 import OrganizationNewsList from '@island.is/web/screens/Organization/OrganizationNewsList'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(withLocale('is')(OrganizationNewsList))
+const Screen = withApollo(withLocale('en')(OrganizationNewsList))
 
 export default Screen
 

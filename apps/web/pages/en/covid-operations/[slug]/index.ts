@@ -3,7 +3,7 @@ import { withLocale } from '@island.is/web/i18n'
 import adgerdirArticleScreen from '@island.is/web/screens/Adgerdir/Article'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(withLocale('is')(adgerdirArticleScreen))
+const Screen = withApollo(withLocale('en')(adgerdirArticleScreen))
 
 export default Screen
 

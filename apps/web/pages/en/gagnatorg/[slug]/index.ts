@@ -3,7 +3,7 @@ import { withLocale } from '@island.is/web/i18n'
 import OpenDataSubPage from '@island.is/web/screens/OpenDataSubPage/OpenDataSubPage'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
-const Screen = withApollo(withLocale('is')(OpenDataSubPage))
+const Screen = withApollo(withLocale('en')(OpenDataSubPage))
 
 export default Screen
 
