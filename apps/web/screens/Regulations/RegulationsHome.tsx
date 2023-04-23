@@ -237,7 +237,7 @@ const assertReasonableYear = (maybeYear?: string): Year | undefined =>
     ? (Math.max(1900, Math.min(2150, Number(maybeYear))) as Year)
     : undefined
 
-RegulationsHome.getInitialProps = async (ctx) => {
+RegulationsHome.getProps = async (ctx) => {
   const { apolloClient, locale, query } = ctx
   const searchQuery = getParams(query, [
     'q',

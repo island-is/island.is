@@ -107,7 +107,7 @@ export const SomeScreen: Screen<Props> = ({ flag }) => {
   )
 }
 
-SomeScreen.getInitialProps = async () => {
+SomeScreen.getProps = async () => {
   const flag = await getFeatureFlag('someFeatureFlag', false)
   return { flag }
 }

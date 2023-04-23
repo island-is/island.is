@@ -1,7 +1,6 @@
-import withApollo from '@island.is/web/graphql/withApollo'
-import { withLocale } from '@island.is/web/i18n'
-import homeScreen from '@island.is/web/screens/Home/Home'
-import { GetServerSideProps } from 'next'
+import { NormalizedCacheObject } from '@apollo/client'
+import type { GetServerSideProps } from 'next'
+import type { ScreenContext } from '../types'
 
 // Hack needed to avoid JSON-Serialization validation error from Next.js https://github.com/zeit/next.js/discussions/11209
 // >>> Reason: `undefined` cannot be serialized as JSON. Please use `null` or omit this value all together.
@@ -18,14 +17,27 @@ const deleteUndefined = (obj: Record<string, any> | undefined): void => {
   }
 }
 
-const Screen = withApollo(withLocale('is')(homeScreen))
+type Component = {
+  ({
+    apolloState,
+    pageProps,
+  }: {
+    apolloState: unknown
+    pageProps: unknown
+  }): JSX.Element
+  getProps(
+    ctx: Partial<ScreenContext>,
+  ): Promise<{
+    pageProps: unknown
+    apolloState: NormalizedCacheObject
+  }>
+}
 
-export default Screen
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const props = Screen.getProps ? await Screen.getProps(ctx) : ctx
+export const getServerSidePropsWrapper: (
+  screen: Component,
+) => GetServerSideProps = (screen) => async (ctx) => {
+  const props = screen.getProps ? await screen.getProps(ctx) : ctx
   deleteUndefined(props)
-
   return {
     props,
   }

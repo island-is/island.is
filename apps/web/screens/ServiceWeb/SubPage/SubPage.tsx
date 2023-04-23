@@ -381,7 +381,7 @@ const SubPage: Screen<SubPageProps> = ({
 
 const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query, res }) => {
+SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
   const slugs = query.slugs as string
   const organizationSlug = slugs[0]
   const categorySlug = slugs[1]

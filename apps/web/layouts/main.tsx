@@ -13,8 +13,7 @@ import {
   ColorSchemes,
 } from '@island.is/island-ui/core'
 import getConfig from 'next/config'
-import { NextComponentType, NextPageContext } from 'next'
-import { Screen, GetInitialPropsContext } from '../types'
+import { Screen } from '../types'
 import Cookies from 'js-cookie'
 import { userMonitoring } from '@island.is/user-monitoring'
 import { useRouter } from 'next/router'
@@ -122,11 +121,7 @@ if (
   })
 }
 
-const Layout: NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  LayoutProps,
-  LayoutProps
-> = ({
+const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
   wrapContent = true,
   showHeader = true,
@@ -439,7 +434,7 @@ const Layout: NextComponentType<
   )
 }
 
-Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
+Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
@@ -592,11 +587,7 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   }
 }
 
-type LayoutWrapper<T> = NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  { layoutProps: LayoutProps; componentProps: T },
-  { layoutProps: LayoutProps; componentProps: T }
->
+type LayoutWrapper<T> = Screen<{ layoutProps: LayoutProps; componentProps: T }>
 
 interface LayoutComponentProps {
   themeConfig?: Partial<LayoutProps>
@@ -620,15 +611,15 @@ export const withMainLayout = <T,>(
     )
   }
 
-  WithMainLayout.getInitialProps = async (ctx) => {
-    const getLayoutInitialProps = Layout.getInitialProps as Exclude<
-      typeof Layout.getInitialProps,
+  WithMainLayout.getProps = async (ctx) => {
+    const getLayoutProps = Layout.getProps as Exclude<
+      typeof Layout.getProps,
       undefined
     >
 
     const [layoutProps, componentProps] = await Promise.all([
-      getLayoutInitialProps(ctx),
-      Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
+      getLayoutProps(ctx),
+      Component.getProps ? Component.getProps(ctx) : ({} as T),
     ])
     const layoutComponentProps = componentProps as LayoutComponentProps
 

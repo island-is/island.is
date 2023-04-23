@@ -167,7 +167,7 @@ const ServiceDetails: Screen<ServiceDetailsProps> = ({
   )
 }
 
-ServiceDetails.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServiceDetails.getProps = async ({ apolloClient, locale, query }) => {
   const serviceId = String(query.slug)
 
   const [

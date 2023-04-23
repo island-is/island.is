@@ -264,7 +264,7 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   )
 }
 
-ServicesPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },

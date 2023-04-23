@@ -155,7 +155,7 @@ const LoginPage: Screen<LoginProps> = ({ namespace }) => {
   )
 }
 
-LoginPage.getInitialProps = async ({ apolloClient, locale }) => {
+LoginPage.getProps = async ({ apolloClient, locale }) => {
   const [namespace] = await Promise.all([
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({

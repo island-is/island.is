@@ -157,11 +157,7 @@ export const GenericOverview: Screen<GenericOverviewProps> = ({
   )
 }
 
-GenericOverview.getInitialProps = async ({
-  apolloClient,
-  locale,
-  pathname,
-}) => {
+GenericOverview.getProps = async ({ apolloClient, locale, pathname }) => {
   const [
     {
       data: { getGenericOverviewPage: genericOverviewPage },

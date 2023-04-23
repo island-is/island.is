@@ -287,7 +287,7 @@ const renderSlices = (
   }
 }
 
-SubPage.getInitialProps = async ({ apolloClient, locale, query, pathname }) => {
+SubPage.getProps = async ({ apolloClient, locale, query, pathname }) => {
   const { slug, subSlug } = getSlugAndSubSlug(query, pathname)
   const [
     {

@@ -7,6 +7,7 @@ import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { defaultLanguage } from '@island.is/shared/constants'
+import type { Screen } from '../types'
 
 export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)
@@ -20,14 +21,14 @@ interface NewComponentProps<T> {
 }
 
 export const withLocale = <Props,>(locale?: Locale) => (
-  Component: NextPage<Props>,
+  Component: Screen<Props>,
 ): NextComponentType => {
-  const getInitialProps = Component.getInitialProps
-  if (!getInitialProps) {
+  const getProps = Component.getProps
+  if (!getProps) {
     return Component
   }
 
-  const NewComponent: NextPage<NewComponentProps<Props>> = ({
+  const NewComponent: Screen<NewComponentProps<Props>> = ({
     pageProps,
     locale,
     translations,
@@ -37,13 +38,13 @@ export const withLocale = <Props,>(locale?: Locale) => (
     </I18n>
   )
 
-  NewComponent.getInitialProps = async (ctx: NextPageContext) => {
+  NewComponent.getProps = async (ctx) => {
     const newContext = {
       ...ctx,
       locale: locale || getLocaleFromPath(ctx.asPath),
     } as any
     const [props, translations] = await Promise.all([
-      getInitialProps(newContext),
+      getProps(newContext),
       getGlobalStrings(newContext),
     ])
     return {

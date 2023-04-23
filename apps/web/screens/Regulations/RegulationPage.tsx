@@ -168,7 +168,7 @@ const assertEarlierDate = (
 
 // ---------------------------------------------------------------------------
 
-RegulationPage.getInitialProps = async ({
+RegulationPage.getProps = async ({
   apolloClient,
   locale,
   query,

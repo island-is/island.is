@@ -65,7 +65,7 @@ const TellUsAStoryPage: Screen<TellUsAStoryProps> = ({ data }) => {
   )
 }
 
-TellUsAStoryPage.getInitialProps = async ({ apolloClient, locale }) => {
+TellUsAStoryPage.getProps = async ({ apolloClient, locale }) => {
   const [data] = await Promise.all([
     apolloClient
       .query<GetTellUsAStoryQuery, QueryGetTellUsAStoryArgs>({

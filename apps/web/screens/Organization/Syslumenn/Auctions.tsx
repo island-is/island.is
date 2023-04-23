@@ -981,7 +981,7 @@ const LotLink = ({
   </LinkContext.Provider>
 )
 
-Auctions.getInitialProps = async ({ apolloClient, locale, pathname }) => {
+Auctions.getProps = async ({ apolloClient, locale, pathname }) => {
   const path = pathname?.split('/') ?? []
   const slug = path?.[path.length - 2] ?? 'syslumenn'
   const subSlug = path.pop() ?? 'uppbod'

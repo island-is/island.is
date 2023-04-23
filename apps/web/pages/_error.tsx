@@ -14,8 +14,8 @@ import I18n from '../i18n/I18n'
 import { Locale } from '@island.is/shared/types'
 import { withApollo } from '../graphql/withApollo'
 import { linkResolver, LinkType } from '../hooks/useLinkResolver'
-import { NextPageContext } from 'next'
 import { getLocaleFromPath } from '../i18n/withLocale'
+import { ScreenContext } from '../types'
 
 type ErrorPageProps = {
   statusCode: number
@@ -23,11 +23,6 @@ type ErrorPageProps = {
   layoutProps: LayoutProps
   errorPage: ErrorPageQuery['getErrorPage']
 }
-
-type ErrorPageInitialProps = {
-  apolloClient: ApolloClient<NormalizedCacheObject>
-  locale: string
-} & NextPageContext
 
 class ErrorPage extends React.Component<ErrorPageProps> {
   state = { renderError: false }
@@ -61,7 +56,17 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     return <ErrorScreen errPage={errorPage} statusCode={statusCode} />
   }
 
-  static async getInitialProps(props: ErrorPageInitialProps) {
+  static async getInitialProps(
+    props: ScreenContext & {
+      err: { statusCode?: number }
+      res: {
+        statusCode?: number
+        // TODO: find better type
+        writeHead: (statusCode: number, any) => void
+        end: () => void
+      }
+    },
+  ) {
     const { err, res, asPath = '' } = props
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
     const locale = getLocaleFromPath(asPath)
@@ -112,7 +117,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     let layoutProps: LayoutProps = null
     let pageProps: any = null
     try {
-      layoutProps = await Layout.getInitialProps({ ...props, locale })
+      layoutProps = await Layout.getProps({ ...props, locale })
       pageProps = await getPageProps({
         apolloClient: props.apolloClient,
         locale,

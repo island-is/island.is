@@ -303,7 +303,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   )
 }
 
-OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
+OrganizationPage.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOrganizations },

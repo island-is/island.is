@@ -1,14 +1,18 @@
+import { ComponentType } from 'react'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
-import { NextComponentType, NextPageContext } from 'next'
+import { GetServerSidePropsContext } from 'next'
 
-export type GetInitialPropsContext<Context> = Context & {
+export type ScreenContext = {
+  query: any // TODO: add type
   apolloClient: ApolloClient<NormalizedCacheObject>
   locale: string
+  asPath: string
+  res: GetServerSidePropsContext['res']
+  req: GetServerSidePropsContext['req']
+  pathname: string
 }
 
-export type Screen<Props = {}> = NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  Props,
-  Props
->
+export type Screen<Props = {}> = ComponentType<Props> & {
+  getProps?: (ctx: ScreenContext) => Promise<Props>
+}
