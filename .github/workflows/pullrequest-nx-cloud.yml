@@ -480,7 +480,7 @@ jobs:
         with:
           node-version: '18'
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud
+        run: npm install -g yarn
 
       - name: Calculate cache key for node_modules
         id: calculate_node_modules_hash
