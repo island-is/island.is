@@ -53,6 +53,7 @@ jobs:
             echo '${{ toJSON(matrix) }}'
           ) | jq -c .)
           echo "$matrix" > matrix
+          echo "matrix: $matrix"
           echo "::set-output name=matrix::$matrix"
         id: matrix
       - uses: actions/upload-artifact@v3
@@ -146,6 +147,7 @@ jobs:
       - uses: actions/download-artifact@v3
       - run: |
           matrix="$(cat */matrix | jq -c --slurp .)"
+          echo "matrix: $matrix"
           echo "::set-output name=matrix::$matrix"
         id: matrix
 

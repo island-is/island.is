@@ -17,6 +17,6 @@ else
   >&2 echo "Projects: ${PROJECTS}"
   CHUNKS=$(node "$PROJECT_ROOT"/scripts/ci/_chunk.js "${PROJECTS}")
   >&2 echo "Chunks: $CHUNKS"
-  echo "$PROJECTS"
+  echo "$CHUNKS"
 fi
 
