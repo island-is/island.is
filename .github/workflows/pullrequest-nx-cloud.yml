@@ -12,9 +12,9 @@ defaults:
   run:
     shell: bash
 
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: ${{ github.ref }}
+#   cancel-in-progress: true
 
 # concurrency:
 #   group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
@@ -117,18 +117,18 @@ jobs:
       - name: fix hanging post job
         run: git config --local --get remote.origin.url
 
-  success:
-    runs-on: ec2-runners
-    container:
-      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    strategy:
-      matrix:
-        option: ${{ needs.nx }}
-    if: always()
-    needs:
-      - nx
-    steps:
-      - name: Check nx success
-        run: '[[ ${{ toJSON(needs.nx.result) }} != "failure" ]] || exit 1'
-      - name: Announce success
-        run: echo "${{ toJSON(needs.nx) }} is successful"
+  # success:
+  #   runs-on: ec2-runners
+  #   container:
+  #     image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+  #   strategy:
+  #     matrix:
+  #       option: ${{ needs.nx }}
+  #   if: always()
+  #   needs:
+  #     - nx
+  #   steps:
+  #     - name: Check nx success
+  #       run: '[[ ${{ toJSON(needs.nx.result) }} != "failure" ]] || exit 1'
+  #     - name: Announce success
+  #       run: echo "${{ toJSON(needs.nx) }} is successful"
