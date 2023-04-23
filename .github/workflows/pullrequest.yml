@@ -11,10 +11,13 @@ defaults:
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  USE_NX_CLOUD: ${{ contains(github.event.pull_request.labels.*.name, 'nx-cloud') }}
 
 jobs:
   prepare:
     runs-on: ec2-runners
+
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'nx-cloud') }}
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
@@ -201,7 +204,7 @@ jobs:
   tests:
     needs:
       - prepare
-    if: needs.prepare.outputs.TEST_CHUNKS
+    if: needs.prepare.outputs.TEST_CHUNKS && !contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -259,7 +262,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: needs.prepare.outputs.E2E_CHUNKS
+    if: needs.prepare.outputs.E2E_CHUNKS && !contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
@@ -410,7 +413,7 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 25
-    if: needs.prepare.outputs.LINT_CHUNKS
+    if: needs.prepare.outputs.LINT_CHUNKS && !contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
@@ -466,7 +469,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
-    if: needs.prepare.outputs.BUILD_CHUNKS
+    if: needs.prepare.outputs.BUILD_CHUNKS && !contains(github.event.pull_request.labels.*.name, 'nx-cloud')
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3

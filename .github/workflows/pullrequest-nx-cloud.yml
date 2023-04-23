@@ -114,6 +114,9 @@ jobs:
         run: |
           ./scripts/ci/run-nx-affected.sh ${{ matrix.nx-target }}
 
+      - name: fix hanging post job
+        run: git config --local --get remote.origin.url
+
   success:
     runs-on: ec2-runners
     container:
