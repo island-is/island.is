@@ -467,7 +467,7 @@ jobs:
   #     - name: Linting
   #       run: ./scripts/ci/run-nx-affected.sh lint
 
-  build:
+  nx:
     # needs:
     #   - prepare
     runs-on: ec2-runners
