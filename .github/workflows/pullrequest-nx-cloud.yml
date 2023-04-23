@@ -36,7 +36,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -48,6 +48,24 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - run: |
+          matrix=$((
+            echo '${{ toJSON(matrix) }}'
+          ) | jq -c .)
+          echo "$matrix" > matrix
+          echo "::set-output name=matrix::$matrix"
+        id: matrix
+      - uses: actions/upload-artifact@v3
+        id: upload-matrix
+        with:
+          name: ${{ hashFiles('matrix') || 'none' }}
+          path: matrix
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ hashFiles('matrix') || 'none' }}
+          path: matrix
+          if-no-files-found: warn
       - uses: nrwl/nx-set-shas@v3
       - run: |
           echo "BASE=$NX_BASE" >> $GITHUB_ENV
@@ -116,6 +134,20 @@ jobs:
 
       - name: fix hanging post job
         run: git config --local --get remote.origin.url
+
+  check-matrix:
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    needs: [ nx ]
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - uses: actions/download-artifact@v3
+      - run: |
+          matrix="$(cat */matrix | jq -c --slurp .)"
+          echo "::set-output name=matrix::$matrix"
+        id: matrix
 
   # success:
   #   runs-on: ec2-runners
