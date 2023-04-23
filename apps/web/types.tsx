@@ -4,7 +4,7 @@ import { NormalizedCacheObject } from '@apollo/client/cache'
 import { GetServerSidePropsContext } from 'next'
 
 export type ScreenContext = {
-  query: any // TODO: add type
+  query: GetServerSidePropsContext['query']
   apolloClient: ApolloClient<NormalizedCacheObject>
   locale: string
   asPath: string
