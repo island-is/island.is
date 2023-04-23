@@ -4,8 +4,7 @@ import type { GetServerSideProps } from 'next'
 import type { ScreenContext } from '../types'
 import { CustomNextError } from '../units/errors'
 
-// Hack needed to avoid JSON-Serialization validation error from Next.js https://github.com/zeit/next.js/discussions/11209
-// >>> Reason: `undefined` cannot be serialized as JSON. Please use `null` or omit this value all together.
+// Taken from here: https://github.com/vercel/next.js/discussions/11209#discussioncomment-38480
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const deleteUndefined = (obj: Record<string, any> | undefined): void => {
   if (obj) {
