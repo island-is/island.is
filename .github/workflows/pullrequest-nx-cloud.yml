@@ -52,7 +52,10 @@ jobs:
           node-version: '18.8.0'
 
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@v13.3.1
+        run: |
+          npm install -g yarn
+          yarn global add @nrwl/nx-cloud@v13.3.1
+          echo "$(yarn global bin)" >> $GITHUB_PATH
 
       - name: Check node version
         run: |
@@ -211,7 +214,10 @@ jobs:
           node-version: '18'
 
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@v13.3.1
+        run: |
+          npm install -g yarn
+          yarn global add @nrwl/nx-cloud@v13.3.1
+          echo "$(yarn global bin)" >> $GITHUB_PATH
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -274,7 +280,10 @@ jobs:
           node-version: '18'
 
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@v13.3.1
+        run: |
+          npm install -g yarn
+          yarn global add @nrwl/nx-cloud@v13.3.1
+          echo "$(yarn global bin)" >> $GITHUB_PATH
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -344,7 +353,11 @@ jobs:
           node-version: '18'
 
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@v13.3.1
+        run: |
+          npm install -g yarn
+          yarn global add @nrwl/nx-cloud@v13.3.1
+          echo "$(yarn global bin)" >> $GITHUB_PATH
+
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
       - name: Linting workspace
@@ -390,7 +403,11 @@ jobs:
         with:
           node-version: '18'
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@v13.3.1
+        run: |
+          npm install -g yarn
+          yarn global add @nrwl/nx-cloud@v13.3.1
+          echo "$(yarn global bin)" >> $GITHUB_PATH
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -429,7 +446,11 @@ jobs:
         with:
           node-version: '18'
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@v13.3.1
+        run: |
+          npm install -g yarn
+          yarn global add @nrwl/nx-cloud@v13.3.1
+          echo "$(yarn global bin)" >> $GITHUB_PATH
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -480,7 +501,11 @@ jobs:
         with:
           node-version: '18'
       - name: Setup yarn
-        run: npm install -g yarn @nrwl/nx-cloud@v13.3.1
+        run: |
+          npm install -g yarn
+          yarn global add @nrwl/nx-cloud@v13.3.1
+          echo "$(yarn global bin)" >> $GITHUB_PATH
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
@@ -533,7 +558,11 @@ jobs:
         with:
           node-version: '18'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: |
+          npm install -g yarn
+          yarn global add @nrwl/nx-cloud@v13.3.1
+          echo "$(yarn global bin)" >> $GITHUB_PATH
+
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         continue-on-error: true
