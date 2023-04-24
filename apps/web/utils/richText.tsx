@@ -25,6 +25,7 @@ import {
   TwoColumnTextSlice,
   AlcoholLicencesList,
   TemporaryEventLicencesList,
+  BrokersList,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
@@ -58,6 +59,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <AlcoholLicencesList slice={slice} />
     case 'Tækifærisleyfi/TemporaryEventLicences':
       return <TemporaryEventLicencesList slice={slice} />
+    case 'Verðbréfamiðlarar/Brokers':
+      return <BrokersList slice={slice} />
     default:
       break
   }

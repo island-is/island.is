@@ -29,7 +29,7 @@ import is from 'date-fns/locale/is'
 
 const GetStudentInfoQuery = gql`
   query universityOfIcelandStudentInfo(
-    $input: UniversityOfIcelandStudentInfoQueryInput!
+    $input: UniversityOfIcelandStudentInfoInput!
   ) {
     universityOfIcelandStudentInfo(input: $input) {
       track(input: $input) {

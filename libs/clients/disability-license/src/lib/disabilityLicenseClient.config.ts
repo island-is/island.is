@@ -21,7 +21,7 @@ export const DisabilityLicenseClientConfig = defineConfig<
         'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
       ),
       fetch: {
-        timeout: 30000,
+        timeout: env.optionalJSON('DISABILITY_LICENSE_FETCH_TIMEOUT') ?? 10000,
         scope: ['@tr.is/oryrki:read'],
       },
     }

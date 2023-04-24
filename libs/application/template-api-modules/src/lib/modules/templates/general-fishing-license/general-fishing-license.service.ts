@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
 import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import {
   FishingLicenseService,
   mapFishingLicenseToCode,
@@ -41,11 +41,14 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
       throw new Error('Vörunúmer fyrir FJS vantar.')
     }
 
+    // If strandveiðileyfi, then we set the const to "Sérstakt gjald vegna strandleyfa", otherwise null.
+    const strandveidileyfi = chargeItemCode === 'L5108' ? 'L5112' : false
+
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       application.id,
       FISKISTOFA_NATIONAL_ID,
-      [chargeItemCode],
+      strandveidileyfi ? [chargeItemCode, strandveidileyfi] : [chargeItemCode],
     )
 
     if (!response?.paymentUrl) {

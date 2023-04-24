@@ -1,10 +1,11 @@
 import { uuid } from 'uuidv4'
 import format from 'date-fns/format'
 
+import { User } from '@island.is/judicial-system/types'
+
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { getCourtRecordPdfAsBuffer } from '../../../../formatters'
 import { CourtService } from '../../../court'
-import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 import { randomDate } from '../../../../test'
@@ -44,7 +45,7 @@ describe('InternalCaseController - Deliver court record to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverCourtRecordToCourt(caseId, user, theCase, { userId })
+        .deliverCourtRecordToCourt(caseId, theCase, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

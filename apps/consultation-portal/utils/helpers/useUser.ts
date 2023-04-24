@@ -22,6 +22,7 @@ export const useUser = () => {
     setIsAuthenticated,
     user,
     setUser,
+    userLoading: loading,
   }
 }
 

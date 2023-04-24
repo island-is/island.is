@@ -1,10 +1,11 @@
 import { uuid } from 'uuidv4'
 import format from 'date-fns/format'
 
+import { User } from '@island.is/judicial-system/types'
+
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
-import { User } from '../../../user'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
 import { randomDate } from '../../../../test'
@@ -46,7 +47,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverSignedRulingToCourt(caseId, user, theCase, { userId })
+        .deliverSignedRulingToCourt(caseId, theCase, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
