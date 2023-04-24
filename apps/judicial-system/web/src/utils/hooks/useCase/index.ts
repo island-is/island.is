@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
 import router from 'next/router'
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
@@ -18,8 +18,6 @@ import {
   isRestrictionCase,
   isInvestigationCase,
   Feature,
-  CaseDecision,
-  CaseAppealDecision,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -35,9 +33,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import {
-  CaseAppealState,
-  CaseType,
-  Defendant,
   InstitutionType,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -54,7 +49,6 @@ import {
   SendNotificationMutation,
   RequestCourtRecordSignatureMutation,
   ExtendCaseMutation,
-  AppealedCasesQuery,
 } from './mutations'
 
 type ChildKeys = Pick<
@@ -106,23 +100,6 @@ interface RequestCourtRecordSignatureMutationResponse {
 
 interface ExtendCaseMutationResponse {
   extendCase: Case
-}
-
-export interface AppealedCasesQueryResponse {
-  courtCaseNumber: string
-  defendants: Defendant[]
-  type: CaseType
-  decision: CaseDecision
-  state: CaseState
-  appealState: CaseAppealState
-  accusedAppealDecision: CaseAppealDecision
-  prosecutorAppealDecision: CaseAppealDecision
-  courtEndTime: string
-  accusedPostponedAppealDate: string
-  prosecutorPostponedAppealDate: string
-  validToDate: string
-  policeCaseNumbers: string[]
-  parentCaseId: string
 }
 
 function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
@@ -301,10 +278,6 @@ const useCase = () => {
     extendCaseMutation,
     { loading: isExtendingCase },
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
-
-  const { data: appealedCases } = useQuery<{
-    cases: AppealedCasesQueryResponse[]
-  }>(AppealedCasesQuery)
 
   const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
     fetchPolicy: 'no-cache',
@@ -565,7 +538,6 @@ const useCase = () => {
     isExtendingCase,
     setAndSendCaseToServer,
     getCaseToOpen,
-    appealedCases,
   }
 }
 

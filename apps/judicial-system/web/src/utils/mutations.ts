@@ -61,6 +61,19 @@ export const CasesQuery = gql`
   }
 `
 
+export const AppealedCasesQuery = gql`
+  ${coreCaseListFields}
+  query AppealedCases {
+    cases {
+      defendants {
+        name
+      }
+      appealState
+      ...CoreCaseListFields
+    }
+  }
+`
+
 export const CreateUserMutation = gql`
   mutation CreateUserMutation($input: CreateUserInput!) {
     createUser(input: $input) {

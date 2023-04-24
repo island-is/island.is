@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
+import { useQuery } from '@apollo/client'
 
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 import {
@@ -28,16 +29,20 @@ import {
 } from '@island.is/judicial-system/types'
 import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
+import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType, getAppealDate } from '../../Shared/Cases/utils'
 import { courtOfAppealCases as strings } from './Cases.strings'
-import DefendantInfo from '@island.is/judicial-system-web/src/components/CasesTableComponents/DefendantInfo/DefendantInfo'
-import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
-  const { appealedCases, getCaseToOpen } = useCase()
+  const { getCaseToOpen } = useCase()
+
+  const { data: appealedCases } = useQuery<{
+    cases: AppealedCasesQueryResponse[]
+  }>(AppealedCasesQuery)
 
   const appealedCasesColumns = useMemo(() => {
     return [
@@ -199,7 +204,7 @@ const CourtOfAppealCases = () => {
         },
       },
     ]
-  }, [])
+  }, [appealedCasesColumns, formatMessage])
 
   const appealedCasesData = useMemo(() => appealedCases?.cases, [appealedCases])
 
