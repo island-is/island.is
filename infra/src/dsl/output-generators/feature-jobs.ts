@@ -23,6 +23,7 @@ export const generateJobsForFeature = async (
         .filter((id) => id)
         .map((info) => {
           const host = resolveDbHost(service, env, info?.host)
+          const extensions = info && info.extensions ? info.extensions.join(",") : ""
           return {
             command: ['/app/create-db.sh'],
             image,
@@ -56,6 +57,10 @@ export const generateJobsForFeature = async (
               {
                 name: 'DB_PASSWORD_KEY',
                 value: info!.passwordSecret!,
+              },
+              {
+                name: 'DB_EXTENSIONS',
+                value: extensions,
               },
             ],
           }

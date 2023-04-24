@@ -19,3 +19,9 @@ fi
 
 # idempotent
 psql -c "grant all privileges on database $DB_NAME to $DB_USER"
+
+for i in ${DB_EXTENSIONS//,/ }
+do
+    psql -d "$DB_NAME" -c "CREATE extension IF NOT EXISTS $i;"
+    echo "extension $i enabled"
+done
