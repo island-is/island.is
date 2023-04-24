@@ -24,59 +24,87 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
   },
 })
 
+const countApplicationsVisible = async (page: Page) => {
+  await page.waitForLoadState('domcontentloaded')
+  return page.getByTestId('application-card').count()
+}
+
 applicationTest.describe('Data protection complaint application', () => {
   applicationTest(
-    'Should be able to start the application and be visible on overview, then delete the application and that its not visible on overview',
+    'Should be able to start the application and seet it added on the application overview',
     async ({ applicationPage }) => {
       const page = applicationPage
+      let numOfApplicationsAtStart = 0
+      let numberOfApplicationsAfterCreationVisible = 0
 
-      const numOfApplicationsAtStart = await createApplication(page)
+      await applicationTest.step('Create a new application', async () => {
+        numOfApplicationsAtStart = await createApplication(page)
+        console.log(numOfApplicationsAtStart, 'at start')
+      })
 
-      // Proceed with the application to reach the draft state
-      await page.getByTestId('agree-to-data-providers').check()
-      await page.getByTestId('proceed').click()
-      await expect(page.getByText('Gervimaður Afríka')).toBeVisible()
-
-      // Go to the overview page
-      await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
-      await page.getByText('Þínar umsóknir')
-
-      // Count the number of visible applications after creation
-      const numberOfApplicationsAfterCreationVisible = await page
-        .getByTestId('application-card')
-        .count()
-
-      // Assert that the number of applications has increased by 1
-      expect(numberOfApplicationsAfterCreationVisible).toBe(
-        numOfApplicationsAtStart + 1,
+      await applicationTest.step(
+        'Proceed with the application to reach the draft state',
+        async () => {
+          await page.getByTestId('agree-to-data-providers').check()
+          await page.getByTestId('proceed').click()
+          await expect(page.getByText('Gervimaður Afríka')).toBeVisible()
+        },
       )
 
-      // Click the delete button for the top application and confirm deletion
-      await page.getByTestId('icon-trash').first().click()
-      await page.getByRole('button', { name: 'Já, eyða' }).click()
+      await applicationTest.step(
+        'Go to the overview page and check the number of applications after creation',
+        async () => {
+          await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
+          await page.getByText('Þínar umsóknir')
 
-      // playwright wait for applicationApplications to be refetched after removing an application
-      await page.waitForResponse('**/api/graphql?op=ApplicationApplications')
+          numberOfApplicationsAfterCreationVisible = await countApplicationsVisible(
+            page,
+          )
+          console.log(
+            numberOfApplicationsAfterCreationVisible,
+            'after creation',
+          )
 
-      // Count the number of visible applications after deletion
-      const numberOfApplicationsAfterDeletion = await page
-        .getByTestId('application-card')
-        .count()
+          expect(numberOfApplicationsAfterCreationVisible).toBe(
+            numOfApplicationsAtStart + 1,
+          )
+        },
+      )
+    },
+  )
+  applicationTest(
+    'Should be able to delete an application and that its not visible on overview',
+    async ({ applicationPage }) => {
+      await applicationTest.step(
+        'Delete an application and check the number of applications after deletion',
+        async () => {
+          const page = applicationPage
+          const applicationAtStart = await createApplication(page)
 
-      // If there are 0 applications left the user will be redirected to create a new application
-      if (numberOfApplicationsAfterDeletion > 0) {
-        // Assert that the number of applications has decreased by 1 to verify delete function
-        expect(numberOfApplicationsAfterDeletion).toBe(
-          numberOfApplicationsAfterCreationVisible - 1,
-        )
-      } else {
-        // Assert that the user has been redirected to a new application as the last application was deleted
-        await expect(applicationPage).toBeApplication()
-      }
+          await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
+          // await page.waitForLoadState('domcontentloaded')
+          const visibleApplicationsAfterCreation = await countApplicationsVisible(
+            page,
+          )
+          await page.getByTestId('icon-trash').first().click()
+          await page.getByRole('button', { name: 'Já, eyða' }).click()
+          await page.waitForResponse(
+            '**/api/graphql?op=ApplicationApplications',
+          )
+          if (visibleApplicationsAfterCreation - 1 > 0) {
+            const numberOfApplicationsAfterDeletion = await countApplicationsVisible(
+              page,
+            )
+            expect(numberOfApplicationsAfterDeletion).toBe(applicationAtStart)
+          } else {
+            await page.getByTestId('agree-to-data-providers')
+            await expect(applicationPage).toBeApplication()
+          }
+        },
+      )
     },
   )
 })
-
 // applicationTest(
 //   'Should be able to start the application, fill in the form and upload a document',
 //   async ({ applicationPage }) => {
