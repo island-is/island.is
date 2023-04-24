@@ -94,9 +94,12 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           utlendingastofnunWatsonChatUsesIdentityToken
         ) {
           onDirectorateOfImmigrationChatLoad(instance)
-        } else if (onLoad) {
+        }
+
+        if (onLoad) {
           onLoad(instance)
         }
+
         instance.render().then(() => setIsButtonVisible(true))
       },
     }
