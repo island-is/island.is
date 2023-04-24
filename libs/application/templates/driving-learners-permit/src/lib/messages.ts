@@ -8,7 +8,7 @@ export const m = defineMessages({
   /* External Data Section */
   externalDataSectionTitle: {
     id: 'dlp.application:externalDataSectionTitle',
-    defaultMessage: 'Gagnaöflun fyrir umsókn',
+    defaultMessage: 'Gagnaöflun',
     description: 'Title for external data acquisition',
   },
 
@@ -52,12 +52,12 @@ export const m = defineMessages({
   /* Requirements Subsection */
   applicationEligibilityTitle: {
     id: 'dlp.application:applicationEligibilityTitle',
-    defaultMessage: 'Skilyrði leiðbeinanda',
+    defaultMessage: 'Uppfletting leiðbeinanda',
     description: 'title for requirement section of mentor',
   },
   applicationStudentRequirementsTitle: {
     id: 'dlp.application:applicationStudentRequirementsTitle',
-    defaultMessage: 'Skilyrði nemanda',
+    defaultMessage: 'Uppfletting nemanda',
     description: 'title for requirement section of learner driver',
   },
   eligibilityRequirementTitle: {
@@ -67,7 +67,7 @@ export const m = defineMessages({
   },
   applicationEligibilityRequirementDescription: {
     id: 'dlp.application:applicationEligibilityDescription',
-    defaultMessage: 'Skilyrði sem leiðbeinandi þarf að uppfylla',
+    defaultMessage: 'Skilyrði sem leiðbeinandi þarf að uppfylla.',
     description: 'description for requirement section of mentor',
   },
   externalDataComplete: {
@@ -101,7 +101,7 @@ export const m = defineMessages({
   },
   studentNameLabel: {
     id: 'dlp.application:studentNameLabel',
-    defaultMessage: 'Nafn',
+    defaultMessage: 'Nafn nemanda',
     description: 'Label for student lookup name',
   },
   studentInfoHeading: {
@@ -157,7 +157,7 @@ export const m = defineMessages({
   },
   overviewStudentTitle: {
     id: 'dlp.application:overviewStudentTitle',
-    defaultMessage: 'Nemandi',
+    defaultMessage: 'Upplýsingar um nemanda',
     description: 'Student title for overview section',
   },
   overviewStudentName: {
@@ -191,7 +191,7 @@ export const m = defineMessages({
   /* ----- */
   name: {
     id: 'dlp.application:name',
-    defaultMessage: 'Umsókn um leiðbeinendaréttindi æfingaaksturs',
+    defaultMessage: 'Umsókn um leiðbeinendaréttindi æfingaraksturs',
     description: 'Name of application',
   },
   institutionName: {

@@ -1,34 +1,14 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import cn from 'classnames'
 import { useLocale } from '@island.is/localization'
-import { formatText, coreMessages } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { coreMessages } from '@island.is/application/core'
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
 
 import * as styles from './ReviewSection.css'
-import { MessageDescriptor } from '@formatjs/intl'
 import { m } from '../../../lib/messages'
-
-export enum ReviewSectionState {
-  inProgress = 'In progress',
-  requiresAction = 'Requires action',
-  complete = 'Complete',
-}
-
-export interface Step {
-  title: MessageDescriptor
-  description: MessageDescriptor
-  state: ReviewSectionState
-}
-
-type ReviewSectionProps = {
-  application: Application
-  step: Step
-  index: number
-}
+import { ReviewSectionProps, ReviewSectionState } from '../../../lib/constants'
 
 const ReviewSection: FC<ReviewSectionProps> = ({
-  application,
   step: { state, description, title },
 }) => {
   const { formatMessage } = useLocale()
@@ -70,11 +50,9 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         justifyContent="spaceBetween"
       >
         <Box marginTop={[1, 0, 0]} paddingRight={[0, 1, 1]}>
-          <Text variant="h3">
-            {formatText(title, application, formatMessage)}
-          </Text>
+          <Text variant="h3">{formatMessage(title)}</Text>
           <Text marginTop={1} variant="default">
-            {formatText(description, application, formatMessage)}
+            {formatMessage(description)}
           </Text>
         </Box>
 
@@ -82,7 +60,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Box pointerEvents="none">
             <button type="button" className={styles.container}>
               <Text variant="eyebrow" as="span">
-                {formatText(m.externalDataComplete, application, formatMessage)}
+                {formatMessage(m.externalDataComplete)}
               </Text>
             </button>
           </Box>
@@ -90,11 +68,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
         {state === ReviewSectionState.requiresAction && (
           <Box pointerEvents="none">
             <Tag variant="red">
-              {formatText(
-                coreMessages.tagsRequiresAction,
-                application,
-                formatMessage,
-              )}
+              {formatMessage(coreMessages.tagsRequiresAction)}
             </Tag>
           </Box>
         )}

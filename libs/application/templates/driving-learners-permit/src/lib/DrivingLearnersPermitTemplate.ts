@@ -7,43 +7,23 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
-  DefaultEvents,
   CurrentLicenseApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
-import { ApiActions, FakeDataFeature } from '../shared'
+import { DrivingLearnersPermitTemplateEvent, Roles, States } from './constants'
+import { ApiActions, FakeDataFeature } from '../shared/constants'
 import { m } from './messages'
 import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { truthyFeatureFromClient } from '../shared/utils'
 
-const States = {
-  prerequisites: 'prerequisites',
-  draft: 'draft',
-  inReview: 'inReview',
-  approved: 'approved',
-  rejected: 'rejected',
-  waitingToAssign: 'waitingToAssign',
-}
-
-type DrivingLearnersPermitTemplateEvent =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
-
-enum Roles {
-  APPLICANT = 'applicant',
-  ASSIGNEE = 'assignee',
-}
 const DrivingLearnersPermitTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<DrivingLearnersPermitTemplateEvent>,
   DrivingLearnersPermitTemplateEvent
 > = {
-  type: ApplicationTypes.EXAMPLE,
+  type: ApplicationTypes.DRIVING_LEARNERS_PERMIT,
   name: m.name,
   institution: m.institutionName,
   translationNamespaces: [
@@ -53,19 +33,19 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   featureFlag: Features.drivingLearnersPermit,
   readyForProduction: true,
   stateMachineConfig: {
-    initial: States.prerequisites,
+    initial: States.PREREQUISITES,
     states: {
-      [States.prerequisites]: {
+      [States.PREREQUISITES]: {
         meta: {
           status: 'draft',
-          name: 'Prerequisities',
+          name: 'Prerequisites',
           progress: 0,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: async ({ featureFlagClient }) => {
-                const getForm = await import('../forms/Prerequisites').then(
+                const getForm = await import('../forms/form').then(
                   (val) => val.getForm,
                 )
 
@@ -89,16 +69,16 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: States.approved,
+            target: States.APPROVED,
           },
         },
       },
-      [States.approved]: {
+      [States.APPROVED]: {
         meta: {
-          onEntry: defineTemplateApi({
+          /*onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             shouldPersistToExternalData: true,
-          }),
+          }),*/
           status: 'approved',
           name: 'Approved',
           progress: 1,
@@ -111,7 +91,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Done').then((module) =>
+                import('../forms/done').then((module) =>
                   Promise.resolve(module.Done),
                 ),
               write: 'all',

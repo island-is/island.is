@@ -9,7 +9,7 @@ import {
   GridRow,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import { formatText, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -19,9 +19,8 @@ import {
   IdentityInput,
   Query,
   StudentCanGetPracticePermitInput,
-  StudentMentorabilityInput,
 } from '@island.is/api/schema'
-import { IDENTITY_QUERY } from '../../graphql/'
+import { IDENTITY_QUERY } from '../../graphql'
 import { LOOKUP_STUDENT_QUERY } from '../../graphql'
 import { LearnersPermitFakeData, YES } from '../../lib/constants'
 
@@ -35,7 +34,7 @@ const fieldNames = {
   studentIsMentorable: `${prefix}.studentIsMentorable`,
 }
 
-const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
+export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const fakeData = getValueViaPath<LearnersPermitFakeData>(
     application.answers,
@@ -149,16 +148,12 @@ const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
 
   return (
     <Box>
-      <GridRow marginBottom={2} marginTop={4}>
+      <GridRow marginBottom={2} marginTop={2}>
         <GridColumn span="6/12">
           <InputController
             id={fieldNames.studentNationalId}
             name={fieldNames.studentNationalId}
-            label={formatText(
-              m.studentNationalIdLabel,
-              application,
-              formatMessage,
-            )}
+            label={formatMessage(m.studentNationalIdLabel)}
             format="######-####"
             defaultValue=""
             backgroundColor="blue"
@@ -170,7 +165,7 @@ const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
           <InputController
             id={fieldNames.studentName}
             name={fieldNames.studentName}
-            label={formatText(m.studentNameLabel, application, formatMessage)}
+            label={formatMessage(m.studentNameLabel)}
             readOnly
             defaultValue=""
           />
@@ -185,21 +180,18 @@ const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
         </Box>
       </GridRow>
 
-      <GridRow marginBottom={3} marginTop={3}>
+      <GridRow marginTop={5}>
         <GridColumn span="12/12">
           {getValues(fieldNames.studentIsMentorable) !== 'default' && (
             <ContentBlock>
               {getValues(fieldNames.studentIsMentorable) === 'loading' && (
-                <>
-                  <LoadingDots />
-                  <AlertMessage
-                    type="info"
-                    title={formatMessage(m.studentIsMentorableLoadingHeader)}
-                    message={formatMessage(
-                      m.studentIsMentorableLoadingDescription,
-                    )}
-                  />
-                </>
+                <AlertMessage
+                  type="info"
+                  title={formatMessage(m.studentIsMentorableLoadingHeader)}
+                  message={formatMessage(
+                    m.studentIsMentorableLoadingDescription,
+                  )}
+                />
               )}
               {getValues(fieldNames.studentIsMentorable) === 'isMentorable' && (
                 <AlertMessage
@@ -224,4 +216,4 @@ const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
   )
 }
 
-export { LookupStudent }
+export default LookupStudent
