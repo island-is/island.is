@@ -16,6 +16,9 @@ import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import { getEnvVariables } from '../../../../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { env } from '../../../../support/urls'
+import { serializeValueSource } from '../../../../../../../infra/src/dsl/output-generators/serialization-helpers'
+import { Kubernetes } from '../../../../../../../infra/src/dsl/kubernetes-runtime'
+import { EnvironmentConfig } from '../../../../../../../infra/src/dsl/types/charts'
 
 export async function setupXroadMocks() {
   await resetMocks()
@@ -287,7 +290,12 @@ export async function setupXroadMocks() {
   const path =
     typeof xroadBasePath === 'string'
       ? xroadBasePath
-      : 'this should never happen url'
+      : xroadBasePath({
+          svc: (args) => {
+            return args as string
+          },
+          env: {} as EnvironmentConfig,
+        })
 
   await wildcard(path)
 }
