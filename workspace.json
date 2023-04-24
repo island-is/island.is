@@ -57,6 +57,7 @@
     "api-domains-university-of-iceland": "libs/api/domains/university-of-iceland",
     "api-domains-user-profile": "libs/api/domains/user-profile",
     "api-domains-vehicles": "libs/api/domains/vehicles",
+    "api-domains-watson-assistant-chat": "libs/api/domains/watson-assistant-chat",
     "api-mocks": "libs/api/mocks",
     "api-schema": "libs/api/schema",
     "application-api-core": "libs/application/api/core",

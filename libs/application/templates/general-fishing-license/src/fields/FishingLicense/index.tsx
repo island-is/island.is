@@ -34,7 +34,7 @@ export const FishingLicense: FC<FieldBaseProps> = ({
   const { register, getValues, setValue } = useFormContext()
   const selectedChargeType = getValueViaPath(
     application.answers,
-    'fishingLicense.license',
+    'fishingLicense.chargeType',
     '',
   ) as string
   const [chargeType, setChargeType] = useState<string>(selectedChargeType || '')
