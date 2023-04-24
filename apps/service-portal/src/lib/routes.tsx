@@ -1,5 +1,4 @@
 import { RouteObject } from 'react-router-dom'
-import { Dashboard } from '../screens/Dashboard/Dashboard'
 import { Root } from '../components/Root'
 
 /**
