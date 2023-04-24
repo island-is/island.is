@@ -23,6 +23,7 @@ export type PostgresInfo = {
   name?: string
   username?: string
   passwordSecret?: string
+  extensions?: string[]
 }
 export type PostgresInfoForEnv = {
   host?: string
