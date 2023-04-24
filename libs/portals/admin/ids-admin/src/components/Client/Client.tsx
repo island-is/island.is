@@ -5,16 +5,7 @@ import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import {
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Tag,
-  Text,
-  Stack,
-  Box,
-  Select,
-} from '@island.is/island-ui/core'
+import { Tag, Text, Stack, Box, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
@@ -25,6 +16,9 @@ import Lifetime from './Lifetime'
 import Translations from './Translations'
 import Delegation from './Delegation'
 import AdvancedSettings from './AdvancedSettings'
+import { ClientContext } from '../../shared/context/ClientContext'
+import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import * as styles from './Client.css'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -42,47 +36,109 @@ const Client = () => {
     AuthClient['environments'][0]
   >(client.environments[0])
 
+  const checkIfInSync = (variables: string[]) => {
+    for (const variable of variables) {
+      for (const env of client.environments) {
+        if (
+          JSON.stringify(
+            env[variable as keyof AuthClient['environments'][0]],
+          ) !==
+          JSON.stringify(
+            selectedEnvironment[
+              variable as keyof AuthClient['environments'][0]
+            ],
+          )
+        ) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
   return (
-    <GridContainer>
+    <ClientContext.Provider
+      value={{
+        client,
+        selectedEnvironment,
+        setSelectedEnvironment,
+        availableEnvironments: client.environments.map(
+          (env) => env.environment,
+        ),
+        checkIfInSync: checkIfInSync,
+        variablesToCheckSync: {
+          [ClientFormTypes.applicationUrls]: [
+            'postLogoutRedirectUris',
+            'redirectUris',
+          ],
+          [ClientFormTypes.lifeTime]: [
+            'absoluteRefreshTokenLifetime',
+            'slidingRefreshTokenLifetime',
+            'refreshTokenExpiration',
+          ],
+          [ClientFormTypes.translations]: ['displayName'],
+          [ClientFormTypes.delegations]: [
+            'supportsProcuringHolders',
+            'supportsLegalGuardians',
+            'promptDelegations',
+            'supportsPersonalRepresentatives',
+            'supportsCustomDelegation',
+            'requireApiScopes',
+          ],
+          [ClientFormTypes.advancedSettings]: [
+            'requirePkce',
+            'allowOfflineAccess',
+            'requireConsent',
+            'supportTokenExchange',
+            'slidingRefreshTokenLifetime',
+            'customClaims',
+          ],
+          [ClientFormTypes.none]: [],
+        },
+      }}
+    >
       <Stack space={4}>
-        <GridRow>
-          <GridColumn span="6/12">
-            <Stack space="smallGutter">
-              <Tag outlined>{client.clientType}</Tag>
-              <Text variant="h2">
-                {client.environments[0].displayName[0].value}
-              </Text>
-            </Stack>
-          </GridColumn>
-          <GridColumn span="6/12">
-            <Box width="full" display="flex" justifyContent="flexEnd">
-              <Select
-                name="env"
-                icon="chevronDown"
-                size="sm"
-                backgroundColor="blue"
-                label={formatMessage(m.environment)}
-                onChange={(event: any) =>
-                  setSelectedEnvironment(
-                    client.environments.find(
-                      (env) => env.environment === event.value,
-                    ) as AuthClient['environments'][0],
-                  )
+        <Box
+          display="flex"
+          columnGap={2}
+          rowGap={2}
+          justifyContent="spaceBetween"
+          flexDirection={['column', 'row']}
+        >
+          <Box flexGrow={1}>
+            <Tag outlined>{client.clientType}</Tag>
+            <Text variant="h2">
+              {client.environments[0].displayName[0].value}
+            </Text>
+          </Box>
+          <Box className={styles.select}>
+            <Select
+              name="env"
+              icon="chevronDown"
+              size="sm"
+              backgroundColor="blue"
+              label={formatMessage(m.environment)}
+              onChange={(event: any) =>
+                setSelectedEnvironment(
+                  client.environments.find(
+                    (env) => env.environment === event.value,
+                  ) as AuthClient['environments'][0],
+                )
+              }
+              value={{
+                label: selectedEnvironment.environment,
+                value: selectedEnvironment.environment,
+              }}
+              options={client.environments.map((env) => {
+                return {
+                  label: env.environment,
+                  value: env.environment,
                 }
-                value={{
-                  label: selectedEnvironment.environment,
-                  value: selectedEnvironment.environment,
-                }}
-                options={client.environments.map((env) => {
-                  return {
-                    label: env.environment,
-                    value: env.environment,
-                  }
-                })}
-              />
-            </Box>
-          </GridColumn>
-        </GridRow>
+              })}
+            />
+          </Box>
+        </Box>
+
         <BasicInfo
           key={`${selectedEnvironment.environment}-BasicInfo`}
           clientId={selectedEnvironment.clientId}
@@ -91,13 +147,11 @@ const Client = () => {
         <Translations
           key={`${selectedEnvironment.environment}-Translations`}
           translations={selectedEnvironment.displayName}
-          selectedEnvironment={selectedEnvironment.environment}
         />
         <ClientsUrl
           key={`${selectedEnvironment.environment}-ClientsUrl`}
           redirectUris={selectedEnvironment.redirectUris}
           postLogoutRedirectUris={selectedEnvironment.postLogoutRedirectUris}
-          selectedEnvironment={selectedEnvironment.environment}
         />
         <Lifetime
           key={`${selectedEnvironment.environment}-Lifetime`}
@@ -111,7 +165,6 @@ const Client = () => {
             selectedEnvironment.refreshTokenExpiration ===
             AuthAdminRefreshTokenExpiration.Sliding
           }
-          selectedEnvironment={selectedEnvironment.environment}
         />
         <Delegation
           key={`${selectedEnvironment.environment}-Delegation`}
@@ -127,7 +180,6 @@ const Client = () => {
             selectedEnvironment.supportsCustomDelegation
           }
           requireApiScopes={selectedEnvironment.requireApiScopes}
-          selectedEnvironment={selectedEnvironment.environment}
         />
         <AdvancedSettings
           key={`${selectedEnvironment.environment}-AdvancedSettings`}
@@ -143,10 +195,9 @@ const Client = () => {
               return `${claim.type}=${claim.value}`
             }) ?? []
           }
-          selectedEnvironment={selectedEnvironment.environment}
         />
       </Stack>
-    </GridContainer>
+    </ClientContext.Provider>
   )
 }
 
