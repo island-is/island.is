@@ -98,7 +98,6 @@
     "@nestjs/swagger": "5.2.1",
     "@nestjs/terminus": "7.0.1",
     "@nrwl/next": "13.10.5",
-    "@nrwl/nx-cloud": "v13.3.1",
     "@rehooks/component-size": "1.0.3",
     "@sindresorhus/slugify": "1.0.0",
     "@statoscope/webpack-plugin": "5.20.1",
