@@ -6,14 +6,35 @@ export interface Case {
   name?: string
   adviceCount?: number
   shortDescription?: string
+  detailedDescription?: string
   statusName?: string
   institutionName?: string
+  oldInstitutionName?: string
   typeName?: string
   policyAreaName?: string
   processBegins?: string
   processEnds?: string
+  announcementText?: string
   created?: string
+  changed?: string
   summaryDate?: string
+  summaryText?: string
+  contactName?: string
+  contactEmail?: string
+  documents?: Array<Document>
+  stakeholders?: Array<Stakeholder>
+}
+
+export interface Document {
+  id?: string
+  fileName?: string
+  fileType?: string
+  size?: number
+}
+
+export interface Stakeholder {
+  name?: string
+  email?: string
 }
 
 export interface AdviceDocuments {
