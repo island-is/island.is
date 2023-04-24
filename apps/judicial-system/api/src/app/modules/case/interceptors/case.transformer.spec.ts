@@ -243,7 +243,6 @@ describe('transformCase', () => {
       expect(res.appealedDate).toBeUndefined()
       expect(res.hasBeenAppealed).toBeUndefined()
       expect(res.canBeAppealed).toBeUndefined()
-      expect(res.appealReceivedByCourtDate).toBeUndefined()
     })
 
     it('should return appeal deadline and hasBeenAppealed set to false when case has not yet been appealed', () => {

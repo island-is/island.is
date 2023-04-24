@@ -1443,13 +1443,18 @@ export class NotificationService {
         theCase.prosecutor?.name,
         theCase.prosecutor?.email,
       ),
-      this.sendEmail(
-        subject,
-        html,
-        theCase.defenderName,
-        theCase.defenderEmail,
-      ),
     ]
+
+    if (theCase.defenderEmail) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
+    }
 
     const recipients = await Promise.all(promises)
 

@@ -377,7 +377,6 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'appealState'
-    | 'appealReceivedByCourtDate'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
