@@ -1,3 +1,4 @@
+import { getPostgresExtensions } from './output-generators/map-to-helm-values'
 import {
   Context,
   EnvironmentVariables,
@@ -270,6 +271,7 @@ export class ServiceBuilder<ServiceType> {
       passwordSecret:
         pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
       name: pi.name ?? postgresIdentifier(this.serviceDef.name),
+      extensions: ["uuid-ossp"]
     }
   }
 }

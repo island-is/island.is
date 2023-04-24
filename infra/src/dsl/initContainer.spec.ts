@@ -53,7 +53,9 @@ describe('Init-container definitions', () => {
       secrets: {
         S1: '/as/dfadf',
       },
-      postgres: {},
+      postgres: {
+        extensions: ["foo", "bar"]
+      },
     })
     const result = (await generateOutputOne({
       outputFormat: renderers.helm,
@@ -96,6 +98,7 @@ describe('Init-container definitions', () => {
         DB_HOST: 'a',
         DB_REPLICAS_HOST: 'a',
         SERVERSIDE_FEATURES_ON: '',
+        DB_EXTENSIONS: 'foo,bar'
       },
       secrets: { S1: '/as/dfadf', DB_PASS: '/k8s/api/DB_PASSWORD' },
     })
