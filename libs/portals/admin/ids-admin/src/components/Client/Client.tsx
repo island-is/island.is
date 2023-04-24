@@ -15,6 +15,7 @@ import ClientsUrl from './ClientsUrl'
 import Lifetime from './Lifetime'
 import Translations from './Translations'
 import Delegation from './Delegation'
+import Permissions from './Permissions'
 import AdvancedSettings from './AdvancedSettings'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
@@ -166,6 +167,7 @@ const Client = () => {
             AuthAdminRefreshTokenExpiration.Sliding
           }
         />
+        <Permissions />
         <Delegation
           key={`${selectedEnvironment.environment}-Delegation`}
           supportsProcuringHolders={

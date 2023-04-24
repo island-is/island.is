@@ -59,7 +59,7 @@ export const m = defineMessages({
   },
   advancedSettings: {
     id: 'ap.ids-admin:advanced-settings',
-    defaultMessage: 'Avanced settings',
+    defaultMessage: 'Advanced settings',
   },
   back: {
     id: 'ap.ids-admin:back',
@@ -443,6 +443,44 @@ export const m = defineMessages({
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
+  },
+  permissions: {
+    id: 'ap.ids-admin:permissions',
+    defaultMessage: 'Permissions',
+  },
+  permissionsDescription: {
+    id: 'ap.ids-admin:permissions-description',
+    defaultMessage:
+      'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.\n\nHere you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
+  },
+  permissionsAdd: {
+    id: 'ap.ids-admin:permissions-add',
+    defaultMessage: 'Add permissions',
+  },
+  permissionsTableLabelName: {
+    id: 'ap.ids-admin:permissions-table-label-name',
+    defaultMessage: 'Name',
+  },
+  permissionsTableLabelDescription: {
+    id: 'ap.ids-admin:permissions-table-label-description',
+    defaultMessage: 'Description',
+  },
+  permissionsTableLabelAPI: {
+    id: 'ap.ids-admin:permissions-table-label-api',
+    defaultMessage: 'API',
+  },
+  permissionsButtonLabelRemove: {
+    id: 'ap.ids-admin:permissions-button-label-remove',
+    defaultMessage: 'Remove',
+  },
+  permissionsModalTitle: {
+    id: 'ap.ids-admin:permissions-modal-title',
+    defaultMessage: 'Add permissions',
+  },
+  permissionsModalDescription: {
+    id: 'ap.ids-admin:permissions-modal-description',
+    defaultMessage:
+      'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
   },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
