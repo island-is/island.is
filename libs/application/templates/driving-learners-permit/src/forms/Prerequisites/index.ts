@@ -3,8 +3,19 @@ import {
   buildSection,
   buildExternalDataProvider,
   buildDataProviderItem,
+  buildKeyValueField,
+  buildTextField,
+  getValueViaPath,
+  buildDescriptionField,
+  buildMultiField,
+  buildDividerField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  Form,
+  FormModes,
+  FormValue,
+} from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { sectionRequirements } from './sectionRequirements'
 import { sectionFakeData } from './sectionFakeData'
@@ -36,6 +47,49 @@ export const getForm = ({ allowFakeData = false }): Form => {
           }),
           sectionRequirements,
           sectionLookupStudent,
+        ],
+      }),
+      buildSection({
+        id: 'overview',
+        title: '',
+        children: [
+          buildMultiField({
+            title: m.overviewSectionTitle,
+            children: [
+              buildDescriptionField({
+                id: 'overViewDescription',
+                title: m.overviewDescription,
+                titleVariant: 'h5',
+                marginBottom: 'none'
+              }),
+              buildDividerField({}),
+              buildDescriptionField({
+                id: 'overViewStudent',
+                title: m.overviewStudentTitle,
+                marginBottom: 'gutter'
+              }),
+              buildKeyValueField({
+                width: 'half',
+                label: m.overviewStudentNationalId,
+                value: (application: Application) => {
+                  return getValueViaPath<string>(
+                    application.answers,
+                    'studentMentorability.studentNationalId',
+                  )
+                }
+              }),
+              buildKeyValueField({
+                width: 'half',
+                label: m.overviewStudentName,
+                value: (application: Application) => {
+                  return getValueViaPath<string>(
+                    application.answers,
+                    'studentMentorability.studentName',
+                  )
+                }
+              })
+            ],
+          }),
         ],
       }),
       buildSection({

@@ -143,6 +143,34 @@ export const m = defineMessages({
     description: 'Informing user that we are loading data',
   },
 
+  /* Overview Section */
+  overviewDescription: {
+    id: 'dlp.application:overviewDescription',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar hér að neðan og staðfestu að þær séu réttar.',
+    description: 'Description for overview section',
+  },
+  overviewSectionTitle: {
+    id: 'dlp.application:overviewSectionTitle',
+    defaultMessage: 'Yfirlit',
+    description: 'Overview section title',
+  },
+  overviewStudentTitle: {
+    id: 'dlp.application:overviewStudentTitle',
+    defaultMessage: 'Nemandi',
+    description: 'Student title for overview section',
+  },
+  overviewStudentName: {
+    id: 'dlp.application:overviewStudentName',
+    defaultMessage: 'Nafn',
+    description: 'Student name for overview section',
+  },
+  overviewStudentNationalId: {
+    id: 'dlp.application:overviewStudentNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'Student national id for overview section',
+  },
+
   /* ------------ */
   /* DONE SECTION */
   /* ------------ */

@@ -9,14 +9,14 @@ export const sectionLookupStudent = buildSubSection({
   title: m.applicationStudentRequirementsTitle,
   children: [
     buildMultiField({
-      id: 'studentLookup',
+      id: 'studentMentorability',
       title: m.applicationStudentLookupTitle,
       description: m.studentInfoHeading,
       children: [
         buildCustomField({
           title: m.applicationStudentLookupTitle,
           component: 'LookupStudent',
-          id: 'studentLookup',
+          id: 'studentMentorability',
         }),
       ],
     }),

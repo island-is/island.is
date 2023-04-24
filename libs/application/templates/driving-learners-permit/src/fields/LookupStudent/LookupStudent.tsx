@@ -69,7 +69,6 @@ const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
 
   const [
     getStudentMentorability,
-    { loading: studentQueryLoading },
   ] = useLazyQuery<Query, { input: StudentCanGetPracticePermitInput }>(
     LOOKUP_STUDENT_QUERY,
     {
@@ -78,6 +77,7 @@ const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
           type: 'serverError',
           message: m.errorNationalIdMentorableLookup.defaultMessage,
         })
+        setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
         console.log('getStudentMentorabilityError:', error)
       },
       onCompleted: (data) => {
