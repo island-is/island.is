@@ -67,35 +67,33 @@ const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     },
   })
 
-  const [
-    getStudentMentorability,
-  ] = useLazyQuery<Query, { input: StudentCanGetPracticePermitInput }>(
-    LOOKUP_STUDENT_QUERY,
-    {
-      onError: (error: unknown) => {
-        setError(fieldNames.studentMentorabilityError, {
-          type: 'serverError',
-          message: m.errorNationalIdMentorableLookup.defaultMessage,
-        })
-        setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
-        console.log('getStudentMentorabilityError:', error)
-      },
-      onCompleted: (data) => {
-        if (data.drivingLicenseStudentCanGetPracticePermit) {
-          clearErrors(fieldNames.studentMentorabilityError)
-          const {
-            isOk,
-            errorCode,
-          } = data.drivingLicenseStudentCanGetPracticePermit
-          const eligible = isOk && errorCode === null
-          setValue(
-            fieldNames.studentIsMentorable,
-            eligible ? 'isMentorable' : 'isNotMentorable',
-          )
-        }
-      },
+  const [getStudentMentorability] = useLazyQuery<
+    Query,
+    { input: StudentCanGetPracticePermitInput }
+  >(LOOKUP_STUDENT_QUERY, {
+    onError: (error: unknown) => {
+      setError(fieldNames.studentMentorabilityError, {
+        type: 'serverError',
+        message: m.errorNationalIdMentorableLookup.defaultMessage,
+      })
+      setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
+      console.log('getStudentMentorabilityError:', error)
     },
-  )
+    onCompleted: (data) => {
+      if (data.drivingLicenseStudentCanGetPracticePermit) {
+        clearErrors(fieldNames.studentMentorabilityError)
+        const {
+          isOk,
+          errorCode,
+        } = data.drivingLicenseStudentCanGetPracticePermit
+        const eligible = isOk && errorCode === null
+        setValue(
+          fieldNames.studentIsMentorable,
+          eligible ? 'isMentorable' : 'isNotMentorable',
+        )
+      }
+    },
+  })
 
   // Clear inital errors on mount
   useEffect(() => {

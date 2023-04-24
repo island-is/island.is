@@ -60,13 +60,13 @@ export const getForm = ({ allowFakeData = false }): Form => {
                 id: 'overViewDescription',
                 title: m.overviewDescription,
                 titleVariant: 'h5',
-                marginBottom: 'none'
+                marginBottom: 'none',
               }),
               buildDividerField({}),
               buildDescriptionField({
                 id: 'overViewStudent',
                 title: m.overviewStudentTitle,
-                marginBottom: 'gutter'
+                marginBottom: 'gutter',
               }),
               buildKeyValueField({
                 width: 'half',
@@ -76,7 +76,7 @@ export const getForm = ({ allowFakeData = false }): Form => {
                     application.answers,
                     'studentMentorability.studentNationalId',
                   )
-                }
+                },
               }),
               buildKeyValueField({
                 width: 'half',
@@ -86,8 +86,8 @@ export const getForm = ({ allowFakeData = false }): Form => {
                     application.answers,
                     'studentMentorability.studentName',
                   )
-                }
-              })
+                },
+              }),
             ],
           }),
         ],
