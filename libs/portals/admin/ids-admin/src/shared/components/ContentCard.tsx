@@ -1,17 +1,35 @@
-import React, { FC, useEffect, useRef, useState } from 'react'
-import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
-import { Form } from 'react-router-dom'
+import React, { FC, useContext, useEffect, useRef, useState } from 'react'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  DropdownMenu,
+  Icon,
+  LoadingDots,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
+import { Form, useActionData } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { ClientFormTypes } from '../../components/forms/EditApplication/EditApplication.action'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import {
+  ClientFormTypes,
+  EditApplicationResult,
+  getIntentWithSyncCheck,
+  schema,
+} from '../../components/forms/EditApplication/EditApplication.action'
+import * as styles from './ContentCard.css'
+import { ClientContext } from '../context/ClientContext'
+import { useSubmitting } from '@island.is/react-spa/shared'
+import isEqual from 'lodash/isEqual'
 
 interface ContentCardProps {
   title: string
   description?: string
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
-  intent?: ClientFormTypes | 'none'
-  selectedEnvironment?: AuthAdminEnvironment
+  inSync?: boolean
+  intent?: ClientFormTypes
 }
 
 function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
@@ -29,14 +47,63 @@ const ContentCard: FC<ContentCardProps> = ({
   title,
   description,
   isDirty = defaultIsDirty,
-  intent = 'none',
-  selectedEnvironment,
+  intent = ClientFormTypes.none,
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
   const originalFormData = useRef<FormData>()
   const [dirty, setDirty] = useState<boolean>(false)
   const ref = useRef<HTMLFormElement>(null)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+
+  const { isLoading, isSubmitting, formData } = useSubmitting()
+
+  const actionData = useActionData() as EditApplicationResult<
+    typeof schema[typeof intent]
+  >
+
+  const actionDataRef = useRef(actionData?.data)
+
+  useEffect(() => {
+    if (actionData?.intent === intent) {
+      if (!isEqual(actionData?.data, actionDataRef?.current)) {
+        if (actionData?.data) {
+          actionDataRef.current = actionData?.data
+          originalFormData.current = new FormData(
+            ref.current as HTMLFormElement,
+          )
+          toast.success(formatMessage(m.successfullySaved))
+        }
+        if (actionData?.globalError) {
+          toast.error(formatMessage(m.globalErrorMessage))
+        }
+      }
+    }
+  }, [actionData, intent, formatMessage])
+
+  const {
+    checkIfInSync,
+    variablesToCheckSync,
+    selectedEnvironment,
+    availableEnvironments,
+  } = useContext(ClientContext)
+
+  const checkIfLoadingForIntent = () => {
+    if (intent === ClientFormTypes.none) {
+      return false
+    }
+
+    if (formData === undefined) {
+      return false
+    }
+
+    const intentToCheck = getIntentWithSyncCheck(formData)
+    return (isSubmitting || isLoading) && intentToCheck.name === intent
+  }
+
+  const inSync = checkIfInSync(
+    variablesToCheckSync?.[intent as keyof typeof ClientFormTypes] ?? [],
+  )
 
   // On change, check if the form has changed, use custom validation if provided
   const onChange = () => {
@@ -57,25 +124,112 @@ const ContentCard: FC<ContentCardProps> = ({
   useEffect(() => {
     originalFormData.current = new FormData(ref.current as HTMLFormElement)
   }, [ref])
+
   return (
-    <Box
-      borderRadius="large"
-      paddingY={2}
-      paddingX={4}
-      display="flex"
-      flexDirection="column"
-      justifyContent="spaceBetween"
-      height="full"
-      width="full"
-      border={'standard'}
-    >
-      <Box>
-        <Text marginTop={2} marginBottom={4} variant="h3">
-          {title}
-        </Text>
-        {description && <Text marginBottom={4}>{description}</Text>}
-      </Box>
-      <Form ref={ref} onChange={onChange} method="post">
+    <Form ref={ref} onChange={onChange} method="post">
+      <Box
+        borderRadius="large"
+        paddingY={2}
+        paddingX={4}
+        display="flex"
+        flexDirection="column"
+        justifyContent="spaceBetween"
+        height="full"
+        width="full"
+        border="standard"
+        position="relative"
+      >
+        <Box>
+          <Box
+            className={styles.title}
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="baseline"
+          >
+            <Text ref={titleRef} marginTop={2} marginBottom={4} variant="h3">
+              {title}
+            </Text>
+            {intent !== 'none' && (
+              <Box>
+                <DropdownMenu
+                  title={
+                    inSync
+                      ? formatMessage(m.inSync)
+                      : formatMessage(m.outOfSync)
+                  }
+                  icon="chevronDown"
+                  menuClassName={styles.menu}
+                  items={[
+                    {
+                      title: '',
+                      render: () => (
+                        <div key={`${intent}-syncText`}>
+                          <Box
+                            justifyContent="center"
+                            alignItems="center"
+                            display="flex"
+                            columnGap={1}
+                            className={styles.menuItem}
+                          >
+                            <Icon
+                              icon={inSync ? 'checkmark' : 'warning'}
+                              color={inSync ? 'blue400' : 'red400'}
+                              size="small"
+                              type="outline"
+                            />
+                            <Text variant="small" color="blue400">
+                              {inSync
+                                ? formatMessage(m.inSyncAcrossAllEnvironments)
+                                : formatMessage(
+                                    m.notInSyncAcrossAllEnvironments,
+                                  )}
+                            </Text>
+                          </Box>
+                          <Divider />
+                        </div>
+                      ),
+                    },
+                    ...(inSync || dirty
+                      ? []
+                      : [
+                          {
+                            title: '',
+                            render: () => (
+                              <Box
+                                key={`${intent}-syncButton`}
+                                display="flex"
+                                justifyContent="center"
+                                padding={2}
+                              >
+                                {checkIfLoadingForIntent() ? (
+                                  <LoadingDots large />
+                                ) : (
+                                  <button
+                                    className={styles.syncButton}
+                                    type="submit"
+                                    value={`${intent}-sync`}
+                                    name="intent"
+                                  >
+                                    <Text
+                                      variant="small"
+                                      fontWeight="semiBold"
+                                      color={'blue400'}
+                                    >
+                                      {formatMessage(m.syncSettings)}
+                                    </Text>
+                                  </button>
+                                )}
+                              </Box>
+                            ),
+                          },
+                        ]),
+                  ]}
+                />
+              </Box>
+            )}
+          </Box>
+          {description && <Text marginBottom={4}>{description}</Text>}
+        </Box>
         {children}
         {intent !== 'none' && (
           <Box
@@ -84,7 +238,6 @@ const ContentCard: FC<ContentCardProps> = ({
             display="flex"
             justifyContent="spaceBetween"
           >
-            {}
             <Checkbox
               label={formatMessage(m.saveForAllEnvironments)}
               value={`${allEnvironments}`}
@@ -97,6 +250,7 @@ const ContentCard: FC<ContentCardProps> = ({
               type="submit"
               name="intent"
               value={intent}
+              loading={checkIfLoadingForIntent()}
             >
               {formatMessage(m.saveSettings)}
             </Button>
@@ -104,12 +258,19 @@ const ContentCard: FC<ContentCardProps> = ({
             <input
               type="hidden"
               name="environment"
-              value={selectedEnvironment}
+              value={selectedEnvironment.environment}
+            />
+            <input
+              type="hidden"
+              name="syncEnvironments"
+              value={`${availableEnvironments
+                ?.filter((env) => env !== selectedEnvironment.environment)
+                .join(',')}`}
             />
           </Box>
         )}
-      </Form>
-    </Box>
+      </Box>
+    </Form>
   )
 }
 
