@@ -37,7 +37,7 @@ export class DocumentController {
     })
 
     const htmlContent = rawDocumentDTO?.htmlContent
-    const data = rawDocumentDTO?.content || rawDocumentDTO || htmlContent
+    const data = rawDocumentDTO?.content || htmlContent
 
     if (!data) {
       return res.end()
@@ -65,6 +65,7 @@ export class DocumentController {
       return res.status(200).end()
     }
 
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     const buffer = Buffer.from(rawDocumentDTO.content!, 'base64')
     res.set('Content-Type', 'application/pdf')
     res.header('Content-length', buffer.length.toString())
