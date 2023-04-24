@@ -67,49 +67,36 @@ const DocumentLine: FC<Props> = ({
   const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
 
   const onClickHandler = async () => {
-    let html: string | undefined = undefined
-    if (singleDocument.html) {
-      html = singleDocument.html.length > 0 ? singleDocument.html : undefined
-    }
-    if (html) {
-      setTimeout(() => {
-        const win = window.open('', '_blank')
-        win && html && win.document.write(html)
-        win?.focus()
-      }, 250)
-    } else {
-      // Create form elements
-      const form = document.createElement('form')
-      const documentIdInput = document.createElement('input')
-      const tokenInput = document.createElement('input')
+    const form = document.createElement('form')
+    const documentIdInput = document.createElement('input')
+    const tokenInput = document.createElement('input')
 
-      const token = userInfo?.access_token
+    const token = userInfo?.access_token
 
-      if (!token) return
+    if (!token) return
 
-      form.appendChild(documentIdInput)
-      form.appendChild(tokenInput)
+    form.appendChild(documentIdInput)
+    form.appendChild(tokenInput)
 
-      // Form values
-      form.method = 'post'
-      // TODO: Use correct url
-      form.action = documentLine.url
-      form.target = '_blank'
+    // Form values
+    form.method = 'post'
+    // TODO: Use correct url
+    form.action = documentLine.url
+    form.target = '_blank'
 
-      // Document Id values
-      documentIdInput.type = 'hidden'
-      documentIdInput.name = 'documentId'
-      documentIdInput.value = documentLine.id
+    // Document Id values
+    documentIdInput.type = 'hidden'
+    documentIdInput.name = 'documentId'
+    documentIdInput.value = documentLine.id
 
-      // National Id values
-      tokenInput.type = 'hidden'
-      tokenInput.name = '__accessToken'
-      tokenInput.value = token
+    // National Id values
+    tokenInput.type = 'hidden'
+    tokenInput.name = '__accessToken'
+    tokenInput.value = token
 
-      document.body.appendChild(form)
-      form.submit()
-      document.body.removeChild(form)
-    }
+    document.body.appendChild(form)
+    form.submit()
+    document.body.removeChild(form)
   }
 
   const date = (variant: 'small' | 'medium') => (
