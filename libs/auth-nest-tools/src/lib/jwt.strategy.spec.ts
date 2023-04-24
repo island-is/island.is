@@ -92,7 +92,7 @@ describe('JwtStrategy#validate', () => {
     }
     const request = ({
       headers: {
-        authorization: 'authorization',
+        authorization: 'Bearer token',
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },
@@ -106,7 +106,7 @@ describe('JwtStrategy#validate', () => {
     expect(user.nationalId).toEqual(payload.nationalId)
     expect(user.scope).toEqual(payload.scope)
     expect(user.client).toEqual(payload.client_id)
-    expect(user.authorization).toEqual('')
+    expect(user.authorization).toEqual(request.headers.authorization)
     expect(user.ip).toEqual(request.headers['x-forwarded-for'])
     expect(user.userAgent).toEqual(request.headers['user-agent'])
     expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)

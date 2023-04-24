@@ -40,6 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     const actor = payload.actor
+    const token = jwtCookieExtractor(request)
 
     if (this.config.allowClientNationalId && payload.client_nationalId) {
       payload.nationalId = payload.client_nationalId
@@ -49,9 +50,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       nationalId: payload.nationalId,
       scope: this.parseScopes(payload.scope),
       client: payload.client_id,
-  // above the return try to get the token
-  const token =  jwtCookieExtractor(request)
-      // then set the authorization string
       authorization: token ? `Bearer ${token}` : '',
       delegationType: payload.delegationType,
       actor: actor && {
