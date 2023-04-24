@@ -15,11 +15,9 @@ import {
   PracticalDrivingLesson,
   Organization,
   SchoolType,
-  StudentMentorability,
   DrivingLicenseBookStudentOverview,
 } from './drivinLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
-import { StudentMentorabilityInput } from './dto/studentMentorability.input'
 
 @Injectable()
 export class DrivingLicenseBookService {
@@ -64,16 +62,6 @@ export class DrivingLicenseBookService {
       { bookId, id, reason },
       user,
     )
-  }
-
-  async getStudentMentorability(
-    input: StudentMentorabilityInput,
-  ): Promise<StudentMentorability> {
-    const student = await this.getStudent(input)
-
-    return {
-      eligible: student.book.practiceDriving ?? false,
-    }
   }
 
   async getPracticalDrivingLessons(

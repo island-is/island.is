@@ -25,8 +25,6 @@ import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTes
 import { DrivingLicenceTestResultId } from './models/drivingLicenseTestResult.response'
 import { DrivingSchoolType } from './models/drivingLicenseBookSchoolType.response'
 import { DrivingSchoolEmployeeGuard } from './guards/drivingSchoolEmployee.guard'
-import { StudentMentorability } from './models/studentMentorability.response'
-import { StudentMentorabilityInput } from './dto/studentMentorability.input'
 import { ApiScope } from '@island.is/auth/scopes'
 import { StudentIdInterceptor } from './interceptors/studentId.interceptor'
 import { Audit } from '@island.is/nest/audit'
@@ -145,11 +143,6 @@ export class DrivingLicenseBookResolver {
   @Query(() => [DrivingSchoolType])
   drivingLicenseBookSchoolTypes() {
     return this.drivingLicenseBookService.getSchoolTypes()
-  }
-
-  @Query(() => StudentMentorability)
-  studentMentorability(@Args('input') input: StudentMentorabilityInput) {
-    return this.drivingLicenseBookService.getStudentMentorability(input)
   }
 
   @UseGuards(DrivingSchoolEmployeeGuard)

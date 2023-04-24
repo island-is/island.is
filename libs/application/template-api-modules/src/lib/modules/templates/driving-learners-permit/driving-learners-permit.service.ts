@@ -6,6 +6,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class DrivingLearnersPermitService extends BaseTemplateApiService {
@@ -22,28 +23,19 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const practicePermitApplication = await this.drivingLicenseService.postPracticePermitApplication(
       {
-        token: auth.authorization.split(' ')[1],
+        token: auth.authorization.split(' ')[1], // Used to remove the bearer part
         mentorSSN: application.applicant,
-        studentSSN: (application.answers.intro as any).studentSSN,
+        studentSSN:
+          getValueViaPath<string>(
+            application.answers,
+            'studentMentorability.studentNationalId',
+            '',
+          ) ?? '',
       },
     )
 
     return {
       practicePermitApplication,
     }
-  }
-
-  async canApplyForPracticePermit({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps): Promise<boolean> {
-    const canApply = await this.drivingLicenseService.postCanApplyForPracticePermit(
-      {
-        token: auth.authorization.split(' ')[1],
-        mentorSSN: application.applicant,
-        studentSSN: (application.answers.intro as any).studentSSN,
-      },
-    )
-    return canApply.isOk ?? false
   }
 }
