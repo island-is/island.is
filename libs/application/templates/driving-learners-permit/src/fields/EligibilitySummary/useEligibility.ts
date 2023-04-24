@@ -47,7 +47,6 @@ export const useEligibility = (
 
   if (error) {
     console.error(error)
-    // TODO: m.
     return {
       loading: false,
       error: error,
