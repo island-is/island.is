@@ -30,8 +30,8 @@ import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMo
 import { sorting } from '../../utils/helpers'
 import getInitValues from '../Subscriptions/getInitValues'
 import TabsList from '../Subscriptions/tabsList'
-import { useFetchSubscriptions } from '@island.is/consultation-portal/utils/helpers/api/useFetchSubscriptions'
-import { IconLink } from '@island.is/consultation-portal/components/IconLink/IconLink'
+import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
+import { IconLink } from '../../components/IconLink/IconLink'
 interface SubProps {
   allcases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
@@ -79,7 +79,7 @@ export const UserSubscriptions = ({
       } else if (subscribedToAllNew) {
         generalSubData = GeneralSubscriptionArray.at(1)
       }
-      let filteredInst = Object.values(institutionsData).filter(function (
+      const filteredInst = Object.values(institutionsData).filter(function (
         item,
       ) {
         return institutions.filter((x) => x.id == item.id).length > 0
@@ -87,7 +87,7 @@ export const UserSubscriptions = ({
 
       setInstitutionsData(filteredInst)
 
-      let filteredPlicy = Object.values(policyAreasData).filter(function (
+      const filteredPlicy = Object.values(policyAreasData).filter(function (
         item,
       ) {
         return policyAreas.filter((x) => x.id == item.id).length > 0
@@ -95,7 +95,7 @@ export const UserSubscriptions = ({
 
       setPolicyAreasData(filteredPlicy)
 
-      let filteredCases = allcases.filter(function (item) {
+      const filteredCases = allcases.filter(function (item) {
         return cases.filter((x) => x.id == item.id).length > 0
       })
 
