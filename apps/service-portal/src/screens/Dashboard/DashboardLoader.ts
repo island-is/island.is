@@ -6,15 +6,18 @@ export const dashboardLoader: WrappedLoaderFn = ({
   client,
   userInfo,
 }) => async () => {
-  const { data } = await client.query<Query>({
-    query: GET_TRANSLATIONS,
-    variables: {
-      input: {
-        namespaces: ['service.portal', 'global', 'portals'],
-        lang: userInfo.profile.locale || 'is',
+  try {
+    const { data } = await client.query<Query>({
+      query: GET_TRANSLATIONS,
+      variables: {
+        input: {
+          namespaces: ['service.portal', 'global', 'portals'],
+          lang: userInfo.profile.locale || 'is',
+        },
       },
-    },
-  })
-
-  return data?.getTranslations
+    })
+    return data?.getTranslations
+  } catch {
+    return null
+  }
 }
