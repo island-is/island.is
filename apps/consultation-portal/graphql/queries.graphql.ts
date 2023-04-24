@@ -32,7 +32,11 @@ export const SUB_GET_EMAIL = gql`
     }
   }
 `
-
+export const SUB_POST_EMAIL = gql`
+  mutation SUB_POST_EMAIL($input: ConsultationPortalPostEmailCommandInput!) {
+    consultationPortalPostUserEmail(input: $input)
+  }
+`
 // screens/Home
 export const HOME_GET_STATISTICS = gql`
   query HOME_GET_STATISTICS {
