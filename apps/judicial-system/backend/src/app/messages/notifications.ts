@@ -621,14 +621,14 @@ export const notifications = {
     subject: {
       id:
         'judicial.system.backend:notifications.case_appeal_received_by_court.subject',
-      defaultMessage: 'Kæra móttekin í máli {courtCaseNumber}',
+      defaultMessage: 'Upplýsingar vegna kæru í máli {courtCaseNumber}',
       description: 'Fyrirsögn í pósti til aðila máls þegar að kæra er móttekin',
     },
     body: {
       id:
         'judicial.system.backend:notifications.case_appeal_received_by_court.body',
       defaultMessage:
-        'Héraðsdómur Reykjavíkur hefur móttekið kæru í máli {courtCaseNumber}. Frestur til að skila greinargerð rennur út {statementDeadline}. Hægt er að skila greinargerð og nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum.',
+        'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. Hægt er að skila greinargerð og nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum.',
       description: 'Texti í pósti til aðila máls þegar að kæra er móttekin',
     },
   }),

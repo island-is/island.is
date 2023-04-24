@@ -72,7 +72,7 @@ describe('InternalNotificationController - Send appeal received by court notific
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
-          subject: `Kæra móttekin í máli ${courtCaseNumber}`,
+          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -82,7 +82,7 @@ describe('InternalNotificationController - Send appeal received by court notific
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
-          subject: `Kæra móttekin í máli ${courtCaseNumber}`,
+          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
