@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -22,7 +21,6 @@ import {
   UserRole,
   CaseAppealState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   courtIndictmentRoutes,
@@ -63,7 +61,6 @@ const useSections = (
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
   const router = useRouter()
 
   const getRestrictionCaseProsecutorSection = (
@@ -375,11 +372,7 @@ const useSections = (
   ): RouteSection => {
     const { id, type } = workingCase
     const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
-    const isTrafficViolation = isTrafficViolationCase(
-      workingCase,
-      features,
-      user,
-    )
+    const isTrafficViolation = isTrafficViolationCase(workingCase, user)
 
     const routes = prosecutorIndictmentRoutes(isTrafficViolation)
 

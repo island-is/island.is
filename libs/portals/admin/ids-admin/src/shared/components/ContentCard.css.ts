@@ -16,14 +16,6 @@ export const menuItem = style({
   },
 })
 
-export const title = style({
-  '@media': {
-    [`(max-width: ${theme.breakpoints.sm}px)`]: {
-      maxWidth: '200px',
-    },
-  },
-})
-
 export const syncButton = style({
   textDecorationLine: 'underline',
 })
