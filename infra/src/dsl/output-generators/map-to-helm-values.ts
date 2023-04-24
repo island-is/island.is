@@ -253,6 +253,8 @@ const serializeService: SerializeMethod<HelmService> = async (
     : { type: 'error', errors: allErrors }
 }
 
+export const getPostgresExtensions = (info: PostgresInfoForEnv | undefined) => info && info.extensions ? info.extensions.join(",") : ""
+
 export const resolveDbHost = (
   service: ServiceDefinitionForEnv,
   env: EnvironmentConfig,
