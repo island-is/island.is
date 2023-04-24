@@ -16,4 +16,5 @@ source "$DIR"/_common.sh
 source "$DIR"/patch-nx-json.sh
 
 MAX_JOBS=${MAX_JOBS:-2}
-yarn dlx -p  @nrwl/nx-cloud@v13.3.1 -- ./node_modules/.bin/nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" "$@"
+YARN_BIN=$(which yarn)
+$YARN_BIN dlx -p  @nrwl/nx-cloud@v13.3.1 -- "$YARN_BIN" run nx affected --base="$BASE" --head="$HEAD" --target="$target" --parallel="$MAX_JOBS" "$@"
