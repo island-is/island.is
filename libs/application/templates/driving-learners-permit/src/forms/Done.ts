@@ -7,18 +7,17 @@ import { m } from '../lib/messages'
 import { Form, FormModes } from '@island.is/application/types'
 
 export const Done: Form = buildForm({
-  id: 'Done',
+  id: 'done',
   title: m.doneTitle.defaultMessage,
   mode: FormModes.COMPLETED,
   children: [
     buildMultiField({
-      title: 'Umsókn móttekin',
+      title: m.doneTitle,
       children: [
         buildAlertMessageField({
           id: 'done',
-          title: 'Umsókn móttekin',
-          message:
-            'Umsókn þín um að gerast leiðbeinandi nemanda hefur verið móttekin.',
+          title: m.doneTitle,
+          message: m.doneInfo,
           alertType: 'success',
         }),
       ],

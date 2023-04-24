@@ -7,7 +7,6 @@ import {
   ContentBlock,
   GridColumn,
   GridRow,
-  LoadingDots,
 } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -94,6 +93,8 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     },
   })
 
+  const studentIsMentorable = getValues(fieldNames.studentIsMentorable)
+
   // Clear inital errors on mount
   useEffect(() => {
     clearErrors()
@@ -157,7 +158,6 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
             format="######-####"
             defaultValue=""
             backgroundColor="blue"
-            icon={studentName ? 'checkmarkCircle' : undefined}
             loading={identityQueryLoading}
           />
         </GridColumn>
@@ -182,9 +182,9 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
 
       <GridRow marginTop={5}>
         <GridColumn span="12/12">
-          {getValues(fieldNames.studentIsMentorable) !== 'default' && (
+          {studentIsMentorable !== 'default' && (
             <ContentBlock>
-              {getValues(fieldNames.studentIsMentorable) === 'loading' && (
+              {studentIsMentorable === 'loading' && (
                 <AlertMessage
                   type="info"
                   title={formatMessage(m.studentIsMentorableLoadingHeader)}
@@ -193,15 +193,14 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
                   )}
                 />
               )}
-              {getValues(fieldNames.studentIsMentorable) === 'isMentorable' && (
+              {studentIsMentorable === 'isMentorable' && (
                 <AlertMessage
                   type="success"
                   title={formatMessage(m.studentIsMentorableHeader)}
                   message={formatMessage(m.studentIsMentorableDescription)}
                 />
               )}
-              {getValues(fieldNames.studentIsMentorable) ===
-                'isNotMentorable' && (
+              {studentIsMentorable === 'isNotMentorable' && (
                 <AlertMessage
                   type="error"
                   title={formatMessage(m.studentIsNotMentorableHeader)}

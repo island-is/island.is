@@ -60,7 +60,7 @@ const ReviewSection: FC<ReviewSectionProps> = ({
           <Box pointerEvents="none">
             <button type="button" className={styles.container}>
               <Text variant="eyebrow" as="span">
-                {formatMessage(m.externalDataComplete)}
+                {formatMessage(m.applicationEligibilitySuccess)}
               </Text>
             </button>
           </Box>

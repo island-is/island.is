@@ -1,7 +1,5 @@
 import * as z from 'zod'
-import { m } from './messages'
 
-// todo: set message strings for the error messages
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   studentMentorability: z.object({

@@ -33,11 +33,11 @@ export const getForm = ({ allowFakeData = false }): Form => {
         id: 'externalData',
         title: m.externalDataSectionTitle,
         children: [
-          //...(allowFakeData ? [sectionFakeData] : []),
+          ...(allowFakeData ? [sectionFakeData] : []),
           buildExternalDataProvider({
             id: 'approveExternalData',
-            title: 'Utanaðkomandi gögn',
-            checkboxLabel: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+            title: m.externalDataSectionTitle,
+            checkboxLabel: m.externalDataSectionCheckboxLabel,
             dataProviders: [
               buildDataProviderItem({
                 id: 'currentLicense',
@@ -50,16 +50,16 @@ export const getForm = ({ allowFakeData = false }): Form => {
         ],
       }),
       buildSection({
-        id: 'requirements',
+        id: 'instructorRequirements',
         title: m.applicationEligibilityTitle,
         children: [
           buildMultiField({
             id: 'info',
-            title: m.eligibilityRequirementTitle,
+            title: m.applicationEligibilityTitle,
             description: m.applicationEligibilityRequirementDescription,
             children: [
               buildCustomField({
-                title: m.eligibilityRequirementTitle,
+                title: m.applicationEligibilityTitle,
                 component: 'EligibilitySummary',
                 id: 'eligsummary',
               }),
@@ -68,7 +68,7 @@ export const getForm = ({ allowFakeData = false }): Form => {
         ],
       }),
       buildSection({
-        id: 'student',
+        id: 'studentMentorability',
         title: m.applicationStudentRequirementsTitle,
         children: [
           buildMultiField({
@@ -87,7 +87,7 @@ export const getForm = ({ allowFakeData = false }): Form => {
       }),
       buildSection({
         id: 'overview',
-        title: 'Overview',
+        title: m.overviewSectionTitle,
         children: [
           buildMultiField({
             title: m.overviewSectionTitle,
@@ -95,7 +95,7 @@ export const getForm = ({ allowFakeData = false }): Form => {
             children: [
               buildDividerField({}),
               buildDescriptionField({
-                id: 'overViewStudent',
+                id: 'overview',
                 title: m.overviewStudentTitle,
                 titleVariant: 'h3',
                 marginBottom: 'gutter',
@@ -130,7 +130,7 @@ export const getForm = ({ allowFakeData = false }): Form => {
                 actions: [
                   {
                     event: DefaultEvents.SUBMIT,
-                    name: 'Senda inn',
+                    name: m.overviewSubmitButton,
                     type: 'primary',
                   },
                 ],

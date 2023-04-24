@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from 'react'
+import { FC, useEffect } from 'react'
 import type { FieldBaseProps } from '@island.is/application/types'
-import { Box, Text } from '@island.is/island-ui/core'
+import { AlertBanner, Box, SkeletonLoader } from '@island.is/island-ui/core'
 import ReviewSection from './ReviewSection'
 import { useFormContext } from 'react-hook-form'
 import { extractReasons } from './extractReasons'
@@ -16,11 +16,18 @@ export const EligibilitySummary: FC<FieldBaseProps> = ({ application }) => {
   }, [eligibility?.isEligible, setValue])
 
   if (loading) {
-    return <Text>Sæki upplýsingar...</Text>
+    return (
+      <SkeletonLoader repeat={4} space={2} height={130} borderRadius="large" />
+    )
   }
 
   if (error || !eligibility) {
-    return <Text>Villa kom upp við að sækja upplýsingar</Text>
+    return (
+      <AlertBanner
+        title="Villa kom upp við að sækja upplýsingar"
+        variant="error"
+      />
+    )
   }
 
   const requirements = extractReasons(eligibility)

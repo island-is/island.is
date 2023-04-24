@@ -1,7 +1,6 @@
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import {
   ApplicationTemplate,
-  ApplicationConfigurations,
   ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
@@ -9,6 +8,7 @@ import {
   Application,
   CurrentLicenseApi,
   defineTemplateApi,
+  DefaultEvents,
 } from '@island.is/application/types'
 import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { DrivingLearnersPermitTemplateEvent, Roles, States } from './constants'
@@ -26,9 +26,6 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LEARNERS_PERMIT,
   name: m.name,
   institution: m.institutionName,
-  translationNamespaces: [
-    ApplicationConfigurations.DrivingLearnersPermit.translation,
-  ],
   dataSchema: dataSchema,
   featureFlag: Features.drivingLearnersPermit,
   readyForProduction: true,
@@ -39,7 +36,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
         meta: {
           status: 'draft',
           name: 'Prerequisites',
-          progress: 0,
+          progress: 0.33,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -60,7 +57,11 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
               },
               api: [CurrentLicenseApi],
               actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
               ],
               write: 'all',
               delete: true,
@@ -75,10 +76,10 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
       },
       [States.APPROVED]: {
         meta: {
-          /*onEntry: defineTemplateApi({
+          onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             shouldPersistToExternalData: true,
-          }),*/
+          }),
           status: 'approved',
           name: 'Approved',
           progress: 1,
@@ -102,29 +103,11 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.assignees.includes(nationalId)) {
-      return Roles.ASSIGNEE
-    }
     if (application.applicant === nationalId) {
-      if (application.state === 'inReview') {
-        return Roles.ASSIGNEE
-      }
-
       return Roles.APPLICANT
     }
   },

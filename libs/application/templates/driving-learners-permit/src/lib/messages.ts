@@ -1,17 +1,17 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  /* --------------------- */
   /* PREREQUISITES SECTION */
-  /* --------------------- */
-
-  /* External Data Section */
   externalDataSectionTitle: {
     id: 'dlp.application:externalDataSectionTitle',
     defaultMessage: 'Gagnaöflun',
     description: 'Title for external data acquisition',
   },
-
+  externalDataSectionCheckboxLabel: {
+    id: 'dlp.application:externalDataSectionCheckboxLabel',
+    defaultMessage: 'Ég hef kynnt mér ofangreint',
+    description: 'Title for external data acquisition',
+  },
   introSectionTitle: {
     id: 'dlp.application:introSectionTitle',
     defaultMessage: 'Velkomin/nn/ið í umsókn um ökuskírteini',
@@ -60,18 +60,13 @@ export const m = defineMessages({
     defaultMessage: 'Uppfletting nemanda',
     description: 'title for requirement section of learner driver',
   },
-  eligibilityRequirementTitle: {
-    id: 'dlp.application:eligibilityTitle',
-    defaultMessage: 'Gögnin þín',
-    description: 'title for requirement component',
-  },
   applicationEligibilityRequirementDescription: {
     id: 'dlp.application:applicationEligibilityDescription',
-    defaultMessage: 'Skilyrði sem leiðbeinandi þarf að uppfylla.',
+    defaultMessage: 'Skilyrði sem leiðbeinandi þarf að uppfylla:',
     description: 'description for requirement section of mentor',
   },
-  externalDataComplete: {
-    id: 'dlp.application:externalData.complete',
+  applicationEligibilitySuccess: {
+    id: 'dlp.application:applicationEligibilitySuccess',
     defaultMessage: 'Uppfletting í lagi',
     description: 'Information',
   },
@@ -170,10 +165,13 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'Student national id for overview section',
   },
+  overviewSubmitButton: {
+    id: 'dlp.application:overviewSubmitButton',
+    defaultMessage: 'Senda inn umsókn',
+    description: '',
+  },
 
-  /* ------------ */
   /* DONE SECTION */
-  /* ------------ */
   doneTitle: {
     id: 'dlp.application:doneTitle',
     defaultMessage: 'Umsókn móttekin',
@@ -182,13 +180,11 @@ export const m = defineMessages({
   doneInfo: {
     id: 'dlp.application:doneInfo',
     defaultMessage:
-      'Umsókn hefur verið móttekin. Leiðbeinendaréttindi munu berast í pósti lorem ipsum dolor ist amet...',
+      'Umsókn þín um að gerast leiðbeinandi nemanda hefur verið móttekin.',
     description: 'Info displayed to applicant upon application completion',
   },
 
-  /* ----- */
   /* OTHER */
-  /* ----- */
   name: {
     id: 'dlp.application:name',
     defaultMessage: 'Umsókn um leiðbeinendaréttindi æfingaraksturs',
