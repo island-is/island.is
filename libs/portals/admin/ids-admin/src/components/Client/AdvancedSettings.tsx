@@ -60,6 +60,7 @@ const AdvancedSettings = ({
     <ContentCard
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
+      accordionLabel={formatMessage(m.settings)}
     >
       <Stack space={3}>
         <Checkbox
