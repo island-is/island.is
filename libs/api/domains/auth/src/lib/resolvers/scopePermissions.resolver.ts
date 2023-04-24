@@ -4,9 +4,11 @@ import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Loader } from '@island.is/nest/dataloader'
 
-import { DomainDataLoader, DomainLoader } from '../loaders/domain.loader'
+import { DomainLoader } from '../loaders/domain.loader'
 import { Domain } from '../models'
 import { ScopePermissions } from '../models/scopePermissions.model'
+
+import type { DomainDataLoader } from '../loaders/domain.loader'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ScopePermissions)
