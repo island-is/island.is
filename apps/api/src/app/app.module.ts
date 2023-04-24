@@ -80,10 +80,6 @@ import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-au
 import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { PowerBiModule } from '@island.is/api/domains/powerbi'
 import { PowerBiConfig } from '@island.is/api/domains/powerbi'
-import {
-  WatsonAssistantChatModule,
-  WatsonAssistantChatConfig,
-} from '@island.is/api/domains/watson-assistant-chat'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -244,7 +240,6 @@ const autoSchemaFile = environment.production
     ElectronicRegistrationsModule,
     FiskistofaModule,
     PowerBiModule,
-    WatsonAssistantChatModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -325,7 +320,6 @@ const autoSchemaFile = environment.production
         UniversityOfIcelandClientConfig,
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
-        WatsonAssistantChatConfig,
       ],
     }),
   ],
