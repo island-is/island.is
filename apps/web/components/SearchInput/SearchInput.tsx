@@ -31,6 +31,7 @@ import {
   SearchableContentTypes,
   LifeEventPage,
   News,
+  OrganizationSubpage,
 } from '@island.is/web/graphql/schema'
 
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -113,9 +114,13 @@ const useSearch = (
               queryString: term.trim(),
               language: locale as ContentLanguage,
               types: [
+                // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
                 SearchableContentTypes['WebArticle'],
                 SearchableContentTypes['WebSubArticle'],
                 SearchableContentTypes['WebProjectPage'],
+                SearchableContentTypes['WebOrganizationPage'],
+                SearchableContentTypes['WebOrganizationSubpage'],
+                SearchableContentTypes['WebDigitalIcelandService'],
               ],
               highlightResults: true,
               useQuery: 'suggestions',
@@ -134,7 +139,6 @@ const useSearch = (
       const hasSpace = indexOfLastSpace !== -1
       const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
       const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
-
       dispatch({
         type: 'searchString',
         term,
@@ -363,6 +367,13 @@ export const SearchInput = forwardRef<
   },
 )
 
+type SearchResultItem =
+  | Article
+  | LifeEventPage
+  | News
+  | SubArticle
+  | OrganizationSubpage
+
 type ResultsProps = {
   search: SearchState
   highlightedIndex: number
@@ -396,7 +407,6 @@ const Results = ({
 
     return <CommonSearchTerms suggestions={suggestions} />
   }
-
   return (
     <Box
       display="flex"
@@ -411,19 +421,23 @@ const Results = ({
             <Text variant="eyebrow" color="purple400">
               {quickContentLabel}
             </Text>
-            {(search.results.items as Article[] &
-              LifeEventPage[] &
-              News[] &
-              SubArticle[])
+            {search.results.items
               .slice(0, 5)
-              .map((item, i) => {
+              .map((item: SearchResultItem, i) => {
+                const typename = item.__typename?.toLowerCase() as LinkType
+                let variables = item.slug?.split('/')
+
+                if (typename === 'organizationsubpage') {
+                  variables = [
+                    (item as OrganizationSubpage)?.organizationPage?.slug,
+                    item.slug,
+                  ]
+                }
+
                 const { onClick, ...itemProps } = getItemProps({
                   item: {
                     type: 'link',
-                    string: linkResolver(
-                      item.__typename as LinkType,
-                      item.slug?.split('/'),
-                    )?.href,
+                    string: linkResolver(typename, variables)?.href,
                   },
                 })
                 return (

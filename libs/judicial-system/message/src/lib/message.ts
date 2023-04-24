@@ -1,3 +1,5 @@
+import type { User } from '@island.is/judicial-system/types'
+
 export enum MessageType {
   DELIVER_PROSECUTOR_TO_COURT = 'DELIVER_PROSECUTOR_TO_COURT',
   DELIVER_DEFENDANT_TO_COURT = 'DELIVER_DEFENDANT_TO_COURT',
@@ -17,11 +19,12 @@ export enum MessageType {
   SEND_MODIFIED_NOTIFICATION = 'SEND_MODIFIED_NOTIFICATION',
   SEND_REVOKED_NOTIFICATION = 'SEND_REVOKED_NOTIFICATION',
   SEND_DEFENDER_ASSIGNED_NOTIFICATION = 'SEND_DEFENDER_ASSIGNED_NOTIFICATION',
+  SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION = 'SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION',
 }
 
 export type CaseMessage = {
   type: MessageType
-  userId: string
+  user: User
   caseId: string
   numberOfRetries?: number
   nextRetry?: number

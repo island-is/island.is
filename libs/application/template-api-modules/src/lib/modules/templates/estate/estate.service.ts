@@ -95,6 +95,18 @@ export class EstateTemplateService extends BaseTemplateApiService {
         knowledgeOfOtherWills: 'Yes',
         ships: [],
         flyers: [],
+        guns: [
+          {
+            assetNumber: '009-2018-0505',
+            description: 'Framhlaðningur (púður)',
+            share: 1,
+          },
+          {
+            assetNumber: '007-2018-1380',
+            description: 'Mauser P38',
+            share: 1,
+          },
+        ],
         estateMembers: [
           {
             name: 'Stúfur Mack',
@@ -192,10 +204,14 @@ export class EstateTemplateService extends BaseTemplateApiService {
       bankAccounts: answers.bankAccounts ?? [],
       debts: answers.debts ?? [],
       estateMembers: processedEstateMembers,
-      inventory: answers.inventory ?? '',
-      inventoryValue: answers.inventoryValue ?? '',
-      moneyAndDepositBoxesInfo: answers.moneyAndDepositBoxesInfo ?? '',
-      moneyAndDepositBoxesValue: answers.moneyAndDepositBoxesValue ?? '',
+      inventory: {
+        info: answers.inventory?.info ?? '',
+        value: answers.inventory?.value ?? '',
+      },
+      moneyAndDeposit: {
+        info: answers.moneyAndDeposit?.info ?? '',
+        value: answers.moneyAndDeposit?.value ?? '',
+      },
       notifier: {
         email: answers.applicant.email ?? '',
         name: answers.applicant.name,
@@ -203,8 +219,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
         relation: relation ?? '',
         ssn: answers.applicant.nationalId,
       },
-      otherAssets: answers.otherAssets ?? '',
-      otherAssetsValue: answers.otherAssetsValue ?? '',
+      otherAssets: {
+        info: answers.otherAssets?.info ?? '',
+        value: answers.otherAssets?.value ?? '',
+      },
       stocks: answers.stocks ?? [],
       vehicles: processedVehicles,
       ...(answers.representative?.representativeName

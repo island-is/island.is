@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
-import { Sections } from '@island.is/judicial-system-web/src/types'
 import {
   BlueBox,
   CaseDates,
@@ -14,10 +14,12 @@ import {
   RestrictionTags,
   SignedDocument,
   PageHeader,
+  Modal,
 } from '@island.is/judicial-system-web/src/components'
 import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  CaseAppealDecision,
   CaseDecision,
   CaseState,
   CaseType,
@@ -28,7 +30,6 @@ import {
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  AlertBanner,
   AlertMessage,
   Box,
   Divider,
@@ -42,9 +43,13 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import * as constants from '@island.is/judicial-system/consts'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
+import { AlertBanner } from '../../components/AlertBanner'
+import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
+
+type availableModals = 'NoModal' | 'ConfirmAppealAfterDeadline'
 
 export const CaseOverview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -52,8 +57,12 @@ export const CaseOverview: React.FC = () => {
   )
 
   const { formatMessage } = useIntl()
-
   const { features } = useContext(FeatureContext)
+  const { title, description, child } = useAppealAlertBanner(workingCase, () =>
+    setModalVisible('ConfirmAppealAfterDeadline'),
+  )
+  const router = useRouter()
+  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
   const titleForCase = (theCase: Case) => {
     if (theCase.state === CaseState.REJECTED) {
@@ -93,31 +102,24 @@ export const CaseOverview: React.FC = () => {
         })
   }
 
+  const shouldDisplayAlertBanner =
+    workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+    workingCase.hasBeenAppealed
+
   return (
     <>
-      {workingCase.courtEndTime &&
-        !workingCase.isAppealDeadlineExpired &&
-        features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) && (
+      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
+        shouldDisplayAlertBanner && (
           <AlertBanner
-            title={formatMessage(m.appealAlertBannerTitle, {
-              appealDeadline: getAppealEndDate(workingCase.courtEndTime),
-            })}
             variant="warning"
-            link={{
-              href: '/krofur',
-              title: formatMessage(m.appealAlertBannerLinkText),
-            }}
-          />
+            title={title}
+            description={description}
+          >
+            {child}
+          </AlertBanner>
         )}
       <PageLayout
         workingCase={workingCase}
-        activeSection={
-          completedCaseStates.includes(workingCase.state)
-            ? 2
-            : workingCase.parentCase
-            ? Sections.JUDGE_EXTENSION
-            : Sections.JUDGE
-        }
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >
@@ -284,7 +286,7 @@ export const CaseOverview: React.FC = () => {
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'request/limitedAccess'}
+                  pdfType={'limitedAccess/request'}
                 />
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
@@ -292,7 +294,7 @@ export const CaseOverview: React.FC = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'courtRecord/limitedAccess'}
+                      pdfType={'limitedAccess/courtRecord'}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -305,7 +307,7 @@ export const CaseOverview: React.FC = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'ruling/limitedAccess'}
+                      pdfType={'limitedAccess/ruling'}
                     >
                       {workingCase.rulingDate ? (
                         <SignedDocument
@@ -323,6 +325,24 @@ export const CaseOverview: React.FC = () => {
             <Divider />
           </Box>
         </FormContentContainer>
+        {modalVisible === 'ConfirmAppealAfterDeadline' && (
+          <Modal
+            title={formatMessage(m.confirmAppealAfterDeadlineModalTitle)}
+            text={formatMessage(m.confirmAppealAfterDeadlineModalText)}
+            primaryButtonText={formatMessage(
+              m.confirmAppealAfterDeadlineModalPrimaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              m.confirmAppealAfterDeadlineModalSecondaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
       </PageLayout>
     </>
   )

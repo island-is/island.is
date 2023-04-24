@@ -2,13 +2,15 @@ import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../lib/messages'
-import ContentCard from './ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
+import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { AuthApplicationTranslation } from './Client.loader'
 
 interface TranslationsProps {
   translations: AuthApplicationTranslation[]
+  inSync?: boolean
 }
-const Translations = ({ translations }: TranslationsProps) => {
+const Translations = ({ translations, inSync = true }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
   const [copyTranslations, setCopyTranslations] = useState(
@@ -29,9 +31,8 @@ const Translations = ({ translations }: TranslationsProps) => {
   return (
     <ContentCard
       title={formatMessage(m.translations)}
-      onSave={(saveOnAllEnvironments) => {
-        console.log('saveOnAllEnvironments: ', saveOnAllEnvironments)
-      }}
+      intent={ClientFormTypes.translations}
+      inSync={inSync}
     >
       <Stack space={3}>
         <Tabs
@@ -50,7 +51,7 @@ const Translations = ({ translations }: TranslationsProps) => {
                     type="text"
                     size="sm"
                     onChange={(e) => onChangeTranslations(e)}
-                    name={language.locale + '-displayName'}
+                    name={language.locale + '_displayName'}
                     value={language.value}
                     label={formatMessage(m.displayName)}
                   />

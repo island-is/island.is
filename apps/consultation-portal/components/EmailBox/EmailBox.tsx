@@ -1,13 +1,64 @@
 import SubscriptionActionCard from '../Card/SubscriptionActionCard'
-import { useUser } from '../../context/UserContext'
-import { useQuery } from '@apollo/client'
-import { useState } from 'react'
+import { useMutation } from '@apollo/client'
+import initApollo from '../../graphql/client'
+import { SUB_POST_EMAIL } from '../../graphql/queries.graphql'
+import { useLogIn, useUser } from '../../utils/helpers'
+import { useEffect, useState } from 'react'
+import { useFetchEmail } from '../../utils/helpers/api/useFetchEmail'
+import { LoadingDots } from '@island.is/island-ui/core'
+
+const emailIsValid = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
 
 export const EmailBox = () => {
-  const { isAuthenticated, user } = useUser()
+  const { isAuthenticated } = useUser()
   const [isVerified, setIsVerified] = useState<boolean>(false)
-  const email = 'email@email.is'
+  const LogIn = useLogIn()
+  const [userEmail, setUserEmail] = useState('')
+  const [inputVal, setInputVal] = useState('')
 
+  const client = initApollo()
+  const [postEmailMutation, { loading: postEmailLoading }] = useMutation(
+    SUB_POST_EMAIL,
+    {
+      client: client,
+    },
+  )
+
+  const { email, emailVerified, getUserEmailLoading } = useFetchEmail()
+  useEffect(() => {
+    if (!getUserEmailLoading) {
+      setUserEmail(email)
+      setIsVerified(emailVerified)
+    }
+  }, [getUserEmailLoading])
+  const onChangeEmail = (e) => {
+    const nextInputVal = e.target.value
+
+    setInputVal(nextInputVal)
+  }
+
+  const onSetEmail = async () => {
+    const nextEmail = inputVal
+    const post = await postEmailMutation({
+      variables: {
+        input: { email: nextEmail },
+      },
+    })
+    setUserEmail(nextEmail)
+  }
+
+  const resetEmail = () => {
+    const nextInputVal = ''
+    setInputVal(nextInputVal)
+    setUserEmail(nextInputVal)
+    setIsVerified(false)
+  }
+
+  if (getUserEmailLoading) {
+    return <LoadingDots></LoadingDots>
+  }
   if (!isAuthenticated) {
     return (
       <SubscriptionActionCard
@@ -16,7 +67,30 @@ export const EmailBox = () => {
         button={[
           {
             label: 'Skrá mig inn',
-            onClick: () => console.log('skras'),
+            onClick: LogIn,
+          },
+        ]}
+      />
+    )
+  }
+
+  if (!userEmail) {
+    return (
+      <SubscriptionActionCard
+        heading="Skrá netfang"
+        text="Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta til að hægt sé að skrá áskrift á það."
+        input={{
+          name: 'subscriptionEmail',
+          label: 'Netfang',
+          placeholder: 'nonni@island.is',
+          value: inputVal,
+          onChange: onChangeEmail,
+        }}
+        button={[
+          {
+            label: 'Skrá netfang',
+            onClick: onSetEmail,
+            disabled: !emailIsValid(inputVal),
           },
         ]}
       />
@@ -25,31 +99,25 @@ export const EmailBox = () => {
 
   return isVerified ? (
     <SubscriptionActionCard
-      heading="Skrá netfang"
-      text="Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarft að staðfesta til að hægt sé að skrá áskrift á það."
-      button={[
-        {
-          label: 'Skrá netfang',
-          onClick: () => console.log('Skrá'),
-        },
-      ]}
-      input={{
-        name: 'subscriptionEmail',
-        label: 'Netfang',
-        placeholder: 'Hér skal skrifa netfang',
-      }}
-    />
-  ) : (
-    <SubscriptionActionCard
-      text={`Skráð netfang: ${email}`}
+      text={`Núverandi skráð netfang: ${userEmail}`}
       button={[
         {
           label: 'Breyta netfangi',
-          onClick: () => console.log('Breyta'),
+          onClick: resetEmail,
         },
         {
           label: 'Sjá áskriftir',
-          onClick: () => console.log('Breyta'),
+          onClick: () => console.log('should render a list of subscriptions'),
+        },
+      ]}
+    />
+  ) : (
+    <SubscriptionActionCard
+      text={`Beðið er eftir staðfestingu fyrir netfangið ${userEmail}`}
+      button={[
+        {
+          label: 'Breyta netfangi',
+          onClick: resetEmail,
         },
       ]}
     />

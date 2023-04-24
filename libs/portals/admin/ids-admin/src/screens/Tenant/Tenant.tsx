@@ -1,24 +1,16 @@
-import { Dispatch, SetStateAction, useState } from 'react'
-import { Outlet, useOutletContext } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { domainNav } from '../../lib/navigation'
 import Layout from '../../components/Layout/Layout'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 const Tenant = () => {
-  const [navTitle, setNavTitle] = useState('')
-
+  const { formatMessage } = useLocale()
   return (
-    <Layout navTitle={navTitle} navItems={domainNav}>
-      <Outlet context={{ setNavTitle }} />
+    <Layout navTitle={formatMessage(m.idsAdmin)} navItems={domainNav}>
+      <Outlet />
     </Layout>
   )
-}
-
-type TenantOutletContext = {
-  setNavTitle: Dispatch<SetStateAction<string>>
-}
-
-export function useTenant() {
-  return useOutletContext<TenantOutletContext>()
 }
 
 export default Tenant

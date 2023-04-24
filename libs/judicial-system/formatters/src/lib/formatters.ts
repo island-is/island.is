@@ -13,7 +13,10 @@ import {
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -313,8 +316,8 @@ export const formatDefenderRoute = (
   id: string,
 ) => {
   const caseType = type as CaseType
-  return `${baseUrl}${DEFENDER_ROUTE}${
-    isIndictmentCase(caseType) ? '/akaera' : ''
+  return `${baseUrl}${
+    isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
   }/${id}`
 }
 

@@ -10,12 +10,13 @@ export enum ClientType {
   native = 'native',
   web = 'web',
   machine = 'machine',
+  spa = 'spa',
 }
 
 export enum RefreshTokenExpiration {
   /** when refreshing the token, the lifetime of the refresh token will be renewed (by the amount specified in Client.SlidingRefreshTokenLifetime). The lifetime will not exceed Client.AbsoluteRefreshTokenLifetime. */
-  Sliding = 0,
+  Sliding = 'Sliding',
 
   /** the refresh token will expire on a fixed point in time (specified by the AbsoluteRefreshTokenLifetime). */
-  Absolute = 1,
+  Absolute = 'Absolute',
 }

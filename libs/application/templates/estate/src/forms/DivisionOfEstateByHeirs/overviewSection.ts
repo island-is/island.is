@@ -63,7 +63,7 @@ export const overview = buildSection({
             cards: ({ answers }: Application) =>
               (
                 ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
-                  (member) => (member as any).enabled,
+                  (member) => member.enabled,
                 ) ?? []
               ).map((member) => ({
                 title: member.name,
@@ -100,7 +100,7 @@ export const overview = buildSection({
             cards: ({ answers }: Application) =>
               (
                 ((answers.estate as unknown) as EstateInfo).assets.filter(
-                  (asset) => (asset as any).enabled,
+                  (asset) => asset.enabled,
                 ) ?? []
               ).map((asset) => ({
                 title: asset.description,
@@ -122,7 +122,7 @@ export const overview = buildSection({
           id: 'overviewInventory',
           title: m.inventoryTextField,
           description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'inventory'),
+            getValueViaPath<string>(application.answers, 'inventory.info'),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -131,7 +131,7 @@ export const overview = buildSection({
           title: m.inventoryValueTitle,
           description: (application: Application) => {
             const value =
-              getValueViaPath<string>(application.answers, 'inventoryValue') ??
+              getValueViaPath<string>(application.answers, 'inventory.value') ??
               ''
             return formatCurrency(value)
           },
@@ -157,13 +157,52 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
-                  (vehicle) => (vehicle as any).enabled,
+                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
+                  (vehicle) => vehicle.enabled,
                 ) ?? []
               ).map((vehicle) => ({
                 title: vehicle.description,
                 description: [
                   m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (vehicle.marketValue
+                      ? formatCurrency(vehicle.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
+          },
+        ),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewGuns',
+          title: m.guns,
+          description: m.gunsDescription,
+          titleVariant: 'h3',
+          space: 'gutter',
+        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'estateGunsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              (
+                ((answers.estate as unknown) as EstateInfo)?.guns?.filter(
+                  (guns) => guns.enabled,
+                ) ?? []
+              ).map((gun) => ({
+                title: gun.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + gun.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (gun.marketValue
+                      ? formatCurrency(gun.marketValue)
+                      : '0 kr.'),
                 ],
               })),
           },
@@ -250,8 +289,8 @@ export const overview = buildSection({
                 (stock) => ({
                   title: stock.organization,
                   description: [
-                    `${m.stocksSsn.defaultMessage}: ${formatNationalId(
-                      stock.ssn ?? '',
+                    `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
+                      stock.nationalId ?? '',
                     )}`,
                     `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
                     `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
@@ -275,7 +314,7 @@ export const overview = buildSection({
           id: 'overviewOtherAssets',
           title: m.moneyAndDepositText,
           description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'otherAssets'),
+            getValueViaPath<string>(application.answers, 'otherAssets.info'),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -286,7 +325,7 @@ export const overview = buildSection({
             const value =
               getValueViaPath<string>(
                 application.answers,
-                'otherAssetsValue',
+                'otherAssets.value',
               ) ?? ''
             return formatCurrency(value)
           },
@@ -308,7 +347,7 @@ export const overview = buildSection({
           description: (application: Application) =>
             getValueViaPath<string>(
               application.answers,
-              'moneyAndDepositBoxesInfo',
+              'moneyAndDeposit.info',
             ),
           titleVariant: 'h4',
           space: 'gutter',
@@ -320,7 +359,7 @@ export const overview = buildSection({
             const value =
               getValueViaPath<string>(
                 application.answers,
-                'moneyAndDepositBoxesValue',
+                'moneyAndDeposit.value',
               ) ?? ''
 
             return formatCurrency(value)
@@ -355,8 +394,8 @@ export const overview = buildSection({
                 (debt) => ({
                   title: debt.creditorName,
                   description: [
-                    `${m.debtsSsn.defaultMessage}: ${formatNationalId(
-                      debt.ssn ?? '',
+                    `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
+                      debt.nationalId ?? '',
                     )}`,
                     `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                       debt.balance ?? '',

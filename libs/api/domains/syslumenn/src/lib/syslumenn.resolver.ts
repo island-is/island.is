@@ -6,6 +6,7 @@ import { OperatingLicensesCSV } from './models/operatingLicensesCSV'
 import { SyslumennAuction } from './models/syslumennAuction'
 import { RealEstateAgent } from './models/realEstateAgent'
 import { Lawyer } from './models/lawyer'
+import { Broker } from './models/broker'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
@@ -24,6 +25,8 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { SearchForPropertyInput } from './dto/searchForProperty.input'
 import { EstateRelations } from './models/relations'
+import { AlcoholLicence } from './models/alcoholLicence'
+import { TemporaryEventLicence } from './models/temporaryEventLicence'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -62,6 +65,13 @@ export class SyslumennResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => [Broker])
+  @BypassAuth()
+  getBrokers(): Promise<Broker[]> {
+    return this.syslumennService.getBrokers()
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => PaginatedOperatingLicenses)
   @BypassAuth()
   getOperatingLicenses(
@@ -79,6 +89,20 @@ export class SyslumennResolver {
   @BypassAuth()
   getOperatingLicensesCSV(): Promise<OperatingLicensesCSV> {
     return this.syslumennService.getOperatingLicensesCSV()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [AlcoholLicence])
+  @BypassAuth()
+  getAlcoholLicences(): Promise<AlcoholLicence[]> {
+    return this.syslumennService.getAlcoholLicences()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => [TemporaryEventLicence])
+  @BypassAuth()
+  getTemporaryEventLicences(): Promise<TemporaryEventLicence[]> {
+    return this.syslumennService.getTemporaryEventLicences()
   }
 
   @Query(() => CertificateInfoResponse)

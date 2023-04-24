@@ -2,8 +2,12 @@ export {
   AdminApi,
   AdminCreateClientDto,
   ClientType,
+  CreateClientType,
   MeClientsControllerCreateRequest,
+  MeClientsControllerUpdateRequest,
+  AdminPatchClientDto,
   RefreshTokenExpiration,
+  AdminClientDto,
   TenantDto,
 } from '../gen/fetch'
 export * from './lib/apis'

@@ -28,7 +28,8 @@ import {
 } from '../../../screens/Tenant/Tenant.loader'
 import { Modal } from '../../Modal/Modal'
 import { IDSAdminPaths } from '../../../lib/paths'
-import { replaceParams } from '@island.is/react-spa/shared'
+import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
+import { useErrorFormatMessage } from '../../../shared/hooks/useFormatErrorMessage'
 
 const environments = [
   AuthAdminEnvironment.Development,
@@ -40,6 +41,29 @@ const clientTypes = [
   AuthAdminClientType.native,
   AuthAdminClientType.machine,
 ]
+
+const isToEnChar = {
+  ð: 'd',
+  þ: 'th',
+  æ: 'ae',
+  ö: 'o',
+  á: 'a',
+  é: 'e',
+  í: 'i',
+  ó: 'o',
+  ú: 'u',
+  ý: 'y',
+  Ð: 'd',
+  Þ: 'th',
+  Æ: 'ae',
+  Ö: 'o',
+  Á: 'a',
+  É: 'e',
+  Í: 'i',
+  Ó: 'o',
+  Ú: 'u',
+  Ý: 'y',
+}
 
 /**
  * Formats the client id to be lowercase and replace spaces with dashes
@@ -76,6 +100,10 @@ const parseClientId = ({
     value = value.replace(prefixWithoutSlash, '')
   }
 
+  value = value.replace(/[ðþæöáéíóúýÐÞÆÖÁÉÍÓÚÝ]/g, (m) => {
+    return isToEnChar[m as keyof typeof isToEnChar]
+  })
+
   // If user tries to erase the prefix, we add it back
   return `${prefix}${formatClientId(value).split('/').pop()}`
 }
@@ -90,9 +118,12 @@ type InputState = {
  */
 export default function CreateClient() {
   const navigate = useNavigate()
+  const { isLoading, isSubmitting } = useSubmitting()
+
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
   const actionData = useActionData() as CreateClientResult
   const { formatMessage } = useLocale()
+  const { formatErrorMessage } = useErrorFormatMessage()
   const prefix = `${tenant.id}/`
   const initialClientIdState: InputState = {
     value: prefix,
@@ -134,12 +165,6 @@ export default function CreateClient() {
     })
   }
 
-  const formatErrorMessage = (messageKey?: string) => {
-    const message = m[messageKey as keyof typeof m]
-
-    return message ? formatMessage(message) : undefined
-  }
-
   const getRadioLabels = (clientType: AuthAdminClientType) => {
     switch (clientType) {
       case AuthAdminClientType.web:
@@ -157,6 +182,8 @@ export default function CreateClient() {
           label: formatMessage(m.machineClientsTitle),
           subLabel: formatMessage(m.machineClientsDescription),
         }
+      default:
+        return null
     }
   }
 
@@ -283,7 +310,9 @@ export default function CreateClient() {
           <Button onClick={onCancel} variant="ghost">
             {formatMessage(m.cancel)}
           </Button>
-          <Button type="submit">{formatMessage(m.create)}</Button>
+          <Button type="submit" loading={isLoading || isSubmitting}>
+            {formatMessage(m.create)}
+          </Button>
         </Box>
       </Form>
     </Modal>

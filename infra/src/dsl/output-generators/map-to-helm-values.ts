@@ -115,7 +115,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
   }
   result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 3
+    serviceDef.replicaCount?.scalingMagicNumber || 5
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
@@ -422,8 +422,8 @@ const serviceMockDef = (options: {
 }) => {
   const result: HelmService = {
     enabled: true,
-    grantNamespaces: [],
-    grantNamespacesEnabled: false,
+    grantNamespaces: ['e2e-dev', 'e2e-staging'],
+    grantNamespacesEnabled: true,
     namespace: getFeatureDeploymentNamespace(options.env),
     image: {
       repository: `bbyars/mountebank`,

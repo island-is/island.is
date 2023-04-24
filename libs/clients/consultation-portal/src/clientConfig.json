@@ -5,60 +5,6 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/auth/RequestUrl": {
-      "get": {
-        "tags": ["Authentication"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/auth/EndSessionUrl": {
-      "get": {
-        "tags": ["Authentication"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Cases": {
       "get": {
         "tags": ["Cases"],
@@ -298,17 +244,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AdviceRequest"
+                "$ref": "#/components/schemas/CaseAdviceCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/AdviceRequest"
+                "$ref": "#/components/schemas/CaseAdviceCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/AdviceRequest"
+                "$ref": "#/components/schemas/CaseAdviceCommand"
               }
             }
           }
@@ -697,37 +643,6 @@
   },
   "components": {
     "schemas": {
-      "AdviceFileRequest": {
-        "type": "object",
-        "properties": {
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "base64Document": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "AdviceRequest": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "string",
-            "nullable": true
-          },
-          "adviceFiles": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AdviceFileRequest"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "AdviceResult": {
         "type": "object",
         "properties": {
@@ -792,6 +707,23 @@
           "caseTypes": {
             "type": "object",
             "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CaseAdviceCommand": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileUrls": {
+            "type": "array",
+            "items": {
               "type": "string"
             },
             "nullable": true
@@ -1274,6 +1206,10 @@
         "properties": {
           "subscribeToAll": {
             "type": "boolean"
+          },
+          "subscribeToAllType": {
+            "type": "string",
+            "nullable": true
           },
           "caseIds": {
             "type": "array",

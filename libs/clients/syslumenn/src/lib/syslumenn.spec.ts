@@ -16,6 +16,7 @@ import {
   MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
   ESTATE_REGISTRANT_RESPONSE,
   OPERATING_LICENSES_CSV,
+  TEMPORARY_EVENT_LICENCES,
 } from './__mock-data__/responses'
 import {
   mapHomestay,
@@ -26,11 +27,16 @@ import {
   mapEstateRegistrant,
   mapRealEstateAgent,
   mapLawyer,
+  mapBroker,
+  mapAlcoholLicence,
+  mapTemporaryEventLicence,
 } from './syslumennClient.utils'
 import {
   SYSLUMENN_AUCTION,
   REAL_ESTATE_AGENTS,
   LAWYERS,
+  BROKERS,
+  ALCOHOL_LICENCES,
 } from './__mock-data__/responses'
 import { PersonType } from './syslumennClient.types'
 import { SyslumennClientModule } from '../lib/syslumennClient.module'
@@ -132,6 +138,13 @@ describe('SyslumennService', () => {
     })
   })
 
+  describe('getBrokers', () => {
+    it('should return brokers', async () => {
+      const response = await service.getBrokers()
+      expect(response).toStrictEqual((BROKERS ?? []).map(mapBroker))
+    })
+  })
+
   describe('getOperatingLicenses', () => {
     it('should return operating license', async () => {
       const response = await service.getOperatingLicenses()
@@ -150,6 +163,24 @@ describe('SyslumennService', () => {
       const response = await service.getOperatingLicensesCSV()
       expect(response).toStrictEqual(
         mapOperatingLicensesCSV(OPERATING_LICENSES_CSV),
+      )
+    })
+  })
+
+  describe('getAlcoholLicences', () => {
+    it('should return alcohol licences', async () => {
+      const response = await service.getAlcoholLicences()
+      expect(response).toStrictEqual(
+        (ALCOHOL_LICENCES ?? []).map(mapAlcoholLicence),
+      )
+    })
+  })
+
+  describe('getTemporaryEventLicences', () => {
+    it('should return temporary event licences', async () => {
+      const response = await service.getTemporaryEventLicences()
+      expect(response).toStrictEqual(
+        (TEMPORARY_EVENT_LICENCES ?? []).map(mapTemporaryEventLicence),
       )
     })
   })

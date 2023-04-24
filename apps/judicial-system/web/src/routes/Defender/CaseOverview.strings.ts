@@ -77,21 +77,38 @@ export const defenderCaseOverview = defineMessages({
     description:
       'Notaður sem titill fyrir skjöl málsins á yfirlitsskjá verjanda.',
   },
-  appealAlertBannerTitle: {
-    id: 'judicial.system.core:defender_case_overview.appeal_alert_banner_title',
-    defaultMessage: 'Kærufrestur rennur út {appealDeadline}',
-    description: 'Texti í viðvörunarglugga um kærufres fyrir verjanda',
-  },
-  appealAlertBannerLinkText: {
-    id:
-      'judicial.system.core:defender_case_overview.appeal_alert_banner_link_text',
-    defaultMessage: 'Senda inn kæru',
-    description: 'Texti í hlekk í viðvörunarglugga um kærufrest fyrir verjanda',
-  },
   unsignedRuling: {
     id: 'judicial.system.core:defender_case_overview.unsigned_ruling',
     defaultMessage: 'Úrskurður ekki undirritaður',
     description:
       'Texti sem birtist ef úrskurður er ekki undirritaður á yfirlitsskjá verjanda',
+  },
+  confirmAppealAfterDeadlineModalTitle: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_title',
+    defaultMessage: 'Kærufrestur er liðinn',
+    description:
+      'Notaður sem titill modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_text',
+    defaultMessage: 'Viltu halda áfram og senda kæru?',
+    description:
+      'Notaður sem texti í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalPrimaryButtonText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_primary_button_text',
+    defaultMessage: 'Já, senda kæru',
+    description:
+      'Notaður sem texti í staðfesta takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+  },
+  confirmAppealAfterDeadlineModalSecondaryButtonText: {
+    id:
+      'judicial.system.core:defender_case_overview.confirm_appeal_after_deadline_modal_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description:
+      'Notaður sem texti í Hætta við takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
   },
 })

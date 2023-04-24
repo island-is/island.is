@@ -9,4 +9,14 @@ export const educationNavigation: PortalNavigationItem = {
     icon: 'school',
   },
   description: m.educationDescription,
+  children: [
+    {
+      name: m.educationAssessment,
+      path: EducationPaths.EducationAssessment,
+    },
+    {
+      name: m.educationGraduation,
+      path: EducationPaths.EducationHaskoliGraduation,
+    },
+  ],
 }

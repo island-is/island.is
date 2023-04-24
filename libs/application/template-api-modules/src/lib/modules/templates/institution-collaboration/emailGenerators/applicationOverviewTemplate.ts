@@ -88,6 +88,16 @@ export const applicationOverviewTemplate = (
     'constraints.hasConsult',
   ) as boolean
 
+  const robotContraint = getValueViaPath(
+    application.answers,
+    'constraints.hasRobot',
+  ) as boolean
+
+  const legacyContraint = getValueViaPath(
+    application.answers,
+    'constraints.hasLegacy',
+  ) as boolean
+
   const applyConstraintsText = getValueViaPath(
     application.answers,
     'constraints.apply',
@@ -101,6 +111,11 @@ export const applicationOverviewTemplate = (
   const certConstraintsText = getValueViaPath(
     application.answers,
     'constraints.cert',
+  ) as string
+
+  const legacyConstraintsText = getValueViaPath(
+    application.answers,
+    'constraints.legacy',
   ) as string
 
   const consultConstraintsText = getValueViaPath(
@@ -117,6 +132,8 @@ export const applicationOverviewTemplate = (
     myPageConstraints,
     certConstraint,
     consultContraint,
+    robotContraint,
+    legacyContraint,
   ].some((x) => !!x)
 
   //  #region Services Text
@@ -152,6 +169,14 @@ export const applicationOverviewTemplate = (
   consultContraint &&
     servicesTextArr.push(
       messages.constraints.constraintsConsultLabel.defaultMessage,
+    )
+  robotContraint &&
+    servicesTextArr.push(
+      messages.constraints.constraintRobotLabel.defaultMessage,
+    )
+  legacyContraint &&
+    servicesTextArr.push(
+      messages.constraints.constraintLegacyLabel.defaultMessage,
     )
 
   function getServicesTextOutput(): string {
@@ -276,6 +301,15 @@ export const applicationOverviewTemplate = (
           messages.constraints.constraintsConsultPlaceholder.defaultMessage,
           messages.constraints.constraintsConsultLabel.defaultMessage,
           consultConstraintsText,
+        )
+      : ''
+  }
+  ${
+    legacyContraint
+      ? getServiceText(
+          messages.constraints.constraintLegacyPlaceholder.defaultMessage,
+          messages.constraints.constraintLegacyLabel.defaultMessage,
+          legacyConstraintsText,
         )
       : ''
   }

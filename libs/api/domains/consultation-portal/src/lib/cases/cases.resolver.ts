@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { CaseResultService } from './cases.service'
+import { CasesService } from './cases.service'
 import { CaseResult } from '../models/caseResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
 import { UseGuards } from '@nestjs/common'
@@ -11,32 +11,23 @@ import {
 import { GetCaseInput } from '../dto/case.input'
 import { GetCasesInput } from '../dto/cases.input'
 import { CasesAggregateResult } from '../models/casesAggregateResult.model'
-import { CurrentAuthorization } from '../auth-tools/current-authorization'
 import { PostAdviceInput } from '../dto/postAdvice.input'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
-export class CaseResultResolver {
-  constructor(private caseResultService: CaseResultService) {}
-
-  @FeatureFlag(Features.consultationPortalApplication)
-  @Query(() => CasesAggregateResult, { name: 'consultationPortalGetCases' })
-  async getCases(
-    @Args('input', { type: () => GetCasesInput }) input: GetCasesInput,
-  ): Promise<CasesAggregateResult> {
-    return await this.caseResultService.getCases(input)
-  }
-
-  @Query(() => CaseResult, { name: 'consultationPortalCaseById' })
-  @FeatureFlag(Features.consultationPortalApplication)
-  async getCase(
-    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
-  ): Promise<CaseResult> {
-    return await this.caseResultService.getCase(input)
-  }
+@FeatureFlag(Features.consultationPortalApplication)
+export class CasesResolver {
+  constructor(private caseResultService: CasesService) {}
 
   @Query(() => [AdviceResult], { name: 'consultationPortalAdviceByCaseId' })
-  @FeatureFlag(Features.consultationPortalApplication)
   async getAdvices(
     @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
   ): Promise<AdviceResult[]> {
@@ -48,12 +39,27 @@ export class CaseResultResolver {
     nullable: true,
     name: 'consultationPortalPostAdvice',
   })
-  @FeatureFlag(Features.consultationPortalApplication)
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(ApiScope.samradsgatt)
   async postAdvice(
     @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
-    @CurrentAuthorization() auth: string,
+    @CurrentUser() user: User,
   ): Promise<void> {
-    const response = await this.caseResultService.postAdvice(auth, input)
+    const response = await this.caseResultService.postAdvice(user, input)
     return response
+  }
+
+  @Query(() => CaseResult, { name: 'consultationPortalCaseById' })
+  async getCase(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
+  ): Promise<CaseResult> {
+    return await this.caseResultService.getCase(input)
+  }
+
+  @Query(() => CasesAggregateResult, { name: 'consultationPortalGetCases' })
+  async getCases(
+    @Args('input', { type: () => GetCasesInput }) input: GetCasesInput,
+  ): Promise<CasesAggregateResult> {
+    return await this.caseResultService.getCases(input)
   }
 }

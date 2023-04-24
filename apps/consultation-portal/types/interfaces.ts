@@ -1,9 +1,9 @@
 import { SortOptions } from './enums'
 
 export interface Case {
-  id: number
-  caseNumber: string
-  name: string
+  id?: number
+  caseNumber?: string
+  name?: string
   adviceCount?: number
   shortDescription?: string
   statusName?: string
@@ -16,13 +16,22 @@ export interface Case {
   summaryDate?: string
 }
 
+export interface AdviceDocuments {
+  id?: string
+  fileName?: string
+  fileType?: string
+  size?: number
+}
+
 export interface UserAdvice {
   id: string
-  number: string
+  caseId: number
   participantName: string
   participantEmail: string
   content: string
   created: string
+  _case: Case
+  adviceDocuments: Array<AdviceDocuments>
 }
 
 export interface CaseForSubscriptions {
@@ -47,6 +56,7 @@ export interface SubscriptionArray {
   caseIds: Array<number>
   institutionIds: Array<number>
   policyAreaIds: Array<number>
+  generalSubscription: string
 }
 
 export interface SortTitle {
@@ -139,4 +149,24 @@ export interface FileObject {
   originalFileObj: File
   size?: number
   type?: string
+}
+
+export interface User {
+  name?: string
+  email?: string
+  image?: string
+}
+
+export interface TypeForSubscriptions {
+  id: string
+  type: string
+  name: string
+  nr: any
+}
+
+export interface AdviceFilter {
+  oldestFirst?: boolean
+  pageNumber?: number
+  pageSize?: number
+  searchQuery?: string
 }
