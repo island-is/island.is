@@ -1,11 +1,14 @@
 import {
   Box,
+  Button,
   Divider,
   GridContainer,
+  LoadingDots,
   ResponsiveSpace,
   Stack,
   Tabs,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
@@ -27,38 +30,78 @@ import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMo
 import { sorting } from '../../utils/helpers'
 import getInitValues from '../Subscriptions/getInitValues'
 import TabsList from '../Subscriptions/tabsList'
+import { useFetchSubscriptions } from '@island.is/consultation-portal/utils/helpers/api/useFetchSubscriptions'
+import { IconLink } from '@island.is/consultation-portal/components/IconLink/IconLink'
 interface SubProps {
-  subscriptions: any
-  cases: CaseForSubscriptions[]
+  allcases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
   isNotAuthorized: boolean
 }
 
 export const UserSubscriptions = ({
-  cases,
-  subscriptions,
+  allcases,
   types,
   isNotAuthorized,
 }: SubProps) => {
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
-
+  const {
+    cases,
+    policyAreas,
+    institutions,
+    subscribedToAll,
+    subscribedToAllNew,
+    getUserSubsLoading,
+  } = useFetchSubscriptions()
   const [searchValue, setSearchValue] = useState('')
 
-  const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>(
-    subscriptions,
-  )
+  const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>()
   const { Institutions, PolicyAreas } = getInitValues({ types: types })
   const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
     GeneralSubscriptionArray,
   )
-
-  const [institutionsData, setInstitutionsData] = useState(Institutions)
-
-  const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
+  const [institutionsData, setInstitutionsData] = useState([])
+  let generalSubData: any = []
+  const [policyAreasData, setPolicyAreasData] = useState([])
 
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
     SubscriptionsArray,
   )
+  const {
+    caseIds,
+    policyAreaIds,
+    institutionIds,
+    generalSubscription,
+  } = subscriptionArray
+  useEffect(() => {
+    if (!getUserSubsLoading) {
+      if (subscribedToAll) {
+        generalSubData = GeneralSubscriptionArray.at(0)
+      } else if (subscribedToAllNew) {
+        generalSubData = GeneralSubscriptionArray.at(1)
+      }
+      let filteredInst = Object.values(institutionsData).filter(function (
+        item,
+      ) {
+        return institutions.filter((x) => x.id == item.id).length > 0
+      })
+
+      setInstitutionsData(filteredInst)
+
+      let filteredPlicy = Object.values(policyAreasData).filter(function (
+        item,
+      ) {
+        return policyAreas.filter((x) => x.id == item.id).length > 0
+      })
+
+      setPolicyAreasData(filteredPlicy)
+
+      let filteredCases = allcases.filter(function (item) {
+        return cases.filter((x) => x.id == item.id).length > 0
+      })
+
+      setCasesData(filteredCases)
+    }
+  }, [getUserSubsLoading])
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,
     Stofnanir: SortOptions.aToZ,
@@ -68,7 +111,7 @@ export const UserSubscriptions = ({
   const paddingX = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   useEffect(() => {
-    const sortedCases = sorting(subscriptions, sortTitle[Area.case])
+    const sortedCases = sorting(cases, sortTitle[Area.case])
     const sortedInstitutions = sorting(
       Institutions,
       sortTitle[Area.institution],
@@ -108,7 +151,14 @@ export const UserSubscriptions = ({
       setPolicyAreasData(sortedPolicyAreas)
     }
   }, [searchValue])
+  const onSubmit = () => {
+    toast.success('Áskrift uppfærð')
 
+    setSubscriptionArray(SubscriptionsArray)
+  }
+  const onClear = () => {
+    setSubscriptionArray(SubscriptionsArray)
+  }
   const tabs = TabsList({
     casesData: casesData,
     setCasesData: (arr: Array<CaseForSubscriptions>) => setCasesData(arr),
@@ -119,6 +169,7 @@ export const UserSubscriptions = ({
     setPolicyAreasData: (arr: Array<ArrOfIdAndName>) => setPolicyAreasData(arr),
     Area: Area,
     subscriptionArray: subscriptionArray,
+    generalSubArray: generalSubData,
     setSubscriptionArray: (arr: SubscriptionArray) => setSubscriptionArray(arr),
     searchValue: searchValue,
     setSearchValue: (value: string) => setSearchValue(value),
@@ -139,6 +190,10 @@ export const UserSubscriptions = ({
         <BreadcrumbsWithMobileDivider
           items={[
             { title: 'Samráðsgátt', href: '/samradsgatt' },
+            {
+              title: 'Áskriftir ',
+              href: '/samradsgatt/askriftir',
+            },
             {
               title: 'Mínar áskriftir ',
               href: '/samradsgatt/minaraskriftir',
@@ -164,20 +219,140 @@ export const UserSubscriptions = ({
                 </Stack>
               </Stack>
             </Stack>
+            <Stack space={0}>
+              {!(
+                caseIds.length === 0 &&
+                institutionIds.length === 0 &&
+                policyAreaIds.length === 0 &&
+                generalSubscription.length === 0
+              ) && (
+                <>
+                  <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
+                    Valin mál
+                  </Text>
+                  {generalSubscription.length !== 0 &&
+                    typeData
+                      .filter((item) => generalSubscription == item.id)
+                      .map((filteredItem) => {
+                        return (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name,
+                              caseNumber: filteredItem.nr,
+                              id: filteredItem.id.toString(),
+                              area: Area.case,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`type-${filteredItem.nr}`}
+                          />
+                        )
+                      })}
+                  {caseIds.length !== 0 &&
+                    caseIds.map((caseId) => {
+                      return casesData
+                        .filter((item) => caseId.id === item.id)
+                        .map((filteredItem) => (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name,
+                              caseNumber: filteredItem.caseNumber,
+                              id: filteredItem.id.toString(),
+                              area: Area.case,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`case-${caseId}`}
+                          />
+                        ))
+                    })}
+                  {institutionIds.length !== 0 &&
+                    institutionIds.map((institutionId) => {
+                      return Object.values(institutionsData).map(
+                        (filteredItem) => {
+                          if (filteredItem.id == institutionId.id.toString()) {
+                            return (
+                              <ChosenSubscriptionCard
+                                data={{
+                                  name: filteredItem.name.toString(),
+                                  id: filteredItem.id,
+                                  area: Area.institution,
+                                }}
+                                subscriptionArray={subscriptionArray}
+                                setSubscriptionArray={(
+                                  newSubscriptionArray: SubscriptionArray,
+                                ) => setSubscriptionArray(newSubscriptionArray)}
+                                key={`institution-${institutionId}`}
+                              />
+                            )
+                          }
+                        },
+                      )
+                    })}
+                  {policyAreaIds.length !== 0 &&
+                    policyAreaIds.map((policyAreaId) => {
+                      return Object.values(policyAreasData)
+                        .filter(
+                          (item) => policyAreaId.id.toString() === item.id,
+                        )
+                        .map((filteredItem) => (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name.toString(),
+                              id: filteredItem.id,
+                              area: Area.policyArea,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`policyArea-${policyAreaId}`}
+                          />
+                        ))
+                    })}
+                  <Box
+                    marginTop={1}
+                    display={'flex'}
+                    justifyContent={'flexEnd'}
+                    alignItems="center"
+                  >
+                    <Box marginRight={3}>
+                      <IconLink
+                        icon={{ icon: 'reload', size: 'small' }}
+                        onClick={onClear}
+                      >
+                        Hreinsa val
+                      </IconLink>
+                    </Box>
+                    <Button size="small" onClick={onSubmit}>
+                      Skrá úr áskrift
+                    </Button>
+                  </Box>
+                </>
+              )}
+            </Stack>
           </Box>
         </GridContainer>
       </Box>
       <Divider />
       <GridContainer>
         <Box paddingX={paddingX} paddingTop={[3, 3, 3, 5, 5]}>
-          <Tabs
-            selected={currentTab}
-            onlyRenderSelectedTab={true}
-            label="Veldu tegund áskrifta"
-            tabs={tabs}
-            contentBackground="transparent"
-            onChange={(e: Area) => setCurrentTab(e)}
-          />
+          {getUserSubsLoading ? (
+            <LoadingDots></LoadingDots>
+          ) : (
+            <Tabs
+              selected={currentTab}
+              onlyRenderSelectedTab={true}
+              label="Veldu tegund áskrifta"
+              tabs={tabs}
+              contentBackground="transparent"
+              onChange={(e: Area) => setCurrentTab(e)}
+            />
+          )}
         </Box>
       </GridContainer>
     </Layout>

@@ -19,7 +19,6 @@ import UserSubscriptions from '../../screens/UserSubscriptions/UserSubscriptions
 const STATUSES_TO_FETCH = [1, 2, 3]
 
 interface SubProps {
-  subscriptions: any
   cases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
   isNotAuthorized?: boolean
@@ -33,9 +32,6 @@ export const getServerSideProps = async (ctx) => {
         data: { consultationPortalGetCases },
       },
       {
-        data: { consultationPortalUserSubscriptions },
-      },
-      {
         data: { consultationPortalAllTypes },
       },
     ] = await Promise.all([
@@ -47,9 +43,6 @@ export const getServerSideProps = async (ctx) => {
           },
         },
       }),
-      client.query<SubGetUsersubsQuery>({
-        query: SUB_GET_USERSUBS,
-      }),
       client.query<SubGetTypesQuery>({
         query: SUB_GET_TYPES,
       }),
@@ -57,7 +50,6 @@ export const getServerSideProps = async (ctx) => {
     return {
       props: {
         cases: consultationPortalGetCases.cases,
-        subscriptions: consultationPortalUserSubscriptions,
         types: consultationPortalAllTypes,
       },
     }
@@ -80,16 +72,10 @@ export const getServerSideProps = async (ctx) => {
     },
   }
 }
-export const Index = ({
-  subscriptions,
-  cases,
-  types,
-  isNotAuthorized,
-}: SubProps) => {
+export const Index = ({ cases, types, isNotAuthorized }: SubProps) => {
   return (
     <UserSubscriptions
-      cases={cases}
-      subscriptions={subscriptions}
+      allcases={cases}
       types={types}
       isNotAuthorized={isNotAuthorized}
     />

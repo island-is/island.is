@@ -10,6 +10,7 @@ export interface TabContentProps {
   currentTab: Area
   subscriptionArray: SubscriptionArray
   setSubscriptionArray: (obj: SubscriptionArray) => void
+  generalSubArray?: any
   searchValue: string
   setSearchValue: (str: string) => void
   sortTitle: SortOptions
@@ -22,6 +23,7 @@ export const TabContent = ({
   currentTab,
   subscriptionArray,
   setSubscriptionArray,
+  generalSubArray,
   searchValue,
   setSearchValue,
   sortTitle,
@@ -41,6 +43,7 @@ export const TabContent = ({
       {data && data.length > 0 ? (
         <SubscriptionTable
           data={data}
+          generalSubArray={generalSubArray}
           currentTab={currentTab}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={setSubscriptionArray}
