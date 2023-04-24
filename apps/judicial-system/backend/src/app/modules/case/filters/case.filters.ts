@@ -336,10 +336,10 @@ export function getCasesQueryFilter(user: User): WhereOptions {
       }
     : user.institution?.type === InstitutionType.HIGH_COURT
     ? {
-        [Op.or]: [
-          { appeal_state: CaseAppealState.APPEALED },
-          { appeal_state: CaseAppealState.RECEIVED },
-          { appeal_state: CaseAppealState.COMPLETED },
+        appeal_state: [
+          CaseAppealState.APPEALED,
+          CaseAppealState.RECEIVED,
+          CaseAppealState.COMPLETED,
         ],
       }
     : {
@@ -362,19 +362,22 @@ export function getCasesQueryFilter(user: User): WhereOptions {
       ]
     : []
 
-  const blockDraftIndictmentsForCourt = isCourtRole(user.role)
-    ? [
-        {
-          [Op.not]: {
-            [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
+  const blockDraftIndictmentsForCourt =
+    isCourtRole(user.role) && user.institution?.type === InstitutionType.COURT
+      ? [
+          {
+            [Op.not]: {
+              [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
+            },
           },
-        },
-      ]
-    : []
+        ]
+      : []
 
   const restrictCaseTypes =
     user.role === UserRole.REPRESENTATIVE || user.role === UserRole.ASSISTANT
       ? [{ type: indictmentCases }]
+      : user.institution?.type === InstitutionType.HIGH_COURT
+      ? [{ type: [...restrictionCases, ...investigationCases] }]
       : []
 
   return {
