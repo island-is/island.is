@@ -161,7 +161,7 @@ const useAppealAlertBanner = (
   // When case can be appealed
   else if (canBeAppealed) {
     title = formatMessage(strings.appealDeadlineTitle, {
-      appealDeadline,
+      appealDeadline: formatDate(appealDeadline, 'PPPp'),
       isAppealDeadlineExpired: isAppealDeadlineExpired,
     })
     child = isAppealDeadlineExpired ? (
