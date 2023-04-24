@@ -16,7 +16,6 @@ import {
   CaseState,
   CaseTransition,
   isRestrictionCase,
-  Feature,
   isInvestigationCase,
   isIndictmentCase,
   isExtendedCourtRole,
@@ -32,7 +31,6 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   InstitutionType,
@@ -50,9 +48,8 @@ import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
 const CreateCaseButton: React.FC<{
-  features: Feature[]
   user: User
-}> = ({ features, user }) => {
+}> = ({ user }) => {
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
@@ -89,33 +86,13 @@ const CreateCaseButton: React.FC<{
     return []
   }, [formatMessage, user?.role])
 
-  // TODO Remove prosecutor office id check when indictments are ready
-  const itemsFiltered = useMemo(() => {
-    if (
-      features.includes(Feature.INDICTMENTS) ||
-      user.name === 'Ásmundur Jónsson' ||
-      [
-        '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
-        '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
-        'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
-        '53581d7b-0591-45e5-9cbe-c96b2f82da85', // Lögreglustjórinn á höfuðborgarsvæðinu
-      ].includes(user.institution?.id ?? '')
-    ) {
-      return items
-    }
-
-    return items.filter(
-      (item) => item.href !== constants.CREATE_INDICTMENT_ROUTE,
-    )
-  }, [features, user, items])
-
   return (
     <Box display={['none', 'none', 'block']}>
       <DropdownMenu
         dataTestId="createCaseDropdown"
         menuLabel="Tegund kröfu"
         icon="add"
-        items={itemsFiltered}
+        items={items}
         title={formatMessage(m.createCaseButton)}
       />
     </Box>
@@ -127,7 +104,6 @@ export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const { user } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
 
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
@@ -223,11 +199,7 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
-    const isTrafficViolation = isTrafficViolationCase(
-      caseToOpen,
-      features,
-      user,
-    )
+    const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
 
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
@@ -290,7 +262,7 @@ export const Cases: React.FC = () => {
         <div className={styles.logoContainer}>
           <Logo />
           {isProsecutor || isRepresentative ? (
-            <CreateCaseButton user={user} features={features} />
+            <CreateCaseButton user={user} />
           ) : null}
         </div>
         {user?.role !== UserRole.Staff && (
