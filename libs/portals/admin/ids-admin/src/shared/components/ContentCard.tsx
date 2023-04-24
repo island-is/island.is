@@ -263,9 +263,9 @@ const ContentCard: FC<ContentCardProps> = ({
             <input
               type="hidden"
               name="syncEnvironments"
-              value={`${availableEnvironments
+              value={availableEnvironments
                 ?.filter((env) => env !== selectedEnvironment.environment)
-                .join(',')}`}
+                .join(',')}
             />
           </Box>
         )}

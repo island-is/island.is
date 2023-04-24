@@ -2,8 +2,15 @@ import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 // import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { m } from '../../lib/messages'
-import { Box, Button, Table as T, Text, Icon } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import {
+  Box,
+  Button,
+  Table as T,
+  Text,
+  Icon,
+  DialogPrompt,
+} from '@island.is/island-ui/core'
+import React, { useState } from 'react'
 import AddPermissions, {
   ShadowBox,
 } from '../forms/AddPermissions/AddPermissions'
@@ -100,65 +107,73 @@ function Permissions({ data = mockData }: PermissionsProps) {
           {formatMessage(m.permissionsAdd)}
         </Button>
       </Box>
-      <Box>
-        {hasData && (
-          <ShadowBox style={{ maxHeight: 440 }}>
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData>
-                    {formatMessage(m.permissionsTableLabelName)}
-                  </T.HeadData>
-                  <T.HeadData>
-                    {formatMessage(m.permissionsTableLabelDescription)}
-                  </T.HeadData>
-                  <T.HeadData>
-                    {formatMessage(m.permissionsTableLabelAPI)}
-                  </T.HeadData>
-                  <T.HeadData>{/* For matching column count */}</T.HeadData>
+      {hasData && (
+        <ShadowBox style={{ maxHeight: 440 }}>
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                <T.HeadData>
+                  {formatMessage(m.permissionsTableLabelName)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(m.permissionsTableLabelDescription)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(m.permissionsTableLabelAPI)}
+                </T.HeadData>
+                <T.HeadData>{/* For matching column count */}</T.HeadData>
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {data.map((item) => (
+                <T.Row key={item.id}>
+                  <T.Data>
+                    <Box display="flex" columnGap={1} alignItems="center">
+                      {item.locked && (
+                        <Icon
+                          type="outline"
+                          icon="lockClosed"
+                          size="small"
+                          color="blue400"
+                        />
+                      )}
+                      <Text variant="eyebrow">{item.label}</Text>
+                    </Box>
+                    {item.id}
+                  </T.Data>
+                  <T.Data>{item.description}</T.Data>
+                  <T.Data>{item.api}</T.Data>
+                  <T.Data>
+                    <DialogPrompt
+                      baseId={`confirm-remove-${item.id}`}
+                      title="Remove permission?"
+                      // description=""
+                      ariaLabel="TODO"
+                      onConfirm={() => console.log(`Removed: ${item.id}`)}
+                      buttonTextConfirm={formatMessage(
+                        m.permissionsButtonLabelRemove,
+                      )}
+                      buttonTextCancel="Cancel"
+                      disclosureElement={
+                        <Button
+                          aria-label={formatMessage(
+                            m.permissionsButtonLabelRemove,
+                          )}
+                          icon="trash"
+                          variant="ghost"
+                          iconType="outline"
+                          size="small"
+                          onClick={() => handleRemove(item.id)}
+                        />
+                      }
+                    />
+                  </T.Data>
                 </T.Row>
-              </T.Head>
-              <T.Body>
-                {data.map((item) => (
-                  <T.Row key={item.id}>
-                    <T.Data>
-                      <Box display="flex" columnGap={1} alignItems="center">
-                        {item.locked && (
-                          <Icon
-                            type="outline"
-                            icon="lockClosed"
-                            size="small"
-                            color="blue400"
-                          />
-                        )}
-                        <Text variant="eyebrow">{item.label}</Text>
-                      </Box>
-                      {item.id}
-                    </T.Data>
-                    <T.Data>{item.description}</T.Data>
-                    <T.Data>{item.api}</T.Data>
-                    <T.Data>
-                      <Button
-                        aria-label={formatMessage(
-                          m.permissionsButtonLabelRemove,
-                        )}
-                        icon="trash"
-                        variant="ghost"
-                        iconType="outline"
-                        size="small"
-                        onClick={() => handleRemove(item.id)}
-                      />
-                    </T.Data>
-                  </T.Row>
-                ))}
-              </T.Body>
-            </T.Table>
-          </ShadowBox>
-        )}
-      </Box>
-      <Box display="flex" justifyContent="flexEnd" marginTop={4}>
-        <Button>{formatMessage(m.saveSettings)}</Button>
-      </Box>
+              ))}
+            </T.Body>
+          </T.Table>
+        </ShadowBox>
+      )}
       <AddPermissions onClose={handleModalClose} isVisible={isModalVisible} />
     </ContentCard>
   )

@@ -112,7 +112,7 @@ function AddPermissions({ isVisible, onClose }: AddPermissionsProps) {
               {mockData.map((item) => (
                 <T.Row key={item.id}>
                   <T.Data>
-                    <Checkbox />
+                    <Checkbox value={item.id} />
                   </T.Data>
                   <T.Data>
                     <Text variant="eyebrow">{item.label}</Text>
