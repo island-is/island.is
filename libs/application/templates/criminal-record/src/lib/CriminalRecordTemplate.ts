@@ -38,7 +38,6 @@ const template: ApplicationTemplate<
   institution: m.institutionName,
   translationNamespaces: [ApplicationConfigurations.CriminalRecord.translation],
   dataSchema: CriminalRecordSchema,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
