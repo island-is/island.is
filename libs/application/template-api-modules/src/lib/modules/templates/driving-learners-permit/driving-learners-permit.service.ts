@@ -21,17 +21,13 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps) {
+    const studentSSN = getValueViaPath<string>(application.answers, 'studentMentorability.studentNationalId', '') ?? ''
     const practicePermitApplication = await this.drivingLicenseService.postPracticePermitApplication(
       {
         token: auth.authorization.split(' ')[1], // Used to remove the bearer part
         mentorSSN: application.applicant,
-        studentSSN:
-          getValueViaPath<string>(
-            application.answers,
-            'studentMentorability.studentNationalId',
-            '',
-          ) ?? '',
-      },
+        studentSSN
+      }
     )
 
     return {
