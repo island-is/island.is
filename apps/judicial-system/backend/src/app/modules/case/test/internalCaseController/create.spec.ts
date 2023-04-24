@@ -266,7 +266,7 @@ describe('InternalCaseController - Create', () => {
       then = await givenWhenThen(caseToCreate)
     })
 
-    it('should throw Error', () => {
+    it('should return a case without a prosecutor', () => {
       expect(then.result).toBe(returnedCase)
     })
   })
@@ -291,7 +291,7 @@ describe('InternalCaseController - Create', () => {
       then = await givenWhenThen(caseToCreate)
     })
 
-    it('should throw BadRequestException', () => {
+    it('should return a case without a prosecutor', () => {
       expect(then.result).toBe(returnedCase)
     })
   })
