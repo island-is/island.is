@@ -49,7 +49,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       nationalId: payload.nationalId,
       scope: this.parseScopes(payload.scope),
       client: payload.client_id,
-      authorization: jwtCookieExtractor(request) ?? '',
+  // above the return try to get the token
+  const token =  jwtCookieExtractor(request)
+      // then set the authorization string
+      authorization: token ? `Bearer ${token}` : '',
       delegationType: payload.delegationType,
       actor: actor && {
         nationalId: actor.nationalId,
