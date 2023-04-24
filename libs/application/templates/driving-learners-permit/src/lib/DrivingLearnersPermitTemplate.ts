@@ -14,7 +14,6 @@ import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { DrivingLearnersPermitTemplateEvent, Roles, States } from './constants'
 import { ApiActions, FakeDataFeature } from '../shared/constants'
 import { m } from './messages'
-import { assign } from 'xstate'
 import { dataSchema } from './dataSchema'
 import { truthyFeatureFromClient } from '../shared/utils'
 
