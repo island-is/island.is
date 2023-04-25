@@ -8,6 +8,7 @@ import {
   isValidVskNr,
   validateApplicationInfoCategory,
 } from './utils'
+import { m } from './messages'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -130,7 +131,7 @@ export const dataSchema = z.object({
     operationName: z.string().min(1),
     vskNr: z
       .string()
-      .refine((v) => isValidVskNr(v), { params: error.invalidValue }),
+      .refine((v) => isValidVskNr(v), { params: m.vskNrInvalid }),
     email: z
       .string()
       .refine((v) => isValidEmail(v), { params: error.invalidValue }),
