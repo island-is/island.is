@@ -132,6 +132,7 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
     | 'appealState'
+    | 'appealCaseNumber'
   > {
   type?: CaseType
   state?: CaseState
@@ -142,6 +143,9 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
+  appealJudge1Id?: string | null
+  appealJudge2Id?: string | null
+  appealJudge3Id?: string | null
 }
 
 export const include: Includeable[] = [
@@ -183,6 +187,26 @@ export const include: Includeable[] = [
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
     },
+  },
+  {
+    model: User,
+    as: 'appealAssistant',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge1',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge2',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 
