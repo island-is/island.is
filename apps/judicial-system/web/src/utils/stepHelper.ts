@@ -106,14 +106,12 @@ export const isTrafficViolationCase = (
   )
 
   return Boolean(
-    user &&
-      isCourtRole(user.role) &&
-      !(
-        workingCase.caseFiles &&
-        workingCase.caseFiles.find(
-          (file) => file.category === CaseFileCategory.INDICTMENT,
-        )
-      ) &&
+    !(
+      workingCase.caseFiles &&
+      workingCase.caseFiles.find(
+        (file) => file.category === CaseFileCategory.INDICTMENT,
+      )
+    ) &&
       flatIndictmentSubtypes.length > 0 &&
       flatIndictmentSubtypes.every(
         (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
