@@ -11,7 +11,7 @@ import { idsAdminScopes } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
-const namespace = '@island.is/auth/admin-api/v2/permissions'
+const namespace = '@island.is/auth/admin-api/v2/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard, MeTenantGuard)
 @Scopes(...idsAdminScopes)
