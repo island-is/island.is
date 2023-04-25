@@ -9,12 +9,18 @@ import * as styles from './Layout.css'
 type LayoutProps = {
   isFrontPage?: boolean
   seo?: SEOProps
+  justifyContent?: 'spaceBetween' | 'flexStart'
 }
-export const Layout: FC<LayoutProps> = ({ children, isFrontPage, seo }) => {
+export const Layout: FC<LayoutProps> = ({
+  children,
+  isFrontPage,
+  seo,
+  justifyContent = 'spaceBetween',
+}) => {
   return (
     <Box
       flexDirection="column"
-      justifyContent="spaceBetween"
+      justifyContent={justifyContent}
       display="flex"
       className={styles.processContainer}
     >

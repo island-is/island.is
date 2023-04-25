@@ -12,6 +12,7 @@ export const clientLoader: WrappedLoaderFn = ({ client }) => {
 
     const authClient = await client.query<GetClientQuery>({
       query: GetClientDocument,
+      fetchPolicy: 'network-only',
       variables: {
         input: {
           tenantId: params['tenant'],

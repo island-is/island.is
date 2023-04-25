@@ -980,4 +980,14 @@ export class Case extends Model {
   })
   @ApiProperty({ enum: CaseAppealState })
   appealState?: CaseAppealState
+
+  /**********
+   * The time and date that the court marked an appeal as received
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealReceivedByCourtDate?: Date
 }
