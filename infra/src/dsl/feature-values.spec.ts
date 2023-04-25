@@ -44,7 +44,7 @@ describe('Feature-deployment support', () => {
           },
         ],
         postgres: {
-          extensions: ['foo,bar'],
+          extensions: ['foo', 'bar'],
         },
       })
       .ingress({
@@ -82,6 +82,13 @@ describe('Feature-deployment support', () => {
       NODE_OPTIONS: '--max-old-space-size=208',
       SERVERSIDE_FEATURES_ON: '',
     })
+  })
+  it('db extensions are set', () => {
+    expect(values.services.graphql.initContainer?.env).toEqual(
+      expect.objectContaining({
+        DB_EXTENSIONS: 'foo,bar',
+      }),
+    )
   })
 
   it('dynamic secrets path', () => {
