@@ -22,6 +22,7 @@ import { useFetchAdvicesById, useLogIn } from '../../utils/helpers'
 import { useContext } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'
+import { CaseEmailBox } from '@island.is/consultation-portal/components/CaseEmailBox/CaseEmailBox'
 
 const CaseScreen = ({ chosenCase, caseId }) => {
   const { contactEmail, contactName } = chosenCase
@@ -74,7 +75,7 @@ const CaseScreen = ({ chosenCase, caseId }) => {
               </Box>
               <Divider />
               <Box paddingTop={1}>
-                <SubscriptionBox />
+                <CaseEmailBox />
               </Box>
             </Stack>
           </GridColumn>

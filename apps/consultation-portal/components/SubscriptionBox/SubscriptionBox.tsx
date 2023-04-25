@@ -1,6 +1,9 @@
 import { Box, Text, Input, Button, Stack } from '@island.is/island-ui/core'
 
 export const SubscriptionBox = () => {
+
+
+
   return (
     <Box
       borderColor="blue300"

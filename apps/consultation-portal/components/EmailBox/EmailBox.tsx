@@ -26,7 +26,9 @@ export const EmailBox = () => {
     },
   )
 
-  const { email, emailVerified, getUserEmailLoading } = useFetchEmail()
+  const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
+    isAuthenticated: isAuthenticated,
+  })
   useEffect(() => {
     if (!getUserEmailLoading) {
       setUserEmail(email)
