@@ -40,8 +40,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     value: utlendingastofnunWatsonChatUsesIdentityToken,
   } = useFeatureFlag('utlendingastofnunWatsonChatUsesIdentityToken', false)
 
-  console.log(loading, utlendingastofnunWatsonChatUsesIdentityToken)
-
   const namespace = useMemo(
     () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
     [data?.getNamespace?.fields],
