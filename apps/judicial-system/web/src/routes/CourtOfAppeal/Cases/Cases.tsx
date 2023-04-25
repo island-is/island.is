@@ -28,13 +28,29 @@ import {
   CaseState,
 } from '@island.is/judicial-system/types'
 import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
-import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
 import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType, getAppealDate } from '../../Shared/Cases/utils'
 import { courtOfAppealCases as strings } from './Cases.strings'
+
+export interface AppealedCasesQueryResponse {
+  courtCaseNumber: string
+  defendants: Defendant[]
+  type: CaseType
+  decision: CaseDecision
+  state: CaseState
+  appealState: CaseAppealState
+  accusedAppealDecision: CaseAppealDecision
+  prosecutorAppealDecision: CaseAppealDecision
+  courtEndTime: string
+  accusedPostponedAppealDate: string
+  prosecutorPostponedAppealDate: string
+  validToDate: string
+  policeCaseNumbers: string[]
+  parentCaseId: string
+}
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()

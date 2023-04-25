@@ -13,8 +13,6 @@ import {
 import {
   CaseState,
   CaseTransition,
-  isRestrictionCase,
-  isInvestigationCase,
   isIndictmentCase,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
@@ -24,7 +22,7 @@ import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-w
 import { core, tables, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
+
 import {
   InstitutionType,
   User,
