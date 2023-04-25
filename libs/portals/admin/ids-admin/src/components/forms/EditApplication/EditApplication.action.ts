@@ -16,11 +16,12 @@ import {
 } from '@island.is/api/schema'
 
 export enum ClientFormTypes {
-  applicationUrls = 'applicationUrl',
+  applicationUrls = 'applicationUrls',
   lifeTime = 'lifeTime',
   translations = 'translations',
   delegations = 'delegations',
   advancedSettings = 'advancedSettings',
+  none = 'none',
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
@@ -84,6 +85,9 @@ const defaultSchema = z.object({
     return s === 'true'
   }),
   environment: z.nativeEnum(AuthAdminEnvironment),
+  syncEnvironments: z.optional(z.string()).transform((s) => {
+    return (s?.split(',') as AuthAdminEnvironment[]) ?? []
+  }),
 })
 
 export const schema = {
@@ -144,17 +148,18 @@ export const schema = {
     })
     .merge(defaultSchema)
     .transform((data) => {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { is_displayName, en_displayName, ...rest } = data
       return {
-        allEnvironments: data.allEnvironments,
-        environment: data.environment,
+        ...rest,
         displayName: [
           {
             locale: 'is',
-            value: data.is_displayName,
+            value: is_displayName,
           },
           {
             locale: 'en',
-            value: data.en_displayName,
+            value: en_displayName,
           },
         ] as AuthAdminTranslatedValue[],
       }
@@ -213,6 +218,7 @@ export const schema = {
         }),
     })
     .merge(defaultSchema),
+  [ClientFormTypes.none]: defaultSchema,
 }
 
 export type EditApplicationResult<T extends ZodType> =
@@ -221,19 +227,35 @@ export type EditApplicationResult<T extends ZodType> =
        * Global error message if the mutation fails
        */
       globalError?: boolean
+      /**
+       * Intent of the form
+       */
+      intent?: string
     })
   | undefined
+
+export const getIntentWithSyncCheck = (
+  formData: FormData,
+): { name: ClientFormTypes; sync: boolean } => {
+  const getIntent = formData.get('intent') as string
+  const intent = getIntent.split('-')
+
+  return {
+    name: ClientFormTypes[intent[0] as keyof typeof ClientFormTypes],
+    sync: !!intent[1],
+  }
+}
 
 export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
   request,
   params,
 }) => {
   const formData = await request.formData()
-  const intent = formData.get('intent') as ClientFormTypes
+  const intent = getIntentWithSyncCheck(formData)
 
   const result = await validateFormData({
     formData,
-    schema: schema[intent],
+    schema: schema[intent.name],
   })
 
   const { data, errors } = result
@@ -242,7 +264,7 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
     return result
   }
 
-  const { allEnvironments, environment, ...rest } = data
+  const { syncEnvironments, allEnvironments, environment, ...rest } = data
 
   try {
     const response = await client.mutate<
@@ -252,25 +274,31 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
       mutation: UpdateClientDocument,
       variables: {
         input: {
+          ...rest,
           clientId: params['client'] as string,
           tenantId: params['tenant'] as string,
-          environments: allEnvironments
+          environments: intent.sync
+            ? syncEnvironments
+            : allEnvironments
             ? [
                 AuthAdminEnvironment.Development,
                 AuthAdminEnvironment.Staging,
                 AuthAdminEnvironment.Production,
               ]
             : [environment],
-          ...rest,
         },
       },
     })
 
-    return response.data
+    return {
+      data: response.data?.patchAuthAdminClient,
+      intent: intent.name,
+    }
   } catch (error) {
     return {
       errors: null,
       data: null,
+      intent: intent.name,
       globalError: true,
     }
   }
