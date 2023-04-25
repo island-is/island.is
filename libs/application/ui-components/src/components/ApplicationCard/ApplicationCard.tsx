@@ -85,7 +85,6 @@ export const ApplicationCard = ({
       paddingY={3}
       dataTestId={`application-card`}
       background="white"
-      dataTestId={`application-card`}
     >
       <Box
         alignItems="center"
