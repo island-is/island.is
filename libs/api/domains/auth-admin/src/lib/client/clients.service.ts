@@ -209,15 +209,15 @@ export class ClientsService extends MultiEnvironmentService {
     user: User,
     clientEnvironment: ClientEnvironment,
   ): Promise<ClientSecretDto[]> {
-    return (
-      this.adminApiByEnvironmentWithAuth(
-        clientEnvironment.environment,
-        user,
-      )?.meClientSecretsControllerFindAll({
-        tenantId: clientEnvironment.tenantId,
-        clientId: clientEnvironment.clientId,
-      }) ?? []
-    )
+    const secrets = await this.adminApiByEnvironmentWithAuth(
+      clientEnvironment.environment,
+      user,
+    )?.meClientSecretsControllerFindAll({
+      tenantId: clientEnvironment.tenantId,
+      clientId: clientEnvironment.clientId,
+    })
+
+    return secrets ?? []
   }
 
   private formatClientId(clientId: string, environment: Environment) {
