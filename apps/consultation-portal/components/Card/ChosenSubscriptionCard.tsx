@@ -10,6 +10,11 @@ import { useState } from 'react'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import { Area } from '../../types/enums'
 import { SubscriptionArray } from '../../types/interfaces'
+import {
+  isSubscriptionTypeChecked,
+  onCheckboxChange,
+  onSubscriptiontypeChange,
+} from '../Table/utils/checkboxes'
 
 export interface ChosenSubscriptionCardProps {
   data: {
@@ -28,26 +33,26 @@ export const ChosenSubscriptionCard = ({
   setSubscriptionArray,
 }: ChosenSubscriptionCardProps) => {
   const [isOpen, setIsOpen] = useState(false)
+
   const onClick = () => {
     setIsOpen(!isOpen)
   }
-
-  const onCheckboxChange = (id: string | number) => {
-    const sub = [...subscriptionArray[mapIsToEn[data.area]]]
-    const subArr = { ...subscriptionArray }
-    if (typeof id === 'string') {
-      let generalsub = subscriptionArray['generalSubscription']
-      generalsub = ''
-      subArr['generalSubscription'] = generalsub
-    } else {
-      const idx = sub.indexOf(id)
-      sub.splice(idx, 1)
-      subArr[mapIsToEn[data.area]] = sub
+  const handleCheckboxChange = (checked, close = true) => {
+    if (close) {
+      onClick()
     }
-
-    return setSubscriptionArray(subArr)
+    onCheckboxChange({
+      currentTab: data.area,
+      subscriptionArray,
+      setSubscriptionArray,
+      checked,
+      itemId: parseInt(data.id),
+    })
   }
-  if (typeof data?.id === 'string') {
+
+  const { area, id } = data
+
+  if (data?.id === 'OnlyNew' || data?.id === 'AllChanges') {
     return (
       <Box
         borderColor={'blue400'}
@@ -62,7 +67,7 @@ export const ChosenSubscriptionCard = ({
           <Box display="flex" flexDirection="row" columnGap={3}>
             <Checkbox
               checked={true}
-              onChange={() => onCheckboxChange(data?.id)}
+              onChange={(e) => handleCheckboxChange(e.target.checked)}
             />
             <Box>
               <Text
@@ -98,7 +103,7 @@ export const ChosenSubscriptionCard = ({
         <Box display="flex" flexDirection="row" columnGap={3}>
           <Checkbox
             checked={true}
-            onChange={() => onCheckboxChange(data?.id)}
+            onChange={(e) => handleCheckboxChange(e.target.checked)}
           />
           <FocusableBox onClick={onClick}>
             <Text
@@ -120,9 +125,26 @@ export const ChosenSubscriptionCard = ({
         </FocusableBox>
       </Box>
       {isOpen && (
-        <Box paddingTop={3}>
-          <SubscriptionChoices />
-        </Box>
+        <SubscriptionChoices
+          itemId={data.id}
+          id="chosen"
+          checkboxCheck={(subType, id) =>
+            isSubscriptionTypeChecked(
+              subType,
+              id,
+              subscriptionArray[mapIsToEn[data.area]],
+            )
+          }
+          checkboxChange={(subType) =>
+            onSubscriptiontypeChange({
+              subType,
+              subscriptionArray,
+              currentTab: area,
+              setSubscriptionArray,
+              itemId: parseInt(id),
+            })
+          }
+        />
       )}
     </Box>
   )

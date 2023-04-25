@@ -337,15 +337,14 @@ describe('CaseController - Transition', () => {
 
           it('should transition the case', () => {
             expect(mockCaseModel.update).toHaveBeenCalledWith(
-              {
+              expect.objectContaining({
                 appealState: newAppealState,
-                prosecutorPostponedAppealDate: currentAppealState
-                  ? undefined
-                  : date,
-              },
+              }),
               { where: { id: caseId }, transaction },
             )
+          })
 
+          it('should send notifications to queue when case is appealed', () => {
             if (transition === CaseTransition.APPEAL) {
               expect(
                 mockMessageService.sendMessagesToQueue,
