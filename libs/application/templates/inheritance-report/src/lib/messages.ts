@@ -107,7 +107,7 @@ export const m = defineMessages({
   funeralExpensesSubtitle: {
     id: 'ir.application:funeralExpensesSubtitle',
     defaultMessage:
-      'Athugað er hvort að skráningaraðili sé búinn að fylla út yfirlit um útfarakostnað',
+      'Athugað er hvort að skráningaraðili sé búinn að fylla út yfirlit um útfararkostnað',
     description: '',
   },
 
