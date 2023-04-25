@@ -1,7 +1,7 @@
 import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import { CaseFile, CaseFileCategory } from './file'
+import { CaseFile } from './file'
 import { User, UserRole } from './user'
 import type { CourtDocument } from './courtDocument'
 
@@ -263,7 +263,7 @@ export interface Case {
   appealedDate?: string
   statementDeadline?: string
   prosecutorStatementDate?: string
-  defenderStatementDate?: string
+  defendantStatementDate?: string
 }
 
 export interface CaseListEntry
@@ -376,6 +376,8 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'appealState'
+    | 'prosecutorStatementDate'
+    | 'defendantStatementDate'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -476,7 +478,6 @@ export function getAppealInfo(theCase: Case): Case {
     prosecutorAppealDecision,
     prosecutorPostponedAppealDate,
     accusedPostponedAppealDate,
-    caseFiles,
   } = theCase
 
   const appealInfo = {} as Case
@@ -519,16 +520,6 @@ export function getAppealInfo(theCase: Case): Case {
       appealedDate.setDate(appealedDate.getDate() + 1),
     ).toISOString()
   }
-  //TODO: These dates should likely be set differently but we haven't
-  //implemented the ability to record when the statement was sent
-  //also this doesn't work for defenders yet because they don't have
-  //file access
-  appealInfo.defenderStatementDate = caseFiles?.find(
-    (cf) => cf.category === CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-  )?.created
-  appealInfo.prosecutorStatementDate = caseFiles?.find(
-    (cf) => cf.category === CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-  )?.created
 
   return appealInfo
 }

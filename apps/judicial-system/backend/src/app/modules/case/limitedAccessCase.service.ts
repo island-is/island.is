@@ -11,6 +11,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseState,
@@ -67,10 +68,15 @@ export const attributes: (keyof Case)[] = [
   'prosecutorAppealDecision',
   'accusedPostponedAppealDate',
   'prosecutorPostponedAppealDate',
+  'prosecutorStatementDate',
+  'defendantStatementDate',
 ]
 
-export interface LimitedUpdateCase
-  extends Pick<Case, 'accusedPostponedAppealDate' | 'appealState'> {}
+export interface LimitedAccessUpdateCase
+  extends Pick<
+    Case,
+    'accusedPostponedAppealDate' | 'appealState' | 'defendantStatementDate'
+  > {}
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -161,12 +167,11 @@ export class LimitedAccessCaseService {
 
   async update(
     theCase: Case,
-    update: LimitedUpdateCase,
+    update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    // Here we assume that the case is being appealed
     const [numberOfAffectedRows] = await this.caseModel.update(
-      { ...update, accusedPostponedAppealDate: nowFactory() },
+      { ...update },
       { where: { id: theCase.id } },
     )
 
@@ -181,14 +186,15 @@ export class LimitedAccessCaseService {
       )
     }
 
-    // Here we assume that the case is being appealed
-    this.messageService.sendMessagesToQueue([
-      {
-        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
-        user,
-        caseId: theCase.id,
-      },
-    ])
+    if (update.appealState === CaseAppealState.APPEALED) {
+      this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+        },
+      ])
+    }
 
     // Return limited access case
     return await this.findById(theCase.id)

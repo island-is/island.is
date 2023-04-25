@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
-const LimitedAccessCaseQuery = gql`
-  query LimitedAccessCaseQuery($input: CaseQueryInput!) {
-    limitedAccessCase(input: $input) {
+export const LimitedAccessUpdateCaseMutation = gql`
+  mutation LimitedAccessUpdateCaseMutation($input: UpdateCaseInput!) {
+    limitedAccessUpdateCase(input: $input) {
       id
       created
       origin
@@ -112,5 +112,3 @@ const LimitedAccessCaseQuery = gql`
     }
   }
 `
-
-export default LimitedAccessCaseQuery

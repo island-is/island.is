@@ -255,7 +255,7 @@ describe('getAppealInfo', () => {
     expect(appealInfo).toEqual(
       expect.objectContaining({
         prosecutorStatementDate: '2021-06-14T19:50:08.033Z',
-        defenderStatementDate: '2021-06-15T19:50:08.033Z',
+        defendantStatementDate: '2021-06-15T19:50:08.033Z',
       }),
     )
   })
@@ -288,7 +288,7 @@ describe('getAppealInfo', () => {
         appealedByRole: undefined,
         appealedDate: undefined,
         prosecutorStatementDate: undefined,
-        defenderStatementDate: undefined,
+        defendantStatementDate: undefined,
         appealDeadline: undefined,
         statementDeadline: undefined,
       }),

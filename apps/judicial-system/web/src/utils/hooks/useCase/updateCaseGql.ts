@@ -23,6 +23,7 @@ export const UpdateCaseMutation = gql`
         defenderNationalId
         defenderEmail
         defenderPhoneNumber
+        defendantWaivesRightToCounsel
       }
       defenderName
       defenderNationalId
@@ -141,7 +142,11 @@ export const UpdateCaseMutation = gql`
         id
       }
       notifications {
+        created
         type
+        recipients {
+          success
+        }
       }
       caseFiles {
         id
@@ -169,17 +174,30 @@ export const UpdateCaseMutation = gql`
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
+      indictmentCounts {
+        id
+        caseId
+        policeCaseNumber
+        created
+        modified
+        vehicleRegistrationNumber
+        offenses
+        substances
+        lawsBroken
+        incidentDescription
+        legalArguments
+      }
       requestDriversLicenseSuspension
+      appealState
+      isStatementDeadlineExpired
+      statementDeadline
       canBeAppealed
       hasBeenAppealed
-      appealDeadline
       appealedByRole
       appealedDate
       appealDeadline
       prosecutorStatementDate
-      defenderStatementDate
-      isStatementDeadlineExpired
-      statementDeadline
+      defendantStatementDate
     }
   }
 `

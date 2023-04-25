@@ -328,5 +328,5 @@ export class Case implements TCase {
   readonly prosecutorStatementDate?: string
 
   @Field({ nullable: true })
-  readonly defenderStatementDate?: string
+  readonly defendantStatementDate?: string
 }

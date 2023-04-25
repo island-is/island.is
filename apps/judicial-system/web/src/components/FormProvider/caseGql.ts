@@ -197,7 +197,7 @@ const CaseQuery = gql`
       appealedDate
       appealDeadline
       prosecutorStatementDate
-      defenderStatementDate
+      defendantStatementDate
     }
   }
 `

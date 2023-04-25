@@ -132,6 +132,7 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
     | 'appealState'
+    | 'prosecutorStatementDate'
   > {
   type?: CaseType
   state?: CaseState

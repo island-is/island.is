@@ -294,4 +294,12 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly requestDriversLicenseSuspension?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly prosecutorStatementDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defendantStatementDate?: string
 }
