@@ -106,6 +106,10 @@ export const CASE_GET_CASE_BY_ID = gql`
       changed
       oldInstitutionName
       statusName
+      stakeholders {
+        name
+        email
+      }
       documents {
         id
         fileName
