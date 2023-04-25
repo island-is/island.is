@@ -199,6 +199,7 @@
 /libs/clients/fiskistofa/                                                                                @island-is/stefna
 /libs/clients/syslumenn/                                                                                 @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                                  @island-is/stefna
+/libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 

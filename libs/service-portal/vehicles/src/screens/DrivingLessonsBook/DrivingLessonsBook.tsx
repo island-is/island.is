@@ -20,7 +20,7 @@ import {
   LinkResolver,
 } from '@island.is/service-portal/core'
 
-import { messages } from '../../lib/messages'
+import { messages, urls } from '../../lib/messages'
 import PhysicalLessons from '../../components/DrivingLessonsTables/PhysicalLessons'
 import DrivingLessonsSchools from '../../components/DrivingLessonsTables/DrivingLessonsSchools'
 import Exams from '../../components/DrivingLessonsTables/Exams'
@@ -118,7 +118,9 @@ const DrivingLessonsBook = () => {
               content={
                 <Box>
                   <div>{book?.teacherName}</div>
-                  <LinkResolver href="https://island.is/umsoknir/okunam-okukennari">
+                  <LinkResolver
+                    href={formatMessage(urls.instructorApplication)}
+                  >
                     <Button variant="text" size="small" type="button">
                       {formatMessage(messages.changeInstructor)}
                     </Button>
@@ -193,7 +195,7 @@ const DrivingLessonsBook = () => {
         <Box marginTop={8}>
           <EmptyState />
           <Box display="flex" alignItems="center" justifyContent="center">
-            <LinkResolver href="https://island.is/umsoknir/okuskirteini">
+            <LinkResolver href={formatMessage(urls.licenseApplication)}>
               <Button type="button">
                 {formatMessage(messages.signupToDrivingSchool)}
               </Button>
