@@ -19,7 +19,7 @@ import {
   natRegGenderMessageDescriptorRecord,
   natRegMaritalStatusMessageDescriptorRecord,
 } from '../../helpers/localizationHelpers'
-import { spmm } from '../../lib/messages'
+import { spmm, urls } from '../../lib/messages'
 import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
 import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
 import { formatNameBreaks } from '../../helpers/formatting'
@@ -93,8 +93,7 @@ const SubjectInfo = () => {
           editLink={{
             external: true,
             title: changeInNationalReg,
-            url:
-              'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
+            url: formatMessage(urls.editAdult),
           }}
         />
         <Divider />
@@ -116,8 +115,7 @@ const SubjectInfo = () => {
           editLink={{
             external: true,
             title: changeInNationalReg,
-            url:
-              'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
+            url: formatMessage(urls.editResidence),
           }}
         />
         <Divider />
@@ -180,8 +178,7 @@ const SubjectInfo = () => {
           editLink={{
             external: true,
             title: changeInNationalReg,
-            url:
-              'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
+            url: formatMessage(urls.editReligion),
           }}
         />
         <Divider />
@@ -209,7 +206,7 @@ const SubjectInfo = () => {
           editLink={{
             external: true,
             title: changeInNationalReg,
-            url: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
+            url: formatMessage(urls.editBanmarking),
           }}
         />
         <Divider />

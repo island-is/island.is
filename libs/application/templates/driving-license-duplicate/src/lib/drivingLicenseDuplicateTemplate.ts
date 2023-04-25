@@ -33,7 +33,6 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  readyForProduction: true,
   featureFlag: Features.drivingLicenseDuplicate,
   stateMachineConfig: {
     initial: States.DRAFT,

@@ -18,7 +18,11 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  CaseMessage,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { Defendant } from '../defendant'
@@ -182,13 +186,31 @@ export class LimitedAccessCaseService {
     }
 
     // Here we assume that the case is being appealed
-    this.messageService.sendMessagesToQueue([
-      {
-        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
-        user,
-        caseId: theCase.id,
-      },
-    ])
+    const messages: CaseMessage[] =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            [
+              CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+              CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+            ].includes(caseFile.category),
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          user,
+          caseId: theCase.id,
+          caseFileId: caseFile.id,
+        })) ?? []
+    messages.push({
+      type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+    })
+
+    await this.messageService.sendMessagesToQueue(messages)
 
     // Return limited access case
     return await this.findById(theCase.id)
