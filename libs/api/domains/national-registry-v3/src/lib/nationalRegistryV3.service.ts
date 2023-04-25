@@ -1,4 +1,4 @@
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { NationalRegistryV3Person } from './graphql/models/nationalRegistryPerson.model'
@@ -11,13 +11,13 @@ type ExcludesFalse = <T>(x: T | null | undefined | '') => x is T
 
 export class NationalRegistryV3Service {
   constructor(
-    private nationalRegistryApi: EinstaklingarApi,
+    private nationalRegistryApi: NationalRegistryV3ClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
 
   private fetchData = (nationalId: string) =>
-    this.nationalRegistryApi.midlunEinstaklingarNationalIdGet({ nationalId })
+    this.nationalRegistryApi.getGerviData(nationalId)
 
   async getNationalRegistryPerson(
     nationalId: string,

@@ -4,7 +4,7 @@ import { Injectable, ForbiddenException } from '@nestjs/common'
 
 import { FamilyMember, FamilyChild, User, Gender, MaritalStatus } from './types'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
-import { EinstaklingarApi } from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
 import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.model'
 
@@ -12,17 +12,13 @@ import { FamilyCorrectionResponse } from './graphql/models/familyCorrection.mode
 export class NationalRegistryService {
   constructor(
     private nationalRegistryApi: NationalRegistryApi,
-    private einstaklingarApi: EinstaklingarApi,
+    private natReg3: NationalRegistryV3ClientService,
   ) {}
 
   async getUser(nationalId: User['nationalId']): Promise<User> {
     const user = await this.nationalRegistryApi.getUser(nationalId)
 
-    const midlunResponse = await this.einstaklingarApi.midlunEinstaklingarNationalIdGet(
-      {
-        nationalId,
-      },
-    )
+    const midlunResponse = await this.natReg3.getGerviData(nationalId)
     console.log('einstaklingarApi', midlunResponse.nafn)
     return {
       nationalId: user.Kennitala,
