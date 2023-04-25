@@ -22,14 +22,14 @@ export class RightsPortalResolver {
   @Scopes(ApiScope.internal)
   @Query(() => [Therapies], { nullable: true })
   @Audit()
-  async getRightsPortalTherapies(@CurrentUser() user: User) {
-    return await this.rightsPortalService.getTherapies(user.nationalId)
+  getRightsPortalTherapies(@CurrentUser() user: User) {
+    return this.rightsPortalService.getTherapies(user.nationalId)
   }
 
   @Scopes(ApiScope.internal)
   @Query(() => AidsAndNutrition, { nullable: true })
   @Audit()
-  async getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
-    return await this.rightsPortalService.getAidsAndNutrition(user.nationalId)
+  getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
+    return this.rightsPortalService.getAidsAndNutrition(user.nationalId)
   }
 }

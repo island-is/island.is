@@ -8,7 +8,12 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ErrorScreen, IntroHeader, m } from '@island.is/service-portal/core'
+import {
+  EmptyState,
+  ErrorScreen,
+  IntroHeader,
+  m,
+} from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { SUPPORT_PRODUCTS } from '../../utils/constants'
 import { FootNote } from '../../components/FootNote.tsx/FootNote'
@@ -75,6 +80,8 @@ const AidsAndNutrition = () => {
   const { loading, error, data } = useQuery<Query>(GetAidsAndNutrition)
   const supportData = data?.getRightsPortalAidsAndNutrition
 
+  console.log(supportData)
+
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -89,12 +96,18 @@ const AidsAndNutrition = () => {
     )
   }
 
-  if (!supportData) {
+  if (!supportData?.aids?.length && !supportData?.nutrition?.length) {
     return (
-      <Box width="full" marginTop={4} display="flex" justifyContent="center">
-        <Text variant="h5" as="h3">
-          {formatMessage(messages.noData)}
-        </Text>
+      <Box marginBottom={[6, 6, 10]}>
+        <IntroHeader
+          title={formatMessage(messages.aidsAndNutritionTitle)}
+          intro={formatMessage(messages.aidsAndNutritionDescription)}
+        />
+        <Box width="full" marginTop={4} display="flex" justifyContent="center">
+          <Box marginTop={8}>
+            <EmptyState />
+          </Box>
+        </Box>
       </Box>
     )
   }
