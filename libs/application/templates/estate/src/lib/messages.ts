@@ -536,7 +536,7 @@ export const m = defineMessages({
   divisionOfEstateTermsText: {
     id: 'es.application:divisionOfEstateTermsText#markdown',
     defaultMessage:
-      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar send í pósthólf þitt á Ísland.is.',
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar sendar í pósthólf þitt á Ísland.is.',
     description: '',
   },
   divisionOfEstateSubmissionCheckbox: {
