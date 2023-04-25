@@ -10,7 +10,10 @@ import { isAuthenticated } from '../utils/authentication/isAuthenticated'
 const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Provider session={pageProps.session} basePath="/samradsgatt/api/auth">
+      <Provider
+        session={pageProps.session}
+        options={{ basePath: '/samradsgatt/api/auth' }}
+      >
         <AuthProvider>
           <AppLayout>
             <PageLoader />
