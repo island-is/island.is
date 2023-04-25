@@ -44,12 +44,11 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     Query,
     { input: IdentityInput }
   >(IDENTITY_QUERY, {
-    onError: (error: unknown) => {
+    onError: () => {
       setError(fieldNames.lookupError, {
         type: 'serverError',
         message: m.errorNationalIdNoName.defaultMessage,
       })
-      console.log('getIdentity error:', error)
     },
     onCompleted: (data) => {
       if (data.identity?.name) {
@@ -69,13 +68,12 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     Query,
     { input: StudentCanGetPracticePermitInput }
   >(LOOKUP_STUDENT_QUERY, {
-    onError: (error: unknown) => {
+    onError: () => {
       setError(fieldNames.studentMentorabilityError, {
         type: 'serverError',
         message: m.errorNationalIdMentorableLookup.defaultMessage,
       })
       setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
-      console.log('getStudentMentorabilityError:', error)
     },
     onCompleted: (data) => {
       if (data.drivingLicenseStudentCanGetPracticePermit) {
@@ -93,7 +91,7 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     },
   })
 
-  const studentIsMentorable = getValues(fieldNames.studentIsMentorable)
+  const studentMentorability = getValues(fieldNames.studentIsMentorable)
 
   // Clear inital errors on mount
   useEffect(() => {
@@ -182,9 +180,9 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
 
       <GridRow marginTop={5}>
         <GridColumn span="12/12">
-          {studentIsMentorable !== 'default' && (
+          {studentMentorability !== 'default' && (
             <ContentBlock>
-              {studentIsMentorable === 'loading' && (
+              {studentMentorability === 'loading' && (
                 <AlertMessage
                   type="info"
                   title={formatMessage(m.studentIsMentorableLoadingHeader)}
@@ -193,14 +191,14 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
                   )}
                 />
               )}
-              {studentIsMentorable === 'isMentorable' && (
+              {studentMentorability === 'isMentorable' && (
                 <AlertMessage
                   type="success"
                   title={formatMessage(m.studentIsMentorableHeader)}
                   message={formatMessage(m.studentIsMentorableDescription)}
                 />
               )}
-              {studentIsMentorable === 'isNotMentorable' && (
+              {studentMentorability === 'isNotMentorable' && (
                 <AlertMessage
                   type="error"
                   title={formatMessage(m.studentIsNotMentorableHeader)}
