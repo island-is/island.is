@@ -38,6 +38,7 @@ import {
   CaseState,
   Recipient,
   UserRole,
+  getStatementDeadline,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -1411,6 +1412,59 @@ export class NotificationService {
     )
   }
 
+  private async sendAppealReceivedByCourtNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(
+      notifications.caseAppealReceivedByCourt.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+      },
+    )
+
+    const statementDeadline =
+      theCase.appealReceivedByCourtDate &&
+      getStatementDeadline(theCase.appealReceivedByCourtDate)
+
+    const html = this.formatMessage(
+      notifications.caseAppealReceivedByCourt.body,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        statementDeadline: formatDate(statementDeadline, 'PPPp'),
+        linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    const promises = [
+      this.sendEmail(
+        subject,
+        html,
+        theCase.prosecutor?.name,
+        theCase.prosecutor?.email,
+      ),
+    ]
+
+    if (theCase.defenderEmail) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
+    }
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.APPEAL_RECEIVED_BY_COURT,
+      recipients,
+    )
+  }
+
   /* Messages */
 
   private getNotificationMessage(
@@ -1483,6 +1537,8 @@ export class NotificationService {
         return this.sendDefendantsNotUpdatedAtCourtNotifications(theCase)
       case NotificationType.APPEAL_TO_COURT_OF_APPEALS:
         return this.sendAppealToCourtOfAppealsNotifications(theCase, user)
+      case NotificationType.APPEAL_RECEIVED_BY_COURT:
+        return this.sendAppealReceivedByCourtNotifications(theCase)
     }
   }
 

@@ -464,6 +464,14 @@ export const m = defineMessages({
     id: 'ap.ids-admin:not-in-sync-across-all-environments',
     defaultMessage: 'SyncSettings are different in some environments',
   },
+  inSync: {
+    id: 'ap.ids-admin:in-sync',
+    defaultMessage: 'In sync',
+  },
+  outOfSync: {
+    id: 'ap.ids-admin:out-of-sync',
+    defaultMessage: 'Out of sync',
+  },
   publishEnvironment: {
     id: 'ap.ids-admin:publish-environment',
     defaultMessage: 'Publish to {environment}',
