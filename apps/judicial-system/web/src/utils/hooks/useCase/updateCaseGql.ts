@@ -198,6 +198,7 @@ export const UpdateCaseMutation = gql`
       appealDeadline
       prosecutorStatementDate
       defendantStatementDate
+      appealReceivedByCourtDate
     }
   }
 `

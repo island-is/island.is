@@ -1000,4 +1000,14 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   defendantStatementDate?: Date
+
+  /**********
+   * The time and date that the court marked an appeal as received
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealReceivedByCourtDate?: Date
 }

@@ -30,7 +30,7 @@ import {
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
-import { messages } from '../../lib/messages'
+import { messages, urls } from '../../lib/messages'
 import {
   basicInfoArray,
   coOwnerInfoArray,
@@ -44,12 +44,6 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
-import {
-  CO_OWNER_LINK,
-  OPERATOR_LINK,
-  REGISTRATION_NUMBER_LINK,
-  SAMGONGUSTOFA_LINK,
-} from '../../utils/constants'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -233,25 +227,25 @@ const VehicleDetail = () => {
   const dropdownArray = [
     {
       title: formatMessage(messages.orderRegistrationNumber),
-      href: REGISTRATION_NUMBER_LINK,
+      href: formatMessage(urls.regNumber),
     },
     {
       title: formatMessage(messages.orderRegistrationLicense),
-      href: REGISTRATION_NUMBER_LINK,
+      href: formatMessage(urls.regNumber),
     },
     {
       title: formatMessage(messages.addCoOwner),
-      href: CO_OWNER_LINK,
+      href: formatMessage(urls.coOwnerChange),
     },
     {
       title: formatMessage(messages.addOperator),
-      href: OPERATOR_LINK,
+      href: formatMessage(urls.operator),
     },
   ]
   if (basicInfo?.permno !== basicInfo?.regno) {
     dropdownArray.push({
       title: formatMessage(messages.renewPrivateRegistration),
-      href: OPERATOR_LINK,
+      href: formatMessage(urls.operator),
     })
   }
   return (
@@ -307,7 +301,7 @@ const VehicleDetail = () => {
                 </Box>
                 <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <a
-                    href={SAMGONGUSTOFA_LINK}
+                    href={formatMessage(urls.ownerChange)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -337,7 +331,7 @@ const VehicleDetail = () => {
           content={mainInfo?.regno ?? ''}
           editLink={{
             title: messages.orderRegistrationNumber,
-            url: REGISTRATION_NUMBER_LINK,
+            url: formatMessage(urls.regNumber),
             external: true,
           }}
           loading={loading}

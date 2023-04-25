@@ -7,6 +7,7 @@ import { Session } from '../src/app/sessions/session.model'
 import { createSessionDto } from './session.fixture'
 
 import addDays from 'date-fns/addDays'
+import { CreateSessionDto } from '../../../../libs/clients/sessions/gen/fetch'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}

@@ -238,6 +238,10 @@ export class CaseController {
       update.prosecutorPostponedAppealDate = nowFactory()
     }
 
+    if (states.appealState === CaseAppealState.RECEIVED) {
+      update.appealReceivedByCourtDate = nowFactory()
+    }
+
     const updatedCase = await this.caseService.update(
       theCase,
       update,

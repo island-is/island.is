@@ -263,7 +263,7 @@ describe('getAppealInfo', () => {
   test('should return a statement deadline if the case has been marked as received by the court', () => {
     const workingCase = {
       courtEndTime: '2022-06-15T19:50:08.033Z',
-      prosecutorPostponedAppealDate: '2022-06-15T19:50:08.033Z',
+      appealReceivedByCourtDate: '2022-06-15T19:50:08.033Z',
       state: CaseState.RECEIVED,
     } as Case
 
@@ -273,6 +273,30 @@ describe('getAppealInfo', () => {
       expect.objectContaining({
         statementDeadline: '2022-06-16T19:50:08.033Z',
       }),
+    )
+  })
+
+  describe('for cases with status', () => {
+    each`
+    appealState
+    ${CaseAppealState.APPEALED}
+    ${CaseAppealState.RECEIVED}
+    ${CaseAppealState.COMPLETED}`.it(
+      '$appealState should return that case has been appealed',
+      ({ appealState }) => {
+        const workingCase = {
+          courtEndTime: '2022-06-15T19:50:08.033Z',
+          appealState,
+        } as Case
+
+        const appealInfo = getAppealInfo(workingCase)
+
+        expect(appealInfo).toEqual(
+          expect.objectContaining({
+            hasBeenAppealed: true,
+          }),
+        )
+      },
     )
   })
 
