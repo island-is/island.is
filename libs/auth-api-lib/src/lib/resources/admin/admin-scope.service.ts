@@ -14,7 +14,7 @@ export class AdminScopeService {
     private readonly apiScope: typeof ApiScope,
   ) {}
 
-  mapApiScopesToPermissions({ name, description, displayName }: ApiScope) {
+  mapApiScopesToDto({ name, description, displayName }: ApiScope) {
     return {
       name,
       description,
@@ -29,6 +29,6 @@ export class AdminScopeService {
       },
     })
 
-    return apiScopes.map(this.mapApiScopesToPermissions)
+    return apiScopes.map(this.mapApiScopesToDto)
   }
 }

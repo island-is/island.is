@@ -31,7 +31,7 @@ export class MeScopesController {
     response: { status: 200, type: [AdminScopeDto] },
   })
   @Audit<AdminScopeDto[]>({
-    resources: (tenants) => tenants.map((tenant) => tenant.name),
+    resources: (scopes) => scopes.map((scope) => scope.name),
   })
   findAll(@Param('tenantId') id: string): Promise<AdminScopeDto[]> {
     return this.adminScopeService.findApiScopesByTenantId(id)

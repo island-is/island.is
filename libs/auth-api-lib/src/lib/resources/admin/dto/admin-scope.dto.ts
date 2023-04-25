@@ -14,7 +14,7 @@ export class AdminScopeDto {
 
   @IsString()
   @ApiProperty({
-    example: 'set_description',
+    example: 'Description about the scope',
   })
   description!: string
 }
