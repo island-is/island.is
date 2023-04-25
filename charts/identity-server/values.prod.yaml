@@ -410,6 +410,7 @@ services-auth-ids-api:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-ids.internal'
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'postgres-ids.internal'
