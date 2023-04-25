@@ -240,6 +240,9 @@ export class ClientsService extends MultiEnvironmentService {
         clientName:
           sourceInput.displayName.find((d) => d.locale === 'is')?.value ||
           sourceInput.clientId,
+        //exclude the uris
+        postLogoutRedirectUris: [],
+        redirectUris: [],
       },
     })
 
