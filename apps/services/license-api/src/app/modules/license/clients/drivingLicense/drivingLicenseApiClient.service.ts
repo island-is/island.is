@@ -117,14 +117,21 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
 
     const licenseNationalId = licenses?.[0]?.kennitala ?? null
     const name = licenses?.[0]?.nafn ?? null
-    //const photo = licenses?.[0]?.mynd ?? null
+    const picture = licenses?.[0]?.mynd?.mynd
 
-    if (!licenseNationalId || !name) {
+    if (
+      !licenseNationalId ||
+      !name
+      //TODO: re-enable when testing is over!
+      //|| !picture
+    ) {
       return {
         ok: false,
         error: {
           code: 14,
-          message: 'Missing data. NationalId, name or photo missing',
+          //TODO: use when testing is over!
+          //message: 'Missing data. NationalId, name or photo missing',
+          message: 'Missing data. NationalId or name missing.',
         },
       }
     }
@@ -136,7 +143,7 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
         passIdentity: {
           nationalId: licenseNationalId,
           name,
-          //picture: 'rjgoap',
+          picture,
         },
       },
     }
