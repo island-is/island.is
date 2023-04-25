@@ -7,13 +7,13 @@ export const SubscriptionsArray = {
 
 export const GeneralSubscriptionArray = [
   {
-    id: 'A',
+    id: 'OnlyNew',
     nr: 'Öll Mál',
     name: 'Tilkynningar um ný mál',
     type: 'OnlyNew',
   },
   {
-    id: 'B',
+    id: 'AllChanges',
     nr: 'Öll Mál',
     name: 'Allar tilkynningar um ný mál og breytingar',
     type: 'AllChanges',

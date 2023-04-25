@@ -41,7 +41,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  readyForProduction: true,
   featureFlag: Features.marriageConditions,
   stateMachineConfig: {
     initial: States.DRAFT,
