@@ -129,7 +129,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
   }
 
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
-    this.logger.info('getCardResponse')
     const nridArr = this.getApplicants(application)
 
     try {
@@ -139,21 +138,15 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
           applicantnationalids: this.toCommaDelimitedList(nridArr),
         })
 
-      this.logger.info('ná í card response')
-      this.logger.info(resp)
-
       if (!resp) {
         this.logger.error('EHIC.API response empty from getCardResponse', resp)
       }
 
       return resp
     } catch (e) {
-      this.logger.info('ná í card response error')
-      this.logger.info(e)
       this.logger.error('EHIC.API error getCardResponse', e)
       throw e
     }
-    return null
   }
 
   async applyForPhysicalAndTemporary(obj: TemplateApiModuleActionProps) {
@@ -194,7 +187,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    this.logger.info('applyForTemporaryCard')
     const applicants = this.getApplicants(
       application,
       FormApplyType.APPLYING_FOR_PDF,
@@ -233,8 +225,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
         throw error
       }
     }
-    this.logger.info('pdf array length')
-    this.logger.info(pdfArray.length)
     return pdfArray
   }
 }
