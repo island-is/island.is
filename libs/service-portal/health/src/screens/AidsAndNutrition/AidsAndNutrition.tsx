@@ -6,6 +6,7 @@ import {
   Text,
   Inline,
   Button,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -78,9 +79,10 @@ const AidsAndNutrition = () => {
   const { formatMessage } = useLocale()
 
   const { loading, error, data } = useQuery<Query>(GetAidsAndNutrition)
-  const supportData = data?.getRightsPortalAidsAndNutrition
-
-  console.log(supportData)
+  const supportData = {
+    aids: data?.getRightsPortalAidsAndNutrition?.aids ?? [],
+    nutrition: data?.getRightsPortalAidsAndNutrition?.nutrition ?? [],
+  }
 
   if (error && !loading) {
     return (
@@ -95,95 +97,104 @@ const AidsAndNutrition = () => {
       />
     )
   }
-
-  if (!supportData?.aids?.length && !supportData?.nutrition?.length) {
-    return (
-      <Box marginBottom={[6, 6, 10]}>
-        <IntroHeader
-          title={formatMessage(messages.aidsAndNutritionTitle)}
-          intro={formatMessage(messages.aidsAndNutritionDescription)}
-        />
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
-          </Box>
-        </Box>
-      </Box>
-    )
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={formatMessage(messages.aidsAndNutritionTitle)}
         intro={formatMessage(messages.aidsAndNutritionDescription)}
       />
-      <Inline space={3}>
-        <>
-          <a
-            href="https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Button size="small" variant="text" icon="open" iconType="outline">
-              {formatMessage(messages.aidsAndNutritionDescriptionInfo1)}
-            </Button>
-          </a>
-          <a
-            href="https://island.is/einnota-hjalpartaeki"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Button size="small" variant="text" icon="open" iconType="outline">
-              {formatMessage(messages.aidsAndNutritionDescriptionInfo2)}
-            </Button>
-          </a>
-        </>
-      </Inline>
+      {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      <Box marginTop={[2, 2, 5]}>
-        <Box marginTop={2}>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {formatMessage(messages.name)}
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {formatMessage(messages.maxUnitRefund)}
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {formatMessage(messages.insuranceRatio)}
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {formatMessage(messages.availableRefund)}
-                  </Text>
-                </T.HeadData>
-                <T.HeadData>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {formatMessage(messages.location)}
-                  </Text>
-                </T.HeadData>
-                <T.HeadData />
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {supportData.aids &&
-                supportData.aids.map((rowItem) => generateRow(rowItem))}
-              {supportData.nutrition &&
-                supportData.nutrition.map((rowItem) => generateRow(rowItem))}
-            </T.Body>
-          </T.Table>
+      {!loading && !supportData.aids.length && !supportData.nutrition.length && (
+        <Box width="full" marginTop={4} display="flex" justifyContent="center">
+          <Box marginTop={8}>
+            <EmptyState />
+          </Box>
         </Box>
-        <FootNote type={SUPPORT_PRODUCTS} />
-      </Box>
+      )}
+
+      {!loading && (
+        <>
+          <Inline space={3}>
+            <>
+              <a
+                href="https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button
+                  size="small"
+                  variant="text"
+                  icon="open"
+                  iconType="outline"
+                >
+                  {formatMessage(messages.aidsAndNutritionDescriptionInfo1)}
+                </Button>
+              </a>
+              <a
+                href="https://island.is/einnota-hjalpartaeki"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button
+                  size="small"
+                  variant="text"
+                  icon="open"
+                  iconType="outline"
+                >
+                  {formatMessage(messages.aidsAndNutritionDescriptionInfo2)}
+                </Button>
+              </a>
+            </>
+          </Inline>
+
+          <Box marginTop={[2, 2, 5]}>
+            <Box marginTop={2}>
+              <T.Table>
+                <T.Head>
+                  <T.Row>
+                    <T.HeadData>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.name)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.maxUnitRefund)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.insuranceRatio)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.availableRefund)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.location)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData />
+                  </T.Row>
+                </T.Head>
+                <T.Body>
+                  {supportData.aids &&
+                    supportData.aids.map((rowItem) => generateRow(rowItem))}
+                  {supportData.nutrition &&
+                    supportData.nutrition.map((rowItem) =>
+                      generateRow(rowItem),
+                    )}
+                </T.Body>
+              </T.Table>
+            </Box>
+            <FootNote type={SUPPORT_PRODUCTS} />
+          </Box>
+        </>
+      )}
     </Box>
   )
 }
