@@ -3,31 +3,6 @@ export const LOG_CATEGORY = 'license-api-driving-client'
 export const DRIVING_LICENSE_API_CLIENT_FACTORY =
   'driving-license-api-client-factory'
 
-export type PkPassVerification = {
-  valid: boolean
-  data?: string
-  error?: PkPassVerificationError
-}
-
-export type PkPassVerificationError = {
-  /**
-   * Generic placeholder for a status code, could be the HTTP status code, code
-   * from API, or empty string. Semantics need to be defined per license type
-   */
-  status: string
-
-  /**
-   * Generic placeholder for a status message, from API, or empty "Unknown error".
-   * Semantics need to be defined per license type
-   */
-  message: string
-
-  /**
-   * data is used to pass along the error from originator, e.g. SmartSolution
-   */
-  data?: string
-}
-
 export interface DrivingLicenseResponse {
   id?: number
   nafn?: string

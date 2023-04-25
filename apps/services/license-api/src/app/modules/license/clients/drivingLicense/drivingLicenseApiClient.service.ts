@@ -2,15 +2,20 @@ import { Inject, Injectable } from '@nestjs/common'
 import { GenericLicenseClient, VerifyLicenseResult } from '../../license.types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Pass, RevokePassData, Result } from '@island.is/clients/smartsolutions'
+import {
+  Pass,
+  RevokePassData,
+  Result,
+  SmartSolutionsApi,
+} from '@island.is/clients/smartsolutions'
 import {
   DrivingLicenseResponse,
   LOG_CATEGORY,
 } from './drivingLicenseApiClient.type'
-import { PkPassClient } from './pkpass/pkpass.client'
 import { ConfigType } from '@nestjs/config'
 import { XRoadConfig } from '@island.is/nest/config'
 import { DrivingLicenseApiClientConfig } from './drivingLicenseApiClient.config'
+import { VerifyInputData } from '../../dto/verifyLicense.input'
 
 @Injectable()
 export class DrivingLicenseApiClientService implements GenericLicenseClient {
@@ -20,7 +25,7 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     @Inject(DrivingLicenseApiClientConfig.KEY)
     private config: ConfigType<typeof DrivingLicenseApiClientConfig>,
-    private pkpassClient: PkPassClient,
+    private smartApi: SmartSolutionsApi,
   ) {}
 
   private headers() {
@@ -42,85 +47,97 @@ export class DrivingLicenseApiClientService implements GenericLicenseClient {
 
   /** We need to verify the pk pass AND the license itself! */
   async verify(inputData: string): Promise<Result<VerifyLicenseResult>> {
-    const result = await this.pkpassClient.verifyPkpassByPdf417(inputData)
-
-    if (!result) {
-      this.logger.warn('Missing pkpass verify from client', {
-        category: LOG_CATEGORY,
-      })
+    //need to parse the scanner data
+    let parsedInput
+    try {
+      parsedInput = JSON.parse(inputData) as VerifyInputData
+    } catch (ex) {
       return {
         ok: false,
         error: {
-          code: 13,
-          message: 'Missing pkpass verify',
+          code: 12,
+          message: 'Invalid input data',
         },
       }
     }
 
-    if (result.error) {
-      let data = ''
+    const { code, date } = parsedInput
 
-      try {
-        data = JSON.stringify(result.error.serviceError?.data)
-      } catch {
-        // noop
-      }
-
+    if (!code || !date) {
       return {
         ok: false,
         error: {
-          code: 13,
-          message: result.error.serviceError?.message,
-          data,
+          code: 4,
+          message:
+            'Invalid input data,  either code or date are missing or invalid',
         },
       }
     }
 
-    if (result.nationalId) {
-      const nationalId = result.nationalId.replace('-', '')
-      const licenses = await this.requestFromXroadApi(nationalId)
+    const verifyRes = await this.smartApi.verifyPkPass({ code, date })
 
-      if (!licenses) {
-        return {
-          ok: false,
-          error: {
-            code: 14,
-            message: 'Missing licenses',
-          },
-        }
-      }
+    if (!verifyRes.ok) {
+      return verifyRes
+    }
 
-      const licenseNationalId = licenses?.[0]?.kennitala ?? null
-      const name = licenses?.[0]?.nafn ?? null
-      const photo = licenses?.[0]?.mynd ?? null
-
-      if (!licenseNationalId || !name || !photo) {
-        return {
-          ok: false,
-          error: {
-            code: 14,
-            message: 'Missing data. NationalId, name or photo missing',
-          },
-        }
-      }
-
+    if (!verifyRes.data.valid) {
       return {
         ok: true,
         data: {
-          valid: true,
-          passIdentity: {
-            nationalId: licenseNationalId,
-            name,
-            picture: photo.mynd,
-          },
+          valid: false,
         },
       }
     }
+
+    const passNationalId = verifyRes.data.pass?.inputFieldValues.find(
+      (i) => i.passInputField.identifier === 'kennitala',
+    )?.value
+
+    if (!passNationalId) {
+      return {
+        ok: false,
+        error: {
+          code: 14,
+          message: 'Missing pass data',
+        },
+      }
+    }
+    const nationalId = passNationalId.replace('-', '')
+    const licenses = await this.requestFromXroadApi(nationalId)
+
+    if (!licenses) {
+      return {
+        ok: false,
+        error: {
+          code: 14,
+          message: 'Missing licenses',
+        },
+      }
+    }
+
+    const licenseNationalId = licenses?.[0]?.kennitala ?? null
+    const name = licenses?.[0]?.nafn ?? null
+    //const photo = licenses?.[0]?.mynd ?? null
+
+    if (!licenseNationalId || !name) {
+      return {
+        ok: false,
+        error: {
+          code: 14,
+          message: 'Missing data. NationalId, name or photo missing',
+        },
+      }
+    }
+
     return {
-      ok: false,
-      error: {
-        code: 99,
-        message: 'Unknown error',
+      ok: true,
+      data: {
+        valid: true,
+        passIdentity: {
+          nationalId: licenseNationalId,
+          name,
+          //picture: 'rjgoap',
+        },
       },
     }
   }
