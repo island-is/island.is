@@ -1,0 +1,52 @@
+openapi: 3.0.0
+info:
+  title: IAS API
+  description: IAS API
+  contact:
+    name: IAS API
+    url: https://island.is
+    email: island@island.is
+  version: v1
+paths:
+  /v1/me/consents:
+    get:
+      tags:
+        - Consents
+      operationId: Consents_Get
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentsResponse'
+components:
+  schemas:
+    ConsentsResponse:
+      type: object
+      properties:
+        consents:
+          type: array
+          items:
+            $ref: '#/components/schemas/Consent'
+    Consent:
+      type: object
+      properties:
+        ClientId:
+          type: string
+        ConsentedScopes:
+          type: array
+          items:
+            type: string
+        RejectedScopes:
+          type: array
+          items:
+            type: string
+          required:
+            - 'ConsentedScopes'
+            - 'RejectedScopes'
+  securitySchemes:
+    auth:
+      name: Authorization
+      type: apiKey
+      in: header

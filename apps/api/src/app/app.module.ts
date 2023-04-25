@@ -111,6 +111,7 @@ import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
+import { AuthIdsApiClientConfig } from '@island.is/clients/auth/ids-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -326,6 +327,7 @@ const autoSchemaFile = environment.production
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
+        AuthIdsApiClientConfig
       ],
     }),
   ],

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { AuthIdsApiClientModule } from '@island.is/clients/auth/ids-api'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { IdentityClientModule } from '@island.is/clients/identity'
 import { CmsModule } from '@island.is/cms'
@@ -56,6 +57,7 @@ import { ScopePermissionsService } from './services/scopePermissions.service'
     AuthDelegationApiClientModule,
     FeatureFlagModule,
     IdentityClientModule,
+    AuthIdsApiClientModule,
   ],
 })
 export class AuthModule {}
