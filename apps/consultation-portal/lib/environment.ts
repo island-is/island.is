@@ -2,11 +2,11 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const devConfig = {
   production: false,
-  NEXTAUTH_URL: 'http://localhost:4200',
+  NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   identityServerId: 'identity-server',
   identityServerClientId: process.env.IDENTITYSERVER_CLIENT_ID,
-  identityServerDomain: process.env.IDENTITYSERVER_DOMAIN,
-  identityServerLogoutURL: 'http://localhost:4200',
+  identityServerDomain: process.env.IDENTITY_SERVER_DOMAIN,
+  identityServerLogoutURL: process.env.IDENTITY_SERVER_LOGOUT_URL,
   identityServerSecret: process.env.IDENTITYSERVER_SECRET,
   identityServerScope: process.env.IDENTITYSERVER_SCOPE,
   identityServerName: 'Samradsgatt',
