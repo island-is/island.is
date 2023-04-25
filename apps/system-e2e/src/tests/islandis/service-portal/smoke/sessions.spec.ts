@@ -33,6 +33,7 @@ test.describe('Service portal, in session history', () => {
     await page.goto(sessionHistoryUrl, {
       waitUntil: 'networkidle',
     })
+    await expect(page.getByRole('heading', { name: 'Notkun' })).toBeVisible()
     const sessionsRows = page.locator('table > tbody > tr')
 
     // Assert

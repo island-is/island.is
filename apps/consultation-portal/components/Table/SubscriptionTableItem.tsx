@@ -17,7 +17,9 @@ export interface SubscriptionTableItemProps {
   item: Case
   idx: number
   checkboxStatus: boolean
+  IsSubscriptionTypeChecked: boolean
   onCheckboxChange: () => void
+  onSubscriptiontypeChange: (val) => void
   currentTab: Area
   mdBreakpoint: boolean
 }
@@ -26,19 +28,25 @@ const SubscriptionTableItem = ({
   item,
   idx,
   checkboxStatus,
+  IsSubscriptionTypeChecked,
+  onSubscriptiontypeChange,
   onCheckboxChange,
   currentTab,
   mdBreakpoint,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
+
   const onClick = () => {
     setIsOpen(!isOpen)
   }
 
   const borderColor = 'transparent'
-  const checkboxChange = (itemId: number, checked: boolean) => {
-    onClick()
-    onCheckboxChange(itemId, checked)
+
+  const checkboxChange = (checked: boolean, close = true) => {
+    if (close) {
+      onClick()
+    }
+    onCheckboxChange(item.id, checked)
   }
 
   const { Row, Data: TData } = T
@@ -61,7 +69,7 @@ const SubscriptionTableItem = ({
         <Data width="10">
           <Checkbox
             checked={checkboxStatus(item.id)}
-            onChange={(e) => checkboxChange(item.id, e.target.checked)}
+            onChange={(e) => checkboxChange(e.target.checked)}
           />
         </Data>
         {currentTab !== Area.case ? (
@@ -117,7 +125,7 @@ const SubscriptionTableItem = ({
         </TData>
       </Row>
       {isOpen && (
-        <Row>
+        <Row key={idx * 21 + 1}>
           <TData
             colSpan={4}
             borderColor={borderColor}
@@ -126,7 +134,11 @@ const SubscriptionTableItem = ({
               background: tableRowBackgroundColor(idx),
             }}
           >
-            <SubscriptionChoices />
+            <SubscriptionChoices
+              itemId={item.id}
+              checkboxCheck={IsSubscriptionTypeChecked}
+              checkboxChange={onSubscriptiontypeChange}
+            />
           </TData>
         </Row>
       )}

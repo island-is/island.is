@@ -18,6 +18,7 @@ import {
   isCourtRole,
   Feature,
   isProsecutionRole,
+  CaseTransition,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -214,7 +215,11 @@ export const getExtensionInfoText = (
       })
 }
 
-type availableModals = 'NoModal' | 'SigningModal' | 'ConfirmAppealAfterDeadline'
+type availableModals =
+  | 'NoModal'
+  | 'SigningModal'
+  | 'ConfirmAppealAfterDeadline'
+  | 'AppealReceived'
 
 export const SignedVerdictOverview: React.FC = () => {
   const {
@@ -264,9 +269,12 @@ export const SignedVerdictOverview: React.FC = () => {
     extendCase,
     isExtendingCase,
     isSendingNotification,
+    transitionCase,
   } = useCase()
-  const { title, description, child } = useAppealAlertBanner(workingCase, () =>
-    setModalVisible('ConfirmAppealAfterDeadline'),
+  const { title, description, child } = useAppealAlertBanner(
+    workingCase,
+    () => setModalVisible('ConfirmAppealAfterDeadline'),
+    () => handleReceivedTransition(workingCase),
   )
 
   // skip loading institutions if the user does not have an id
@@ -369,6 +377,18 @@ export const SignedVerdictOverview: React.FC = () => {
     } else {
       setIsReopeningCase(true)
     }
+  }
+
+  const handleReceivedTransition = (workingCase: Case) => {
+    transitionCase(
+      workingCase.id,
+      CaseTransition.RECEIVE_APPEAL,
+      setWorkingCase,
+    ).then((updatedCase) => {
+      if (updatedCase) {
+        setModalVisible('AppealReceived')
+      }
+    })
   }
 
   const setAccusedAppealDate = (date?: Date) => {
@@ -1009,6 +1029,18 @@ export const SignedVerdictOverview: React.FC = () => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
             }}
             onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
+        {modalVisible === 'AppealReceived' && (
+          <Modal
+            title={formatMessage(m.sections.appealReceived.title)}
+            text={formatMessage(m.sections.appealReceived.text)}
+            primaryButtonText={formatMessage(
+              m.sections.appealReceived.primaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
               setModalVisible('NoModal')
             }}
           />
