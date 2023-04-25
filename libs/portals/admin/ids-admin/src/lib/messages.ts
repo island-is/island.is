@@ -464,4 +464,17 @@ export const m = defineMessages({
     id: 'ap.ids-admin:not-in-sync-across-all-environments',
     defaultMessage: 'SyncSettings are different in some environments',
   },
+  publishEnvironment: {
+    id: 'ap.ids-admin:publish-environment',
+    defaultMessage: 'Publish to {environment}',
+  },
+  publishEnvironmentDescription: {
+    id: 'ap.ids-admin:publish-environment-description',
+    defaultMessage:
+      'The application will inherit settings from the selected environment excluding URLs and client secrets.',
+  },
+  chooseEnvironmentToCopyFrom: {
+    id: 'ap.ids-admin:choose-environment-to-copy-from',
+    defaultMessage: 'Choose environment to copy settings from',
+  },
 })
