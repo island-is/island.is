@@ -14,6 +14,13 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '15m', memory: '256Mi' },
     })
+    .env({
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+    })
     .secrets({
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
