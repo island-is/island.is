@@ -1,14 +1,12 @@
 import {
   ArrowLink,
   Box,
-  Button,
   GridColumn,
   GridContainer,
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
 import Layout from '../../components/Layout/Layout'
-import { title } from 'process'
 
 export const EmailVerifiedPage = () => {
   return (
