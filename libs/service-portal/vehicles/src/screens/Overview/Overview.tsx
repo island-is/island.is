@@ -24,12 +24,11 @@ import {
 import { useUserInfo } from '@island.is/auth/react'
 
 import { VehicleCard } from '../../components/VehicleCard'
-import { messages } from '../../lib/messages'
+import { messages, urls } from '../../lib/messages'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { VEHICLE_HIDE_NAME } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -214,7 +213,7 @@ const VehiclesOverview = () => {
           </Box>
           <Box marginBottom={[1, 1, 1, 0]}>
             <a
-              href={VEHICLE_HIDE_NAME}
+              href={formatMessage(urls.hideName)}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -236,7 +235,7 @@ const VehiclesOverview = () => {
             <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>
               <Box marginBottom={1}>
                 <Input
-                  icon="search"
+                  icon={{ name: 'search' }}
                   backgroundColor="blue"
                   size="xs"
                   value={filterValue.searchQuery}

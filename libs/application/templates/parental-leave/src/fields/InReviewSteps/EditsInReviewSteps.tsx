@@ -9,7 +9,7 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-import { getExpectedDateOfBirth } from '../../lib/parentalLeaveUtils'
+import { getExpectedDateOfBirthOrAdoptionDate } from '../../lib/parentalLeaveUtils'
 import { dateFormat } from '@island.is/shared/constants'
 
 import { States as ApplicationStates } from '../../constants'
@@ -34,7 +34,7 @@ const statesMap: StatesMap = {
 
 const EditInReviewSteps: FC<FieldBaseProps> = (props) => {
   const { application } = props
-  const dob = getExpectedDateOfBirth(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const dobDate = dob ? new Date(dob) : null
 
   const { formatMessage } = useLocale()

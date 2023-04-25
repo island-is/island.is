@@ -89,6 +89,7 @@ export class GenericDrivingLicenseApi
     try {
       res = await fetch(`${this.xroadApiUrl}/${url}`, {
         headers: this.headers(),
+        timeout: this.config.fetch.timeout,
       })
 
       if (!res.ok) {
@@ -214,15 +215,6 @@ export class GenericDrivingLicenseApi
     }
 
     if (!license.mynd?.skrad || !license.mynd?.mynd) {
-      return GenericUserLicensePkPassStatus.NotAvailable
-    }
-
-    const cutoffDate = new Date(IMAGE_CUTOFF_DATE)
-    const imageDate = new Date(license.mynd?.skrad)
-
-    const comparison = compareAsc(imageDate, cutoffDate)
-
-    if (isNaN(comparison) || comparison < 0) {
       return GenericUserLicensePkPassStatus.NotAvailable
     }
 

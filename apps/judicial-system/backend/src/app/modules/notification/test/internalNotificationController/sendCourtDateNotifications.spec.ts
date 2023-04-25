@@ -1,9 +1,12 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
-import { CaseType, NotificationType } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  NotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
-import { User } from '../../../user'
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -13,7 +16,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (eventOnly?: boolean) => Promise<Then>
+type GivenWhenThen = () => Promise<Then>
 
 describe('InternalNotificationController - Send court date notification', () => {
   const userId = uuid()
@@ -34,13 +37,12 @@ describe('InternalNotificationController - Send court date notification', () => 
 
     mockEmailService = emailService
 
-    givenWhenThen = async (eventOnly?) => {
+    givenWhenThen = async () => {
       const then = {} as Then
 
       await internalNotificationController
         .sendCaseNotification(
           caseId,
-          { id: userId } as User,
           {
             id: caseId,
             type: CaseType.CUSTODY,
@@ -48,7 +50,7 @@ describe('InternalNotificationController - Send court date notification', () => 
             court: { name: courtName },
             courtCaseNumber,
           } as Case,
-          { userId, type: NotificationType.COURT_DATE, eventOnly },
+          { user: { id: userId } as User, type: NotificationType.COURT_DATE },
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -74,18 +76,6 @@ describe('InternalNotificationController - Send court date notification', () => 
         }),
       )
       expect(then.result).toEqual({ delivered: true })
-    })
-  })
-
-  describe('event only', () => {
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(true)
-    })
-
-    it('should send notification', () => {
-      expect(then.result).toEqual({ delivered: false })
     })
   })
 })

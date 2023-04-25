@@ -32,9 +32,12 @@ export const getApproveAnswers = (
     'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
-  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators.find(
-    (coOwnerOrOperator) => coOwnerOrOperator.nationalId === reviewerNationalId,
-  )
+  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (coOwnerOrOperator) =>
+        coOwnerOrOperator.nationalId === reviewerNationalId,
+    )
   if (
     buyerCoOwnerAndOperator &&
     buyerCoOwnerAndOperator.approved === undefined
@@ -48,6 +51,7 @@ export const getApproveAnswers = (
             email: coOwnerOrOperator.email,
             phone: coOwnerOrOperator.phone,
             type: coOwnerOrOperator.type,
+            wasRemoved: coOwnerOrOperator.wasRemoved,
             approved:
               coOwnerOrOperator.nationalId === reviewerNationalId
                 ? true

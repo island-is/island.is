@@ -12,16 +12,16 @@ import { formatPhoneNumber } from '../../../utils'
 export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
   coOwnersAndOperators = [],
   reviewerNationalId = '',
+  mainOperator = '',
 }) => {
   const { formatMessage } = useLocale()
-
   const operators = coOwnersAndOperators.filter((x) => x.type === 'operator')
 
   return operators.length > 0 ? (
     <ReviewGroup isLast>
       <GridRow>
         {operators?.map(({ name, nationalId, email, phone }, index: number) => {
-          if (name.length === 0) return null
+          if (!name || name.length === 0) return null
           const isOperator = nationalId === reviewerNationalId
           return (
             <GridColumn
@@ -32,15 +32,15 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                 <Text variant="h4">
                   {formatMessage(information.labels.operator.title)}{' '}
                   {operators.length > 1 ? index + 1 : ''}{' '}
-                  {operators.length > 1 && index === 0
+                  {operators.length > 1 && mainOperator === nationalId
                     ? `(${formatMessage(information.labels.operator.main)})`
                     : ''}{' '}
                   {isOperator && `(${formatMessage(review.status.youLabel)})`}
                 </Text>
                 <Text>{name}</Text>
-                <Text>{kennitala.format(nationalId, '-')}</Text>
+                <Text>{kennitala.format(nationalId!, '-')}</Text>
                 <Text>{email}</Text>
-                <Text>{formatPhoneNumber(phone)}</Text>
+                <Text>{formatPhoneNumber(phone!)}</Text>
               </Box>
             </GridColumn>
           )

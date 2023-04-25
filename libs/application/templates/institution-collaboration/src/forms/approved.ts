@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { formConclusionSection } from '@island.is/application/ui-forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { institutionApplicationMessages as m } from '../lib/messages'
 
 export const approved: Form = buildForm({
@@ -8,7 +8,7 @@ export const approved: Form = buildForm({
   title: '',
   mode: FormModes.APPROVED,
   children: [
-    formConclusionSection({
+    buildFormConclusionSection({
       alertTitle: m.confirmation.sectionTitle,
       expandableHeader: m.confirmation.sectionInfoHeader,
       expandableDescription: m.confirmation.sectionInfoBulletPoints,

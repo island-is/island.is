@@ -600,4 +600,36 @@ export const notifications = {
         'Texti í pósti til dómara og dómritara þegar ekki tekst að skrá varnaraðila/verjendur á mál.',
     },
   }),
+  caseAppealedToCourtOfAppeals: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.case_appealed_to_court_of_appeals.subject',
+      defaultMessage: 'Kæra í máli {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og dómritara þegar að mál er kært til landsréttar',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.case_appealed_to_court_of_appeals.body',
+      defaultMessage:
+        'Úrskurður hefur verið kærður í máli {courtCaseNumber}. Hægt er að nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum.',
+      description:
+        'Texti í pósti til dómara og dómritara þegar að mál er kært til landsréttar',
+    },
+  }),
+  caseAppealReceivedByCourt: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.case_appeal_received_by_court.subject',
+      defaultMessage: 'Upplýsingar vegna kæru í máli {courtCaseNumber}',
+      description: 'Fyrirsögn í pósti til aðila máls þegar að kæra er móttekin',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.case_appeal_received_by_court.body',
+      defaultMessage:
+        'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. Hægt er að skila greinargerð og nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum.',
+      description: 'Texti í pósti til aðila máls þegar að kæra er móttekin',
+    },
+  }),
 }

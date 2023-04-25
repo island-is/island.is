@@ -1,3 +1,6 @@
+// Types
+export * from './lib/types'
+
 // Core module
 export * from './lib/core/sequelizeConfig.service'
 export * from './lib/core/types/paged-rows.dto'
@@ -33,13 +36,15 @@ export * from './lib/delegations/models/delegation.model'
 export * from './lib/delegations/models/delegation-scope.model'
 export * from './lib/delegations/DelegationConfig'
 export * from './lib/delegations/utils/scopes'
-export * from './lib/types/defaultDomain'
 
 // Resources module
 export * from './lib/resources/resources.module'
 export * from './lib/resources/resources.service'
 export * from './lib/resources/delegation-resources.service'
 export * from './lib/resources/resource-access.service'
+export * from './lib/resources/tenants.service'
+export * from './lib/resources/me-tenant.guard'
+export * from './lib/resources/admin/admin-scope.service'
 export * from './lib/resources/models/api-resource.model'
 export * from './lib/resources/models/api-resource-scope.model'
 export * from './lib/resources/models/api-resource-secret.model'
@@ -65,6 +70,8 @@ export * from './lib/resources/dto/api-resource-allowed-scope.dto'
 export * from './lib/resources/dto/identity-resources.dto'
 export * from './lib/resources/dto/domain.dto'
 export * from './lib/resources/dto/user-claim.dto'
+export * from './lib/resources/dto/tenant.dto'
+export * from './lib/resources/admin/dto/admin-scope.dto'
 
 // Clients module
 export * from './lib/clients/clients.module'
@@ -88,11 +95,16 @@ export * from './lib/clients/models/client-redirect-uri.model'
 export * from './lib/clients/models/client-claim.model'
 export * from './lib/clients/models/client-secret.model'
 export * from './lib/clients/models/client.model'
+export * from './lib/clients/admin/admin-clients.service'
+export * from './lib/clients/admin/dto/admin-client.dto'
+export * from './lib/clients/admin/dto/admin-create-client.dto'
+export * from './lib/clients/admin/dto/admin-patch-client.dto'
 
 // Translation module
 export * from './lib/translation/translation.module'
 export * from './lib/translation/translation.service'
 export * from './lib/translation/dto/language.dto'
+export * from './lib/translation/dto/translated-value.dto'
 export * from './lib/translation/dto/translation.dto'
 export * from './lib/translation/models/translation.model'
 export * from './lib/translation/models/language.model'
@@ -138,3 +150,5 @@ export * from './lib/personal-representative/dto/paginated-personal-representati
 export * from './lib/personal-representative/dto/paginated-personal-representative.dto'
 export * from './lib/personal-representative/dto/paginated-personal-representative-access.dto'
 export * from './lib/personal-representative/dto/personal-representative-scope-permission.dto'
+export * from './lib/clients/admin/dto/admin-create-client.dto'
+export * from './lib/clients/admin/dto/admin-client.dto'

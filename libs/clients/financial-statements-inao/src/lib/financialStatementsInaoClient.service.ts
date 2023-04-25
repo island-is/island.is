@@ -24,6 +24,7 @@ import type {
   PersonalElectionSubmitInput,
 } from './types'
 import { ClientTypes, ContactType } from './types'
+import { hasReachedAge } from './utils/ageUtil'
 import {
   getCemeteryFileName,
   getPersonalElectionFileName,
@@ -52,6 +53,7 @@ export class FinancialStatementsInaoClientService {
       mode: 'token',
       tokenEndpoint: this.config.tokenEndpoint,
     },
+    timeout: 30000,
   })
 
   async getClientTypes(): Promise<ClientType[] | null> {
@@ -160,22 +162,27 @@ export class FinancialStatementsInaoClientService {
     return res
   }
 
-  async getElections(): Promise<Election[] | null> {
+  async getElections(nationalId: string): Promise<Election[] | null> {
     const url = `${this.basePath}/star_elections`
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
-    const elections: Election[] = data.value.map((x: any) => {
-      return {
-        electionId: x.star_electionid,
-        name: x.star_name,
-        electionDate: new Date(x.star_electiondate),
-        genitiveName: x.star_genitive_name,
-      }
-    })
+    const elections: Election[] = data.value
+      .filter((x: any) => x.star_open)
+      .map((x: any) => {
+        return {
+          electionId: x.star_electionid,
+          name: x.star_name,
+          electionDate: new Date(x.star_electiondate),
+          genitiveName: x.star_genitive_name,
+          minimumAge: x.star_minimumage,
+        }
+      })
 
-    return elections
+    return elections.filter((x) =>
+      hasReachedAge(nationalId, x.electionDate, x.minimumAge),
+    )
   }
 
   async getElectionInfo(electionId: string): Promise<ElectionInfo | null> {
@@ -195,14 +202,14 @@ export class FinancialStatementsInaoClientService {
     clientType: string,
     year: string,
   ): Promise<number | null> {
-    const select = '$select=star_value,star_years'
+    const select = '$select=star_value,star_year'
     const filter = `$filter=star_client_type eq ${clientType}`
     const url = `${this.basePath}/star_clientfinanciallimits?${select}&${filter}`
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
 
-    const found = data.value.find((x: any) => x.star_years.includes(year))
+    const found = data.value.find((x: any) => x.star_year == year)
 
     if (found) {
       return found.star_value

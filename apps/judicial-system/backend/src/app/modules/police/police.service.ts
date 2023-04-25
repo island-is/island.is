@@ -22,12 +22,12 @@ import {
   CaseState,
   CaseType,
   IndictmentSubtype,
-  User as TUser,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
-import { User } from '../user'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
@@ -88,8 +88,9 @@ export class PoliceService {
 
   private async throttleUploadPoliceCaseFile(
     caseId: string,
+    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-    user: TUser,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -145,7 +146,9 @@ export class PoliceService {
         })
       })
 
-    const key = `uploads/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `${
+      isIndictmentCase(caseType) ? 'indictments' : 'uploads'
+    }/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
     await this.awsS3Service.putObject(key, pdf)
 
@@ -154,7 +157,7 @@ export class PoliceService {
 
   async getAllPoliceCaseFiles(
     caseId: string,
-    user: TUser,
+    user: User,
   ): Promise<PoliceCaseFile[]> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetDocumentListById/${caseId}`,
@@ -164,11 +167,16 @@ export class PoliceService {
           const response = await res.json()
 
           return response.map(
-            (file: { rvMalSkjolMals_ID: string; heitiSkjals: string }) => ({
+            (file: {
+              rvMalSkjolMals_ID: string
+              heitiSkjals: string
+              malsnumer: string
+            }) => ({
               id: file.rvMalSkjolMals_ID,
               name: file.heitiSkjals.endsWith('.pdf')
                 ? file.heitiSkjals
                 : `${file.heitiSkjals}.pdf`,
+              policeCaseNumber: file.malsnumer,
             }),
           )
         }
@@ -216,11 +224,13 @@ export class PoliceService {
 
   async uploadPoliceCaseFile(
     caseId: string,
+    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-    user: TUser,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
+      caseType,
       uploadPoliceCaseFile,
       user,
     )

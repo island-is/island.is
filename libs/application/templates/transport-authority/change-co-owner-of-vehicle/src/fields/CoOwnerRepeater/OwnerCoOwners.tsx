@@ -9,14 +9,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { information } from '../../lib/messages'
+import { useFormContext } from 'react-hook-form'
 
 interface Props {
   id: string
   index: number
   rowLocation: number
   handleRemove: (index: number) => void
+  wasRemoved: boolean
 }
 
 export const OwnerCoOwners: FC<Props & FieldBaseProps> = ({
@@ -24,8 +26,10 @@ export const OwnerCoOwners: FC<Props & FieldBaseProps> = ({
   index,
   rowLocation,
   handleRemove,
+  wasRemoved,
   ...props
 }) => {
+  const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
@@ -33,9 +37,14 @@ export const OwnerCoOwners: FC<Props & FieldBaseProps> = ({
   const phoneField = `${fieldIndex}.phone`
   const nameField = `${fieldIndex}.name`
   const nationaIdField = `${fieldIndex}.nationalId`
+  const wasRemovedField = `${fieldIndex}.wasRemoved`
+
+  useEffect(() => {
+    setValue(wasRemovedField, `${wasRemoved}`)
+  }, [wasRemoved, setValue])
 
   return (
-    <Box position="relative" marginBottom={4}>
+    <Box position="relative" marginBottom={4} hidden={wasRemoved}>
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
           {formatMessage(information.labels.coOwner.title)} {rowLocation}

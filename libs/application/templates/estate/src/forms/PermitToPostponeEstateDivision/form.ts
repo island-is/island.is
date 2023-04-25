@@ -90,14 +90,14 @@ export const form: Form = buildForm({
                   titleVariant: 'h3',
                 }),
                 buildTextField({
-                  id: 'inventory',
+                  id: 'inventory.info',
                   title: m.inventoryTextField,
                   placeholder: m.inventoryTextFieldPlaceholder,
                   variant: 'textarea',
                   rows: 7,
                 }),
                 buildTextField({
-                  id: 'inventoryValue',
+                  id: 'inventory.value',
                   title: m.inventoryValueTitle,
                   width: 'half',
                   variant: 'currency',
@@ -125,6 +125,30 @@ export const form: Form = buildForm({
                   title: '',
                   id: 'estate.vehicles',
                   component: 'VehiclesRepeater',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'guns',
+          title: m.guns,
+          children: [
+            buildMultiField({
+              id: 'realEstate',
+              title: m.propertiesTitle,
+              description: m.propertiesDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'gunsTitle',
+                  title: m.guns,
+                  description: m.gunsDescription,
+                  titleVariant: 'h3',
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.guns',
+                  component: 'GunsRepeater',
                 }),
               ],
             }),
@@ -242,8 +266,8 @@ export const form: Form = buildForm({
                         id: 'organization',
                       },
                       {
-                        title: m.stocksSsn.defaultMessage,
-                        id: 'ssn',
+                        title: m.stocksNationalId.defaultMessage,
+                        id: 'nationalId',
                         format: '######-####',
                       },
                       {
@@ -272,29 +296,29 @@ export const form: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'moneyAndDedosit',
+          id: 'moneyAndDeposit',
           title: m.moneyAndDepositTitle,
           children: [
             buildMultiField({
-              id: 'moneyAndDedosit',
+              id: 'moneyAndDeposit',
               title: m.propertiesTitle,
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
-                  id: 'moneyAndDedositTitle',
+                  id: 'moneyAndDepositTitle',
                   title: m.moneyAndDepositTitle,
                   description: m.moneyAndDepositDescription,
                   titleVariant: 'h3',
                 }),
                 buildTextField({
-                  id: 'moneyAndDepositBoxesInfo',
+                  id: 'moneyAndDeposit.info',
                   title: m.moneyAndDepositText,
                   placeholder: m.moneyAndDepositPlaceholder,
                   variant: 'textarea',
                   rows: 7,
                 }),
                 buildTextField({
-                  id: 'moneyAndDepositBoxesValue',
+                  id: 'moneyAndDeposit.value',
                   title: m.moneyAndDepositValue,
                   width: 'half',
                   variant: 'currency',
@@ -319,14 +343,14 @@ export const form: Form = buildForm({
                   titleVariant: 'h3',
                 }),
                 buildTextField({
-                  id: 'otherAssets',
+                  id: 'otherAssets.info',
                   title: m.otherAssetsText,
                   placeholder: m.otherAssetsPlaceholder,
                   variant: 'textarea',
                   rows: 7,
                 }),
                 buildTextField({
-                  id: 'otherAssetsValue',
+                  id: 'otherAssets.value',
                   title: m.otherAssetsValue,
                   width: 'half',
                   variant: 'currency',
@@ -359,8 +383,8 @@ export const form: Form = buildForm({
                     id: 'creditorName',
                   },
                   {
-                    title: m.debtsSsn.defaultMessage,
-                    id: 'ssn',
+                    title: m.debtsNationalId.defaultMessage,
+                    id: 'nationalId',
                     format: '######-####',
                   },
                   {

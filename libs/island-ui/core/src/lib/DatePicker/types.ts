@@ -40,10 +40,11 @@ export interface DatePickerProps {
   handleOpenCalendar?: () => void
   required?: boolean
   inputName?: string
+  appearInline?: boolean
   size?: DatePickerSize
   backgroundColor?: DatePickerBackgroundColor
-  icon?: IconType
-  iconType?: Type
+  icon?: { name: IconType; type?: Type }
+
   /**
    * Minimum selectable year inside datepicker
    */

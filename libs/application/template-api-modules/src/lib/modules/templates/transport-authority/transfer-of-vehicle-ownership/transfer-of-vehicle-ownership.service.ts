@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   getChargeItemCodes,
   TransferOfVehicleOwnershipAnswers,
@@ -115,18 +118,26 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
+    const sellerSsn = answers?.seller?.nationalId
+    const sellerEmail = answers?.seller?.email
+    const buyerSsn = answers?.buyer?.nationalId
+    const buyerEmail = answers?.buyer?.email
+
+    const createdStr = application.created.toISOString()
+
     // No need to continue with this validation in user is neither seller nor buyer
     // (only time application data changes is on state change from these roles)
-    const sellerSsn = answers?.seller?.nationalId
-    const buyerSsn = answers?.buyer?.nationalId
     if (auth.nationalId !== sellerSsn && auth.nationalId !== buyerSsn) {
       return
     }
 
-    const buyerCoOwners = answers?.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers?.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -136,22 +147,23 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         permno: answers?.pickVehicle?.plate,
         seller: {
           ssn: sellerSsn,
-          email: answers?.seller?.email,
+          email: sellerEmail,
         },
         buyer: {
           ssn: buyerSsn,
-          email: answers?.buyer?.email,
+          email: buyerEmail,
         },
         dateOfPurchase: new Date(answers?.vehicle?.date),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
         saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
         insuranceCompanyCode: answers?.insurance?.value,
         coOwners: buyerCoOwners?.map((coOwner) => ({
-          ssn: coOwner.nationalId,
-          email: coOwner.email,
+          ssn: coOwner.nationalId!,
+          email: coOwner.email!,
         })),
         operators: buyerOperators?.map((operator) => ({
-          ssn: operator.nationalId,
-          email: operator.email,
+          ssn: operator.nationalId!,
+          email: operator.email!,
           isMainOperator:
             buyerOperators.length > 1
               ? operator.nationalId === answers?.buyerMainOperator?.nationalId
@@ -185,8 +197,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     | undefined
   > {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as TransferOfVehicleOwnershipAnswers
 
       const chargeItemCodes = getChargeItemCodes()
@@ -194,7 +204,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
@@ -304,8 +314,12 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     const newlyAddedRecipientList: Array<EmailRecipient> = []
 
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+
     // Buyer's co-owners
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
     if (buyerCoOwners) {
@@ -322,8 +336,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : false
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerCoOwners[i].nationalId,
-            name: buyerCoOwners[i].name,
+            ssn: buyerCoOwners[i].nationalId!,
+            name: buyerCoOwners[i].name!,
             email: emailChanged ? buyerCoOwners[i].email : undefined,
             phone: phoneChanged ? buyerCoOwners[i].phone : undefined,
             role: EmailRole.buyerCoOwner,
@@ -333,7 +347,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     }
 
     // Buyer's operators
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
     if (buyerOperators) {
@@ -350,8 +364,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
           : false
         if (!oldEntry || emailChanged || phoneChanged) {
           newlyAddedRecipientList.push({
-            ssn: buyerOperators[i].nationalId,
-            name: buyerOperators[i].name,
+            ssn: buyerOperators[i].nationalId!,
+            name: buyerOperators[i].name!,
             email: emailChanged ? buyerOperators[i].email : undefined,
             phone: phoneChanged ? buyerOperators[i].phone : undefined,
             role: EmailRole.buyerOperator,
@@ -492,6 +506,8 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as TransferOfVehicleOwnershipAnswers
+    const createdStr = application.created.toISOString()
+
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.seller?.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -502,11 +518,13 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         400,
       )
     }
-
-    const buyerCoOwners = answers.buyerCoOwnerAndOperator?.filter(
+    const filteredBuyerCoOwnerAndOperator = answers?.buyerCoOwnerAndOperator?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const buyerCoOwners = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'coOwner',
     )
-    const buyerOperators = answers.buyerCoOwnerAndOperator?.filter(
+    const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
       (x) => x.type === 'operator',
     )
 
@@ -521,15 +539,16 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
         email: answers?.buyer?.email,
       },
       dateOfPurchase: new Date(answers?.vehicle?.date),
+      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: Number(answers?.vehicle?.salePrice || '0') || 0,
       insuranceCompanyCode: answers?.insurance?.value,
       coOwners: buyerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
+        ssn: coOwner.nationalId!,
+        email: coOwner.email!,
       })),
       operators: buyerOperators?.map((operator) => ({
-        ssn: operator.nationalId,
-        email: operator.email,
+        ssn: operator.nationalId!,
+        email: operator.email!,
         isMainOperator:
           buyerOperators.length > 1
             ? operator.nationalId === answers.buyerMainOperator?.nationalId

@@ -90,7 +90,7 @@ const Sessions = () => {
       refetch({
         ...getQueryVariables(
           nextCursor,
-          searchNationalId,
+          kennitala.format(searchNationalId, ''),
           filterDates.fromDate,
           filterDates.toDate,
         ),
@@ -111,7 +111,7 @@ const Sessions = () => {
     refetch({
       ...getQueryVariables(
         '',
-        searchNationalId,
+        kennitala.format(searchNationalId, ''),
         type === 'clear'
           ? initialDates.fromDate
           : type === 'from'
@@ -145,7 +145,7 @@ const Sessions = () => {
       refetch({
         ...getQueryVariables(
           '',
-          value,
+          kennitala.format(value, ''),
           filterDates.fromDate,
           filterDates.toDate,
         ),

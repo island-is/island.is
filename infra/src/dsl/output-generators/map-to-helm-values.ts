@@ -115,7 +115,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
   }
   result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 2
+    serviceDef.replicaCount?.scalingMagicNumber || 5
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes
@@ -238,6 +238,13 @@ const serializeService: SerializeMethod<HelmService> = async (
     const { errors, volumes } = serializeVolumes(service, serviceDef.volumes)
     addToErrors(errors)
     result.pvcs = volumes
+  }
+  // Redis
+  if (typeof serviceDef.redis !== 'undefined') {
+    const env: { [name: string]: string } = {}
+    env['REDIS_URL_NODE_01'] = serviceDef.redis.host ?? env1.redisHost
+
+    mergeObjects(result.env, env)
   }
 
   const allErrors = getErrors()
@@ -384,7 +391,7 @@ function serializeContainerRuns(
         },
         requests: {
           memory: '128Mi',
-          cpu: '100m',
+          cpu: '50m',
         },
       },
     }
@@ -415,8 +422,8 @@ const serviceMockDef = (options: {
 }) => {
   const result: HelmService = {
     enabled: true,
-    grantNamespaces: [],
-    grantNamespacesEnabled: false,
+    grantNamespaces: ['e2e-dev', 'e2e-staging'],
+    grantNamespacesEnabled: true,
     namespace: getFeatureDeploymentNamespace(options.env),
     image: {
       repository: `bbyars/mountebank`,
@@ -446,6 +453,15 @@ const serviceMockDef = (options: {
       max: 1,
       default: 1,
     },
+    hpa: {
+      scaling: {
+        replicas: {
+          min: 1,
+          max: 1,
+        },
+        metric: { cpuAverageUtilization: 70 },
+      },
+    },
     securityContext: {
       privileged: false,
       allowPrivilegeEscalation: false,
@@ -470,7 +486,7 @@ export const HelmOutput: OutputFormat<HelmService> = {
     })
     s.replicaCount = {
       min: Math.min(1, s.replicaCount?.min ?? 1),
-      max: Math.min(2, s.replicaCount?.max ?? 2),
+      max: Math.min(2, s.replicaCount?.max ?? 1),
       default: Math.min(1, s.replicaCount?.default ?? 1),
     }
     s.namespace = getFeatureDeploymentNamespace(env)

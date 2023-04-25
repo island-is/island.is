@@ -21,7 +21,9 @@ import {
   VehicleOperatorChangeChecksByPermno,
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
+  MyPlateOwnershipChecksByRegno,
 } from './models'
+import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -59,6 +61,18 @@ export class MainResolver {
     @Args('answers') answers: OwnerChangeAnswers,
   ) {
     return this.transportAuthorityApi.validateApplicationForOwnerChange(
+      user,
+      answers,
+    )
+  }
+
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Query(() => OwnerChangeValidation, { nullable: true })
+  vehicleCoOwnerChangeValidation(
+    @CurrentUser() user: User,
+    @Args('answers') answers: CoOwnerChangeAnswers,
+  ) {
+    return this.transportAuthorityApi.validateApplicationForCoOwnerChange(
       user,
       answers,
     )
@@ -103,6 +117,21 @@ export class MainResolver {
     return await this.transportAuthorityApi.getVehiclePlateOrderChecksByPermno(
       user,
       permno,
+    )
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => MyPlateOwnershipChecksByRegno, {
+    name: 'myPlateOwnershipChecksByRegno',
+    nullable: true,
+  })
+  async getMyPlateOwnershipChecksByRegno(
+    @Args('regno', { type: () => String }) regno: string,
+    @CurrentUser() user: User,
+  ) {
+    return await this.transportAuthorityApi.getMyPlateOwnershipChecksByRegno(
+      user,
+      regno,
     )
   }
 }

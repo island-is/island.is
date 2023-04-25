@@ -2,12 +2,12 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
-  buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
@@ -15,6 +15,7 @@ import { format as formatNationalId } from 'kennitala'
 import {
   formatBankInfo,
   formatCurrency,
+  formatPhoneNumber,
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
@@ -61,7 +62,9 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo).estateMembers ?? []
+                ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
+                  (member) => member.enabled,
+                ) ?? []
               ).map((member) => ({
                 title: member.name,
                 description: [
@@ -95,14 +98,21 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              (((answers.estate as unknown) as EstateInfo).assets ?? []).map(
-                (asset) => ({
-                  title: asset.description,
-                  description: [
-                    `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo).assets.filter(
+                  (asset) => asset.enabled,
+                ) ?? []
+              ).map((asset) => ({
+                title: asset.description,
+                description: [
+                  `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (asset.marketValue
+                      ? formatCurrency(asset.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
           },
         ),
         buildDividerField({}),
@@ -117,7 +127,7 @@ export const overview = buildSection({
           id: 'overviewInventory',
           title: m.inventoryTextField,
           description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'inventory'),
+            getValueViaPath<string>(application.answers, 'inventory.info'),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -126,7 +136,7 @@ export const overview = buildSection({
           title: m.inventoryValueTitle,
           description: (application: Application) => {
             const value =
-              getValueViaPath<string>(application.answers, 'inventoryValue') ??
+              getValueViaPath<string>(application.answers, 'inventory.value') ??
               ''
             return formatCurrency(value)
           },
@@ -151,16 +161,55 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              (((answers.estate as unknown) as EstateInfo)?.vehicles ?? []).map(
-                (vehicle) => ({
-                  title: vehicle.description,
-                  description: [
-                    m.propertyNumber.defaultMessage +
-                      ': ' +
-                      vehicle.assetNumber,
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
+                  (vehicle) => vehicle.enabled,
+                ) ?? []
+              ).map((vehicle) => ({
+                title: vehicle.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (vehicle.marketValue
+                      ? formatCurrency(vehicle.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
+          },
+        ),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewGuns',
+          title: m.guns,
+          description: m.gunsDescription,
+          titleVariant: 'h3',
+          space: 'gutter',
+        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'estateGunsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              (
+                ((answers.estate as unknown) as EstateInfo)?.guns?.filter(
+                  (guns) => guns.enabled,
+                ) ?? []
+              ).map((gun) => ({
+                title: gun.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + gun.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (gun.marketValue
+                      ? formatCurrency(gun.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
           },
         ),
         buildDividerField({}),
@@ -245,8 +294,8 @@ export const overview = buildSection({
                 (stock) => ({
                   title: stock.organization,
                   description: [
-                    `${m.stocksSsn.defaultMessage}: ${formatNationalId(
-                      stock.ssn ?? '',
+                    `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
+                      stock.nationalId ?? '',
                     )}`,
                     `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
                     `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
@@ -270,7 +319,7 @@ export const overview = buildSection({
           id: 'overviewOtherAssets',
           title: m.moneyAndDepositText,
           description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'otherAssets'),
+            getValueViaPath<string>(application.answers, 'otherAssets.info'),
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -281,7 +330,7 @@ export const overview = buildSection({
             const value =
               getValueViaPath<string>(
                 application.answers,
-                'otherAssetsValue',
+                'otherAssets.value',
               ) ?? ''
             return formatCurrency(value)
           },
@@ -303,7 +352,7 @@ export const overview = buildSection({
           description: (application: Application) =>
             getValueViaPath<string>(
               application.answers,
-              'moneyAndDepositBoxesInfo',
+              'moneyAndDeposit.info',
             ),
           titleVariant: 'h4',
           space: 'gutter',
@@ -315,7 +364,7 @@ export const overview = buildSection({
             const value =
               getValueViaPath<string>(
                 application.answers,
-                'moneyAndDepositBoxesValue',
+                'moneyAndDeposit.value',
               ) ?? ''
 
             return formatCurrency(value)
@@ -350,8 +399,8 @@ export const overview = buildSection({
                 (debt) => ({
                   title: debt.creditorName,
                   description: [
-                    `${m.debtsSsn.defaultMessage}: ${formatNationalId(
-                      debt.ssn ?? '',
+                    `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
+                      debt.nationalId ?? '',
                     )}`,
                     `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                       debt.balance ?? '',
@@ -361,6 +410,64 @@ export const overview = buildSection({
               ),
           },
         ),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'space3',
+          title: '',
+          space: 'gutter',
+        }),
+        buildDescriptionField({
+          id: 'overviewRepresentativeTitle',
+          title: m.representativeTitle,
+          description: m.representativeDescription,
+          titleVariant: 'h3',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.name,
+          value: ({ answers }) =>
+            getValueViaPath<string>(
+              answers,
+              'representative.representativeName',
+            ),
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.nationalId,
+          value: ({ answers }) =>
+            formatNationalId(
+              getValueViaPath<string>(
+                answers,
+                'representative.representativeNationalId',
+              ) ?? '',
+            ),
+        }),
+        buildDescriptionField({
+          id: 'space4',
+          title: '',
+          space: 'gutter',
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.phone,
+          value: ({ answers }) =>
+            formatPhoneNumber(
+              getValueViaPath<string>(
+                answers,
+                'representative.representativePhoneNumber',
+              ) ?? '',
+            ),
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.email,
+          value: ({ answers }) =>
+            getValueViaPath<string>(
+              answers,
+              'representative.representativeEmail',
+            ),
+        }),
       ],
     }),
   ],

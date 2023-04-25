@@ -62,7 +62,7 @@ describe('CaseController - Get court record signature confirmation guards', () =
     })
   })
 
-  describe('CaseTypeGuerd', () => {
+  describe('CaseTypeGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {

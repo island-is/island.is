@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   applicationCheck,
   ChangeCoOwnerOfVehicleAnswers,
@@ -111,45 +114,61 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
 
-    // No need to continue with this validation in user is neither seller nor buyer
-    // (only time application data changes is on state change from these roles)
+    const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
-    if (auth.nationalId !== ownerSsn) {
-      return
-    }
+    const ownerEmail = answers?.owner?.email
+
+    const createdStr = application.created.toISOString()
+
+    const currentOperators = await this.vehicleOperatorsClient.getOperators(
+      auth,
+      permno,
+    )
+
+    const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
+      auth,
+      permno,
+    )
+
+    const filteredOldCoOwners = answers?.ownerCoOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewCoOwners = answers?.coOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredCoOwners = [
+      ...(filteredOldCoOwners ? filteredOldCoOwners : []),
+      ...(filteredNewCoOwners ? filteredNewCoOwners : []),
+    ]
 
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       auth,
       {
-        permno: answers?.pickVehicle?.plate,
+        permno: permno,
         seller: {
           ssn: ownerSsn,
-          email: answers?.owner?.email,
+          email: ownerEmail,
         },
         buyer: {
           ssn: ownerSsn,
-          email: answers?.owner?.email,
+          email: ownerEmail,
         },
-        dateOfPurchase: new Date(),
-        saleAmount: 0,
-        insuranceCompanyCode: null,
-        coOwners: [
-          ...(answers?.ownerCoOwners
-            ? answers.ownerCoOwners.map((x) => ({
-                ssn: x.nationalId,
-                email: x.email,
-              }))
-            : []),
-          ...(answers?.coOwners
-            ? answers.coOwners
-                .filter(({ wasRemoved }) => wasRemoved !== 'true')
-                .map((x) => ({
-                  ssn: x.nationalId,
-                  email: x.email,
-                }))
-            : []),
-        ],
-        operators: null,
+        dateOfPurchase: new Date(application.created),
+        dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
+        saleAmount: currentOwnerChange?.saleAmount,
+        insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
+        operators: currentOperators?.map((operator) => ({
+          ssn: operator.ssn || '',
+          // Note: It should be ok that the email we send in is empty, since we dont get
+          // the email when fetching current operators, and according to them (SGS), they
+          // are not using the operator email in their API (not being saved in their DB)
+          email: null,
+          isMainOperator: operator.isMainOperator || false,
+        })),
+        coOwners: filteredCoOwners.map((x) => ({
+          ssn: x.nationalId!,
+          email: x.email!,
+        })),
       },
     )
 
@@ -169,8 +188,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
 
       const chargeItemCodes = getChargeItemCodes(answers)
@@ -182,7 +199,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
@@ -362,6 +379,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
+    const createdStr = application.created.toISOString()
+
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
     if (answers?.owner?.nationalId !== application.applicant) {
       throw new TemplateApiError(
@@ -376,20 +395,17 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
-    const newCoOwners = answers?.coOwners
-      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
-      }))
-    const ownerCoOwners = answers?.ownerCoOwners?.filter(
-      (coOwner) => coOwner.wasRemoved !== 'true',
+
+    const filteredOldCoOwners = answers?.ownerCoOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
     )
-    const oldCoOwners =
-      ownerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
-      })) || []
+    const filteredNewCoOwners = answers?.coOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredCoOwners = [
+      ...(filteredOldCoOwners ? filteredOldCoOwners : []),
+      ...(filteredNewCoOwners ? filteredNewCoOwners : []),
+    ]
 
     const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
       auth,
@@ -411,7 +427,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         ssn: ownerSsn,
         email: ownerEmail,
       },
-      dateOfPurchase: currentOwnerChange?.dateOfPurchase,
+      dateOfPurchase: new Date(application.created),
+      dateOfPurchaseTimestamp: createdStr.substring(11, createdStr.length),
       saleAmount: currentOwnerChange?.saleAmount,
       insuranceCompanyCode: currentOwnerChange?.insuranceCompanyCode,
       operators: currentOperators?.map((operator) => ({
@@ -419,10 +436,13 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         // Note: It should be ok that the email we send in is empty, since we dont get
         // the email when fetching current operators, and according to them (SGS), they
         // are not using the operator email in their API (not being saved in their DB)
-        email: '',
+        email: null,
         isMainOperator: operator.isMainOperator || false,
       })),
-      coOwners: [...newCoOwners, ...oldCoOwners],
+      coOwners: filteredCoOwners.map((x) => ({
+        ssn: x.nationalId!,
+        email: x.email!,
+      })),
     })
 
     // 3. Notify everyone in the process that the application has successfully been submitted

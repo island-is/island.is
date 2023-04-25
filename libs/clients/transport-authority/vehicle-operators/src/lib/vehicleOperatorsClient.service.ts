@@ -84,8 +84,11 @@ export class VehicleOperatorsClient {
     }
 
     const warnSeverityError = 'E'
+    const warnSeverityLock = 'L'
     errorList = errorList?.filter(
-      (x) => x.errorMess && x.warnSever === warnSeverityError,
+      (x) =>
+        x.errorMess &&
+        (x.warnSever === warnSeverityError || x.warnSever === warnSeverityLock),
     )
 
     return {

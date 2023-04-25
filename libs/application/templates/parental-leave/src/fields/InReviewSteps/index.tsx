@@ -14,12 +14,15 @@ import ReviewSection, { ReviewSectionState } from './ReviewSection'
 import { Review } from '../Review/Review'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import {
-  getExpectedDateOfBirth,
+  getExpectedDateOfBirthOrAdoptionDate,
+  isFosterCareAndAdoption,
   otherParentApprovalDescription,
   requiresOtherParentApproval,
 } from '../../lib/parentalLeaveUtils'
 import {
   NO,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
   PARENTAL_LEAVE,
   States as ApplicationStates,
   States,
@@ -28,6 +31,7 @@ import {
 import { useApplicationAnswers } from '../../hooks/useApplicationAnswers'
 import { useRemainingRights } from '../../hooks/useRemainingRights'
 import { showResidenceGrant } from '../../lib/answerValidationSections/utils'
+import { PrintButton } from '../PrintButton'
 
 type StateMapEntry = { [key: string]: ReviewSectionState }
 
@@ -103,6 +107,8 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     isReceivingUnemploymentBenefits,
     hasAppliedForReidenceGrant,
     periods,
+    employerLastSixMonths,
+    employers,
   } = useApplicationAnswers(application)
   const showResidenceGrantCard = showResidenceGrant(application)
   const oldApplication = applicationType === undefined // Added this check for applications that is in the db already
@@ -111,6 +117,9 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
       ? isReceivingUnemploymentBenefits === YES
       : false
     : false
+  const isStillEmployed = employers?.some(
+    (employer) => employer.stillEmployed === YES,
+  )
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -145,6 +154,21 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   ]
 
   if (isSelfEmployed === NO && !isBeneficiaries) {
+    steps.unshift({
+      state: statesMap['employer'][application.state],
+      title: formatMessage(
+        parentalLeaveFormMessages.reviewScreen.employerTitle,
+      ),
+      description: formatMessage(descKey[application.state]),
+    })
+  }
+
+  if (
+    (applicationType === PARENTAL_GRANT ||
+      applicationType === PARENTAL_GRANT_STUDENTS) &&
+    employerLastSixMonths === YES &&
+    isStillEmployed
+  ) {
     steps.unshift({
       state: statesMap['employer'][application.state],
       title: formatMessage(
@@ -199,7 +223,7 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
     }
   }
 
-  const dob = getExpectedDateOfBirth(application)
+  const dob = getExpectedDateOfBirthOrAdoptionDate(application)
   const dobDate = dob ? new Date(dob) : null
 
   const canBeEdited =
@@ -235,15 +259,31 @@ const InReviewSteps: FC<FieldBaseProps> = (props) => {
   }, [])
   return (
     <Box marginBottom={10}>
+      {screenState === 'viewApplication' && <PrintButton />}
+      <Box marginBottom={2}>
+        <Text variant="h2">
+          {formatMessage(
+            application.state === States.VINNUMALASTOFNUN_APPROVAL
+              ? parentalLeaveFormMessages.reviewScreen.titleReceived
+              : application.state === States.APPROVED
+              ? parentalLeaveFormMessages.reviewScreen.titleApproved
+              : parentalLeaveFormMessages.reviewScreen.titleInReview,
+          )}
+        </Text>
+      </Box>
       <Box
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       >
         {dobDate && (
           <Text variant="h4" color="blue400">
-            {formatMessage(
-              parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
-            )}
+            {isFosterCareAndAdoption(application)
+              ? formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.adoptionDate,
+                )
+              : formatMessage(
+                  parentalLeaveFormMessages.reviewScreen.estimatedBirthDate,
+                )}
             <br />
             {format(dobDate, dateFormat.is)}
           </Text>

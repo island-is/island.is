@@ -122,6 +122,7 @@ import { defineTemplateApi } from '@island.is/application/types'
       approved: {
         meta: {
           // ...
+          // onEntry and onExit support either a single api or a list of apis.
           onEntry:  defineTemplateApi({
             action: TEMPLATE_API_ACTIONS.sendApplication,
             // (Optional) Should the response/error be persisted to application.externalData

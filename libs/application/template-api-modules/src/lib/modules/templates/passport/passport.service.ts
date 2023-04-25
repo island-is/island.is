@@ -23,7 +23,7 @@ export class PassportService extends BaseTemplateApiService {
     super(ApplicationTypes.PASSPORT)
   }
 
-  async identityDocument({ application, auth }: TemplateApiModuleActionProps) {
+  async identityDocument({ auth }: TemplateApiModuleActionProps) {
     const identityDocument = await this.passportApi.getCurrentPassport(auth)
     if (!identityDocument) {
       throw new TemplateApiError(
@@ -35,6 +35,20 @@ export class PassportService extends BaseTemplateApiService {
       )
     }
     return identityDocument
+  }
+
+  async deliveryAddress({ auth }: TemplateApiModuleActionProps) {
+    const res = await this.passportApi.getDeliveryAddress(auth)
+    if (!res) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProvider,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+    return res
   }
 
   async createCharge({
@@ -125,6 +139,7 @@ export class PassportService extends BaseTemplateApiService {
       let result
       if (forUser) {
         result = await this.passportApi.preregisterIdentityDocument(auth, {
+          guid: application.id,
           appliedForPersonId: auth.nationalId,
           priority: service.type === 'regular' ? 0 : 1,
           deliveryName: service.dropLocation,
@@ -137,15 +152,18 @@ export class PassportService extends BaseTemplateApiService {
         })
       } else {
         result = await this.passportApi.preregisterChildIdentityDocument(auth, {
+          guid: application.id,
           appliedForPersonId: childsPersonalInfo.nationalId,
           priority: service.type === 'regular' ? 0 : 1,
           deliveryName: service.dropLocation,
           approvalA: {
             personId: childsPersonalInfo.guardian1.nationalId.replace('-', ''),
+            name: childsPersonalInfo.guardian1.name,
             approved: application.created,
           },
           approvalB: {
             personId: childsPersonalInfo.guardian2.nationalId.replace('-', ''),
+            name: childsPersonalInfo.guardian2.name,
             approved: new Date(),
           },
           contactInfo: {

@@ -21,6 +21,16 @@ export const serviceSetup = (services: {
     })
     .liveness('/liveness')
     .readiness('/readiness')
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '256Mi',
+      },
+      requests: {
+        cpu: '15m',
+        memory: '128Mi',
+      },
+    })
     .ingress({
       primary: {
         host: {

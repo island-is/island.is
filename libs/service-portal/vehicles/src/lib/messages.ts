@@ -604,10 +604,57 @@ export const messages = defineMessages({
   },
   addCoOwner: {
     id: 'sp.vehicles:add-co-owner',
-    defaultMessage: 'Bæta við meðeigenda',
+    defaultMessage: 'Breyta meðeiganda',
   },
   addOperator: {
     id: 'sp.vehicles:add-operator',
-    defaultMessage: 'Bæta við umráðamanni',
+    defaultMessage: 'Breyta umráðamanni',
+  },
+  renewPrivateRegistration: {
+    id: 'sp.vehicles:renew-private-registration',
+    defaultMessage: 'Endurnýja einkamerki',
+  },
+  changeInstructor: {
+    id: 'sp.vehicles:change-driving-instructor',
+    defaultMessage: 'Skipta um ökukennara',
+  },
+  signupToDrivingSchool: {
+    id: 'sp.vehicles:signup-to-driving-school',
+    defaultMessage: 'Skrá mig í ökunám',
+  },
+})
+
+export const urls = defineMessages({
+  ownerChange: {
+    id: 'sp.vehicles:url-owner-change',
+    defaultMessage: 'https://island.is/umsoknir/eigendaskipti-okutaekis',
+  },
+  coOwnerChange: {
+    id: 'sp.vehicles:url-co-owner-change',
+    defaultMessage: 'https://island.is/umsoknir/medeigandi-okutaekis',
+  },
+  operator: {
+    id: 'sp.vehicles:url-operator',
+    defaultMessage: 'https://island.is/umsoknir/umradamadur-okutaekis',
+  },
+  regNumber: {
+    id: 'sp.vehicles:url-registration-number',
+    defaultMessage: 'https://island.is/umsoknir/panta-skraningarmerki',
+  },
+  renewPrivate: {
+    id: 'sp.vehicles:url-renew-private',
+    defaultMessage: 'https://island.is/endurnyjun-a-einkamerki',
+  },
+  hideName: {
+    id: 'sp.vehicles:url-hide-private-name',
+    defaultMessage: 'https://island.is/umsoknir/nafnleynd-i-okutaekjaskra',
+  },
+  instructorApplication: {
+    id: 'sp.vehicles:url-instructor-application',
+    defaultMessage: 'https://island.is/umsoknir/okunam-okukennari',
+  },
+  licenseApplication: {
+    id: 'sp.vehicles:url-license-application',
+    defaultMessage: 'https://island.is/umsoknir/okuskirteini',
   },
 })

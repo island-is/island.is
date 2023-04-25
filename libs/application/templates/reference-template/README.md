@@ -11,7 +11,7 @@ There are multiple requirements needed for a new template to be usable by the ap
 3. Add a unique application type to `application/types/src/lib/ApplicationTypes.ts`
 4. Add to `application/template-loader/src/lib/templateLoaders.ts` so that library knows how to import this new application template.
 5. If the template includes custom fields only used by this application, export a submodule `getFields` (see `application/templates/parental-leave`):
-6. Add to `application/core/src/lib/institutionMapper.ts`
+6. Add to `application/types/src/lib/institutionMapper.ts`
 
 ```ts
 import ParentalLeaveTemplate from './lib/ParentalLeaveTemplate'

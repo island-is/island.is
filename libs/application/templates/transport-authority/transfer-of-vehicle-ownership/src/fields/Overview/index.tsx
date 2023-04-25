@@ -45,6 +45,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators = [],
+  mainOperator = '',
   ...props
 }) => {
   const { application, refetch, insurance = undefined } = props
@@ -55,6 +56,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     false,
   )
   const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
+
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
@@ -106,6 +108,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const onBackButtonClick = () => {
     setStep && setStep('states')
   }
+
   const onRejectButtonClick = () => {
     setRejectModalVisibility(true)
   }
@@ -136,9 +139,10 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
               },
               buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
                 (x) => ({
-                  email: x.email,
-                  nationalId: x.nationalId,
+                  nationalId: x.nationalId!,
+                  email: x.email!,
                   type: x.type,
+                  wasRemoved: x.wasRemoved,
                 }),
               ),
               buyerMainOperator: answers?.buyerMainOperator
@@ -201,6 +205,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
+          mainOperator={mainOperator}
           {...props}
         />
         <InsuranceSection
@@ -209,11 +214,13 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           reviewerNationalId={reviewerNationalId}
           noInsuranceError={noInsuranceError}
         />
+
         {error && (
           <InputError
             errorMessage={errorMsg.submitApplicationError.defaultMessage}
           />
         )}
+
         {data?.vehicleOwnerChangeValidation?.hasError &&
         data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
           <Box>
@@ -254,6 +261,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
             />
           </Box>
         ) : null}
+
         <Box marginTop={14}>
           <Divider />
           <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

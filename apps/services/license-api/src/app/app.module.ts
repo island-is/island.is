@@ -14,10 +14,12 @@ import {
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { ProblemModule } from '@island.is/nest/problem'
+import { DrivingLicenseApiClientConfig } from './modules/license/clients/drivingLicense/drivingLicenseApiClient.config'
 
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
+    AuthModule.register(environment.auth),
     ProblemModule,
     LoggingModule,
     ConfigModule.forRoot({
@@ -28,6 +30,7 @@ import { ProblemModule } from '@island.is/nest/problem'
         FirearmLicenseApiClientConfig,
         DisabilityLicenseClientConfig,
         DisabilityLicenseApiClientConfig,
+        DrivingLicenseApiClientConfig,
       ],
     }),
     LicenseModule,

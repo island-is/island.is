@@ -4,7 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { FC, useCallback, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
-import { OwnerCoOwnersInformation, UserInformation } from '../../shared'
+import { OwnerCoOwnersInformation, CoOwnersInformation } from '../../shared'
 import { CoOwnerRepeaterItem } from './CoOwnerRepeaterItem'
 import { getValueViaPath } from '@island.is/application/core'
 import { OwnerCoOwners } from './OwnerCoOwners'
@@ -25,8 +25,12 @@ export const CoOwnerRepeater: FC<FieldBaseProps> = (props) => {
       [],
     ) as OwnerCoOwnersInformation[],
   )
-  const [coOwners, setCoOwners] = useState<UserInformation[]>(
-    getValueViaPath(application.answers, 'coOwners', []) as UserInformation[],
+  const [coOwners, setCoOwners] = useState<CoOwnersInformation[]>(
+    getValueViaPath(
+      application.answers,
+      'coOwners',
+      [],
+    ) as CoOwnersInformation[],
   )
   const [identicalError, setIdenticalError] = useState<boolean>(false)
   const filteredCoOwners = coOwners.filter(
@@ -86,7 +90,9 @@ export const CoOwnerRepeater: FC<FieldBaseProps> = (props) => {
     ]
     return !!jointCoOwners.some((nationalId, index) => {
       return (
-        jointCoOwners.indexOf(nationalId) !== index && nationalId.length > 0
+        nationalId &&
+        nationalId.length > 0 &&
+        jointCoOwners.indexOf(nationalId) !== index
       )
     })
   }
@@ -147,14 +153,19 @@ export const CoOwnerRepeater: FC<FieldBaseProps> = (props) => {
 
   return (
     <Box>
-      {filteredOwnerCoOwners.length > 0 &&
-        filteredOwnerCoOwners.map((coOwner, index) => (
+      {ownerCoOwners.length > 0 &&
+        ownerCoOwners.map((coOwner, index) => (
           <OwnerCoOwners
             id="ownerCoOwners"
             index={index}
-            rowLocation={index + 1}
+            rowLocation={
+              filteredOwnerCoOwners.indexOf(coOwner) > -1
+                ? filteredOwnerCoOwners.indexOf(coOwner) + 1
+                : index + 1
+            }
             key={`ownerCoOwners-${index}`}
             handleRemove={handleRemoveOld}
+            wasRemoved={coOwner.wasRemoved === 'true'}
             {...props}
           />
         ))}

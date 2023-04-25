@@ -40,13 +40,16 @@ type EventType =
   | 'selectionChanged'
   | 'renderingStarted'
 
-const slicerStateContainsShipNameAndNumberTarget = (
+const slicerStateContainsExpectedTarget = (
   slicerState: models.ISlicerState,
+  expectedTarget = {
+    column: 'Skip',
+    table: 'Skipaskra',
+  },
 ) => {
-  const value = 'Skip nafn og númer'
   return (
-    slicerState?.filters?.[0]?.target?.['column'] === value ||
-    slicerState?.targets?.[0]?.['column'] === value
+    slicerState?.filters?.[0]?.target?.['column'] === expectedTarget?.column ||
+    slicerState?.targets?.[0]?.['column'] === expectedTarget?.column
   )
 }
 
@@ -55,7 +58,7 @@ const convertShipNameToSlicerDropdownValue = (
   shipNumber: string | number,
 ) => {
   const nameSplit = shipName.split(' ')
-  return `${nameSplit.slice(0, nameSplit.length - 1).join(' ')}-${
+  return `${nameSplit.slice(0, nameSplit.length - 1).join(' ')} ${
     nameSplit[nameSplit.length - 1]
   } (${shipNumber})`
 }
@@ -69,6 +72,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     accessToken: string
     embedUrl: string
     tokenType: models.TokenType
+    pageName?: string
   } | null>(null)
   const [shouldRender, setShouldRender] = useState(false)
   const router = useRouter()
@@ -93,6 +97,68 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
   }, [namespaceResponse?.data?.getNamespace?.fields])
 
   const n = useNamespace(namespace)
+
+  const fiskistofaShipSearchTarget = n('fiskistofaShipSearchTarget', {
+    column: 'Skip',
+    table: 'Skipaskra',
+  })
+
+  const updateReportStateFromQueryParams = async (report?: Report) => {
+    if (!report) {
+      report = embeddedReport
+    }
+
+    const nr = Number(router.query.nr)
+
+    if (!report || isNaN(nr)) return
+
+    const page = await report.getActivePage()
+
+    const slicers = await page.getSlicers()
+
+    for (const visual of slicers) {
+      if (visual.type !== 'slicer') continue
+
+      const slicer = visual as VisualDescriptor
+
+      const slicerState = await slicer.getSlicerState()
+
+      if (
+        !slicerStateContainsExpectedTarget(
+          slicerState,
+          fiskistofaShipSearchTarget,
+        )
+      )
+        return
+
+      const response = await apolloClient.query({
+        query: GET_SINGLE_SHIP,
+        variables: {
+          input: {
+            shipNumber: nr,
+          },
+        },
+      })
+
+      const ship = response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
+
+      if (!ship?.name) return
+      slicer.setSlicerState({
+        ...slicerState,
+        filters: [
+          {
+            $schema: 'http://powerbi.com/product/schema#basic',
+            filterType: 1,
+            operator: 'In',
+            requireSingleSelection: false,
+            target: fiskistofaShipSearchTarget,
+            ...slicerState.filters?.[0],
+            values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
+          },
+        ],
+      })
+    }
+  }
 
   const eventHandlers = new Map<EventType, EventHandler>([
     [
@@ -120,6 +186,36 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       },
     ],
     [
+      'pageChanged',
+      async (event) => {
+        const pageName = event.detail?.newPage?.name
+
+        if (pageName) {
+          const params = new URLSearchParams(window.location.search)
+
+          const query = {}
+
+          for (const [key, value] of params.entries()) {
+            query[key] = value
+          }
+
+          router.query = query
+
+          router.push(
+            {
+              pathname: router.asPath.split('?')[0].split('#')[0],
+              query: {
+                ...query,
+                pageName,
+              },
+            },
+            undefined,
+            { shallow: true },
+          )
+        }
+      },
+    ],
+    [
       'dataSelected',
       async (event) => {
         const visualName = event.detail?.visual?.name as string
@@ -142,7 +238,10 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         // and the data that got changed relates to a ship number
         if (
           slice?.owner === 'Fiskistofa' &&
-          slicerStateContainsShipNameAndNumberTarget(slicerState)
+          slicerStateContainsExpectedTarget(
+            slicerState,
+            fiskistofaShipSearchTarget,
+          )
         ) {
           const value: string = slicerState.filters?.[0]?.['values']?.[0] ?? ''
           const firstParenthesis = value.indexOf('(')
@@ -200,6 +299,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
           accessToken: response.data.powerbiEmbedToken.token,
           embedUrl: response.data.powerbiEmbedToken.embedUrl,
           tokenType: models.TokenType.Embed,
+          pageName: router.query?.pageName as string,
         })
         setShouldRender(true)
         setErrorOccurred(false)
@@ -220,51 +320,6 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       slice?.owner !== 'Fiskistofa'
     ) {
       return
-    }
-
-    const updateReportStateFromQueryParams = async () => {
-      const nr = Number(router.query.nr)
-      const page = await embeddedReport.getActivePage()
-
-      const slicers = await page.getSlicers()
-
-      for (const visual of slicers) {
-        if (visual.type !== 'slicer') continue
-
-        const slicer = visual as VisualDescriptor
-
-        const slicerState = await slicer.getSlicerState()
-
-        if (!slicerStateContainsShipNameAndNumberTarget(slicerState)) return
-
-        const response = await apolloClient.query({
-          query: GET_SINGLE_SHIP,
-          variables: {
-            input: {
-              shipNumber: nr,
-            },
-          },
-        })
-
-        const ship =
-          response?.data?.fiskistofaGetSingleShip?.fiskistofaSingleShip
-
-        if (!ship?.name) return
-        slicer.setSlicerState({
-          ...slicerState,
-          filters: [
-            {
-              $schema: 'http://powerbi.com/product/schema#basic',
-              filterType: 1,
-              operator: 'In',
-              requireSingleSelection: false,
-              target: { table: 'Skipasaga', column: 'Skip nafn og númer' },
-              ...slicerState.filters?.[0],
-              values: [convertShipNameToSlicerDropdownValue(ship.name, nr)],
-            },
-          ],
-        })
-      }
     }
 
     updateReportStateFromQueryParams()

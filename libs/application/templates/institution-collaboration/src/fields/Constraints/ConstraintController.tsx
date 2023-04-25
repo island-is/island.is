@@ -9,6 +9,7 @@ interface Props {
   placeholder?: string
   defaultValue?: boolean
   extraText?: boolean
+  subLabel?: string
 }
 const ConstraintController: FC<Props> = ({
   id,
@@ -17,6 +18,7 @@ const ConstraintController: FC<Props> = ({
   placeholder,
   defaultValue,
   extraText,
+  subLabel,
 }) => {
   const { register, setValue } = useFormContext()
   const [isChecked, setIsChecked] = useState(defaultValue)
@@ -33,7 +35,7 @@ const ConstraintController: FC<Props> = ({
         <Controller
           name={checkboxId}
           defaultValue={defaultValue}
-          render={({ value, onChange }) => {
+          render={({ field: { onChange, value } }) => {
             return (
               <Checkbox
                 onChange={(e) => {
@@ -45,6 +47,7 @@ const ConstraintController: FC<Props> = ({
                 checked={value}
                 name={checkboxId}
                 label={label}
+                subLabel={subLabel}
                 large
               />
             )
@@ -57,13 +60,12 @@ const ConstraintController: FC<Props> = ({
           backgroundColor="blue"
           required={isChecked}
           type="text"
-          name={id}
+          {...register(id)}
           id={id}
           label={label}
           textarea
           rows={5}
           maxLength={250}
-          ref={register}
         />
       )}
     </Stack>

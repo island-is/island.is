@@ -39,10 +39,8 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
   private adrApiWithAuth = (user: User) =>
     this.adrApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async fetchLicense(user: User) {
-    const license = await this.adrApiWithAuth(user).getAdr().catch(handle404)
-    return license
-  }
+  fetchLicense = (user: User) =>
+    this.adrApiWithAuth(user).getAdr().catch(handle404)
 
   async getLicense(
     user: User,
@@ -54,6 +52,7 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     if (!licenseData) {
       return null
     }
+
     const payload = parseAdrLicensePayload(licenseData, locale, labels)
 
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
@@ -114,6 +113,9 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     const payload = await this.createPkPassPayload(user)
 
     if (!payload) {
+      this.logger.warn('Pkpass payload creation failed', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -123,12 +125,24 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     )
 
     if (pass.ok) {
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
       return pass.data.distributionUrl
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
      * For now we return null, just to keep existing behavior unchanged
      */
+    if (pass.error) {
+      this.logger.warn('Pkpass url generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
     return null
   }
   async getPkPassQRCode(user: User): Promise<string | null> {
@@ -143,12 +157,25 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     )
 
     if (pass.ok) {
-      return pass.data.distributionQRCode
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn('Missing pkpass distribution qr code', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+      return pass.data.distributionUrl
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
      * For now we return null, just to keep existing behavior unchanged
      */
+
+    if (pass.error) {
+      this.logger.warn('Pkpass qr code generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
     return null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
@@ -163,6 +190,11 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     }
 
     if (!result.ok) {
+      this.logger.warn('Pkpass verification failed', {
+        ...result.error,
+        category: LOG_CATEGORY,
+      })
+
       return {
         valid: false,
         data: undefined,

@@ -33,6 +33,7 @@ test.describe('Service portal, in session history', () => {
     await page.goto(sessionHistoryUrl, {
       waitUntil: 'networkidle',
     })
+    await expect(page.getByRole('heading', { name: 'Notkun' })).toBeVisible()
     const sessionsRows = page.locator('table > tbody > tr')
 
     // Assert
@@ -45,14 +46,14 @@ test.describe('Service portal, in session history', () => {
       // eslint-disable-next-line local-rules/disallow-kennitalas
       env === 'staging' ? '6609170200' : '5005101370'
     const page = await context.newPage()
-    await page.goto(sessionHistoryUrl, {
-      waitUntil: 'networkidle',
-    })
+    await page.goto(sessionHistoryUrl)
 
     // Act
-    await page.locator('#filterInput').fill(filterSubjectNationalId)
-    const sessionsRows = page.locator('table > tbody > tr', {
-      hasText: format(filterSubjectNationalId),
+    await page
+      .getByRole('textbox', { name: 'Leita eftir kennitölu' })
+      .fill(filterSubjectNationalId)
+    const sessionsRows = page.getByRole('cell', {
+      name: format(filterSubjectNationalId),
     })
 
     // Assert
@@ -64,18 +65,16 @@ test.describe('Service portal, in session history', () => {
     const testCompanyName =
       env === 'staging' ? 'Prófunarfélag GG og HEB' : 'ARTIC ehf.'
     const page = await context.newPage()
-    await page.goto(homeUrl, {
-      waitUntil: 'domcontentloaded',
-    })
-    await page.locator('data-testid=user-menu >> visible=true').click()
+    await page.goto(homeUrl)
+    await page
+      .getByRole('button', { name: 'Útskráning og aðgangsstillingar' })
+      .click()
     await page.getByRole('button', { name: 'Skipta um notanda' }).click()
     await page.getByRole('button', { name: testCompanyName }).click()
 
     // Act
-    await page.goto(sessionHistoryUrl, {
-      waitUntil: 'networkidle',
-    })
-    const sessionsRows = page.locator('table > tbody > tr')
+    await page.goto(sessionHistoryUrl, { waitUntil: 'networkidle' })
+    const sessionsRows = page.getByRole('row')
 
     // Assert
     await expect(sessionsRows).toHaveCountGreaterThan(0)

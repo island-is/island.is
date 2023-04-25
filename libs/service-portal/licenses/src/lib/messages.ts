@@ -35,7 +35,6 @@ export const m = defineMessages({
     id: 'sp.license:your-adr-license',
     defaultMessage: 'ADR réttindin þín',
   },
-
   adrLicenseDescription: {
     id: 'sp.license:adr-license-description',
     defaultMessage:
@@ -281,5 +280,17 @@ export const m = defineMessages({
   seeLicenses: {
     id: 'sp.license:see-licenses',
     defaultMessage: 'Skoða skírteini',
+  },
+  licenseFetchError: {
+    id: 'sp.license:license-fetch-error',
+    defaultMessage: 'Í augnablikinu er ekki hægt að senda skilríki í síma',
+  },
+  lostPassportUrl: {
+    id: 'sp.license:url-lost-passport',
+    defaultMessage: 'https://island.is/stolidtynt-vegabref',
+  },
+  applyPassportUrl: {
+    id: 'sp.license:url-apply-passport',
+    defaultMessage: 'https://island.is/vegabref',
   },
 })

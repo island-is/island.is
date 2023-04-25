@@ -1,12 +1,12 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { UserInformation, OwnerCoOwnersInformation } from '../shared'
+import { CoOwnersInformation, OwnerCoOwnersInformation } from '../shared'
 
 export const getReviewerInfo = (
   reviewerNationalId: string,
   answers: FormValue,
 ) => {
-  // If reviewer is owner coowner
+  // If reviewer is old co-owner
   const ownerCoOwners = getValueViaPath(
     answers,
     'ownerCoOwners',
@@ -14,18 +14,22 @@ export const getReviewerInfo = (
   ) as OwnerCoOwnersInformation[]
 
   const ownerCoOwner = ownerCoOwners.find(
-    (ownerCoOwner) => ownerCoOwner.nationalId === reviewerNationalId,
+    (x) => x.nationalId === reviewerNationalId,
   )
   if (ownerCoOwner) {
     return ownerCoOwner
   }
 
-  // If reviewer is operator
-  const coOwners = getValueViaPath(answers, 'coOwners', []) as UserInformation[]
+  // If reviewer is new co-owner
+  const coOwners = getValueViaPath(
+    answers,
+    'coOwners',
+    [],
+  ) as CoOwnersInformation[]
 
   const coOwner = coOwners
     .filter(({ wasRemoved }) => wasRemoved !== 'true')
-    .find((operator) => operator.nationalId === reviewerNationalId)
+    .find((x) => x.nationalId === reviewerNationalId)
   if (coOwner) {
     return coOwner
   }

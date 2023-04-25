@@ -21,4 +21,41 @@ export const error = defineMessages({
     defaultMessage: 'DEBUG',
     description: 'Error message when a value is invalid.',
   },
+  dataCollectionCriminalRecordErrorTitle: {
+    id: 'ol.application:missingCriominalRecordTitle',
+    defaultMessage: 'Skilyrði um hreina sakaskrá er ekki uppfyllt',
+    description: '',
+  },
+  dataCollectionCriminalRecordTitle: {
+    id: 'ol.application:dataCollection.criminalRecordTitle',
+    defaultMessage: 'Sakaskrá ríkisins',
+    description: 'Some description',
+  },
+  missingCertificateTitle: {
+    id: 'ol.application:missingCertificateTitle',
+    defaultMessage: 'Ekki tókst að staðfesta skuldleysi',
+    description: '',
+  },
+  missingCertificateSummary: {
+    id: 'ol.application:missingCertificateSummary',
+    defaultMessage:
+      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
+    description: '',
+  },
+  missingJudicialAdministrationificateTitle: {
+    id: 'ol.application:missingJudicialAdministrationificateTitle',
+    defaultMessage: 'Ekki tókst að staðfesta búsforræðisvottorð',
+    description: '',
+  },
+  missingJudicialAdministrationificateSummary: {
+    id: 'ol.application:missingJudicialAdministrationificateSummary',
+    defaultMessage:
+      'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Dómstólasýslu ríkisins',
+    description: '',
+  },
+  missingAddressForPropertyNumber: {
+    id: 'ol.application:missingAddressForPropertyNumber',
+    defaultMessage: 'Fasteignanúmer ekki til eða villa við að sækja gögn.',
+    description: 'Error message when a value is invalid for property.',
+  },
 })

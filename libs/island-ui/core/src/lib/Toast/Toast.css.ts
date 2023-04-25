@@ -10,7 +10,7 @@ export const root = style(
 export const useMotion = style({}, 'useMotion')
 
 globalStyle(`${root} .Toastify__toast-container`, {
-  zIndex: 9999,
+  zIndex: 99999,
   transform: 'translate3d(0, 0, 9999px)',
   position: 'fixed',
   padding: '4px',

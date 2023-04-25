@@ -68,6 +68,8 @@ import { DigitalTachographDriversCardModule } from './transport-authority/digita
 import { DigitalTachographDriversCardService } from './transport-authority/digital-tachograph-drivers-card/digital-tachograph-drivers-card.service'
 import { DigitalTachographWorkshopCardModule } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.module'
 import { DigitalTachographWorkshopCardService } from './transport-authority/digital-tachograph-workshop-card/digital-tachograph-workshop-card.service'
+import { LicensePlateRenewalModule } from './transport-authority/license-plate-renewal/license-plate-renewal.module'
+import { LicensePlateRenewalService } from './transport-authority/license-plate-renewal/license-plate-renewal.service'
 import { OrderVehicleLicensePlateModule } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.module'
 import { OrderVehicleLicensePlateService } from './transport-authority/order-vehicle-license-plate/order-vehicle-license-plate.service'
 import { OrderVehicleRegistrationCertificateModule } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.module'
@@ -80,6 +82,8 @@ import {
 } from './european-health-insurance-card'
 import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book-update-instructor/driving-license-book-update-instructor.module'
 import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
+import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
+import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
 
 //TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
@@ -122,12 +126,14 @@ export const modules = [
   DigitalTachographCompanyCardModule,
   DigitalTachographDriversCardModule,
   DigitalTachographWorkshopCardModule,
+  LicensePlateRenewalModule,
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
   EstateTemplateModule,
   EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
+  DrivingLearnersPermitModule,
 ]
 
 export const services = [
@@ -168,10 +174,12 @@ export const services = [
   DigitalTachographCompanyCardService,
   DigitalTachographDriversCardService,
   DigitalTachographWorkshopCardService,
+  LicensePlateRenewalService,
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
   EstateTemplateService,
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
+  DrivingLearnersPermitService,
 ]

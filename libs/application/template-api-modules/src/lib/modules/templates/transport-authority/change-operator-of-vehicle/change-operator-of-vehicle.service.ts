@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { EmailRecipient, EmailRole } from './types'
 import {
   getAllRoles,
@@ -113,16 +116,24 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const permno = answers?.pickVehicle?.plate
 
-    const operators = answers?.operators
-      .filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .map((operator) => ({
-        ssn: operator.nationalId,
-        isMainOperator:
-          answers.operators.filter(({ wasRemoved }) => wasRemoved !== 'true')
-            .length > 1
-            ? operator.nationalId === answers?.mainOperator?.nationalId
-            : true,
-      }))
+    const filteredOldOperators = answers?.oldOperators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewOperators = answers?.operators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredOperators = [
+      ...(filteredOldOperators ? filteredOldOperators : []),
+      ...(filteredNewOperators ? filteredNewOperators : []),
+    ]
+
+    const operators = filteredOperators.map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        filteredOperators.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
 
     const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
       auth,
@@ -146,8 +157,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as ChangeOperatorOfVehicleAnswers
 
       const chargeItemCodes = getChargeItemCodes(answers)
@@ -159,7 +168,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
@@ -339,6 +348,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     // 2. Submit the application
 
     const answers = application.answers as ChangeOperatorOfVehicleAnswers
+
     const permno = answers?.pickVehicle?.plate
 
     // Note: Need to be sure that the user that created the application is the seller when submitting application to SGS
@@ -356,16 +366,24 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const operators = answers?.operators
-      .filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .map((operator) => ({
-        ssn: operator.nationalId,
-        isMainOperator:
-          answers.operators.filter(({ wasRemoved }) => wasRemoved !== 'true')
-            .length > 1
-            ? operator.nationalId === answers?.mainOperator?.nationalId
-            : true,
-      }))
+    const filteredOldOperators = answers?.oldOperators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewOperators = answers?.operators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredOperators = [
+      ...(filteredOldOperators ? filteredOldOperators : []),
+      ...(filteredNewOperators ? filteredNewOperators : []),
+    ]
+
+    const operators = filteredOperators.map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        filteredOperators.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
 
     await this.vehicleOperatorsClient.saveOperators(auth, permno, operators)
 

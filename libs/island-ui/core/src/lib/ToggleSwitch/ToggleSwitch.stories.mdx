@@ -5,6 +5,7 @@ import {
   ToggleSwitchButton,
   ToggleSwitchLink,
 } from './index'
+import { useState } from 'react'
 
 <Meta title="Form/ToggleSwitch" />
 
@@ -17,33 +18,43 @@ All three variant share some basic props, but each has a few props unique to it.
 
 <Canvas>
   <Story name="Default">
-    <ToggleSwitchCheckbox
-      label="Basic Toggle Switch"
-      checked={false}
-      onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
-    />
-    <ToggleSwitchCheckbox
-      label="Large version (ckecked)"
-      large={true}
-      checked={true}
-      onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
-    />
-    <ToggleSwitchCheckbox
-      label={
+    {() => {
+      const [checked, setChecked] = useState(false)
+      return (
         <>
-          Full-width version <strong>(disabled)</strong>
+          <ToggleSwitchCheckbox
+            label="Basic Toggle Switch"
+            checked={checked}
+            onChange={setChecked}
+          />
+          <ToggleSwitchCheckbox
+            label="Large version"
+            large
+            checked={checked}
+            onChange={setChecked}
+          />
+          <ToggleSwitchCheckbox
+            label="Full-width version"
+            wide
+            checked={checked}
+            onChange={setChecked}
+          />
+          <ToggleSwitchCheckbox
+            label="Disabled version"
+            disabled
+            checked={checked}
+            onChange={setChecked}
+          />
+          <p>In rare instances you may need to hide the label:</p>
+          <ToggleSwitchCheckbox
+            label="The label is still required!"
+            hiddenLabel={true}
+            checked={checked}
+            onChange={setChecked}
+          />
         </>
-      }
-      wide={true}
-      disabled={true}
-      onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
-    />
-    <div>In rare instances you may need to hide the label:</div>
-    <ToggleSwitchCheckbox
-      label="The label is still required!"
-      hiddenLabel={true}
-      onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
-    />
+      )
+    }}
   </Story>
 </Canvas>
 
@@ -84,6 +95,7 @@ if `expander` props is set. It accepts an optional `aria-controls` value.
     <ToggleSwitchButton
       label="Basic aria-expanded Switch"
       expander={true}
+      checked={false}
       onChange={(newChecked) => alert('Checked is now: ' + newChecked)}
       aria-controls="remote-content-area"
     />

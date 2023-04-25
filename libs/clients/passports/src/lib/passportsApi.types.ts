@@ -44,27 +44,18 @@ export interface Region {
   name?: string
 }
 
-export interface DeliveryAddress {
-  street?: string
-  street2?: string
-  zipCode?: string
-  city?: string
-  city2?: string
-  region?: Region
-  country?: Country
-}
-
 export interface Country {
   number?: string
   name?: string
 }
 
 export interface Approval {
-  personId?: string
-  approved?: Date
+  personId: string
+  approved: Date
+  name: string
 }
 export interface PreregistrationInput {
-  guId?: string
+  guid?: string
   priority?: number
   appliedForPersonId?: string
   approvalA?: Approval
@@ -72,7 +63,6 @@ export interface PreregistrationInput {
   contactInfo?: ContactInfo
   documents?: Document[]
   deliveryName?: string
-  deliveryAddress?: DeliveryAddress
 }
 
 export interface Passport {
@@ -86,4 +76,14 @@ export type ExpiryStatus = 'EXPIRED' | 'LOST'
 
 export interface PreregisterResponse {
   success: boolean
+}
+
+export interface DeliveryAddress {
+  id?: number
+  key?: string
+  type?: string
+  name?: string
+  street?: string
+  city?: string
+  zip?: string
 }

@@ -37,6 +37,7 @@ export type {
 export {
   UserRole,
   isExtendedCourtRole,
+  extendedCourtRoles,
   isCourtRole,
   courtRoles,
   isProsecutionRole,
@@ -65,6 +66,9 @@ export {
   completedCaseStates,
   hasCaseBeenAppealed,
   SubpoenaType,
+  CaseAppealState,
+  getAppealInfo,
+  getStatementDeadline,
 } from './lib/case'
 export type {
   Case,
@@ -85,7 +89,11 @@ export type {
   UploadPoliceCaseFileResponse,
 } from './lib/policeFile'
 
-export { IndictmentCountOffense, Substance } from './lib/indictmentCount'
+export {
+  IndictmentCountOffense,
+  Substance,
+  offenseSubstances,
+} from './lib/indictmentCount'
 export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'
