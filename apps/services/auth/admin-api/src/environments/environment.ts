@@ -9,6 +9,8 @@ const devConfig = {
     audience,
     issuer: 'https://identity-server.dev01.devland.is',
   },
+  port: 6333,
+  clientSecretEncryptionKey: 'secret',
 }
 
 const prodConfig = {
@@ -20,9 +22,10 @@ const prodConfig = {
   },
   auth: {
     audience,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL!,
+    issuer: JSON.parse(process.env.IDENTITY_SERVER_ISSUER_URL_LIST || '[]'),
   },
+  port: 3333,
+  clientSecretEncryptionKey: process.env.CLIENT_SECRET_ENCRYPTION_KEY,
 }
 
 export default process.env.NODE_ENV === 'production' ? prodConfig : devConfig

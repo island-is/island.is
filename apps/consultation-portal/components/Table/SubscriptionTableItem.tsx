@@ -3,10 +3,10 @@ import {
   Table as T,
   Text,
   Icon,
-  Hidden,
   Stack,
+  FocusableBox,
 } from '@island.is/island-ui/core'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { tableRowBackgroundColor } from '../../utils/helpers'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import * as styles from './SubscriptionTableItem.css'
@@ -17,77 +17,97 @@ export interface SubscriptionTableItemProps {
   item: Case
   idx: number
   checkboxStatus: boolean
+  IsSubscriptionTypeChecked: boolean
   onCheckboxChange: () => void
+  onSubscriptiontypeChange: (val) => void
   currentTab: Area
+  mdBreakpoint: boolean
 }
 
 const SubscriptionTableItem = ({
   item,
   idx,
   checkboxStatus,
+  IsSubscriptionTypeChecked,
+  onSubscriptiontypeChange,
   onCheckboxChange,
   currentTab,
+  mdBreakpoint,
 }) => {
   const [isOpen, setIsOpen] = useState(false)
+
   const onClick = () => {
     setIsOpen(!isOpen)
   }
 
   const borderColor = 'transparent'
 
+  const checkboxChange = (checked: boolean, close = true) => {
+    if (close) {
+      onClick()
+    }
+    onCheckboxChange(item.id, checked)
+  }
+
+  const { Row, Data: TData } = T
+
+  const Data = ({ width = '', children }) => {
+    return (
+      <TData
+        width={width}
+        borderColor={borderColor}
+        box={{ background: tableRowBackgroundColor(idx) }}
+      >
+        {children}
+      </TData>
+    )
+  }
+
   return (
-    <Fragment>
-      <T.Row>
-        <T.Data
-          borderColor={borderColor}
-          box={{
-            className: styles.tableRowLeft,
-            background: tableRowBackgroundColor(idx),
-          }}
-        >
+    <>
+      <Row key={idx}>
+        <Data width="10">
           <Checkbox
             checked={checkboxStatus(item.id)}
-            onChange={(e) => onCheckboxChange(item.id, e.target.checked)}
+            onChange={(e) => checkboxChange(e.target.checked)}
           />
-        </T.Data>
+        </Data>
         {currentTab !== Area.case ? (
-          <T.Data
-            borderColor={borderColor}
-            box={{ background: tableRowBackgroundColor(idx) }}
-          >
-            <Text variant="h5">{item.name}</Text>
-          </T.Data>
+          <Data>
+            <FocusableBox onClick={onClick}>
+              <Text variant="h5">{item.name}</Text>
+            </FocusableBox>
+          </Data>
+        ) : mdBreakpoint ? (
+          <>
+            <Data>
+              <FocusableBox onClick={onClick}>
+                <Text variant="h5">{item.caseNumber}</Text>
+              </FocusableBox>
+            </Data>
+            <Data>
+              <FocusableBox onClick={onClick}>
+                <Text variant="medium" fontWeight="light">
+                  {item.name}
+                </Text>
+              </FocusableBox>
+            </Data>
+          </>
         ) : (
           <>
-            <T.Data
-              borderColor={borderColor}
-              box={{ background: tableRowBackgroundColor(idx) }}
-            >
-              <Hidden below="lg">
-                <Text variant="h5">{item.caseNumber}</Text>
-              </Hidden>
-              <Hidden above="md">
+            <Data>
+              <FocusableBox onClick={onClick}>
                 <Stack space={1}>
                   <Text variant="h5">{item.caseNumber}</Text>
                   <Text variant="medium" fontWeight="light">
                     {item.name}
                   </Text>
                 </Stack>
-              </Hidden>
-            </T.Data>
-            <T.Data
-              borderColor={borderColor}
-              box={{ background: tableRowBackgroundColor(idx) }}
-            >
-              <Hidden below="lg">
-                <Text variant="medium" fontWeight="light">
-                  {item.name}
-                </Text>
-              </Hidden>
-            </T.Data>
+              </FocusableBox>
+            </Data>
           </>
         )}
-        <T.Data
+        <TData
           borderColor={borderColor}
           box={{
             className: styles.tableRowRight,
@@ -95,14 +115,18 @@ const SubscriptionTableItem = ({
           }}
           align="right"
         >
-          <div onClick={onClick} style={{ height: '24px' }}>
+          <FocusableBox
+            onClick={onClick}
+            style={{ height: '24px' }}
+            flexDirection="rowReverse"
+          >
             <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
-          </div>
-        </T.Data>
-      </T.Row>
+          </FocusableBox>
+        </TData>
+      </Row>
       {isOpen && (
-        <T.Row>
-          <T.Data
+        <Row key={idx * 21 + 1}>
+          <TData
             colSpan={4}
             borderColor={borderColor}
             box={{
@@ -110,11 +134,15 @@ const SubscriptionTableItem = ({
               background: tableRowBackgroundColor(idx),
             }}
           >
-            <SubscriptionChoices />
-          </T.Data>
-        </T.Row>
+            <SubscriptionChoices
+              itemId={item.id}
+              checkboxCheck={IsSubscriptionTypeChecked}
+              checkboxChange={onSubscriptiontypeChange}
+            />
+          </TData>
+        </Row>
       )}
-    </Fragment>
+    </>
   )
 }
 

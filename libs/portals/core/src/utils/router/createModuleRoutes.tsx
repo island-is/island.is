@@ -31,6 +31,7 @@ const createRoutes = ({ routes, childRoute }: CreateRoutes): RouteObject[] => {
           loader: route.loader,
           action: route.action,
           handle: route.handle,
+          id: route.id,
           errorElement: childRoute
             ? route.errorElement
             : route.errorElement || <ModuleErrorScreen name={route.name} />,

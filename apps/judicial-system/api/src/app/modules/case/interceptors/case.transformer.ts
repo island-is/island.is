@@ -1,9 +1,11 @@
+import { getAppealInfo } from '@island.is/judicial-system/types'
 import { Case } from '../models/case.model'
 
-const threeDays = 3 * 24 * 60 * 60 * 1000
-const sevenDays = 7 * 24 * 60 * 60 * 1000
+const getDays = (days: number) => days * 24 * 60 * 60 * 1000
 
 export function transformCase(theCase: Case): Case {
+  const appealInfo = getAppealInfo(theCase)
+
   return {
     ...theCase,
     sendRequestToDefender: theCase.sendRequestToDefender ?? false,
@@ -13,11 +15,17 @@ export function transformCase(theCase: Case): Case {
     isValidToDateInThePast: theCase.validToDate
       ? Date.now() > new Date(theCase.validToDate).getTime()
       : theCase.isValidToDateInThePast,
-    isAppealDeadlineExpired: theCase.rulingDate
-      ? Date.now() >= new Date(theCase.rulingDate).getTime() + threeDays
+    // TODO: Use appealInfo.appealDeadline
+    isAppealDeadlineExpired: theCase.courtEndTime
+      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(3)
       : false,
-    isAppealGracePeriodExpired: theCase.rulingDate
-      ? Date.now() >= new Date(theCase.rulingDate).getTime() + sevenDays
+    isAppealGracePeriodExpired: theCase.courtEndTime
+      ? Date.now() >= new Date(theCase.courtEndTime).getTime() + getDays(31)
       : false,
+    isStatementDeadlineExpired: theCase.appealReceivedByCourtDate
+      ? Date.now() >=
+        new Date(theCase.appealReceivedByCourtDate).getTime() + getDays(1)
+      : false,
+    ...appealInfo,
   }
 }

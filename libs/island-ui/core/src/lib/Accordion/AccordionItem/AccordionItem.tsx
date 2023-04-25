@@ -16,12 +16,13 @@ import { hideFocusRingsClassName } from '../../private/hideFocusRings/hideFocusR
 import { Overlay } from '../../private/Overlay/Overlay'
 import { Text } from '../../Text/Text'
 import { TextVariants } from '../../Text/Text.css'
-import { AccordionContext } from '../../Accordion/Accordion'
+import { AccordionContext } from '../Accordion'
 import { Icon } from '../../IconRC/Icon'
 import * as styles from './AccordionItem.css'
 import { Colors } from '@island.is/island-ui/theme'
 
 type IconVariantTypes = 'default' | 'small' | 'sidebar'
+type ColorVariants = 'blue' | 'red'
 
 export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5'
 
@@ -36,6 +37,7 @@ type BaseProps = {
   children: ReactNode
   onBlur?: () => void
   onFocus?: () => void
+  colorVariant?: ColorVariants
 }
 
 type StateProps =
@@ -73,6 +75,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       onClick,
       onBlur,
       onFocus,
+      colorVariant,
     },
     forwardedRef,
   ) => {
@@ -120,6 +123,12 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       [], // Only run when component mounts!
     )
 
+    const plusColor = colorVariant
+      ? colorVariant
+      : iconVariant === 'sidebar'
+      ? 'purple'
+      : 'blue'
+
     return (
       <Box>
         <Box position="relative" display="flex">
@@ -164,10 +173,10 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </Column>
                 <Column width="content">
                   <span
-                    className={cn(
-                      styles.plusIconWrap,
-                      styles.iconWrapVariants[iconVariant],
-                    )}
+                    className={styles.plusIconWrap({
+                      iconVariant,
+                      color: plusColor,
+                    })}
                   >
                     <span
                       className={cn(styles.icon, styles.removeIcon, {
@@ -223,7 +232,9 @@ export const AccordionCard = (props: AccordionCardProps) => {
       height="full"
       background="white"
       borderRadius="large"
-      className={cn(styles.card, { [styles.focused]: isFocused })}
+      className={cn(styles.card({ color: props.colorVariant }), {
+        [styles.focused]: isFocused,
+      })}
       padding={[2, 2, 4]}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>

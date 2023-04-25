@@ -23,10 +23,14 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) => {
-        return (
-          (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].childName ?? ''
-        )
+        const child = (application.externalData.identityDocument
+          ?.data as IdentityDocumentData).childPassports.find((child) => {
+          return (
+            child.childNationalId ===
+            (application.answers.passport as Passport)?.childPassport
+          )
+        })
+        return child?.childName ?? ''
       },
     }),
     buildTextField({
@@ -37,11 +41,14 @@ export const childsPersonalInfo = buildMultiField({
       readOnly: true,
       format: '######-####',
       defaultValue: (application: Application) => {
-        return (
-          (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].childNationalId ??
-          ''
-        )
+        const child = (application.externalData.identityDocument
+          ?.data as IdentityDocumentData).childPassports.find((child) => {
+          return (
+            child.childNationalId ===
+            (application.answers.passport as Passport)?.childPassport
+          )
+        })
+        return child?.childNationalId ?? ''
       },
     }),
     buildDescriptionField({
@@ -75,6 +82,7 @@ export const childsPersonalInfo = buildMultiField({
       id: 'childsPersonalInfo.guardian1.email',
       title: m.email,
       width: 'half',
+      required: true,
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           email?: string
@@ -86,6 +94,7 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       variant: 'tel',
       format: '###-####',
+      required: true,
       defaultValue: (application: Application) => {
         const phone =
           (application.externalData.userProfile?.data as {
@@ -108,11 +117,14 @@ export const childsPersonalInfo = buildMultiField({
       backgroundColor: 'white',
       width: 'half',
       defaultValue: (application: Application) => {
-        return (
-          (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0]
-            .secondParentName ?? ''
-        )
+        const child = (application.externalData.identityDocument
+          ?.data as IdentityDocumentData).childPassports.find((child) => {
+          return (
+            child.childNationalId ===
+            (application.answers.passport as Passport)?.childPassport
+          )
+        })
+        return child?.secondParentName ?? ''
       },
     }),
     buildTextField({
@@ -123,10 +135,14 @@ export const childsPersonalInfo = buildMultiField({
       readOnly: true,
       format: '######-####',
       defaultValue: (application: Application) => {
-        return (
-          (application.externalData.identityDocument
-            ?.data as IdentityDocumentData).childPassports[0].secondParent ?? ''
-        )
+        const child = (application.externalData.identityDocument
+          ?.data as IdentityDocumentData).childPassports.find((child) => {
+          return (
+            child.childNationalId ===
+            (application.answers.passport as Passport)?.childPassport
+          )
+        })
+        return child?.secondParent ?? ''
       },
     }),
     buildTextField({
@@ -135,6 +151,7 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       defaultValue: '',
       backgroundColor: 'blue',
+      required: true,
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.phoneNumber',
@@ -144,6 +161,7 @@ export const childsPersonalInfo = buildMultiField({
       format: '###-####',
       backgroundColor: 'blue',
       defaultValue: '',
+      required: true,
     }),
     buildSubmitField({
       id: 'approveCheckForDisability',

@@ -43,10 +43,14 @@ import { serviceSetup as adsBackendSetup } from '../../../apps/air-discount-sche
 
 import { serviceSetup as externalContractsTestsSetup } from '../../../apps/external-contracts-tests/infra/external-contracts-tests'
 
+import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
+
 import {
   serviceSetup as sessionsServiceSetup,
   workerSetup as sessionsWorkerSetup,
 } from '../../../apps/services/sessions/infra/sessions'
+
+import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/admin-api/infra/auth-admin-api'
 
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
@@ -62,15 +66,17 @@ const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
 const adminPortal = adminPortalSetup()
-const consultationPortal = consultationPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
+const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
+
+const authAdminApi = authAdminApiSetup()
 
 const api = apiSetup({
   appSystemApi,
@@ -79,7 +85,9 @@ const api = apiSetup({
   icelandicNameRegistryBackend: nameRegistryBackend,
   servicesEndorsementApi: endorsement,
   airDiscountSchemeBackend: adsBackend,
+  regulationsAdminBackend: rabBackend,
   sessionsApi: sessionsService,
+  authAdminApi,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -87,6 +95,7 @@ const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
 const contentfulApps = contentfulAppsSetup()
+const consultationPortal = consultationPortalSetup({ api: api })
 
 const xroadCollector = xroadCollectorSetup()
 
@@ -98,7 +107,9 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 const storybook = storybookSetup({})
 const contentfulTranslationExtension = contentfulTranslationExtensionSetup()
 
-const downloadService = downloadServiceSetup()
+const downloadService = downloadServiceSetup({
+  regulationsAdminBackend: rabBackend,
+})
 
 const userNotificationService = userNotificationServiceSetup()
 const userNotificationWorkerService = userNotificationWorkerSetup({
@@ -131,6 +142,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    rabBackend,
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
@@ -159,6 +171,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    rabBackend,
     appSystemApiWorker,
     userNotificationService,
     userNotificationWorkerService,
@@ -188,6 +201,7 @@ export const Services: EnvironmentServices = {
     adsWeb,
     adsBackend,
     adsApi,
+    rabBackend,
     githubActionsCache,
     userNotificationService,
     userNotificationWorkerService,

@@ -184,11 +184,6 @@ export const m = defineMessages({
     defaultMessage: 'Þú getur einning fundið sakavottorðið í pósthólfinu þínu',
     description: 'You can also find the criminal record in your inbox',
   },
-  criminalRecordInboxLink: {
-    id: 'cr.application:criminalRecordInboxLink',
-    defaultMessage: 'https://island.is/minarsidur/postholf',
-    description: 'Link to the island.is inbox',
-  },
   downloadCriminalRecord: {
     id: 'cr.application:downloadCriminalRecord',
     defaultMessage: 'Hlaða niður sakavottorði',

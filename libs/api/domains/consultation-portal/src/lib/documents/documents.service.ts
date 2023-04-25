@@ -1,6 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
-import { ApolloError } from 'apollo-server-express'
-import { FetchError } from '@island.is/clients/middlewares'
+import { Injectable } from '@nestjs/common'
 import {
   DocumentsApi,
   ApiDocumentsDocumentIdGetRequest,
@@ -10,7 +8,7 @@ import {
 export class DocumentService {
   constructor(private documentsApi: DocumentsApi) {}
 
-  async getDocument(documentId: string): Promise<void> {
+  async getCaseDocument(documentId: string): Promise<void> {
     const requestParams: ApiDocumentsDocumentIdGetRequest = {
       documentId: documentId,
     }

@@ -36,7 +36,9 @@ export const CemetryOperation = ({
     variables: { year: operatingYear },
   })
 
-  const { errors } = useFormContext()
+  const {
+    formState: { errors },
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const currentUserType = getCurrentUserType(answers, externalData)
   const [getTotalIncome, totalIncome] = useTotals(

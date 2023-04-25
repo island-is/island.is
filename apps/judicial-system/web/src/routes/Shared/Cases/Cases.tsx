@@ -16,10 +16,10 @@ import {
   CaseState,
   CaseTransition,
   isRestrictionCase,
-  Feature,
   isInvestigationCase,
   isIndictmentCase,
   isExtendedCourtRole,
+  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -31,26 +31,25 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { findFirstInvalidStep } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ActiveCases from './ActiveCases'
 import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
+import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import { FilterOption, useFilter } from './useFilter'
 
 const CreateCaseButton: React.FC<{
-  features: Feature[]
   user: User
-}> = ({ features, user }) => {
+}> = ({ user }) => {
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
@@ -87,32 +86,13 @@ const CreateCaseButton: React.FC<{
     return []
   }, [formatMessage, user?.role])
 
-  // TODO Remove procecutor office id check when indictments are ready
-  const itemsFiltered = useMemo(() => {
-    if (
-      features.includes(Feature.INDICTMENTS) ||
-      [
-        '1c45b4c5-e5d3-45ba-96f8-219568982268', // Lögreglustjórinn á Austurlandi
-        '26136a67-c3d6-4b73-82e2-3265669a36d3', // Lögreglustjórinn á Suðurlandi
-        'a4b204f3-b072-41b6-853c-42ec4b263bd6', // Lögreglustjórinn á Norðurlandi eystra
-        '53581d7b-0591-45e5-9cbe-c96b2f82da85', // Lögreglustjórinn á höfuðborgarsvæðinu
-      ].includes(user.institution?.id ?? '')
-    ) {
-      return items
-    }
-
-    return items.filter(
-      (item) => item.href !== constants.CREATE_INDICTMENT_ROUTE,
-    )
-  }, [features, user, items])
-
   return (
     <Box display={['none', 'none', 'block']}>
       <DropdownMenu
         dataTestId="createCaseDropdown"
         menuLabel="Tegund kröfu"
         icon="add"
-        items={itemsFiltered}
+        items={items}
         title={formatMessage(m.createCaseButton)}
       />
     </Box>
@@ -124,7 +104,6 @@ export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
 
   const { user } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
 
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
@@ -182,12 +161,12 @@ export const Cases: React.FC = () => {
     })
 
     return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type) && c.state === CaseState.ACCEPTED) {
-        return false
+      if (isIndictmentCase(c.type)) {
+        return !completedCaseStates.includes(c.state)
       } else if (isPrisonAdminUser || isPrisonUser) {
-        return !c.isValidToDateInThePast && c.rulingDate
+        return !c.isValidToDateInThePast
       } else {
-        return !c.rulingDate
+        return !(completedCaseStates.includes(c.state) && c.rulingDate)
       }
     })
   }, [resCases, isPrisonAdminUser, isPrisonUser])
@@ -220,6 +199,7 @@ export const Cases: React.FC = () => {
 
   const openCase = (caseToOpen: Case, role: UserRole) => {
     let routeTo = null
+    const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
 
     if (
       caseToOpen.state === CaseState.ACCEPTED ||
@@ -228,6 +208,8 @@ export const Cases: React.FC = () => {
     ) {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      } else if (isHighCourtUser) {
+        routeTo = constants.COURT_OF_APPEAL_OVERVIEW
       } else {
         routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
       }
@@ -260,7 +242,7 @@ export const Cases: React.FC = () => {
         )
       } else {
         routeTo = findFirstInvalidStep(
-          constants.prosecutorIndictmentRoutes,
+          constants.prosecutorIndictmentRoutes(isTrafficViolation),
           caseToOpen,
         )
       }
@@ -280,21 +262,23 @@ export const Cases: React.FC = () => {
         <div className={styles.logoContainer}>
           <Logo />
           {isProsecutor || isRepresentative ? (
-            <CreateCaseButton user={user} features={features} />
+            <CreateCaseButton user={user} />
           ) : null}
         </div>
-        <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
-          <Select
-            name="filter-cases"
-            options={filterOptions}
-            label={formatMessage(m.filter.label)}
-            onChange={(value) => {
-              setIsFiltering(true)
-              setFilter(value as FilterOption)
-            }}
-            value={filter}
-          />
-        </Box>
+        {user?.role !== UserRole.Staff && (
+          <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
+            <Select
+              name="filter-cases"
+              options={filterOptions}
+              label={formatMessage(m.filter.label)}
+              onChange={(value) => {
+                setIsFiltering(true)
+                setFilter(value as FilterOption)
+              }}
+              value={filter}
+            />
+          </Box>
+        )}
         {error ? (
           <div
             className={styles.infoContainer}

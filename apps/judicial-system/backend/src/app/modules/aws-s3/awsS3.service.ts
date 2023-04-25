@@ -111,7 +111,7 @@ export class AwsS3Service {
       .copyObject({
         Bucket: environment.files.bucket,
         Key: newKey,
-        CopySource: `${environment.files.bucket}/${key}`,
+        CopySource: encodeURIComponent(`${environment.files.bucket}/${key}`),
       })
       .promise()
       .then(() => newKey)

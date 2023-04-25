@@ -53,6 +53,7 @@ export class FinancialStatementsInaoClientService {
       mode: 'token',
       tokenEndpoint: this.config.tokenEndpoint,
     },
+    timeout: 30000,
   })
 
   async getClientTypes(): Promise<ClientType[] | null> {
@@ -207,8 +208,6 @@ export class FinancialStatementsInaoClientService {
     const data = await this.getData(url)
 
     if (!data || !data.value) return null
-
-    console.log('getClientFinancialLimit', data)
 
     const found = data.value.find((x: any) => x.star_year == year)
 

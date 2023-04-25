@@ -1,4 +1,4 @@
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { Area, SortOptions } from '../../types/enums'
 import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
 import SearchAndSort from '../SearchAndSort/SearchAndSort'
@@ -10,6 +10,7 @@ export interface TabContentProps {
   currentTab: Area
   subscriptionArray: SubscriptionArray
   setSubscriptionArray: (obj: SubscriptionArray) => void
+  generalSubArray?: any
   searchValue: string
   setSearchValue: (str: string) => void
   sortTitle: SortOptions
@@ -22,15 +23,12 @@ export const TabContent = ({
   currentTab,
   subscriptionArray,
   setSubscriptionArray,
+  generalSubArray,
   searchValue,
   setSearchValue,
   sortTitle,
   setSortTitle,
 }: TabContentProps) => {
-  const onLoadMore = () => {
-    console.log('clicked on load more')
-  }
-
   return (
     <Box paddingTop={[3, 3, 3, 5, 5]}>
       <SearchAndSort
@@ -40,18 +38,21 @@ export const TabContent = ({
         setSearchValue={setSearchValue}
         sortTitle={sortTitle}
         setSortTitle={setSortTitle}
-      />
-      <SubscriptionTable
-        data={data}
         currentTab={currentTab}
-        subscriptionArray={subscriptionArray}
-        setSubscriptionArray={setSubscriptionArray}
       />
-      <Box paddingY={3}>
-        <Button icon="eye" variant="text" onClick={onLoadMore}>
-          Sýna fleiri mál
-        </Button>
-      </Box>
+      {data && data.length > 0 ? (
+        <SubscriptionTable
+          data={data}
+          generalSubArray={generalSubArray}
+          currentTab={currentTab}
+          subscriptionArray={subscriptionArray}
+          setSubscriptionArray={setSubscriptionArray}
+        />
+      ) : (
+        <Text paddingY={4} variant="h3">
+          Engin áskrift fannst
+        </Text>
+      )}
     </Box>
   )
 }

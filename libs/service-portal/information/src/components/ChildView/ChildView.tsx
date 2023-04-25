@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { ApolloError } from '@apollo/client/errors'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -27,6 +27,10 @@ import {
 import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
 import * as styles from './ChildView.css'
+import { formatNameBreaks } from '../../helpers/formatting'
+import { spmm, urls } from '../../lib/messages'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -74,6 +78,8 @@ const ChildView: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
+  const [showTooltip, setShowTooltip] = useState(false)
+  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
   const livingArrangment = (
     livingArrangementParents: Array<string> | undefined,
@@ -83,6 +89,20 @@ const ChildView: FC<Props> = ({
       ? formatMessage(m.yes)
       : formatMessage(m.no)
   }
+
+  /* Should show name breakdown tooltip? */
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalNameBreakdownEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setShowTooltip(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+  }, [])
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -159,14 +179,22 @@ const ChildView: FC<Props> = ({
             title={formatMessage(m.myRegistration)}
             label={formatMessage(m.fullName)}
             content={person?.fullName || '...'}
+            tooltip={
+              showTooltip
+                ? formatNameBreaks(person ?? undefined, {
+                    givenName: formatMessage(spmm.givenName),
+                    middleName: formatMessage(spmm.middleName),
+                    lastName: formatMessage(spmm.lastName),
+                  })
+                : undefined
+            }
             loading={loading}
             editLink={
               !isChild
                 ? {
                     title: editLink,
                     external: true,
-                    url:
-                      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
+                    url: formatMessage(urls.editChild),
                   }
                 : undefined
             }
@@ -194,7 +222,7 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url: 'https://skra.is/folk/flutningur/flutningur-barna/',
+                    url: formatMessage(urls.editResidenceChild),
                   }
                 : undefined
             }
@@ -234,8 +262,7 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url:
-                      'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
+                    url: formatMessage(urls.editChildReligion),
                   }
                 : undefined
             }
@@ -369,50 +396,28 @@ const ChildView: FC<Props> = ({
             <Box printHidden>
               <Divider />
             </Box>
-            {guardianship && !loading && (
-              <>
-                {guardianship?.legalDomicileParent &&
-                  guardianship.legalDomicileParent.length > 0 && (
-                    <>
-                      <TwoColumnUserInfoLine
-                        label={formatMessage({
-                          id: 'sp.family:legal-domicile-parent',
-                          defaultMessage: 'Lögheimilsforeldri',
-                        })}
-                        firstValue={livingArrangment(
-                          guardianship?.legalDomicileParent ?? [],
-                          person?.parent1 ?? '',
-                        )}
-                        secondValue={livingArrangment(
-                          guardianship?.legalDomicileParent ?? [],
-                          person?.parent2 ?? '',
-                        )}
-                      />
-                      <Divider />
-                    </>
-                  )}
-                {guardianship?.residenceParent &&
-                  guardianship.residenceParent.length > 0 && (
-                    <>
-                      <TwoColumnUserInfoLine
-                        label={formatMessage({
-                          id: 'sp.family:residence-parent',
-                          defaultMessage: 'Búsetuforeldri',
-                        })}
-                        firstValue={livingArrangment(
-                          guardianship?.residenceParent ?? [],
-                          person?.parent1 ?? '',
-                        )}
-                        secondValue={livingArrangment(
-                          guardianship?.residenceParent ?? [],
-                          person?.parent2 ?? '',
-                        )}
-                      />
-                      <Divider />
-                    </>
-                  )}
-              </>
-            )}
+            {guardianship &&
+              !loading &&
+              guardianship.residenceParent &&
+              guardianship.residenceParent.length > 0 && (
+                <>
+                  <TwoColumnUserInfoLine
+                    label={formatMessage({
+                      id: 'sp.family:residence-parent',
+                      defaultMessage: 'Búsetuforeldri',
+                    })}
+                    firstValue={livingArrangment(
+                      guardianship?.residenceParent ?? [],
+                      person?.parent1 ?? '',
+                    )}
+                    secondValue={livingArrangment(
+                      guardianship?.residenceParent ?? [],
+                      person?.parent2 ?? '',
+                    )}
+                  />
+                  <Divider />
+                </>
+              )}
           </Stack>
         )}
       </Stack>

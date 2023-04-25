@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
-import { CaseOrigin, PoliceCaseFile } from '@island.is/judicial-system/types'
+import { PoliceCaseFile } from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
@@ -11,10 +11,8 @@ import {
   Checkbox,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import {
-  FormContext,
-  SectionHeading,
-} from '@island.is/judicial-system-web/src/components'
+import { FormContext } from '@island.is/judicial-system-web/src/components'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { policeCaseFiles as m } from './PoliceCaseFiles.strings'
 import PoliceCaseFilesMessageBox from '../PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'
@@ -88,13 +86,11 @@ interface Props {
   setPoliceCaseFileList: React.Dispatch<
     React.SetStateAction<PoliceCaseFileCheck[]>
   >
-  policeCaseNumber?: string
   policeCaseFiles?: PoliceCaseFilesData
 }
 
 const PoliceCaseFiles: React.FC<Props> = ({
   onUpload,
-  policeCaseNumber,
   isUploading,
   policeCaseFileList,
   setPoliceCaseFileList,
@@ -117,7 +113,12 @@ const PoliceCaseFiles: React.FC<Props> = ({
       setCheckAllChecked(!checkAllChecked)
       setPoliceCaseFileList(
         policeCaseFileList.map((l) => {
-          return { id: l.id, name: l.name, checked: evt.target.checked }
+          return {
+            id: l.id,
+            name: l.name,
+            policeCaseNumber: l.policeCaseNumber,
+            checked: evt.target.checked,
+          }
         }),
       )
     } else {
@@ -128,99 +129,93 @@ const PoliceCaseFiles: React.FC<Props> = ({
   }
 
   return (
-    <>
-      <SectionHeading
-        title={formatMessage(m.heading, { policeCaseNumber })}
-        description={formatMessage(m.introduction)}
-      />
-      <Box marginBottom={5}>
-        {workingCase.origin === CaseOrigin.LOKE && (
-          <LayoutGroup>
-            <motion.div layout className={styles.policeCaseFilesContainer}>
-              <motion.ul layout>
-                <motion.li
-                  layout
-                  className={cn(styles.policeCaseFile, {
-                    [styles.selectAllPoliceCaseFiles]: true,
-                  })}
+    <Box marginBottom={5}>
+      {workingCase.origin === CaseOrigin.Loke && (
+        <LayoutGroup>
+          <motion.div layout className={styles.policeCaseFilesContainer}>
+            <motion.ul layout>
+              <motion.li
+                layout
+                className={cn(styles.policeCaseFile, {
+                  [styles.selectAllPoliceCaseFiles]: true,
+                })}
+              >
+                <Checkbox
+                  name="selectAllPoliceCaseFiles"
+                  label={formatMessage(m.selectAllLabel)}
+                  checked={checkAllChecked}
+                  onChange={(evt) => toggleCheckbox(evt, true)}
+                  disabled={isUploading || policeCaseFileList.length === 0}
+                  strong
+                />
+              </motion.li>
+              {policeCaseFiles?.isLoading ? (
+                <Box
+                  textAlign="center"
+                  paddingY={2}
+                  paddingX={3}
+                  marginBottom={2}
                 >
-                  <Checkbox
-                    name="selectAllPoliceCaseFiles"
-                    label={formatMessage(m.selectAllLabel)}
-                    checked={checkAllChecked}
-                    onChange={(evt) => toggleCheckbox(evt, true)}
-                    disabled={isUploading || policeCaseFileList.length === 0}
-                    strong
-                  />
-                </motion.li>
-                {policeCaseFiles?.isLoading ? (
-                  <Box
-                    textAlign="center"
-                    paddingY={2}
-                    paddingX={3}
-                    marginBottom={2}
-                  >
-                    <LoadingDots />
-                  </Box>
-                ) : policeCaseFiles?.hasError ? (
-                  policeCaseFiles?.errorCode ===
-                  'https://httpstatuses.org/404' ? (
-                    <PoliceCaseFilesMessageBox
-                      icon="warning"
-                      iconColor="yellow400"
-                      message={formatMessage(m.caseNotFoundInLOKEMessage)}
-                    />
-                  ) : (
-                    <PoliceCaseFilesMessageBox
-                      icon="close"
-                      iconColor="red400"
-                      message={formatMessage(m.couldNotGetFromLOKEMessage)}
-                    />
-                  )
-                ) : policeCaseFiles?.files.length === 0 ? (
+                  <LoadingDots />
+                </Box>
+              ) : policeCaseFiles?.hasError ? (
+                policeCaseFiles?.errorCode ===
+                'https://httpstatuses.org/404' ? (
                   <PoliceCaseFilesMessageBox
                     icon="warning"
                     iconColor="yellow400"
-                    message={formatMessage(m.noFilesFoundInLOKEMessage)}
-                  />
-                ) : policeCaseFileList.length > 0 ? (
-                  <CheckboxList
-                    files={policeCaseFileList}
-                    isUploading={isUploading}
-                    onCheck={toggleCheckbox}
+                    message={formatMessage(m.caseNotFoundInLOKEMessage)}
                   />
                 ) : (
                   <PoliceCaseFilesMessageBox
-                    icon="checkmark"
-                    iconColor="blue400"
-                    message={formatMessage(m.allFilesUploadedMessage)}
+                    icon="close"
+                    iconColor="red400"
+                    message={formatMessage(m.couldNotGetFromLOKEMessage)}
                   />
-                )}
-              </motion.ul>
-            </motion.div>
-            <motion.div layout className={styles.uploadToRVGButtonContainer}>
-              <Button
-                onClick={async () => {
-                  await onUpload()
-                  setCheckAllChecked(false)
-                }}
-                loading={isUploading}
-                disabled={policeCaseFileList.every((p) => !p.checked)}
-              >
-                {formatMessage(m.uploadButtonLabel)}
-              </Button>
-            </motion.div>
-          </LayoutGroup>
-        )}
-        {workingCase.origin !== CaseOrigin.LOKE && (
-          <AlertMessage
-            type="info"
-            title={formatMessage(m.originNotLokeTitle)}
-            message={formatMessage(m.originNotLokeMessage)}
-          ></AlertMessage>
-        )}
-      </Box>
-    </>
+                )
+              ) : policeCaseFiles?.files.length === 0 ? (
+                <PoliceCaseFilesMessageBox
+                  icon="warning"
+                  iconColor="yellow400"
+                  message={formatMessage(m.noFilesFoundInLOKEMessage)}
+                />
+              ) : policeCaseFileList.length > 0 ? (
+                <CheckboxList
+                  files={policeCaseFileList}
+                  isUploading={isUploading}
+                  onCheck={toggleCheckbox}
+                />
+              ) : (
+                <PoliceCaseFilesMessageBox
+                  icon="checkmark"
+                  iconColor="blue400"
+                  message={formatMessage(m.allFilesUploadedMessage)}
+                />
+              )}
+            </motion.ul>
+          </motion.div>
+          <motion.div layout className={styles.uploadToRVGButtonContainer}>
+            <Button
+              onClick={async () => {
+                await onUpload()
+                setCheckAllChecked(false)
+              }}
+              loading={isUploading}
+              disabled={policeCaseFileList.every((p) => !p.checked)}
+            >
+              {formatMessage(m.uploadButtonLabel)}
+            </Button>
+          </motion.div>
+        </LayoutGroup>
+      )}
+      {workingCase.origin !== CaseOrigin.Loke && (
+        <AlertMessage
+          type="info"
+          title={formatMessage(m.originNotLokeTitle)}
+          message={formatMessage(m.originNotLokeMessage)}
+        ></AlertMessage>
+      )}
+    </Box>
   )
 }
 

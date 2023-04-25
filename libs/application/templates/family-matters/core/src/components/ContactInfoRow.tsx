@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
@@ -25,10 +25,15 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
   const [statefulPhone, setStatefulPhone] = useState(
     phoneNumber.defaultValue || '',
   )
-  const { clearErrors, register } = useFormContext()
+  const { clearErrors, register, setValue } = useFormContext()
   const parsedNumber =
     parsePhoneNumberFromString(statefulPhone, 'IS')?.nationalNumber ||
     statefulPhone
+
+  useEffect(() => {
+    setValue(phoneNumber.id, parsedNumber)
+  }, [parsedNumber])
+
   return (
     <GridContainer>
       <GridRow>
@@ -64,12 +69,7 @@ const ContactInfoRow = ({ email, phoneNumber }: Props) => {
             defaultValue={phoneNumber.defaultValue || ''}
           />
         </GridColumn>
-        <input
-          name={`${phoneNumber.id}`}
-          type="hidden"
-          value={parsedNumber as string}
-          ref={register}
-        />
+        <input {...register(`${phoneNumber.id}`)} type="hidden" />
       </GridRow>
     </GridContainer>
   )

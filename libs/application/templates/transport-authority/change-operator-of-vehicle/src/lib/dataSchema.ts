@@ -1,24 +1,69 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
 
-export const UserInformationSchema = z.object({
-  nationalId: z.string().min(1),
+const UserSchemaBase = z.object({
+  nationalId: z
+    .string()
+    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
   name: z.string().min(1),
   email: z.string().min(1),
   phone: z.string().min(1),
-  approved: z.boolean().optional(),
 })
 
-export const OperatorInformationSchema = z.object({
-  nationalId: z.string().min(1),
-  name: z.string().min(1),
-  email: z.string().min(1),
-  phone: z.string().min(1),
-  wasRemoved: z.string().optional(),
-  approved: z.boolean().optional(),
-})
+const RemovableUserSchemaBase = z
+  .object({
+    nationalId: z.string().optional(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    wasRemoved: z.string().optional(),
+  })
+  .refine(
+    ({ nationalId, wasRemoved }) => {
+      return (
+        wasRemoved === 'true' ||
+        (nationalId && nationalId.length > 0 && kennitala.isValid(nationalId))
+      )
+    },
+    { path: ['nationalId'] },
+  )
+  .refine(
+    ({ name, wasRemoved }) => {
+      return wasRemoved === 'true' || (name && name.length > 0)
+    },
+    { path: ['name'] },
+  )
+  .refine(
+    ({ email, wasRemoved }) => {
+      return wasRemoved === 'true' || (email && email.length > 0)
+    },
+    { path: ['email'] },
+  )
+  .refine(
+    ({ phone, wasRemoved }) => {
+      return wasRemoved === 'true' || (phone && phone.length > 0)
+    },
+    { path: ['phone'] },
+  )
+
+export const UserInformationSchema = z.intersection(
+  UserSchemaBase,
+  z.object({
+    approved: z.boolean().optional(),
+  }),
+)
+
+export const OperatorInformationSchema = z.intersection(
+  RemovableUserSchemaBase,
+  z.object({
+    approved: z.boolean().optional(),
+  }),
+)
 
 export const OldOperatorInformationSchema = z.object({
-  nationalId: z.string().min(1),
+  nationalId: z
+    .string()
+    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
   name: z.string().min(1),
   wasRemoved: z.string().optional(),
   startDate: z.string().optional(),

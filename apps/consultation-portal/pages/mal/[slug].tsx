@@ -1,45 +1,53 @@
-import {
-  ConsultationPortalCaseItemResult,
-  QueryConsultationPortalCaseByIdArgs,
-} from '@island.is/api/schema'
+import { QueryConsultationPortalCaseByIdArgs } from '@island.is/api/schema'
 import initApollo from '../../graphql/client'
 import CaseScreen from '../../screens/Case/Case'
-import {
-  ConsultationPortalCaseByIdQuery,
-  ConsultationPortalCaseByIdDocument,
-} from '../../screens/Case/getCase.generated'
-import { GET_CASE_BY_ID } from '../../screens/Case/getCase'
-import { Advice, Case } from '../../types/viewModels'
+import { CASE_GET_CASE_BY_ID } from '../../graphql/queries.graphql'
+import { CaseGetCaseByIdQuery } from '../../graphql/queries.graphql.generated'
+import { Case } from '../../types/interfaces'
+
 interface CaseProps {
   case: Case
-  advices: Advice
+  caseId: number
 }
-const CaseDetails: React.FC<CaseProps> = ({ case: Case, advices }) => {
-  return <CaseScreen chosenCase={Case} advices={advices} isLoggedIn={true} />
+
+const CaseDetails: React.FC<CaseProps> = ({
+  case: Case,
+  caseId,
+}: CaseProps) => {
+  return <CaseScreen chosenCase={Case} caseId={caseId} />
 }
 export default CaseDetails
 
 export const getServerSideProps = async (ctx) => {
   const client = initApollo()
-  const slug = parseInt(ctx.query.slug)
-  const [
-    {
-      data: { consultationPortalCaseById },
-    },
-  ] = await Promise.all([
-    client.query<
-      ConsultationPortalCaseByIdQuery,
-      QueryConsultationPortalCaseByIdArgs
-    >({
-      query: GET_CASE_BY_ID,
-      variables: {
-        input: {
-          caseId: slug,
-        },
+  try {
+    const [
+      {
+        data: { consultationPortalCaseById },
       },
-    }),
-  ])
+    ] = await Promise.all([
+      client.query<CaseGetCaseByIdQuery, QueryConsultationPortalCaseByIdArgs>({
+        query: CASE_GET_CASE_BY_ID,
+        variables: {
+          input: {
+            caseId: parseInt(ctx.query['slug']),
+          },
+        },
+      }),
+    ])
+
+    return {
+      props: {
+        case: consultationPortalCaseById,
+        caseId: parseInt(ctx.query['slug']),
+      },
+    }
+  } catch (e) {
+    console.error(e)
+  }
   return {
-    props: { case: consultationPortalCaseById },
+    redirect: {
+      destination: '/500',
+    },
   }
 }

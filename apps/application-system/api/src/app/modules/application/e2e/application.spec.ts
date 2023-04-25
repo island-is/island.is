@@ -94,8 +94,104 @@ describe('Application system API', () => {
     expect(response.body.id).toBeTruthy()
   })
 
+  it('should set and return a pending action for an application', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const newStateResponse = await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    expect(newStateResponse.body.state).toBe('inReview')
+
+    expect(newStateResponse.body.actionCard.pendingAction.title).toBe(
+      'Verið er að fara yfir umsóknina',
+    )
+    expect(newStateResponse.body.actionCard.pendingAction.content).toBe(
+      'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
+    )
+  })
+
+  it('should fetch Application History for overview', async () => {
+    const creationResponse = await server
+      .post('/applications')
+      .send({
+        typeId: ApplicationTypes.EXAMPLE,
+      })
+      .expect(201)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}`)
+      .send({
+        answers: {
+          careerHistoryDetails: {
+            careerHistoryCompanies: ['government'],
+          },
+          dreamJob: 'pilot',
+        },
+      })
+      .expect(200)
+
+    // Advance from prerequisites state
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const list = await server
+      .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    const historyLog = list?.body[0]?.actionCard?.history[0]?.log
+
+    await server
+      .put(`/applications/${creationResponse.body.id}/submit`)
+      .send({ event: 'SUBMIT' })
+      .expect(200)
+
+    const listAgain = await server
+      .get(`/users/${nationalId}/applications`)
+      .expect(200)
+
+    expect(historyLog).toBe('Umsókn send inn')
+    expect(listAgain.body[0].actionCard.history).toHaveLength(3)
+  })
+
   // This template does not have readyForProduction: false
-  it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
+  it.skip('should succeed when POST-ing an application that has an undefined readyforproduction flag, on production environment', async () => {
     const envBefore = environment.environment
     environment.environment = 'production'
 
@@ -827,7 +923,7 @@ describe('Application system API', () => {
         nationalId: '1234567890',
         age: '30',
         email: 'tester@island.is',
-        phoneNumber: '8234567',
+        phoneNumber: '+3548234567',
       },
       dreamJob: 'Yes',
       attachments: [],
@@ -913,7 +1009,7 @@ describe('Application system API', () => {
         name: '123123',
         email: 'another@email.com',
         nationalId: '123',
-        phoneNumber: '5555555',
+        phoneNumber: '+3545555555',
       },
     }
 

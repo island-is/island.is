@@ -9,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useEffect } from 'react'
-import { SortOptions } from '../../types/enums'
+import { Area, SortOptions } from '../../types/enums'
 import DropdownSort from '../DropdownSort/DropdownSort'
 
 const SearchAndSort = ({
@@ -21,6 +21,7 @@ const SearchAndSort = ({
   searchPlaceholder = 'Leitaðu að máli, stofnun eða málefnasviði',
   sortTitle,
   setSortTitle,
+  currentTab,
 }) => {
   const searchOptions = []
 
@@ -40,6 +41,29 @@ const SearchAndSort = ({
       title: SortOptions.oldest,
     },
   ]
+
+  if (currentTab !== Area.case) {
+    return (
+      <GridRow>
+        <GridColumn span={'12/12'}>
+          <Stack space={1}>
+            <Hidden below="md">
+              <Text variant="eyebrow">Leit</Text>
+            </Hidden>
+            <AsyncSearch
+              label={label}
+              colored={true}
+              options={searchOptions}
+              placeholder={searchPlaceholder}
+              initialInputValue={searchValue}
+              inputValue={searchValue}
+              onInputValueChange={(value) => setSearchValue(value)}
+            />
+          </Stack>
+        </GridColumn>
+      </GridRow>
+    )
+  }
 
   return (
     <>

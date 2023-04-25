@@ -39,6 +39,9 @@ import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
+import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
+import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
+import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import { AssetsModule } from '@island.is/api/domains/assets'
@@ -74,8 +77,13 @@ import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municip
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
+import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { PowerBiModule } from '@island.is/api/domains/powerbi'
 import { PowerBiConfig } from '@island.is/api/domains/powerbi'
+import {
+  WatsonAssistantChatModule,
+  WatsonAssistantChatConfig,
+} from '@island.is/api/domains/watson-assistant-chat'
 
 import { maskOutFieldsMiddleware } from './graphql.middleware'
 import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
@@ -98,9 +106,11 @@ import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-
 import { DataLoaderInterceptor } from '@island.is/nest/dataloader'
 import { SessionsModule } from '@island.is/api/domains/sessions'
 import { CommunicationsConfig } from '@island.is/api/domains/communications'
+import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
+import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -234,6 +244,7 @@ const autoSchemaFile = environment.production
     ElectronicRegistrationsModule,
     FiskistofaModule,
     PowerBiModule,
+    WatsonAssistantChatModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -241,9 +252,8 @@ const autoSchemaFile = environment.production
     EndorsementSystemModule.register({
       baseApiUrl: environment.endorsementSystem.baseApiUrl!,
     }),
-    RegulationsModule.register({
-      url: environment.regulationsDomain.url!,
-    }),
+    RegulationsModule,
+    RegulationsAdminModule,
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
@@ -265,6 +275,7 @@ const autoSchemaFile = environment.production
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
+    UniversityOfIcelandModule,
     SessionsModule,
     AuthAdminModule,
     ConfigModule.forRoot({
@@ -287,6 +298,8 @@ const autoSchemaFile = environment.production
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,
+        RegulationsAdminClientConfig,
+        RegulationsClientConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
@@ -309,7 +322,10 @@ const autoSchemaFile = environment.production
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
+        UniversityOfIcelandClientConfig,
         SessionsApiClientConfig,
+        AuthAdminApiClientConfig,
+        WatsonAssistantChatConfig,
       ],
     }),
   ],

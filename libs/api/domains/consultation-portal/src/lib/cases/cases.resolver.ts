@@ -1,7 +1,6 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { CaseResultService } from './cases.service'
+import { CasesService } from './cases.service'
 import { CaseResult } from '../models/caseResult.model'
-import { CaseItemResult } from '../models/caseItemResult.model'
 import { AdviceResult } from '../models/adviceResult.model'
 import { UseGuards } from '@nestjs/common'
 import {
@@ -10,45 +9,57 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { GetCaseInput } from '../dto/case.input'
+import { GetCasesInput } from '../dto/cases.input'
+import { CasesAggregateResult } from '../models/casesAggregateResult.model'
+import { PostAdviceInput } from '../dto/postAdvice.input'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard)
-export class CaseResultResolver {
-  constructor(private caseResultService: CaseResultService) {}
+@FeatureFlag(Features.consultationPortalApplication)
+export class CasesResolver {
+  constructor(private caseResultService: CasesService) {}
 
-  @FeatureFlag(Features.consultationPortalApplication)
-  @Query(() => [CaseItemResult], { name: 'consultationPortalAllCases' })
-  async getAllCases(): Promise<CaseItemResult[]> {
-    return await this.caseResultService.getAllCases()
+  @Query(() => [AdviceResult], { name: 'consultationPortalAdviceByCaseId' })
+  async getAdvices(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
+  ): Promise<AdviceResult[]> {
+    const advices = await this.caseResultService.getAdvices(input)
+    return advices
+  }
+
+  @Mutation(() => Boolean!, {
+    nullable: true,
+    name: 'consultationPortalPostAdvice',
+  })
+  @UseGuards(IdsUserGuard, ScopesGuard)
+  @Scopes(ApiScope.samradsgatt)
+  async postAdvice(
+    @Args('input', { type: () => PostAdviceInput }) input: PostAdviceInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    const response = await this.caseResultService.postAdvice(user, input)
+    return response
   }
 
   @Query(() => CaseResult, { name: 'consultationPortalCaseById' })
-  @FeatureFlag(Features.consultationPortalApplication)
   async getCase(
     @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
   ): Promise<CaseResult> {
     return await this.caseResultService.getCase(input)
   }
 
-  @Query(() => [AdviceResult], { name: 'consultationPortalAdviceByCaseId' })
-  @FeatureFlag(Features.consultationPortalApplication)
-  async getAdvices(@Args('caseId') caseId: number): Promise<string[]> {
-    const advices = await this.caseResultService.getAdvices(caseId)
-    return advices.map((advice) => advice.content as string)
-  }
-
-  @Mutation(() => CaseResult, { name: 'postConsultationPortalAdvice' })
-  @FeatureFlag(Features.consultationPortalApplication)
-  async postAdvice(
-    @Args('caseId') caseId: number,
-    @Args('content') content: string,
-    @Args('files', { type: () => [String] }) files: Blob[],
-  ): Promise<void> {
-    const response = await this.caseResultService.postAdvice(
-      caseId,
-      content,
-      files,
-    )
-    return response
+  @Query(() => CasesAggregateResult, { name: 'consultationPortalGetCases' })
+  async getCases(
+    @Args('input', { type: () => GetCasesInput }) input: GetCasesInput,
+  ): Promise<CasesAggregateResult> {
+    return await this.caseResultService.getCases(input)
   }
 }

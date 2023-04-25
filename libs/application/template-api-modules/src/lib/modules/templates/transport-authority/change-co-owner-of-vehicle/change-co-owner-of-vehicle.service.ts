@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   applicationCheck,
   ChangeCoOwnerOfVehicleAnswers,
@@ -110,11 +113,12 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
-    const createdStr = application.created.toISOString()
 
+    const permno = answers?.pickVehicle?.plate
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
-    const permno = answers?.pickVehicle?.plate
+
+    const createdStr = application.created.toISOString()
 
     const currentOperators = await this.vehicleOperatorsClient.getOperators(
       auth,
@@ -125,6 +129,17 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       auth,
       permno,
     )
+
+    const filteredOldCoOwners = answers?.ownerCoOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewCoOwners = answers?.coOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredCoOwners = [
+      ...(filteredOldCoOwners ? filteredOldCoOwners : []),
+      ...(filteredNewCoOwners ? filteredNewCoOwners : []),
+    ]
 
     const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
       auth,
@@ -150,22 +165,10 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
           email: null,
           isMainOperator: operator.isMainOperator || false,
         })),
-        coOwners: [
-          ...(answers?.ownerCoOwners
-            ? answers.ownerCoOwners.map((x) => ({
-                ssn: x.nationalId,
-                email: x.email,
-              }))
-            : []),
-          ...(answers?.coOwners
-            ? answers.coOwners
-                .filter(({ wasRemoved }) => wasRemoved !== 'true')
-                .map((x) => ({
-                  ssn: x.nationalId,
-                  email: x.email,
-                }))
-            : []),
-        ],
+        coOwners: filteredCoOwners.map((x) => ({
+          ssn: x.nationalId!,
+          email: x.email!,
+        })),
       },
     )
 
@@ -185,8 +188,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
 
       const chargeItemCodes = getChargeItemCodes(answers)
@@ -198,7 +199,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
@@ -395,20 +396,16 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     const ownerSsn = answers?.owner?.nationalId
     const ownerEmail = answers?.owner?.email
 
-    const newCoOwners = answers?.coOwners
-      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
-      }))
-    const ownerCoOwners = answers?.ownerCoOwners?.filter(
-      (coOwner) => coOwner.wasRemoved !== 'true',
+    const filteredOldCoOwners = answers?.ownerCoOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
     )
-    const oldCoOwners =
-      ownerCoOwners?.map((coOwner) => ({
-        ssn: coOwner.nationalId,
-        email: coOwner.email,
-      })) || []
+    const filteredNewCoOwners = answers?.coOwners?.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredCoOwners = [
+      ...(filteredOldCoOwners ? filteredOldCoOwners : []),
+      ...(filteredNewCoOwners ? filteredNewCoOwners : []),
+    ]
 
     const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
       auth,
@@ -442,7 +439,10 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         email: null,
         isMainOperator: operator.isMainOperator || false,
       })),
-      coOwners: [...newCoOwners, ...oldCoOwners],
+      coOwners: filteredCoOwners.map((x) => ({
+        ssn: x.nationalId!,
+        email: x.email!,
+      })),
     })
 
     // 3. Notify everyone in the process that the application has successfully been submitted

@@ -5,39 +5,12 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Types": {
-      "get": {
-        "tags": ["Types"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/AllTypesResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AllTypesResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/AllTypesResult"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/Cases": {
       "get": {
         "tags": ["Cases"],
         "parameters": [
           {
-            "name": "Query",
+            "name": "SearchQuery",
             "in": "query",
             "style": "form",
             "schema": {
@@ -143,62 +116,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CaseItemResult"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/User/Advices": {
-      "get": {
-        "tags": ["User"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserAdviceResult"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserAdviceResult"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/UserAdviceResult"
-                  }
+                  "$ref": "#/components/schemas/CasesAggregateResult"
                 }
               }
             }
@@ -241,85 +169,6 @@
                 }
               }
             }
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/api/User/Subscriptions": {
-      "get": {
-        "tags": ["User"],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSubscriptionsResult"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSubscriptionsResult"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserSubscriptionsResult"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["User"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserSubscriptionsCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserSubscriptionsCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserSubscriptionsCommand"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/Documents/{documentId}": {
-      "get": {
-        "tags": ["Documents"],
-        "parameters": [
-          {
-            "name": "documentId",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
           },
           "404": {
             "description": "Not Found"
@@ -393,29 +242,19 @@
         ],
         "requestBody": {
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "content": {
-                    "type": "string"
-                  },
-                  "files": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "binary"
-                    }
-                  }
-                }
-              },
-              "encoding": {
-                "content": {
-                  "style": "form"
-                },
-                "files": {
-                  "style": "form"
-                }
+                "$ref": "#/components/schemas/CaseAdviceCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseAdviceCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaseAdviceCommand"
               }
             }
           }
@@ -450,9 +289,46 @@
         }
       }
     },
-    "/api/Cases/{caseId}/Subscribe": {
+    "/api/CaseSubscription/{caseId}": {
+      "get": {
+        "tags": ["CaseSubscription"],
+        "parameters": [
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseSubscriptionResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseSubscriptionResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CaseSubscriptionResult"
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
-        "tags": ["Cases"],
+        "tags": ["CaseSubscription"],
         "parameters": [
           {
             "name": "caseId",
@@ -469,17 +345,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CaseSubscribeCommand"
+                "$ref": "#/components/schemas/PostCaseSubscriptionCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CaseSubscribeCommand"
+                "$ref": "#/components/schemas/PostCaseSubscriptionCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CaseSubscribeCommand"
+                "$ref": "#/components/schemas/PostCaseSubscriptionCommand"
               }
             }
           }
@@ -492,11 +368,9 @@
             "description": "Not Found"
           }
         }
-      }
-    },
-    "/api/Cases/{caseId}/Unsubscribe": {
-      "post": {
-        "tags": ["Cases"],
+      },
+      "delete": {
+        "tags": ["CaseSubscription"],
         "parameters": [
           {
             "name": "caseId",
@@ -512,9 +386,256 @@
         "responses": {
           "200": {
             "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Documents/{documentId}": {
+      "get": {
+        "tags": ["Documents"],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/Statistics": {
+      "get": {
+        "tags": ["Statistics"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatisticsResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Types": {
+      "get": {
+        "tags": ["Types"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllTypesResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllTypesResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllTypesResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/Advices": {
+      "get": {
+        "tags": ["User"],
+        "parameters": [
+          {
+            "name": "OldestFirst",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "SearchQuery",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAdviceAggregate"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAdviceAggregate"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserAdviceAggregate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/Subscriptions": {
+      "get": {
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSubscriptionsAggregate"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSubscriptionsAggregate"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSubscriptionsAggregate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSubscriptionsCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSubscriptionsCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSubscriptionsCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/User/Email": {
+      "get": {
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEmailResult"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEmailResult"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserEmailResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["User"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostEmailCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
@@ -586,6 +707,23 @@
           "caseTypes": {
             "type": "object",
             "additionalProperties": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CaseAdviceCommand": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileUrls": {
+            "type": "array",
+            "items": {
               "type": "string"
             },
             "nullable": true
@@ -762,15 +900,6 @@
         },
         "additionalProperties": false
       },
-      "CaseSubscribeCommand": {
-        "type": "object",
-        "properties": {
-          "subscriptionType": {
-            "$ref": "#/components/schemas/CaseSubscriptionType"
-          }
-        },
-        "additionalProperties": false
-      },
       "CaseSubscriptionCommand": {
         "type": "object",
         "properties": {
@@ -787,11 +916,7 @@
       "CaseSubscriptionResult": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "subscriptionType": {
+          "type": {
             "$ref": "#/components/schemas/CaseSubscriptionType"
           }
         },
@@ -800,6 +925,34 @@
       "CaseSubscriptionType": {
         "enum": ["AllChanges", "StatusChanges"],
         "type": "string"
+      },
+      "CasesAggregateResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseItemResult"
+            },
+            "nullable": true
+          },
+          "filterGroups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "CasesOrderBy": {
         "enum": ["LastUpdated", "LatestCases", "AdviceDeadline"],
@@ -827,20 +980,44 @@
         },
         "additionalProperties": false
       },
-      "SubscriptionCommand": {
+      "PostCaseSubscriptionCommand": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
           "subscriptionType": {
-            "$ref": "#/components/schemas/SubscriptionType"
+            "$ref": "#/components/schemas/CaseSubscriptionType"
           }
         },
         "additionalProperties": false
       },
-      "SubscriptionResult": {
+      "PostEmailCommand": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatisticsResult": {
+        "type": "object",
+        "properties": {
+          "totalCases": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalAdvices": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "casesInReview": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SubscriptionCommand": {
         "type": "object",
         "properties": {
           "id": {
@@ -856,6 +1033,61 @@
       "SubscriptionType": {
         "enum": ["AllChanges", "StatusChanges", "OnlyNew"],
         "type": "string"
+      },
+      "UserAdviceAggregate": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "advices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserAdviceResult"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserAdviceCaseResult": {
+        "type": "object",
+        "properties": {
+          "caseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "statusName": {
+            "type": "string",
+            "nullable": true
+          },
+          "institutionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "typeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "policyAreaName": {
+            "type": "string",
+            "nullable": true
+          },
+          "processBegins": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "processEnds": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
       },
       "UserAdviceResult": {
         "type": "object",
@@ -884,10 +1116,85 @@
             "type": "string",
             "format": "date-time"
           },
+          "case": {
+            "$ref": "#/components/schemas/UserAdviceCaseResult"
+          },
           "adviceDocuments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DocumentInfoResult"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserCaseSubscriptionResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subscriptionType": {
+            "$ref": "#/components/schemas/CaseSubscriptionType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserEmailResult": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailVerified": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserSubscriptionResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subscriptionType": {
+            "$ref": "#/components/schemas/SubscriptionType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserSubscriptionsAggregate": {
+        "type": "object",
+        "properties": {
+          "subscribedToAll": {
+            "type": "boolean"
+          },
+          "subscribedToAllNew": {
+            "type": "boolean"
+          },
+          "cases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserCaseSubscriptionResult"
+            },
+            "nullable": true
+          },
+          "institutions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserSubscriptionResult"
+            },
+            "nullable": true
+          },
+          "policyAreas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserSubscriptionResult"
             },
             "nullable": true
           }
@@ -899,6 +1206,10 @@
         "properties": {
           "subscribeToAll": {
             "type": "boolean"
+          },
+          "subscribeToAllType": {
+            "type": "string",
+            "nullable": true
           },
           "caseIds": {
             "type": "array",
@@ -918,47 +1229,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SubscriptionCommand"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UserSubscriptionsResult": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "emailVerified": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "subscribedToAll": {
-            "type": "boolean"
-          },
-          "subscribedToAllNew": {
-            "type": "boolean"
-          },
-          "cases": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CaseSubscriptionResult"
-            },
-            "nullable": true
-          },
-          "institutions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubscriptionResult"
-            },
-            "nullable": true
-          },
-          "policyAreas": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubscriptionResult"
             },
             "nullable": true
           }
@@ -985,6 +1255,19 @@
         },
         "additionalProperties": false
       }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme.",
+        "name": "Authorization",
+        "in": "header"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "Bearer": []
+    }
+  ]
 }

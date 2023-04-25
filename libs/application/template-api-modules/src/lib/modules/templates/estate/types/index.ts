@@ -20,34 +20,46 @@ type Notifier = {
 
 type EstateMember = {
   name: string
-  ssn: string
-  relation: string
+  ssn?: string
+  relation?: string
   dateOfBirth?: string
   foreignCitizenShip?: 'yes' | 'no'
 }
 
+type Representative = {
+  name: string
+  ssn: string
+  phoneNumber: string
+  email: string
+}
+
 type AssetFrame = {
-  assetNumber: string
-  description: string
+  assetNumber?: string
+  description?: string
 }
 
 type BankAccount = {
-  accountNumber: string
-  balance: string | number
+  accountNumber?: string
+  balance?: string | number
 }
 
 type Stock = {
-  organization: string
-  ssn: string
-  faceValue: string | number
-  rateOfExchange: string | number
-  value: string | number
+  organization?: string
+  ssn?: string
+  faceValue?: string | number
+  rateOfExchange?: string | number
+  value?: string | number
 }
 
 type Debt = {
-  creditorName: string
-  ssn: string
-  balance: string | number
+  creditorName?: string
+  ssn?: string
+  balance?: string | number
+}
+
+type InfoValueField = {
+  info?: string
+  value?: string
 }
 
 export interface UploadData {
@@ -60,22 +72,19 @@ export interface UploadData {
     | BankAccount[]
     | Stock[]
     | Debt[]
-    | 'yes'
-    | 'no'
+    | Representative
+    | 'Yes'
+    | 'No'
+    | InfoValueField
   //caseNumber: string
   notifier: Notifier
   estateMembers: EstateMember[]
   assets: AssetFrame[]
   vehicles: AssetFrame[]
-  inventory: string
-  inventoryValue: string | number
+  inventory: InfoValueField
   bankAccounts: BankAccount[]
   stocks: Stock[]
-  moneyAndDepositBoxesInfo: string
-  moneyAndDepositBoxesValue: string | number
-  otherAssets: string
-  otherAssetsValue: string
+  moneyAndDeposit: InfoValueField
+  otherAssets: InfoValueField
   debts: Debt[]
-  undividedEstateResidencePermission: 'yes' | 'no'
-  applicantHasLegalCustodyOverEstate: 'yes' | 'no'
 }

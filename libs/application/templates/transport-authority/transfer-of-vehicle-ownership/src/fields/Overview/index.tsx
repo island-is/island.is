@@ -45,6 +45,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators = [],
+  mainOperator = '',
   ...props
 }) => {
   const { application, refetch, insurance = undefined } = props
@@ -136,13 +137,14 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
                 email: answers?.buyer?.email,
                 nationalId: answers?.buyer?.nationalId,
               },
-              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator
-                ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
-                .map((x) => ({
-                  email: x.email,
-                  nationalId: x.nationalId,
+              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
+                (x) => ({
+                  nationalId: x.nationalId!,
+                  email: x.email!,
                   type: x.type,
-                })),
+                  wasRemoved: x.wasRemoved,
+                }),
+              ),
               buyerMainOperator: answers?.buyerMainOperator
                 ? {
                     nationalId: answers.buyerMainOperator.nationalId,
@@ -203,6 +205,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
+          mainOperator={mainOperator}
           {...props}
         />
         <InsuranceSection

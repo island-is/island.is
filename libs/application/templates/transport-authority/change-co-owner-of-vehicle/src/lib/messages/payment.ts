@@ -12,16 +12,6 @@ export const payment = {
       defaultMessage: 'Greiðsla',
       description: 'Title of for payment page',
     },
-    tryAgain: {
-      id: 'ta.ccov.application:payment.general.tryAgain',
-      defaultMessage: 'Reyna aftur',
-      description: '',
-    },
-    forwardingToPayment: {
-      id: 'ta.ccov.application:payment.general.forwardingToPayment',
-      defaultMessage: 'Sendi þig áfram á greiðsluveitu...',
-      description: 'Forwarding you to payment handler...',
-    },
     confirm: {
       id: 'ta.ccov.application:payment.general.confirm',
       defaultMessage: 'Staðfesta',

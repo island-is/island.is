@@ -1,13 +1,7 @@
 import React from 'react'
 
 const Grieving: React.FC = () => (
-  <svg
-    width="595"
-    height="251"
-    viewBox="0 0 595 251"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg viewBox="0 0 595 251" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M416.132 83.3892C416.584 83.3892 416.951 83.0219 416.951 82.5688C416.951 82.1157 416.584 81.7484 416.132 81.7484C415.679 81.7484 415.312 82.1157 415.312 82.5688C415.312 83.0219 415.679 83.3892 416.132 83.3892Z"
       fill="#CCDFFF"
