@@ -20,8 +20,15 @@ fi
 # idempotent
 psql -c "grant all privileges on database $DB_NAME to $DB_USER"
 
-for i in ${DB_EXTENSIONS//,/ }
-do
-    psql -d "$DB_NAME" -c "CREATE extension IF NOT EXISTS $i;"
-    echo "extension $i enabled"
-done
+echo "checking if postgres extensions should be installed ..."
+if [[ -z $DB_EXTENSIONS ]]; then
+    echo "DB_EXTENSIONS env var is empty, nothing to enable."
+else
+    for i in ${DB_EXTENSIONS//,/ }
+    do
+        echo "enabling $i"
+        psql -d "$DB_NAME" -c "CREATE extension IF NOT EXISTS $i;"
+        echo "extension $i enabled"
+    done
+fi
+
