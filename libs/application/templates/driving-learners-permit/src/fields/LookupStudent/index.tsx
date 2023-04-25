@@ -103,6 +103,7 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
 
   useEffect(() => {
     if (isPerson(studentNationalId)) {
+      // If fakedata is enabled, construct eligibility based on provided nationalId
       if (fakeData?.useFakeData === YES) {
         const fakeEligible = fakeData?.mentorableStudents
           ?.split(',')
@@ -116,6 +117,11 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
         setValue(fieldNames.studentMentorability, fakeMentorability)
         setValue(fieldNames.studentName, fakeName)
       } else {
+        // construct input for identity and driving license mentorability queries
+        // The identity input simply finds the name of the student but
+        // the driving license mentorability query also checks if the student is eligible
+        // for a learners permit. The learner permit mentorability is required
+        // in the dataschema, the name is simply used in the overview.
         const identityInput = {
           variables: {
             input: {
@@ -130,11 +136,16 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
             },
           },
         }
+
+        // Trigger queries and set loading state
+        // The queries are responsible for their related fields,
+        // see their respective useEffects
         getIdentity(identityInput)
         getStudentMentorability(studentLookupInput)
         setValue(fieldNames.studentMentorability, 'loading')
       }
     } else if (studentName !== '') {
+      // clear student name if nationalId is not valid
       setValue(fieldNames.studentName, '')
     }
   }, [studentName, studentNationalId, getIdentity, setValue])
