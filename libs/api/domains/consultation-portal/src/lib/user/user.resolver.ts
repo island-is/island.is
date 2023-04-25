@@ -76,13 +76,10 @@ export class UserResolver {
   })
   async postUserSubscriptions(
     @CurrentUser() user: User,
-    @Args('userSubscriptionsCommand')
-    userSubscriptionsCommand: UserSubscriptionsCommand,
+    @Args('input', { type: () => UserSubscriptionsCommand })
+    input: UserSubscriptionsCommand,
   ): Promise<void> {
-    const response = await this.userService.postUserSubscriptions(
-      user,
-      userSubscriptionsCommand,
-    )
+    const response = await this.userService.postUserSubscriptions(user, input)
     return response
   }
 }

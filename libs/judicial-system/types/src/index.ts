@@ -68,6 +68,7 @@ export {
   SubpoenaType,
   CaseAppealState,
   getAppealInfo,
+  getStatementDeadline,
 } from './lib/case'
 export type {
   Case,

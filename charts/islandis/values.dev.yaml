@@ -866,6 +866,8 @@ consultation-portal:
     API_URL: 'http://web-api.islandis.svc.cluster.local'
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'dev'
+    IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
+    NEXTAUTH_URL: 'https://beta.dev01.devland.is/samradsgatt/api/auth'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -916,6 +918,7 @@ consultation-portal:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1548,6 +1551,7 @@ island-ui-storybook:
 license-api:
   enabled: true
   env:
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'

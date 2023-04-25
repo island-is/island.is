@@ -16,6 +16,7 @@ import {
   Teacher,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
+import { PracticePermitDto } from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
@@ -98,6 +99,13 @@ export class DrivingLicenseApi {
           expires: rettindi.gildirTil ?? null,
           comments: rettindi.aths ?? '',
         })) ?? [],
+      disqualification:
+        skirteini?.svipting?.dagsTil && skirteini?.svipting?.dagsFra
+          ? {
+              to: skirteini.svipting.dagsTil,
+              from: skirteini.svipting.dagsFra,
+            }
+          : null,
       birthCountry: skirteini.faedingarStadurHeiti,
     }
   }
@@ -315,6 +323,40 @@ export class DrivingLicenseApi {
     }
 
     return handledResponse.success
+  }
+
+  async postCanApplyForPracticePermit(params: {
+    token: string
+    mentorSSN: string
+    studentSSN: string
+  }): Promise<PracticePermitDto> {
+    return await this.v5.apiDrivinglicenseV5CanapplyforPracticepermitPost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token,
+      postPracticePermit: {
+        dateFrom: new Date(),
+        studentSSN: params.studentSSN,
+        userId: params.mentorSSN,
+      },
+    })
+  }
+
+  async postPracticePermitApplication(params: {
+    token: string
+    mentorSSN: string
+    studentSSN: string
+  }): Promise<PracticePermitDto> {
+    return await this.v5.apiDrivinglicenseV5ApplicationsPracticepermitPost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token,
+      postPracticePermit: {
+        dateFrom: new Date(),
+        studentSSN: params.studentSSN,
+        userId: params.mentorSSN,
+      },
+    })
   }
 
   async getHasQualityPhoto(params: { nationalId: string }): Promise<boolean> {

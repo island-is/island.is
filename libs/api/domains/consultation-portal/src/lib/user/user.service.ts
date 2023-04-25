@@ -50,10 +50,10 @@ export class UserService {
 
   async postUserSubscriptions(
     auth: User,
-    userSubscriptionsCommand: UserSubscriptionsCommand,
+    input: UserSubscriptionsCommand,
   ): Promise<void> {
     const request: ApiUserSubscriptionsPostRequest = {
-      userSubscriptionsCommand: userSubscriptionsCommand,
+      userSubscriptionsCommand: input,
     }
 
     const response = await this.userApiWithAuth(auth).apiUserSubscriptionsPost(
