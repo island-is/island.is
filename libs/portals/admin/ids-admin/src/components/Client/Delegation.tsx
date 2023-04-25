@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
@@ -26,32 +26,15 @@ const Delegation = ({
 }: DelegationProps) => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
-  const [procuring, setProcuring] = useState(supportsProcuringHolders)
-  const [legalGuardian, setLegalGuardian] = useState(supportsLegalGuardians)
-  const [prompt, setPrompt] = useState(promptDelegations)
-  const [apiScope, setApiScope] = useState(requireApiScopes)
-  const [personalRepresentative, setPersonalRepresentative] = useState(
-    supportsPersonalRepresentatives,
-  )
-  const [customDelegation, setCustomDelegation] = useState(
-    supportsCustomDelegation,
-  )
 
-  useEffect(() => {
-    setProcuring(supportsProcuringHolders)
-    setLegalGuardian(supportsLegalGuardians)
-    setPrompt(promptDelegations)
-    setApiScope(requireApiScopes)
-    setPersonalRepresentative(supportsPersonalRepresentatives)
-    setCustomDelegation(supportsCustomDelegation)
-  }, [
+  const [inputValues, setInputValues] = useState({
     supportsCustomDelegation,
     supportsLegalGuardians,
     supportsPersonalRepresentatives,
     supportsProcuringHolders,
     promptDelegations,
     requireApiScopes,
-  ])
+  })
 
   const isSuperAdmin = userInfo?.scopes.includes(
     AdminPortalScope.idsAdminSuperUser,
@@ -61,9 +44,8 @@ const Delegation = ({
     <ContentCard
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
-      isDirty={() => true}
-      onSave={() => Promise.resolve()}
       intent={ClientFormTypes.delegations}
+      accordionLabel={formatMessage(m.settings)}
     >
       <Stack space={2}>
         <Checkbox
@@ -71,11 +53,17 @@ const Delegation = ({
           backgroundColor={'blue'}
           large
           name="supportsCustomDelegation"
+          value="true"
           disabled={!isSuperAdmin}
-          value={`${customDelegation}`}
+          defaultChecked={inputValues.supportsCustomDelegation}
+          checked={inputValues.supportsCustomDelegation}
+          onChange={() => {
+            setInputValues((prev) => ({
+              ...prev,
+              supportsCustomDelegation: !prev.supportsCustomDelegation,
+            }))
+          }}
           subLabel={formatMessage(m.supportCustomDelegationDescription)}
-          checked={customDelegation}
-          onChange={() => setCustomDelegation(!customDelegation)}
         />
         <Checkbox
           label={formatMessage(m.supportLegalGuardianDelegation)}
@@ -83,10 +71,16 @@ const Delegation = ({
           large
           name="supportsLegalGuardians"
           disabled={!isSuperAdmin}
-          value={`${legalGuardian}`}
+          value="true"
+          checked={inputValues.supportsLegalGuardians}
+          defaultChecked={inputValues.supportsLegalGuardians}
+          onChange={() => {
+            setInputValues((prev) => ({
+              ...prev,
+              supportsLegalGuardians: !prev.supportsLegalGuardians,
+            }))
+          }}
           subLabel={formatMessage(m.supportLegalGuardianDelegationDescription)}
-          checked={legalGuardian}
-          onChange={() => setLegalGuardian(!legalGuardian)}
         />
         <Checkbox
           label={formatMessage(m.supportPersonalRepresentativeDelegation)}
@@ -94,12 +88,18 @@ const Delegation = ({
           large
           disabled={!isSuperAdmin}
           name="supportsPersonalRepresentatives"
-          value={`${personalRepresentative}`}
+          value="true"
+          defaultChecked={inputValues.supportsPersonalRepresentatives}
+          checked={inputValues.supportsPersonalRepresentatives}
+          onChange={() => {
+            setInputValues((prev) => ({
+              ...prev,
+              supportsPersonalRepresentatives: !prev.supportsPersonalRepresentatives,
+            }))
+          }}
           subLabel={formatMessage(
             m.supportPersonalRepresentativeDelegationDescription,
           )}
-          checked={personalRepresentative}
-          onChange={() => setPersonalRepresentative(!personalRepresentative)}
         />
         <Checkbox
           label={formatMessage(m.supportProcuringHolderDelegation)}
@@ -107,12 +107,18 @@ const Delegation = ({
           large
           disabled={!isSuperAdmin}
           name="supportsProcuringHolders"
-          value={`${procuring}`}
+          value="true"
+          defaultChecked={inputValues.supportsProcuringHolders}
+          checked={inputValues.supportsProcuringHolders}
+          onChange={() => {
+            setInputValues((prev) => ({
+              ...prev,
+              supportsProcuringHolders: !prev.supportsProcuringHolders,
+            }))
+          }}
           subLabel={formatMessage(
             m.supportProcuringHolderDelegationDescription,
           )}
-          checked={procuring}
-          onChange={() => setProcuring(!procuring)}
         />
         <Checkbox
           label={formatMessage(m.alwaysPromptDelegations)}
@@ -120,10 +126,16 @@ const Delegation = ({
           large
           disabled={!isSuperAdmin}
           name="promptDelegations"
-          value={`${prompt}`}
+          value="true"
+          defaultChecked={inputValues.promptDelegations}
+          checked={inputValues.promptDelegations}
+          onChange={() => {
+            setInputValues((prev) => ({
+              ...prev,
+              promptDelegations: !prev.promptDelegations,
+            }))
+          }}
           subLabel={formatMessage(m.alwaysPromptDelegationsDescription)}
-          checked={prompt}
-          onChange={() => setPrompt(!prompt)}
         />
         <Checkbox
           label={formatMessage(m.requirePermissions)}
@@ -131,10 +143,16 @@ const Delegation = ({
           large
           disabled={!isSuperAdmin}
           name="requireApiScopes"
-          value={`${apiScope}`}
+          value="true"
+          defaultChecked={inputValues.requireApiScopes}
+          checked={inputValues.requireApiScopes}
+          onChange={() => {
+            setInputValues((prev) => ({
+              ...prev,
+              requireApiScopes: !prev.requireApiScopes,
+            }))
+          }}
           subLabel={formatMessage(m.requirePermissionsDescription)}
-          checked={apiScope}
-          onChange={() => setApiScope(!apiScope)}
         />
       </Stack>
     </ContentCard>

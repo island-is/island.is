@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { UserInformation, OwnerCoOwnersInformation } from '../shared'
+import { CoOwnersInformation, OwnerCoOwnersInformation } from '../shared'
 
 export const getApproveAnswers = (
   reviewerNationalId: string,
@@ -35,7 +35,11 @@ export const getApproveAnswers = (
   }
 
   // If reviewer is coowner
-  const coOwners = getValueViaPath(answers, 'coOwners', []) as UserInformation[]
+  const coOwners = getValueViaPath(
+    answers,
+    'coOwners',
+    [],
+  ) as CoOwnersInformation[]
   const currentCoOwner = coOwners.find(
     (coOwner) => coOwner.nationalId === reviewerNationalId,
   )

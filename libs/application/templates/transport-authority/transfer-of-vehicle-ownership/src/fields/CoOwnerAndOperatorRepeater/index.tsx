@@ -84,7 +84,9 @@ export const CoOwnerAndOperatorRepeater: FC<FieldBaseProps> = (props) => {
     const jointOperators = [...existingCoOwnersAndOperators, buyer.nationalId]
     return !!jointOperators.some((nationalId, index) => {
       return (
-        jointOperators.indexOf(nationalId) !== index && nationalId.length > 0
+        nationalId &&
+        nationalId.length > 0 &&
+        jointOperators.indexOf(nationalId) !== index
       )
     })
   }

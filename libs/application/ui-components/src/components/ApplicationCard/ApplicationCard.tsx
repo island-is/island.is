@@ -83,6 +83,7 @@ export const ApplicationCard = ({
       borderWidth="standard"
       paddingX={[3, 3, 4]}
       paddingY={3}
+      dataTestId={`application-card`}
       background="white"
       dataTestId={`application-card`}
     >

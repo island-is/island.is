@@ -78,6 +78,8 @@ import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
 import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book-update-instructor/driving-license-book-update-instructor.module'
 import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
+import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
+import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
 
 //TODO: ADD These templates.
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
@@ -125,6 +127,7 @@ export const modules = [
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
   DrivingLicenseBookUpdateInstructorModule,
+  DrivingLearnersPermitModule,
 ]
 
 export const services = [
@@ -170,4 +173,5 @@ export const services = [
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
   DrivingLicenseBookUpdateInstructorService,
+  DrivingLearnersPermitService,
 ]

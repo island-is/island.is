@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import {
-  AuthenticationApi,
   CasesApi,
   CaseSubscriptionApi,
   DocumentsApi,
@@ -10,7 +9,6 @@ import {
 } from '../../gen/fetch'
 
 import {
-  AuthenticationApiProvider,
   DocumentsApiProvider,
   CasesApiProvider,
   StatisticsApiProvider,
@@ -21,7 +19,6 @@ import {
 
 @Module({
   providers: [
-    AuthenticationApiProvider,
     CasesApiProvider,
     CaseSubscriptionApiProvider,
     DocumentsApiProvider,
@@ -30,7 +27,6 @@ import {
     UserApiProvider,
   ],
   exports: [
-    AuthenticationApi,
     CasesApi,
     CaseSubscriptionApi,
     DocumentsApi,

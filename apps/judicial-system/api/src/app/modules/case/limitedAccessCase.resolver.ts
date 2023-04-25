@@ -41,14 +41,14 @@ export class LimitedAccessCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASE,
-      backendApi.getLimitedAccessCase(input.id),
+      backendApi.limitedAccessGetCase(input.id),
       input.id,
     )
   }
 
   @Mutation(() => Case, { nullable: true })
   @UseInterceptors(CaseInterceptor)
-  transitionLimitedAccessCase(
+  limitedAccessTransitionCase(
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
     @CurrentGraphQlUser() user: User,
@@ -61,7 +61,7 @@ export class LimitedAccessCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_CASE,
-      backendApi.transitionLimitedAccessCase(id, transitionCase),
+      backendApi.limitedAccessTransitionCase(id, transitionCase),
       id,
     )
   }
