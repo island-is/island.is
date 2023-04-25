@@ -623,3 +623,38 @@ export const messages = defineMessages({
     defaultMessage: 'Skrá mig í ökunám',
   },
 })
+
+export const urls = defineMessages({
+  ownerChange: {
+    id: 'sp.vehicles:url-owner-change',
+    defaultMessage: 'https://island.is/umsoknir/eigendaskipti-okutaekis',
+  },
+  coOwnerChange: {
+    id: 'sp.vehicles:url-co-owner-change',
+    defaultMessage: 'https://island.is/umsoknir/medeigandi-okutaekis',
+  },
+  operator: {
+    id: 'sp.vehicles:url-operator',
+    defaultMessage: 'https://island.is/umsoknir/umradamadur-okutaekis',
+  },
+  regNumber: {
+    id: 'sp.vehicles:url-registration-number',
+    defaultMessage: 'https://island.is/umsoknir/panta-skraningarmerki',
+  },
+  renewPrivate: {
+    id: 'sp.vehicles:url-renew-private',
+    defaultMessage: 'https://island.is/endurnyjun-a-einkamerki',
+  },
+  hideName: {
+    id: 'sp.vehicles:url-hide-private-name',
+    defaultMessage: 'https://island.is/umsoknir/nafnleynd-i-okutaekjaskra',
+  },
+  instructorApplication: {
+    id: 'sp.vehicles:url-instructor-application',
+    defaultMessage: 'https://island.is/umsoknir/okunam-okukennari',
+  },
+  licenseApplication: {
+    id: 'sp.vehicles:url-license-application',
+    defaultMessage: 'https://island.is/umsoknir/okuskirteini',
+  },
+})

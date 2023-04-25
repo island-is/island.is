@@ -120,14 +120,8 @@ export class FileService {
 
     switch (file.category) {
       case CaseFileCategory.COVER_LETTER:
-        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        break
       case CaseFileCategory.INDICTMENT:
-        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        break
       case CaseFileCategory.CRIMINAL_RECORD:
-        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        break
       case CaseFileCategory.COST_BREAKDOWN:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
         break
@@ -139,6 +133,12 @@ export class FileService {
         break
       case CaseFileCategory.CASE_FILE:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+        break
+      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
+      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+        courtDocumentFolder = CourtDocumentFolder.APPEAL_DOCUMENTS
         break
       default:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
