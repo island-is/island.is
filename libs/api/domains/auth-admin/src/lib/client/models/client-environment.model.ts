@@ -7,7 +7,6 @@ import { ClientType } from '../../models/client-type.enum'
 import { TranslatedValue } from '../../models/translated-value.model'
 import { ClientClaim } from './client-claim.model'
 import { ClientSecret } from './client-secret.model'
-import { ClientSecretDto } from '../../../../../../../../apps/services/auth/admin-api/src/app/v2/secrets/dto/client-secret.dto'
 
 @ObjectType('AuthAdminClientEnvironment')
 export class ClientEnvironment {
