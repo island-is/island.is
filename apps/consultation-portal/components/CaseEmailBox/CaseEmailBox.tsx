@@ -101,7 +101,7 @@ export const CaseEmailBox = () => {
         <Box paddingTop={2}>
           <Stack space={2}>
             <Input
-              name={'UserEmail'}
+              name="userEmailInput"
               size="sm"
               label="Netfang"
               placeholder="nonni@island.is"
