@@ -185,6 +185,9 @@
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
       ],
+      "@island.is/api/domains/watson-assistant-chat": [
+        "libs/api/domains/watson-assistant-chat/src/index.ts"
+      ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
@@ -248,6 +251,9 @@
       ],
       "@island.is/application/templates/driving-instructor-registrations": [
         "libs/application/templates/driving-instructor-registrations/src/index.ts"
+      ],
+      "@island.is/application/templates/driving-learners-permit": [
+        "libs/application/templates/driving-learners-permit/src/index.ts"
       ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"

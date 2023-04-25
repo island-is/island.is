@@ -43,18 +43,6 @@ export class UserService {
     return emailResponse
   }
 
-  async postUserEmail(
-    auth: User,
-    postEmailCommand: PostEmailCommand,
-  ): Promise<void> {
-    const request: ApiUserEmailPostRequest = {
-      postEmailCommand: postEmailCommand,
-    }
-
-    const response = await this.userApiWithAuth(auth).apiUserEmailPost(request)
-    return response
-  }
-
   async getUserSubscriptions(auth: User): Promise<UserSubscriptionsAggregate> {
     const response = await this.userApiWithAuth(auth).apiUserSubscriptionsGet()
     return response
@@ -62,15 +50,22 @@ export class UserService {
 
   async postUserSubscriptions(
     auth: User,
-    userSubscriptionsCommand: UserSubscriptionsCommand,
+    input: UserSubscriptionsCommand,
   ): Promise<void> {
     const request: ApiUserSubscriptionsPostRequest = {
-      userSubscriptionsCommand: userSubscriptionsCommand,
+      userSubscriptionsCommand: input,
     }
 
     const response = await this.userApiWithAuth(auth).apiUserSubscriptionsPost(
       request,
     )
+    return response
+  }
+  async postUserEmail(auth: User, input: PostEmailCommand): Promise<void> {
+    const request: ApiUserEmailPostRequest = {
+      postEmailCommand: input,
+    }
+    const response = await this.userApiWithAuth(auth).apiUserEmailPost(request)
     return response
   }
 }

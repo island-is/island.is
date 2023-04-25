@@ -11,11 +11,11 @@ export class UserSubscriptionsAggregate {
   subscribedToAllNew?: boolean
 
   @Field(() => [UserCaseSubscriptionResult], { nullable: true })
-  cases?: UserCaseSubscriptionResult[] | null
+  cases?: Array<UserCaseSubscriptionResult> | null
 
   @Field(() => [UserSubscriptionResult], { nullable: true })
-  institutions?: UserSubscriptionResult[] | null
+  institutions?: Array<UserSubscriptionResult> | null
 
   @Field(() => [UserSubscriptionResult], { nullable: true })
-  policyAreas?: UserSubscriptionResult[] | null
+  policyAreas?: Array<UserSubscriptionResult> | null
 }

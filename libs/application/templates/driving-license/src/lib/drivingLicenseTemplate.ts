@@ -39,7 +39,6 @@ const template: ApplicationTemplate<
   name: m.applicationForDrivingLicense,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
