@@ -17,7 +17,6 @@ import {
   isExtendedCourtRole,
   isRestrictionCase,
   isInvestigationCase,
-  Feature,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -31,7 +30,6 @@ import {
   CaseQuery,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import {
   InstitutionType,
   User,
@@ -174,9 +172,9 @@ export const formatDateForServer = (date: Date) => {
   return formatISO(date, { representation: 'complete' })
 }
 
-const openCase = (caseToOpen: Case, user: User, features: Feature[]) => {
+const openCase = (caseToOpen: Case, user: User) => {
   let routeTo = null
-  const isTrafficViolation = isTrafficViolationCase(caseToOpen, features, user)
+  const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
 
   if (
     caseToOpen.state === CaseState.ACCEPTED ||
@@ -230,7 +228,6 @@ const openCase = (caseToOpen: Case, user: User, features: Feature[]) => {
 
 const useCase = () => {
   const { limitedAccess, user } = useContext(UserContext)
-  const { features } = useContext(FeatureContext)
   const { formatMessage } = useIntl()
 
   const [
@@ -283,7 +280,7 @@ const useCase = () => {
     fetchPolicy: 'no-cache',
     onCompleted: (caseData) => {
       if (user && caseData?.case) {
-        openCase(caseData.case, user, features)
+        openCase(caseData.case, user)
       }
     },
   })

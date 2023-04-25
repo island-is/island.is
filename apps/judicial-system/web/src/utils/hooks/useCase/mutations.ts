@@ -28,15 +28,6 @@ export const ExtendCaseMutation = gql`
   }
 `
 
-export const LimitedAccessTransitionCaseMutation = gql`
-  mutation LimitedAccessTransitionCase($input: TransitionCaseInput!) {
-    limitedAccessTransitionCase(input: $input) {
-      state
-      appealState
-    }
-  }
-`
-
 export const RequestCourtRecordSignatureMutation = gql`
   mutation RequestCourtRecordSignature($input: RequestSignatureInput!) {
     requestCourtRecordSignature(input: $input) {
@@ -59,6 +50,17 @@ export const TransitionCaseMutation = gql`
     transitionCase(input: $input) {
       state
       appealState
+      appealReceivedByCourtDate
+    }
+  }
+`
+
+export const LimitedAccessTransitionCaseMutation = gql`
+  mutation LimitedAccessTransitionCase($input: TransitionCaseInput!) {
+    limitedAccessTransitionCase(input: $input) {
+      state
+      appealState
+      appealReceivedByCourtDate
     }
   }
 `
