@@ -43,7 +43,9 @@ describe('Feature-deployment support', () => {
             command: 'node',
           },
         ],
-        postgres: {},
+        postgres: {
+          extensions: ['foo,bar'],
+        },
       })
       .ingress({
         primary: {
@@ -79,7 +81,6 @@ describe('Feature-deployment support', () => {
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=208',
       SERVERSIDE_FEATURES_ON: '',
-      DB_EXTENSIONS: "foo,bar"
     })
   })
 
@@ -96,6 +97,12 @@ describe('Feature-deployment support', () => {
     )
     expect(values.services.graphql.initContainer?.secrets!.DB_PASS).toEqual(
       '/k8s/feature-feature-A-graphql/DB_PASSWORD',
+    )
+  })
+
+  it('postgres extensions', () => {
+    expect(values.services.graphql.initContainer?.env).toHaveProperty(
+      'DB_EXTENSIONS',
     )
   })
 

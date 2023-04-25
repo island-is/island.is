@@ -54,7 +54,7 @@ describe('Init-container definitions', () => {
         S1: '/as/dfadf',
       },
       postgres: {
-        extensions: ["foo", "bar"]
+        extensions: ['foo', 'bar'],
       },
     })
     const result = (await generateOutputOne({
@@ -93,12 +93,12 @@ describe('Init-container definitions', () => {
       env: {
         A: 'B',
         B: 'b',
+        DB_EXTENSIONS: 'foo,bar',
         DB_USER: 'api',
         DB_NAME: 'api',
         DB_HOST: 'a',
         DB_REPLICAS_HOST: 'a',
         SERVERSIDE_FEATURES_ON: '',
-        DB_EXTENSIONS: 'foo,bar'
       },
       secrets: { S1: '/as/dfadf', DB_PASS: '/k8s/api/DB_PASSWORD' },
     })
