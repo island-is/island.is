@@ -28,9 +28,9 @@ const prefix = 'studentMentorability'
 const fieldNames = {
   studentNationalId: `${prefix}.studentNationalId`,
   lookupError: `${prefix}.lookupError`,
-  studentMentorabilityError: `${prefix}.studentMentorabilityError`,
   studentName: `${prefix}.studentName`,
   studentMentorability: `${prefix}.studentMentorability`,
+  studentMentorabilityError: `${prefix}.studentMentorabilityError`,
 }
 
 export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
@@ -91,8 +91,6 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     },
   })
 
-  const studentMentorability = getValues(fieldNames.studentMentorability)
-
   // Clear inital errors on mount
   useEffect(() => {
     clearErrors()
@@ -100,6 +98,8 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
 
   const studentNationalId: string = watch(fieldNames.studentNationalId)
   const studentName: string = watch(fieldNames.studentName)
+
+  const studentMentorability = getValues(fieldNames.studentMentorability)
 
   useEffect(() => {
     if (isPerson(studentNationalId)) {
