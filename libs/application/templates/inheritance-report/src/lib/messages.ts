@@ -101,7 +101,7 @@ export const m = defineMessages({
   },
   funeralExpensesTitle: {
     id: 'ir.application:funeralExpensesTitle',
-    defaultMessage: 'Yfirlit um útfarakostnað',
+    defaultMessage: 'Yfirlit um útfararkostnað',
     description: '',
   },
   funeralExpensesSubtitle: {
