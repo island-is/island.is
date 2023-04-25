@@ -3,7 +3,6 @@ import {
   ApplicationEligibilityRequirement,
   RequirementKey,
 } from '../../types/schema'
-import { DrivingLicenseApplicationFor, B_FULL } from '../../shared/constants'
 
 interface FakeEligibilityInput {
   categoryType?: string
