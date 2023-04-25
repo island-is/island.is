@@ -4,7 +4,10 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { AdminScopeDto, SequelizeConfigService } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
 import { setupApp, TestApp } from '@island.is/testing/nest'
 import { User } from '@island.is/auth-nest-tools'
 
@@ -35,36 +38,53 @@ const mockedApiScopes = [
   },
 ]
 
-const createTestData = async (app: TestApp, tenantId: string) => {
+const createTestData = async (
+  app: TestApp,
+  tenantId: string,
+  tenantOwnerNationalId?: string,
+) => {
   const fixtureFactory = new FixtureFactory(app)
   await fixtureFactory.createDomain({
     name: tenantId,
-    nationalId: '1234567890',
+    nationalId: tenantOwnerNationalId || createNationalId('company'),
     apiScopes: mockedApiScopes,
   })
 }
 
 interface TestCase {
   user: User
-  tenantId?: string
+  tenantId: string
+  tenantOwnerNationalId?: string
   expected: {
     status: number
     body: AdminScopeDto[] | Record<string, unknown>
   }
 }
 
+const SHOULD_NOT_CREATE_TENANT_ID = '@should_not_create'
+
 const testCases: Record<string, TestCase> = {
-  'should have access': {
-    user: superUser,
+  'should have access as current user': {
+    user: currentUser,
     tenantId: '@tenant1',
     expected: {
       status: 200,
       body: mockedApiScopes,
     },
   },
-  'should throw no content because user is not super user': {
+  'should have access as super user': {
+    user: superUser,
+    tenantId: '@tenant1',
+    tenantOwnerNationalId: createNationalId('company'),
+    expected: {
+      status: 200,
+      body: mockedApiScopes,
+    },
+  },
+  'should return no content where user is not tenant owner': {
     user: currentUser,
     tenantId: '@tenant1',
+    tenantOwnerNationalId: createNationalId('company'),
     expected: {
       status: 204,
       body: {},
@@ -72,6 +92,7 @@ const testCases: Record<string, TestCase> = {
   },
   'should throw no content because of tenant does not exist': {
     user: superUser,
+    tenantId: SHOULD_NOT_CREATE_TENANT_ID,
     expected: {
       status: 204,
       body: {},
@@ -94,8 +115,12 @@ describe('MeScopesController', () => {
         })
         server = request(app.getHttpServer())
 
-        if (testCase.tenantId) {
-          await createTestData(app, testCase.tenantId)
+        if (testCase.tenantId !== SHOULD_NOT_CREATE_TENANT_ID) {
+          await createTestData(
+            app,
+            testCase.tenantId,
+            testCase.tenantOwnerNationalId ?? testCase.user.nationalId,
+          )
         }
       })
 
