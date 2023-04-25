@@ -262,6 +262,29 @@ export const signedVerdictOverview = {
           'Notaður sem texti í Hætta við takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
       },
     }),
+    appealReceived: defineMessages({
+      title: {
+        id:
+          'judicial.system.core:signed_verdict_overview.appeal_received.title',
+        defaultMessage: 'Tilkynningar sendar á málsaðila',
+        description:
+          'Notaður sem titill í upplýsingaboxi sem birtist þegar að héraðsdómur hefur móttekið kæru.',
+      },
+      text: {
+        id: 'judicial.system.core:signed_verdict_overview.appeal_received.text',
+        defaultMessage:
+          'Tilkynning um móttöku kæru hefur verið send Landsrétti, sækjanda og verjanda.',
+        description:
+          'Notaður sem texti í upplýsingaboxi sem birtist þegar að héraðsdómur hefur móttekið kæru.',
+      },
+      primaryButtonText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.appeal_received.primary_button_text',
+        defaultMessage: 'Loka glugga',
+        description:
+          'Notaður sem texti á takka sem lokar upplýsingaboxi eftir að héraðsdómur hefur móttekið kæru.',
+      },
+    }),
     modifyDatesInfo: defineMessages({
       titleV3: {
         id:
