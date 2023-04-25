@@ -45,6 +45,7 @@ const Delegation = ({
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
+      accordionLabel={formatMessage(m.settings)}
     >
       <Stack space={2}>
         <Checkbox
