@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   GridContainer,
+  LoadingDots,
   ResponsiveSpace,
   Stack,
   Tabs,
@@ -27,61 +28,86 @@ import {
 } from '../../types/interfaces'
 import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
-import getInitValues from './getInitValues'
-import TabsList from './tabsList'
-import EmailBox from '../../components/EmailBox/EmailBox'
+import getInitValues from '../Subscriptions/getInitValues'
+import TabsList from '../Subscriptions/tabsList'
+import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
 import { IconLink } from '../../components/IconLink/IconLink'
-import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
 interface SubProps {
-  cases: CaseForSubscriptions[]
+  allcases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
+  isNotAuthorized: boolean
 }
 
-const SubscriptionsScreen = ({ cases, types }: SubProps) => {
+export const UserSubscriptions = ({
+  allcases,
+  types,
+  isNotAuthorized,
+}: SubProps) => {
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
+  const {
+    cases,
+    policyAreas,
+    institutions,
+    subscribedToAll,
+    subscribedToAllNew,
+    getUserSubsLoading,
+  } = useFetchSubscriptions()
   const [searchValue, setSearchValue] = useState('')
-  const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>(cases)
+
+  const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>()
   const { Institutions, PolicyAreas } = getInitValues({ types: types })
   const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
     GeneralSubscriptionArray,
   )
-  const [institutionsData, setInstitutionsData] = useState(Institutions)
-  const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
+  const [institutionsData, setInstitutionsData] = useState([])
+  let generalSubData: any = []
+  const [policyAreasData, setPolicyAreasData] = useState([])
+
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
     SubscriptionsArray,
   )
+  const {
+    caseIds,
+    policyAreaIds,
+    institutionIds,
+    generalSubscription,
+  } = subscriptionArray
+  useEffect(() => {
+    if (!getUserSubsLoading) {
+      if (subscribedToAll) {
+        generalSubData = GeneralSubscriptionArray.at(0)
+      } else if (subscribedToAllNew) {
+        generalSubData = GeneralSubscriptionArray.at(1)
+      }
+      const filteredInst = Object.values(institutionsData).filter(function (
+        item,
+      ) {
+        return institutions.filter((x) => x.id == item.id).length > 0
+      })
+
+      setInstitutionsData(filteredInst)
+
+      const filteredPlicy = Object.values(policyAreasData).filter(function (
+        item,
+      ) {
+        return policyAreas.filter((x) => x.id == item.id).length > 0
+      })
+
+      setPolicyAreasData(filteredPlicy)
+
+      const filteredCases = allcases.filter(function (item) {
+        return cases.filter((x) => x.id == item.id).length > 0
+      })
+
+      setCasesData(filteredCases)
+    }
+  }, [getUserSubsLoading])
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,
     Stofnanir: SortOptions.aToZ,
     Málefnasvið: SortOptions.aToZ,
   })
-  const { postSubsMutation } = usePostSubscription()
-  const onSubmit = async () => {
-    setSubscriptionArray(SubscriptionsArray)
-    //TODO: subscribe to all
-    const objToSend = {
-      // subscribeToAll: generalSubscription.length > 0,
-      // subscribeToAllType: generalSubscription,
-      caseIds: caseIds,
-      institutionIds: institutionIds,
-      policyAreaIds: policyAreaIds,
-    }
-    const posting = await postSubsMutation({
-      variables: {
-        input: objToSend,
-      },
-    })
-      .then((res) => {
-        toast.success('Áskrift skráð')
-      })
-      .catch((e) => {
-        console.error(e)
-        toast.error('Eitthvað fór úrskeiðis')
-      })
-  }
-  const onClear = () => {
-    setSubscriptionArray(SubscriptionsArray)
-  }
+
   const paddingX = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   useEffect(() => {
@@ -125,23 +151,25 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       setPolicyAreasData(sortedPolicyAreas)
     }
   }, [searchValue])
-  const {
-    caseIds,
-    policyAreaIds,
-    institutionIds,
-    generalSubscription,
-  } = subscriptionArray
+  const onSubmit = () => {
+    toast.success('Áskrift uppfærð')
+
+    setSubscriptionArray(SubscriptionsArray)
+  }
+  const onClear = () => {
+    setSubscriptionArray(SubscriptionsArray)
+  }
   const tabs = TabsList({
     casesData: casesData,
     setCasesData: (arr: Array<CaseForSubscriptions>) => setCasesData(arr),
     institutionsData: institutionsData,
-    generalSubArray: GeneralSubscriptionArray,
     setInstitutionsData: (arr: Array<ArrOfIdAndName>) =>
       setInstitutionsData(arr),
     policyAreasData: policyAreasData,
     setPolicyAreasData: (arr: Array<ArrOfIdAndName>) => setPolicyAreasData(arr),
     Area: Area,
     subscriptionArray: subscriptionArray,
+    generalSubArray: generalSubData,
     setSubscriptionArray: (arr: SubscriptionArray) => setSubscriptionArray(arr),
     searchValue: searchValue,
     setSearchValue: (value: string) => setSearchValue(value),
@@ -153,13 +181,23 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
     },
   })
   return (
-    <Layout seo={{ title: 'Áskriftir', url: 'askriftir' }}>
+    <Layout
+      seo={{ title: 'Mínar áskriftir', url: 'minaraskriftir' }}
+      justifyContent="flexStart"
+    >
       <Divider />
       <Box background="blue100">
         <BreadcrumbsWithMobileDivider
           items={[
             { title: 'Samráðsgátt', href: '/samradsgatt' },
-            { title: 'Áskriftir ', href: '/samradsgatt/askriftir' },
+            {
+              title: 'Áskriftir ',
+              href: '/samradsgatt/askriftir',
+            },
+            {
+              title: 'Mínar áskriftir ',
+              href: '/samradsgatt/minaraskriftir',
+            },
           ]}
         />
 
@@ -168,23 +206,18 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
             <Stack space={[3, 3, 3, 5, 5]}>
               <Stack space={3}>
                 <Text variant="h1" color="dark400">
-                  Áskriftir
+                  Mínar Áskriftir
                 </Text>
                 <Stack space={1}>
                   <Text variant="default">
-                    Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig
-                    inn á Ísland.is, hakar við einn eða fleiri flokka
-                    (mál/stofnanir/málefnasvið), velur hvort þú vilt
-                    tilkynningar um ný mál eða fleiri atriði og smellir á
-                    „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum
-                    tölvupóstfangið sem þú skráðir.
+                    Hér er hægt að halda utan um áskriftir og skrá sig úr
+                    áskriftum. Aðeins birtast virk mál.
                   </Text>
                   <Text variant="default">
                     Kerfið er uppfært einu sinni á sólarhring.
                   </Text>
                 </Stack>
               </Stack>
-              <EmailBox />
             </Stack>
             <Stack space={0}>
               {!(
@@ -296,7 +329,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                       </IconLink>
                     </Box>
                     <Button size="small" onClick={onSubmit}>
-                      Skrá í áskrift
+                      Skrá úr áskrift
                     </Button>
                   </Box>
                 </>
@@ -308,18 +341,21 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       <Divider />
       <GridContainer>
         <Box paddingX={paddingX} paddingTop={[3, 3, 3, 5, 5]}>
-          <Tabs
-            selected={currentTab}
-            onlyRenderSelectedTab={true}
-            label="Veldu tegund áskrifta"
-            tabs={tabs}
-            contentBackground="transparent"
-            onChange={(e: Area) => setCurrentTab(e)}
-          />
+          {getUserSubsLoading ? (
+            <LoadingDots></LoadingDots>
+          ) : (
+            <Tabs
+              selected={currentTab}
+              onlyRenderSelectedTab={true}
+              label="Veldu tegund áskrifta"
+              tabs={tabs}
+              contentBackground="transparent"
+              onChange={(e: Area) => setCurrentTab(e)}
+            />
+          )}
         </Box>
       </GridContainer>
     </Layout>
   )
 }
-
-export default SubscriptionsScreen
+export default UserSubscriptions

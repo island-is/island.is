@@ -74,10 +74,14 @@ export interface ArrOfValueAndLabel {
 }
 
 export interface SubscriptionArray {
-  caseIds: Array<number>
-  institutionIds: Array<number>
-  policyAreaIds: Array<number>
+  caseIds: Array<SubscriptionItem>
+  institutionIds: Array<SubscriptionItem>
+  policyAreaIds: Array<SubscriptionItem>
   generalSubscription: string
+}
+export interface SubscriptionItem {
+  id: number
+  subscriptionType: string
 }
 
 export interface SortTitle {
