@@ -15,6 +15,7 @@ import { Override } from '@island.is/application/templates/family-matters-core/t
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
 import { SharedTemplateApiService } from '../../shared'
 import {
+  applicationRejectedByOrganizationEmail,
   generateApplicationSubmittedEmail,
   generateSyslumennNotificationEmail,
   transferRequestedEmail,
@@ -116,7 +117,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const durationType = answers.selectDuration?.type
     const durationDate = answers.selectDuration?.date
     const extraData = {
-      // TODO: add new screen data here?
+      typeOfChildSupport: answers.selectChildSupportPayment, // TODO: is this correct?
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
         durationType === 'temporary' && durationDate
@@ -141,7 +142,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       childResidenceInfo.future.address.postalCode,
     )
 
-    /* const uploadDataName = 'Lögheimilisbreyting barns'
+    const uploadDataName = 'SamningurForsjaOgMedlag1.1'
 
     const response = await this.syslumennService
       .uploadData(participants, attachments, extraData, uploadDataName)
@@ -153,40 +154,9 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
           syslumennData.email,
         )
         return undefined
-      }) */
+      })
 
-    await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateApplicationSubmittedEmail(
-          props,
-          pdf.toString('binary'),
-          answers.parentA.email,
-          syslumennData.name,
-          '1337',
-          /* response?.caseNumber, */
-        ),
-      (application as unknown) as Application,
-    )
-
-    await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateApplicationSubmittedEmail(
-          props,
-          pdf.toString('binary'),
-          answers.parentB.email,
-          syslumennData.name,
-          '1337',
-          /* response?.caseNumber, */
-        ),
-      (application as unknown) as Application,
-    )
-
-    return {
-      success: true,
-      message: 'Flott',
-      id: '1234',
-      caseNumber: '1337',
-    }
+    return response
   }
 
   async sendNotificationToCounterParty({ application }: Props) {
@@ -208,9 +178,63 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     }
   }
 
-  async rejectApplication({ application }: Props) {
+  // Sends notification to both parties
+  async approvedByOrganization({ application }: Props) {
+    const { answers, externalData } = application
+    const { parentA, parentB } = answers
+    const { nationalRegistry } = externalData
+    const applicant = nationalRegistry.data
+    const childResidenceInfo = childrenResidenceInfo(
+      applicant,
+      externalData.childrenCustodyInformation.data,
+      answers.selectedChildren,
+    )
+    const caseNumber = externalData.submitApplication?.data?.caseNumber
+
+    if (!childResidenceInfo.future?.address?.postalCode) {
+      throw new Error('Future residence postal code was not found')
+    }
+
+    const pdf = await generateResidenceChangePdf(application)
+    const syslumennData = syslumennDataFromPostalCode(
+      childResidenceInfo.future.address.postalCode,
+    )
+
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          pdf.toString('binary'),
+          parentA.email,
+          syslumennData.name,
+          caseNumber,
+        ),
+      (application as unknown) as Application,
+    )
+
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          pdf.toString('binary'),
+          parentB.email,
+          syslumennData.name,
+          caseNumber,
+        ),
+      (application as unknown) as Application,
+    )
+  }
+
+  async rejectedByCounterParty({ application }: Props) {
     await this.sharedTemplateAPIService.sendEmail(
       applicationRejectedEmail,
+      (application as unknown) as Application,
+    )
+  }
+
+  async rejectedByOrganization({ application }: Props) {
+    await this.sharedTemplateAPIService.sendEmail(
+      applicationRejectedByOrganizationEmail,
       (application as unknown) as Application,
     )
   }
