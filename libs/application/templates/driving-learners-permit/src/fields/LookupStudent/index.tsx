@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import * as kennitala from 'kennitala'
+import { isPerson } from 'kennitala'
 import {
   AlertMessage,
   Box,
@@ -30,7 +30,7 @@ const fieldNames = {
   lookupError: `${prefix}.lookupError`,
   studentMentorabilityError: `${prefix}.studentMentorabilityError`,
   studentName: `${prefix}.studentName`,
-  studentIsMentorable: `${prefix}.studentIsMentorable`,
+  studentMentorability: `${prefix}.studentMentorability`,
 }
 
 export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
@@ -73,7 +73,7 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
         type: 'serverError',
         message: m.errorNationalIdMentorableLookup.defaultMessage,
       })
-      setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
+      setValue(fieldNames.studentMentorability, 'isNotMentorable')
     },
     onCompleted: (data) => {
       if (data.drivingLicenseStudentCanGetPracticePermit) {
@@ -84,14 +84,14 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
         } = data.drivingLicenseStudentCanGetPracticePermit
         const eligible = isOk && errorCode === null
         setValue(
-          fieldNames.studentIsMentorable,
+          fieldNames.studentMentorability,
           eligible ? 'isMentorable' : 'isNotMentorable',
         )
       }
     },
   })
 
-  const studentMentorability = getValues(fieldNames.studentIsMentorable)
+  const studentMentorability = getValues(fieldNames.studentMentorability)
 
   // Clear inital errors on mount
   useEffect(() => {
@@ -102,43 +102,37 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
   const studentName: string = watch(fieldNames.studentName)
 
   useEffect(() => {
-    if (studentNationalId?.length === 10) {
-      const isValidSSN = kennitala.isPerson(studentNationalId)
-      if (isValidSSN) {
-        if (fakeData?.useFakeData === YES) {
-          if (
-            fakeData?.mentorableStudents
-              ?.split(',')
-              .map((v) => v.trim())
-              .includes(studentNationalId)
-          ) {
-            setValue(fieldNames.studentIsMentorable, 'isMentorable')
-            setValue(fieldNames.studentName, 'Æfinga Leyfisbur')
-          } else {
-            setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
-            setValue(fieldNames.studentName, 'Óleyf Keyra Vagnsdóttir')
-          }
-        } else {
-          const identityInput = {
-            variables: {
-              input: {
-                nationalId: studentNationalId,
-              },
-            },
-          }
-          const studentLookupInput = {
-            variables: {
-              input: {
-                studentSSN: studentNationalId,
-              },
-            },
-          }
-          getIdentity(identityInput)
-          getStudentMentorability(studentLookupInput)
-          setValue(fieldNames.studentIsMentorable, 'loading')
+    if (isPerson(studentNationalId)) {
+      if (fakeData?.useFakeData === YES) {
+        const fakeEligible = fakeData?.mentorableStudents
+          ?.split(',')
+          .some((e) => e.trim() === studentNationalId)
+        let fakeMentorability = 'isNotMentorable'
+        let fakeName = 'Óleyf Keyra Vagnsdóttir'
+        if (fakeEligible) {
+          fakeMentorability = 'isMentorable'
+          fakeName = 'Æfinga Leyfisbur'
         }
-      } else if (studentName !== '') {
-        setValue(fieldNames.studentName, '')
+        setValue(fieldNames.studentMentorability, fakeMentorability)
+        setValue(fieldNames.studentName, fakeName)
+      } else {
+        const identityInput = {
+          variables: {
+            input: {
+              nationalId: studentNationalId,
+            },
+          },
+        }
+        const studentLookupInput = {
+          variables: {
+            input: {
+              studentSSN: studentNationalId,
+            },
+          },
+        }
+        getIdentity(identityInput)
+        getStudentMentorability(studentLookupInput)
+        setValue(fieldNames.studentMentorability, 'loading')
       }
     } else if (studentName !== '') {
       setValue(fieldNames.studentName, '')
@@ -170,8 +164,8 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
         </GridColumn>
         <Box hidden={true}>
           <InputController
-            id={fieldNames.studentIsMentorable}
-            name={fieldNames.studentIsMentorable}
+            id={fieldNames.studentMentorability}
+            name={fieldNames.studentMentorability}
             readOnly
             defaultValue="default"
           />
