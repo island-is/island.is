@@ -13,9 +13,9 @@ import {
   DrivingLicenseBookStudentForTeacher,
   DrivingLicenseBookStudent,
   PracticalDrivingLesson,
-  DrivingLicenseBookStudentOverview,
   Organization,
   SchoolType,
+  DrivingLicenseBookStudentOverview,
 } from './drivinLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 
