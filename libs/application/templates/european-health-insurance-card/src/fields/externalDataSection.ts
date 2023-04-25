@@ -14,10 +14,10 @@ import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/mess
 
 export const externalDataSection = buildSection({
   id: 'intro',
-  title:  e.introScreen.sectionLabel,
+  title: e.introScreen.sectionLabel,
   children: [
     buildExternalDataProvider({
-      title:  e.introScreen.sectionTitle,
+      title: e.introScreen.sectionTitle,
       id: 'introScreen',
       description: e.introScreen.sectionDescription,
       dataProviders: [

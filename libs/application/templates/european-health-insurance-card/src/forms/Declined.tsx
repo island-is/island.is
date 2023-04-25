@@ -1,13 +1,9 @@
 import { Form, FormModes } from '@island.is/application/types'
-import {
-  buildDescriptionField,
-  buildForm,
-} from '@island.is/application/core'
+import { buildDescriptionField, buildForm } from '@island.is/application/core'
 
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
-
-export interface EuropeanHealthInsuranceCardProps { }
+export interface EuropeanHealthInsuranceCardProps {}
 
 export const Declined: Form = buildForm({
   id: 'Declined',
@@ -19,7 +15,6 @@ export const Declined: Form = buildForm({
       title: e.no.sectionLabel,
       description: e.no.sectionDescription,
     }),
-
   ],
 })
 

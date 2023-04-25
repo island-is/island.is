@@ -273,6 +273,9 @@
       "@island.is/application/templates/estate/types": [
         "libs/application/templates/estate/src/types.ts"
       ],
+      "@island.is/application/templates/european-health-insurance-card": [
+        "libs/application/templates/european-health-insurance-card/src/index.ts"
+      ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
@@ -308,9 +311,6 @@
       ],
       "@island.is/application/templates/institution-collaboration": [
         "libs/application/templates/institution-collaboration/src/index.ts"
-      ],
-      "@island.is/application/templates/european-health-insurance-card": [
-        "libs/application/templates/european-health-insurance-card/src/index.ts"
       ],
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
@@ -446,6 +446,9 @@
       "@island.is/clients/driving-license-book": [
         "libs/clients/driving-license-book/src/index.ts"
       ],
+      "@island.is/clients/ehic-client-v1": [
+        "libs/clients/ehic-client-v1/src/index.ts"
+      ],
       "@island.is/clients/electronic-registration-statistics": [
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
@@ -541,9 +544,6 @@
       "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
-      "@island.is/clients/ehic-client-v1": [
-        "libs/clients/ehic-client-v1/src/index.ts"
-      ],
       "@island.is/cms": ["libs/cms/src/index.ts"],
       "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],
       "@island.is/cms-translations/test": [
