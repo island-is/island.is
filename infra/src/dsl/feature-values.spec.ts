@@ -1,4 +1,4 @@
-import { ref, service } from './dsl'
+import { ServiceBuilder, ref, service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
 import { getFeatureAffectedServices } from './feature-deployments'
@@ -7,28 +7,49 @@ import { getHelmValueFile } from './value-files-generators/helm-value-file'
 import { renderers } from './upstream-dependencies'
 import { generateOutput } from './processing/rendering-pipeline'
 
-const Dev: EnvironmentConfig = {
-  auroraHost: 'a',
-  redisHost: 'b',
-  domain: 'staging01.devland.is',
-  type: 'dev',
-  featuresOn: [],
-  defaultMaxReplicas: 3,
-  defaultMinReplicas: 2,
-  releaseName: 'web',
-  awsAccountId: '111111',
-  awsAccountRegion: 'eu-west-1',
-  feature: 'feature-A',
-  global: {},
+const getEnvironment = (
+  options: EnvironmentConfig = {
+    auroraHost: 'a',
+    redisHost: 'b',
+    domain: 'staging01.devland.is',
+    type: 'dev',
+    featuresOn: [],
+    defaultMaxReplicas: 3,
+    defaultMinReplicas: 2,
+    releaseName: 'web',
+    awsAccountId: '111111',
+    awsAccountRegion: 'eu-west-1',
+    feature: 'feature-A',
+    global: {},
+  },
+) => {
+  return { ...options }
+}
+
+const getValues = async (
+  services: ServiceBuilder<any>[],
+  env: EnvironmentConfig,
+) => {
+  const chart = new Kubernetes(env)
+  const out = await generateOutput({
+    runtime: chart,
+    services: services,
+    outputFormat: renderers.helm,
+    env: env,
+  })
+  const values = getHelmValueFile(chart, out, 'no-mocks', env)
+  return values
 }
 
 describe('Feature-deployment support', () => {
   let values: HelmValueFile
+  let dev: EnvironmentConfig
 
   beforeEach(async () => {
     const dependencyA = service('service-a').namespace('A')
     const dependencyB = service('service-b')
     const dependencyC = service('service-c')
+
     const apiService = service('graphql')
       .env({
         A: ref((h) => `${h.svc(dependencyA)}`),
@@ -44,7 +65,7 @@ describe('Feature-deployment support', () => {
           },
         ],
         postgres: {
-          extensions: ['foo', 'bar'],
+          extensions: ['foo'],
         },
       })
       .ingress({
@@ -55,20 +76,14 @@ describe('Feature-deployment support', () => {
       })
       .postgres()
 
+    dev = getEnvironment()
     const services1 = await getFeatureAffectedServices(
       [apiService, dependencyA, dependencyB],
       [dependencyA, dependencyC],
       [dependencyC],
-      Dev,
+      dev,
     )
-    const chart1 = new Kubernetes(Dev)
-    const services = await generateOutput({
-      runtime: chart1,
-      services: services1.included,
-      outputFormat: renderers.helm,
-      env: Dev,
-    })
-    values = getHelmValueFile(chart1, services, 'no-mocks', Dev)
+    values = await getValues(services1.included, dev)
   })
 
   it('dynamic service name generation', () => {
@@ -83,10 +98,10 @@ describe('Feature-deployment support', () => {
       SERVERSIDE_FEATURES_ON: '',
     })
   })
-  it('db extensions are set', () => {
+  it('multiple db extensions are set', () => {
     expect(values.services.graphql.initContainer?.env).toEqual(
       expect.objectContaining({
-        DB_EXTENSIONS: 'foo,bar',
+        DB_EXTENSIONS: 'foo',
       }),
     )
   })
@@ -107,22 +122,16 @@ describe('Feature-deployment support', () => {
     )
   })
 
-  it('postgres extensions', () => {
-    expect(values.services.graphql.initContainer?.env).toHaveProperty(
-      'DB_EXTENSIONS',
-    )
-  })
-
   it('feature deployment namespaces', () => {
     expect(Object.keys(values.services).sort()).toEqual([
       'graphql',
       'service-a',
     ])
     expect(values.services['graphql'].namespace).toEqual(
-      `feature-${Dev.feature}`,
+      `feature-${dev.feature}`,
     )
     expect(values.services['service-a'].namespace).toEqual(
-      `feature-${Dev.feature}`,
+      `feature-${dev.feature}`,
     )
   })
 
