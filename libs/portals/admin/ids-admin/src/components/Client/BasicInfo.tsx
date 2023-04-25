@@ -1,4 +1,4 @@
-import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
+import { AccordionCard, Input, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { RefObject } from 'react'
 import { m } from '../../lib/messages'
@@ -13,11 +13,11 @@ interface BasicInfoProps {
 
 const BasicInfoContent = ({
   clientId,
-  clientSecret,
+  // clientSecret,
   issuerUrl,
 }: BasicInfoProps) => {
   const { formatMessage } = useLocale()
-  const [showSecret, setShowSecret] = React.useState(false)
+  // const [showSecret, setShowSecret] = React.useState(false)
   const clientIdRef = React.useRef<HTMLInputElement>(null)
   //const clientSecretRef = React.useRef<HTMLInputElement>(null)
   const issuerUrlRef = React.useRef<HTMLInputElement>(null)
@@ -41,10 +41,6 @@ const BasicInfoContent = ({
     }
 
     toast.success(formatMessage(m.copySuccess))
-  }
-
-  const handleShow = () => {
-    setShowSecret(!showSecret)
   }
 
   return (

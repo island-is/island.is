@@ -63,7 +63,7 @@ describe('LimitedAccessCaseController - Get ruling pdf guards', () => {
     })
   })
 
-  describe('CaseTypeGuerd', () => {
+  describe('CaseTypeGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {

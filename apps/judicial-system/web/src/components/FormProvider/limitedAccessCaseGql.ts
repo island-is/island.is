@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 const LimitedAccessCaseQuery = gql`
-  query LimitedAccessCase($input: CaseQueryInput!) {
+  query LimitedAccessCaseQuery($input: CaseQueryInput!) {
     limitedAccessCase(input: $input) {
       id
       created
@@ -100,8 +100,16 @@ const LimitedAccessCaseQuery = gql`
       accusedAppealDecision
       prosecutorAppealDecision
       isAppealDeadlineExpired
-      accusedPostponedAppealDate
-      prosecutorPostponedAppealDate
+      isStatementDeadlineExpired
+      statementDeadline
+      canBeAppealed
+      hasBeenAppealed
+      appealedByRole
+      appealedDate
+      appealDeadline
+      prosecutorStatementDate
+      defenderStatementDate
+      appealReceivedByCourtDate
     }
   }
 `

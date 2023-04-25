@@ -2,7 +2,7 @@ import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -19,7 +19,7 @@ export class TranslationService {
     @InjectModel(Translation)
     private translationModel: typeof Translation,
     @InjectModel(Language)
-    private langugeModel: typeof Language,
+    private languageModel: typeof Language,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -68,7 +68,7 @@ export class TranslationService {
 
   /** Get's all languages */
   async findAllLanguages(): Promise<Language[]> {
-    return this.langugeModel.findAll()
+    return this.languageModel.findAll()
   }
 
   /** Get's and counts all languages */
@@ -81,7 +81,7 @@ export class TranslationService {
   }> {
     page--
     const offset = page * count
-    return this.langugeModel.findAndCountAll({
+    return this.languageModel.findAndCountAll({
       limit: count,
       offset: offset,
       distinct: true,
@@ -91,7 +91,7 @@ export class TranslationService {
 
   /** Adds a new Language */
   async createLanguage(language: LanguageDTO): Promise<Language> {
-    return this.langugeModel.create(language)
+    return this.languageModel.create(language)
   }
 
   /** Updates an existing Language */
@@ -110,7 +110,7 @@ export class TranslationService {
   async deleteLanguage(isoKey: string): Promise<number> {
     this.logger.debug(`Deleting language: ${isoKey}`)
 
-    return this.langugeModel.destroy({ where: { isoKey: isoKey } })
+    return this.languageModel.destroy({ where: { isoKey: isoKey } })
   }
 
   /** Finds a translation by it's key */
@@ -119,6 +119,7 @@ export class TranslationService {
     className: string,
     property: string,
     key: string,
+    transaction?: Transaction,
   ): Promise<Translation | null> {
     return this.translationModel.findOne({
       where: {
@@ -127,6 +128,7 @@ export class TranslationService {
         key: key,
         property: property,
       },
+      transaction,
     })
   }
 
@@ -137,7 +139,7 @@ export class TranslationService {
   }
 
   async findLanguage(isoKey: string): Promise<Language | null> {
-    return this.langugeModel.findByPk(isoKey)
+    return this.languageModel.findByPk(isoKey)
   }
 
   /** Updates an existing translation */
@@ -160,6 +162,34 @@ export class TranslationService {
     }
 
     return translation.update({ ...translationData })
+  }
+
+  /** Upserts an translation */
+  async upsertTranslation(
+    translationData: TranslationDTO,
+    transaction?: Transaction,
+  ): Promise<Translation> {
+    this.logger.debug(
+      'Upserting the translation with key: ',
+      translationData.key,
+    )
+
+    const language = await this.languageModel.findByPk(
+      translationData.language,
+      { transaction },
+    )
+    if (!language) {
+      throw new BadRequestException(
+        `Language ${translationData.language} does not exist for translation`,
+      )
+    }
+
+    const [translation] = await this.translationModel.upsert(translationData, {
+      fields: ['value'],
+      transaction,
+    })
+
+    return translation
   }
 
   /** Deletes a translation */

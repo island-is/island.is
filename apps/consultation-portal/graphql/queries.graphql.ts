@@ -32,7 +32,40 @@ export const SUB_GET_EMAIL = gql`
     }
   }
 `
+export const SUB_POST_SUBS = gql`
+  mutation SUB_POST_SUBS(
+    $input: ConsultationPortalUserSubscriptionsCommandInput!
+  ) {
+    consultationPortalPostSubscriptions(input: $input)
+  }
+`
+// screens/UserSubscriptions
+export const SUB_GET_USERSUBS = gql`
+  query SUB_GET_USERSUBS {
+    consultationPortalUserSubscriptions {
+      subscribedToAll
+      subscribedToAllNew
+      cases {
+        id
+        subscriptionType
+      }
+      institutions {
+        id
+        subscriptionType
+      }
+      policyAreas {
+        id
+        subscriptionType
+      }
+    }
+  }
+`
 
+export const SUB_POST_EMAIL = gql`
+  mutation SUB_POST_EMAIL($input: ConsultationPortalPostEmailCommandInput!) {
+    consultationPortalPostUserEmail(input: $input)
+  }
+`
 // screens/Home
 export const HOME_GET_STATISTICS = gql`
   query HOME_GET_STATISTICS {
@@ -88,7 +121,6 @@ export const CASE_GET_CASE_BY_ID = gql`
       typeName
       shortDescription
       detailedDescription
-
       contactName
       contactEmail
       institutionName
@@ -103,6 +135,10 @@ export const CASE_GET_CASE_BY_ID = gql`
       changed
       oldInstitutionName
       statusName
+      stakeholders {
+        name
+        email
+      }
       documents {
         id
         fileName
@@ -134,6 +170,15 @@ export const CASE_POST_ADVICE = gql`
   }
 `
 
+export const CREATE_UPLOAD_URL = gql`
+  mutation CreateUploadUrl($filename: String!) {
+    createUploadUrl(filename: $filename) {
+      url
+      fields
+    }
+  }
+`
+
 // Screens/Advices
 export const ADVICES_GET_ALL_USER_ADVICES = gql`
   query ADVICES_GET_ALL_USER_ADVICES(
@@ -141,7 +186,7 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
   ) {
     consultationPortalAllUserAdvices(input: $input) {
       total
-      cases {
+      advices {
         id
         caseId
         participantName
@@ -151,6 +196,7 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
         _case {
           caseNumber
           name
+          statusName
           institutionName
           typeName
           policyAreaName

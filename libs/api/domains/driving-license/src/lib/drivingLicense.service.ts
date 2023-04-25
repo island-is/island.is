@@ -38,6 +38,7 @@ import {
   hasLocalResidence,
   hasResidenceHistory,
 } from './util/hasResidenceHistory'
+import { info } from 'kennitala'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -135,6 +136,70 @@ export class DrivingLicenseService {
       }
 
       throw e
+    }
+  }
+
+  async getLearnerMentorEligibility(
+    user: User,
+    nationalId: string,
+  ): Promise<ApplicationEligibility> {
+    const license = await this.getDrivingLicense(nationalId)
+    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
+      nationalId,
+    )
+
+    const localRecidency = hasLocalResidence(residenceHistory)
+
+    const year = 1000 * 3600 * 24 * 365.25
+    const twelveMonthsAgo = new Date(Date.now() - year)
+    const fiveYearsAgo = new Date(Date.now() - year * 5)
+
+    const categoryB = license?.categories
+      ? license.categories.find(
+          (category) => category.name.toLocaleUpperCase() === 'B',
+        )
+      : undefined
+
+    const activeDisqualification = license?.disqualification?.to
+      ? Date.now() < license.disqualification.to.getTime()
+      : false
+    const disqualificationInTheLastTwelveMonths = license?.disqualification
+      ?.from
+      ? license.disqualification.from > twelveMonthsAgo
+      : false
+
+    const requirements: ApplicationEligibilityRequirement[] = [
+      {
+        key: RequirementKey.hasDeprivation,
+        requirementMet: !(
+          activeDisqualification || disqualificationInTheLastTwelveMonths
+        ),
+      },
+      {
+        key: RequirementKey.currentLocalResidency,
+        requirementMet: localRecidency,
+      },
+      {
+        key: RequirementKey.personNotAtLeast24YearsOld,
+        requirementMet: info(nationalId).age >= 24,
+      },
+      {
+        key: RequirementKey.hasHadValidCategoryForFiveYearsOrMore,
+        requirementMet:
+          categoryB && categoryB.issued
+            ? categoryB.issued < fiveYearsAgo
+            : false,
+      },
+    ]
+
+    // only eligible if we dont find an unmet requirement
+    const isEligible = !requirements.find(
+      ({ requirementMet }) => requirementMet === false,
+    )
+
+    return {
+      requirements,
+      isEligible,
     }
   }
 
@@ -247,6 +312,19 @@ export class DrivingLicenseService {
     } else {
       throw new Error('unhandled license type')
     }
+  }
+
+  async studentCanGetPracticePermit(params: {
+    studentSSN: string
+    mentorSSN: string
+    token: string
+  }) {
+    const { mentorSSN, studentSSN, token } = params
+    return await this.drivingLicenseApi.postCanApplyForPracticePermit({
+      mentorSSN,
+      studentSSN,
+      token,
+    })
   }
 
   async newDrivingAssessment(
