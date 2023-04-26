@@ -6,14 +6,35 @@ export interface Case {
   name?: string
   adviceCount?: number
   shortDescription?: string
+  detailedDescription?: string
   statusName?: string
   institutionName?: string
+  oldInstitutionName?: string
   typeName?: string
   policyAreaName?: string
   processBegins?: string
   processEnds?: string
+  announcementText?: string
   created?: string
+  changed?: string
   summaryDate?: string
+  summaryText?: string
+  contactName?: string
+  contactEmail?: string
+  documents?: Array<Document>
+  stakeholders?: Array<Stakeholder>
+}
+
+export interface Document {
+  id?: string
+  fileName?: string
+  fileType?: string
+  size?: number
+}
+
+export interface Stakeholder {
+  name?: string
+  email?: string
 }
 
 export interface AdviceDocuments {
@@ -53,10 +74,14 @@ export interface ArrOfValueAndLabel {
 }
 
 export interface SubscriptionArray {
-  caseIds: Array<number>
-  institutionIds: Array<number>
-  policyAreaIds: Array<number>
+  caseIds: Array<SubscriptionItem>
+  institutionIds: Array<SubscriptionItem>
+  policyAreaIds: Array<SubscriptionItem>
   generalSubscription: string
+}
+export interface SubscriptionItem {
+  id: number
+  subscriptionType: string
 }
 
 export interface SortTitle {
