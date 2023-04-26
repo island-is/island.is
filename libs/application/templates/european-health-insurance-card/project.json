@@ -2,7 +2,7 @@
   "root": "libs/application/templates/european-health-insurance-card",
   "sourceRoot": "libs/application/templates/european-health-insurance-card/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["lib:application-system", "scope:application-system"],
   "targets": {
     "lint": {
       "executor": "@nrwl/linter:eslint",
