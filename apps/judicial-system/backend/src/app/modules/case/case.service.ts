@@ -132,6 +132,7 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
     | 'appealState'
+    | 'appealReceivedByCourtDate'
     | 'appealCaseNumber'
   > {
   type?: CaseType
@@ -541,7 +542,11 @@ export class CaseService {
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
-            caseFile.state === CaseFileState.STORED_IN_RVG && caseFile.key,
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            // In restriction and investigation cases, ordinary case files do not have a category.
+            // We should consider migrating all existing case files to have a category in the database.
+            !caseFile.category,
         )
         .map((caseFile) => ({
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
@@ -617,9 +622,37 @@ export class CaseService {
   }
 
   addMessagesForAppealedCaseToQueue(theCase: Case, user: TUser): Promise<void> {
+    const messages: CaseMessage[] =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            [
+              CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+              CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+            ].includes(caseFile.category),
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          user,
+          caseId: theCase.id,
+          caseFileId: caseFile.id,
+        })) ?? []
+    messages.push({
+      type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+    })
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
+  addMessagesForReceivedAppealCaseToQueue(theCase: Case, user: TUser) {
     return this.messageService.sendMessagesToQueue([
       {
-        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
         user,
         caseId: theCase.id,
       },
@@ -653,6 +686,8 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(theCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+        await this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
       }
     }
 

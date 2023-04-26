@@ -19,6 +19,7 @@ export enum CourtDocumentFolder {
   INDICTMENT_DOCUMENTS = 'Ákæra og greinargerð',
   CASE_DOCUMENTS = 'Gögn málsins',
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
+  APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
 }
 
 export type Subtype = Exclude<CaseType, CaseType.INDICTMENT> | IndictmentSubtype

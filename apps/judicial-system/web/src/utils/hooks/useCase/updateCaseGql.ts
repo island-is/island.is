@@ -180,6 +180,7 @@ export const UpdateCaseMutation = gql`
       defenderStatementDate
       isStatementDeadlineExpired
       statementDeadline
+      appealReceivedByCourtDate
       appealCaseNumber
       appealAssistant {
         id

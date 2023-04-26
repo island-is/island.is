@@ -198,6 +198,7 @@ const CaseQuery = gql`
       appealDeadline
       prosecutorStatementDate
       defenderStatementDate
+      appealReceivedByCourtDate
       appealCaseNumber
       appealAssistant {
         id

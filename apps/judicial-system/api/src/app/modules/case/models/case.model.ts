@@ -331,6 +331,9 @@ export class Case implements TCase {
   readonly defenderStatementDate?: string
 
   @Field({ nullable: true })
+  readonly appealReceivedByCourtDate?: string
+
+  @Field({ nullable: true })
   readonly appealCaseNumber?: string
 
   @Field(() => User, { nullable: true })

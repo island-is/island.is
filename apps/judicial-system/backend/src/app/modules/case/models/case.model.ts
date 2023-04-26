@@ -982,6 +982,16 @@ export class Case extends Model {
   appealState?: CaseAppealState
 
   /**********
+   * The time and date that the court marked an appeal as received
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealReceivedByCourtDate?: Date
+
+  /**********
    * The appeal case number assigned in the court of appeals
    **********/
   @Column({
