@@ -223,7 +223,7 @@ jobs:
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       - name: Checking out relevant branches for a PR
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'timed-feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
           git checkout $GITHUB_HEAD_REF
           git checkout $GITHUB_BASE_REF
