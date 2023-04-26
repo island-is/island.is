@@ -1,6 +1,8 @@
 module.exports = {
   displayName: 'application-templates-european-health-insurance-card',
-  preset: '../../jest.preset.js',
+  preset: './jest.preset.js',
+  rootDir: '../../../..',
+  roots: [__dirname],
   transform: {
     '^.+\\.[tj]sx?$': 'babel-jest',
   },
