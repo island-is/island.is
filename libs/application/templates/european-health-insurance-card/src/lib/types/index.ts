@@ -27,6 +27,7 @@ export enum States {
   DRAFT = 'draft',
   COMPLETED = 'completed',
   DECLINED = 'declined',
+  NOAPPLICANTS = 'noapplicants',
 }
 
 export interface CardInfo {

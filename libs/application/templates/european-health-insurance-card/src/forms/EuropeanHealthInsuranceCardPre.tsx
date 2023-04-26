@@ -60,7 +60,7 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
             actions: [
               {
                 event: 'SUBMIT',
-                name: e.temp.submitButtonLabel,
+                name: e.data.dataCollectionButtonLabel,
                 type: 'primary',
               },
             ],

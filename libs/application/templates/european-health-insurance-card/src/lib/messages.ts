@@ -303,6 +303,26 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
   }),
 
+  // Applicants already have plastic and PDF
+  noApplicants: defineMessages({
+    sectionTitle: {
+      id: 'ia.application:noapplicants.section.title',
+      defaultMessage: 'Umsókn lokið!',
+      description: 'Section title',
+    },
+    checkboxTitle: {
+      id: 'ia.application:noapplicants.checkbox.description',
+      defaultMessage: 'Umsókn lokið',
+      description: 'Checkbox Title',
+    },
+    checkboxDescription: {
+      id: 'ia.application:noapplicants.checkbox.description',
+      defaultMessage:
+        'Þeir aðilar hafa eiga kort í gildi og bráðabirgðaskírteini í pósthólfi sínu',
+      description: 'Checkbox description',
+    },
+  }),
+
   urls: defineMessages({
     allServices: {
       id: 'ia.application:url.all',

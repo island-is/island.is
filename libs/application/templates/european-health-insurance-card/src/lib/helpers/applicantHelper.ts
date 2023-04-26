@@ -1,6 +1,5 @@
 import {
   Application,
-  ApplicationContext,
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
@@ -135,6 +134,20 @@ export function someCanApplyForPlasticOrPdf(
   return false
 }
 
+/** Checks if some are insured*/
+export function someAreInsured(externalData: ExternalData): boolean {
+  if (externalData?.cardResponse?.data) {
+    const cardResponse = externalData?.cardResponse?.data as CardResponse[]
+
+    const ret = cardResponse.find((x) => x.isInsured === true)
+
+    if (ret !== null || ret !== undefined) {
+      return true
+    }
+  }
+  return false
+}
+
 /** Checks if one of all persons from national registry for this user has an health insurance and can apply*/
 export function someCanApplyForPlastic(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
@@ -222,10 +235,4 @@ export function hasAPDF(cardInfo: CardResponse) {
     }
   }
   return false
-}
-
-export const canApply = (value = false) => ({
-  application,
-}: ApplicationContext) => {
-  return value === someCanApplyForPlasticOrPdf(application.externalData)
 }

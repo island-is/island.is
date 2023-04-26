@@ -16,7 +16,10 @@ import { EhicCardResponseApi, EhicGetTemporaryCardApi } from '../dataProviders'
 
 import { ApiActions } from '../dataProviders/apiActions.enum'
 import { States } from './types'
-import { canApply } from './helpers/applicantHelper'
+import {
+  someAreInsured,
+  someCanApplyForPlasticOrPdf,
+} from './helpers/applicantHelper'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
@@ -41,9 +44,8 @@ const template: ApplicationTemplate<
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'EHIC-Prerequisites',
+          name: 'Prerequisites',
           status: 'draft',
-          progress: 0.2,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -55,7 +57,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'EHIC-Prerequisites-submit',
+                  name: 'data-submit',
                   type: 'primary',
                 },
               ],
@@ -74,12 +76,25 @@ const template: ApplicationTemplate<
         on: {
           [DefaultEvents.SUBMIT]: [
             {
-              cond: canApply(true),
               target: States.DRAFT,
+              cond: (application) =>
+                someAreInsured(application?.application?.externalData) &&
+                someCanApplyForPlasticOrPdf(
+                  application?.application?.externalData,
+                ),
             },
             {
-              cond: canApply(false),
               target: States.DECLINED,
+              cond: (application) =>
+                !someAreInsured(application?.application?.externalData),
+            },
+            {
+              target: States.NOAPPLICANTS,
+              cond: (application) =>
+                someAreInsured(application?.application?.externalData) &&
+                !someCanApplyForPlasticOrPdf(
+                  application?.application?.externalData,
+                ),
             },
           ],
         },
@@ -87,9 +102,8 @@ const template: ApplicationTemplate<
 
       [States.DRAFT]: {
         meta: {
-          name: 'EHIC-FORM',
-          status: 'draft',
-          progress: 0.4,
+          name: 'application',
+          status: 'inprogress',
           onExit: defineTemplateApi({
             action: ApiActions.applyForPhysicalAndTemporary,
             shouldPersistToExternalData: true,
@@ -106,7 +120,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'EHIC-Plastic-submit',
+                  name: 'plastic-submit',
                   type: 'primary',
                 },
               ],
@@ -125,7 +139,7 @@ const template: ApplicationTemplate<
 
       [States.COMPLETED]: {
         meta: {
-          name: 'EHIC-Completed',
+          name: 'Completed',
           status: 'completed',
           progress: 1,
           onEntry: defineTemplateApi({
@@ -145,7 +159,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'EHIC-Approved-Submit',
+                  name: 'completed-submit',
                   type: 'primary',
                 },
               ],
@@ -169,6 +183,23 @@ const template: ApplicationTemplate<
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/Declined').then((val) => val.Declined),
+              read: 'all',
+            },
+          ],
+        },
+      },
+
+      [States.NOAPPLICANTS]: {
+        meta: {
+          name: 'NoApplicants',
+          status: 'completed',
+          progress: 1,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/NoApplicants').then((val) => val.NoApplicants),
               read: 'all',
             },
           ],
