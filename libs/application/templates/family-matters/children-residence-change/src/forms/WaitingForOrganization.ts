@@ -3,6 +3,7 @@ import {
   buildSection,
   buildAlertMessageField,
   buildMultiField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
 import * as m from '../lib/messages'
@@ -20,12 +21,10 @@ export const WaitingForOrganization = buildForm({
           id: 'waitingForOrganizationMultifield',
           title: m.section.waiting,
           children: [
-            buildAlertMessageField({
+            buildDescriptionField({
               id: 'waitingForOrganizationDescription',
-              title: 'Umsókn er í vinnslu hjá sýslumanni, vinsamlegast bíddu.',
-              alertType: 'info',
-              message:
-                'Umsókn er í vinnslu hjá sýslumanni, vinsamlegast bíddu.',
+              title: '',
+              description: m.stateDescriptions.waiting,
             }),
           ],
         }),

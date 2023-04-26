@@ -13,7 +13,12 @@ import { getSelectedChildrenFromExternalData } from '@island.is/application/temp
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
-import { application, stateDescriptions, stateLabels } from './messages'
+import {
+  application,
+  stateDescriptions,
+  stateLabels,
+  history,
+} from './messages'
 import {
   ChildrenCustodyInformationApi,
   NationalRegistryUserApi,
@@ -55,6 +60,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           status: 'draft',
           name: applicationName,
+          progress: 0,
           actionCard: {
             description: stateDescriptions.draft,
           },
@@ -114,8 +120,22 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           status: 'inprogress',
           name: applicationName,
+          progress: 0.5,
           actionCard: {
             description: stateDescriptions.inReview,
+            onEntryHistoryLog: history.general.onSubmit,
+            pendingAction: (_, role) =>
+              role === Roles.ParentB
+                ? {
+                    displayStatus: 'warning',
+                    title: history.actions.waitingForUserActionTitle,
+                    content: history.actions.waitingForUserActionDescription,
+                  }
+                : {
+                    displayStatus: 'info',
+                    title: history.actions.waitingForUserActionTitle,
+                    content: history.actions.waitingForCounterpartyDescription,
+                  },
           },
           lifecycle: pruneAfterDays(28),
           onEntry: defineTemplateApi({
@@ -175,8 +195,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           status: 'rejected',
+          progress: 1,
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
+            onEntryHistoryLog: history.general.onCounterPartyReject,
             tag: {
               variant: 'red',
               label: stateLabels.rejected,
@@ -211,13 +233,19 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           status: 'inprogress',
+          progress: 0.75,
           onEntry: defineTemplateApi({
             action: TemplateApiActions.submitApplication,
             shouldPersistToExternalData: true,
           }),
           lifecycle: pruneAfterDays(365),
           actionCard: {
-            description: stateDescriptions.submitted,
+            onEntryHistoryLog: history.general.onCounterPartyApprove,
+            pendingAction: {
+              displayStatus: 'info',
+              title: history.actions.waitingForOrganizationTitle,
+              content: stateDescriptions.submitted,
+            },
             tag: {
               variant: 'blueberry',
               label: stateLabels.submitted,
@@ -270,8 +298,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           status: 'rejected',
           name: applicationName,
+          progress: 1,
           actionCard: {
             description: stateDescriptions.rejected,
+            onEntryHistoryLog: history.general.onCommissionerReject,
             tag: { label: stateLabels.rejected, variant: 'red' },
           },
           lifecycle: pruneAfterDays(365),
@@ -302,9 +332,11 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           status: 'approved',
+          progress: 1,
           actionCard: {
             description: stateDescriptions.approved,
-            tag: { label: stateLabels.approved, variant: 'blueberry' },
+            onEntryHistoryLog: history.general.onCommissionerApprove,
+            tag: { label: stateLabels.approved, variant: 'mint' },
           },
           lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({

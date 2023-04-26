@@ -13,7 +13,7 @@ export const generateSyslumennNotificationEmail: AttachmentEmailTemplateGenerato
   const body = `
   Berist til fjölskyldusviðs (sifjamál)
 
-  Í viðhengi er rafrænt undirritaður samningur frá Island.is milli tveggja foreldra um breytt lögheimili barns/barna og meðlag.
+  Í viðhengi er samningur frá Island.is milli tveggja foreldra um breytt lögheimili barns/barna og meðlag.
 
   Undir venjulegum kringumstæðum er samningurinn vistaður og mál stofnað sjálfkrafa í Starfskerfi en vegna tæknilegra vandamála tókst það ekki fyrir þennan samning.
 
