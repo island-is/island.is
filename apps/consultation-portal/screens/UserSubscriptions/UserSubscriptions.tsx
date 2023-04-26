@@ -29,6 +29,8 @@ import getInitValues from '../Subscriptions/getInitValues'
 import TabsList from '../Subscriptions/tabsList'
 import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
 import { IconLink } from '../../components/IconLink/IconLink'
+import { filterOutExistingSubs } from '../../utils/helpers/subscriptionHelper'
+import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
 interface SubProps {
   allcases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
@@ -48,9 +50,9 @@ export const UserSubscriptions = ({
     subscribedToAll,
     subscribedToAllNew,
     getUserSubsLoading,
+    refetch,
   } = useFetchSubscriptions()
   const [searchValue, setSearchValue] = useState('')
-
   const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>()
   const { Institutions, PolicyAreas } = getInitValues({ types: types })
   const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
@@ -147,10 +149,39 @@ export const UserSubscriptions = ({
       setPolicyAreasData(sortedPolicyAreas)
     }
   }, [searchValue])
-  const onSubmit = () => {
-    toast.success('Áskrift uppfærð')
-
+  const { postSubsMutation } = usePostSubscription()
+  const onSubmit = async () => {
     setSubscriptionArray(SubscriptionsArray)
+
+    const subscriptionCases = filterOutExistingSubs(cases, caseIds)
+    const subscriptionInstitution = filterOutExistingSubs(
+      institutions,
+      institutionIds,
+    )
+    const subscriptionPolicyAreas = filterOutExistingSubs(
+      policyAreas,
+      policyAreaIds,
+    )
+    const objToSend: SubscriptionArray = {
+      caseIds: subscriptionCases,
+      institutionIds: subscriptionInstitution,
+      policyAreaIds: subscriptionPolicyAreas,
+      subscribeToAll,
+      subscribeToAllType,
+    }
+    await postSubsMutation({
+      variables: {
+        input: objToSend,
+      },
+    })
+      .then(() => {
+        refetch()
+        toast.success('Áskrift skráð')
+      })
+      .catch((e) => {
+        console.error(e)
+        toast.error('Eitthvað fór úrskeiðis')
+      })
   }
   const onClear = () => {
     setSubscriptionArray(SubscriptionsArray)

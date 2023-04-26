@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   GridContainer,
+  LoadingDots,
   ResponsiveSpace,
   Stack,
   Tabs,
@@ -29,7 +30,8 @@ import TabsList from './tabsList'
 import EmailBox from '../../components/EmailBox/EmailBox'
 import { IconLink } from '../../components/IconLink/IconLink'
 import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
-import { useFetchSubscriptions } from '@island.is/consultation-portal/utils/helpers/api/useFetchSubscriptions'
+import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
+import { updateSubscriptionArray } from '../../utils/helpers/subscriptionHelper'
 interface SubProps {
   cases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
@@ -54,7 +56,8 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
     policyAreasVM,
     subscribedToAll: userSubscribedToAll,
     subscribedToAllNew: userSubscribedToAllNew,
-    getUserSubsLoading: user,
+    getUserSubsLoading,
+    refetch,
   } = useFetchSubscriptions()
 
   const [sortTitle, setSortTitle] = useState<SortTitle>({
@@ -62,22 +65,17 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
     Stofnanir: SortOptions.aToZ,
     Málefnasvið: SortOptions.aToZ,
   })
-  const filterOutExistingSubs = (oldArray, newArray) => {
-    const updatedArray = oldArray.filter(function (obj) {
-      return newArray.findIndex((x) => x.id == obj.id) == -1
-    })
-    return updatedArray.concat(newArray)
-  }
+
   const { postSubsMutation } = usePostSubscription()
   const onSubmit = async () => {
     setSubscriptionArray(SubscriptionsArray)
 
-    const subscriptionCases = filterOutExistingSubs(casesVM, caseIds)
-    const subscriptionInstitution = filterOutExistingSubs(
+    const subscriptionCases = updateSubscriptionArray(casesVM, caseIds)
+    const subscriptionInstitution = updateSubscriptionArray(
       institutionsVM,
       institutionIds,
     )
-    const subscriptionPolicyAreas = filterOutExistingSubs(
+    const subscriptionPolicyAreas = updateSubscriptionArray(
       policyAreasVM,
       policyAreaIds,
     )
@@ -88,13 +86,13 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       subscribeToAll,
       subscribeToAllType,
     }
-    console.log(objToSend)
     const posting = await postSubsMutation({
       variables: {
         input: objToSend,
       },
     })
       .then((res) => {
+        refetch()
         toast.success('Áskrift skráð')
       })
       .catch((e) => {
@@ -332,14 +330,18 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       <Divider />
       <GridContainer>
         <Box paddingX={paddingX} paddingTop={[3, 3, 3, 5, 5]}>
-          <Tabs
-            selected={currentTab}
-            onlyRenderSelectedTab={true}
-            label="Veldu tegund áskrifta"
-            tabs={tabs}
-            contentBackground="transparent"
-            onChange={(e: Area) => setCurrentTab(e)}
-          />
+          {getUserSubsLoading ? (
+            <LoadingDots></LoadingDots>
+          ) : (
+            <Tabs
+              selected={currentTab}
+              onlyRenderSelectedTab={true}
+              label="Veldu tegund áskrifta"
+              tabs={tabs}
+              contentBackground="transparent"
+              onChange={(e: Area) => setCurrentTab(e)}
+            />
+          )}
         </Box>
       </GridContainer>
     </Layout>
