@@ -42,6 +42,7 @@ jobs:
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
+      FEATURE_LIFETIME: ${{ steps.should-run.outputs.FEATURE_LIFETIME}}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
@@ -106,13 +107,22 @@ jobs:
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
               deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
+              deployTimedFeature=$([[ "${{ github.event.label.name }} == *"deploy-feature-"*]]) && echo true || echo false)
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+              deployTimedFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature-') }}
             fi
             if [[ "$deployFeature" == "true" ]]; then
               echo "Pull request contains deploy-feature label, continuing with feature deployment"
               echo "::set-output name=PRE_CHECK::feature-deploy"
+              exit 0
+            fi
+            if [[ "$deployTimedFeature" == "true"]]; then
+              time=$({{ github.event.label.name }} | cut -c 15-)
+              echo "PR contains timed deploy-feature label"
+              echo "::set-output name=PRE_CHECK::timed-feature-deploy"
+              echo "::set-output name=FEATURE_LIFETIME::$time"
               exit 0
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
@@ -197,6 +207,20 @@ jobs:
 
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
+
+      - name: Checking out relevant branches for a PR
+        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'timed-feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true') && !(needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy')
+        run: |
+          git checkout $GITHUB_HEAD_REF
+          git checkout $GITHUB_BASE_REF
+          git checkout $GITHUB_SHA
+          git config --global user.email "ci@island.is"
+          git config --global user.name "CI Bot"
+
+          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
+          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
+          echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
+          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
@@ -692,6 +716,7 @@ jobs:
     env:
       GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      FEATURE_LIFETIME: ${{ needs.prepare.outputs.FEATURE_LIFETIME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
     steps:
@@ -710,6 +735,7 @@ jobs:
               "feature_name": "$FEATURE_NAME",
               "images": "$IMAGES",
               "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
+              "lifetime": "$FEATURE_LIFETIME" || "8h"
             }
           }
           BODY
