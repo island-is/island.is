@@ -9,10 +9,11 @@ export interface LableProps extends LabelHTMLAttributes<HTMLLabelElement> {
 }
 
 export const Label = forwardRef<HTMLLabelElement, LableProps>(
-  ({ hasError, color, children, ...props }) => {
+  ({ hasError, color, children, ...props }, ref) => {
     return (
       <label
         {...props}
+        ref={ref}
         className={cn(styles.label, {
           [styles.hasError]: hasError,
         })}

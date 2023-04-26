@@ -20,7 +20,6 @@ import {
 } from '../../lib/messages'
 import { formatIsk, formatPhonenumber } from '../../utils'
 import { FishingLicenseShip } from '@island.is/api/schema'
-import { useLocale } from '@island.is/localization'
 import {
   licenseHasAreaSelection,
   licenseHasRailNetAndRoeNetField,
@@ -31,7 +30,6 @@ import { Colors } from '@island.is/island-ui/theme'
 export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
   const answers = application.answers as GeneralFishingLicense
   const [fishingLicensePrice, setFishingLicensePrice] = useState<number>(0)
-  const { formatMessage } = useLocale()
 
   // Ships
   const ships = getValueViaPath(
@@ -64,8 +62,17 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
 
   useEffect(() => {
     catalogItems?.map((item) => {
-      if (item.chargeItemCode === chargeItemCode)
-        setFishingLicensePrice(item.priceAmount)
+      if (item.chargeItemCode === chargeItemCode) {
+        let price = item.priceAmount
+        // chargeItemCode for "Leyfi til strandveiða"
+        if (chargeItemCode === 'L5108') {
+          price +=
+            // chargeItemCode for "Sérstakt gjald vegna strandleyfa"
+            catalogItems.find((item) => item.chargeItemCode === 'L5112')
+              ?.priceAmount || 0
+        }
+        setFishingLicensePrice(price)
+      }
       return item
     })
   }, [chargeItemCode])

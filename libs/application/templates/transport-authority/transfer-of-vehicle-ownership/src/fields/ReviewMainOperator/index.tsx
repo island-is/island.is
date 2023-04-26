@@ -86,9 +86,9 @@ export const ReviewMainOperator: FC<FieldBaseProps & ReviewScreenProps> = ({
           onSelect={(value) => setTempMainOperator(value)}
           options={allOperators.map((operator) => {
             return {
-              value: operator.nationalId,
+              value: operator.nationalId!,
               label: `${operator.name} - ${kennitala.format(
-                operator.nationalId,
+                operator.nationalId!,
                 '-',
               )}`,
             }

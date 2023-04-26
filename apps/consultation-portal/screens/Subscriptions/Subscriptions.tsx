@@ -1,15 +1,20 @@
 import {
   Box,
+  Button,
   Divider,
   GridContainer,
   ResponsiveSpace,
   Stack,
   Tabs,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
-import { SubscriptionsArray } from '../../utils/dummydata'
+import {
+  GeneralSubscriptionArray,
+  SubscriptionsArray,
+} from '../../utils/dummydata'
 import { ChosenSubscriptionCard } from '../../components/Card'
 import { Area, SortOptions } from '../../types/enums'
 import {
@@ -18,13 +23,15 @@ import {
   CaseForSubscriptions,
   SortTitle,
   SubscriptionArray,
+  TypeForSubscriptions,
 } from '../../types/interfaces'
 import { BreadcrumbsWithMobileDivider } from '../../components/BreadcrumbsWithMobileDivider'
 import { sorting } from '../../utils/helpers'
 import getInitValues from './getInitValues'
 import TabsList from './tabsList'
 import EmailBox from '../../components/EmailBox/EmailBox'
-
+import { IconLink } from '../../components/IconLink/IconLink'
+import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
 interface SubProps {
   cases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
@@ -32,27 +39,49 @@ interface SubProps {
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
-
   const [searchValue, setSearchValue] = useState('')
-
   const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>(cases)
-
   const { Institutions, PolicyAreas } = getInitValues({ types: types })
-
+  const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
+    GeneralSubscriptionArray,
+  )
   const [institutionsData, setInstitutionsData] = useState(Institutions)
-
   const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
-
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
     SubscriptionsArray,
   )
-
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,
     Stofnanir: SortOptions.aToZ,
     Málefnasvið: SortOptions.aToZ,
   })
-
+  const { postSubsMutation } = usePostSubscription()
+  const onSubmit = async () => {
+    setSubscriptionArray(SubscriptionsArray)
+    //TODO: subscribe to all
+    const objToSend = {
+      // subscribeToAll: generalSubscription.length > 0,
+      // subscribeToAllType: generalSubscription,
+      caseIds: caseIds,
+      institutionIds: institutionIds,
+      policyAreaIds: policyAreaIds,
+    }
+    const posting = await postSubsMutation({
+      variables: {
+        input: objToSend,
+      },
+    })
+      .then((res) => {
+        toast.success('Áskrift skráð')
+      })
+      .catch((e) => {
+        console.error(e)
+        toast.error('Eitthvað fór úrskeiðis')
+      })
+  }
+  const onClear = () => {
+    setSubscriptionArray(SubscriptionsArray)
+  }
   const paddingX = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   useEffect(() => {
@@ -96,11 +125,17 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       setPolicyAreasData(sortedPolicyAreas)
     }
   }, [searchValue])
-
+  const {
+    caseIds,
+    policyAreaIds,
+    institutionIds,
+    generalSubscription,
+  } = subscriptionArray
   const tabs = TabsList({
     casesData: casesData,
     setCasesData: (arr: Array<CaseForSubscriptions>) => setCasesData(arr),
     institutionsData: institutionsData,
+    generalSubArray: GeneralSubscriptionArray,
     setInstitutionsData: (arr: Array<ArrOfIdAndName>) =>
       setInstitutionsData(arr),
     policyAreasData: policyAreasData,
@@ -124,7 +159,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
         <BreadcrumbsWithMobileDivider
           items={[
             { title: 'Samráðsgátt', href: '/samradsgatt' },
-            { title: 'Mínar áskriftir ', href: '/samradsgatt/askriftir' },
+            { title: 'Áskriftir ', href: '/samradsgatt/askriftir' },
           ]}
         />
 
@@ -153,18 +188,39 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
             </Stack>
             <Stack space={0}>
               {!(
-                subscriptionArray.caseIds.length === 0 &&
-                subscriptionArray.institutionIds.length === 0 &&
-                subscriptionArray.policyAreaIds.length === 0
+                caseIds.length === 0 &&
+                institutionIds.length === 0 &&
+                policyAreaIds.length === 0 &&
+                generalSubscription.length === 0
               ) && (
                 <>
                   <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
                     Valin mál
                   </Text>
-                  {subscriptionArray.caseIds.length !== 0 &&
-                    subscriptionArray.caseIds.map((caseId) => {
+                  {generalSubscription.length !== 0 &&
+                    typeData
+                      .filter((item) => generalSubscription == item.id)
+                      .map((filteredItem) => {
+                        return (
+                          <ChosenSubscriptionCard
+                            data={{
+                              name: filteredItem.name,
+                              caseNumber: filteredItem.nr,
+                              id: filteredItem.id.toString(),
+                              area: Area.case,
+                            }}
+                            subscriptionArray={subscriptionArray}
+                            setSubscriptionArray={(
+                              newSubscriptionArray: SubscriptionArray,
+                            ) => setSubscriptionArray(newSubscriptionArray)}
+                            key={`type-${filteredItem.nr}`}
+                          />
+                        )
+                      })}
+                  {caseIds.length !== 0 &&
+                    caseIds.map((caseId) => {
                       return casesData
-                        .filter((item) => caseId === item.id)
+                        .filter((item) => caseId.id === item.id)
                         .map((filteredItem) => (
                           <ChosenSubscriptionCard
                             data={{
@@ -181,29 +237,35 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                           />
                         ))
                     })}
-                  {subscriptionArray.institutionIds.length !== 0 &&
-                    subscriptionArray.institutionIds.map((institutionId) => {
-                      return institutionsData
-                        .filter((item) => institutionId.toString() === item.id)
-                        .map((filteredItem) => (
-                          <ChosenSubscriptionCard
-                            data={{
-                              name: filteredItem.name.toString(),
-                              id: filteredItem.id,
-                              area: Area.institution,
-                            }}
-                            subscriptionArray={subscriptionArray}
-                            setSubscriptionArray={(
-                              newSubscriptionArray: SubscriptionArray,
-                            ) => setSubscriptionArray(newSubscriptionArray)}
-                            key={`institution-${institutionId}`}
-                          />
-                        ))
+                  {institutionIds.length !== 0 &&
+                    institutionIds.map((institutionId) => {
+                      return Object.values(institutionsData).map(
+                        (filteredItem) => {
+                          if (filteredItem.id == institutionId.id.toString()) {
+                            return (
+                              <ChosenSubscriptionCard
+                                data={{
+                                  name: filteredItem.name.toString(),
+                                  id: filteredItem.id,
+                                  area: Area.institution,
+                                }}
+                                subscriptionArray={subscriptionArray}
+                                setSubscriptionArray={(
+                                  newSubscriptionArray: SubscriptionArray,
+                                ) => setSubscriptionArray(newSubscriptionArray)}
+                                key={`institution-${institutionId}`}
+                              />
+                            )
+                          }
+                        },
+                      )
                     })}
-                  {subscriptionArray.policyAreaIds.length !== 0 &&
-                    subscriptionArray.policyAreaIds.map((policyAreaId) => {
-                      return policyAreasData
-                        .filter((item) => policyAreaId.toString() === item.id)
+                  {policyAreaIds.length !== 0 &&
+                    policyAreaIds.map((policyAreaId) => {
+                      return Object.values(policyAreasData)
+                        .filter(
+                          (item) => policyAreaId.id.toString() === item.id,
+                        )
                         .map((filteredItem) => (
                           <ChosenSubscriptionCard
                             data={{
@@ -219,6 +281,24 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                           />
                         ))
                     })}
+                  <Box
+                    marginTop={1}
+                    display={'flex'}
+                    justifyContent={'flexEnd'}
+                    alignItems="center"
+                  >
+                    <Box marginRight={3}>
+                      <IconLink
+                        icon={{ icon: 'reload', size: 'small' }}
+                        onClick={onClear}
+                      >
+                        Hreinsa val
+                      </IconLink>
+                    </Box>
+                    <Button size="small" onClick={onSubmit}>
+                      Skrá í áskrift
+                    </Button>
+                  </Box>
                 </>
               )}
             </Stack>

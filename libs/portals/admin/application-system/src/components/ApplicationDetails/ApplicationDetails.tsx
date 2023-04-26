@@ -88,12 +88,14 @@ interface Props {
   application: AdminApplication
   organizations: Organization[]
   onCopyButtonClick: (application: AdminApplication) => void
+  shouldShowCardButtons?: boolean
 }
 
 export const ApplicationDetails = ({
   application,
   organizations,
   onCopyButtonClick,
+  shouldShowCardButtons = true,
 }: Props) => {
   const { formatMessage } = useLocale()
   const tag = statusMapper[application.status]
@@ -175,6 +177,7 @@ export const ApplicationDetails = ({
       </Box>
       {application && (
         <ApplicationCard
+          shouldShowCardButtons={shouldShowCardButtons}
           application={{
             id: application.id,
             modified: new Date(application.modified),

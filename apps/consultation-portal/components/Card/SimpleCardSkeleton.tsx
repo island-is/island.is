@@ -1,7 +1,7 @@
 import { Box } from '@island.is/island-ui/core'
 
 export type SimpleCardSkeletonProps = {
-  borderColor?: 'blue300' | 'blue600'
+  borderColor?: 'blue300' | 'blue600' | 'blue200'
   borderWidth?: 'large' | 'standard'
   borderRadius?: 'large' | 'standard'
   children: any

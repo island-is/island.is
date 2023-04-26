@@ -34,7 +34,6 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.NoDebtCertificate.translation,
   ],
   dataSchema: NoDebtCertificateSchema,
-  readyForProduction: true,
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,

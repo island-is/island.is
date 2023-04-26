@@ -5,6 +5,7 @@ export const TransitionCaseMutation = gql`
     transitionCase(input: $input) {
       state
       appealState
+      appealReceivedByCourtDate
     }
   }
 `

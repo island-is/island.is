@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   Headers,
+  Inject,
   Post,
   Query,
   UseGuards,
@@ -20,6 +21,8 @@ import {
   User,
 } from '@island.is/auth-nest-tools'
 import { ApiScope, SessionsScope } from '@island.is/auth/scopes'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
@@ -40,7 +43,10 @@ import { SessionsService } from './sessions.service'
 export class SessionsController {
   constructor(
     private readonly sessionsService: SessionsService,
-    @InjectQueue(sessionsQueueName) private readonly sessionsQueue: Queue,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
+    @InjectQueue(sessionsQueueName)
+    private readonly sessionsQueue: Queue,
   ) {}
 
   @Get()
@@ -90,6 +96,10 @@ export class SessionsController {
         'Sessions can only be registered for the authenticated user.',
       )
 
-    await this.sessionsQueue.add(sessionJobName, session)
+    const job = await this.sessionsQueue.add(sessionJobName, session, {
+      removeOnComplete: true,
+      removeOnFail: true,
+    })
+    this.logger.debug(`Added job ${job.id} to queue.`)
   }
 }
