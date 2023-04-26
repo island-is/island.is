@@ -41,7 +41,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                   )}
                 </Text>
 
-                {plastic?.map((item, index) => (
+                {plastic?.map((item) => (
                   <Text>{getFullName(application, item)}</Text>
                 ))}
               </Box>
@@ -59,7 +59,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                   )}
                 </Text>
 
-                {pdf?.map((item, index) => (
+                {pdf?.map((item) => (
                   <Text>{getFullName(application, item)}</Text>
                 ))}
               </Box>

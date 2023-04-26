@@ -90,7 +90,7 @@ export function getEhicApplicants(
     applying.push(spouseData?.nationalId)
   }
 
-  for (var i = 0; i < custodyData.data.length; i++) {
+  for (let i = 0; i < custodyData.data.length; i++) {
     if (applicants.includes(`${cardType}-${custodyData.data[i].nationalId}`)) {
       applying.push(custodyData.data[i])
     }
