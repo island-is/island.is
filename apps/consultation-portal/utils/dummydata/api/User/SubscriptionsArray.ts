@@ -2,10 +2,11 @@ export const SubscriptionsArray = {
   caseIds: [],
   institutionIds: [],
   policyAreaIds: [],
-  generalSubscription: '',
+  subscribeToAll: false,
+  subscribeToAllType: 'AllChanges',
 }
 
-export const GeneralSubscriptionArray = [
+export const SubscribeToAllArray = [
   {
     id: 'OnlyNew',
     nr: 'Öll Mál',
@@ -19,5 +20,4 @@ export const GeneralSubscriptionArray = [
     type: 'AllChanges',
   },
 ]
-
 export default SubscriptionsArray

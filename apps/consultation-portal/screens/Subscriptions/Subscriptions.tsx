@@ -11,10 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
-import {
-  GeneralSubscriptionArray,
-  SubscriptionsArray,
-} from '../../utils/dummydata'
+import { SubscribeToAllArray, SubscriptionsArray } from '../../utils/dummydata'
 import { ChosenSubscriptionCard } from '../../components/Card'
 import { Area, SortOptions } from '../../types/enums'
 import {
@@ -32,6 +29,7 @@ import TabsList from './tabsList'
 import EmailBox from '../../components/EmailBox/EmailBox'
 import { IconLink } from '../../components/IconLink/IconLink'
 import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
+import { useFetchSubscriptions } from '@island.is/consultation-portal/utils/helpers/api/useFetchSubscriptions'
 interface SubProps {
   cases: CaseForSubscriptions[]
   types: ArrOfTypesForSubscriptions
@@ -43,29 +41,54 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>(cases)
   const { Institutions, PolicyAreas } = getInitValues({ types: types })
   const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
-    GeneralSubscriptionArray,
+    SubscribeToAllArray,
   )
   const [institutionsData, setInstitutionsData] = useState(Institutions)
   const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
   const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
     SubscriptionsArray,
   )
+  const {
+    casesVM,
+    institutionsVM,
+    policyAreasVM,
+    subscribedToAll: userSubscribedToAll,
+    subscribedToAllNew: userSubscribedToAllNew,
+    getUserSubsLoading: user,
+  } = useFetchSubscriptions()
+
   const [sortTitle, setSortTitle] = useState<SortTitle>({
     Mál: SortOptions.latest,
     Stofnanir: SortOptions.aToZ,
     Málefnasvið: SortOptions.aToZ,
   })
+  const filterOutExistingSubs = (oldArray, newArray) => {
+    const updatedArray = oldArray.filter(function (obj) {
+      return newArray.findIndex((x) => x.id == obj.id) == -1
+    })
+    return updatedArray.concat(newArray)
+  }
   const { postSubsMutation } = usePostSubscription()
   const onSubmit = async () => {
     setSubscriptionArray(SubscriptionsArray)
-    //TODO: subscribe to all
-    const objToSend = {
-      // subscribeToAll: generalSubscription.length > 0,
-      // subscribeToAllType: generalSubscription,
-      caseIds: caseIds,
-      institutionIds: institutionIds,
-      policyAreaIds: policyAreaIds,
+
+    const subscriptionCases = filterOutExistingSubs(casesVM, caseIds)
+    const subscriptionInstitution = filterOutExistingSubs(
+      institutionsVM,
+      institutionIds,
+    )
+    const subscriptionPolicyAreas = filterOutExistingSubs(
+      policyAreasVM,
+      policyAreaIds,
+    )
+    const objToSend: SubscriptionArray = {
+      caseIds: subscriptionCases,
+      institutionIds: subscriptionInstitution,
+      policyAreaIds: subscriptionPolicyAreas,
+      subscribeToAll,
+      subscribeToAllType,
     }
+    console.log(objToSend)
     const posting = await postSubsMutation({
       variables: {
         input: objToSend,
@@ -129,13 +152,14 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
     caseIds,
     policyAreaIds,
     institutionIds,
-    generalSubscription,
+    subscribeToAll,
+    subscribeToAllType,
   } = subscriptionArray
   const tabs = TabsList({
     casesData: casesData,
     setCasesData: (arr: Array<CaseForSubscriptions>) => setCasesData(arr),
     institutionsData: institutionsData,
-    generalSubArray: GeneralSubscriptionArray,
+    generalSubArray: SubscribeToAllArray,
     setInstitutionsData: (arr: Array<ArrOfIdAndName>) =>
       setInstitutionsData(arr),
     policyAreasData: policyAreasData,
@@ -191,15 +215,15 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                 caseIds.length === 0 &&
                 institutionIds.length === 0 &&
                 policyAreaIds.length === 0 &&
-                generalSubscription.length === 0
+                !subscribeToAll
               ) && (
                 <>
                   <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
                     Valin mál
                   </Text>
-                  {generalSubscription.length !== 0 &&
+                  {subscribeToAll &&
                     typeData
-                      .filter((item) => generalSubscription == item.id)
+                      .filter((item) => subscribeToAllType == item.id)
                       .map((filteredItem) => {
                         return (
                           <ChosenSubscriptionCard

@@ -12,10 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 import { Layout } from '../../components/Layout/Layout'
-import {
-  GeneralSubscriptionArray,
-  SubscriptionsArray,
-} from '../../utils/dummydata'
+import { SubscriptionsArray, SubscribeToAllArray } from '../../utils/dummydata'
 import { ChosenSubscriptionCard } from '../../components/Card'
 import { Area, SortOptions } from '../../types/enums'
 import {
@@ -45,9 +42,9 @@ export const UserSubscriptions = ({
 }: SubProps) => {
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
   const {
-    cases,
-    policyAreas,
-    institutions,
+    casesVM: cases,
+    institutionsVM: institutions,
+    policyAreasVM: policyAreas,
     subscribedToAll,
     subscribedToAllNew,
     getUserSubsLoading,
@@ -57,7 +54,7 @@ export const UserSubscriptions = ({
   const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>()
   const { Institutions, PolicyAreas } = getInitValues({ types: types })
   const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
-    GeneralSubscriptionArray,
+    SubscribeToAllArray,
   )
   const [institutionsData, setInstitutionsData] = useState([])
   let generalSubData: any = []
@@ -70,15 +67,11 @@ export const UserSubscriptions = ({
     caseIds,
     policyAreaIds,
     institutionIds,
-    generalSubscription,
+    subscribeToAll,
+    subscribeToAllType,
   } = subscriptionArray
   useEffect(() => {
     if (!getUserSubsLoading) {
-      if (subscribedToAll) {
-        generalSubData = GeneralSubscriptionArray.at(0)
-      } else if (subscribedToAllNew) {
-        generalSubData = GeneralSubscriptionArray.at(1)
-      }
       const filteredInst = Object.values(institutionsData).filter(function (
         item,
       ) {
@@ -111,12 +104,15 @@ export const UserSubscriptions = ({
   const paddingX = [0, 0, 0, 8, 15] as ResponsiveSpace
 
   useEffect(() => {
-    const sortedCases = sorting(cases, sortTitle[Area.case])
+    const sortedCases = sorting(casesData, sortTitle[Area.case])
     const sortedInstitutions = sorting(
       Institutions,
       sortTitle[Area.institution],
     )
-    const sortedPolicyAreas = sorting(PolicyAreas, sortTitle[Area.policyArea])
+    const sortedPolicyAreas = sorting(
+      policyAreasData,
+      sortTitle[Area.policyArea],
+    )
     const lowerCaseSearchValue = searchValue.toLocaleLowerCase()
 
     if (searchValue) {
@@ -224,15 +220,15 @@ export const UserSubscriptions = ({
                 caseIds.length === 0 &&
                 institutionIds.length === 0 &&
                 policyAreaIds.length === 0 &&
-                generalSubscription.length === 0
+                !subscribeToAll
               ) && (
                 <>
                   <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
                     Valin mál
                   </Text>
-                  {generalSubscription.length !== 0 &&
+                  {subscribeToAll &&
                     typeData
-                      .filter((item) => generalSubscription == item.id)
+                      .filter((item) => subscribeToAllType == item.id)
                       .map((filteredItem) => {
                         return (
                           <ChosenSubscriptionCard

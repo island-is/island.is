@@ -1,3 +1,4 @@
+import { SubscriptionViewmodel } from '@island.is/consultation-portal/types/viewmodel'
 import initApollo from '../../../graphql/client'
 import { SUB_GET_USERSUBS } from '../../../graphql/queries.graphql'
 import { useQuery } from '@apollo/client'
@@ -19,10 +20,15 @@ export const useFetchSubscriptions = () => {
     subscribedToAll = false,
     subscribedToAllNew = false,
   } = userSubscriptions
+
+  const casesVM = SubscriptionViewmodel(cases)
+  const institutionsVM = SubscriptionViewmodel(institutions)
+  const policyAreasVM = SubscriptionViewmodel(policyAreas)
+
   return {
-    cases,
-    institutions,
-    policyAreas,
+    casesVM,
+    institutionsVM,
+    policyAreasVM,
     subscribedToAll,
     subscribedToAllNew,
     getUserSubsLoading: loading,

@@ -67,7 +67,12 @@ export const ChosenSubscriptionCard = ({
           <Box display="flex" flexDirection="row" columnGap={3}>
             <Checkbox
               checked={true}
-              onChange={(e) => handleCheckboxChange(e.target.checked)}
+              onChange={(e) =>
+                setSubscriptionArray({
+                  ...subscriptionArray,
+                  subscribeToAll: false,
+                })
+              }
             />
             <Box>
               <Text

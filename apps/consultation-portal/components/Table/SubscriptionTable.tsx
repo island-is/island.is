@@ -34,18 +34,16 @@ const SubscriptionTable = ({
   generalSubArray,
 }: SubscriptionTableProps) => {
   const onAllChecked = (item, action) => {
-    let sub = subscriptionArray['generalSubscription']
-    const subArr = { ...subscriptionArray }
-    if (action) {
-      sub = item.id
-    } else {
-      sub = ''
-    }
-    subArr['generalSubscription'] = sub
-    return setSubscriptionArray(subArr)
+    const sub = { ...subscriptionArray }
+    sub.subscribeToAllType = item.id
+    sub.subscribeToAll = action
+    return setSubscriptionArray(sub)
   }
   const checkboxAllStatus = (id: string | number) => {
-    return subscriptionArray['generalSubscription'] == id
+    return (
+      subscriptionArray.subscribeToAllType === id &&
+      subscriptionArray.subscribeToAll
+    )
   }
 
   const paddingTop = [3, 3, 3, 5, 5] as ResponsiveSpace

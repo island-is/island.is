@@ -25,10 +25,6 @@ const SubscriptionTableAllItem = ({
 }) => {
   const borderColor = 'transparent'
 
-  const checkboxChange = (item, checked: boolean) => {
-    onCheckboxChange(item, checked)
-  }
-
   const { Row, Data: TData } = T
 
   const Data = ({ width = '', children }) => {
@@ -51,7 +47,7 @@ const SubscriptionTableAllItem = ({
         <Data width="10">
           <Checkbox
             checked={checkboxStatus(item.id)}
-            onChange={(e) => checkboxChange(item, e.target.checked)}
+            onChange={(e) => onCheckboxChange(item, e.target.checked)}
           />
         </Data>
         {currentTab !== Area.case ? (

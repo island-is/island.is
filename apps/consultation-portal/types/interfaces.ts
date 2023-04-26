@@ -77,7 +77,8 @@ export interface SubscriptionArray {
   caseIds: Array<SubscriptionItem>
   institutionIds: Array<SubscriptionItem>
   policyAreaIds: Array<SubscriptionItem>
-  generalSubscription: string
+  subscribeToAll: boolean
+  subscribeToAllType: string
 }
 export interface SubscriptionItem {
   id: number
