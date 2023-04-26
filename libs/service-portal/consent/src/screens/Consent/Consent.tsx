@@ -15,22 +15,20 @@ import {
 import { IntroHeader } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { useQuery } from '@apollo/client'
-import type { ConsentLineProps, ConsentSectionProps } from './types'
+import type {
+  ConsentLineProps,
+  ConsentSectionProps,
+  ConsentGroupProps,
+} from './types'
 
-import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql' // Temp
-import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { mock, useMockData } from './mockData'
+import { useGetConsentListQuery } from './Consent.generated'
+import * as styles from './Consent.css'
 
 function Consent() {
   const { formatMessage } = useLocale()
 
-  // const { data, isLoading } = useMockData<MData[]>([], 1000)
-  const { data, isLoading } = useMockData(mock, 5000)
-
-  // Mock organizations for icons.
-  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
-  const organizations = orgData?.getOrganizations?.items || {}
+  const { data, loading } = useGetConsentListQuery()
+  const isData = Array.isArray(data?.consentsList?.data)
 
   return (
     <GridRow>
@@ -55,7 +53,7 @@ function Consent() {
           dividerOnTop={false}
           dividerOnBottom={false}
         >
-          {isLoading ? (
+          {loading ? (
             <Box>
               <SkeletonLoader
                 display="block"
@@ -65,56 +63,64 @@ function Consent() {
                 borderRadius="large"
               />
             </Box>
-          ) : Array.isArray(data) && data.length > 0 ? (
-            data.map(({ tenant, client, items = [] }) => (
-              <AccordionCard
-                id={tenant}
-                key={tenant}
-                labelUse="h2"
-                label={
-                  <Box
-                    display="flex"
-                    columnGap={2}
-                    alignItems="center"
-                    component="span"
-                  >
-                    <img
-                      src={getOrganizationLogoUrl(tenant, organizations)}
-                      alt={''}
-                      width={24}
-                    />
-                    <Box component="span">
-                      <Text variant="eyebrow" color="purple400">
-                        {tenant}
-                      </Text>
-                      <Text as="h2" variant="h4">
-                        {client}
-                      </Text>
+          ) : isData ? (
+            data?.consentsList?.data?.map(({ client, permissions }) => {
+              const title = client?.clientName || client.clientId
+              return (
+                <AccordionCard
+                  id={client.clientId}
+                  key={client.clientId}
+                  labelUse="h2"
+                  label={
+                    <Box
+                      display="flex"
+                      columnGap={2}
+                      alignItems="center"
+                      component="span"
+                    >
+                      <Box
+                        component="span"
+                        display="flex"
+                        alignItems="center"
+                        className={styles.logoContainer}
+                      >
+                        {client.domain?.organisationLogoUrl ? (
+                          <img
+                            src={client.domain?.organisationLogoUrl || ''}
+                            alt={''}
+                            width={24}
+                          />
+                        ) : null}
+                      </Box>
+                      <Box component="span">
+                        {client.domain?.displayName ? (
+                          <Text variant="eyebrow" color="purple400">
+                            {client.domain.displayName}
+                          </Text>
+                        ) : null}
+                        <Text as="span" variant="h4">
+                          {title}
+                        </Text>
+                      </Box>
                     </Box>
-                  </Box>
-                }
-              >
-                <Box
-                  paddingTop={3}
-                  paddingBottom={3}
-                  paddingLeft={4}
-                  component="ul"
+                  }
                 >
-                  <Text variant="eyebrow" marginBottom={4}>
-                    {formatMessage(m.consentExplanation)}
-                  </Text>
-                  {items.map((item) => {
-                    return (
-                      <ConsentSection
-                        key={item.provider}
-                        organizations={organizations}
-                        {...item}
-                      />
-                    )
-                  })}
-                </Box>
-              </AccordionCard>
-            ))
+                  <Box
+                    paddingTop={3}
+                    paddingBottom={3}
+                    paddingLeft={4}
+                    component="ul"
+                  >
+                    <Text variant="eyebrow" marginBottom={4}>
+                      {formatMessage(m.consentExplanation)}
+                    </Text>
+                    {permissions?.map((permission, index) => {
+                      return <ConsentSection {...permission} key={index} />
+                    })}
+                  </Box>
+                </AccordionCard>
+              )
+            })
           ) : (
             <AlertMessage
               type="info"
@@ -127,56 +133,92 @@ function Consent() {
   )
 }
 
-function ConsentSection({
-  provider,
-  providerLogo,
-  permissions,
-  organizations,
-}: ConsentSectionProps) {
+function ConsentSection({ scopes = [], owner }: ConsentSectionProps) {
+  if (!scopes?.length || !owner) {
+    return null
+  }
+
   return (
     <Box marginBottom={1}>
-      <Box display="flex" columnGap={1}>
-        <img
-          src={getOrganizationLogoUrl(providerLogo, organizations)}
-          alt={''}
-          width={24}
-        />
+      <Box display="flex" columnGap={2} alignItems="center">
+        {owner?.organisationLogoUrl ? (
+          <img src={owner.organisationLogoUrl} alt={''} width={16} />
+        ) : null}
         <Box flexGrow={1}>
           <Text as="h3" variant="h5">
-            {provider}
+            {owner.displayName}
           </Text>
         </Box>
       </Box>
       <Box component="ul">
-        {permissions.map(({ title, description, hasConsent }, index) => {
-          const id = `${title}-${provider}`
-
+        {scopes.map((scope, index) => {
           const handleChange = (newChecked: boolean) => {
             console.log('change', newChecked)
           }
-          return (
-            <ConsentLine
-              id={id}
-              hasConsent={hasConsent}
-              title={title}
-              description={description}
-              key={id + hasConsent}
-              onChange={handleChange}
-              isLast={permissions.length === index + 1}
-            />
-          )
+
+          if (scope?.__typename === 'AuthConsentScopeGroup') {
+            return (
+              <ConsentGroup
+                description={scope.description}
+                displayName={scope.displayName}
+                key={index}
+              >
+                {scope.children?.map((cld, index, list) => {
+                  return (
+                    <ConsentLine
+                      {...cld}
+                      key={scope.name + cld.hasConsent}
+                      onChange={handleChange}
+                      isLast={list.length === index + 1}
+                    />
+                  )
+                })}
+              </ConsentGroup>
+            )
+          }
+
+          if (scope?.__typename === 'AuthConsentScope') {
+            return (
+              <ConsentLine
+                {...scope}
+                // To flush the component after a change
+                // TODO: Test this
+                key={scope.name + scope.hasConsent}
+                onChange={handleChange}
+                isLast={scopes.length === index + 1}
+              />
+            )
+          }
+          return null
         })}
       </Box>
     </Box>
   )
 }
 
+function ConsentGroup({
+  displayName,
+  description,
+  children,
+}: ConsentGroupProps) {
+  return (
+    <Box marginY={2}>
+      <Box marginBottom={2}>
+        <Text as="h4">{displayName}</Text>
+        {description ? <Text variant="small">{description}</Text> : null}
+      </Box>
+      <Box borderLeftWidth="standard" borderColor={'blue200'} paddingLeft={3}>
+        {children}
+      </Box>
+    </Box>
+  )
+}
+
 function ConsentLine({
-  title,
+  displayName,
   description,
   hasConsent,
   onChange,
-  id,
   isLast,
 }: ConsentLineProps) {
   const { formatMessage } = useLocale()
@@ -198,21 +240,19 @@ function ConsentLine({
 
   return (
     <li>
-      <Box key={title} display="flex" paddingY={3}>
+      <Box display="flex" paddingY={3}>
         <Box flexGrow={1}>
-          <Text as="h4" id={id}>
-            {title}
-          </Text>
+          <Text as="h4">{displayName}</Text>
           <Text variant="small">{description}</Text>
         </Box>
-        <Box>
+        <span className={styles.toggleWrapper}>
           <ToggleSwitchButton
-            label={formatMessage(m.consentToggleButton, { item: title })}
+            label={formatMessage(m.consentToggleButton, { item: displayName })}
             hiddenLabel
             checked={localConsent}
             onChange={handleChange}
           />
-        </Box>
+        </span>
       </Box>
       {!isLast && <Divider />}
     </li>

@@ -1,19 +1,18 @@
-export interface ConsentSectionProps {
-  provider: string
-  providerLogo: string
-  permissions: {
-    title: string
-    description: string
-    hasConsent: boolean
-  }[]
-  organizations: any[]
-}
+import type {
+  AuthConsentScopeFragment,
+  GetConsentListQuery,
+} from './Consent.generated'
+import type { ReactNode } from 'react'
 
-export interface ConsentLineProps {
-  title: string
-  description: string
-  hasConsent: boolean
-  id: string
+export type ConsentSectionProps = GetConsentListQuery['consentsList']['data'][0]['permissions'][0]
+
+export interface ConsentLineProps extends AuthConsentScopeFragment {
   onChange: (newChecked: boolean) => void
   isLast: boolean
+}
+
+export interface ConsentGroupProps {
+  displayName: string
+  description?: string | null
+  children?: ReactNode
 }
