@@ -118,7 +118,7 @@ jobs:
               echo "::set-output name=PRE_CHECK::feature-deploy"
               exit 0
             fi
-            if [[ "$deployTimedFeature" == "true"]]; then
+            if [[ "$deployTimedFeature" == "true" ]]; then
               time=$({{ github.event.label.name }} | cut -c 15-)
               echo "PR contains timed deploy-feature label"
               echo "::set-output name=PRE_CHECK::timed-feature-deploy"
