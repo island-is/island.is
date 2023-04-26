@@ -63,12 +63,13 @@ export const CasesQuery = gql`
 
 export const AppealedCasesQuery = gql`
   ${coreCaseListFields}
-  query AppealedCases {
-    cases {
+  query AppealedCases($input: CaseListQueryInput) {
+    cases(input: $input) {
       defendants {
         name
       }
       appealState
+      appealedDate
       ...CoreCaseListFields
     }
   }
