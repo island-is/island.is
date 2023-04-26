@@ -1,4 +1,4 @@
-import { SubscriptionViewmodel } from '@island.is/consultation-portal/types/viewmodel'
+import { SubscriptionViewmodel } from '../../../types/viewmodel'
 import initApollo from '../../../graphql/client'
 import { SUB_GET_USERSUBS } from '../../../graphql/queries.graphql'
 import { NetworkStatus, useQuery } from '@apollo/client'
