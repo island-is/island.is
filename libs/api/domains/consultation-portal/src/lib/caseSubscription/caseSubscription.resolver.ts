@@ -16,6 +16,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PostCaseSubscriptionTypeInput } from '../dto/postCaseSubscriptionType.input'
+import { GetCaseInput } from '../dto/case.input'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard, IdsUserGuard, ScopesGuard)
@@ -26,27 +27,27 @@ export class CaseSubscriptionResolver {
 
   @Mutation(() => Boolean!, {
     nullable: true,
-    name: 'consultationPortalPostSubscriptionType',
+    name: 'consultationPortalDeleteSubscriptionType',
   })
   async deleteCaseSubscription(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
     @CurrentUser() user: User,
-    @Args('caseId') caseId: number,
   ): Promise<void> {
     const response = await this.caseSubscriptionService.deleteCaseSubscription(
       user,
-      caseId,
+      input,
     )
     return response
   }
 
-  @Query(() => [CaseSubscriptionResult], {
+  @Query(() => CaseSubscriptionResult, {
     name: 'consultationPortalSubscriptionType',
   })
   async getCaseSubscriptionType(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
     @CurrentUser() user: User,
-    @Args('caseId') caseId: number,
   ): Promise<CaseSubscriptionResult> {
-    return this.caseSubscriptionService.getCaseSubscriptionType(user, caseId)
+    return this.caseSubscriptionService.getCaseSubscriptionType(user, input)
   }
 
   @Mutation(() => Boolean!, {

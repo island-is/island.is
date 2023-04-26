@@ -75,7 +75,7 @@ const CaseScreen = ({ chosenCase, caseId }) => {
               </Box>
               <Divider />
               <Box paddingTop={1}>
-                <CaseEmailBox />
+                <CaseEmailBox caseId={caseId} caseNumber={chosenCase?.caseNumber} />
               </Box>
             </Stack>
           </GridColumn>
