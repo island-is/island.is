@@ -500,7 +500,7 @@ export class ClientsService {
    * Removes multiple allowed scopes from client
    * @param scopeNames - Unique scope names
    * @param clientId - Client ID
-   * @param options -Destroy options
+   * @param options - Destroy options
    */
   async removeAllowedScopes(
     scopeNames: string[],
