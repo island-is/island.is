@@ -24,8 +24,8 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
   },
 })
 
-applicationTest.describe('Data protection complaint application', () => {
-  applicationTest.only(
+applicationTest.describe('Criminal record application payment test', () => {
+  applicationTest(
     'Should be able to proceed through payment',
     async ({ applicationPage }) => {
       const page = applicationPage
