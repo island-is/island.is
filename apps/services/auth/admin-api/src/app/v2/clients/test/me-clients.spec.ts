@@ -106,12 +106,10 @@ const createTestClientData = async (app: TestApp, user: User) => {
 describe('MeClientsController with auth', () => {
   const user = createCurrentUser({
     scope: [AdminPortalScope.idsAdmin],
-    nationalId: createNationalId('company'),
   })
   const otherUser = createCurrentUser({ scope: [AdminPortalScope.idsAdmin] })
   const superUser = createCurrentUser({
     scope: [AdminPortalScope.idsAdminSuperUser],
-    nationalId: createNationalId('company'),
   })
 
   describe('with tenant id that user does not own', () => {
