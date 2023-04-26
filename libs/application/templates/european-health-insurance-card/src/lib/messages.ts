@@ -60,7 +60,7 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       id: 'ehic.application:data.national.registry.description',
       defaultMessage:
         'Við þurfum að sækja þessi gögn úr þjóðskrá. Lögheimili, hjúskaparstaða, maki og afkvæmi.',
-      description: 'Description for NationalRegistry',
+      description: 'Description for data collection from NationalRegistry',
     },
     dataCollectionHealthInsuranceTitle: {
       id: 'ehic.application:data.health.insurance.name',
@@ -79,6 +79,11 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað.',
       description: 'Data collection checkbox label',
     },
+    dataCollectionButtonLabel: {
+      id: 'ehic.application:data.dataCollectionCheckboxLabel',
+      defaultMessage: 'Halda áfram',
+      description: 'Button label for retrieving data collection',
+    },
     dataCollectionCompletedTitle: {
       id: 'ehic.application:data.dataCollectionCompletedTitle',
       defaultMessage: 'Gagnaöflun lokið',
@@ -91,31 +96,32 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
   }),
 
-  // No
+  // No health insurance
   no: defineMessages({
     sectionLabel: {
       id: 'ehic.application:no.label',
       defaultMessage:
-        'Því miður hefur þú ekki rétt á Evrópska Sjúkratrygginakortinu',
-      description: 'Section description',
+        'Því miður hefur þú ekki rétt á Evrópska Sjúkratryggingakortinu',
+      description: 'Label for user is not insured',
     },
     sectionTitle: {
       id: 'ehic.application:no.description',
       defaultMessage:
         'Því miður er ekki heimild til að sækja um ES kort fyrir eftirfarandi einstaklinga.',
-      description: 'Section description',
+      description: 'Description for User or users are not insured',
     },
     sectionDescription: {
       id: 'ehic.application:no.description#markdown',
       defaultMessage:
         'Ástæður fyrir því gætu verið eftirfarandi.\n* Einstaklingur er ekki sjúkratryggð/ur á Íslandi. \n* Einstaklingur er ekki með lögheimili á Íslandi. \n* Einstaklingur er ekki með ríkisborgararétt frá EES landi.\n\nEf þú telur þessi atriði ekki eiga við, vinsamlegast hafið samband við [ehic@sjukra.is](mailto:ehic@sjukra.is)',
 
-      description: 'Section description',
+      description:
+        'Description of why user or users can not apply for the card',
     },
     sectionSubDescription: {
       id: 'ehic.application:no.sectionSubDescription',
       defaultMessage: ' Ekki heimild til að sækja um ES kort',
-      description: 'Section description',
+      description: 'Can not apply for card message',
     },
   }),
 

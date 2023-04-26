@@ -55,7 +55,7 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: e.review.submitButtonLabel,
+            title: e.data.dataCollectionButtonLabel,
             refetchApplicationAfterSubmit: true,
             actions: [
               {
@@ -68,9 +68,8 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: 'Þjóðskrá Íslands',
-              subTitle:
-                'Við þurfum að sækja þessi gögn úr þjóðskrá. Lögheimili, hjúskaparstaða, maki og afkvæmi.',
+              title: e.data.dataCollectionNationalRegistryTitle,
+              subTitle: e.data.dataCollectionNationalRegistryDescription,
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
@@ -84,9 +83,8 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: EhicCardResponseApi,
-              title: 'Sjúkratryggingar',
-              subTitle:
-                'Upplýsingar um stöðu heimildar á evrópska sjúktryggingakortinu',
+              title: e.data.dataCollectionHealthInsuranceTitle,
+              subTitle: e.data.dataCollectionHealthInsuranceDescription,
             }),
           ],
         }),
