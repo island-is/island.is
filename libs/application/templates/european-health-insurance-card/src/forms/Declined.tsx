@@ -3,8 +3,6 @@ import { buildDescriptionField, buildForm } from '@island.is/application/core'
 
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
-export interface EuropeanHealthInsuranceCardProps {}
-
 export const Declined: Form = buildForm({
   id: 'Declined',
   title: '',

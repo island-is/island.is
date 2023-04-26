@@ -18,7 +18,7 @@ import { useLocale } from '@island.is/localization'
 const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const tempData = application.externalData.getTemporaryCard?.data as TempData[]
-  let links: JSX.Element[] = []
+  const links: JSX.Element[] = []
 
   const nationalRegistryData = application.externalData.nationalRegistry
     ?.data as NationalRegistry
