@@ -27,7 +27,7 @@ import { useContext, useState } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'
 import { Case } from '../../types/interfaces'
-import CaseEmailBox from '@island.is/consultation-portal/components/CaseEmailBox/CaseEmailBox'
+import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
 
 interface Props {
   chosenCase: Case
