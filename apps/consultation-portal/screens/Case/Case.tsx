@@ -28,6 +28,7 @@ import { useContext, useState } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'
 import { Case } from '../../types/interfaces'
+import env from '../../lib/environment'
 
 interface Props {
   chosenCase: Case
@@ -127,7 +128,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                     chosenCase.documents.map((doc, index) => {
                       return (
                         <LinkV2
-                          href={`https://samradapi-test.devland.is/api/Documents/${doc.id}`}
+                          href={`${env.backendDownloadUrl}${doc.id}`}
                           color="blue400"
                           underline="normal"
                           underlineVisibility="always"
