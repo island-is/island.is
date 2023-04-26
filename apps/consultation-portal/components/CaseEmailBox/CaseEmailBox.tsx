@@ -39,7 +39,7 @@ const CardSkeleton = ({ text, children }: CardSkeletonProps) => {
 
 interface Props {
   caseId: number
-  caseNumber: number
+  caseNumber: string
 }
 
 export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
