@@ -155,7 +155,7 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
-export enum CourtOfAppealDecision {
+export enum CourtOfAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
   CHANGED = 'CHANGED',

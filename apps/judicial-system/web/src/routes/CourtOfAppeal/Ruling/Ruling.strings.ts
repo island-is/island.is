@@ -61,8 +61,31 @@ export const courtOfAppealRuling = defineMessages({
       'Ómerking og heimvísun í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
   },
   conclusionHeading: {
-    id: 'judicial.system.backend:pdf.court_record.conclusionHeading',
+    id: 'judicial.system.core:court_of_appeal_ruling.conclusionHeading',
     defaultMessage: 'Úrskurðarorð',
     description: 'Notaður sem fyrirsögn á úrskurðarorð.',
+  },
+  courtConclusionHeading: {
+    id: 'judicial.system.core:court_of_appeal_ruling.courtConclusionHeading',
+    defaultMessage: 'Úrskurður Landsréttar',
+    description: 'Notaður sem fyrirsögn á úrskurður Landsréttar.',
+  },
+  nextButtonFooter: {
+    id: 'judicial.system.core:court_of_appeal_ruling.nextButtonFooter',
+    defaultMessage: 'Ljúka máli',
+    description:
+      'Notaður sem titill á ljúka máli takka á úrskurðin Landsrétta.',
+  },
+  inputFieldLabel: {
+    id: 'judicial.system.core:court_of_appeal_ruling.input_field_label',
+    defaultMessage: 'Dragðu gögn hingað til að hlaða upp',
+    description:
+      'Notaður sem titill á hlaða upp gögnum á skrefi úrskurður Landsréttar.',
+  },
+  uploadButtonText: {
+    id: 'judicial.system.core:court_of_appeal_ruling.upload_button_text',
+    defaultMessage: 'Velja gögn til að hlaða upp',
+    description:
+      'Notaður sem titill á hlaða upp takka á skrefi úrskurður Landsréttar.',
   },
 })
