@@ -274,6 +274,7 @@ export class ServiceBuilder<ServiceType> {
       passwordSecret:
         pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
       name: pi.name ?? postgresIdentifier(this.serviceDef.name),
+      extensions: this.serviceDef.initContainers?.postgres?.extensions,
     }
   }
 }

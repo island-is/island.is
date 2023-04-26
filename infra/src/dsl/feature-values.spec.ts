@@ -96,9 +96,10 @@ describe('Feature-deployment support', () => {
       DB_REPLICAS_HOST: 'a',
       NODE_OPTIONS: '--max-old-space-size=208',
       SERVERSIDE_FEATURES_ON: '',
+      DB_EXTENSIONS: 'foo',
     })
   })
-  it('multiple db extensions are set', () => {
+  it('db extensions are set', () => {
     expect(values.services.graphql.initContainer?.env).toEqual(
       expect.objectContaining({
         DB_EXTENSIONS: 'foo',

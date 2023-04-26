@@ -155,9 +155,9 @@ function serializePostgres(
   const errors: string[] = []
   env['DB_USER'] = 'testdb'
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
-  if (typeof postgres.extensions !== 'undefined') {
+  if (serviceDef.initContainers?.postgres?.extensions) {
     env['DB_EXTENSIONS'] = getPostgresExtensions(
-      serviceDef.initContainers?.postgres,
+      serviceDef.initContainers.postgres.extensions,
     )
   }
   try {
