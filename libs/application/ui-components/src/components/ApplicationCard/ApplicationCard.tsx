@@ -143,6 +143,7 @@ export const ApplicationCard = ({
           <Text paddingTop={heading ? 1 : 0}>{actionCard.description}</Text>
         )}
       </Box>
+
       {shouldRenderProgress ? (
         <ApplicationCardProgress
           application={application}
