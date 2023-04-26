@@ -12,8 +12,8 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PostCaseSubscriptionTypeInput } from '../dto/postCaseSubscriptionType.input'
 import { GetCaseInput } from '../dto/case.input'
