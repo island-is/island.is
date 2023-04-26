@@ -60,6 +60,7 @@ export const LimitedAccessTransitionCaseMutation = gql`
     limitedAccessTransitionCase(input: $input) {
       state
       appealState
+      appealReceivedByCourtDate
     }
   }
 `
