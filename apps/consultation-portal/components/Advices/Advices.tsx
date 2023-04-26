@@ -1,10 +1,10 @@
 import { SkeletonLoader, Stack, Text } from '@island.is/island-ui/core'
 import { SimpleCardSkeleton } from '../Card'
-import { Advice } from '../../types/viewModels'
 import ReviewCard from '../ReviewCard/ReviewCard'
+import { UserAdvice } from '../../types/interfaces'
 
 interface Props {
-  advices: Array<Advice>
+  advices: Array<UserAdvice>
   advicesLoading: boolean
 }
 
@@ -22,8 +22,8 @@ const Advices = ({ advices, advicesLoading }: Props) => {
 
   return (
     <Stack space={3}>
-      {advices.map((advice: Advice) => {
-        return <ReviewCard advice={advice} key={advice.number} />
+      {advices.map((advice: UserAdvice) => {
+        return <ReviewCard advice={advice} key={advice.id} />
       })}
     </Stack>
   )

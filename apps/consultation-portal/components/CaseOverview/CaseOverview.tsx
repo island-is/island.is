@@ -1,13 +1,13 @@
-import { Advice, Case } from '../../types/viewModels'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
 import * as styles from './CaseOverview.css'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
 import { getShortDate } from '../../utils/helpers/dateFormatter'
+import { Case, UserAdvice } from '../../types/interfaces'
 
 interface CaseOverviewProps {
   chosenCase: Case
-  advices?: Array<Advice>
+  advices?: Array<UserAdvice>
 }
 
 export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
@@ -42,7 +42,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           {chosenCase?.name}
         </Text>
       </Stack>
-      <CaseStatusCard status={chosenCase?.status} />
+      <CaseStatusCard status={chosenCase?.statusName} />
       <Stack space={[3, 3, 3, 4, 4]}>
         <Box>
           <Text variant="h4">Málsefni</Text>

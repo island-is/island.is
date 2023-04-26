@@ -112,7 +112,6 @@ export const lightThemes = [
   'landing_page',
   'tryggingastofnun',
   'hve',
-  'hsu',
 ]
 export const footerEnabled = [
   'syslumenn',
