@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 import initApollo from '../../graphql/client'
-import { CASE_GET_CASE_SUBSCRIPTION } from '@island.is/consultation-portal/graphql/queries.graphql'
+import { CASE_GET_CASE_SUBSCRIPTION } from '../../graphql/queries.graphql'
 
 interface Props {
   isAuthenticated: boolean

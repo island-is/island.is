@@ -19,7 +19,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import CaseEmailActionBox from './CaseEmailActionBox'
-import { SubscriptionTypeOptions } from '@island.is/consultation-portal/types/enums'
+import { SubscriptionTypeOptions } from '../../types/enums'
 
 interface CardSkeletonProps {
   text?: string

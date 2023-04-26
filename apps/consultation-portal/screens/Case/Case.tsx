@@ -11,7 +11,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import SubscriptionBox from '../../components/SubscriptionBox/SubscriptionBox'
 import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 import { SimpleCardSkeleton } from '../../components/Card'
@@ -22,7 +21,7 @@ import { useFetchAdvicesById, useLogIn } from '../../utils/helpers'
 import { useContext } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'
-import { CaseEmailBox } from '@island.is/consultation-portal/components/CaseEmailBox/CaseEmailBox'
+import { CaseEmailBox } from '../../components/CaseEmailBox/CaseEmailBox'
 
 const CaseScreen = ({ chosenCase, caseId }) => {
   const { contactEmail, contactName } = chosenCase
@@ -75,7 +74,10 @@ const CaseScreen = ({ chosenCase, caseId }) => {
               </Box>
               <Divider />
               <Box paddingTop={1}>
-                <CaseEmailBox caseId={caseId} caseNumber={chosenCase?.caseNumber} />
+                <CaseEmailBox
+                  caseId={caseId}
+                  caseNumber={chosenCase?.caseNumber}
+                />
               </Box>
             </Stack>
           </GridColumn>
