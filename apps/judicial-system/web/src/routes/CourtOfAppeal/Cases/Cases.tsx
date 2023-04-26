@@ -13,7 +13,6 @@ import { titles, tables, core } from '@island.is/judicial-system-web/messages'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseAppealState,
-  CaseListQueryInput,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'

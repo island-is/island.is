@@ -7,7 +7,7 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import type { CaseAppealState, User } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CurrentGraphQlUser,
   JwtGraphQlAuthGuard,
