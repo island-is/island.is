@@ -42,7 +42,7 @@ jobs:
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
-      FEATURE_LIFETIME: ${{ steps.should-run.outputs.FEATURE_LIFETIME}}
+      FEATURE_LIFETIME: ${{ steps.should-run.outputs.FEATURE_LIFETIME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
     steps:
@@ -107,7 +107,7 @@ jobs:
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
               deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
-              deployTimedFeature=$([[ "${{ github.event.label.name }} == *"deploy-feature-"*]]) && echo true || echo false)
+              deployTimedFeature=$([[ "${{ github.event.label.name }}" == *"deploy-feature-"*]]) && echo true || echo false)
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
