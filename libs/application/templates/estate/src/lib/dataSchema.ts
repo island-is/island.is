@@ -23,6 +23,7 @@ const asset = z
   .object({
     assetNumber: z.string().optional(),
     description: z.string().optional(),
+    marketValue: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
     dummy: z.boolean().optional(),

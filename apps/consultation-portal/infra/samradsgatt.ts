@@ -28,9 +28,9 @@ export const serviceSetup = (services: {
         prod: 'innskra.island.is',
       },
       NEXTAUTH_URL: {
-        dev: 'https://beta.dev01.devland.is/samradsgatt',
-        staging: 'https://staging.staging01.devland.is/samradsgatt',
-        prod: 'https://island.is/samradsgatt',
+        dev: 'https://beta.dev01.devland.is/samradsgatt/api/auth',
+        staging: 'https://staging.staging01.devland.is/samradsgatt/api/auth',
+        prod: 'https://island.is/samradsgatt/api/auth',
       },
     })
     .secrets({
