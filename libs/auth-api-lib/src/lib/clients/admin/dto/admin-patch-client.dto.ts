@@ -155,6 +155,20 @@ export class AdminPatchClientDto {
   @ValidateNested({ each: true })
   @IsArray()
   customClaims?: AdminClientClaimDto[]
+
+  @ApiPropertyOptional({
+    description: 'Scopes to attach to client.',
+  })
+  @IsOptional()
+  @IsArray()
+  addedScopes?: string[]
+
+  @ApiPropertyOptional({
+    description: 'Scopes to detach from client.',
+  })
+  @IsOptional()
+  @IsArray()
+  removedScopes?: string[]
 }
 
 export const superUserFields = [

@@ -12,7 +12,10 @@ import {
 } from '@island.is/auth-api-lib'
 import { User } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
 import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
@@ -21,20 +24,39 @@ import { getModelToken } from '@nestjs/sequelize'
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'
 
+const mockedApiScopes = [
+  {
+    name: '@scope1',
+    displayName: 'Scope 1 display name',
+    description: 'Scope 1 description',
+  },
+  {
+    name: '@scope2',
+    displayName: 'Scope 2 display name',
+    description: 'Scope 2 description',
+  },
+]
+
 const createTestClientData = async (app: TestApp, user: User) => {
   const fixtureFactory = new FixtureFactory(app)
-  await fixtureFactory.createDomain({
+  const domain = await fixtureFactory.createDomain({
     name: tenantId,
     nationalId: user.nationalId,
+    apiScopes: mockedApiScopes,
   })
   const client = await fixtureFactory.createClient({
     ...clientBaseAttributes,
-    clientId: clientId,
+    clientId,
     domainName: tenantId,
     redirectUris: [faker.internet.url()],
     postLogoutRedirectUris: [faker.internet.url()],
     allowedGrantTypes: [],
     claims: [{ type: faker.random.word(), value: faker.random.word() }],
+    allowedScopes:
+      domain.scopes?.map(({ name }) => ({
+        scopeName: name,
+        clientId,
+      })) ?? [],
   })
   const [translation] = await fixtureFactory.createTranslations(client, 'en', {
     clientName: faker.random.word(),
@@ -77,14 +99,19 @@ const createTestClientData = async (app: TestApp, user: User) => {
     supportsPersonalRepresentatives: false,
     supportsProcuringHolders: false,
     promptDelegations: false,
+    allowedScopes: client.allowedScopes ?? [],
   }
 }
 
 describe('MeClientsController with auth', () => {
-  const user = createCurrentUser({ scope: [AdminPortalScope.idsAdmin] })
+  const user = createCurrentUser({
+    scope: [AdminPortalScope.idsAdmin],
+    nationalId: createNationalId('company'),
+  })
   const otherUser = createCurrentUser({ scope: [AdminPortalScope.idsAdmin] })
   const superUser = createCurrentUser({
     scope: [AdminPortalScope.idsAdminSuperUser],
+    nationalId: createNationalId('company'),
   })
 
   describe('with tenant id that user does not own', () => {
@@ -265,6 +292,7 @@ describe('MeClientsController with auth', () => {
         supportsProcuringHolders: false,
         promptDelegations: false,
         customClaims: [],
+        allowedScopes: [],
       })
 
       // Assert - db record
