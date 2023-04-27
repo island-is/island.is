@@ -20,7 +20,6 @@ import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
-import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
 import { useFetchAdvicesById, useLogIn } from '../../utils/helpers'
 import { useContext, useState } from 'react'
@@ -99,10 +98,18 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <CaseOverview chosenCase={chosenCase} />
               <Box>
                 <Stack space={3}>
-                  <Text variant="h1" color="blue400">
-                    Innsendar umsagnir
-                  </Text>
-                  <Advices advices={advices} advicesLoading={advicesLoading} />
+                  {advices.length !== 0 && (
+                    <>
+                      <Text variant="h1" color="blue400">
+                        Innsendar umsagnir
+                      </Text>
+
+                      <Advices
+                        advices={advices}
+                        advicesLoading={advicesLoading}
+                      />
+                    </>
+                  )}
                   <WriteReviewCard
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}
