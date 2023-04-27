@@ -16,9 +16,9 @@ ADD package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 
-# RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
-# RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' `aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
-# RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
+RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' `aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
 RUN CI=true yarn install --immutable
 
 FROM deps as src
@@ -132,7 +132,7 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update && apt-get install -y zip awscli && apt-get purge
+RUN apt-get update && apt-get install -y zip aws-cli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
