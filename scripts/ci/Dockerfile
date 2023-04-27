@@ -2,8 +2,12 @@
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_DEFAULT_REGION
 
 RUN apk add -U git
+RUN apk add --no-cache aws-cli
 
 WORKDIR /build
 
@@ -11,6 +15,10 @@ WORKDIR /build
 ADD package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
+
+RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' `aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
 RUN CI=true yarn install --immutable
 
 FROM deps as src
@@ -137,6 +145,9 @@ RUN chown -R pwuser:pwuser .
 
 USER pwuser
 RUN yarn set version berry
+RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' `aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
 RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=webkit
