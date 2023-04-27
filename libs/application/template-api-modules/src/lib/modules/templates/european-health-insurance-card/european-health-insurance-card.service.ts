@@ -159,7 +159,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    this.logger.info('applyForPhysicalCard')
     const applicants = this.getApplicants(
       application,
       FormApplyType.APPLYING_FOR_PLASTIC,
