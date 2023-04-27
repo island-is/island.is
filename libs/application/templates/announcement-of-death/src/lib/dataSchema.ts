@@ -58,9 +58,9 @@ export const dataSchema = z.object({
     .refine(
       ({ roleConfirmation, electPerson }) =>
         roleConfirmation === RoleConfirmationEnum.DELEGATE && !!electPerson
-          ? electPerson.electedPersonNationalId ??
-            (nationalId.isPerson(electPerson.electedPersonNationalId) &&
-              nationalId.info(electPerson.electedPersonNationalId).age >= 18)
+          ? electPerson.electedPersonNationalId &&
+            nationalId.isPerson(electPerson.electedPersonNationalId) &&
+            nationalId.info(electPerson.electedPersonNationalId).age >= 18
           : !electPerson
           ? true
           : roleConfirmation === RoleConfirmationEnum.CONTINUE
