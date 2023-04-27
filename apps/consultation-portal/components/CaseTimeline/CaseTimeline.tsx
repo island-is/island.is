@@ -1,5 +1,5 @@
-import { Case } from '@island.is/consultation-portal/types/interfaces'
-import { getTimeLineDate } from '@island.is/consultation-portal/utils/helpers/dateFormatter'
+import { Case } from '../../types/interfaces'
+import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import {
   FormStepperV2,
   Text,
