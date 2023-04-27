@@ -8,6 +8,7 @@ import {
 import { CaseSubscriptionResult } from '../models/caseSubscriptionResult.model'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { PostCaseSubscriptionTypeInput } from '../dto/postCaseSubscriptionType.input'
+import { GetCaseInput } from '../dto/case.input'
 
 @Injectable()
 export class CaseSubscriptionService {
@@ -17,9 +18,9 @@ export class CaseSubscriptionService {
     return this.caseSubscriptionApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async deleteCaseSubscription(auth: User, caseId: number): Promise<void> {
+  async deleteCaseSubscription(auth: User, input: GetCaseInput): Promise<void> {
     const requestParams: ApiCaseSubscriptionCaseIdDeleteRequest = {
-      caseId: caseId,
+      caseId: input.caseId,
     }
 
     const response = await this.caseSubscriptionApiWithAuth(
@@ -31,15 +32,14 @@ export class CaseSubscriptionService {
 
   async getCaseSubscriptionType(
     auth: User,
-    caseId: number,
+    input: GetCaseInput,
   ): Promise<CaseSubscriptionResult> {
     const requestParams: ApiCaseSubscriptionCaseIdGetRequest = {
-      caseId: caseId,
+      caseId: input.caseId,
     }
     const response = await this.caseSubscriptionApiWithAuth(
       auth,
     ).apiCaseSubscriptionCaseIdGet(requestParams)
-
     return response
   }
 
