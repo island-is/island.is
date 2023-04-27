@@ -13,13 +13,14 @@ interface CaseTimelineProps {
 }
 
 const Sections = ['Til umsagnar', 'Niðurstöður í vinnslu', 'Niðurstöður birtar']
+const SectionsRenamed = ['Til umsagnar', 'Í vinnslu', 'Lokið']
 
 export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
   const sectionItems = Sections.map((item, index) => (
     <Section
       key={index}
       isActive={item === chosenCase.statusName}
-      section={item}
+      section={SectionsRenamed[index]}
       theme={FormStepperThemes.PURPLE}
       sectionIndex={index}
       subSections={[
