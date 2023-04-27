@@ -177,10 +177,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
                     (mál/stofnanir/málefnasvið), velur hvort þú vilt
                     tilkynningar um ný mál eða fleiri atriði og smellir á
                     „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum
-                    tölvupóstfangið sem þú skráðir.
-                  </Text>
-                  <Text variant="default">
-                    Kerfið er uppfært einu sinni á sólarhring.
+                    netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.
                   </Text>
                 </Stack>
               </Stack>
