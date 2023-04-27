@@ -100,6 +100,11 @@ export const overview = buildSection({
                   title: asset.description,
                   description: [
                     `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                    m.overviewMarketValue.defaultMessage +
+                      ': ' +
+                      (asset.marketValue
+                        ? formatCurrency(asset.marketValue)
+                        : '0 kr.'),
                   ],
                 }),
               ),
@@ -158,9 +163,48 @@ export const overview = buildSection({
                     m.propertyNumber.defaultMessage +
                       ': ' +
                       vehicle.assetNumber,
+                    m.overviewMarketValue.defaultMessage +
+                      ': ' +
+                      (vehicle.marketValue
+                        ? formatCurrency(vehicle.marketValue)
+                        : '0 kr.'),
                   ],
                 }),
               ),
+          },
+        ),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewGuns',
+          title: m.guns,
+          description: m.gunsDescription,
+          titleVariant: 'h3',
+          space: 'gutter',
+        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'estateGunsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              (
+                ((answers.estate as unknown) as EstateInfo)?.guns?.filter(
+                  (guns) => guns.enabled,
+                ) ?? []
+              ).map((gun) => ({
+                title: gun.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + gun.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (gun.marketValue
+                      ? formatCurrency(gun.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
           },
         ),
         buildDividerField({}),

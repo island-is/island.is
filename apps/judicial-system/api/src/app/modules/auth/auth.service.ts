@@ -28,7 +28,7 @@ export class AuthService {
     nationalId: string,
   ): Promise<User | undefined> {
     const res = await fetch(
-      `${environment.backend.url}/api/case/${caseId}/defender/limitedAccess?nationalId=${nationalId}`,
+      `${environment.backend.url}/api/case/${caseId}/limitedAccess/defender?nationalId=${nationalId}`,
       {
         headers: { authorization: `Bearer ${environment.auth.secretToken}` },
       },

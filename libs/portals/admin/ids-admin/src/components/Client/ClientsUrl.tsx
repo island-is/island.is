@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 
 import { Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -22,7 +22,7 @@ const ClientsUrl = ({
   postLogoutRedirectUris,
 }: ClientsUrlProps) => {
   const actionData = useActionData() as EditApplicationResult<
-    typeof schema.applicationUrl
+    typeof schema.applicationUrls
   >
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
@@ -41,16 +41,9 @@ const ClientsUrl = ({
     }))
   }
 
-  useEffect(() => {
-    setUris({ redirectUris, postLogoutRedirectUris })
-  }, [redirectUris, postLogoutRedirectUris])
-
   return (
     <ContentCard
       title={formatMessage(m.clientUris)}
-      onSave={(saveOnAllEnvironments) => {
-        console.log('saveOnAllEnvironments: ', saveOnAllEnvironments, uris)
-      }}
       intent={ClientFormTypes.applicationUrls}
     >
       <Stack space={3}>

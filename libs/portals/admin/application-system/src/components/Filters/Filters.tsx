@@ -18,6 +18,7 @@ import { m } from '../../lib/messages'
 import { statusMapper } from '../../shared/utils'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
+import { format as formatNationalId } from 'kennitala'
 
 interface Props {
   onSearchChange: (query: string) => void
@@ -91,7 +92,11 @@ export const Filters = ({
             <FilterInput
               placeholder={formatMessage(m.searchPlaceholder)}
               name="admin-applications-nationalId"
-              value={nationalId}
+              value={
+                nationalId.length > 6
+                  ? formatNationalId(nationalId)
+                  : nationalId
+              }
               onChange={setNationalId}
               backgroundColor="blue"
             />

@@ -10,6 +10,7 @@ import { SimpleCardSkeleton } from '../Card'
 import { useEffect, useRef, useState } from 'react'
 import * as styles from './ReviewCard.css'
 import { getShortDate } from '../../utils/helpers/dateFormatter'
+import env from '../../lib/environment'
 
 // One line is 27
 const SCROLL_HEIGHT = 27
@@ -59,7 +60,7 @@ export const ReviewCard = ({ advice }) => {
           advice?.adviceDocuments.map((doc, index) => {
             return (
               <LinkV2
-                href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
+                href={`${env.backendDownloadUrl}${doc.id}`}
                 color="blue400"
                 underline="normal"
                 underlineVisibility="always"

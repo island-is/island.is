@@ -189,6 +189,16 @@ const CaseQuery = gql`
       }
       requestDriversLicenseSuspension
       appealState
+      isStatementDeadlineExpired
+      statementDeadline
+      canBeAppealed
+      hasBeenAppealed
+      appealedByRole
+      appealedDate
+      appealDeadline
+      prosecutorStatementDate
+      defenderStatementDate
+      appealReceivedByCourtDate
     }
   }
 `

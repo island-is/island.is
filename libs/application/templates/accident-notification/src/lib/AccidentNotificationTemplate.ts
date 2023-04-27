@@ -46,7 +46,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   type: ApplicationTypes.ACCIDENT_NOTIFICATION,
   name: application.general.name,
   institution: application.general.institutionName,
-  readyForProduction: true,
   featureFlag: Features.accidentNotification,
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,
