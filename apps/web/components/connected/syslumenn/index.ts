@@ -2,16 +2,16 @@ import dynamic from 'next/dynamic'
 
 export const AlcoholLicencesList = dynamic(
   () => import('./CardLists/AlcoholLicencesList/AlcoholLicencesList'),
-  { ssr: false },
+  { ssr: true },
 )
 
 export const TemporaryEventLicencesList = dynamic(
   () =>
     import('./CardLists/TemporaryEventLicencesList/TemporaryEventLicencesList'),
-  { ssr: false },
+  { ssr: true },
 )
 
 export const BrokersList = dynamic(
   () => import('./TableLists/BrokersList/BrokersList'),
-  { ssr: false },
+  { ssr: true },
 )
