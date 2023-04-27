@@ -1,4 +1,13 @@
-import React, { ReactNode, Fragment, useEffect, useRef } from 'react'
+import React, { ReactNode, Fragment, useEffect, useRef, useState } from 'react'
+import {
+  ApolloClient,
+  NormalizedCacheObject,
+  useApolloClient,
+  useQuery,
+} from '@apollo/client'
+import { useRouter } from 'next/router'
+import { Document } from '@contentful/rich-text-types'
+
 import {
   Text,
   Box,
@@ -7,8 +16,6 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { Slice as SliceType, richText } from '@island.is/island-ui/contentful'
-import { Document } from '@contentful/rich-text-types'
-import { useRouter } from 'next/router'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
 import {
   GetUrlQuery,
@@ -16,10 +23,12 @@ import {
   ErrorPageQuery,
   QueryGetErrorPageArgs,
 } from '@island.is/web/graphql/schema'
-import { useQuery } from '@apollo/client'
-import { GET_ERROR_PAGE, GET_URL_QUERY } from '../queries'
 import { getLocaleFromPath } from '@island.is/web/i18n'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks'
+import Layout, { LayoutProps } from '@island.is/web/layouts/main'
+
+import { GET_ERROR_PAGE, GET_URL_QUERY } from '../queries'
+import I18n from '@island.is/web/i18n/I18n'
 
 type MessageType = {
   title: string
@@ -54,10 +63,13 @@ interface ErrorProps {
 }
 
 export const ErrorPage: React.FC<ErrorProps> = ({ statusCode }) => {
-  const { asPath, push } = useRouter()
+  const { asPath, push, query } = useRouter()
   const activeLocale = getLocaleFromPath(asPath)
   const isRedirecting = useRef(false)
   const { linkResolver } = useLinkResolver()
+  const [layoutProps, setLayoutProps] = useState<LayoutProps>(null)
+
+  const apolloClient = useApolloClient()
 
   const { data: urlData, loading: urlDataLoading } = useQuery<
     GetUrlQuery,
@@ -97,6 +109,20 @@ export const ErrorPage: React.FC<ErrorProps> = ({ statusCode }) => {
     })
   }, [])
 
+  useEffect(() => {
+    if (!activeLocale || !apolloClient) {
+      return null
+    }
+
+    Layout.getProps({
+      apolloClient: apolloClient as ApolloClient<NormalizedCacheObject>,
+      locale: activeLocale,
+      query,
+      req: undefined,
+      res: undefined,
+    }).then((props) => setLayoutProps(props))
+  }, [activeLocale, apolloClient, query])
+
   if (statusCode === 404) {
     if (urlDataLoading) {
       return null
@@ -124,40 +150,46 @@ export const ErrorPage: React.FC<ErrorProps> = ({ statusCode }) => {
     }
   }
 
+  const Wrapper = layoutProps ? Layout : Box
+
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span={'12/12'} paddingBottom={10} paddingTop={8}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            width="full"
-            alignItems="center"
-          >
-            <Text
-              variant="eyebrow"
-              as="div"
-              paddingBottom={2}
-              color="purple400"
-            >
-              {statusCode}
-            </Text>
-            {!errorPageDataLoading && (
-              <>
-                <Text variant="h1" as="h1" paddingBottom={3}>
-                  {errorMessages.title}
+    <I18n locale={activeLocale} translations={layoutProps?.namespace ?? {}}>
+      <Wrapper {...layoutProps}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={'12/12'} paddingBottom={10} paddingTop={8}>
+              <Box
+                display="flex"
+                flexDirection="column"
+                width="full"
+                alignItems="center"
+              >
+                <Text
+                  variant="eyebrow"
+                  as="div"
+                  paddingBottom={2}
+                  color="purple400"
+                >
+                  {statusCode}
                 </Text>
-                <Text variant="intro" as="div">
-                  {errorMessages.description
-                    ? richText([errorMessages.description] as SliceType[])
-                    : formatBody(errorMessages.body, asPath)}
-                </Text>
-              </>
-            )}
-          </Box>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+                {!errorPageDataLoading && (
+                  <>
+                    <Text variant="h1" as="h1" paddingBottom={3}>
+                      {errorMessages.title}
+                    </Text>
+                    <Text variant="intro" as="div">
+                      {errorMessages.description
+                        ? richText([errorMessages.description] as SliceType[])
+                        : formatBody(errorMessages.body, asPath)}
+                    </Text>
+                  </>
+                )}
+              </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Wrapper>
+    </I18n>
   )
 }
 
