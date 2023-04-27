@@ -42,15 +42,5 @@ module.exports = withNx(
       IDENTITY_SERVER_SECRET: process.env.IDENTITY_SERVER_SECRET,
       IDENTITY_SERVER_ISSUER_DOMAIN: process.env.IDENTITY_SERVER_ISSUER_DOMAIN,
     },
-    // async redirects() {
-    //   return [
-    //     {
-    //       source: `${BASE_PATH}`,
-    //       destination: ,
-    //       basePath: false,
-    //       permanent: false,
-    //     },
-    //   ]
-    // },
   }),
 )
