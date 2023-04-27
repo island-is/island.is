@@ -29,6 +29,7 @@ export enum Operation {
   UpdateDefendantMutation = 'UpdateDefendantMutation',
   LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
   ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
+  TransitionCaseMutation = 'TransitionCase',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -92,6 +93,15 @@ export const intercept = (res: Case, forceFail?: Operation) => {
       req.alias = 'gqlProsecutorSelectionUsersQuery'
       req.reply({
         fixture: 'prosecutorUsers',
+      })
+    } else if (hasOperationName(req, Operation.TransitionCaseMutation)) {
+      req.alias = 'TransitionCaseMutation'
+      req.reply({
+        fixture: 'transitionCaseMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CaseListQuery)) {
+      req.reply({
+        fixture: 'cases',
       })
     }
   })
