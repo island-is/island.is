@@ -17,6 +17,7 @@ import EmptyState from '../../components/EmptyState/EmptyState'
 import { UserAdvice } from '../../types/interfaces'
 import Pagination from '../../components/Pagination/Pagination'
 import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSortPartialData'
+import env from '../../lib/environment'
 
 const CARDS_PER_PAGE = 12
 
@@ -125,7 +126,7 @@ export const AdvicesScreen = () => {
                       items={item.adviceDocuments?.map((item) => {
                         return {
                           title: item.fileName,
-                          href: `https://samradapi-test.devland.is/api/Documents/${item.id}`,
+                          href: `${env.backendDownloadUrl}${item.id}`,
                         }
                       })}
                     />

@@ -302,4 +302,24 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly defendantStatementDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealCaseNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealAssistantId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge1Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge2Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge3Id?: string
 }

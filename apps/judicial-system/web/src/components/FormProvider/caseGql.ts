@@ -199,6 +199,23 @@ const CaseQuery = gql`
       prosecutorStatementDate
       defendantStatementDate
       appealReceivedByCourtDate
+      appealCaseNumber
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
     }
   }
 `
