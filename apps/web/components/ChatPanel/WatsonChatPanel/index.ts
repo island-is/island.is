@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 export const WatsonChatPanel = dynamic(() => import('./WatsonChatPanel'), {
-  ssr: true,
+  ssr: false,
 })
 
 export * from './utils'

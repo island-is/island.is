@@ -3,33 +3,33 @@ import dynamic from 'next/dynamic'
 export const StraddlingStockCalculator = dynamic(
   () =>
     import('./calculators/StraddlingStockCalculator/StraddlingStockCalculator'),
-  { ssr: true },
+  { ssr: false },
 )
 
 export const CatchQuotaCalculator = dynamic(
   () => import('./calculators/CatchQuotaCalculator/CatchQuotaCalculator'),
-  { ssr: true },
+  { ssr: false },
 )
 
 export const SelectedShip = dynamic(
   () => import('./SelectedShip/SelectedShip'),
-  { ssr: true },
+  { ssr: false },
 )
 
 export const ShipSearch = dynamic(() => import('./ShipSearch/ShipSearch'), {
-  ssr: true,
+  ssr: false,
 })
 
 export const SidebarShipSearchInput = dynamic(
   () => import('./SidebarShipSearchInput/SidebarShipSearchInput'),
   {
-    ssr: true,
+    ssr: false,
   },
 )
 
 export const ShipSearchBoxedInput = dynamic(
   () => import('./ShipSearchBoxedInput/ShipSearchBoxedInput'),
   {
-    ssr: true,
+    ssr: false,
   },
 )

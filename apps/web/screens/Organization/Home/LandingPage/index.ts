@@ -1,7 +1,7 @@
 import dynamic from 'next/dynamic'
 export const LandingPageFooter = dynamic(() => import('./LandingPageFooter'), {
-  ssr: true,
+  ssr: false,
 })
 export const LandingPage = dynamic(() => import('./LandingPage'), {
-  ssr: true,
+  ssr: false,
 })

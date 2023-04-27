@@ -1,5 +1,6 @@
-import ErrorScreen from '../screens/Error/Error'
+import withApollo from '../graphql/withApollo'
+import { ErrorPage } from '../screens/Error'
 
-export default () => {
-  return <ErrorScreen statusCode={500} />
-}
+export default withApollo(() => {
+  return <ErrorPage statusCode={500} />
+})

@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic'
 
 export const FiskistofaFooter = dynamic(() => import('./FiskistofaFooter'), {
-  ssr: true,
+  ssr: false,
 })
 
 export const FiskistofaHeader = dynamic(() => import('./FiskistofaHeader'), {
-  ssr: true,
+  ssr: false,
 })

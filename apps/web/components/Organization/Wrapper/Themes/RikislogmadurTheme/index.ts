@@ -2,10 +2,10 @@ import dynamic from 'next/dynamic'
 
 export const RikislogmadurHeader = dynamic(
   () => import('./RikislogmadurHeader'),
-  { ssr: true },
+  { ssr: false },
 )
 
 export const RikislogmadurFooter = dynamic(
   () => import('./RikislogmadurFooter'),
-  { ssr: true },
+  { ssr: false },
 )

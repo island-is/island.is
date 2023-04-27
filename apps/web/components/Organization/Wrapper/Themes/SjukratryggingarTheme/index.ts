@@ -2,10 +2,10 @@ import dynamic from 'next/dynamic'
 
 export const SjukratryggingarHeader = dynamic(
   () => import('./SjukratryggingarHeader'),
-  { ssr: true },
+  { ssr: false },
 )
 
 export const SjukratryggingarFooter = dynamic(
   () => import('./SjukratryggingarFooter'),
-  { ssr: true },
+  { ssr: false },
 )

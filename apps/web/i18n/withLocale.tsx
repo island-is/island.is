@@ -1,6 +1,6 @@
 import React from 'react'
 import I18n, { isLocale } from './I18n'
-import { NextPage, NextPageContext, NextComponentType } from 'next'
+import { NextComponentType } from 'next'
 import { ApolloClient } from '@apollo/client/core'
 import { NormalizedCacheObject } from '@apollo/client/cache'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
