@@ -80,6 +80,7 @@
     "application-templates-document-provider-onboarding": "libs/application/templates/document-provider-onboarding",
     "application-templates-driving-assessment-approval": "libs/application/templates/driving-assessment-approval",
     "application-templates-driving-instructor-registrations": "libs/application/templates/driving-instructor-registrations",
+    "application-templates-driving-learners-permit": "libs/application/templates/driving-learners-permit",
     "application-templates-driving-license": "libs/application/templates/driving-license",
     "application-templates-driving-license-book-update-instructor": "libs/application/templates/driving-license-book-update-instructor",
     "application-templates-driving-license-duplicate": "libs/application/templates/driving-license-duplicate",
