@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -23,6 +23,10 @@ const CourtOfAppealRuling: React.FC = () => {
 
   const { formatMessage } = useIntl()
 
+  const [checkedRadio, setCheckedRadio] = useState<CaseAppealRulingDecision>(
+    CaseAppealRulingDecision.ACCEPTING,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -39,7 +43,7 @@ const CourtOfAppealRuling: React.FC = () => {
         <Box marginBottom={7}>
           <Text as="h2" variant="h2">
             {formatMessage(strings.caseNumber, {
-              caseNumber: '??/2023',
+              caseNumber: `${workingCase.appealCaseNumber}/2023`,
             })}
           </Text>
           <Text as="h3" variant="default" fontWeight="semiBold">
@@ -58,15 +62,9 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-accepting"
                 label={formatMessage(strings.decisionAccept)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.ACCEPTING
-                }
+                checked={checkedRadio === CaseAppealRulingDecision.ACCEPTING}
                 onChange={() =>
-                  setWorkingCase({
-                    ...workingCase,
-                    appealRulingDecision: CaseAppealRulingDecision.ACCEPTING,
-                  })
+                  setCheckedRadio(CaseAppealRulingDecision.ACCEPTING)
                 }
                 backgroundColor="white"
                 large
@@ -77,15 +75,9 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-repeal"
                 label={formatMessage(strings.decisionRepeal)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.REPEAL
-                }
+                checked={checkedRadio === CaseAppealRulingDecision.REPEAL}
                 onChange={() =>
-                  setWorkingCase({
-                    ...workingCase,
-                    appealRulingDecision: CaseAppealRulingDecision.REPEAL,
-                  })
+                  setCheckedRadio(CaseAppealRulingDecision.REPEAL)
                 }
                 backgroundColor="white"
                 large
@@ -96,15 +88,9 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-changed"
                 label={formatMessage(strings.decisionChanged)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.CHANGED
-                }
+                checked={checkedRadio === CaseAppealRulingDecision.CHANGED}
                 onChange={() =>
-                  setWorkingCase({
-                    ...workingCase,
-                    appealRulingDecision: CaseAppealRulingDecision.CHANGED,
-                  })
+                  setCheckedRadio(CaseAppealRulingDecision.CHANGED)
                 }
                 backgroundColor="white"
                 large
@@ -118,15 +104,13 @@ const CourtOfAppealRuling: React.FC = () => {
                   strings.decisionDismissedFromCourtOfAppeal,
                 )}
                 checked={
-                  workingCase.appealRulingDecision ===
+                  checkedRadio ===
                   CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
                 }
                 onChange={() =>
-                  setWorkingCase({
-                    ...workingCase,
-                    appealRulingDecision:
-                      CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
-                  })
+                  setCheckedRadio(
+                    CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
+                  )
                 }
                 backgroundColor="white"
                 large
@@ -138,15 +122,10 @@ const CourtOfAppealRuling: React.FC = () => {
                 id="case-decision-dismissed-from-court"
                 label={formatMessage(strings.decisionDismissedFromCourt)}
                 checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.DISMISSED_FROM_COURT
+                  checkedRadio === CaseAppealRulingDecision.DISMISSED_FROM_COURT
                 }
                 onChange={() =>
-                  setWorkingCase({
-                    ...workingCase,
-                    appealRulingDecision:
-                      CaseAppealRulingDecision.DISMISSED_FROM_COURT,
-                  })
+                  setCheckedRadio(CaseAppealRulingDecision.DISMISSED_FROM_COURT)
                 }
                 backgroundColor="white"
                 large
@@ -157,15 +136,9 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-unlabeling"
                 label={formatMessage(strings.decisionUnlabeling)}
-                checked={
-                  workingCase.appealRulingDecision ===
-                  CaseAppealRulingDecision.REMAND
-                }
+                checked={checkedRadio === CaseAppealRulingDecision.REMAND}
                 onChange={() =>
-                  setWorkingCase({
-                    ...workingCase,
-                    appealRulingDecision: CaseAppealRulingDecision.REMAND,
-                  })
+                  setCheckedRadio(CaseAppealRulingDecision.REMAND)
                 }
                 backgroundColor="white"
                 large
@@ -196,7 +169,12 @@ const CourtOfAppealRuling: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          onNextButtonClick={() => console.log('23')}
+          onNextButtonClick={() => {
+            setWorkingCase({
+              ...workingCase,
+              appealRulingDecision: checkedRadio,
+            })
+          }}
           nextButtonIcon="arrowForward"
           nextButtonText={formatMessage(strings.nextButtonFooter)}
         />
