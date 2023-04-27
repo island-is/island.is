@@ -53,6 +53,8 @@ const CourtOfAppealRuling: React.FC = () => {
     CourtOfAppealRulingDecision.ACCEPTING,
   )
 
+  const [rulingConclusion, setRulingConclusion] = useState<string>()
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -184,8 +186,13 @@ const CourtOfAppealRuling: React.FC = () => {
           <Input
             label={formatMessage(strings.conclusionHeading)}
             name="rulingConclusion"
+            value={rulingConclusion}
+            onChange={(event) =>
+              setRulingConclusion(event.target.value as string)
+            }
             textarea
             rows={7}
+            required
             autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
