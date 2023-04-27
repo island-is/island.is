@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   ForbiddenException,
-  Inject,
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -11,8 +10,6 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
@@ -70,8 +67,6 @@ export class AdminClientsService {
     private readonly translationService: TranslationService,
     private readonly clientsService: ClientsService,
     private sequelize: Sequelize,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
   ) {}
 
   async findByTenantId(tenantId: string): Promise<AdminClientDto[]> {
@@ -516,13 +511,6 @@ export class AdminClientsService {
     tenantId: string
     transaction: Transaction
   }): Promise<boolean> {
-    this.logger.debug(
-      `Verifying scope names "${scopeNames
-        .map((scopeName) => scopeName)
-        .join(', ')}", for tenantId: ${tenantId}`,
-      scopeNames,
-    )
-
     const scopes = await this.apiScopeModel.findAndCountAll({
       where: {
         name: {
