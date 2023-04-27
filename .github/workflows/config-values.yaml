@@ -81,14 +81,6 @@ jobs:
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
-      - name: Set npm repo as codeartifact
-        run: |
-          export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
-          export NPM_REPOSITORY_URL=$(aws codeartifact get-repository-endpoint --domain npm-upstream --domain-owner 821090935708 --repository github-runner-npm-cache --format npm --query repositoryEndpoint --output text)
-          yarn config set npmRegistryServer "${NPM_REPOSITORY_URL}"
-          yarn config set 'npmRegistries["${NPM_REPOSITORY_URL}"].npmAuthToken' "${CODEARTIFACT_AUTH_TOKEN}"
-          yarn config set 'npmRegistries["${NPM_REPOSITORY_URL}"].npmAlwaysAuth' "true"
-
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
         working-directory: infra
@@ -133,14 +125,6 @@ jobs:
 
       - name: Check cache success
         run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Set npm repo as codeartifact
-        run: |
-          export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
-          export NPM_REPOSITORY_URL=$(aws codeartifact get-repository-endpoint --domain npm-upstream --domain-owner 821090935708 --repository github-runner-npm-cache --format npm --query repositoryEndpoint --output text)
-          yarn config set npmRegistryServer "${NPM_REPOSITORY_URL}"
-          yarn config set 'npmRegistries["${NPM_REPOSITORY_URL}"].npmAuthToken' "${CODEARTIFACT_AUTH_TOKEN}"
-          yarn config set 'npmRegistries["${NPM_REPOSITORY_URL}"].npmAlwaysAuth' "true"
 
       - name: Building NodeJS dependencies
         if: steps.node-modules.outputs.cache-hit != 'true'
