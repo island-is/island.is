@@ -1,34 +1,38 @@
 import { Configuration } from '../../gen/fetch'
-import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
+import {
+  ConfigType,
+  IdsClientConfig,
+  LazyDuringDevScope,
+} from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { RightsPortalClientConfig } from './clients-rights-portal.config'
 
 export const ApiConfig = {
   provide: 'RightsPortalApiProviderConfiguration',
   scope: LazyDuringDevScope,
-  useFactory: (config: ConfigType<typeof RightsPortalClientConfig>) =>
+  useFactory: (
+    config: ConfigType<typeof RightsPortalClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) =>
     new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-rights-portal',
         timeout: config.fetch.timeout,
-        autoAuth: undefined,
-        //idsClientConfig.isConfigured
-        //   ? {
-        //       mode: 'tokenExchange',
-        //       issuer: idsClientConfig.issuer,
-        //       clientId: idsClientConfig.clientId,
-        //       clientSecret: idsClientConfig.clientSecret,
-        //       scope: config.scope,
-        //     }
-        //   : undefined,
+        autoAuth: idsClientConfig.isConfigured
+          ? {
+              mode: 'tokenExchange',
+              issuer: idsClientConfig.issuer,
+              clientId: idsClientConfig.clientId,
+              clientSecret: idsClientConfig.clientSecret,
+              scope: config.fetch.scope,
+            }
+          : undefined,
       }),
-      basePath: 'https://midgardur-test.sjukra.is/minarsidur',
+      basePath: 'https://midgardur-test.sjukra.is/minarsidur-jwt',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     }),
-  inject: [
-    RightsPortalClientConfig.KEY, //IdsClientConfig.KEY
-  ],
+  inject: [RightsPortalClientConfig.KEY, IdsClientConfig.KEY],
 }

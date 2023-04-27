@@ -23,13 +23,13 @@ export class RightsPortalResolver {
   @Query(() => [Therapies], { nullable: true })
   @Audit()
   getRightsPortalTherapies(@CurrentUser() user: User) {
-    return this.rightsPortalService.getTherapies(user.nationalId)
+    return this.rightsPortalService.getTherapies(user)
   }
 
   @Scopes(ApiScope.internal)
   @Query(() => AidsAndNutrition, { nullable: true })
   @Audit()
   getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
-    return this.rightsPortalService.getAidsAndNutrition(user.nationalId)
+    return this.rightsPortalService.getAidsAndNutrition(user)
   }
 }

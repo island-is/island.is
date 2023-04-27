@@ -113,7 +113,7 @@ const AidsAndNutrition = () => {
         </Box>
       )}
 
-      {!loading && (
+      {!loading && !!(supportData.aids.length || supportData.nutrition.length) && (
         <>
           <Inline space={3}>
             <>

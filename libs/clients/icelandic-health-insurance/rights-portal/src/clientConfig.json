@@ -6,24 +6,14 @@
   },
   "servers": [
     {
-      "url": "/minarsidur"
+      "url": "/minarsidur-jwt"
     }
   ],
   "paths": {
-    "/aidsandnutrition/usernationalid": {
+    "/aidsandnutrition": {
       "get": {
         "tags": ["aidsandnutrition"],
         "operationId": "aidsandnutrition",
-        "parameters": [
-          {
-            "name": "usernationalid",
-            "in": "query",
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -47,20 +37,124 @@
         }
       }
     },
-    "/therapies/usernationalid": {
+    "/dentists/current": {
+      "get": {
+        "tags": ["dentist"],
+        "operationId": "dentists/current",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DentistDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/dentists/bills": {
+      "get": {
+        "tags": ["dentist"],
+        "operationId": "dentists/bills",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HealthCenterHistoryEntryDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/healthcenters/current": {
+      "get": {
+        "tags": ["healthcenter"],
+        "operationId": "healthcenters/current",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCenterDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/healthcenters/history": {
+      "get": {
+        "tags": ["healthcenter"],
+        "operationId": "healthcenters/history",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HealthCenterHistoryEntryDTO"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/therapies": {
       "get": {
         "tags": ["therapy"],
         "operationId": "therapies",
-        "parameters": [
-          {
-            "name": "usernationalid",
-            "in": "query",
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -162,6 +256,49 @@
         },
         "additionalProperties": false
       },
+      "DentistDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthCenterDTO": {
+        "type": "object",
+        "properties": {
+          "healthCenter": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthCenterHistoryEntryDTO": {
+        "type": "object",
+        "properties": {
+          "dateFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "healthCenter": {
+            "$ref": "#/components/schemas/HealthCenterDTO"
+          }
+        },
+        "additionalProperties": false
+      },
       "TherapyDTO": {
         "type": "object",
         "properties": {
@@ -172,7 +309,8 @@
           },
           "id": {
             "type": "string",
-            "nullable": true
+            "nullable": true,
+            "readOnly": true
           },
           "state": {
             "$ref": "#/components/schemas/TherapyStateDTO"

@@ -8,6 +8,7 @@ import {
   TherapyDTO,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { ApolloError } from 'apollo-server-express'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'rights-portal-service'
@@ -35,13 +36,11 @@ export class RightsPortalService {
     return this.handleError(error, detail)
   }
 
-  async getTherapies(
-    nationalId: string,
-  ): Promise<TherapyDTO[] | null | ApolloError> {
+  async getTherapies(user: User): Promise<TherapyDTO[] | null | ApolloError> {
     try {
-      const res = await this.therapyApi.therapies({
-        usernationalid: nationalId,
-      })
+      const res = await this.therapyApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .therapies()
 
       if (!res) return null
       return res
@@ -51,12 +50,12 @@ export class RightsPortalService {
   }
 
   async getAidsAndNutrition(
-    nationalId: string,
+    user: User,
   ): Promise<AidsAndNutritionDTO | null | ApolloError> {
     try {
-      const res = await this.aidsAndNutritionApi.aidsandnutrition({
-        usernationalid: nationalId,
-      })
+      const res = await this.aidsAndNutritionApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .aidsandnutrition()
 
       if (!res) return null
       return res
