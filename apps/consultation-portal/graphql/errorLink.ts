@@ -5,7 +5,6 @@ import { toast } from '@island.is/island-ui/core'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {
-    toast.error(networkError.message)
     return
   }
 
@@ -25,7 +24,5 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
     } else if (errorCodes.includes('FORBIDDEN')) {
       return
     }
-
-    toast.error(graphQLErrors.map((error) => error.message).join('\n'))
   }
 })

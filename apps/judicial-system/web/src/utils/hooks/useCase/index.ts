@@ -56,6 +56,10 @@ type ChildKeys = Pick<
   | 'sharedWithProsecutorsOfficeId'
   | 'registrarId'
   | 'judgeId'
+  | 'appealAssistantId'
+  | 'appealJudge1Id'
+  | 'appealJudge2Id'
+  | 'appealJudge3Id'
 >
 
 export type autofillEntry = Partial<UpdateCase> & {
@@ -107,6 +111,10 @@ function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
     'sharedWithProsecutorsOfficeId',
     'registrarId',
     'judgeId',
+    'appealAssistantId',
+    'appealJudge1Id',
+    'appealJudge2Id',
+    'appealJudge3Id',
   ].includes(key)
 }
 
@@ -116,6 +124,10 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
   registrarId: 'registrar',
   judgeId: 'judge',
+  appealAssistantId: 'appealAssistant',
+  appealJudge1Id: 'appealJudge1',
+  appealJudge2Id: 'appealJudge2',
+  appealJudge3Id: 'appealJudge3',
 }
 
 const overwrite = (update: UpdateCase): UpdateCase => {

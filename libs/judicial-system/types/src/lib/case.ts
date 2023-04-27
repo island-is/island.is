@@ -264,6 +264,11 @@ export interface Case {
   statementDeadline?: string
   prosecutorStatementDate?: string
   defenderStatementDate?: string
+  appealCaseNumber?: string
+  appealAssistant?: User
+  appealJudge1?: User
+  appealJudge2?: User
+  appealJudge3?: User
   appealReceivedByCourtDate?: string
 }
 
@@ -379,6 +384,7 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'appealState'
+    | 'appealCaseNumber'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -387,6 +393,10 @@ export interface UpdateCase
   sharedWithProsecutorsOfficeId?: string | null
   registrarId?: string | null
   judgeId?: string
+  appealAssistantId?: string
+  appealJudge1Id?: string
+  appealJudge2Id?: string
+  appealJudge3Id?: string
 }
 
 export interface TransitionCase {

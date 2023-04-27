@@ -133,6 +133,11 @@ export interface UpdateCase
     | 'creatingProsecutorId'
     | 'appealState'
     | 'appealReceivedByCourtDate'
+    | 'appealCaseNumber'
+    | 'appealAssistantId'
+    | 'appealJudge1Id'
+    | 'appealJudge2Id'
+    | 'appealJudge3Id'
   > {
   type?: CaseType
   state?: CaseState
@@ -184,6 +189,26 @@ export const include: Includeable[] = [
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
     },
+  },
+  {
+    model: User,
+    as: 'appealAssistant',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge1',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge2',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 
