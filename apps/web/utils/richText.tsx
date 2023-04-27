@@ -26,12 +26,14 @@ import {
   AlcoholLicencesList,
   TemporaryEventLicencesList,
   BrokersList,
+  SliceDropdown,
 } from '@island.is/web/components'
 import {
   PowerBiSlice as PowerBiSliceSchema,
   Slice,
   AccordionSlice as AccordionSliceSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
+  SliceDropdown as SliceDropdownSchema,
 } from '@island.is/web/graphql/schema'
 import { Locale } from '@island.is/shared/types'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
@@ -80,6 +82,16 @@ const defaultRenderComponent = {
   FaqList: (slice: FaqListProps) => slice?.questions && <FaqList {...slice} />,
   FeaturedSupportQNAs: (slice: FeaturedSupportQNAsSchema) => (
     <FeaturedSupportQNAs slice={slice} />
+  ),
+  SliceDropdown: (slice: SliceDropdownSchema) => (
+    <SliceDropdown
+      slices={slice.slices}
+      sliceExtraText={slice.dropdownLabel}
+      gridSpan="1/1"
+      gridOffset="0"
+      slicesAreFullWidth={true}
+      dropdownMarginBottom={5}
+    />
   ),
 }
 
