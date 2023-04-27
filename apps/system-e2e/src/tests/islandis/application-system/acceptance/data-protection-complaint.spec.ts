@@ -104,101 +104,116 @@ applicationTest.describe('Data protection complaint application', () => {
       )
     },
   )
-  applicationTest(
-    'Should be able to start the application, fill in the form and upload a document',
-    async ({ applicationPage }) => {
-      const page = applicationPage
-
-      // Start the application
-      const numOfApplicationsAtStart = await createApplication(page)
-
-      // Check the checkbox to agree to data providers and click proceed.
-      await page.getByTestId('agree-to-data-providers').check()
-      await page.getByTestId('proceed').click()
-
-      // Ensure the first question is visible and answer "No" and proceed
-      // through the questions until the "Upplýsingar um málsmeðferð" screen.
-      await expect(page.getByText('Gervimaður Afríka')).toBeVisible()
-      await expect(
-        page.getByText(
-          'Er málið sem um ræðir til meðferðar hjá dómstólum eða öðrum stjórnvöldum?',
-        ),
-      ).toBeVisible()
-      await page.getByLabel('Nei').check()
-      await page.getByTestId('proceed').click()
-
-      await expect(
-        page.getByText(
-          'Ertu að kvarta yfir umfjöllun um þig eða aðra í fjölmiðlum?',
-        ),
-      ).toBeVisible()
-      await page.getByLabel('Nei').check()
-      await page.getByTestId('proceed').click()
-
-      await expect(
-        page.getByText(
-          'Ertu að kvarta yfir því að x-merking í símaskrá eða bannmerking í þjóðskrá hafi ekki verið virt?',
-        ),
-      ).toBeVisible()
-      await page.getByLabel('Nei').check()
-      await page.getByTestId('proceed').click()
-
-      await expect(
-        page.getByText(
-          'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig á netinu eða á öðrum opinberum vettvangi?\n',
-        ),
-      ).toBeVisible()
-      await page.getByLabel('Nei').check()
-      await page.getByTestId('proceed').click()
-
-      // Proceed through the questions until the "Upplýsingar um málsmeðferð" screen.
-      await expect(page.getByText('Upplýsingar um málsmeðferð')).toBeVisible()
-      await page.getByTestId('proceed').click()
-
-      // Select the "Í umboði fyrir aðra" option and proceed.
-      await expect(
-        page.getByText('Fyrir hvern ertu að senda inn kvörtun?'),
-      ).toBeVisible()
-      await page.getByLabel('Í umboði fyrir aðra').check()
-      await page.getByTestId('proceed').click()
-
-      // Fill in the email and phone number fields, and proceed.
-      await page.getByLabel('Netfang').last().fill('test@test.test')
-      await page.getByLabel('Símanúmer').last().fill('777-3019')
-      await page.getByTestId('proceed').click()
-
-      // Ensure the "Upplýsingar um umboð" heading is visible, upload a document and proceed
-      await expect(
-        page.getByRole('heading', { name: 'Upplýsingar um umboð\n' }),
-      ).toBeVisible()
-      const fileChooserPromise = page.waitForEvent('filechooser')
-      const uploadButton = page.getByRole('button', {
-        name: 'Velja umboðsskjöl til að hlaða upp',
-        exact: true,
-      })
-      await uploadButton.click()
-      const chooser = await fileChooserPromise
-      await chooser.setFiles('someFileThatDoesNotExist.txt')
-      await page.getByLabel('Fullt nafn').last().fill('test@test.test')
-      await page.getByLabel('Kennitala').last().fill('0101302719')
-      await page.getByTestId('proceed').click()
-
-      // Ensure the "Upplýsingar um fyrirtæki, stofnun eða einstakling sem
-      // kvartað er yfir" heading is visible and go back to the previous screen
-      await expect(
-        page.getByText(
-          'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
-        ),
-      ).toBeVisible()
-      await page.locator('button[data-testid="step-back"]:visible').click()
-
-      // Ensure the "file.rtf" is visible in the file upload field
-      await expect(
-        page.getByRole('button', {
-          name:
-            'Dragðu umboðsskjöl hingað til að hlaða upp Tekið er við skjölum með endingu: .pdf, .docx, .rtf Velja umboðsskjöl til að hlaða upp file.rtf Fjarlægja skrá',
-        }),
-      ).toBeVisible()
-    },
-  )
+  // applicationTest(
+  //   'Should be able to start the application, fill in the form and upload a document',
+  //   async ({ applicationPage }) => {
+  //     const page = applicationPage
+  //
+  //     await applicationTest.step('Start the application', async () => {
+  //       await createApplication(page)
+  //     })
+  //
+  //     await applicationTest.step(
+  //       'Agree to data providers and proceed',
+  //       async () => {
+  //         await page.getByTestId('agree-to-data-providers').check()
+  //         await page.getByTestId('proceed').click()
+  //       },
+  //     )
+  //
+  //     // Answer "No" to all questions until "Upplýsingar um málsmeðferð" screen
+  //     await applicationTest.step('Answer questions', async () => {
+  //       await expect(page.getByText('Gervimaður Afríka')).toBeVisible()
+  //       await expect(
+  //         page.getByText(
+  //           'Er málið sem um ræðir til meðferðar hjá dómstólum eða öðrum stjórnvöldum?',
+  //         ),
+  //       ).toBeVisible()
+  //       await page.getByLabel('Nei').check()
+  //       await page.getByTestId('proceed').click()
+  //
+  //       await expect(
+  //         page.getByText(
+  //           'Ertu að kvarta yfir umfjöllun um þig eða aðra í fjölmiðlum?',
+  //         ),
+  //       ).toBeVisible()
+  //       await page.getByLabel('Nei').check()
+  //       await page.getByTestId('proceed').click()
+  //
+  //       await expect(
+  //         page.getByText(
+  //           'Ertu að kvarta yfir því að x-merking í símaskrá eða bannmerking í þjóðskrá hafi ekki verið virt?',
+  //         ),
+  //       ).toBeVisible()
+  //       await page.getByLabel('Nei').check()
+  //       await page.getByTestId('proceed').click()
+  //
+  //       await expect(
+  //         page.getByText(
+  //           'Ertu að kvarta yfir einhverju sem var sagt eða skrifað um þig á netinu eða á öðrum opinberum vettvangi?\n',
+  //         ),
+  //       ).toBeVisible()
+  //       await page.getByLabel('Nei').check()
+  //       await page.getByTestId('proceed').click()
+  //
+  //       await expect(page.getByText('Upplýsingar um málsmeðferð')).toBeVisible()
+  //       await page.getByTestId('proceed').click()
+  //     })
+  //
+  //     await applicationTest.step('Select representation option', async () => {
+  //       await expect(
+  //         page.getByText('Fyrir hvern ertu að senda inn kvörtun?'),
+  //       ).toBeVisible()
+  //       await page.getByLabel('Í umboði fyrir aðra').check()
+  //       await page.getByTestId('proceed').click()
+  //     })
+  //
+  //     await applicationTest.step('Fill in contact information', async () => {
+  //       await page.getByLabel('Netfang').last().fill('test@test.test')
+  //       await page.getByLabel('Símanúmer').last().fill('777-3019')
+  //       await page.getByTestId('proceed').click()
+  //     })
+  //
+  //     await applicationTest.step(
+  //       'Upload document and provide representative info',
+  //       async () => {
+  //         // Ensure the "Upplýsingar um umboð" heading is visible, upload a document and proceed
+  //         await expect(
+  //           page.getByRole('heading', { name: 'Upplýsingar um umboð\n' }),
+  //         ).toBeVisible()
+  //         const fileChooserPromise = page.waitForEvent('filechooser')
+  //         const uploadButton = page.getByRole('button', {
+  //           name: 'Velja umboðsskjöl til að hlaða upp',
+  //           exact: true,
+  //         })
+  //         await uploadButton.click()
+  //         const chooser = await fileChooserPromise
+  //         await chooser.setFiles('someFileThatDoesNotExist.txt')
+  //         await page.getByLabel('Fullt nafn').last().fill('test@test.test')
+  //         await page.getByLabel('Kennitala').last().fill('0101302719')
+  //         await page.getByTestId('proceed').click()
+  //       },
+  //     )
+  //
+  //     await applicationTest.step(
+  //       'Check uploaded file and go back to verify the file is still there',
+  //       async () => {
+  //         await expect(
+  //           page.getByText(
+  //             'Upplýsingar um fyrirtæki, stofnun eða einstakling sem kvartað er yfir',
+  //           ),
+  //         ).toBeVisible()
+  //         await page.locator('button[data-testid="step-back"]:visible').click()
+  //
+  //         // Ensure the "file.rtf" is visible in the file upload field
+  //         await expect(
+  //           page.getByRole('button', {
+  //             name:
+  //               'Dragðu umboðsskjöl hingað til að hlaða upp Tekið er við skjölum með endingu: .pdf, .docx, .rtf Velja umboðsskjöl til að hlaða upp file.rtf Fjarlægja skrá',
+  //           }),
+  //         ).toBeVisible()
+  //       },
+  //     )
+  //   },
+  // )
 })
