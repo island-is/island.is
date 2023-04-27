@@ -19,6 +19,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseAppealRulingDecision,
   CaseType,
   SessionArrangements,
   CourtDocument,
@@ -990,4 +991,25 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   appealReceivedByCourtDate?: Date
+
+  /**********
+   * The appeal conclusion
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealConclusion?: string
+
+  /**********
+   * The case appeal ruling decision
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseAppealRulingDecision),
+  })
+  @ApiProperty({ enum: CaseAppealRulingDecision })
+  appealRulingDecision?: CaseAppealRulingDecision
 }

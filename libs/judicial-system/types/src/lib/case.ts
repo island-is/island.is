@@ -155,13 +155,13 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
-export enum CourtOfAppealRulingDecision {
+export enum CaseAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
   CHANGED = 'CHANGED',
   DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
   DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
-  UNLABELING = 'UNLABELING',
+  REMAND = 'REMAND',
 }
 
 export enum SessionArrangements {
@@ -274,6 +274,8 @@ export interface Case {
   prosecutorStatementDate?: string
   defenderStatementDate?: string
   appealReceivedByCourtDate?: string
+  appealConclusion?: string
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface CaseListEntry

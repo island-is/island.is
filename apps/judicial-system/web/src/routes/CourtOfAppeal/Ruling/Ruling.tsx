@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -7,25 +7,11 @@ import {
   FormFooter,
   PageHeader,
   PageLayout,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Box,
-  Input,
-  InputFileUpload,
-  RadioButton,
-  Text,
-} from '@island.is/island-ui/core'
-import { core } from '@island.is/judicial-system-web/messages'
-import {
-  useFileList,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
-import * as constants from '@island.is/judicial-system/consts'
+import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
-import { CourtOfAppealRulingDecision } from 'libs/judicial-system/types/src/lib/case'
+import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
 
 const CourtOfAppealRuling: React.FC = () => {
   const {
@@ -35,25 +21,7 @@ const CourtOfAppealRuling: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
 
-  const { onOpen } = useFileList({
-    caseId: workingCase.id,
-  })
-
-  const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
-
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
-
-  const [checkedRadio, setCheckedRadio] = useState<CourtOfAppealRulingDecision>(
-    CourtOfAppealRulingDecision.ACCEPTING,
-  )
-
-  const [rulingConclusion, setRulingConclusion] = useState<string>()
 
   return (
     <PageLayout
@@ -90,9 +58,15 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-accepting"
                 label={formatMessage(strings.decisionAccept)}
-                checked={checkedRadio === CourtOfAppealRulingDecision.ACCEPTING}
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.ACCEPTING
+                }
                 onChange={() =>
-                  setCheckedRadio(CourtOfAppealRulingDecision.ACCEPTING)
+                  setWorkingCase({
+                    ...workingCase,
+                    appealRulingDecision: CaseAppealRulingDecision.ACCEPTING,
+                  })
                 }
                 backgroundColor="white"
                 large
@@ -103,9 +77,15 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-repeal"
                 label={formatMessage(strings.decisionRepeal)}
-                checked={checkedRadio === CourtOfAppealRulingDecision.REPEAL}
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.REPEAL
+                }
                 onChange={() =>
-                  setCheckedRadio(CourtOfAppealRulingDecision.REPEAL)
+                  setWorkingCase({
+                    ...workingCase,
+                    appealRulingDecision: CaseAppealRulingDecision.REPEAL,
+                  })
                 }
                 backgroundColor="white"
                 large
@@ -116,9 +96,15 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-changed"
                 label={formatMessage(strings.decisionChanged)}
-                checked={checkedRadio === CourtOfAppealRulingDecision.CHANGED}
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.CHANGED
+                }
                 onChange={() =>
-                  setCheckedRadio(CourtOfAppealRulingDecision.CHANGED)
+                  setWorkingCase({
+                    ...workingCase,
+                    appealRulingDecision: CaseAppealRulingDecision.CHANGED,
+                  })
                 }
                 backgroundColor="white"
                 large
@@ -132,13 +118,15 @@ const CourtOfAppealRuling: React.FC = () => {
                   strings.decisionDismissedFromCourtOfAppeal,
                 )}
                 checked={
-                  checkedRadio ===
-                  CourtOfAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
                 }
                 onChange={() =>
-                  setCheckedRadio(
-                    CourtOfAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    appealRulingDecision:
+                      CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
+                  })
                 }
                 backgroundColor="white"
                 large
@@ -150,13 +138,15 @@ const CourtOfAppealRuling: React.FC = () => {
                 id="case-decision-dismissed-from-court"
                 label={formatMessage(strings.decisionDismissedFromCourt)}
                 checked={
-                  checkedRadio ===
-                  CourtOfAppealRulingDecision.DISMISSED_FROM_COURT
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.DISMISSED_FROM_COURT
                 }
                 onChange={() =>
-                  setCheckedRadio(
-                    CourtOfAppealRulingDecision.DISMISSED_FROM_COURT,
-                  )
+                  setWorkingCase({
+                    ...workingCase,
+                    appealRulingDecision:
+                      CaseAppealRulingDecision.DISMISSED_FROM_COURT,
+                  })
                 }
                 backgroundColor="white"
                 large
@@ -168,10 +158,14 @@ const CourtOfAppealRuling: React.FC = () => {
                 id="case-decision-unlabeling"
                 label={formatMessage(strings.decisionUnlabeling)}
                 checked={
-                  checkedRadio === CourtOfAppealRulingDecision.UNLABELING
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.REMAND
                 }
                 onChange={() =>
-                  setCheckedRadio(CourtOfAppealRulingDecision.UNLABELING)
+                  setWorkingCase({
+                    ...workingCase,
+                    appealRulingDecision: CaseAppealRulingDecision.REMAND,
+                  })
                 }
                 backgroundColor="white"
                 large
@@ -186,9 +180,12 @@ const CourtOfAppealRuling: React.FC = () => {
           <Input
             label={formatMessage(strings.conclusionHeading)}
             name="rulingConclusion"
-            value={rulingConclusion}
+            value={workingCase.appealConclusion || ''}
             onChange={(event) =>
-              setRulingConclusion(event.target.value as string)
+              setWorkingCase({
+                ...workingCase,
+                appealConclusion: event.target.value,
+              })
             }
             textarea
             rows={7}
@@ -196,33 +193,9 @@ const CourtOfAppealRuling: React.FC = () => {
             autoExpand={{ on: true, maxHeight: 300 }}
           />
         </Box>
-        <Box marginBottom={10}>
-          <Text as="h3" variant="h3" marginBottom={3}>
-            {formatMessage(strings.courtConclusionHeading)}
-          </Text>
-          <InputFileUpload
-            fileList={[]}
-            accept="application/pdf"
-            header={formatMessage(strings.inputFieldLabel)}
-            description={formatMessage(core.uploadBoxDescription, {
-              fileEndings: '.pdf',
-            })}
-            buttonLabel={formatMessage(strings.uploadButtonText)}
-            onChange={() => {
-              // handleChange(
-              //   files,
-              //   CaseFileCategory.COURT_RECORD,
-              //   setDisplayFiles,
-              //   handleUIUpdate,
-              // )
-            }}
-            onRemove={() => console.log('asdasd')}
-          />
-        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASES_ROUTE}
           onNextButtonClick={() => console.log('23')}
           nextButtonIcon="arrowForward"
           nextButtonText={formatMessage(strings.nextButtonFooter)}
