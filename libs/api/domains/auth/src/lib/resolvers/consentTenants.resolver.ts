@@ -6,20 +6,20 @@ import { Loader } from '@island.is/nest/dataloader'
 
 import { DomainLoader } from '../loaders/domain.loader'
 import { Domain } from '../models'
-import { ScopePermissions } from '../models/scopePermissions.model'
+import { ConsentTenant } from '../models/consentTenants.model'
 
 import type { DomainDataLoader } from '../loaders/domain.loader'
 
 @UseGuards(IdsUserGuard)
-@Resolver(() => ScopePermissions)
-export class ScopePermissionsResolver {
+@Resolver(() => ConsentTenant)
+export class ConsentTenantsResolver {
   @ResolveField('owner', () => Domain)
   resolvePermissions(
     @Loader(DomainLoader) domainLoader: DomainDataLoader,
-    @Parent() permissions: ScopePermissions,
+    @Parent() tenants: ConsentTenant,
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang: string,
   ) {
-    return domainLoader.load({ lang, domain: permissions.domainName })
+    return domainLoader.load({ lang, domain: tenants.domainName })
   }
 }

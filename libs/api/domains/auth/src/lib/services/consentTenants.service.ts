@@ -4,10 +4,10 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ScopeNodeDTO, ScopesApi } from '@island.is/clients/auth/delegation-api'
 
 import { ConsentScopeNode } from '../models/consentScopeNode.model'
-import { ScopePermissions } from '../models/scopePermissions.model'
+import { ConsentTenant } from '../models/consentTenants.model'
 
 @Injectable()
-export class ScopePermissionsService {
+export class ConsentTenantsService {
   constructor(private readonly scopesApi: ScopesApi) {}
 
   private scopesApiWithAuth(auth: Auth) {
@@ -36,7 +36,7 @@ export class ScopePermissionsService {
     lang: string,
     consentedScopes: string[],
     rejectedScopes: string[],
-  ): Promise<ScopePermissions[]> {
+  ): Promise<ConsentTenant[]> {
     const response = await this.scopesApiWithAuth(
       user,
     ).scopesControllerFindScopeTree({
@@ -55,7 +55,7 @@ export class ScopePermissionsService {
       }
     })
 
-    const result: ScopePermissions[] = []
+    const result: ConsentTenant[] = []
     map.forEach((value, key) => {
       result.push({
         domainName: key,
