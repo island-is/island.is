@@ -32,7 +32,7 @@ const mockedApiScopes = [
     description: 'Scope 1 description',
   },
   {
-    name: '@scope',
+    name: '@scope2',
     displayName: 'Scope 2 display name',
     description: 'Scope 2 description',
   },
