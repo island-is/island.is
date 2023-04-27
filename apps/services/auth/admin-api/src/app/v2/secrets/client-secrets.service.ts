@@ -31,7 +31,10 @@ export class ClientSecretsService {
     this.encryptionKey = environment.clientSecretEncryptionKey
   }
 
-  async find(tenantId: string, clientId: string): Promise<ClientSecretDto[]> {
+  async findAll(
+    tenantId: string,
+    clientId: string,
+  ): Promise<ClientSecretDto[]> {
     const secrets = await this.clientSecretModel.findAll({
       where: {
         clientId,
@@ -42,7 +45,7 @@ export class ClientSecretsService {
           model: Client,
           where: { domainName: tenantId },
           required: true,
-          attributes: ['clientId'],
+          attributes: [],
         },
       ],
     })

@@ -1,47 +1,52 @@
-import { AccordionCard, Input, Stack } from '@island.is/island-ui/core'
+import React, { RefObject, useReducer, useRef } from 'react'
+
+import {
+  AccordionCard,
+  Input,
+  Stack,
+  toast,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { RefObject } from 'react'
+import { AuthAdminClientSecret } from '@island.is/api/schema'
+
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
-import { toast } from '@island.is/island-ui/core'
 
 interface BasicInfoProps {
   clientId: string
-  clientSecret?: string
+  clientSecrets?: AuthAdminClientSecret[] | null
   issuerUrl: string
 }
 
 const BasicInfoContent = ({
   clientId,
-  // clientSecret,
+  clientSecrets = [],
   issuerUrl,
 }: BasicInfoProps) => {
   const { formatMessage } = useLocale()
-  // const [showSecret, setShowSecret] = React.useState(false)
-  const clientIdRef = React.useRef<HTMLInputElement>(null)
-  //const clientSecretRef = React.useRef<HTMLInputElement>(null)
-  const issuerUrlRef = React.useRef<HTMLInputElement>(null)
-  const authorizationUrlRef = React.useRef<HTMLInputElement>(null)
-  const tokenUrlRef = React.useRef<HTMLInputElement>(null)
-  const userInfoUrlRef = React.useRef<HTMLInputElement>(null)
-  const endSessionUrlRef = React.useRef<HTMLInputElement>(null)
-  const openIdConfigurationUrlRef = React.useRef<HTMLInputElement>(null)
-  const jsonWebSetKeyUrlRef = React.useRef<HTMLInputElement>(null)
+  const [showSecret, toggleSecret] = useReducer((s) => !s, false)
+  const clientIdRef = useRef<HTMLInputElement>(null)
+  const clientSecretRef = useRef<HTMLInputElement>(null)
+  const issuerUrlRef = useRef<HTMLInputElement>(null)
+  const authorizationUrlRef = useRef<HTMLInputElement>(null)
+  const tokenUrlRef = useRef<HTMLInputElement>(null)
+  const userInfoUrlRef = useRef<HTMLInputElement>(null)
+  const endSessionUrlRef = useRef<HTMLInputElement>(null)
+  const openIdConfigurationUrlRef = useRef<HTMLInputElement>(null)
+  const jsonWebSetKeyUrlRef = useRef<HTMLInputElement>(null)
 
-  const handleCopy = (
-    ev: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    ref: RefObject<HTMLInputElement>,
-  ) => {
+  const handleCopy = (ref: RefObject<HTMLInputElement>) => {
     if (!ref.current) return
 
-    ref.current.select()
-    document.execCommand('copy')
-    if (ev.target instanceof HTMLElement) {
-      ev.target.focus()
-    }
-
-    toast.success(formatMessage(m.copySuccess))
+    navigator.clipboard.writeText(ref.current.value).then(() => {
+      toast.success(formatMessage(m.copySuccess))
+    })
   }
+
+  const secret = clientSecrets?.find((secret) => secret.decryptedValue)
+  const hasClientSecrets = Boolean(clientSecrets && clientSecrets.length > 0)
+  const isLegacySecret = hasClientSecrets && !secret
 
   return (
     <ContentCard title={formatMessage(m.basicInfo)}>
@@ -59,43 +64,44 @@ const BasicInfoContent = ({
               name: 'copy',
               label: 'copy',
               type: 'outline',
-              onClick: (event) => {
-                handleCopy(event, clientIdRef)
-              },
+              onClick: () => handleCopy(clientIdRef),
             },
           ]}
         />
-        {/*uncomment when we have client secret*/}
-        {/*<Stack space={1}>*/}
-        {/*  <Input*/}
-        {/*    readOnly*/}
-        {/*    type={showSecret ? 'text' : 'password'}*/}
-        {/*    ref={clientSecretRef}*/}
-        {/*    size="sm"*/}
-        {/*    name="clientSecret"*/}
-        {/*    value={clientSecret}*/}
-        {/*    label={formatMessage(m.clientSecret)}*/}
-        {/*    buttons={[*/}
-        {/*      {*/}
-        {/*        name: 'copy',*/}
-        {/*        type: 'outline',*/}
-        {/*        onClick: (event) => {*/}
-        {/*          handleCopy(event, clientSecretRef)*/}
-        {/*        },*/}
-        {/*        label: 'Copy value',*/}
-        {/*      },*/}
-        {/*      {*/}
-        {/*        name: showSecret ? 'eyeOff' : 'eye',*/}
-        {/*        type: 'outline',*/}
-        {/*        onClick: handleShow,*/}
-        {/*        label: showSecret ? 'Hide password' : 'Show password',*/}
-        {/*      },*/}
-        {/*    ]}*/}
-        {/*  />*/}
-        {/*  <Text variant={'small'}>*/}
-        {/*    {formatMessage(m.clientSecretDescription)}*/}
-        {/*  </Text>*/}
-        {/*</Stack>*/}
+        {hasClientSecrets && (
+          <Stack space={1}>
+            <Input
+              readOnly
+              type={showSecret ? 'text' : 'password'}
+              ref={clientSecretRef}
+              size="sm"
+              name="clientSecret"
+              value={secret?.decryptedValue ?? '*'.repeat(16)}
+              label={formatMessage(m.clientSecret)}
+              buttons={[
+                {
+                  name: 'copy',
+                  type: 'outline',
+                  onClick: () => handleCopy(clientSecretRef),
+                  label: 'Copy value',
+                  disabled: isLegacySecret,
+                },
+                {
+                  name: showSecret ? 'eyeOff' : 'eye',
+                  type: 'outline',
+                  onClick: toggleSecret,
+                  label: showSecret ? 'Hide password' : 'Show password',
+                  disabled: isLegacySecret,
+                },
+              ]}
+            />
+            <Text variant={'small'}>
+              {isLegacySecret
+                ? formatMessage(m.clientSecretLegacy)
+                : formatMessage(m.clientSecretDescription)}
+            </Text>
+          </Stack>
+        )}
         <Input
           readOnly
           type="text"
@@ -109,9 +115,7 @@ const BasicInfoContent = ({
               name: 'copy',
               label: 'copy',
               type: 'outline',
-              onClick: (event) => {
-                handleCopy(event, issuerUrlRef)
-              },
+              onClick: () => handleCopy(issuerUrlRef),
             },
           ]}
         />
@@ -133,9 +137,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: (event) => {
-                    handleCopy(event, authorizationUrlRef)
-                  },
+                  onClick: () => handleCopy(authorizationUrlRef),
                 },
               ]}
             />
@@ -152,9 +154,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: (event) => {
-                    handleCopy(event, tokenUrlRef)
-                  },
+                  onClick: () => handleCopy(tokenUrlRef),
                 },
               ]}
             />
@@ -171,9 +171,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: (event) => {
-                    handleCopy(event, userInfoUrlRef)
-                  },
+                  onClick: () => handleCopy(userInfoUrlRef),
                 },
               ]}
             />
@@ -190,9 +188,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: (event) => {
-                    handleCopy(event, endSessionUrlRef)
-                  },
+                  onClick: () => handleCopy(endSessionUrlRef),
                 },
               ]}
             />
@@ -209,9 +205,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: (event) => {
-                    handleCopy(event, openIdConfigurationUrlRef)
-                  },
+                  onClick: () => handleCopy(openIdConfigurationUrlRef),
                 },
               ]}
             />
@@ -228,9 +222,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: (event) => {
-                    handleCopy(event, jsonWebSetKeyUrlRef)
-                  },
+                  onClick: () => handleCopy(jsonWebSetKeyUrlRef),
                 },
               ]}
             />

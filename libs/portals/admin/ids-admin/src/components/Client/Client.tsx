@@ -143,6 +143,7 @@ const Client = () => {
           key={`${selectedEnvironment.environment}-BasicInfo`}
           clientId={selectedEnvironment.clientId}
           issuerUrl={IssuerUrls[selectedEnvironment.environment]}
+          clientSecrets={selectedEnvironment.secrets}
         />
         <Translations
           key={`${selectedEnvironment.environment}-Translations`}

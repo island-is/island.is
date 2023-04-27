@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
+  ClientSecretDto,
   CreateClientType,
   MeClientsControllerCreateRequest,
   MeClientsControllerUpdateRequest,
@@ -202,6 +203,21 @@ export class ClientsService extends MultiEnvironmentService {
     })
 
     return patchClientResponses
+  }
+
+  async getClientSecret(
+    user: User,
+    clientEnvironment: ClientEnvironment,
+  ): Promise<ClientSecretDto[]> {
+    return (
+      this.adminApiByEnvironmentWithAuth(
+        clientEnvironment.environment,
+        user,
+      )?.meClientSecretsControllerFindAll({
+        tenantId: clientEnvironment.tenantId,
+        clientId: clientEnvironment.clientId,
+      }) ?? []
+    )
   }
 
   private formatClientId(clientId: string, environment: Environment) {

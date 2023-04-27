@@ -11,11 +11,14 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
 
+import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { ClientType, GrantTypeEnum, RefreshTokenExpiration } from '../../types'
+import { ClientsService } from '../clients.service'
 import { Client } from '../models/client.model'
+import { ClientAllowedScope } from '../models/client-allowed-scope.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
 import { ClientRedirectUri } from '../models/client-redirect-uri.model'
@@ -27,9 +30,6 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
-import { ClientsService } from '../clients.service'
-import { ClientAllowedScope } from '../models/client-allowed-scope.model'
-import { ApiScope } from '../../resources/models/api-scope.model'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -62,6 +62,8 @@ export class AdminClientsService {
     private clientClaimModel: typeof ClientClaim,
     @InjectModel(ClientGrantType)
     private readonly clientGrantType: typeof ClientGrantType,
+    @InjectModel(ClientAllowedScope)
+    private readonly clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ApiScope)
     private readonly apiScopeModel: typeof ApiScope,
     private readonly translationService: TranslationService,
@@ -73,6 +75,7 @@ export class AdminClientsService {
     const clients = await this.clientModel.findAll({
       where: {
         domainName: tenantId,
+        enabled: true,
       },
       include: this.clientInclude(),
     })
@@ -95,6 +98,7 @@ export class AdminClientsService {
       where: {
         clientId,
         domainName: tenantId,
+        enabled: true,
       },
       include: this.clientInclude(),
     })
@@ -138,8 +142,8 @@ export class AdminClientsService {
       ...this.defaultClientAttributes(clientDto.clientType),
     })
 
-    // TODO: Add client type specific openid profile identity resources
-    await this.clientGrantType.create(this.defaultClientGrantTypes(client))
+    await this.clientGrantType.create(this.defaultClientGrantType(client))
+    await this.clientAllowedScope.bulkCreate(this.defaultClientScopes(client))
 
     return this.findByTenantIdAndClientId(tenantId, client.clientId)
   }
@@ -406,13 +410,9 @@ export class AdminClientsService {
     return displayNames
   }
 
-  private defaultClientGrantTypes(client: Client) {
+  private defaultClientGrantType(client: Client) {
     switch (client.clientType) {
       case ClientType.web:
-        return {
-          clientId: client.clientId,
-          grantType: 'authorization_code',
-        }
       case ClientType.native:
         return {
           clientId: client.clientId,
@@ -424,6 +424,26 @@ export class AdminClientsService {
           grantType: 'client_credentials',
         }
     }
+  }
+
+  private defaultClientScopes(client: Client) {
+    const scopes = [
+      {
+        clientId: client.clientId,
+        scopeName: 'openid',
+      },
+    ]
+
+    switch (client.clientType) {
+      case ClientType.web:
+      case ClientType.native:
+        scopes.push({
+          clientId: client.clientId,
+          scopeName: 'profile',
+        })
+    }
+
+    return scopes
   }
 
   private clientInclude(): Includeable[] {
