@@ -46,7 +46,7 @@ export const getServerSidePropsWrapper: (
   } catch (error) {
     if (error instanceof CustomNextError) {
       if (error.statusCode === 404) {
-        logger.info(error.title || '404 error occurred on web', error) // TODO: verify that this logging method works
+        logger.info(error.title || '404 error occurred on web', error)
         return {
           notFound: true,
         }
