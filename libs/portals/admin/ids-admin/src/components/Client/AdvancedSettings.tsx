@@ -19,7 +19,7 @@ interface AdvancedSettingsProps {
   allowOfflineAccess: boolean
   requireConsent: boolean
   supportTokenExchange: boolean
-  slidingRefreshTokenLifetime: number
+  accessTokenLifetime: number
   customClaims: string[]
 }
 
@@ -28,7 +28,7 @@ const AdvancedSettings = ({
   allowOfflineAccess,
   requireConsent,
   supportTokenExchange,
-  slidingRefreshTokenLifetime,
+  accessTokenLifetime,
   customClaims,
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
@@ -46,15 +46,13 @@ const AdvancedSettings = ({
     allowOfflineAccess,
     requireConsent,
     supportTokenExchange,
-    slidingRefreshTokenLifetime,
+    accessTokenLifetime,
     customClaims,
   })
 
   const { formatErrorMessage } = useErrorFormatMessage()
 
-  const readableSlidingRefreshToken = useReadableSeconds(
-    slidingRefreshTokenLifetime,
-  )
+  const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
 
   return (
     <ContentCard
@@ -136,25 +134,24 @@ const AdvancedSettings = ({
             size="sm"
             type="number"
             disabled={!isSuperAdmin}
-            name="slidingRefreshTokenLifetime"
-            value={inputValues.slidingRefreshTokenLifetime}
+            name="accessTokenLifetime"
+            value={inputValues.accessTokenLifetime}
             backgroundColor="blue"
             onChange={(e) => {
               setInputValues({
                 ...inputValues,
-                slidingRefreshTokenLifetime: parseInt(e.target.value),
+                accessTokenLifetime: parseInt(e.target.value),
               })
             }}
             label={formatMessage(m.accessTokenExpiration)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors
-                ?.slidingRefreshTokenLifetime as unknown) as string,
+              (actionData?.errors?.accessTokenLifetime as unknown) as string,
             )}
           />
           <Text variant={'small'}>
             {formatMessage(m.accessTokenExpirationDescription)}
             <br />
-            {readableSlidingRefreshToken}
+            {readableAccessTokenLifetime}
           </Text>
         </Stack>
         <Stack space={1}>

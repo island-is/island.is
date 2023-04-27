@@ -200,7 +200,7 @@ export const schema = {
       requireConsent: z.optional(z.string()).transform((s) => {
         return s === 'true'
       }),
-      slidingRefreshTokenLifetime: z
+      accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {
           message: 'errorPositiveNumber',

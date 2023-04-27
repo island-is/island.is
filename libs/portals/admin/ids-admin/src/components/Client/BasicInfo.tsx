@@ -8,14 +8,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AuthAdminClientSecret } from '@island.is/api/schema'
 
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
+import { AuthAdminClientSecret } from './Client.loader'
 
 interface BasicInfoProps {
   clientId: string
-  clientSecrets?: AuthAdminClientSecret[] | null
+  clientSecrets?: AuthAdminClientSecret | null
   issuerUrl: string
 }
 
@@ -56,7 +56,7 @@ const BasicInfoContent = ({
           readOnly
           type="text"
           size="sm"
-          name="application"
+          name="clientId"
           value={clientId}
           label={formatMessage(m.clientId)}
           buttons={[
@@ -107,7 +107,7 @@ const BasicInfoContent = ({
           type="text"
           ref={issuerUrlRef}
           size="sm"
-          name="application"
+          name="issuerUrl"
           value={issuerUrl}
           label={formatMessage(m.idsUrl)}
           buttons={[
@@ -129,7 +129,7 @@ const BasicInfoContent = ({
               type="text"
               size="sm"
               ref={authorizationUrlRef}
-              name="application"
+              name="authorizationUrl"
               value={issuerUrl + 'connect/authorize'}
               label={formatMessage(m.oAuthAuthorizationUrl)}
               buttons={[
@@ -146,7 +146,7 @@ const BasicInfoContent = ({
               type="text"
               size="sm"
               ref={tokenUrlRef}
-              name="application"
+              name="tokenUrl"
               value={issuerUrl + 'connect/token'}
               label={formatMessage(m.oAuthTokenUrl)}
               buttons={[
@@ -163,7 +163,7 @@ const BasicInfoContent = ({
               type="text"
               size="sm"
               ref={userInfoUrlRef}
-              name="application"
+              name="userInfoUrl"
               value={issuerUrl + 'connect/userinfo'}
               label={formatMessage(m.oAuthUserInfoUrl)}
               buttons={[
@@ -180,7 +180,7 @@ const BasicInfoContent = ({
               type="text"
               size="sm"
               ref={endSessionUrlRef}
-              name="application"
+              name="endSessionUrl"
               value={issuerUrl + 'connect/endsession'}
               label={formatMessage(m.endSessionUrl)}
               buttons={[
@@ -197,7 +197,7 @@ const BasicInfoContent = ({
               type="text"
               size="sm"
               ref={openIdConfigurationUrlRef}
-              name="application"
+              name="openIdConfigurationUrl"
               value={issuerUrl + '.well-known/openid-configuration'}
               label={formatMessage(m.openIdConfiguration)}
               buttons={[
@@ -213,7 +213,7 @@ const BasicInfoContent = ({
               readOnly
               type="text"
               size="sm"
-              name="application"
+              name="jsonWebSetKeyUrl"
               ref={jsonWebSetKeyUrlRef}
               value={issuerUrl + '.well-known/openid-configuration/jwks'}
               label={formatMessage(m.jsonWebKeySet)}

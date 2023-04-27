@@ -460,17 +460,17 @@ export const m = defineMessages({
     id: 'ap.ids-admin:sync-settings',
     defaultMessage: 'Sync settings (from this environment)',
   },
-  inSyncAcrossAllEnvironments: {
-    id: 'ap.ids-admin:in-sync-across-all-environments',
+  syncedAcrossAllEnvironments: {
+    id: 'ap.ids-admin:synced-across-all-environments',
     defaultMessage: 'Settings are the same in all environments.',
   },
   notInSyncAcrossAllEnvironments: {
     id: 'ap.ids-admin:not-in-sync-across-all-environments',
     defaultMessage: 'SyncSettings are different in some environments',
   },
-  inSync: {
-    id: 'ap.ids-admin:in-sync',
-    defaultMessage: 'In sync',
+  synced: {
+    id: 'ap.ids-admin:synced',
+    defaultMessage: 'Synced',
   },
   outOfSync: {
     id: 'ap.ids-admin:out-of-sync',

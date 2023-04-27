@@ -8,6 +8,7 @@ import { TenantsService } from './tenant/tenants.service'
 import { ClientsResolver } from './client/clients.resolver'
 import { ClientsService } from './client/clients.service'
 import { ClientEnvironmentResolver } from './client/client-environment.resolver'
+import { ClientSecretLoader } from './client/client-secret.loader'
 
 @Module({
   imports: [AuthAdminApiClientModule],
@@ -18,6 +19,7 @@ import { ClientEnvironmentResolver } from './client/client-environment.resolver'
     ClientsResolver,
     ClientEnvironmentResolver,
     ClientsService,
+    ClientSecretLoader,
   ],
 })
 export class AuthAdminModule {}
