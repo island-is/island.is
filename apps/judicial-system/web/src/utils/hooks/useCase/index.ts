@@ -322,8 +322,7 @@ const useCase = () => {
         if (setWorkingCase) {
           setWorkingCase((theCase) => ({
             ...theCase,
-            state,
-            appealState,
+            ...res[resultType],
           }))
         }
 
