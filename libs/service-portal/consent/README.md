@@ -1,7 +1,5 @@
-# service-portal-consent
+<!-- gitbook-ignore -->
 
-This library was generated with [Nx](https://nx.dev).
+# Consent
 
-## Running unit tests
-
-Run `nx test service-portal-consent` to execute the unit tests via [Jest](https://jestjs.io).
+UI screens and components for the consent section of the service portal.
