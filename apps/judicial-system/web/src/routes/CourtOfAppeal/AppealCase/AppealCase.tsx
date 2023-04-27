@@ -85,7 +85,7 @@ const AppealCase = () => {
     (assistant: Option) => assistant.value === workingCase.appealAssistant?.id,
   )
 
-  const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW}/${id}`
+  const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
