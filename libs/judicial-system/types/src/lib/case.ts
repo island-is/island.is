@@ -534,6 +534,6 @@ export function getAppealInfo(theCase: Case): Case {
 
 export function getStatementDeadline(appealReceived: Date) {
   return new Date(
-    appealReceived.setDate(appealReceived.getDate() + 1),
+    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
   ).toISOString()
 }
