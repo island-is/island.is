@@ -40,10 +40,10 @@ export class LicenseService {
     code < 10 ? 'BadRequest' : 'ServerError'
 
   //Error message is an array to maintain consistency
-  private getException = (errorType: ErrorType, message?: string | object) => {
+  private getException = (errorType: ErrorType, details?: string | object) => {
     return errorType === 'BadRequest'
-      ? new BadRequestException([message])
-      : new InternalServerErrorException([message])
+      ? new BadRequestException([details ?? 'Unknown error'])
+      : new InternalServerErrorException([details ?? 'Unknown error'])
   }
 
   private async pushUpdateLicense(
