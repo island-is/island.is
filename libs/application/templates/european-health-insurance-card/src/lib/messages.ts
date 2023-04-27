@@ -276,13 +276,13 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       description: 'Second part two information sentence, in bullet list',
     },
     sectionInfoBulletThird: {
-      id: 'ia.application:confirmation.section.infoBullet.third',
+      id: 'ehic.application:confirmation.section.infoBullet.third',
       defaultMessage:
         'Bráðabirgðakortið hefur verið sent í stafræna pósthólfið þitt á island.is',
       description: 'Third information sentence, in bullet list',
     },
     sectionInfoBulletFour: {
-      id: 'ia.application:confirmation.section.infoBullet.four',
+      id: 'ehic.application:confirmation.section.infoBullet.four',
       defaultMessage:
         'Þú getur niðurhalað bráðabirgðakortinu hér að neðan. Við mælum með að prenta út skjalið.',
       description: 'Fourth information sentence, in bullet list',
@@ -291,12 +291,12 @@ export const europeanHealthInsuranceCardApplicationMessages = {
 
   approved: defineMessages({
     sectionTitle: {
-      id: 'ia.application:approved.section.title',
+      id: 'ehic.application:approved.section.title',
       defaultMessage: 'Takk fyrir umsóknina!',
       description: 'Section title',
     },
     sectionDescription: {
-      id: 'ia.application:approved.section.description',
+      id: 'ehic.application:approved.section.description',
       defaultMessage:
         'Við munum fara yfir umsóknina og sendum á þig svör innan tíðar. Við verðum í sambandi ef okkur vantar frekari upplýsingar. ',
       description: 'Section title',
@@ -306,12 +306,12 @@ export const europeanHealthInsuranceCardApplicationMessages = {
   // Applicants already have plastic and PDF
   noApplicants: defineMessages({
     checkboxTitle: {
-      id: 'ia.application:noapplicants.checkbox.description',
+      id: 'ehic.application:noapplicants.checkbox.description',
       defaultMessage: 'Umsækjendur',
       description: 'Checkbox Title',
     },
     checkboxDescription: {
-      id: 'ia.application:noapplicants.checkbox.description',
+      id: 'ehic.application:noapplicants.checkbox.description',
       defaultMessage:
         'Einstaklingar sem eiga ES kort og bráðabirgðaskírteini í gildi í stafrænu pósthólfi',
       description: 'Checkbox description',
@@ -320,64 +320,64 @@ export const europeanHealthInsuranceCardApplicationMessages = {
 
   urls: defineMessages({
     allServices: {
-      id: 'ia.application:url.all',
+      id: 'ehic.application:url.all',
       defaultMessage: 'https://island.is/s/stafraent-island/thjonustur',
       description: 'Url',
     },
     mailService: {
-      id: 'ia.application:url.mail',
+      id: 'ehic.application:url.mail',
       defaultMessage: '/s/stafraent-island/thjonustur/postholf',
       description: 'Url',
     },
     loginService: {
-      id: 'ia.application:url.login',
+      id: 'ehic.application:url.login',
       defaultMessage:
         'https://island.is/s/stafraent-island/thjonustur/innskraning-fyrir-alla',
       description: 'Url',
     },
     myPageService: {
-      id: 'ia.application:url.mypage',
+      id: 'ehic.application:url.mypage',
       defaultMessage:
         'https://island.is/s/stafraent-island/thjonustur/minar-sidur',
       description: 'Url',
     },
     certificateService: {
-      id: 'ia.application:url.certificate',
+      id: 'ehic.application:url.certificate',
       defaultMessage:
         'https://island.is/s/stafraent-island/thjonustur/skirteini',
       description: 'Url',
     },
     straumurService: {
-      id: 'ia.application:url.straumur',
+      id: 'ehic.application:url.straumur',
       defaultMessage:
         'https://island.is/s/stafraent-island/thjonustur/straumurinn',
       description: 'Url',
     },
     applyService: {
-      id: 'ia.application:url.apply',
+      id: 'ehic.application:url.apply',
       defaultMessage:
         'https://island.is/s/stafraent-island/thjonustur/umsoknarkerfi',
       description: 'Url',
     },
     authorityService: {
-      id: 'ia.application:url.authority',
+      id: 'ehic.application:url.authority',
       defaultMessage:
         'https://island.is/s/stafraent-island/thjonustur/umbodskerfi',
       description: 'Url',
     },
     webService: {
-      id: 'ia.application:url.web',
+      id: 'ehic.application:url.web',
       defaultMessage:
         'https://island.is/s/stafraent-island/thjonustur/vefur-stofnana',
       description: 'Url',
     },
     appService: {
-      id: 'ia.application:url.app',
+      id: 'ehic.application:url.app',
       defaultMessage: '/https://island.iss/stafraent-island/thjonustur/app',
       description: 'Url',
     },
     islandService: {
-      id: 'ia.application:url.island',
+      id: 'ehic.application:url.island',
       defaultMessage:
         'https://island.is/s/stafraent-island/thjonustur/island-is',
       description: 'Url',
