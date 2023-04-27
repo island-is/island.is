@@ -357,10 +357,6 @@ jobs:
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
         run: ./scripts/ci/10_prepare-docker-deps.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID_CODEARTIFACT }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_CODEARTIFACT }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV

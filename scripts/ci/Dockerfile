@@ -2,9 +2,6 @@
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
-ARG AWS_ACCESS_KEY_ID
-ARG AWS_SECRET_ACCESS_KEY
-ARG AWS_DEFAULT_REGION
 
 RUN apk add -U git
 RUN apk add --no-cache aws-cli
