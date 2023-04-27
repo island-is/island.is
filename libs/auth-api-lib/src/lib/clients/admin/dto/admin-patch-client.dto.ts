@@ -164,7 +164,7 @@ export class AdminPatchClientDto {
   addedScopes?: string[]
 
   @ApiPropertyOptional({
-    description: 'Scopes to detach from client.',
+    description: 'Scopes to revoke from client.',
   })
   @IsOptional()
   @IsArray()
