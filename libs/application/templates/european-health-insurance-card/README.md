@@ -20,9 +20,14 @@ Run `nx test application-templates-european-health-insurance-card` to execute th
 
 The following environment variable must be set, 'EHIC_XROAD_PROVIDER_ID', to the appropriate X-ROAD path for the EHIC API. It defaults to: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic/',
 
+### Scope and TokenExchange
+
+Calls to the EHIC API uses token exchange with a scope named 'europeanHealthInsuranceCard' as defined now as '@sjukra.is/sjukratryggingakort'
+
 ## Setup
 
 To start the application system, follow the instructions in the handbook [here](https://docs.devland.is/apps/application-system).
+The application will be accessible under the path https://{host}/umsoknir/sjukrakort
 
 ### Translations from Contentful
 
