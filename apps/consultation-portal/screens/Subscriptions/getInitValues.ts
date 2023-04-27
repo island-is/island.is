@@ -23,8 +23,8 @@ export const getInitValues = ({ types }: Props) => {
     }
   }
   return {
-    PolicyAreas: {},
-    Institutions: {},
+    PolicyAreas: [],
+    Institutions: [],
   }
 }
 

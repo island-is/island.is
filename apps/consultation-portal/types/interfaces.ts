@@ -1,4 +1,4 @@
-import { SortOptions } from './enums'
+import { CaseSubscriptionType, SortOptions, SubscriptionType } from './enums'
 
 export interface Case {
   id?: number
@@ -194,4 +194,34 @@ export interface AdviceFilter {
   pageNumber?: number
   pageSize?: number
   searchQuery?: string
+}
+
+export interface GeneralSubscription {
+  id?: string
+  nr?: string
+  name?: string
+  type?: string
+}
+
+export interface CasesSubscription {
+  id?: number
+  subscriptionType?: CaseSubscriptionType
+}
+
+export interface InstitutionsSubscription {
+  id?: number
+  subscriptionType?: SubscriptionType
+}
+
+export interface PolicyAreasSubscription {
+  id?: number
+  subscriptionType?: SubscriptionType
+}
+
+export interface Subscription {
+  subscribedToAll?: boolean
+  subscribedToAllType?: SubscriptionType
+  cases?: CasesSubscription
+  institutions?: InstitutionsSubscription
+  policyAreas?: PolicyAreasSubscription
 }

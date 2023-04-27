@@ -241,6 +241,7 @@ export const withAutoAuth = ({
 
   return async (request) => {
     const authorization = await getAuth(request)
+    console.log('authorization', authorization)
     request.headers.set('authorization', authorization)
     return fetch(request)
   }

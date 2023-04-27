@@ -1,0 +1,22 @@
+UserSubscriptionsAggregate
+-> 
+	"subscribedToAllNew": {
+                        "type": "boolean"
+                    }
+
+	"subscribedToAllType": {
+                        "$ref": "#/components/schemas/SubscriptionType"
+                    }
+
+UserSubscriptionsCommand
+->
+	"subscribeToAllType": {
+                        "nullable": true,
+                        "type": "string"
+                    }
+
+	"subscribeToAllType": {
+                        "$ref": "#/components/schemas/SubscriptionType"
+                    }
+
+

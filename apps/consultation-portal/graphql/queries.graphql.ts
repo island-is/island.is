@@ -44,7 +44,7 @@ export const SUB_GET_USERSUBS = gql`
   query SUB_GET_USERSUBS {
     consultationPortalUserSubscriptions {
       subscribedToAll
-      subscribedToAllNew
+      subscribedToAllType
       cases {
         id
         subscriptionType
