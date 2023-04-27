@@ -29,6 +29,7 @@ export const ClientContext = createContext<ClientContextType>({
     [ClientFormTypes.translations]: [],
     [ClientFormTypes.delegations]: [],
     [ClientFormTypes.advancedSettings]: [],
+    [ClientFormTypes.permissions]: [],
     [ClientFormTypes.none]: [],
   },
 })

@@ -14,6 +14,7 @@ import React, { useState } from 'react'
 import AddPermissions, {
   ShadowBox,
 } from '../forms/AddPermissions/AddPermissions'
+import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 
 type Permission = {
   id: string
@@ -52,38 +53,35 @@ const mockData: NonNullable<PermissionsProps['data']> = [
     api: 'Skatturinn',
     locked: true,
   },
-  // {
-  //   label: 'Staða og hreyfingar',
-  //   id: '@island.is/finance:overview',
-  //   description:
-  //     'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-  //   api: 'Island.is APIs',
-  //   locked: false,
-  // },
-  // {
-  //   label: 'Full Access',
-  //   id: '@island.is/auth/admin:full',
-  //   description:
-  //     'Full access to authorization admin something description here',
-  //   api: 'Island.is APIs',
-  //   locked: false,
-  // },
-  // {
-  //   label: 'Skattskýrslur',
-  //   id: '@skatturinn.is/skattskyrslur',
-  //   description:
-  //     'Full access to authorization admin something description here',
-  //   api: 'Skatturinn',
-  //   locked: true,
-  // },
+  {
+    label: 'Staða og hreyfingar',
+    id: '@island.is/finance:overview',
+    description:
+      'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
+    api: 'Island.is APIs',
+    locked: false,
+  },
+  {
+    label: 'Full Access',
+    id: '@island.is/auth/admin:full',
+    description:
+      'Full access to authorization admin something description here',
+    api: 'Island.is APIs',
+    locked: false,
+  },
+  {
+    label: 'Skattskýrslur',
+    id: '@skatturinn.is/skattskyrslur',
+    description:
+      'Full access to authorization admin something description here',
+    api: 'Skatturinn',
+    locked: true,
+  },
 ]
 
 function Permissions({ data = mockData }: PermissionsProps) {
   const { formatMessage } = useLocale()
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const handleRemove = (path: string) => {
-    console.log('Remove', path)
-  }
 
   const handleModalClose = () => {
     setIsModalVisible(false)
@@ -99,8 +97,7 @@ function Permissions({ data = mockData }: PermissionsProps) {
     <ContentCard
       title={formatMessage(m.permissions)}
       description={formatMessage(m.permissionsDescription)}
-
-      // intent={ClientFormTypes.permissions}
+      intent={ClientFormTypes.permissions}
     >
       <Box marginBottom={5}>
         <Button onClick={handleModalOpen}>
@@ -147,12 +144,13 @@ function Permissions({ data = mockData }: PermissionsProps) {
                     <DialogPrompt
                       baseId={`confirm-remove-${item.id}`}
                       title="Remove permission?"
-                      // description=""
+                      description="Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi."
                       ariaLabel="TODO"
                       onConfirm={() => console.log(`Removed: ${item.id}`)}
                       buttonTextConfirm={formatMessage(
                         m.permissionsButtonLabelRemove,
                       )}
+                      buttonPropsConfirm={{ colorScheme: 'destructive' }}
                       buttonTextCancel="Cancel"
                       disclosureElement={
                         <Button
@@ -163,7 +161,6 @@ function Permissions({ data = mockData }: PermissionsProps) {
                           variant="ghost"
                           iconType="outline"
                           size="small"
-                          onClick={() => handleRemove(item.id)}
                         />
                       }
                     />

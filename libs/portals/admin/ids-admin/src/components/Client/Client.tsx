@@ -94,6 +94,7 @@ const Client = () => {
             'slidingRefreshTokenLifetime',
             'customClaims',
           ],
+          [ClientFormTypes.permissions]: [],
           [ClientFormTypes.none]: [],
         },
       }}
