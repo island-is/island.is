@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -6,7 +7,12 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  YES,
+} from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
@@ -42,8 +48,39 @@ export const form: Form = buildForm({
               space: 'gutter',
             }),
             ...deceasedInfoFields,
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'approveSubmission',
+      title: m.divisionOfEstateTerms,
+      children: [
+        buildMultiField({
+          id: 'approveSubmission',
+          title: m.divisionOfEstateTerms,
+          description: m.divisionOfEstateTermsText,
+          children: [
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              space: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'readTerms',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: m.divisionOfEstateSubmissionCheckbox.defaultMessage,
+                },
+              ],
+            }),
             buildSubmitField({
-              id: 'divisionOfEstate.submit',
+              id: 'divisionOfEstateByHeirs.submit',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [

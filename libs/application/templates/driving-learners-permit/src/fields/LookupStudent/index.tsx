@@ -1,6 +1,6 @@
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
-import * as kennitala from 'kennitala'
+import { isPerson } from 'kennitala'
 import {
   AlertMessage,
   Box,
@@ -28,9 +28,9 @@ const prefix = 'studentMentorability'
 const fieldNames = {
   studentNationalId: `${prefix}.studentNationalId`,
   lookupError: `${prefix}.lookupError`,
-  studentMentorabilityError: `${prefix}.studentMentorabilityError`,
   studentName: `${prefix}.studentName`,
-  studentIsMentorable: `${prefix}.studentIsMentorable`,
+  studentMentorability: `${prefix}.studentMentorability`,
+  studentMentorabilityError: `${prefix}.studentMentorabilityError`,
 }
 
 export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
@@ -44,12 +44,11 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     Query,
     { input: IdentityInput }
   >(IDENTITY_QUERY, {
-    onError: (error: unknown) => {
+    onError: () => {
       setError(fieldNames.lookupError, {
         type: 'serverError',
         message: m.errorNationalIdNoName.defaultMessage,
       })
-      console.log('getIdentity error:', error)
     },
     onCompleted: (data) => {
       if (data.identity?.name) {
@@ -69,13 +68,12 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
     Query,
     { input: StudentCanGetPracticePermitInput }
   >(LOOKUP_STUDENT_QUERY, {
-    onError: (error: unknown) => {
+    onError: () => {
       setError(fieldNames.studentMentorabilityError, {
         type: 'serverError',
         message: m.errorNationalIdMentorableLookup.defaultMessage,
       })
-      setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
-      console.log('getStudentMentorabilityError:', error)
+      setValue(fieldNames.studentMentorability, 'isNotMentorable')
     },
     onCompleted: (data) => {
       if (data.drivingLicenseStudentCanGetPracticePermit) {
@@ -86,14 +84,12 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
         } = data.drivingLicenseStudentCanGetPracticePermit
         const eligible = isOk && errorCode === null
         setValue(
-          fieldNames.studentIsMentorable,
+          fieldNames.studentMentorability,
           eligible ? 'isMentorable' : 'isNotMentorable',
         )
       }
     },
   })
-
-  const studentIsMentorable = getValues(fieldNames.studentIsMentorable)
 
   // Clear inital errors on mount
   useEffect(() => {
@@ -103,46 +99,53 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
   const studentNationalId: string = watch(fieldNames.studentNationalId)
   const studentName: string = watch(fieldNames.studentName)
 
+  const studentMentorability = getValues(fieldNames.studentMentorability)
+
   useEffect(() => {
-    if (studentNationalId?.length === 10) {
-      const isValidSSN = kennitala.isPerson(studentNationalId)
-      if (isValidSSN) {
-        if (fakeData?.useFakeData === YES) {
-          if (
-            fakeData?.mentorableStudents
-              ?.split(',')
-              .map((v) => v.trim())
-              .includes(studentNationalId)
-          ) {
-            setValue(fieldNames.studentIsMentorable, 'isMentorable')
-            setValue(fieldNames.studentName, 'Æfinga Leyfisbur')
-          } else {
-            setValue(fieldNames.studentIsMentorable, 'isNotMentorable')
-            setValue(fieldNames.studentName, 'Óleyf Keyra Vagnsdóttir')
-          }
-        } else {
-          const identityInput = {
-            variables: {
-              input: {
-                nationalId: studentNationalId,
-              },
-            },
-          }
-          const studentLookupInput = {
-            variables: {
-              input: {
-                studentSSN: studentNationalId,
-              },
-            },
-          }
-          getIdentity(identityInput)
-          getStudentMentorability(studentLookupInput)
-          setValue(fieldNames.studentIsMentorable, 'loading')
+    if (isPerson(studentNationalId)) {
+      // If fakedata is enabled, construct eligibility based on provided nationalId
+      if (fakeData?.useFakeData === YES) {
+        const fakeEligible = fakeData?.mentorableStudents
+          ?.split(',')
+          .some((e) => e.trim() === studentNationalId)
+        let fakeMentorability = 'isNotMentorable'
+        let fakeName = 'Óleyf Keyra Vagnsdóttir'
+        if (fakeEligible) {
+          fakeMentorability = 'isMentorable'
+          fakeName = 'Æfinga Leyfisbur'
         }
-      } else if (studentName !== '') {
-        setValue(fieldNames.studentName, '')
+        setValue(fieldNames.studentMentorability, fakeMentorability)
+        setValue(fieldNames.studentName, fakeName)
+      } else {
+        // construct input for identity and driving license mentorability queries
+        // The identity input simply finds the name of the student but
+        // the driving license mentorability query also checks if the student is eligible
+        // for a learners permit. The learner permit mentorability is required
+        // in the dataschema, the name is simply used in the overview.
+        const identityInput = {
+          variables: {
+            input: {
+              nationalId: studentNationalId,
+            },
+          },
+        }
+        const studentLookupInput = {
+          variables: {
+            input: {
+              studentSSN: studentNationalId,
+            },
+          },
+        }
+
+        // Trigger queries and set loading state
+        // The queries are responsible for their related fields,
+        // see their respective useEffects
+        getIdentity(identityInput)
+        getStudentMentorability(studentLookupInput)
+        setValue(fieldNames.studentMentorability, 'loading')
       }
     } else if (studentName !== '') {
+      // clear student name if nationalId is not valid
       setValue(fieldNames.studentName, '')
     }
   }, [studentName, studentNationalId, getIdentity, setValue])
@@ -172,8 +175,8 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
         </GridColumn>
         <Box hidden={true}>
           <InputController
-            id={fieldNames.studentIsMentorable}
-            name={fieldNames.studentIsMentorable}
+            id={fieldNames.studentMentorability}
+            name={fieldNames.studentMentorability}
             readOnly
             defaultValue="default"
           />
@@ -182,9 +185,9 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
 
       <GridRow marginTop={5}>
         <GridColumn span="12/12">
-          {studentIsMentorable !== 'default' && (
+          {studentMentorability !== 'default' && (
             <ContentBlock>
-              {studentIsMentorable === 'loading' && (
+              {studentMentorability === 'loading' && (
                 <AlertMessage
                   type="info"
                   title={formatMessage(m.studentIsMentorableLoadingHeader)}
@@ -193,14 +196,14 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
                   )}
                 />
               )}
-              {studentIsMentorable === 'isMentorable' && (
+              {studentMentorability === 'isMentorable' && (
                 <AlertMessage
                   type="success"
                   title={formatMessage(m.studentIsMentorableHeader)}
                   message={formatMessage(m.studentIsMentorableDescription)}
                 />
               )}
-              {studentIsMentorable === 'isNotMentorable' && (
+              {studentMentorability === 'isNotMentorable' && (
                 <AlertMessage
                   type="error"
                   title={formatMessage(m.studentIsNotMentorableHeader)}
