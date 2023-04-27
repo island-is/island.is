@@ -141,7 +141,7 @@ export function someAreInsured(externalData: ExternalData): boolean {
 
     const ret = cardResponse.find((x) => x.isInsured === true)
 
-    if (ret !== null || ret !== undefined) {
+    if (ret) {
       return true
     }
   }
