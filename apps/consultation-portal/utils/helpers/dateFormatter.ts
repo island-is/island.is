@@ -23,7 +23,7 @@ export function getDateBeginDateEnd(begin: string | Date, end: string | Date) {
   const formatstring = `dd.${!sameMonth ? 'MM.' : ''}${!sameYear ? 'yyyy' : ''}`
   return `${removeZeroInDate(
     format(new Date(begin), formatstring),
-  )} - ${removeZeroInDate(format(new Date(end), 'dd.MM.yyyy'))} `
+  )}\u2014${removeZeroInDate(format(new Date(end), 'dd.MM.yyyy'))} `
 }
 
 export function getTimeLineDate(Case: Case) {
