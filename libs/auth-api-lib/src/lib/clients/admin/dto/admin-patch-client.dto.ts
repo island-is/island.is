@@ -157,7 +157,7 @@ export class AdminPatchClientDto {
   customClaims?: AdminClientClaimDto[]
 
   @ApiPropertyOptional({
-    description: 'Scopes to attach to client.',
+    description: 'Scopes to grant to client.',
   })
   @IsOptional()
   @IsArray()
