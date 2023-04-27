@@ -145,28 +145,49 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Viltu senda umsögn?"
-                >
-                  <Text>
-                    Öllum er frjálst að taka þátt í samráðinu.
-                    {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
-                  </Text>
-                </StackedTitleAndDescription>
-                <Box paddingTop={2}>
-                  {isAuthenticated ? (
-                    <Link href="#write-review" shallow>
-                      <Button fluid iconType="outline" nowrap as="a">
-                        Senda umsögn
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button fluid iconType="outline" nowrap onClick={LogIn}>
-                      Skrá mig inn
-                    </Button>
-                  )}
-                </Box>
+                {chosenCase.statusName === 'Til umsagnar' ? (
+                  <>
+                    <StackedTitleAndDescription
+                      headingColor="blue400"
+                      title="Viltu senda umsögn?"
+                    >
+                      <Text>
+                        Öllum er frjálst að taka þátt í samráðinu.
+                        {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
+                      </Text>
+                    </StackedTitleAndDescription>
+                    <Box paddingTop={2}>
+                      {isAuthenticated ? (
+                        <Link href="#write-review" shallow>
+                          <Button fluid iconType="outline" nowrap as="a">
+                            Senda umsögn
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Button fluid iconType="outline" nowrap onClick={LogIn}>
+                          Skrá mig inn
+                        </Button>
+                      )}
+                    </Box>
+                  </>
+                ) : chosenCase.statusName === 'Niðurstöður í vinnslu' ? (
+                  <StackedTitleAndDescription
+                    headingColor="blue400"
+                    title="Niðurstöður í vinnslu"
+                  >
+                    <Text>
+                      Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum
+                      og þær bárust.
+                    </Text>
+                  </StackedTitleAndDescription>
+                ) : (
+                  <StackedTitleAndDescription
+                    headingColor="blue400"
+                    title="Niðurstöður hafa verið birtar"
+                  >
+                    <Text>Niðurstöður hafa verið birtar.</Text>
+                  </StackedTitleAndDescription>
+                )}
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
