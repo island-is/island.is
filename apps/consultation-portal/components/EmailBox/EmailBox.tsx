@@ -27,7 +27,9 @@ export const EmailBox = () => {
     },
   )
   const router = useRouter()
-  const { email, emailVerified, getUserEmailLoading } = useFetchEmail()
+  const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
+    isAuthenticated: isAuthenticated,
+  })
   useEffect(() => {
     if (!getUserEmailLoading) {
       setUserEmail(email)
