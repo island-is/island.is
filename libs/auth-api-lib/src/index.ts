@@ -70,6 +70,7 @@ export * from './lib/resources/dto/identity-resources.dto'
 export * from './lib/resources/dto/domain.dto'
 export * from './lib/resources/dto/user-claim.dto'
 export * from './lib/resources/dto/tenant.dto'
+export * from './lib/resources/resource-translation.service'
 
 // Clients module
 export * from './lib/clients/clients.module'

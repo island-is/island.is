@@ -20,6 +20,6 @@ export class ScopePermissionsResolver {
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang: string,
   ) {
-    return domainLoader.load({ lang, domain: permissions.domainId })
+    return domainLoader.load({ lang, domain: permissions.domainName })
   }
 }

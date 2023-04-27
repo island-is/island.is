@@ -8,18 +8,19 @@ info:
     email: island@island.is
   version: v1
 paths:
-  /v1/me/consents:
+  /v1/actor/consents:
     get:
       tags:
         - Consents
-      operationId: Consents_Get
       responses:
         '200':
-          description: ''
+          description: 'Success'
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConsentsResponse'
+        '401':
+          description: 'Unauthorized'
 components:
   schemas:
     ConsentsResponse:
@@ -32,21 +33,18 @@ components:
     Consent:
       type: object
       properties:
-        ClientId:
+        clientId:
           type: string
-        ConsentedScopes:
+        consentedScopes:
           type: array
           items:
             type: string
-        RejectedScopes:
+        rejectedScopes:
           type: array
           items:
             type: string
-          required:
-            - 'ConsentedScopes'
-            - 'RejectedScopes'
   securitySchemes:
-    auth:
-      name: Authorization
-      type: apiKey
-      in: header
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -14,22 +14,9 @@ export class ConsentService {
   }
 
   async getConsent(user: User): Promise<ConsentsPaginated> {
-    const response = await this.consentsApiWithAuth(user).consentsGet()
+    const response = await this.consentsApiWithAuth(user).v1ActorConsentsGet()
 
     const consents = response.consents ?? []
-    // TODO: Get consents from IDS
-    // const data = [
-    //   {
-    //     clientId: '@reykjavik-web',
-    //     consentedScopes: ['scope1, scope2'],
-    //     rejectedScopes: ['scope3'],
-    //   },
-    //   {
-    //     clientId: '@hms.is/minarsidur',
-    //     consentedScopes: ['scope1, scope2'],
-    //     rejectedScopes: ['scope3'],
-    //   },
-    // ]
 
     return {
       totalCount: consents.length,
