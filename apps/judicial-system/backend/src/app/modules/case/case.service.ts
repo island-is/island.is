@@ -134,6 +134,10 @@ export interface UpdateCase
     | 'appealState'
     | 'appealReceivedByCourtDate'
     | 'appealCaseNumber'
+    | 'appealAssistantId'
+    | 'appealJudge1Id'
+    | 'appealJudge2Id'
+    | 'appealJudge3Id'
   > {
   type?: CaseType
   state?: CaseState
@@ -144,9 +148,6 @@ export interface UpdateCase
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
-  appealJudge1Id?: string | null
-  appealJudge2Id?: string | null
-  appealJudge3Id?: string | null
 }
 
 export const include: Includeable[] = [
