@@ -27,6 +27,9 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
+import { ClientsService } from '../clients.service'
+import { ClientAllowedScope } from '../models/client-allowed-scope.model'
+import { ApiScope } from '../../resources/models/api-scope.model'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -59,7 +62,10 @@ export class AdminClientsService {
     private clientClaimModel: typeof ClientClaim,
     @InjectModel(ClientGrantType)
     private readonly clientGrantType: typeof ClientGrantType,
+    @InjectModel(ApiScope)
+    private readonly apiScopeModel: typeof ApiScope,
     private readonly translationService: TranslationService,
+    private readonly clientsService: ClientsService,
     private sequelize: Sequelize,
   ) {}
 
@@ -171,6 +177,8 @@ export class AdminClientsService {
       postLogoutRedirectUris,
       supportTokenExchange,
       refreshTokenExpiration,
+      addedScopes,
+      removedScopes,
       ...clientAttributes
     } = input
 
@@ -194,6 +202,19 @@ export class AdminClientsService {
 
       if (displayName && displayName.length > 0) {
         await this.updateDisplayName(clientId, displayName, transaction)
+      }
+
+      if (
+        (addedScopes && addedScopes.length > 0) ||
+        (removedScopes && removedScopes.length > 0)
+      ) {
+        await this.updateClientAllowedScopes({
+          addedScopes,
+          removedScopes,
+          transaction,
+          clientId,
+          tenantId,
+        })
       }
 
       if (redirectUris && redirectUris.length > 0) {
@@ -361,6 +382,11 @@ export class AdminClientsService {
           type: claim.type,
           value: claim.value,
         })) ?? [],
+      allowedScopes:
+        client.allowedScopes?.map(({ scopeName, clientId }) => ({
+          scopeName,
+          clientId,
+        })) ?? [],
     }
   }
 
@@ -406,6 +432,7 @@ export class AdminClientsService {
       { model: ClientGrantType, as: 'allowedGrantTypes' },
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
+      { model: ClientAllowedScope, as: 'allowedScopes' },
     ]
   }
 
@@ -469,5 +496,79 @@ export class AdminClientsService {
         }
       }),
     )
+  }
+
+  /**
+   * Verifies that the scopes exist and are enabled for the tenant.
+   * @returns true if all scopes exist, are enabled and have the same tenant, false otherwise.
+   */
+  private async verifyScopeNames({
+    scopeNames,
+    tenantId,
+    transaction,
+  }: {
+    scopeNames: string[]
+    tenantId: string
+    transaction: Transaction
+  }): Promise<boolean> {
+    const scopes = await this.apiScopeModel.findAndCountAll({
+      where: {
+        name: {
+          [Op.in]: scopeNames,
+        },
+        enabled: true,
+        domainName: tenantId,
+      },
+      transaction,
+    })
+
+    return scopes.count === scopeNames.length
+  }
+
+  private async updateClientAllowedScopes({
+    addedScopes,
+    removedScopes,
+    clientId,
+    tenantId,
+    transaction,
+  }: {
+    addedScopes?: string[]
+    removedScopes?: string[]
+    clientId: string
+    tenantId: string
+    transaction: Transaction
+  }): Promise<void> {
+    const mergedScopes = [...(addedScopes ?? []), ...(removedScopes ?? [])]
+
+    if (mergedScopes.length > 0) {
+      const verifiedScopes = await this.verifyScopeNames({
+        scopeNames: mergedScopes,
+        tenantId,
+        transaction,
+      })
+
+      if (!verifiedScopes) {
+        throw new BadRequestException(
+          `One or more scopes (${mergedScopes
+            .map((scopeName) => scopeName)
+            .join(
+              ', ',
+            )}) do not exist, are not enabled or do not belong to tenant: ${tenantId}`,
+        )
+      }
+    }
+
+    if (removedScopes) {
+      await this.clientsService.removeAllowedScopes(removedScopes, clientId, {
+        transaction,
+      })
+    }
+
+    if (addedScopes) {
+      await this.clientsService.addAllowedScopes(addedScopes, clientId, {
+        transaction,
+        ignoreDuplicates: true,
+      })
+    }
   }
 }
