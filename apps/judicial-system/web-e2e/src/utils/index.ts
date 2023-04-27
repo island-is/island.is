@@ -23,7 +23,7 @@ export enum Operation {
   CurrentUserQuery = 'CurrentUserQuery',
   UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCaseMutation',
-  SendNotificationMutation = 'SendNotificationMutation',
+  SendNotificationMutation = 'SendNotification',
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
   CreateFileMutation = 'CreateFileMutation',
   UpdateDefendantMutation = 'UpdateDefendantMutation',
