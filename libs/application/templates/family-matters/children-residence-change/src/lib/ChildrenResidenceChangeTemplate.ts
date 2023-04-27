@@ -422,7 +422,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       return Roles.ParentB
     }
     if (id === InstitutionNationalIds.SYSLUMENN) {
-      // The nationalId added as claim in the Ids
       return Roles.Organization
     }
     return undefined
