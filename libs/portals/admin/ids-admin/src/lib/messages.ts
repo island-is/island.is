@@ -485,4 +485,12 @@ export const m = defineMessages({
     id: 'ap.ids-admin:choose-environment-to-copy-from',
     defaultMessage: 'Choose environment to copy settings from',
   },
+  publish: {
+    id: 'ap.ids-admin:publish',
+    defaultMessage: 'Publish',
+  },
+  errorPublishingEnvironment: {
+    id: 'ap.ids-admin:error-publishing-environment',
+    defaultMessage: 'Error publishing environment',
+  },
 })

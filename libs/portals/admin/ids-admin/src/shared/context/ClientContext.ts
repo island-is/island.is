@@ -13,11 +13,11 @@ export type ClientContextType = {
   availableEnvironments: AuthAdminEnvironment[] | null
   checkIfInSync: (variables: string[]) => boolean
   variablesToCheckSync?: { [key in ClientFormTypes]: string[] }
-  publishData?: {
-    toEnvironment: AuthAdminEnvironment | null
-    fromEnvironment: AuthAdminEnvironment | null
+  publishData: {
+    toEnvironment?: AuthAdminEnvironment | null
+    fromEnvironment?: AuthAdminEnvironment | null
   }
-  setPublishData?: Dispatch<SetStateAction<PublishData>>
+  setPublishData: Dispatch<SetStateAction<PublishData>>
 }
 export const ClientContext = createContext<ClientContextType>({
   client: {} as AuthClient,
@@ -36,5 +36,12 @@ export const ClientContext = createContext<ClientContextType>({
     [ClientFormTypes.delegations]: [],
     [ClientFormTypes.advancedSettings]: [],
     [ClientFormTypes.none]: [],
+  },
+  publishData: {
+    toEnvironment: null,
+    fromEnvironment: null,
+  },
+  setPublishData: () => {
+    return
   },
 })

@@ -25,17 +25,21 @@ export default function PublishEnvironment() {
   )
 
   const actionData = useActionData() as PublisEnvironmentResult
-
   const { isLoading, isSubmitting } = useSubmitting()
+
+  useEffect(() => {
+    if (actionData?.globalError && !isLoading && !isSubmitting)
+      toast.error(formatMessage(m.errorPublishingEnvironment))
+  }, [actionData?.globalError, isSubmitting, isLoading, formatMessage])
 
   useEffect(() => {
     if (actionData?.data) {
       toast.success(formatMessage(m.successfullySaved))
-      onCancel()
+      cancel()
     }
-  }, [actionData])
+  }, [actionData, formatMessage])
 
-  const onCancel = () => {
+  const cancel = () => {
     navigate(
       replaceParams({
         href: IDSAdminPaths.IDSAdminClient,
@@ -45,18 +49,16 @@ export default function PublishEnvironment() {
   }
 
   const onChange = (env: AuthAdminEnvironment) => {
-    if (setPublishData) {
-      setPublishData((prev) => ({
-        ...prev,
-        fromEnvironment: env,
-      }))
-    }
+    setPublishData?.((prev) => ({
+      ...prev,
+      fromEnvironment: env,
+    }))
   }
 
   // If there is no publishData, we should close the modal since we can't publish
   useEffect(() => {
     if (!publishData?.toEnvironment) {
-      onCancel()
+      cancel()
     }
   }, [publishData?.toEnvironment])
 
@@ -67,7 +69,7 @@ export default function PublishEnvironment() {
       title={formatMessage(m.publishEnvironment, {
         environment: publishData?.toEnvironment,
       })}
-      onClose={onCancel}
+      onClose={cancel}
     >
       <Form method="post">
         <Box paddingTop={3}>
@@ -84,24 +86,22 @@ export default function PublishEnvironment() {
             rowGap={3}
             paddingTop={3}
           >
-            {availableEnvironments?.map((env) => {
-              return (
-                <Box key={env} width={'full'}>
-                  <RadioButton
-                    backgroundColor="blue"
-                    label={env}
-                    id={`publish-environment-${env}`}
-                    large
-                    name="publish-environment"
-                    value={env}
-                    checked={publishData?.fromEnvironment === env}
-                    onChange={() => {
-                      onChange(env as AuthAdminEnvironment)
-                    }}
-                  />
-                </Box>
-              )
-            })}
+            {availableEnvironments?.map((env) => (
+              <Box key={env} width={'full'}>
+                <RadioButton
+                  backgroundColor="blue"
+                  label={env}
+                  id={`publish-environment-${env}`}
+                  large
+                  name="publish-environment"
+                  value={env}
+                  checked={publishData?.fromEnvironment === env}
+                  onChange={() => {
+                    onChange(env as AuthAdminEnvironment)
+                  }}
+                />
+              </Box>
+            ))}
           </Box>
           <input
             type="hidden"
@@ -119,11 +119,11 @@ export default function PublishEnvironment() {
             justifyContent="spaceBetween"
             paddingTop={7}
           >
-            <Button onClick={onCancel} variant="ghost">
-              Cancel
+            <Button onClick={cancel} variant="ghost">
+              {formatMessage(m.cancel)}
             </Button>
             <Button loading={isSubmitting || isLoading} type="submit">
-              Publish
+              {formatMessage(m.publish)}
             </Button>
           </Box>
         </Box>

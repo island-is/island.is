@@ -138,10 +138,8 @@ export class AdminClientsService {
       ...clientAttributes
     } = clientDto
 
-    let client: Client = {} as Client
-
-    await this.sequelize.transaction(async (transaction) => {
-      client = await this.clientModel.create(
+    const client = await this.sequelize.transaction(async (transaction) => {
+      const newClient = await this.clientModel.create(
         {
           clientId: clientDto.clientId,
           clientType: clientDto.clientType,
@@ -153,7 +151,7 @@ export class AdminClientsService {
         { transaction },
       )
 
-      const { clientId } = client
+      const { clientId } = newClient
 
       await this.updateConnectionsForClient(transaction, {
         clientId,
@@ -167,7 +165,9 @@ export class AdminClientsService {
       })
 
       // TODO: Add client type specific openid profile identity resources
-      await this.clientGrantType.create(this.defaultClientGrantTypes(client))
+      await this.clientGrantType.create(this.defaultClientGrantTypes(newClient))
+
+      return newClient
     })
 
     return this.findByTenantIdAndClientId(tenantId, client.clientId)
