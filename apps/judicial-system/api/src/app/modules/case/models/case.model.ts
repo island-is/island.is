@@ -340,4 +340,19 @@ export class Case implements TCase {
 
   @Field(() => CaseAppealRulingDecision, { nullable: true })
   readonly appealRulingDecision?: CaseAppealRulingDecision
+
+  @Field({ nullable: true })
+  readonly appealCaseNumber?: string
+
+  @Field(() => User, { nullable: true })
+  readonly appealAssistant?: User
+
+  @Field(() => User, { nullable: true })
+  readonly appealJudge1?: User
+
+  @Field(() => User, { nullable: true })
+  readonly appealJudge2?: User
+
+  @Field(() => User, { nullable: true })
+  readonly appealJudge3?: User
 }
