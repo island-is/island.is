@@ -190,36 +190,51 @@ export class LimitedAccessCaseService {
       )
     }
 
+    const messages: CaseMessage[] = []
+
     if (update.appealState === CaseAppealState.APPEALED) {
-      const messages: CaseMessage[] =
-        theCase.caseFiles
-          ?.filter(
-            (caseFile) =>
-              caseFile.state === CaseFileState.STORED_IN_RVG &&
-              caseFile.key &&
-              caseFile.category &&
-              [
-                CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-                CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-              ].includes(caseFile.category),
-          )
-          .map((caseFile) => ({
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            [
+              CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+              CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+            ].includes(caseFile.category),
+        )
+        .forEach((caseFile) => {
+          const message = {
             type: MessageType.DELIVER_CASE_FILE_TO_COURT,
             user,
             caseId: theCase.id,
             caseFileId: caseFile.id,
-          })) ?? []
+          }
+          messages.push(message)
+        })
+
       messages.push({
         type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
         user,
         caseId: theCase.id,
       })
-
-      await this.messageService.sendMessagesToQueue(messages)
     }
 
     // Return limited access case
-    return await this.findById(theCase.id)
+    const updatedCase = await this.findById(theCase.id)
+
+    if (updatedCase.defendantStatementDate !== theCase.defendantStatementDate) {
+      messages.push({
+        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    await this.messageService.sendMessagesToQueue(messages)
+
+    return updatedCase
   }
 
   findDefenderNationalId(theCase: Case, nationalId: string): User {

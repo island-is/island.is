@@ -209,7 +209,7 @@ export const Cases: React.FC = () => {
       if (isIndictmentCase(caseToOpen.type)) {
         routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
       } else if (isHighCourtUser) {
-        routeTo = constants.COURT_OF_APPEAL_OVERVIEW
+        routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
       } else {
         routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
       }

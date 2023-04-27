@@ -164,7 +164,7 @@ export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
 
 /* COURT OF APPEAL ROUTES START */
-export const COURT_OF_APPEAL_OVERVIEW = '/landsrettur/yfirlit'
+export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
 /* COURT OF APPEAL ROUTES END */
 
 export const prosecutorRestrictionCasesRoutes = [
@@ -221,7 +221,7 @@ export const courtIndictmentRoutes = [
   INDICTMENTS_COURT_RECORD_ROUTE,
 ]
 
-export const courtOfAppealRoutes = [COURT_OF_APPEAL_OVERVIEW]
+export const courtOfAppealRoutes = [COURT_OF_APPEAL_OVERVIEW_ROUTE]
 
 // Feedback
 export const FEEDBACK_FORM_URL =

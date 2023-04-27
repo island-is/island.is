@@ -480,6 +480,16 @@ describe('CaseController - Update', () => {
         )
       })
 
+      it('should queue messages', () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+            user,
+            caseId,
+          },
+        ])
+      })
+
       it('should return the updated case', () => {
         expect(then.result).toEqual(updatedCase)
       })

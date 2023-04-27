@@ -1,5 +1,6 @@
 import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { User } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../../factories'
@@ -27,15 +28,18 @@ describe('LimitedAccessCaseController - Update', () => {
   const updateDto = { defendantStatementDate: new Date() }
   const updatedCase = { ...theCase, defendantStatementDate: date } as Case
 
+  let mockMessageService: MessageService
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      messageService,
       caseModel,
       limitedAccessCaseController,
     } = await createTestingCaseModule()
 
+    mockMessageService = messageService
     mockCaseModel = caseModel
 
     const mockToday = nowFactory as jest.Mock
@@ -75,6 +79,16 @@ describe('LimitedAccessCaseController - Update', () => {
         { defendantStatementDate: date },
         { where: { id: caseId } },
       )
+    })
+
+    it('should queue messages', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+          user,
+          caseId,
+        },
+      ])
     })
 
     it('should return the updated case', () => {
