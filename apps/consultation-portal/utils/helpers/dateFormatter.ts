@@ -26,7 +26,11 @@ export function getDateBeginDateEnd(begin: string | Date, end: string | Date) {
   )}\u2014${removeZeroInDate(format(new Date(end), 'dd.MM.yyyy'))} `
 }
 
-export function getTimeLineDate(Case: Case) {
+interface Props {
+  Case: Case
+}
+
+export function getTimeLineDate({ Case }: Props) {
   switch (Case.statusName) {
     case 'Til umsagnar':
       return getDateBeginDateEnd(Case.processBegins, Case.processEnds)

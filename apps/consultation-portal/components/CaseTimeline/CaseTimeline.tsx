@@ -1,3 +1,5 @@
+import { Case } from '@island.is/consultation-portal/types/interfaces'
+import { getTimeLineDate } from '@island.is/consultation-portal/utils/helpers/dateFormatter'
 import {
   FormStepperV2,
   Text,
@@ -7,28 +9,27 @@ import {
 } from '@island.is/island-ui/core'
 
 interface CaseTimelineProps {
-  status: string
-  updatedDate: string
+  chosenCase: Case
 }
 
 const Sections = ['Til umsagnar', 'Niðurstöður í vinnslu', 'Niðurstöður birtar']
 
-export const CaseTimeline = ({ status, updatedDate }: CaseTimelineProps) => {
+export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
   const sectionItems = Sections.map((item, index) => (
     <Section
       key={index}
-      isActive={item === status}
+      isActive={item === chosenCase.statusName}
       section={item}
       theme={FormStepperThemes.PURPLE}
       sectionIndex={index}
-      subSections={
-        item === status && [
-          <Text variant="medium" key="sub1">
-            {updatedDate}
-          </Text>,
-        ]
+      subSections={[
+        <Text variant="medium" key="sub0">
+          {getTimeLineDate({ Case: chosenCase })}
+        </Text>,
+      ]}
+      isComplete={
+        Sections.indexOf(chosenCase.statusName) > Sections.indexOf(item)
       }
-      isComplete={Sections.indexOf(status) > Sections.indexOf(item)}
     />
   ))
 

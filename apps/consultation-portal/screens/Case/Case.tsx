@@ -75,10 +75,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           >
             <Stack space={2}>
               <Divider />
-              <CaseTimeline
-                status={chosenCase.statusName}
-                updatedDate={getTimeLineDate(chosenCase)}
-              />
+              <CaseTimeline chosenCase={chosenCase} />
               <Divider />
               <Box paddingLeft={1}>
                 <Text variant="h3" color="purple400">
@@ -174,10 +171,14 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"
-                  title="Aðilar sem hafa fengið boð um samráð á máli."
+                  title="Aðilar sem hafa fengið boð um þáttöku."
                 >
+                  <Text>
+                    Öllum er frjálst að taka þátt í samráðsgátt en eftirtöldum
+                    hefur verið boðið að senda inn umsögn:
+                  </Text>
                   {chosenCase?.stakeholders.length < 1 ? (
-                    <Text>Engir aðilar hafa fengið boð.</Text>
+                    <Text>Enginn listi skráður.</Text>
                   ) : (
                     <Inline justifyContent="spaceBetween" alignY="center">
                       <Text>
