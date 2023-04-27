@@ -21,7 +21,7 @@ export enum Operation {
   CaseQuery = 'CaseQuery',
   CaseListQuery = 'CaseListQuery',
   CurrentUserQuery = 'CurrentUserQuery',
-  UploadFileToCourtMutation = 'UploadFileToCourt',
+  UploadFileToCourtMutation = 'UploadFileToCourtMutation',
   UpdateCaseMutation = 'UpdateCase',
   SendNotificationMutation = 'SendNotification',
   CreatePresignedPostMutation = 'CreatePresignedPostMutation',
