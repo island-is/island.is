@@ -327,7 +327,7 @@ const autoSchemaFile = environment.production
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
-        AuthIdsApiClientConfig
+        AuthIdsApiClientConfig,
       ],
     }),
   ],
