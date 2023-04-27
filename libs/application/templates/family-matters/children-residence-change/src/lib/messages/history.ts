@@ -49,7 +49,7 @@ export const history = {
     },
     waitingForOrganizationTitle: {
       id: 'crc.application:history.actions.waitingForOrganizationTitle',
-      defaultMessage: 'Beðið eftir sýslumanni',
+      defaultMessage: 'Beðið eftir sýslumanni.',
       description: 'Application history waiting for organization title',
     },
   }),

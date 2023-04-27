@@ -8,6 +8,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
@@ -42,7 +43,6 @@ enum TemplateApiActions {
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
-const institutionID = 'xxxxxx-xxxx'
 
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -390,7 +390,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
       assignToOrganization: assign((context) => {
         const { application } = context
 
-        set(application, 'assignees', [institutionID])
+        set(application, 'assignees', [InstitutionNationalIds.SYSLUMENN])
 
         return context
       }),
@@ -421,7 +421,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     if (application.assignees.includes(id)) {
       return Roles.ParentB
     }
-    if (id === institutionID) {
+    if (id === InstitutionNationalIds.SYSLUMENN) {
       // The nationalId added as claim in the Ids
       return Roles.Organization
     }
