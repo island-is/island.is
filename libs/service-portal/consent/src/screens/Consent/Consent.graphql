@@ -30,15 +30,15 @@ query GetConsentList {
         }
         scopes {
           ... on AuthConsentScope {
-            ... AuthConsentScope
+            ...AuthConsentScope
           }
 
-          ...  on AuthConsentScopeGroup {
+          ... on AuthConsentScopeGroup {
             name
             displayName
             description
             children {
-              ... AuthConsentScope
+              ...AuthConsentScope
             }
           }
         }
