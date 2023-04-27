@@ -110,13 +110,15 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                       />
                     </>
                   )}
-                  <WriteReviewCard
-                    card={chosenCase}
-                    isLoggedIn={isAuthenticated}
-                    username={user?.name}
-                    caseId={chosenCase.id}
-                    refetchAdvices={refetchAdvices}
-                  />
+                  {chosenCase.statusName === 'Til umsagnar' && (
+                    <WriteReviewCard
+                      card={chosenCase}
+                      isLoggedIn={isAuthenticated}
+                      username={user?.name}
+                      caseId={chosenCase.id}
+                      refetchAdvices={refetchAdvices}
+                    />
+                  )}
                 </Stack>
               </Box>
             </Stack>
@@ -190,9 +192,13 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                 ) : (
                   <StackedTitleAndDescription
                     headingColor="blue400"
-                    title="Niðurstöður hafa verið birtar"
+                    title="Lokið"
                   >
-                    <Text>Niðurstöður hafa verið birtar.</Text>
+                    <Text>
+                      Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum
+                      og þær bárust. Niðurstöður samráðsins hafa verið birtar og
+                      málinu lokið.
+                    </Text>
                   </StackedTitleAndDescription>
                 )}
               </SimpleCardSkeleton>
