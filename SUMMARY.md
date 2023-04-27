@@ -175,6 +175,7 @@
   - [Auth](libs/clients/auth/README.md)
     - [Admin API](libs/clients/auth/admin-api/README.md)
     - [Delegation API](libs/clients/auth/delegation-api/README.md)
+    - [Clients Auth Ids API](libs/clients/auth/ids-api/README.md)
     - [Public API](libs/clients/auth/public-api/README.md)
   - [Ark](libs/clients/charge-fjs-v2/README.md)
   - [Consultation Portal Client](libs/clients/consultation-portal/README.md)
