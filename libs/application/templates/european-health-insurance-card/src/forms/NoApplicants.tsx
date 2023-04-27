@@ -12,7 +12,7 @@ import {
 
 export const NoApplicants: Form = buildForm({
   id: 'NoApplicants',
-  title: e.noApplicants.sectionTitle,
+  title: '',
   mode: FormModes.COMPLETED,
   children: [
     buildCheckboxField({
