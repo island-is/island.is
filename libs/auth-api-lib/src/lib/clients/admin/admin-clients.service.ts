@@ -14,7 +14,12 @@ import { NoContentException } from '@island.is/nest/problem'
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
-import { ClientType, GrantTypeEnum, RefreshTokenExpiration } from '../../types'
+import {
+  ClientType,
+  GrantTypeEnum,
+  RefreshTokenExpiration,
+  translateRefreshTokenExpiration,
+} from '../../types'
 import { Client } from '../models/client.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
@@ -160,10 +165,10 @@ export class AdminClientsService {
         customClaims,
         supportTokenExchange,
       })
-    })
 
-    // TODO: Add client type specific openid profile identity resources
-    await this.clientGrantType.create(this.defaultClientGrantTypes(client))
+      // TODO: Add client type specific openid profile identity resources
+      await this.clientGrantType.create(this.defaultClientGrantTypes(client))
+    })
 
     return this.findByTenantIdAndClientId(tenantId, client.clientId)
   }
@@ -284,7 +289,15 @@ export class AdminClientsService {
       clientId: string
       displayName?: TranslatedValueDto[]
       refreshTokenExpiration?: RefreshTokenExpiration
-      clientAttributes?: Partial<Client>
+      clientAttributes?: Omit<
+        AdminPatchClientDto,
+        | 'customClaims'
+        | 'displayName'
+        | 'redirectUris'
+        | 'postLogoutRedirectUris'
+        | 'supportTokenExchange'
+        | 'refreshTokenExpiration'
+      >
       redirectUris?: string[]
       postLogoutRedirectUris?: string[]
       customClaims?: AdminClientClaimDto[]
@@ -296,10 +309,9 @@ export class AdminClientsService {
       await this.clientModel.update(
         {
           ...data.clientAttributes,
-          refreshTokenExpiration:
-            data.refreshTokenExpiration === RefreshTokenExpiration.Sliding
-              ? 0
-              : 1,
+          refreshTokenExpiration: translateRefreshTokenExpiration(
+            data.refreshTokenExpiration,
+          ),
         },
         {
           where: {
