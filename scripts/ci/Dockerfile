@@ -132,7 +132,12 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update && apt-get install -y zip aws-cli && apt-get purge
+RUN apt-get update && apt-get install -y zip && apt-get purge
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+RUN unzip awscliv2.zip
+RUN ./aws/install
+RUN rm awscliv2.zip
 
 ARG APP_HOME
 ARG APP_DIST_HOME
