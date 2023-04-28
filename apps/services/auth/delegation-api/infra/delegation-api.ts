@@ -61,7 +61,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-delegation-api'> =
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '192Mi',
       },
     })
     .ingress({

@@ -138,6 +138,8 @@ export interface UpdateCase
     | 'appealJudge1Id'
     | 'appealJudge2Id'
     | 'appealJudge3Id'
+    | 'appealConclusion'
+    | 'appealRulingDecision'
   > {
   type?: CaseType
   state?: CaseState

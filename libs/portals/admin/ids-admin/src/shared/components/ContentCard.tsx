@@ -79,6 +79,7 @@ const ContentCard: FC<ContentCardProps> = ({
           originalFormData.current = new FormData(
             ref.current as HTMLFormElement,
           )
+          onChange()
           toast.success(formatMessage(m.successfullySaved))
         }
         if (actionData?.globalError) {
@@ -86,7 +87,7 @@ const ContentCard: FC<ContentCardProps> = ({
         }
       }
     }
-  }, [actionData, intent, formatMessage])
+  }, [actionData, intent])
 
   const {
     checkIfInSync,
