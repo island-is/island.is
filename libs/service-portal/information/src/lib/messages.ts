@@ -51,7 +51,7 @@ export const spmm = defineMessages({
     defaultMessage:
       'Íslendingur með lögheimili á Íslandi (t.d. námsmaður eða sendiráðsmaður); í hjúskap með útlendingi sem ekki er á skrá',
   },
-  maritalStatusMarried: {
+  maritalþStatusMarried: {
     id: 'sp.family:marital-status-married',
     defaultMessage: 'Gift/ur eða staðfest samvist',
   },

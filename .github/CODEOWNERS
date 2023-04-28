@@ -1,3 +1,5 @@
+const { preventExtensions } = require("core-js/core/object")
+
 # Add new projects here. Project folders are usually owned by the team assigned.
 
 # Order is important; the last matching pattern takes the most precedence.
@@ -211,6 +213,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                         @island-is/deloitte
 /libs/clients/vmst/                                                                                      @island-is/deloitte
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
+/libs/application/templates/old-age-pension                                                              @island-is/deloitte
 
 /apps/services/auth/ids-api/                                                                             @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                           @island-is/fuglar @island-is/aranja

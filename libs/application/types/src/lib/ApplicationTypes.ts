@@ -43,6 +43,7 @@ export enum ApplicationTypes {
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
+  OLD_AGE_PENSION ='OldAgePension',
 }
 
 export const ApplicationConfigurations = {
@@ -221,5 +222,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
     slug: 'endugreidsla-afengisutgjalda',
     translation: 'atr.application',
+  },
+  [ApplicationTypes.OLD_AGE_PENSION]: {
+    slug: 'ellilifeyrir',
+    translation: 'oap.application',
   },
 }

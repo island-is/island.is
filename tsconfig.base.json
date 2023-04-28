@@ -324,6 +324,9 @@
       "@island.is/application/templates/no-debt-certificate": [
         "libs/application/templates/no-debt-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/old-age-pension": [
+        "libs/application/templates/old-age-pension/src/index.ts"
+      ],
       "@island.is/application/templates/operating-license": [
         "libs/application/templates/operating-license/src/index.ts"
       ],
