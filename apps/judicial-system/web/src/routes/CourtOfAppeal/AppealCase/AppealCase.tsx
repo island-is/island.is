@@ -85,7 +85,7 @@ const AppealCase = () => {
     (assistant: Option) => assistant.value === workingCase.appealAssistant?.id,
   )
 
-  const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW}/${id}`
+  const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -137,7 +137,12 @@ const AppealCase = () => {
               const assistantUpdate = (so as AssistantSelectOption).assistant
 
               setAndSendCaseToServer(
-                [{ appealAssistantId: assistantUpdate.id }],
+                [
+                  {
+                    appealAssistantId: assistantUpdate.id ?? null,
+                    force: true,
+                  },
+                ],
                 workingCase,
                 setWorkingCase,
               )
@@ -166,7 +171,12 @@ const AppealCase = () => {
                       const judgeProperty = `appealJudge${index + 1}Id`
 
                       setAndSendCaseToServer(
-                        [{ [judgeProperty]: judgeUpdate.id }],
+                        [
+                          {
+                            [judgeProperty]: judgeUpdate.id ?? null,
+                            force: true,
+                          },
+                        ],
                         workingCase,
                         setWorkingCase,
                       )
