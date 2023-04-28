@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { MessageDescriptor, useIntl } from 'react-intl'
 
 import {
   FormContentContainer,
@@ -92,9 +92,16 @@ const CourtOfAppealRuling: React.FC = () => {
           </Text>
         </Box>
         <Box marginBottom={5}>
-          <Text as="h3" variant="h3" marginBottom={3}>
-            {formatMessage(strings.decision)}
-          </Text>
+          <Box marginBottom={3} display="flex">
+            <Text as="h3" variant="h3">
+              {formatMessage(strings.decision)}
+            </Text>
+            <Box marginLeft="smallGutter">
+              <Text as="span" variant="h3" color="red400">
+                *
+              </Text>
+            </Box>
+          </Box>
           <Box background="blue100" padding={3}>
             <Box marginBottom={2}>
               <RadioButton
@@ -206,9 +213,17 @@ const CourtOfAppealRuling: React.FC = () => {
           />
         </Box>
         <Box marginBottom={10}>
-          <Text as="h3" variant="h3" marginBottom={3}>
-            {formatMessage(strings.courtConclusionHeading)}
-          </Text>
+          <Box marginBottom={3} display="flex">
+            <Text as="h3" variant="h3">
+              {formatMessage(strings.courtConclusionHeading)}
+            </Text>
+            <Box marginLeft="smallGutter">
+              <Text as="span" variant="h3" color="red400">
+                *
+              </Text>
+            </Box>
+          </Box>
+
           <InputFileUpload
             fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.APPEAL_RULING,
