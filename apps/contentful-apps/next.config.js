@@ -10,13 +10,6 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: false,
   },
-  env: {
-    MIDEIND_TRANSLATION_API_KEY: process.env.MIDEIND_TRANSLATION_API_KEY,
-    CONTENTFUL_ENVIRONMENT: process.env.CONTENTFUL_ENVIRONMENT,
-    CONTENTFUL_SPACE: process.env.CONTENTFUL_SPACE,
-    MIDEIND_TRANSLATION_API_BASE_URL:
-      process.env.MIDEIND_TRANSLATION_API_BASE_URL,
-  },
 }
 
 module.exports = withNx(nextConfig)

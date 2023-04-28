@@ -87,6 +87,13 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'subpoenaType',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
+  'appealCaseNumber',
+  'appealAssistantId',
+  'appealJudge1Id',
+  'appealJudge2Id',
+  'appealJudge3Id',
+  'appealConclusion',
+  'appealRulingDecision',
 ]
 
 const staffFields: (keyof UpdateCaseDto)[] = [

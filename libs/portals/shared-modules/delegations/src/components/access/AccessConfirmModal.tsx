@@ -42,7 +42,7 @@ export const AccessConfirmModal = ({
   const [error, setError] = useState(formError ?? false)
 
   const { showShadow, pxProps } = useDynamicShadow({
-    rootMargin: '-128px',
+    rootMargin: md ? '-128px' : '-104px',
     isDisabled: !rest.isVisible,
   })
 
@@ -126,7 +126,7 @@ export const AccessConfirmModal = ({
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md && showShadow}
+          showShadow={showShadow}
           onCancel={onClose}
           onConfirm={onConfirmHandler}
           confirmLabel={formatMessage(coreMessages.codeConfirmation)}

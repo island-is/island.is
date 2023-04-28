@@ -444,4 +444,53 @@ export const m = defineMessages({
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
   },
+  successfullySaved: {
+    id: 'ap.ids-admin:successfully-saved',
+    defaultMessage: 'Successfully saved',
+  },
+  globalErrorMessage: {
+    id: 'ap.ids-admin:global-error-message',
+    defaultMessage: 'An error occurred',
+  },
+  syncSettings: {
+    id: 'ap.ids-admin:sync-settings',
+    defaultMessage: 'Sync settings (from this environment)',
+  },
+  inSyncAcrossAllEnvironments: {
+    id: 'ap.ids-admin:in-sync-across-all-environments',
+    defaultMessage: 'Settings are the same in all environments.',
+  },
+  notInSyncAcrossAllEnvironments: {
+    id: 'ap.ids-admin:not-in-sync-across-all-environments',
+    defaultMessage: 'SyncSettings are different in some environments',
+  },
+  inSync: {
+    id: 'ap.ids-admin:in-sync',
+    defaultMessage: 'In sync',
+  },
+  outOfSync: {
+    id: 'ap.ids-admin:out-of-sync',
+    defaultMessage: 'Out of sync',
+  },
+  publishEnvironment: {
+    id: 'ap.ids-admin:publish-environment',
+    defaultMessage: 'Publish to {environment}',
+  },
+  publishEnvironmentDescription: {
+    id: 'ap.ids-admin:publish-environment-description',
+    defaultMessage:
+      'The application will inherit settings from the selected environment excluding URLs and client secrets.',
+  },
+  chooseEnvironmentToCopyFrom: {
+    id: 'ap.ids-admin:choose-environment-to-copy-from',
+    defaultMessage: 'Choose environment to copy settings from',
+  },
+  publish: {
+    id: 'ap.ids-admin:publish',
+    defaultMessage: 'Publish',
+  },
+  errorPublishingEnvironment: {
+    id: 'ap.ids-admin:error-publishing-environment',
+    defaultMessage: 'Error publishing environment',
+  },
 })
