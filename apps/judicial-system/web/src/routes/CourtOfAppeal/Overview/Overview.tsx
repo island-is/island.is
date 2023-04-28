@@ -1,8 +1,6 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import isValid from 'date-fns/isValid'
-import addDays from 'date-fns/addDays'
 
 import {
   CaseDates,
