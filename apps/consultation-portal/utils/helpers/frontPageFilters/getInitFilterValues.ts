@@ -63,9 +63,29 @@ export const getInitFilterValues = ({ types }: Props) => {
     to: new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()),
   }
 
+  const typesOrder = [
+    'Áform um lagasetningu',
+    'Drög að frumvarpi til laga',
+    'Drög að reglugerð',
+    'Drög að stefnu',
+    'Stöðumat og valkostir',
+    'Annað',
+  ]
+
+  const sortByObject = typesOrder.reduce((obj, item, index) => {
+    return {
+      ...obj,
+      [item]: index,
+    }
+  }, {})
+
+  const sortedTypes = caseTypes.sort(
+    (a, b) => sortByObject[a.label] - sortByObject[b.label],
+  )
+
   const filters = {
     caseStatuses: caseStatuses,
-    caseTypes: caseTypes,
+    caseTypes: sortedTypes,
     Institutions: Institutions,
     allInstitutions: allInstitutions,
     PolicyAreas: PolicyAreas,
