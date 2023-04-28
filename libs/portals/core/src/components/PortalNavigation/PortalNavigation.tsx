@@ -53,7 +53,7 @@ export function PortalNavigation({
         nav.children?.map((child) => ({
           href: child.path,
           title: formatMessage(child.name),
-          active: child.active,
+          active: child.active || child.children?.some((item) => item.active),
           items: child.children?.map((grandChild) => ({
             href: grandChild.path,
             title: formatMessage(grandChild.name),
