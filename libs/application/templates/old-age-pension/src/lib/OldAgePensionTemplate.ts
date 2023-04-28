@@ -17,7 +17,6 @@ import { pruneAfterDays } from '@island.is/application/core'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage } from './messages'
-import { MaritalStatus } from '@island.is/api/schema'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
