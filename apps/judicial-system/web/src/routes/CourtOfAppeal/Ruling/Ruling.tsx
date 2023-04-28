@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -8,10 +8,26 @@ import {
   PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  InputFileUpload,
+  RadioButton,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
-import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
+
+import {
+  CaseAppealRulingDecision,
+  CaseFileCategory,
+} from '@island.is/judicial-system/types'
+import {
+  TUploadFile,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 const CourtOfAppealRuling: React.FC = () => {
   const {
@@ -22,10 +38,33 @@ const CourtOfAppealRuling: React.FC = () => {
   } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
 
   const [checkedRadio, setCheckedRadio] = useState<CaseAppealRulingDecision>(
     CaseAppealRulingDecision.ACCEPTING,
   )
+
+  const {
+    handleChange,
+    handleRemove,
+    handleRetry,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
+
+  const handleUIUpdate = useCallback(
+    (displayFile: TUploadFile, newId?: string) => {
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
+    },
+    [generateSingleFileUpdate],
+  )
+
+  const removeFileCB = useCallback((file: UploadFile) => {
+    setDisplayFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+  }, [])
 
   return (
     <PageLayout
@@ -164,6 +203,32 @@ const CourtOfAppealRuling: React.FC = () => {
             rows={7}
             required
             autoExpand={{ on: true, maxHeight: 300 }}
+          />
+        </Box>
+        <Box marginBottom={10}>
+          <Text as="h3" variant="h3" marginBottom={3}>
+            {formatMessage(strings.courtConclusionHeading)}
+          </Text>
+          <InputFileUpload
+            fileList={displayFiles.filter(
+              (file) => file.category === CaseFileCategory.APPEAL_RULING,
+            )}
+            accept="application/pdf"
+            header={formatMessage(strings.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
+            buttonLabel={formatMessage(strings.uploadButtonText)}
+            onChange={(files) => {
+              handleChange(
+                files,
+                CaseFileCategory.APPEAL_RULING,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
+            }}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
       </FormContentContainer>
