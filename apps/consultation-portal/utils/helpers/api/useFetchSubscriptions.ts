@@ -19,7 +19,6 @@ export const useFetchSubscriptions = ({ isAuthenticated }: Props) => {
   const { consultationPortalUserSubscriptions: userSubscriptions = [] } =
     data ?? {}
 
-
   const {
     cases = [],
     institutions = [],

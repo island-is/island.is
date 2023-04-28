@@ -19,7 +19,7 @@ export const usePostSubscription = () => {
 
   return {
     postSubsMutation,
-    postLoading
+    postLoading,
   }
 }
 
