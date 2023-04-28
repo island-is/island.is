@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import isValid from 'date-fns/isValid'
@@ -66,6 +66,9 @@ const CourtOfAppealOverview: React.FC = () => {
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
       ].includes(caseFile.category),
   )
+
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}/${workingCase.id}`)
 
   return (
     <>
@@ -236,7 +239,9 @@ const CourtOfAppealOverview: React.FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={constants.CASES_ROUTE}
-            onNextButtonClick={() => console.log('23')}
+            onNextButtonClick={() =>
+              handleNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
+            }
             nextButtonIcon="arrowForward"
           />
         </FormContentContainer>
