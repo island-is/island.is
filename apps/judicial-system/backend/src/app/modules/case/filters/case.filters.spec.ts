@@ -3,6 +3,7 @@ import each from 'jest-each'
 
 import {
   CaseAppealDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
@@ -1221,27 +1222,28 @@ describe('isCaseBlockedFromUser', () => {
     expect(isReadBlocked).toBe(false)
   })
 
-  describe.each([...restrictionCases, ...investigationCases, indictmentCases])(
-    'given %s case',
-    (type) => {
-      it.each(Object.values(CaseState))(
-        'should block admin from reading or writing %s state',
-        (state) => {
-          // Arrange
-          const theCase = { type, state } as Case
-          const user = { role: UserRole.ADMIN } as User
+  describe.each([
+    ...restrictionCases,
+    ...investigationCases,
+    ...indictmentCases,
+  ])('given %s case', (type) => {
+    it.each(Object.values(CaseState))(
+      'should block admin from reading or writing %s state',
+      (state) => {
+        // Arrange
+        const theCase = { type, state } as Case
+        const user = { role: UserRole.ADMIN } as User
 
-          // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        // Act
+        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
+        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
 
-          // Assert
-          expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(true)
-        },
-      )
-    },
-  )
+        // Assert
+        expect(isWriteBlocked).toBe(true)
+        expect(isReadBlocked).toBe(true)
+      },
+    )
+  })
 })
 
 describe('getCasesQueryFilter', () => {
@@ -1322,7 +1324,7 @@ describe('getCasesQueryFilter', () => {
     })
   })
 
-  describe.each(courtRoles)('given $role role', (role) => {
+  describe.each(courtRoles)('given %s role', (role) => {
     it(`should get ${role} filter`, () => {
       // Arrange
       const user = {
@@ -1379,18 +1381,13 @@ describe('getCasesQueryFilter', () => {
             },
           },
           {
-            [Op.or]: [
-              { accused_appeal_decision: CaseAppealDecision.APPEAL },
-              { prosecutor_appeal_decision: CaseAppealDecision.APPEAL },
-              { accused_postponed_appeal_date: { [Op.not]: null } },
-              { prosecutor_postponed_appeal_date: { [Op.not]: null } },
+            appeal_state: [
+              CaseAppealState.APPEALED,
+              CaseAppealState.RECEIVED,
+              CaseAppealState.COMPLETED,
             ],
           },
-          {
-            [Op.not]: {
-              [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
-            },
-          },
+          { type: [...restrictionCases, ...investigationCases] },
         ],
       })
     })
