@@ -103,6 +103,7 @@
     "application-templates-marriage-conditions": "libs/application/templates/marriage-conditions",
     "application-templates-mortgage-certificate": "libs/application/templates/mortgage-certificate",
     "application-templates-no-debt-certificate": "libs/application/templates/no-debt-certificate",
+    "application-templates-old-age-pension": "libs/application/templates/old-age-pension",
     "application-templates-operating-license": "libs/application/templates/operating-license",
     "application-templates-p-sign": "libs/application/templates/p-sign",
     "application-templates-parental-leave": "libs/application/templates/parental-leave",
