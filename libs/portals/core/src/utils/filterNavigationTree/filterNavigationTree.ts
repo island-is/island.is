@@ -77,7 +77,7 @@ export const filterNavigationTree = ({
         ? !!matchPath(item.path, currentLocationPath)
         : currentLocationPath.startsWith(item.path)
     } else if (!item.path && item?.children) {
-      // Set item active if one of its children is active and the item has no path.
+      // Set item active if one of it's children is active and the item has no path.
       item.active = item.children.some(({ active }) => active)
     }
   }
