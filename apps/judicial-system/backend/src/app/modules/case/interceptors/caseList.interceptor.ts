@@ -43,6 +43,7 @@ export class CaseListInterceptor implements NestInterceptor {
             registrar: theCase.registrar,
             creatingProsecutor: theCase.creatingProsecutor,
             parentCaseId: theCase.parentCaseId,
+            appealState: theCase.appealState,
           }
         })
       }),
