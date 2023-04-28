@@ -285,6 +285,36 @@ export function isCaseBlockedFromUser(
   )
 }
 
+function getProsecutionCasesQueryFilter(role: UserRole): WhereOptions {
+  const options: WhereOptions = [
+    { isArchived: false },
+    { [Op.not]: { state: [CaseState.DELETED] } },
+    {
+      [Op.or]: [
+        { creating_prosecutor_id: { [Op.is]: null } },
+        { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
+        { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
+      ],
+    },
+    {
+      [Op.or]: [
+        { is_heightened_security_level: { [Op.is]: null } },
+        { is_heightened_security_level: false },
+        { creating_prosecutor_id: 'Prosecutor Id' },
+        { prosecutor_id: 'Prosecutor Id' },
+      ],
+    },
+  ]
+
+  if (role === UserRole.REPRESENTATIVE) {
+    options.push({ type: indictmentCases })
+  }
+
+  return {
+    [Op.and]: options,
+  }
+}
+
 function getStaffCasesQueryFilter(
   institutionType?: InstitutionType,
 ): WhereOptions {
@@ -318,7 +348,10 @@ function getStaffCasesQueryFilter(
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
-  if (user.role === UserRole.STAFF) {
+  // TODO: Convert to switch
+  if (isProsecutionRole(user.role)) {
+    return getProsecutionCasesQueryFilter(user.role)
+  } else if (user.role === UserRole.STAFF) {
     return getStaffCasesQueryFilter(user.institution?.type)
   }
 
