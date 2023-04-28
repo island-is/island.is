@@ -13,7 +13,6 @@ docker buildx build \
   --platform=linux/amd64 \
   --cache-to=type=local,dest="$PROJECT_ROOT"/cache \
   -f "${DIR}"/Dockerfile \
-  --progress=plain \
   --target=deps \
   "$PROJECT_ROOT"
 
@@ -22,6 +21,5 @@ docker buildx build \
   --cache-from=type=local,src="$PROJECT_ROOT"/cache \
   --cache-to=type=local,dest="$PROJECT_ROOT"/cache_output \
   -f "${DIR}"/Dockerfile \
-  --progress=plain \
   --target=output-base \
   "$PROJECT_ROOT"
