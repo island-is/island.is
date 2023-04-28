@@ -177,60 +177,6 @@ export const Cases: React.FC = () => {
     })
   }
 
-  const openCase = (caseToOpen: Case, role: UserRole) => {
-    let routeTo = null
-    const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
-
-    if (
-      caseToOpen.state === CaseState.ACCEPTED ||
-      caseToOpen.state === CaseState.REJECTED ||
-      caseToOpen.state === CaseState.DISMISSED
-    ) {
-      if (isIndictmentCase(caseToOpen.type)) {
-        routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      } else if (isHighCourtUser) {
-        routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
-      } else {
-        routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
-      }
-    } else if (isExtendedCourtRole(role)) {
-      if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.courtRestrictionCasesRoutes,
-          caseToOpen,
-        )
-      } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.courtInvestigationCasesRoutes,
-          caseToOpen,
-        )
-      } else {
-        // Route to Indictment Overview section since it always a valid step and
-        // would be skipped if we route to the last valid step
-        routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
-      }
-    } else {
-      if (isRestrictionCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorRestrictionCasesRoutes,
-          caseToOpen,
-        )
-      } else if (isInvestigationCase(caseToOpen.type)) {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorInvestigationCasesRoutes,
-          caseToOpen,
-        )
-      } else {
-        routeTo = findFirstInvalidStep(
-          constants.prosecutorIndictmentRoutes(isTrafficViolation),
-          caseToOpen,
-        )
-      }
-    }
-
-    if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
-  }
-
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
