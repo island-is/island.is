@@ -28,8 +28,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
     name: id,
   })
 
-  console.log(fields)
-
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
     estate: EstateRegistrant
