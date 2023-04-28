@@ -190,7 +190,8 @@
                   "lib:js",
                   "lib:client",
                   "lib:application-system",
-                  "lib:portals"
+                  "lib:portals",
+                  "lib:portals-mypages"
                 ]
               }
             ]
