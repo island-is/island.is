@@ -394,6 +394,8 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'appealState'
     | 'appealCaseNumber'
+    | 'appealConclusion'
+    | 'appealRulingDecision'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
