@@ -2,6 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   CaseAppealDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
@@ -91,4 +92,7 @@ export class CaseListEntry {
 
   @ApiPropertyOptional()
   parentCaseId?: string
+
+  @ApiPropertyOptional()
+  appealState?: CaseAppealState
 }
