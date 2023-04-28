@@ -10,6 +10,9 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 ADD infra/package.json infra/yarn.lock /app/infra/
 COPY .yarn/ ./.yarn
 WORKDIR /app/infra
+RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' `aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
 RUN yarn install --immutable
 
 ADD infra/ /app/infra/
