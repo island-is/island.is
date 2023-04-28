@@ -98,6 +98,8 @@ import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 
 const { cacheTime } = environment
 
+// TODO: remove this comment since this was added in the hopes of a feature deployment deploying the api project
+
 const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 
 @Resolver()
