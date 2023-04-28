@@ -68,17 +68,26 @@ export const filterNavigationTree = ({
   // Hides item from navigation
 
   item.navHide = routeItem?.navHide || !!item.navHide
+
   if (currentLocationPath) {
+    const hasActiveChildren = !!item?.children?.some(({ active }) => active)
+
     if (item.path) {
       // Set item active if
+      // - the item has active children
       // - the item path is an exact match
       // - the item path is a prefix of the current location path
-      item.active = item.activeIfExact
-        ? !!matchPath(item.path, currentLocationPath)
-        : currentLocationPath.startsWith(item.path)
+
+      if (hasActiveChildren) {
+        item.active = hasActiveChildren
+      } else {
+        item.active = item.activeIfExact
+          ? !!matchPath(item.path, currentLocationPath)
+          : currentLocationPath.startsWith(item.path)
+      }
     } else if (!item.path && item?.children) {
-      // Set item active if one of it's children is active and the item has no path.
-      item.active = item.children.some(({ active }) => active)
+      // Set item active if one of its children is active and the item has no path.
+      item.active = hasActiveChildren
     }
   }
 
