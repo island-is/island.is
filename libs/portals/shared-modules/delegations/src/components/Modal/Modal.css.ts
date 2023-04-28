@@ -21,6 +21,8 @@ export const modal = style({
 })
 
 export const modalInner = style({
+  maxHeight: '100vh',
+
   ...themeUtils.responsiveStyle({
     md: {
       maxHeight: `calc(100vh - ${2 * theme.spacing['6']}px)`,
