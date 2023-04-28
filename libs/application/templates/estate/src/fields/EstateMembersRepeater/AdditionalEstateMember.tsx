@@ -14,10 +14,9 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from '../styles.css'
 import { useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
-import * as kennitala from 'kennitala'
+import * as nationalId from 'kennitala'
 import { m } from '../../lib/messages'
 import { YES } from '../../lib/constants'
 import { IDENTITY_QUERY } from '../../graphql'
@@ -49,8 +48,9 @@ export const AdditionalEstateMember = ({
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
   const initialField = `${fieldIndex}.initial`
-  const dummyField = `${fieldIndex}.dummy`
   const enabledField = `${fieldIndex}.enabled`
+  const phoneField = `${fieldIndex}.phone`
+  const emailField = `${fieldIndex}.email`
   const nationalIdInput = useWatch({ name: nationalIdField, defaultValue: '' })
   const name = useWatch({ name: nameField, defaultValue: '' })
 
@@ -72,7 +72,7 @@ export const AdditionalEstateMember = ({
   })
 
   useEffect(() => {
-    if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
+    if (nationalIdInput.length === 10 && nationalId.isValid(nationalIdInput)) {
       getIdentity({
         variables: {
           input: {
@@ -99,28 +99,24 @@ export const AdditionalEstateMember = ({
         render={() => <input type="hidden" />}
       />
       <Controller
-        name={dummyField}
-        control={control}
-        defaultValue={field.dummy || false}
-        render={() => <input type="hidden" />}
-      />
-      <Controller
         name={enabledField}
         control={control}
         defaultValue={field.enabled || false}
         render={() => <input type="hidden" />}
       />
-      <Text variant="h4">{formatMessage(m.estateMember)}</Text>
-      <Box position="absolute" className={styles.removeFieldButton}>
-        <Button
-          variant="ghost"
-          size="small"
-          circle
-          icon="remove"
-          onClick={() => {
-            remove(index)
-          }}
-        />
+      <Box display={'flex'} justifyContent="spaceBetween">
+        <Text variant="h4">{formatMessage(m.estateMember)}</Text>
+        <Box>
+          <Button
+            variant="text"
+            size="small"
+            onClick={() => {
+              remove(index)
+            }}
+          >
+            {'Eyða'}
+          </Button>
+        </Box>
       </Box>
       <GridRow>
         {foreignCitizenship?.length ? (
@@ -196,6 +192,24 @@ export const AdditionalEstateMember = ({
             defaultValue={field.relation}
             options={relationOptions}
             error={error?.relation ?? undefined}
+            backgroundColor="blue"
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <InputController
+            id={phoneField}
+            name={phoneField}
+            label={m.phone.defaultMessage}
+            defaultValue={field.phone}
+            backgroundColor="blue"
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <InputController
+            id={emailField}
+            name={emailField}
+            label={m.email.defaultMessage}
+            defaultValue={field.email}
             backgroundColor="blue"
           />
         </GridColumn>

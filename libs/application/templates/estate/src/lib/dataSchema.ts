@@ -26,7 +26,6 @@ const asset = z
     marketValue: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    dummy: z.boolean().optional(),
     share: z.number().optional(),
   })
   .refine(
@@ -74,7 +73,6 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().min(1).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        dummy: z.boolean().optional(),
       })
       .array()
       .optional(),
