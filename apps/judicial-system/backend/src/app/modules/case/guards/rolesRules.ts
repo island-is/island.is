@@ -92,6 +92,8 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'appealJudge1Id',
   'appealJudge2Id',
   'appealJudge3Id',
+  'appealConclusion',
+  'appealRulingDecision',
 ]
 
 const staffFields: (keyof UpdateCaseDto)[] = [

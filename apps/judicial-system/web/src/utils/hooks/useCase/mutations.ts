@@ -263,6 +263,8 @@ export const UpdateCaseMutation = gql`
         id
         name
       }
+      appealConclusion
+      appealRulingDecision
     }
   }
 `

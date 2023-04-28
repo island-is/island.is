@@ -16,6 +16,7 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
   SessionArrangements,
   CourtDocument,
   SubpoenaType,
@@ -368,6 +369,16 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly requestDriversLicenseSuspension?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealConclusion?: string
+
+  @IsOptional()
+  @IsEnum(CaseAppealRulingDecision)
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 
   @IsOptional()
   @IsString()
