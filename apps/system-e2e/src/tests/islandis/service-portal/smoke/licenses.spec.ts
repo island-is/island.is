@@ -1,6 +1,8 @@
 import { test, BrowserContext, expect } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { label } from '../../../../support/i18n'
+import { m } from '@island.is/service-portal/licenses/messages'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -30,8 +32,8 @@ test.describe('Licenses', () => {
       await page.goto('/minarsidur/skirteini')
 
       // Assert
-      const headline = page.locator('h1')
-      await expect(headline).toContainText('Skírteinin þín')
+      const headline = page.getByRole('heading', { name: label(m.title) })
+      await expect(headline).toBeVisible()
     })
   })
 
@@ -41,9 +43,11 @@ test.describe('Licenses', () => {
     await page.waitForLoadState('networkidle')
 
     // Act
-    const passportLink = page.locator('a:right-of(:text("Vegabréf"))').first()
+    const passportLink = page
+      .locator('data-testid=passport-card')
+      .getByRole('link', { name: label(m.seeDetails) })
     await passportLink.click()
-    const title1 = page.getByText('Nafn einstaklings')
+    const title1 = page.getByText(label(m.passportName))
 
     // Assert
     await expect(page).toHaveURL(
@@ -59,15 +63,15 @@ test.describe('Licenses', () => {
 
     // Act
     const tabButton = page.getByRole('tab', {
-      name: 'Skírteini barna þinna',
+      name: label(m.licenseTabSecondary),
     })
     await tabButton.click()
 
     const childPassportLink = page
-      .locator('role=button[name="Skoða upplýsingar"]')
+      .locator(`role=button[name="${label(m.seeDetails)}"]`)
       .last()
     await childPassportLink.click()
-    const title1 = page.getByText('Nafn einstaklings')
+    const title1 = page.getByText(label(m.passportName))
 
     // Assert
     await expect(page).toHaveURL(

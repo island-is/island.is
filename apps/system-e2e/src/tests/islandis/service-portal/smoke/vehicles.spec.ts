@@ -1,6 +1,9 @@
 import { test, BrowserContext, expect } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { label } from '../../../../support/i18n'
+import { messages } from '@island.is/service-portal/vehicles/messages'
+import { m } from '@island.is/service-portal/core/messages'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -31,17 +34,19 @@ test.describe('Vehicles', () => {
 
       // Act
       const ownersLicense = page
-        .locator('role=button[name="Eignastöðuvottorð"]')
+        .locator(`role=button[name="${label(messages.myCarsFiles)}"]`)
         .first()
       const recycleLicense = page
-        .locator('role=button[name="Skilavottorð"]')
+        .locator(`role=button[name="${label(messages.recycleCar)}"]`)
         .first()
       const hideName = page
-        .locator('role=button[name="Nafnleynd í ökutækjaskrá"]')
+        .locator(`role=button[name="${label(messages.vehicleNameSecret)}"]`)
         .first()
-      const viewLink = page.getByText('Skoða nánar').first()
+      const viewLink = page.getByText(label(messages.seeInfo)).first()
 
-      const inputField = page.locator('input[name="okutaeki-leit"]')
+      const inputField = page.getByRole('textbox', {
+        name: label(m.searchLabel),
+      })
       await inputField.click()
       await inputField.type('la', { delay: 200 })
 
@@ -50,8 +55,10 @@ test.describe('Vehicles', () => {
       await expect(recycleLicense).toBeVisible()
       await expect(hideName).toBeVisible()
       await expect(viewLink).toBeVisible()
-      await expect(page.locator('text=ökutæki fundust')).toBeVisible()
-      await expect(page.locator('text=Hreinsa síu')).toBeVisible()
+      await expect(page.locator(`text=${label(messages.found)}`)).toBeVisible()
+      await expect(
+        page.locator(`text=${label(messages.clearFilter)}`),
+      ).toBeVisible()
     })
 
     await test.step('should display detail', async () => {
@@ -60,15 +67,17 @@ test.describe('Vehicles', () => {
       await page.waitForLoadState('networkidle')
 
       // Act
-      const viewLink = page.getByText('Skoða nánar').first()
+      const viewLink = page.getByText(label(messages.seeInfo)).first()
       await viewLink.click()
 
-      const basicInfoText = page.getByText('Grunnupplýsingar ökutækis').first()
+      const basicInfoText = page
+        .getByText(label(messages.baseInfoTitle))
+        .first()
       const reportLink = page
-        .locator('role=button[name="Ferilskýrsla"]')
+        .locator(`role=button[name="${label(messages.vehicleHistoryReport)}"]`)
         .first()
       const ownershipLink = page
-        .locator('role=button[name="Tilkynna eigendaskipti"]')
+        .locator(`role=button[name="${label(messages.changeOfOwnership)}"]`)
         .first()
 
       // Assert
@@ -88,18 +97,22 @@ test.describe('Vehicles', () => {
 
       // Act
       const terms = page
-        .locator('role=button[name="Samþykkja skilmála"]')
+        .locator(`role=button[name="${label(messages.acceptTerms)}"]`)
         .first()
       await terms.click()
 
-      const inputField = page.locator(
-        'input[name="uppfletting-okutaekjaskra-leit"]',
-      )
+      const inputField = page.getByRole('textbox', {
+        name: label(messages.searchLabel),
+      })
       await inputField.click()
       await inputField.type('ísland.is', { delay: 200 })
-      const lookBtn = page.getByText(/Leita/).first()
+      const lookBtn = page
+        .getByRole('button', { name: label(messages.search) })
+        .first()
       await lookBtn.click()
-      const basicInfoText = page.getByText('Ekkert ökutæki fannst').first()
+      const basicInfoText = page
+        .getByText(label(messages.noVehicleFound))
+        .first()
 
       // Assert
       await expect(basicInfoText).toBeVisible()
@@ -115,14 +128,14 @@ test.describe('Vehicles', () => {
 
       // Act
       const tabButton = page.getByRole('tab', {
-        name: 'Umráðaferill',
+        name: label(messages.operatorHistory),
       })
       await tabButton.click()
 
       const table = page.locator('role=table')
 
       // Assert
-      await expect(table).toContainText('Forskráð')
+      await expect(table).toContainText('Forskráð') // API data
 
       // Act (filter)
       const inputField = page.getByPlaceholder('Veldu dagsetningu').first()
@@ -132,8 +145,8 @@ test.describe('Vehicles', () => {
 
       // Assert
       await expect(table).not.toContainText('Forskráð')
-      await expect(table).toContainText('Í lagi')
-      await expect(table).toContainText('Fyrsta skráning')
+      await expect(table).toContainText('Í lagi') // API data
+      await expect(table).toContainText(label(messages.firstReg))
     })
   })
 })

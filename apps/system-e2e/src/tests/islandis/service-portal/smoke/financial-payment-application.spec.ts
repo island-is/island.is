@@ -1,6 +1,8 @@
 import { test, BrowserContext, expect } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { label } from '../../../../support/i18n'
+import { m } from '@island.is/service-portal/finance/messages'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Fjármál overview', () => {
@@ -29,7 +31,7 @@ test.describe('Fjármál overview', () => {
 
       // Act
       const applicationButton = page.locator(
-        'role=button[name="Gera greiðsluáætlun"]',
+        `role=button[name="${label(m.scheduleApplication)}"]`,
       )
 
       // Assert
@@ -42,7 +44,7 @@ test.describe('Fjármál overview', () => {
 
       // Act
       const applicationButton = page.locator(
-        'role=button[name="Gera greiðsluáætlun"]',
+        `role=button[name="${label(m.scheduleApplication)}"]`,
       )
 
       const pagePromise = context.waitForEvent('page')
@@ -59,8 +61,14 @@ test.describe('Fjármál overview', () => {
       await page.goto('/minarsidur/fjarmal/greidsluaetlanir')
 
       // Assert
-      await expect(page.locator('role=table')).toContainText('Stofndagur')
-      await expect(page.locator('role=table')).toContainText('Í gildi')
+      await expect(page.locator('role=table')).toContainText(
+        label(m.createdDate),
+      )
+      await expect(page.locator('role=table')).toContainText(
+        label(m.financeStatusValid),
+      )
+
+      // "Skattar og gjöld" comes from the api - not translateable
       await expect(page.locator('role=table')).toContainText('Skattar og gjöld')
     })
   })

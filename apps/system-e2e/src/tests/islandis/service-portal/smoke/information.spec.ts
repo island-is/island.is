@@ -2,6 +2,9 @@ import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
+import { label } from '../../../../support/i18n'
+import { m } from '@island.is/service-portal/core/messages'
+import { spmm } from '@island.is/service-portal/information/messages'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -23,26 +26,28 @@ test.describe('Service portal', () => {
   test('should display user information overveiw', async () => {
     // Arrange
     const page = await context.newPage()
-    const { findByRole } = helpers(page)
     await page.goto('/minarsidur/min-gogn')
 
     // Act
-    const element = page.getByText('Kennitala').first()
+    const element = page.getByText(label(m.natreg)).first()
 
     // Assert
-    await expect(findByRole('heading', 'Mín gögn')).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: label(m.myInfo) }),
+    ).toBeVisible()
     await expect(element).toBeVisible()
   })
 
   test('should display user detail information', async () => {
     const page = await context.newPage()
-    const { findByRole } = helpers(page)
     await page.goto('/minarsidur/min-gogn/minar-upplysingar')
 
     // Act
-    const title1 = page.getByText('Mín skráning')
-    const title2 = page.getByText('Grunnupplýsingar')
-    const link = findByRole('link', 'Breyta í þjóðskrá').first()
+    const title1 = page.getByText(label(m.myRegistration))
+    const title2 = page.getByText(label(m.baseInfo))
+    const link = page
+      .getByRole('link', { name: label(spmm.changeInNationalReg) })
+      .first()
 
     // Assert
     await expect(title1).toBeVisible()
@@ -57,13 +62,13 @@ test.describe('Service portal', () => {
 
     // Act
     const babyButton = page
-      .locator('role=button[name="Skoða upplýsingar"]')
+      .locator(`role=button[name="${label(spmm.seeInfo)}"]`)
       .last()
 
     await babyButton.click()
 
     const registrationButton = page
-      .locator('role=button[name="Gera athugasemd við skráningu"]')
+      .locator(`role=button[name="${label(spmm.childRegisterModalButton)}"]`)
       .first()
 
     // Assert

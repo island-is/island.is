@@ -33,11 +33,6 @@ const dataNotFoundMessage = defineMessage({
   defaultMessage: 'Gögn fundust ekki',
 })
 
-const changeInNationalReg = defineMessage({
-  id: 'sp.family:change-in-national-registry',
-  defaultMessage: 'Breyta hjá Þjóðskrá',
-})
-
 const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
@@ -92,7 +87,7 @@ const SubjectInfo = () => {
           }
           editLink={{
             external: true,
-            title: changeInNationalReg,
+            title: spmm.changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
           }}
@@ -115,7 +110,7 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
+            title: spmm.changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
           }}
@@ -179,7 +174,7 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
+            title: spmm.changeInNationalReg,
             url:
               'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
           }}
@@ -208,7 +203,7 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
+            title: spmm.changeInNationalReg,
             url: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
           }}
         />

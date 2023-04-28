@@ -1,6 +1,8 @@
 import { test, BrowserContext, expect } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { label } from '../../../../support/i18n'
+import { m } from '@island.is/service-portal/core/messages'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Fjármál overview', () => {
@@ -29,7 +31,9 @@ test.describe('Fjármál overview', () => {
 
       // Assert
       await expect(
-        page.locator('role=button[name="Sundurliðun"]').first(),
+        page
+          .locator(`role=button[name="${label(m.financeBreakdown)}"]`)
+          .first(),
       ).toBeVisible()
     })
   })
@@ -43,7 +47,9 @@ test.describe('Fjármál overview', () => {
 
       // Assert
       await expect(
-        page.locator('role=button[name="Sundurliðun"]').first(),
+        page
+          .locator(`role=button[name="${label(m.financeBreakdown)}"]`)
+          .first(),
       ).toBeVisible()
     })
 
@@ -52,8 +58,12 @@ test.describe('Fjármál overview', () => {
       await page.goto('/minarsidur/fjarmal/faerslur')
 
       // Act
-      const inputField = page.locator('input[name="finance-transaction-input"]')
+      const inputField = page.getByRole('textbox', {
+        name: label(m.searchPlaceholder),
+      })
       await inputField.click()
+
+      // "Sakavottorð" comes from the api - not translateable
       await inputField.type('Sakavottorð', { delay: 100 })
 
       // Assert
@@ -70,7 +80,9 @@ test.describe('Fjármál overview', () => {
       await page.goto('/minarsidur/fjarmal/greidslusedlar-og-greidslukvittanir')
 
       // Act
-      const inputField = page.locator('input[name="finance-document-input"]')
+      const inputField = page.getByRole('textbox', {
+        name: label(m.searchPlaceholder),
+      })
       await inputField.click()
       await inputField.type('27.01.2023', { delay: 100 })
 
@@ -88,16 +100,20 @@ test.describe('Fjármál overview', () => {
       await page.goto('/minarsidur/fjarmal/laungreidendakrofur')
 
       // Act
-      const filterButton = page.locator('role=button[name="Opna síu"]').first()
+      const filterButton = page
+        .locator(`role=button[name="${label(m.openFilter)}"]`)
+        .first()
       await filterButton.click()
 
-      const inputField = page.getByPlaceholder('Veldu dagsetningu').first()
+      const inputField = page.getByPlaceholder(label(m.datepickLabel)).first()
       await inputField.click()
       await inputField.fill('')
       await inputField.type('15.10.2021', { delay: 200 })
 
       // Assert
       await expect(page.locator('role=table')).toContainText('15.10.2021')
+
+      // "Launagreiðandakröfur" comes from the api - not translateable
       await expect(page.locator('role=table')).toContainText(
         'Launagreiðandakröfur',
       )
