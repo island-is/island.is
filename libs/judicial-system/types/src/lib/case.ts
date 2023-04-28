@@ -297,6 +297,8 @@ export interface CaseListEntry
     | 'prosecutor'
     | 'registrar'
     | 'creatingProsecutor'
+    | 'appealState'
+    | 'appealedDate'
   > {
   parentCaseId?: string
 }
@@ -545,4 +547,11 @@ export function getStatementDeadline(appealReceived: Date) {
   return new Date(
     appealReceived.setDate(appealReceived.getDate() + 1),
   ).toISOString()
+}
+
+export function getAppealedDate(
+  prosecutorPostponedAppealDate?: string,
+  accusedPostponedAppealDate?: string,
+): string | undefined {
+  return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }

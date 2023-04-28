@@ -69,6 +69,7 @@ export {
   CaseAppealState,
   getAppealInfo,
   getStatementDeadline,
+  getAppealedDate,
 } from './lib/case'
 export type {
   Case,
