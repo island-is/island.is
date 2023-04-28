@@ -86,6 +86,8 @@ const AppealCase = () => {
   )
 
   const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}/${workingCase.id}`)
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -150,7 +152,7 @@ const AppealCase = () => {
             required
           />
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={8}>
           <SectionHeading title={formatMessage(strings.judgesHeading)} />
           <BlueBox>
             {defaultJudges.map((judge, index) => {
@@ -194,7 +196,7 @@ const AppealCase = () => {
           previousUrl={previousUrl}
           nextButtonIcon="arrowForward"
           onNextButtonClick={() => {
-            /* To be implemented */
+            handleNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
           }}
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!isCourtOfAppealCaseStepValid(workingCase)}
