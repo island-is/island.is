@@ -285,7 +285,7 @@ export function isCaseBlockedFromUser(
   )
 }
 
-function getProsecutionCasesQueryFilter(role: UserRole): WhereOptions {
+function getProsecutionRoleCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -316,7 +316,7 @@ function getProsecutionCasesQueryFilter(role: UserRole): WhereOptions {
     },
   ]
 
-  if (role === UserRole.REPRESENTATIVE) {
+  if (user.role === UserRole.REPRESENTATIVE) {
     options.push({ type: indictmentCases })
   }
 
@@ -325,15 +325,13 @@ function getProsecutionCasesQueryFilter(role: UserRole): WhereOptions {
   }
 }
 
-function getStaffCasesQueryFilter(
-  institutionType?: InstitutionType,
-): WhereOptions {
+function getStaffRoleCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
     { state: CaseState.ACCEPTED },
   ]
 
-  if (institutionType === InstitutionType.PRISON_ADMIN) {
+  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
     options.push({
       type: [
         CaseType.ADMISSION_TO_FACILITY,
@@ -356,50 +354,30 @@ function getStaffCasesQueryFilter(
 export function getCasesQueryFilter(user: User): WhereOptions {
   // TODO: Convert to switch
   if (isProsecutionRole(user.role)) {
-    return getProsecutionCasesQueryFilter(user.role)
+    return getProsecutionRoleCasesQueryFilter(user)
   } else if (user.role === UserRole.STAFF) {
-    return getStaffCasesQueryFilter(user.institution?.type)
+    return getStaffRoleCasesQueryFilter(user)
   }
 
   const blockStates = {
     [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
   }
 
-  const blockInstitutions = isProsecutionRole(user.role)
-    ? {
-        [Op.or]: [
-          { creating_prosecutor_id: { [Op.is]: null } },
-          { '$creatingProsecutor.institution_id$': user.institution?.id },
-          { shared_with_prosecutors_office_id: user.institution?.id },
-        ],
-      }
-    : user.institution?.type === InstitutionType.HIGH_COURT
-    ? {
-        appeal_state: [
-          CaseAppealState.APPEALED,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.COMPLETED,
-        ],
-      }
-    : {
-        [Op.or]: [
-          { court_id: { [Op.is]: null } },
-          { court_id: user.institution?.id },
-        ],
-      }
-
-  const blockHightenedSecurity = isProsecutionRole(user.role)
-    ? [
-        {
-          [Op.or]: [
-            { is_heightened_security_level: { [Op.is]: null } },
-            { is_heightened_security_level: false },
-            { creating_prosecutor_id: user.id },
-            { prosecutor_id: user.id },
+  const blockInstitutions =
+    user.institution?.type === InstitutionType.HIGH_COURT
+      ? {
+          appeal_state: [
+            CaseAppealState.APPEALED,
+            CaseAppealState.RECEIVED,
+            CaseAppealState.COMPLETED,
           ],
-        },
-      ]
-    : []
+        }
+      : {
+          [Op.or]: [
+            { court_id: { [Op.is]: null } },
+            { court_id: user.institution?.id },
+          ],
+        }
 
   const blockDraftIndictmentsForCourt =
     isCourtRole(user.role) && user.institution?.type === InstitutionType.COURT
@@ -413,7 +391,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
       : []
 
   const restrictCaseTypes =
-    user.role === UserRole.REPRESENTATIVE || user.role === UserRole.ASSISTANT
+    user.role === UserRole.ASSISTANT
       ? [{ type: indictmentCases }]
       : user.institution?.type === InstitutionType.HIGH_COURT
       ? [{ type: [...restrictionCases, ...investigationCases] }]
@@ -424,7 +402,6 @@ export function getCasesQueryFilter(user: User): WhereOptions {
       hideArchived,
       blockStates,
       blockInstitutions,
-      ...blockHightenedSecurity,
       ...blockDraftIndictmentsForCourt,
       ...restrictCaseTypes,
     ],
