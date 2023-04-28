@@ -14,7 +14,12 @@ import { NoContentException } from '@island.is/nest/problem'
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
-import { ClientType, GrantTypeEnum, RefreshTokenExpiration } from '../../types'
+import {
+  ClientType,
+  GrantTypeEnum,
+  RefreshTokenExpiration,
+  translateRefreshTokenExpiration,
+} from '../../types'
 import { Client } from '../models/client.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
@@ -129,17 +134,52 @@ export class AdminClientsService {
       throw new BadRequestException('Invalid client id')
     }
 
-    const client = await this.clientModel.create({
-      clientId: clientDto.clientId,
-      clientType: clientDto.clientType,
-      domainName: tenantId,
-      nationalId: tenant.nationalId,
-      clientName: clientDto.clientName,
-      ...this.defaultClientAttributes(clientDto.clientType),
-    })
+    const {
+      customClaims,
+      displayName,
+      redirectUris,
+      postLogoutRedirectUris,
+      supportTokenExchange,
+      refreshTokenExpiration,
+      addedScopes,
+      removedScopes,
+      ...clientAttributes
+    } = clientDto
 
-    // TODO: Add client type specific openid profile identity resources
-    await this.clientGrantType.create(this.defaultClientGrantTypes(client))
+    const client = await this.sequelize.transaction(async (transaction) => {
+      const newClient = await this.clientModel.create(
+        {
+          clientId: clientDto.clientId,
+          clientType: clientDto.clientType,
+          domainName: tenantId,
+          nationalId: tenant.nationalId,
+          clientName: clientDto.clientName,
+          ...this.defaultClientAttributes(clientDto.clientType),
+        },
+        { transaction },
+      )
+
+      const { clientId } = newClient
+
+      await this.updateConnectionsForClient(transaction, {
+        clientId,
+        tenantId,
+        displayName,
+        refreshTokenExpiration,
+        clientAttributes,
+        redirectUris,
+        postLogoutRedirectUris,
+        customClaims,
+        supportTokenExchange,
+        addedScopes,
+        removedScopes,
+      })
+
+      // TODO: Add client type specific openid profile identity resources
+      await this.clientGrantType.create(this.defaultClientGrantTypes(newClient))
+
+      return newClient
+    })
 
     return this.findByTenantIdAndClientId(tenantId, client.clientId)
   }
@@ -183,83 +223,19 @@ export class AdminClientsService {
     } = input
 
     await this.sequelize.transaction(async (transaction) => {
-      if (Object.keys(clientAttributes).length > 0) {
-        // Update includes client base attributes
-        await this.clientModel.update(
-          {
-            ...clientAttributes,
-            refreshTokenExpiration:
-              refreshTokenExpiration === RefreshTokenExpiration.Sliding ? 0 : 1,
-          },
-          {
-            where: {
-              clientId,
-            },
-            transaction,
-          },
-        )
-      }
-
-      if (displayName && displayName.length > 0) {
-        await this.updateDisplayName(clientId, displayName, transaction)
-      }
-
-      if (
-        (addedScopes && addedScopes.length > 0) ||
-        (removedScopes && removedScopes.length > 0)
-      ) {
-        await this.updateClientAllowedScopes({
-          addedScopes,
-          removedScopes,
-          transaction,
-          clientId,
-          tenantId,
-        })
-      }
-
-      if (redirectUris && redirectUris.length > 0) {
-        await this.updateClientUris(
-          ClientRedirectUri,
-          clientId,
-          redirectUris,
-          transaction,
-        )
-      }
-
-      if (postLogoutRedirectUris && postLogoutRedirectUris.length > 0) {
-        await this.updateClientUris(
-          ClientPostLogoutRedirectUri,
-          clientId,
-          postLogoutRedirectUris,
-          transaction,
-        )
-      }
-
-      if (customClaims && customClaims.length > 0) {
-        await this.updateCustomClaims(clientId, customClaims, transaction)
-      }
-
-      // Checking if the value is true and boolean to avoid undefined
-      if (supportTokenExchange === true) {
-        await this.clientGrantType.upsert(
-          {
-            clientId,
-            grantType: GrantTypeEnum.TokenExchange,
-          },
-          { transaction, fields: ['grant_type'] },
-        )
-      }
-
-      // Checking if the value is false and boolean to avoid undefined
-      if (supportTokenExchange === false) {
-        await this.clientGrantType.destroy({
-          where: {
-            clientId,
-            grantType: GrantTypeEnum.TokenExchange,
-          },
-          transaction,
-        })
-      }
+      await this.updateConnectionsForClient(transaction, {
+        clientId,
+        tenantId,
+        displayName,
+        refreshTokenExpiration,
+        clientAttributes,
+        redirectUris,
+        postLogoutRedirectUris,
+        customClaims,
+        supportTokenExchange,
+        addedScopes,
+        removedScopes,
+      })
     })
 
     return this.findByTenantIdAndClientId(tenantId, clientId)
@@ -321,6 +297,114 @@ export class AdminClientsService {
       },
       transaction,
     })
+  }
+
+  private async updateConnectionsForClient(
+    transaction: Transaction,
+    data: {
+      clientId: string
+      tenantId?: string
+      displayName?: TranslatedValueDto[]
+      refreshTokenExpiration?: RefreshTokenExpiration
+      clientAttributes?: Omit<
+        AdminPatchClientDto,
+        | 'customClaims'
+        | 'displayName'
+        | 'redirectUris'
+        | 'postLogoutRedirectUris'
+        | 'supportTokenExchange'
+        | 'refreshTokenExpiration'
+      >
+      redirectUris?: string[]
+      postLogoutRedirectUris?: string[]
+      customClaims?: AdminClientClaimDto[]
+      supportTokenExchange?: boolean
+      addedScopes?: string[]
+      removedScopes?: string[]
+    },
+  ) {
+    if (Object.keys(data.clientAttributes as object).length > 0) {
+      // Update includes client base attributes
+      await this.clientModel.update(
+        {
+          ...data.clientAttributes,
+          refreshTokenExpiration: translateRefreshTokenExpiration(
+            data.refreshTokenExpiration,
+          ),
+        },
+        {
+          where: {
+            clientId: data.clientId,
+          },
+          transaction,
+        },
+      )
+    }
+
+    if (data.displayName && data.displayName.length > 0) {
+      await this.updateDisplayName(data.clientId, data.displayName, transaction)
+    }
+
+    if (data.redirectUris && data.redirectUris.length > 0) {
+      await this.updateClientUris(
+        ClientRedirectUri,
+        data.clientId,
+        data.redirectUris,
+        transaction,
+      )
+    }
+
+    if (data.postLogoutRedirectUris && data.postLogoutRedirectUris.length > 0) {
+      await this.updateClientUris(
+        ClientPostLogoutRedirectUri,
+        data.clientId,
+        data.postLogoutRedirectUris,
+        transaction,
+      )
+    }
+
+    if (data.customClaims && data.customClaims.length > 0) {
+      await this.updateCustomClaims(
+        data.clientId,
+        data.customClaims,
+        transaction,
+      )
+    }
+
+    if (
+      (data.addedScopes && data.addedScopes.length > 0) ||
+      (data.removedScopes && data.removedScopes.length > 0)
+    ) {
+      await this.updateClientAllowedScopes({
+        addedScopes: data.addedScopes,
+        removedScopes: data.removedScopes,
+        transaction,
+        clientId: data.clientId,
+        tenantId: data?.tenantId ?? '',
+      })
+    }
+
+    // Checking if the value is true and boolean to avoid undefined
+    if (data.supportTokenExchange === true) {
+      await this.clientGrantType.upsert(
+        {
+          clientId: data.clientId,
+          grantType: GrantTypeEnum.TokenExchange,
+        },
+        { transaction, fields: ['grant_type'] },
+      )
+    }
+
+    // Checking if the value is false and boolean to avoid undefined
+    if (data.supportTokenExchange === false) {
+      await this.clientGrantType.destroy({
+        where: {
+          clientId: data.clientId,
+          grantType: GrantTypeEnum.TokenExchange,
+        },
+        transaction,
+      })
+    }
   }
 
   private defaultClientAttributes(clientType: ClientType) {
