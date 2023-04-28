@@ -264,6 +264,12 @@ export interface Case {
   statementDeadline?: string
   prosecutorStatementDate?: string
   defenderStatementDate?: string
+  appealCaseNumber?: string
+  appealAssistant?: User
+  appealJudge1?: User
+  appealJudge2?: User
+  appealJudge3?: User
+  appealReceivedByCourtDate?: string
 }
 
 export interface CaseListEntry
@@ -376,6 +382,7 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'appealState'
+    | 'appealCaseNumber'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -384,6 +391,10 @@ export interface UpdateCase
   sharedWithProsecutorsOfficeId?: string | null
   registrarId?: string | null
   judgeId?: string
+  appealAssistantId?: string
+  appealJudge1Id?: string
+  appealJudge2Id?: string
+  appealJudge3Id?: string
 }
 
 export interface TransitionCase {
@@ -477,6 +488,7 @@ export function getAppealInfo(theCase: Case): Case {
     prosecutorPostponedAppealDate,
     accusedPostponedAppealDate,
     caseFiles,
+    appealReceivedByCourtDate,
   } = theCase
 
   const appealInfo = {} as Case
@@ -490,9 +502,7 @@ export function getAppealInfo(theCase: Case): Case {
         prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
   )
 
-  appealInfo.hasBeenAppealed = Boolean(
-    appealState && appealState === CaseAppealState.APPEALED,
-  )
+  appealInfo.hasBeenAppealed = Boolean(appealState)
 
   appealInfo.appealedByRole = prosecutorPostponedAppealDate
     ? UserRole.PROSECUTOR
@@ -511,13 +521,11 @@ export function getAppealInfo(theCase: Case): Case {
       courtEndDate.setDate(courtEndDate.getDate() + 3),
     ).toISOString()
   }
-  //TODO: This date should be set differently but we haven't implemented
-  //the statement deadline notifiction yet
-  if (appealInfo.appealedDate) {
-    const appealedDate = new Date(appealInfo.appealedDate)
-    appealInfo.statementDeadline = new Date(
-      appealedDate.setDate(appealedDate.getDate() + 1),
-    ).toISOString()
+
+  if (appealReceivedByCourtDate) {
+    appealInfo.statementDeadline = getStatementDeadline(
+      new Date(appealReceivedByCourtDate),
+    )
   }
   //TODO: These dates should likely be set differently but we haven't
   //implemented the ability to record when the statement was sent
@@ -531,4 +539,10 @@ export function getAppealInfo(theCase: Case): Case {
   )?.created
 
   return appealInfo
+}
+
+export function getStatementDeadline(appealReceived: Date) {
+  return new Date(
+    appealReceived.setDate(appealReceived.getDate() + 1),
+  ).toISOString()
 }

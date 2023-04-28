@@ -6,6 +6,7 @@ import { useLogIn, useUser } from '../../utils/helpers'
 import { useEffect, useState } from 'react'
 import { useFetchEmail } from '../../utils/helpers/api/useFetchEmail'
 import { LoadingDots } from '@island.is/island-ui/core'
+import { useRouter } from 'next/router'
 
 const emailIsValid = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -25,8 +26,10 @@ export const EmailBox = () => {
       client: client,
     },
   )
-
-  const { email, emailVerified, getUserEmailLoading } = useFetchEmail()
+  const router = useRouter()
+  const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
+    isAuthenticated: isAuthenticated,
+  })
   useEffect(() => {
     if (!getUserEmailLoading) {
       setUserEmail(email)
@@ -107,7 +110,7 @@ export const EmailBox = () => {
         },
         {
           label: 'Sjá áskriftir',
-          onClick: () => console.log('should render a list of subscriptions'),
+          onClick: () => router.push('/minaraskriftir'),
         },
       ]}
     />

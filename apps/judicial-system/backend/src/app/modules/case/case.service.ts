@@ -132,6 +132,12 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
     | 'appealState'
+    | 'appealReceivedByCourtDate'
+    | 'appealCaseNumber'
+    | 'appealAssistantId'
+    | 'appealJudge1Id'
+    | 'appealJudge2Id'
+    | 'appealJudge3Id'
   > {
   type?: CaseType
   state?: CaseState
@@ -183,6 +189,26 @@ export const include: Includeable[] = [
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
     },
+  },
+  {
+    model: User,
+    as: 'appealAssistant',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge1',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge2',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 
@@ -624,6 +650,16 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  addMessagesForReceivedAppealCaseToQueue(theCase: Case, user: TUser) {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
   private async addMessagesForUpdatedCaseToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -651,6 +687,8 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(theCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+        await this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
       }
     }
 

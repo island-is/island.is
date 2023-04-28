@@ -34,7 +34,6 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as strings from './CaseFiles.strings'
@@ -51,14 +50,9 @@ const CaseFiles: React.FC = () => {
     handleRetry,
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
-  const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(
-    workingCase,
-    features,
-    user,
-  )
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase, user)
 
   useEffect(() => {
     if (workingCase.caseFiles) {
