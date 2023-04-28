@@ -1,7 +1,72 @@
 import { gql } from '@apollo/client'
 
+export const CreateCaseMutation = gql`
+  mutation CreateCase($input: CreateCaseInput!) {
+    createCase(input: $input) {
+      id
+      defendants {
+        id
+      }
+    }
+  }
+`
+
+export const CreateCourtCaseMutation = gql`
+  mutation CreateCourtCase($input: CreateCourtCaseInput!) {
+    createCourtCase(input: $input) {
+      courtCaseNumber
+    }
+  }
+`
+
+export const ExtendCaseMutation = gql`
+  mutation ExtendCase($input: ExtendCaseInput!) {
+    extendCase(input: $input) {
+      id
+      type
+    }
+  }
+`
+
+export const RequestCourtRecordSignatureMutation = gql`
+  mutation RequestCourtRecordSignature($input: RequestSignatureInput!) {
+    requestCourtRecordSignature(input: $input) {
+      controlCode
+      documentToken
+    }
+  }
+`
+
+export const SendNotificationMutation = gql`
+  mutation SendNotification($input: SendNotificationInput!) {
+    sendNotification(input: $input) {
+      notificationSent
+    }
+  }
+`
+
+export const TransitionCaseMutation = gql`
+  mutation TransitionCase($input: TransitionCaseInput!) {
+    transitionCase(input: $input) {
+      state
+      appealState
+      appealReceivedByCourtDate
+    }
+  }
+`
+
+export const LimitedAccessTransitionCaseMutation = gql`
+  mutation LimitedAccessTransitionCase($input: TransitionCaseInput!) {
+    limitedAccessTransitionCase(input: $input) {
+      state
+      appealState
+      appealReceivedByCourtDate
+    }
+  }
+`
+
 export const UpdateCaseMutation = gql`
-  mutation UpdateCaseMutation($input: UpdateCaseInput!) {
+  mutation UpdateCase($input: UpdateCaseInput!) {
     updateCase(input: $input) {
       id
       created
@@ -216,6 +281,119 @@ export const UpdateCaseMutation = gql`
         id
         name
       }
+    }
+  }
+`
+
+export const LimitedAccessUpdateCaseMutation = gql`
+  mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
+    limitedAccessUpdateCase(input: $input) {
+      id
+      created
+      origin
+      type
+      indictmentSubtypes
+      state
+      policeCaseNumbers
+      caseFiles {
+        id
+        name
+        category
+      }
+      defendants {
+        id
+        noNationalId
+        nationalId
+        name
+        gender
+        address
+        citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defendantWaivesRightToCounsel
+      }
+      defenderName
+      defenderNationalId
+      defenderEmail
+      defenderPhoneNumber
+      court {
+        id
+        name
+        type
+      }
+      leadInvestigator
+      requestedCustodyRestrictions
+      creatingProsecutor {
+        id
+        name
+        title
+        institution {
+          id
+          name
+        }
+      }
+      prosecutor {
+        id
+        name
+        title
+        institution {
+          id
+          name
+        }
+      }
+      courtCaseNumber
+      courtEndTime
+      validToDate
+      decision
+      isValidToDateInThePast
+      isCustodyIsolation
+      isolationToDate
+      conclusion
+      rulingDate
+      registrar {
+        id
+        name
+        title
+      }
+      judge {
+        id
+        name
+        title
+      }
+      courtRecordSignatory {
+        id
+        name
+        title
+      }
+      courtRecordSignatureDate
+      parentCase {
+        id
+        state
+        validToDate
+        decision
+        courtCaseNumber
+        ruling
+      }
+      childCase {
+        id
+      }
+      caseModifiedExplanation
+      caseResentExplanation
+      appealState
+      accusedAppealDecision
+      prosecutorAppealDecision
+      isAppealDeadlineExpired
+      isStatementDeadlineExpired
+      statementDeadline
+      canBeAppealed
+      hasBeenAppealed
+      appealedByRole
+      appealedDate
+      appealDeadline
+      prosecutorStatementDate
+      defendantStatementDate
     }
   }
 `
