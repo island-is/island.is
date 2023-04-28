@@ -110,6 +110,7 @@ export const AdditionalEstateMember = ({
           <Button
             variant="text"
             size="small"
+            icon="trash"
             onClick={() => {
               remove(index)
             }}
@@ -202,6 +203,7 @@ export const AdditionalEstateMember = ({
             label={m.phone.defaultMessage}
             defaultValue={field.phone}
             backgroundColor="blue"
+            format={'###-####'}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

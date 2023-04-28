@@ -73,6 +73,13 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().min(1).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
+        phone: z
+          .string()
+          .refine((v) => isValidPhoneNumber(v), {
+            params: m.errorPhoneNumber,
+          })
+          .optional(),
+        email: customZodError(z.string().email().optional(), m.errorEmail),
       })
       .array()
       .optional(),
