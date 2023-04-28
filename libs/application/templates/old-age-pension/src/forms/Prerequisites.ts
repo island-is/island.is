@@ -21,9 +21,7 @@ import {
 import Logo from '../assets/Logo'
 import { NO, YES } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
-import {
-  getApplicationAnswers,
-} from '../lib/oldAgePensionUtils'
+import { getApplicationAnswers } from '../lib/oldAgePensionUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'OldAgePensionPrerequisites',
@@ -46,19 +44,23 @@ export const PrerequisitesForm: Form = buildForm({
               dataProviders: [
                 buildDataProviderItem({
                   provider: UserProfileApi,
-                  title: oldAgePensionFormMessage.shared.userProfileInformationTitle,
+                  title:
+                    oldAgePensionFormMessage.shared.userProfileInformationTitle,
                   subTitle:
-                    oldAgePensionFormMessage.shared.userProfileInformationSubTitle,
+                    oldAgePensionFormMessage.shared
+                      .userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryUserApi,
                   title: oldAgePensionFormMessage.shared.skraInformationTitle,
-                  subTitle: oldAgePensionFormMessage.shared.skraInformationSubTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.shared.skraInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistrySpouseApi,
                   title: oldAgePensionFormMessage.shared.skraInformationTitle,
-                  subTitle: oldAgePensionFormMessage.shared.skraInformationSubTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.shared.skraInformationSubTitle,
                 }),
               ],
             }),
@@ -74,7 +76,8 @@ export const PrerequisitesForm: Form = buildForm({
               children: [
                 buildRadioField({
                   id: 'questions.pensionFund',
-                  title: oldAgePensionFormMessage.shared.pensionFundQuestionTitle,
+                  title:
+                    oldAgePensionFormMessage.shared.pensionFundQuestionTitle,
                   description: '',
                   options: [
                     { value: YES, label: oldAgePensionFormMessage.shared.yes },
@@ -120,9 +123,9 @@ export const PrerequisitesForm: Form = buildForm({
                         const { pensionFundQuestion } = getApplicationAnswers(
                           answers,
                         )
-    
+
                         return pensionFundQuestion !== NO
-                      }
+                      },
                     },
                   ],
                 }),

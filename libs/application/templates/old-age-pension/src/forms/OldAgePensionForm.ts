@@ -40,9 +40,11 @@ export const OldAgePensionForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: oldAgePensionFormMessage.shared.applicantInfoSubSectionTitle,
+              title:
+                oldAgePensionFormMessage.shared.applicantInfoSubSectionTitle,
               description:
-                oldAgePensionFormMessage.shared.applicantInfoSubSectionDescription,
+                oldAgePensionFormMessage.shared
+                  .applicantInfoSubSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.name',
@@ -79,7 +81,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.postcode',
-                  title: oldAgePensionFormMessage.shared.applicantInfoPostalcode,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoPostalcode,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -91,7 +94,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.municipality',
-                  title: oldAgePensionFormMessage.shared.applicantInfoMunicipality,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoMunicipality,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -115,7 +119,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
-                  title: oldAgePensionFormMessage.shared.applicantInfoPhonenumber,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoPhonenumber,
                   width: 'half',
                   placeholder: '000-0000',
                   required: true,
@@ -129,11 +134,13 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'applicantInfo.descriptionField',
                   space: 'containerGutter',
                   titleVariant: 'h5',
-                  title: oldAgePensionFormMessage.shared.applicantInfoMaritalTitle,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoMaritalTitle,
                 }),
                 buildTextField({
                   id: 'applicantInfo.maritalStatus',
-                  title: oldAgePensionFormMessage.shared.applicantInfoMaritalStatus,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoMaritalStatus,
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
@@ -144,7 +151,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.spouseName',
-                  title: oldAgePensionFormMessage.shared.applicantInfoSpouseName,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoSpouseName,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,

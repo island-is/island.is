@@ -44,7 +44,7 @@ export enum ApplicationTypes {
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
-  OLD_AGE_PENSION ='OldAgePension',
+  OLD_AGE_PENSION = 'OldAgePension',
 }
 
 export const ApplicationConfigurations = {
