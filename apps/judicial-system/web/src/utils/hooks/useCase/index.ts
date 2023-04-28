@@ -1,34 +1,53 @@
 import { useContext, useMemo } from 'react'
-import { useMutation } from '@apollo/client'
+import router from 'next/router'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
 import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
 
-import type {
+import {
   NotificationType,
   SendNotificationResponse,
   CaseTransition,
   RequestSignatureResponse,
+  CaseState,
+  isIndictmentCase,
+  isExtendedCourtRole,
+  isRestrictionCase,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
   TempCreateCase as CreateCase,
+  CaseData,
 } from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
+import {
+  CaseQuery,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  InstitutionType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as constants from '@island.is/judicial-system/consts'
 
-import { CreateCaseMutation } from './createCaseGql'
-import { CreateCourtCaseMutation } from './createCourtCaseGql'
-import { UpdateCaseMutation } from './updateCaseGql'
-import { SendNotificationMutation } from './sendNotificationGql'
-import { TransitionCaseMutation } from './transitionCaseGql'
-import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
-import { ExtendCaseMutation } from './extendCaseGql'
-import { LimitedAccessTransitionCaseMutation } from './limitedAccessTransitionCaseGql'
+import { isTrafficViolationCase } from '../../stepHelper'
+import { findFirstInvalidStep } from '../../formHelper'
+import {
+  CreateCaseMutation,
+  CreateCourtCaseMutation,
+  UpdateCaseMutation,
+  TransitionCaseMutation,
+  LimitedAccessTransitionCaseMutation,
+  SendNotificationMutation,
+  RequestCourtRecordSignatureMutation,
+  ExtendCaseMutation,
+} from './mutations'
 
 type ChildKeys = Pick<
   UpdateCase,
@@ -165,48 +184,118 @@ export const formatDateForServer = (date: Date) => {
   return formatISO(date, { representation: 'complete' })
 }
 
+const openCase = (caseToOpen: Case, user: User) => {
+  let routeTo = null
+  const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
+
+  if (
+    caseToOpen.state === CaseState.ACCEPTED ||
+    caseToOpen.state === CaseState.REJECTED ||
+    caseToOpen.state === CaseState.DISMISSED
+  ) {
+    if (isIndictmentCase(caseToOpen.type)) {
+      routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+    } else if (user?.institution?.type === InstitutionType.HighCourt) {
+      routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+    } else {
+      routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+    }
+  } else if (isExtendedCourtRole(user.role)) {
+    if (isRestrictionCase(caseToOpen.type)) {
+      routeTo = findFirstInvalidStep(
+        constants.courtRestrictionCasesRoutes,
+        caseToOpen,
+      )
+    } else if (isInvestigationCase(caseToOpen.type)) {
+      routeTo = findFirstInvalidStep(
+        constants.courtInvestigationCasesRoutes,
+        caseToOpen,
+      )
+    } else {
+      // Route to Indictment Overview section since it always a valid step and
+      // would be skipped if we route to the last valid step
+      routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+    }
+  } else {
+    if (isRestrictionCase(caseToOpen.type)) {
+      routeTo = findFirstInvalidStep(
+        constants.prosecutorRestrictionCasesRoutes,
+        caseToOpen,
+      )
+    } else if (isInvestigationCase(caseToOpen.type)) {
+      routeTo = findFirstInvalidStep(
+        constants.prosecutorInvestigationCasesRoutes,
+        caseToOpen,
+      )
+    } else {
+      routeTo = findFirstInvalidStep(
+        constants.prosecutorIndictmentRoutes(isTrafficViolation),
+        caseToOpen,
+      )
+    }
+  }
+
+  if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
+}
+
 const useCase = () => {
-  const { limitedAccess } = useContext(UserContext)
+  const { limitedAccess, user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
   const [
     createCaseMutation,
     { loading: isCreatingCase },
   ] = useMutation<CreateCaseMutationResponse>(CreateCaseMutation)
+
   const [
     createCourtCaseMutation,
     { loading: isCreatingCourtCase },
   ] = useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
+
   const [
     updateCaseMutation,
     { loading: isUpdatingCase },
   ] = useMutation<UpdateCaseMutationResponse>(UpdateCaseMutation, {
     fetchPolicy: 'no-cache',
   })
+
   const [
     transitionCaseMutation,
     { loading: isTransitioningCase },
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
+
   const [
     limitedAccessTransitionCaseMutation,
     { loading: isLimitedAccessTransitioningCase },
   ] = useMutation<LimitedAccessTransitionCaseMutationResponse>(
     LimitedAccessTransitionCaseMutation,
   )
+
   const [
     sendNotificationMutation,
     { loading: isSendingNotification, error: sendNotificationError },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
+
   const [
     requestCourtRecordSignatureMutation,
     { loading: isRequestingCourtRecordSignature },
   ] = useMutation<RequestCourtRecordSignatureMutationResponse>(
     RequestCourtRecordSignatureMutation,
   )
+
   const [
     extendCaseMutation,
     { loading: isExtendingCase },
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
+
+  const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (caseData) => {
+      if (user && caseData?.case) {
+        openCase(caseData.case, user)
+      }
+    },
+  })
 
   const createCase = useMemo(
     () => async (theCase: CreateCase): Promise<Case | undefined> => {
@@ -456,6 +545,7 @@ const useCase = () => {
     extendCase,
     isExtendingCase,
     setAndSendCaseToServer,
+    getCaseToOpen,
   }
 }
 
