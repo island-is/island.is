@@ -41,6 +41,8 @@ export const AdditionalRealEstate = ({
   const enabledField = `${fieldIndex}.enabled`
   const dummyField = `${fieldIndex}.dummy`
   const shareField = `${fieldIndex}.share`
+  const marketValueField = `${fieldIndex}.marketValue`
+
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -102,9 +104,7 @@ export const AdditionalRealEstate = ({
         defaultValue={field.share || ''}
         render={() => <input type="hidden" />}
       />
-      <Text variant="h4">
-        {formatMessage(m.realEstateRepeaterHeader) + ' ' + (index + 1)}
-      </Text>
+      <Text variant="h4">{formatMessage(m.realEstateRepeaterHeader)}</Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"
@@ -133,6 +133,17 @@ export const AdditionalRealEstate = ({
             loading={queryLoading}
             readOnly
             defaultValue={field.description}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']}>
+          <InputController
+            id={marketValueField}
+            name={marketValueField}
+            label={formatMessage(m.marketValueTitle)}
+            defaultValue={(field as any).marketValue}
+            placeholder={'0 kr.'}
+            currency
+            size="sm"
           />
         </GridColumn>
       </GridRow>

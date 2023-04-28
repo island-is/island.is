@@ -1,18 +1,18 @@
-import each from 'jest-each'
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize'
 
 import {
   CaseAppealState,
+  CaseFileCategory,
+  CaseFileState,
   CaseState,
   CaseTransition,
-  investigationCases,
-  restrictionCases,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -23,26 +23,50 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (
-  caseId: string,
-  theCase: Case,
-  transition: TransitionCaseDto,
-) => Promise<Then>
+type GivenWhenThen = (state: CaseState) => Promise<Then>
 
-describe('LimitedCaseController - Transition', () => {
+describe('LimitedAccessCaseController - Transition', () => {
   const date = randomDate()
+  const user = { id: uuid() } as User
+  const caseId = uuid()
+  const defenderAppealBriefId = uuid()
+  const defenderAppealBriefCaseFileId1 = uuid()
+  const defenderAppealBriefCaseFileId2 = uuid()
+  const caseFiles = [
+    {
+      id: defenderAppealBriefId,
+      key: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+    },
+    {
+      id: defenderAppealBriefCaseFileId1,
+      key: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    },
+    {
+      id: defenderAppealBriefCaseFileId2,
+      key: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+    },
+  ]
 
   let transaction: Transaction
+  let mockMessageService: MessageService
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       sequelize,
+      messageService,
       caseModel,
       limitedAccessCaseController,
     } = await createTestingCaseModule()
 
+    mockMessageService = messageService
     mockCaseModel = caseModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -56,18 +80,15 @@ describe('LimitedCaseController - Transition', () => {
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
 
-    givenWhenThen = async (
-      caseId: string,
-      theCase: Case,
-      transition: TransitionCaseDto,
-    ) => {
+    givenWhenThen = async (state: CaseState) => {
       const then = {} as Then
 
       try {
         then.result = await limitedAccessCaseController.transition(
           caseId,
-          theCase,
-          transition,
+          user,
+          { id: caseId, state, caseFiles } as Case,
+          { transition: CaseTransition.APPEAL },
         )
       } catch (error) {
         then.error = error as Error
@@ -77,72 +98,66 @@ describe('LimitedCaseController - Transition', () => {
     }
   })
 
-  each`
-      transition                        | caseState                        | newAppealState
-      ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}            | ${CaseAppealState.APPEALED}
-      ${CaseTransition.APPEAL}          | ${CaseState.REJECTED}            | ${CaseAppealState.APPEALED}
-    
-    `.describe(
-    '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
-    ({ transition, caseState, currentAppealState, newAppealState }) => {
-      each([...restrictionCases, ...investigationCases]).describe(
-        '%s case',
-        (type) => {
-          const caseId = uuid()
-          const theCase = {
-            id: caseId,
-            type,
-            state: caseState,
-          } as Case
+  describe.each([CaseState.ACCEPTED, CaseState.REJECTED])(
+    'appeal %s case',
+    (state) => {
+      const updatedCase = {
+        id: caseId,
+        state,
+        caseFiles,
+        appealState: CaseAppealState.APPEALED,
+        accusedPostponedAppealDate: date,
+      } as Case
+      let then: Then
 
-          const updatedCase = {
-            id: caseId,
-            type,
-            state: caseState,
+      beforeEach(async () => {
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        then = await givenWhenThen(state)
+      })
+
+      it('should transition the case', () => {
+        expect(mockCaseModel.update).toHaveBeenCalledWith(
+          {
             appealState: CaseAppealState.APPEALED,
             accusedPostponedAppealDate: date,
-          } as Case
+          },
+          { where: { id: caseId } },
+        )
+      })
 
-          beforeEach(async () => {
-            const mockFindOne = mockCaseModel.findOne as jest.Mock
-            mockFindOne.mockResolvedValueOnce(updatedCase)
+      it('should queue a notification message', () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId,
+            caseFileId: defenderAppealBriefId,
+          },
+          {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId,
+            caseFileId: defenderAppealBriefCaseFileId1,
+          },
+          {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId,
+            caseFileId: defenderAppealBriefCaseFileId2,
+          },
+          {
+            type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+            user,
+            caseId,
+          },
+        ])
+      })
 
-            await givenWhenThen(caseId, theCase, {
-              transition,
-            })
-          })
-
-          it('should transition the case', () => {
-            expect(mockCaseModel.update).toHaveBeenCalledWith(
-              {
-                appealState: newAppealState,
-                accusedPostponedAppealDate: currentAppealState
-                  ? undefined
-                  : date,
-              },
-              { returning: true, where: { id: caseId } },
-            )
-          })
-        },
-      )
+      it('should return the updated case', () => {
+        expect(then.result).toBe(updatedCase)
+      })
     },
   )
-
-  describe('Transition to RECEIVED appeal state', () => {
-    const caseId = uuid()
-    const theCase = {
-      id: caseId,
-      state: CaseState.ACCEPTED,
-    } as Case
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, {
-        transition: CaseTransition.RECEIVE_APPEAL,
-      })
-    })
-
-    it('should fail', () => {
-      expect(mockCaseModel.update).not.toHaveBeenCalled()
-    })
-  })
 })

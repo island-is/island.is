@@ -170,7 +170,34 @@ export const UpdateCaseMutation = gql`
       crimeScenes
       indictmentIntroduction
       requestDriversLicenseSuspension
-      appealState
+      canBeAppealed
+      hasBeenAppealed
+      appealDeadline
+      appealedByRole
+      appealedDate
+      appealDeadline
+      prosecutorStatementDate
+      defenderStatementDate
+      isStatementDeadlineExpired
+      statementDeadline
+      appealReceivedByCourtDate
+      appealCaseNumber
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
     }
   }
 `

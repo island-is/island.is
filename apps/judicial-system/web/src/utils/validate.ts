@@ -425,3 +425,14 @@ export const isAdminUserFormValid = (user: User): boolean => {
     false
   )
 }
+
+export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
+  return (
+    (workingCase.appealJudge1 &&
+      workingCase.appealJudge2 &&
+      workingCase.appealJudge3 &&
+      workingCase.appealAssistant &&
+      validate([[workingCase.appealCaseNumber, ['empty']]]).isValid) ||
+    false
+  )
+}

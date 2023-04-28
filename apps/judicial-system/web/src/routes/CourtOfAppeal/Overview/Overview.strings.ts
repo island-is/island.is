@@ -1,17 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const courtOfAppealOverview = defineMessages({
-  alertBannerTitle: {
-    id: 'judicial.system.core:court_of_appeal_overview.alert_banner_title',
-    defaultMessage: 'Úrskurður kærður',
-    description: 'Titill á tilkynningu um móttöku kæru',
-  },
-  alertBannerMessage: {
-    id: 'judicial.system.core:court_of_appeal_overview.alert_banner_message',
-    defaultMessage:
-      'Frestur til að skila greinargerð {isStatementDeadlineExpired, select, true {rann} other {rennur}} út {statementDeadline}',
-    description: 'Texti á tilkynningu um móttöku kæru',
-  },
   alertBannerLinkText: {
     id: 'judicial.system.core:court_of_appeal_overview.alert_banner_link_text',
     defaultMessage: 'Senda tilkynningu um móttöku',
