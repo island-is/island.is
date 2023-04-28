@@ -4,7 +4,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import { YES, YesOrNo, DiscountCheck } from './constants'
+import {
+  YES,
+  YesOrNo,
+  DiscountCheck,
+  DistrictCommissionerAgencies,
+} from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
 import { PassportSchema } from '@island.is/application/templates/passport'
@@ -48,7 +53,25 @@ export class PassportService extends BaseTemplateApiService {
         400,
       )
     }
-    return res
+
+    // We want to make sure that Þjóðskrá locations are the first to appear, their key starts with a number
+    const deliveryAddresses = (res as DistrictCommissionerAgencies[]).sort(
+      (a, b) => {
+        const keyA = a.key.toUpperCase() // ignore upper and lowercase
+        const keyB = b.key.toUpperCase() // ignore upper and lowercase
+        if (keyA < keyB) {
+          return -1
+        }
+        if (keyA > keyB) {
+          return 1
+        }
+
+        // keys must be equal
+        return 0
+      },
+    )
+
+    return deliveryAddresses
   }
 
   async createCharge({

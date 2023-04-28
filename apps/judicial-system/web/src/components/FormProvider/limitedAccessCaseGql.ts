@@ -110,6 +110,8 @@ const LimitedAccessCaseQuery = gql`
       prosecutorStatementDate
       defendantStatementDate
       appealReceivedByCourtDate
+      appealConclusion
+      appealRulingDecision
     }
   }
 `
