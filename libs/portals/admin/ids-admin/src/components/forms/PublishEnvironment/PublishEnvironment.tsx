@@ -30,14 +30,14 @@ export default function PublishEnvironment() {
   useEffect(() => {
     if (actionData?.globalError && !isLoading && !isSubmitting)
       toast.error(formatMessage(m.errorPublishingEnvironment))
-  }, [actionData?.globalError, isSubmitting, isLoading, formatMessage])
+  }, [actionData?.globalError, isSubmitting, isLoading])
 
   useEffect(() => {
     if (actionData?.data) {
       toast.success(formatMessage(m.successfullySaved))
       cancel()
     }
-  }, [actionData, formatMessage])
+  }, [actionData])
 
   const cancel = () => {
     navigate(

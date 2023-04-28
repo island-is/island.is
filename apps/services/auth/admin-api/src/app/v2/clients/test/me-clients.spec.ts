@@ -23,20 +23,39 @@ import { getModelToken } from '@nestjs/sequelize'
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'
 
+const mockedApiScopes = [
+  {
+    name: '@scope1',
+    displayName: 'Scope 1 display name',
+    description: 'Scope 1 description',
+  },
+  {
+    name: '@scope2',
+    displayName: 'Scope 2 display name',
+    description: 'Scope 2 description',
+  },
+]
+
 const createTestClientData = async (app: TestApp, user: User) => {
   const fixtureFactory = new FixtureFactory(app)
-  await fixtureFactory.createDomain({
+  const domain = await fixtureFactory.createDomain({
     name: tenantId,
     nationalId: user.nationalId,
+    apiScopes: mockedApiScopes,
   })
   const client = await fixtureFactory.createClient({
     ...clientBaseAttributes,
-    clientId: clientId,
+    clientId,
     domainName: tenantId,
     redirectUris: [faker.internet.url()],
     postLogoutRedirectUris: [faker.internet.url()],
     allowedGrantTypes: [],
     claims: [{ type: faker.random.word(), value: faker.random.word() }],
+    allowedScopes:
+      domain.scopes?.map(({ name }) => ({
+        scopeName: name,
+        clientId,
+      })) ?? [],
   })
   const [translation] = await fixtureFactory.createTranslations(client, 'en', {
     clientName: faker.random.word(),
@@ -79,6 +98,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
     supportsPersonalRepresentatives: false,
     supportsProcuringHolders: false,
     promptDelegations: false,
+    allowedScopes: client.allowedScopes ?? [],
   }
 }
 
@@ -115,7 +135,9 @@ const clientForCreateTest: Partial<AdminCreateClientDto> = {
 }
 
 describe('MeClientsController with auth', () => {
-  const user = createCurrentUser({ scope: [AdminPortalScope.idsAdmin] })
+  const user = createCurrentUser({
+    scope: [AdminPortalScope.idsAdmin],
+  })
   const otherUser = createCurrentUser({ scope: [AdminPortalScope.idsAdmin] })
   const superUser = createCurrentUser({
     scope: [AdminPortalScope.idsAdminSuperUser],
@@ -299,6 +321,7 @@ describe('MeClientsController with auth', () => {
         supportsProcuringHolders: false,
         promptDelegations: false,
         customClaims: [],
+        allowedScopes: [],
       })
 
       // Assert - db record

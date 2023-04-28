@@ -121,6 +121,20 @@ export class FixtureFactory {
         .filter(isDefined) ?? [],
     )
 
+    createdClient.allowedScopes = (
+      await Promise.all(
+        client?.allowedScopes?.map((allowedScope) =>
+          this.createClientAllowedScope(allowedScope),
+        ) ?? [],
+      )
+    ).map(
+      ({ scopeName, clientId }) =>
+        ({
+          scopeName,
+          clientId,
+        } as ClientAllowedScope),
+    )
+
     return createdClient
   }
 
