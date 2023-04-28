@@ -73,11 +73,8 @@ const SubscriptionsSkeleton = ({
                 <Stack space={1}>
                   <Text variant="default">
                     {isMySubscriptions
-                      ? 'Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál.'
-                      : 'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum tölvupóstfangið sem þú skráðir.'}
-                  </Text>
-                  <Text variant="default">
-                    Kerfið er uppfært einu sinni á sólarhring.
+                      ? 'Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál. Kerfið er uppfært einu sinni á sólarhring.'
+                      : 'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.'}
                   </Text>
                 </Stack>
               </Stack>
