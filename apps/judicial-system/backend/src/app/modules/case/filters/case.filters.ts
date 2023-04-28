@@ -288,7 +288,17 @@ export function isCaseBlockedFromUser(
 function getProsecutionCasesQueryFilter(role: UserRole): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
-    { [Op.not]: { state: [CaseState.DELETED] } },
+    {
+      state: [
+        CaseState.NEW,
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        CaseState.ACCEPTED,
+        CaseState.REJECTED,
+        CaseState.DISMISSED,
+      ],
+    },
     {
       [Op.or]: [
         { creating_prosecutor_id: { [Op.is]: null } },

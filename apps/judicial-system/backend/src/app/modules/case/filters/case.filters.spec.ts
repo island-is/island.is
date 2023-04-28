@@ -1265,7 +1265,17 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { isArchived: false },
-        { [Op.not]: { state: [CaseState.DELETED] } },
+        {
+          state: [
+            CaseState.NEW,
+            CaseState.DRAFT,
+            CaseState.SUBMITTED,
+            CaseState.RECEIVED,
+            CaseState.ACCEPTED,
+            CaseState.REJECTED,
+            CaseState.DISMISSED,
+          ],
+        },
         {
           [Op.or]: [
             { creating_prosecutor_id: { [Op.is]: null } },
@@ -1303,7 +1313,17 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { isArchived: false },
-        { [Op.not]: { state: [CaseState.DELETED] } },
+        {
+          state: [
+            CaseState.NEW,
+            CaseState.DRAFT,
+            CaseState.SUBMITTED,
+            CaseState.RECEIVED,
+            CaseState.ACCEPTED,
+            CaseState.REJECTED,
+            CaseState.DISMISSED,
+          ],
+        },
         {
           [Op.or]: [
             { creating_prosecutor_id: { [Op.is]: null } },
