@@ -81,6 +81,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 <Button
                   variant="text"
                   size="small"
+                  icon={member.enabled ? 'remove' : 'add'}
                   onClick={() => {
                     const updatedMember = {
                       ...member,
