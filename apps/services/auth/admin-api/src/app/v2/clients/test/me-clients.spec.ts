@@ -432,6 +432,7 @@ describe('MeClientsController with auth', () => {
           ? typeSpecificDefaults.promptDelegations
           : false,
         customClaims: typeSpecificDefaults.customClaims ?? [],
+        allowedScopes: typeSpecificDefaults.allowedScopes ?? [],
       })
 
       // Assert - db record
