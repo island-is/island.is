@@ -76,6 +76,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseOrigin),
   })
+  @ApiProperty({ enum: CaseOrigin })
   origin!: CaseOrigin
 
   /**********
@@ -86,6 +87,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseType),
   })
+  @ApiProperty({ enum: CaseType })
   type!: CaseType
 
   /**********
