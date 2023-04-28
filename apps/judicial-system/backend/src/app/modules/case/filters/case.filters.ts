@@ -318,33 +318,29 @@ function getProsecutionCasesQueryFilter(role: UserRole): WhereOptions {
 function getStaffCasesQueryFilter(
   institutionType?: InstitutionType,
 ): WhereOptions {
-  return institutionType === InstitutionType.PRISON_ADMIN
-    ? {
-        [Op.and]: [
-          { isArchived: false },
-          { state: CaseState.ACCEPTED },
-          {
-            type: [
-              CaseType.ADMISSION_TO_FACILITY,
-              CaseType.CUSTODY,
-              CaseType.TRAVEL_BAN,
-            ],
-          },
-        ],
-      }
-    : {
-        [Op.and]: [
-          { isArchived: false },
-          { state: CaseState.ACCEPTED },
-          { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
-          {
-            decision: [
-              CaseDecision.ACCEPTING,
-              CaseDecision.ACCEPTING_PARTIALLY,
-            ],
-          },
-        ],
-      }
+  const options: WhereOptions = [
+    { isArchived: false },
+    { state: CaseState.ACCEPTED },
+  ]
+
+  if (institutionType === InstitutionType.PRISON_ADMIN) {
+    options.push({
+      type: [
+        CaseType.ADMISSION_TO_FACILITY,
+        CaseType.CUSTODY,
+        CaseType.TRAVEL_BAN,
+      ],
+    })
+  } else {
+    options.push(
+      { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+      {
+        decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
+      },
+    )
+  }
+
+  return { [Op.and]: options }
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
