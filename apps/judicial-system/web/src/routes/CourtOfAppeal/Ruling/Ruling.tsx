@@ -28,6 +28,8 @@ import {
   TUploadFile,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import * as constants from '@island.is/judicial-system/consts'
+import { useRouter } from 'next/router'
 
 const CourtOfAppealRuling: React.FC = () => {
   const {
@@ -39,10 +41,14 @@ const CourtOfAppealRuling: React.FC = () => {
 
   const { formatMessage } = useIntl()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
+  const [hasError, setError] = useState<boolean>(false)
 
   const [checkedRadio, setCheckedRadio] = useState<CaseAppealRulingDecision>(
     CaseAppealRulingDecision.ACCEPTING,
   )
+  const router = useRouter()
+  const { id } = router.query
+  const previousUrl = `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`
 
   const {
     handleChange,
@@ -65,6 +71,9 @@ const CourtOfAppealRuling: React.FC = () => {
       previous.filter((caseFile) => caseFile.id !== file.id),
     )
   }, [])
+
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}`)
 
   return (
     <PageLayout
@@ -200,16 +209,18 @@ const CourtOfAppealRuling: React.FC = () => {
             label={formatMessage(strings.conclusionHeading)}
             name="rulingConclusion"
             value={workingCase.appealConclusion || ''}
-            onChange={(event) =>
+            onChange={(event) => {
+              setError(false)
               setWorkingCase({
                 ...workingCase,
                 appealConclusion: event.target.value,
               })
-            }
+            }}
             textarea
             rows={7}
             required
             autoExpand={{ on: true, maxHeight: 300 }}
+            hasError={hasError && !workingCase.appealConclusion}
           />
         </Box>
         <Box marginBottom={10}>
@@ -249,11 +260,17 @@ const CourtOfAppealRuling: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          previousUrl={previousUrl}
           onNextButtonClick={() => {
+            if (!workingCase.appealConclusion) {
+              setError(true)
+              return
+            }
             setWorkingCase({
               ...workingCase,
               appealRulingDecision: checkedRadio,
             })
+            handleNavigationTo(constants.CASES_ROUTE)
           }}
           nextButtonIcon="arrowForward"
           nextButtonText={formatMessage(strings.nextButtonFooter)}
