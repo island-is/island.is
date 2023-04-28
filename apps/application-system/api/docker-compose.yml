@@ -22,7 +22,7 @@ services:
     environment:
       - IP=0.0.0.0
     ports:
-      - '7001-7005:7001-7005'
+      - '7000-7005:7000-7005'
 
 networks:
   local:
