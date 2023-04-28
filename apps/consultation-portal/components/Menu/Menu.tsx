@@ -45,7 +45,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                 {isFrontPage && (
                   <Column width="content">
                     <FocusableBox href="https://island.is/">
-                      <Logo iconOnly width={26} />
+                      <Logo />
                     </FocusableBox>
                   </Column>
                 )}
@@ -53,7 +53,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                   <Hidden below="xl">
                     <Column width="content">
                       <FocusableBox href="https://island.is/">
-                        <Logo iconOnly width={26} />
+                        <Logo iconOnly />
                       </FocusableBox>
                     </Column>
                   </Hidden>
