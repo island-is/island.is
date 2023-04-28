@@ -119,22 +119,33 @@ USER runner
 CMD [ "jest", "main.spec.js" ]
 
 
+FROM alpine3.15 as awscli
+
+ARG AWSCLI_VERSION="1.22.24"
+ENV AWSCLI_VERSION=${AWSCLI_VERSION}
+
+RUN apk add \
+    bash \
+    python3 \
+    python3-dev \
+    py-pip \
+    build-base \
+    jq \
+    curl
+
+RUN pip install awscli==$AWSCLI_VERSION --user
+RUN mkdir -p /build
+
+COPY /root/.local/bin/aws /build/
+
 
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
 
-
-
-
-
-
 FROM playwright-base as output-playwright
-# TODO: remove awscli dependency (157 MB extra)
 RUN apt-get update && apt-get install -y zip && apt-get purge
 
-RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-RUN unzip awscliv2.zip
-RUN ./aws/install
-RUN rm awscliv2.zip
+COPY --chown=root:root --from=awscli /build /usr/local/bin
+
 
 ARG APP_HOME
 ARG APP_DIST_HOME
