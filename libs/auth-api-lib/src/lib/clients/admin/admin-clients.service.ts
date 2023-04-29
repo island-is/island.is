@@ -452,7 +452,18 @@ export class AdminClientsService {
       { model: ClientGrantType, as: 'allowedGrantTypes' },
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
-      { model: ClientAllowedScope, as: 'allowedScopes' },
+      {
+        model: ClientAllowedScope,
+        as: 'allowedScopes',
+        where: {
+          scopeName: {
+            [Op.notIn]: Sequelize.literal(
+              `(SELECT name FROM identity_resource)`,
+            ),
+          },
+        },
+        required: false,
+      },
     ]
   }
 

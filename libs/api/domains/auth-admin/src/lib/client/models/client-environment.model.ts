@@ -28,9 +28,6 @@ export class ClientEnvironment {
   @Field(() => [TranslatedValue])
   displayName!: TranslatedValue[]
 
-  @Field(() => [ClientSecret], { nullable: true })
-  secrets?: ClientSecret[]
-
   @Field(() => [String])
   redirectUris!: string[]
 
