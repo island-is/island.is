@@ -1,8 +1,9 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
-import { RefreshTokenExpiration } from '../../models/refreshTokenExpiration.enum'
+import { ClientAllowedScopeDTO } from '@island.is/auth-api-lib'
 import { Environment } from '@island.is/shared/types'
 
+import { RefreshTokenExpiration } from '../../models/refreshTokenExpiration.enum'
 import { ClientType } from '../../models/client-type.enum'
 import { TranslatedValue } from '../../models/translated-value.model'
 import { ClientClaim } from './client-claim.model'
@@ -77,4 +78,7 @@ export class ClientEnvironment {
 
   @Field(() => [ClientClaim], { nullable: true })
   customClaims?: ClientClaim[]
+
+  // Internal attributes, used in field resolvers.
+  allowedScopes?: ClientAllowedScopeDTO[]
 }
