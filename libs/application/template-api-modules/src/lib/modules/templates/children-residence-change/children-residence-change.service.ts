@@ -142,10 +142,17 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       childResidenceInfo.future.address.postalCode,
     )
 
-    const uploadDataName = 'SamningurForsjaOgMedlag1.1'
+    const uploadDataName = 'Samningur Forsjá Og Meðlag'
+    const uploadDataId = 'SamningurForsjaOgMedlag1.1'
 
     const response = await this.syslumennService
-      .uploadData(participants, attachments, extraData, uploadDataName)
+      .uploadData(
+        participants,
+        attachments,
+        extraData,
+        uploadDataName,
+        uploadDataId,
+      )
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
@@ -155,7 +162,6 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
         )
         return undefined
       })
-
     return response
   }
 
