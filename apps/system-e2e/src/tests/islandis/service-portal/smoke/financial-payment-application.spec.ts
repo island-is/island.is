@@ -3,6 +3,7 @@ import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/finance/messages'
+import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Fjármál overview', () => {
@@ -24,6 +25,7 @@ test.describe('Fjármál overview', () => {
 
   test('Finance payment application', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('Application button is visible', async () => {
       // Arrange

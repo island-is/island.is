@@ -4,6 +4,7 @@ import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { messages } from '@island.is/service-portal/vehicles/messages'
 import { m } from '@island.is/service-portal/core/messages'
+import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -27,6 +28,7 @@ test.describe('Vehicles', () => {
 
   test('my vehicles', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('should display data and filter overview', async () => {
       // Arrange
@@ -90,6 +92,7 @@ test.describe('Vehicles', () => {
 
   test('lookup', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('should allow lookup of cars', async () => {
       // Arrange
@@ -121,6 +124,7 @@ test.describe('Vehicles', () => {
 
   test('history list', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('should display and filter data', async () => {
       // Arrange

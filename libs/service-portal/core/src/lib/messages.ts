@@ -378,7 +378,7 @@ export const m = defineMessages({
   },
   myRegistration: {
     id: 'service.portal:my-registration',
-    defaultMessage: 'Mín skráninggg',
+    defaultMessage: 'Mín skráning',
   },
   baseInfo: {
     id: 'service.portal:base-info',

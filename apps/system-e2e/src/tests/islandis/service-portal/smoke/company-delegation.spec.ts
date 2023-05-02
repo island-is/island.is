@@ -7,6 +7,7 @@ import { coreDelegationsMessages } from '@island.is/application/core/messages'
 import { m } from '@island.is/portals/shared-modules/delegations/messages'
 import { m as coreMessages } from '@island.is/service-portal/core/messages'
 import { mCompany } from '@island.is/service-portal/information/messages'
+import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -59,6 +60,7 @@ test.describe('Service portal', () => {
   test('can view company data', async () => {
     // Arrange
     const page = await context.newPage()
+    await disableI18n(page)
     await page.goto('/minarsidur?locale=is&hide_onboarding_modal=true')
 
     // Act

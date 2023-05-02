@@ -1,7 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { helpers } from '../../../../support/locator-helpers'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
 import { spmm } from '@island.is/service-portal/information/messages'
@@ -27,6 +26,7 @@ test.describe('Service portal', () => {
   test('should display user information overveiw', async () => {
     // Arrange
     const page = await context.newPage()
+    await disableI18n(page)
     await page.goto('/minarsidur/min-gogn')
 
     // Act
@@ -39,7 +39,7 @@ test.describe('Service portal', () => {
     await expect(element).toBeVisible()
   })
 
-  test.only('should display user detail information', async () => {
+  test('should display user detail information', async () => {
     const page = await context.newPage()
     await disableI18n(page)
     await page.goto('/minarsidur/min-gogn/minar-upplysingar')
@@ -59,6 +59,7 @@ test.describe('Service portal', () => {
 
   test('should display child information', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
     await page.goto('/minarsidur/min-gogn')
     await page.waitForLoadState('networkidle')
 

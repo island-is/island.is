@@ -3,6 +3,7 @@ import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/licenses/messages'
+import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -26,6 +27,7 @@ test.describe('Licenses', () => {
 
   test('License overview', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('Renders the page', async () => {
       // Arrange
@@ -39,6 +41,7 @@ test.describe('Licenses', () => {
 
   test('should display passport in overview', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
     await page.goto('/minarsidur/skirteini')
     await page.waitForLoadState('networkidle')
 
@@ -58,6 +61,7 @@ test.describe('Licenses', () => {
 
   test('should display child passports', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
     await page.goto('/minarsidur/skirteini')
     await page.waitForLoadState('networkidle')
 

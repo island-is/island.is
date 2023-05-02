@@ -4,6 +4,7 @@ import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { messages } from '@island.is/service-portal/documents/messages'
 import { m } from '@island.is/service-portal/core/messages'
+import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -27,6 +28,7 @@ test.describe('Pósthólf overview', () => {
 
   test('Can filter inbox items', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('Filter by searchbox', async () => {
       // Arrange

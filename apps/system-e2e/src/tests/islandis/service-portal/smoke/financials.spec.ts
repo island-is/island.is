@@ -3,6 +3,7 @@ import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
+import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Fjármál overview', () => {
@@ -24,6 +25,7 @@ test.describe('Fjármál overview', () => {
 
   test('Finance status', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('Filter returns any data', async () => {
       // Arrange
@@ -40,6 +42,7 @@ test.describe('Fjármál overview', () => {
 
   test('Finance transactions', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('Data is returned', async () => {
       // Arrange
@@ -74,6 +77,7 @@ test.describe('Fjármál overview', () => {
 
   test('Finance bills', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('Data is filtered', async () => {
       // Arrange
@@ -94,6 +98,7 @@ test.describe('Fjármál overview', () => {
 
   test('Finance Launagreidendakröfur', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('Can filter table and find a claim', async () => {
       // Arrange

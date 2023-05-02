@@ -3,6 +3,7 @@ import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
+import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -26,6 +27,7 @@ test.describe('Work licenses', () => {
 
   test('Work license overview has a work-license', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
 
     await test.step('Renders the page', async () => {
       // Arrange
