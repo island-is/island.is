@@ -1,27 +1,31 @@
+import React, { useState } from 'react'
+import { useActionData } from 'react-router-dom'
+
+import { AuthAdminClientEnvironment } from '@island.is/api/schema'
+import { useAuth } from '@island.is/auth/react'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Checkbox, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
+import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
 import {
   ClientFormTypes,
   EditApplicationResult,
   schema,
 } from '../forms/EditApplication/EditApplication.action'
-import React, { useState } from 'react'
-import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
-import { useActionData } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 import { useReadableSeconds } from './ReadableSeconds'
 
-interface AdvancedSettingsProps {
-  requirePkce: boolean
-  allowOfflineAccess: boolean
-  requireConsent: boolean
-  supportTokenExchange: boolean
-  accessTokenLifetime: number
-  customClaims: string[]
-}
+type AdvancedSettingsProps = Pick<
+  AuthAdminClientEnvironment,
+  | 'requirePkce'
+  | 'allowOfflineAccess'
+  | 'requireConsent'
+  | 'supportTokenExchange'
+  | 'accessTokenLifetime'
+  | 'customClaims'
+>
 
 const AdvancedSettings = ({
   requirePkce,
@@ -41,13 +45,18 @@ const AdvancedSettings = ({
     AdminPortalScope.idsAdminSuperUser,
   )
 
+  const customClaimsString = (
+    customClaims?.map((claim) => {
+      return `${claim.type}=${claim.value}`
+    }) ?? []
+  ).join('\n')
   const [inputValues, setInputValues] = useState({
     requirePkce,
     allowOfflineAccess,
     requireConsent,
     supportTokenExchange,
     accessTokenLifetime,
-    customClaims,
+    customClaims: customClaimsString,
   })
 
   const { formatErrorMessage } = useErrorFormatMessage()
@@ -166,16 +175,12 @@ const AdvancedSettings = ({
             onChange={(e) => {
               setInputValues({
                 ...inputValues,
-                customClaims: e.target.value.split(/\r?\n/),
+                customClaims: e.target.value,
               })
             }}
             backgroundColor="blue"
-            value={
-              inputValues.customClaims.length > 0
-                ? inputValues.customClaims.join('\n')
-                : ''
-            }
-            placeholder={'claim=Value'}
+            value={inputValues.customClaims}
+            placeholder={'claim=value'}
             errorMessage={formatErrorMessage(
               (actionData?.errors?.customClaims as unknown) as string,
             )}

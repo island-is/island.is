@@ -241,11 +241,7 @@ const Client = () => {
           requireConsent={selectedEnvironment.requireConsent}
           supportTokenExchange={selectedEnvironment.supportTokenExchange}
           accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
-          customClaims={
-            selectedEnvironment.customClaims?.map((claim) => {
-              return `${claim.type}=${claim.value}`
-            }) ?? []
-          }
+          customClaims={selectedEnvironment.customClaims}
         />
       </Stack>
       <Outlet />
