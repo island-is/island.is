@@ -23,7 +23,9 @@ export const generateJobsForFeature = async (
         .filter((id) => id)
         .map((info) => {
           const host = resolveDbHost(service, env, info?.host)
-          const extensions = getPostgresExtensions(info?.extensions)
+          const extensions = getPostgresExtensions(
+            service.initContainers?.postgres?.extensions,
+          )
           return {
             command: ['/app/create-db.sh'],
             image,
