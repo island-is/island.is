@@ -14,7 +14,6 @@ import {
   UserRole,
   isExtendedCourtRole,
   isProsecutionUser,
-  isCourtRole,
   CaseAppealState,
   isDistrictCourtUser,
   isAppealsCourtUser,
@@ -23,8 +22,6 @@ import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 import { ForbiddenException } from '@nestjs/common'
-
-const hideArchived = { isArchived: false }
 
 function getAllowedStates(
   user: User,
@@ -393,49 +390,19 @@ function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-function getAppealsCourtUserCasesQueryFilter(user: User): WhereOptions {
-  const blockStates = {
-    [Op.not]: { state: getBlockedStates(user, user.institution?.type) },
-  }
-
-  const blockInstitutions =
-    user.institution?.type === InstitutionType.HIGH_COURT
-      ? {
-          appeal_state: [
-            CaseAppealState.APPEALED,
-            CaseAppealState.RECEIVED,
-            CaseAppealState.COMPLETED,
-          ],
-        }
-      : {
-          [Op.or]: [
-            { court_id: { [Op.is]: null } },
-            { court_id: user.institution?.id },
-          ],
-        }
-
-  const blockDraftIndictmentsForCourt =
-    isCourtRole(user.role) && user.institution?.type === InstitutionType.COURT
-      ? [
-          {
-            [Op.not]: {
-              [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
-            },
-          },
-        ]
-      : []
-
-  const restrictCaseTypes = [
-    { type: [...restrictionCases, ...investigationCases] },
-  ]
-
+function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
   return {
     [Op.and]: [
-      hideArchived,
-      blockStates,
-      blockInstitutions,
-      ...blockDraftIndictmentsForCourt,
-      ...restrictCaseTypes,
+      { isArchived: false },
+      { type: [...restrictionCases, ...investigationCases] },
+      { state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED] },
+      {
+        appeal_state: [
+          CaseAppealState.APPEALED,
+          CaseAppealState.RECEIVED,
+          CaseAppealState.COMPLETED,
+        ],
+      },
     ],
   }
 }
@@ -477,7 +444,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
   }
 
   if (isAppealsCourtUser(user)) {
-    return getAppealsCourtUserCasesQueryFilter(user)
+    return getAppealsCourtUserCasesQueryFilter()
   }
 
   if (user.role === UserRole.STAFF) {

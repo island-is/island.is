@@ -1455,16 +1455,13 @@ describe('getCasesQueryFilter', () => {
       expect(res).toStrictEqual({
         [Op.and]: [
           { isArchived: false },
+          { type: [...restrictionCases, ...investigationCases] },
           {
-            [Op.not]: {
-              state: [
-                CaseState.NEW,
-                CaseState.DRAFT,
-                CaseState.SUBMITTED,
-                CaseState.RECEIVED,
-                CaseState.DELETED,
-              ],
-            },
+            state: [
+              CaseState.ACCEPTED,
+              CaseState.REJECTED,
+              CaseState.DISMISSED,
+            ],
           },
           {
             appeal_state: [
@@ -1473,7 +1470,6 @@ describe('getCasesQueryFilter', () => {
               CaseAppealState.COMPLETED,
             ],
           },
-          { type: [...restrictionCases, ...investigationCases] },
         ],
       })
     })
