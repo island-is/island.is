@@ -22,6 +22,8 @@ import {
 } from './models'
 import { AuditService } from '@island.is/nest/audit'
 import { DrivingInstructorGuard } from './guards/drivingInstructor.guard'
+import { StudentCanGetPracticePermitInput } from './models/studentCanGetPracticePermit.input'
+import { StudentCanGetPracticePermit } from './models/studentCanGetPracticePermit.model'
 
 const namespace = '@island.is/api/driving-license'
 
@@ -99,6 +101,14 @@ export class MainResolver {
     )
   }
 
+  @Query(() => ApplicationEligibility)
+  learnerMentorEligibility(@CurrentUser() user: User) {
+    return this.drivingLicenseService.getLearnerMentorEligibility(
+      user,
+      user.nationalId,
+    )
+  }
+
   @Query(() => [Juristiction])
   drivingLicenseListOfJuristictions() {
     return this.drivingLicenseService.getListOfJuristictions()
@@ -107,5 +117,17 @@ export class MainResolver {
   @Query(() => StudentAssessment, { nullable: true })
   drivingLicenseStudentAssessment(@CurrentUser() user: User) {
     return this.drivingLicenseService.getDrivingAssessment(user.nationalId)
+  }
+
+  @Query(() => StudentCanGetPracticePermit, { nullable: true })
+  drivingLicenseStudentCanGetPracticePermit(
+    @CurrentUser() user: User,
+    @Args('input') input: StudentCanGetPracticePermitInput,
+  ) {
+    return this.drivingLicenseService.studentCanGetPracticePermit({
+      mentorSSN: user.nationalId,
+      studentSSN: input.studentSSN,
+      token: user.authorization.split(' ')?.[1] ?? '', // Need to remove "Bearer" part
+    })
   }
 }

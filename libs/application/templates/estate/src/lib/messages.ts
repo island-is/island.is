@@ -528,6 +528,22 @@ export const m = defineMessages({
       'Þú hefur valið að lýsa því yfir að þú óskir eftir að ofangreint dánarbú verði tekið til opinberra skipta. Nánari upplýsingar um skilyrði opinberra skipta má finna á eftirfarandi vefslóð á Ísland.is',
     description: '',
   },
+  divisionOfEstateTerms: {
+    id: 'es.application:divisionOfEstateTerms',
+    defaultMessage: 'Skilmálar',
+    description: '',
+  },
+  divisionOfEstateTermsText: {
+    id: 'es.application:divisionOfEstateTermsText#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar sendar í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  divisionOfEstateSubmissionCheckbox: {
+    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
+    defaultMessage: 'Ég hef lesið skilmálana',
+    description: '',
+  },
   overviewSubtitlePermitToPostpone: {
     id: 'es.application:overviewSubtitlePermitToPostpone#markdown',
     defaultMessage:
@@ -773,7 +789,7 @@ export const m = defineMessages({
   },
   gunNumberLabel: {
     id: 'es.application:gunNumberLabel',
-    defaultMessage: 'Raðnúmer ökutækis',
+    defaultMessage: 'Raðnúmer skotvopns',
     description: 'Gun number label',
   },
   gunTypeLabel: {

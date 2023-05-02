@@ -36,7 +36,9 @@ const SubscriptionTableAllItem = ({
       <TData
         width={width}
         borderColor={borderColor}
-        box={{ background: tableRowBackgroundColor(item.id == 'A' ? 0 : 1) }}
+        box={{
+          background: tableRowBackgroundColor(item.id == 'OnlyNew' ? 0 : 1),
+        }}
       >
         {children}
       </TData>

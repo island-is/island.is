@@ -11,12 +11,19 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseState,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
+import {
+  CaseMessage,
+  MessageService,
+  MessageType,
+} from '@island.is/judicial-system/message'
 
 import { nowFactory, uuidFactory } from '../../factories'
 import { Defendant } from '../defendant'
@@ -65,10 +72,22 @@ export const attributes: (keyof Case)[] = [
   'prosecutorAppealDecision',
   'accusedPostponedAppealDate',
   'prosecutorPostponedAppealDate',
+  'prosecutorStatementDate',
+  'defendantStatementDate',
+  'appealCaseNumber',
+  'appealAssistantId',
+  'appealJudge1Id',
+  'appealJudge2Id',
+  'appealJudge3Id',
+  'appealConclusion',
+  'appealRulingDecision',
 ]
 
-export interface LimitedUpdateCase
-  extends Pick<Case, 'accusedPostponedAppealDate' | 'appealState'> {}
+export interface LimitedAccessUpdateCase
+  extends Pick<
+    Case,
+    'accusedPostponedAppealDate' | 'appealState' | 'defendantStatementDate'
+  > {}
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -126,6 +145,7 @@ export const order: OrderItem[] = [
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
+    private readonly messageService: MessageService,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -156,11 +176,15 @@ export class LimitedAccessCaseService {
     return theCase
   }
 
-  async update(theCase: Case, update: LimitedUpdateCase): Promise<Case> {
-    const [numberOfAffectedRows, cases] = await this.caseModel.update(update, {
-      where: { id: theCase.id },
-      returning: true,
-    })
+  async update(
+    theCase: Case,
+    update: LimitedAccessUpdateCase,
+    user: TUser,
+  ): Promise<Case> {
+    const [numberOfAffectedRows] = await this.caseModel.update(
+      { ...update },
+      { where: { id: theCase.id } },
+    )
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -173,7 +197,51 @@ export class LimitedAccessCaseService {
       )
     }
 
-    return cases[0]
+    const messages: CaseMessage[] = []
+
+    if (update.appealState === CaseAppealState.APPEALED) {
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            [
+              CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+              CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+            ].includes(caseFile.category),
+        )
+        .forEach((caseFile) => {
+          const message = {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId: theCase.id,
+            caseFileId: caseFile.id,
+          }
+          messages.push(message)
+        })
+
+      messages.push({
+        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    // Return limited access case
+    const updatedCase = await this.findById(theCase.id)
+
+    if (updatedCase.defendantStatementDate !== theCase.defendantStatementDate) {
+      messages.push({
+        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    await this.messageService.sendMessagesToQueue(messages)
+
+    return updatedCase
   }
 
   findDefenderNationalId(theCase: Case, nationalId: string): User {
