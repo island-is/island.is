@@ -16,6 +16,7 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
   SessionArrangements,
   CourtDocument,
   SubpoenaType,
@@ -372,6 +373,16 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly prosecutorStatementDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defendantStatementDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly appealCaseNumber?: string
 
   @IsOptional()
@@ -393,4 +404,14 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional()
   readonly appealJudge3Id?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealConclusion?: string
+
+  @IsOptional()
+  @IsEnum(CaseAppealRulingDecision)
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }

@@ -63,7 +63,7 @@ const useAppealAlertBanner = (
 
   const {
     prosecutorStatementDate,
-    defenderStatementDate,
+    defendantStatementDate,
     statementDeadline,
     hasBeenAppealed,
     appealedByRole,
@@ -77,7 +77,7 @@ const useAppealAlertBanner = (
 
   const hasCurrentUserSentStatement =
     (isProsecutionRoleUser && prosecutorStatementDate) ||
-    (isDefenderRoleUser && defenderStatementDate)
+    (isDefenderRoleUser && defendantStatementDate)
 
   // HIGH COURT BANNER INFO IS HANDLED HERE
   if (user?.institution?.type === InstitutionType.HighCourt) {
@@ -105,7 +105,7 @@ const useAppealAlertBanner = (
           {formatMessage(strings.statementSentDescription, {
             statementSentDate: isProsecutionRoleUser
               ? formatDate(prosecutorStatementDate, 'PPPp')
-              : formatDate(defenderStatementDate, 'PPPp'),
+              : formatDate(defendantStatementDate, 'PPPp'),
           })}
         </Text>
       )
@@ -143,7 +143,7 @@ const useAppealAlertBanner = (
               {formatMessage(strings.statementSentDescription, {
                 statementSentDate: isProsecutionRoleUser
                   ? formatDate(prosecutorStatementDate, 'PPPp')
-                  : formatDate(defenderStatementDate, 'PPPp'),
+                  : formatDate(defendantStatementDate, 'PPPp'),
               })}
             </Text>
           ))
