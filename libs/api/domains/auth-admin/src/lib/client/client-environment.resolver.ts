@@ -32,9 +32,9 @@ export class ClientEnvironmentResolver {
   @ResolveField('allowedScopes', () => [AllowedScope], { nullable: true })
   async resolveAllowedScopes(
     @Loader(ClientAllowedScopesLoader)
-      apiScopeLoader: ClientAllowedScopesDataLoader,
+    apiScopeLoader: ClientAllowedScopesDataLoader,
     @Parent()
-      { tenantId, clientId, environment }: ClientEnvironment,
+    { tenantId, clientId, environment }: ClientEnvironment,
   ): Promise<AllowedScope[]> {
     return apiScopeLoader.load({
       tenantId,
