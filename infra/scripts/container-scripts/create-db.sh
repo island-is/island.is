@@ -27,7 +27,7 @@ else
     for i in ${DB_EXTENSIONS//,/ }
     do
         echo "enabling $i"
-        psql -d "$DB_NAME" -c "CREATE extension IF NOT EXISTS '$i';"
+        psql -d "$DB_NAME" -c "CREATE extension $i;"
         echo "extension $i enabled"
     done
 fi
