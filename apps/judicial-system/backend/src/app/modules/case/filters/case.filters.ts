@@ -16,6 +16,7 @@ import {
   isProsecutionUser,
   isCourtRole,
   CaseAppealState,
+  isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
@@ -285,7 +286,7 @@ export function isCaseBlockedFromUser(
   )
 }
 
-function getProsecutionRoleCasesQueryFilter(user: User): WhereOptions {
+function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -351,10 +352,53 @@ function getStaffRoleCasesQueryFilter(user: User): WhereOptions {
   return { [Op.and]: options }
 }
 
+function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
+  const blockStates = {
+    [Op.not]: { state: getBlockedStates(user, user.institution?.type) },
+  }
+
+  const blockInstitutions = {
+    [Op.or]: [
+      { court_id: { [Op.is]: null } },
+      { court_id: user.institution?.id },
+    ],
+  }
+
+  const blockDraftIndictmentsForCourt =
+    isCourtRole(user.role) && user.institution?.type === InstitutionType.COURT
+      ? [
+          {
+            [Op.not]: {
+              [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
+            },
+          },
+        ]
+      : []
+
+  const restrictCaseTypes =
+    user.role === UserRole.ASSISTANT ? [{ type: indictmentCases }] : []
+
+  return {
+    [Op.and]: [
+      hideArchived,
+      blockStates,
+      blockInstitutions,
+      ...blockDraftIndictmentsForCourt,
+      ...restrictCaseTypes,
+    ],
+  }
+
+  // const options: WhereOptions = []
+
+  // return { [Op.and]: options }
+}
+
 export function getCasesQueryFilter(user: User): WhereOptions {
   // TODO: Convert to switch
   if (isProsecutionUser(user)) {
-    return getProsecutionRoleCasesQueryFilter(user)
+    return getProsecutionUserCasesQueryFilter(user)
+  } else if (isDistrictCourtUser(user)) {
+    return getDistricteCourtUserCasesQueryFilter(user)
   } else if (user.role === UserRole.STAFF) {
     return getStaffRoleCasesQueryFilter(user)
   }
