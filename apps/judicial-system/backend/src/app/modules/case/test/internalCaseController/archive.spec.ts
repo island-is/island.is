@@ -18,7 +18,7 @@ import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
 import { caseModuleConfig } from '../../case.config'
-import { oldFilter } from '../../filters/case.filters'
+import { archiveFilter } from '../../filters/case.archiveFilter'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
@@ -100,7 +100,7 @@ describe('InternalCaseController - Archive', () => {
         ],
         where: {
           isArchived: false,
-          [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+          [Op.or]: [{ state: CaseState.DELETED }, archiveFilter],
         },
       })
     })
