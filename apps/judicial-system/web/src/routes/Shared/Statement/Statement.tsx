@@ -33,6 +33,7 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   TUploadFile,
+  useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { mapCaseFileToUploadFile } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -44,6 +45,7 @@ import { statement as strings } from './Statement.strings'
 const Statement = () => {
   const { workingCase } = useContext(FormContext)
   const { limitedAccess, user } = useContext(UserContext)
+  const { isUpdatingCase, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
@@ -207,9 +209,15 @@ const Statement = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={() => setVisibleModal('STATEMENT_SENT')}
+          onNextButtonClick={async () => {
+            const update = limitedAccess
+              ? { defendantStatementDate: new Date().toISOString() }
+              : { prosecutorStatementDate: new Date().toISOString() }
+            await updateCase(workingCase.id, update)
+            setVisibleModal('STATEMENT_SENT')
+          }}
           nextButtonText={formatMessage(strings.nextButtonText)}
-          nextIsDisabled={!isStepValid}
+          nextIsDisabled={!isStepValid || isUpdatingCase}
           nextButtonIcon={undefined}
         />
       </FormContentContainer>
