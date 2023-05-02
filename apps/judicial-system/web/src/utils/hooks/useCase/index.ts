@@ -42,6 +42,7 @@ import {
   CreateCaseMutation,
   CreateCourtCaseMutation,
   UpdateCaseMutation,
+  LimitedAccessUpdateCaseMutation,
   TransitionCaseMutation,
   LimitedAccessTransitionCaseMutation,
   SendNotificationMutation,
@@ -82,6 +83,10 @@ interface CreateCourtCaseMutationResponse {
 
 interface UpdateCaseMutationResponse {
   updateCase: Case
+}
+
+interface LimitedAccessUpdateCaseMutationResponse {
+  limitedAccessUpdateCase: Case
 }
 
 interface TransitionCaseMutationResponse {
@@ -260,6 +265,15 @@ const useCase = () => {
   })
 
   const [
+    limitedAccessUpdateCaseMutation,
+    { loading: isLimitedAccessUpdatingCase },
+  ] = useMutation<LimitedAccessUpdateCaseMutationResponse>(
+    LimitedAccessUpdateCaseMutation,
+    {
+      fetchPolicy: 'no-cache',
+    },
+  )
+  const [
     transitionCaseMutation,
     { loading: isTransitioningCase },
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
@@ -369,21 +383,37 @@ const useCase = () => {
 
   const updateCase = useMemo(
     () => async (id: string, updateCase: UpdateCase) => {
+      const mutation = limitedAccess
+        ? limitedAccessUpdateCaseMutation
+        : updateCaseMutation
+
+      const resultType = limitedAccess
+        ? 'limitedAccessUpdateCase'
+        : 'updateCase'
+
       try {
         if (!id || Object.keys(updateCase).length === 0) {
           return
         }
 
-        const { data } = await updateCaseMutation({
+        const { data } = await mutation({
           variables: { input: { id, ...updateCase } },
         })
 
-        return data?.updateCase
+        const res = data as UpdateCaseMutationResponse &
+          LimitedAccessUpdateCaseMutationResponse
+
+        return res && res[resultType]
       } catch (error) {
         toast.error(formatMessage(errors.updateCase))
       }
     },
-    [formatMessage, updateCaseMutation],
+    [
+      formatMessage,
+      limitedAccess,
+      limitedAccessUpdateCaseMutation,
+      updateCaseMutation,
+    ],
   )
 
   const transitionCase = useMemo(
@@ -413,8 +443,8 @@ const useCase = () => {
         const res = data as TransitionCaseMutationResponse &
           LimitedAccessTransitionCaseMutationResponse
 
-        const state = res[resultType].state
-        const appealState = res[resultType].appealState
+        const state = res && res[resultType].state
+        const appealState = res && res[resultType].appealState
 
         if (!state && !appealState) {
           return false
@@ -533,10 +563,10 @@ const useCase = () => {
     createCourtCase,
     isCreatingCourtCase,
     updateCase,
-    isUpdatingCase,
+    isUpdatingCase: isUpdatingCase || isLimitedAccessUpdatingCase,
     transitionCase,
-    isTransitioningCase,
-    isLimitedAccessTransitioningCase,
+    isTransitioningCase:
+      isTransitioningCase || isLimitedAccessTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,

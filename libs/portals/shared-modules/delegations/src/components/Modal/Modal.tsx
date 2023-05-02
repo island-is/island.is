@@ -48,7 +48,6 @@ export const Modal = ({
         paddingTop={12}
         borderRadius="standard"
         width="full"
-        overflow="auto"
         className={styles.modalInner}
       >
         <Box
