@@ -6,10 +6,8 @@ import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { ClientsService } from './clients.service'
 import { ClientEnvironment } from './models/client-environment.model'
 import { ClientSecret } from './models/client-secret.model'
-import {
-  ClientSecretDataLoader,
-  ClientSecretLoader,
-} from './client-secret.loader'
+import { ClientSecretLoader } from './client-secret.loader'
+import type { ClientSecretDataLoader } from './client-secret.loader'
 import { Loader } from '@island.is/nest/dataloader'
 
 @UseGuards(IdsUserGuard)
