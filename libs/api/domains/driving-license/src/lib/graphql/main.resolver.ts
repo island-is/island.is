@@ -125,7 +125,6 @@ export class MainResolver {
     @Args('input') input: StudentCanGetPracticePermitInput,
   ) {
     return this.drivingLicenseService.studentCanGetPracticePermit({
-      mentorSSN: user.nationalId,
       studentSSN: input.studentSSN,
       token: user.authorization.split(' ')?.[1] ?? '', // Need to remove "Bearer" part
     })
