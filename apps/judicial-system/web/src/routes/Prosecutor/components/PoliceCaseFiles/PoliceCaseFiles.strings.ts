@@ -56,8 +56,8 @@ export const policeCaseFiles = defineMessages({
       'Notaður sem texti í "hlaða upp" takka í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
   },
   originNotLokeTitle: {
-    id: 'judicial.system.core:police_case_files.origin_not_loke_title',
-    defaultMessage: 'Krafa ekki stofnuð í LÖKE',
+    id: 'judicial.system.core:police_case_files.origin_not_loke_title_v1',
+    defaultMessage: 'Ákæra ekki stofnuð í LÖKE',
     description:
       'Notaður sem titill í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
   },
