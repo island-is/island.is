@@ -187,6 +187,10 @@ export class CaseController {
       update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
     }
 
+    if (update.prosecutorStatementDate) {
+      update.prosecutorStatementDate = nowFactory()
+    }
+
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 

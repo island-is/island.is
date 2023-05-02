@@ -9,7 +9,7 @@ type StatisticProps = {
 export const StatisticBox = ({ label, statistic, text }: StatisticProps) => {
   const renderStatistic = () => {
     if (statistic) {
-      return `${statistic} ${text}`
+      return `${statistic}`
     }
     return '-'
   }

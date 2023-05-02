@@ -21,6 +21,7 @@ export enum ClientFormTypes {
   translations = 'translations',
   delegations = 'delegations',
   advancedSettings = 'advancedSettings',
+  permissions = 'permissions',
   none = 'none',
 }
 
@@ -218,6 +219,7 @@ export const schema = {
         }),
     })
     .merge(defaultSchema),
+  [ClientFormTypes.permissions]: defaultSchema,
   [ClientFormTypes.none]: defaultSchema,
 }
 
@@ -238,6 +240,14 @@ export const getIntentWithSyncCheck = (
   formData: FormData,
 ): { name: ClientFormTypes; sync: boolean } => {
   const getIntent = formData.get('intent') as string
+
+  if (!getIntent) {
+    return {
+      name: ClientFormTypes.none,
+      sync: false,
+    }
+  }
+
   const intent = getIntent.split('-')
 
   return {
