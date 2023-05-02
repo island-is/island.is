@@ -1359,13 +1359,13 @@ describe('getCasesQueryFilter', () => {
       expect(res).toStrictEqual({
         [Op.and]: [
           { isArchived: false },
-          { [Op.not]: { state: [CaseState.NEW, CaseState.DELETED] } },
           {
             [Op.or]: [
               { court_id: { [Op.is]: null } },
               { court_id: 'Court Id' },
             ],
           },
+          { [Op.not]: { state: [CaseState.NEW, CaseState.DELETED] } },
           {
             [Op.not]: {
               [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
@@ -1428,12 +1428,12 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         {
+          [Op.or]: [{ court_id: { [Op.is]: null } }, { court_id: 'Court Id' }],
+        },
+        {
           [Op.not]: {
             state: [CaseState.NEW, CaseState.DRAFT, CaseState.DELETED],
           },
-        },
-        {
-          [Op.or]: [{ court_id: { [Op.is]: null } }, { court_id: 'Court Id' }],
         },
         { type: indictmentCases },
       ],

@@ -327,17 +327,18 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
 }
 
 function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
-  const options: WhereOptions = [{ isArchived: false }]
+  const options: WhereOptions = [
+    { isArchived: false },
+    {
+      [Op.or]: [
+        { court_id: { [Op.is]: null } },
+        { court_id: user.institution?.id },
+      ],
+    },
+  ]
 
   const blockStates = {
     [Op.not]: { state: getBlockedStates(user, user.institution?.type) },
-  }
-
-  const blockInstitutions = {
-    [Op.or]: [
-      { court_id: { [Op.is]: null } },
-      { court_id: user.institution?.id },
-    ],
   }
 
   const blockDraftIndictmentsForCourt =
@@ -356,7 +357,6 @@ function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
 
   options.push(
     blockStates,
-    blockInstitutions,
     ...blockDraftIndictmentsForCourt,
     ...restrictCaseTypes,
   )
