@@ -188,7 +188,7 @@ export const requirementsMessages = defineMessages({
     description: 'Learner age requirement title',
   },
   ageRequirementDescription: {
-    id: 'dlp.application:requirementunmet.ageRequirementTitle',
+    id: 'dlp.application:requirementunmet.ageRequirementDescription',
     defaultMessage:
       'Leiðbeinandi þarf að hafa náð 24 ára aldri a.m.k til að gerast leiðbeinandi',
     description: 'Learner age requirement description',
