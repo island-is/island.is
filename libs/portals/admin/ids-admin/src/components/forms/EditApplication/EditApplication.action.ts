@@ -22,6 +22,7 @@ export enum ClientFormTypes {
   translations = 'translations',
   delegations = 'delegations',
   advancedSettings = 'advancedSettings',
+  permissions = 'permissions',
   none = 'none',
 }
 
@@ -219,6 +220,7 @@ export const schema = {
         }),
     })
     .merge(defaultSchema),
+  [ClientFormTypes.permissions]: defaultSchema,
   [ClientFormTypes.none]: defaultSchema,
 }
 

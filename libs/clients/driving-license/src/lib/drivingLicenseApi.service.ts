@@ -327,7 +327,6 @@ export class DrivingLicenseApi {
 
   async postCanApplyForPracticePermit(params: {
     token: string
-    mentorSSN: string
     studentSSN: string
   }): Promise<PracticePermitDto> {
     return await this.v5.apiDrivinglicenseV5CanapplyforPracticepermitPost({
@@ -337,14 +336,13 @@ export class DrivingLicenseApi {
       postPracticePermit: {
         dateFrom: new Date(),
         studentSSN: params.studentSSN,
-        userId: params.mentorSSN,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
       },
     })
   }
 
   async postPracticePermitApplication(params: {
     token: string
-    mentorSSN: string
     studentSSN: string
   }): Promise<PracticePermitDto> {
     return await this.v5.apiDrivinglicenseV5ApplicationsPracticepermitPost({
@@ -354,7 +352,7 @@ export class DrivingLicenseApi {
       postPracticePermit: {
         dateFrom: new Date(),
         studentSSN: params.studentSSN,
-        userId: params.mentorSSN,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
       },
     })
   }
