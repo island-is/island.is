@@ -150,42 +150,49 @@ export class AdminClientsService {
       ...clientAttributes
     } = clientDto
 
-    const client = await this.sequelize.transaction(async (transaction) => {
-      const newClient = await this.clientModel.create(
-        {
-          clientId: clientDto.clientId,
-          clientType: clientDto.clientType,
-          domainName: tenantId,
-          nationalId: tenant.nationalId,
-          clientName: clientDto.clientName,
-          ...this.defaultClientAttributes(clientDto.clientType),
-        },
-        { transaction },
-      )
+    const { clientId } = await this.sequelize.transaction(
+      async (transaction) => {
+        const client = await this.clientModel.create(
+          {
+            clientId: clientDto.clientId,
+            clientType: clientDto.clientType,
+            domainName: tenantId,
+            nationalId: tenant.nationalId,
+            clientName: clientDto.clientName,
+            ...this.defaultClientAttributes(clientDto.clientType),
+          },
+          { transaction },
+        )
 
-      const { clientId } = newClient
+        await this.updateConnectionsForClient(transaction, {
+          clientId: client.clientId,
+          tenantId,
+          displayName,
+          refreshTokenExpiration,
+          clientAttributes,
+          redirectUris,
+          postLogoutRedirectUris,
+          customClaims,
+          supportTokenExchange,
+          addedScopes,
+          removedScopes,
+        })
 
-      await this.updateConnectionsForClient(transaction, {
-        clientId,
-        tenantId,
-        displayName,
-        refreshTokenExpiration,
-        clientAttributes,
-        redirectUris,
-        postLogoutRedirectUris,
-        customClaims,
-        supportTokenExchange,
-        addedScopes,
-        removedScopes,
-      })
+        await this.clientGrantType.create(this.defaultClientGrantType(client), {
+          transaction,
+        })
+        await this.clientAllowedScope.bulkCreate(
+          this.defaultClientScopes(client),
+          {
+            transaction,
+          },
+        )
 
-      await this.clientGrantType.create(this.defaultClientGrantType(newClient))
-      await this.clientAllowedScope.bulkCreate(this.defaultClientScopes(client))
+        return client
+      },
+    )
 
-      return newClient
-    })
-
-    return this.findByTenantIdAndClientId(tenantId, client.clientId)
+    return this.findByTenantIdAndClientId(tenantId, clientId)
   }
 
   async update(
