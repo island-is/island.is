@@ -11,6 +11,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
 
+import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
@@ -20,7 +21,9 @@ import {
   RefreshTokenExpiration,
   translateRefreshTokenExpiration,
 } from '../../types'
+import { ClientsService } from '../clients.service'
 import { Client } from '../models/client.model'
+import { ClientAllowedScope } from '../models/client-allowed-scope.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
 import { ClientRedirectUri } from '../models/client-redirect-uri.model'
@@ -32,8 +35,6 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
-import { ClientsService } from '../clients.service'
-import { ApiScope } from '../../resources/models/api-scope.model'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -66,6 +67,8 @@ export class AdminClientsService {
     private clientClaimModel: typeof ClientClaim,
     @InjectModel(ClientGrantType)
     private readonly clientGrantType: typeof ClientGrantType,
+    @InjectModel(ClientAllowedScope)
+    private readonly clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ApiScope)
     private readonly apiScopeModel: typeof ApiScope,
     private readonly translationService: TranslationService,
@@ -77,6 +80,7 @@ export class AdminClientsService {
     const clients = await this.clientModel.findAll({
       where: {
         domainName: tenantId,
+        enabled: true,
       },
       include: this.clientInclude(),
     })
@@ -99,6 +103,7 @@ export class AdminClientsService {
       where: {
         clientId,
         domainName: tenantId,
+        enabled: true,
       },
       include: this.clientInclude(),
     })
@@ -145,42 +150,49 @@ export class AdminClientsService {
       ...clientAttributes
     } = clientDto
 
-    const client = await this.sequelize.transaction(async (transaction) => {
-      const newClient = await this.clientModel.create(
-        {
-          clientId: clientDto.clientId,
-          clientType: clientDto.clientType,
-          domainName: tenantId,
-          nationalId: tenant.nationalId,
-          clientName: clientDto.clientName,
-          ...this.defaultClientAttributes(clientDto.clientType),
-        },
-        { transaction },
-      )
+    const { clientId } = await this.sequelize.transaction(
+      async (transaction) => {
+        const client = await this.clientModel.create(
+          {
+            clientId: clientDto.clientId,
+            clientType: clientDto.clientType,
+            domainName: tenantId,
+            nationalId: tenant.nationalId,
+            clientName: clientDto.clientName,
+            ...this.defaultClientAttributes(clientDto.clientType),
+          },
+          { transaction },
+        )
 
-      const { clientId } = newClient
+        await this.updateConnectionsForClient(transaction, {
+          clientId: client.clientId,
+          tenantId,
+          displayName,
+          refreshTokenExpiration,
+          clientAttributes,
+          redirectUris,
+          postLogoutRedirectUris,
+          customClaims,
+          supportTokenExchange,
+          addedScopes,
+          removedScopes,
+        })
 
-      await this.updateConnectionsForClient(transaction, {
-        clientId,
-        tenantId,
-        displayName,
-        refreshTokenExpiration,
-        clientAttributes,
-        redirectUris,
-        postLogoutRedirectUris,
-        customClaims,
-        supportTokenExchange,
-        addedScopes,
-        removedScopes,
-      })
+        await this.clientGrantType.create(this.defaultClientGrantType(client), {
+          transaction,
+        })
+        await this.clientAllowedScope.bulkCreate(
+          this.defaultClientScopes(client),
+          {
+            transaction,
+          },
+        )
 
-      // TODO: Add client type specific openid profile identity resources
-      await this.clientGrantType.create(this.defaultClientGrantTypes(newClient))
+        return client
+      },
+    )
 
-      return newClient
-    })
-
-    return this.findByTenantIdAndClientId(tenantId, client.clientId)
+    return this.findByTenantIdAndClientId(tenantId, clientId)
   }
 
   async update(
@@ -484,13 +496,9 @@ export class AdminClientsService {
     return displayNames
   }
 
-  private defaultClientGrantTypes(client: Client) {
+  private defaultClientGrantType(client: Client) {
     switch (client.clientType) {
       case ClientType.web:
-        return {
-          clientId: client.clientId,
-          grantType: 'authorization_code',
-        }
       case ClientType.native:
         return {
           clientId: client.clientId,
@@ -504,12 +512,33 @@ export class AdminClientsService {
     }
   }
 
+  private defaultClientScopes(client: Client) {
+    const scopes = [
+      {
+        clientId: client.clientId,
+        scopeName: 'openid',
+      },
+    ]
+
+    switch (client.clientType) {
+      case ClientType.web:
+      case ClientType.native:
+        scopes.push({
+          clientId: client.clientId,
+          scopeName: 'profile',
+        })
+    }
+
+    return scopes
+  }
+
   private clientInclude(): Includeable[] {
     return [
       { model: ClientClaim, as: 'claims' },
       { model: ClientGrantType, as: 'allowedGrantTypes' },
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
+      { model: ClientAllowedScope, as: 'allowedScopes' },
     ]
   }
 

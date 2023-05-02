@@ -35,6 +35,6 @@ import { ApiScope } from '../resources/models/api-scope.model'
     TranslationModule,
   ],
   providers: [ClientsService, AdminClientsService, ClientsTranslationService],
-  exports: [ClientsService, AdminClientsService],
+  exports: [ClientsService, AdminClientsService, SequelizeModule],
 })
 export class ClientsModule {}

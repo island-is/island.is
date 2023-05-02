@@ -27,6 +27,8 @@ import { idsAdminScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
+import { ClientSecretsService } from '../secrets/client-secrets.service'
+
 const namespace = '@island.is/auth/admin-api/v2/clients'
 
 @UseGuards(IdsUserGuard, ScopesGuard, MeTenantGuard)
@@ -40,8 +42,9 @@ const namespace = '@island.is/auth/admin-api/v2/clients'
 @Audit({ namespace })
 export class MeClientsController {
   constructor(
-    private readonly clientsService: AdminClientsService,
     private readonly auditService: AuditService,
+    private readonly clientsService: AdminClientsService,
+    private readonly clientsSecretsService: ClientSecretsService,
   ) {}
 
   @Get()
@@ -82,12 +85,16 @@ export class MeClientsController {
   @Audit<AdminClientDto>({
     resources: (client) => client.clientId,
   })
-  create(
+  async create(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Body() input: AdminCreateClientDto,
   ): Promise<AdminClientDto> {
-    return this.clientsService.create(input, user, tenantId)
+    const client = await this.clientsService.create(input, user, tenantId)
+
+    await this.clientsSecretsService.create(tenantId, client.clientId)
+
+    return client
   }
 
   @Patch(':clientId')
