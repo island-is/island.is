@@ -42,8 +42,8 @@ export const getForm = ({ allowFakeData = false }): Form => {
                 id: 'intro.description',
                 title: m.introTitle,
                 description: m.introBody,
-              })
-            ]
+              }),
+            ],
           }),
           ...(allowFakeData ? [sectionFakeData] : []),
           buildExternalDataProvider({
@@ -51,6 +51,16 @@ export const getForm = ({ allowFakeData = false }): Form => {
             title: m.externalDataSectionTitle,
             checkboxLabel: m.externalDataSectionCheckboxLabel,
             dataProviders: [
+              buildDataProviderItem({
+                id: 'nationalRegistry',
+                title: m.titleNationalRegistryProvider,
+                subTitle: m.descriptionNationalRegistryProvider,
+              }),
+              buildDataProviderItem({
+                id: 'personalInfo',
+                title: m.titlePersonalInfoProvider,
+                subTitle: m.descriptionPersonalInfoProvider,
+              }),
               buildDataProviderItem({
                 id: 'currentLicense',
                 type: 'CurrentLicenseProvider',

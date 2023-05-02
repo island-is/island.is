@@ -9,7 +9,8 @@ export const m = defineMessages({
   },
   introBody: {
     id: 'dlp.application:introBody#markdown',
-    defaultMessage: '#Leyfi fyrir leiðbeinendur\n\nÁður en æfingaakstur með leiðbeinanda má hefjast, þarf ökukennari að hafa staðfest að lágmarki 10 verklega ökutíma í stafræna ökunámsbók og ökunemi þarf einnig að hafa lokið Ökuskóla 1.\n\nEftirfarandi skilyrði þarf að uppfylla til að geta sótt um að vera leiðbeinandi.\n* Hafa náð 24 ára aldri\n* Hafa gild ökuréttindi\n* 5 ára reynslu af akstri frá fyrsta ökuprófi í B flokki\n* Hafa ekki verið sviptur ökuréttindum eða refsað fyrir vítaverðan akstur síðustu 12 mánuði',
+    defaultMessage:
+      '#Leyfi fyrir leiðbeinendur\n\nÁður en æfingaakstur með leiðbeinanda má hefjast, þarf ökukennari að hafa staðfest að lágmarki 10 verklega ökutíma í stafræna ökunámsbók og ökunemi þarf einnig að hafa lokið Ökuskóla 1.\n\nEftirfarandi skilyrði þarf að uppfylla til að geta sótt um að vera leiðbeinandi.\n* Hafa náð 24 ára aldri\n* Hafa gild ökuréttindi\n* 5 ára reynslu af akstri frá fyrsta ökuprófi í B flokki\n* Hafa ekki verið sviptur ökuréttindum eða refsað fyrir vítaverðan akstur síðustu 12 mánuði',
     description: 'Body for the introduction section',
   },
   externalDataSectionTitle: {
@@ -41,6 +42,32 @@ export const m = defineMessages({
       'Tókst ekki að sækja upplýsingar um núgildandi ökuskírteini',
     description:
       "Message to display when user's Driver License Data cannot be retrieved",
+  },
+
+  /* National Registry Provider */
+  titleNationalRegistryProvider: {
+    id: 'dlp.application:titleNationalRegistryProvider',
+    defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
+    description: 'National Registry Provider Title',
+  },
+  descriptionNationalRegistryProvider: {
+    id: 'dlp.application:descriptionNationalRegistryProvider',
+    defaultMessage:
+      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út í umsóknina.',
+    description: 'National Registry Provider Description',
+  },
+
+  /* Personal Info Provider */
+  titlePersonalInfoProvider: {
+    id: 'dlp.application:titlePersonalInfoProvider',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Personal Info Provider Title',
+  },
+  descriptionPersonalInfoProvider: {
+    id: 'dlp.application:descriptionPersonalInfoProvider',
+    defaultMessage:
+      'Til þess að geta sent þér mikilvæg skilaboð um umsóknir þínar er mikilvægt að hafa fyllt út netfang og símanúmer á Mínum síðum.',
+    description: 'Personal Info Provider Description',
   },
 
   /* Requirements Subsection */
