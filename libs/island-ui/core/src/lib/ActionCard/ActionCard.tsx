@@ -26,7 +26,10 @@ type ActionCardProps = {
   }
   cta: {
     label: string
+    /** Allows for simple variant configuration of the button. If buttonType is defined it will supersede this property. */
     variant?: ButtonTypes['variant']
+    /** Allows for full buttonType control. Supersedes the variant property when both are defined. */
+    buttonType?: ButtonTypes
     size?: ButtonSizes
     icon?: IconType
     onClick?: () => void
@@ -111,6 +114,12 @@ export const ActionCard: React.FC<ActionCardProps> = ({
       : backgroundColor === 'red'
       ? 'red100'
       : 'blue100'
+  const color =
+    backgroundColor === 'blue'
+      ? 'blue600'
+      : backgroundColor === 'red'
+      ? 'red600'
+      : 'currentColor'
 
   const renderAvatar = () => {
     if (!avatar) {
@@ -276,7 +285,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           )}
           <Box marginLeft={[0, 3]}>
             <Button
-              variant={cta.variant}
+              {...(cta.buttonType ?? { variant: cta.variant })}
               size="small"
               onClick={cta.onClick}
               disabled={cta.disabled}
@@ -326,10 +335,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Text
-                variant={headingVariant}
-                color={backgroundColor === 'blue' ? 'blue600' : 'currentColor'}
-              >
+              <Text variant={headingVariant} color={color}>
                 {heading}
               </Text>
               <Hidden above="xs">
@@ -338,7 +344,11 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             </Box>
           )}
 
-          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+          {text && (
+            <Text color={color} paddingTop={heading ? 1 : 0}>
+              {text}
+            </Text>
+          )}
         </Box>
         <Box
           display="flex"
