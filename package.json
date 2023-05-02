@@ -478,7 +478,8 @@
     "xmldom": "github:xmldom/xmldom#0.7.0",
     "tar": "6.1.9",
     "url-parse": "1.5.2",
-    "path-parse": "1.0.7"
+    "path-parse": "1.0.7",
+    "@anatine/esbuildnx@0.2.0": "patch:@anatine/esbuildnx@npm%3A0.2.0#./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch"
   },
   "volta": {
     "node": "18.8.0"

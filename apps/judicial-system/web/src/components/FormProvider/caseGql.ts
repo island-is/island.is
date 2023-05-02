@@ -197,8 +197,27 @@ const CaseQuery = gql`
       appealedDate
       appealDeadline
       prosecutorStatementDate
-      defenderStatementDate
+      defendantStatementDate
       appealReceivedByCourtDate
+      appealConclusion
+      appealRulingDecision
+      appealCaseNumber
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
     }
   }
 `

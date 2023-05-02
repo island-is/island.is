@@ -40,11 +40,10 @@ export class LicenseService {
     code < 10 ? 'BadRequest' : 'ServerError'
 
   //Error message is an array to maintain consistency
-  private getException = (errorType: ErrorType, message?: string) => {
-    const errorMessage = message ?? 'Unknown error'
+  private getException = (errorType: ErrorType, details?: string | object) => {
     return errorType === 'BadRequest'
-      ? new BadRequestException([errorMessage])
-      : new InternalServerErrorException([errorMessage])
+      ? new BadRequestException([details ?? 'Unknown error'])
+      : new InternalServerErrorException([details ?? 'Unknown error'])
   }
 
   private async pushUpdateLicense(
@@ -195,11 +194,12 @@ export class LicenseService {
     this.logger.error('verify license failed', {
       category: LOG_CATEGORY,
       ...verifyRes.error,
+      requestId: inputData.requestId,
     })
-    throw this.getException(
-      this.getErrorTypeByCode(verifyRes.error.code),
-      verifyRes.error.message,
-    )
+    throw this.getException(this.getErrorTypeByCode(verifyRes.error.code), {
+      message: verifyRes.error.message,
+      requestId: inputData.requestId,
+    })
   }
 
   private getTypeFromPassTemplateId(passTemplateId: string): LicenseId | null {
