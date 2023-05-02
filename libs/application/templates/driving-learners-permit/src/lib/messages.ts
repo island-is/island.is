@@ -2,6 +2,16 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   /* PREREQUISITES SECTION */
+  introTitle: {
+    id: 'dlp.application:introTitle',
+    defaultMessage: 'Inngangur',
+    description: 'Title for the introduction section',
+  },
+  introBody: {
+    id: 'dlp.application:introBody#markdown',
+    defaultMessage: '#Leyfi fyrir leiðbeinendur\n\nÁður en æfingaakstur með leiðbeinanda má hefjast, þarf ökukennari að hafa staðfest að lágmarki 10 verklega ökutíma í stafræna ökunámsbók og ökunemi þarf einnig að hafa lokið Ökuskóla 1.\n\nEftirfarandi skilyrði þarf að uppfylla til að geta sótt um að vera leiðbeinandi.\n* Hafa náð 24 ára aldri\n* Hafa gild ökuréttindi\n* 5 ára reynslu af akstri frá fyrsta ökuprófi í B flokki\n* Hafa ekki verið sviptur ökuréttindum eða refsað fyrir vítaverðan akstur síðustu 12 mánuði',
+    description: 'Body for the introduction section',
+  },
   externalDataSectionTitle: {
     id: 'dlp.application:externalDataSectionTitle',
     defaultMessage: 'Gagnaöflun',
@@ -171,7 +181,7 @@ export const m = defineMessages({
   /* OTHER */
   name: {
     id: 'dlp.application:name',
-    defaultMessage: 'Umsókn um leiðbeinendaréttindi æfingaraksturs',
+    defaultMessage: 'Umsókn um að gerast leiðbeinandi í æfingaakstri B-flokk',
     description: 'Name of application',
   },
   institutionName: {
