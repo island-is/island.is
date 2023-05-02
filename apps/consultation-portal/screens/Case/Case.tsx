@@ -20,7 +20,6 @@ import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
-import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
 import Link from 'next/link'
 import { useFetchAdvicesById, useLogIn } from '../../utils/helpers'
 import { useContext, useState } from 'react'
@@ -75,10 +74,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           >
             <Stack space={2}>
               <Divider />
-              <CaseTimeline
-                status={chosenCase.statusName}
-                updatedDate={getTimeLineDate(chosenCase)}
-              />
+              <CaseTimeline chosenCase={chosenCase} />
               <Divider />
               <Box paddingLeft={1}>
                 <Text variant="h3" color="purple400">
@@ -102,17 +98,27 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <CaseOverview chosenCase={chosenCase} />
               <Box>
                 <Stack space={3}>
-                  <Text variant="h1" color="blue400">
-                    Innsendar umsagnir
-                  </Text>
-                  <Advices advices={advices} advicesLoading={advicesLoading} />
-                  <WriteReviewCard
-                    card={chosenCase}
-                    isLoggedIn={isAuthenticated}
-                    username={user?.name}
-                    caseId={chosenCase.id}
-                    refetchAdvices={refetchAdvices}
-                  />
+                  {advices.length !== 0 && (
+                    <>
+                      <Text variant="h1" color="blue400">
+                        Innsendar umsagnir
+                      </Text>
+
+                      <Advices
+                        advices={advices}
+                        advicesLoading={advicesLoading}
+                      />
+                    </>
+                  )}
+                  {chosenCase.statusName === 'Til umsagnar' && (
+                    <WriteReviewCard
+                      card={chosenCase}
+                      isLoggedIn={isAuthenticated}
+                      username={user?.name}
+                      caseId={chosenCase.id}
+                      refetchAdvices={refetchAdvices}
+                    />
+                  )}
                 </Stack>
               </Box>
             </Stack>
@@ -148,36 +154,65 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Viltu senda umsögn?"
-                >
-                  <Text>
-                    Öllum er frjálst að taka þátt í samráðinu.
-                    {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
-                  </Text>
-                </StackedTitleAndDescription>
-                <Box paddingTop={2}>
-                  {isAuthenticated ? (
-                    <Link href="#write-review" shallow>
-                      <Button fluid iconType="outline" nowrap as="a">
-                        Senda umsögn
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button fluid iconType="outline" nowrap onClick={LogIn}>
-                      Skrá mig inn
-                    </Button>
-                  )}
-                </Box>
+                {chosenCase.statusName === 'Til umsagnar' ? (
+                  <>
+                    <StackedTitleAndDescription
+                      headingColor="blue400"
+                      title="Viltu senda umsögn?"
+                    >
+                      <Text>
+                        Öllum er frjálst að taka þátt í samráðinu.
+                        {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
+                      </Text>
+                    </StackedTitleAndDescription>
+                    <Box paddingTop={2}>
+                      {isAuthenticated ? (
+                        <Link href="#write-review" shallow>
+                          <Button fluid iconType="outline" nowrap as="a">
+                            Senda umsögn
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Button fluid iconType="outline" nowrap onClick={LogIn}>
+                          Skrá mig inn
+                        </Button>
+                      )}
+                    </Box>
+                  </>
+                ) : chosenCase.statusName === 'Niðurstöður í vinnslu' ? (
+                  <StackedTitleAndDescription
+                    headingColor="blue400"
+                    title="Niðurstöður í vinnslu"
+                  >
+                    <Text>
+                      Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum
+                      og þær bárust.
+                    </Text>
+                  </StackedTitleAndDescription>
+                ) : (
+                  <StackedTitleAndDescription
+                    headingColor="blue400"
+                    title="Lokið"
+                  >
+                    <Text>
+                      Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum
+                      og þær bárust. Niðurstöður samráðsins hafa verið birtar og
+                      málinu lokið.
+                    </Text>
+                  </StackedTitleAndDescription>
+                )}
               </SimpleCardSkeleton>
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
                   headingColor="blue400"
-                  title="Aðilar sem hafa fengið boð um samráð á máli."
+                  title="Aðilar sem hafa fengið boð um þáttöku."
                 >
+                  <Text>
+                    Öllum er frjálst að taka þátt í samráðsgátt en eftirtöldum
+                    hefur verið boðið að senda inn umsögn:
+                  </Text>
                   {chosenCase?.stakeholders.length < 1 ? (
-                    <Text>Engir aðilar hafa fengið boð.</Text>
+                    <Text>Enginn listi skráður.</Text>
                   ) : (
                     <Inline justifyContent="spaceBetween" alignY="center">
                       <Text>

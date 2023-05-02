@@ -1,10 +1,4 @@
-import {
-  Text,
-  Box,
-  Icon,
-  ModalBase,
-  useBreakpoint,
-} from '@island.is/island-ui/core'
+import { Text, Box, Icon, ModalBase } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 import * as styles from './Modal.css'
 
@@ -25,8 +19,6 @@ export const Modal = ({
   label,
   title,
 }: ModalProps) => {
-  const { md } = useBreakpoint()
-
   const handleOnVisibilityChange = (isVisible: boolean) => {
     if (!isVisible) {
       onClose?.()
@@ -41,7 +33,6 @@ export const Modal = ({
       modalLabel={label}
       hideOnClickOutside
       hideOnEsc
-      preventBodyScroll={md}
       onVisibilityChange={handleOnVisibilityChange}
     >
       <Box
@@ -52,7 +43,8 @@ export const Modal = ({
         paddingTop={12}
         borderRadius="standard"
         width="full"
-        overflow="auto"
+        display="flex"
+        flexDirection="column"
         className={styles.modalInner}
       >
         {title && (

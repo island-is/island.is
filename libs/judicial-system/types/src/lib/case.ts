@@ -1,7 +1,7 @@
 import type { Defendant } from './defendant'
 import type { Institution } from './institution'
 import type { Notification } from './notification'
-import { CaseFile, CaseFileCategory } from './file'
+import { CaseFile } from './file'
 import { User, UserRole } from './user'
 import type { CourtDocument } from './courtDocument'
 
@@ -155,6 +155,15 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum CaseAppealRulingDecision {
+  ACCEPTING = 'ACCEPTING',
+  REPEAL = 'REPEAL',
+  CHANGED = 'CHANGED',
+  DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
+  DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
+  REMAND = 'REMAND',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -263,8 +272,15 @@ export interface Case {
   appealedDate?: string
   statementDeadline?: string
   prosecutorStatementDate?: string
-  defenderStatementDate?: string
+  defendantStatementDate?: string
+  appealCaseNumber?: string
+  appealAssistant?: User
+  appealJudge1?: User
+  appealJudge2?: User
+  appealJudge3?: User
   appealReceivedByCourtDate?: string
+  appealConclusion?: string
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface CaseListEntry
@@ -292,6 +308,8 @@ export interface CaseListEntry
     | 'prosecutor'
     | 'registrar'
     | 'creatingProsecutor'
+    | 'appealState'
+    | 'appealedDate'
   > {
   parentCaseId?: string
 }
@@ -377,6 +395,11 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'appealState'
+    | 'prosecutorStatementDate'
+    | 'defendantStatementDate'
+    | 'appealCaseNumber'
+    | 'appealConclusion'
+    | 'appealRulingDecision'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -385,6 +408,10 @@ export interface UpdateCase
   sharedWithProsecutorsOfficeId?: string | null
   registrarId?: string | null
   judgeId?: string
+  appealAssistantId?: string
+  appealJudge1Id?: string
+  appealJudge2Id?: string
+  appealJudge3Id?: string
 }
 
 export interface TransitionCase {
@@ -477,7 +504,6 @@ export function getAppealInfo(theCase: Case): Case {
     prosecutorAppealDecision,
     prosecutorPostponedAppealDate,
     accusedPostponedAppealDate,
-    caseFiles,
     appealReceivedByCourtDate,
   } = theCase
 
@@ -517,22 +543,19 @@ export function getAppealInfo(theCase: Case): Case {
       new Date(appealReceivedByCourtDate),
     )
   }
-  //TODO: These dates should likely be set differently but we haven't
-  //implemented the ability to record when the statement was sent
-  //also this doesn't work for defenders yet because they don't have
-  //file access
-  appealInfo.defenderStatementDate = caseFiles?.find(
-    (cf) => cf.category === CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-  )?.created
-  appealInfo.prosecutorStatementDate = caseFiles?.find(
-    (cf) => cf.category === CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-  )?.created
 
   return appealInfo
 }
 
 export function getStatementDeadline(appealReceived: Date) {
   return new Date(
-    appealReceived.setDate(appealReceived.getDate() + 1),
+    new Date(appealReceived).setDate(appealReceived.getDate() + 1),
   ).toISOString()
+}
+
+export function getAppealedDate(
+  prosecutorPostponedAppealDate?: string,
+  accusedPostponedAppealDate?: string,
+): string | undefined {
+  return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }
