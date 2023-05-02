@@ -1402,6 +1402,40 @@ describe('getCasesQueryFilter', () => {
       })
     })
 
+    it(`should get assistant filter`, () => {
+      // Arrange
+      const user = {
+        role: UserRole.ASSISTANT,
+        institution: { id: 'Court Id', type: InstitutionType.COURT },
+      }
+
+      // Act
+      const res = getCasesQueryFilter(user as User)
+
+      // Assert
+      expect(res).toStrictEqual({
+        [Op.and]: [
+          { isArchived: false },
+          {
+            [Op.or]: [
+              { court_id: { [Op.is]: null } },
+              { court_id: 'Court Id' },
+            ],
+          },
+          { type: indictmentCases },
+          {
+            state: [
+              CaseState.SUBMITTED,
+              CaseState.RECEIVED,
+              CaseState.ACCEPTED,
+              CaseState.REJECTED,
+              CaseState.DISMISSED,
+            ],
+          },
+        ],
+      })
+    })
+
     it('should get high court filter', () => {
       // Arrange
       const user = {
@@ -1437,37 +1471,6 @@ describe('getCasesQueryFilter', () => {
           { type: [...restrictionCases, ...investigationCases] },
         ],
       })
-    })
-  })
-
-  it(`should get assistant filter`, () => {
-    // Arrange
-    const user = {
-      role: UserRole.ASSISTANT,
-      institution: { id: 'Court Id', type: InstitutionType.COURT },
-    }
-
-    // Act
-    const res = getCasesQueryFilter(user as User)
-
-    // Assert
-    expect(res).toStrictEqual({
-      [Op.and]: [
-        { isArchived: false },
-        {
-          [Op.or]: [{ court_id: { [Op.is]: null } }, { court_id: 'Court Id' }],
-        },
-        { type: indictmentCases },
-        {
-          state: [
-            CaseState.SUBMITTED,
-            CaseState.RECEIVED,
-            CaseState.ACCEPTED,
-            CaseState.REJECTED,
-            CaseState.DISMISSED,
-          ],
-        },
-      ],
     })
   })
 

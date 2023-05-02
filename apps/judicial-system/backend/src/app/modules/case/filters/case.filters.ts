@@ -17,10 +17,12 @@ import {
   isCourtRole,
   CaseAppealState,
   isDistrictCourtUser,
+  isAppealsCourtUser,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
+import { ForbiddenException } from '@nestjs/common'
 
 const hideArchived = { isArchived: false }
 
@@ -391,42 +393,7 @@ function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-function getStaffRoleCasesQueryFilter(user: User): WhereOptions {
-  const options: WhereOptions = [
-    { isArchived: false },
-    { state: CaseState.ACCEPTED },
-  ]
-
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
-    options.push({
-      type: [
-        CaseType.ADMISSION_TO_FACILITY,
-        CaseType.CUSTODY,
-        CaseType.TRAVEL_BAN,
-      ],
-    })
-  } else {
-    options.push(
-      { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
-      {
-        decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
-      },
-    )
-  }
-
-  return { [Op.and]: options }
-}
-
-export function getCasesQueryFilter(user: User): WhereOptions {
-  // TODO: Convert to switch
-  if (isProsecutionUser(user)) {
-    return getProsecutionUserCasesQueryFilter(user)
-  } else if (isDistrictCourtUser(user)) {
-    return getDistricteCourtUserCasesQueryFilter(user)
-  } else if (user.role === UserRole.STAFF) {
-    return getStaffRoleCasesQueryFilter(user)
-  }
-
+function getAppealsCourtUserCasesQueryFilter(user: User): WhereOptions {
   const blockStates = {
     [Op.not]: { state: getBlockedStates(user, user.institution?.type) },
   }
@@ -474,4 +441,45 @@ export function getCasesQueryFilter(user: User): WhereOptions {
       ...restrictCaseTypes,
     ],
   }
+}
+
+function getStaffRoleCasesQueryFilter(user: User): WhereOptions {
+  const options: WhereOptions = [
+    { isArchived: false },
+    { state: CaseState.ACCEPTED },
+  ]
+
+  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+    options.push({
+      type: [
+        CaseType.ADMISSION_TO_FACILITY,
+        CaseType.CUSTODY,
+        CaseType.TRAVEL_BAN,
+      ],
+    })
+  } else {
+    options.push(
+      { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+      {
+        decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
+      },
+    )
+  }
+
+  return { [Op.and]: options }
+}
+
+export function getCasesQueryFilter(user: User): WhereOptions {
+  // TODO: Convert to switch
+  if (isProsecutionUser(user)) {
+    return getProsecutionUserCasesQueryFilter(user)
+  } else if (isDistrictCourtUser(user)) {
+    return getDistricteCourtUserCasesQueryFilter(user)
+  } else if (isAppealsCourtUser(user)) {
+    return getAppealsCourtUserCasesQueryFilter(user)
+  } else if (user.role === UserRole.STAFF) {
+    return getStaffRoleCasesQueryFilter(user)
+  }
+
+  throw new ForbiddenException(`User ${user.id} does not have access to cases`)
 }
