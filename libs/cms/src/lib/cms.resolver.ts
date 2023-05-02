@@ -6,6 +6,7 @@ import {
   Parent,
   Directive,
 } from '@nestjs/graphql'
+import graphqlTypeJson from 'graphql-type-json'
 import { Article } from './models/article.model'
 import { ContentSlug } from './models/contentSlug.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
@@ -95,6 +96,8 @@ import { TabSection } from './models/tabSection.model'
 import { GenericTag } from './models/genericTag.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
+import { PowerBiSlice } from './models/powerBiSlice.model'
+import { PowerBiService } from './powerbi.service'
 
 const { cacheTime } = environment
 
@@ -607,5 +610,22 @@ export class FeaturedSupportQNAsResolver {
       getElasticsearchIndex(input.lang),
       input,
     )
+  }
+}
+
+@Resolver(() => PowerBiSlice)
+@Directive(cacheControlDirective())
+export class PowerBiSliceResolver {
+  constructor(private powerBiService: PowerBiService) {}
+
+  @ResolveField(() => graphqlTypeJson)
+  async powerBiEmbedPropsFromServer(@Parent() powerBiSlice: PowerBiSlice) {
+    const needsEmbedPropsFromServer =
+      !!powerBiSlice.owner &&
+      powerBiSlice.reportId &&
+      !!powerBiSlice.workspaceId
+    if (!needsEmbedPropsFromServer) return null
+
+    return this.powerBiService.getEmbedProps(powerBiSlice)
   }
 }

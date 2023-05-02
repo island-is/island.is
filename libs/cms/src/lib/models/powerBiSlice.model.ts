@@ -22,6 +22,9 @@ export class PowerBiSlice {
 
   @Field({ nullable: true })
   owner?: 'Fiskistofa'
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  powerBiEmbedPropsFromServer?: Record<string, unknown> | null
 }
 
 export const mapPowerBiSlice = ({
@@ -36,5 +39,6 @@ export const mapPowerBiSlice = ({
     workspaceId: fields.workSpaceId,
     reportId: fields.reportId,
     owner: fields.owner,
+    powerBiEmbedPropsFromServer: null,
   }
 }

@@ -1,10 +1,13 @@
 import { Configuration, ConfidentialClientApplication } from '@azure/msal-node'
+import { Provider } from '@nestjs/common'
+import { LazyDuringDevScope } from '@island.is/nest/config'
 import { ConfigType } from '@island.is/nest/config'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { PowerBiConfig } from './powerbi.config'
+import { PowerBiSlice } from './models/powerBiSlice.model'
 
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
@@ -16,7 +19,36 @@ export class PowerBiService {
     this.fetch = createEnhancedFetch({ name: 'PowerBiService' })
   }
 
-  async getAccessToken(owner: Owner) {
+  async getEmbedProps(powerBiSlice: PowerBiSlice) {
+    if (
+      !powerBiSlice.owner ||
+      !powerBiSlice.workspaceId ||
+      !powerBiSlice.reportId
+    )
+      return null
+
+    const accessToken = await this.getAccessToken(powerBiSlice.owner)
+
+    const report = await this.getReport(
+      powerBiSlice.workspaceId,
+      powerBiSlice.reportId,
+      accessToken,
+    )
+
+    const embedToken = await this.getEmbedToken(
+      powerBiSlice.reportId,
+      [report.datasetId],
+      powerBiSlice.workspaceId,
+      accessToken,
+    )
+
+    return {
+      accessToken: embedToken,
+      embedUrl: report.embedUrl,
+    }
+  }
+
+  private async getAccessToken(owner: Owner) {
     let clientId = ''
     let clientSecret = ''
     let tenantId = ''
@@ -49,7 +81,11 @@ export class PowerBiService {
     return tokenResponse?.accessToken as string
   }
 
-  async getReport(workspaceId: string, reportId: string, accessToken: string) {
+  private async getReport(
+    workspaceId: string,
+    reportId: string,
+    accessToken: string,
+  ) {
     const url = `${BASE_URL}/groups/${workspaceId}/reports/${reportId}`
 
     const response = await this.fetch(url, {
@@ -63,7 +99,7 @@ export class PowerBiService {
     return response.json()
   }
 
-  async getEmbedToken(
+  private async getEmbedToken(
     reportId: string,
     datasetIds: string[],
     targetWorkspaceId: string,
@@ -94,4 +130,13 @@ export class PowerBiService {
     const data = await response.json()
     return data?.token
   }
+}
+
+export const PowerBiServiceProvider: Provider<PowerBiService> = {
+  provide: PowerBiService,
+  scope: LazyDuringDevScope,
+  useFactory(config: ConfigType<typeof PowerBiConfig>) {
+    return new PowerBiService(config)
+  },
+  inject: [PowerBiConfig.KEY],
 }

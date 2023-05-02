@@ -7,12 +7,14 @@ import {
   LatestNewsSliceResolver,
   FeaturedArticlesResolver,
   FeaturedSupportQNAsResolver,
+  PowerBiSliceResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
 import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
+import { PowerBiServiceProvider } from './powerbi.service'
 
 @Module({
   imports: [TerminusModule],
@@ -28,6 +30,8 @@ import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
     FeaturedArticlesResolver,
     FeaturedSupportQNAsResolver,
     OrganizationLogoLoader,
+    PowerBiServiceProvider,
+    PowerBiSliceResolver,
   ],
   exports: [
     ContentfulRepository,
