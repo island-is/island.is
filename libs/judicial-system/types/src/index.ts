@@ -55,6 +55,7 @@ export {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
   SessionArrangements,
   restrictionCases,
   investigationCases,
@@ -68,6 +69,8 @@ export {
   SubpoenaType,
   CaseAppealState,
   getAppealInfo,
+  getStatementDeadline,
+  getAppealedDate,
 } from './lib/case'
 export type {
   Case,

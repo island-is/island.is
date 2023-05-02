@@ -88,7 +88,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
                 <Card key={index} card={card} frontPage showPublished>
                   <Stack space={2}>
                     <Text variant="eyebrow" color="purple400">
-                      {`Fjöldi umsagna: ${item.adviceCount}`}
+                      {`Umsagnir: ${item.adviceCount}`}
                     </Text>
                     <Box
                       style={{

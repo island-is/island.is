@@ -61,9 +61,7 @@ export class ApplicationValidationService {
     return await this.featureFlagService.getValue(featureFlag, false, user)
   }
 
-  // If configcat flag is present use that flag to determine if the template is ready
-  // If configcat flag is not present, use the readyForProduction flag
-  // TODO: Remove the readyForProduction flag and assume that applications that have no featureFlag are ready for production
+  // Determines if a template is ready based on the presence of a configcat flag or the readyForProduction flag.
   async isTemplateReady(
     template: Pick<
       Unwrap<typeof getApplicationTemplateByTypeId>,
@@ -71,18 +69,18 @@ export class ApplicationValidationService {
     >,
     user?: User,
   ): Promise<boolean> {
+    // If the featureFlag is present, use the isTemplateFeatureFlaggedReady function.
     if (template.featureFlag) {
       return await this.isTemplateFeatureFlaggedReady(
         template.featureFlag,
         user,
       )
     }
-    // TODO: Remove this when readyForProduction is removed
-    if (isRunningOnProductionEnvironment() && !template.readyForProduction) {
-      {
-        return false
-      }
+    // If the code is running in a production environment and the readyForProduction flag is undefined or true, consider the template ready.
+    if (isRunningOnProductionEnvironment()) {
+      return template.readyForProduction ?? true
     }
+    // If the code is not running in a production environment, consider the template ready.
     return true
   }
 
