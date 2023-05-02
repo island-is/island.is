@@ -139,7 +139,6 @@ applicationTest.describe('Data protection complaint application', () => {
       const secondCheckBoxText = label(
         delimitation.labels.concernsMediaCoverage,
       )
-      // delimitations.concernsBanMarking
       const thirdCheckBoxText = label(delimitation.labels.concernsBanMarking)
       const fourthCheckBoxText = label(delimitation.labels.concernsLibel)
       const infoAboutCaseText = label(
