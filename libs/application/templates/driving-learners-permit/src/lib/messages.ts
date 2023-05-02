@@ -204,6 +204,12 @@ export const m = defineMessages({
       'Umsókn þín um að gerast leiðbeinandi nemanda hefur verið móttekin.',
     description: 'Info displayed to applicant upon application completion',
   },
+  doneDescriptionBody: {
+    id: 'dlp.application:doneDescriptionBody#markdown',
+    defaultMessage:
+      '## Leyfisbréf leiðbeinanda verður sent í pósthólf þitt á Ísland.is\nAlltaf skal hafa leyfið meðferðis við æfingaakstur. Óheimilt er að taka endurgjald fyrir að leiðbeina ökunema. Fylgi leiðbeinandi ekki reglum um æfingaakstur eða fullnægi ekki lengur skilyrðum getur sýslumaður afturkallað leyfið.\n\nSamgöngustofa gefur út leiðbeiningar um æfingaakstur og skal ökukennari veita leiðbeinanda aðstoð við skipulagningu akstursins og gefa leiðbeinanda kost á að fylgjast með a.m.k. einni klukkustund í akstri. Auðkenna skal bifreið sem nota á til æfingaaksturs samkvæmt reglum Samgöngustofu.',
+    description: 'Description of what happens next',
+  },
 
   /* OTHER */
   name: {
