@@ -238,6 +238,14 @@ export const getIntentWithSyncCheck = (
   formData: FormData,
 ): { name: ClientFormTypes; sync: boolean } => {
   const getIntent = formData.get('intent') as string
+
+  if (!getIntent) {
+    return {
+      name: ClientFormTypes.none,
+      sync: false,
+    }
+  }
+
   const intent = getIntent.split('-')
 
   return {

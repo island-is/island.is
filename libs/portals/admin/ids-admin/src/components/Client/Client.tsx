@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { useLoaderData } from 'react-router-dom'
+import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import { Tag, Text, Stack, Box, Select } from '@island.is/island-ui/core'
+import { Box, Select, Stack, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
@@ -19,6 +19,8 @@ import AdvancedSettings from './AdvancedSettings'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import * as styles from './Client.css'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { IDSAdminPaths } from '../../lib/paths'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -28,10 +30,21 @@ const IssuerUrls = {
   [AuthAdminEnvironment.Production]: 'https://innskra.island.is',
 }
 
+export type PublishData = {
+  toEnvironment: AuthAdminEnvironment | null
+  fromEnvironment: AuthAdminEnvironment | null
+}
+
 const Client = () => {
   const client = useLoaderData() as AuthAdminClient
+  const navigate = useNavigate()
+  const params = useParams()
 
   const { formatMessage } = useLocale()
+  const [publishData, setPublishData] = useState<PublishData>({
+    toEnvironment: null,
+    fromEnvironment: null,
+  })
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     AuthAdminClient['environments'][0]
   >(client.environments[0])
@@ -54,6 +67,26 @@ const Client = () => {
       }
     }
     return true
+  }
+
+  const openPublishModal = (to: AuthAdminEnvironment) => {
+    setPublishData({
+      toEnvironment: to,
+      fromEnvironment: selectedEnvironment.environment,
+    })
+    navigate(
+      replaceParams({
+        href: IDSAdminPaths.IDSAdminClientPublish,
+        params: {
+          tenant: params['tenant'],
+          client: selectedEnvironment.clientId,
+        },
+      }),
+    )
+  }
+
+  const environmentExists = (environment: AuthAdminEnvironment) => {
+    return client.environments.some((env) => env.environment === environment)
   }
 
   return (
@@ -95,6 +128,8 @@ const Client = () => {
           ],
           [ClientFormTypes.none]: [],
         },
+        publishData: publishData,
+        setPublishData: setPublishData,
       }}
     >
       <Stack space={4}>
@@ -118,21 +153,38 @@ const Client = () => {
               size="sm"
               backgroundColor="blue"
               label={formatMessage(m.environment)}
-              onChange={(event: any) =>
-                setSelectedEnvironment(
-                  client.environments.find(
-                    (env) => env.environment === event.value,
-                  ) as AuthAdminClient['environments'][0],
-                )
-              }
+              onChange={(event: any) => {
+                if (environmentExists(event.value)) {
+                  setSelectedEnvironment(
+                    client.environments.find(
+                      (env) => env.environment === event.value,
+                    ) as AuthAdminClient['environments'][0],
+                  )
+                } else {
+                  openPublishModal(event.value)
+                }
+              }}
               value={{
                 label: selectedEnvironment.environment,
                 value: selectedEnvironment.environment,
               }}
-              options={client.environments.map((env) => {
+              options={[
+                AuthAdminEnvironment.Development,
+                AuthAdminEnvironment.Staging,
+                AuthAdminEnvironment.Production,
+              ].map((env) => {
+                const selectedEnv = environmentExists(env)
+                if (selectedEnv) {
+                  return {
+                    label: env,
+                    value: env,
+                  }
+                }
                 return {
-                  label: env.environment,
-                  value: env.environment,
+                  label: formatMessage(m.publishEnvironment, {
+                    environment: env,
+                  }),
+                  value: env,
                 }
               })}
             />
@@ -196,6 +248,7 @@ const Client = () => {
           }
         />
       </Stack>
+      <Outlet />
     </ClientContext.Provider>
   )
 }

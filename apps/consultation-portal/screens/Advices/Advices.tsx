@@ -35,9 +35,7 @@ export const AdvicesLayout = ({ children }) => {
           <Stack space={3}>
             <Text variant="h1">Mínar umsagnir</Text>
             <Text variant="default">
-              Hér er hægt að fylgjast með þeim áskriftum sem þú ert skráð(ur) í
-              ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
-              tíðina.
+              Hér geturðu skoðað allar umsagnir sem þú hefur sent inn.
             </Text>
           </Stack>
           {children}
