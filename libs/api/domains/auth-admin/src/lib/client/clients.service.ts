@@ -9,12 +9,14 @@ import {
 import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import { ClientSecretInput } from './dto/client-secret.input'
 import { CreateClientInput } from './dto/create-client.input'
 import { CreateClientResponse } from './dto/create-client.response'
-import { ClientEnvironment } from './models/client-environment.model'
-import { Client } from './models/client.model'
 import { PatchClientInput } from './dto/patch-client.input'
 import { PublishClientInput } from './dto/publish-client.input'
+import { ClientEnvironment } from './models/client-environment.model'
+import { ClientSecret } from './models/client-secret.model'
+import { Client } from './models/client.model'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -203,6 +205,21 @@ export class ClientsService extends MultiEnvironmentService {
     })
 
     return patchClientResponses
+  }
+
+  async getClientSecrets(
+    user: User,
+    input: ClientSecretInput,
+  ): Promise<ClientSecret[]> {
+    const secrets = await this.adminApiByEnvironmentWithAuth(
+      input.environment,
+      user,
+    )?.meClientSecretsControllerFindAll({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+    })
+
+    return secrets ?? []
   }
 
   async publishClient(
