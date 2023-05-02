@@ -2,6 +2,8 @@ import { expect, test as base, Page } from '@playwright/test'
 import { disableI18n } from '../../../../support/disablers'
 import { session } from '../../../../support/session'
 import { createApplication } from '../../../../support/application'
+import { m } from '@island.is/application/templates/criminal-record/messages'
+import { label } from '../../../../support/i18n'
 
 const homeUrl = '/umsoknir/sakavottord'
 
@@ -30,23 +32,32 @@ applicationTest.describe('Criminal record application payment test', () => {
     async ({ applicationPage }) => {
       const page = applicationPage
 
+      const buttonStaðfesta = label(m.confirm)
+      const buttonBætaViðKorti = 'Bæta við korti'
+      const buttonGreiða = 'Greiða'
+      const buttonTextSubmit3DData = 'Submit 3D data'
+      const textGervimaðurAfríka = 'Gervimaður Afríka'
+      const textGreiðslaTókst = 'Greiðsla tókst'
+      const textUmsóknStaðfest = label(m.successTitle)
+      const textAfgreidd = label(m.actionCardDone)
+
       await applicationTest.step(
         'Create and proceed with application',
         async () => {
           await createApplication(page)
           await page.getByTestId('agree-to-data-providers').check()
           await page.getByTestId('proceed').click()
-          await expect(page.getByText('Gervimaður Afríka')).toBeVisible()
+          await expect(page.getByText(textGervimaðurAfríka)).toBeVisible()
         },
       )
 
       await applicationTest.step('Confirm application', async () => {
-        await page.getByRole('button', { name: 'Staðfesta' }).click()
+        await page.getByRole('button', { name: buttonStaðfesta }).click()
         await page.waitForURL('https://uat.arkid.is/quickpay/card')
       })
 
       await applicationTest.step('Add a card', async () => {
-        await page.getByRole('button', { name: 'Bæta við korti' }).click()
+        await page.getByRole('button', { name: buttonBætaViðKorti }).click()
         await page.getByPlaceholder('Nafn korthafa').fill('Valitortestfyrirtgr')
         await page.getByPlaceholder('Kortanúmer').fill('2223000010246699')
         await page.getByPlaceholder('Öryggiskóði').fill('123')
@@ -58,9 +69,9 @@ applicationTest.describe('Criminal record application payment test', () => {
       })
 
       await applicationTest.step('Complete payment', async () => {
-        await page.getByRole('button', { name: 'Greiða' }).click()
-        await page.getByRole('button', { name: 'Submit 3D data' }).click()
-        await page.getByText('Greiðsla tókst').isVisible()
+        await page.getByRole('button', { name: buttonGreiða }).click()
+        await page.getByRole('button', { name: buttonTextSubmit3DData }).click()
+        await page.getByText(textGreiðslaTókst).isVisible()
       })
 
       await applicationTest.step(
@@ -68,13 +79,13 @@ applicationTest.describe('Criminal record application payment test', () => {
         async () => {
           await page
             .getByRole('heading', {
-              name: 'Umsókn þín um sakavottorð hefur verið staðfest',
+              name: textUmsóknStaðfest,
             })
             .isVisible()
 
           await page.goto(`${homeUrl}`, { waitUntil: 'networkidle' })
           await page.getByTestId('application-card').first().isVisible()
-          expect(await page.getByText('Afgreidd').first().isVisible()).toBe(
+          expect(await page.getByText(textAfgreidd).first().isVisible()).toBe(
             true,
           )
         },
