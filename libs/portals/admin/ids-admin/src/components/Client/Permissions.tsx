@@ -1,20 +1,11 @@
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
-// import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { m } from '../../lib/messages'
-import {
-  Box,
-  Button,
-  Table as T,
-  Text,
-  Icon,
-  DialogPrompt,
-} from '@island.is/island-ui/core'
+import { Box, Button, Table as T, Text, Icon } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
-import AddPermissions, {
-  ShadowBox,
-} from '../forms/AddPermissions/AddPermissions'
+import AddPermissions from '../forms/AddPermissions/AddPermissions'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import { ShadowBox } from '../ShadowBox/ShadowBox'
 
 type Permission = {
   id: string
@@ -141,28 +132,12 @@ function Permissions({ data = mockData }: PermissionsProps) {
                   <T.Data>{item.description}</T.Data>
                   <T.Data>{item.api}</T.Data>
                   <T.Data>
-                    <DialogPrompt
-                      baseId={`confirm-remove-${item.id}`}
-                      title="Remove permission?"
-                      description="Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi."
-                      ariaLabel="TODO"
-                      onConfirm={() => console.log(`Removed: ${item.id}`)}
-                      buttonTextConfirm={formatMessage(
-                        m.permissionsButtonLabelRemove,
-                      )}
-                      buttonPropsConfirm={{ colorScheme: 'destructive' }}
-                      buttonTextCancel="Cancel"
-                      disclosureElement={
-                        <Button
-                          aria-label={formatMessage(
-                            m.permissionsButtonLabelRemove,
-                          )}
-                          icon="trash"
-                          variant="ghost"
-                          iconType="outline"
-                          size="small"
-                        />
-                      }
+                    <Button
+                      aria-label={formatMessage(m.permissionsButtonLabelRemove)}
+                      icon="trash"
+                      variant="ghost"
+                      iconType="outline"
+                      size="small"
                     />
                   </T.Data>
                 </T.Row>

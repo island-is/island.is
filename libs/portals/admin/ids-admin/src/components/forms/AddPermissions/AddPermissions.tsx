@@ -8,10 +8,9 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import React, { ComponentPropsWithoutRef } from 'react'
-import { useDynamicShadow, UseDynamicShadowOptions } from './useDynamicShadow'
-import * as styles from './AddPermissions.css'
+import React from 'react'
 import { Form } from 'react-router-dom'
+import { ShadowBox } from '../../ShadowBox/ShadowBox'
 
 interface AddPermissionsProps {
   isVisible: boolean
@@ -127,9 +126,9 @@ function AddPermissions({ isVisible, onClose }: AddPermissionsProps) {
         </ShadowBox>
         <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
           <Button onClick={onClose} variant="ghost">
-            Cancel
+            {formatMessage(m.cancel)}
           </Button>
-          <Button type="submit">Add</Button>
+          <Button type="submit">{formatMessage(m.add)}</Button>
         </Box>
       </Modal>
     </Form>
@@ -137,27 +136,3 @@ function AddPermissions({ isVisible, onClose }: AddPermissionsProps) {
 }
 
 export default AddPermissions
-
-interface ShadowBoxProps
-  extends ComponentPropsWithoutRef<typeof Box>,
-    Pick<UseDynamicShadowOptions, 'isDisabled' | 'debug'> {}
-
-export function ShadowBox({
-  children,
-  isDisabled,
-  debug,
-  ...props
-}: ShadowBoxProps) {
-  const { showShadow, pxProps } = useDynamicShadow({
-    isDisabled,
-    debug,
-  })
-
-  return (
-    <Box overflow="auto" {...props} position="relative">
-      {children}
-      <div {...pxProps} />
-      <div className={styles.shadow({ showShadow })}></div>
-    </Box>
-  )
-}
