@@ -307,7 +307,7 @@ export const requirementsMessages = defineMessages({
   validForFiveYearsDescription: {
     id: 'dlp.application:requirementunmet.validForFiveYearsDescription',
     defaultMessage:
-      'Leiðbeinandi þarf að hafa haft gild ökuréttindi fyrir bifreiðar, ekki bifhjól, í að minnsta kosti 5 ár',
+      'Leiðbeinandi þarf að hafa haft gild ökuréttindi fyrir B-flokk í að minnsta kosti 5 ár',
     description:
       'requirement unmet valid license for five years or more description',
   },
