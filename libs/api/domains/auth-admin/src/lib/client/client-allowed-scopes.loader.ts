@@ -19,7 +19,7 @@ export class ClientAllowedScopesLoader
   constructor(private readonly clientsService: ClientsService) {}
 
   keyFn(input: AllowedScopeInput): string {
-    return `${input.clientId}##${input.tenantId}`
+    return `${input.environment}##${input.clientId}##${input.tenantId}`
   }
 
   async loadApiScopes(
