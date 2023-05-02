@@ -213,7 +213,7 @@ export const m = defineMessages({
   },
   institutionName: {
     id: 'dlp.application:institutionName',
-    defaultMessage: 'Ökubók',
+    defaultMessage: 'Ökunámsbók',
     description: 'Name of institution for the application',
   },
 })
