@@ -7,6 +7,7 @@ import { ApiScope } from '../models/api-scope.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { Client } from '../../clients/models/client.model'
 import { ClientAllowedScope } from '../../clients/models/client-allowed-scope.model'
+import { NoContentException } from '@island.is/nest/problem'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -49,6 +50,7 @@ export class AdminScopeService {
       where: {
         clientId,
         domainName: tenantId,
+        enabled: true,
       },
       include: {
         model: ClientAllowedScope,
@@ -64,7 +66,11 @@ export class AdminScopeService {
       },
     })
 
-    if (!client?.allowedScopes?.length) return []
+    if (!client) {
+      throw new NoContentException()
+    } else if (!client?.allowedScopes?.length) {
+      return []
+    }
 
     const scopeNames = client.allowedScopes.map((scope) => scope.scopeName)
 
