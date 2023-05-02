@@ -1,37 +1,30 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { Loader } from '@island.is/nest/dataloader'
 import { IdsUserGuard } from '@island.is/auth-nest-tools'
-import { ApiScopeDataLoader, ApiScopeLoader } from '@island.is/api/domains/auth'
 
 import { ClientEnvironment } from './models/client-environment.model'
-import { AllowedScope } from './models/allowedScope.model'
+import { AllowedScope } from './models/allowed-scope.model'
+import {
+  ClientAllowedScopesDataLoader,
+  ClientAllowedScopesLoader,
+} from './client-allowed-scopes.loader'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ClientEnvironment)
 export class ClientEnvironmentResolver {
   @ResolveField('allowedScopes', () => [AllowedScope], { nullable: true })
   async resolveAllowedScopes(
-    @Loader(ApiScopeLoader) apiScopeLoader: ApiScopeDataLoader,
+    @Loader(ClientAllowedScopesLoader)
+    apiScopeLoader: ClientAllowedScopesDataLoader,
     @Parent()
-    { tenantId, allowedScopes }: ClientEnvironment,
-    @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
-    lang: string,
+    { tenantId, clientId, environment }: ClientEnvironment,
   ): Promise<AllowedScope[]> {
-    // Return empty array if no allowed scopes are defined
-    if (!allowedScopes) {
-      return []
-    }
-
-    return Promise.all(
-      allowedScopes.map(({ scopeName }) =>
-        apiScopeLoader.load({
-          lang,
-          domain: tenantId,
-          name: scopeName,
-        }),
-      ),
-    )
+    return apiScopeLoader.load({
+      tenantId,
+      clientId,
+      environment,
+    })
   }
 }

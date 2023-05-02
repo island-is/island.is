@@ -26,6 +26,7 @@ import { DelegationResourcesService } from './delegation-resources.service'
 import { ResourceTranslationService } from './resource-translation.service'
 import { TenantsService } from './tenants.service'
 import { AdminScopeService } from './admin/admin-scope.service'
+import { Client } from '../clients/models/client.model'
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AdminScopeService } from './admin/admin-scope.service'
       ApiScopeUserClaim,
       ApiResourceUserClaim,
       ApiResourceSecret,
+      Client,
       Delegation,
       DelegationScope,
       PersonalRepresentativeScopePermission,

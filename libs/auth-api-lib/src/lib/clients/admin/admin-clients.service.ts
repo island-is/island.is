@@ -33,7 +33,6 @@ import {
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
 import { ClientsService } from '../clients.service'
-import { ClientAllowedScope } from '../models/client-allowed-scope.model'
 import { ApiScope } from '../../resources/models/api-scope.model'
 
 export const clientBaseAttributes: Partial<Client> = {
@@ -466,11 +465,6 @@ export class AdminClientsService {
           type: claim.type,
           value: claim.value,
         })) ?? [],
-      allowedScopes:
-        client.allowedScopes?.map(({ scopeName, clientId }) => ({
-          scopeName,
-          clientId,
-        })) ?? [],
     }
   }
 
@@ -516,7 +510,6 @@ export class AdminClientsService {
       { model: ClientGrantType, as: 'allowedGrantTypes' },
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
-      { model: ClientAllowedScope, as: 'allowedScopes' },
     ]
   }
 

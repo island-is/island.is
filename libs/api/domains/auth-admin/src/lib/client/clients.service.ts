@@ -7,6 +7,7 @@ import {
   MeClientsControllerUpdateRequest,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
+import { AdminScopeDTO } from '@island.is/auth-api-lib'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateClientInput } from './dto/create-client.input'
@@ -15,6 +16,7 @@ import { ClientEnvironment } from './models/client-environment.model'
 import { Client } from './models/client.model'
 import { PatchClientInput } from './dto/patch-client.input'
 import { PublishClientInput } from './dto/publish-client.input'
+import { AllowedScopeInput } from './dto/allowed-scope.input'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -210,7 +212,6 @@ export class ClientsService extends MultiEnvironmentService {
     input: PublishClientInput,
   ): Promise<ClientEnvironment> {
     // Fetch the client from source environment
-
     const sourceInput = await this.adminApiByEnvironmentWithAuth(
       input.sourceEnvironment,
       user,
@@ -261,5 +262,20 @@ export class ClientsService extends MultiEnvironmentService {
 
   private formatClientId(clientId: string, environment: Environment) {
     return `${clientId}#${environment}`
+  }
+
+  async getAllowedScopes(
+    user: User,
+    input: AllowedScopeInput,
+  ): Promise<AdminScopeDTO[]> {
+    const apiScopes = await this.adminApiByEnvironmentWithAuth(
+      input.environment,
+      user,
+    )?.meClientsScopesControllerFindAll({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+    })
+
+    return apiScopes ?? []
   }
 }
