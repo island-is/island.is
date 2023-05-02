@@ -78,7 +78,6 @@ const SearchAndFilter = ({
                   </Text>
                   <div style={{ marginBottom: '6px' }} />
                   <AsyncSearch
-                    loading={loading}
                     label="Leit"
                     size="medium"
                     options={options}
@@ -143,7 +142,6 @@ const SearchAndFilter = ({
         <GridContainer>
           <Box paddingY={4}>
             <AsyncSearch
-              loading={loading}
               colored
               label="Leit"
               size="medium"
