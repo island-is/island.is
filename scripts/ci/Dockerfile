@@ -1,6 +1,8 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
+ARG NPM_AUTH_TOKEN
+
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
 
 RUN apk add -U git
@@ -14,7 +16,7 @@ COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 
 RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
-RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' `aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' $NPM_AUTH_TOKEN
 RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
 RUN CI=true yarn install --immutable
 
@@ -159,7 +161,7 @@ RUN chown -R pwuser:pwuser .
 USER pwuser
 RUN yarn set version berry
 RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
-RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' `aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' $NPM_AUTH_TOKEN
 RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
 RUN yarn install
 

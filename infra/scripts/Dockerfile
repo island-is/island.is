@@ -1,4 +1,5 @@
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
+ARG NPM_AUTH_TOKEN
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as runner
 
 RUN apk add postgresql-client bash
@@ -11,7 +12,7 @@ ADD infra/package.json infra/yarn.lock /app/infra/
 COPY .yarn/ ./.yarn
 WORKDIR /app/infra
 RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
-RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' `aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' $NPM_AUTH_TOKEN
 RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
 RUN yarn install --immutable
 
