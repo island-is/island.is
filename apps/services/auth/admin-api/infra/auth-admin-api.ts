@@ -28,6 +28,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         prod: json(['https://innskra.island.is']),
       },
     })
+    .secrets({
+      CLIENT_SECRET_ENCRYPTION_KEY:
+        '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
+    })
     .ingress({
       primary: {
         host: {
@@ -55,11 +59,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     .resources({
       limits: {
         cpu: '400m',
-        memory: '256Mi',
+        memory: '384Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '256Mi',
       },
     })
     .replicaCount({

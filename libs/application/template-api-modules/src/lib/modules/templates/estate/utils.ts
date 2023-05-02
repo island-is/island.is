@@ -31,6 +31,7 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
   )
   const ships = estate.ships.map((el) => initialMapper<EstateAsset>(el))
   const vehicles = estate.vehicles.map((el) => initialMapper<EstateAsset>(el))
+  const guns = estate.guns.map((el) => initialMapper<EstateAsset>(el))
 
   return {
     ...estate,
@@ -39,21 +40,14 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     flyers,
     ships,
     vehicles,
+    guns,
   }
 }
 
 export const filterAndRemoveRepeaterMetadata = <T>(
   elements: RepeaterType<Extract<NonNullable<T>>>[],
 ): Omit<Extract<NonNullable<T>>, 'initial' | 'enabled' | 'dummy'>[] => {
-  elements = elements.filter((element) => {
-    if (Object.keys(element).includes('enabled')) {
-      return element.enabled
-    }
-    return true
-  })
-
   elements.forEach((element) => {
-    delete element.enabled
     delete element.initial
     delete element.dummy
   })

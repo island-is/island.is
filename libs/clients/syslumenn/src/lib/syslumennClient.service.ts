@@ -18,6 +18,7 @@ import {
   EstateInfo,
   RealEstateAgent,
   Lawyer,
+  Broker,
   PropertyDetail,
   TemporaryEventLicence,
 } from './syslumennClient.types'
@@ -35,6 +36,7 @@ import {
   mapEstateInfo,
   mapRealEstateAgent,
   mapLawyer,
+  mapBroker,
   mapAlcoholLicence,
   cleanPropertyNumber,
   mapTemporaryEventLicence,
@@ -135,6 +137,14 @@ export class SyslumennService {
       audkenni: id,
     })
     return (lawyers ?? []).map(mapLawyer)
+  }
+
+  async getBrokers(): Promise<Broker[]> {
+    const { id, api } = await this.createApi()
+    const brokers = await api.verdbrefamidlararGet({
+      audkenni: id,
+    })
+    return (brokers ?? []).map(mapBroker)
   }
 
   async getOperatingLicenses(

@@ -236,6 +236,9 @@ export const slices = gql`
       image {
         ...ImageFields
       }
+      imageOnSelect {
+        ...ImageFields
+      }
     }
   }
 
@@ -613,6 +616,15 @@ export const slices = gql`
     translations
   }
 
+  fragment SliceDropdownFields on SliceDropdown {
+    __typename
+    id
+    dropdownLabel
+    slices {
+      ...OneColumnTextFields
+    }
+  }
+
   fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
     __typename
     id
@@ -705,6 +717,7 @@ export const slices = gql`
     ...PowerBiSliceFields
     ...TableSliceFields
     ...EmailSignupFields
+    ...SliceDropdownFields
   }
 
   fragment AllSlices on Slice {
@@ -756,6 +769,17 @@ const nestedContainerFields = `
       }
       body {
         ...AllSlices
+      }
+    }
+  }
+  ... on SliceDropdown {
+    ...SliceDropdownFields
+    slices {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
       }
     }
   }

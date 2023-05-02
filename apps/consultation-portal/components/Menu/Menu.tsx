@@ -14,23 +14,19 @@ import {
   UserMenu,
 } from '@island.is/island-ui/core'
 import * as styles from './Menu.css'
-import React from 'react'
+import React, { useContext } from 'react'
 import { MenuLogo, MenuLogoMobile } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
-import {
-  checkActiveHeaderLink,
-  useLogIn,
-  useLogOut,
-  useUser,
-} from '../../utils/helpers'
+import { checkActiveHeaderLink, useLogIn, useLogOut } from '../../utils/helpers'
 import { useRouter } from 'next/router'
+import { UserContext } from '../../context'
 type MenuProps = {
   isFrontPage: boolean
 }
 
 export const Menu = ({ isFrontPage = false }: MenuProps) => {
-  const { isAuthenticated, user } = useUser()
+  const { isAuthenticated, user } = useContext(UserContext)
 
   const router = useRouter()
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -49,7 +45,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                 {isFrontPage && (
                   <Column width="content">
                     <FocusableBox href="https://island.is/">
-                      <Logo iconOnly width={26} />
+                      <Logo />
                     </FocusableBox>
                   </Column>
                 )}
@@ -57,7 +53,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                   <Hidden below="xl">
                     <Column width="content">
                       <FocusableBox href="https://island.is/">
-                        <Logo iconOnly width={26} />
+                        <Logo iconOnly />
                       </FocusableBox>
                     </Column>
                   </Hidden>

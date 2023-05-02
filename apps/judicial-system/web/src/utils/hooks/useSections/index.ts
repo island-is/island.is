@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -21,11 +20,11 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   courtIndictmentRoutes,
   courtInvestigationCasesRoutes,
+  courtOfAppealRoutes,
   courtRestrictionCasesRoutes,
   prosecutorIndictmentRoutes,
   prosecutorInvestigationCasesRoutes,
@@ -61,7 +60,6 @@ const useSections = (
   onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>,
 ) => {
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
   const router = useRouter()
 
   const getRestrictionCaseProsecutorSection = (
@@ -373,11 +371,7 @@ const useSections = (
   ): RouteSection => {
     const { id, type } = workingCase
     const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
-    const isTrafficViolation = isTrafficViolationCase(
-      workingCase,
-      features,
-      user,
-    )
+    const isTrafficViolation = isTrafficViolationCase(workingCase, user)
 
     const routes = prosecutorIndictmentRoutes(isTrafficViolation)
 
@@ -1119,6 +1113,60 @@ const useSections = (
     }
   }
 
+  const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
+    const { id } = workingCase
+    const routeIndex = courtOfAppealRoutes.findIndex(
+      /**
+       * We do .slice here because router.pathname is /something/[:id]
+       * and we want to remove the /[:id] part
+       */
+      (route) => route === router.pathname.slice(0, -5),
+    )
+
+    return [
+      {
+        name: formatMessage(sections.courtOfAppealSection.appealed),
+        isActive: user?.institution?.type !== InstitutionType.HighCourt,
+        children: [],
+      },
+      {
+        name: formatMessage(sections.courtOfAppealSection.result),
+        isActive: user?.institution?.type === InstitutionType.HighCourt,
+        children: [
+          {
+            name: formatMessage(sections.courtOfAppealSection.overview),
+            isActive: routeIndex === 0,
+            href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
+          },
+          {
+            name: formatMessage(sections.courtOfAppealSection.reception),
+            isActive: routeIndex === 1,
+            href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+            onClick:
+              validateFormStepper(
+                isValid,
+                [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                workingCase,
+              ) && onNavigationTo
+                ? async () =>
+                    await onNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
+                : undefined,
+          },
+          {
+            name: formatMessage(sections.courtOfAppealSection.ruling),
+            isActive: routeIndex === 2,
+            href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
+          },
+        ],
+      },
+      {
+        name: formatMessage(sections.caseResults.result),
+        isActive: false,
+        children: [],
+      },
+    ]
+  }
+
   const getRestrictionCaseExtensionCourtSections = (
     workingCase: Case,
     user?: User,
@@ -1163,16 +1211,8 @@ const useSections = (
           !workingCase.accusedPostponedAppealDate,
         children: [],
       },
-      ...(isRestrictionCase(workingCase.type) &&
-      (workingCase.accusedPostponedAppealDate ||
-        workingCase.prosecutorPostponedAppealDate)
-        ? [
-            {
-              name: formatMessage(sections.caseResults.appealed),
-              isActive: true, // Whenever this is shown, it is active
-              children: [],
-            },
-          ]
+      ...(isRestrictionCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
         : []),
       ...(workingCase.parentCase
         ? [

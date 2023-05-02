@@ -1,47 +1,27 @@
 import {
-  Box,
-  DropdownMenu,
   GridContainer,
   Text,
-  Tiles,
   Stack,
+  Box,
+  LoadingDots,
+  Tiles,
+  DropdownMenu,
+  FocusableBox,
 } from '@island.is/island-ui/core'
-import { Card } from '../../components'
-import { useEffect, useState } from 'react'
 import Layout from '../../components/Layout/Layout'
-import SearchAndSort from '../../components/SearchAndSort/SearchAndSort'
-import { Area, SortOptions } from '../../types/enums'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
-import { sorting } from '../../utils/helpers'
+import { useLogIn, useUser, useAdviceFilters } from '../../utils/helpers'
+import { Card, SubscriptionActionCard } from '../../components/Card'
+import { useState } from 'react'
 import EmptyState from '../../components/EmptyState/EmptyState'
+import { UserAdvice } from '../../types/interfaces'
 import Pagination from '../../components/Pagination/Pagination'
+import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSortPartialData'
+import env from '../../lib/environment'
 
 const CARDS_PER_PAGE = 12
 
-export const AdvicesScreen = ({ allUserAdvices }) => {
-  const [sortTitle, setSortTitle] = useState(SortOptions.aToZ)
-  const [searchValue, setSearchValue] = useState('')
-  const [page, setPage] = useState<number>(0)
-
-  const [data, setData] = useState(allUserAdvices)
-
-  // useEffect(() => {
-  //   const sortedContent = sorting(allUserAdvices, sortTitle)
-  //   searchValue
-  //     ? setData(
-  //         sortedContent.filter(
-  //           (item) =>
-  //             item.name.includes(searchValue) ||
-  //             item.caseNumber.includes(searchValue) ||
-  //             item.institution.includes(searchValue) ||
-  //             item.type.includes(searchValue),
-  //         ),
-  //       )
-  //     : setData(sortedContent)
-  // }, [searchValue])
-
-  const total = 0
-
+export const AdvicesLayout = ({ children }) => {
   return (
     <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
       <BreadcrumbsWithMobileDivider
@@ -51,90 +31,154 @@ export const AdvicesScreen = ({ allUserAdvices }) => {
         ]}
       />
       <GridContainer>
-        <Stack space={5}>
+        <Stack space={[3, 3, 3, 5, 5]}>
           <Stack space={3}>
             <Text variant="h1">Mínar umsagnir</Text>
             <Text variant="default">
-              Hér er hægt að fylgjast með þeim áskriftum sem þú ert skráð(ur) í
-              ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
-              tíðina.
+              Hér geturðu skoðað allar umsagnir sem þú hefur sent inn.
             </Text>
           </Stack>
-          {/* <SearchAndSort
-            data={data}
-            setData={(data) => setData(data)}
-            searchValue={searchValue}
-            setSearchValue={(newValue) => setSearchValue(newValue)}
-            sortTitle={sortTitle}
-            setSortTitle={(title: SortOptions) => setSortTitle(title)}
-            currentTab={Area.case}
-          /> */}
-          {/* {data && (
-            <>
-              {data && (
-                <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
-                  {data.map((item, index) => {
-                    const review = {
-                      tag: item.status,
-                      id: item.id,
-                      title: item.name,
-                      eyebrows: [item.type, item.institution],
-                    }
-                    return (
-                      <Card
-                        frontPage={false}
-                        key={index}
-                        showAttachment
-                        card={review}
-                        dropdown={
-                          <DropdownMenu
-                            icon="chevronDown"
-                            title="Viðhengi"
-                            items={item.documents.map((doc) => {
-                              return {
-                                title: 'Viðhengi ' + doc.id + ' - ' + doc.name,
-                                onClick: console.log,
-                              }
-                            })}
-                          />
-                        }
-                      >
-                        <Box
-                          display="flex"
-                          flexDirection="row"
-                          alignItems="center"
-                          justifyContent="spaceBetween"
-                        >
-                          <Text variant="eyebrow">Þín umsögn</Text>
-                        </Box>
-                        <Box
-                          style={{
-                            minHeight: 110,
-                            lineBreak: 'anywhere',
-                          }}
-                        >
-                          <Box>
-                            <Text variant="small" color="dark400" truncate>
-                              {item.review}
-                            </Text>
-                          </Box>
-                        </Box>
-                      </Card>
-                    )
-                  })}
-                </Tiles>
-              )}
-                <Pagination
-                  page={page}
-                  setPage={(page: number) => setPage(page)}
-                  totalPages={Math.ceil(total / CARDS_PER_PAGE)}
-                />
-            </>
-          )} */}
-          {data.length === 0 && <EmptyState />}
+          {children}
         </Stack>
       </GridContainer>
     </Layout>
+  )
+}
+
+export const AdvicesScreen = () => {
+  const LogIn = useLogIn()
+  const { isAuthenticated, userLoading } = useUser()
+  const [page, setPage] = useState(0)
+  const [dropdownState, setDropdownState] = useState('')
+
+  const handleDropdown = (id: string) => {
+    setDropdownState((prev) => {
+      return prev === id ? null : id
+    })
+  }
+
+  const {
+    advices,
+    total,
+    getAdvicesLoading,
+    filters,
+    setFilters,
+  } = useAdviceFilters({ cards_per_page: CARDS_PER_PAGE, page: page })
+
+  if (!userLoading && !isAuthenticated) {
+    return (
+      <AdvicesLayout>
+        <SubscriptionActionCard
+          heading="Mínar umsagnir"
+          text="Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir."
+          button={[{ label: 'Skrá mig inn', onClick: LogIn }]}
+        />
+      </AdvicesLayout>
+    )
+  }
+
+  const renderCards = () => {
+    if (getAdvicesLoading) {
+      return (
+        <Box
+          display="flex"
+          width="full"
+          alignItems="center"
+          justifyContent="center"
+          style={{ height: 200 }}
+        >
+          <LoadingDots color="blue" large />
+        </Box>
+      )
+    }
+
+    if (!getAdvicesLoading && advices?.length === 0) {
+      return <EmptyState />
+    }
+
+    return (
+      <>
+        {advices && (
+          <Tiles space={3} columns={[1, 1, 1, 2, 3]}>
+            {advices.map((item: UserAdvice, index: number) => {
+              const card = {
+                id: item.caseId,
+                title: item.participantName,
+                tag: item._case?.statusName,
+                published: item.created,
+                processEnds: item._case?.processEnds,
+                processBegins: item._case?.processBegins,
+                eyebrows: [item._case?.typeName, item._case?.institutionName],
+              }
+              const dropdown =
+                item.adviceDocuments?.length !== 0 ? (
+                  <FocusableBox
+                    onClick={() => handleDropdown(item.id)}
+                    component="div"
+                  >
+                    <DropdownMenu
+                      title="Viðhengi"
+                      icon={
+                        dropdownState === item.id ? 'chevronUp' : 'chevronDown'
+                      }
+                      items={item.adviceDocuments?.map((item) => {
+                        return {
+                          title: item.fileName,
+                          href: `${env.backendDownloadUrl}${item.id}`,
+                        }
+                      })}
+                    />
+                  </FocusableBox>
+                ) : (
+                  <></>
+                )
+              return (
+                <Card
+                  key={index}
+                  card={card}
+                  frontPage={false}
+                  showAttachment
+                  dropdown={dropdown}
+                >
+                  <Stack space={2}>
+                    <Text variant="eyebrow" color="dark400">
+                      Þín umsögn
+                    </Text>
+                    <Box
+                      style={{
+                        wordBreak: 'break-word',
+                        height: '105px',
+                      }}
+                      overflow="hidden"
+                    >
+                      <Text variant="small" color="dark400">
+                        {item.content}
+                      </Text>
+                    </Box>
+                  </Stack>
+                </Card>
+              )
+            })}
+          </Tiles>
+        )}
+        <Pagination
+          page={page}
+          setPage={(page: number) => setPage(page)}
+          totalPages={Math.ceil(total / CARDS_PER_PAGE)}
+        />
+      </>
+    )
+  }
+
+  return (
+    <AdvicesLayout>
+      <SearchAndSortPartialData
+        filters={filters}
+        setFilters={setFilters}
+        loading={getAdvicesLoading}
+      />
+      {renderCards()}
+    </AdvicesLayout>
   )
 }
 
