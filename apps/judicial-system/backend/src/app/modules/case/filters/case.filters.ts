@@ -13,7 +13,7 @@ import {
   restrictionCases,
   UserRole,
   isExtendedCourtRole,
-  isProsecutionRole,
+  isProsecutionUser,
   isCourtRole,
   CaseAppealState,
 } from '@island.is/judicial-system/types'
@@ -24,11 +24,11 @@ import { Case } from '../models/case.model'
 const hideArchived = { isArchived: false }
 
 function getAllowedStates(
-  role: UserRole,
+  user: User,
   institutionType?: InstitutionType,
   caseType?: CaseType,
 ): CaseState[] {
-  if (isProsecutionRole(role)) {
+  if (isProsecutionUser(user)) {
     return [
       CaseState.NEW,
       CaseState.DRAFT,
@@ -42,7 +42,7 @@ function getAllowedStates(
 
   if (institutionType === InstitutionType.COURT) {
     if (
-      role === UserRole.ASSISTANT ||
+      user.role === UserRole.ASSISTANT ||
       (caseType && isIndictmentCase(caseType))
     ) {
       return [
@@ -72,19 +72,19 @@ function getAllowedStates(
 }
 
 function getBlockedStates(
-  role: UserRole,
+  user: User,
   institutionType?: InstitutionType,
   caseType?: CaseType,
 ): CaseState[] {
-  const allowedStates = getAllowedStates(role, institutionType, caseType)
+  const allowedStates = getAllowedStates(user, institutionType, caseType)
 
   return Object.values(CaseState).filter(
     (state) => !allowedStates.includes(state as CaseState),
   )
 }
 
-function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
-  return isProsecutionRole(role)
+function prosecutorsOfficeMustMatchUserInstitution(user: User): boolean {
+  return isProsecutionUser(user)
 }
 
 function courtMustMatchUserInstitution(role: UserRole): boolean {
@@ -93,11 +93,11 @@ function courtMustMatchUserInstitution(role: UserRole): boolean {
 
 function isStateHiddenFromRole(
   state: CaseState,
-  role: UserRole,
+  user: User,
   caseType: CaseType,
   institutionType?: InstitutionType,
 ): boolean {
-  return getBlockedStates(role, institutionType, caseType).includes(state)
+  return getBlockedStates(user, institutionType, caseType).includes(state)
 }
 
 function getAllowedTypes(
@@ -156,7 +156,7 @@ function isProsecutorsOfficeCaseHiddenFromUser(
   sharedWithProsecutorsOfficeId?: string,
 ): boolean {
   return (
-    prosecutorsOfficeMustMatchUserInstitution(user.role) &&
+    prosecutorsOfficeMustMatchUserInstitution(user) &&
     Boolean(prosecutorInstitutionId) &&
     prosecutorInstitutionId !== user.institution?.id &&
     (forUpdate ||
@@ -188,7 +188,7 @@ function isHightenedSecurityCaseHiddenFromUser(
   prosecutorId?: string,
 ): boolean {
   return (
-    isProsecutionRole(user.role) &&
+    isProsecutionUser(user) &&
     Boolean(isHeightenedSecurityLevel) &&
     user.id !== creatingProsecutorId &&
     user.id !== prosecutorId
@@ -253,7 +253,7 @@ export function isCaseBlockedFromUser(
   return (
     isStateHiddenFromRole(
       theCase.state,
-      user.role,
+      user,
       theCase.type,
       user.institution?.type,
     ) ||
@@ -353,14 +353,14 @@ function getStaffRoleCasesQueryFilter(user: User): WhereOptions {
 
 export function getCasesQueryFilter(user: User): WhereOptions {
   // TODO: Convert to switch
-  if (isProsecutionRole(user.role)) {
+  if (isProsecutionUser(user)) {
     return getProsecutionRoleCasesQueryFilter(user)
   } else if (user.role === UserRole.STAFF) {
     return getStaffRoleCasesQueryFilter(user)
   }
 
   const blockStates = {
-    [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
+    [Op.not]: { state: getBlockedStates(user, user.institution?.type) },
   }
 
   const blockInstitutions =
