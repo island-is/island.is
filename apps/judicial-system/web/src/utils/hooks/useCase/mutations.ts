@@ -88,6 +88,7 @@ export const UpdateCaseMutation = gql`
         defenderNationalId
         defenderEmail
         defenderPhoneNumber
+        defendantWaivesRightToCounsel
       }
       defenderName
       defenderNationalId
@@ -206,7 +207,11 @@ export const UpdateCaseMutation = gql`
         id
       }
       notifications {
+        created
         type
+        recipients {
+          success
+        }
       }
       caseFiles {
         id
@@ -234,17 +239,163 @@ export const UpdateCaseMutation = gql`
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
+      indictmentCounts {
+        id
+        caseId
+        policeCaseNumber
+        created
+        modified
+        vehicleRegistrationNumber
+        offenses
+        substances
+        lawsBroken
+        incidentDescription
+        legalArguments
+      }
       requestDriversLicenseSuspension
+      appealState
+      isStatementDeadlineExpired
+      statementDeadline
       canBeAppealed
       hasBeenAppealed
-      appealDeadline
       appealedByRole
       appealedDate
       appealDeadline
       prosecutorStatementDate
-      defenderStatementDate
+      defendantStatementDate
+      appealReceivedByCourtDate
+      appealCaseNumber
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
+      appealConclusion
+      appealRulingDecision
+    }
+  }
+`
+
+export const LimitedAccessUpdateCaseMutation = gql`
+  mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
+    limitedAccessUpdateCase(input: $input) {
+      id
+      created
+      origin
+      type
+      indictmentSubtypes
+      state
+      policeCaseNumbers
+      caseFiles {
+        id
+        name
+        category
+      }
+      defendants {
+        id
+        noNationalId
+        nationalId
+        name
+        gender
+        address
+        citizenship
+        defenderName
+        defenderNationalId
+        defenderEmail
+        defenderPhoneNumber
+        defendantWaivesRightToCounsel
+      }
+      defenderName
+      defenderNationalId
+      defenderEmail
+      defenderPhoneNumber
+      court {
+        id
+        name
+        type
+      }
+      leadInvestigator
+      requestedCustodyRestrictions
+      creatingProsecutor {
+        id
+        name
+        title
+        institution {
+          id
+          name
+        }
+      }
+      prosecutor {
+        id
+        name
+        title
+        institution {
+          id
+          name
+        }
+      }
+      courtCaseNumber
+      courtEndTime
+      validToDate
+      decision
+      isValidToDateInThePast
+      isCustodyIsolation
+      isolationToDate
+      conclusion
+      rulingDate
+      registrar {
+        id
+        name
+        title
+      }
+      judge {
+        id
+        name
+        title
+      }
+      courtRecordSignatory {
+        id
+        name
+        title
+      }
+      courtRecordSignatureDate
+      parentCase {
+        id
+        state
+        validToDate
+        decision
+        courtCaseNumber
+        ruling
+      }
+      childCase {
+        id
+      }
+      caseModifiedExplanation
+      caseResentExplanation
+      appealState
+      accusedAppealDecision
+      prosecutorAppealDecision
+      isAppealDeadlineExpired
       isStatementDeadlineExpired
       statementDeadline
+      canBeAppealed
+      hasBeenAppealed
+      appealedByRole
+      appealedDate
+      appealDeadline
+      prosecutorStatementDate
+      defendantStatementDate
       appealReceivedByCourtDate
       appealCaseNumber
       appealAssistant {

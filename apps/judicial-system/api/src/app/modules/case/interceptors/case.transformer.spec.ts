@@ -1,9 +1,6 @@
 import each from 'jest-each'
 
-import {
-  CaseAppealState,
-  CaseFileCategory,
-} from '@island.is/judicial-system/types'
+import { CaseAppealState } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
@@ -293,37 +290,6 @@ describe('transformCase', () => {
 
       // Assert
       expect(res.statementDeadline).toBe('2021-06-16T19:50:08.033Z')
-    })
-
-    it('should have correct prosecutor and defender statement dates when both parties have sent in their statements', () => {
-      // Arrange
-      const courtEndTime = new Date()
-      courtEndTime.setDate(courtEndTime.getDate() - 1)
-
-      const theCase = {
-        courtEndTime: courtEndTime.toISOString(),
-        caseFiles: [
-          {
-            id: '123',
-            created: '2021-06-14T19:50:08.033Z',
-            name: 'ProsecutorStatement',
-            category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-          },
-          {
-            id: '1234',
-            created: '2021-06-15T19:50:08.033Z',
-            name: 'DefenderStatement',
-            category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-          },
-        ],
-      } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      //Assert
-      expect(res.defenderStatementDate).toBe('2021-06-15T19:50:08.033Z')
-      expect(res.prosecutorStatementDate).toBe('2021-06-14T19:50:08.033Z')
     })
   })
 })
