@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { MessageDescriptor, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import {
   FormContentContainer,
