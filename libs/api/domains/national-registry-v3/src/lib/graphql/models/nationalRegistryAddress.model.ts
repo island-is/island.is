@@ -2,8 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class NationalRegistryV3Address {
-  @Field(() => String)
-  streetName!: string
+  @Field(() => String, { nullable: true })
+  streetName?: string | null
 
   @Field(() => String, { nullable: true })
   postalCode?: string | null

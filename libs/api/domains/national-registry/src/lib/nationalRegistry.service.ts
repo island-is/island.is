@@ -17,9 +17,6 @@ export class NationalRegistryService {
 
   async getUser(nationalId: User['nationalId']): Promise<User> {
     const user = await this.nationalRegistryApi.getUser(nationalId)
-
-    const midlunResponse = await this.natReg3.getGerviData(nationalId)
-    console.log('einstaklingarApi', midlunResponse.nafn)
     return {
       nationalId: user.Kennitala,
       name: user.Birtnafn,

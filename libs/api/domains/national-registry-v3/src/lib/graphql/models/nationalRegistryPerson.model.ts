@@ -10,8 +10,8 @@ export class NationalRegistryV3Person {
   @Field(() => ID)
   nationalId!: string
 
-  @Field(() => String)
-  fullName!: string
+  @Field(() => String, { nullable: true })
+  fullName?: string | null
 
   @Field(() => String, { nullable: true })
   genderCode?: string | null

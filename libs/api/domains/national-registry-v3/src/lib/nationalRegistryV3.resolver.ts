@@ -22,6 +22,10 @@ import { ChildGuardianship } from './graphql/models/nationalRegistryChildGuardia
 import { ChildGuardianshipInput } from './graphql/dto/nationalRegistryChildGuardianshipInput'
 import { NationalRegistryV3Spouse } from './graphql/models/nationalRegistrySpouse.model'
 import { NationalRegistryV3Service } from './nationalRegistryV3.service'
+import { NationalRegistryV3Address } from './graphql/models/nationalRegistryAddress.model'
+import { NationalRegistryV3Birthplace } from './graphql/models/nationalRegistryBirthplace.model'
+import { NationalRegistryV3Residence } from './graphql/models/nationalRegistryResidence.model'
+import { NationalRegistryV3Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -58,12 +62,69 @@ export class NationalRegistryV3Resolver {
     )
   }
 
+  @ResolveField('children', () => [NationalRegistryV3Person], {
+    nullable: true,
+  })
+  @Audit()
+  async resolveChildren(
+    @Context('req') { user }: { user: User },
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<Array<NationalRegistryV3Person> | null> {
+    if (person.nationalId !== user.nationalId) {
+      return null
+    }
+    return this.nationalRegistryV3Service.getChildrenCustodyInformation(
+      user.nationalId,
+    )
+  }
+
+  @ResolveField('residenceHistory', () => [NationalRegistryV3Residence], {
+    nullable: true,
+  })
+  @Audit()
+  async resolveResidenceHistory(
+    @Context('req') { user }: { user: User },
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<Array<NationalRegistryV3Service> | null> {
+    /*return this.nationalRegistryV3Service.getNationalRegistryResidenceHistory(
+      person.nationalId,
+    )*/
+    return null
+  }
+
+  @ResolveField('birthplace', () => NationalRegistryV3Birthplace, {
+    nullable: true,
+  })
+  @Audit()
+  async resolveBirthPlace(
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<NationalRegistryV3Birthplace | null> {
+    return this.nationalRegistryV3Service.getBirthplace(person.nationalId)
+  }
+
+  @ResolveField('citizenship', () => NationalRegistryV3Citizenship, {
+    nullable: true,
+  })
+  @Audit()
+  async resolveCitizenship(
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<NationalRegistryV3Citizenship | null> {
+    return this.nationalRegistryV3Service.getCitizenship(person.nationalId)
+  }
+
   @ResolveField('spouse', () => NationalRegistryV3Spouse, { nullable: true })
   @Audit()
   async resolveSpouse(
-    @Context('req') { user }: { user: User },
     @Parent() person: NationalRegistryV3Person,
   ): Promise<NationalRegistryV3Spouse | null> {
     return this.nationalRegistryV3Service.getSpouse(person.nationalId)
+  }
+
+  @ResolveField('address', () => NationalRegistryV3Address, { nullable: true })
+  @Audit()
+  async resolveAddress(
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<NationalRegistryV3Address | null> {
+    return this.nationalRegistryV3Service.getAddress(person.nationalId)
   }
 }
