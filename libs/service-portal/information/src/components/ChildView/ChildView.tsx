@@ -30,7 +30,7 @@ import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInf
 import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
 import * as styles from './ChildView.css'
 import { formatNameBreaks } from '../../helpers/formatting'
-import { spmm } from '../../lib/messages'
+import { spmm, urls } from '../../lib/messages'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
@@ -197,8 +197,7 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url:
-                      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
+                    url: formatMessage(urls.editChild),
                   }
                 : undefined
             }
@@ -226,7 +225,7 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url: 'https://skra.is/folk/flutningur/flutningur-barna/',
+                    url: formatMessage(urls.editResidenceChild),
                   }
                 : undefined
             }
@@ -266,8 +265,7 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url:
-                      'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
+                    url: formatMessage(urls.editChildReligion),
                   }
                 : undefined
             }

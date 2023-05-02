@@ -23,12 +23,11 @@ import {
   CaseType,
   IndictmentSubtype,
   isIndictmentCase,
-  User as TUser,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
-import { User } from '../user'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
@@ -91,7 +90,7 @@ export class PoliceService {
     caseId: string,
     caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-    user: TUser,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -158,7 +157,7 @@ export class PoliceService {
 
   async getAllPoliceCaseFiles(
     caseId: string,
-    user: TUser,
+    user: User,
   ): Promise<PoliceCaseFile[]> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetDocumentListById/${caseId}`,
@@ -227,7 +226,7 @@ export class PoliceService {
     caseId: string,
     caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-    user: TUser,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,

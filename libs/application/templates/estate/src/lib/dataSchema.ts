@@ -23,6 +23,7 @@ const asset = z
   .object({
     assetNumber: z.string().optional(),
     description: z.string().optional(),
+    marketValue: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
     dummy: z.boolean().optional(),
@@ -81,6 +82,7 @@ export const estateSchema = z.object({
     flyers: asset,
     vehicles: asset,
     ships: asset,
+    guns: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),

@@ -1,7 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
 import { ClientType, RefreshTokenExpiration } from '../../../types'
+import { ClientAllowedScopeDTO } from '../../dto/client-allowed-scope.dto'
+import { ClientAllowedScope } from '../../models/client-allowed-scope.model'
+import { AdminClientClaimDto } from './admin-client-claim.dto'
 
 export class AdminClientDto {
   @ApiProperty()
@@ -95,8 +98,15 @@ export class AdminClientDto {
   @ApiProperty()
   accessTokenLifetime!: number
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Dictionary of custom claims added to access tokens.',
+    type: [AdminClientClaimDto],
   })
-  customClaims?: Record<string, string>
+  customClaims?: AdminClientClaimDto[]
+
+  @ApiProperty({
+    description: 'Allowed scopes for the client',
+    type: [ClientAllowedScopeDTO],
+  })
+  allowedScopes?: ClientAllowedScopeDTO[]
 }

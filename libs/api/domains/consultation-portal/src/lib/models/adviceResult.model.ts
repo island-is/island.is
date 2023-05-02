@@ -1,5 +1,17 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, registerEnumType } from '@nestjs/graphql'
 import { DocumentInfoResult } from './documentInfoResult.model'
+import {
+  CaseSubscriptionType,
+  SubscriptionType,
+} from '@island.is/clients/consultation-portal'
+
+registerEnumType(CaseSubscriptionType, {
+  name: 'CaseSubscriptionType',
+})
+
+registerEnumType(SubscriptionType, {
+  name: 'SubscriptionType',
+})
 
 @ObjectType('ConsultationPortalAdviceResult')
 export class AdviceResult {

@@ -7,10 +7,22 @@ export interface UserProps {
 }
 
 const AuthProvider = ({ children }: UserProps) => {
-  const { isAuthenticated, setIsAuthenticated, user, setUser } = useUser()
+  const {
+    isAuthenticated,
+    setIsAuthenticated,
+    user,
+    setUser,
+    userLoading,
+  } = useUser()
   return (
     <UserContext.Provider
-      value={{ isAuthenticated, setIsAuthenticated, user, setUser }}
+      value={{
+        isAuthenticated,
+        setIsAuthenticated,
+        user,
+        setUser,
+        userLoading,
+      }}
     >
       {children}
     </UserContext.Provider>

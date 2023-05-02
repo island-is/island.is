@@ -25,6 +25,7 @@ import { PersonalRepresentativeRightType } from '../personal-representative/mode
 import { DelegationResourcesService } from './delegation-resources.service'
 import { ResourceTranslationService } from './resource-translation.service'
 import { TenantsService } from './tenants.service'
+import { AdminScopeService } from './admin/admin-scope.service'
 
 @Module({
   imports: [
@@ -56,12 +57,14 @@ import { TenantsService } from './tenants.service'
     ResourceTranslationService,
     DelegationResourcesService,
     TenantsService,
+    AdminScopeService,
   ],
   exports: [
     ResourcesService,
     ResourceAccessService,
     DelegationResourcesService,
     TenantsService,
+    AdminScopeService,
   ],
 })
 export class ResourcesModule {}

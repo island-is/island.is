@@ -233,6 +233,7 @@ export interface TempCase
     | 'indictmentCounts'
     | 'sessionArrangements'
     | 'appealState'
+    | 'appealedByRole'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -244,6 +245,7 @@ export interface TempCase
   indictmentCounts?: TempIndictmentCount[]
   sessionArrangements?: SessionArrangements
   appealState?: CaseAppealState
+  appealedByRole?: UserRole
 }
 
 export interface TempUpdateCase
@@ -261,8 +263,10 @@ export interface TempCreateCase extends Omit<CreateCase, 'type'> {
   type: CaseType
 }
 
-export interface TempCaseListEntry extends Omit<CaseListEntry, 'type'> {
+export interface TempCaseListEntry
+  extends Omit<CaseListEntry, 'type' | 'appealState'> {
   type: CaseType
+  appealState?: CaseAppealState
 }
 
 export interface CourtDocument {

@@ -4,19 +4,26 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { UseGuards } from '@nestjs/common'
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
-import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { ConsultationPortalScope } from '@island.is/auth/scopes'
+import { ApiScope } from '@island.is/auth/scopes'
 import { UserService } from './user.service'
 import { UserEmailResult } from '../models/userEmailResult.model'
 import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
+import { PostEmailCommand } from '../models/postEmailCommand.model'
+import { UserSubscriptionsCommand } from '../models/userSubscriptionsCommand.model'
 
 @Resolver()
-@UseGuards(FeatureFlagGuard, IdsUserGuard)
-@Scopes(ConsultationPortalScope.default)
+@UseGuards(FeatureFlagGuard, IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.samradsgatt)
 @FeatureFlag(Features.consultationPortalApplication)
 export class UserResolver {
   constructor(private userService: UserService) {}
@@ -41,6 +48,17 @@ export class UserResolver {
 
     return userEmail
   }
+  @Mutation(() => Boolean!, {
+    nullable: true,
+    name: 'consultationPortalPostUserEmail',
+  })
+  async postUserEmail(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => PostEmailCommand }) input: PostEmailCommand,
+  ): Promise<void> {
+    const response = await this.userService.postUserEmail(user, input)
+    return response
+  }
 
   @Query(() => UserSubscriptionsAggregate, {
     name: 'consultationPortalUserSubscriptions',
@@ -49,6 +67,19 @@ export class UserResolver {
     @CurrentUser() user: User,
   ): Promise<UserSubscriptionsAggregate> {
     const response = await this.userService.getUserSubscriptions(user)
+    return response
+  }
+
+  @Mutation(() => Boolean!, {
+    nullable: true,
+    name: 'consultationPortalPostSubscriptions',
+  })
+  async postUserSubscriptions(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => UserSubscriptionsCommand })
+    input: UserSubscriptionsCommand,
+  ): Promise<void> {
+    const response = await this.userService.postUserSubscriptions(user, input)
     return response
   }
 }

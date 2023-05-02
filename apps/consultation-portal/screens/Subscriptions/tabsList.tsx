@@ -8,6 +8,7 @@ export const TabsList = ({
   policyAreasData,
   setPolicyAreasData,
   Area,
+  generalSubArray,
   subscriptionArray,
   setSubscriptionArray,
   searchValue,
@@ -24,6 +25,7 @@ export const TabsList = ({
           data={casesData}
           setData={setCasesData}
           currentTab={Area.case}
+          generalSubArray={generalSubArray}
           subscriptionArray={subscriptionArray}
           setSubscriptionArray={setSubscriptionArray}
           searchValue={searchValue}
@@ -40,6 +42,7 @@ export const TabsList = ({
       content: (
         <TabContent
           data={institutionsData}
+          generalSubArray={generalSubArray}
           setData={setInstitutionsData}
           currentTab={Area.institution}
           subscriptionArray={subscriptionArray}
@@ -61,6 +64,7 @@ export const TabsList = ({
           setData={setPolicyAreasData}
           currentTab={Area.policyArea}
           subscriptionArray={subscriptionArray}
+          generalSubArray={generalSubArray}
           setSubscriptionArray={setSubscriptionArray}
           searchValue={searchValue}
           setSearchValue={setSearchValue}

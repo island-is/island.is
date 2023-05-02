@@ -3,6 +3,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { TransportPaths } from './lib/paths'
+import { translationLoader } from './screens/Translation.loader'
 
 const AirDiscountOverview = lazy(() =>
   import('./screens/AirDiscountOverview/AirDiscountOverview'),
@@ -27,7 +28,7 @@ const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
 
 export const transportsModule: PortalModule = {
   name: 'Farartæki',
-  routes: ({ userInfo }) => [
+  routes: ({ userInfo, client }) => [
     {
       name: m.transports,
       path: TransportPaths.TransportRoot,
@@ -44,6 +45,7 @@ export const transportsModule: PortalModule = {
       name: m.myVehicles,
       path: TransportPaths.AssetsMyVehicles,
       enabled: userInfo.scopes.includes(ApiScope.vehicles),
+      loader: translationLoader({ userInfo, client }),
       element: <Overview />,
     },
     {

@@ -14,6 +14,7 @@ import { licensesModule } from '@island.is/service-portal/licenses'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { transportsModule } from '@island.is/service-portal/transports'
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
+import { indexModule } from '../screens/Dashboard/module'
 /**
  * NOTE:
  * Modules should only be here if they are production ready
@@ -36,4 +37,5 @@ export const modules: PortalModule[] = [
   transportsModule,
   licensesModule,
   sessionsModule,
+  indexModule,
 ]

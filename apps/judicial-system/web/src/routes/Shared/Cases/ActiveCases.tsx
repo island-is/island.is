@@ -30,7 +30,7 @@ import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
@@ -160,7 +160,7 @@ const ActiveCases: React.FC<Props> = (props) => {
         <tr>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.caseNumber)}
+              {formatMessage(tables.caseNumber)}
             </Text>
           </th>
           <th className={cn(styles.th, styles.largeColumn)}>
@@ -198,7 +198,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.state)}
+              {formatMessage(tables.state)}
             </Text>
           </th>
           <th className={styles.th}>
