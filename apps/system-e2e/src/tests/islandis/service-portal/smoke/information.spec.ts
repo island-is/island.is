@@ -5,6 +5,7 @@ import { helpers } from '../../../../support/locator-helpers'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
 import { spmm } from '@island.is/service-portal/information/messages'
+import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -38,8 +39,9 @@ test.describe('Service portal', () => {
     await expect(element).toBeVisible()
   })
 
-  test('should display user detail information', async () => {
+  test.only('should display user detail information', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
     await page.goto('/minarsidur/min-gogn/minar-upplysingar')
 
     // Act
