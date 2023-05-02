@@ -14,6 +14,7 @@ import {
   CaseType,
   CaseAppealState,
   UserRole,
+  CaseAppealRulingDecision,
 } from '@island.is/judicial-system/types'
 import type {
   Case as TCase,
@@ -33,6 +34,7 @@ registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
 registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
 registerEnumType(UserRole, { name: 'UserRole' })
+registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 
 @ObjectType()
 export class Case implements TCase {
@@ -332,6 +334,12 @@ export class Case implements TCase {
 
   @Field({ nullable: true })
   readonly appealReceivedByCourtDate?: string
+
+  @Field({ nullable: true })
+  readonly appealConclusion?: string
+
+  @Field(() => CaseAppealRulingDecision, { nullable: true })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 
   @Field({ nullable: true })
   readonly appealCaseNumber?: string

@@ -15,6 +15,7 @@ import type {
   CaseType,
   IndictmentSubtypeMap,
   CrimeSceneMap,
+  CaseAppealRulingDecision,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -322,4 +323,12 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly appealJudge3Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealConclusion?: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }
