@@ -43,6 +43,8 @@ export const Modal = ({
         paddingTop={12}
         borderRadius="standard"
         width="full"
+        display="flex"
+        flexDirection="column"
         className={styles.modalInner}
       >
         {title && (
