@@ -337,29 +337,54 @@ function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  const blockStates = {
-    [Op.not]: { state: getBlockedStates(user, user.institution?.type) },
-  }
-
-  const blockDraftIndictmentsForCourt =
-    isCourtRole(user.role) && user.institution?.type === InstitutionType.COURT
-      ? [
-          {
-            [Op.not]: {
-              [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
+  if (user.role === UserRole.ASSISTANT) {
+    options.push(
+      { type: indictmentCases },
+      {
+        state: [
+          CaseState.SUBMITTED,
+          CaseState.RECEIVED,
+          CaseState.ACCEPTED,
+          CaseState.REJECTED,
+          CaseState.DISMISSED,
+        ],
+      },
+    )
+  } else {
+    options.push({
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { type: [...restrictionCases, ...investigationCases] },
+            {
+              state: [
+                CaseState.DRAFT,
+                CaseState.SUBMITTED,
+                CaseState.RECEIVED,
+                CaseState.ACCEPTED,
+                CaseState.REJECTED,
+                CaseState.DISMISSED,
+              ],
             },
-          },
-        ]
-      : []
-
-  const restrictCaseTypes =
-    user.role === UserRole.ASSISTANT ? [{ type: indictmentCases }] : []
-
-  options.push(
-    blockStates,
-    ...blockDraftIndictmentsForCourt,
-    ...restrictCaseTypes,
-  )
+          ],
+        },
+        {
+          [Op.and]: [
+            { type: indictmentCases },
+            {
+              state: [
+                CaseState.SUBMITTED,
+                CaseState.RECEIVED,
+                CaseState.ACCEPTED,
+                CaseState.REJECTED,
+                CaseState.DISMISSED,
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  }
 
   return {
     [Op.and]: options,

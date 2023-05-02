@@ -1365,11 +1365,38 @@ describe('getCasesQueryFilter', () => {
               { court_id: 'Court Id' },
             ],
           },
-          { [Op.not]: { state: [CaseState.NEW, CaseState.DELETED] } },
           {
-            [Op.not]: {
-              [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
-            },
+            [Op.or]: [
+              {
+                [Op.and]: [
+                  { type: [...restrictionCases, ...investigationCases] },
+                  {
+                    state: [
+                      CaseState.DRAFT,
+                      CaseState.SUBMITTED,
+                      CaseState.RECEIVED,
+                      CaseState.ACCEPTED,
+                      CaseState.REJECTED,
+                      CaseState.DISMISSED,
+                    ],
+                  },
+                ],
+              },
+              {
+                [Op.and]: [
+                  { type: indictmentCases },
+                  {
+                    state: [
+                      CaseState.SUBMITTED,
+                      CaseState.RECEIVED,
+                      CaseState.ACCEPTED,
+                      CaseState.REJECTED,
+                      CaseState.DISMISSED,
+                    ],
+                  },
+                ],
+              },
+            ],
           },
         ],
       })
@@ -1430,12 +1457,16 @@ describe('getCasesQueryFilter', () => {
         {
           [Op.or]: [{ court_id: { [Op.is]: null } }, { court_id: 'Court Id' }],
         },
-        {
-          [Op.not]: {
-            state: [CaseState.NEW, CaseState.DRAFT, CaseState.DELETED],
-          },
-        },
         { type: indictmentCases },
+        {
+          state: [
+            CaseState.SUBMITTED,
+            CaseState.RECEIVED,
+            CaseState.ACCEPTED,
+            CaseState.REJECTED,
+            CaseState.DISMISSED,
+          ],
+        },
       ],
     })
   })
