@@ -326,33 +326,9 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-function getStaffRoleCasesQueryFilter(user: User): WhereOptions {
-  const options: WhereOptions = [
-    { isArchived: false },
-    { state: CaseState.ACCEPTED },
-  ]
-
-  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
-    options.push({
-      type: [
-        CaseType.ADMISSION_TO_FACILITY,
-        CaseType.CUSTODY,
-        CaseType.TRAVEL_BAN,
-      ],
-    })
-  } else {
-    options.push(
-      { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
-      {
-        decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
-      },
-    )
-  }
-
-  return { [Op.and]: options }
-}
-
 function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
+  const options: WhereOptions = [{ isArchived: false }]
+
   const blockStates = {
     [Op.not]: { state: getBlockedStates(user, user.institution?.type) },
   }
@@ -378,19 +354,42 @@ function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
   const restrictCaseTypes =
     user.role === UserRole.ASSISTANT ? [{ type: indictmentCases }] : []
 
+  options.push(
+    blockStates,
+    blockInstitutions,
+    ...blockDraftIndictmentsForCourt,
+    ...restrictCaseTypes,
+  )
+
   return {
-    [Op.and]: [
-      hideArchived,
-      blockStates,
-      blockInstitutions,
-      ...blockDraftIndictmentsForCourt,
-      ...restrictCaseTypes,
-    ],
+    [Op.and]: options,
+  }
+}
+
+function getStaffRoleCasesQueryFilter(user: User): WhereOptions {
+  const options: WhereOptions = [
+    { isArchived: false },
+    { state: CaseState.ACCEPTED },
+  ]
+
+  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+    options.push({
+      type: [
+        CaseType.ADMISSION_TO_FACILITY,
+        CaseType.CUSTODY,
+        CaseType.TRAVEL_BAN,
+      ],
+    })
+  } else {
+    options.push(
+      { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
+      {
+        decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
+      },
+    )
   }
 
-  // const options: WhereOptions = []
-
-  // return { [Op.and]: options }
+  return { [Op.and]: options }
 }
 
 export function getCasesQueryFilter(user: User): WhereOptions {
