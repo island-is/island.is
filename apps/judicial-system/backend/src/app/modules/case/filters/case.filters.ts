@@ -302,16 +302,16 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
     {
       [Op.or]: [
         { creating_prosecutor_id: { [Op.is]: null } },
-        { '$creatingProsecutor.institution_id$': 'Prosecutors Office Id' },
-        { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
+        { '$creatingProsecutor.institution_id$': user.institution?.id },
+        { shared_with_prosecutors_office_id: user.institution?.id },
       ],
     },
     {
       [Op.or]: [
         { is_heightened_security_level: { [Op.is]: null } },
         { is_heightened_security_level: false },
-        { creating_prosecutor_id: 'Prosecutor Id' },
-        { prosecutor_id: 'Prosecutor Id' },
+        { creating_prosecutor_id: user.id },
+        { prosecutor_id: user.id },
       ],
     },
   ]
@@ -397,11 +397,7 @@ function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
       { type: [...restrictionCases, ...investigationCases] },
       { state: [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED] },
       {
-        appeal_state: [
-          CaseAppealState.APPEALED,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.COMPLETED,
-        ],
+        appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
       },
     ],
   }

@@ -1464,11 +1464,7 @@ describe('getCasesQueryFilter', () => {
             ],
           },
           {
-            appeal_state: [
-              CaseAppealState.APPEALED,
-              CaseAppealState.RECEIVED,
-              CaseAppealState.COMPLETED,
-            ],
+            appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
           },
         ],
       })
