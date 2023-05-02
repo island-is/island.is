@@ -15,9 +15,16 @@ import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
 import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
 import { PowerBiServiceProvider } from './powerbi.service'
+import { ConfigModule } from '@island.is/nest/config'
+import { PowerBiConfig } from './powerbi.config'
 
 @Module({
-  imports: [TerminusModule],
+  imports: [
+    TerminusModule,
+    ConfigModule.forRoot({
+      load: [PowerBiConfig],
+    }),
+  ],
   providers: [
     CmsResolver,
     ArticleResolver,

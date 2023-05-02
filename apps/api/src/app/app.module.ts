@@ -78,7 +78,6 @@ import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalit
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
-import { PowerBiConfig } from '@island.is/cms'
 import {
   WatsonAssistantChatModule,
   WatsonAssistantChatConfig,
@@ -313,7 +312,6 @@ const autoSchemaFile = environment.production
         PassportsClientConfig,
         FileStorageConfig,
         FiskistofaClientConfig,
-        PowerBiConfig,
         ChargeFjsV2ClientConfig,
         DisabilityLicenseClientConfig,
         ZenterSignupConfig,
