@@ -17,6 +17,7 @@ import {
   ApplicationAttachments,
   AttachmentPaths,
   CriminalRecord,
+  DebtLessCertificateResult,
 } from './types/attachments'
 import {
   ApplicationTypes,
@@ -34,7 +35,7 @@ import { JudicialAdministrationService } from '@island.is/clients/judicial-admin
 import { BANNED_BANKRUPTCY_STATUSES } from './constants'
 import { error } from '@island.is/application/templates/operating-license'
 import { isPerson } from 'kennitala'
-
+import { User } from '@island.is/auth-nest-tools'
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
   s3: S3
@@ -100,10 +101,38 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     }
   }
 
+  async getDebtLessCertificate(auth: User): Promise<DebtLessCertificateResult> {
+    const response = await this.financeService.getDebtLessCertificate(
+      auth.nationalId,
+      'IS',
+      auth,
+    )
+    if (!response?.debtLessCertificateResult) {
+      throw new TemplateApiError(
+        {
+          title: error.missingCertificateTitle,
+          summary: error.missingCertificateSummary,
+        },
+        400,
+      )
+    }
+
+    if (response?.error) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: response.error.message,
+        },
+        response.error.code,
+      )
+    }
+
+    return response.debtLessCertificateResult
+  }
+
   async debtLessCertificate({
     application,
     auth,
-    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const fakeData = getValueViaPath<OperatingLicenseFakeData>(
       application.answers,
@@ -123,31 +152,10 @@ export class OperatingLicenseService extends BaseTemplateApiService {
             statusCode: 404,
           })
     }
-    const financeServiceLangMap = {
-      is: 'IS',
-      en: 'EN',
-    }
 
-    const response = await this.financeService.getDebtLessCertificate(
-      auth.nationalId,
-      financeServiceLangMap[currentUserLocale] ?? 'is',
-      auth,
-    )
+    const response = await this.getDebtLessCertificate(auth)
 
-    if (response?.error) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.errorDataProvider,
-          summary: response.error.message,
-        },
-        response.error.code,
-      )
-    }
-
-    if (
-      response?.debtLessCertificateResult &&
-      !response.debtLessCertificateResult.debtLess
-    ) {
+    if (!response.debtLess) {
       throw new TemplateApiError(
         {
           title: error.missingCertificateTitle,
@@ -254,7 +262,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
       const persons: Person[] = [applicant, ...actors]
 
-      const attachments = await this.getAttachments(application)
+      const attachments = await this.getAttachments(application, auth)
       const extraData = getExtraData(application)
       const result: DataUploadResponse = await this.syslumennService
         .uploadData(
@@ -298,6 +306,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
   private async getAttachments(
     application: ApplicationWithAttachments,
+    auth: User,
   ): Promise<Attachment[]> {
     const attachments: Attachment[] = []
 
@@ -322,6 +331,14 @@ export class OperatingLicenseService extends BaseTemplateApiService {
       attachments.push({
         name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
         content: criminalRecord.contentBase64,
+      })
+    }
+
+    const debtLess = await this.getDebtLessCertificate(auth)
+    if (debtLess.certificate?.document) {
+      attachments.push({
+        name: `skuldleysisvottord_${application.applicant}_${dateStr}.pdf`,
+        content: debtLess.certificate?.document,
       })
     }
 
