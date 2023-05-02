@@ -2,6 +2,7 @@ import { Op } from 'sequelize'
 import each from 'jest-each'
 
 import {
+  appealsCourtRoles,
   CaseAppealDecision,
   CaseAppealState,
   CaseDecision,
@@ -1401,7 +1402,9 @@ describe('getCasesQueryFilter', () => {
         ],
       })
     })
+  })
 
+  describe('given ASSISTANT role', () => {
     it(`should get assistant filter`, () => {
       // Arrange
       const user = {
@@ -1435,7 +1438,9 @@ describe('getCasesQueryFilter', () => {
         ],
       })
     })
+  })
 
+  describe.each(appealsCourtRoles)('given %s role', (role) => {
     it('should get high court filter', () => {
       // Arrange
       const user = {

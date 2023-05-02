@@ -93,9 +93,15 @@ export function isDistrictCourtUser(user: User): boolean {
   )
 }
 
+export const appealsCourtRoles: string[] = [UserRole.JUDGE, UserRole.ASSISTANT]
+
+function isAppealsCourtRole(role: string): boolean {
+  return appealsCourtRoles.includes(role)
+}
+
 export function isAppealsCourtUser(user: User): boolean {
   return (
     user.institution?.type === InstitutionType.HIGH_COURT &&
-    isExtendedCourtRole(user.role)
+    isAppealsCourtRole(user.role)
   )
 }

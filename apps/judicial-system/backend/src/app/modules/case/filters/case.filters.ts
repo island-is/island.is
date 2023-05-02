@@ -425,12 +425,9 @@ function getAppealsCourtUserCasesQueryFilter(user: User): WhereOptions {
         ]
       : []
 
-  const restrictCaseTypes =
-    user.role === UserRole.ASSISTANT
-      ? [{ type: indictmentCases }]
-      : user.institution?.type === InstitutionType.HIGH_COURT
-      ? [{ type: [...restrictionCases, ...investigationCases] }]
-      : []
+  const restrictCaseTypes = [
+    { type: [...restrictionCases, ...investigationCases] },
+  ]
 
   return {
     [Op.and]: [
@@ -473,11 +470,17 @@ export function getCasesQueryFilter(user: User): WhereOptions {
   // TODO: Convert to switch
   if (isProsecutionUser(user)) {
     return getProsecutionUserCasesQueryFilter(user)
-  } else if (isDistrictCourtUser(user)) {
+  }
+
+  if (isDistrictCourtUser(user)) {
     return getDistricteCourtUserCasesQueryFilter(user)
-  } else if (isAppealsCourtUser(user)) {
+  }
+
+  if (isAppealsCourtUser(user)) {
     return getAppealsCourtUserCasesQueryFilter(user)
-  } else if (user.role === UserRole.STAFF) {
+  }
+
+  if (user.role === UserRole.STAFF) {
     return getStaffRoleCasesQueryFilter(user)
   }
 
