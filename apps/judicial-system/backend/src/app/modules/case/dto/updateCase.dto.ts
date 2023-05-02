@@ -373,12 +373,12 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly appealConclusion?: string
+  readonly prosecutorStatementDate?: Date
 
   @IsOptional()
-  @IsEnum(CaseAppealRulingDecision)
-  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
-  readonly appealRulingDecision?: CaseAppealRulingDecision
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defendantStatementDate?: Date
 
   @IsOptional()
   @IsString()
@@ -404,4 +404,14 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional()
   readonly appealJudge3Id?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealConclusion?: string
+
+  @IsOptional()
+  @IsEnum(CaseAppealRulingDecision)
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }
