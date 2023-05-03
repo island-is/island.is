@@ -9,129 +9,99 @@ import {
 import { m } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
-import { Form } from 'react-router-dom'
 import { ShadowBox } from '../../ShadowBox/ShadowBox'
+import { mockDataUnused, Permission } from '../../Client/MockPermission'
 
 interface AddPermissionsProps {
   isVisible: boolean
 
   onClose(): void
+
+  handleAddPermission(newPermissions: Permission[]): void
+
+  handleRemovedPermissions(removedPermissions: Permission): void
 }
 
-type Permission = {
-  id: string
-  label: string
-  description: string
-  api: string
-  locked?: boolean
-}
-
-const mockData: Permission[] = [
-  {
-    label: 'Staða og hreyfingar',
-    id: '@island.is/finance:overview',
-    description:
-      'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-    api: 'Island.is APIs',
-    locked: false,
-  },
-  {
-    label: 'Full Access',
-    id: '@island.is/auth/admin:full',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Island.is APIs',
-    locked: false,
-  },
-  {
-    label: 'Skattskýrslur',
-    id: '@skatturinn.is/skattskyrslur',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
-  },
-  {
-    label: 'Staða og hreyfingar',
-    id: '@island.is/finance:overview',
-    description:
-      'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-    api: 'Island.is APIs',
-    locked: false,
-  },
-  {
-    label: 'Full Access',
-    id: '@island.is/auth/admin:full',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Island.is APIs',
-    locked: false,
-  },
-  {
-    label: 'Skattskýrslur',
-    id: '@skatturinn.is/skattskyrslur',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
-  },
-]
-
-function AddPermissions({ isVisible, onClose }: AddPermissionsProps) {
+function AddPermissions({
+  isVisible,
+  onClose,
+  handleAddPermission,
+}: AddPermissionsProps) {
   const { formatMessage } = useLocale()
+  const [selected, setSelected] = React.useState<Map<string, Permission>>(
+    new Map(),
+  )
+
+  const handleAdd = () => {
+    handleAddPermission(Array.from(selected.values()))
+    // Close the modal
+    onClose()
+  }
+
+  const onChange = (value: Permission) => {
+    if (selected.has(value.id)) {
+      selected.delete(value.id)
+    } else {
+      selected.set(value.id, value)
+    }
+    setSelected(new Map(selected))
+  }
 
   return (
-    <Form method="post">
-      <Modal
-        title={formatMessage(m.permissionsModalTitle)}
-        id="add-permissions"
-        isVisible={isVisible}
-        onClose={onClose}
-      >
-        <Box marginTop={1} marginBottom={4}>
-          <Text>{formatMessage(m.permissionsModalDescription)}</Text>
-        </Box>
-        <ShadowBox isDisabled={!isVisible} flexShrink={1} overflow="auto">
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>{/* For matching column count */}</T.HeadData>
-                <T.HeadData>
-                  {formatMessage(m.permissionsTableLabelName)}
-                </T.HeadData>
-                <T.HeadData>
-                  {formatMessage(m.permissionsTableLabelDescription)}
-                </T.HeadData>
-                <T.HeadData>
-                  {formatMessage(m.permissionsTableLabelAPI)}
-                </T.HeadData>
+    <Modal
+      title={formatMessage(m.permissionsModalTitle)}
+      id="add-permissions"
+      isVisible={isVisible}
+      onClose={onClose}
+    >
+      <Box marginTop={1} marginBottom={4}>
+        <Text>{formatMessage(m.permissionsModalDescription)}</Text>
+      </Box>
+      <ShadowBox isDisabled={!isVisible} flexShrink={1} overflow="auto">
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData>{/* For matching column count */}</T.HeadData>
+              <T.HeadData>
+                {formatMessage(m.permissionsTableLabelName)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(m.permissionsTableLabelDescription)}
+              </T.HeadData>
+              <T.HeadData>
+                {formatMessage(m.permissionsTableLabelAPI)}
+              </T.HeadData>
+            </T.Row>
+          </T.Head>
+          <T.Body>
+            {mockDataUnused.map((item) => (
+              <T.Row key={item.id}>
+                <T.Data>
+                  <Checkbox
+                    onChange={() => {
+                      onChange(item)
+                    }}
+                    value={item.id}
+                  />
+                </T.Data>
+                <T.Data>
+                  <Text variant="eyebrow">{item.label}</Text>
+                  {item.id}
+                </T.Data>
+                <T.Data>{item.description}</T.Data>
+                <T.Data>{item.api}</T.Data>
               </T.Row>
-            </T.Head>
-            <T.Body>
-              {mockData.map((item) => (
-                <T.Row key={item.id}>
-                  <T.Data>
-                    <Checkbox value={item.id} />
-                  </T.Data>
-                  <T.Data>
-                    <Text variant="eyebrow">{item.label}</Text>
-                    {item.id}
-                  </T.Data>
-                  <T.Data>{item.description}</T.Data>
-                  <T.Data>{item.api}</T.Data>
-                </T.Row>
-              ))}
-            </T.Body>
-          </T.Table>
-        </ShadowBox>
-        <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
-          <Button onClick={onClose} variant="ghost">
-            {formatMessage(m.cancel)}
-          </Button>
-          <Button type="submit">{formatMessage(m.add)}</Button>
-        </Box>
-      </Modal>
-    </Form>
+            ))}
+          </T.Body>
+        </T.Table>
+      </ShadowBox>
+      <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
+        <Button onClick={onClose} variant="ghost">
+          {formatMessage(m.cancel)}
+        </Button>
+        <Button onClick={handleAdd}>{formatMessage(m.add)}</Button>
+      </Box>
+    </Modal>
   )
 }
 

@@ -29,7 +29,9 @@ import { ConditionalWrapper } from './ConditionalWrapper'
 interface ContentCardProps {
   title: string
   description?: string
-  isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
+  isDirty?:
+    | ((currentValue: FormData, originalValue: FormData) => boolean)
+    | boolean
   inSync?: boolean
   intent?: ClientFormTypes
   /**
@@ -70,6 +72,12 @@ const ContentCard: FC<ContentCardProps> = ({
   >
 
   const actionDataRef = useRef(actionData?.data)
+
+  useEffect(() => {
+    if (typeof isDirty !== 'function') {
+      setDirty(isDirty)
+    }
+  }, [isDirty])
 
   useEffect(() => {
     if (actionData?.intent === intent) {
@@ -126,7 +134,11 @@ const ContentCard: FC<ContentCardProps> = ({
       return
     }
 
-    setDirty(isDirty(newFormData, originalFormData.current ?? new FormData()))
+    setDirty(
+      typeof isDirty === 'function'
+        ? isDirty(newFormData, originalFormData.current ?? new FormData())
+        : isDirty,
+    )
   }
 
   // On mount, set the original form data

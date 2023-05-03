@@ -26,6 +26,9 @@ export enum ClientFormTypes {
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
+  if (!s) {
+    return []
+  }
   return s.split(/\s*,\s*|\s+|\n+/)
 }
 
@@ -219,7 +222,12 @@ export const schema = {
         }),
     })
     .merge(defaultSchema),
-  [ClientFormTypes.permissions]: defaultSchema,
+  [ClientFormTypes.permissions]: z
+    .object({
+      addedScopes: z.string().transform(splitStringOnCommaOrSpaceOrNewLine),
+      removedScopes: z.string().transform(splitStringOnCommaOrSpaceOrNewLine),
+    })
+    .merge(defaultSchema),
   [ClientFormTypes.none]: defaultSchema,
 }
 

@@ -219,7 +219,7 @@ const Client = () => {
             AuthAdminRefreshTokenExpiration.Sliding
           }
         />
-        <Permissions />
+        <Permissions key={`${selectedEnvironment.environment}-Permissions`} />
         <Delegation
           key={`${selectedEnvironment.environment}-Delegation`}
           supportsProcuringHolders={
