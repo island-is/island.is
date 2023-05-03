@@ -63,6 +63,7 @@ import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
+import { PlausibleDomainTracking } from '@island.is/web/components'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -431,7 +432,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
         imageUrl={article.featuredImage?.url}
         imageWidth={article.featuredImage?.width.toString()}
         imageHeight={article.featuredImage?.height.toString()}
-      />
+      >
+        <PlausibleDomainTracking
+          domain={article.organization?.[0]?.plausibleTrackingDomain}
+        />
+      </HeadWithSocialSharing>
       <SidebarLayout
         isSticky={false}
         sidebarContent={

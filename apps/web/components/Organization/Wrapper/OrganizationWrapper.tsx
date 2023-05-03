@@ -32,6 +32,7 @@ import {
   SidebarShipSearchInput,
   Webreader,
   SearchBox,
+  PlausibleDomainTracking,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useFeatureFlag } from '@island.is/web/hooks'
@@ -603,7 +604,11 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageContentType={pageFeaturedImage?.contentType}
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
-      />
+      >
+        <PlausibleDomainTracking
+          domain={organizationPage.organization?.plausibleTrackingDomain}
+        />
+      </HeadWithSocialSharing>
       <OrganizationHeader organizationPage={organizationPage} />
       {!minimal && (
         <SidebarLayout

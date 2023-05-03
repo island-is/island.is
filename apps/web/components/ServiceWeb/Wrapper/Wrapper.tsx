@@ -8,6 +8,7 @@ import {
   ServiceWebDynamicFooter,
   HeadWithSocialSharing,
   WatsonChatPanel,
+  PlausibleDomainTracking,
 } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { BackgroundVariations, Options, TextModes } from '../types'
@@ -92,6 +93,9 @@ export const Wrapper: FC<WrapperProps> = ({
         {!indexableBySearchEngine && (
           <meta name="robots" content="noindex, nofollow" />
         )}
+        <PlausibleDomainTracking
+          domain={organization?.plausibleTrackingDomain}
+        />
       </HeadWithSocialSharing>
 
       <ServiceWebContext.Provider value={{ textMode, institutionSlug }}>

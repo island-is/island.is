@@ -34,6 +34,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       phone
       title
       hasALandingPage
+      plausibleTrackingDomain
       logo {
         title
         url
@@ -110,6 +111,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         slug
         email
         phone
+        plausibleTrackingDomain
         publishedMaterialSearchFilterGenericTags {
           id
           title

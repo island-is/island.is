@@ -18,6 +18,7 @@ import {
   AnchorNavigation,
   BackgroundImage,
   HeadWithSocialSharing,
+  PlausibleDomainTracking,
   Sticky,
 } from '@island.is/web/components'
 import {
@@ -109,7 +110,9 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         imageContentType={image?.contentType}
         imageWidth={image?.width?.toString()}
         imageHeight={image?.height?.toString()}
-      />
+      >
+        <PlausibleDomainTracking domain={'island.is/s/stafraent-island'} />
+      </HeadWithSocialSharing>
 
       <GridContainer id="main-content">
         <GridRow>

@@ -2227,6 +2227,9 @@ export interface IOrganizationFields {
 
   /** Has A Landing Page */
   hasALandingPage?: boolean | undefined
+
+  /** Plausible Tracking Domain */
+  plausibleTrackingDomain?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
