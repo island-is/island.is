@@ -309,6 +309,9 @@ const useCase = () => {
         openCase(caseData.case, user)
       }
     },
+    onError: () => {
+      toast.error(formatMessage(errors.getCaseToOpen))
+    },
   })
 
   const createCase = useMemo(
