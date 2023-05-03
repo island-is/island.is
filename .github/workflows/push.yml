@@ -365,7 +365,7 @@ jobs:
       - name: Get AWS NPM secret
         id: npm_secrets
         run: |
-          NPM_AUTH_TOKEN=$((aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text))
+          NPM_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text``
           echo "::add-mask::$NPM_AUTH_TOKEN"
           echo "::set-output name=npm_auth_token::${NPM_AUTH_TOKEN}"
 
@@ -637,12 +637,9 @@ jobs:
       - name: Get AWS NPM secret
         id: npm_secrets
         run: |
-          NPM_AUTH_TOKEN=$((aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text))
+          NPM_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
           echo "::add-mask::$NPM_AUTH_TOKEN"
           echo "::set-output name=npm_auth_token::${NPM_AUTH_TOKEN}"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Docker build image
         working-directory: infra
