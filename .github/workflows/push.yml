@@ -368,7 +368,7 @@ jobs:
       - name: Building NodeJS dependencies
         run: ./scripts/ci/10_prepare-docker-deps.sh
         env:
-          NPM_AUTH_TOKEN: ${{ outputs.NPM_AUTH_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ needs.prepare.outputs.NPM_AUTH_TOKEN }}
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
