@@ -155,6 +155,7 @@ jobs:
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
+      NPM_AUTH_TOKEN: ${{ steps.npm_secrets.outputs.npm_auth_token }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -355,9 +356,11 @@ jobs:
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Get AWS NPM secret
+        id: npm_secrets
         run: |
-          export NPM_AUTH_TOKEN=$((aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text))
+          NPM_AUTH_TOKEN=$((aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text))
           echo "::add-mask::$NPM_AUTH_TOKEN"
+          echo "::set-output name=npm_auth_token::${NPM_AUTH_TOKEN}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -365,7 +368,7 @@ jobs:
       - name: Building NodeJS dependencies
         run: ./scripts/ci/10_prepare-docker-deps.sh
         env:
-          NPM_AUTH_TOKEN: ${{ NPM_AUTH_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ outputs.NPM_AUTH_TOKEN }}
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
