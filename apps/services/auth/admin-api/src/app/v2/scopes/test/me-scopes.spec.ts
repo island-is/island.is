@@ -1,7 +1,7 @@
 import request from 'supertest'
 
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AdminScopeDto, SequelizeConfigService } from '@island.is/auth-api-lib'
+import { AdminScopeDTO, SequelizeConfigService } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
@@ -57,7 +57,7 @@ interface TestCase {
   tenantOwnerNationalId?: string
   expected: {
     status: number
-    body: AdminScopeDto[] | Record<string, unknown>
+    body: AdminScopeDTO[] | Record<string, unknown>
   }
 }
 
