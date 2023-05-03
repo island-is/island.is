@@ -28,7 +28,7 @@ else
     do
         echo "enabling $i"
         psql -d "$DB_NAME" -c 'CREATE extension '"\"$i\""'';
-        if [ "$?" < 1 ];
+        if [ "$?" -lt 1 ];
         then
             echo "extension $i enabled"
         else 
