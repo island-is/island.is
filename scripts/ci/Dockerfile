@@ -149,9 +149,9 @@ RUN apt-get update && apt-get install -y zip && apt-get purge
 
 COPY --chown=root:root --from=awscli /build /usr/local/bin
 
-
 ARG APP_HOME
 ARG APP_DIST_HOME
+ARG NPM_AUTH_TOKEN
 
 WORKDIR ${APP_DIST_HOME}
 

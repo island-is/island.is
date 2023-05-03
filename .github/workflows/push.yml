@@ -622,6 +622,7 @@ jobs:
 
       - name: Get AWS NPM secret
         id: npm_secrets_helm
+        # if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
         run: |
           NPM_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
           echo "::add-mask::$NPM_AUTH_TOKEN"
@@ -629,6 +630,7 @@ jobs:
 
       - name: Docker build image
         working-directory: infra
+        # if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
         run: |
           ./scripts/build-docker-container.sh $DOCKER_TAG
           echo "COMMENT<<EOF" >> $GITHUB_ENV
