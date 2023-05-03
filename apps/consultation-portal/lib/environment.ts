@@ -20,7 +20,7 @@ const prodConfig = {
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   identityServerId: 'identity-server',
   identityServerClientId: '@island.is/samradsgatt',
-  identityServerLogoutURL: 'https://island.is/samradsgatt',
+  identityServerLogoutURL: 'https://beta.dev01.devland.is/samradsgatt',
   identityServerDomain: process.env.IDENTITY_SERVER_ISSUER_DOMAIN,
   identityServerSecret: process.env.IDENTITY_SERVER_SECRET,
   identityServerScope: 'openid profile offline_access @island.is/samradsgatt',
