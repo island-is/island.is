@@ -156,7 +156,7 @@ export type DraftRegulationChange = {
   title: PlainText
   dropped?: boolean
   diff?: HTMLText
-} & Pick<Regulation, 'text' | 'comments' | 'appendixes'>
+} & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 
 // ---------------------------------------------------------------------------
 

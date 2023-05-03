@@ -1,4 +1,4 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
   return service('services-auth-admin-api')
@@ -15,6 +15,22 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      IDENTITY_SERVER_ISSUER_URL_LIST: {
+        dev: json([
+          'https://identity-server.dev01.devland.is',
+          'https://identity-server.staging01.devland.is',
+          'https://innskra.island.is',
+        ]),
+        staging: json([
+          'https://identity-server.staging01.devland.is',
+          'https://innskra.island.is',
+        ]),
+        prod: json(['https://innskra.island.is']),
+      },
+    })
+    .secrets({
+      CLIENT_SECRET_ENCRYPTION_KEY:
+        '/k8s/services-auth/admin-api/CLIENT_SECRET_ENCRYPTION_KEY',
     })
     .ingress({
       primary: {
@@ -43,11 +59,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     .resources({
       limits: {
         cpu: '400m',
-        memory: '256Mi',
+        memory: '384Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '256Mi',
       },
     })
     .replicaCount({

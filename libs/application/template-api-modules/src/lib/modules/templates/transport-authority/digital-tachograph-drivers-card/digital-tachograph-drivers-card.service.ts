@@ -15,7 +15,10 @@ import {
 import { YES } from '@island.is/application/core'
 import { DigitalTachographDriversCardClient } from '@island.is/clients/transport-authority/digital-tachograph-drivers-card'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { externalData } from '@island.is/application/templates/transport-authority/digital-tachograph-drivers-card'
 import { getUriFromImageStr } from './digital-tachograph-drivers-card.util'
@@ -105,8 +108,6 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const chargeItemCodes = getChargeItemCodes(
         application.answers as DigitalTachographDriversCardAnswers,
       )
@@ -114,7 +115,7 @@ export class DigitalTachographDriversCardService extends BaseTemplateApiService 
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
       )
       return result

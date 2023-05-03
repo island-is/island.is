@@ -340,9 +340,9 @@ export class DraftRegulationService {
           const person = await this.nationalRegistryApi.getIndividual(
             nationalId,
           )
-          if (person?.fullName) {
+          if (person?.name) {
             author = {
-              name: person.fullName,
+              name: person.name,
               authorId: nationalId,
             }
             await this.draftAuthorService.create(author)

@@ -1,4 +1,4 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { RegulationsAdminResolver } from './graphql/regulationsAdmin.resolver'
 import { RegulationsService } from '@island.is/clients/regulations'
 import {

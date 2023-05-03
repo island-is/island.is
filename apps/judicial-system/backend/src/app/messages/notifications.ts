@@ -600,4 +600,50 @@ export const notifications = {
         'Texti í pósti til dómara og dómritara þegar ekki tekst að skrá varnaraðila/verjendur á mál.',
     },
   }),
+  caseAppealedToCourtOfAppeals: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.case_appealed_to_court_of_appeals.subject',
+      defaultMessage: 'Kæra í máli {courtCaseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og dómritara þegar að mál er kært til landsréttar',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.case_appealed_to_court_of_appeals.body_v2',
+      defaultMessage:
+        'Úrskurður hefur verið kærður í máli {courtCaseNumber}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+      description:
+        'Texti í pósti til dómara og dómritara þegar að mál er kært til landsréttar',
+    },
+  }),
+  caseAppealReceivedByCourt: defineMessages({
+    subject: {
+      id:
+        'judicial.system.backend:notifications.case_appeal_received_by_court.subject',
+      defaultMessage: 'Upplýsingar vegna kæru í máli {courtCaseNumber}',
+      description: 'Fyrirsögn í pósti til aðila máls þegar að kæra er móttekin',
+    },
+    body: {
+      id:
+        'judicial.system.backend:notifications.case_appeal_received_by_court.body_v2',
+      defaultMessage:
+        'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. {userHasAccessToRVG, select, true {Hægt er að skila greinargerð og nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Hægt er að skila greinargerð og nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+      description: 'Texti í pósti til aðila máls þegar að kæra er móttekin',
+    },
+  }),
+  caseAppealStatement: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_appeal_statement.subject',
+      defaultMessage:
+        'Ný greinargerð í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { ({appealCaseNumber})}}',
+      description: 'Fyrirsögn í pósti til aðila máls þegar greinargerð er send',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_appeal_statement.body',
+      defaultMessage:
+        'Greinargerð hefur borist vegna kæru í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { (Landsréttarmál nr. {appealCaseNumber})}}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+      description: 'Texti í pósti til aðila máls þegar greinargerð er send',
+    },
+  }),
 }

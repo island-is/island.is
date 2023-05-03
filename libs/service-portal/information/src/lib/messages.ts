@@ -87,7 +87,7 @@ export const spmm = defineMessages({
   },
   userFamilyMembersOnNumber: {
     id: 'sp.family:user-famly-on-nr',
-    defaultMessage: 'Einstaklingar á fjölskyldunúmerinu mínu',
+    defaultMessage: 'Einstaklingar með sömu lögheimilistengsl',
   },
   childRegisterSuccess: {
     id: 'sp.family:child-registration-generic-success',
@@ -125,6 +125,54 @@ export const spmm = defineMessages({
   childRegisterSend: {
     id: 'sp.family:child-registration-send',
     defaultMessage: 'Senda tilkynningu',
+  },
+  givenName: {
+    id: 'sp.family:person-given-name',
+    defaultMessage: 'Eiginnafn',
+  },
+  middleName: {
+    id: 'sp.family:person-middle-name',
+    defaultMessage: 'Millinafn',
+  },
+  lastName: {
+    id: 'sp.family:person-last-name',
+    defaultMessage: 'Kenninafn',
+  },
+})
+
+export const urls = defineMessages({
+  editChild: {
+    id: 'sp.family:url-edit-registration-child',
+    defaultMessage:
+      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
+  },
+  editResidenceChild: {
+    id: 'sp.family:url-edit-residence-child',
+    defaultMessage: 'https://skra.is/folk/flutningur/flutningur-barna/',
+  },
+  editChildReligion: {
+    id: 'sp.family:url-edit-religion-child',
+    defaultMessage:
+      'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
+  },
+  editAdult: {
+    id: 'sp.family:url-edit-registration-adult',
+    defaultMessage:
+      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
+  },
+  editResidence: {
+    id: 'sp.family:url-edit-residence-adult',
+    defaultMessage:
+      'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
+  },
+  editReligion: {
+    id: 'sp.family:url-edit-religion-adult',
+    defaultMessage:
+      'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
+  },
+  editBanmarking: {
+    id: 'sp.family:url-edit-banmarking-adult',
+    defaultMessage: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
   },
 })
 

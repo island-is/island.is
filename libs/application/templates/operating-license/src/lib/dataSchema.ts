@@ -8,6 +8,7 @@ import {
   isValidVskNr,
   validateApplicationInfoCategory,
 } from './utils'
+import { m } from './messages'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -23,6 +24,14 @@ const Properties = z
     customerCount: z.string(),
   })
   .array()
+  .refine(
+    (arr) => {
+      return !arr.some((item) => {
+        return item.propertyNumber.length > 0 && item.address.length === 0
+      })
+    },
+    { params: error.missingAddressForPropertyNumber },
+  )
 
 const TimeRefine = z.object({
   from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
@@ -122,7 +131,7 @@ export const dataSchema = z.object({
     operationName: z.string().min(1),
     vskNr: z
       .string()
-      .refine((v) => isValidVskNr(v), { params: error.invalidValue }),
+      .refine((v) => isValidVskNr(v), { params: m.vskNrInvalid }),
     email: z
       .string()
       .refine((v) => isValidEmail(v), { params: error.invalidValue }),
@@ -177,6 +186,11 @@ export const dataSchema = z.object({
         .refine((v) => v.length > 0, { params: error.invalidValue }),
     }),
     outsideBlueprints: z
+      .object({
+        file: z.array(FileSchema),
+      })
+      .optional(),
+    otherFiles: z
       .object({
         file: z.array(FileSchema),
       })

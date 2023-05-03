@@ -35,6 +35,9 @@ export class News {
 
   @Field(() => Boolean, { nullable: true })
   fullWidthImageInContent?: boolean
+
+  @Field({ nullable: true })
+  initialPublishDate?: string
 }
 
 export const mapNews = ({ fields, sys }: INews): News => ({
@@ -50,4 +53,5 @@ export const mapNews = ({ fields, sys }: INews): News => ({
     : [],
   genericTags: (fields.genericTags ?? []).map(mapGenericTag),
   fullWidthImageInContent: fields.fullWidthImageInContent ?? true,
+  initialPublishDate: fields.initialPublishDate ?? '',
 })

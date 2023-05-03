@@ -391,7 +391,7 @@ export const m = defineMessages({
   },
   familyNumber: {
     id: 'service.portal:family-number',
-    defaultMessage: 'Fjölskyldunúmer',
+    defaultMessage: 'Lögheimilistengsl',
   },
   familySpouse: {
     id: 'service.portal:family-spouse',
@@ -428,6 +428,26 @@ export const m = defineMessages({
   educationDescription: {
     id: 'service.portal:education-description',
     defaultMessage: 'Hér mun birtast námsferill þinn og barnanna þinna',
+  },
+  educationGrunnskoli: {
+    id: 'service.portal:education-grunnskoli',
+    defaultMessage: 'Grunnskóli',
+  },
+  educationAssessment: {
+    id: 'service.portal:education-assessment',
+    defaultMessage: 'Námsmat',
+  },
+  educationFramhskoli: {
+    id: 'service.portal:education-framhskoli',
+    defaultMessage: 'Framhaldsskóli',
+  },
+  educationHaskoli: {
+    id: 'service.portal:education-haskoli',
+    defaultMessage: 'Háskóli',
+  },
+  educationGraduation: {
+    id: 'service.portal:education-graduation',
+    defaultMessage: 'Brautskráning',
   },
   documentProvider: {
     id: 'service.portal:document-provider',
@@ -686,6 +706,10 @@ export const m = defineMessages({
   refuseEmailTitle: {
     id: 'service.portal:refuse-email-title',
     defaultMessage: 'Tölvupóstur',
+  },
+  requestPaperMailTitle: {
+    id: 'service.portal:req-paper-mail-title',
+    defaultMessage: 'Bréfpóstur',
   },
   nextStep: {
     id: 'service.portal:next-step',

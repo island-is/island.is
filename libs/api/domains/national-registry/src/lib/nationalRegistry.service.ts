@@ -95,11 +95,13 @@ export class NationalRegistryService {
       )
       return {
         fullName: familyMember.Fulltnafn,
+        firstName: familyMember.Eiginnafn,
         nationalId: familyMemberNationalId,
         gender: familyMember.Kyn,
         displayName: familyMember.Birtnafn,
         middleName: familyMember.Millinafn,
         surname: familyMember.Kenninafn,
+        lastName: familyMember.Kenninafn,
         genderDisplay: familyMember.Kynheiti,
         birthday: familyMember.Faedingardagur,
         parent1: familyMember.Foreldri1,
@@ -140,6 +142,8 @@ export class NationalRegistryService {
         nationalId: familyChild.Barn,
         gender: familyChild.Kyn,
         displayName: familyChild.BirtNafn,
+        firstName: familyChild.Eiginnafn,
+        lastName: familyChild.Kenninafn,
         middleName: familyChild.Millinafn,
         surname: familyChild.Kenninafn,
         genderDisplay: familyChild.Kynheiti,

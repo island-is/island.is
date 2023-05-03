@@ -1,6 +1,7 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
   PASSPORT = 'Passport',
+  DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
   DRIVING_LICENSE = 'DrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
@@ -37,6 +38,7 @@ export enum ApplicationTypes {
   DIGITAL_TACHOGRAPH_COMPANY_CARD = 'DigitalTachographCompanyCard',
   DIGITAL_TACHOGRAPH_DRIVERS_CARD = 'DigitalTachographDriversCard',
   DIGITAL_TACHOGRAPH_WORKSHOP_CARD = 'DigitalTachographWorkshopCard',
+  LICENSE_PLATE_RENEWAL = 'LicensePlateRenewal',
   ORDER_VEHICLE_LICENSE_PLATE = 'OrderVehicleLicensePlate',
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
@@ -52,6 +54,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
     translation: 'pa.application',
+  },
+  [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
+    slug: 'aefingaakstur',
+    translation: 'dlp.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
@@ -197,6 +203,10 @@ export const ApplicationConfigurations = {
     slug: 'okuritakort-verkstaediskort',
     translation: 'ta.dtwc.application',
   },
+  [ApplicationTypes.LICENSE_PLATE_RENEWAL]: {
+    slug: 'endurnyja-einkanumer',
+    translation: 'ta.lpr.application',
+  },
   [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: {
     slug: 'panta-skraningarmerki',
     translation: 'ta.ovlp.application',
@@ -214,7 +224,7 @@ export const ApplicationConfigurations = {
     translation: 'dlbui.application',
   },
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
-    slug: 'afengisgjold',
+    slug: 'endugreidsla-afengisutgjalda',
     translation: 'atr.application',
   },
 }

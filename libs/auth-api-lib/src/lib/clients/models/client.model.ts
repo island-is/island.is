@@ -1,7 +1,9 @@
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
@@ -17,6 +19,7 @@ import { ClientIdpRestrictions } from './client-idp-restrictions.model'
 import { ClientSecret } from './client-secret.model'
 import { ClientGrantType } from './client-grant-type.model'
 import { ClientClaim } from './client-claim.model'
+import { Domain } from '../../resources/models/domain.model'
 
 @Table({
   tableName: 'client',
@@ -49,6 +52,16 @@ export class Client extends Model {
     example: 'spa',
   })
   clientType!: string
+
+  @ForeignKey(() => Domain)
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  domainName?: string
+
+  @BelongsTo(() => Domain)
+  domain?: Domain
 
   @Column({
     type: DataType.BOOLEAN,

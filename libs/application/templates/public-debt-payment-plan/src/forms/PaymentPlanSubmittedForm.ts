@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { formConclusionSection } from '@island.is/application/ui-forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { application } from '../lib/messages'
 import { conclusion } from '../lib/messages'
 
@@ -9,7 +9,7 @@ export const PaymentPlanSubmittedForm: Form = buildForm({
   title: application.name,
   mode: FormModes.COMPLETED,
   children: [
-    formConclusionSection({
+    buildFormConclusionSection({
       alertMessage: conclusion.general.alertMessage,
       alertTitle: conclusion.general.alertTitle,
       expandableHeader: conclusion.information.title,

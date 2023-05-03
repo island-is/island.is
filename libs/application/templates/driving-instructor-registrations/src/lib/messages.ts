@@ -166,7 +166,7 @@ export const m = defineMessages({
   },
   viewStudentNo: {
     id: 'dir.application:viewStudentNo',
-    defaultMessage: 'nei',
+    defaultMessage: 'Nei',
     description: 'Student complete hours',
   },
   viewStudentCompleteSchools: {

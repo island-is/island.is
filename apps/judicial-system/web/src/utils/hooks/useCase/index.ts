@@ -1,32 +1,54 @@
-import { useMemo } from 'react'
-import { useMutation } from '@apollo/client'
+import { useContext, useMemo } from 'react'
+import router from 'next/router'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
 import isUndefined from 'lodash/isUndefined'
 import isNil from 'lodash/isNil'
 
-import type {
+import {
   NotificationType,
   SendNotificationResponse,
   CaseTransition,
   RequestSignatureResponse,
+  CaseState,
+  isIndictmentCase,
+  isExtendedCourtRole,
+  isRestrictionCase,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
   TempCreateCase as CreateCase,
+  CaseData,
 } from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
+import {
+  CaseQuery,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  InstitutionType,
+  User,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import * as constants from '@island.is/judicial-system/consts'
 
-import { CreateCaseMutation } from './createCaseGql'
-import { CreateCourtCaseMutation } from './createCourtCaseGql'
-import { UpdateCaseMutation } from './updateCaseGql'
-import { SendNotificationMutation } from './sendNotificationGql'
-import { TransitionCaseMutation } from './transitionCaseGql'
-import { RequestCourtRecordSignatureMutation } from './requestCourtRecordSignatureGql'
-import { ExtendCaseMutation } from './extendCaseGql'
+import { isTrafficViolationCase } from '../../stepHelper'
+import { findFirstInvalidStep } from '../../formHelper'
+import {
+  CreateCaseMutation,
+  CreateCourtCaseMutation,
+  UpdateCaseMutation,
+  LimitedAccessUpdateCaseMutation,
+  TransitionCaseMutation,
+  LimitedAccessTransitionCaseMutation,
+  SendNotificationMutation,
+  RequestCourtRecordSignatureMutation,
+  ExtendCaseMutation,
+} from './mutations'
 
 type ChildKeys = Pick<
   UpdateCase,
@@ -35,6 +57,10 @@ type ChildKeys = Pick<
   | 'sharedWithProsecutorsOfficeId'
   | 'registrarId'
   | 'judgeId'
+  | 'appealAssistantId'
+  | 'appealJudge1Id'
+  | 'appealJudge2Id'
+  | 'appealJudge3Id'
 >
 
 export type autofillEntry = Partial<UpdateCase> & {
@@ -59,8 +85,16 @@ interface UpdateCaseMutationResponse {
   updateCase: Case
 }
 
+interface LimitedAccessUpdateCaseMutationResponse {
+  limitedAccessUpdateCase: Case
+}
+
 interface TransitionCaseMutationResponse {
   transitionCase: Case
+}
+
+interface LimitedAccessTransitionCaseMutationResponse {
+  limitedAccessTransitionCase: Case
 }
 
 interface SendNotificationMutationResponse {
@@ -82,6 +116,10 @@ function isChildKey(key: keyof UpdateCase): key is keyof ChildKeys {
     'sharedWithProsecutorsOfficeId',
     'registrarId',
     'judgeId',
+    'appealAssistantId',
+    'appealJudge1Id',
+    'appealJudge2Id',
+    'appealJudge3Id',
   ].includes(key)
 }
 
@@ -91,6 +129,10 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   sharedWithProsecutorsOfficeId: 'sharedWithProsecutorsOffice',
   registrarId: 'registrar',
   judgeId: 'judge',
+  appealAssistantId: 'appealAssistant',
+  appealJudge1Id: 'appealJudge1',
+  appealJudge2Id: 'appealJudge2',
+  appealJudge3Id: 'appealJudge3',
 }
 
 const overwrite = (update: UpdateCase): UpdateCase => {
@@ -147,40 +189,127 @@ export const formatDateForServer = (date: Date) => {
   return formatISO(date, { representation: 'complete' })
 }
 
+const openCase = (caseToOpen: Case, user: User) => {
+  let routeTo = null
+  const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
+
+  if (
+    caseToOpen.state === CaseState.ACCEPTED ||
+    caseToOpen.state === CaseState.REJECTED ||
+    caseToOpen.state === CaseState.DISMISSED
+  ) {
+    if (isIndictmentCase(caseToOpen.type)) {
+      routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
+    } else if (user?.institution?.type === InstitutionType.HighCourt) {
+      routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+    } else {
+      routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
+    }
+  } else if (isExtendedCourtRole(user.role)) {
+    if (isRestrictionCase(caseToOpen.type)) {
+      routeTo = findFirstInvalidStep(
+        constants.courtRestrictionCasesRoutes,
+        caseToOpen,
+      )
+    } else if (isInvestigationCase(caseToOpen.type)) {
+      routeTo = findFirstInvalidStep(
+        constants.courtInvestigationCasesRoutes,
+        caseToOpen,
+      )
+    } else {
+      // Route to Indictment Overview section since it always a valid step and
+      // would be skipped if we route to the last valid step
+      routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+    }
+  } else {
+    if (isRestrictionCase(caseToOpen.type)) {
+      routeTo = findFirstInvalidStep(
+        constants.prosecutorRestrictionCasesRoutes,
+        caseToOpen,
+      )
+    } else if (isInvestigationCase(caseToOpen.type)) {
+      routeTo = findFirstInvalidStep(
+        constants.prosecutorInvestigationCasesRoutes,
+        caseToOpen,
+      )
+    } else {
+      routeTo = findFirstInvalidStep(
+        constants.prosecutorIndictmentRoutes(isTrafficViolation),
+        caseToOpen,
+      )
+    }
+  }
+
+  if (routeTo) router.push(`${routeTo}/${caseToOpen.id}`)
+}
+
 const useCase = () => {
+  const { limitedAccess, user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+
   const [
     createCaseMutation,
     { loading: isCreatingCase },
   ] = useMutation<CreateCaseMutationResponse>(CreateCaseMutation)
+
   const [
     createCourtCaseMutation,
     { loading: isCreatingCourtCase },
   ] = useMutation<CreateCourtCaseMutationResponse>(CreateCourtCaseMutation)
+
   const [
     updateCaseMutation,
     { loading: isUpdatingCase },
   ] = useMutation<UpdateCaseMutationResponse>(UpdateCaseMutation, {
     fetchPolicy: 'no-cache',
   })
+
+  const [
+    limitedAccessUpdateCaseMutation,
+    { loading: isLimitedAccessUpdatingCase },
+  ] = useMutation<LimitedAccessUpdateCaseMutationResponse>(
+    LimitedAccessUpdateCaseMutation,
+    {
+      fetchPolicy: 'no-cache',
+    },
+  )
   const [
     transitionCaseMutation,
     { loading: isTransitioningCase },
   ] = useMutation<TransitionCaseMutationResponse>(TransitionCaseMutation)
+
+  const [
+    limitedAccessTransitionCaseMutation,
+    { loading: isLimitedAccessTransitioningCase },
+  ] = useMutation<LimitedAccessTransitionCaseMutationResponse>(
+    LimitedAccessTransitionCaseMutation,
+  )
+
   const [
     sendNotificationMutation,
     { loading: isSendingNotification, error: sendNotificationError },
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
+
   const [
     requestCourtRecordSignatureMutation,
     { loading: isRequestingCourtRecordSignature },
   ] = useMutation<RequestCourtRecordSignatureMutationResponse>(
     RequestCourtRecordSignatureMutation,
   )
+
   const [
     extendCaseMutation,
     { loading: isExtendingCase },
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
+
+  const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
+    fetchPolicy: 'no-cache',
+    onCompleted: (caseData) => {
+      if (user && caseData?.case) {
+        openCase(caseData.case, user)
+      }
+    },
+  })
 
   const createCase = useMemo(
     () => async (theCase: CreateCase): Promise<Case | undefined> => {
@@ -254,21 +383,37 @@ const useCase = () => {
 
   const updateCase = useMemo(
     () => async (id: string, updateCase: UpdateCase) => {
+      const mutation = limitedAccess
+        ? limitedAccessUpdateCaseMutation
+        : updateCaseMutation
+
+      const resultType = limitedAccess
+        ? 'limitedAccessUpdateCase'
+        : 'updateCase'
+
       try {
         if (!id || Object.keys(updateCase).length === 0) {
           return
         }
 
-        const { data } = await updateCaseMutation({
+        const { data } = await mutation({
           variables: { input: { id, ...updateCase } },
         })
 
-        return data?.updateCase
+        const res = data as UpdateCaseMutationResponse &
+          LimitedAccessUpdateCaseMutationResponse
+
+        return res && res[resultType]
       } catch (error) {
         toast.error(formatMessage(errors.updateCase))
       }
     },
-    [formatMessage, updateCaseMutation],
+    [
+      formatMessage,
+      limitedAccess,
+      limitedAccessUpdateCaseMutation,
+      updateCaseMutation,
+    ],
   )
 
   const transitionCase = useMemo(
@@ -277,8 +422,16 @@ const useCase = () => {
       transition: CaseTransition,
       setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
     ): Promise<boolean> => {
+      const mutation = limitedAccess
+        ? limitedAccessTransitionCaseMutation
+        : transitionCaseMutation
+
+      const resultType = limitedAccess
+        ? 'limitedAccessTransitionCase'
+        : 'transitionCase'
+
       try {
-        const { data } = await transitionCaseMutation({
+        const { data } = await mutation({
           variables: {
             input: {
               id: caseId,
@@ -287,14 +440,20 @@ const useCase = () => {
           },
         })
 
-        if (!data?.transitionCase?.state) {
+        const res = data as TransitionCaseMutationResponse &
+          LimitedAccessTransitionCaseMutationResponse
+
+        const state = res && res[resultType].state
+        const appealState = res && res[resultType].appealState
+
+        if (!state && !appealState) {
           return false
         }
 
         if (setWorkingCase) {
           setWorkingCase((theCase) => ({
             ...theCase,
-            state: data.transitionCase.state,
+            ...res[resultType],
           }))
         }
 
@@ -304,7 +463,12 @@ const useCase = () => {
         return false
       }
     },
-    [formatMessage, transitionCaseMutation],
+    [
+      limitedAccess,
+      limitedAccessTransitionCaseMutation,
+      transitionCaseMutation,
+      formatMessage,
+    ],
   )
 
   const sendNotification = useMemo(
@@ -399,9 +563,10 @@ const useCase = () => {
     createCourtCase,
     isCreatingCourtCase,
     updateCase,
-    isUpdatingCase,
+    isUpdatingCase: isUpdatingCase || isLimitedAccessUpdatingCase,
     transitionCase,
-    isTransitioningCase,
+    isTransitioningCase:
+      isTransitioningCase || isLimitedAccessTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,
@@ -410,6 +575,7 @@ const useCase = () => {
     extendCase,
     isExtendingCase,
     setAndSendCaseToServer,
+    getCaseToOpen,
   }
 }
 

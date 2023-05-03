@@ -11,23 +11,23 @@ import {
   DisabilityLicenseApiClientConfig,
   FirearmLicenseApiClientConfig,
 } from './modules/license'
-import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
-import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
+import { OpenFirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { ProblemModule } from '@island.is/nest/problem'
-
+import { DrivingLicenseApiClientConfig } from './modules/license/clients/drivingLicense/drivingLicenseApiClient.config'
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
+    AuthModule.register(environment.auth),
     ProblemModule,
     LoggingModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         XRoadConfig,
-        FirearmLicenseClientConfig,
         FirearmLicenseApiClientConfig,
-        DisabilityLicenseClientConfig,
         DisabilityLicenseApiClientConfig,
+        DrivingLicenseApiClientConfig,
+        OpenFirearmLicenseClientConfig,
       ],
     }),
     LicenseModule,

@@ -7,7 +7,8 @@ import { defaultLanguage } from '@island.is/shared/constants'
 
 import possibleTypes from './fragmentTypes.json'
 
-const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
+const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
+
 const isBrowser: boolean = process.browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null

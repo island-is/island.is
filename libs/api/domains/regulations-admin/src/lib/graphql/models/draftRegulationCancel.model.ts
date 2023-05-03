@@ -16,7 +16,7 @@ export class DraftRegulationCancelModel {
   regTitle?: string
 
   @Field(() => String, { nullable: true })
-  date!: string // ?
+  date!: string
 
   @Field(() => Boolean, { nullable: true })
   dropped?: boolean

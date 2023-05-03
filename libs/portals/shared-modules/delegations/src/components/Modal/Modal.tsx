@@ -1,11 +1,5 @@
 import React, { useRef } from 'react'
-import {
-  Box,
-  Icon,
-  ModalBase,
-  Text,
-  useBreakpoint,
-} from '@island.is/island-ui/core'
+import { Box, Icon, ModalBase, Text } from '@island.is/island-ui/core'
 import * as styles from './Modal.css'
 
 export interface ModalProps {
@@ -28,7 +22,6 @@ export const Modal = ({
   noPaddingBottom,
 }: ModalProps) => {
   const headingRef = useRef<HTMLElement>(null)
-  const { md } = useBreakpoint()
   const handleOnVisibilityChange = (isVisible: boolean) => {
     if (isVisible) {
       headingRef.current?.focus()
@@ -45,7 +38,6 @@ export const Modal = ({
       modalLabel={label}
       hideOnClickOutside
       hideOnEsc
-      preventBodyScroll={md}
       onVisibilityChange={handleOnVisibilityChange}
     >
       <Box
@@ -56,7 +48,6 @@ export const Modal = ({
         paddingTop={12}
         borderRadius="standard"
         width="full"
-        overflow="auto"
         className={styles.modalInner}
       >
         <Box

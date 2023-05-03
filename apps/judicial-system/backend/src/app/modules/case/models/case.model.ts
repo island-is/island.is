@@ -19,11 +19,13 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseAppealRulingDecision,
   CaseType,
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
   SubpoenaType,
+  CaseAppealState,
 } from '@island.is/judicial-system/types'
 import type {
   IndictmentSubtypeMap,
@@ -75,6 +77,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseOrigin),
   })
+  @ApiProperty({ enum: CaseOrigin })
   origin!: CaseOrigin
 
   /**********
@@ -85,6 +88,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseType),
   })
+  @ApiProperty({ enum: CaseType })
   type!: CaseType
 
   /**********
@@ -968,4 +972,148 @@ export class Case extends Model {
   })
   @ApiProperty()
   requestDriversLicenseSuspension?: boolean
+
+  /**********
+   * The case appeal state
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseAppealState),
+  })
+  @ApiProperty({ enum: CaseAppealState })
+  appealState?: CaseAppealState
+
+  /**********
+   * The date and time when the prosecutor appeal statement was sent
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  prosecutorStatementDate?: Date
+
+  /**********
+   * The date and time when the defendant appeal statement was sent
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defendantStatementDate?: Date
+
+  /**********
+   * The time and date that the court marked an appeal as received
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealReceivedByCourtDate?: Date
+
+  /**********
+   * The appeal conclusion
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealConclusion?: string
+
+  /**********
+   * The case appeal ruling decision
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseAppealRulingDecision),
+  })
+  @ApiProperty({ enum: CaseAppealRulingDecision })
+  appealRulingDecision?: CaseAppealRulingDecision
+
+  /**********
+   * The appeal case number assigned in the court of appeals
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealCaseNumber?: string
+
+  /**********
+   * The surrogate key of the assistant assigned to the appeal case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealAssistantId?: string
+
+  /**********
+   * The assistant assigned to the appeal case
+   **********/
+  @BelongsTo(() => User, 'appealAssistantId')
+  @ApiPropertyOptional({ type: User })
+  appealAssistant?: User
+
+  /**********
+   * The surrogate key of the first judge assigned to the appeal case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealJudge1Id?: string
+
+  /**********
+   * The first judge assigned to the appeal case
+   **********/
+  @BelongsTo(() => User, 'appealJudge1Id')
+  @ApiPropertyOptional({ type: User })
+  appealJudge1?: User
+
+  /**********
+   * The surrogate key of the second judge assigned to the appeal case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealJudge2Id?: string
+
+  /**********
+   * The second judge assigned to the appeal case
+   **********/
+  @BelongsTo(() => User, 'appealJudge2Id')
+  @ApiPropertyOptional({ type: User })
+  appealJudge2?: User
+
+  /**********
+   * The surrogate key of the third judge assigned to the appeal case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealJudge3Id?: string
+
+  /**********
+   * The third judge assigned to the appeal case
+   **********/
+  @BelongsTo(() => User, 'appealJudge3Id')
+  @ApiPropertyOptional({ type: User })
+  appealJudge3?: User
 }

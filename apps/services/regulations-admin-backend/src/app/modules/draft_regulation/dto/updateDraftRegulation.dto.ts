@@ -2,7 +2,6 @@ import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
-  Appendix,
   HTMLText,
   ISODate,
   Kennitala,

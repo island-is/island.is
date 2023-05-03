@@ -1,10 +1,4 @@
-import {
-  Appendix,
-  HTMLText,
-  ISODate,
-  PlainText,
-  RegName,
-} from '@island.is/regulations'
+import { HTMLText, PlainText } from '@island.is/regulations'
 import { DraftImpactName } from '@island.is/regulations/admin'
 import { Field, ObjectType } from '@nestjs/graphql'
 

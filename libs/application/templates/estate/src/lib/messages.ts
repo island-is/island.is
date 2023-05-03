@@ -290,6 +290,16 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
     description: '',
   },
+  guns: {
+    id: 'es.application:guns',
+    defaultMessage: 'Skotvopn',
+    description: '',
+  },
+  gunsDescription: {
+    id: 'es.application:gunsDescription',
+    defaultMessage: 'Til dæmis haglabyssa, riffill og skammbyssa',
+    description: '',
+  },
 
   // Bank Info
   estateBankInfo: {
@@ -367,8 +377,8 @@ export const m = defineMessages({
     defaultMessage: 'Útgefandi',
     description: '',
   },
-  stocksSsn: {
-    id: 'es.application:stocksSsn',
+  stocksNationalId: {
+    id: 'es.application:stocksNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -474,8 +484,8 @@ export const m = defineMessages({
     defaultMessage: 'Nafn kröfuhafa',
     description: '',
   },
-  debtsSsn: {
-    id: 'es.application:debtsSsn',
+  debtsNationalId: {
+    id: 'es.application:debtsNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -518,6 +528,22 @@ export const m = defineMessages({
       'Þú hefur valið að lýsa því yfir að þú óskir eftir að ofangreint dánarbú verði tekið til opinberra skipta. Nánari upplýsingar um skilyrði opinberra skipta má finna á eftirfarandi vefslóð á Ísland.is',
     description: '',
   },
+  divisionOfEstateTerms: {
+    id: 'es.application:divisionOfEstateTerms',
+    defaultMessage: 'Skilmálar',
+    description: '',
+  },
+  divisionOfEstateTermsText: {
+    id: 'es.application:divisionOfEstateTermsText#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar sendar í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  divisionOfEstateSubmissionCheckbox: {
+    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
+    defaultMessage: 'Ég hef lesið skilmálana',
+    description: '',
+  },
   overviewSubtitlePermitToPostpone: {
     id: 'es.application:overviewSubtitlePermitToPostpone#markdown',
     defaultMessage:
@@ -527,6 +553,11 @@ export const m = defineMessages({
   overviewSubtitleDivisionOfEstateByHeirs: {
     id: 'es.application:overviewSubtitleDivisionOfEstateByHeirs#markdown',
     defaultMessage: 'Þú hefur nú útfyllt beiðni um einkaskipti.',
+    description: '',
+  },
+  overviewMarketValue: {
+    id: 'es.application:overviewMarketValue',
+    defaultMessage: 'Markaðsvirði',
     description: '',
   },
   divisionOfEstateByHeirsTerms: {
@@ -600,6 +631,11 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
   },
+  fillOutRates: {
+    id: 'es.application:error.fillOutRates',
+    defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
+    description: '',
+  },
 
   // Assets
   errorNumberEmpty: {
@@ -652,7 +688,7 @@ export const m = defineMessages({
   inheritanceForeignCitizenshipLabel: {
     id: 'es.application:inheritanceForeignCitizenshipLabel',
     defaultMessage: 'Aðili án íslenskrar kennitölu',
-    description: 'No icelandic ssn label',
+    description: '',
   },
   inheritanceDayOfBirthLabel: {
     id: 'es.application:inheritanceDayOfBirthLabel',
@@ -670,6 +706,11 @@ export const m = defineMessages({
     id: 'es.application:realEstatesDescription',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: 'Real estates and lands description',
+  },
+  gunTitle: {
+    id: 'es.application:gunTitle',
+    defaultMessage: 'Skotvopn',
+    description: 'Vehicles title',
   },
   vehiclesTitle: {
     id: 'es.application:vehiclesTitle',
@@ -740,5 +781,25 @@ export const m = defineMessages({
     id: 'es.application:vehicleTypeLabel',
     defaultMessage: 'Tegund faratækis',
     description: 'Vehicle type label',
+  },
+  addGun: {
+    id: 'es.application:addGun',
+    defaultMessage: 'Bæta við skotvopni',
+    description: '',
+  },
+  gunNumberLabel: {
+    id: 'es.application:gunNumberLabel',
+    defaultMessage: 'Raðnúmer skotvopns',
+    description: 'Gun number label',
+  },
+  gunTypeLabel: {
+    id: 'es.application:gunTypeLabel',
+    defaultMessage: 'Tegund skotvopns',
+    description: 'Gun type label',
+  },
+  marketValueTitle: {
+    id: 'es.application:marketValueTitle',
+    defaultMessage: 'Markaðsvirði á dánardegi',
+    description: 'Placeholder for vehicles type',
   },
 })

@@ -15,7 +15,7 @@ export const m = defineMessages({
     description: '',
   },
   introDescription: {
-    id: 'gpl.application:introDescription',
+    id: 'gpl.application:introDescription#markdown',
     defaultMessage: 'Vantar texta hér',
     description: '',
   },
@@ -127,13 +127,13 @@ export const m = defineMessages({
   // Done
   listCreatedTitle: {
     id: 'gpl.application:listCreatedTitle',
-    defaultMessage: 'Undirskriftalista hefur verið skilað til Island.is',
+    defaultMessage: 'Undirskriftalista hefur verið skilað til Ísland.is',
     description: '',
   },
   listCreatedSubtitle: {
     id: 'gpl.application:listCreatedSubtitle#markdown',
     defaultMessage:
-      'Hægt er að sjá stöðu lista, undirskriftir og einnig er hægt að breyta gildisdagsetningu lista inná Mínum Síðum.',
+      'Hægt er að sjá stöðu lista, undirskriftir og breyta gildistíma lista inná Mínum Síðum.',
     description: '',
   },
   linkToList: {

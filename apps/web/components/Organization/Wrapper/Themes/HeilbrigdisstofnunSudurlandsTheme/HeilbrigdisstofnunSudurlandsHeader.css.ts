@@ -64,3 +64,11 @@ export const navigation = style({
     },
   }),
 })
+
+export const title = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginLeft: -185,
+    },
+  }),
+})

@@ -1,1 +1,0 @@
-export { PaymentPendingScreen } from './PaymentPendingScreen'

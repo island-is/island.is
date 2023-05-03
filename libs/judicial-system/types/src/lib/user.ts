@@ -45,14 +45,15 @@ export interface UpdateUser {
   institutionId?: string
   active?: boolean
 }
-const extendedCourtRoles: string[] = [
+
+export const extendedCourtRoles: string[] = [
   UserRole.JUDGE,
   UserRole.REGISTRAR,
   UserRole.ASSISTANT,
 ]
 
 export function isExtendedCourtRole(role: string): boolean {
-  return Object.values(extendedCourtRoles).includes(role)
+  return extendedCourtRoles.includes(role)
 }
 
 export const prosecutionRoles: string[] = [
@@ -60,12 +61,20 @@ export const prosecutionRoles: string[] = [
   UserRole.REPRESENTATIVE,
 ]
 
-export function isProsecutionRole(role: string): boolean {
+export function isProsecutionRole(role?: string): boolean {
+  if (!role) {
+    return false
+  }
+
   return prosecutionRoles.includes(role)
 }
 
 export const courtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
 
-export function isCourtRole(role: string): boolean {
+export function isCourtRole(role?: string): boolean {
+  if (!role) {
+    return false
+  }
+
   return courtRoles.includes(role)
 }
