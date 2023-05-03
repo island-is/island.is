@@ -45,6 +45,16 @@ export const userNotificationServiceSetup = (): ServiceBuilder<'user-notificatio
         },
       },
     })
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '15m',
+        memory: '256Mi',
+      },
+    })
     .grantNamespaces('nginx-ingress-internal')
 
 export const userNotificationWorkerSetup = (services: {

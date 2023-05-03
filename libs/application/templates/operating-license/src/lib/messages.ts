@@ -269,6 +269,12 @@ export const m = defineMessages({
     defaultMessage: 'Virðisaukaskattsnúmer',
     description: 'Some description',
   },
+  vskNrInvalid: {
+    id: 'ol.application:info.vskNrInvalid',
+    defaultMessage:
+      'Ef númer inniheldur færri en 6 stafi skaltu bæta við 0 fyrir framan.',
+    description: 'Some description',
+  },
   // Property screen
   propertyInfoTitle: {
     id: 'ol.application:propertyInfo.title',

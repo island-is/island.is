@@ -15,6 +15,7 @@ import {
   addEmptyLines,
   addGiganticHeading,
   addNormalPlusCenteredText,
+  addNormalPlusJustifiedText,
   addNormalPlusText,
   setTitle,
 } from './pdfHelpers'
@@ -83,17 +84,20 @@ export const createIndictment = async (
 
     if (hasManyCounts) {
       addNormalPlusCenteredText(doc, `${roman(index + 1)}.`)
-      addNormalPlusText(doc, capitalize(count.incidentDescription || ''))
+      addNormalPlusJustifiedText(
+        doc,
+        capitalize(count.incidentDescription || ''),
+      )
     } else {
-      addNormalPlusText(doc, count.incidentDescription || '')
+      addNormalPlusJustifiedText(doc, count.incidentDescription || '')
     }
     addEmptyLines(doc)
-    addNormalPlusText(doc, count.legalArguments || '')
+    addNormalPlusJustifiedText(doc, count.legalArguments || '')
     addNormalPlusText(doc, `M: ${count.policeCaseNumber || ''}`)
   })
 
   addEmptyLines(doc, 2)
-  addNormalPlusText(doc, theCase.demands || '')
+  addNormalPlusJustifiedText(doc, theCase.demands || '')
   addEmptyLines(doc, 2)
   addNormalPlusText(
     doc,

@@ -6,6 +6,7 @@ import {
   CaseDecision,
   CaseType,
   NotificationType,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
@@ -13,7 +14,6 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
-import { User } from '../../../user'
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -31,13 +31,13 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notification: SendInternalNotificationDto,
+  notificationDto: SendInternalNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
-  const notification: SendInternalNotificationDto = {
-    userId,
+  const notificationDto: SendInternalNotificationDto = {
+    user: { id: userId } as User,
     type: NotificationType.RULING,
   }
 
@@ -48,7 +48,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.PRISON_EMAIL = 'prisonEmail@email.com'
+    process.env.PRISON_EMAIL = 'prisonEmail@email.com,prisonEmail2@email.com'
     const {
       emailService,
       notificationConfig,
@@ -71,9 +71,8 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       try {
         then.result = await internalNotificationController.sendCaseNotification(
           caseId,
-          { id: userId } as User,
           theCase,
-          notification,
+          notificationDto,
         )
       } catch (error) {
         then.error = error as Error
@@ -95,7 +94,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prosecutor', () => {
@@ -123,7 +122,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prosecutor', () => {
@@ -153,7 +152,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prosecutor', () => {
@@ -185,7 +184,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       } as Case
 
       beforeEach(async () => {
-        await givenWhenThen(caseId, theCase, notification)
+        await givenWhenThen(caseId, theCase, notificationDto)
       })
 
       it('should send email to prison', () => {
@@ -197,9 +196,11 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             to: [
               {
                 name: 'Gæsluvarðhaldsfangelsi',
-                address: mockConfig.email.prisonEmail,
+                address: mockConfig.email.prisonEmail.split(',')[0],
               },
             ],
+            cc: mockConfig.email.prisonEmail.split(',').slice(1),
+
             subject: 'Úrskurður um gæsluvarðhald',
             html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í gæsluvarðhald í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
           }),
@@ -228,7 +229,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should not send email to prison', () => {
@@ -252,7 +253,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should not send email to prison', () => {
@@ -277,7 +278,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(true)
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prison', () => {
@@ -289,9 +290,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
           to: [
             {
               name: 'Gæsluvarðhaldsfangelsi',
-              address: mockConfig.email.prisonEmail,
+              address: mockConfig.email.prisonEmail.split(',')[0],
             },
           ],
+          cc: mockConfig.email.prisonEmail.split(',').slice(1),
           subject: 'Úrskurður um vistun á viðeigandi stofnun',
           html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),
@@ -316,7 +318,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         typeof mockDefendantService.isDefendantInActiveCustody
       >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
-      await givenWhenThen(caseId, theCase, notification)
+      await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email to prison', () => {
@@ -328,9 +330,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
           to: [
             {
               name: 'Gæsluvarðhaldsfangelsi',
-              address: mockConfig.email.prisonEmail,
+              address: mockConfig.email.prisonEmail.split(',')[0],
             },
           ],
+          cc: mockConfig.email.prisonEmail.split(',').slice(1),
           subject: 'Úrskurður um vistun á viðeigandi stofnun',
           html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í vistun á viðeigandi stofnun í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
         }),

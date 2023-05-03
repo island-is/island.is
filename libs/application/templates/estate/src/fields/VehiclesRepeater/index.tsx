@@ -11,7 +11,7 @@ import {
   ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
-import { Answers, Asset } from '../../types'
+import { Answers, AssetFormField } from '../../types'
 
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
@@ -26,10 +26,10 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   const error = (errors as any)?.estate?.vehicles
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove } = useFieldArray<Asset>({
+  const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-  const { control, setValue } = useFormContext()
+  const { control } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { vehicles: EstateAsset[] }
@@ -45,13 +45,14 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
     append({
       assetNumber: '',
       description: '',
+      marketValue: '',
     })
   const handleRemoveVehicle = (index: number) => remove(index)
 
   return (
     <Box marginTop={2}>
       <GridRow>
-        {fields.reduce((acc, asset, index) => {
+        {fields.reduce((acc, asset: AssetFormField, index) => {
           if (!asset.initial) {
             return acc
           }
@@ -63,6 +64,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               paddingBottom={3}
             >
               <ProfileCard
+                disabled={!asset.enabled}
                 title={asset.assetNumber}
                 key={asset.assetNumber}
                 description={[
@@ -73,9 +75,13 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                       icon={asset.enabled ? 'remove' : 'add'}
                       size="small"
                       iconType="outline"
-                      onClick={() =>
-                        setValue(`${id}[${index}].enabled`, !asset.enabled)
-                      }
+                      onClick={() => {
+                        const updatedAsset = {
+                          ...asset,
+                          enabled: !asset.enabled,
+                        }
+                        update(index, updatedAsset)
+                      }}
                     >
                       {asset.enabled
                         ? formatMessage(m.inheritanceDisableMember)
@@ -83,19 +89,32 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                     </Button>
                   </Box>,
                 ]}
-                heightFull
               />
+              <Box marginTop={2}>
+                <InputController
+                  id={`${id}[${index}].marketValue`}
+                  name={`${id}[${index}].marketValue`}
+                  label={formatMessage(m.marketValueTitle)}
+                  disabled={!asset.enabled}
+                  backgroundColor="blue"
+                  placeholder="0 kr."
+                  defaultValue={(asset as any).marketValue}
+                  currency
+                  size="sm"
+                />
+              </Box>
             </GridColumn>,
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field, index) => {
+      {fields.map((field: AssetFormField, index) => {
         const fieldIndex = `${id}[${index}]`
         const vehicleNumberField = `${fieldIndex}.assetNumber`
         const vehicleTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const dummyField = `${fieldIndex}.dummy`
+        const marketValueField = `${fieldIndex}.marketValue`
         const fieldError = error && error[index] ? error[index] : null
 
         return (
@@ -109,20 +128,21 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               name={initialField}
               control={control}
               defaultValue={field.initial || false}
+              render={() => <input type="hidden" />}
             />
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={field.enabled || false}
+              defaultValue={true}
+              render={() => <input type="hidden" />}
             />
             <Controller
               name={dummyField}
               control={control}
               defaultValue={field.dummy || false}
+              render={() => <input type="hidden" />}
             />
-            <Text variant="h4">
-              {formatMessage(m.vehiclesTitle) + ' ' + (index + 1)}
-            </Text>
+            <Text variant="h4">{formatMessage(m.vehiclesTitle)}</Text>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
@@ -162,6 +182,17 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   size="sm"
                   //Make readOnly again when Vehicle Registry query is available
                   //readOnly
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']}>
+                <InputController
+                  id={marketValueField}
+                  name={marketValueField}
+                  label={formatMessage(m.marketValueTitle)}
+                  defaultValue={(field as any).marketValue}
+                  placeholder={'0 kr.'}
+                  currency
+                  size="sm"
                 />
               </GridColumn>
             </GridRow>

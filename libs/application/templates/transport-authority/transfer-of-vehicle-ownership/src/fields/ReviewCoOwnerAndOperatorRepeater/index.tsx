@@ -63,7 +63,9 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     const jointOperators = [...existingCoOwnersAndOperators, buyerNationalId]
     return !!jointOperators.some((nationalId, index) => {
       return (
-        jointOperators.indexOf(nationalId) !== index && nationalId.length > 0
+        nationalId &&
+        nationalId.length > 0 &&
+        jointOperators.indexOf(nationalId) !== index
       )
     })
   }
@@ -99,25 +101,13 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     setStep && setStep('overview')
   }
 
-  const updateMainOperator = () => {
-    const mainOperator = getValueViaPath(
-      application.answers,
-      'buyerMainOperator.nationalId',
-      '',
-    ) as string
+  const shouldUpdateMainOperator = () => {
     const availableOperators = tempCoOwnersAndOperators.filter(
       ({ type, wasRemoved }) => {
         return type === 'operator' && wasRemoved !== 'true'
       },
     )
-    if (availableOperators.length === 0) return ''
-    if (availableOperators.length === 1) return availableOperators[0].nationalId
-    if (mainOperator.length > 0) {
-      const currentOperator = availableOperators.find(({ nationalId }) => {
-        return nationalId === mainOperator
-      })
-      return currentOperator ?? availableOperators[0].nationalId
-    }
+    return availableOperators.length > 1
   }
 
   const onForwardButtonClick = async () => {
@@ -127,10 +117,10 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
       if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
         const notValid = filteredCoOwnersAndOperators.find((field) => {
           if (
-            field.email.length === 0 ||
-            field.name.length === 0 ||
-            field.nationalId.length === 0 ||
-            field.phone.length === 0
+            !(field.email && field.email.length > 0) ||
+            !(field.name && field.name.length > 0) ||
+            !(field.nationalId && field.nationalId.length > 0) ||
+            !(field.phone && field.phone.length > 0)
           ) {
             return true
           }
@@ -146,9 +136,6 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
                 id: application.id,
                 answers: {
                   buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
-                  buyerMainOperator: {
-                    nationalId: updateMainOperator(),
-                  },
                 },
               },
               locale,
@@ -162,7 +149,8 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
             setCoOwnersAndOperators(tempCoOwnersAndOperators)
             setGenericErrorMessage(undefined)
             setErrorMessage(undefined)
-            setStep && setStep('overview')
+            setStep &&
+              setStep(shouldUpdateMainOperator() ? 'mainOperator' : 'overview')
           }
         }
       }

@@ -1,5 +1,4 @@
 import { Text, Pagination, Box } from '@island.is/island-ui/core'
-import { getBaseUrlForm } from '../shared/utils'
 import { ApplicationList as List } from '@island.is/application/ui-components'
 import { Application } from '@island.is/application/types'
 import { FC, useCallback, useState } from 'react'
@@ -41,9 +40,6 @@ export const ApplicationGroup: FC<Props> = ({
           pagedDocuments.to,
         )}
         refetch={refetch}
-        onClick={(applicationUrl) =>
-          window.open(`${getBaseUrlForm()}/${applicationUrl}`)
-        }
         focus={focus}
       />
       {applications.length > pageSize && (

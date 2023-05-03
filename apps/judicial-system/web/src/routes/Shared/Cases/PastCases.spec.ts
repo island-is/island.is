@@ -13,7 +13,7 @@ describe('getDurationDate', () => {
     ${CaseState.REJECTED}
     ${CaseState.DISMISSED}
   `('should return null if state is REJECTED or DISMISSED', ({ state }) => {
-    expect(getDurationDate(state, date1, date2, date3, date4)).toBe(null)
+    expect(getDurationDate(state, date1, date2, date4)).toBe(null)
   })
 
   test('should use initial ruling date if it is set', () => {
@@ -29,56 +29,23 @@ describe('getDurationDate', () => {
     expect(res).toBe('4.8.2022 - 4.9.2022')
   })
 
-  test('should use ruling date if initialRulingDate is not set', () => {
+  test('should use court end time if initialRulingDate is not set', () => {
     const initialRulingDate = undefined
-    const rulingDate = date2
+    const courtEndTime = date2
     const validToDate = date3
 
     const res = getDurationDate(
       CaseState.ACCEPTED,
       validToDate,
       initialRulingDate,
-      rulingDate,
-    )
-
-    expect(res).toBe('4.9.2022 - 13.9.2022')
-  })
-
-  test('should use ruling date if initialRulingDate is not set', () => {
-    const initialRulingDate = undefined
-    const rulingDate = date2
-    const validToDate = date3
-
-    const res = getDurationDate(
-      CaseState.ACCEPTED,
-      validToDate,
-      initialRulingDate,
-      rulingDate,
-    )
-
-    expect(res).toBe('4.9.2022 - 13.9.2022')
-  })
-
-  test('should use court end time if initialRulingDate and ruling date are not set', () => {
-    const initialRulingDate = undefined
-    const rulingDate = undefined
-    const courtEndTime = date3
-    const validToDate = date4
-
-    const res = getDurationDate(
-      CaseState.ACCEPTED,
-      validToDate,
-      initialRulingDate,
-      rulingDate,
       courtEndTime,
     )
 
-    expect(res).toBe('13.9.2022 - 24.12.2022')
+    expect(res).toBe('4.9.2022 - 13.9.2022')
   })
 
   test('should fallback to use validToDate', () => {
     const initialRulingDate = undefined
-    const rulingDate = undefined
     const courtEndTime = undefined
     const validToDate = date4
 
@@ -86,7 +53,6 @@ describe('getDurationDate', () => {
       CaseState.ACCEPTED,
       validToDate,
       initialRulingDate,
-      rulingDate,
       courtEndTime,
     )
 
@@ -95,7 +61,6 @@ describe('getDurationDate', () => {
 
   test('should return null if all dates are undefined', () => {
     const initialRulingDate = undefined
-    const rulingDate = undefined
     const courtEndTime = undefined
     const validToDate = undefined
 
@@ -103,7 +68,6 @@ describe('getDurationDate', () => {
       CaseState.ACCEPTED,
       validToDate,
       initialRulingDate,
-      rulingDate,
       courtEndTime,
     )
 

@@ -9,10 +9,6 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
@@ -178,13 +174,9 @@ const PoliceDemands: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.POLICE_DEMANDS}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isExtension={workingCase?.parentCase && true}
+      isExtension={!!workingCase.parentCase}
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
@@ -332,6 +324,7 @@ const PoliceDemands: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INVESTIGATION_CASE_POLICE_REPORT_ROUTE)

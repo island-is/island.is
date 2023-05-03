@@ -10,7 +10,6 @@ import {
   Regulation,
   LawChapter,
   Appendix,
-  RegulationHistoryItem,
 } from './types'
 
 // ---------------------------------------------------------------------------
@@ -156,7 +155,7 @@ export type DraftRegulationChange = {
   title: PlainText
   dropped?: boolean
   diff?: HTMLText
-} & Pick<Regulation, 'text' | 'comments' | 'appendixes'>
+} & Pick<Regulation, 'text' | 'appendixes' | 'comments'>
 
 // ---------------------------------------------------------------------------
 

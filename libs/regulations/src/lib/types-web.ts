@@ -12,7 +12,7 @@ export type RegulationListItem = {
   /** The title of the Regulation */
   title: string
   /** The ministry that the regulation is linked to */
-  ministry?: Ministry
+  ministry?: Ministry | string
   /** Publication date of this regulation */
   publishedDate: ISODate
 }

@@ -1,16 +1,22 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
+import { CaseState, Defendant } from '@island.is/judicial-system/types'
+import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
+  CaseType,
   CaseOrigin,
-  CaseState,
-  Defendant,
-} from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE, USERS_ROUTE } from '@island.is/judicial-system/consts'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
+import { UserContext } from '../UserProvider/UserProvider'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
 import CaseQuery from './caseGql'
 
@@ -39,7 +45,7 @@ const initialState: Case = {
   id: '',
   created: '',
   modified: '',
-  origin: CaseOrigin.UNKNOWN,
+  origin: CaseOrigin.Unknown,
   type: CaseType.Custody,
   state: CaseState.NEW,
   policeCaseNumbers: [],
@@ -68,8 +74,8 @@ const MaybeFormProvider = ({ children }: Props) => {
 }
 
 const FormProvider = ({ children }: Props) => {
+  const { limitedAccess } = useContext(UserContext)
   const router = useRouter()
-  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')

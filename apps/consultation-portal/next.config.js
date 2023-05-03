@@ -5,6 +5,7 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const {
   API_URL = 'http://localhost:4444',
   WEB_PUBLIC_URL = 'http://localhost:4200',
+  BASE_PATH = '/samradsgatt',
   NODE_ENV,
   DISABLE_API_CATALOGUE,
   DD_RUM_APPLICATION_ID,
@@ -16,7 +17,6 @@ const {
 const apiPath = '/api'
 const graphqlPath = '/api/graphql'
 const withVanillaExtract = createVanillaExtractPlugin()
-const path = process.env.NODE_ENV === 'production' ? '/consultation-portal' : ''
 module.exports = withNx(
   withVanillaExtract({
     webpack: (config, options) => {
@@ -35,7 +35,12 @@ module.exports = withNx(
       apiUrl: `${API_URL}${apiPath}`,
       graphqlEndpoint: `${API_URL}${graphqlPath}`,
     },
-    basePath: path,
+    basePath: `${BASE_PATH}`,
     presets: ['next/babel'],
+    env: {
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+      IDENTITY_SERVER_SECRET: process.env.IDENTITY_SERVER_SECRET,
+      IDENTITY_SERVER_ISSUER_DOMAIN: process.env.IDENTITY_SERVER_ISSUER_DOMAIN,
+    },
   }),
 )

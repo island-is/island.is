@@ -8,26 +8,20 @@ import { ReviewScreenProps } from '../../../shared'
 import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
 import { formatPhoneNumber } from '../../../utils'
-import { getValueViaPath } from '@island.is/application/core'
 
 export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
   coOwnersAndOperators = [],
   reviewerNationalId = '',
+  mainOperator = '',
 }) => {
   const { formatMessage } = useLocale()
   const operators = coOwnersAndOperators.filter((x) => x.type === 'operator')
-  const mainOperator = getValueViaPath(
-    application.answers,
-    'buyerMainOperator.nationalId',
-    '',
-  ) as string
 
   return operators.length > 0 ? (
     <ReviewGroup isLast>
       <GridRow>
         {operators?.map(({ name, nationalId, email, phone }, index: number) => {
-          if (name.length === 0) return null
+          if (!name || name.length === 0) return null
           const isOperator = nationalId === reviewerNationalId
           return (
             <GridColumn
@@ -44,9 +38,9 @@ export const OperatorSection: FC<FieldBaseProps & ReviewScreenProps> = ({
                   {isOperator && `(${formatMessage(review.status.youLabel)})`}
                 </Text>
                 <Text>{name}</Text>
-                <Text>{kennitala.format(nationalId, '-')}</Text>
+                <Text>{kennitala.format(nationalId!, '-')}</Text>
                 <Text>{email}</Text>
-                <Text>{formatPhoneNumber(phone)}</Text>
+                <Text>{formatPhoneNumber(phone!)}</Text>
               </Box>
             </GridColumn>
           )

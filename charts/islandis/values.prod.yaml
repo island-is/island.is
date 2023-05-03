@@ -32,7 +32,7 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -60,7 +60,7 @@ air-discount-scheme-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
@@ -116,7 +116,7 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -144,7 +144,7 @@ air-discount-scheme-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -166,7 +166,7 @@ air-discount-scheme-backend:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -207,7 +207,7 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -264,7 +264,7 @@ api:
     AUTH_PUBLIC_API_URL: 'https://innskra.island.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
-    CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.island.is'
+    CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.island.is'
@@ -309,6 +309,7 @@ api:
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
@@ -322,7 +323,7 @@ api:
     XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000'
     XROAD_PASSPORT_LICENSE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Forskraning-V1'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
-    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/'
+    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
@@ -331,12 +332,14 @@ api:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1'
     XROAD_VEHICLE_OPERATORS_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V3'
     XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
     XROAD_VEHICLE_PLATE_ORDERING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
+    XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateRenewal-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1'
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
@@ -348,6 +351,7 @@ api:
     - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -362,10 +366,10 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 50
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -384,20 +388,25 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 50
-    min: 10
+    min: 2
   resources:
     limits:
-      cpu: '800m'
+      cpu: '400m'
       memory: '2048Mi'
     requests:
-      cpu: '200m'
-      memory: '1024Mi'
+      cpu: '150m'
+      memory: '512Mi'
   secrets:
+    ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
     DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
     DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH'
     DOCUMENT_PROVIDER_BASE_PATH_TEST: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST'
@@ -412,8 +421,10 @@ api:
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
@@ -446,7 +457,6 @@ api:
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
-    RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
@@ -528,6 +538,7 @@ application-system-api:
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
@@ -536,7 +547,7 @@ application-system-api:
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
     XROAD_PASSPORT_LICENSE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Forskraning-V1'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
-    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/'
+    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS/GOV/5402697509/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v1'
@@ -550,6 +561,7 @@ application-system-api:
     XROAD_VEHICLE_OPERATORS_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Operators-V3'
     XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
     XROAD_VEHICLE_PLATE_ORDERING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
+    XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateRenewal-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Printing-V1'
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS/GOV/5402697509/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
@@ -573,10 +585,10 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 60
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -606,7 +618,7 @@ application-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -622,15 +634,15 @@ application-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 60
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
       memory: '1024Mi'
     requests:
-      cpu: '100m'
+      cpu: '50m'
       memory: '512Mi'
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
@@ -707,7 +719,7 @@ application-system-api-worker:
     XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
-    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/'
+    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS/GOV/5402697509/FJS-Public'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
@@ -728,7 +740,7 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -801,7 +813,7 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -831,7 +843,7 @@ application-system-form:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '10m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -862,7 +874,7 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -908,6 +920,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
   grantNamespaces:
     - 'islandis'
@@ -926,7 +939,7 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -961,7 +974,9 @@ download-service:
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
     POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1002,7 +1017,7 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1021,7 +1036,7 @@ endorsement-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1101,7 +1116,7 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1120,7 +1135,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
@@ -1133,7 +1148,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1184,7 +1199,7 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1209,7 +1224,7 @@ island-ui-storybook:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '10m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1219,12 +1234,16 @@ island-ui-storybook:
 license-api:
   enabled: true
   env:
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
     XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
     XROAD_DISABILITY_LICENSE_PATH: 'IS/GOV/5012130120/TR-Protected/oryrki-v1'
+    XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
+    XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
@@ -1244,7 +1263,7 @@ license-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 2
@@ -1269,16 +1288,27 @@ license-api:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '15m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
     DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
+    DRIVING_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
+    PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
+    PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
+    PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES'
+    PKPASS_CACHE_KEY: '/k8s/api/PKPASS_CACHE_KEY'
+    PKPASS_CACHE_TOKEN_EXPIRY_DELTA: '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
+    PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY'
     RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1326,10 +1356,10 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 30
-        min: 5
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -1348,9 +1378,9 @@ portals-admin:
   namespace: 'portals-admin'
   pvcs: []
   replicaCount:
-    default: 5
+    default: 2
     max: 30
-    min: 5
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -1373,10 +1403,22 @@ regulations-admin-backend:
     DB_NAME: 'regulations_admin_backend'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'regulations_admin_backend'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'islandis'
+    - 'download-service'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1391,7 +1433,7 @@ regulations-admin-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1409,7 +1451,7 @@ regulations-admin-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1435,7 +1477,11 @@ regulations-admin-backend:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-regulations-admin/IDENTITY_SERVER_CLIENT_SECRET'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1467,7 +1513,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 1
         min: 1
@@ -1568,7 +1614,7 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_GRAPHQL_API: '/api/graphql'
@@ -1592,10 +1638,10 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 30
-        min: 5
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -1614,16 +1660,16 @@ service-portal:
   namespace: 'service-portal'
   pvcs: []
   replicaCount:
-    default: 5
+    default: 2
     max: 30
-    min: 5
+    min: 2
   resources:
     limits:
-      cpu: '400m'
-      memory: '512Mi'
-    requests:
-      cpu: '200m'
+      cpu: '300m'
       memory: '256Mi'
+    requests:
+      cpu: '5m'
+      memory: '32Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1664,7 +1710,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1690,7 +1736,7 @@ service-portal-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1762,7 +1808,7 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1780,7 +1826,7 @@ services-documents:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1840,7 +1886,7 @@ services-sessions:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 1
@@ -1862,11 +1908,11 @@ services-sessions:
     min: 1
   resources:
     limits:
-      cpu: '400m'
+      cpu: '250m'
       memory: '512Mi'
     requests:
-      cpu: '100m'
-      memory: '256Mi'
+      cpu: '25m'
+      memory: '300Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
@@ -1908,7 +1954,7 @@ services-sessions-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -1926,7 +1972,7 @@ services-sessions-worker:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1987,7 +2033,7 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2017,7 +2063,7 @@ skilavottord-web:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '20m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2057,7 +2103,7 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2086,7 +2132,7 @@ skilavottord-ws:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -2136,7 +2182,7 @@ user-notification:
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=336'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2154,7 +2200,7 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2181,10 +2227,10 @@ user-notification:
   resources:
     limits:
       cpu: '200m'
-      memory: '256Mi'
+      memory: '384Mi'
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: '15m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
@@ -2230,7 +2276,7 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3
@@ -2280,6 +2326,7 @@ web:
     - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2294,10 +2341,10 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 50
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -2317,15 +2364,15 @@ web:
   namespace: 'islandis'
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 50
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '100m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2366,7 +2413,7 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
         min: 3

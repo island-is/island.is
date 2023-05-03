@@ -14,7 +14,7 @@
 /apps/application-system/                                                                                @island-is/norda-applications
 /apps/web*/                                                                                              @island-is/juni @island-is/stefna
 /libs/application/                                                                                       @island-is/norda-applications
-/libs/contentful-extensions/                                                                             @island-is/juni
+/libs/contentful-extensions/                                                                             @island-is/juni @island-is/stefna
 /libs/service-portal/                                                                                    @island-is/hugsmidjan
 /libs/portals/admin/                                                                                     @island-is/aranja
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
@@ -36,12 +36,11 @@
 /libs/clients/zendesk/                                                                                   @island-is/juni
 /libs/icelandic-names-registry/                                                                          @island-is/juni
 /libs/service-portal/petitions/                                                                          @island-is/juni
-/libs/service-portal/education/                                                                          @island-is/juni
+/libs/service-portal/education/                                                                          @island-is/juni @island-is/hugsmidjan
 /libs/service-portal/education-career/                                                                   @island-is/juni
 /libs/service-portal/education-degree/                                                                   @island-is/juni
 /libs/service-portal/education-license/                                                                  @island-is/juni
 /libs/service-portal/education-student-assessment/                                                       @island-is/juni @island-is/norda
-/libs/contentful-extensions/mideind-translation/                                                         @island-is/juni
 /libs/contentful-extensions/parent-slug/                                                                 @island-is/juni
 /libs/clients/driving-license/                                                                           @island-is/juni
 /libs/clients/judicial-administration/                                                                   @island-is/juni
@@ -49,6 +48,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death                   @island-is/juni
 /libs/application/templates/driving-license/                                                             @island-is/juni
 /libs/application/templates/driving-assessment-approval/                                                 @island-is/juni
+/libs/application/templates/driving-learners-permit/                                                     @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-learners-permit/                @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission              @island-is/juni
 /libs/api/domains/driving-license/                                                                       @island-is/juni
 /libs/api/domains/education/                                                                             @island-is/juni
@@ -91,6 +92,7 @@
 /libs/portals/shared-modules/delegations                                                                 @island-is/aranja
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
+/apps/native/app/                                                                                        @island-is/aranja-enum-app
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                                   @island-is/kolibri-justice-league
@@ -121,6 +123,7 @@
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
+/libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
@@ -133,6 +136,7 @@
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
+/libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
 /apps/services/license-api/                                                                              @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
 /libs/regulations/                                                                                       @island-is/hugsmidjan
@@ -167,6 +171,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/data-protection-complaint/              @island-is/norda
 /libs/shared/form-fields/                                                                                @island-is/norda @island-is/island-ui
 
+/libs/portals/admin/application-system/                                                                  @island-is/norda-applications
 /libs/api/domains/application/                                                                           @island-is/norda-applications
 /libs/api/domains/payment/                                                                               @island-is/norda-applications
 
@@ -196,6 +201,7 @@
 /libs/clients/fiskistofa/                                                                                @island-is/stefna
 /libs/clients/syslumenn/                                                                                 @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                                  @island-is/stefna
+/libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 

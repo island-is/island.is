@@ -47,7 +47,7 @@ export interface IAlertBannerFields {
   showAlertBanner: boolean
 
   /** Banner variant */
-  bannerVariant: 'default' | 'warning' | 'error' | 'info' | 'success'
+  bannerVariant: 'default' | 'warning' | 'error' | 'info'
 
   /** Title */
   title?: string | undefined
@@ -210,6 +210,9 @@ export interface IArticleFields {
 
   /** Process Entry Button Text */
   processEntryButtonText?: 'application' | 'stepByStep' | undefined
+
+  /** Active Translations */
+  activeTranslations?: Record<string, any> | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -1497,8 +1500,11 @@ export interface ILifeEventPageFields {
   /** see more text */
   seeMoreText?: string | undefined
 
-  /** Page Type */
+  /** page type */
   pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
+
+  /** featured image */
+  featuredImage?: Asset | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1958,6 +1964,9 @@ export interface INewsFields {
 
   /** Generic tags */
   genericTags?: IGenericTag[] | undefined
+
+  /** Initial Publish Date */
+  initialPublishDate?: string | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2238,36 +2247,11 @@ export interface IOrganization extends Entry<IOrganizationFields> {
 }
 
 export interface IOrganizationPageFields {
-  /** Organization */
-  organization: IOrganization
-
   /** Title */
   title: string
 
-  /** Slug */
-  slug: string
-
   /** Intro */
   intro?: string | undefined
-
-  /** Theme */
-  theme:
-    | 'default'
-    | 'utlendingastofnun'
-    | 'sjukratryggingar'
-    | 'syslumenn'
-    | 'digital_iceland'
-    | 'hsn'
-    | 'fiskistofa'
-    | 'landlaeknir'
-    | 'rikislogmadur'
-    | 'landskjorstjorn'
-    | 'landing_page'
-    | 'fjarsysla-rikisins'
-    | 'fjarsyslan'
-    | 'custom'
-    | 'hsu'
-    | 'tryggingastofnun'
 
   /** Description */
   description?: string | undefined
@@ -2327,9 +2311,6 @@ export interface IOrganizationPageFields {
   /** Featured Image */
   featuredImage: Asset
 
-  /** Theme Properties */
-  themeProperties?: Record<string, any> | undefined
-
   /** Footer Items */
   footerItems?: IFooterItem[] | undefined
 
@@ -2339,8 +2320,39 @@ export interface IOrganizationPageFields {
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
 
+  /** Organization */
+  organization: IOrganization
+
   /** News tag */
   newsTag?: IGenericTag | undefined
+
+  /** Slug */
+  slug: string
+
+  /** Theme */
+  theme:
+    | 'default'
+    | 'utlendingastofnun'
+    | 'sjukratryggingar'
+    | 'syslumenn'
+    | 'digital_iceland'
+    | 'hsn'
+    | 'fiskistofa'
+    | 'landlaeknir'
+    | 'rikislogmadur'
+    | 'landskjorstjorn'
+    | 'landing_page'
+    | 'fjarsysla-rikisins'
+    | 'fjarsyslan'
+    | 'custom'
+    | 'hsu'
+    | 'tryggingastofnun'
+    | 'sak'
+    | 'gev'
+    | 'hve'
+
+  /** Theme Properties */
+  themeProperties?: Record<string, any> | undefined
 }
 
 export interface IOrganizationPage extends Entry<IOrganizationPageFields> {
@@ -2554,6 +2566,37 @@ export interface IPowerBiSlice extends Entry<IPowerBiSliceFields> {
   }
 }
 
+export interface IPriceFields {
+  /** Title */
+  title: string
+
+  /** Reference Identifier */
+  referenceIdentifier: string
+
+  /** Amount */
+  amount: number
+
+  /** Organization */
+  organization: IOrganization
+}
+
+export interface IPrice extends Entry<IPriceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'price'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IProcessEntryFields {
   /** Type */
   type:
@@ -2564,6 +2607,7 @@ export interface IProcessEntryFields {
     | 'Drop and sign'
     | 'Paper'
     | 'Ísland.is mínar síður'
+    | 'Umsoknarkerfi'
 
   /** Process title */
   processTitle: string
@@ -2911,6 +2955,10 @@ export interface ISliceConnectedComponentFields {
     | 'Fiskistofa/StraddlingStockCalculator'
     | 'Fiskistofa/SelectedShip'
     | 'Fiskistofa/ShipSearchBoxedInput'
+    | 'Áfengisleyfi/AlcoholLicences'
+    | 'Tækifærisleyfi/TemporaryEventLicences'
+    | 'OrganizationSearchBox'
+    | 'Verðbréfamiðlarar/Brokers'
     | undefined
 
   /** Localized JSON */
@@ -2931,6 +2979,34 @@ export interface ISliceConnectedComponent
     contentType: {
       sys: {
         id: 'sliceConnectedComponent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISliceDropdownFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Dropdown Label */
+  dropdownLabel?: string | undefined
+
+  /** Slices */
+  slices?: IOneColumnText[] | undefined
+}
+
+export interface ISliceDropdown extends Entry<ISliceDropdownFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sliceDropdown'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3467,6 +3543,9 @@ export interface ITeamMemberFields {
 
   /** Mynd */
   mynd: Asset
+
+  /** Image On Select */
+  imageOnSelect?: Asset | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {
@@ -3597,28 +3676,6 @@ export interface ITellUsAStory extends Entry<ITellUsAStoryFields> {
     contentType: {
       sys: {
         id: 'tellUsAStory'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface ITestHnippFieldFields {
-  /** Key */
-  key?: string | undefined
-}
-
-export interface ITestHnippField extends Entry<ITestHnippFieldFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'testHnippField'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -4057,6 +4114,7 @@ export type CONTENT_TYPE =
   | 'overviewLinks'
   | 'pageHeader'
   | 'powerBiSlice'
+  | 'price'
   | 'processEntry'
   | 'projectPage'
   | 'projectSubpage'
@@ -4065,6 +4123,7 @@ export type CONTENT_TYPE =
   | 'sectionWithImage'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
+  | 'sliceDropdown'
   | 'statistic'
   | 'statistics'
   | 'statisticsCard'
@@ -4083,7 +4142,6 @@ export type CONTENT_TYPE =
   | 'teamList'
   | 'teamMember'
   | 'tellUsAStory'
-  | 'testHnippField'
   | 'timeline'
   | 'timelineEvent'
   | 'twoColumnText'

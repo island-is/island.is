@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { CoOwnerAndOperator } from '../../../shared'
+import kennitala from 'kennitala'
 
 export const mainOperatorSubSection = buildSubSection({
   id: 'buyerMainOperator',
@@ -42,8 +43,11 @@ export const mainOperatorSubSection = buildSubSection({
               .filter((field) => field.type === 'operator')
             return operators.map((operator) => {
               return {
-                value: operator.nationalId,
-                label: `${operator.name} - ${operator.nationalId}`,
+                value: operator.nationalId!,
+                label: `${operator.name} - ${kennitala.format(
+                  operator.nationalId!,
+                  '-',
+                )}`,
               }
             })
           },

@@ -4,7 +4,6 @@ import { Sequelize } from 'sequelize-typescript'
 import format from 'date-fns/format'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -24,6 +23,7 @@ import {
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { uuidFactory, nowFactory } from '../../factories'
 import {
@@ -164,7 +164,7 @@ export class InternalCaseService {
   private async uploadSignedRulingPdfToCourt(
     theCase: Case,
     buffer: Buffer,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
     const fileName = this.formatMessage(courtUpload.ruling, {
       courtCaseNumber: theCase.courtCaseNumber,
@@ -197,7 +197,7 @@ export class InternalCaseService {
 
   private async uploadCourtRecordPdfToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
     try {
       const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
@@ -232,7 +232,7 @@ export class InternalCaseService {
 
   private async upploadRequestPdfToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
     return getRequestPdfAsBuffer(theCase, this.formatMessage)
       .then((pdf) => {
@@ -270,7 +270,7 @@ export class InternalCaseService {
   private async uploadCaseFilesRecordPdfToCourt(
     theCase: Case,
     policeCaseNumber: string,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
     const caseFiles = theCase.caseFiles
       ?.filter(
@@ -346,7 +346,7 @@ export class InternalCaseService {
 
   private async deliverSignedRulingPdfToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<boolean> {
     return this.awsS3Service
       .getObject(`generated/${theCase.id}/ruling.pdf`)
@@ -366,20 +366,21 @@ export class InternalCaseService {
     let courtId: string | undefined
 
     if (caseToCreate.prosecutorNationalId) {
-      const prosecutor = await this.userService.findByNationalId(
-        caseToCreate.prosecutorNationalId,
-      )
+      const prosecutor = await this.userService
+        .findByNationalId(caseToCreate.prosecutorNationalId)
+        .catch(() => undefined) // Tolerate failure
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        throw new BadRequestException(
+        // Tolerate failure, but log error
+        this.logger.error(
           `User ${
             prosecutor?.id ?? 'unknown'
           } is not registered as a prosecutor`,
         )
+      } else {
+        prosecutorId = prosecutor.id
+        courtId = prosecutor.institution?.defaultCourtId
       }
-
-      prosecutorId = prosecutor.id
-      courtId = prosecutor.institution?.defaultCourtId
     }
 
     return this.sequelize.transaction(async (transaction) => {
@@ -543,7 +544,7 @@ export class InternalCaseService {
 
   async deliverProsecutorToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
       .updateCaseWithProsecutor(
@@ -556,7 +557,7 @@ export class InternalCaseService {
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {
-        this.logger.error('Failed to update case with defendant', { reason })
+        this.logger.error('Failed to update case with prosecutor', { reason })
 
         return { delivered: false }
       })
@@ -565,7 +566,7 @@ export class InternalCaseService {
   async deliverCaseFilesRecordToCourt(
     theCase: Case,
     policeCaseNumber: string,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -580,7 +581,7 @@ export class InternalCaseService {
 
   async deliverRequestToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -591,7 +592,7 @@ export class InternalCaseService {
 
   async deliverCourtRecordToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -602,7 +603,7 @@ export class InternalCaseService {
 
   async deliverSignedRulingToCourt(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
@@ -613,7 +614,7 @@ export class InternalCaseService {
 
   async deliverCaseToPolice(
     theCase: Case,
-    user: User,
+    user: TUser,
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 

@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import {
+  ConfigModule,
+  XRoadConfig,
+  IdsClientConfig,
+} from '@island.is/nest/config'
 import { SequelizeModule } from '@nestjs/sequelize'
-
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
 
@@ -29,6 +32,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         RegulationsClientConfig,
         XRoadConfig,
         NationalRegistryClientConfig,
+        IdsClientConfig,
       ],
     }),
   ],

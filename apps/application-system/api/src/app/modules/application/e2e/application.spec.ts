@@ -140,7 +140,7 @@ describe('Application system API', () => {
     )
   })
 
-  it('should fetch Applicaiton History for overview', async () => {
+  it('should fetch Application History for overview', async () => {
     const creationResponse = await server
       .post('/applications')
       .send({
@@ -191,7 +191,7 @@ describe('Application system API', () => {
   })
 
   // This template does not have readyForProduction: false
-  it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
+  it.skip('should succeed when POST-ing an application that has an undefined readyforproduction flag, on production environment', async () => {
     const envBefore = environment.environment
     environment.environment = 'production'
 
@@ -923,7 +923,7 @@ describe('Application system API', () => {
         nationalId: '1234567890',
         age: '30',
         email: 'tester@island.is',
-        phoneNumber: '8234567',
+        phoneNumber: '+3548234567',
       },
       dreamJob: 'Yes',
       attachments: [],
@@ -1009,7 +1009,7 @@ describe('Application system API', () => {
         name: '123123',
         email: 'another@email.com',
         nationalId: '123',
-        phoneNumber: '5555555',
+        phoneNumber: '+3545555555',
       },
     }
 
