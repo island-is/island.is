@@ -19,7 +19,6 @@ import { ClientAllowedScopeInput } from './dto/client-allowed-scope.input'
 import { ClientEnvironment } from './models/client-environment.model'
 import { ClientSecret } from './models/client-secret.model'
 import { Client } from './models/client.model'
-import { MeClientsScopesController } from '../../../../../../../apps/services/auth/admin-api/src/app/v2/scopes/me-clients-scopes.controller'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
