@@ -368,7 +368,7 @@ jobs:
       - name: Building NodeJS dependencies
         run: ./scripts/ci/10_prepare-docker-deps.sh
         env:
-          NPM_AUTH_TOKEN: ${{ needs.prepare.outputs.NPM_AUTH_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ steps.prepare.outputs.NPM_AUTH_TOKEN }}
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
@@ -631,9 +631,11 @@ jobs:
           aws-region: eu-west-1
 
       - name: Get AWS NPM secret
+        id: npm_secrets
         run: |
-          export NPM_AUTH_TOKEN=$((aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text))
+          NPM_AUTH_TOKEN=$((aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text))
           echo "::add-mask::$NPM_AUTH_TOKEN"
+          echo "::set-output name=npm_auth_token::${NPM_AUTH_TOKEN}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -648,7 +650,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg NPM_AUTH_TOKEN=$NPM_AUTH_TOKEN'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg NPM_AUTH_TOKEN=${{ steps.prepare.outputs.NPM_AUTH_TOKEN }}'
 
       - name: Retag as latest
         if: env.GIT_BRANCH == 'main'
