@@ -175,10 +175,9 @@ yargs(process.argv.slice(2))
       })
     },
     async (argv: Arguments) => {
-      const { habitat, affectedServices, env } = parseArguments(argv)
+      const { affectedServices, env } = parseArguments(argv)
       const featureYaml = await renderHelmJobForFeature(
         env,
-        habitat,
         argv.jobImage!,
         affectedServices,
       )

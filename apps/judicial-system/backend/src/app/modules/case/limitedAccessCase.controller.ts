@@ -50,6 +50,7 @@ import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
+import { CaseEvent, EventService } from '../event'
 
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('limited access cases')
@@ -57,6 +58,8 @@ export class LimitedAccessCaseController {
   constructor(
     private readonly caseService: CaseService,
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
+    private readonly eventService: EventService,
+
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -121,7 +124,7 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Updates the state of a case',
   })
-  transition(
+  async transition(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: TUser,
     @CurrentCase() theCase: Case,
@@ -141,7 +144,18 @@ export class LimitedAccessCaseController {
       update.accusedPostponedAppealDate = nowFactory()
     }
 
-    return this.limitedAccessCaseService.update(theCase, update, user)
+    const updatedCase = await this.limitedAccessCaseService.update(
+      theCase,
+      update,
+      user,
+    )
+
+    this.eventService.postEvent(
+      (transition.transition as unknown) as CaseEvent,
+      updatedCase,
+    )
+
+    return updatedCase
   }
 
   @UseGuards(TokenGuard, LimitedAccessCaseExistsGuard)
