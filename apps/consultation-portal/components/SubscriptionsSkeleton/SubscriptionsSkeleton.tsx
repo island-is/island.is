@@ -30,6 +30,11 @@ const BREADCRUMBS_LIST = [
   },
 ]
 
+const MY_BREADCRUMBS_LIST = [
+  ...BREADCRUMBS_LIST,
+  { title: 'Mínar áskriftir ', href: '/samradsgatt/minaraskriftir' },
+]
+
 const SUBSCRIPTIONS = {
   title: 'Áskriftir',
   url: 'askriftir',
@@ -48,12 +53,6 @@ const SubscriptionsSkeleton = ({
   tabs,
   getUserSubsLoading,
 }: Props) => {
-  if (isMySubscriptions) {
-    BREADCRUMBS_LIST.concat({
-      title: 'Mínar áskriftir ',
-      href: '/samradsgatt/minaraskriftir',
-    })
-  }
   return (
     <Layout
       seo={isMySubscriptions ? MY_SUBSCRIPTIONS : SUBSCRIPTIONS}
@@ -61,7 +60,9 @@ const SubscriptionsSkeleton = ({
     >
       <Divider />
       <Box background="blue100">
-        <BreadcrumbsWithMobileDivider items={BREADCRUMBS_LIST} />
+        <BreadcrumbsWithMobileDivider
+          items={isMySubscriptions ? MY_BREADCRUMBS_LIST : BREADCRUMBS_LIST}
+        />
 
         <GridContainer>
           <Box paddingX={[0, 0, 0, 8, 15]} paddingBottom={3}>
