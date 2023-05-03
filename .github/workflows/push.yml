@@ -355,15 +355,19 @@ jobs:
       - name: Check cache success
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
       - name: Get AWS NPM secret
         id: npm_secrets
         run: |
           NPM_AUTH_TOKEN=$((aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text))
           echo "::add-mask::$NPM_AUTH_TOKEN"
           echo "::set-output name=npm_auth_token::${NPM_AUTH_TOKEN}"
-        # env:
-        #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Building NodeJS dependencies
         run: ./scripts/ci/10_prepare-docker-deps.sh
