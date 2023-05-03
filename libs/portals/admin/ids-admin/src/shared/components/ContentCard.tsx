@@ -178,7 +178,7 @@ const ContentCard: FC<ContentCardProps> = ({
                 <DropdownMenu
                   title={
                     inSync
-                      ? formatMessage(m.inSync)
+                      ? formatMessage(m.synced)
                       : formatMessage(m.outOfSync)
                   }
                   icon="chevronDown"
@@ -203,7 +203,7 @@ const ContentCard: FC<ContentCardProps> = ({
                             />
                             <Text variant="small" color="blue400">
                               {inSync
-                                ? formatMessage(m.inSyncAcrossAllEnvironments)
+                                ? formatMessage(m.syncedAcrossAllEnvironments)
                                 : formatMessage(
                                     m.notInSyncAcrossAllEnvironments,
                                   )}

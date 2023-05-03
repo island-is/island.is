@@ -13,6 +13,7 @@ import {
   AuthAdminEnvironment,
   AuthAdminTranslatedValue,
   AuthAdminRefreshTokenExpiration,
+  AuthAdminClientClaim,
 } from '@island.is/api/schema'
 
 export enum ClientFormTypes {
@@ -32,7 +33,7 @@ const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
   return s.split(/\s*,\s*|\s+|\n+/)
 }
 
-const transformCustomClaims = (s: string) => {
+const transformCustomClaims = (s: string): AuthAdminClientClaim[] => {
   if (!s) {
     return []
   }
@@ -41,7 +42,7 @@ const transformCustomClaims = (s: string) => {
 
   return array.map((claim) => {
     const [type, value] = claim.split('=')
-    return { type, value } as { type: string; value: string }
+    return { type, value }
   })
 }
 
@@ -204,7 +205,7 @@ export const schema = {
       requireConsent: z.optional(z.string()).transform((s) => {
         return s === 'true'
       }),
-      slidingRefreshTokenLifetime: z
+      accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {
           message: 'errorPositiveNumber',
