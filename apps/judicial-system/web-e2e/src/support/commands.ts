@@ -35,7 +35,7 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
       } else {
         return { fixture: 'prosecutorUser' }
       }
-    } else if (graphqlRequest.body.query.includes('UsersQuery')) {
+    } else if (graphqlRequest.body.query.includes('Users')) {
       if (graphqlRequest.headers.referer.includes('/domur')) {
         return {
           fixture: 'judgeUsers',
