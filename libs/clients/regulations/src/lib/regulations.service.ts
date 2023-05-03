@@ -184,14 +184,8 @@ export class RegulationsService extends RESTDataSource {
     )
 
     const searchNames = searchRes?.data?.map((item) => item.name)
-
     if (searchNames && searchNames?.length > 0) {
-      const response =
-        (await this.get<RegulationOptionList>(
-          'regulations/optionsList?names=' + searchNames.join(','),
-        )) ?? []
-
-      return response
+      return await this.getRegulationOptionList(searchNames)
     }
 
     return null
