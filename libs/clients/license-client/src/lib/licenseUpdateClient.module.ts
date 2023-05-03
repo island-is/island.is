@@ -57,7 +57,7 @@ import {
           adrLicense: adrConfig.passTemplateId,
           machineLicense: machineConfig.passTemplateId,
           disabilityLicense: disabilityConfig.passTemplateId,
-          drivingLicense: drivingConfig.passTemplateId,
+          driversLicense: drivingConfig.passTemplateId,
         }
         return ids
       },
@@ -83,7 +83,7 @@ import {
             return firearmClient
           case LicenseType.DisabilityLicense:
             return disabilityClient
-          case LicenseType.DrivingLicense:
+          case LicenseType.DriversLicense:
             return drivingClient
           default:
             return null

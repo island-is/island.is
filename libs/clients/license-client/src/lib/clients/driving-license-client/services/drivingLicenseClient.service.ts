@@ -117,7 +117,6 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
           }
         : null,
     }
-    this.logger.debug(JSON.stringify(payload))
     return payload
   }
 
