@@ -1,13 +1,9 @@
-import { Op } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApiScope } from '../models/api-scope.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { Client } from '../../clients/models/client.model'
-import { ClientAllowedScope } from '../../clients/models/client-allowed-scope.model'
-import { NoContentException } from '@island.is/nest/problem'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -21,14 +17,6 @@ export class AdminScopeService {
     private readonly clientModel: typeof Client,
   ) {}
 
-  mapApiScopesToDto({ name, description, displayName }: ApiScope) {
-    return {
-      name,
-      description,
-      displayName,
-    }
-  }
-
   async findApiScopesByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
     const apiScopes = await this.apiScope.findAll({
       where: {
@@ -36,6 +24,6 @@ export class AdminScopeService {
       },
     })
 
-    return apiScopes.map(this.mapApiScopesToDto)
+    return apiScopes.map((apiScope) => new AdminScopeDTO(apiScope))
   }
 }

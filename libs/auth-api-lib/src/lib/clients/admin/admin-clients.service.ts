@@ -731,6 +731,6 @@ export class AdminClientsService {
       },
     })
 
-    return apiScopes.map(this.mapApiScopesToDto)
+    return apiScopes.map((apiScope) => new AdminScopeDTO(apiScope))
   }
 }
