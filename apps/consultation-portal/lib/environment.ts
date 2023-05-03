@@ -27,7 +27,7 @@ const prodConfig = {
   identityServerName: 'Samradsgatt',
   idsTokenCookieName: '__Secure-next-auth.session-token',
   csrfCookieName: '__Host-next-auth.csrf-token',
-  backendDownloadUrl: '',
+  backendDownloadUrl: 'https://samradapi-test.devland.is/api/Documents/',
 }
 
 export default isProd ? prodConfig : devConfig
