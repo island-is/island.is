@@ -355,13 +355,6 @@ jobs:
       - name: Check cache success
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: eu-west-1
-
       - name: Get AWS NPM secret
         id: npm_secrets
         run: |
@@ -372,7 +365,7 @@ jobs:
       - name: Building NodeJS dependencies
         run: ./scripts/ci/10_prepare-docker-deps.sh
         env:
-          NPM_AUTH_TOKEN: ${{ steps.prepare.outputs.NPM_AUTH_TOKEN }}
+          NPM_AUTH_TOKEN: ${{ steps.npm_secrets.outputs.NPM_AUTH_TOKEN }}
 
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
@@ -627,15 +620,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ECR_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.ECR_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
-
       - name: Get AWS NPM secret
-        id: npm_secrets
+        id: npm_secrets_helm
         run: |
           NPM_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain npm-upstream --domain-owner 821090935708 --region eu-west-1 --query authorizationToken --output text`
           echo "::add-mask::$NPM_AUTH_TOKEN"
@@ -651,7 +637,7 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg NPM_AUTH_TOKEN=${{ steps.prepare.outputs.NPM_AUTH_TOKEN }}'
+          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg NPM_AUTH_TOKEN=${{ steps.npm_secrets_helm.outputs.NPM_AUTH_TOKEN }}'
 
       - name: Retag as latest
         if: env.GIT_BRANCH == 'main'
