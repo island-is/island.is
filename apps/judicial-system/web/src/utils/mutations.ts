@@ -44,6 +44,7 @@ export const CasesQuery = gql`
       courtDate
       isValidToDateInThePast
       initialRulingDate
+      rulingDate
       judge {
         id
       }
