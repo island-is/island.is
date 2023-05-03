@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
-import { ElasticService } from '@island.is/content-search-toolkit'
 import { TerminusModule } from '@nestjs/terminus'
+import { ElasticService } from '@island.is/content-search-toolkit'
+import { PowerBiServiceProvider } from '@island.is/api/domains/powerbi'
 import {
   CmsResolver,
   ArticleResolver,
@@ -14,17 +15,9 @@ import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
 import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
-import { PowerBiServiceProvider } from './powerbi.service'
-import { ConfigModule } from '@island.is/nest/config'
-import { PowerBiConfig } from './powerbi.config'
 
 @Module({
-  imports: [
-    TerminusModule,
-    ConfigModule.forRoot({
-      load: [PowerBiConfig],
-    }),
-  ],
+  imports: [TerminusModule],
   providers: [
     CmsResolver,
     ArticleResolver,

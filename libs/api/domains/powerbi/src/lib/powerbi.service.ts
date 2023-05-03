@@ -1,5 +1,5 @@
 import { Configuration, ConfidentialClientApplication } from '@azure/msal-node'
-import { Provider } from '@nestjs/common'
+import { Injectable, Provider } from '@nestjs/common'
 import { LazyDuringDevScope } from '@island.is/nest/config'
 import { ConfigType } from '@island.is/nest/config'
 import {
@@ -7,11 +7,11 @@ import {
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { PowerBiConfig } from './powerbi.config'
-import { PowerBiSlice } from './models/powerBiSlice.model'
 
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
 
+@Injectable({ scope: LazyDuringDevScope })
 export class PowerBiService {
   private fetch: EnhancedFetchAPI
 
@@ -19,7 +19,11 @@ export class PowerBiService {
     this.fetch = createEnhancedFetch({ name: 'PowerBiService' })
   }
 
-  async getEmbedProps(powerBiSlice: PowerBiSlice) {
+  async getEmbedProps(powerBiSlice: {
+    owner?: string
+    workspaceId?: string
+    reportId?: string
+  }) {
     if (
       !powerBiSlice.owner ||
       !powerBiSlice.workspaceId ||
@@ -27,7 +31,7 @@ export class PowerBiService {
     )
       return null
 
-    const accessToken = await this.getAccessToken(powerBiSlice.owner)
+    const accessToken = await this.getAccessToken(powerBiSlice.owner as Owner)
 
     const report = await this.getReport(
       powerBiSlice.workspaceId,
