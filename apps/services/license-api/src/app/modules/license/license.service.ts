@@ -14,7 +14,7 @@ import {
   RevokeLicenseResponse,
 } from './dto'
 import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
-import { LicenseId } from './license.types'
+import { ErrorType, LicenseId } from './license.types'
 import {
   BaseLicenseUpdateClient,
   LicenseType,
@@ -22,12 +22,24 @@ import {
 } from '@island.is/clients/license-client'
 import { mapLicenseIdToLicenseType } from './utils/mapLicenseId'
 
+const LOG_CATEGORY = 'license-api'
+
 @Injectable()
 export class LicenseService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly clientService: LicenseUpdateClientService,
   ) {}
+
+  private getErrorTypeByCode = (code: number): ErrorType =>
+    code < 10 ? 'BadRequest' : 'ServerError'
+
+  //Error message is an array to maintain consistency
+  private getException = (errorType: ErrorType, details?: string | object) => {
+    return errorType === 'BadRequest'
+      ? new BadRequestException([details ?? 'Unknown error'])
+      : new InternalServerErrorException([details ?? 'Unknown error'])
+  }
 
   private async getClientByLicenseId(
     licenseId: LicenseId,
@@ -75,7 +87,13 @@ export class LicenseService {
       try {
         parsedInputPayload = JSON.parse(payload)
       } catch (e) {
-        throw new BadRequestException('Unable to parse payload')
+        this.logger.warn('Unable to parse payload', {
+          category: LOG_CATEGORY,
+        })
+        throw this.getException(
+          'BadRequest',
+          'Unable to parse payload for push update',
+        )
       }
       updatePayload = {
         ...updatePayload,
@@ -110,10 +128,16 @@ export class LicenseService {
     if (inputData.licenseUpdateType === 'push') {
       const { expiryDate, payload } = inputData
 
-      if (!expiryDate)
-        throw new BadRequestException(
+      if (!expiryDate) {
+        this.logger.warn('Invalid request body, missing expiryDate', {
+          category: LOG_CATEGORY,
+        })
+
+        throw this.getException(
+          'BadRequest',
           'Invalid request body, missing expiryDate',
         )
+      }
 
       updateRes = await this.pushUpdateLicense(
         service,
@@ -131,11 +155,15 @@ export class LicenseService {
         data: updateRes.data,
       }
     }
-    // code < 10 means malformed request
-    if (updateRes.error.code < 10) {
-      throw new BadRequestException(updateRes.error.message)
-    }
-    throw new InternalServerErrorException(updateRes.error.message)
+
+    this.logger.error('Update license failed', {
+      category: LOG_CATEGORY,
+      ...updateRes.error,
+    })
+    throw this.getException(
+      this.getErrorTypeByCode(updateRes.error.code),
+      updateRes.error.message,
+    )
   }
 
   async revokeLicense(
@@ -143,18 +171,20 @@ export class LicenseService {
     nationalId: string,
   ): Promise<RevokeLicenseResponse> {
     const service = await this.getClientByLicenseId(licenseId)
-    const revokeData = await service.revoke(nationalId)
+    const revokeRes = await service.revoke(nationalId)
 
-    if (revokeData.ok) {
-      return { revokeSuccess: revokeData.data.success }
+    if (revokeRes.ok) {
+      return { revokeSuccess: revokeRes.data.success }
     }
 
-    const code = revokeData.error.code
-    // code < 10 means malformed request
-    if (code < 10) {
-      throw new BadRequestException(revokeData.error.message)
-    }
-    throw new InternalServerErrorException(revokeData.error.message)
+    this.logger.error('Update license failed', {
+      category: LOG_CATEGORY,
+      ...revokeRes.error,
+    })
+    throw this.getException(
+      this.getErrorTypeByCode(revokeRes.error.code),
+      revokeRes.error.message,
+    )
   }
 
   async verifyLicense(
@@ -163,25 +193,30 @@ export class LicenseService {
     const { passTemplateId } = JSON.parse(inputData.barcodeData)
 
     if (!passTemplateId) {
-      throw new BadRequestException('Missing passTemplateId from request input')
+      this.logger.error('No pass template id supplied', {
+        category: LOG_CATEGORY,
+      })
+      throw this.getException('BadRequest', 'Missing pass template id')
     }
 
     const service = await this.getClientByPassTemplateId(passTemplateId)
 
-    const verifyData = await service.verify(inputData.barcodeData)
+    const verifyRes = await service.verify(inputData.barcodeData)
 
-    if (verifyData.ok) {
+    if (verifyRes.ok) {
       return {
-        valid: verifyData.data.valid,
-        passIdentity: verifyData.data.passIdentity,
+        valid: verifyRes.data.valid,
+        passIdentity: verifyRes.data.passIdentity,
       }
     }
-
-    const code = verifyData.error.code
-    // code < 10 means malformed request
-    if (code < 10) {
-      throw new BadRequestException(verifyData.error.message)
-    }
-    throw new InternalServerErrorException(verifyData.error.message)
+    this.logger.error('verify license failed', {
+      category: LOG_CATEGORY,
+      ...verifyRes.error,
+      requestId: inputData.requestId,
+    })
+    throw this.getException(this.getErrorTypeByCode(verifyRes.error.code), {
+      message: verifyRes.error.message,
+      requestId: inputData.requestId,
+    })
   }
 }

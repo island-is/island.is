@@ -6,7 +6,7 @@ import { environment } from '../environments'
 import { LicenseModule } from './modules/license/license.module'
 import { LoggingModule } from '@island.is/logging'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
-import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
+import { OpenFirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { ProblemModule } from '@island.is/nest/problem'
 import {
@@ -28,7 +28,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
       isGlobal: true,
       load: [
         XRoadConfig,
-        FirearmLicenseClientConfig,
+        OpenFirearmLicenseClientConfig,
         FirearmDigitalLicenseClientConfig,
         DisabilityLicenseClientConfig,
         DisabilityDigitalLicenseClientConfig,

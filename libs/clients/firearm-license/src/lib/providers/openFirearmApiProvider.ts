@@ -4,17 +4,17 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { FirearmLicenseClientConfig } from '../firearmLicenseClient.config'
 import { Configuration, FirearmApplicationApi } from '../../../gen/fetch'
 import { Provider } from '@nestjs/common'
 import { OPEN_FIREARM_APPLICATION_API } from '../firearmApi.types'
+import { OpenFirearmLicenseClientConfig } from '../openFirearmLicenseClient.config'
 
 export const OpenFirearmApiProvider: Provider<FirearmApplicationApi> = {
   provide: OPEN_FIREARM_APPLICATION_API,
   scope: LazyDuringDevScope,
   useFactory: (
     xroadConfig: ConfigType<typeof XRoadConfig>,
-    config: ConfigType<typeof FirearmLicenseClientConfig>,
+    config: ConfigType<typeof OpenFirearmLicenseClientConfig>,
   ) =>
     new FirearmApplicationApi(
       new Configuration({
@@ -30,5 +30,5 @@ export const OpenFirearmApiProvider: Provider<FirearmApplicationApi> = {
         },
       }),
     ),
-  inject: [XRoadConfig.KEY, FirearmLicenseClientConfig.KEY],
+  inject: [XRoadConfig.KEY, OpenFirearmLicenseClientConfig.KEY],
 }

@@ -53,6 +53,7 @@ export class FinancialStatementsInaoClientService {
       mode: 'token',
       tokenEndpoint: this.config.tokenEndpoint,
     },
+    timeout: 30000,
   })
 
   async getClientTypes(): Promise<ClientType[] | null> {

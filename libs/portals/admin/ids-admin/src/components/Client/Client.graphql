@@ -8,6 +8,10 @@ query GetClient($input: ClientInput!) {
       id
       environment
       clientId
+      secrets {
+        secretId
+        decryptedValue
+      }
       displayName {
         locale
         value
@@ -27,7 +31,10 @@ query GetClient($input: ClientInput!) {
       requireConsent
       requirePkce
       accessTokenLifetime
-      customClaims
+      customClaims {
+        type
+        value
+      }
       allowOfflineAccess
     }
   }

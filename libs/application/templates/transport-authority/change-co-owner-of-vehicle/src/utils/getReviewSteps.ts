@@ -1,6 +1,6 @@
 import {
   ReviewSectionProps,
-  UserInformation,
+  CoOwnersInformation,
   OwnerCoOwnersInformation,
 } from '../shared'
 import { Application } from '@island.is/application/types'
@@ -24,7 +24,7 @@ export const getReviewSteps = (application: Application) => {
     application.answers,
     'coOwners',
     [],
-  ) as UserInformation[]
+  ) as CoOwnersInformation[]
 
   const filteredCoOwners = coOwners.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',

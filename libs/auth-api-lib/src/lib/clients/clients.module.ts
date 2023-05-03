@@ -15,6 +15,7 @@ import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
 import { ClientSecret } from './models/client-secret.model'
 import { ClientsTranslationService } from './clients-translation.service'
 import { Domain } from '../resources/models/domain.model'
+import { ApiScope } from '../resources/models/api-scope.model'
 
 @Module({
   imports: [
@@ -29,10 +30,11 @@ import { Domain } from '../resources/models/domain.model'
       ClientRedirectUri,
       ClientSecret,
       Domain,
+      ApiScope,
     ]),
     TranslationModule,
   ],
   providers: [ClientsService, AdminClientsService, ClientsTranslationService],
-  exports: [ClientsService, AdminClientsService],
+  exports: [ClientsService, AdminClientsService, SequelizeModule],
 })
 export class ClientsModule {}

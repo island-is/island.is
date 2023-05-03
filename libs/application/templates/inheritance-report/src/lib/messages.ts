@@ -99,6 +99,17 @@ export const m = defineMessages({
       'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
     description: '',
   },
+  funeralExpensesTitle: {
+    id: 'ir.application:funeralExpensesTitle',
+    defaultMessage: 'Yfirlit um útfararkostnað',
+    description: '',
+  },
+  funeralExpensesSubtitle: {
+    id: 'ir.application:funeralExpensesSubtitle',
+    defaultMessage:
+      'Athugað er hvort að skráningaraðili sé búinn að fylla út yfirlit um útfararkostnað',
+    description: '',
+  },
 
   // Applicant's Information
   applicantsInfo: {
@@ -200,6 +211,12 @@ export const m = defineMessages({
     id: 'ir.application:continueWithoutVehicles',
     defaultMessage:
       'Ef hinn látni átti ekki farartæki vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  continueWithoutGuns: {
+    id: 'ir.application:continueWithoutGuns',
+    defaultMessage:
+      'Ef hinn látni átti ekki skotvopn vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
   continueWithoutInnventory: {
@@ -357,6 +374,33 @@ export const m = defineMessages({
     id: 'ir.application:vehicleTypeLabel',
     defaultMessage: 'Tegund faratækis',
     description: 'Vehicle type label',
+  },
+
+  // Guns
+  guns: {
+    id: 'ir.application:guns',
+    defaultMessage: 'Skotvopn',
+    description: '',
+  },
+  gunsDescription: {
+    id: 'ir.application:gunsDescription',
+    defaultMessage: 'Til dæmis haglabyssa, riffill og skammbyssa',
+    description: '',
+  },
+  addGun: {
+    id: 'ir.application:addGun',
+    defaultMessage: 'Bæta við skotvopni',
+    description: 'Add gun',
+  },
+  gunType: {
+    id: 'ir.application:gunType',
+    defaultMessage: 'Tegund',
+    description: '',
+  },
+  gunValuation: {
+    id: 'ir.application:gunValuation',
+    defaultMessage: 'Markaðsverðmæti á dánardegi',
+    description: '',
   },
 
   // Bank Info

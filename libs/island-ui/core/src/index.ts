@@ -124,6 +124,7 @@ export type { GridColumns } from './lib/Grid/GridColumn/GridColumn.css'
 
 // Styles
 export * as linkStyles from './lib/Link/Link.css'
+export * as alertBannerStyles from './lib/AlertBanner/AlertBanner.css'
 
 // Hooks
 export * from './hooks/useBreakpoint'

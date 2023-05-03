@@ -11,6 +11,8 @@ import { clientsLoader } from './components/Clients/Clients.loader'
 import Client from './components/Client/Client'
 import { clientLoader } from './components/Client/Client.loader'
 import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
+import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
+import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -67,6 +69,15 @@ export const idsAdminModule: PortalModule = {
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminTenants,
                 },
+                children: [
+                  {
+                    name: m.publishEnvironment,
+                    navHide: true,
+                    path: IDSAdminPaths.IDSAdminClientPublish,
+                    action: publishEnvironmentAction(props),
+                    element: <PublishEnvironment />,
+                  },
+                ],
               },
             ],
           },
