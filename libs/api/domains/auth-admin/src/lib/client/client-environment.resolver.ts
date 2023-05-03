@@ -9,10 +9,8 @@ import { ClientSecret } from './models/client-secret.model'
 import { ClientSecretLoader } from './client-secret.loader'
 import type { ClientSecretDataLoader } from './client-secret.loader'
 import { AllowedScope } from './models/allowed-scope.model'
-import {
-  ClientAllowedScopesDataLoader,
-  ClientAllowedScopesLoader,
-} from './client-allowed-scopes.loader'
+import type { ClientAllowedScopesDataLoader } from './client-allowed-scopes.loader'
+import { ClientAllowedScopesLoader } from './client-allowed-scopes.loader'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ClientEnvironment)
