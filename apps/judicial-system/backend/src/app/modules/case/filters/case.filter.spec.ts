@@ -1,14 +1,10 @@
-import { Op } from 'sequelize'
 import each from 'jest-each'
 
 import {
-  appealsCourtRoles,
   CaseAppealDecision,
-  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
-  courtRoles,
   indictmentCases,
   InstitutionType,
   investigationCases,

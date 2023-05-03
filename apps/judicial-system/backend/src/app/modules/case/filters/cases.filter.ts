@@ -58,7 +58,7 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   }
 }
 
-function getDistricteCourtUserCasesQueryFilter(user: User): WhereOptions {
+function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -169,7 +169,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
   }
 
   if (isDistrictCourtUser(user)) {
-    return getDistricteCourtUserCasesQueryFilter(user)
+    return getDistrictCourtUserCasesQueryFilter(user)
   }
 
   if (isAppealsCourtUser(user)) {
