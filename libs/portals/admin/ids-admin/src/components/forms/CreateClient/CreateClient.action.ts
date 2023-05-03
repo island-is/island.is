@@ -6,6 +6,7 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
+import { validateClientId } from '@island.is/shared/utils'
 import {
   AuthAdminCreateClientType,
   AuthAdminEnvironment,
@@ -17,18 +18,6 @@ import {
 } from './CreateClient.generated'
 import { redirect } from 'react-router-dom'
 import { IDSAdminPaths } from '../../../lib/paths'
-
-/**
- * Validates that the applicationId is prefixed with the tenant and that it matches the regex
- * Value can only contain alphanumeric characters, hyphens, underscores, periods and forward slashes.
- */
-export const validateClientId = ({
-  prefix,
-  value,
-}: {
-  prefix: string
-  value: string
-}) => new RegExp(`^${prefix}/[a-zA-Z0-9]+([-_/.][a-zA-Z0-9]+)*$`).test(value)
 
 const schema = z
   .object({

@@ -72,6 +72,7 @@ export * from './lib/resources/dto/domain.dto'
 export * from './lib/resources/dto/user-claim.dto'
 export * from './lib/resources/dto/tenant.dto'
 export * from './lib/resources/admin/dto/admin-scope.dto'
+export * from './lib/resources/admin/dto/client-create-scope.dto'
 
 // Clients module
 export * from './lib/clients/clients.module'

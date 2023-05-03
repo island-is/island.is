@@ -36,6 +36,7 @@ import {
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
 import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
+import { validateClientId } from '@island.is/shared/utils'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -134,8 +135,12 @@ export class AdminClientsService {
       throw new NoContentException()
     }
 
-    // validate that client id starts with the tenant id
-    if (!clientDto.clientId.startsWith(`${tenantId}/`)) {
+    if (
+      !validateClientId({
+        prefix: tenantId,
+        value: clientDto.clientId,
+      })
+    ) {
       throw new BadRequestException('Invalid client id')
     }
 
@@ -675,14 +680,6 @@ export class AdminClientsService {
         transaction,
         ignoreDuplicates: true,
       })
-    }
-  }
-
-  mapApiScopesToDto({ name, description, displayName }: ApiScope) {
-    return {
-      name,
-      description,
-      displayName,
     }
   }
 
