@@ -33,7 +33,7 @@ else
             echo "extension $i enabled"
         else 
             echo "Failed to enable extension $i" 
-        
+        fi
     done
 fi
 
