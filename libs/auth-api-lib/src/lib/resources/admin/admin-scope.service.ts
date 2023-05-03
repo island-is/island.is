@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { ApiScope } from '../models/api-scope.model'
-import { AdminScopeDto } from './dto/admin-scope.dto'
+import { AdminScopeDTO } from './dto/admin-scope.dto'
+import { Client } from '../../clients/models/client.model'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -12,23 +13,17 @@ export class AdminScopeService {
   constructor(
     @InjectModel(ApiScope)
     private readonly apiScope: typeof ApiScope,
+    @InjectModel(Client)
+    private readonly clientModel: typeof Client,
   ) {}
 
-  mapApiScopesToDto({ name, description, displayName }: ApiScope) {
-    return {
-      name,
-      description,
-      displayName,
-    }
-  }
-
-  async findApiScopesByTenantId(tenantId: string): Promise<AdminScopeDto[]> {
+  async findApiScopesByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
     const apiScopes = await this.apiScope.findAll({
       where: {
         domainName: tenantId,
       },
     })
 
-    return apiScopes.map(this.mapApiScopesToDto)
+    return apiScopes.map((apiScope) => new AdminScopeDTO(apiScope))
   }
 }
