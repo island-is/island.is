@@ -630,4 +630,34 @@ describe('MessageHandlerService - Handle message', () => {
       expect(then.result).toBe(true)
     })
   })
+
+  describe('send appeal statement notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send appeal statement notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.APPEAL_STATEMENT,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
 })

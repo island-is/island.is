@@ -10,6 +10,7 @@ import {
   buildDividerField,
   buildCustomField,
   buildSubmitField,
+  buildSubSection,
 } from '@island.is/application/core'
 import {
   Application,
@@ -33,12 +34,33 @@ export const getForm = ({ allowFakeData = false }): Form => {
         id: 'externalData',
         title: m.externalDataSectionTitle,
         children: [
+          buildSubSection({
+            id: 'intro',
+            title: m.introTitle,
+            children: [
+              buildDescriptionField({
+                id: 'intro.description',
+                title: m.introTitle,
+                description: m.introBody,
+              }),
+            ],
+          }),
           ...(allowFakeData ? [sectionFakeData] : []),
           buildExternalDataProvider({
             id: 'approveExternalData',
             title: m.externalDataSectionTitle,
             checkboxLabel: m.externalDataSectionCheckboxLabel,
             dataProviders: [
+              buildDataProviderItem({
+                id: 'nationalRegistry',
+                title: m.titleNationalRegistryProvider,
+                subTitle: m.descriptionNationalRegistryProvider,
+              }),
+              buildDataProviderItem({
+                id: 'personalInfo',
+                title: m.titlePersonalInfoProvider,
+                subTitle: m.descriptionPersonalInfoProvider,
+              }),
               buildDataProviderItem({
                 id: 'currentLicense',
                 type: 'CurrentLicenseProvider',

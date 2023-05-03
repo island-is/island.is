@@ -193,11 +193,7 @@ export class CourtClientServiceImplementation implements CourtClientService {
     if (!this.connectionState[courtId]) {
       const credentials = this.courtsCredentials[courtId]
 
-      if (
-        !credentials ||
-        // TODO Remove court id check when indictments are ready
-        courtId === '73ef0f01-7ae6-477c-af4a-9e86c2bc3440' // Héraðsdómur Austurlands
-      ) {
+      if (!credentials) {
         throw new NotImplementedException(
           `Integration with court ${courtId} not implemented`,
         )
