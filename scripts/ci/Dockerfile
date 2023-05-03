@@ -1,9 +1,10 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
-ARG NPM_AUTH_TOKEN
 
 FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
+
+ARG NPM_AUTH_TOKEN
 
 RUN apk add -U git
 RUN apk add --no-cache aws-cli
