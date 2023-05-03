@@ -20,6 +20,7 @@ import { UserEmailResult } from '../models/userEmailResult.model'
 import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
 import { PostEmailCommand } from '../models/postEmailCommand.model'
 import { UserSubscriptionsCommand } from '../models/userSubscriptionsCommand.model'
+import { PostSubscriptionTypeInput } from '../dto/postSubscriptionType.input'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard, IdsUserGuard, ScopesGuard)
@@ -76,8 +77,8 @@ export class UserResolver {
   })
   async postUserSubscriptions(
     @CurrentUser() user: User,
-    @Args('input', { type: () => UserSubscriptionsCommand })
-    input: UserSubscriptionsCommand,
+    @Args('input', { type: () => PostSubscriptionTypeInput })
+    input: PostSubscriptionTypeInput,
   ): Promise<void> {
     const response = await this.userService.postUserSubscriptions(user, input)
     return response

@@ -32,6 +32,7 @@ export const SUB_GET_EMAIL = gql`
     }
   }
 `
+
 export const SUB_POST_SUBS = gql`
   mutation SUB_POST_SUBS(
     $input: ConsultationPortalUserSubscriptionsCommandInput!
@@ -39,12 +40,13 @@ export const SUB_POST_SUBS = gql`
     consultationPortalPostSubscriptions(input: $input)
   }
 `
+
 // screens/UserSubscriptions
 export const SUB_GET_USERSUBS = gql`
   query SUB_GET_USERSUBS {
     consultationPortalUserSubscriptions {
       subscribedToAll
-      subscribedToAllNew
+      subscribedToAllType
       cases {
         id
         subscriptionType
