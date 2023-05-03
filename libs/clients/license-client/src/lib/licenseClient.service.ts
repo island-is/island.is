@@ -7,15 +7,10 @@ import {
 } from './licenseClient.type'
 import { Cache as CacheManager } from 'cache-manager'
 import type { PassTemplateIds, LicenseTypeType } from './licenseClient.type'
-import { DRIVING_LICENSE_CLIENT_FACTORY } from './clients/driving-license-client'
 
 @Injectable()
 export class LicenseClientService {
   constructor(
-    @Inject(DRIVING_LICENSE_CLIENT_FACTORY)
-    private drivingLicenseFactory: (
-      cacheManager: CacheManager,
-    ) => Promise<LicenseClient<unknown | null>>,
     @Inject(LICENSE_CLIENT_FACTORY)
     private licenseClientFactory: (
       type: LicenseType,
@@ -24,13 +19,7 @@ export class LicenseClientService {
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
   ) {}
 
-  private async getClient(type: LicenseType) {
-    const client =
-      type === LicenseType.DriversLicense
-        ? this.drivingLicenseFactory(this.cacheManager)
-        : this.licenseClientFactory(type)
-    return await client
-  }
+  private getClient = (type: LicenseType) => this.licenseClientFactory(type)
 
   private getTypeByPassTemplateId(id: string) {
     for (const [key, value] of Object.entries(this.config)) {

@@ -6,9 +6,9 @@ import {
 } from '../licenceService.type'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
-import { DrivingLicenseDto } from '@island.is/clients/license-client'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
+import { DriversLicense } from '@island.is/clients/driving-license'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
@@ -21,10 +21,10 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
   ): GenericUserLicensePayload | null {
     if (!payload) return null
 
-    const typedPayload = payload as DrivingLicenseDto
+    const typedPayload = payload as DriversLicense
 
-    const expired = typedPayload.gildirTil
-      ? !isAfter(new Date(typedPayload.gildirTil), new Date())
+    const expired = typedPayload.expires
+      ? !isAfter(new Date(typedPayload.expires), new Date())
       : null
 
     const label = labels?.labels
@@ -42,53 +42,51 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('fullName', locale, label),
-        value: typedPayload.nafn,
+        value: typedPayload.name,
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('publisher', locale, label),
-        value: typedPayload.nafnUtgafustadur,
+        // todo:
+        // value: typedPayload.location ?? '',
+        value: '',
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('publishedDate', locale, label),
-        value: typedPayload.utgafuDagsetning
-          ? new Date(typedPayload.utgafuDagsetning).toISOString()
+        value: typedPayload.issued
+          ? new Date(typedPayload.issued).toISOString()
           : '',
       },
       {
         type: GenericLicenseDataFieldType.Value,
         label: getLabel('validTo', locale, label),
-        value: typedPayload.gildirTil
-          ? new Date(typedPayload.gildirTil).toISOString()
+        value: typedPayload.expires
+          ? new Date(typedPayload.expires).toISOString()
           : '',
       },
       {
         type: GenericLicenseDataFieldType.Group,
         label: getLabel('classesOfRights', locale, label),
-        fields: (typedPayload.rettindi ?? []).map((field) => ({
+        fields: (typedPayload.categories ?? []).map((field) => ({
           type: GenericLicenseDataFieldType.Category,
-          name: (field.nr ?? '').trim(),
+          name: field.name ?? '',
           label: '',
           fields: [
             {
               type: GenericLicenseDataFieldType.Value,
               label: getLabel('expiryDate', locale, label),
-              value: field.gildirTil
-                ? new Date(field.gildirTil).toISOString()
-                : '',
+              value: field.expires ? field.expires.toISOString() : '',
             },
             {
               type: GenericLicenseDataFieldType.Value,
               label: getLabel('publishedDate', locale, label),
-              value: field.utgafuDags
-                ? new Date(field.utgafuDags).toISOString()
-                : '',
+              value: field.issued ? field.issued.toISOString() : '',
             },
-            field.aths && {
+            field.comments && {
               type: GenericLicenseDataFieldType.Value,
               label: getLabel('comment', locale, label),
-              value: field.aths,
+              value: field.comments ?? '',
             },
           ].filter((Boolean as unknown) as ExcludesFalse),
         })),
@@ -101,7 +99,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
       metadata: {
         licenseNumber: typedPayload.id?.toString() ?? '',
         expired,
-        expireDate: typedPayload.gildirTil ?? undefined,
+        expireDate: typedPayload.expires?.toISOString() ?? undefined,
         links: [
           {
             label: getLabel('renewDrivingLicense', locale, label),

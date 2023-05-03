@@ -19,8 +19,11 @@ import {
   DisabilityClientModule,
   DisabilityLicenseClient,
 } from './clients/disability-license-client'
-import { DrivingClientModule } from './clients/driving-license-client/drivingLicenseClient.module'
 import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
+import {
+  DrivingClientModule,
+  DrivingLicenseClient,
+} from './clients/driving-license-client'
 
 @Module({
   imports: [
@@ -45,12 +48,15 @@ import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
         adrClient: AdrLicenseClient,
         machineClient: MachineLicenseClient,
         disabilityClient: DisabilityLicenseClient,
+        drivingClient: DrivingLicenseClient,
       ) => async (
         type: LicenseType,
       ): Promise<LicenseClient<unknown> | null> => {
         switch (type) {
           case LicenseType.FirearmLicense:
             return firearmClient
+          case LicenseType.DrivingLicense:
+            return drivingClient
           case LicenseType.AdrLicense:
             return adrClient
           case LicenseType.MachineLicense:
@@ -66,6 +72,7 @@ import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
         AdrLicenseClient,
         MachineLicenseClient,
         DisabilityLicenseClient,
+        DrivingLicenseClient,
       ],
     },
   ],

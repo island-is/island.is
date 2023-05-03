@@ -223,6 +223,8 @@ export class LicenseServiceService {
       return pkPassRes.data
     }
 
+    this.logger.debug(JSON.stringify(pkPassRes))
+
     throw new InternalServerErrorException(
       `Unable to get pkpass for ${licenseType} for user`,
     )

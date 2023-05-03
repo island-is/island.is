@@ -79,37 +79,29 @@ export const PkPass = ({
   }
 
   return (
-    <>
-      {!isMobile && isDriversLicense && (
-        <DriversLicensePkPass textButton={textButton} expireDate={expireDate} />
-      )}
-
-      {(isMobile || !isDriversLicense) && (
-        <Box>
-          <Button
-            variant="utility"
-            disabled={linkError}
-            size="small"
-            loading={displayLoader}
-            icon={
-              fetched && !linkError
-                ? 'checkmark'
-                : displayLoader
-                ? undefined
-                : linkError
-                ? 'warning'
-                : 'QRCode'
-            }
-            iconType="outline"
-            onClick={() => {
-              setDisplayLoader(true)
-              getLink()
-            }}
-          >
-            {formatMessage(m.sendToPhone)}
-          </Button>
-        </Box>
-      )}
-    </>
+    <Box>
+      <Button
+        variant="utility"
+        disabled={linkError}
+        size="small"
+        loading={displayLoader}
+        icon={
+          fetched && !linkError
+            ? 'checkmark'
+            : displayLoader
+            ? undefined
+            : linkError
+            ? 'warning'
+            : 'QRCode'
+        }
+        iconType="outline"
+        onClick={() => {
+          setDisplayLoader(true)
+          getLink()
+        }}
+      >
+        {formatMessage(m.sendToPhone)}
+      </Button>
+    </Box>
   )
 }

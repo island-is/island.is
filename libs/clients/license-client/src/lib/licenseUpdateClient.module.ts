@@ -22,9 +22,18 @@ import {
 } from './clients/disability-license-client'
 import { PassTemplateIdsProvider } from './providers/passTemplateIdsProvider'
 import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
+import {
+  DrivingDigitalLicenseClientConfig,
+  DrivingLicenseUpdateClient,
+  DrivingUpdateClientModule,
+} from './clients/driving-license-client'
 
 @Module({
-  imports: [FirearmUpdateClientModule, DisabilityUpdateClientModule],
+  imports: [
+    FirearmUpdateClientModule,
+    DisabilityUpdateClientModule,
+    DrivingUpdateClientModule,
+  ],
   providers: [
     LicenseUpdateClientService,
     PassTemplateIdsProvider,
@@ -41,12 +50,14 @@ import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
         disabilityConfig: ConfigType<
           typeof DisabilityDigitalLicenseClientConfig
         >,
+        drivingConfig: ConfigType<typeof DrivingDigitalLicenseClientConfig>,
       ) => {
         const ids: PassTemplateIds = {
           firearmLicense: firearmConfig.passTemplateId,
           adrLicense: adrConfig.passTemplateId,
           machineLicense: machineConfig.passTemplateId,
           disabilityLicense: disabilityConfig.passTemplateId,
+          drivingLicense: drivingConfig.passTemplateId,
         }
         return ids
       },
@@ -55,6 +66,7 @@ import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
         AdrDigitalLicenseClientConfig.KEY,
         MachineDigitalLicenseClientConfig.KEY,
         DisabilityDigitalLicenseClientConfig.KEY,
+        DrivingDigitalLicenseClientConfig.KEY,
       ],
     },
     {
@@ -62,6 +74,7 @@ import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
       useFactory: (
         firearmClient: FirearmLicenseUpdateClient,
         disabilityClient: DisabilityLicenseUpdateClient,
+        drivingClient: DrivingLicenseUpdateClient,
       ) => async (
         type: LicenseType,
       ): Promise<BaseLicenseUpdateClient | null> => {
@@ -70,11 +83,17 @@ import { BaseLicenseUpdateClient } from './clients/baseLicenseUpdateClient'
             return firearmClient
           case LicenseType.DisabilityLicense:
             return disabilityClient
+          case LicenseType.DrivingLicense:
+            return drivingClient
           default:
             return null
         }
       },
-      inject: [FirearmLicenseUpdateClient, DisabilityLicenseUpdateClient],
+      inject: [
+        FirearmLicenseUpdateClient,
+        DisabilityLicenseUpdateClient,
+        DrivingLicenseUpdateClient,
+      ],
     },
   ],
   exports: [LicenseUpdateClientService],
