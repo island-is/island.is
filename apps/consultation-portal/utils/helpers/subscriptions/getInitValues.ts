@@ -1,10 +1,10 @@
-import { ArrOfTypesForSubscriptions } from '../../types/interfaces'
+import { ArrOfTypesForSubscriptions } from '../../../types/interfaces'
 
 interface Props {
   types: ArrOfTypesForSubscriptions
 }
 
-export const getInitValues = ({ types }: Props) => {
+const getInitValues = ({ types }: Props) => {
   if (types && types != null) {
     const Institutions = Object.entries(types.institutions).map(
       ([id, name]) => ({

@@ -1,24 +1,16 @@
 import { toast } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { Area, SubscriptionTypeKey } from '../../types/enums'
 import {
-  GeneralSubscriptionArray,
-  SubscriptionsArray,
-} from '../../utils/dummydata'
-import { Area, SortOptions } from '../../types/enums'
-import {
-  ArrOfIdAndName,
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
-  SortTitle,
-  SubscriptionArray,
-  TypeForSubscriptions,
 } from '../../types/interfaces'
-import { useSearchSubscriptions, useUser } from '../../utils/helpers'
-import getInitValues from './getInitValues'
-import TabsList from './tabsList'
+import { useLogIn, useSearchSubscriptions, useUser } from '../../utils/helpers'
 import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
 import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
 import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
+import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
+import { useSubscriptions } from '../../utils/helpers/subscriptions'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -28,87 +20,153 @@ interface SubProps {
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const { isAuthenticated, userLoading } = useUser()
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
-  const { Institutions, PolicyAreas } = getInitValues({ types: types })
-  const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>(cases)
-  const [institutionsData, setInstitutionsData] = useState(Institutions)
-  const [policyAreasData, setPolicyAreasData] = useState(PolicyAreas)
-  const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
-    GeneralSubscriptionArray,
-  )
-  const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
-    SubscriptionsArray,
-  )
-  const [sortTitle, setSortTitle] = useState<SortTitle>({
-    Mál: SortOptions.latest,
-    Stofnanir: SortOptions.aToZ,
-    Málefnasvið: SortOptions.aToZ,
-  })
-  const [searchValue, setSearchValue] = useState('')
+  const {
+    initSubs,
+    subscriptionArray,
+    setSubscriptionArray,
+    sortTitle,
+    searchValue,
+    tabs,
+  } = useSubscriptions({ types: types, cases: cases })
+  const [submitSubsIsLoading, setSubmitSubsIsLoading] = useState(false)
+  const LogIn = useLogIn()
 
-  const { postSubsMutation, postLoading } = usePostSubscription()
+  const { userSubscriptions } = useFetchSubscriptions({
+    isAuthenticated: isAuthenticated,
+  })
+
+  const { postSubsMutation } = usePostSubscription()
 
   const { searchIsLoading } = useSearchSubscriptions({
     searchValue: searchValue,
-    initCasesData: cases,
     sortTitle: sortTitle,
-    initInstitutions: Institutions,
-    initPolicyAreas: PolicyAreas,
-    setCasesData: setCasesData,
-    setInstitutionsData: setInstitutionsData,
-    setPolicyAreasData: setPolicyAreasData,
+    subscriptionArray: subscriptionArray,
+    setSubscriptionArray: setSubscriptionArray,
+    initSubs: initSubs,
   })
 
-  const { caseIds, institutionIds, policyAreaIds } = subscriptionArray
-
   const onSubmit = async () => {
-    // setSubscriptionArray(SubscriptionsArray)
-    // //TODO: subscribe to all
-    // const objToSend = {
-    //   // subscribeToAll: generalSubscription.length > 0,
-    //   // subscribeToAllType: generalSubscription,
-    //   caseIds: caseIds,
-    //   institutionIds: institutionIds,
-    //   policyAreaIds: policyAreaIds,
-    // }
-    // const posting = await postSubsMutation({
-    //   variables: {
-    //     input: objToSend,
-    //   },
-    // })
-    //   .then((res) => {
-    //     toast.success('Áskrift skráð')
-    //   })
-    //   .catch((e) => {
-    //     console.error(e)
-    //     toast.error('Eitthvað fór úrskeiðis')
-    //   })
+    setSubmitSubsIsLoading(true)
+
+    if (!isAuthenticated) {
+      LogIn()
+    }
+
+    const {
+      cases: preCases,
+      institutions: preInstitutions,
+      policyAreas: prePolicyAreas,
+      subscribedToAll: preSubscribedToAll,
+      subscribedToAllType: preSubscribedToAllType,
+    } = userSubscriptions
+
+    const {
+      cases: subCases,
+      institutions: subInstitutions,
+      policyAreas: subPolicyAreas,
+      subscribedToAllNewObj: subSubscribedToAllNewObj,
+      subscribedToAllChangesObj: subSubscribedToAllChangesObj,
+    } = subscriptionArray
+
+    const filteredSubCases = subCases
+      .filter((item) => item.checked)
+      .map((i) => {
+        const obj = {
+          id: i.id,
+          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
+        }
+        return obj
+      })
+    const filteredSubInstitutions = subInstitutions
+      .filter((item) => item.checked)
+      .map((i) => {
+        const obj = {
+          id: parseInt(i.id),
+          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
+        }
+        return obj
+      })
+    const filteredSubPolicyAreas = subPolicyAreas
+      .filter((item) => item.checked)
+      .map((i) => {
+        const obj = {
+          id: parseInt(i.id),
+          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
+        }
+        return obj
+      })
+
+    const casesNoChange = preCases
+      .filter((item) => !filteredSubCases.find((i) => i.id === item.id))
+      .map((x) => {
+        const obj = {
+          id: x.id,
+          subscriptionType: x.subscriptionType,
+        }
+        return obj
+      })
+    const institutionsNoChange = preInstitutions
+      .filter((item) => !filteredSubInstitutions.find((i) => i.id === item.id))
+      .map((x) => {
+        const obj = {
+          id: parseInt(x.id),
+          subscriptionType: x.subscriptionType,
+        }
+        return obj
+      })
+    const policyAreasNoChange = prePolicyAreas
+      .filter((item) => !filteredSubPolicyAreas.find((i) => i.id === item.id))
+      .map((x) => {
+        const obj = {
+          id: parseInt(x.id),
+          subscriptionType: x.subscriptionType,
+        }
+        return obj
+      })
+
+    const _cases = [...filteredSubCases, ...casesNoChange]
+    const _institutions = [...filteredSubInstitutions, ...institutionsNoChange]
+    const _policyAreas = [...filteredSubPolicyAreas, ...policyAreasNoChange]
+    const _subscribedToAll =
+      subSubscribedToAllNewObj.checked || subSubscribedToAllChangesObj.checked
+        ? true
+        : preSubscribedToAll
+    const _subscribedToAllType = _subscribedToAll
+      ? subSubscribedToAllNewObj.checked
+        ? 'OnlyNew'
+        : 'AllChanges'
+      : preSubscribedToAllType
+
+    const objToSend = {
+      caseIds: _cases,
+      institutionIds: _institutions,
+      policyAreaIds: _policyAreas,
+      subscribeToAll: _subscribedToAll,
+      subscribeToAllType: _subscribedToAllType,
+    }
+
+    await postSubsMutation({
+      variables: {
+        input: objToSend,
+      },
+    })
+      .then(() => {
+        onClear()
+        setSubmitSubsIsLoading(false)
+        toast.success('Áskrift skráð')
+      })
+      .catch((e) => {
+        setSubmitSubsIsLoading(false)
+        console.error(e)
+        toast.error('Ekki tókst að skrá áskriftir')
+      })
+    setSubmitSubsIsLoading(false)
   }
 
   const onClear = () => {
-    // setSubscriptionArray(SubscriptionsArray)
+    setSubscriptionArray(initSubs)
   }
 
-  const tabs = TabsList({
-    casesData: casesData,
-    setCasesData: (arr: Array<CaseForSubscriptions>) => setCasesData(arr),
-    institutionsData: institutionsData,
-    generalSubArray: GeneralSubscriptionArray,
-    setInstitutionsData: (arr: Array<ArrOfIdAndName>) =>
-      setInstitutionsData(arr),
-    policyAreasData: policyAreasData,
-    setPolicyAreasData: (arr: Array<ArrOfIdAndName>) => setPolicyAreasData(arr),
-    Area: Area,
-    subscriptionArray: subscriptionArray,
-    setSubscriptionArray: (arr: SubscriptionArray) => setSubscriptionArray(arr),
-    searchValue: searchValue,
-    setSearchValue: (value: string) => setSearchValue(value),
-    sortTitle: sortTitle,
-    setSortTitle: (value: SortOptions) => {
-      const _sortTitle = { ...sortTitle }
-      _sortTitle[Area.case] = value
-      setSortTitle(_sortTitle)
-    },
-  })
   return (
     <SubscriptionsSkeleton
       currentTab={currentTab}
@@ -117,14 +175,11 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
     >
       <ChosenSubscriptions
         subscriptionArray={subscriptionArray}
-        typeData={typeData}
-        casesData={casesData}
-        institutionsData={institutionsData}
-        policyAreasData={policyAreasData}
         setSubscriptionArray={setSubscriptionArray}
-        onClear={onClear}
         onSubmit={onSubmit}
+        onClear={onClear}
         buttonText="Skrá í áskrift"
+        submitSubsIsLoading={submitSubsIsLoading}
       />
     </SubscriptionsSkeleton>
   )

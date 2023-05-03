@@ -9,7 +9,7 @@ interface Props {
 export const useFetchSubscriptions = ({ isAuthenticated }: Props) => {
   const client = initApollo()
 
-  const { data, loading } = useQuery(SUB_GET_USERSUBS, {
+  const { data, loading, refetch } = useQuery(SUB_GET_USERSUBS, {
     client: client,
     ssr: false,
     fetchPolicy: 'network-only',
@@ -19,21 +19,9 @@ export const useFetchSubscriptions = ({ isAuthenticated }: Props) => {
   const { consultationPortalUserSubscriptions: userSubscriptions = [] } =
     data ?? {}
 
-
-  const {
-    cases = [],
-    institutions = [],
-    policyAreas = [],
-    subscribedToAll = false,
-    subscribedToAllNew = false,
-  } = userSubscriptions
-
   return {
-    cases,
-    institutions,
-    policyAreas,
-    subscribedToAll,
-    subscribedToAllNew,
+    userSubscriptions,
     getUserSubsLoading: loading,
+    refetchUserSubs: refetch,
   }
 }

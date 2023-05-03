@@ -1,135 +1,102 @@
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { ChosenSubscriptionCard } from '../Card'
 import { Area } from '../../types/enums'
-import {
-  ArrOfIdAndName,
-  CaseForSubscriptions,
-  SubscriptionArray,
-  TypeForSubscriptions,
-} from '../../types/interfaces'
+import { SubscriptionArray } from '../../types/interfaces'
 
 interface Props {
   subscriptionArray: SubscriptionArray
-  typeData: Array<TypeForSubscriptions>
-  casesData: Array<CaseForSubscriptions>
-  institutionsData: Array<ArrOfIdAndName>
-  policyAreasData: Array<ArrOfIdAndName>
-  setSubscriptionArray: (arr: SubscriptionArray) => void
-  onClear: () => void
-  onSubmit: () => void
-  buttonText: string
+  setSubscriptionArray: (_: SubscriptionArray) => void
+  onClear?: () => void
+  onSubmit?: () => void
+  buttonText?: string
+  submitSubsIsLoading?: boolean
 }
 
 const ChosenSubscriptions = ({
   subscriptionArray,
-  typeData,
-  casesData,
-  institutionsData,
-  policyAreasData,
   setSubscriptionArray,
   onClear,
   onSubmit,
   buttonText,
+  submitSubsIsLoading,
 }: Props) => {
   const {
-    caseIds,
-    institutionIds,
-    policyAreaIds,
-    generalSubscription,
+    cases,
+    institutions,
+    policyAreas,
+    subscribedToAllNewObj,
+    subscribedToAllChangesObj,
   } = subscriptionArray
+  const chosenCases = cases.filter((item) => item.checked)
+  const chosenInstitutions = institutions.filter((item) => item.checked)
+  const chosenPolicyAreas = policyAreas.filter((item) => item.checked)
 
   return (
     <Stack space={0}>
       {!(
-        caseIds.length === 0 &&
-        institutionIds.length === 0 &&
-        policyAreaIds.length === 0 &&
-        generalSubscription.length === 0
+        chosenCases.length === 0 &&
+        chosenInstitutions.length === 0 &&
+        chosenPolicyAreas.length === 0 &&
+        !subscribedToAllNewObj.checked &&
+        !subscribedToAllChangesObj.checked
       ) && (
         <>
           <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
             Valin mál
           </Text>
-
-          {generalSubscription.length !== 0 &&
-            typeData
-              .filter((item) => generalSubscription == item.id)
-              .map((filteredItem) => {
-                return (
-                  <ChosenSubscriptionCard
-                    data={{
-                      name: filteredItem.name,
-                      caseNumber: filteredItem.nr,
-                      id: filteredItem.id.toString(),
-                      area: Area.case,
-                    }}
-                    subscriptionArray={subscriptionArray}
-                    setSubscriptionArray={(
-                      newSubscriptionArray: SubscriptionArray,
-                    ) => setSubscriptionArray(newSubscriptionArray)}
-                    key={`type-${filteredItem.nr}`}
-                  />
-                )
-              })}
-          {caseIds.length !== 0 &&
-            caseIds.map((caseId) => {
-              return casesData
-                .filter((item) => caseId.id === item.id)
-                .map((filteredItem) => (
-                  <ChosenSubscriptionCard
-                    data={{
-                      name: filteredItem.name,
-                      caseNumber: filteredItem.caseNumber,
-                      id: filteredItem.id.toString(),
-                      area: Area.case,
-                    }}
-                    subscriptionArray={subscriptionArray}
-                    setSubscriptionArray={(
-                      newSubscriptionArray: SubscriptionArray,
-                    ) => setSubscriptionArray(newSubscriptionArray)}
-                    key={`case-${caseId}`}
-                  />
-                ))
+          {subscribedToAllNewObj.checked && (
+            <ChosenSubscriptionCard
+              isGeneralSubscription
+              idx={0}
+              item={subscribedToAllNewObj}
+              subscriptionArray={subscriptionArray}
+              setSubscriptionArray={setSubscriptionArray}
+            />
+          )}
+          {subscribedToAllChangesObj.checked && (
+            <ChosenSubscriptionCard
+              isGeneralSubscription
+              idx={1}
+              item={subscribedToAllChangesObj}
+              subscriptionArray={subscriptionArray}
+              setSubscriptionArray={setSubscriptionArray}
+            />
+          )}
+          {chosenCases.length !== 0 &&
+            chosenCases.map((item) => {
+              return (
+                <ChosenSubscriptionCard
+                  key={item.key}
+                  item={item}
+                  area={Area.case}
+                  subscriptionArray={subscriptionArray}
+                  setSubscriptionArray={setSubscriptionArray}
+                />
+              )
             })}
-          {institutionIds.length !== 0 &&
-            institutionIds.map((institutionId) => {
-              return Object.values(institutionsData).map((filteredItem) => {
-                if (filteredItem.id == institutionId.id.toString()) {
-                  return (
-                    <ChosenSubscriptionCard
-                      data={{
-                        name: filteredItem.name.toString(),
-                        id: filteredItem.id,
-                        area: Area.institution,
-                      }}
-                      subscriptionArray={subscriptionArray}
-                      setSubscriptionArray={(
-                        newSubscriptionArray: SubscriptionArray,
-                      ) => setSubscriptionArray(newSubscriptionArray)}
-                      key={`institution-${institutionId}`}
-                    />
-                  )
-                }
-              })
+          {chosenInstitutions.length !== 0 &&
+            chosenInstitutions.map((item) => {
+              return (
+                <ChosenSubscriptionCard
+                  key={item.key}
+                  item={item}
+                  area={Area.institution}
+                  subscriptionArray={subscriptionArray}
+                  setSubscriptionArray={setSubscriptionArray}
+                />
+              )
             })}
-          {policyAreaIds.length !== 0 &&
-            policyAreaIds.map((policyAreaId) => {
-              return Object.values(policyAreasData)
-                .filter((item) => policyAreaId.id.toString() === item.id)
-                .map((filteredItem) => (
-                  <ChosenSubscriptionCard
-                    data={{
-                      name: filteredItem.name.toString(),
-                      id: filteredItem.id,
-                      area: Area.policyArea,
-                    }}
-                    subscriptionArray={subscriptionArray}
-                    setSubscriptionArray={(
-                      newSubscriptionArray: SubscriptionArray,
-                    ) => setSubscriptionArray(newSubscriptionArray)}
-                    key={`policyArea-${policyAreaId}`}
-                  />
-                ))
+          {chosenPolicyAreas.length !== 0 &&
+            chosenPolicyAreas.map((item) => {
+              return (
+                <ChosenSubscriptionCard
+                  key={item.key}
+                  item={item}
+                  area={Area.policyArea}
+                  subscriptionArray={subscriptionArray}
+                  setSubscriptionArray={setSubscriptionArray}
+                />
+              )
             })}
           <Box
             marginTop={1}
@@ -148,7 +115,11 @@ const ChosenSubscriptions = ({
                 Hreinsa val
               </Button>
             </Box>
-            <Button size="small" onClick={onSubmit}>
+            <Button
+              size="small"
+              onClick={onSubmit}
+              loading={submitSubsIsLoading}
+            >
               {buttonText}
             </Button>
           </Box>

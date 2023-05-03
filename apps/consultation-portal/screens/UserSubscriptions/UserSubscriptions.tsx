@@ -1,25 +1,17 @@
 import { toast } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
+import { Area, SubscriptionTypeKey } from '../../types/enums'
 import {
-  GeneralSubscriptionArray,
-  SubscriptionsArray,
-} from '../../utils/dummydata'
-import { Area, SortOptions } from '../../types/enums'
-import {
-  ArrOfIdAndName,
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
-  GeneralSubscription,
-  SortTitle,
   SubscriptionArray,
-  TypeForSubscriptions,
 } from '../../types/interfaces'
-import { useSearchSubscriptions, useUser } from '../../utils/helpers'
-import getInitValues from '../Subscriptions/getInitValues'
-import TabsList from '../Subscriptions/tabsList'
+import { useLogIn, useSearchSubscriptions, useUser } from '../../utils/helpers'
 import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
-import ChosenSubscriptions from '@island.is/consultation-portal/components/ChosenSubscriptions/ChosenSubscriptions'
-import SubscriptionsSkeleton from '@island.is/consultation-portal/components/SubscriptionsSkeleton/SubscriptionsSkeleton'
+import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
+import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
+import { useSubscriptions } from '../../utils/helpers/subscriptions'
+import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
 
 interface SubProps {
   allcases: CaseForSubscriptions[]
@@ -33,115 +25,213 @@ export const UserSubscriptions = ({
   isNotAuthorized,
 }: SubProps) => {
   const { isAuthenticated, userLoading } = useUser()
+  const [submitSubsIsLoading, setSubmitSubsIsLoading] = useState(false)
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
-  const [generalSubData, setGeneralSubData] = useState<GeneralSubscription>()
-  const { Institutions, PolicyAreas } = getInitValues({ types: types })
-  const [initCases, setInitCases] = useState<Array<CaseForSubscriptions>>()
-  const [casesData, setCasesData] = useState<Array<CaseForSubscriptions>>()
-  const [typeData, setTypeData] = useState<Array<TypeForSubscriptions>>(
-    GeneralSubscriptionArray,
-  )
-  const [initInstitutions, setInitInstitutions] = useState<
-    Array<ArrOfIdAndName>
-  >([])
-  const [institutionsData, setInstitutionsData] = useState<
-    Array<ArrOfIdAndName>
-  >([])
-  const [initPolicyAreas, setInitPolicyAreas] = useState<Array<ArrOfIdAndName>>(
-    [],
-  )
-  const [policyAreasData, setPolicyAreasData] = useState<Array<ArrOfIdAndName>>(
-    [],
-  )
-  const [subscriptionArray, setSubscriptionArray] = useState<SubscriptionArray>(
-    SubscriptionsArray,
-  )
-
-  const [sortTitle, setSortTitle] = useState<SortTitle>({
-    Mál: SortOptions.latest,
-    Stofnanir: SortOptions.aToZ,
-    Málefnasvið: SortOptions.aToZ,
-  })
-
-  const [searchValue, setSearchValue] = useState('')
+  const [dontShowNew, setDontShowNew] = useState(true)
+  const [dontShowChanges, setDontShowChanges] = useState(true)
+  const [initData, setInitData] = useState<SubscriptionArray>()
+  const LogIn = useLogIn()
 
   const {
-    cases,
-    policyAreas,
-    institutions,
-    subscribedToAll,
-    subscribedToAllNew,
-    getUserSubsLoading,
-  } = useFetchSubscriptions({ isAuthenticated: isAuthenticated })
-
-  const { searchIsLoading } = useSearchSubscriptions({
-    searchValue: searchValue,
-    initCasesData: initCases,
-    sortTitle: sortTitle,
-    initInstitutions: initInstitutions,
-    initPolicyAreas: initPolicyAreas,
-    setCasesData: setCasesData,
-    setInstitutionsData: setInstitutionsData,
-    setPolicyAreasData: setPolicyAreasData,
+    subscriptionArray,
+    setSubscriptionArray,
+    sortTitle,
+    searchValue,
+    tabs,
+  } = useSubscriptions({
+    types: types,
+    cases: allcases,
+    dontShowNew: dontShowNew,
+    dontShowChanges: dontShowChanges,
   })
+
+  const {
+    userSubscriptions,
+    getUserSubsLoading,
+    refetchUserSubs,
+  } = useFetchSubscriptions({
+    isAuthenticated: isAuthenticated,
+  })
+
+  const { postSubsMutation } = usePostSubscription()
 
   useEffect(() => {
     if (!getUserSubsLoading) {
+      const {
+        cases: allCases,
+        institutions: allInstitutions,
+        policyAreas: allPolicyAreas,
+        subscribedToAllNewObj,
+        subscribedToAllChangesObj,
+      } = subscriptionArray
+      const {
+        cases: subCases,
+        institutions: subInstitutions,
+        policyAreas: subPolicyAreas,
+        subscribedToAll,
+        subscribedToAllType,
+      } = userSubscriptions
       if (subscribedToAll) {
-        setGeneralSubData(GeneralSubscriptionArray.at(0))
-      } else if (subscribedToAllNew) {
-        setGeneralSubData(GeneralSubscriptionArray.at(1))
+        if (subscribedToAllType === 'OnlyNew') {
+          setDontShowNew(false)
+          setDontShowChanges(true)
+        } else if (subscribedToAllType === 'AllChanges') {
+          setDontShowChanges(false)
+          setDontShowNew(true)
+        }
+      } else {
+        setDontShowNew(true)
+        setDontShowChanges(true)
       }
 
-      const filteredInstitutions = Institutions.filter((item) =>
-        institutions.find((i) => i.id.toString() === item.id),
-      )
-      const filteredPolicyAreas = PolicyAreas.filter((item) =>
-        policyAreas.find((i) => i.id.toString() === item.id),
-      )
-      const filteredCases = allcases.filter((item) =>
-        cases.find((i) => i.id === item.id),
-      )
+      if (subCases && subInstitutions && subPolicyAreas) {
+        const filteredCases = allCases.filter((item) =>
+          subCases.find((i) => i.id === item.id),
+        )
+        const filteredInstitutions = allInstitutions.filter((item) =>
+          subInstitutions?.find((i) => i.id.toString() === item.id),
+        )
 
-      setInitInstitutions(filteredInstitutions)
-      setInstitutionsData(filteredInstitutions)
-      setInitPolicyAreas(filteredPolicyAreas)
-      setPolicyAreasData(filteredPolicyAreas)
-      setInitCases(filteredCases)
-      setCasesData(filteredCases)
+        const filteredPolicyAreas = allPolicyAreas.filter((item) =>
+          subPolicyAreas?.find((i) => i.id.toString() === item.id),
+        )
+
+        const objToUse = {
+          cases: filteredCases,
+          institutions: filteredInstitutions,
+          policyAreas: filteredPolicyAreas,
+          subscribedToAllNewObj: subscribedToAllNewObj,
+          subscribedToAllChangesObj: subscribedToAllChangesObj,
+        }
+        setSubscriptionArray({ ...objToUse })
+        setInitData({ ...objToUse })
+      }
     }
-  }, [getUserSubsLoading])
+  }, [getUserSubsLoading, userSubscriptions])
 
-  const onSubmit = () => {
-    toast.success('Áskrift uppfærð')
-    setSubscriptionArray(SubscriptionsArray)
+  const { searchIsLoading } = useSearchSubscriptions({
+    searchValue: searchValue,
+    sortTitle: sortTitle,
+    subscriptionArray: subscriptionArray,
+    setSubscriptionArray: setSubscriptionArray,
+    initSubs: initData ? initData : subscriptionArray,
+  })
+
+  const onSubmit = async () => {
+    setSubmitSubsIsLoading(true)
+
+    if (!isAuthenticated) {
+      LogIn()
+    }
+
+    const {
+      cases,
+      institutions,
+      policyAreas,
+      subscribedToAllNewObj,
+      subscribedToAllChangesObj,
+    } = subscriptionArray
+
+    const filteredCases = cases
+      .filter((item) => !item.checked)
+      .map((i) => {
+        const obj = {
+          id: i.id,
+          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
+        }
+        return obj
+      })
+    const filteredInstitutions = institutions
+      .filter((item) => !item.checked)
+      .map((i) => {
+        const obj = {
+          id: parseInt(i.id),
+          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
+        }
+        return obj
+      })
+    const filteredPolicyAreas = policyAreas
+      .filter((item) => !item.checked)
+      .map((i) => {
+        const obj = {
+          id: parseInt(i.id),
+          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
+        }
+        return obj
+      })
+    const subscribeToAll =
+      subscribedToAllNewObj.checked || subscribedToAllChangesObj.checked
+        ? false
+        : userSubscriptions?.subscribedToAll
+    const objToSend = {
+      caseIds: filteredCases,
+      institutionIds: filteredInstitutions,
+      policyAreaIds: filteredPolicyAreas,
+      subscribeToAll: subscribeToAll,
+      subscribeToAllType: userSubscriptions?.subscribedToAllType,
+    }
+
+    await postSubsMutation({
+      variables: {
+        input: objToSend,
+      },
+    })
+      .then(() => {
+        onClear()
+        setSubmitSubsIsLoading(false)
+        refetchUserSubs()
+        toast.success('Skráð úr áskrift')
+      })
+      .catch((e) => {
+        setSubmitSubsIsLoading(false)
+        console.error(e)
+        toast.error('Ekki tókst að skrá úr áskrift')
+      })
+    setSubmitSubsIsLoading(false)
   }
 
   const onClear = () => {
-    setSubscriptionArray(SubscriptionsArray)
+    const {
+      cases,
+      institutions,
+      policyAreas,
+      subscribedToAllNewObj,
+      subscribedToAllChangesObj,
+    } = subscriptionArray
+    const casesMapped = cases.map((item) => {
+      const obj = {
+        ...item,
+        checked: false,
+      }
+      return obj
+    })
+    const institutionsMapped = institutions.map((item) => {
+      const obj = {
+        ...item,
+        checked: false,
+      }
+      return obj
+    })
+    const policyAreasMapped = policyAreas.map((item) => {
+      const obj = {
+        ...item,
+        checked: false,
+      }
+      return obj
+    })
+    const allNew = { ...subscribedToAllNewObj }
+    const allChanges = { ...subscribedToAllChangesObj }
+    allNew.checked = false
+    allChanges.checked = false
+    const newObj = {
+      cases: casesMapped,
+      institutions: institutionsMapped,
+      policyAreas: policyAreasMapped,
+      subscribedToAllNewObj: allNew,
+      subscribedToAllChangesObj: allChanges,
+    }
+    setSubscriptionArray(newObj)
   }
-
-  const tabs = TabsList({
-    casesData: casesData,
-    setCasesData: (arr: Array<CaseForSubscriptions>) => setCasesData(arr),
-    institutionsData: institutionsData,
-    setInstitutionsData: (arr: Array<ArrOfIdAndName>) =>
-      setInstitutionsData(arr),
-    policyAreasData: policyAreasData,
-    setPolicyAreasData: (arr: Array<ArrOfIdAndName>) => setPolicyAreasData(arr),
-    Area: Area,
-    subscriptionArray: subscriptionArray,
-    generalSubArray: generalSubData,
-    setSubscriptionArray: (arr: SubscriptionArray) => setSubscriptionArray(arr),
-    searchValue: searchValue,
-    setSearchValue: (value: string) => setSearchValue(value),
-    sortTitle: sortTitle,
-    setSortTitle: (value: SortOptions) => {
-      const _sortTitle = { ...sortTitle }
-      _sortTitle[Area.case] = value
-      setSortTitle(_sortTitle)
-    },
-  })
 
   if (!userLoading && !isAuthenticated) {
     return (
@@ -167,14 +257,11 @@ export const UserSubscriptions = ({
     >
       <ChosenSubscriptions
         subscriptionArray={subscriptionArray}
-        typeData={typeData}
-        casesData={casesData}
-        institutionsData={institutionsData}
-        policyAreasData={policyAreasData}
         setSubscriptionArray={setSubscriptionArray}
-        onClear={onClear}
         onSubmit={onSubmit}
+        onClear={onClear}
         buttonText="Skrá úr áskrift"
+        submitSubsIsLoading={submitSubsIsLoading}
       />
     </SubscriptionsSkeleton>
   )

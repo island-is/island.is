@@ -11,7 +11,7 @@ import Layout from '../Layout/Layout'
 import { BreadcrumbsWithMobileDivider } from '../BreadcrumbsWithMobileDivider'
 import { ReactNode } from 'react'
 import EmailBox from '../EmailBox/EmailBox'
-import { Area } from '@island.is/consultation-portal/types/enums'
+import { Area } from '../../types/enums'
 
 interface Props {
   children: ReactNode

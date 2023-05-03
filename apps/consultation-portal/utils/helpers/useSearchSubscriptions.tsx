@@ -1,52 +1,55 @@
 import { useEffect, useState } from 'react'
 import sorting from './sorting'
-import { Area } from '@island.is/consultation-portal/types/enums'
+import { Area } from '../../types/enums'
 import {
-  ArrOfIdAndName,
-  CaseForSubscriptions,
+  CasesSubscriptionData,
+  InstitutionsSubscriptionData,
+  PolicyAreasSubscriptionData,
   SortTitle,
-} from '@island.is/consultation-portal/types/interfaces'
+  SubscriptionArray,
+} from '../../types/interfaces'
 
 interface Props {
   searchValue: string
-  initCasesData: Array<CaseForSubscriptions>
   sortTitle: SortTitle
-  initInstitutions: Array<ArrOfIdAndName>
-  initPolicyAreas: Array<ArrOfIdAndName>
-  setCasesData: (cases: Array<CaseForSubscriptions>) => void
-  setInstitutionsData: (institutions: Array<ArrOfIdAndName>) => void
-  setPolicyAreasData: (policyAreas: Array<ArrOfIdAndName>) => void
+  subscriptionArray: SubscriptionArray
+  setSubscriptionArray: (_: SubscriptionArray) => void
+  initSubs: SubscriptionArray
 }
 
 export const useSearchSubscriptions = ({
   searchValue,
-  initCasesData,
   sortTitle,
-  initInstitutions,
-  initPolicyAreas,
-  setCasesData,
-  setInstitutionsData,
-  setPolicyAreasData,
+  subscriptionArray,
+  setSubscriptionArray,
+  initSubs,
 }: Props) => {
   const [searchIsLoading, setSearchIsLoading] = useState(false)
+
+  const { subscribedToAllNewObj, subscribedToAllChangesObj } = subscriptionArray
+  const {
+    cases: initCases,
+    institutions: initInstitutions,
+    policyAreas: initPolicyAreas,
+  } = initSubs
 
   useEffect(() => {
     setSearchIsLoading(true)
 
     const sortedCases = sorting(
-      initCasesData,
+      initCases,
       sortTitle[Area.case],
-    ) as Array<CaseForSubscriptions>
+    ) as Array<CasesSubscriptionData>
 
     const sortedInstitutions = sorting(
       initInstitutions,
       sortTitle[Area.institution],
-    ) as Array<ArrOfIdAndName>
+    ) as Array<InstitutionsSubscriptionData>
 
     const sortedPolicyAreas = sorting(
       initPolicyAreas,
       sortTitle[Area.policyArea],
-    ) as Array<ArrOfIdAndName>
+    ) as Array<PolicyAreasSubscriptionData>
 
     if (searchValue) {
       const lowerCaseSearchValue = searchValue.toLocaleLowerCase()
@@ -71,13 +74,23 @@ export const useSearchSubscriptions = ({
         item.name.toLocaleLowerCase().includes(lowerCaseSearchValue),
       )
 
-      setCasesData(sortedCasesFiltered)
-      setInstitutionsData(sortedInstitutionsFiltered)
-      setPolicyAreasData(sortedPolicyAreasFiltered)
+      const newObj = {
+        cases: sortedCasesFiltered,
+        institutions: sortedInstitutionsFiltered,
+        policyAreas: sortedPolicyAreasFiltered,
+        subscribedToAllNewObj: subscribedToAllNewObj,
+        subscribedToAllChangesObj: subscribedToAllChangesObj,
+      }
+      setSubscriptionArray(newObj)
     } else {
-      setCasesData(sortedCases)
-      setInstitutionsData(sortedInstitutions)
-      setPolicyAreasData(sortedPolicyAreas)
+      const newObj = {
+        cases: sortedCases,
+        institutions: sortedInstitutions,
+        policyAreas: sortedPolicyAreas,
+        subscribedToAllNewObj: subscribedToAllNewObj,
+        subscribedToAllChangesObj: subscribedToAllChangesObj,
+      }
+      setSubscriptionArray(newObj)
     }
 
     setSearchIsLoading(false)
