@@ -18,7 +18,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
-  CaseQuery = 'CaseQuery',
+  CaseQuery = 'Case',
   CaseListQuery = 'CaseList',
   CurrentUserQuery = 'CurrentUser',
   UploadFileToCourtMutation = 'UploadFileToCourt',
