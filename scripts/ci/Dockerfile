@@ -16,7 +16,7 @@ COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 
 RUN yarn config set npmRegistryServer "https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"
-RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' $NPM_AUTH_TOKEN
+RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAuthToken' "$NPM_AUTH_TOKEN"
 RUN yarn config set 'npmRegistries["https://npm-upstream-821090935708.d.codeartifact.eu-west-1.amazonaws.com/npm/github-runner-npm-cache/"].npmAlwaysAuth' "true"
 RUN CI=true yarn install --immutable
 
