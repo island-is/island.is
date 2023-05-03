@@ -115,8 +115,8 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að eyða ákærulið',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að eyða ákærulíð',
   },
-  getCaseToOpenError: {
-    id: 'judicial.system.core:errors.getCaseToOpenError',
+  getCaseToOpen: {
+    id: 'judicial.system.core:errors.getCaseToOpen',
     defaultMessage: 'Upp kom villa við að sækja mál',
     description:
       'Notaður sem villuskilaboð þegar mistekst að opna mál úr málalista',

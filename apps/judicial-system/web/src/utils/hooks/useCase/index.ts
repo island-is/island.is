@@ -310,7 +310,7 @@ const useCase = () => {
       }
     },
     onError: () => {
-      toast.error(formatMessage(errors.getCaseToOpenError))
+      toast.error(formatMessage(errors.getCaseToOpen))
     },
   })
 
