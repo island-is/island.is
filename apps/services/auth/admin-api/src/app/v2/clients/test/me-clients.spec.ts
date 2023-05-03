@@ -3,12 +3,14 @@ import request from 'supertest'
 
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
+  AdminCreateClientDto,
   AdminPatchClientDto,
   Client,
   clientBaseAttributes,
   ClientGrantType,
   RefreshTokenExpiration,
   SequelizeConfigService,
+  translateRefreshTokenExpiration,
 } from '@island.is/auth-api-lib'
 import { User } from '@island.is/auth-nest-tools'
 import { FixtureFactory } from '@island.is/services/auth/testing'
@@ -98,6 +100,38 @@ const createTestClientData = async (app: TestApp, user: User) => {
     promptDelegations: false,
     allowedScopes: client.allowedScopes ?? [],
   }
+}
+
+const clientForCreateTest: Partial<AdminCreateClientDto> = {
+  absoluteRefreshTokenLifetime: 1000,
+  slidingRefreshTokenLifetime: 1000,
+  accessTokenLifetime: 1000,
+  allowOfflineAccess: true,
+  customClaims: [
+    {
+      type: 'test',
+      value: 'test',
+    },
+  ],
+  displayName: [
+    {
+      locale: 'is',
+      value: 'test-client',
+    },
+    {
+      locale: 'en',
+      value: 'test-client',
+    },
+  ],
+  refreshTokenExpiration: RefreshTokenExpiration.Sliding,
+  requireApiScopes: true,
+  requireConsent: true,
+  requirePkce: true,
+  supportsCustomDelegation: true,
+  supportsLegalGuardians: true,
+  supportsPersonalRepresentatives: true,
+  supportsProcuringHolders: true,
+  promptDelegations: true,
 }
 
 describe('MeClientsController with auth', () => {
@@ -305,6 +339,134 @@ describe('MeClientsController with auth', () => {
         domainName: tenantId,
 
         ...typeSpecificDefaults,
+      })
+    },
+  )
+
+  it.each`
+    value                                   | typeSpecificDefaults
+    ${'none'}                               | ${{}}
+    ${'allowOfflineAccess and requirePkce'} | ${{ allowOfflineAccess: false, requirePkce: false }}
+    ${'refreshTokenExpiration'}             | ${{ refreshTokenExpiration: RefreshTokenExpiration.Sliding }}
+    ${'all values'}                         | ${{ ...clientForCreateTest }}
+  `(
+    'should create client with correct none default values for $value',
+    async ({ typeSpecificDefaults }) => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user,
+      })
+      const server = request(app.getHttpServer())
+      const clientModel = app.get(getModelToken(Client))
+      const newClientId = '@test.is/new-test-client'
+      await createTestClientData(app, user)
+      const newClient = {
+        ...typeSpecificDefaults,
+        clientId: newClientId,
+        clientName: 'test-client',
+        clientType: 'web',
+      }
+
+      // Act
+      const res = await server
+        .post(`/v2/me/tenants/${tenantId}/clients`)
+        .send(newClient)
+
+      // Assert - response
+      expect(res.status).toEqual(201)
+      expect(res.body).toEqual({
+        clientId: newClientId,
+        clientType: newClient.clientType,
+        tenantId,
+        displayName: typeSpecificDefaults.displayName ?? [
+          {
+            locale: 'is',
+            value: newClient.clientName,
+          },
+        ],
+        refreshTokenExpiration: typeSpecificDefaults.refreshTokenExpiration
+          ? typeSpecificDefaults.refreshTokenExpiration
+          : translateRefreshTokenExpiration(
+              clientBaseAttributes.refreshTokenExpiration,
+            ),
+        absoluteRefreshTokenLifetime:
+          typeSpecificDefaults.absoluteRefreshTokenLifetime ??
+          clientBaseAttributes.absoluteRefreshTokenLifetime,
+        slidingRefreshTokenLifetime:
+          typeSpecificDefaults.slidingRefreshTokenLifetime ??
+          clientBaseAttributes.slidingRefreshTokenLifetime,
+        accessTokenLifetime:
+          typeSpecificDefaults.accessTokenLifetime ??
+          clientBaseAttributes.accessTokenLifetime,
+        allowOfflineAccess:
+          typeSpecificDefaults.allowOfflineAccess ??
+          clientBaseAttributes.allowOfflineAccess,
+        redirectUris: [],
+        postLogoutRedirectUris: [],
+        requireApiScopes: typeSpecificDefaults.requireApiScopes
+          ? typeSpecificDefaults.requireApiScopes
+          : false,
+        requireConsent: typeSpecificDefaults.requireConsent
+          ? typeSpecificDefaults.requireConsent
+          : false,
+        requirePkce:
+          typeSpecificDefaults.requirePkce ?? clientBaseAttributes.requirePkce,
+        supportTokenExchange: typeSpecificDefaults.supportTokenExchange
+          ? typeSpecificDefaults.supportTokenExchange
+          : false,
+        supportsCustomDelegation: typeSpecificDefaults.supportsCustomDelegation
+          ? typeSpecificDefaults.supportsCustomDelegation
+          : false,
+        supportsLegalGuardians: typeSpecificDefaults.supportsLegalGuardians
+          ? typeSpecificDefaults.supportsLegalGuardians
+          : false,
+        supportsPersonalRepresentatives: typeSpecificDefaults.supportsPersonalRepresentatives
+          ? typeSpecificDefaults.supportsPersonalRepresentatives
+          : false,
+        supportsProcuringHolders: typeSpecificDefaults.supportsProcuringHolders
+          ? typeSpecificDefaults.supportsProcuringHolders
+          : false,
+        promptDelegations: typeSpecificDefaults.promptDelegations
+          ? typeSpecificDefaults.promptDelegations
+          : false,
+        customClaims: typeSpecificDefaults.customClaims ?? [],
+        allowedScopes: typeSpecificDefaults.allowedScopes ?? [],
+      })
+
+      // Assert - db record
+      const dbClient = await clientModel.findByPk(newClientId, {
+        include: [{ model: ClientGrantType, as: 'allowedGrantTypes' }],
+      })
+
+      expect(dbClient).toMatchObject({
+        ...clientBaseAttributes,
+        allowRememberConsent: clientBaseAttributes.allowRememberConsent
+          ? '1'
+          : '0',
+        clientId: newClientId,
+        clientType: newClient.clientType,
+        clientName: newClient.clientName,
+        domainName: tenantId,
+
+        slidingRefreshTokenLifetime:
+          typeSpecificDefaults.slidingRefreshTokenLifetime ??
+          clientBaseAttributes.slidingRefreshTokenLifetime,
+        absoluteRefreshTokenLifetime:
+          typeSpecificDefaults.absoluteRefreshTokenLifetime ??
+          clientBaseAttributes.absoluteRefreshTokenLifetime,
+        accessTokenLifetime:
+          typeSpecificDefaults.accessTokenLifetime ??
+          clientBaseAttributes.accessTokenLifetime,
+        allowOfflineAccess:
+          typeSpecificDefaults.allowOfflineAccess ??
+          clientBaseAttributes.allowOfflineAccess,
+        requirePkce:
+          typeSpecificDefaults.requirePkce ?? clientBaseAttributes.requirePkce,
+        refreshTokenExpiration: translateRefreshTokenExpiration(
+          typeSpecificDefaults.refreshTokenExpiration,
+        ),
       })
     },
   )
