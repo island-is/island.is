@@ -1,10 +1,12 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { CaseSubscriptionCommand } from './caseSubscriptionCommand.model'
-import { SubscriptionCommand } from './subscriptionCommand.model'
 import { SubscriptionType } from '@island.is/clients/consultation-portal'
+import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
+import { Field, InputType } from '@nestjs/graphql'
+import { CaseSubscriptionCommand } from '../models/caseSubscriptionCommand.model'
+import { SubscriptionCommand } from '../models/subscriptionCommand.model'
 
-@ObjectType('ConsultationPortalUserSubscriptionsCommand')
-export class UserSubscriptionsCommand {
+@InputType('ConsultationPortalUserSubscriptionsCommandInput')
+@FeatureFlag(Features.consultationPortalApplication)
+export class PostSubscriptionTypeInput {
   @Field({ nullable: true })
   subscribeToAll?: boolean
 
