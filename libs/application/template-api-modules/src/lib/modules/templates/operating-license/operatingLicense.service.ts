@@ -153,17 +153,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           })
     }
 
-    const response = await this.getDebtLessCertificate(auth)
-
-    if (!response.debtLess) {
-      throw new TemplateApiError(
-        {
-          title: error.missingCertificateTitle,
-          summary: error.missingCertificateSummary,
-        },
-        400,
-      )
-    }
+    await this.getDebtLessCertificate(auth)
+    // User can owe under a million and should still pass so the status is checked with a pdf manualy by Sýslumenn
 
     return { success: true }
   }
