@@ -55,7 +55,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
             items={[
-              { title: 'Öll mál', href: '/' },
+              { title: 'Öll mál', href: '/samradsgatt' },
               { title: `Mál nr. S-${chosenCase?.caseNumber}` },
             ]}
           />
