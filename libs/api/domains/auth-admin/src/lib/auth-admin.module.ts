@@ -8,6 +8,7 @@ import { TenantsService } from './tenant/tenants.service'
 import { ClientsResolver } from './client/clients.resolver'
 import { ClientsService } from './client/clients.service'
 import { ClientEnvironmentResolver } from './client/client-environment.resolver'
+import { ClientAllowedScopesLoader } from './client/client-allowed-scopes.loader'
 import { ClientSecretLoader } from './client/client-secret.loader'
 
 @Module({
@@ -17,6 +18,7 @@ import { ClientSecretLoader } from './client/client-secret.loader'
     TenantEnvironmentResolver,
     TenantsService,
     ClientsResolver,
+    ClientAllowedScopesLoader,
     ClientEnvironmentResolver,
     ClientsService,
     ClientSecretLoader,

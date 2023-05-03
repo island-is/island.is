@@ -13,6 +13,9 @@ import { User } from '@island.is/auth-nest-tools'
 
 import { AppModule } from '../../../app.module'
 
+const CLIENT_ID = '@client1'
+const TENANT_ID = '@tenant1'
+
 const currentUser = createCurrentUser({
   delegationType: AuthDelegationType.Custom,
   nationalIdType: 'company',
@@ -38,35 +41,57 @@ const mockedApiScopes = [
   },
 ]
 
-const createTestData = async (
-  app: TestApp,
-  tenantId: string,
-  tenantOwnerNationalId?: string,
-) => {
+const createTestData = async ({
+  app,
+  tenantId,
+  tenantOwnerNationalId,
+  clientId,
+  hasNoScopes = false,
+}: {
+  app: TestApp
+  tenantId: string
+  tenantOwnerNationalId?: string
+  clientId?: string
+  hasNoScopes?: boolean
+}) => {
   const fixtureFactory = new FixtureFactory(app)
   await fixtureFactory.createDomain({
     name: tenantId,
     nationalId: tenantOwnerNationalId || createNationalId('company'),
-    apiScopes: mockedApiScopes,
+    apiScopes: hasNoScopes ? undefined : mockedApiScopes,
+  })
+  await fixtureFactory.createClient({
+    ...(clientId && {
+      clientId,
+      allowedScopes: mockedApiScopes.map(({ name }) => ({
+        scopeName: name,
+        clientId,
+      })),
+    }),
+    domainName: tenantId,
   })
 }
 
 interface TestCase {
   user: User
   tenantId: string
+  clientId: string
   tenantOwnerNationalId?: string
+  hasNoScopes?: boolean
   expected: {
     status: number
     body: AdminScopeDTO[] | Record<string, unknown>
   }
 }
 
-const SHOULD_NOT_CREATE_TENANT_ID = '@should_not_create'
+const SHOULD_NOT_CREATE_TENANT_ID = '@should_not_create_tenant'
+const SHOULD_NOT_CREATE_CLIENT_ID = '@should_not_create_client'
 
 const testCases: Record<string, TestCase> = {
   'should have access as current user': {
     user: currentUser,
-    tenantId: '@tenant1',
+    tenantId: TENANT_ID,
+    clientId: CLIENT_ID,
     expected: {
       status: 200,
       body: mockedApiScopes,
@@ -74,7 +99,8 @@ const testCases: Record<string, TestCase> = {
   },
   'should have access as super user': {
     user: superUser,
-    tenantId: '@tenant1',
+    tenantId: TENANT_ID,
+    clientId: CLIENT_ID,
     tenantOwnerNationalId: createNationalId('company'),
     expected: {
       status: 200,
@@ -83,7 +109,8 @@ const testCases: Record<string, TestCase> = {
   },
   'should return no content where user is not tenant owner': {
     user: currentUser,
-    tenantId: '@tenant1',
+    tenantId: TENANT_ID,
+    clientId: CLIENT_ID,
     tenantOwnerNationalId: createNationalId('company'),
     expected: {
       status: 204,
@@ -93,14 +120,34 @@ const testCases: Record<string, TestCase> = {
   'should throw no content because of tenant does not exist': {
     user: superUser,
     tenantId: SHOULD_NOT_CREATE_TENANT_ID,
+    clientId: CLIENT_ID,
     expected: {
       status: 204,
       body: {},
     },
   },
+  'should throw no content because client does not exist': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    clientId: SHOULD_NOT_CREATE_CLIENT_ID,
+    expected: {
+      status: 204,
+      body: {},
+    },
+  },
+  'should return empty array if client has no allowed scopes': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    clientId: CLIENT_ID,
+    hasNoScopes: true,
+    expected: {
+      status: 200,
+      body: [],
+    },
+  },
 }
 
-describe('MeScopesController', () => {
+describe('MeClientScopesController', () => {
   describe('with auth', () => {
     describe.each(Object.keys(testCases))('%s', (testCaseName) => {
       const testCase = testCases[testCaseName]
@@ -116,19 +163,28 @@ describe('MeScopesController', () => {
         server = request(app.getHttpServer())
 
         if (testCase.tenantId !== SHOULD_NOT_CREATE_TENANT_ID) {
-          await createTestData(
+          await createTestData({
             app,
-            testCase.tenantId,
-            testCase.tenantOwnerNationalId ?? testCase.user.nationalId,
-          )
+            tenantId: testCase.tenantId,
+            tenantOwnerNationalId:
+              testCase.tenantOwnerNationalId ?? testCase.user.nationalId,
+            clientId:
+              testCase.clientId === SHOULD_NOT_CREATE_CLIENT_ID
+                ? undefined
+                : testCase.clientId,
+            hasNoScopes: testCase?.hasNoScopes ?? false,
+          })
         }
       })
 
       it(testCaseName, async () => {
         // Act
         const response = await server.get(
-          `/v2/me/tenants/${testCase.tenantId}/scopes`,
+          `/v2/me/tenants/${encodeURIComponent(
+            testCase.tenantId,
+          )}/clients/${encodeURIComponent(testCase.clientId)}/scopes`,
         )
+
         // Assert
         expect(response.status).toEqual(testCase.expected.status)
         expect(response.body).toMatchObject(testCase.expected.body)
