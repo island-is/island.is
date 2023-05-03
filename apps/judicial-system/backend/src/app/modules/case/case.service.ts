@@ -132,6 +132,7 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
     | 'appealState'
+    | 'prosecutorStatementDate'
     | 'appealReceivedByCourtDate'
     | 'appealCaseNumber'
     | 'appealAssistantId'
@@ -624,7 +625,10 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  addMessagesForAppealedCaseToQueue(theCase: Case, user: TUser): Promise<void> {
+  private addMessagesForAppealedCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     const messages: CaseMessage[] =
       theCase.caseFiles
         ?.filter(
@@ -652,10 +656,26 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  addMessagesForReceivedAppealCaseToQueue(theCase: Case, user: TUser) {
+  private addMessagesForReceivedAppealCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     return this.messageService.sendMessagesToQueue([
       {
         type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
+  private addMessagesForAppealStatementToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
         user,
         caseId: theCase.id,
       },
@@ -694,12 +714,19 @@ export class CaseService {
       }
     }
 
-    if (
-      isRestrictionCase(theCase.type) &&
-      updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
-    ) {
-      // Case to dates modified
-      this.addMessagesForModifiedCaseToQueue(theCase, user)
+    if (isRestrictionCase(theCase.type)) {
+      if (
+        updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
+      ) {
+        // Case to dates modified
+        await this.addMessagesForModifiedCaseToQueue(theCase, user)
+      }
+
+      if (
+        updatedCase.prosecutorStatementDate !== theCase.prosecutorStatementDate
+      ) {
+        await this.addMessagesForAppealStatementToQueue(theCase, user)
+      }
     }
 
     if (

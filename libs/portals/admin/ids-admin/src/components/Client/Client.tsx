@@ -10,11 +10,12 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
 import BasicInfo from './BasicInfo'
-import { AuthClient } from './Client.loader'
+import { AuthAdminClient } from './Client.loader'
 import ClientsUrl from './ClientsUrl'
 import Lifetime from './Lifetime'
 import Translations from './Translations'
 import Delegation from './Delegation'
+import Permissions from './Permissions'
 import AdvancedSettings from './AdvancedSettings'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
@@ -36,16 +37,17 @@ export type PublishData = {
 }
 
 const Client = () => {
-  const client = useLoaderData() as AuthClient
+  const client = useLoaderData() as AuthAdminClient
   const navigate = useNavigate()
   const params = useParams()
+
   const { formatMessage } = useLocale()
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
     fromEnvironment: null,
   })
   const [selectedEnvironment, setSelectedEnvironment] = useState<
-    AuthClient['environments'][0]
+    AuthAdminClient['environments'][0]
   >(client.environments[0])
 
   const checkIfInSync = (variables: string[]) => {
@@ -53,11 +55,11 @@ const Client = () => {
       for (const env of client.environments) {
         if (
           JSON.stringify(
-            env[variable as keyof AuthClient['environments'][0]],
+            env[variable as keyof AuthAdminClient['environments'][0]],
           ) !==
           JSON.stringify(
             selectedEnvironment[
-              variable as keyof AuthClient['environments'][0]
+              variable as keyof AuthAdminClient['environments'][0]
             ],
           )
         ) {
@@ -125,6 +127,7 @@ const Client = () => {
             'slidingRefreshTokenLifetime',
             'customClaims',
           ],
+          [ClientFormTypes.permissions]: [],
           [ClientFormTypes.none]: [],
         },
         publishData: publishData,
@@ -157,7 +160,7 @@ const Client = () => {
                   setSelectedEnvironment(
                     client.environments.find(
                       (env) => env.environment === event.value,
-                    ) as AuthClient['environments'][0],
+                    ) as AuthAdminClient['environments'][0],
                   )
                 } else {
                   openPublishModal(event.value)
@@ -194,6 +197,7 @@ const Client = () => {
           key={`${selectedEnvironment.environment}-BasicInfo`}
           clientId={selectedEnvironment.clientId}
           issuerUrl={IssuerUrls[selectedEnvironment.environment]}
+          clientSecrets={selectedEnvironment.secrets}
         />
         <Translations
           key={`${selectedEnvironment.environment}-Translations`}
@@ -217,6 +221,7 @@ const Client = () => {
             AuthAdminRefreshTokenExpiration.Sliding
           }
         />
+        <Permissions />
         <Delegation
           key={`${selectedEnvironment.environment}-Delegation`}
           supportsProcuringHolders={
@@ -238,14 +243,8 @@ const Client = () => {
           allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
           requireConsent={selectedEnvironment.requireConsent}
           supportTokenExchange={selectedEnvironment.supportTokenExchange}
-          slidingRefreshTokenLifetime={
-            selectedEnvironment.slidingRefreshTokenLifetime
-          }
-          customClaims={
-            selectedEnvironment.customClaims?.map((claim) => {
-              return `${claim.type}=${claim.value}`
-            }) ?? []
-          }
+          accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
+          customClaims={selectedEnvironment.customClaims}
         />
       </Stack>
       <Outlet />
