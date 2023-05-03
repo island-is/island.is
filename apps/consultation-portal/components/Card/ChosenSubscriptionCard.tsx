@@ -9,114 +9,120 @@ import { mapIsToEn } from '../../utils/helpers'
 import { useState } from 'react'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import { Area } from '../../types/enums'
-import { SubscriptionArray } from '../../types/interfaces'
 import {
-  isSubscriptionTypeChecked,
-  onCheckboxChange,
-  onSubscriptiontypeChange,
-} from '../Table/utils/checkboxes'
+  SubscriptionArray,
+  SubscriptionTableItem,
+} from '../../types/interfaces'
 
 export interface ChosenSubscriptionCardProps {
-  data: {
-    name: string
-    caseNumber?: string
-    id: string
-    area: Area
-  }
+  isGeneralSubscription?: boolean
+  item: SubscriptionTableItem
+  idx?: number
+  area?: Area
   subscriptionArray: SubscriptionArray
-  setSubscriptionArray: (arr: SubscriptionArray) => void
+  setSubscriptionArray: (_: SubscriptionArray) => void
 }
 
-export const ChosenSubscriptionCard = ({
-  data,
-  subscriptionArray,
-  setSubscriptionArray,
-}: ChosenSubscriptionCardProps) => {
-  const [isOpen, setIsOpen] = useState(false)
-
-  const onClick = () => {
-    setIsOpen(!isOpen)
-  }
-  const handleCheckboxChange = (checked, close = true) => {
-    if (close) {
-      onClick()
-    }
-    onCheckboxChange({
-      currentTab: data.area,
-      subscriptionArray,
-      setSubscriptionArray,
-      checked,
-      itemId: parseInt(data.id),
-    })
-  }
-
-  const { area, id } = data
-
-  if (data?.id === 'OnlyNew' || data?.id === 'AllChanges') {
-    return (
-      <Box
-        borderColor={'blue400'}
-        borderRadius="large"
-        borderWidth="standard"
-        background="white"
-        paddingX={3}
-        paddingY={3}
-        rowGap={3}
-      >
-        <Box display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
-          <Box display="flex" flexDirection="row" columnGap={3}>
-            <Checkbox
-              checked={true}
-              onChange={(e) => handleCheckboxChange(e.target.checked)}
-            />
-            <Box>
-              <Text
-                lineHeight="sm"
-                variant="h5"
-                color={data?.area === 'Mál' ? 'dark400' : 'blue400'}
-              >
-                {data?.area === 'Mál' ? data?.caseNumber : data?.name}
-              </Text>
-            </Box>
-            {data?.area === 'Mál' && (
-              <Box>
-                <Text variant="medium">{data?.name}</Text>
-              </Box>
-            )}
-          </Box>
-          <Box style={{ height: '24px' }}></Box>
-        </Box>
-      </Box>
-    )
-  }
+const ChosenSubscriptionCardSkeleton = ({ children }) => {
   return (
     <Box
       borderColor={'blue400'}
       borderRadius="large"
       borderWidth="standard"
       background="white"
-      paddingX={3}
-      paddingY={3}
+      padding={3}
       rowGap={3}
     >
+      {children}
+    </Box>
+  )
+}
+
+export const ChosenSubscriptionCard = ({
+  isGeneralSubscription,
+  item,
+  area,
+  idx,
+  subscriptionArray,
+  setSubscriptionArray,
+}: ChosenSubscriptionCardProps) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const onCheckboxChange = () => {
+    if (isGeneralSubscription) {
+      const subscriptionArrayCopy = { ...subscriptionArray }
+      if (idx === 0) {
+        const thisData = subscriptionArray.subscribedToAllNewObj
+        thisData.checked = false
+        subscriptionArrayCopy.subscribedToAllNewObj = thisData
+      } else if (idx === 1) {
+        const thisData = subscriptionArray.subscribedToAllChangesObj
+        thisData.checked = false
+        subscriptionArrayCopy.subscribedToAllChangesObj = thisData
+      }
+      setSubscriptionArray(subscriptionArrayCopy)
+    } else {
+      const subscriptionArrayCopy = { ...subscriptionArray }
+      const thisData = subscriptionArrayCopy[mapIsToEn[area]]
+      const thisInstance = thisData.findIndex((elem) => elem.key === item.key)
+      const oldVal = thisData[thisInstance].checked
+      thisData[thisInstance].checked = !oldVal
+      subscriptionArrayCopy[mapIsToEn[area]] = thisData
+      setSubscriptionArray(subscriptionArrayCopy)
+
+      if ((oldVal && isOpen) || (!oldVal && !isOpen)) {
+        setIsOpen(!isOpen)
+      }
+    }
+  }
+
+  const onClick = () => {
+    setIsOpen(!isOpen)
+  }
+
+  if (isGeneralSubscription) {
+    return (
+      <ChosenSubscriptionCardSkeleton>
+        <Box display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
+          <Box display="flex" flexDirection="row" columnGap={3}>
+            <Checkbox
+              checked={item.checked}
+              onChange={() => onCheckboxChange()}
+            />
+            <Box>
+              <Text lineHeight="sm" variant="h5" color={'dark400'}>
+                Öll mál
+              </Text>
+            </Box>
+            <Box>
+              <Text variant="medium">{item.name}</Text>
+            </Box>
+          </Box>
+          <Box style={{ height: '24px' }} />
+        </Box>
+      </ChosenSubscriptionCardSkeleton>
+    )
+  }
+  return (
+    <ChosenSubscriptionCardSkeleton>
       <Box display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
         <Box display="flex" flexDirection="row" columnGap={3}>
           <Checkbox
-            checked={true}
-            onChange={(e) => handleCheckboxChange(e.target.checked)}
+            checked={item.checked}
+            onChange={() => onCheckboxChange()}
           />
           <FocusableBox onClick={onClick}>
             <Text
               lineHeight="sm"
               variant="h5"
-              color={data?.area === 'Mál' ? 'dark400' : 'blue400'}
+              color={area === Area.case ? 'dark400' : 'blue400'}
             >
-              {data?.area === 'Mál' ? data?.caseNumber : data?.name}
+              {area === Area.case ? item.caseNumber : item.name}
             </Text>
           </FocusableBox>
-          {data?.area === 'Mál' && (
+          {area === Area.case && (
             <FocusableBox onClick={onClick}>
-              <Text variant="medium">{data?.name}</Text>
+              <Text variant="medium">{item.name}</Text>
             </FocusableBox>
           )}
         </Box>
@@ -124,29 +130,17 @@ export const ChosenSubscriptionCard = ({
           <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
         </FocusableBox>
       </Box>
-      {isOpen && (
-        <SubscriptionChoices
-          itemId={data.id}
-          id="chosen"
-          checkboxCheck={(subType, id) =>
-            isSubscriptionTypeChecked(
-              subType,
-              id,
-              subscriptionArray[mapIsToEn[data.area]],
-            )
-          }
-          checkboxChange={(subType) =>
-            onSubscriptiontypeChange({
-              subType,
-              subscriptionArray,
-              currentTab: area,
-              setSubscriptionArray,
-              itemId: parseInt(id),
-            })
-          }
-        />
+      {!isOpen && (
+        <Box paddingTop={3}>
+          <SubscriptionChoices
+            item={item}
+            currentTab={area}
+            subscriptionArray={subscriptionArray}
+            setSubscriptionArray={setSubscriptionArray}
+          />
+        </Box>
       )}
-    </Box>
+    </ChosenSubscriptionCardSkeleton>
   )
 }
 
