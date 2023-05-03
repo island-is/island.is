@@ -43,7 +43,7 @@ import { Defendant, DefendantService } from '../defendant'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { CaseFile, FileService } from '../file'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
-import { oldFilter } from './filters/case.filters'
+import { archiveFilter } from './filters/case.archiveFilter'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { ArchiveResponse } from './models/archive.response'
@@ -446,7 +446,7 @@ export class InternalCaseService {
       ],
       where: {
         isArchived: false,
-        [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+        [Op.or]: [{ state: CaseState.DELETED }, archiveFilter],
       },
     })
 
