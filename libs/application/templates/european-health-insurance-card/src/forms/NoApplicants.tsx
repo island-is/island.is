@@ -9,6 +9,7 @@ import {
   hasAPDF,
   someHavePDF,
 } from '../lib/helpers/applicantHelper'
+import { Option } from '@island.is/application/types'
 
 export const NoApplicants: Form = buildForm({
   id: 'NoApplicants',
@@ -22,17 +23,19 @@ export const NoApplicants: Form = buildForm({
       description: e.noApplicants.checkboxDescription,
       condition: (_, externalData) => someHavePDF(externalData),
       options: (application: Application) => {
-        const applying: Array<any> = []
+        const applying: Array<Option> = []
         getEhicResponse(application).forEach((x) => {
           if (x.isInsured && hasAPDF(x)) {
             applying.push({
-              value: x.applicantNationalId,
-              label: getFullName(application, x.applicantNationalId),
+              value: x.applicantNationalId?.toString() ?? '',
+              label:
+                getFullName(application, x.applicantNationalId)?.toString() ??
+                '',
               disabled: true,
             })
           }
         })
-        return applying as Array<{ value: any; label: string }>
+        return applying
       },
     }),
   ],

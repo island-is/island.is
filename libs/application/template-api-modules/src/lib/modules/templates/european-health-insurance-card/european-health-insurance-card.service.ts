@@ -49,8 +49,8 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
         nridArr.push(spouseData.nationalId)
       }
 
-      const custodyData = (application?.externalData
-        ?.childrenCustodyInformation as unknown) as NationalRegistry[]
+      const custodyData = application?.externalData?.childrenCustodyInformation
+        .data as NationalRegistry[]
       for (let i = 0; i < custodyData?.length; i++) {
         nridArr.push(custodyData[i].nationalId)
       }
@@ -130,7 +130,6 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
     const nridArr = this.getApplicants(application)
-
     const resp = await this.ehicApi
       .withMiddleware(new AuthMiddleware(auth as Auth))
       .cardStatus({
