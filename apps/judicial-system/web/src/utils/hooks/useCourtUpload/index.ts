@@ -7,9 +7,9 @@ import {
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  UploadFileToCourtDocument as GeneratedUploadFileToCourtDocument,
-  UploadFileToCourtMutation as GeneratedUploadFileToCourtMutation,
-  UploadFileToCourtMutationVariables as GeneratedUploadFileToCourtMutationVariables,
+  UploadFileToCourtDocument,
+  UploadFileToCourtMutation,
+  UploadFileToCourtMutationVariables,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum UploadState {
@@ -42,9 +42,9 @@ export const useCourtUpload = (
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
   const [uploadFileToCourtMutation] = useMutation<
-    GeneratedUploadFileToCourtMutation,
-    GeneratedUploadFileToCourtMutationVariables
-  >(GeneratedUploadFileToCourtDocument)
+    UploadFileToCourtMutation,
+    UploadFileToCourtMutationVariables
+  >(UploadFileToCourtDocument)
 
   const setFileUploadStatus = useCallback(
     (theCase: Case, file: CaseFile, status: CaseFileStatus) => {
