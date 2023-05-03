@@ -3,29 +3,29 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 
 import { NestDataLoader, GraphQLContext } from '@island.is/nest/dataloader'
 import { User } from '@island.is/auth-nest-tools'
-import { AllowedScopeInput } from './dto/allowed-scope.input'
 import { ClientsService } from './clients.service'
-import { AllowedScope } from './models/allowed-scope.model'
+import { ClientAllowedScopeInput } from './dto/client-allowed-scope.input'
+import { ClientAllowedScope } from './models/client-allowed-scope.model'
 
 export type ClientAllowedScopesDataLoader = DataLoader<
-  AllowedScopeInput,
-  AllowedScope[],
+  ClientAllowedScopeInput,
+  ClientAllowedScope[],
   string
 >
 
 @Injectable()
 export class ClientAllowedScopesLoader
-  implements NestDataLoader<AllowedScopeInput, AllowedScope[]> {
+  implements NestDataLoader<ClientAllowedScopeInput, ClientAllowedScope[]> {
   constructor(private readonly clientsService: ClientsService) {}
 
-  keyFn(input: AllowedScopeInput): string {
+  keyFn(input: ClientAllowedScopeInput): string {
     return `${input.environment}##${input.clientId}##${input.tenantId}`
   }
 
   async loadApiScopes(
     user: User | undefined,
-    inputs: readonly AllowedScopeInput[],
-  ): Promise<AllowedScope[][]> {
+    inputs: readonly ClientAllowedScopeInput[],
+  ): Promise<ClientAllowedScope[][]> {
     if (!user) {
       throw new UnauthorizedException()
     }

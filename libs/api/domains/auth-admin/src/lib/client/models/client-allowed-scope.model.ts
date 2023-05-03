@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('AuthAdminClientAllowedScope')
-export class AllowedScope {
+export class ClientAllowedScope {
   @Field(() => ID)
   name!: string
 

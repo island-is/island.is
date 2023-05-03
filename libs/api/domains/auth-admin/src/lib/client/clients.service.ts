@@ -15,10 +15,11 @@ import { CreateClientInput } from './dto/create-client.input'
 import { CreateClientResponse } from './dto/create-client.response'
 import { PatchClientInput } from './dto/patch-client.input'
 import { PublishClientInput } from './dto/publish-client.input'
-import { AllowedScopeInput } from './dto/allowed-scope.input'
+import { ClientAllowedScopeInput } from './dto/client-allowed-scope.input'
 import { ClientEnvironment } from './models/client-environment.model'
 import { ClientSecret } from './models/client-secret.model'
 import { Client } from './models/client.model'
+import { MeClientsScopesController } from '../../../../../../../apps/services/auth/admin-api/src/app/v2/scopes/me-clients-scopes.controller'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -284,7 +285,7 @@ export class ClientsService extends MultiEnvironmentService {
 
   async getAllowedScopes(
     user: User,
-    input: AllowedScopeInput,
+    input: ClientAllowedScopeInput,
   ): Promise<AdminScopeDTO[]> {
     const apiScopes = await this.adminApiByEnvironmentWithAuth(
       input.environment,

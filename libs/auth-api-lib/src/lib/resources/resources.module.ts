@@ -25,8 +25,6 @@ import { PersonalRepresentativeRightType } from '../personal-representative/mode
 import { DelegationResourcesService } from './delegation-resources.service'
 import { ResourceTranslationService } from './resource-translation.service'
 import { TenantsService } from './tenants.service'
-import { AdminScopeService } from './admin/admin-scope.service'
-import { Client } from '../clients/models/client.model'
 
 @Module({
   imports: [
@@ -44,7 +42,6 @@ import { Client } from '../clients/models/client.model'
       ApiScopeUserClaim,
       ApiResourceUserClaim,
       ApiResourceSecret,
-      Client,
       Delegation,
       DelegationScope,
       PersonalRepresentativeScopePermission,
@@ -59,14 +56,12 @@ import { Client } from '../clients/models/client.model'
     ResourceTranslationService,
     DelegationResourcesService,
     TenantsService,
-    AdminScopeService,
   ],
   exports: [
     ResourcesService,
     ResourceAccessService,
     DelegationResourcesService,
     TenantsService,
-    AdminScopeService,
   ],
 })
 export class ResourcesModule {}

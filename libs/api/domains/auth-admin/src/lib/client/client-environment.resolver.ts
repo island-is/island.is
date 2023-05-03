@@ -8,7 +8,7 @@ import { ClientEnvironment } from './models/client-environment.model'
 import { ClientSecret } from './models/client-secret.model'
 import { ClientSecretLoader } from './client-secret.loader'
 import type { ClientSecretDataLoader } from './client-secret.loader'
-import { AllowedScope } from './models/allowed-scope.model'
+import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import type { ClientAllowedScopesDataLoader } from './client-allowed-scopes.loader'
 import { ClientAllowedScopesLoader } from './client-allowed-scopes.loader'
 
@@ -27,13 +27,13 @@ export class ClientEnvironmentResolver {
     })
   }
 
-  @ResolveField('allowedScopes', () => [AllowedScope], { nullable: true })
+  @ResolveField('allowedScopes', () => [ClientAllowedScope], { nullable: true })
   async resolveAllowedScopes(
     @Loader(ClientAllowedScopesLoader)
     apiScopeLoader: ClientAllowedScopesDataLoader,
     @Parent()
     { tenantId, clientId, environment }: ClientEnvironment,
-  ): Promise<AllowedScope[]> {
+  ): Promise<ClientAllowedScope[]> {
     return apiScopeLoader.load({
       tenantId,
       clientId,

@@ -2,9 +2,9 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
-  AdminScopeService,
   AdminScopeDTO,
   MeTenantGuard,
+  AdminClientsService,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
@@ -23,7 +23,7 @@ const namespace = '@island.is/auth/admin-api/v2/client/scopes'
 })
 @Audit({ namespace })
 export class MeClientsScopesController {
-  constructor(private readonly adminScopeService: AdminScopeService) {}
+  constructor(private readonly adminClientsService: AdminClientsService) {}
 
   @Get()
   @Documentation({
@@ -37,7 +37,7 @@ export class MeClientsScopesController {
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
   ): Promise<AdminScopeDTO[]> {
-    return this.adminScopeService.findAllowedScopes({
+    return this.adminClientsService.findAllowedScopes({
       tenantId,
       clientId,
     })
