@@ -54,6 +54,7 @@ export class ContentfulRepository {
             break
           case 'warning':
             logger.warn(`Contentful API: ${level} - ${data}`)
+            break
           case 'info':
           default:
             logger.info(`Contentful API: ${level} - ${data}`)
