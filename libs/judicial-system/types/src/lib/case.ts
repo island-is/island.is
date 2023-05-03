@@ -155,6 +155,15 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum CaseAppealRulingDecision {
+  ACCEPTING = 'ACCEPTING',
+  REPEAL = 'REPEAL',
+  CHANGED = 'CHANGED',
+  DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
+  DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
+  REMAND = 'REMAND',
+}
+
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',
@@ -270,6 +279,8 @@ export interface Case {
   appealJudge2?: User
   appealJudge3?: User
   appealReceivedByCourtDate?: string
+  appealConclusion?: string
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface CaseListEntry
@@ -297,6 +308,8 @@ export interface CaseListEntry
     | 'prosecutor'
     | 'registrar'
     | 'creatingProsecutor'
+    | 'appealState'
+    | 'appealedDate'
   > {
   parentCaseId?: string
 }
@@ -383,6 +396,8 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'appealState'
     | 'appealCaseNumber'
+    | 'appealConclusion'
+    | 'appealRulingDecision'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -545,4 +560,11 @@ export function getStatementDeadline(appealReceived: Date) {
   return new Date(
     appealReceived.setDate(appealReceived.getDate() + 1),
   ).toISOString()
+}
+
+export function getAppealedDate(
+  prosecutorPostponedAppealDate?: string,
+  accusedPostponedAppealDate?: string,
+): string | undefined {
+  return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }
