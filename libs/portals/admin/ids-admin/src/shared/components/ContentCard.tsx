@@ -79,6 +79,7 @@ const ContentCard: FC<ContentCardProps> = ({
           originalFormData.current = new FormData(
             ref.current as HTMLFormElement,
           )
+          onChange()
           toast.success(formatMessage(m.successfullySaved))
         }
         if (actionData?.globalError) {
@@ -86,7 +87,7 @@ const ContentCard: FC<ContentCardProps> = ({
         }
       }
     }
-  }, [actionData, intent, formatMessage])
+  }, [actionData, intent])
 
   const {
     checkIfInSync,
@@ -165,7 +166,7 @@ const ContentCard: FC<ContentCardProps> = ({
                 <DropdownMenu
                   title={
                     inSync
-                      ? formatMessage(m.inSync)
+                      ? formatMessage(m.synced)
                       : formatMessage(m.outOfSync)
                   }
                   icon="chevronDown"
@@ -190,7 +191,7 @@ const ContentCard: FC<ContentCardProps> = ({
                             />
                             <Text variant="small" color="blue400">
                               {inSync
-                                ? formatMessage(m.inSyncAcrossAllEnvironments)
+                                ? formatMessage(m.syncedAcrossAllEnvironments)
                                 : formatMessage(
                                     m.notInSyncAcrossAllEnvironments,
                                   )}

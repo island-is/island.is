@@ -316,12 +316,10 @@ export class DrivingLicenseService {
 
   async studentCanGetPracticePermit(params: {
     studentSSN: string
-    mentorSSN: string
     token: string
   }) {
-    const { mentorSSN, studentSSN, token } = params
+    const { studentSSN, token } = params
     return await this.drivingLicenseApi.postCanApplyForPracticePermit({
-      mentorSSN,
       studentSSN,
       token,
     })

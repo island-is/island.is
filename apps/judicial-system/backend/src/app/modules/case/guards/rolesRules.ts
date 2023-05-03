@@ -45,6 +45,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'crimeScenes',
   'indictmentIntroduction',
   'requestDriversLicenseSuspension',
+  'prosecutorStatementDate',
 ]
 
 const courtFields: (keyof UpdateCaseDto)[] = [
@@ -92,6 +93,8 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'appealJudge1Id',
   'appealJudge2Id',
   'appealJudge3Id',
+  'appealConclusion',
+  'appealRulingDecision',
 ]
 
 const staffFields: (keyof UpdateCaseDto)[] = [
@@ -99,6 +102,8 @@ const staffFields: (keyof UpdateCaseDto)[] = [
   'isolationToDate',
   'caseModifiedExplanation',
 ]
+
+const limitedAccessFields: (keyof UpdateCaseDto)[] = ['defendantStatementDate']
 
 // Allows prosecutors to update a specific set of fields
 export const prosecutorUpdateRule: RolesRule = {
@@ -142,6 +147,13 @@ export const staffUpdateRule: RolesRule = {
   role: UserRole.STAFF,
   type: RulesType.FIELD,
   dtoFields: staffFields,
+}
+
+// Allows defenders to update a specific set of fields
+export const defenderUpdateRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.FIELD,
+  dtoFields: limitedAccessFields,
 }
 
 // Allows prosecutors to open, submit and delete cases

@@ -238,6 +238,8 @@ export type stepValidationsType = {
   ) => boolean
   [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => boolean
   [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => boolean
+  [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
+  [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
 }
 
 export const stepValidations = (): stepValidationsType => {
@@ -321,6 +323,9 @@ export const stepValidations = (): stepValidationsType => {
       validations.isProsecutorAndDefenderStepValid(theCase),
     [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => true,
     [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => true,
+    [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
+    [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
+      validations.isCourtOfAppealCaseStepValid(theCase),
   }
 }
 
