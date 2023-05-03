@@ -1,5 +1,5 @@
 import { Configuration, ConfidentialClientApplication } from '@azure/msal-node'
-import { Injectable, Provider } from '@nestjs/common'
+import { Provider } from '@nestjs/common'
 import { LazyDuringDevScope } from '@island.is/nest/config'
 import { ConfigType } from '@island.is/nest/config'
 import {
@@ -11,7 +11,6 @@ import { PowerBiConfig } from './powerbi.config'
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
 
-@Injectable({ scope: LazyDuringDevScope })
 export class PowerBiService {
   private fetch: EnhancedFetchAPI
 

@@ -4,6 +4,6 @@ import { PowerBiServiceProvider } from './powerbi.service'
 @Module({
   controllers: [],
   providers: [PowerBiServiceProvider],
-  exports: [],
+  exports: [PowerBiServiceProvider],
 })
 export class PowerBiModule {}
