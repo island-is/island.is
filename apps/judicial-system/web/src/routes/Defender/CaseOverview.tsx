@@ -29,13 +29,7 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  AlertMessage,
-  Box,
-  Divider,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   capitalize,
