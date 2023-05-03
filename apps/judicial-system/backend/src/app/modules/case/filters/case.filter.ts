@@ -1,10 +1,7 @@
-import { literal, Op, WhereOptions } from 'sequelize'
-
 import {
   CaseDecision,
   CaseState,
   CaseType,
-  completedCaseStates,
   hasCaseBeenAppealed,
   indictmentCases,
   InstitutionType,
@@ -13,22 +10,18 @@ import {
   restrictionCases,
   UserRole,
   isExtendedCourtRole,
-  isProsecutionRole,
-  isCourtRole,
-  CaseAppealState,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
-const hideArchived = { isArchived: false }
-
 function getAllowedStates(
-  role: UserRole,
+  user: User,
   institutionType?: InstitutionType,
   caseType?: CaseType,
 ): CaseState[] {
-  if (isProsecutionRole(role)) {
+  if (isProsecutionUser(user)) {
     return [
       CaseState.NEW,
       CaseState.DRAFT,
@@ -42,7 +35,7 @@ function getAllowedStates(
 
   if (institutionType === InstitutionType.COURT) {
     if (
-      role === UserRole.ASSISTANT ||
+      user.role === UserRole.ASSISTANT ||
       (caseType && isIndictmentCase(caseType))
     ) {
       return [
@@ -72,19 +65,19 @@ function getAllowedStates(
 }
 
 function getBlockedStates(
-  role: UserRole,
+  user: User,
   institutionType?: InstitutionType,
   caseType?: CaseType,
 ): CaseState[] {
-  const allowedStates = getAllowedStates(role, institutionType, caseType)
+  const allowedStates = getAllowedStates(user, institutionType, caseType)
 
   return Object.values(CaseState).filter(
     (state) => !allowedStates.includes(state as CaseState),
   )
 }
 
-function prosecutorsOfficeMustMatchUserInstitution(role: UserRole): boolean {
-  return isProsecutionRole(role)
+function prosecutorsOfficeMustMatchUserInstitution(user: User): boolean {
+  return isProsecutionUser(user)
 }
 
 function courtMustMatchUserInstitution(role: UserRole): boolean {
@@ -93,11 +86,11 @@ function courtMustMatchUserInstitution(role: UserRole): boolean {
 
 function isStateHiddenFromRole(
   state: CaseState,
-  role: UserRole,
+  user: User,
   caseType: CaseType,
   institutionType?: InstitutionType,
 ): boolean {
-  return getBlockedStates(role, institutionType, caseType).includes(state)
+  return getBlockedStates(user, institutionType, caseType).includes(state)
 }
 
 function getAllowedTypes(
@@ -156,7 +149,7 @@ function isProsecutorsOfficeCaseHiddenFromUser(
   sharedWithProsecutorsOfficeId?: string,
 ): boolean {
   return (
-    prosecutorsOfficeMustMatchUserInstitution(user.role) &&
+    prosecutorsOfficeMustMatchUserInstitution(user) &&
     Boolean(prosecutorInstitutionId) &&
     prosecutorInstitutionId !== user.institution?.id &&
     (forUpdate ||
@@ -188,61 +181,11 @@ function isHightenedSecurityCaseHiddenFromUser(
   prosecutorId?: string,
 ): boolean {
   return (
-    isProsecutionRole(user.role) &&
+    isProsecutionUser(user) &&
     Boolean(isHeightenedSecurityLevel) &&
     user.id !== creatingProsecutorId &&
     user.id !== prosecutorId
   )
-}
-
-const lifetime = literal('current_date - 90')
-const indictmentLifetime = literal('current_date - 180')
-
-export const oldFilter = {
-  [Op.or]: [
-    {
-      [Op.and]: [
-        { type: [...restrictionCases, ...investigationCases] },
-        {
-          state: [
-            CaseState.NEW,
-            CaseState.DRAFT,
-            CaseState.SUBMITTED,
-            CaseState.RECEIVED,
-          ],
-        },
-        { created: { [Op.lt]: lifetime } },
-      ],
-    },
-    {
-      [Op.and]: [
-        { type: restrictionCases },
-        { state: [CaseState.REJECTED, CaseState.DISMISSED] },
-        { ruling_date: { [Op.lt]: lifetime } },
-      ],
-    },
-    {
-      [Op.and]: [
-        { type: restrictionCases },
-        { state: CaseState.ACCEPTED },
-        { valid_to_date: { [Op.lt]: lifetime } },
-      ],
-    },
-    {
-      [Op.and]: [
-        { type: investigationCases },
-        { state: completedCaseStates },
-        { ruling_date: { [Op.lt]: lifetime } },
-      ],
-    },
-    {
-      [Op.and]: [
-        { type: indictmentCases },
-        { state: completedCaseStates },
-        { ruling_date: { [Op.lt]: indictmentLifetime } },
-      ],
-    },
-  ],
 }
 
 export function isCaseBlockedFromUser(
@@ -253,7 +196,7 @@ export function isCaseBlockedFromUser(
   return (
     isStateHiddenFromRole(
       theCase.state,
-      user.role,
+      user,
       theCase.type,
       user.institution?.type,
     ) ||
@@ -283,111 +226,4 @@ export function isCaseBlockedFromUser(
       theCase.prosecutor?.id,
     )
   )
-}
-
-function getStaffCasesQueryFilter(
-  institutionType?: InstitutionType,
-): WhereOptions {
-  return institutionType === InstitutionType.PRISON_ADMIN
-    ? {
-        [Op.and]: [
-          { isArchived: false },
-          { state: CaseState.ACCEPTED },
-          {
-            type: [
-              CaseType.ADMISSION_TO_FACILITY,
-              CaseType.CUSTODY,
-              CaseType.TRAVEL_BAN,
-            ],
-          },
-        ],
-      }
-    : {
-        [Op.and]: [
-          { isArchived: false },
-          { state: CaseState.ACCEPTED },
-          { type: [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY] },
-          {
-            decision: [
-              CaseDecision.ACCEPTING,
-              CaseDecision.ACCEPTING_PARTIALLY,
-            ],
-          },
-        ],
-      }
-}
-
-export function getCasesQueryFilter(user: User): WhereOptions {
-  if (user.role === UserRole.STAFF) {
-    return getStaffCasesQueryFilter(user.institution?.type)
-  }
-
-  const blockStates = {
-    [Op.not]: { state: getBlockedStates(user.role, user.institution?.type) },
-  }
-
-  const blockInstitutions = isProsecutionRole(user.role)
-    ? {
-        [Op.or]: [
-          { creating_prosecutor_id: { [Op.is]: null } },
-          { '$creatingProsecutor.institution_id$': user.institution?.id },
-          { shared_with_prosecutors_office_id: user.institution?.id },
-        ],
-      }
-    : user.institution?.type === InstitutionType.HIGH_COURT
-    ? {
-        appeal_state: [
-          CaseAppealState.APPEALED,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.COMPLETED,
-        ],
-      }
-    : {
-        [Op.or]: [
-          { court_id: { [Op.is]: null } },
-          { court_id: user.institution?.id },
-        ],
-      }
-
-  const blockHightenedSecurity = isProsecutionRole(user.role)
-    ? [
-        {
-          [Op.or]: [
-            { is_heightened_security_level: { [Op.is]: null } },
-            { is_heightened_security_level: false },
-            { creating_prosecutor_id: user.id },
-            { prosecutor_id: user.id },
-          ],
-        },
-      ]
-    : []
-
-  const blockDraftIndictmentsForCourt =
-    isCourtRole(user.role) && user.institution?.type === InstitutionType.COURT
-      ? [
-          {
-            [Op.not]: {
-              [Op.and]: [{ state: CaseState.DRAFT }, { type: indictmentCases }],
-            },
-          },
-        ]
-      : []
-
-  const restrictCaseTypes =
-    user.role === UserRole.REPRESENTATIVE || user.role === UserRole.ASSISTANT
-      ? [{ type: indictmentCases }]
-      : user.institution?.type === InstitutionType.HIGH_COURT
-      ? [{ type: [...restrictionCases, ...investigationCases] }]
-      : []
-
-  return {
-    [Op.and]: [
-      hideArchived,
-      blockStates,
-      blockInstitutions,
-      ...blockHightenedSecurity,
-      ...blockDraftIndictmentsForCourt,
-      ...restrictCaseTypes,
-    ],
-  }
 }

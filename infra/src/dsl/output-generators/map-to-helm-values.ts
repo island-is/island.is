@@ -253,6 +253,9 @@ const serializeService: SerializeMethod<HelmService> = async (
     : { type: 'error', errors: allErrors }
 }
 
+export const getPostgresExtensions = (extensions: string[] | undefined) =>
+  extensions ? extensions.join(',') : ''
+
 export const resolveDbHost = (
   service: ServiceDefinitionForEnv,
   env: EnvironmentConfig,
@@ -297,6 +300,11 @@ function serializePostgres(
   const errors: string[] = []
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
+  if (serviceDef.initContainers?.postgres?.extensions) {
+    env['DB_EXTENSIONS'] = getPostgresExtensions(
+      serviceDef.initContainers.postgres.extensions,
+    )
+  }
   try {
     const { reader, writer } = resolveDbHost(service, envConf, postgres.host)
     env['DB_HOST'] = writer
