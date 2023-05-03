@@ -3,9 +3,14 @@ import {
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
-import { CardResponse, NationalRegistry, NridName } from '../types'
+import {
+  CardResponse,
+  NationalRegistry,
+  NridName,
+  NationalRegistrySpouse,
+} from '../types'
 
-function getObjectKey(obj: any, value: any) {
+function getObjectKey(obj: FormValue, value: string | boolean) {
   return Object.keys(obj).filter((key) => obj[key] === value)
 }
 
@@ -18,14 +23,14 @@ export function getFromRegistry(formValues: Application<FormValue>) {
     nridArr.push({ nrid: userData?.nationalId, name: userData?.fullName })
   }
   const spouseData = formValues?.externalData?.nationalRegistrySpouse
-    ?.data as NationalRegistry
+    ?.data as NationalRegistrySpouse
 
   if (spouseData?.nationalId) {
     nridArr.push({ nrid: spouseData?.nationalId, name: spouseData?.name })
   }
 
-  const custodyData = (formValues?.externalData?.childrenCustodyInformation
-    ?.data as unknown) as NationalRegistry[]
+  const custodyData = formValues?.externalData?.childrenCustodyInformation
+    ?.data as NationalRegistry[]
 
   if (custodyData) {
     for (let i = 0; i < custodyData.length; i++) {
@@ -67,11 +72,13 @@ export function getEhicApplicants(
     nridArr.push(spouseData?.nationalId)
   }
 
-  const custodyData = (formValues?.externalData
-    ?.childrenCustodyInformation as unknown) as NationalRegistry
+  const custodyData = formValues?.externalData?.childrenCustodyInformation
+    ?.data as NationalRegistry[]
 
-  if (custodyData?.nationalId) {
-    nridArr.push(custodyData?.nationalId)
+  for (let i = 0; i < custodyData.length; i++) {
+    if (custodyData[i].nationalId) {
+      nridArr.push(custodyData[i].nationalId)
+    }
   }
 
   if (!cardType) {
@@ -89,9 +96,9 @@ export function getEhicApplicants(
     applying.push(spouseData?.nationalId)
   }
 
-  for (let i = 0; i < custodyData.data.length; i++) {
-    if (applicants.includes(`${cardType}-${custodyData.data[i].nationalId}`)) {
-      applying.push(custodyData.data[i])
+  for (let i = 0; i < custodyData.length; i++) {
+    if (applicants.includes(`${cardType}-${custodyData[i].nationalId}`)) {
+      applying.push(custodyData[i].nationalId)
     }
   }
 
@@ -138,12 +145,7 @@ export function someCanApplyForPlasticOrPdf(
 export function someAreInsured(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-
-    const ret = cardResponse.find((x) => x.isInsured === true)
-
-    if (ret) {
-      return true
-    }
+    return cardResponse.some((x) => x.isInsured)
   }
   return false
 }
@@ -152,12 +154,7 @@ export function someAreInsured(externalData: ExternalData): boolean {
 export function someCanApplyForPlastic(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-
-    const ret = cardResponse.find((x) => x.isInsured && x.canApply)
-
-    if (ret) {
-      return true
-    }
+    return cardResponse.some((x) => x.isInsured && x.canApply)
   }
   return false
 }
@@ -165,15 +162,9 @@ export function someCanApplyForPlastic(externalData: ExternalData): boolean {
 export function someHavePDF(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-
-    for (let i = 0; i < cardResponse?.length; i++) {
-      if (cardResponse[i].isInsured && !cardResponse[i].canApply) {
-        const card = cardResponse[i].cards?.find((x) => x.isTemp === true)
-        if (card) {
-          return true
-        }
-      }
-    }
+    return cardResponse.some(
+      (x) => x.isInsured && !x.canApply && x.cards?.some((y) => y.isTemp),
+    )
   }
   return false
 }
@@ -200,10 +191,7 @@ export function someHavePlasticButNotPdf(externalData: ExternalData): boolean {
 export function someAreNotInsured(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-    const ret = cardResponse.find((x) => !x.isInsured)
-    if (ret) {
-      return true
-    }
+    return cardResponse.some((x) => !x.isInsured)
   }
   return false
 }
@@ -220,7 +208,7 @@ export function getDefaultValuesForPDFApplicants(
 ) {
   const defaultValues: string[] = []
 
-  const ans = formValues.answers?.addForPDF as Array<any>
+  const ans = formValues.answers?.addForPDF as Array<string>
   if (ans) {
     ans.forEach((item) => defaultValues.push(item))
   }
@@ -229,10 +217,7 @@ export function getDefaultValuesForPDFApplicants(
 
 export function hasAPDF(cardInfo: CardResponse) {
   if (cardInfo && cardInfo.cards && cardInfo.cards.length > 0) {
-    const card = cardInfo.cards.find((x) => x.isTemp)
-    if (card) {
-      return true
-    }
+    return cardInfo.cards.some((x) => x.isTemp)
   }
   return false
 }

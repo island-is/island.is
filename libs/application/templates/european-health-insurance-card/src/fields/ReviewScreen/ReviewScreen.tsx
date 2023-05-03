@@ -15,16 +15,14 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
     ?.data as NationalRegistry
 
   const residence: Address = {
-    address: {
-      streetAddress: nationalRegistryData.address.streetAddress,
-      locality: nationalRegistryData.address.locality,
-      municipalityCode: nationalRegistryData.address.municipalityCode,
-      postalCode: nationalRegistryData.address.postalCode,
-    },
+    streetAddress: nationalRegistryData.address.streetAddress,
+    locality: nationalRegistryData.address.locality,
+    municipalityCode: nationalRegistryData.address.municipalityCode,
+    postalCode: nationalRegistryData.address.postalCode,
   }
 
-  const plastic = application.answers.applyForPlastic as Array<any>
-  const pdf = application.answers.applyForPDF as Array<any>
+  const plastic = application.answers.applyForPlastic as Array<string>
+  const pdf = application.answers.applyForPDF as Array<string>
 
   return (
     <Box marginTop={4}>
@@ -92,8 +90,8 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               )}
             </Text>
             <Text>
-              {residence.address.streetAddress}, {residence.address.postalCode}{' '}
-              {residence.address.locality}
+              {residence.streetAddress}, {residence.postalCode}{' '}
+              {residence.locality}
             </Text>
           </Box>
           {application?.state === 'approved' && <Box marginBottom={8} />}

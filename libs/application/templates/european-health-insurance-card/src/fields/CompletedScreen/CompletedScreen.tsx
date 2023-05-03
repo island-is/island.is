@@ -24,12 +24,10 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
     ?.data as NationalRegistry
 
   const residence: Address = {
-    address: {
-      streetAddress: nationalRegistryData.address.streetAddress,
-      locality: nationalRegistryData.address.locality,
-      municipalityCode: nationalRegistryData.address.municipalityCode,
-      postalCode: nationalRegistryData.address.postalCode,
-    },
+    streetAddress: nationalRegistryData.address.streetAddress,
+    locality: nationalRegistryData.address.locality,
+    municipalityCode: nationalRegistryData.address.municipalityCode,
+    postalCode: nationalRegistryData.address.postalCode,
   }
 
   if (tempData) {
@@ -70,8 +68,8 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
               application,
               formatMessage,
             )}{' '}
-            {residence.address.streetAddress}, {residence.address.postalCode}{' '}
-            {residence.address.locality}{' '}
+            {residence.streetAddress}, {residence.postalCode}{' '}
+            {residence.locality}{' '}
             {formatText(
               e.confirmation.sectionInfoBulletSecondTwo,
               application,

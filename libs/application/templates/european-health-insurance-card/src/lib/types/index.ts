@@ -4,22 +4,22 @@ export interface Person {
 }
 
 export interface Address {
-  address: {
-    locality: string
-    municipalityCode: string
-    postalCode: string
-    streetAddress: string
-  }
+  streetAddress: string
+  locality: string
+  municipalityCode: string
+  postalCode: string
+  city?: string
 }
 
 export interface NationalRegistry {
-  address: any
+  address: Address
   nationalId: string
   fullName: string
+}
+
+export interface NationalRegistrySpouse {
   name: string
-  ssn: string
-  length: number
-  data: any
+  nationalId: string
 }
 
 export enum States {

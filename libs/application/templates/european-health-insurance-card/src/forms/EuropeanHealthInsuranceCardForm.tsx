@@ -20,6 +20,7 @@ import {
   someHavePDF,
   someHavePlasticButNotPdf,
 } from '../lib/helpers/applicantHelper'
+import { Option } from '@island.is/application/types'
 
 import { CardResponse } from '../lib/types'
 import { Sjukra } from '../assets'
@@ -62,21 +63,25 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               condition: (_, externalData) =>
                 someCanApplyForPlastic(externalData),
               options: (application: Application) => {
-                const applying: Array<any> = []
+                const applying: Array<Option> = []
                 getEhicResponse(application).forEach((x) => {
                   if (x.canApply) {
                     applying.push({
-                      value: x.applicantNationalId,
-                      label: getFullName(application, x.applicantNationalId),
+                      value: x.applicantNationalId?.toString() ?? '',
+                      label:
+                        getFullName(
+                          application,
+                          x.applicantNationalId,
+                        )?.toString() ?? '',
                     })
                   }
                 })
-                return applying as Array<{ value: any; label: string }>
+                return applying
               },
             }),
 
             buildDescriptionField({
-              id: 'break',
+              id: 'break1',
               title: '',
               titleVariant: 'h3',
               marginBottom: 'gutter',
@@ -93,23 +98,27 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               condition: (_, externalData) =>
                 someHavePlasticButNotPdf(externalData),
               options: (application: Application) => {
-                const applying: Array<any> = []
+                const applying: Array<Option> = []
 
                 getEhicResponse(application).forEach((x) => {
                   if (x.isInsured && !x.canApply && !hasAPDF(x)) {
                     applying.push({
-                      value: x.applicantNationalId,
-                      label: getFullName(application, x.applicantNationalId),
+                      value: x.applicantNationalId?.toString() ?? '',
+                      label:
+                        getFullName(
+                          application,
+                          x.applicantNationalId,
+                        )?.toString() ?? '',
                     })
                   }
                 })
 
-                return applying as Array<{ value: any; label: string }>
+                return applying
               },
             }),
 
             buildDescriptionField({
-              id: 'break',
+              id: 'break2',
               title: '',
               titleVariant: 'h3',
               marginBottom: 'gutter',
@@ -124,22 +133,26 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               description: '',
               condition: (_, externalData) => someHavePDF(externalData),
               options: (application: Application) => {
-                const applying: Array<any> = []
+                const applying: Array<Option> = []
                 getEhicResponse(application).forEach((x) => {
                   if (x.isInsured && hasAPDF(x)) {
                     applying.push({
-                      value: x.applicantNationalId,
-                      label: getFullName(application, x.applicantNationalId),
+                      value: x.applicantNationalId?.toString() ?? '',
+                      label:
+                        getFullName(
+                          application,
+                          x.applicantNationalId,
+                        )?.toString() ?? '',
                       disabled: true,
                     })
                   }
                 })
-                return applying as Array<{ value: any; label: string }>
+                return applying
               },
             }),
 
             buildDescriptionField({
-              id: 'break',
+              id: 'break3',
               title: '',
               titleVariant: 'h3',
               marginBottom: 'gutter',
@@ -154,17 +167,21 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               description: e.no.sectionDescription,
               condition: (_, externalData) => someAreNotInsured(externalData),
               options: (application: Application) => {
-                const applying: Array<any> = []
+                const applying: Array<Option> = []
                 getEhicResponse(application).forEach((x) => {
                   if (!x.isInsured && !x.canApply) {
                     applying.push({
-                      value: x.applicantNationalId,
-                      label: getFullName(application, x.applicantNationalId),
+                      value: x.applicantNationalId?.toString() ?? '',
+                      label:
+                        getFullName(
+                          application,
+                          x.applicantNationalId,
+                        )?.toString() ?? '',
                       disabled: true,
                     })
                   }
                 })
-                return applying as Array<{ value: any; label: string }>
+                return applying
               },
             }),
           ],
@@ -196,12 +213,12 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               options: (application: Application) => {
                 const applying = []
                 // Are applying for a new plastic card
-                const ans = application.answers.applyForPlastic as Array<any>
+                const ans = application.answers.applyForPlastic as Array<string>
 
                 for (const i in ans) {
                   applying.push({
                     value: ans[i],
-                    label: getFullName(application, ans[i]),
+                    label: getFullName(application, ans[i])?.toString() ?? '',
                   })
                 }
 
@@ -212,13 +229,17 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 cardResponse.forEach((x) => {
                   if (x.isInsured && !x.canApply) {
                     applying.push({
-                      value: x.applicantNationalId,
-                      label: getFullName(application, x.applicantNationalId),
+                      value: x.applicantNationalId?.toString() ?? '',
+                      label:
+                        getFullName(
+                          application,
+                          x.applicantNationalId,
+                        )?.toString() ?? '',
                     })
                   }
                 })
 
-                return applying as Array<{ value: any; label: string }>
+                return applying
               },
               defaultValue: (application: Application) =>
                 getDefaultValuesForPDFApplicants(application),
