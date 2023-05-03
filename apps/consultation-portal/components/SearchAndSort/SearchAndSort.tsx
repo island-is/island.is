@@ -1,4 +1,4 @@
-import { sorting } from '../../utils/helpers'
+import { mapIsToEn, sorting } from '../../utils/helpers'
 import {
   AsyncSearch,
   Box,
@@ -11,10 +11,23 @@ import {
 import { useEffect } from 'react'
 import { Area, SortOptions } from '../../types/enums'
 import DropdownSort from '../DropdownSort/DropdownSort'
+import { SubscriptionArray } from '../../types/interfaces'
+
+interface Props {
+  subscriptionArray: SubscriptionArray
+  setSubscriptionArray: (_: SubscriptionArray) => void
+  searchValue: string
+  setSearchValue: (str: string) => void
+  label?: string
+  searchPlaceholder?: string
+  sortTitle: SortOptions
+  setSortTitle: (val: SortOptions) => void
+  currentTab: Area
+}
 
 const SearchAndSort = ({
-  data,
-  setData,
+  subscriptionArray,
+  setSubscriptionArray,
   searchValue,
   setSearchValue,
   label = 'Leit',
@@ -22,12 +35,14 @@ const SearchAndSort = ({
   sortTitle,
   setSortTitle,
   currentTab,
-}) => {
+}: Props) => {
   const searchOptions = []
-
   useEffect(() => {
-    const sortedData = sorting(data, sortTitle)
-    setData(sortedData)
+    const dataCopy = [...subscriptionArray[mapIsToEn[currentTab]]]
+    const sortedData = sorting(dataCopy, sortTitle)
+    const subArrCopy = { ...subscriptionArray }
+    subArrCopy[mapIsToEn[currentTab]] = sortedData
+    setSubscriptionArray(subArrCopy)
   }, [sortTitle])
 
   const sortOpts = [

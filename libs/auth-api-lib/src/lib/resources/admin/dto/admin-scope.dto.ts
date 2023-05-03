@@ -1,7 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
+import { ApiScope } from '../../models/api-scope.model'
 
-export class AdminScopeDto {
+export class AdminScopeDTO {
+  constructor(apiScope: ApiScope) {
+    this.name = apiScope.name
+    this.displayName = apiScope.displayName
+    this.description = apiScope.description
+  }
+
   @IsString()
   @ApiProperty({ example: '@island.is' })
   name!: string
