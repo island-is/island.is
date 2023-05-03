@@ -122,7 +122,7 @@ USER runner
 CMD [ "jest", "main.spec.js" ]
 
 
-FROM alpine3.15 as awscli
+FROM alpine:3.15 as awscli
 
 ARG AWSCLI_VERSION="1.22.24"
 ENV AWSCLI_VERSION=${AWSCLI_VERSION}
