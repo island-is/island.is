@@ -16,6 +16,7 @@ const workerPostgresInfo = {
   username: 'services_sessions',
   name: dbName,
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
+  extensions: ['uuid-ossp'],
 }
 
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
