@@ -21,17 +21,6 @@ import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
-function getAllowedStates(
-  user: User,
-  institutionType?: InstitutionType,
-): CaseState[] {
-  if (institutionType === InstitutionType.HIGH_COURT) {
-    return [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED]
-  }
-
-  return [CaseState.ACCEPTED]
-}
-
 function prosecutorsOfficeMustMatchUserInstitution(user: User): boolean {
   return isProsecutionUser(user)
 }
@@ -174,17 +163,22 @@ function canProsecutionUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  const canAccessState = [
-    CaseState.NEW,
-    CaseState.DRAFT,
-    CaseState.SUBMITTED,
-    CaseState.RECEIVED,
-    CaseState.ACCEPTED,
-    CaseState.REJECTED,
-    CaseState.DISMISSED,
-  ].includes(theCase.state)
+  // Check case state access
+  if (
+    ![
+      CaseState.NEW,
+      CaseState.DRAFT,
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ].includes(theCase.state)
+  ) {
+    return false
+  }
 
-  return canAccessState && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 function canDistrictCourtUserAccessCase(
@@ -230,12 +224,16 @@ function canAppealsCourtUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  const canAccessState = getAllowedStates(
-    user,
-    user.institution?.type,
-  ).includes(theCase.state)
+  // Check case state access
+  if (
+    ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
+      theCase.state,
+    )
+  ) {
+    return false
+  }
 
-  return canAccessState && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 function canStaffUserAccessCase(
@@ -243,12 +241,12 @@ function canStaffUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  const canAccessState = getAllowedStates(
-    user,
-    user.institution?.type,
-  ).includes(theCase.state)
+  // Check case state access
+  if (theCase.state !== CaseState.ACCEPTED) {
+    return false
+  }
 
-  return canAccessState && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 export function canUserAccessCase(
