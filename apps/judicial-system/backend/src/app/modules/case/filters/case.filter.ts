@@ -29,45 +29,6 @@ function courtMustMatchUserInstitution(role: UserRole): boolean {
   return isExtendedCourtRole(role)
 }
 
-function getAllowedTypes(
-  role: UserRole,
-  forUpdate: boolean,
-  institutionType?: InstitutionType,
-): CaseType[] {
-  if (role === UserRole.ADMIN) {
-    return [] // admins should only handle user management
-  }
-
-  if (role === UserRole.REPRESENTATIVE || role === UserRole.ASSISTANT) {
-    return indictmentCases
-  }
-
-  if (
-    [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(role)
-  ) {
-    return [...indictmentCases, ...investigationCases, ...restrictionCases]
-  }
-
-  if (institutionType === InstitutionType.PRISON_ADMIN) {
-    return [
-      CaseType.CUSTODY,
-      CaseType.ADMISSION_TO_FACILITY,
-      ...(forUpdate ? [] : [CaseType.TRAVEL_BAN]),
-    ]
-  }
-
-  return forUpdate ? [] : [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]
-}
-
-function isTypeHiddenFromRole(
-  type: CaseType,
-  role: UserRole,
-  forUpdate: boolean,
-  institutionType?: InstitutionType,
-): boolean {
-  return !getAllowedTypes(role, forUpdate, institutionType).includes(type)
-}
-
 function isDecisionHiddenFromInstitution(
   decision?: CaseDecision,
   institutionType?: InstitutionType,
@@ -158,11 +119,61 @@ function isCaseBlockedFromUser(
   )
 }
 
+function getAllowedTypes(
+  role: UserRole,
+  forUpdate: boolean,
+  institutionType?: InstitutionType,
+): CaseType[] {
+  if (role === UserRole.REPRESENTATIVE || role === UserRole.ASSISTANT) {
+    return indictmentCases
+  }
+
+  if (
+    [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(role)
+  ) {
+    return [...indictmentCases, ...investigationCases, ...restrictionCases]
+  }
+
+  if (institutionType === InstitutionType.PRISON_ADMIN) {
+    return [
+      CaseType.CUSTODY,
+      CaseType.ADMISSION_TO_FACILITY,
+      ...(forUpdate ? [] : [CaseType.TRAVEL_BAN]),
+    ]
+  }
+
+  return forUpdate ? [] : [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]
+}
+
+function isTypeHiddenFromRole(
+  type: CaseType,
+  role: UserRole,
+  forUpdate: boolean,
+  institutionType?: InstitutionType,
+): boolean {
+  return !getAllowedTypes(role, forUpdate, institutionType).includes(type)
+}
+
 function canProsecutionUserAccessCase(
   theCase: Case,
   user: User,
   forUpdate = true,
 ): boolean {
+  // check case type access
+  if (user.role === UserRole.PROSECUTOR) {
+    if (
+      ![
+        ...indictmentCases,
+        ...investigationCases,
+        ...restrictionCases,
+      ].includes(theCase.type)
+    ) {
+      return false
+    }
+  } else if (!indictmentCases.includes(theCase.type)) {
+    return false
+  }
+
   // Check case state access
   if (
     ![
@@ -186,9 +197,24 @@ function canDistrictCourtUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
+  // check case type access
+  if (user.role === UserRole.JUDGE || user.role === UserRole.REGISTRAR) {
+    if (
+      ![
+        ...indictmentCases,
+        ...investigationCases,
+        ...restrictionCases,
+      ].includes(theCase.type)
+    ) {
+      return false
+    }
+  } else if (!indictmentCases.includes(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
   if (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) {
     if (
-      user.role === UserRole.ASSISTANT ||
       ![
         CaseState.DRAFT,
         CaseState.SUBMITTED,
@@ -200,19 +226,15 @@ function canDistrictCourtUserAccessCase(
     ) {
       return false
     }
-  } else if (isIndictmentCase(theCase.type)) {
-    if (
-      ![
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        CaseState.ACCEPTED,
-        CaseState.REJECTED,
-        CaseState.DISMISSED,
-      ].includes(theCase.state)
-    ) {
-      return false
-    }
-  } else {
+  } else if (
+    ![
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ].includes(theCase.state)
+  ) {
     return false
   }
 
@@ -270,5 +292,6 @@ export function canUserAccessCase(
     return canStaffUserAccessCase(theCase, user, forUpdate)
   }
 
+  // Other users cannot access cases
   return false
 }
