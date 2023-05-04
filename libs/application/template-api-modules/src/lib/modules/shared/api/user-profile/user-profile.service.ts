@@ -5,6 +5,7 @@ import { UserProfileApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -34,13 +35,14 @@ export class UserProfileService extends BaseTemplateApiService {
         }
       })
       .catch((error) => {
-        if (isRunningOnEnvironment('local')) {
+        if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
           return {
             email: 'mockEmail@island.is',
             mobilePhoneNumber: '9999999',
             bankInfo: '0000-11-222222',
           }
         }
+
         throw error
       })
   }
