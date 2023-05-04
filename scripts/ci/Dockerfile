@@ -139,7 +139,6 @@ RUN apk add \
 RUN pip install awscli==$AWSCLI_VERSION --user
 RUN mkdir -p /build
 
-COPY /root/.local/bin/aws /build/
 
 
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
@@ -147,7 +146,7 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 FROM playwright-base as output-playwright
 RUN apt-get update && apt-get install -y zip && apt-get purge
 
-COPY --chown=root:root --from=awscli /build /usr/local/bin
+COPY --chown=pwuser:pwuser --from=awscli /root/.local/bin/aws /usr/local/bin
 
 ARG APP_HOME
 ARG APP_DIST_HOME
