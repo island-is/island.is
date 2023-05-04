@@ -4,7 +4,6 @@ import StackedTitleAndDescription from '../StackedTitleAndDescription/StackedTit
 // Depending on the status of the card. Need to add props.
 
 export const CaseStatusCard = ({ status }) => {
-  console.log(status)
   const StatusCard = ({ heading, text }) => (
     <SimpleCardSkeleton borderColor="blue600" borderWidth="large">
       <StackedTitleAndDescription headingColor="blue400" title={heading}>
