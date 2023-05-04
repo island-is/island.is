@@ -6,7 +6,7 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { validateClientId } from '@island.is/shared/utils'
+import { validateClientId } from '@island.is/auth/shared'
 import {
   AuthAdminCreateClientType,
   AuthAdminEnvironment,

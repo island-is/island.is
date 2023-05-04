@@ -1,7 +1,8 @@
 import { Sequelize } from 'sequelize-typescript'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { validateClientId } from '@island.is/shared/utils'
+
+import { validateClientId } from '@island.is/auth/shared'
 
 import { ApiScope } from '../models/api-scope.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'

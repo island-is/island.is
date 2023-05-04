@@ -1,4 +1,4 @@
-import { validateClientId } from '@island.is/shared/utils'
+import { validateClientId } from '@island.is/auth/shared'
 
 const validValues = [
   '@island-is/ids-admin',

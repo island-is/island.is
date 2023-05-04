@@ -10,6 +10,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
+import { validateClientId } from '@island.is/auth/shared'
 
 import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
@@ -36,7 +37,6 @@ import {
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
 import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
-import { validateClientId } from '@island.is/shared/utils'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
