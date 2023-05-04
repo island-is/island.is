@@ -7,6 +7,8 @@ import { MultiEnvironmentService } from '../shared/services/multi-environment.se
 import { TenantEnvironment } from './models/tenant-environment.model'
 import { TenantsPayload } from './dto/tenants.payload'
 import { Tenant } from './models/tenant.model'
+import { ScopesInput } from './dto/scopes-input'
+import { ScopesPayload } from './dto/scopes-payload'
 
 @Injectable()
 export class TenantsService extends MultiEnvironmentService {
@@ -95,5 +97,17 @@ export class TenantsService extends MultiEnvironmentService {
       id: id,
       environments: tenantMap,
     }
+  }
+
+  async getScopesByTenantId(
+    input: ScopesInput,
+    user: User,
+  ): Promise<ScopesPayload[]> {
+    const scopes = await this.adminApiByEnvironmentWithAuth(
+      input.environment,
+      user,
+    )?.meScopesControllerFindAll({ tenantId: input.tenantId })
+
+    return scopes as ScopesPayload[]
   }
 }
