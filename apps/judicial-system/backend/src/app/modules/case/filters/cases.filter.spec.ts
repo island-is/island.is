@@ -37,6 +37,13 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
+        },
+        {
           state: [
             CaseState.NEW,
             CaseState.DRAFT,
@@ -84,6 +91,13 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { isArchived: false },
+        {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
+        },
         {
           state: [
             CaseState.NEW,
