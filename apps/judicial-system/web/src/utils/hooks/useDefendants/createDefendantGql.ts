@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const CreateDefendantMutation = gql`
-  mutation CreateDefendantMutation($input: CreateDefendantInput!) {
+  mutation CreateDefendant($input: CreateDefendantInput!) {
     createDefendant(input: $input) {
       id
     }

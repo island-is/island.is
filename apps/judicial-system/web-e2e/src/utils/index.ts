@@ -18,17 +18,17 @@ import {
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
-  CaseQuery = 'CaseQuery',
-  CaseListQuery = 'CaseListQuery',
-  CurrentUserQuery = 'CurrentUserQuery',
-  UploadFileToCourtMutation = 'UploadFileToCourtMutation',
+  CaseQuery = 'Case',
+  CaseListQuery = 'CaseList',
+  CurrentUserQuery = 'CurrentUser',
+  UploadFileToCourtMutation = 'UploadFileToCourt',
   UpdateCaseMutation = 'UpdateCase',
   SendNotificationMutation = 'SendNotification',
-  CreatePresignedPostMutation = 'CreatePresignedPostMutation',
-  CreateFileMutation = 'CreateFileMutation',
-  UpdateDefendantMutation = 'UpdateDefendantMutation',
-  LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
-  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
+  CreatePresignedPostMutation = 'CreatePresignedPost',
+  CreateFileMutation = 'CreateFile',
+  UpdateDefendantMutation = 'UpdateDefendant',
+  LimitedAccessCaseQuery = 'LimitedAccessCase',
+  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsers',
   TransitionCaseMutation = 'TransitionCase',
 }
 
