@@ -11,8 +11,10 @@ export const modal = style({
   minHeight: '100vh',
   margin: '0 auto',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
+
   ...themeUtils.responsiveStyle({
     md: {
+      maxWidth: 888,
       margin: `${theme.spacing['6']}px auto`,
       alignItems: 'center',
       minHeight: 'initial',

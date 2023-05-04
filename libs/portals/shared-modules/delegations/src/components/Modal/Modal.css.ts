@@ -1,31 +1,101 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
+import { recipe } from '@vanilla-extract/recipes'
 
-export const modal = style({
-  display: 'flex',
-  justifyContent: 'center',
-  zIndex: 100,
-  maxWidth: 888,
-  background: theme.color.white,
-  width: '100%',
-  minHeight: '100vh',
-  margin: '0 auto',
-  boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
+export const modal = recipe({
+  base: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[2],
+
+    zIndex: 100,
+    position: 'absolute',
+
+    bottom: 0,
+    left: 0,
+    right: 0,
+    maxHeight: ['85vh', `calc(100dvh - ${theme.spacing[8]}px)`],
+    width: '100%',
+    maxWidth: 888,
+
+    paddingTop: theme.spacing[3],
+
+    backgroundColor: theme.color.white,
+    boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
+
+    ...themeUtils.responsiveStyle({
+      md: {
+        position: 'relative',
+        margin: `${theme.spacing['6']}px auto`,
+        maxHeight: [
+          `calc(100vh - ${theme.spacing[12]}px)`,
+          `calc(100dvh - ${theme.spacing[12]}px)`,
+        ],
+
+        maxWidth: 'min(calc(100vw - 64px), 888px)',
+
+        paddingTop: theme.spacing[9],
+      },
+    }),
+  },
+  variants: {
+    noPaddingBottom: {
+      true: {},
+      false: {
+        paddingBottom: theme.spacing[3],
+        ...themeUtils.responsiveStyle({
+          md: {
+            paddingBottom: theme.spacing[9],
+          },
+        }),
+      },
+    },
+  },
+})
+
+// This is not a part of the parent for better scroll bar placement.
+const sharedPaddingX = style({
+  paddingLeft: theme.spacing[3],
+  paddingRight: theme.spacing[3],
+
   ...themeUtils.responsiveStyle({
     md: {
-      margin: `${theme.spacing['6']}px auto`,
-      alignItems: 'center',
-      minHeight: 'initial',
+      paddingLeft: theme.spacing[6],
+      paddingRight: theme.spacing[6],
     },
   }),
 })
 
-export const modalInner = style({
-  maxHeight: '100vh',
+export const header = style([
+  sharedPaddingX,
+  {
+    display: 'grid',
+    gridTemplateColumns: '1fr auto',
+    columnGap: theme.spacing[2],
+    alignItems: 'start',
+  },
+])
+
+export const close = style({
+  gridColumn: '2',
 
   ...themeUtils.responsiveStyle({
     md: {
-      maxHeight: `calc(100vh - ${2 * theme.spacing['6']}px)`,
+      position: 'absolute',
+      top: theme.spacing[4],
+      right: theme.spacing[4],
     },
   }),
 })
+
+export const content = style([
+  sharedPaddingX,
+  {
+    overflowX: 'hidden',
+    WebkitOverflowScrolling: 'touch',
+
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+  },
+])
