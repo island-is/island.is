@@ -95,9 +95,10 @@ export const AccessDeleteModal = ({
 
   return (
     <Modal
-      id={`access-delete-modal`}
-      label={formatMessage(m.accessControl)}
+      id="access-delete-modal"
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessRemoveModalTitle)}
+      label={formatMessage(m.accessRemoveModalTitle)}
       onClose={onClose}
       noPaddingBottom
       {...rest}
