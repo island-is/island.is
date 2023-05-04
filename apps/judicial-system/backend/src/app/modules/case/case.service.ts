@@ -805,7 +805,6 @@ export class CaseService {
   }
 
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
-    this.logger.debug('Creating case', { caseToCreate, user })
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
