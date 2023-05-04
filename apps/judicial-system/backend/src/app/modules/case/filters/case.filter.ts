@@ -5,9 +5,7 @@ import {
   hasCaseBeenAppealed,
   indictmentCases,
   InstitutionType,
-  investigationCases,
   isIndictmentCase,
-  restrictionCases,
   UserRole,
   isExtendedCourtRole,
   isProsecutionUser,
@@ -21,28 +19,8 @@ import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
-function prosecutorsOfficeMustMatchUserInstitution(user: User): boolean {
-  return isProsecutionUser(user)
-}
-
 function courtMustMatchUserInstitution(role: UserRole): boolean {
   return isExtendedCourtRole(role)
-}
-
-function isProsecutorsOfficeCaseHiddenFromUser(
-  user: User,
-  forUpdate: boolean,
-  prosecutorInstitutionId?: string,
-  sharedWithProsecutorsOfficeId?: string,
-): boolean {
-  return (
-    prosecutorsOfficeMustMatchUserInstitution(user) &&
-    Boolean(prosecutorInstitutionId) &&
-    prosecutorInstitutionId !== user.institution?.id &&
-    (forUpdate ||
-      !sharedWithProsecutorsOfficeId ||
-      sharedWithProsecutorsOfficeId !== user.institution?.id)
-  )
 }
 
 function isCourtCaseHiddenFromUser(
@@ -81,12 +59,6 @@ function isCaseBlockedFromUser(
   forUpdate = true,
 ): boolean {
   return (
-    isProsecutorsOfficeCaseHiddenFromUser(
-      user,
-      forUpdate,
-      theCase.creatingProsecutor?.institutionId,
-      theCase.sharedWithProsecutorsOfficeId,
-    ) ||
     isCourtCaseHiddenFromUser(
       user,
       forUpdate,
@@ -131,6 +103,16 @@ function canProsecutionUserAccessCase(
       CaseState.REJECTED,
       CaseState.DISMISSED,
     ].includes(theCase.state)
+  ) {
+    return false
+  }
+
+  // Check prosecutors office access
+  if (
+    theCase.creatingProsecutor?.institutionId &&
+    theCase.creatingProsecutor?.institutionId !== user.institution?.id &&
+    (forUpdate ||
+      theCase.sharedWithProsecutorsOfficeId !== user.institution?.id)
   ) {
     return false
   }
