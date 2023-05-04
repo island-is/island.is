@@ -14,6 +14,8 @@ import {
   isDistrictCourtUser,
   isAppealsCourtUser,
   isPrisonSystemUser,
+  isRestrictionCase,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
@@ -22,44 +24,7 @@ import { Case } from '../models/case.model'
 function getAllowedStates(
   user: User,
   institutionType?: InstitutionType,
-  caseType?: CaseType,
 ): CaseState[] {
-  if (isProsecutionUser(user)) {
-    return [
-      CaseState.NEW,
-      CaseState.DRAFT,
-      CaseState.SUBMITTED,
-      CaseState.RECEIVED,
-      CaseState.ACCEPTED,
-      CaseState.REJECTED,
-      CaseState.DISMISSED,
-    ]
-  }
-
-  if (institutionType === InstitutionType.COURT) {
-    if (
-      user.role === UserRole.ASSISTANT ||
-      (caseType && isIndictmentCase(caseType))
-    ) {
-      return [
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        CaseState.ACCEPTED,
-        CaseState.REJECTED,
-        CaseState.DISMISSED,
-      ]
-    }
-
-    return [
-      CaseState.DRAFT,
-      CaseState.SUBMITTED,
-      CaseState.RECEIVED,
-      CaseState.ACCEPTED,
-      CaseState.REJECTED,
-      CaseState.DISMISSED,
-    ]
-  }
-
   if (institutionType === InstitutionType.HIGH_COURT) {
     return [CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED]
   }
@@ -209,13 +174,17 @@ function canProsecutionUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  const hasAccess = getAllowedStates(
-    user,
-    user.institution?.type,
-    theCase.type,
-  ).includes(theCase.state)
+  const canAccessState = [
+    CaseState.NEW,
+    CaseState.DRAFT,
+    CaseState.SUBMITTED,
+    CaseState.RECEIVED,
+    CaseState.ACCEPTED,
+    CaseState.REJECTED,
+    CaseState.DISMISSED,
+  ].includes(theCase.state)
 
-  return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return canAccessState && !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 function canDistrictCourtUserAccessCase(
@@ -223,13 +192,37 @@ function canDistrictCourtUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  const hasAccess = getAllowedStates(
-    user,
-    user.institution?.type,
-    theCase.type,
-  ).includes(theCase.state)
+  if (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) {
+    if (
+      user.role === UserRole.ASSISTANT ||
+      ![
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        CaseState.ACCEPTED,
+        CaseState.REJECTED,
+        CaseState.DISMISSED,
+      ].includes(theCase.state)
+    ) {
+      return false
+    }
+  } else if (isIndictmentCase(theCase.type)) {
+    if (
+      ![
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        CaseState.ACCEPTED,
+        CaseState.REJECTED,
+        CaseState.DISMISSED,
+      ].includes(theCase.state)
+    ) {
+      return false
+    }
+  } else {
+    return false
+  }
 
-  return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 function canAppealsCourtUserAccessCase(
@@ -237,13 +230,12 @@ function canAppealsCourtUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  const hasAccess = getAllowedStates(
+  const canAccessState = getAllowedStates(
     user,
     user.institution?.type,
-    theCase.type,
   ).includes(theCase.state)
 
-  return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return canAccessState && !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 function canStaffUserAccessCase(
@@ -251,13 +243,12 @@ function canStaffUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  const hasAccess = getAllowedStates(
+  const canAccessState = getAllowedStates(
     user,
     user.institution?.type,
-    theCase.type,
   ).includes(theCase.state)
 
-  return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return canAccessState && !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 export function canUserAccessCase(
