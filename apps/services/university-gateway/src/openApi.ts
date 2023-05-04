@@ -1,6 +1,6 @@
 import { DocumentBuilder } from '@nestjs/swagger'
 import { UniversityGatewayScope } from '@island.is/auth/scopes'
-import { environment } from './environments'
+import { environment } from './environments/environment'
 
 export const openApi = new DocumentBuilder()
   .setTitle('University Gateway')

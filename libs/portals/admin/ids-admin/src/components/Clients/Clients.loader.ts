@@ -11,6 +11,7 @@ export const clientsLoader: WrappedLoaderFn = ({ client }) => {
 
     const clients = await client.query<GetClientsQuery>({
       query: GetClientsDocument,
+      fetchPolicy: 'network-only',
       variables: {
         input: {
           tenantId: params['tenant'],

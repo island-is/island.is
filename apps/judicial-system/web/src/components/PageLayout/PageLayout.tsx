@@ -21,6 +21,7 @@ import {
   pageLayout,
 } from '@island.is/judicial-system-web/messages'
 import {
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -139,7 +140,9 @@ const SidePanel: React.FC<SidePanelProps> = ({
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                workingCase && isIndictmentCase(workingCase.type)
+                user?.institution?.type === InstitutionType.HighCourt
+                  ? formStepperSections.appealedCaseTitle
+                  : isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
                   : formStepperSections.title,
                 { caseType: workingCase.type },

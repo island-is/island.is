@@ -23,6 +23,14 @@ const Properties = z
     customerCount: z.string(),
   })
   .array()
+  .refine(
+    (arr) => {
+      return !arr.some((item) => {
+        return item.propertyNumber.length > 0 && item.address.length === 0
+      })
+    },
+    { params: error.missingAddressForPropertyNumber },
+  )
 
 const TimeRefine = z.object({
   from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {

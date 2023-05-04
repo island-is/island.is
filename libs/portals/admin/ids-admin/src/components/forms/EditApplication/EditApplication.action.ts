@@ -4,17 +4,41 @@ import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
+import {
+  UpdateClientDocument,
+  UpdateClientMutation,
+  UpdateClientMutationVariables,
+} from './EditClient.generated'
+import {
+  AuthAdminEnvironment,
+  AuthAdminTranslatedValue,
+  AuthAdminRefreshTokenExpiration,
+} from '@island.is/api/schema'
 
 export enum ClientFormTypes {
-  applicationUrls = 'applicationUrl',
+  applicationUrls = 'applicationUrls',
   lifeTime = 'lifeTime',
   translations = 'translations',
   delegations = 'delegations',
   advancedSettings = 'advancedSettings',
+  none = 'none',
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
   return s.split(/\s*,\s*|\s+|\n+/)
+}
+
+const transformCustomClaims = (s: string) => {
+  if (!s) {
+    return []
+  }
+
+  const array = splitStringOnCommaOrSpaceOrNewLine(s)
+
+  return array.map((claim) => {
+    const [type, value] = claim.split('=')
+    return { type, value } as { type: string; value: string }
+  })
 }
 
 const checkIfStringIsListOfUrls = (urls: string) => {
@@ -60,12 +84,16 @@ const defaultSchema = z.object({
   allEnvironments: z.optional(z.string()).transform((s) => {
     return s === 'true'
   }),
+  environment: z.nativeEnum(AuthAdminEnvironment),
+  syncEnvironments: z.optional(z.string()).transform((s) => {
+    return (s?.split(',') as AuthAdminEnvironment[]) ?? []
+  }),
 })
 
 export const schema = {
   [ClientFormTypes.lifeTime]: z
     .object({
-      absoluteLifetime: z
+      absoluteRefreshTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {
           message: 'errorPositiveNumber',
@@ -73,19 +101,21 @@ export const schema = {
         .transform((s) => {
           return Number(s)
         }),
-      inactivityExpiration: z.optional(z.string()).transform((s) => {
+      refreshTokenExpiration: z.optional(z.string()).transform((s) => {
         return s === 'on'
+          ? AuthAdminRefreshTokenExpiration.Sliding
+          : AuthAdminRefreshTokenExpiration.Absolute
       }),
-      inactivityLifetime: z.string().transform((s) => {
+      slidingRefreshTokenLifetime: z.string().transform((s) => {
         return Number(s)
       }),
     })
     .merge(defaultSchema)
     .refine(
       (data) => {
-        if (data.inactivityExpiration) {
+        if (data.refreshTokenExpiration) {
           return checkIfStringIsPositiveNumber(
-            data.inactivityLifetime.toString(),
+            data.slidingRefreshTokenLifetime.toString(),
           )
         }
         return true
@@ -118,17 +148,20 @@ export const schema = {
     })
     .merge(defaultSchema)
     .transform((data) => {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { is_displayName, en_displayName, ...rest } = data
       return {
-        translation: [
+        ...rest,
+        displayName: [
           {
             locale: 'is',
-            displayName: data.is_displayName,
+            value: is_displayName,
           },
           {
             locale: 'en',
-            displayName: data.en_displayName,
+            value: en_displayName,
           },
-        ],
+        ] as AuthAdminTranslatedValue[],
       }
     }),
   [ClientFormTypes.delegations]: z
@@ -161,7 +194,7 @@ export const schema = {
       allowOfflineAccess: z.optional(z.string()).transform((s) => {
         return s === 'true'
       }),
-      supportsTokenExchange: z.optional(z.string()).transform((s) => {
+      supportTokenExchange: z.optional(z.string()).transform((s) => {
         return s === 'true'
       }),
       requireConsent: z.optional(z.string()).transform((s) => {
@@ -181,10 +214,11 @@ export const schema = {
           message: 'errorInvalidClaims',
         })
         .transform((s) => {
-          return splitStringOnCommaOrSpaceOrNewLine(s)
+          return transformCustomClaims(s)
         }),
     })
     .merge(defaultSchema),
+  [ClientFormTypes.none]: defaultSchema,
 }
 
 export type EditApplicationResult<T extends ZodType> =
@@ -193,18 +227,35 @@ export type EditApplicationResult<T extends ZodType> =
        * Global error message if the mutation fails
        */
       globalError?: boolean
+      /**
+       * Intent of the form
+       */
+      intent?: string
     })
   | undefined
 
+export const getIntentWithSyncCheck = (
+  formData: FormData,
+): { name: ClientFormTypes; sync: boolean } => {
+  const getIntent = formData.get('intent') as string
+  const intent = getIntent.split('-')
+
+  return {
+    name: ClientFormTypes[intent[0] as keyof typeof ClientFormTypes],
+    sync: !!intent[1],
+  }
+}
+
 export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
   request,
+  params,
 }) => {
   const formData = await request.formData()
-  const intent = formData.get('intent') as ClientFormTypes
+  const intent = getIntentWithSyncCheck(formData)
 
   const result = await validateFormData({
     formData,
-    schema: schema[intent],
+    schema: schema[intent.name],
   })
 
   const { data, errors } = result
@@ -213,7 +264,42 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
     return result
   }
 
-  //Todo: call graphql mutation for the given intent
+  const { syncEnvironments, allEnvironments, environment, ...rest } = data
 
-  return result
+  try {
+    const response = await client.mutate<
+      UpdateClientMutation,
+      UpdateClientMutationVariables
+    >({
+      mutation: UpdateClientDocument,
+      variables: {
+        input: {
+          ...rest,
+          clientId: params['client'] as string,
+          tenantId: params['tenant'] as string,
+          environments: intent.sync
+            ? syncEnvironments
+            : allEnvironments
+            ? [
+                AuthAdminEnvironment.Development,
+                AuthAdminEnvironment.Staging,
+                AuthAdminEnvironment.Production,
+              ]
+            : [environment],
+        },
+      },
+    })
+
+    return {
+      data: response.data?.patchAuthAdminClient,
+      intent: intent.name,
+    }
+  } catch (error) {
+    return {
+      errors: null,
+      data: null,
+      intent: intent.name,
+      globalError: true,
+    }
+  }
 }

@@ -1,22 +1,19 @@
 import { QueryConsultationPortalCaseByIdArgs } from '@island.is/api/schema'
 import initApollo from '../../graphql/client'
 import CaseScreen from '../../screens/Case/Case'
-import {
-  CASE_GET_CASE_BY_ID,
-  CASE_GET_ADVICES_BY_ID,
-} from '../../graphql/queries.graphql'
-import {
-  CaseGetCaseByIdQuery,
-  CaseGetAdvicesByIdQuery,
-  CaseGetAdvicesByIdQueryVariables,
-} from '../../graphql/queries.graphql.generated'
-import { Advice, Case } from '../../types/viewModels'
+import { CASE_GET_CASE_BY_ID } from '../../graphql/queries.graphql'
+import { CaseGetCaseByIdQuery } from '../../graphql/queries.graphql.generated'
+import { Case } from '../../types/viewModels'
 interface CaseProps {
   case: Case
-  advices: Advice[]
+  caseId: number
 }
-const CaseDetails: React.FC<CaseProps> = ({ case: Case, advices }) => {
-  return <CaseScreen chosenCase={Case} advices={advices} />
+
+const CaseDetails: React.FC<CaseProps> = ({
+  case: Case,
+  caseId,
+}: CaseProps) => {
+  return <CaseScreen chosenCase={Case} caseId={caseId} />
 }
 export default CaseDetails
 
@@ -27,9 +24,6 @@ export const getServerSideProps = async (ctx) => {
       {
         data: { consultationPortalCaseById },
       },
-      {
-        data: { consultationPortalAdviceByCaseId },
-      },
     ] = await Promise.all([
       client.query<CaseGetCaseByIdQuery, QueryConsultationPortalCaseByIdArgs>({
         query: CASE_GET_CASE_BY_ID,
@@ -39,19 +33,12 @@ export const getServerSideProps = async (ctx) => {
           },
         },
       }),
-      client.query<CaseGetAdvicesByIdQuery, CaseGetAdvicesByIdQueryVariables>({
-        query: CASE_GET_ADVICES_BY_ID,
-        variables: {
-          input: {
-            caseId: parseInt(ctx.query['slug']),
-          },
-        },
-      }),
     ])
+
     return {
       props: {
         case: consultationPortalCaseById,
-        advices: consultationPortalAdviceByCaseId,
+        caseId: parseInt(ctx.query['slug']),
       },
     }
   } catch (e) {

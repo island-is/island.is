@@ -13,6 +13,7 @@ import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNo
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
@@ -36,12 +37,10 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         id,
-        SYSLUMADUR_NATIONAL_ID,
+        InstitutionNationalIds.SYSLUMENN,
         [ChargeItemCode.CRIMINAL_RECORD],
       )
       return result

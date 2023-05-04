@@ -57,16 +57,9 @@ import {
   Button,
   Select,
   Tooltip,
-  Stack,
-  Divider,
   AlertMessage,
-  AlertBanner,
 } from '@island.is/island-ui/core'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   core,
@@ -78,12 +71,14 @@ import {
   User,
   UserRole,
   CaseType,
-  CaseAppealState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import { getAppealEndDate } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
+import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import * as constants from '@island.is/judicial-system/consts'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -219,32 +214,9 @@ export const getExtensionInfoText = (
       })
 }
 
-type availableModals = 'NoModal' | 'SigningModal'
+type availableModals = 'NoModal' | 'SigningModal' | 'ConfirmAppealAfterDeadline'
 
 export const SignedVerdictOverview: React.FC = () => {
-  // Date modification state
-  const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
-
-  // Case sharing state
-  const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
-  const [
-    selectedSharingInstitutionId,
-    setSelectedSharingInstitutionId,
-  ] = useState<ValueType<ReactSelectOption>>()
-
-  // Court record signature state
-  const [
-    requestCourtRecordSignatureResponse,
-    setRequestCourtRecordSignatureResponse,
-  ] = useState<RequestSignatureResponse>()
-  const [
-    courtRecordSignatureConfirmationResponse,
-    setCourtRecordSignatureConfirmationResponse,
-  ] = useState<SignatureConfirmationResponse>()
-
-  // Reopen case state
-  const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
-
   const {
     workingCase,
     setWorkingCase,
@@ -253,8 +225,26 @@ export const SignedVerdictOverview: React.FC = () => {
     refreshCase,
   } = useContext(FormContext)
 
-  // Ruling signature state
+  const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
+  const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
+  const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
+
+  const [
+    selectedSharingInstitutionId,
+    setSelectedSharingInstitutionId,
+  ] = useState<ValueType<ReactSelectOption>>()
+
+  const [
+    requestCourtRecordSignatureResponse,
+    setRequestCourtRecordSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
+
+  const [
+    courtRecordSignatureConfirmationResponse,
+    setCourtRecordSignatureConfirmationResponse,
+  ] = useState<SignatureConfirmationResponse>()
+
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
@@ -275,13 +265,12 @@ export const SignedVerdictOverview: React.FC = () => {
     isExtendingCase,
     isSendingNotification,
   } = useCase()
+  const { title, description, child } = useAppealAlertBanner(workingCase, () =>
+    setModalVisible('ConfirmAppealAfterDeadline'),
+  )
 
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
-
-  const isAppealedCase =
-    workingCase.prosecutorPostponedAppealDate ||
-    workingCase.accusedPostponedAppealDate
 
   /**
    * If the case is not rejected it must be accepted because
@@ -503,52 +492,6 @@ export const SignedVerdictOverview: React.FC = () => {
     }
   }
 
-  const renderAlertBanner = () => {
-    let alertTitle, alertLinkText, alertLinkHref, appealDate
-
-    const shouldDisplayAppealAlertBanner =
-      workingCase.courtEndTime &&
-      !workingCase.isAppealDeadlineExpired &&
-      user?.role &&
-      isProsecutionRole(user.role)
-
-    const shouldDisplayAppealedAlertBanner =
-      workingCase.appealState &&
-      workingCase.appealState === CaseAppealState.Appealed
-
-    if (shouldDisplayAppealAlertBanner) {
-      alertTitle = formatMessage(strings.appealAlertBannerTitle, {
-        appealDeadline: getAppealEndDate(workingCase.courtEndTime ?? ''),
-      })
-      alertLinkText = formatMessage(strings.appealAlertBannerLinkText)
-      alertLinkHref = '/krofur'
-    } else if (shouldDisplayAppealedAlertBanner) {
-      const isAppealedByProsecutor = workingCase.prosecutorPostponedAppealDate
-      appealDate = isAppealedByProsecutor
-        ? workingCase.prosecutorPostponedAppealDate
-        : workingCase.accusedPostponedAppealDate
-      alertTitle = formatMessage(strings.appealedAlertBannerTitle, {
-        isAppealedByProsecutor: isAppealedByProsecutor,
-        appealDate: formatDate(appealDate, 'PPPp'),
-      })
-      alertLinkText = formatMessage(strings.appealedAlertBannerLinkText)
-      alertLinkHref = '/krofur'
-    } else {
-      return undefined
-    }
-
-    return (
-      <AlertBanner
-        title={alertTitle}
-        variant="warning"
-        link={{
-          href: alertLinkHref,
-          title: alertLinkText,
-        }}
-      />
-    )
-  }
-
   const onModifyDatesSubmit = async (update: UpdateCase) => {
     const updatedCase = await updateCase(workingCase.id, { ...update })
 
@@ -561,10 +504,24 @@ export const SignedVerdictOverview: React.FC = () => {
     return true
   }
 
+  const shouldDisplayAlertBanner =
+    (workingCase.hasBeenAppealed &&
+      (isProsecutionRole(user?.role) || isCourtRole(user?.role))) ||
+    (isProsecutionRole(user?.role) &&
+      workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
+
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        renderAlertBanner()}
+        shouldDisplayAlertBanner && (
+          <AlertBanner
+            variant="warning"
+            title={title}
+            description={description}
+          >
+            {child}
+          </AlertBanner>
+        )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -583,7 +540,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 preTextIcon="arrowBack"
                 onClick={() => router.push(constants.CASES_ROUTE)}
               >
-                Til baka
+                {formatMessage(core.back)}
               </Button>
             </Box>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
@@ -729,8 +686,7 @@ export const SignedVerdictOverview: React.FC = () => {
             workingCase.prosecutorAppealDecision ===
               CaseAppealDecision.APPEAL) &&
             user?.role &&
-            isCourtRole(user.role) &&
-            user?.institution?.type !== InstitutionType.HighCourt && (
+            isCourtRole(user.role) && (
               <Box marginBottom={7}>
                 <AppealSection
                   workingCase={workingCase}
@@ -763,21 +719,10 @@ export const SignedVerdictOverview: React.FC = () => {
                 </Accordion>
               </Box>
               <Box marginBottom={6}>
-                <BlueBox>
-                  <Box marginBottom={2} textAlign="center">
-                    <Text as="h3" variant="h3">
-                      {formatMessage(m.conclusionTitle)}
-                    </Text>
-                  </Box>
-                  <Box marginBottom={3}>
-                    <Box marginTop={1}>
-                      <Text variant="intro">{workingCase.conclusion}</Text>
-                    </Box>
-                  </Box>
-                  <Box marginBottom={1} textAlign="center">
-                    <Text variant="h4">{workingCase.judge?.name}</Text>
-                  </Box>
-                </BlueBox>
+                <Conclusion
+                  conclusionText={workingCase.conclusion}
+                  judgeName={workingCase.judge?.name}
+                />
               </Box>
             </>
           )}
@@ -786,89 +731,86 @@ export const SignedVerdictOverview: React.FC = () => {
               {formatMessage(m.caseDocuments)}
             </Text>
             <Box marginBottom={2}>
-              <Stack space={2} dividers>
-                {user?.role !== UserRole.Staff && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRequest)}
-                    pdfType={'request'}
-                  />
-                )}
-                {showCustodyNotice(
-                  workingCase.type,
-                  workingCase.state,
-                  workingCase.decision,
-                ) && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonCustodyNotice)}
-                    pdfType="custodyNotice"
-                  />
-                )}
+              {user?.role !== UserRole.Staff && (
                 <PdfButton
                   renderAs="row"
                   caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonRulingShortVersion)}
-                  pdfType={'courtRecord'}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'request'}
+                />
+              )}
+              {showCustodyNotice(
+                workingCase.type,
+                workingCase.state,
+                workingCase.decision,
+              ) && (
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonCustodyNotice)}
+                  pdfType="custodyNotice"
+                />
+              )}
+              <PdfButton
+                renderAs="row"
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRulingShortVersion)}
+                pdfType={'courtRecord'}
+              >
+                {isInvestigationCase(workingCase.type) &&
+                  (workingCase.courtRecordSignatory ? (
+                    <SignedDocument
+                      signatory={workingCase.courtRecordSignatory.name}
+                      signingDate={workingCase.courtRecordSignatureDate}
+                    />
+                  ) : user?.role && isCourtRole(user.role) ? (
+                    <Button
+                      variant="ghost"
+                      size="small"
+                      data-testid="signCourtRecordButton"
+                      loading={isRequestingCourtRecordSignature}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        handleRequestCourtRecordSignature()
+                      }}
+                    >
+                      {formatMessage(m.signButton)}
+                    </Button>
+                  ) : isRestrictionCase(workingCase.type) ? null : (
+                    <Text>{formatMessage(m.unsignedDocument)}</Text>
+                  ))}
+              </PdfButton>
+              {user?.role !== UserRole.Staff && (
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRuling)}
+                  pdfType={'ruling'}
                 >
-                  {isInvestigationCase(workingCase.type) &&
-                    (workingCase.courtRecordSignatory ? (
+                  <Box display="flex" flexDirection="row">
+                    {workingCase.rulingDate ? (
                       <SignedDocument
-                        signatory={workingCase.courtRecordSignatory.name}
-                        signingDate={workingCase.courtRecordSignatureDate}
+                        signatory={workingCase.judge?.name}
+                        signingDate={workingCase.rulingDate}
                       />
-                    ) : user?.role && isCourtRole(user.role) ? (
+                    ) : user && user.id === workingCase.judge?.id ? (
                       <Button
-                        variant="ghost"
                         size="small"
-                        data-testid="signCourtRecordButton"
-                        loading={isRequestingCourtRecordSignature}
+                        loading={isRequestingRulingSignature}
                         onClick={(event) => {
                           event.stopPropagation()
-                          handleRequestCourtRecordSignature()
+                          requestRulingSignature()
                         }}
                       >
                         {formatMessage(m.signButton)}
                       </Button>
-                    ) : isRestrictionCase(workingCase.type) ? null : (
+                    ) : (
                       <Text>{formatMessage(m.unsignedDocument)}</Text>
-                    ))}
+                    )}
+                  </Box>
                 </PdfButton>
-                {user?.role !== UserRole.Staff && (
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRuling)}
-                    pdfType={'ruling'}
-                  >
-                    <Box display="flex" flexDirection="row">
-                      {workingCase.rulingDate ? (
-                        <SignedDocument
-                          signatory={workingCase.judge?.name}
-                          signingDate={workingCase.rulingDate}
-                        />
-                      ) : user && user.id === workingCase.judge?.id ? (
-                        <Button
-                          size="small"
-                          loading={isRequestingRulingSignature}
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            requestRulingSignature()
-                          }}
-                        >
-                          {formatMessage(m.signButton)}
-                        </Button>
-                      ) : (
-                        <Text>{formatMessage(m.unsignedDocument)}</Text>
-                      )}
-                    </Box>
-                  </PdfButton>
-                )}
-              </Stack>
+              )}
             </Box>
-            <Divider />
           </Box>
           {user?.role === UserRole.Prosecutor &&
             user.institution?.id ===
@@ -1048,6 +990,28 @@ export const SignedVerdictOverview: React.FC = () => {
         )}
         {isReopeningCase && (
           <ReopenModal onClose={() => setIsReopeningCase(false)} />
+        )}
+        {modalVisible === 'ConfirmAppealAfterDeadline' && (
+          <Modal
+            title={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.title,
+            )}
+            text={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.text,
+            )}
+            primaryButtonText={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
         )}
       </PageLayout>
     </>
