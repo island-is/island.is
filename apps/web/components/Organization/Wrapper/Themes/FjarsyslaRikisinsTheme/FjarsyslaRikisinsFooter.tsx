@@ -1,4 +1,10 @@
-import { Box, GridContainer, Text, Inline } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridContainer,
+  Text,
+  Inline,
+  Stack,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -18,10 +24,12 @@ const joinList = (list: string[], seperator: string) => {
 
 interface FjarsyslaRikisinsFooterProps {
   namespace: Record<string, string>
+  title: string
 }
 
 const FjarsyslaRikisinsFooter = ({
   namespace,
+  title,
 }: FjarsyslaRikisinsFooterProps) => {
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
@@ -52,15 +60,21 @@ const FjarsyslaRikisinsFooter = ({
     <footer className={styles.container} aria-labelledby="fjarsyslan-footer">
       <GridContainer>
         <Box className={styles.topRow}>
-          <img
-            width={160}
-            height={133}
-            src={n(
-              'fjarsyslanFooterLogo',
-              'https://images.ctfassets.net/8k0h54kbe6bj/5uadQzxeuYfF8bzDjdkygg/4fa1e78ef7d91fd8095b4780bafc5245/fjarsyslan.svg',
-            )}
-            alt=""
-          />
+          <Box>
+            <Box marginLeft={[3, 3, 6]} marginBottom={1}>
+              <img
+                width={80}
+                src={n(
+                  'fjarsyslanFooterLogo',
+                  'https://images.ctfassets.net/8k0h54kbe6bj/5uadQzxeuYfF8bzDjdkygg/32ddc280aa31e7ada0f7a6e007a3ebff/fjarsyslan_logo.svg',
+                )}
+                alt=""
+              />
+            </Box>
+            <Text color="white" variant="h2">
+              {title}
+            </Text>
+          </Box>
           <Box textAlign="right">
             <Text fontWeight="semiBold" color="white" marginBottom={1}>
               {n('fjarsyslanFooterTopRowColumnTitle', 'Afgreiðslutími')}

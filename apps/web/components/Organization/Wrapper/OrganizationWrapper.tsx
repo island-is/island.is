@@ -416,7 +416,10 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'fjarsysla-rikisins':
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
-        <FjarsyslaRikisinsFooter namespace={namespace} />
+        <FjarsyslaRikisinsFooter
+          namespace={namespace}
+          title={organization.title}
+        />
       )
       break
     case 'hve':
