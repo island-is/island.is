@@ -321,7 +321,7 @@ export const ComplaintForm: Form = buildForm({
               onBehalf === OnBehalf.OTHERS
             )
           },
-          children: [applicantInformationMultiField],
+          children: [applicantInformationMultiField()],
         }),
         buildSubSection({
           id: 'organizationOrInstitution',
