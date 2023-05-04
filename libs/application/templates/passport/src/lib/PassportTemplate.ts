@@ -35,6 +35,7 @@ const pruneAfter = (time: number) => {
     shouldBeListed: true,
     shouldBePruned: true,
     whenToPrune: time,
+    shouldDeleteChargeIfPaymentFulfilled: true,
   }
 }
 
@@ -134,7 +135,7 @@ const PassportTemplate: ApplicationTemplate<
           name: 'ParentB',
           status: 'inprogress',
           progress: 0.9,
-          lifecycle: pruneAfter(sevenDays),
+          lifecycle:pruneAfter(sevenDays),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),
