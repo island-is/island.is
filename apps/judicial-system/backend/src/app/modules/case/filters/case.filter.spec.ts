@@ -859,7 +859,7 @@ describe('canUserAccessCase', () => {
       `.describe(
       'given a $state case and $role at high court',
       ({ state, role }) => {
-        it('should not read block the case if the accused appealed in court', () => {
+        it('should read block the case if the accused appealed in court', () => {
           // Arrange
           const theCase = {
             state,
@@ -881,10 +881,10 @@ describe('canUserAccessCase', () => {
 
           // Assert
           expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(false)
+          expect(isReadBlocked).toBe(true)
         })
 
-        it('should not read block the case if the prosecutor appealed in court', () => {
+        it('should read block the case if the prosecutor appealed in court', () => {
           // Arrange
           const theCase = {
             state,
@@ -906,10 +906,10 @@ describe('canUserAccessCase', () => {
 
           // Assert
           expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(false)
+          expect(isReadBlocked).toBe(true)
         })
 
-        it('should not read block the case if the accused appealed out of court', () => {
+        it('should read block the case if the accused appealed out of court', () => {
           // Arrange
           const theCase = {
             state,
@@ -932,10 +932,10 @@ describe('canUserAccessCase', () => {
 
           // Assert
           expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(false)
+          expect(isReadBlocked).toBe(true)
         })
 
-        it('should not read block the case if the prosecutor appealed out of court', () => {
+        it('should read block the case if the prosecutor appealed out of court', () => {
           // Arrange
           const theCase = {
             state,
@@ -958,7 +958,7 @@ describe('canUserAccessCase', () => {
 
           // Assert
           expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(false)
+          expect(isReadBlocked).toBe(true)
         })
 
         each`

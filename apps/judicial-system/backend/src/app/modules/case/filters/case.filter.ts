@@ -201,16 +201,6 @@ function getAllowedTypes(
   forUpdate: boolean,
   institutionType?: InstitutionType,
 ): CaseType[] {
-  if (role === UserRole.REPRESENTATIVE || role === UserRole.ASSISTANT) {
-    return indictmentCases
-  }
-
-  if (
-    [UserRole.JUDGE, UserRole.REGISTRAR, UserRole.PROSECUTOR].includes(role)
-  ) {
-    return [...indictmentCases, ...investigationCases, ...restrictionCases]
-  }
-
   if (institutionType === InstitutionType.PRISON_ADMIN) {
     return [
       CaseType.CUSTODY,
@@ -236,6 +226,11 @@ function canAppealsCourtUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
+  // check case type access
+  if (!isRestrictionCase(theCase.type) && !isInvestigationCase(theCase.type)) {
+    return false
+  }
+
   // Check case state access
   if (
     ![CaseState.ACCEPTED, CaseState.REJECTED, CaseState.DISMISSED].includes(
@@ -245,14 +240,7 @@ function canAppealsCourtUserAccessCase(
     return false
   }
 
-  return (
-    !isTypeHiddenFromRole(
-      theCase.type,
-      user.role,
-      forUpdate,
-      user.institution?.type,
-    ) && !isCaseBlockedFromUser(theCase, user, forUpdate)
-  )
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 function canStaffUserAccessCase(
