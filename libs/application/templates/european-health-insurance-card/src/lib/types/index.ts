@@ -17,6 +17,15 @@ export interface NationalRegistry {
   fullName: string
 }
 
+export interface Answer {
+  delimitations: CardAnswer
+}
+
+export interface CardAnswer {
+  applyForPlastic: string[]
+  addForPDF: string[]
+}
+
 export interface NationalRegistrySpouse {
   name: string
   nationalId: string
