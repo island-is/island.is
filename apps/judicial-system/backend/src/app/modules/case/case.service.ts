@@ -58,7 +58,7 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { getCasesQueryFilter } from './filters/case.filters'
+import { getCasesQueryFilter } from './filters/cases.filter'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
@@ -729,13 +729,31 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
-      {
-        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
-        user,
-        caseId: theCase.id,
-      },
-    ])
+    const messages: CaseMessage[] =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            [
+              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+            ].includes(caseFile.category),
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          user,
+          caseId: theCase.id,
+          caseFileId: caseFile.id,
+        })) ?? []
+    messages.push({
+      type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+    })
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForUpdatedCaseToQueue(

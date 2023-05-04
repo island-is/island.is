@@ -55,7 +55,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
             items={[
-              { title: 'Öll mál', href: '/' },
+              { title: 'Öll mál', href: '/samradsgatt' },
               { title: `Mál nr. S-${chosenCase?.caseNumber}` },
             ]}
           />
@@ -76,12 +76,31 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <Box paddingLeft={1}>
-                <Text variant="h3" color="purple400">
-                  {`Fjöldi umsagna: ${chosenCase.adviceCount}`}
-                </Text>
-              </Box>
-              <Divider />
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Skjöl til samráðs"
+                >
+                  {chosenCase.documents.length > 0 ? (
+                    chosenCase.documents.map((doc, index) => {
+                      return (
+                        <LinkV2
+                          href={`${env.backendDownloadUrl}${doc.id}`}
+                          color="blue400"
+                          underline="normal"
+                          underlineVisibility="always"
+                          newTab
+                          key={index}
+                        >
+                          {doc.fileName}
+                        </LinkV2>
+                      )
+                    })
+                  ) : (
+                    <Text>Engin skjöl fundust.</Text>
+                  )}
+                </StackedTitleAndDescription>
+              </SimpleCardSkeleton>
               <Box paddingTop={1}>
                 <CaseEmailBox
                   caseId={caseId}
@@ -101,7 +120,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                   {advices.length !== 0 && (
                     <>
                       <Text variant="h1" color="blue400">
-                        Innsendar umsagnir
+                        Innsendar umsagnir ({chosenCase.adviceCount})
                       </Text>
 
                       <Advices
@@ -128,31 +147,6 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Skjöl til samráðs"
-                >
-                  {chosenCase.documents.length > 0 ? (
-                    chosenCase.documents.map((doc, index) => {
-                      return (
-                        <LinkV2
-                          href={`${env.backendDownloadUrl}${doc.id}`}
-                          color="blue400"
-                          underline="normal"
-                          underlineVisibility="always"
-                          newTab
-                          key={index}
-                        >
-                          {doc.fileName}
-                        </LinkV2>
-                      )
-                    })
-                  ) : (
-                    <Text>Engin skjöl fundust.</Text>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
               <SimpleCardSkeleton>
                 {chosenCase.statusName === 'Til umsagnar' ? (
                   <>
@@ -226,7 +220,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                         onClick={() => setShowStakeholders(!showStakeholders)}
                       >
                         <Icon
-                          icon={showStakeholders ? 'close' : 'open'}
+                          icon={showStakeholders ? 'close' : 'add'}
                           type="outline"
                           size="small"
                           color="blue400"

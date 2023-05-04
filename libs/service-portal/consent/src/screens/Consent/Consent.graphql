@@ -1,0 +1,48 @@
+fragment AuthConsentScope on AuthConsentScope {
+  displayName
+  name
+  description
+  hasConsent
+}
+
+query GetConsentList {
+  consentsList {
+    data {
+      client {
+        clientId
+        clientName
+        domainName
+        domain {
+          name
+          displayName
+          description
+          nationalId
+          organisationLogoUrl
+        }
+      }
+      permissions {
+        owner {
+          name
+          displayName
+          description
+          nationalId
+          organisationLogoUrl
+        }
+        scopes {
+          ... on AuthConsentScope {
+            ...AuthConsentScope
+          }
+
+          ... on AuthConsentScopeGroup {
+            name
+            displayName
+            description
+            children {
+              ...AuthConsentScope
+            }
+          }
+        }
+      }
+    }
+  }
+}
