@@ -9,7 +9,7 @@ import { disableI18n } from '../../../../support/disablers'
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Pósthólf overview', () => {
+test.describe('MS - Pósthólf overview', () => {
   let context: BrowserContext
 
   test.beforeAll(async ({ browser }) => {

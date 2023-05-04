@@ -8,7 +8,7 @@ import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Service portal', () => {
+test.describe('MS - Mínar upplýsingar', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session({

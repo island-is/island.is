@@ -8,7 +8,7 @@ import { disableI18n } from '../../../../support/disablers'
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Licenses', () => {
+test.describe('MS - Skírteini', () => {
   let context: BrowserContext
 
   test.beforeAll(async ({ browser }) => {
