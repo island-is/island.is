@@ -15,6 +15,7 @@ export class ClientCreateScopeDTO {
   displayName!: string
 
   @IsString()
+  @IsNotEmpty()
   @ApiProperty({
     example: 'Description about the scope',
   })
