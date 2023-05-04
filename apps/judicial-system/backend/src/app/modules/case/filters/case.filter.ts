@@ -64,33 +64,12 @@ function getAllowedStates(
   return [CaseState.ACCEPTED]
 }
 
-function getBlockedStates(
-  user: User,
-  institutionType?: InstitutionType,
-  caseType?: CaseType,
-): CaseState[] {
-  const allowedStates = getAllowedStates(user, institutionType, caseType)
-
-  return Object.values(CaseState).filter(
-    (state) => !allowedStates.includes(state as CaseState),
-  )
-}
-
 function prosecutorsOfficeMustMatchUserInstitution(user: User): boolean {
   return isProsecutionUser(user)
 }
 
 function courtMustMatchUserInstitution(role: UserRole): boolean {
   return isExtendedCourtRole(role)
-}
-
-function isStateHiddenFromRole(
-  state: CaseState,
-  user: User,
-  caseType: CaseType,
-  institutionType?: InstitutionType,
-): boolean {
-  return getBlockedStates(user, institutionType, caseType).includes(state)
 }
 
 function getAllowedTypes(
@@ -194,12 +173,6 @@ function isCaseBlockedFromUser(
   forUpdate = true,
 ): boolean {
   return (
-    isStateHiddenFromRole(
-      theCase.state,
-      user,
-      theCase.type,
-      user.institution?.type,
-    ) ||
     isTypeHiddenFromRole(
       theCase.type,
       user.role,
@@ -233,5 +206,11 @@ export function canUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
+  const hasAccess = getAllowedStates(
+    user,
+    user.institution?.type,
+    theCase.type,
+  ).includes(theCase.state)
+
+  return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
