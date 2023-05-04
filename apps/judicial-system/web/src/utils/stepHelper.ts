@@ -9,7 +9,6 @@ import {
   CaseFileCategory,
   Gender,
   IndictmentSubtype,
-  isCourtRole,
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
