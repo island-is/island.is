@@ -1194,7 +1194,7 @@ describe('canUserAccessCase', () => {
     const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
-    expect(isWriteBlocked).toBe(false)
+    expect(isWriteBlocked).toBe(true)
     expect(isReadBlocked).toBe(false)
   })
 
@@ -1214,7 +1214,7 @@ describe('canUserAccessCase', () => {
     const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
-    expect(isWriteBlocked).toBe(false)
+    expect(isWriteBlocked).toBe(true)
     expect(isReadBlocked).toBe(false)
   })
 

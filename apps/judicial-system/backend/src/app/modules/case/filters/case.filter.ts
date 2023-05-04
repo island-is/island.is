@@ -118,7 +118,7 @@ function canProsecutionUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  // check case type access
+  // Check case type access
   if (user.role === UserRole.PROSECUTOR) {
     if (
       !isRestrictionCase(theCase.type) &&
@@ -154,7 +154,7 @@ function canDistrictCourtUserAccessCase(
   user: User,
   forUpdate = true,
 ): boolean {
-  // check case type access
+  // Check case type access
   if ([UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role)) {
     if (
       !isRestrictionCase(theCase.type) &&
@@ -196,37 +196,12 @@ function canDistrictCourtUserAccessCase(
   return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
-function getAllowedTypes(
-  role: UserRole,
-  forUpdate: boolean,
-  institutionType?: InstitutionType,
-): CaseType[] {
-  if (institutionType === InstitutionType.PRISON_ADMIN) {
-    return [
-      CaseType.CUSTODY,
-      CaseType.ADMISSION_TO_FACILITY,
-      ...(forUpdate ? [] : [CaseType.TRAVEL_BAN]),
-    ]
-  }
-
-  return forUpdate ? [] : [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY]
-}
-
-function isTypeHiddenFromRole(
-  type: CaseType,
-  role: UserRole,
-  forUpdate: boolean,
-  institutionType?: InstitutionType,
-): boolean {
-  return !getAllowedTypes(role, forUpdate, institutionType).includes(type)
-}
-
 function canAppealsCourtUserAccessCase(
   theCase: Case,
   user: User,
   forUpdate = true,
 ): boolean {
-  // check case type access
+  // Check case type access
   if (!isRestrictionCase(theCase.type) && !isInvestigationCase(theCase.type)) {
     return false
   }
@@ -243,24 +218,33 @@ function canAppealsCourtUserAccessCase(
   return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
-function canStaffUserAccessCase(
+function canPrisonSystemUserAccessCase(
   theCase: Case,
   user: User,
   forUpdate = true,
 ): boolean {
+  // Prison system users cannot update cases
+  if (forUpdate) {
+    return false
+  }
+
+  // Check case type access
+  if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+    if (!isRestrictionCase(theCase.type)) {
+      return false
+    }
+  } else if (
+    ![CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(theCase.type)
+  ) {
+    return false
+  }
+
   // Check case state access
   if (theCase.state !== CaseState.ACCEPTED) {
     return false
   }
 
-  return (
-    !isTypeHiddenFromRole(
-      theCase.type,
-      user.role,
-      forUpdate,
-      user.institution?.type,
-    ) && !isCaseBlockedFromUser(theCase, user, forUpdate)
-  )
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 export function canUserAccessCase(
@@ -281,7 +265,7 @@ export function canUserAccessCase(
   }
 
   if (isPrisonSystemUser(user)) {
-    return canStaffUserAccessCase(theCase, user, forUpdate)
+    return canPrisonSystemUserAccessCase(theCase, user, forUpdate)
   }
 
   // Other users cannot access cases
