@@ -78,7 +78,7 @@ runs:
            [[ "${{ steps.cache_try_number_two.outputs.success }}" == "true" ]] || \
            [[ "${{ steps.cache_try_number_three.outputs.success }}" == "true" ]]
         then
-          echo "::set-output name=success::false"
+          echo "::set-output name=success::true"
         else
           echo "::set-output name=success::false"
         fi
