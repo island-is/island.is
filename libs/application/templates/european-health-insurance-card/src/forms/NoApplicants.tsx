@@ -27,10 +27,8 @@ export const NoApplicants: Form = buildForm({
         getEhicResponse(application).forEach((x) => {
           if (x.isInsured && hasAPDF(x)) {
             applying.push({
-              value: x.applicantNationalId?.toString() ?? '',
-              label:
-                getFullName(application, x.applicantNationalId)?.toString() ??
-                '',
+              value: x.applicantNationalId ?? '',
+              label: getFullName(application, x.applicantNationalId) ?? '',
               disabled: true,
             })
           }

@@ -145,9 +145,7 @@ export function someCanApplyForPlasticOrPdf(
 export function someAreInsured(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-    if (cardResponse) {
-      return cardResponse.some((x) => x.isInsured)
-    }
+    return cardResponse.some((x) => x.isInsured)
   }
   return false
 }
@@ -156,7 +154,6 @@ export function someAreInsured(externalData: ExternalData): boolean {
 export function someCanApplyForPlastic(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-
     return cardResponse.some((x) => x.isInsured && x.canApply)
   }
   return false
@@ -165,7 +162,6 @@ export function someCanApplyForPlastic(externalData: ExternalData): boolean {
 export function someHavePDF(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-
     return cardResponse.some(
       (x) => x.isInsured && !x.canApply && x.cards?.some((y) => y.isTemp),
     )
@@ -195,7 +191,6 @@ export function someHavePlasticButNotPdf(externalData: ExternalData): boolean {
 export function someAreNotInsured(externalData: ExternalData): boolean {
   if (externalData?.cardResponse?.data) {
     const cardResponse = externalData?.cardResponse?.data as CardResponse[]
-
     return cardResponse.some((x) => !x.isInsured)
   }
   return false
@@ -222,10 +217,7 @@ export function getDefaultValuesForPDFApplicants(
 
 export function hasAPDF(cardInfo: CardResponse) {
   if (cardInfo && cardInfo.cards && cardInfo.cards.length > 0) {
-    const card = cardInfo.cards.find((x) => x.isTemp)
-    if (card) {
-      return true
-    }
+    return cardInfo.cards.some((x) => x.isTemp)
   }
   return false
 }

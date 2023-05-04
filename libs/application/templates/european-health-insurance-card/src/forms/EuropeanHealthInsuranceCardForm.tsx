@@ -67,12 +67,9 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 getEhicResponse(application).forEach((x) => {
                   if (x.canApply) {
                     applying.push({
-                      value: x.applicantNationalId?.toString() ?? '',
+                      value: x.applicantNationalId ?? '',
                       label:
-                        getFullName(
-                          application,
-                          x.applicantNationalId,
-                        )?.toString() ?? '',
+                        getFullName(application, x.applicantNationalId) ?? '',
                     })
                   }
                 })
@@ -103,12 +100,9 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 getEhicResponse(application).forEach((x) => {
                   if (x.isInsured && !x.canApply && !hasAPDF(x)) {
                     applying.push({
-                      value: x.applicantNationalId?.toString() ?? '',
+                      value: x.applicantNationalId ?? '',
                       label:
-                        getFullName(
-                          application,
-                          x.applicantNationalId,
-                        )?.toString() ?? '',
+                        getFullName(application, x.applicantNationalId) ?? '',
                     })
                   }
                 })
@@ -137,12 +131,9 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 getEhicResponse(application).forEach((x) => {
                   if (x.isInsured && hasAPDF(x)) {
                     applying.push({
-                      value: x.applicantNationalId?.toString() ?? '',
+                      value: x.applicantNationalId ?? '',
                       label:
-                        getFullName(
-                          application,
-                          x.applicantNationalId,
-                        )?.toString() ?? '',
+                        getFullName(application, x.applicantNationalId) ?? '',
                       disabled: true,
                     })
                   }
@@ -171,12 +162,9 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 getEhicResponse(application).forEach((x) => {
                   if (!x.isInsured && !x.canApply) {
                     applying.push({
-                      value: x.applicantNationalId?.toString() ?? '',
+                      value: x.applicantNationalId ?? '',
                       label:
-                        getFullName(
-                          application,
-                          x.applicantNationalId,
-                        )?.toString() ?? '',
+                        getFullName(application, x.applicantNationalId) ?? '',
                       disabled: true,
                     })
                   }
@@ -218,7 +206,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 for (const i in ans) {
                   applying.push({
                     value: ans[i],
-                    label: getFullName(application, ans[i])?.toString() ?? '',
+                    label: getFullName(application, ans[i]) ?? '',
                   })
                 }
 
@@ -229,12 +217,9 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 cardResponse.forEach((x) => {
                   if (x.isInsured && !x.canApply) {
                     applying.push({
-                      value: x.applicantNationalId?.toString() ?? '',
+                      value: x.applicantNationalId ?? '',
                       label:
-                        getFullName(
-                          application,
-                          x.applicantNationalId,
-                        )?.toString() ?? '',
+                        getFullName(application, x.applicantNationalId) ?? '',
                     })
                   }
                 })
