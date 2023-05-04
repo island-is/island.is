@@ -14,6 +14,7 @@ import {
   ApplicantCard,
   CardType,
   FormApplyType,
+  Answer,
 } from './types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -56,6 +57,12 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
       }
       return nridArr
     }
+
+    if (applyType === FormApplyType.APPLYING_FOR_PLASTIC) {
+      const ans = (application.answers as unknown) as Answer
+      return ans.delimitations.applyForPlastic
+    }
+
     return application.answers[applyType] as string[]
   }
 
