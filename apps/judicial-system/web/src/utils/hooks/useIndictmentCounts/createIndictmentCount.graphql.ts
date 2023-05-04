@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const CreateIndictmentCountMutation = gql`
-  mutation CreateIndictmentCountMutation($input: CreateIndictmentCountInput!) {
+  mutation CreateIndictmentCount($input: CreateIndictmentCountInput!) {
     createIndictmentCount(input: $input) {
       id
       caseId

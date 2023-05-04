@@ -55,7 +55,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
             items={[
-              { title: 'Öll mál', href: '/' },
+              { title: 'Öll mál', href: '/samradsgatt' },
               { title: `Mál nr. S-${chosenCase?.caseNumber}` },
             ]}
           />
@@ -226,7 +226,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                         onClick={() => setShowStakeholders(!showStakeholders)}
                       >
                         <Icon
-                          icon={showStakeholders ? 'close' : 'open'}
+                          icon={showStakeholders ? 'close' : 'add'}
                           type="outline"
                           size="small"
                           color="blue400"

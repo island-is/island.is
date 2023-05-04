@@ -37,7 +37,7 @@ describe(RESTRICTION_CASE_OVERVIEW_ROUTE, () => {
   it('should submit the case on continue', () => {
     cy.intercept('POST', '**/api/graphql', (req) => {
       if (
-        req.body.operationName === 'TransitionCaseMutation' &&
+        req.body.operationName === 'TransitionCase' &&
         req.body.variables.input.transition !== CaseTransition.DELETE
       ) {
         expect(req.body.variables.input.id).to.equal(caseId)
