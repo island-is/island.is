@@ -110,7 +110,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field: AssetFormField, index) => (
-        <Box key={field.id} hidden={field.initial || field?.dummy}>
+        <Box key={field.id} hidden={field.initial}>
           <AdditionalRealEstate
             field={field}
             fieldName={id}

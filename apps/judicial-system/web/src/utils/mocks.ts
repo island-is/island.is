@@ -6,7 +6,7 @@ import {
   UserRole,
   CaseType,
   CaseOrigin,
-  CurrentUserQueryDocument,
+  CurrentUserDocument,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const mockCourt = {
@@ -64,7 +64,7 @@ export const mockPrisonUser = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -77,7 +77,7 @@ export const mockJudgeQuery = [
 export const mockHighCourtQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -90,7 +90,7 @@ export const mockHighCourtQuery = [
 export const mockPrisonUserQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -103,7 +103,7 @@ export const mockPrisonUserQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {

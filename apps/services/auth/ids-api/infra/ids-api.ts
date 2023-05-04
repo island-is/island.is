@@ -6,6 +6,7 @@ const postgresInfo = {
   username: 'servicesauth',
   name: 'servicesauth',
   passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
+  extensions: ['uuid-ossp'],
 }
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
