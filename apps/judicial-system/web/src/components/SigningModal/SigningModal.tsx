@@ -23,8 +23,8 @@ import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
-  RequestRulingSignatureMutationMutation,
-  RulingSignatureConfirmationQueryQuery,
+  RequestRulingSignatureMutation as RequestRulingSignatureMutationMutation,
+  RulingSignatureConfirmationQuery as RulingSignatureConfirmationQueryQuery,
 } from '../../graphql/schema'
 import RequestRulingSignatureMutation from './requestRulingSignatureGql'
 import { signingModal as m } from './SigningModal.strings'
