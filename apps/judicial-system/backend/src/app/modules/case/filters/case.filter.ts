@@ -231,7 +231,7 @@ function canPrisonSystemUserAccessCase(
   // Check case state access
   if (
     theCase.state !== CaseState.ACCEPTED ||
-    (user.institution?.type === InstitutionType.PRISON &&
+    (user.institution?.type !== InstitutionType.PRISON_ADMIN &&
       theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
   ) {
     return false
