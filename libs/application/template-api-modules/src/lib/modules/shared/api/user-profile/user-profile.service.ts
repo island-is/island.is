@@ -41,7 +41,6 @@ export class UserProfileService extends BaseTemplateApiService {
             bankInfo: '0000-11-222222',
           }
         }
-
         throw error
       })
   }
