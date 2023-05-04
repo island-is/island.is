@@ -83,6 +83,7 @@ function AddPermissions({ isVisible, onClose }: AddPermissionsProps) {
   return (
     <Form method="post">
       <Modal
+        label={formatMessage(m.permissionsModalTitle)}
         title={formatMessage(m.permissionsModalTitle)}
         id="add-permissions"
         isVisible={isVisible}

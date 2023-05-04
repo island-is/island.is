@@ -76,12 +76,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <Box paddingLeft={1}>
-                <Text variant="h3" color="purple400">
-                  {`Fjöldi umsagna: ${chosenCase.adviceCount}`}
-                </Text>
-              </Box>
-              <Divider />
+
               <Box paddingTop={1}>
                 <CaseEmailBox
                   caseId={caseId}
@@ -101,7 +96,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                   {advices.length !== 0 && (
                     <>
                       <Text variant="h1" color="blue400">
-                        Innsendar umsagnir
+                        Innsendar umsagnir ({chosenCase.adviceCount})
                       </Text>
 
                       <Advices

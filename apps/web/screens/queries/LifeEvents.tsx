@@ -14,6 +14,9 @@ export const GET_LIFE_EVENT_QUERY = gql`
       content {
         ...AllSlices
       }
+      featuredImage {
+        ...ImageFields
+      }
     }
   }
   ${slices}
