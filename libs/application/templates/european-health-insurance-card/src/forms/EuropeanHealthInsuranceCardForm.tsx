@@ -20,9 +20,9 @@ import {
   someHavePDF,
   someHavePlasticButNotPdf,
 } from '../lib/helpers/applicantHelper'
-import { Option } from '@island.is/application/types'
 
-import { CardResponse } from '../lib/types'
+import { CardResponse, Answer } from '../lib/types'
+import { Option } from '@island.is/application/types'
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
@@ -50,14 +50,14 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
       title: e.applicants.sectionLabel,
       children: [
         buildMultiField({
-          id: 'plastic',
+          id: 'delimitations',
           title: e.applicants.sectionTitle,
           description: e.applicants.sectionDescription,
           condition: (_, externalData) =>
             someCanApplyForPlasticOrPdf(externalData),
           children: [
             buildCheckboxField({
-              id: 'applyForPlastic',
+              id: 'delimitations.applyForPlastic',
               backgroundColor: 'white',
               title: '',
               condition: (_, externalData) =>
@@ -88,7 +88,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             }),
 
             buildCheckboxField({
-              id: 'addForPDF',
+              id: 'delimitations.addForPDF',
               backgroundColor: 'white',
               title: e.temp.sectionCanTitle,
               description: '',
@@ -201,8 +201,8 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               options: (application: Application) => {
                 const applying = []
                 // Are applying for a new plastic card
-                const ans = application.answers.applyForPlastic as Array<string>
-
+                const answers = application.answers as unknown as Answer
+                const ans = answers.delimitations.applyForPlastic
                 for (const i in ans) {
                   applying.push({
                     value: ans[i],

@@ -38,5 +38,14 @@ export enum CardType {
 
 export enum FormApplyType {
   APPLYING_FOR_PDF = 'applyForPDF',
-  APPLYING_FOR_PLASTIC = 'applyForPlastic',
+  APPLYING_FOR_PLASTIC = 'delimitations.applyForPlastic',
+}
+
+export interface Answer {
+  delimitations: CardAnswer
+}
+
+export interface CardAnswer {
+  applyForPlastic: string[]
+  addForPDF: string[]
 }
