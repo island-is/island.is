@@ -14,7 +14,7 @@ const AboutPage: React.FC<AboutProps> = () => {
     <Layout seo={{ title: 'Um samráðsgátt', url: 'um' }}>
       <BreadcrumbsWithMobileDivider
         items={[
-          { title: 'Samráðsgátt', href: '/' },
+          { title: 'Samráðsgátt', href: '/samradsgatt' },
           { title: 'Um samráðsgátt' },
         ]}
       />
