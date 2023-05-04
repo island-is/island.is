@@ -37,7 +37,8 @@
         "parallel": false,
         "command": "graphql-codegen --config apps/native/app/codegen.yml"
       }
-    }
+    },
+    "docker-native": {}
   },
   "tags": ["scope:js"]
 }

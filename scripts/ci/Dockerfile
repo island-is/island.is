@@ -147,12 +147,6 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
-
-
-
-
-
-
 FROM playwright-base as output-local
 ARG APP_HOME
 
@@ -166,3 +160,6 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
+
+FROM output-base as output-native
+RUN echo "not-implemented"
