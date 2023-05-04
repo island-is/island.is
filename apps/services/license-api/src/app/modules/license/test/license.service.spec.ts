@@ -188,6 +188,7 @@ describe('LicenseService', () => {
           useValue: {
             disability: LicenseId.DISABILITY_LICENSE,
             firearm: LicenseId.FIREARM_LICENSE,
+            driving: LicenseId.DRIVING_LICENSE,
           },
         },
         {
@@ -207,10 +208,7 @@ describe('LicenseService', () => {
         //act
         const result = await licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId:
-              licenseId === LicenseId.DRIVING_LICENSE
-                ? undefined
-                : licenseId.toString(),
+            passTemplateId: licenseId.toString(),
             passTemplateName: licenseId.toString(),
             code: 'success',
             date: '2022-06-28T15:42:11.665950Z',
@@ -226,10 +224,7 @@ describe('LicenseService', () => {
         //act
         const result = await licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId:
-              licenseId === LicenseId.DRIVING_LICENSE
-                ? undefined
-                : licenseId.toString(),
+            passTemplateId: licenseId.toString(),
             passTemplateName: licenseId.toString(),
             code: 'failure',
             date: '2022-06-28T15:42:11.665950Z',
@@ -245,10 +240,7 @@ describe('LicenseService', () => {
         //act
         const result = licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId:
-              licenseId === LicenseId.DRIVING_LICENSE
-                ? undefined
-                : licenseId.toString(),
+            passTemplateId: licenseId.toString(),
             passTemplateName: licenseId.toString(),
             code: '',
             date: '2022-06-28T15:42:11.665950Z',
@@ -265,10 +257,7 @@ describe('LicenseService', () => {
         //act
         const result = licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId:
-              licenseId === LicenseId.DRIVING_LICENSE
-                ? undefined
-                : licenseId.toString(),
+            passTemplateId: licenseId.toString(),
             passTemplateName: licenseId.toString(),
             code: 'invalid',
             date: '2022-06-28T15:42:11.665950Z',

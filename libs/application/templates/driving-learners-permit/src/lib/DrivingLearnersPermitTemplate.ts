@@ -27,7 +27,6 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   institution: m.institutionName,
   dataSchema: dataSchema,
   featureFlag: Features.drivingLearnersPermit,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
