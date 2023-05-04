@@ -24,7 +24,7 @@ import {
   ApplicationWithAttachments,
   YES,
 } from '@island.is/application/types'
-import { Info } from './types/application'
+import { Info, BankruptcyHistoryResult } from './types/application'
 import { getExtraData } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
@@ -161,8 +161,9 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
   async courtBankruptcyCert({
     auth,
-  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+  }: TemplateApiModuleActionProps): Promise<BankruptcyHistoryResult> {
     const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
+
     for (const [_, value] of Object.entries(cert)) {
       if (
         value.bankruptcyStatus &&
@@ -177,7 +178,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         )
       }
     }
-    return { success: true }
+
+    return cert[0]
   }
 
   async createCharge({
