@@ -16,6 +16,7 @@ export function getShortDate(date: string | Date, noYear?: boolean) {
 }
 
 export function getDateBeginDateEnd(begin: string | Date, end: string | Date) {
+  // u2013 is endash and u2014 is emdash
   const beginDate = new Date(begin)
   const endDate = new Date(end)
   const sameYear = beginDate.getFullYear() == endDate.getFullYear()
@@ -23,7 +24,7 @@ export function getDateBeginDateEnd(begin: string | Date, end: string | Date) {
   const formatstring = `dd.${!sameMonth ? 'MM.' : ''}${!sameYear ? 'yyyy' : ''}`
   return `${removeZeroInDate(
     format(new Date(begin), formatstring),
-  )}\u2014${removeZeroInDate(format(new Date(end), 'dd.MM.yyyy'))} `
+  )}\u2013${removeZeroInDate(format(new Date(end), 'dd.MM.yyyy'))} `
 }
 
 interface Props {

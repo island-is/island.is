@@ -28,7 +28,7 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
     }
 
     cy.intercept('POST', '**/api/graphql', (req) => {
-      if (req.body.query.includes('ProsecutorSelectionUsersQuery')) {
+      if (req.body.query.includes('ProsecutorSelectionUsers')) {
         req.alias = 'gqlProsecutorSelectionUsersQuery'
         req.reply({
           fixture: 'prosecutorUsers',

@@ -26,7 +26,6 @@ const asset = z
     marketValue: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    dummy: z.boolean().optional(),
     share: z.number().optional(),
   })
   .refine(
@@ -74,7 +73,13 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().min(1).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        dummy: z.boolean().optional(),
+        phone: z
+          .string()
+          .refine((v) => isValidPhoneNumber(v), {
+            params: m.errorPhoneNumber,
+          })
+          .optional(),
+        email: customZodError(z.string().email().optional(), m.errorEmail),
       })
       .array()
       .optional(),
@@ -89,6 +94,14 @@ export const estateSchema = z.object({
     nameOfDeceased: z.string().min(1).optional(),
     nationalIdOfDeceased: z.string().optional(),
     districtCommissionerHasWill: z.boolean().optional(),
+    testament: z
+      .object({
+        wills: z.enum([YES, NO]),
+        agreement: z.enum([YES, NO]),
+        dividedEstate: z.enum([YES, NO]).optional(),
+        additionalInfo: z.string().optional(),
+      })
+      .optional(),
   }),
 
   // is: Innbú
