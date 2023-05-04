@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const CreatePresignedPostMutation = gql`
-  mutation CreatePresignedPostMutation($input: CreatePresignedPostInput!) {
+  mutation CreatePresignedPost($input: CreatePresignedPostInput!) {
     createPresignedPost(input: $input) {
       url
       fields
@@ -10,9 +10,7 @@ export const CreatePresignedPostMutation = gql`
 `
 
 export const LimitedAccessCreatePresignedPostMutation = gql`
-  mutation LimitedAccessCreatePresignedPostMutation(
-    $input: CreatePresignedPostInput!
-  ) {
+  mutation LimitedAccessCreatePresignedPost($input: CreatePresignedPostInput!) {
     limitedAccessCreatePresignedPost(input: $input) {
       url
       fields
@@ -21,7 +19,7 @@ export const LimitedAccessCreatePresignedPostMutation = gql`
 `
 
 export const CreateFileMutation = gql`
-  mutation CreateFileMutation($input: CreateFileInput!) {
+  mutation CreateFile($input: CreateFileInput!) {
     createFile(input: $input) {
       id
       created
@@ -36,7 +34,7 @@ export const CreateFileMutation = gql`
 `
 
 export const LimitedAccessCreateFileMutation = gql`
-  mutation LimitedAccessCreateFileMutation($input: CreateFileInput!) {
+  mutation LimitedAccessCreateFile($input: CreateFileInput!) {
     limitedAccessCreateFile(input: $input) {
       id
       created
@@ -51,7 +49,7 @@ export const LimitedAccessCreateFileMutation = gql`
 `
 
 export const DeleteFileMutation = gql`
-  mutation DeleteFileMutation($input: DeleteFileInput!) {
+  mutation DeleteFile($input: DeleteFileInput!) {
     deleteFile(input: $input) {
       success
     }
@@ -59,7 +57,7 @@ export const DeleteFileMutation = gql`
 `
 
 export const LimitedAccessDeleteFileMutation = gql`
-  mutation LimitedAccessDeleteFileMutation($input: DeleteFileInput!) {
+  mutation LimitedAccessDeleteFile($input: DeleteFileInput!) {
     limitedAccessDeleteFile(input: $input) {
       success
     }
@@ -67,7 +65,7 @@ export const LimitedAccessDeleteFileMutation = gql`
 `
 
 export const UploadPoliceCaseFileMutation = gql`
-  mutation UploadPoliceCaseFileMutation($input: UploadPoliceCaseFileInput!) {
+  mutation UploadPoliceCaseFile($input: UploadPoliceCaseFileInput!) {
     uploadPoliceCaseFile(input: $input) {
       key
       size

@@ -29,13 +29,7 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  AlertMessage,
-  Box,
-  Divider,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   capitalize,
@@ -280,49 +274,46 @@ export const CaseOverview: React.FC = () => {
             <Text as="h3" variant="h3" marginBottom={3}>
               {formatMessage(m.documentHeading)}
             </Text>
-            <Box marginBottom={2}>
-              <Stack space={2} dividers>
-                <PdfButton
-                  renderAs="row"
-                  caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'limitedAccess/request'}
-                />
-                {completedCaseStates.includes(workingCase.state) && (
-                  <>
-                    <PdfButton
-                      renderAs="row"
-                      caseId={workingCase.id}
-                      title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'limitedAccess/courtRecord'}
-                    >
-                      {workingCase.courtRecordSignatory ? (
-                        <SignedDocument
-                          signatory={workingCase.courtRecordSignatory.name}
-                          signingDate={workingCase.courtRecordSignatureDate}
-                        />
-                      ) : null}
-                    </PdfButton>
-                    <PdfButton
-                      renderAs="row"
-                      caseId={workingCase.id}
-                      title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'limitedAccess/ruling'}
-                    >
-                      {workingCase.rulingDate ? (
-                        <SignedDocument
-                          signatory={workingCase.judge?.name}
-                          signingDate={workingCase.rulingDate}
-                        />
-                      ) : (
-                        <Text>{formatMessage(m.unsignedRuling)}</Text>
-                      )}
-                    </PdfButton>
-                  </>
-                )}
-              </Stack>
+            <Box>
+              <PdfButton
+                renderAs="row"
+                caseId={workingCase.id}
+                title={formatMessage(core.pdfButtonRequest)}
+                pdfType={'limitedAccess/request'}
+              />
+              {completedCaseStates.includes(workingCase.state) && (
+                <>
+                  <PdfButton
+                    renderAs="row"
+                    caseId={workingCase.id}
+                    title={formatMessage(core.pdfButtonRulingShortVersion)}
+                    pdfType={'limitedAccess/courtRecord'}
+                  >
+                    {workingCase.courtRecordSignatory ? (
+                      <SignedDocument
+                        signatory={workingCase.courtRecordSignatory.name}
+                        signingDate={workingCase.courtRecordSignatureDate}
+                      />
+                    ) : null}
+                  </PdfButton>
+                  <PdfButton
+                    renderAs="row"
+                    caseId={workingCase.id}
+                    title={formatMessage(core.pdfButtonRuling)}
+                    pdfType={'limitedAccess/ruling'}
+                  >
+                    {workingCase.rulingDate ? (
+                      <SignedDocument
+                        signatory={workingCase.judge?.name}
+                        signingDate={workingCase.rulingDate}
+                      />
+                    ) : (
+                      <Text>{formatMessage(m.unsignedRuling)}</Text>
+                    )}
+                  </PdfButton>
+                </>
+              )}
             </Box>
-            <Divider />
           </Box>
         </FormContentContainer>
         {modalVisible === 'ConfirmAppealAfterDeadline' && (

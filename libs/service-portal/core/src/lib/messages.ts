@@ -894,4 +894,8 @@ export const m = defineMessages({
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
   },
+  consent: {
+    id: 'service.portal:consent',
+    defaultMessage: 'Gagnaöflun',
+  },
 })

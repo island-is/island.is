@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const GetSignedUrlQuery = gql`
-  query GetSignedUrlQuery($input: GetSignedUrlInput!) {
+  query GetSignedUrl($input: GetSignedUrlInput!) {
     getSignedUrl(input: $input) {
       url
     }
@@ -9,7 +9,7 @@ export const GetSignedUrlQuery = gql`
 `
 
 export const LimitedAccessGetSignedUrlQuery = gql`
-  query LimitedAccessGetSignedUrlQuery($input: GetSignedUrlInput!) {
+  query LimitedAccessGetSignedUrl($input: GetSignedUrlInput!) {
     limitedAccessGetSignedUrl(input: $input) {
       url
     }
