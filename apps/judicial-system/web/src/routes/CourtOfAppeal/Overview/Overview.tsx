@@ -21,13 +21,19 @@ import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseFileCategory,
+  CaseState,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
+import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -93,7 +99,7 @@ const CourtOfAppealOverview: React.FC = () => {
             <Box>
               <Box marginBottom={1}>
                 <Text as="h1" variant="h1">
-                  {formatMessage(strings.title)}
+                  {titleForCase(formatMessage, workingCase)}
                 </Text>
               </Box>
               {workingCase.courtEndTime && (
@@ -107,7 +113,12 @@ const CourtOfAppealOverview: React.FC = () => {
             </Box>
           </Box>
           <Box marginBottom={5}>
-            <CaseDates workingCase={workingCase} />
+            {isRestrictionCase(workingCase.type) &&
+              workingCase.decision !==
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+              workingCase.state === CaseState.ACCEPTED && (
+                <CaseDates workingCase={workingCase} />
+              )}
           </Box>
           <Box marginBottom={5}>
             <InfoCard
