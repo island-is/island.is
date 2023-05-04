@@ -49,7 +49,7 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  lifeEvent: { id, image, title, intro, content },
+  lifeEvent: { id, image, title, intro, content, featuredImage },
   namespace,
   locale,
 }) => {
@@ -107,10 +107,10 @@ export const LifeEvent: Screen<LifeEventProps> = ({
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
-        imageUrl={image?.url}
-        imageContentType={image?.contentType}
-        imageWidth={image?.width?.toString()}
-        imageHeight={image?.height?.toString()}
+        imageUrl={featuredImage?.url}
+        imageContentType={featuredImage?.contentType}
+        imageWidth={featuredImage?.width?.toString()}
+        imageHeight={featuredImage?.height?.toString()}
       >
         <PlausibleDomainTracking
           domain={DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN}
