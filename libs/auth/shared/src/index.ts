@@ -1,1 +1,1 @@
-export * from './lib/utils/validateClientId'
+export { validateClientId } from './lib/utils/validateClientId'
