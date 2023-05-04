@@ -66,8 +66,9 @@ export const AccessConfirmModal = ({
 
   return (
     <Modal
-      id={`access-confirm-modal`}
-      label={formatMessage(m.accessControl)}
+      id="access-confirm-modal"
+      label={formatMessage(m.accessConfirmModalTitle)}
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessConfirmModalTitle)}
       {...rest}
       onClose={onClose}

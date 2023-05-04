@@ -23,25 +23,11 @@ import { getModelToken } from '@nestjs/sequelize'
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'
 
-const mockedApiScopes = [
-  {
-    name: '@scope1',
-    displayName: 'Scope 1 display name',
-    description: 'Scope 1 description',
-  },
-  {
-    name: '@scope2',
-    displayName: 'Scope 2 display name',
-    description: 'Scope 2 description',
-  },
-]
-
 const createTestClientData = async (app: TestApp, user: User) => {
   const fixtureFactory = new FixtureFactory(app)
-  const domain = await fixtureFactory.createDomain({
+  await fixtureFactory.createDomain({
     name: tenantId,
     nationalId: user.nationalId,
-    apiScopes: mockedApiScopes,
   })
   const client = await fixtureFactory.createClient({
     ...clientBaseAttributes,
@@ -51,11 +37,6 @@ const createTestClientData = async (app: TestApp, user: User) => {
     postLogoutRedirectUris: [faker.internet.url()],
     allowedGrantTypes: [],
     claims: [{ type: faker.random.word(), value: faker.random.word() }],
-    allowedScopes:
-      domain.scopes?.map(({ name }) => ({
-        scopeName: name,
-        clientId,
-      })) ?? [],
   })
   const [translation] = await fixtureFactory.createTranslations(client, 'en', {
     clientName: faker.random.word(),
@@ -98,7 +79,6 @@ const createTestClientData = async (app: TestApp, user: User) => {
     supportsPersonalRepresentatives: false,
     supportsProcuringHolders: false,
     promptDelegations: false,
-    allowedScopes: client.allowedScopes ?? [],
   }
 }
 
@@ -321,7 +301,6 @@ describe('MeClientsController with auth', () => {
         supportsProcuringHolders: false,
         promptDelegations: false,
         customClaims: [],
-        allowedScopes: [],
       })
 
       // Assert - db record
@@ -432,7 +411,6 @@ describe('MeClientsController with auth', () => {
           ? typeSpecificDefaults.promptDelegations
           : false,
         customClaims: typeSpecificDefaults.customClaims ?? [],
-        allowedScopes: typeSpecificDefaults.allowedScopes ?? [],
       })
 
       // Assert - db record

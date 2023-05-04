@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const CourtRecordSignatureConfirmationQuery = gql`
-  query CourtRecordSignatureConfirmationQuery(
+  query CourtRecordSignatureConfirmation(
     $input: SignatureConfirmationQueryInput!
   ) {
     courtRecordSignatureConfirmation(input: $input) {
