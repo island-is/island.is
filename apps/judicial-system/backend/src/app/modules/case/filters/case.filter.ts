@@ -19,26 +19,6 @@ import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
-function courtMustMatchUserInstitution(role: UserRole): boolean {
-  return isExtendedCourtRole(role)
-}
-
-function isCourtCaseHiddenFromUser(
-  user: User,
-  forUpdate: boolean,
-  hasCaseBeenAppealed: boolean,
-  courtId?: string,
-): boolean {
-  return (
-    courtMustMatchUserInstitution(user.role) &&
-    Boolean(courtId) &&
-    courtId !== user.institution?.id &&
-    (forUpdate ||
-      !hasCaseBeenAppealed ||
-      user.institution?.type !== InstitutionType.HIGH_COURT)
-  )
-}
-
 function isHightenedSecurityCaseHiddenFromUser(
   user: User,
   isHeightenedSecurityLevel?: boolean,
@@ -53,24 +33,12 @@ function isHightenedSecurityCaseHiddenFromUser(
   )
 }
 
-function isCaseBlockedFromUser(
-  theCase: Case,
-  user: User,
-  forUpdate = true,
-): boolean {
-  return (
-    isCourtCaseHiddenFromUser(
-      user,
-      forUpdate,
-      hasCaseBeenAppealed((theCase as unknown) as TCase),
-      theCase.courtId,
-    ) ||
-    isHightenedSecurityCaseHiddenFromUser(
-      user,
-      theCase.isHeightenedSecurityLevel,
-      theCase.creatingProsecutor?.id,
-      theCase.prosecutor?.id,
-    )
+function isCaseBlockedFromUser(theCase: Case, user: User): boolean {
+  return isHightenedSecurityCaseHiddenFromUser(
+    user,
+    theCase.isHeightenedSecurityLevel,
+    theCase.creatingProsecutor?.id,
+    theCase.prosecutor?.id,
   )
 }
 
@@ -117,14 +85,10 @@ function canProsecutionUserAccessCase(
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return !isCaseBlockedFromUser(theCase, user)
 }
 
-function canDistrictCourtUserAccessCase(
-  theCase: Case,
-  user: User,
-  forUpdate = true,
-): boolean {
+function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   // Check case type access
   if ([UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role)) {
     if (
@@ -164,7 +128,27 @@ function canDistrictCourtUserAccessCase(
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
+  // Check court access
+  if (theCase.courtId !== user.institution?.id) {
+    return false
+  }
+
+  return !isCaseBlockedFromUser(theCase, user)
+}
+
+function isCourtCaseHiddenFromUser(
+  user: User,
+  forUpdate: boolean,
+  hasCaseBeenAppealed: boolean,
+  courtId?: string,
+): boolean {
+  return (
+    Boolean(courtId) &&
+    courtId !== user.institution?.id &&
+    (forUpdate ||
+      !hasCaseBeenAppealed ||
+      user.institution?.type !== InstitutionType.HIGH_COURT)
+  )
 }
 
 function canAppealsCourtUserAccessCase(
@@ -186,7 +170,14 @@ function canAppealsCourtUserAccessCase(
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return (
+    !isCourtCaseHiddenFromUser(
+      user,
+      forUpdate,
+      hasCaseBeenAppealed((theCase as unknown) as TCase),
+      theCase.courtId,
+    ) && !isCaseBlockedFromUser(theCase, user)
+  )
 }
 
 function canPrisonSystemUserAccessCase(
@@ -219,7 +210,7 @@ function canPrisonSystemUserAccessCase(
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return !isCaseBlockedFromUser(theCase, user)
 }
 
 export function canUserAccessCase(
@@ -232,7 +223,7 @@ export function canUserAccessCase(
   }
 
   if (isDistrictCourtUser(user)) {
-    return canDistrictCourtUserAccessCase(theCase, user, forUpdate)
+    return canDistrictCourtUserAccessCase(theCase, user)
   }
 
   if (isAppealsCourtUser(user)) {
