@@ -21,7 +21,7 @@ export const modal = recipe({
     paddingTop: theme.spacing[3],
 
     backgroundColor: theme.color.white,
-    boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
+    boxShadow: theme.shadows.strong,
 
     ...themeUtils.responsiveStyle({
       md: {
@@ -40,7 +40,6 @@ export const modal = recipe({
   },
   variants: {
     noPaddingBottom: {
-      true: {},
       false: {
         paddingBottom: theme.spacing[3],
         ...themeUtils.responsiveStyle({

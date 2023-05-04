@@ -75,7 +75,7 @@ export const Modal = ({
 
         <button onClick={onClose} className={styles.close}>
           <VisuallyHidden>{formatMessage(m.closeModal)}</VisuallyHidden>
-          <Icon icon="close" type="outline" size="large" />
+          <Icon color="blue400" icon="close" type="outline" size="large" />
         </button>
       </Box>
 
