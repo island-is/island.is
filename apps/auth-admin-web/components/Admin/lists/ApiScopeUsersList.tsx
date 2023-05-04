@@ -20,6 +20,10 @@ const ApiScopeUsersList: React.FC = () => {
   )
   const [accessToRemove, setAccessToRemove] = useState('')
 
+  const AWSID = "AKIAabcdefghijklmnop"
+  const password = "abcd"
+  const passwordHash_MD5 = "098f6bcd4621d373cade4e832627b4f6"
+
   const getAdmins = async (
     searchString: string,
     page: number,
