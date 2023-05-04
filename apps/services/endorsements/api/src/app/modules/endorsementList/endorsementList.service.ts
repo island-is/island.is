@@ -66,7 +66,7 @@ export class EndorsementListService {
 
   async findListsByTags(tags: string[], query: any, user: User) {
     const isAdmin = await this.hasAdminScope(user)
-    this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
+    this.logger.info(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // check if user is admin
     return await paginate({
       Model: this.endorsementListModel,
@@ -86,7 +86,7 @@ export class EndorsementListService {
     // Check variable needed since finAll function in Endorsement controller uses this function twice
     // on the second call it passes nationalID of user but does not go throught the get list pipe
     const isAdmin = user && check ? await this.hasAdminScope(user) : false
-    this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
       where: {
         id: listId,
@@ -102,7 +102,7 @@ export class EndorsementListService {
   }
 
   async findAllEndorsementsByNationalId(nationalId: string, query: any) {
-    this.logger.debug(
+    this.logger.info(
       `Finding endorsements for single national id ${nationalId}`,
     )
     return await paginate({
@@ -133,7 +133,7 @@ export class EndorsementListService {
   }
 
   async findAllEndorsementListsByNationalId(nationalId: string, query: any) {
-    this.logger.debug(
+    this.logger.info(
       `Finding endorsement lists created by single national id ${nationalId}`,
     )
 
@@ -243,7 +243,7 @@ export class EndorsementListService {
     // Is used by both unauthenticated users, authenticated users and admin
     // Admin needs to access locked lists and can not use the EndorsementListById pipe
     // Since the endpoint is not authenticated
-    this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     if (!owner) {
       const endorsementList = await this.endorsementListModel.findOne({
         where: {

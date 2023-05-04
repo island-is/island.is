@@ -57,7 +57,7 @@ export class EndorsementService {
   ) {}
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
-    this.logger.debug(`Finding endorsements by list id "${listId}"`)
+    this.logger.info(`Finding endorsements by list id "${listId}"`)
 
     return await paginate({
       Model: this.endorsementModel,
@@ -74,6 +74,7 @@ export class EndorsementService {
     { listId }: FindEndorsementsInput,
     query: any,
   ) {
+    this.logger.info(`Finding GeneralPetitionendorsements by list id "${listId}"`)
     // check if list exists and belongs to general petitions
     const result = await this.endorsementListModel.findOne({
       where: {
@@ -91,7 +92,7 @@ export class EndorsementService {
     nationalId,
     listId,
   }: FindEndorsementInput) {
-    this.logger.debug(
+    this.logger.info(
       `Finding endorsement in list "${listId}" by nationalId "${nationalId}"`,
     )
 
@@ -110,7 +111,7 @@ export class EndorsementService {
     nationalId,
     tags,
   }: FindUserEndorsementsByTagsInput) {
-    this.logger.debug(
+    this.logger.info(
       `Finding endorsements by tags "${tags.join(
         ', ',
       )}" for user "${nationalId}"`,
@@ -130,7 +131,7 @@ export class EndorsementService {
     nationalId,
     showName,
   }: EndorsementInput) {
-    this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
+    this.logger.info(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists
     if (new Date() >= endorsementList.closedDate) {
@@ -165,7 +166,7 @@ export class EndorsementService {
     nationalId,
     endorsementList,
   }: DeleteEndorsementInput) {
-    this.logger.debug(
+    this.logger.info(
       `Removing endorsement from list "${endorsementList.id}" by nationalId "${nationalId}"`,
     )
 
@@ -193,7 +194,7 @@ export class EndorsementService {
   }
 
   private async getEndorserInfo(nationalId: string) {
-    this.logger.debug(`Finding fullName of Endorser "${nationalId}" by id`)
+    this.logger.info(`Finding fullName of Endorser "${nationalId}" by id`)
 
     try {
       return (await this.nationalRegistryApi.getUser(nationalId)).Fulltnafn
