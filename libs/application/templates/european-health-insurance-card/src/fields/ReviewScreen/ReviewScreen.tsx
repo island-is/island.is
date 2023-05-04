@@ -24,7 +24,6 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
   const answers = application.answers as unknown as Answer
   const plastic = answers.delimitations.applyForPlastic
   const pdf = application.answers.applyForPDF as Array<string>
-
   return (
     <Box marginTop={4}>
       <Stack space={7}>
@@ -41,7 +40,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 </Text>
 
                 {plastic?.map((item) => (
-                  <Text>{getFullName(application, item)}</Text>
+                  <Text key={item}>{getFullName(application, item)}</Text>
                 ))}
               </Box>
               <Divider />
@@ -59,7 +58,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 </Text>
 
                 {pdf?.map((item) => (
-                  <Text>{getFullName(application, item)}</Text>
+                  <Text key={item}>{getFullName(application, item)}</Text>
                 ))}
               </Box>
               <Divider />
