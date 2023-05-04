@@ -8,7 +8,7 @@ import {
   NationalRegistry,
   NridName,
   NationalRegistrySpouse,
-  Answer
+  Answer,
 } from '../types'
 
 function getObjectKey(obj: FormValue, value: string | boolean) {
@@ -209,7 +209,7 @@ export function getDefaultValuesForPDFApplicants(
 ) {
   const defaultValues: string[] = []
 
-  const answers = formValues.answers as unknown as Answer
+  const answers = (formValues.answers as unknown) as Answer
   const ans = answers.delimitations.addForPDF
 
   if (ans) {
