@@ -29,16 +29,6 @@ function courtMustMatchUserInstitution(role: UserRole): boolean {
   return isExtendedCourtRole(role)
 }
 
-function isDecisionHiddenFromInstitution(
-  decision?: CaseDecision,
-  institutionType?: InstitutionType,
-): boolean {
-  return (
-    institutionType === InstitutionType.PRISON &&
-    decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-  )
-}
-
 function isProsecutorsOfficeCaseHiddenFromUser(
   user: User,
   forUpdate: boolean,
@@ -91,7 +81,6 @@ function isCaseBlockedFromUser(
   forUpdate = true,
 ): boolean {
   return (
-    isDecisionHiddenFromInstitution(theCase.decision, user.institution?.type) ||
     isProsecutorsOfficeCaseHiddenFromUser(
       user,
       forUpdate,
@@ -240,7 +229,11 @@ function canPrisonSystemUserAccessCase(
   }
 
   // Check case state access
-  if (theCase.state !== CaseState.ACCEPTED) {
+  if (
+    theCase.state !== CaseState.ACCEPTED ||
+    (user.institution?.type === InstitutionType.PRISON &&
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+  ) {
     return false
   }
 
