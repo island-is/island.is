@@ -2,6 +2,7 @@ import each from 'jest-each'
 
 import {
   CaseAppealDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
@@ -426,129 +427,43 @@ describe('canUserAccessCase', () => {
       `.describe(
         'given a $state case and $role at high court',
         ({ state, role }) => {
-          it('should not read block the case if the accused appealed in court', () => {
-            // Arrange
-            const theCase = {
-              state,
-              type,
-              courtId: 'Court',
-              accusedAppealDecision: CaseAppealDecision.APPEAL,
-            } as Case
-            const user = {
-              role,
-              institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
-              },
-            } as User
-
-            // Act
-            const isWriteBlocked = !canUserAccessCase(theCase, user)
-            const isReadBlocked = !canUserAccessCase(theCase, user, false)
-
-            // Assert
-            expect(isWriteBlocked).toBe(true)
-            expect(isReadBlocked).toBe(false)
-          })
-
-          it('should not read block the case if the prosecutor appealed in court', () => {
-            // Arrange
-            const theCase = {
-              state,
-              type,
-              courtId: 'Court',
-              prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-            } as Case
-            const user = {
-              role,
-              institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
-              },
-            } as User
-
-            // Act
-            const isWriteBlocked = !canUserAccessCase(theCase, user)
-            const isReadBlocked = !canUserAccessCase(theCase, user, false)
-
-            // Assert
-            expect(isWriteBlocked).toBe(true)
-            expect(isReadBlocked).toBe(false)
-          })
-
-          it('should not read block the case if the accused appealed out of court', () => {
-            // Arrange
-            const theCase = {
-              state,
-              type,
-              courtId: 'Court',
-              accusedAppealDecision: CaseAppealDecision.POSTPONE,
-              accusedPostponedAppealDate: randomDate(),
-            } as Case
-            const user = {
-              role,
-              institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
-              },
-            } as User
-
-            // Act
-            const isWriteBlocked = !canUserAccessCase(theCase, user)
-            const isReadBlocked = !canUserAccessCase(theCase, user, false)
-
-            // Assert
-            expect(isWriteBlocked).toBe(true)
-            expect(isReadBlocked).toBe(false)
-          })
-
-          it('should not read block the case if the prosecutor appealed out of court', () => {
-            // Arrange
-            const theCase = {
-              state,
-              type,
-              courtId: 'Court',
-              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-              prosecutorPostponedAppealDate: randomDate(),
-            } as Case
-            const user = {
-              role,
-              institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
-              },
-            } as User
-
-            // Act
-            const isWriteBlocked = !canUserAccessCase(theCase, user)
-            const isReadBlocked = !canUserAccessCase(theCase, user, false)
-
-            // Assert
-            expect(isWriteBlocked).toBe(true)
-            expect(isReadBlocked).toBe(false)
-          })
-
-          each`
-            accusedAppealDecision  | prosecutorAppealDecision
-            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.ACCEPT}
-            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.NOT_APPLICABLE}
-            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.POSTPONE}
-            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.ACCEPT}
-            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.NOT_APPLICABLE}
-            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.POSTPONE}
-            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.ACCEPT}
-            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.NOT_APPLICABLE}
-            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.POSTPONE}
-          `.it(
-            'should block the case if it has not been appealed',
-            ({ accusedAppealDecision, prosecutorAppealDecision }) => {
+          it.each([CaseAppealState.RECEIVED, CaseAppealState.COMPLETED])(
+            'should not block the case if the accused appealed in court',
+            (appealState) => {
               // Arrange
               const theCase = {
                 state,
                 type,
                 courtId: 'Court',
-                accusedAppealDecision,
-                prosecutorAppealDecision,
+                appealState,
+              } as Case
+              const user = {
+                role,
+                institution: {
+                  id: 'High Court',
+                  type: InstitutionType.HIGH_COURT,
+                },
+              } as User
+
+              // Act
+              const isWriteBlocked = !canUserAccessCase(theCase, user)
+              const isReadBlocked = !canUserAccessCase(theCase, user, false)
+
+              // Assert
+              expect(isWriteBlocked).toBe(false)
+              expect(isReadBlocked).toBe(false)
+            },
+          )
+
+          it.each([undefined, CaseAppealState.APPEALED])(
+            'should block the case if an appealed has not been received',
+            (appealState) => {
+              // Arrange
+              const theCase = {
+                state,
+                type,
+                courtId: 'Court',
+                appealState,
               } as Case
               const user = {
                 role,
