@@ -18,29 +18,6 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
-function isHightenedSecurityCaseHiddenFromUser(
-  user: User,
-  isHeightenedSecurityLevel?: boolean,
-  creatingProsecutorId?: string,
-  prosecutorId?: string,
-): boolean {
-  return (
-    isProsecutionUser(user) &&
-    Boolean(isHeightenedSecurityLevel) &&
-    user.id !== creatingProsecutorId &&
-    user.id !== prosecutorId
-  )
-}
-
-function isCaseBlockedFromUser(theCase: Case, user: User): boolean {
-  return isHightenedSecurityCaseHiddenFromUser(
-    user,
-    theCase.isHeightenedSecurityLevel,
-    theCase.creatingProsecutor?.id,
-    theCase.prosecutor?.id,
-  )
-}
-
 function canProsecutionUserAccessCase(
   theCase: Case,
   user: User,
@@ -77,14 +54,23 @@ function canProsecutionUserAccessCase(
   // Check prosecutors office access
   if (
     theCase.creatingProsecutor?.institutionId &&
-    theCase.creatingProsecutor?.institutionId !== user.institution?.id &&
-    (forUpdate ||
-      theCase.sharedWithProsecutorsOfficeId !== user.institution?.id)
+    user.institution?.id !== theCase.creatingProsecutor?.institutionId &&
+    (forUpdate || user.institution?.id) !==
+      theCase.sharedWithProsecutorsOfficeId
   ) {
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user)
+  // Check heightened security level access
+  if (
+    theCase.isHeightenedSecurityLevel &&
+    user.id !== theCase.creatingProsecutor?.id &&
+    user.id !== theCase.prosecutor?.id
+  ) {
+    return false
+  }
+
+  return true
 }
 
 function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
@@ -128,14 +114,14 @@ function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   }
 
   // Check court access
-  if (theCase.courtId !== user.institution?.id) {
+  if (user.institution?.id !== theCase.courtId) {
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user)
+  return true
 }
 
-function canAppealsCourtUserAccessCase(theCase: Case, user: User): boolean {
+function canAppealsCourtUserAccessCase(theCase: Case): boolean {
   // Check case type access
   if (!isRestrictionCase(theCase.type) && !isInvestigationCase(theCase.type)) {
     return false
@@ -160,7 +146,7 @@ function canAppealsCourtUserAccessCase(theCase: Case, user: User): boolean {
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user)
+  return true
 }
 
 function canPrisonSystemUserAccessCase(
@@ -193,7 +179,7 @@ function canPrisonSystemUserAccessCase(
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user)
+  return true
 }
 
 export function canUserAccessCase(
@@ -210,7 +196,7 @@ export function canUserAccessCase(
   }
 
   if (isAppealsCourtUser(user)) {
-    return canAppealsCourtUserAccessCase(theCase, user)
+    return canAppealsCourtUserAccessCase(theCase)
   }
 
   if (isPrisonSystemUser(user)) {
