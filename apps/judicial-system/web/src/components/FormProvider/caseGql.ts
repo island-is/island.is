@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 const CaseQuery = gql`
-  query CaseQuery($input: CaseQueryInput!) {
+  query Case($input: CaseQueryInput!) {
     case(input: $input) {
       id
       created
@@ -197,7 +197,7 @@ const CaseQuery = gql`
       appealedDate
       appealDeadline
       prosecutorStatementDate
-      defenderStatementDate
+      defendantStatementDate
       appealReceivedByCourtDate
       appealConclusion
       appealRulingDecision

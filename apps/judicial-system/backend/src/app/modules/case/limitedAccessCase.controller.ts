@@ -24,11 +24,13 @@ import {
   TokenGuard,
 } from '@island.is/judicial-system/auth'
 import {
+  CaseAppealState,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { defenderRule } from '../../guards'
 import { User } from '../user'
 import { CaseExistsGuard } from './guards/caseExists.guard'
@@ -37,16 +39,18 @@ import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseScheduledGuard } from './guards/caseScheduled.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
 import { CurrentCase } from './guards/case.decorator'
+import { UpdateCaseDto } from './dto/updateCase.dto'
+import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { Case } from './models/case.model'
+import { transitionCase } from './state/case.state'
 import { CaseService } from './case.service'
 import {
   LimitedAccessCaseService,
-  LimitedUpdateCase,
+  LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
-import { defenderTransitionRule } from './guards/rolesRules'
-import { TransitionCaseDto } from './dto/transitionCase.dto'
-import { transitionCase } from './state/case.state'
+import { CaseEvent, EventService } from '../event'
 
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('limited access cases')
@@ -54,6 +58,8 @@ export class LimitedAccessCaseController {
   constructor(
     private readonly caseService: CaseService,
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
+    private readonly eventService: EventService,
+
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -84,13 +90,41 @@ export class LimitedAccessCaseController {
     CaseCompletedGuard,
     CaseDefenderGuard,
   )
+  @RolesRules(defenderUpdateRule)
+  @Patch()
+  @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
+  update(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: TUser,
+    @CurrentCase() theCase: Case,
+    @Body() updateDto: UpdateCaseDto,
+  ): Promise<Case> {
+    this.logger.debug(`Updating limitedAccess case ${caseId}`)
+
+    const update: LimitedAccessUpdateCase = updateDto
+
+    if (update.defendantStatementDate) {
+      update.defendantStatementDate = nowFactory()
+    }
+
+    return this.limitedAccessCaseService.update(theCase, update, user)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    LimitedAccessCaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+    CaseDefenderGuard,
+  )
   @RolesRules(defenderTransitionRule)
   @Patch('state')
   @ApiOkResponse({
     type: Case,
     description: 'Updates the state of a case',
   })
-  transition(
+  async transition(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: TUser,
     @CurrentCase() theCase: Case,
@@ -100,13 +134,28 @@ export class LimitedAccessCaseController {
       `Transitioning case ${caseId} to ${transition.transition}`,
     )
 
-    const update: LimitedUpdateCase = transitionCase(
+    const update: LimitedAccessUpdateCase = transitionCase(
       transition.transition,
       theCase.state,
       theCase.appealState,
     )
 
-    return this.limitedAccessCaseService.update(theCase, update, user)
+    if (update.appealState === CaseAppealState.APPEALED) {
+      update.accusedPostponedAppealDate = nowFactory()
+    }
+
+    const updatedCase = await this.limitedAccessCaseService.update(
+      theCase,
+      update,
+      user,
+    )
+
+    this.eventService.postEvent(
+      (transition.transition as unknown) as CaseEvent,
+      updatedCase,
+    )
+
+    return updatedCase
   }
 
   @UseGuards(TokenGuard, LimitedAccessCaseExistsGuard)
