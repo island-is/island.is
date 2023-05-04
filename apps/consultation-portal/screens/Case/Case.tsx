@@ -120,7 +120,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                   {advices.length !== 0 && (
                     <>
                       <Text variant="h1" color="blue400">
-                        Innsendar umsagnir
+                        Innsendar umsagnir ({chosenCase.adviceCount})
                       </Text>
 
                       <Advices
