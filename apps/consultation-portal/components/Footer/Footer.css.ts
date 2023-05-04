@@ -5,11 +5,6 @@ export const footer = style({
   paddingTop: theme.spacing[8],
 })
 
-export const footerTransparent = style({
-  margin: 0,
-  width: '100%',
-})
-
 export const footerColor = style({
   backgroundColor: theme.color.blue100,
   margin: 0,

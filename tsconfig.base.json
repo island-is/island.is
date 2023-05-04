@@ -252,6 +252,9 @@
       "@island.is/application/templates/driving-instructor-registrations": [
         "libs/application/templates/driving-instructor-registrations/src/index.ts"
       ],
+      "@island.is/application/templates/driving-learners-permit": [
+        "libs/application/templates/driving-learners-permit/src/index.ts"
+      ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
       ],
@@ -671,6 +674,9 @@
       ],
       "@island.is/service-portal/assets": [
         "libs/service-portal/assets/src/index.ts"
+      ],
+      "@island.is/service-portal/consent": [
+        "libs/service-portal/consent/src/index.ts"
       ],
       "@island.is/service-portal/constants": [
         "libs/service-portal/constants/src/index.ts"

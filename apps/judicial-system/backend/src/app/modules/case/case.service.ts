@@ -58,7 +58,7 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto } from './dto/createCase.dto'
-import { getCasesQueryFilter } from './filters/case.filters'
+import { getCasesQueryFilter } from './filters/cases.filter'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
@@ -132,6 +132,15 @@ export interface UpdateCase
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
     | 'appealState'
+    | 'prosecutorStatementDate'
+    | 'appealReceivedByCourtDate'
+    | 'appealCaseNumber'
+    | 'appealAssistantId'
+    | 'appealJudge1Id'
+    | 'appealJudge2Id'
+    | 'appealJudge3Id'
+    | 'appealConclusion'
+    | 'appealRulingDecision'
   > {
   type?: CaseType
   state?: CaseState
@@ -183,6 +192,26 @@ export const include: Includeable[] = [
     where: {
       state: { [Op.not]: CaseFileState.DELETED },
     },
+  },
+  {
+    model: User,
+    as: 'appealAssistant',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge1',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge2',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 
@@ -596,7 +625,10 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  addMessagesForAppealedCaseToQueue(theCase: Case, user: TUser): Promise<void> {
+  private addMessagesForAppealedCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
     const messages: CaseMessage[] =
       theCase.caseFiles
         ?.filter(
@@ -622,6 +654,32 @@ export class CaseService {
     })
 
     return this.messageService.sendMessagesToQueue(messages)
+  }
+
+  private addMessagesForReceivedAppealCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
+  }
+
+  private addMessagesForAppealStatementToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -651,15 +709,24 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(theCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+        await this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
       }
     }
 
-    if (
-      isRestrictionCase(theCase.type) &&
-      updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
-    ) {
-      // Case to dates modified
-      this.addMessagesForModifiedCaseToQueue(theCase, user)
+    if (isRestrictionCase(theCase.type)) {
+      if (
+        updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
+      ) {
+        // Case to dates modified
+        await this.addMessagesForModifiedCaseToQueue(theCase, user)
+      }
+
+      if (
+        updatedCase.prosecutorStatementDate !== theCase.prosecutorStatementDate
+      ) {
+        await this.addMessagesForAppealStatementToQueue(theCase, user)
+      }
     }
 
     if (

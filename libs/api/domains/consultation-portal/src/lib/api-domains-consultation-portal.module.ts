@@ -14,11 +14,15 @@ import { UserService } from './user/user.service'
 import { UserResolver } from './user/user.resolver'
 import { ConfigModule } from '@nestjs/config'
 import { FileStorageConfig, FileStorageModule } from '@island.is/file-storage'
+import { CaseSubscriptionService } from './caseSubscription/caseSubscription.service'
+import { CaseSubscriptionResolver } from './caseSubscription/caseSubscription.resolver'
 
 @Module({
   providers: [
-    CasesResolver,
     CasesService,
+    CasesResolver,
+    CaseSubscriptionService,
+    CaseSubscriptionResolver,
     DocumentService,
     DocumentResolver,
     TypesService,

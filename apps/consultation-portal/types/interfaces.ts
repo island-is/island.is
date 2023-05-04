@@ -1,4 +1,4 @@
-import { SortOptions } from './enums'
+import { CaseSubscriptionType, SortOptions, SubscriptionType } from './enums'
 
 export interface Case {
   id?: number
@@ -6,14 +6,35 @@ export interface Case {
   name?: string
   adviceCount?: number
   shortDescription?: string
+  detailedDescription?: string
   statusName?: string
   institutionName?: string
+  oldInstitutionName?: string
   typeName?: string
   policyAreaName?: string
   processBegins?: string
   processEnds?: string
+  announcementText?: string
   created?: string
+  changed?: string
   summaryDate?: string
+  summaryText?: string
+  contactName?: string
+  contactEmail?: string
+  documents?: Array<Document>
+  stakeholders?: Array<Stakeholder>
+}
+
+export interface Document {
+  id?: string
+  fileName?: string
+  fileType?: string
+  size?: number
+}
+
+export interface Stakeholder {
+  name?: string
+  email?: string
 }
 
 export interface AdviceDocuments {
@@ -52,11 +73,16 @@ export interface ArrOfValueAndLabel {
   label: string
 }
 
-export interface SubscriptionArray {
-  caseIds: Array<number>
-  institutionIds: Array<number>
-  policyAreaIds: Array<number>
-  generalSubscription: string
+// export interface SubscriptionArray {
+//   caseIds: Array<SubscriptionItem>
+//   institutionIds: Array<SubscriptionItem>
+//   policyAreaIds: Array<SubscriptionItem>
+//   generalSubscription: string
+// }
+
+export interface SubscriptionItem {
+  id: number
+  subscriptionType: string
 }
 
 export interface SortTitle {
@@ -169,4 +195,81 @@ export interface AdviceFilter {
   pageNumber?: number
   pageSize?: number
   searchQuery?: string
+}
+
+export interface CasesSubscription {
+  id?: number
+  subscriptionType?: CaseSubscriptionType
+}
+
+export interface CasesSubscriptionData {
+  id?: number | string
+  caseNumber?: string
+  institutionName?: string
+  name?: string
+  policyAreaName?: string
+  key?: string
+  checked?: boolean
+  subscriptionType?: SubscriptionType
+}
+
+export interface InstitutionsSubscription {
+  id?: number
+  subscriptionType?: SubscriptionType
+}
+
+export interface InstitutionsSubscriptionData {
+  name?: string
+  id?: string
+  subscriptionType?: SubscriptionType
+  checked?: boolean
+  key?: string
+}
+
+export interface PolicyAreasSubscription {
+  id?: number
+  subscriptionType?: SubscriptionType
+}
+
+export interface PolicyAreasSubscriptionData {
+  name?: string
+  id?: string
+  subscriptionType?: SubscriptionType
+  checked?: boolean
+  key?: string
+}
+
+export interface GeneralSubscriptionData {
+  name?: string
+  key?: string
+  checked?: boolean
+  subscriptionType?: SubscriptionType
+}
+
+export interface SubscriptionArray {
+  cases?: Array<CasesSubscriptionData>
+  institutions?: Array<InstitutionsSubscriptionData>
+  policyAreas?: Array<PolicyAreasSubscriptionData>
+  subscribedToAllNewObj?: GeneralSubscriptionData
+  subscribedToAllChangesObj?: GeneralSubscriptionData
+}
+
+export interface SubscriptionArrayForValue {
+  case?: CasesSubscriptionData
+  institution?: InstitutionsSubscriptionData
+  policyArea?: PolicyAreasSubscriptionData
+  subscribedToAllNewObj?: GeneralSubscriptionData
+  subscribedToAllChangesObj?: GeneralSubscriptionData
+}
+
+export interface SubscriptionTableItem extends CasesSubscriptionData {
+  subscriptionType?: SubscriptionType
+}
+
+export interface Subscription {
+  subscribedToAll?: boolean
+  subscribedToAllType?: SubscriptionType
+  cases?: Array<CasesSubscription>
+  institutions?: Array<InstitutionsSubscription>
+  policyAreas?: Array<PolicyAreasSubscription>
 }

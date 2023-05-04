@@ -9,6 +9,7 @@ import {
   LoadingDots,
   Text,
   toast,
+  AccordionItem,
 } from '@island.is/island-ui/core'
 import { Form, useActionData } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
@@ -23,6 +24,7 @@ import * as styles from './ContentCard.css'
 import { ClientContext } from '../context/ClientContext'
 import { useSubmitting } from '@island.is/react-spa/shared'
 import isEqual from 'lodash/isEqual'
+import { ConditionalWrapper } from './ConditionalWrapper'
 
 interface ContentCardProps {
   title: string
@@ -30,6 +32,10 @@ interface ContentCardProps {
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
   inSync?: boolean
   intent?: ClientFormTypes
+  /**
+   * The children will be wrapped in an accordion when a label is provided to the component.
+   */
+  accordionLabel?: string
 }
 
 function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
@@ -48,6 +54,7 @@ const ContentCard: FC<ContentCardProps> = ({
   description,
   isDirty = defaultIsDirty,
   intent = ClientFormTypes.none,
+  accordionLabel = false,
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
@@ -72,6 +79,7 @@ const ContentCard: FC<ContentCardProps> = ({
           originalFormData.current = new FormData(
             ref.current as HTMLFormElement,
           )
+          onChange()
           toast.success(formatMessage(m.successfullySaved))
         }
         if (actionData?.globalError) {
@@ -79,7 +87,7 @@ const ContentCard: FC<ContentCardProps> = ({
         }
       }
     }
-  }, [actionData, intent, formatMessage])
+  }, [actionData, intent])
 
   const {
     checkIfInSync,
@@ -100,6 +108,7 @@ const ContentCard: FC<ContentCardProps> = ({
     const intentToCheck = getIntentWithSyncCheck(formData)
     return (isSubmitting || isLoading) && intentToCheck.name === intent
   }
+  const isLoadingForIntent = checkIfLoadingForIntent()
 
   const inSync = checkIfInSync(
     variablesToCheckSync?.[intent as keyof typeof ClientFormTypes] ?? [],
@@ -141,12 +150,15 @@ const ContentCard: FC<ContentCardProps> = ({
       >
         <Box>
           <Box
-            className={styles.title}
             display="flex"
+            flexDirection={['column', 'row']}
+            rowGap={2}
             justifyContent="spaceBetween"
-            alignItems="baseline"
+            alignItems={['flexStart', 'center']}
+            marginTop={2}
+            marginBottom={4}
           >
-            <Text ref={titleRef} marginTop={2} marginBottom={4} variant="h3">
+            <Text ref={titleRef} variant="h3">
               {title}
             </Text>
             {intent !== 'none' && (
@@ -154,7 +166,7 @@ const ContentCard: FC<ContentCardProps> = ({
                 <DropdownMenu
                   title={
                     inSync
-                      ? formatMessage(m.inSync)
+                      ? formatMessage(m.synced)
                       : formatMessage(m.outOfSync)
                   }
                   icon="chevronDown"
@@ -179,7 +191,7 @@ const ContentCard: FC<ContentCardProps> = ({
                             />
                             <Text variant="small" color="blue400">
                               {inSync
-                                ? formatMessage(m.inSyncAcrossAllEnvironments)
+                                ? formatMessage(m.syncedAcrossAllEnvironments)
                                 : formatMessage(
                                     m.notInSyncAcrossAllEnvironments,
                                   )}
@@ -201,7 +213,7 @@ const ContentCard: FC<ContentCardProps> = ({
                                 justifyContent="center"
                                 padding={2}
                               >
-                                {checkIfLoadingForIntent() ? (
+                                {isLoadingForIntent ? (
                                   <LoadingDots large />
                                 ) : (
                                   <button
@@ -230,45 +242,58 @@ const ContentCard: FC<ContentCardProps> = ({
           </Box>
           {description && <Text marginBottom={4}>{description}</Text>}
         </Box>
-        {children}
-        {intent !== 'none' && (
-          <Box
-            alignItems="center"
-            marginTop="containerGutter"
-            display="flex"
-            justifyContent="spaceBetween"
-          >
-            <Checkbox
-              label={formatMessage(m.saveForAllEnvironments)}
-              value={`${allEnvironments}`}
-              disabled={!dirty}
-              name="allEnvironments"
-              onChange={() => setAllEnvironments(!allEnvironments)}
-            />
-            <Button
-              disabled={!dirty}
-              type="submit"
-              name="intent"
-              value={intent}
-              loading={checkIfLoadingForIntent()}
-            >
-              {formatMessage(m.saveSettings)}
-            </Button>
-            {/*hidden input to pass the selected environment to the form*/}
-            <input
-              type="hidden"
-              name="environment"
-              value={selectedEnvironment.environment}
-            />
-            <input
-              type="hidden"
-              name="syncEnvironments"
-              value={`${availableEnvironments
-                ?.filter((env) => env !== selectedEnvironment.environment)
-                .join(',')}`}
-            />
-          </Box>
-        )}
+        <ConditionalWrapper
+          condition={Boolean(accordionLabel)}
+          trueWrapper={(cld) => (
+            <AccordionItem label={accordionLabel} id={title}>
+              {cld}
+            </AccordionItem>
+          )}
+        >
+          <>
+            {children}
+            {intent !== 'none' && (
+              <Box
+                alignItems={['flexStart', 'center']}
+                marginTop="containerGutter"
+                display="flex"
+                justifyContent="spaceBetween"
+                rowGap={[2, 0]}
+                flexDirection={['column', 'row']}
+              >
+                <Checkbox
+                  label={formatMessage(m.saveForAllEnvironments)}
+                  value={`${allEnvironments}`}
+                  disabled={!dirty}
+                  name="allEnvironments"
+                  onChange={() => setAllEnvironments(!allEnvironments)}
+                />
+                <Button
+                  disabled={!dirty}
+                  type="submit"
+                  name="intent"
+                  value={intent}
+                  loading={isLoadingForIntent}
+                >
+                  {formatMessage(m.saveSettings)}
+                </Button>
+                {/*hidden input to pass the selected environment to the form*/}
+                <input
+                  type="hidden"
+                  name="environment"
+                  value={selectedEnvironment.environment}
+                />
+                <input
+                  type="hidden"
+                  name="syncEnvironments"
+                  value={`${availableEnvironments
+                    ?.filter((env) => env !== selectedEnvironment.environment)
+                    .join(',')}`}
+                />
+              </Box>
+            )}
+          </>
+        </ConditionalWrapper>
       </Box>
     </Form>
   )
