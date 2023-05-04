@@ -58,7 +58,6 @@ export class ContentfulRepository {
           case 'info':
           default:
             logger.info(`Contentful API: ${level} - ${data}`)
-            break
         }
       },
     })
