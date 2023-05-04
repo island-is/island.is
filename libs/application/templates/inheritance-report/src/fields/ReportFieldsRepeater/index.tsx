@@ -143,16 +143,18 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    setTaxFreeInheritance(taxFreeLimit * percentage)
+    setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
     setInheritance(
-      (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-        Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-        Number(getValueViaPath(answers, 'business.businessTotal')) -
-        Number(getValueViaPath(answers, 'totalDeduction'))) *
-        percentage,
+      Math.round(
+        (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+          Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+          Number(getValueViaPath(answers, 'business.businessTotal')) -
+          Number(getValueViaPath(answers, 'totalDeduction'))) *
+          percentage,
+      ),
     )
-    setTaxableInheritance(inheritance - taxFreeInheritance)
-    setInheritanceTax(Math.round(taxableInheritance * 0.01))
+    setTaxableInheritance(Math.round(inheritance - taxFreeInheritance))
+    setInheritanceTax(Math.round(taxableInheritance * 0.1))
 
     setIfValueIsNotNan(
       setValue,
@@ -230,7 +232,7 @@ export const ReportFieldsRepeater: FC<
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
               <Text variant="h4" marginBottom={2}>
-                {props.repeaterHeaderText + ' ' + (index + 1)}
+                {props.repeaterHeaderText}
               </Text>
               <Box position="absolute" className={styles.removeFieldButton}>
                 <Button

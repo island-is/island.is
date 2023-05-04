@@ -17,6 +17,7 @@ import EmptyState from '../../components/EmptyState/EmptyState'
 import { UserAdvice } from '../../types/interfaces'
 import Pagination from '../../components/Pagination/Pagination'
 import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSortPartialData'
+import env from '../../lib/environment'
 
 const CARDS_PER_PAGE = 12
 
@@ -25,7 +26,7 @@ export const AdvicesLayout = ({ children }) => {
     <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
       <BreadcrumbsWithMobileDivider
         items={[
-          { title: 'Samráðsgátt', href: '/' },
+          { title: 'Samráðsgátt', href: '/samradsgatt' },
           { title: 'Mínar umsagnir' },
         ]}
       />
@@ -34,9 +35,7 @@ export const AdvicesLayout = ({ children }) => {
           <Stack space={3}>
             <Text variant="h1">Mínar umsagnir</Text>
             <Text variant="default">
-              Hér er hægt að fylgjast með þeim áskriftum sem þú ert skráð(ur) í
-              ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
-              tíðina.
+              Hér geturðu skoðað allar umsagnir sem þú hefur sent inn.
             </Text>
           </Stack>
           {children}
@@ -125,7 +124,7 @@ export const AdvicesScreen = () => {
                       items={item.adviceDocuments?.map((item) => {
                         return {
                           title: item.fileName,
-                          href: `https://samradapi-test.devland.is/api/Documents/${item.id}`,
+                          href: `${env.backendDownloadUrl}${item.id}`,
                         }
                       })}
                     />

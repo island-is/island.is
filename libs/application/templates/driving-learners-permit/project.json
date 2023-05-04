@@ -2,8 +2,9 @@
   "root": "libs/application/templates/driving-learners-permit",
   "sourceRoot": "libs/application/templates/driving-learners-permit/src",
   "projectType": "library",
+  "generators": {},
   "schematics": {},
-  "architect": {
+  "targets": {
     "lint": {
       "builder": "@nrwl/linter:eslint",
       "options": {

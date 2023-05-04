@@ -19,7 +19,6 @@ import {
   InstitutionType,
   User,
   UserRole,
-  CaseAppealState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
@@ -1114,7 +1113,8 @@ const useSections = (
     }
   }
 
-  const getCourtOfAppealSections = (user?: User) => {
+  const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
+    const { id } = workingCase
     const routeIndex = courtOfAppealRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -1136,14 +1136,26 @@ const useSections = (
           {
             name: formatMessage(sections.courtOfAppealSection.overview),
             isActive: routeIndex === 0,
+            href: `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`,
           },
           {
             name: formatMessage(sections.courtOfAppealSection.reception),
             isActive: routeIndex === 1,
+            href: `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`,
+            onClick:
+              validateFormStepper(
+                isValid,
+                [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE],
+                workingCase,
+              ) && onNavigationTo
+                ? async () =>
+                    await onNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
+                : undefined,
           },
           {
             name: formatMessage(sections.courtOfAppealSection.ruling),
             isActive: routeIndex === 2,
+            href: `${constants.COURT_OF_APPEAL_RULING_ROUTE}/${workingCase.id}`,
           },
         ],
       },
@@ -1199,9 +1211,8 @@ const useSections = (
           !workingCase.accusedPostponedAppealDate,
         children: [],
       },
-      ...(isRestrictionCase(workingCase.type) &&
-      workingCase.appealState === CaseAppealState.Appealed
-        ? getCourtOfAppealSections(user)
+      ...(isRestrictionCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
         : []),
       ...(workingCase.parentCase
         ? [

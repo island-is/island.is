@@ -15,6 +15,7 @@ import { format as formatNationalId } from 'kennitala'
 import {
   formatBankInfo,
   formatCurrency,
+  formatPhoneNumber,
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
@@ -69,6 +70,8 @@ export const overview = buildSection({
                     ? formatNationalId(member.nationalId)
                     : member.dateOfBirth,
                   member.relation,
+                  formatPhoneNumber(member.phone || ''),
+                  member.email,
                 ],
               })),
           },
@@ -100,6 +103,11 @@ export const overview = buildSection({
                   title: asset.description,
                   description: [
                     `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                    m.overviewMarketValue.defaultMessage +
+                      ': ' +
+                      (asset.marketValue
+                        ? formatCurrency(asset.marketValue)
+                        : '0 kr.'),
                   ],
                 }),
               ),

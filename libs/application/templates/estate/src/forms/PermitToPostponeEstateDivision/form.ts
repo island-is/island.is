@@ -31,12 +31,6 @@ export const form: Form = buildForm({
           title: m.estateMembersTitle,
           description: m.estateMembersSubtitle,
           children: [
-            buildDescriptionField({
-              id: 'membersOfEstateTitle',
-              title: m.estateMembers,
-              description: m.estateMembersHeaderDescription,
-              titleVariant: 'h3',
-            }),
             buildCustomField({
               title: '',
               id: 'estate.estateMembers',

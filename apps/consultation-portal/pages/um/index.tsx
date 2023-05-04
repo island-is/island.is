@@ -14,15 +14,15 @@ const AboutPage: React.FC<AboutProps> = () => {
     <Layout seo={{ title: 'Um samráðsgátt', url: 'um' }}>
       <BreadcrumbsWithMobileDivider
         items={[
-          { title: 'Samráðsgátt', href: '/' },
+          { title: 'Samráðsgátt', href: '/samradsgatt' },
           { title: 'Um samráðsgátt' },
         ]}
       />
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '9/12', '9/12', '6/12']}
-            offset={['0', '0', '0', '0', '3/12']}
+            span={['12/12', '12/12', '9/12', '9/12', '8/12']}
+            offset={['0', '0', '0', '0', '1/12']}
             order={[1, 1, 0]}
           >
             <MainColumn />

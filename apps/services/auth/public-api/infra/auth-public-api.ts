@@ -95,11 +95,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
     .resources({
       limits: {
         cpu: '400m',
-        memory: '256Mi',
+        memory: '384Mi',
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '256Mi',
       },
     })
 }
