@@ -20,9 +20,9 @@ import {
   someHavePDF,
   someHavePlasticButNotPdf,
 } from '../lib/helpers/applicantHelper'
-import { Option } from '@island.is/application/types'
 
 import { CardResponse } from '../lib/types'
+import { Option } from '@island.is/application/types'
 import { Sjukra } from '../assets'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 
@@ -50,14 +50,14 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
       title: e.applicants.sectionLabel,
       children: [
         buildMultiField({
-          id: 'plastic',
+          id: 'delimitations',
           title: e.applicants.sectionTitle,
           description: e.applicants.sectionDescription,
           condition: (_, externalData) =>
             someCanApplyForPlasticOrPdf(externalData),
           children: [
             buildCheckboxField({
-              id: 'applyForPlastic',
+              id: 'delimitations.applyForPlastic',
               backgroundColor: 'white',
               title: '',
               condition: (_, externalData) =>
@@ -91,7 +91,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
             }),
 
             buildCheckboxField({
-              id: 'addForPDF',
+              id: 'delimitations.addForPDF',
               backgroundColor: 'white',
               title: e.temp.sectionCanTitle,
               description: '',

@@ -130,11 +130,22 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
     const nridArr = this.getApplicants(application)
-    const resp = await this.ehicApi
-      .withMiddleware(new AuthMiddleware(auth as Auth))
-      .cardStatus({
-        applicantnationalids: this.toCommaDelimitedList(nridArr),
-      })
+    const resp = []
+    resp.push({
+      applicantNationalId: '2409151460',
+      canApply: true,
+      isInsured: true,
+    })
+    resp.push({
+      applicantNationalId: '1111111119',
+      canApply: false,
+      isInsured: true,
+      cards: [
+        {
+          isPlastic: true,
+        },
+      ],
+    })
 
     if (!resp) {
       this.logger.error('EHIC.API response empty from getCardResponse', resp)
