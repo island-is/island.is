@@ -43,6 +43,7 @@ export const form: Form = buildForm({
                   title: m.estateMembers,
                   description: m.estateMembersHeaderDescription,
                   titleVariant: 'h3',
+                  marginBottom: 5,
                 }),
                 buildCustomField({
                   title: '',
@@ -120,7 +121,7 @@ export const form: Form = buildForm({
                   rows: 7,
                 }),
               ],
-            })
+            }),
           ],
         }),
       ],
