@@ -74,7 +74,9 @@ export class EndorsementService {
     { listId }: FindEndorsementsInput,
     query: any,
   ) {
-    this.logger.info(`Finding GeneralPetitionendorsements by list id "${listId}"`)
+    this.logger.info(
+      `Finding GeneralPetitionendorsements by list id "${listId}"`,
+    )
     // check if list exists and belongs to general petitions
     const result = await this.endorsementListModel.findOne({
       where: {
