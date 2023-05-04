@@ -30,7 +30,6 @@ describe('canUserAccessCase', () => {
         ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
         ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
-        ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}

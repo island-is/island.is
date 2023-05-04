@@ -11,6 +11,9 @@ import {
   UserRole,
   isExtendedCourtRole,
   isProsecutionUser,
+  isDistrictCourtUser,
+  isAppealsCourtUser,
+  isPrisonSystemUser,
 } from '@island.is/judicial-system/types'
 import type { User, Case as TCase } from '@island.is/judicial-system/types'
 
@@ -201,7 +204,7 @@ function isCaseBlockedFromUser(
   )
 }
 
-export function canUserAccessCase(
+function canProsecutionUserAccessCase(
   theCase: Case,
   user: User,
   forUpdate = true,
@@ -213,4 +216,70 @@ export function canUserAccessCase(
   ).includes(theCase.state)
 
   return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
+}
+
+function canDistrictCourtUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  const hasAccess = getAllowedStates(
+    user,
+    user.institution?.type,
+    theCase.type,
+  ).includes(theCase.state)
+
+  return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
+}
+
+function canAppealsCourtUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  const hasAccess = getAllowedStates(
+    user,
+    user.institution?.type,
+    theCase.type,
+  ).includes(theCase.state)
+
+  return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
+}
+
+function canStaffUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  const hasAccess = getAllowedStates(
+    user,
+    user.institution?.type,
+    theCase.type,
+  ).includes(theCase.state)
+
+  return hasAccess && !isCaseBlockedFromUser(theCase, user, forUpdate)
+}
+
+export function canUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  if (isProsecutionUser(user)) {
+    return canProsecutionUserAccessCase(theCase, user, forUpdate)
+  }
+
+  if (isDistrictCourtUser(user)) {
+    return canDistrictCourtUserAccessCase(theCase, user, forUpdate)
+  }
+
+  if (isAppealsCourtUser(user)) {
+    return canAppealsCourtUserAccessCase(theCase, user, forUpdate)
+  }
+
+  if (isPrisonSystemUser(user)) {
+    return canStaffUserAccessCase(theCase, user, forUpdate)
+  }
+
+  return false
 }
