@@ -109,7 +109,6 @@ import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
-import { PowerBiConfig, PowerBiModule } from '@island.is/api/domains/powerbi'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -147,7 +146,6 @@ const autoSchemaFile = environment.production
         // }),
       ],
     }),
-    PowerBiModule,
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
@@ -323,7 +321,6 @@ const autoSchemaFile = environment.production
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
-        PowerBiConfig,
       ],
     }),
   ],

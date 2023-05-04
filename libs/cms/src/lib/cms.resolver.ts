@@ -6,7 +6,6 @@ import {
   Parent,
   Directive,
 } from '@nestjs/graphql'
-import { PowerBiService } from '@island.is/api/domains/powerbi'
 import { Article } from './models/article.model'
 import { ContentSlug } from './models/contentSlug.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
@@ -42,6 +41,7 @@ import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
+import { PowerBiService } from './powerbi.service'
 import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { GetArticlesInput } from './dto/getArticles.input'
