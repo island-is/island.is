@@ -4,13 +4,14 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubmitField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { YES } from '../../lib/constants'
+import { NO, YES, NEI, JA } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
@@ -26,18 +27,85 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'estateMembersInfo',
+      id: 'estateMembersAndWillsInfo',
       title: m.estateMembersTitle,
       children: [
-        buildMultiField({
-          id: 'estateMembersInfo',
+        buildSubSection({
+          id: 'estateMembers',
           title: m.estateMembersTitle,
-          description: m.estateMembersSubtitle,
           children: [
-            buildCustomField({
-              title: '',
-              id: 'estate.estateMembers',
-              component: 'EstateMembersRepeater',
+            buildMultiField({
+              id: 'estateMembersInfo',
+              title: m.estateMembersTitle,
+              description: m.estateMembersSubtitle,
+              children: [
+                buildDescriptionField({
+                  id: 'membersOfEstateTitle',
+                  title: m.estateMembers,
+                  description: m.estateMembersHeaderDescription,
+                  titleVariant: 'h3',
+                  marginBottom: 5,
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.estateMembers',
+                  component: 'EstateMembersRepeater',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'testamentInfo',
+          title: m.willsAndAgreements,
+          children: [
+            buildMultiField({
+              id: 'testamentInfo',
+              title: m.estateMembersTitle,
+              description: m.estateMembersSubtitle,
+              children: [
+                buildDescriptionField({
+                  id: 'willsAndAgreementsTitle',
+                  title: m.willsAndAgreements,
+                  description: m.willsAndAgreementsDescription,
+                  titleVariant: 'h3',
+                  marginBottom: 2,
+                }),
+                buildRadioField({
+                  id: 'estate.testament.wills',
+                  title: m.doesWillExist,
+                  largeButtons: false,
+                  width: 'half',
+                  space: 2,
+                  options: [
+                    { value: YES, label: JA },
+                    { value: NO, label: NEI },
+                  ],
+                }),
+                buildRadioField({
+                  id: 'estate.testament.agreement',
+                  title: m.doesAgreementExist,
+                  largeButtons: false,
+                  width: 'half',
+                  space: 2,
+                  options: [
+                    { value: YES, label: JA },
+                    { value: NO, label: NEI },
+                  ],
+                }),
+                buildDescriptionField({
+                  id: 'space',
+                  title: '',
+                  marginBottom: 2,
+                }),
+                buildTextField({
+                  id: 'estate.testament.additionalInfo',
+                  title: m.additionalInfo,
+                  placeholder: m.additionalInfoPlaceholder,
+                  variant: 'textarea',
+                  rows: 7,
+                }),
+              ],
             }),
           ],
         }),
