@@ -1,0 +1,35 @@
+{
+  "root": "libs/clients/university-gateway/reykjavik-university",
+  "sourceRoot": "libs/clients/university-gateway/reykjavik-university/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/university-gateway/reykjavik-university/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/university-gateway/reykjavik-university"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/university-gateway/reykjavik-university/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/university-gateway/reykjavik-university/gen/fetch -i libs/clients/university-gateway/reykjavik-university/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

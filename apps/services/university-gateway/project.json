@@ -1,0 +1,60 @@
+{
+  "root": "apps/services/university-gateway",
+  "sourceRoot": "apps/services/university-gateway/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/node:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/services/university-gateway",
+        "main": "apps/services/university-gateway/src/main.ts",
+        "tsConfig": "apps/services/university-gateway/tsconfig.app.json",
+        "assets": ["apps/services/university-gateway/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/services/university-gateway/src/environments/environment.ts",
+              "with": "apps/services/university-gateway/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "services-university-gateway:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/services/university-gateway/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/services/university-gateway"],
+      "options": {
+        "jestConfig": "apps/services/university-gateway/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+
+    "schemas/build-openapi": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "apps/services/university-gateway/src/openapi.yaml",
+        "command": "yarn ts-node -P apps/services/university-gateway/tsconfig.app.json apps/services/university-gateway/src/buildOpenApi.ts"
+      }
+    }
+  },
+  "tags": []
+}

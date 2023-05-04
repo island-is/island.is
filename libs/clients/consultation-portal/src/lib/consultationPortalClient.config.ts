@@ -5,6 +5,7 @@ const schema = z.object({
   basePath: z.string(),
 })
 
+//TODOx hægt að skoða þetta?
 export const ConsultationPortalClientConfig = defineConfig({
   name: 'ConsultationPortalApi',
   schema,

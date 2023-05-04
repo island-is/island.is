@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'services-universitygateway',
+  displayName: 'services-university-gateway',
   preset: '../../../jest.preset.js',
   globals: {
     'ts-jest': {
@@ -11,5 +11,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../../coverage/apps/services/universitygateway',
+  coverageDirectory: '../../../coverage/apps/services/university-gateway',
 }

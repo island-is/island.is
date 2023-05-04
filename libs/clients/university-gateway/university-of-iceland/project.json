@@ -1,0 +1,27 @@
+{
+  "root": "libs/clients/university-gateway/university-of-iceland",
+  "sourceRoot": "libs/clients/university-gateway/university-of-iceland/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/university-gateway/university-of-iceland/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": [
+        "coverage/libs/clients/university-gateway/university-of-iceland"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/university-gateway/university-of-iceland/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
