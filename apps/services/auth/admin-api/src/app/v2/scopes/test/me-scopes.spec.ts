@@ -160,6 +160,7 @@ const createTestCases: Record<string, CreateTestCase> = {
           'name must be a string',
           'displayName should not be empty',
           'displayName must be a string',
+          'description should not be empty',
           'description must be a string',
         ],
       },
