@@ -9,7 +9,7 @@ import { createKeyProvider } from './create-key-provider'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 
-const jwtCookieExtractor = ExtractJwt.fromExtractors([
+const jwtTokenExtractor = ExtractJwt.fromExtractors([
   ExtractJwt.fromAuthHeaderAsBearerToken(),
   ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
 ])
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private config: AuthConfig) {
     super({
       secretOrKeyProvider: createKeyProvider(config.issuer),
-      jwtFromRequest: jwtCookieExtractor,
+      jwtFromRequest: jwtTokenExtractor,
       audience: config.audience,
       issuer: config.issuer,
       algorithms: ['RS256'],
@@ -40,7 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     const actor = payload.actor
-    const token = jwtCookieExtractor(request)
+    const token = jwtTokenExtractor(request)
 
     if (this.config.allowClientNationalId && payload.client_nationalId) {
       payload.nationalId = payload.client_nationalId

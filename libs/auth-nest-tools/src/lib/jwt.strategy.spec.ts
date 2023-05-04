@@ -74,6 +74,7 @@ describe('JwtStrategy#validate', () => {
 
   it('picks up request and jwt properties', async () => {
     // Arrange
+    const testToken = 'Bearer token'
     const payload: JwtPayload = {
       nationalId: '1234567890',
       scope: ['test-scope-1'],
@@ -92,9 +93,12 @@ describe('JwtStrategy#validate', () => {
     }
     const request = ({
       headers: {
-        authorization: 'Bearer token',
+        authorization: testToken,
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
+      },
+      body: {
+        __accessToken: testToken,
       },
       ip: '1.1.1.1',
     } as unknown) as Request
@@ -107,6 +111,7 @@ describe('JwtStrategy#validate', () => {
     expect(user.scope).toEqual(payload.scope)
     expect(user.client).toEqual(payload.client_id)
     expect(user.authorization).toEqual(request.headers.authorization)
+    expect(user.authorization).toEqual(request.body.__accessToken)
     expect(user.ip).toEqual(request.headers['x-forwarded-for'])
     expect(user.userAgent).toEqual(request.headers['user-agent'])
     expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
