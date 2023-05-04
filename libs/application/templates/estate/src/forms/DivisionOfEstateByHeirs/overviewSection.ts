@@ -72,6 +72,8 @@ export const overview = buildSection({
                     ? formatNationalId(member.nationalId)
                     : member.dateOfBirth,
                   member.relation,
+                  formatPhoneNumber(member.phone || ''),
+                  member.email,
                 ],
               })),
           },
