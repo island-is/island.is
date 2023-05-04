@@ -89,6 +89,14 @@ export const estateSchema = z.object({
     nameOfDeceased: z.string().min(1).optional(),
     nationalIdOfDeceased: z.string().optional(),
     districtCommissionerHasWill: z.boolean().optional(),
+    testament: z
+      .object({
+        wills: z.enum([YES, NO]),
+        agreement: z.enum([YES, NO]),
+        dividedEstate: z.enum([YES, NO]).optional(),
+        additionalInfo: z.string().optional(),
+      })
+      .optional(),
   }),
 
   // is: Innbú
