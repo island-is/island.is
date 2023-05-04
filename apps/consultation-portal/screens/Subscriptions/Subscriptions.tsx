@@ -10,7 +10,10 @@ import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
 import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
 import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
 import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
-import { useSubscriptions } from '../../utils/helpers/subscriptions'
+import {
+  useSubscriptions,
+  filterSubscriptions as F,
+} from '../../utils/helpers/subscriptions'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -68,61 +71,19 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       subscribedToAllChangesObj: subSubscribedToAllChangesObj,
     } = subscriptionArray
 
-    const filteredSubCases = subCases
-      .filter((item) => item.checked)
-      .map((i) => {
-        const obj = {
-          id: i.id,
-          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
-        }
-        return obj
-      })
-    const filteredSubInstitutions = subInstitutions
-      .filter((item) => item.checked)
-      .map((i) => {
-        const obj = {
-          id: parseInt(i.id),
-          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
-        }
-        return obj
-      })
-    const filteredSubPolicyAreas = subPolicyAreas
-      .filter((item) => item.checked)
-      .map((i) => {
-        const obj = {
-          id: parseInt(i.id),
-          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
-        }
-        return obj
-      })
+    const filteredSubCases = F.filterOutUnChecked(subCases)
+    const filteredSubInstitutions = F.filterOutUnChecked(subInstitutions)
+    const filteredSubPolicyAreas = F.filterOutUnChecked(subPolicyAreas)
 
-    const casesNoChange = preCases
-      .filter((item) => !filteredSubCases.find((i) => i.id === item.id))
-      .map((x) => {
-        const obj = {
-          id: x.id,
-          subscriptionType: x.subscriptionType,
-        }
-        return obj
-      })
-    const institutionsNoChange = preInstitutions
-      .filter((item) => !filteredSubInstitutions.find((i) => i.id === item.id))
-      .map((x) => {
-        const obj = {
-          id: parseInt(x.id),
-          subscriptionType: x.subscriptionType,
-        }
-        return obj
-      })
-    const policyAreasNoChange = prePolicyAreas
-      .filter((item) => !filteredSubPolicyAreas.find((i) => i.id === item.id))
-      .map((x) => {
-        const obj = {
-          id: parseInt(x.id),
-          subscriptionType: x.subscriptionType,
-        }
-        return obj
-      })
+    const casesNoChange = F.filterOutExistingSubs(preCases, filteredSubCases)
+    const institutionsNoChange = F.filterOutExistingSubs(
+      preInstitutions,
+      filteredSubInstitutions,
+    )
+    const policyAreasNoChange = F.filterOutExistingSubs(
+      prePolicyAreas,
+      filteredSubPolicyAreas,
+    )
 
     const _cases = [...filteredSubCases, ...casesNoChange]
     const _institutions = [...filteredSubInstitutions, ...institutionsNoChange]

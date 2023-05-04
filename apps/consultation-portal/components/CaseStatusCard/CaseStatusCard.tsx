@@ -11,12 +11,13 @@ export const CaseStatusCard = ({ status }) => {
       </StackedTitleAndDescription>
     </SimpleCardSkeleton>
   )
+  //TODO: Get proper wording and info for card
   switch (status) {
-    case 'Til umsagnar':
+    case 'Niðurstöður birtar':
       return (
         <StatusCard
-          heading="Niðurstöður í vinnslu"
-          text="Umsagnarfrestur er liðinn (01.01.2023–13.01.2023). Umsagnir voru birtar jafnóðum og þær bárust. Skoða umsagnir. Niðurstöður samráðsins verða birtar þegar unnið hefur verið úr þeim ábendingum og athugasemdum sem bárust."
+          heading="Niðurstöður birtar"
+          text="Sjá meðfylgjandi skjal."
         />
       )
     default:

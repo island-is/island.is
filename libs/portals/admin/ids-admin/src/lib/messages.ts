@@ -539,4 +539,8 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-publishing-environment',
     defaultMessage: 'Error publishing environment',
   },
+  closeModal: {
+    id: 'ap.ids-admin:close-modal',
+    defaultMessage: 'Close dialog',
+  },
 })
