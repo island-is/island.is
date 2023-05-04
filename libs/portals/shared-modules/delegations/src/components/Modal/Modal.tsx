@@ -1,11 +1,29 @@
 import React, { useRef } from 'react'
-import { Box, Icon, ModalBase, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Icon,
+  ModalBase,
+  Text,
+  useBreakpoint,
+  VisuallyHidden,
+} from '@island.is/island-ui/core'
+import { RemoveScroll } from 'react-remove-scroll'
 import * as styles from './Modal.css'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 export interface ModalProps {
   onClose?(): void
+
   id: string
-  label?: string
+  /**
+   * Aria label for the modal
+   */
+  label: string
+  /**
+   * Displayed above the title
+   */
+  eyebrow?: string
   title?: string
   children?: React.ReactNode
   isVisible: boolean
@@ -14,12 +32,13 @@ export interface ModalProps {
 
 export const Modal = ({
   id,
-  title,
   label,
+  title,
+  eyebrow,
   onClose,
   isVisible,
   children,
-  noPaddingBottom,
+  noPaddingBottom = false,
 }: ModalProps) => {
   const headingRef = useRef<HTMLElement>(null)
   const handleOnVisibilityChange = (isVisible: boolean) => {
@@ -30,47 +49,39 @@ export const Modal = ({
     }
   }
 
+  const { formatMessage } = useLocale()
+  const { md } = useBreakpoint()
+
   return (
     <ModalBase
       baseId={id}
-      isVisible={isVisible}
-      className={styles.modal}
       modalLabel={label}
+      className={styles.modal({ noPaddingBottom })}
+      isVisible={isVisible}
+      onVisibilityChange={handleOnVisibilityChange}
       hideOnClickOutside
       hideOnEsc
-      onVisibilityChange={handleOnVisibilityChange}
+      preventBodyScroll={false} // Do to a bug in iOS we implement our own scroll lock
     >
-      <Box
-        position="relative"
-        background="white"
-        paddingX={[3, 3, 6]}
-        paddingBottom={noPaddingBottom ? 0 : [3, 3, 6]}
-        paddingTop={12}
-        borderRadius="standard"
-        width="full"
-        className={styles.modalInner}
-      >
-        <Box
-          display="flex"
-          flexDirection="column"
-          rowGap={2}
-          tabIndex={-1}
-          ref={headingRef}
-        >
-          {label && (
-            <Text variant="small" fontWeight="semiBold">
-              {label}
+      <Box className={styles.header} ref={headingRef}>
+        <Box display="flex" flexDirection="column" rowGap={1}>
+          {eyebrow ? <Text variant="eyebrow">{eyebrow}</Text> : null}
+          {title ? (
+            <Text as="h2" variant={md ? 'h2' : 'h3'}>
+              {title}
             </Text>
-          )}
-          {title && <Text variant="h2">{title}</Text>}
+          ) : null}
         </Box>
-        {children}
-        <Box position="absolute" top={4} right={4} aria-hidden>
-          <button onClick={onClose}>
-            <Icon icon="close" type="outline" size="large" />
-          </button>
-        </Box>
+
+        <button onClick={onClose} className={styles.close}>
+          <VisuallyHidden>{formatMessage(m.closeModal)}</VisuallyHidden>
+          <Icon icon="close" type="outline" size="large" />
+        </button>
       </Box>
+
+      <RemoveScroll enabled={isVisible} forwardProps>
+        <Box className={styles.content}>{children}</Box>
+      </RemoveScroll>
     </ModalBase>
   )
 }
