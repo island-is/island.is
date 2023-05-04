@@ -120,7 +120,7 @@ export const form: Form = buildForm({
                   rows: 7,
                 }),
               ],
-            })
+            }),
           ],
         }),
       ],
