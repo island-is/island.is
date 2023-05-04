@@ -1,5 +1,4 @@
-import { HTMLText, PlainText } from '@island.is/regulations'
-import { DraftImpactName } from '@island.is/regulations/admin'
+import { HTMLText, PlainText, RegName } from '@island.is/regulations'
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
@@ -20,7 +19,7 @@ export class DraftRegulationChangeModel {
   id!: string
 
   @Field(() => String, { nullable: true })
-  name?: DraftImpactName
+  name?: RegName | 'self'
 
   @Field(() => String, { nullable: true })
   title!: PlainText
