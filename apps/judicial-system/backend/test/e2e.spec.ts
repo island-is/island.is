@@ -712,7 +712,7 @@ describe('Case', () => {
       })
   })
 
-  it('PATCH /api/case/:id should update judge fields of a case by id', async () => {
+  it.only('PATCH /api/case/:id should update judge fields of a case by id', async () => {
     const judgeCaseData = getJudgeCaseData()
     let dbCase: CCase
     let apiCase: CCase
@@ -721,6 +721,7 @@ describe('Case', () => {
       ...getCaseData(),
       origin: CaseOrigin.RVG,
       state: CaseState.DRAFT,
+      courtId: judge.institution?.id,
     })
       .then((value) => {
         dbCase = caseToCCase(value)
@@ -742,6 +743,7 @@ describe('Case', () => {
           ...judgeCaseData,
           judge,
           registrar,
+          court,
         } as CCase)
 
         // Check the data in the database

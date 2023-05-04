@@ -64,8 +64,8 @@ function canProsecutionUserAccessCase(
   // Check heightened security level access
   if (
     theCase.isHeightenedSecurityLevel &&
-    user.id !== theCase.creatingProsecutor?.id &&
-    user.id !== theCase.prosecutor?.id
+    user.id !== theCase.creatingProsecutorId &&
+    user.id !== theCase.prosecutorId
   ) {
     return false
   }

@@ -275,11 +275,12 @@ describe('canUserAccessCase', () => {
             state,
             type,
             isHeightenedSecurityLevel: true,
+            creatingProsecutorId: 'Creating Prosecutor',
             creatingProsecutor: {
               id: 'Creating Prosecutor',
               institution: { id: 'Prosecutors Office' },
             },
-            prosecutor: { id: 'Assigned Prosecutor' },
+            prosecutorId: 'Assigned Prosecutor',
           } as Case
           const user = {
             id: 'Creating Prosecutor',
@@ -305,11 +306,12 @@ describe('canUserAccessCase', () => {
             state,
             type,
             isHeightenedSecurityLevel: true,
+            creatingProsecutorId: 'Creating Prosecutor',
             creatingProsecutor: {
               id: 'Creating Prosecutor',
               institution: { id: 'Prosecutors Office' },
             },
-            prosecutor: { id: 'Assigned Prosecutor' },
+            prosecutorId: 'Assigned Prosecutor',
           } as Case
           const user = {
             id: 'Assigned Prosecutor',
@@ -619,11 +621,12 @@ describe('canUserAccessCase', () => {
           state,
           type,
           isHeightenedSecurityLevel: true,
+          creatingProsecutorId: 'Creating Prosecutor',
           creatingProsecutor: {
             id: 'Creating Prosecutor',
             institution: { id: 'Prosecutors Office' },
           },
-          prosecutor: { id: 'Assigned Prosecutor' },
+          prosecutorId: 'Assigned Prosecutor',
         } as Case
         const user = {
           id: 'Creating Prosecutor',
@@ -653,7 +656,7 @@ describe('canUserAccessCase', () => {
             id: 'Creating Prosecutor',
             institution: { id: 'Prosecutors Office' },
           },
-          prosecutor: { id: 'Assigned Prosecutor' },
+          prosecutorId: 'Assigned Prosecutor',
         } as Case
         const user = {
           id: 'Assigned Prosecutor',
