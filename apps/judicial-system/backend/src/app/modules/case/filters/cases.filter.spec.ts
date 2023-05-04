@@ -37,13 +37,6 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         {
-          type: [
-            ...restrictionCases,
-            ...investigationCases,
-            ...indictmentCases,
-          ],
-        },
-        {
           state: [
             CaseState.NEW,
             CaseState.DRAFT,
@@ -69,6 +62,13 @@ describe('getCasesQueryFilter', () => {
             { prosecutor_id: 'Prosecutor Id' },
           ],
         },
+        {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
+        },
       ],
     })
   })
@@ -91,13 +91,6 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { isArchived: false },
-        {
-          type: [
-            ...restrictionCases,
-            ...investigationCases,
-            ...indictmentCases,
-          ],
-        },
         {
           state: [
             CaseState.NEW,

@@ -22,7 +22,6 @@ import { ForbiddenException } from '@nestjs/common'
 function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
-    { type: [...restrictionCases, ...investigationCases, ...indictmentCases] },
     {
       state: [
         CaseState.NEW,
@@ -51,7 +50,11 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  if (user.role === UserRole.REPRESENTATIVE) {
+  if (user.role === UserRole.PROSECUTOR) {
+    options.push({
+      type: [...restrictionCases, ...investigationCases, ...indictmentCases],
+    })
+  } else {
     options.push({ type: indictmentCases })
   }
 
