@@ -122,31 +122,14 @@ USER runner
 CMD [ "jest", "main.spec.js" ]
 
 
-FROM alpine:3.15 as awscli
-
-ARG AWSCLI_VERSION="1.22.24"
-ENV AWSCLI_VERSION=${AWSCLI_VERSION}
-
-RUN apk add \
-    bash \
-    python3 \
-    python3-dev \
-    py-pip \
-    build-base \
-    jq \
-    curl
-
-RUN pip install awscli==$AWSCLI_VERSION --user
-RUN mkdir -p /build
-
-
-
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
 
 FROM playwright-base as output-playwright
 RUN apt-get update && apt-get install -y zip && apt-get purge
 
-COPY --chown=pwuser:pwuser --from=awscli /root/.local/bin/aws /usr/local/bin
+RUN wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.11.17.zip" -O "awscliv2.zip"
+RUN unzip awscliv2.zip
+RUN ./aws/install
 
 ARG APP_HOME
 ARG APP_DIST_HOME
