@@ -4,11 +4,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   AdminScopeDTO,
   ApiScopeUserClaim,
-  Client,
-  clientBaseAttributes,
-  ClientGrantType,
   SequelizeConfigService,
-  translateRefreshTokenExpiration,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { AuthDelegationType } from '@island.is/shared/types'
