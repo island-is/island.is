@@ -7,6 +7,7 @@ import {
   LatestNewsSliceResolver,
   FeaturedArticlesResolver,
   FeaturedSupportQNAsResolver,
+  PowerBiSliceResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -31,6 +32,7 @@ import { PowerBiConfig } from './powerbi.config'
     FeaturedSupportQNAsResolver,
     OrganizationLogoLoader,
     PowerBiServiceProvider,
+    PowerBiSliceResolver,
   ],
   exports: [
     ContentfulRepository,
