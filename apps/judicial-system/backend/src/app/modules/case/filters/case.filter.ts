@@ -91,12 +91,6 @@ function isCaseBlockedFromUser(
   forUpdate = true,
 ): boolean {
   return (
-    isTypeHiddenFromRole(
-      theCase.type,
-      user.role,
-      forUpdate,
-      user.institution?.type,
-    ) ||
     isDecisionHiddenFromInstitution(theCase.decision, user.institution?.type) ||
     isProsecutorsOfficeCaseHiddenFromUser(
       user,
@@ -117,6 +111,89 @@ function isCaseBlockedFromUser(
       theCase.prosecutor?.id,
     )
   )
+}
+
+function canProsecutionUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  // check case type access
+  if (user.role === UserRole.PROSECUTOR) {
+    if (
+      !isRestrictionCase(theCase.type) &&
+      !isInvestigationCase(theCase.type) &&
+      !isIndictmentCase(theCase.type)
+    ) {
+      return false
+    }
+  } else if (!isIndictmentCase(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
+  if (
+    ![
+      CaseState.NEW,
+      CaseState.DRAFT,
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ].includes(theCase.state)
+  ) {
+    return false
+  }
+
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
+}
+
+function canDistrictCourtUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  // check case type access
+  if ([UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role)) {
+    if (
+      !isRestrictionCase(theCase.type) &&
+      !isInvestigationCase(theCase.type) &&
+      !isIndictmentCase(theCase.type)
+    ) {
+      return false
+    }
+  } else if (!indictmentCases.includes(theCase.type)) {
+    return false
+  }
+
+  // Check case state access
+  if (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) {
+    if (
+      ![
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        CaseState.ACCEPTED,
+        CaseState.REJECTED,
+        CaseState.DISMISSED,
+      ].includes(theCase.state)
+    ) {
+      return false
+    }
+  } else if (
+    ![
+      CaseState.SUBMITTED,
+      CaseState.RECEIVED,
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ].includes(theCase.state)
+  ) {
+    return false
+  }
+
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }
 
 function getAllowedTypes(
@@ -154,93 +231,6 @@ function isTypeHiddenFromRole(
   return !getAllowedTypes(role, forUpdate, institutionType).includes(type)
 }
 
-function canProsecutionUserAccessCase(
-  theCase: Case,
-  user: User,
-  forUpdate = true,
-): boolean {
-  // check case type access
-  if (user.role === UserRole.PROSECUTOR) {
-    if (
-      ![
-        ...indictmentCases,
-        ...investigationCases,
-        ...restrictionCases,
-      ].includes(theCase.type)
-    ) {
-      return false
-    }
-  } else if (!indictmentCases.includes(theCase.type)) {
-    return false
-  }
-
-  // Check case state access
-  if (
-    ![
-      CaseState.NEW,
-      CaseState.DRAFT,
-      CaseState.SUBMITTED,
-      CaseState.RECEIVED,
-      CaseState.ACCEPTED,
-      CaseState.REJECTED,
-      CaseState.DISMISSED,
-    ].includes(theCase.state)
-  ) {
-    return false
-  }
-
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
-}
-
-function canDistrictCourtUserAccessCase(
-  theCase: Case,
-  user: User,
-  forUpdate = true,
-): boolean {
-  // check case type access
-  if (user.role === UserRole.JUDGE || user.role === UserRole.REGISTRAR) {
-    if (
-      ![
-        ...indictmentCases,
-        ...investigationCases,
-        ...restrictionCases,
-      ].includes(theCase.type)
-    ) {
-      return false
-    }
-  } else if (!indictmentCases.includes(theCase.type)) {
-    return false
-  }
-
-  // Check case state access
-  if (isRestrictionCase(theCase.type) || isInvestigationCase(theCase.type)) {
-    if (
-      ![
-        CaseState.DRAFT,
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        CaseState.ACCEPTED,
-        CaseState.REJECTED,
-        CaseState.DISMISSED,
-      ].includes(theCase.state)
-    ) {
-      return false
-    }
-  } else if (
-    ![
-      CaseState.SUBMITTED,
-      CaseState.RECEIVED,
-      CaseState.ACCEPTED,
-      CaseState.REJECTED,
-      CaseState.DISMISSED,
-    ].includes(theCase.state)
-  ) {
-    return false
-  }
-
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
-}
-
 function canAppealsCourtUserAccessCase(
   theCase: Case,
   user: User,
@@ -255,7 +245,14 @@ function canAppealsCourtUserAccessCase(
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return (
+    !isTypeHiddenFromRole(
+      theCase.type,
+      user.role,
+      forUpdate,
+      user.institution?.type,
+    ) && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  )
 }
 
 function canStaffUserAccessCase(
@@ -268,7 +265,14 @@ function canStaffUserAccessCase(
     return false
   }
 
-  return !isCaseBlockedFromUser(theCase, user, forUpdate)
+  return (
+    !isTypeHiddenFromRole(
+      theCase.type,
+      user.role,
+      forUpdate,
+      user.institution?.type,
+    ) && !isCaseBlockedFromUser(theCase, user, forUpdate)
+  )
 }
 
 export function canUserAccessCase(
