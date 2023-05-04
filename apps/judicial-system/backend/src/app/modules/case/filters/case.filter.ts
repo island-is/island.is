@@ -188,7 +188,7 @@ function isHightenedSecurityCaseHiddenFromUser(
   )
 }
 
-export function isCaseBlockedFromUser(
+function isCaseBlockedFromUser(
   theCase: Case,
   user: User,
   forUpdate = true,
@@ -226,4 +226,12 @@ export function isCaseBlockedFromUser(
       theCase.prosecutor?.id,
     )
   )
+}
+
+export function canUserAccessCase(
+  theCase: Case,
+  user: User,
+  forUpdate = true,
+): boolean {
+  return !isCaseBlockedFromUser(theCase, user, forUpdate)
 }

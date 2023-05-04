@@ -16,9 +16,9 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../test'
 import { Case } from '../models/case.model'
-import { isCaseBlockedFromUser } from './case.filter'
+import { canUserAccessCase } from './case.filter'
 
-describe('isCaseBlockedFromUser', () => {
+describe('canUserAccessCase', () => {
   describe.each([...restrictionCases, investigationCases])(
     'given %s case',
     (caseType) => {
@@ -81,8 +81,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -143,8 +143,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(true)
@@ -182,8 +182,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -206,8 +206,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -231,8 +231,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -261,8 +261,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -291,8 +291,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -321,8 +321,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -358,8 +358,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -379,8 +379,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -407,8 +407,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -444,8 +444,8 @@ describe('isCaseBlockedFromUser', () => {
             } as User
 
             // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+            const isWriteBlocked = !canUserAccessCase(theCase, user)
+            const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
             // Assert
             expect(isWriteBlocked).toBe(true)
@@ -469,8 +469,8 @@ describe('isCaseBlockedFromUser', () => {
             } as User
 
             // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+            const isWriteBlocked = !canUserAccessCase(theCase, user)
+            const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
             // Assert
             expect(isWriteBlocked).toBe(true)
@@ -495,8 +495,8 @@ describe('isCaseBlockedFromUser', () => {
             } as User
 
             // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+            const isWriteBlocked = !canUserAccessCase(theCase, user)
+            const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
             // Assert
             expect(isWriteBlocked).toBe(true)
@@ -521,8 +521,8 @@ describe('isCaseBlockedFromUser', () => {
             } as User
 
             // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+            const isWriteBlocked = !canUserAccessCase(theCase, user)
+            const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
             // Assert
             expect(isWriteBlocked).toBe(true)
@@ -560,8 +560,8 @@ describe('isCaseBlockedFromUser', () => {
               } as User
 
               // Act
-              const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-              const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+              const isWriteBlocked = !canUserAccessCase(theCase, user)
+              const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
               // Assert
               expect(isWriteBlocked).toBe(true)
@@ -602,8 +602,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -629,8 +629,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -657,8 +657,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -690,8 +690,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -721,8 +721,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(false)
@@ -751,8 +751,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(false)
@@ -791,8 +791,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(true)
@@ -812,8 +812,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(false)
@@ -840,8 +840,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(false)
@@ -877,8 +877,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -902,8 +902,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -928,8 +928,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -954,8 +954,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -993,8 +993,8 @@ describe('isCaseBlockedFromUser', () => {
             } as User
 
             // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+            const isWriteBlocked = !canUserAccessCase(theCase, user)
+            const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
             // Assert
             expect(isWriteBlocked).toBe(true)
@@ -1024,8 +1024,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(true)
@@ -1046,8 +1046,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1066,8 +1066,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1087,8 +1087,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1108,8 +1108,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1129,8 +1129,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1150,8 +1150,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1171,8 +1171,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1191,8 +1191,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(false)
@@ -1211,8 +1211,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(false)
@@ -1232,8 +1232,8 @@ describe('isCaseBlockedFromUser', () => {
         const user = { role: UserRole.ADMIN } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(true)
