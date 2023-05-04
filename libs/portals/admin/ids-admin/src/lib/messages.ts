@@ -543,4 +543,12 @@ export const m = defineMessages({
     id: 'ap.ids-admin:close-modal',
     defaultMessage: 'Close dialog',
   },
+  listOfPermissions: {
+    id: 'ap.ids-admin:list-of-permissions',
+    defaultMessage: 'List of permissions',
+  },
+  permissionsManagement: {
+    id: 'ap.ids-admin:permissions-management',
+    defaultMessage: 'Management',
+  },
 })

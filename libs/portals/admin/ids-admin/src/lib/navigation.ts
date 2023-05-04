@@ -20,6 +20,26 @@ export const domainNav: PortalNavigationItem = {
     //   description: m.idsAdmin,
     //   activeIfExact: true,
     // },
+    {
+      name: m.permissions,
+      path: IDSAdminPaths.IDSAdminPermissions,
+      description: m.idsAdmin,
+      activeIfExact: true,
+      children: [
+        {
+          name: m.listOfPermissions,
+          path: IDSAdminPaths.IDSAdminPermissions,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+        {
+          name: m.permissionsManagement,
+          path: IDSAdminPaths.IDSAdminPermissionsManagement,
+          description: m.idsAdmin,
+          activeIfExact: true,
+        },
+      ],
+    },
   ],
 }
 

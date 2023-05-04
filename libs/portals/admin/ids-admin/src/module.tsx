@@ -23,6 +23,13 @@ const CreateApplication = lazy(() =>
 const Applications = lazy(() => import('./components/Clients/Clients'))
 const ApplicationsScreen = lazy(() => import('./screens/ApplicationsScreen'))
 
+const PermissionsList = lazy(() =>
+  import('./components/PermissionsList/PermissionsList'),
+)
+const PermissionsManagement = lazy(() =>
+  import('./components/PermissionsManagement/PermissionsManagement'),
+)
+
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
 
 export type IDSAdminRouteHandle = {
@@ -108,6 +115,22 @@ export const idsAdminModule: PortalModule = {
                     action: createClientAction(props),
                   },
                 ],
+              },
+              {
+                name: m.permissions,
+                path: IDSAdminPaths.IDSAdminPermissions,
+                element: <PermissionsList />,
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdmin,
+                },
+              },
+              {
+                name: m.permissionsManagement,
+                path: IDSAdminPaths.IDSAdminPermissionsManagement,
+                element: <PermissionsManagement />,
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdmin,
+                },
               },
               {
                 name: m.apis,
