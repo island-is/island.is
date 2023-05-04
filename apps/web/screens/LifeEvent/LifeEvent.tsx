@@ -40,6 +40,7 @@ import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { webRichText } from '@island.is/web/utils/richText'
 import { Webreader } from '@island.is/web/components'
+import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -111,7 +112,9 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         imageWidth={image?.width?.toString()}
         imageHeight={image?.height?.toString()}
       >
-        <PlausibleDomainTracking domain={'island.is/s/stafraent-island'} />
+        <PlausibleDomainTracking
+          domain={DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN}
+        />
       </HeadWithSocialSharing>
 
       <GridContainer id="main-content">
