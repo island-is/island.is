@@ -19,6 +19,7 @@ import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseAppealRulingDecision,
   CaseType,
   SessionArrangements,
   CourtDocument,
@@ -76,6 +77,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseOrigin),
   })
+  @ApiProperty({ enum: CaseOrigin })
   origin!: CaseOrigin
 
   /**********
@@ -86,6 +88,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseType),
   })
+  @ApiProperty({ enum: CaseType })
   type!: CaseType
 
   /**********
@@ -982,6 +985,26 @@ export class Case extends Model {
   appealState?: CaseAppealState
 
   /**********
+   * The date and time when the prosecutor appeal statement was sent
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  prosecutorStatementDate?: Date
+
+  /**********
+   * The date and time when the defendant appeal statement was sent
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defendantStatementDate?: Date
+
+  /**********
    * The time and date that the court marked an appeal as received
    **********/
   @Column({
@@ -990,6 +1013,27 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   appealReceivedByCourtDate?: Date
+
+  /**********
+   * The appeal conclusion
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealConclusion?: string
+
+  /**********
+   * The case appeal ruling decision
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseAppealRulingDecision),
+  })
+  @ApiProperty({ enum: CaseAppealRulingDecision })
+  appealRulingDecision?: CaseAppealRulingDecision
 
   /**********
    * The appeal case number assigned in the court of appeals

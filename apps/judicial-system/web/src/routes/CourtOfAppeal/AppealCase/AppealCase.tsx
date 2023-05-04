@@ -86,6 +86,8 @@ const AppealCase = () => {
   )
 
   const previousUrl = `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${id}`
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}/${workingCase.id}`)
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -137,7 +139,12 @@ const AppealCase = () => {
               const assistantUpdate = (so as AssistantSelectOption).assistant
 
               setAndSendCaseToServer(
-                [{ appealAssistantId: assistantUpdate.id }],
+                [
+                  {
+                    appealAssistantId: assistantUpdate.id ?? null,
+                    force: true,
+                  },
+                ],
                 workingCase,
                 setWorkingCase,
               )
@@ -145,7 +152,7 @@ const AppealCase = () => {
             required
           />
         </Box>
-        <Box component="section" marginBottom={5}>
+        <Box component="section" marginBottom={8}>
           <SectionHeading title={formatMessage(strings.judgesHeading)} />
           <BlueBox>
             {defaultJudges.map((judge, index) => {
@@ -166,7 +173,12 @@ const AppealCase = () => {
                       const judgeProperty = `appealJudge${index + 1}Id`
 
                       setAndSendCaseToServer(
-                        [{ [judgeProperty]: judgeUpdate.id }],
+                        [
+                          {
+                            [judgeProperty]: judgeUpdate.id ?? null,
+                            force: true,
+                          },
+                        ],
                         workingCase,
                         setWorkingCase,
                       )
@@ -184,7 +196,7 @@ const AppealCase = () => {
           previousUrl={previousUrl}
           nextButtonIcon="arrowForward"
           onNextButtonClick={() => {
-            /* To be implemented */
+            handleNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
           }}
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!isCourtOfAppealCaseStepValid(workingCase)}

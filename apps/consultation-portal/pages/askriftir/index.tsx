@@ -12,6 +12,7 @@ import {
 } from '../../graphql/queries.graphql.generated'
 
 const STATUSES_TO_FETCH = [1, 2, 3]
+const PAGE_SIZE = 20
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -34,6 +35,7 @@ export const getServerSideProps = async (ctx) => {
         variables: {
           input: {
             caseStatuses: STATUSES_TO_FETCH,
+            pageSize: PAGE_SIZE,
           },
         },
       }),
