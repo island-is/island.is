@@ -88,7 +88,7 @@ const Decision: React.FC<Props> = ({
           disabled={disabled}
         />
       </Box>
-      {(workingCase.type === CaseType.Custody ||
+      {(workingCase.type === CaseType.CUSTODY ||
         workingCase.type === CaseType.AdmissionToFacility) && (
         <Box marginTop={2}>
           <RadioButton

@@ -43,7 +43,7 @@ describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
     .formatMessage
 
   const fn = (defendants: Defendant[]) =>
-    getDefendantLabel(formatMessage, defendants, CaseType.Custody)
+    getDefendantLabel(formatMessage, defendants, CaseType.CUSTODY)
 
   test('should render label for signle defendant', () => {
     const defendants = [{}] as Defendant[]

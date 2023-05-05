@@ -20,7 +20,7 @@ describe('Appeal section component', () => {
     id: 'test',
     created: new Date().toString(),
     modified: new Date().toString(),
-    type: CaseType.Custody,
+    type: CaseType.CUSTODY,
     state: CaseState.ACCEPTED,
     policeCaseNumbers: ['000'],
     defendants: [{ nationalId: '000000-0000' }] as Defendant[],

@@ -94,7 +94,7 @@ describe('useFilter - filterCases', () => {
   test('should return investigation cases', async () => {
     const user = {} as User
     const cases = [
-      { id: '1', type: CaseType.Custody },
+      { id: '1', type: CaseType.CUSTODY },
       { id: '2', type: CaseType.Indictment },
     ] as Case[]
 

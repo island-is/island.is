@@ -286,7 +286,7 @@ export const PoliceDemands: React.FC = () => {
 
                     const nextCaseType = event.target.checked
                       ? CaseType.AdmissionToFacility
-                      : CaseType.Custody
+                      : CaseType.CUSTODY
                     onDemandsChange(
                       {
                         type: nextCaseType,
@@ -370,7 +370,7 @@ export const PoliceDemands: React.FC = () => {
             <Box marginBottom={2}>
               <CheckboxList
                 checkboxes={
-                  workingCase.type === CaseType.Custody ||
+                  workingCase.type === CaseType.CUSTODY ||
                   workingCase.type === CaseType.AdmissionToFacility
                     ? legalProvisions
                     : travelBanProvisions
@@ -421,7 +421,7 @@ export const PoliceDemands: React.FC = () => {
             />
           </BlueBox>
         </Box>
-        {(workingCase.type === CaseType.Custody ||
+        {(workingCase.type === CaseType.CUSTODY ||
           workingCase.type === CaseType.AdmissionToFacility) && (
           <Box
             component="section"

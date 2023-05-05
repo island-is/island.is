@@ -18,7 +18,7 @@ describe('<CaseDates /> expired', () => {
   test('should render expired custody case', () => {
     const theCase = {
       isValidToDateInThePast: true,
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -58,7 +58,7 @@ describe('<CaseDates /> expired', () => {
 describe('<CaseDates /> still valid', () => {
   test('should render valid custody case', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -94,7 +94,7 @@ describe('<CaseDates /> still valid', () => {
 
   test('should render valid custody case with isolation', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       isCustodyIsolation: true,
       validToDate: '2022-06-15T19:50:08.033Z',
       isolationToDate: '2022-06-15T19:50:08.033Z',

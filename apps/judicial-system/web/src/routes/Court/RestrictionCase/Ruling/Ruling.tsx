@@ -623,7 +623,7 @@ export const Ruling: React.FC = () => {
               />
             </Box>
           )}
-        {(workingCase.type === CaseType.Custody ||
+        {(workingCase.type === CaseType.CUSTODY ||
           workingCase.type === CaseType.AdmissionToFacility) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>

@@ -103,7 +103,7 @@ function showCustodyNotice(
   decision?: CaseDecision,
 ) {
   return (
-    (type === CaseType.Custody || type === CaseType.AdmissionToFacility) &&
+    (type === CaseType.CUSTODY || type === CaseType.AdmissionToFacility) &&
     state === CaseState.ACCEPTED &&
     isAcceptingCaseDecision(decision)
   )

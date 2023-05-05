@@ -46,7 +46,7 @@ const initialState: Case = {
   created: '',
   modified: '',
   origin: CaseOrigin.Unknown,
-  type: CaseType.Custody,
+  type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumbers: [],
   defendants: [{ id: '', noNationalId: false } as Defendant],
@@ -81,7 +81,7 @@ const FormProvider = ({ children }: Props) => {
   const caseType = router.pathname.includes('farbann')
     ? CaseType.TravelBan
     : router.pathname.includes('gaesluvardhald')
-    ? CaseType.Custody
+    ? CaseType.CUSTODY
     : router.pathname.includes('akaera')
     ? CaseType.Indictment
     : // This is a random case type for the default value.

@@ -90,7 +90,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted custody cases', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,

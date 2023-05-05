@@ -111,7 +111,7 @@ const useSections = (
                   validateFormStepper(
                     isValid,
                     [
-                      workingCase.type === CaseType.Custody
+                      workingCase.type === CaseType.CUSTODY
                         ? constants.RESTRICTION_CASE_DEFENDANT_ROUTE
                         : constants.CREATE_TRAVEL_BAN_ROUTE,
                     ],
