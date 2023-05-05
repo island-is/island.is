@@ -39,7 +39,7 @@ export const HealthInsuranceForm: Form = buildForm({
     buildSection({
       id: 'applicantInfoSection',
       title: m.applicantInfoSection,
-      children: [applicantInformationMultiField],
+      children: [applicantInformationMultiField()],
     }),
     buildSection({
       id: 'statusAndChildrenSection',
