@@ -153,6 +153,7 @@ export class EndorsementService {
       // map meaningful sequelize errors to custom errors, else return error
       switch (error.constructor) {
         case UniqueConstraintError: {
+          this.logger.warn('Endorsement already exists in list')
           throw new MethodNotAllowedException([
             'Endorsement already exists in list',
           ])
@@ -174,6 +175,7 @@ export class EndorsementService {
 
     // we don't allow endorsements on closed lists
     if (new Date() >= endorsementList.closedDate) {
+      this.logger.warn('Unable to remove endorsement form closed list')
       throw new MethodNotAllowedException([
         'Unable to remove endorsement form closed list',
       ])

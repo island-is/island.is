@@ -53,6 +53,7 @@ export class EndorsementListService {
 
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
+    this.logger.info(`Finding endorsement lists`)
     return await paginate({
       Model: this.endorsementListModel,
       limit: query.limit || 10,
@@ -95,6 +96,7 @@ export class EndorsementListService {
     })
 
     if (!result) {
+      this.logger.warn('This endorsement list does not exist.')
       throw new NotFoundException(['This endorsement list does not exist.'])
     }
 
@@ -186,16 +188,19 @@ export class EndorsementListService {
 
   async create(list: CreateInput) {
     if (!list.openedDate || !list.closedDate) {
+      this.logger.warn('Body missing openedDate or closedDate value.')
       throw new BadRequestException([
         'Body missing openedDate or closedDate value.',
       ])
     }
     if (list.openedDate >= list.closedDate) {
+      this.logger.warn('openedDate can not be bigger than closedDate.')
       throw new BadRequestException([
         'openedDate can not be bigger than closedDate.',
       ])
     }
     if (new Date() >= list.closedDate) {
+      this.logger.warn('closedDate can not have already passed on creation of Endorsement List')
       throw new BadRequestException([
         'closedDate can not have already passed on creation of Endorsement List',
       ])
@@ -216,6 +221,7 @@ export class EndorsementListService {
       }
       return await this.findListsGenericQuery(query, where)
     } catch (error) {
+      this.logger.warn('findOpenListsTaggedGeneralPetition not found')
       throw new NotFoundException()
     }
   }
@@ -234,6 +240,7 @@ export class EndorsementListService {
       },
     })
     if (!result) {
+      this.logger.warn('findSingleOpenListTaggedGeneralPetition not found')
       throw new NotFoundException()
     }
     return result
@@ -251,6 +258,7 @@ export class EndorsementListService {
         },
       })
       if (!endorsementList) {
+        this.logger.warn('This endorsement list does not exist.')
         throw new NotFoundException(['This endorsement list does not exist.'])
       }
       owner = endorsementList.owner
@@ -354,6 +362,7 @@ export class EndorsementListService {
       ],
     })
     if (!endorsementList) {
+      this.logger.warn('This endorsement list does not exist.')
       throw new NotFoundException(['This endorsement list does not exist.'])
     }
     const ownerName = await this.getOwnerInfo(
