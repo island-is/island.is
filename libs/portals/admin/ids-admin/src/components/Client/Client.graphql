@@ -8,6 +8,10 @@ query GetClient($input: ClientInput!) {
       id
       environment
       clientId
+      secrets {
+        secretId
+        decryptedValue
+      }
       displayName {
         locale
         value
@@ -32,6 +36,11 @@ query GetClient($input: ClientInput!) {
         value
       }
       allowOfflineAccess
+      allowedScopes {
+        name
+        displayName
+        description
+      }
     }
   }
 }
