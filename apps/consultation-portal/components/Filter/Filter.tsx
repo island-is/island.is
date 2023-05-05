@@ -25,7 +25,7 @@ export const Filter = ({
   }
 
   const handleClear = () => {
-    getItem({ key: FILTERS_FRONT_PAGE_KEY, clear: true})
+    getItem({ key: FILTERS_FRONT_PAGE_KEY, clear: true })
     setFilters(initialValues)
   }
 
