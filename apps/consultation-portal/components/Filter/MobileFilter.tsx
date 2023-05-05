@@ -7,11 +7,8 @@ import {
   GridContainer,
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
-import {
-  getItem,
-  setItem,
-} from '@island.is/consultation-portal/utils/helpers/localStorage'
-import { FILTERS_FRONT_PAGE_KEY } from '@island.is/consultation-portal/utils/consts/consts'
+import { getItem, setItem } from '../../utils/helpers/localStorage'
+import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
 
 interface Props {
   filters: CaseFilter
@@ -93,6 +90,7 @@ export const MobileFilter = ({
       }
     })
     thisData.items = changedItems
+    filtersCopy.pageNumber = 0
     setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
     setFilters(filtersCopy)
   }
@@ -112,6 +110,7 @@ export const MobileFilter = ({
       }
     })
     thisData.items = changedItems
+    filtersCopy.pageNumber = 0
     setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
     setFilters(filtersCopy)
   }

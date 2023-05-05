@@ -161,11 +161,11 @@ export const AdvicesScreen = () => {
             })}
           </Tiles>
         )}
-        <Pagination
+        {/* <Pagination
           page={page}
           setPage={(page: number) => setPage(page)}
           totalPages={Math.ceil(total / CARDS_PER_PAGE)}
-        />
+        /> */}
       </>
     )
   }

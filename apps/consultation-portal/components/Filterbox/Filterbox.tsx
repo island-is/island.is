@@ -1,8 +1,4 @@
-import {
-  CaseFilter,
-  FilterInputItem,
-  FilterInputItems,
-} from '../../types/interfaces'
+import { CaseFilter, FilterInputItem } from '../../types/interfaces'
 import {
   Box,
   Button,
@@ -42,6 +38,7 @@ const FilterBox = ({
     const instance = filtersCopy[type].items[index]
     instance.checked = !instance.checked
     filtersCopy[type].items[index] = instance
+    filtersCopy.pageNumber = 0
     setFilters(filtersCopy)
   }
 
@@ -56,24 +53,41 @@ const FilterBox = ({
     if (prevIndex !== thisIndex) {
       filtersCopy[type].items[prevIndex].checked = false
       filtersCopy[type].items[thisIndex].checked = true
+      filtersCopy.pageNumber = 0
       setFilters(filtersCopy)
     }
   }
 
-  const onClean = () => {
+  const onClear = () => {
     const filtersCopy = { ...filters }
     if (type === 'sorting') {
       onChangeRadio(0)
     } else {
       filtersCopy[type].items.map((item: FilterInputItem) => {
-        item.checked = true
+        item.checked = false
       })
     }
+    filtersCopy.pageNumber = 0
     setFilters(filtersCopy)
   }
 
   const renderLabel = (item) => {
-    return `${item.label} (${item.count})`
+    const renderCount = item.count !== 0 ? ` (${item.count})` : ``
+    return `${item.label}${renderCount}`
+  }
+
+  const checkedItems = thisFilters.items.filter((item) => item.checked)
+  const clearCategoryCheck = (thisFilters) => {
+    if (type === 'sorting') {
+      if (!thisFilters?.items[0].checked) {
+        return true
+      }
+    } else {
+      if (checkedItems.length !== 0) {
+        return true
+      }
+    }
+    return false
   }
 
   return (
@@ -113,17 +127,19 @@ const FilterBox = ({
                 />
               ),
             )}
-            <Box textAlign="right">
-              <Button
-                size="small"
-                icon="arrowForward"
-                variant="text"
-                onClick={onClean}
-                loading={loading}
-              >
-                Hreinsa síu
-              </Button>
-            </Box>
+            {clearCategoryCheck(thisFilters) && (
+              <Box textAlign="right">
+                <Button
+                  size="small"
+                  icon="arrowForward"
+                  variant="text"
+                  onClick={onClear}
+                  loading={loading}
+                >
+                  Hreinsa síu
+                </Button>
+              </Box>
+            )}
           </>
         )}
       </Stack>

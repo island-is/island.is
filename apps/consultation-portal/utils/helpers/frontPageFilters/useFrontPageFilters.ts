@@ -17,10 +17,9 @@ import { getInitialFilters } from './getInitialFilters'
 
 interface Props {
   types: ArrOfTypes
-  page: number
 }
 
-export const useFrontPageFilters = ({ types, page }: Props) => {
+export const useFrontPageFilters = ({ types }: Props) => {
   const {
     caseStatuses,
     caseTypes,
@@ -56,7 +55,6 @@ export const useFrontPageFilters = ({ types, page }: Props) => {
     items: [...filters?.caseTypes?.items],
     defaultItems: initialValues?.caseTypes?.items,
   })
-
   const input = {
     caseStatuses: _caseStatuses,
     caseTypes: _caseTypes,
@@ -75,13 +73,7 @@ export const useFrontPageFilters = ({ types, page }: Props) => {
     pageNumber: filters.pageNumber,
   }
 
-  const {
-    cases,
-    filterGroups,
-    total,
-    getCasesLoading,
-    refetchCases,
-  } = useFetchCases({
+  const { cases, filterGroups, total, getCasesLoading } = useFetchCases({
     input: input,
   })
 
@@ -123,6 +115,5 @@ export const useFrontPageFilters = ({ types, page }: Props) => {
     filters: filters,
     setFilters: setFilters,
     initialValues: initialValues,
-    refetchCases: refetchCases,
   }
 }

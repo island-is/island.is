@@ -27,15 +27,14 @@ import Filter from '../../components/Filter/Filter'
 import { useFrontPageFilters, useIsMobile } from '../../utils/helpers'
 import Pagination from '../../components/Pagination/Pagination'
 import MobileFilter from '../../components/Filter/MobileFilter'
+import { CARDS_PER_PAGE } from '../../utils/consts/consts'
 
-const CARDS_PER_PAGE = 12
 interface HomeProps {
   types: ArrOfTypes
   statistics: ArrOfStatistics
 }
 
 export const Home = ({ types, statistics }: HomeProps) => {
-  const [page, setPage] = useState<number>(0)
   const { isMobile } = useIsMobile()
 
   const {
@@ -49,10 +48,8 @@ export const Home = ({ types, statistics }: HomeProps) => {
     filters,
     setFilters,
     initialValues,
-    refetchCases,
   } = useFrontPageFilters({
     types: types,
-    page: page,
   })
 
   const renderCards = () => {
@@ -112,8 +109,8 @@ export const Home = ({ types, statistics }: HomeProps) => {
           </Tiles>
         )}
         <Pagination
-          page={page}
-          setPage={(page: number) => setPage(page)}
+          filters={filters}
+          setFilters={(arr: CaseFilter) => setFilters(arr)}
           totalPages={Math.ceil(total / CARDS_PER_PAGE)}
         />
       </>
@@ -149,7 +146,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
               <Filter
                 filters={filters}
                 setFilters={(arr: CaseFilter) => setFilters(arr)}
-                defaultValues={initialValues}
+                initialValues={initialValues}
                 loading={getCasesLoading}
               />
             )}

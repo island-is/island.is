@@ -1,16 +1,12 @@
 import { ArrOfValueAndLabel, CaseFilter } from '../../types/interfaces'
 import {
-  AsyncSearch,
   Box,
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Select,
-  Stack,
-  Text,
 } from '@island.is/island-ui/core'
-import { useEffect, useState } from 'react'
+import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
 
 interface SearchAndFilterProps {
   PolicyAreas: Array<ArrOfValueAndLabel>
@@ -31,25 +27,6 @@ const SearchAndFilter = ({
   setFilters,
   loading,
 }: SearchAndFilterProps) => {
-  const options = []
-  const [searchValue, setSearchValue] = useState(filters?.searchQuery)
-
-  useEffect(() => {
-    const identifier = setTimeout(() => {
-      const filtersCopy = { ...filters }
-      filtersCopy.searchQuery = searchValue
-      setFilters(filtersCopy)
-    }, 500)
-
-    return () => {
-      clearTimeout(identifier)
-    }
-  }, [searchValue, setSearchValue])
-
-  const onChangeSearch = (value: string) => {
-    setSearchValue(value)
-  }
-
   const onChange = (e, isInstitutions: boolean) => {
     const filtersCopy = { ...filters }
     if (isInstitutions) {
@@ -57,6 +34,7 @@ const SearchAndFilter = ({
     } else {
       filtersCopy.policyAreas = e ? [parseInt(e.value)] : defaultPolicyAreas
     }
+    filtersCopy.pageNumber = 0
     setFilters(filtersCopy)
   }
 
@@ -65,26 +43,11 @@ const SearchAndFilter = ({
       <Box paddingY={4}>
         <GridRow>
           <GridColumn span={['8/12', '8/12', '6/12', '6/12', '6/12']}>
-            <Stack space="none">
-              <Text
-                lineHeight="sm"
-                variant="eyebrow"
-                color="blue400"
-                paddingBottom="none"
-              >
-                Leit
-              </Text>
-              <div style={{ marginBottom: '6px' }} />
-              <AsyncSearch
-                label="Leit"
-                size="medium"
-                options={options}
-                placeholder="Að hverju ertu að leita?"
-                initialInputValue={searchValue}
-                inputValue={searchValue}
-                onInputValueChange={(value) => onChangeSearch(value)}
-              />
-            </Stack>
+            <DebouncedSearch
+              filters={filters}
+              setFilters={setFilters}
+              name="front_page_search"
+            />
           </GridColumn>
           <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
             <Select
