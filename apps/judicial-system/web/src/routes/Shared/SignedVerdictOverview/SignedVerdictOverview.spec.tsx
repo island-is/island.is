@@ -59,7 +59,7 @@ describe('titleForCase', () => {
   test('should handle admission case with valid to date in past', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
-      type: CaseType.AdmissionToFacility,
+      type: CaseType.ADMISSION_TO_FACILITY,
       isValidToDateInThePast: true,
     } as Case
     const res = fn(theCase)
@@ -97,7 +97,7 @@ describe('titleForCase', () => {
   test('should handle active admission case', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
-      type: CaseType.AdmissionToFacility,
+      type: CaseType.ADMISSION_TO_FACILITY,
     } as Case
     const res = fn(theCase)
     expect(res).toEqual('Vistun á viðeigandi stofnun virk')
@@ -225,7 +225,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for rejected admission case', () => {
     const theCase = {
-      type: CaseType.AdmissionToFacility,
+      type: CaseType.ADMISSION_TO_FACILITY,
       state: CaseState.REJECTED,
     } as Case
     const res = fn(theCase, prosecutor)

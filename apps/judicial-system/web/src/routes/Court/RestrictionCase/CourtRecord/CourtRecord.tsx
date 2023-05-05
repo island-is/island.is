@@ -142,7 +142,7 @@ export const CourtRecord: React.FC = () => {
 
     if (
       workingCase.type === CaseType.CUSTODY ||
-      workingCase.type === CaseType.AdmissionToFacility
+      workingCase.type === CaseType.ADMISSION_TO_FACILITY
     ) {
       autofillSessionBookings.push(
         `\n\n${formatMessage(

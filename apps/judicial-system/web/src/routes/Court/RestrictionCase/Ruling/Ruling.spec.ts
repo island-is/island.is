@@ -69,7 +69,7 @@ describe('getConclusionAutofill', () => {
       }
 
       const theCase = {
-        type: CaseType.AdmissionToFacility,
+        type: CaseType.ADMISSION_TO_FACILITY,
       } as Case
 
       const result = fn(theCase, decision, defendant)
@@ -120,7 +120,7 @@ describe('getConclusionAutofill', () => {
         nationalId: '1990-01-01',
       }
       const theCase = {
-        type: CaseType.AdmissionToFacility,
+        type: CaseType.ADMISSION_TO_FACILITY,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
@@ -176,7 +176,7 @@ describe('getConclusionAutofill', () => {
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
-        type: CaseType.AdmissionToFacility,
+        type: CaseType.ADMISSION_TO_FACILITY,
       } as Case
 
       const result = fn(
@@ -202,7 +202,7 @@ describe('getConclusionAutofill', () => {
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
-        type: CaseType.AdmissionToFacility,
+        type: CaseType.ADMISSION_TO_FACILITY,
       } as Case
 
       const result = fn(

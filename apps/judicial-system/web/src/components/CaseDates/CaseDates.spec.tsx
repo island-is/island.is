@@ -31,7 +31,7 @@ describe('<CaseDates /> expired', () => {
   test('should render expired admission case', () => {
     const theCase = {
       isValidToDateInThePast: true,
-      type: CaseType.AdmissionToFacility,
+      type: CaseType.ADMISSION_TO_FACILITY,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -82,7 +82,7 @@ describe('<CaseDates /> still valid', () => {
 
   test('should render valid admission case', () => {
     const theCase = {
-      type: CaseType.AdmissionToFacility,
+      type: CaseType.ADMISSION_TO_FACILITY,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 

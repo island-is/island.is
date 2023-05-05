@@ -93,7 +93,7 @@ describe('getDemandsAutofill', () => {
 
   it('should format admission to facility case', () => {
     const props = {
-      caseType: CaseType.AdmissionToFacility,
+      caseType: CaseType.ADMISSION_TO_FACILITY,
       defendant: baseDefendant,
       type: CaseType.CUSTODY,
       courtName,

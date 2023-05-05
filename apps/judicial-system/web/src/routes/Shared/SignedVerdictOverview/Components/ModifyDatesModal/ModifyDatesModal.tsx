@@ -195,7 +195,7 @@ const ModifyDatesModal: React.FC<Props> = ({
     if (!modifiedValidToDate?.value) return
 
     if (
-      [CaseType.CUSTODY, CaseType.AdmissionToFacility].includes(
+      [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
         workingCase.type,
       )
     ) {
