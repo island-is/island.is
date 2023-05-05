@@ -1,17 +1,22 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { CaseSubscriptionCommand } from './caseSubscriptionCommand.model'
+import { SubscriptionCommand } from './subscriptionCommand.model'
+import { SubscriptionType } from '@island.is/clients/consultation-portal'
 
 @ObjectType('ConsultationPortalUserSubscriptionsCommand')
 export class UserSubscriptionsCommand {
   @Field({ nullable: true })
   subscribeToAll?: boolean
 
+  @Field(() => SubscriptionType, { nullable: true })
+  subscribeToAllType?: SubscriptionType
+
   @Field(() => [CaseSubscriptionCommand], { nullable: true })
   caseIds?: CaseSubscriptionCommand[] | null
 
-  @Field(() => [CaseSubscriptionCommand], { nullable: true })
-  institutionIds?: CaseSubscriptionCommand[] | null
+  @Field(() => [SubscriptionCommand], { nullable: true })
+  institutionIds?: SubscriptionCommand[] | null
 
-  @Field(() => [CaseSubscriptionCommand], { nullable: true })
-  policyAreaIds?: CaseSubscriptionCommand[] | null
+  @Field(() => [SubscriptionCommand], { nullable: true })
+  policyAreaIds?: SubscriptionCommand[] | null
 }

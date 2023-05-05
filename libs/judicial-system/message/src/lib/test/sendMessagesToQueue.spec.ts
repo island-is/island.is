@@ -2,6 +2,8 @@ import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
 import each from 'jest-each'
 
+import { User } from '@island.is/judicial-system/types'
+
 import { MessageType, CaseMessage } from '../message'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
@@ -46,9 +48,9 @@ describe('MessageService - Send messages to queue', () => {
   each(Object.values(MessageType)).describe(
     'message posted to queue',
     (type) => {
-      const userId = uuid()
+      const user = { id: uuid() } as User
       const caseId = uuid()
-      const message = { type, userId, caseId }
+      const message = { type, user, caseId }
       const messageId = uuid()
 
       beforeEach(async () => {
@@ -72,7 +74,7 @@ describe('MessageService - Send messages to queue', () => {
   )
 
   describe('message not posted to queue', () => {
-    const message = { userId: uuid() } as CaseMessage
+    const message = { caseId: uuid() } as CaseMessage
     let then: Then
 
     beforeEach(async () => {

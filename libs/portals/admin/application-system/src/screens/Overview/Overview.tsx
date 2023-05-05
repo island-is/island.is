@@ -58,7 +58,9 @@ const Overview = () => {
     ssr: false,
     variables: {
       input: {
-        nationalId: filters.nationalId ?? '',
+        nationalId: filters.nationalId
+          ? filters.nationalId.replace('-', '')
+          : '',
       },
     },
     onCompleted: (q) => {
@@ -87,10 +89,12 @@ const Overview = () => {
   })
 
   const handleSearchChange = (nationalId: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      nationalId,
-    }))
+    if (nationalId.length === 11) {
+      setFilters((prev) => ({
+        ...prev,
+        nationalId,
+      }))
+    }
   }
 
   const handleMultiChoiceFilterChange: FilterMultiChoiceProps['onChange'] = ({
@@ -98,7 +102,7 @@ const Overview = () => {
     selected,
   }) => {
     if (categoryId === MultiChoiceFilter.INSTITUTION) {
-      // Special case for instutitions, because we need to map institution slugs to application typeIds
+      // Special case for institutions, because we need to map institution slugs to application typeIds
       const typeIds = flatten(selected.map((x) => institutionApplications[x]))
       setInstitutionFilters(typeIds.length > 0 ? typeIds : undefined)
     }
@@ -166,13 +170,19 @@ const Overview = () => {
         organizations={availableOrganizations ?? []}
         numberOfDocuments={applicationAdminList?.length}
       />
-      {isLoading ? (
+      {isLoading && filters.nationalId?.length === 11 ? (
         <SkeletonLoader
           height={60}
           repeat={10}
           space={2}
           borderRadius="large"
         />
+      ) : filters.nationalId === '' ? (
+        <Box display="flex" justifyContent="center" marginTop={[3, 3, 6]}>
+          <Text variant="h4">
+            {formatMessage(m.pleaseEnterValueToBeingSearch)}
+          </Text>
+        </Box>
       ) : (
         <ApplicationsTable
           applications={filteredApplicationList ?? []}
@@ -180,6 +190,7 @@ const Overview = () => {
           page={page}
           setPage={setPage}
           pageSize={pageSize}
+          shouldShowCardButtons={false}
         />
       )}
     </Box>

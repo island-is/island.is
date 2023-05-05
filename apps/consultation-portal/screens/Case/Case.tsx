@@ -1,7 +1,6 @@
 import {
   Box,
   Breadcrumbs,
-  Button,
   Divider,
   GridColumn,
   GridContainer,
@@ -11,24 +10,32 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import SubscriptionBox from '../../components/SubscriptionBox/SubscriptionBox'
-import {
-  CaseOverview,
-  CaseTimeline,
-  ReviewCard,
-  WriteReviewCard,
-} from '../../components'
+import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
-import { Advice } from '../../types/viewModels'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
-import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
-import Link from 'next/link'
-import { useUser } from '../../utils/helpers'
+import { useFetchAdvicesById } from '../../utils/helpers'
+import { useContext } from 'react'
+import { UserContext } from '../../context'
+import Advices from '../../components/Advices/Advices'
+import { Case } from '../../types/interfaces'
+import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
+import env from '../../lib/environment'
+import StakeholdersCard from './components/Stakeholders'
+import { AdviceCTACard } from './components/AdviceCTA'
 
-const CaseScreen = ({ chosenCase, advices }) => {
+interface Props {
+  chosenCase: Case
+  caseId: number
+}
+
+const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const { contactEmail, contactName } = chosenCase
-  const { isAuthenticated, user } = useUser()
+  const { isAuthenticated, user } = useContext(UserContext)
+
+  const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
+    caseId: caseId,
+  })
 
   return (
     <Layout
@@ -41,7 +48,7 @@ const CaseScreen = ({ chosenCase, advices }) => {
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
             items={[
-              { title: 'Öll mál', href: '/' },
+              { title: 'Öll mál', href: '/samradsgatt' },
               { title: `Mál nr. S-${chosenCase?.caseNumber}` },
             ]}
           />
@@ -60,19 +67,38 @@ const CaseScreen = ({ chosenCase, advices }) => {
           >
             <Stack space={2}>
               <Divider />
-              <CaseTimeline
-                status={chosenCase.statusName}
-                updatedDate={getTimeLineDate(chosenCase)}
-              />
+              <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <Box paddingLeft={1}>
-                <Text variant="h3" color="purple400">
-                  {`Fjöldi umsagna: ${chosenCase.adviceCount}`}
-                </Text>
-              </Box>
-              <Divider />
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Skjöl til samráðs"
+                >
+                  {chosenCase.documents.length > 0 ? (
+                    chosenCase.documents.map((doc, index) => {
+                      return (
+                        <LinkV2
+                          href={`${env.backendDownloadUrl}${doc.id}`}
+                          color="blue400"
+                          underline="normal"
+                          underlineVisibility="always"
+                          newTab
+                          key={index}
+                        >
+                          {doc.fileName}
+                        </LinkV2>
+                      )
+                    })
+                  ) : (
+                    <Text>Engin skjöl fundust.</Text>
+                  )}
+                </StackedTitleAndDescription>
+              </SimpleCardSkeleton>
               <Box paddingTop={1}>
-                <SubscriptionBox />
+                <CaseEmailBox
+                  caseId={caseId}
+                  caseNumber={chosenCase?.caseNumber}
+                />
               </Box>
             </Stack>
           </GridColumn>
@@ -84,18 +110,27 @@ const CaseScreen = ({ chosenCase, advices }) => {
               <CaseOverview chosenCase={chosenCase} />
               <Box>
                 <Stack space={3}>
-                  <Text variant="h1" color="blue400">
-                    Innsendar umsagnir
-                  </Text>
-                  {advices?.map((advice: Advice) => {
-                    return <ReviewCard advice={advice} key={advice.number} />
-                  })}
-                  <WriteReviewCard
-                    card={chosenCase}
-                    isLoggedIn={isAuthenticated}
-                    username={user?.name}
-                    caseId={chosenCase.id}
-                  />
+                  {advices.length !== 0 && (
+                    <>
+                      <Text variant="h1" color="blue400">
+                        Innsendar umsagnir ({chosenCase.adviceCount})
+                      </Text>
+
+                      <Advices
+                        advices={advices}
+                        advicesLoading={advicesLoading}
+                      />
+                    </>
+                  )}
+                  {chosenCase.statusName === 'Til umsagnar' && (
+                    <WriteReviewCard
+                      card={chosenCase}
+                      isLoggedIn={isAuthenticated}
+                      username={user?.name}
+                      caseId={chosenCase.id}
+                      refetchAdvices={refetchAdvices}
+                    />
+                  )}
                 </Stack>
               </Box>
             </Stack>
@@ -105,54 +140,8 @@ const CaseScreen = ({ chosenCase, advices }) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Skjöl til samráðs"
-                >
-                  {chosenCase.documents
-                    ? chosenCase.documents.map((doc, index) => {
-                        return (
-                          <LinkV2
-                            href={`https://samradapi-test.island.is/api/Documents/${doc.id}`}
-                            color="blue400"
-                            underline="normal"
-                            underlineVisibility="always"
-                            newTab
-                            key={index}
-                          >
-                            {doc.fileName}
-                          </LinkV2>
-                        )
-                      })
-                    : 'Engin skjöl'}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Viltu senda umsögn?"
-                >
-                  Öllum er frjálst að taka þátt í samráðinu. Skráðu þig inn og
-                  sendu umsögn.
-                </StackedTitleAndDescription>
-                <Box paddingTop={2}>
-                  <Link href="#write-review" shallow>
-                    <Button fluid iconType="outline" nowrap as="a">
-                      Senda umsögn
-                    </Button>
-                  </Link>
-                </Box>
-              </SimpleCardSkeleton>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Aðilar sem hafa fengið boð um samráð á máli."
-                >
-                  Viltu senda umsögn? Öllum er frjálst að taka þátt í samráðinu.
-                  Skráðu þig inn og sendu umsögn.
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
+              <AdviceCTACard chosenCase={chosenCase} />
+              <StakeholdersCard chosenCase={chosenCase} />
 
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription
@@ -165,7 +154,7 @@ const CaseScreen = ({ chosenCase, advices }) => {
                       {contactEmail && <Text>{contactEmail}</Text>}
                     </>
                   ) : (
-                    'Engin skráður'
+                    <Text>Engin skráður umsjónaraðili.</Text>
                   )}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>

@@ -8,6 +8,7 @@ import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 import { FileController } from './file.controller'
 import { InternalFileController } from './internalFile.controller'
+import { LimitedAccessFileController } from './limitedAccessFile.controller'
 
 @Module({
   imports: [
@@ -18,7 +19,11 @@ import { InternalFileController } from './internalFile.controller'
     forwardRef(() => AwsS3Module),
     SequelizeModule.forFeature([CaseFile]),
   ],
-  controllers: [FileController, InternalFileController],
+  controllers: [
+    FileController,
+    InternalFileController,
+    LimitedAccessFileController,
+  ],
   providers: [FileService],
   exports: [FileService],
 })

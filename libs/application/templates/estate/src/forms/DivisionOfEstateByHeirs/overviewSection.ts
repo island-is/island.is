@@ -63,7 +63,7 @@ export const overview = buildSection({
             cards: ({ answers }: Application) =>
               (
                 ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
-                  (member) => (member as any).enabled,
+                  (member) => member.enabled,
                 ) ?? []
               ).map((member) => ({
                 title: member.name,
@@ -72,10 +72,24 @@ export const overview = buildSection({
                     ? formatNationalId(member.nationalId)
                     : member.dateOfBirth,
                   member.relation,
+                  formatPhoneNumber(member.phone || ''),
+                  member.email,
                 ],
               })),
           },
         ),
+        buildKeyValueField({
+          label: m.doesWillExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.wills'),
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.doesAgreementExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.agreement'),
+          width: 'half',
+        }),
         buildDescriptionField({
           id: 'space1',
           title: '',
@@ -100,12 +114,17 @@ export const overview = buildSection({
             cards: ({ answers }: Application) =>
               (
                 ((answers.estate as unknown) as EstateInfo).assets.filter(
-                  (asset) => (asset as any).enabled,
+                  (asset) => asset.enabled,
                 ) ?? []
               ).map((asset) => ({
                 title: asset.description,
                 description: [
                   `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (asset.marketValue
+                      ? formatCurrency(asset.marketValue)
+                      : '0 kr.'),
                 ],
               })),
           },
@@ -157,13 +176,52 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
-                  (vehicle) => (vehicle as any).enabled,
+                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
+                  (vehicle) => vehicle.enabled,
                 ) ?? []
               ).map((vehicle) => ({
                 title: vehicle.description,
                 description: [
                   m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (vehicle.marketValue
+                      ? formatCurrency(vehicle.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
+          },
+        ),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewGuns',
+          title: m.guns,
+          description: m.gunsDescription,
+          titleVariant: 'h3',
+          space: 'gutter',
+        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'estateGunsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              (
+                ((answers.estate as unknown) as EstateInfo)?.guns?.filter(
+                  (guns) => guns.enabled,
+                ) ?? []
+              ).map((gun) => ({
+                title: gun.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + gun.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (gun.marketValue
+                      ? formatCurrency(gun.marketValue)
+                      : '0 kr.'),
                 ],
               })),
           },

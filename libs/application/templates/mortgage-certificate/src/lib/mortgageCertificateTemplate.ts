@@ -48,7 +48,6 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.MORTGAGE_CERTIFICATE,
   name: m.name,
   institution: m.institutionName,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.MortgageCertificate.translation,
   ],

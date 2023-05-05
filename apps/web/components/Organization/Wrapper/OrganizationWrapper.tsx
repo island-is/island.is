@@ -112,7 +112,6 @@ export const lightThemes = [
   'landing_page',
   'tryggingastofnun',
   'hve',
-  'hsu',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -418,9 +417,8 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
         <FjarsyslaRikisinsFooter
-          footerItems={organization.footerItems}
-          logo={organization.logo?.url}
           namespace={namespace}
+          title={organization.title}
         />
       )
       break

@@ -89,15 +89,16 @@ export const AccessDeleteModal = ({
   const fromNationalId = userInfo?.profile.nationalId
 
   const { showShadow, pxProps } = useDynamicShadow({
-    rootMargin: '-128px',
+    rootMargin: md ? '-128px' : '-104px',
     isDisabled: !rest.isVisible,
   })
 
   return (
     <Modal
-      id={`access-delete-modal`}
-      label={formatMessage(m.accessControl)}
+      id="access-delete-modal"
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessRemoveModalTitle)}
+      label={formatMessage(m.accessRemoveModalTitle)}
       onClose={onClose}
       noPaddingBottom
       {...rest}
@@ -156,7 +157,7 @@ export const AccessDeleteModal = ({
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md && showShadow}
+          showShadow={showShadow}
           confirmButtonColorScheme="destructive"
           onCancel={onClose}
           onConfirm={onDeleteHandler}

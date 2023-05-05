@@ -100,5 +100,9 @@ export const getApplicantName = (application: Application) => {
   if (application.externalData.identity) {
     return getValueViaPath(application.externalData, 'identity.data.name')
   }
+  // special case for parental leave
+  if (application.externalData.person) {
+    return getValueViaPath(application.externalData, 'person.data.fullname')
+  }
   return null
 }

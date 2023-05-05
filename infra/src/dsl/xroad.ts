@@ -118,9 +118,9 @@ export const DrivingLicense = new XroadConf({
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
     XROAD_DRIVING_LICENSE_V5_PATH: {
-      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5',
-      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5',
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
     },
   },
   secrets: {
@@ -184,7 +184,8 @@ export const Payment = new XroadConf({
       dev:
         'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/',
       staging: 'XROAD:',
-      prod: 'XROAD:/IS/GOV/5501692829/island-is/application-payment-v1/',
+      prod:
+        'XROAD:/IS/GOV/5501692829/island-is/application-callback-v2/application-payment/',
     },
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/',
   },

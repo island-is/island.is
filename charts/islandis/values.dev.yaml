@@ -274,7 +274,7 @@ api:
     AUTH_PUBLIC_API_URL: 'https://identity-server.dev01.devland.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
-    CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.island.is'
+    CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
@@ -319,7 +319,7 @@ api:
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
-    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
@@ -409,9 +409,14 @@ api:
       cpu: '150m'
       memory: '512Mi'
   secrets:
+    ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
     DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
     DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH'
     DOCUMENT_PROVIDER_BASE_PATH_TEST: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST'
@@ -426,8 +431,10 @@ api:
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
@@ -460,7 +467,6 @@ api:
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
-    RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
@@ -542,7 +548,7 @@ application-system-api:
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
-    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
@@ -860,6 +866,8 @@ consultation-portal:
     API_URL: 'http://web-api.islandis.svc.cluster.local'
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'dev'
+    IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
+    NEXTAUTH_URL: 'https://beta.dev01.devland.is/samradsgatt/api/auth'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -910,15 +918,13 @@ consultation-portal:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
     DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+    IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
 contentful-apps:
   enabled: true
   env:
-    CONTENTFUL_ENVIRONMENT: 'master'
-    CONTENTFUL_SPACE: '8k0h54kbe6bj'
-    MIDEIND_TRANSLATION_API_BASE_URL: 'https://stafraentisland.greynir.is/translate'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
@@ -968,7 +974,6 @@ contentful-apps:
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    MIDEIND_TRANSLATION_API_KEY: '/k8s/contentful-apps/MIDEIND_TRANSLATION_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1546,12 +1551,16 @@ island-ui-storybook:
 license-api:
   enabled: true
   env:
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1'
+    XROAD_DRIVING_LICENSE_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
+    XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FIREARM_LICENSE_PATH: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1600,12 +1609,23 @@ license-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
     DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
+    DRIVING_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
+    PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
+    PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
+    PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES'
+    PKPASS_CACHE_KEY: '/k8s/api/PKPASS_CACHE_KEY'
+    PKPASS_CACHE_TOKEN_EXPIRY_DELTA: '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
+    PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY'
     RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2223,6 +2243,7 @@ services-sessions-worker:
     - 'node'
   enabled: true
   env:
+    DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
@@ -2271,6 +2292,7 @@ services-sessions-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_sessions'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'

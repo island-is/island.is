@@ -45,6 +45,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
     append({
       assetNumber: '',
       description: '',
+      marketValue: '',
     })
   const handleRemoveVehicle = (index: number) => remove(index)
 
@@ -88,8 +89,20 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                     </Button>
                   </Box>,
                 ]}
-                heightFull
               />
+              <Box marginTop={2}>
+                <InputController
+                  id={`${id}[${index}].marketValue`}
+                  name={`${id}[${index}].marketValue`}
+                  label={formatMessage(m.marketValueTitle)}
+                  disabled={!asset.enabled}
+                  backgroundColor="blue"
+                  placeholder="0 kr."
+                  defaultValue={(asset as any).marketValue}
+                  currency
+                  size="sm"
+                />
+              </Box>
             </GridColumn>,
           ]
         }, [] as JSX.Element[])}
@@ -100,7 +113,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         const vehicleTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
-        const dummyField = `${fieldIndex}.dummy`
+        const marketValueField = `${fieldIndex}.marketValue`
         const fieldError = error && error[index] ? error[index] : null
 
         return (
@@ -108,7 +121,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
             position="relative"
             key={field.id}
             marginTop={2}
-            hidden={field.initial || field?.dummy}
+            hidden={field.initial}
           >
             <Controller
               name={initialField}
@@ -119,18 +132,10 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
             <Controller
               name={enabledField}
               control={control}
-              defaultValue={field.enabled || false}
+              defaultValue={true}
               render={() => <input type="hidden" />}
             />
-            <Controller
-              name={dummyField}
-              control={control}
-              defaultValue={field.dummy || false}
-              render={() => <input type="hidden" />}
-            />
-            <Text variant="h4">
-              {formatMessage(m.vehiclesTitle) + ' ' + (index + 1)}
-            </Text>
+            <Text variant="h4">{formatMessage(m.vehiclesTitle)}</Text>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
@@ -170,6 +175,17 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   size="sm"
                   //Make readOnly again when Vehicle Registry query is available
                   //readOnly
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']}>
+                <InputController
+                  id={marketValueField}
+                  name={marketValueField}
+                  label={formatMessage(m.marketValueTitle)}
+                  defaultValue={(field as any).marketValue}
+                  placeholder={'0 kr.'}
+                  currency
+                  size="sm"
                 />
               </GridColumn>
             </GridRow>

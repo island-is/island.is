@@ -1,13 +1,11 @@
-import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
-import GraphQLJSON from 'graphql-type-json'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
-import { RefreshTokenExpiration } from '@island.is/auth-api-lib'
 import { Environment } from '@island.is/shared/types'
 
+import { RefreshTokenExpiration } from '../../models/refreshTokenExpiration.enum'
 import { ClientType } from '../../models/client-type.enum'
 import { TranslatedValue } from '../../models/translated-value.model'
-
-registerEnumType(RefreshTokenExpiration, { name: 'RefreshTokenExpiration' })
+import { ClientClaim } from './client-claim.model'
 
 @ObjectType('AuthAdminClientEnvironment')
 export class ClientEnvironment {
@@ -77,6 +75,6 @@ export class ClientEnvironment {
   @Field(() => Int)
   accessTokenLifetime!: number
 
-  @Field(() => GraphQLJSON, { nullable: true })
-  customClaims?: object
+  @Field(() => [ClientClaim], { nullable: true })
+  customClaims?: ClientClaim[]
 }
