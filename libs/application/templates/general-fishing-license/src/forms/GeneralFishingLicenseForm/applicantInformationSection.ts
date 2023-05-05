@@ -5,5 +5,5 @@ import { applicantInformation } from '../../lib/messages'
 export const applicantInformationSection = buildSection({
   id: 'applicantInformationSection',
   title: applicantInformation.general.sectionTitle,
-  children: [applicantInformationMultiField],
+  children: [applicantInformationMultiField({ phoneRequired: true })],
 })
