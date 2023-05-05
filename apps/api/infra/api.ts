@@ -126,7 +126,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       REGULATIONS_ADMIN_URL: ref(
-        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
