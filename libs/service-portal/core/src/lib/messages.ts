@@ -491,7 +491,7 @@ export const m = defineMessages({
   },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
-    defaultMessage: 'Laungreiðendakröfur',
+    defaultMessage: 'Launagreiðendakröfur',
   },
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
@@ -893,6 +893,10 @@ export const m = defineMessages({
   sessions: {
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
+  },
+  financeBreakdown: {
+    id: 'service.portal:finance-detail-breakdown',
+    defaultMessage: 'Sundurliðun',
   },
   consent: {
     id: 'service.portal:consent',

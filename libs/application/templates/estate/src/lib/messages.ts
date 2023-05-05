@@ -696,6 +696,11 @@ export const m = defineMessages({
     defaultMessage: 'Virkja',
     description: 'Inheritance step enable member of estate',
   },
+  inheritanceDeleteMember: {
+    id: 'es.application:inheritanceDeleteMember',
+    defaultMessage: 'Eyða',
+    description: 'Inheritance step delete member of estate',
+  },
   inheritanceKtLabel: {
     id: 'es.application:inheritanceKtLabel',
     defaultMessage: 'Kennitala',

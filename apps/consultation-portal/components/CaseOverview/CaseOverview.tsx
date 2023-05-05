@@ -14,6 +14,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   const upperInstances = [
     `Mál nr. S-${chosenCase?.caseNumber}`,
     `Birt: ${getShortDate(chosenCase.created)}`,
+    `Fjöldi umsagna: ${chosenCase?.adviceCount}`,
   ]
 
   const lowerInstances = [
@@ -24,13 +25,15 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   return (
     <Stack space={[4, 4, 4, 6, 6]}>
       <Stack space={3}>
-        <EyebrowsWithSeperator
-          instances={upperInstances}
-          color="purple400"
-          style={styles.upperSeperator}
-          wrap={false}
-          truncate={false}
-        />
+        <Box display={'flex'} justifyContent={'spaceBetween'}>
+          <EyebrowsWithSeperator
+            instances={upperInstances}
+            color="purple400"
+            style={styles.upperSeperator}
+            wrap={false}
+            truncate={false}
+          />
+        </Box>
         <EyebrowsWithSeperator
           instances={lowerInstances}
           color="blue600"
