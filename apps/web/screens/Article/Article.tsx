@@ -434,6 +434,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         imageHeight={article.featuredImage?.height.toString()}
       >
         <PlausibleDomainTracking
+          // The first organization is considered to be the main organization responsible for this article
           domain={article.organization?.[0]?.plausibleTrackingDomain}
         />
       </HeadWithSocialSharing>
