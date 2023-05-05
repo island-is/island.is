@@ -16,10 +16,10 @@ export class ConsentTenantsResolver {
   @ResolveField('owner', () => Domain)
   resolvePermissions(
     @Loader(DomainLoader) domainLoader: DomainDataLoader,
-    @Parent() tenants: ConsentTenant,
+    @Parent() consentTenant: ConsentTenant,
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang: string,
   ) {
-    return domainLoader.load({ lang, domain: tenants.domainName })
+    return domainLoader.load({ lang, domain: consentTenant.domainName })
   }
 }

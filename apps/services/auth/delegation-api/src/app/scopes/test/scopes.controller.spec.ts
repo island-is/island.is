@@ -79,7 +79,6 @@ describe('ScopesController', () => {
       const scopeName = 'ts1'
 
       beforeAll(async () => {
-        // Arrange
         app = await setupWithAuth({
           user: createCurrentUser({ scope: [AuthScope.consents] }),
         })

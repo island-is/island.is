@@ -20,7 +20,7 @@ import type { ClientDataLoader } from '../loaders/client.loader'
 export class ConsentResolver {
   constructor(
     private readonly consentService: ConsentService,
-    private readonly scopeService: ConsentTenantsService,
+    private readonly consentTenantsService: ConsentTenantsService,
   ) {}
 
   @Query(() => ConsentsPaginated, { name: 'consentsList' })
@@ -39,13 +39,13 @@ export class ConsentResolver {
   }
 
   @ResolveField('tenants', () => [ConsentTenant])
-  resolveTenants(
+  resolveConsentTenants(
     @CurrentUser() user: User,
     @Parent() consent: Consent,
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang: string,
   ): Promise<ConsentTenant[]> {
-    return this.scopeService.getPermissions(
+    return this.consentTenantsService.getPermissions(
       user,
       lang,
       consent.consentedScopes,
