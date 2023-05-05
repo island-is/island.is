@@ -32,14 +32,16 @@ const Advices = ({ advices, advicesLoading }: Props) => {
           return <ReviewCard advice={advice} key={advice.id} />
         }
       })}
-      <Button
-        onClick={() => setShowAll(!showAll)}
-        variant="text"
-        icon={showAll ? 'chevronUp' : 'chevronDown'}
-      >
-        {' '}
-        {showAll ? 'Fela umsagnir' : 'Sjá allar umsagnir'}
-      </Button>
+      {advices.length > showAmount && (
+        <Button
+          onClick={() => setShowAll(!showAll)}
+          variant="text"
+          icon={showAll ? 'chevronUp' : 'chevronDown'}
+        >
+          {' '}
+          {showAll ? 'Fela umsagnir' : 'Sjá allar umsagnir'}
+        </Button>
+      )}
     </Stack>
   )
 }
