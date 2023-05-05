@@ -351,7 +351,7 @@ export class CaseController {
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(
-      `Getting the case files for case ${caseId} as a pdf document`,
+      `Getting the case files for police case number ${policeCaseNumber} in case ${caseId} as a pdf document`,
     )
 
     if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
