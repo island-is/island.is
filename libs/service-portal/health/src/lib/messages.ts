@@ -17,7 +17,7 @@ export const messages = defineMessages({
   aidsAndNutritionDescription: {
     id: 'sp.health:aids-and-nutrition-title',
     defaultMessage:
-      'Hjálpartækjamiðstöð Sjúkratrygginga Íslands annast afgreiðslu umsókna um styrki vegna stuðningsvara, næringar og sérfæðis, veitir faglega ráðgjöf um val á þeim og sinnir viðgerðarþjónustu.',
+      'Sjúkratryggingar annast afgreiðslu umsókna um styrki vegna hjálpartækja, heyrnartækja og næringar og sérfæðis. Veita einnig faglega ráðgjöf um val á hjálpartækjum og sinnir viðgerðarþjónustu.',
   },
   aidsAndNutritionDescriptionInfo1: {
     id: 'sp.health:aids-and-nutrition-description-info-1',
@@ -66,7 +66,7 @@ export const messages = defineMessages({
   },
   timePeriod: {
     id: 'sp.health:time-period',
-    defaultMessage: 'Tímabil',
+    defaultMessage: 'Þjálfunartímabil',
   },
   status: {
     id: 'sp.health:status',
@@ -74,11 +74,11 @@ export const messages = defineMessages({
   },
   usedTherapySessions: {
     id: 'sp.health:used-therapy-sessions',
-    defaultMessage: 'Þjálfunarskipti nýtt',
+    defaultMessage: 'Notuð skipti á þjálfunartímabili',
   },
   totalTherapySessions: {
     id: 'sp.health:total-therapy-sessions',
-    defaultMessage: 'Heimild á þjálfunarskiptum',
+    defaultMessage: 'Heimild á þjálfunartímabili',
   },
   physioDisclaimer1: {
     id: 'sp.health:therapy-disclaimer-1',
@@ -165,6 +165,6 @@ export const messages = defineMessages({
   },
   insuranceRatio: {
     id: 'sp.health:insurance-ratio',
-    defaultMessage: 'Hlutfall trygginga',
+    defaultMessage: 'Hlutfall Sjúkratrygginga',
   },
 })

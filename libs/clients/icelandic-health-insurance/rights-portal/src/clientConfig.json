@@ -10,13 +10,13 @@
     }
   ],
   "paths": {
-    "/aidsandnutrition": {
+    "/v1/aidsandnutrition": {
       "get": {
         "tags": ["aidsandnutrition"],
         "operationId": "aidsandnutrition",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -25,25 +25,35 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/dentists/current": {
+    "/v1/dentists/current": {
       "get": {
         "tags": ["dentist"],
         "operationId": "dentists/current",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -52,32 +62,12 @@
               }
             }
           },
-          "404": {
-            "description": "Not Found"
-          },
           "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Server Error"
-          }
-        }
-      }
-    },
-    "/dentists/bills": {
-      "get": {
-        "tags": ["dentist"],
-        "operationId": "dentists/bills",
-        "responses": {
-          "200": {
-            "description": "Success",
+            "description": "Bad Request",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/HealthCenterHistoryEntryDTO"
-                  }
+                  "type": "string"
                 }
               }
             }
@@ -85,22 +75,62 @@
           "404": {
             "description": "Not Found"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/healthcenters/current": {
+    "/v1/dentists/bills": {
+      "get": {
+        "tags": ["dentist"],
+        "operationId": "dentists/bills",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DentistBillDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/healthcenters/current": {
       "get": {
         "tags": ["healthcenter"],
         "operationId": "healthcenters/current",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -109,25 +139,35 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/healthcenters/history": {
+    "/v1/healthcenters/history": {
       "get": {
         "tags": ["healthcenter"],
         "operationId": "healthcenters/history",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -139,25 +179,35 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error"
           }
         }
       }
     },
-    "/therapies": {
+    "/v1/therapies": {
       "get": {
         "tags": ["therapy"],
         "operationId": "therapies",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -169,14 +219,24 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "404": {
             "description": "Not Found"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
-            "description": "Server Error"
+            "description": "Internal Server Error"
           }
         }
       }
@@ -251,6 +311,37 @@
             "items": {
               "$ref": "#/components/schemas/AidOrNutritionDTO"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DentistBillDTO": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "refundDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "coveredAmount": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },

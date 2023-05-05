@@ -6,4 +6,8 @@ export {
   TherapyDTO,
   AidsandnutritionApi,
   AidsAndNutritionDTO,
+  DentistApi,
+  DentistDTO,
+  HealthcenterApi,
+  HealthCenterDTO,
 } from '../gen/fetch'
