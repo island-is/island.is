@@ -24,7 +24,7 @@ describe('Appeal section component', () => {
     state: CaseState.ACCEPTED,
     policeCaseNumbers: ['000'],
     defendants: [{ nationalId: '000000-0000' }] as Defendant[],
-    origin: CaseOrigin.Unknown,
+    origin: CaseOrigin.UNKNOWN,
     defendantWaivesRightToCounsel: false,
   }
 

@@ -66,17 +66,17 @@ export const Users: React.FC = () => {
 
   const userRoleToString = (userRole: UserRole) => {
     switch (userRole) {
-      case UserRole.Prosecutor:
+      case UserRole.PROSECUTOR:
         return 'Saksóknari'
-      case UserRole.Representative:
+      case UserRole.REPRESENTATIVE:
         return 'Fulltrúi'
-      case UserRole.Judge:
+      case UserRole.JUDGE:
         return 'Dómari'
-      case UserRole.Registrar:
+      case UserRole.REGISTRAR:
         return 'Dómritari'
-      case UserRole.Assistant:
+      case UserRole.ASSISTANT:
         return 'Aðstoðarmaður dómara'
-      case UserRole.Staff:
+      case UserRole.STAFF:
         return 'Starfsmaður'
     }
   }

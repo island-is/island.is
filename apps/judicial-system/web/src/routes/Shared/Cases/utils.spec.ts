@@ -20,7 +20,7 @@ describe('displayCaseType', () => {
     ).toBe('Farbann')
   })
 
-  it.each([CaseType.Indictment])(
+  it.each([CaseType.INDICTMENT])(
     'should display indictment case: %s',
     (caseType) => {
       expect(fn(caseType)).toEqual('Ákæra')
@@ -92,7 +92,7 @@ describe('mapCaseStateToTagVariant', () => {
       text: m.tags.active.defaultMessage,
     })
 
-    expect(fn(CaseState.ACCEPTED, false, CaseType.Indictment)).toEqual({
+    expect(fn(CaseState.ACCEPTED, false, CaseType.INDICTMENT)).toEqual({
       color: 'darkerBlue',
       text: m.tags.inactive.defaultMessage,
     })

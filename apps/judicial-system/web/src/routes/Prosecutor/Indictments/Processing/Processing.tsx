@@ -42,7 +42,7 @@ const Processing: React.FC = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase, user)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {

@@ -89,13 +89,10 @@ export const createCaseResentExplanation = (
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
 }
 
-export const isTrafficViolationCase = (
-  workingCase: Case,
-  user?: User,
-): boolean => {
+export const isTrafficViolationCase = (workingCase: Case): boolean => {
   if (
     !workingCase.indictmentSubtypes ||
-    workingCase.type !== CaseType.Indictment
+    workingCase.type !== CaseType.INDICTMENT
   ) {
     return false
   }

@@ -153,7 +153,7 @@ const getModificationSuccessText = (
   return formatMessage(m.sections.modifyDatesModal.successText, {
     modification,
     courtOrProsecutor:
-      userRole === UserRole.Prosecutor ? 'héraðsdómstól' : 'saksóknaraembætti',
+      userRole === UserRole.PROSECUTOR ? 'héraðsdómstól' : 'saksóknaraembætti',
   })
 }
 

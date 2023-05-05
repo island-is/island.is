@@ -187,7 +187,7 @@ export const formatDateForServer = (date: Date) => {
 
 const openCase = (caseToOpen: Case, user: User) => {
   let routeTo = null
-  const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
+  const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
   if (
     caseToOpen.state === CaseState.ACCEPTED ||
@@ -196,7 +196,7 @@ const openCase = (caseToOpen: Case, user: User) => {
   ) {
     if (isIndictmentCase(caseToOpen.type)) {
       routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-    } else if (user?.institution?.type === InstitutionType.HighCourt) {
+    } else if (user?.institution?.type === InstitutionType.HIGH_COURT) {
       routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
     } else {
       routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE

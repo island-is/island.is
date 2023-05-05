@@ -52,7 +52,7 @@ const CaseFiles: React.FC = () => {
   } = useS3Upload(workingCase.id)
   const { user } = useContext(UserContext)
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase, user)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   useEffect(() => {
     if (workingCase.caseFiles) {

@@ -36,7 +36,7 @@ describe('Page layout utils', () => {
         // Arrange
         const workingCase = {
           ...mockCase(CaseType.CUSTODY),
-          type: CaseType.Autopsy,
+          type: CaseType.AUTOPSY,
           state: CaseState.REJECTED,
         }
 
@@ -73,7 +73,7 @@ describe('Page layout utils', () => {
       // Arrange
       const workingCase = {
         ...mockCase(CaseType.CUSTODY),
-        type: CaseType.Autopsy,
+        type: CaseType.AUTOPSY,
         state: CaseState.ACCEPTED,
       }
 
@@ -90,7 +90,7 @@ describe('Page layout utils', () => {
       // Arrange
       const workingCase = {
         ...mockCase(CaseType.CUSTODY),
-        type: CaseType.Autopsy,
+        type: CaseType.AUTOPSY,
         parentCase: {
           ...mockCase(CaseType.CUSTODY),
           state: CaseState.ACCEPTED,
@@ -167,7 +167,7 @@ describe('Page layout utils', () => {
       // Arrange
       const workingCase = {
         ...mockCase(CaseType.CUSTODY),
-        type: CaseType.Autopsy,
+        type: CaseType.AUTOPSY,
         state: CaseState.DISMISSED,
       }
 

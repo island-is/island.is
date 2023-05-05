@@ -45,7 +45,7 @@ const initialState: Case = {
   id: '',
   created: '',
   modified: '',
-  origin: CaseOrigin.Unknown,
+  origin: CaseOrigin.UNKNOWN,
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumbers: [],
@@ -83,10 +83,10 @@ const FormProvider = ({ children }: Props) => {
     : router.pathname.includes('gaesluvardhald')
     ? CaseType.CUSTODY
     : router.pathname.includes('akaera')
-    ? CaseType.Indictment
+    ? CaseType.INDICTMENT
     : // This is a random case type for the default value.
       // It is updated when the case is created.
-      CaseType.Other
+      CaseType.OTHER
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
@@ -94,7 +94,7 @@ const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
-    policeCaseNumbers: caseType === CaseType.Indictment ? [''] : [],
+    policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
   })
 
   // Used in exported indicators

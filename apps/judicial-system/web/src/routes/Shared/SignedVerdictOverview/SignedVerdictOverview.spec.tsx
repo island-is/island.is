@@ -25,7 +25,7 @@ describe('titleForCase', () => {
   test('should handle rejected investigation case', () => {
     const theCase = {
       state: CaseState.REJECTED,
-      type: CaseType.BodySearch,
+      type: CaseType.BODY_SEARCH,
     } as Case
     const res = fn(theCase)
     expect(res).toEqual('Kröfu um rannsóknarheimild hafnað')
@@ -79,7 +79,7 @@ describe('titleForCase', () => {
   test('should handle accepted investigation case', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
-      type: CaseType.SearchWarrant,
+      type: CaseType.SEARCH_WARRANT,
     } as Case
     const res = fn(theCase)
     expect(res).toEqual('Krafa um rannsóknarheimild samþykkt')
@@ -113,15 +113,15 @@ describe('titleForCase', () => {
   })
 })
 describe('shouldHideNextButton', () => {
-  const prosecutor = { id: uuid(), role: UserRole.Prosecutor } as User
+  const prosecutor = { id: uuid(), role: UserRole.PROSECUTOR } as User
 
   it.each`
     role
-    ${UserRole.Admin}
-    ${UserRole.Defender}
-    ${UserRole.Judge}
-    ${UserRole.Registrar}
-    ${UserRole.Staff}
+    ${UserRole.ADMIN}
+    ${UserRole.DEFENDER}
+    ${UserRole.JUDGE}
+    ${UserRole.REGISTRAR}
+    ${UserRole.STAFF}
   `('should hide next button for user role: $role', ({ role }) => {
     const theCase = {} as Case
     const res = shouldHideNextButton(theCase, { id: uuid(), role } as User)
@@ -139,7 +139,7 @@ describe('shouldHideNextButton', () => {
     const theCase = { registrar: { id: userId } } as Case
     const res = shouldHideNextButton(theCase, {
       id: userId,
-      role: UserRole.Registrar,
+      role: UserRole.REGISTRAR,
     } as User)
     expect(res).toEqual(false)
   })
@@ -149,7 +149,7 @@ describe('shouldHideNextButton', () => {
     const theCase = { judge: { id: userId } } as Case
     const res = shouldHideNextButton(theCase, {
       id: userId,
-      role: UserRole.Judge,
+      role: UserRole.JUDGE,
     } as User)
     expect(res).toEqual(false)
   })
@@ -191,18 +191,18 @@ describe('getExtensionInfoText', () => {
   const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
     .formatMessage
 
-  const prosecutor = { role: UserRole.Prosecutor } as User
+  const prosecutor = { role: UserRole.PROSECUTOR } as User
 
   const fn = (theCase: Case, user?: User) =>
     getExtensionInfoText(formatMessage, theCase, user)
 
   it.each`
     role
-    ${UserRole.Admin}
-    ${UserRole.Defender}
-    ${UserRole.Judge}
-    ${UserRole.Registrar}
-    ${UserRole.Staff}
+    ${UserRole.ADMIN}
+    ${UserRole.DEFENDER}
+    ${UserRole.JUDGE}
+    ${UserRole.REGISTRAR}
+    ${UserRole.STAFF}
   `('should return undefined for user role: $role', ({ role }) => {
     const theCase = {
       type: CaseType.CUSTODY,
@@ -247,7 +247,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for rejected investigation case', () => {
     const theCase = {
-      type: CaseType.SearchWarrant,
+      type: CaseType.SEARCH_WARRANT,
       state: CaseState.REJECTED,
     } as Case
     const res = fn(theCase, prosecutor)
@@ -257,7 +257,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for dismissed investigation case', () => {
     const theCase = {
-      type: CaseType.SearchWarrant,
+      type: CaseType.SEARCH_WARRANT,
       state: CaseState.DISMISSED,
     } as Case
     const res = fn(theCase, prosecutor)

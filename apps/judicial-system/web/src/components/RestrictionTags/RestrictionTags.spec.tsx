@@ -16,7 +16,7 @@ const renderRestrictionTags = (workingCase: Case) =>
 describe('<RestrictionTags />', () => {
   const selector = { selector: 'span' }
   test('should not render for investication cases', () => {
-    const theCase = { type: CaseType.BodySearch } as Case
+    const theCase = { type: CaseType.BODY_SEARCH } as Case
     const result = renderRestrictionTags(theCase)
 
     expect(result.container).toBeEmptyDOMElement()
