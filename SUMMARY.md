@@ -186,7 +186,6 @@
   - [Documents](libs/clients/documents/README.md)
   - [Driving License](libs/clients/driving-license/README.md)
   - [Driving License](libs/clients/driving-license-book/README.md)
-  - [Clients Ehic Client V1](libs/clients/ehic-client-v1/README.md)
   - [Finance](libs/clients/finance/README.md)
   - [Firearm License](libs/clients/firearm-license/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
