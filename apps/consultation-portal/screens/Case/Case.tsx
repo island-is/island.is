@@ -76,7 +76,31 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-
+              <SimpleCardSkeleton>
+                <StackedTitleAndDescription
+                  headingColor="blue400"
+                  title="Skjöl til samráðs"
+                >
+                  {chosenCase.documents.length > 0 ? (
+                    chosenCase.documents.map((doc, index) => {
+                      return (
+                        <LinkV2
+                          href={`${env.backendDownloadUrl}${doc.id}`}
+                          color="blue400"
+                          underline="normal"
+                          underlineVisibility="always"
+                          newTab
+                          key={index}
+                        >
+                          {doc.fileName}
+                        </LinkV2>
+                      )
+                    })
+                  ) : (
+                    <Text>Engin skjöl fundust.</Text>
+                  )}
+                </StackedTitleAndDescription>
+              </SimpleCardSkeleton>
               <Box paddingTop={1}>
                 <CaseEmailBox
                   caseId={caseId}
@@ -123,31 +147,6 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Skjöl til samráðs"
-                >
-                  {chosenCase.documents.length > 0 ? (
-                    chosenCase.documents.map((doc, index) => {
-                      return (
-                        <LinkV2
-                          href={`${env.backendDownloadUrl}${doc.id}`}
-                          color="blue400"
-                          underline="normal"
-                          underlineVisibility="always"
-                          newTab
-                          key={index}
-                        >
-                          {doc.fileName}
-                        </LinkV2>
-                      )
-                    })
-                  ) : (
-                    <Text>Engin skjöl fundust.</Text>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
               <SimpleCardSkeleton>
                 {chosenCase.statusName === 'Til umsagnar' ? (
                   <>
