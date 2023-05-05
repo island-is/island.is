@@ -25,6 +25,7 @@ import { ClientsService } from './clients.service'
 import { CreateClientInput } from './dto/create-client.input'
 import { PatchClientInput } from './dto/patch-client.input'
 import { AdminClientDto } from '@island.is/auth-api-lib'
+import { PublishClientInput } from './dto/publish-client.input'
 
 const baseResponse: AdminClientDto = {
   clientId: 'test-client-id',
@@ -62,9 +63,10 @@ const createMockAdminApi = () => ({
       ...adminPatchClientDto,
     }
   }),
-  meClientsControllerCreate: jest
+  meClientsControllerFindByTenantIdAndClientId: jest
     .fn()
-    .mockResolvedValue({ clientId: 'test-client-id' }),
+    .mockResolvedValue(baseResponse),
+  meClientsControllerCreate: jest.fn().mockResolvedValue(baseResponse),
 })
 
 const mockAdminDevApi = createMockAdminApi()
@@ -177,6 +179,40 @@ describe('ClientsService', () => {
           clientId: 'test-client-id',
         },
       ])
+    })
+
+    it('should publish the client from Staging to Development', async function () {
+      const publishClientInput: PublishClientInput = {
+        clientId: 'test-client-id',
+        tenantId: 'test-tenant-id',
+        sourceEnvironment: Environment.Staging,
+        targetEnvironment: Environment.Development,
+      }
+
+      const response = await clientsService.publishClient(
+        currentUser,
+        publishClientInput,
+      )
+
+      expect(mockAdminDevApi.meClientsControllerCreate).toBeCalledTimes(1)
+      expect(mockAdminStagingApi.meClientsControllerCreate).toBeCalledTimes(0)
+      expect(mockAdminProdApi.meClientsControllerCreate).toBeCalledTimes(0)
+
+      expect(
+        mockAdminDevApi.meClientsControllerFindByTenantIdAndClientId,
+      ).toBeCalledTimes(0)
+      expect(
+        mockAdminStagingApi.meClientsControllerFindByTenantIdAndClientId,
+      ).toBeCalledTimes(1)
+      expect(
+        mockAdminProdApi.meClientsControllerFindByTenantIdAndClientId,
+      ).toBeCalledTimes(0)
+
+      expect(response).toEqual({
+        ...baseResponse,
+        id: 'test-client-id#development',
+        environment: Environment.Development,
+      })
     })
 
     it('should throw an error because no value was provided', async function () {

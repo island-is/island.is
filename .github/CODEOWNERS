@@ -48,6 +48,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death                   @island-is/juni
 /libs/application/templates/driving-license/                                                             @island-is/juni
 /libs/application/templates/driving-assessment-approval/                                                 @island-is/juni
+/libs/application/templates/driving-learners-permit/                                                     @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-learners-permit/                @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission              @island-is/juni
 /libs/api/domains/driving-license/                                                                       @island-is/juni
 /libs/api/domains/education/                                                                             @island-is/juni
@@ -89,6 +91,7 @@
 /libs/clients/sessions                                                                                   @island-is/aranja
 /libs/portals/shared-modules/delegations                                                                 @island-is/aranja
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
+/libs/service-portal/consent                                                                             @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
@@ -198,6 +201,7 @@
 /libs/clients/fiskistofa/                                                                                @island-is/stefna
 /libs/clients/syslumenn/                                                                                 @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                                  @island-is/stefna
+/libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 

@@ -83,10 +83,11 @@ export const ApplicationCard = ({
       borderWidth="standard"
       paddingX={[3, 3, 4]}
       paddingY={3}
+      dataTestId={`application-card`}
       background="white"
     >
       <Box
-        alignItems="center"
+        alignItems={['flexStart', 'center']}
         display="flex"
         flexDirection="row"
         justifyContent="spaceBetween"
@@ -102,15 +103,17 @@ export const ApplicationCard = ({
             </Text>
           </Box>
         </Box>
-        <Inline alignY="center" space={1}>
+        <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag
             actionCard={actionCard}
             defaultData={defaultData}
           />
-          <ApplicationCardDelete
-            application={application}
-            onDelete={onDelete}
-          />
+          {actionCard && actionCard.deleteButton && (
+            <ApplicationCardDelete
+              application={application}
+              onDelete={onDelete}
+            />
+          )}
         </Inline>
       </Box>
 

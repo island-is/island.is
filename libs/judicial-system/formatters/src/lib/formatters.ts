@@ -279,8 +279,8 @@ export function formatRequestCaseType(type: string): string {
 }
 
 export const formatDOB = (
-  nationalId?: string,
-  noNationalId?: boolean,
+  nationalId?: string | null,
+  noNationalId?: boolean | null,
   fallback = '-',
 ) => {
   if (!nationalId) {

@@ -6,6 +6,7 @@ import {
   LoadingDots,
   Tiles,
   DropdownMenu,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import Layout from '../../components/Layout/Layout'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
@@ -16,6 +17,7 @@ import EmptyState from '../../components/EmptyState/EmptyState'
 import { UserAdvice } from '../../types/interfaces'
 import Pagination from '../../components/Pagination/Pagination'
 import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSortPartialData'
+import env from '../../lib/environment'
 
 const CARDS_PER_PAGE = 12
 
@@ -24,7 +26,7 @@ export const AdvicesLayout = ({ children }) => {
     <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
       <BreadcrumbsWithMobileDivider
         items={[
-          { title: 'Samráðsgátt', href: '/' },
+          { title: 'Samráðsgátt', href: '/samradsgatt' },
           { title: 'Mínar umsagnir' },
         ]}
       />
@@ -33,9 +35,7 @@ export const AdvicesLayout = ({ children }) => {
           <Stack space={3}>
             <Text variant="h1">Mínar umsagnir</Text>
             <Text variant="default">
-              Hér er hægt að fylgjast með þeim áskriftum sem þú ert skráð(ur) í
-              ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
-              tíðina.
+              Hér geturðu skoðað allar umsagnir sem þú hefur sent inn.
             </Text>
           </Stack>
           {children}
@@ -49,6 +49,13 @@ export const AdvicesScreen = () => {
   const LogIn = useLogIn()
   const { isAuthenticated, userLoading } = useUser()
   const [page, setPage] = useState(0)
+  const [dropdownState, setDropdownState] = useState('')
+
+  const handleDropdown = (id: string) => {
+    setDropdownState((prev) => {
+      return prev === id ? null : id
+    })
+  }
 
   const {
     advices,
@@ -105,15 +112,23 @@ export const AdvicesScreen = () => {
               }
               const dropdown =
                 item.adviceDocuments?.length !== 0 ? (
-                  <DropdownMenu
-                    title="Viðhengi"
-                    items={item.adviceDocuments?.map((item) => {
-                      return {
-                        title: item.fileName,
-                        href: `https://samradapi-test.devland.is/api/Documents/${item.id}`,
+                  <FocusableBox
+                    onClick={() => handleDropdown(item.id)}
+                    component="div"
+                  >
+                    <DropdownMenu
+                      title="Viðhengi"
+                      icon={
+                        dropdownState === item.id ? 'chevronUp' : 'chevronDown'
                       }
-                    })}
-                  />
+                      items={item.adviceDocuments?.map((item) => {
+                        return {
+                          title: item.fileName,
+                          href: `${env.backendDownloadUrl}${item.id}`,
+                        }
+                      })}
+                    />
+                  </FocusableBox>
                 ) : (
                   <></>
                 )

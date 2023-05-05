@@ -38,11 +38,11 @@ export const m = defineMessages({
     defaultMessage: 'Search',
   },
   clients: {
-    id: 'ap.ids-admin:applications',
-    defaultMessage: 'Application',
+    id: 'ap.ids-admin:clients',
+    defaultMessage: 'Applications',
   },
   applicationCreate: {
-    id: 'ap.ids-admin:application-create',
+    id: 'ap.ids-admin:client-create',
     defaultMessage: 'Create application',
   },
   apis: {
@@ -59,32 +59,36 @@ export const m = defineMessages({
   },
   advancedSettings: {
     id: 'ap.ids-admin:advanced-settings',
-    defaultMessage: 'Avanced settings',
+    defaultMessage: 'Advanced settings',
   },
   back: {
     id: 'ap.ids-admin:back',
     defaultMessage: 'Back',
   },
   clientsDescription: {
-    id: 'ap.ids-admin:applications-description',
+    id: 'ap.ids-admin:clients-description',
     defaultMessage: 'Here you can view and create applications.',
   },
   learnMore: {
     id: 'ap.ids-admin:learn-more',
     defaultMessage: 'Learn more',
   },
-  noApplications: {
-    id: 'ap.ids-admin:no-applications',
+  noClients: {
+    id: 'ap.ids-admin:no-clients',
     defaultMessage: 'No applications',
   },
   noClientsDescription: {
-    id: 'ap.ids-admin:no-applications-description',
+    id: 'ap.ids-admin:no-clients-description',
     defaultMessage:
       'You can create an application by clicking on Create application',
   },
   cancel: {
     id: 'ap.ids-admin:cancel',
     defaultMessage: 'Cancel',
+  },
+  add: {
+    id: 'ap.ids-admin:add',
+    defaultMessage: 'Add',
   },
   create: {
     id: 'ap.ids-admin:create',
@@ -103,7 +107,7 @@ export const m = defineMessages({
     defaultMessage: 'Choose environment',
   },
   chooseClientType: {
-    id: 'ap.ids-admin:choose-application-type',
+    id: 'ap.ids-admin:choose-client-type',
     defaultMessage: 'Choose application type',
   },
   errorDisplayName: {
@@ -111,11 +115,11 @@ export const m = defineMessages({
     defaultMessage: 'Name is required.',
   },
   errorClientId: {
-    id: 'ap.ids-admin:error-application-id',
+    id: 'ap.ids-admin:error-client-id',
     defaultMessage: 'Application ID is required.',
   },
   errorClientIdRegex: {
-    id: 'ap.ids-admin:error-application-id-regex',
+    id: 'ap.ids-admin:error-client-id-regex',
     defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
   },
   errorEnvironment: {
@@ -123,7 +127,7 @@ export const m = defineMessages({
     defaultMessage: 'Choose at least one environment.',
   },
   errorClientType: {
-    id: 'ap.ids-admin:error-application-type',
+    id: 'ap.ids-admin:error-client-type',
     defaultMessage: 'Application type is required.',
   },
   errorDefault: {
@@ -131,34 +135,34 @@ export const m = defineMessages({
     defaultMessage: 'Oops, an unknown error has occurred.',
   },
   webClientsTitle: {
-    id: 'ap.ids-admin:web-applications-title',
+    id: 'ap.ids-admin:web-clients-title',
     defaultMessage: 'Web application',
   },
   webClientsDescription: {
-    id: 'ap.ids-admin:web-applications-description',
+    id: 'ap.ids-admin:web-clients-description',
     defaultMessage:
       'Traditional web apps using redirects. E.g. Node.js, Express, ASP.net, Java, PHP.',
   },
   nativeClientsTitle: {
-    id: 'ap.ids-admin:native-applications-title',
+    id: 'ap.ids-admin:native-clients-title',
     defaultMessage: 'Native application',
   },
   nativeClientsDescription: {
-    id: 'ap.ids-admin:native-applications-description',
+    id: 'ap.ids-admin:native-clients-description',
     defaultMessage:
       'Mobile, desktop, CLI and smart device app running natively. E.g. iOS, Electron, Apple TV app.',
   },
   machineClientsTitle: {
-    id: 'ap.ids-admin:machine-applications-title',
+    id: 'ap.ids-admin:machine-clients-title',
     defaultMessage: 'Machine to machine application',
   },
   machineClientsDescription: {
-    id: 'ap.ids-admin:machine-applications-description',
+    id: 'ap.ids-admin:machine-clients-description',
     defaultMessage:
       'CLIs, daemons, or services running on your backend. E.g. APIs, CRON jobs or shell script.',
   },
   createClient: {
-    id: 'ap.ids-admin:create-application',
+    id: 'ap.ids-admin:create-client',
     defaultMessage: 'Create application',
   },
   change: {
@@ -208,12 +212,16 @@ export const m = defineMessages({
     defaultMessage: 'Save in all environments',
   },
   clientSecret: {
-    id: 'ap.ids-admin:application-secret',
+    id: 'ap.ids-admin:client-secret',
     defaultMessage: 'Application secret',
   },
   clientSecretDescription: {
-    id: 'ap.ids-admin:application-secret-description',
+    id: 'ap.ids-admin:client-secret-description',
     defaultMessage: 'The application Secret is not base64 encoded.',
+  },
+  clientSecretLegacy: {
+    id: 'ap.ids-admin:client-secret-legacy',
+    defaultMessage: 'This is a legacy secret which cannot be viewed.',
   },
   otherEndpoints: {
     id: 'ap.ids-admin:other-endpoints',
@@ -275,7 +283,7 @@ export const m = defineMessages({
     defaultMessage: 'Basic information',
   },
   clientUris: {
-    id: 'ap.ids-admin:applications-urls',
+    id: 'ap.ids-admin:clients-urls',
     defaultMessage: 'Application URLs',
   },
   lifetime: {
@@ -443,5 +451,96 @@ export const m = defineMessages({
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
+  },
+  permissions: {
+    id: 'ap.ids-admin:permissions',
+    defaultMessage: 'Permissions',
+  },
+  permissionsDescription: {
+    id: 'ap.ids-admin:permissions-description',
+    defaultMessage:
+      'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.\n\nHere you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
+  },
+  permissionsAdd: {
+    id: 'ap.ids-admin:permissions-add',
+    defaultMessage: 'Add permissions',
+  },
+  permissionsTableLabelName: {
+    id: 'ap.ids-admin:permissions-table-label-name',
+    defaultMessage: 'Name',
+  },
+  permissionsTableLabelDescription: {
+    id: 'ap.ids-admin:permissions-table-label-description',
+    defaultMessage: 'Description',
+  },
+  permissionsTableLabelAPI: {
+    id: 'ap.ids-admin:permissions-table-label-api',
+    defaultMessage: 'API',
+  },
+  permissionsButtonLabelRemove: {
+    id: 'ap.ids-admin:permissions-button-label-remove',
+    defaultMessage: 'Remove',
+  },
+  permissionsModalTitle: {
+    id: 'ap.ids-admin:permissions-modal-title',
+    defaultMessage: 'Add permissions',
+  },
+  permissionsModalDescription: {
+    id: 'ap.ids-admin:permissions-modal-description',
+    defaultMessage:
+      'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
+  },
+  successfullySaved: {
+    id: 'ap.ids-admin:successfully-saved',
+    defaultMessage: 'Successfully saved',
+  },
+  globalErrorMessage: {
+    id: 'ap.ids-admin:global-error-message',
+    defaultMessage: 'An error occurred',
+  },
+  syncSettings: {
+    id: 'ap.ids-admin:sync-settings',
+    defaultMessage: 'Sync settings (from this environment)',
+  },
+  syncedAcrossAllEnvironments: {
+    id: 'ap.ids-admin:synced-across-all-environments',
+    defaultMessage: 'Settings are the same in all environments.',
+  },
+  notInSyncAcrossAllEnvironments: {
+    id: 'ap.ids-admin:not-in-sync-across-all-environments',
+    defaultMessage: 'SyncSettings are different in some environments',
+  },
+  synced: {
+    id: 'ap.ids-admin:synced',
+    defaultMessage: 'Synced',
+  },
+  outOfSync: {
+    id: 'ap.ids-admin:out-of-sync',
+    defaultMessage: 'Out of sync',
+  },
+  publishEnvironment: {
+    id: 'ap.ids-admin:publish-environment',
+    defaultMessage: 'Publish to {environment}',
+  },
+  publishEnvironmentDescription: {
+    id: 'ap.ids-admin:publish-environment-description',
+    defaultMessage:
+      'The application will inherit settings from the selected environment excluding URLs and client secrets.',
+  },
+  chooseEnvironmentToCopyFrom: {
+    id: 'ap.ids-admin:choose-environment-to-copy-from',
+    defaultMessage: 'Choose environment to copy settings from',
+  },
+  publish: {
+    id: 'ap.ids-admin:publish',
+    defaultMessage: 'Publish',
+  },
+  errorPublishingEnvironment: {
+    id: 'ap.ids-admin:error-publishing-environment',
+    defaultMessage: 'Error publishing environment',
+  },
+  closeModal: {
+    id: 'ap.ids-admin:close-modal',
+    defaultMessage: 'Close dialog',
   },
 })

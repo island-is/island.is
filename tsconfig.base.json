@@ -185,6 +185,9 @@
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
       ],
+      "@island.is/api/domains/watson-assistant-chat": [
+        "libs/api/domains/watson-assistant-chat/src/index.ts"
+      ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
@@ -237,8 +240,14 @@
       "@island.is/application/templates/criminal-record": [
         "libs/application/templates/criminal-record/src/index.ts"
       ],
+      "@island.is/application/templates/criminal-record/messages": [
+        "libs/application/templates/criminal-record/src/lib/messages.ts"
+      ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
+      ],
+      "@island.is/application/templates/data-protection-complaint/messages": [
+        "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
       ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
@@ -248,6 +257,9 @@
       ],
       "@island.is/application/templates/driving-instructor-registrations": [
         "libs/application/templates/driving-instructor-registrations/src/index.ts"
+      ],
+      "@island.is/application/templates/driving-learners-permit": [
+        "libs/application/templates/driving-learners-permit/src/index.ts"
       ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
@@ -395,6 +407,7 @@
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
+      "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
@@ -652,6 +665,9 @@
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
       ],
+      "@island.is/portals/shared-modules/delegations/messages": [
+        "libs/portals/shared-modules/delegations/src/lib/messages.ts"
+      ],
       "@island.is/react-spa/shared": ["libs/react-spa/shared/src/index.ts"],
       "@island.is/react/components": ["libs/react/components/src/index.ts"],
       "@island.is/react/feature-flags": [
@@ -669,14 +685,23 @@
       "@island.is/service-portal/assets": [
         "libs/service-portal/assets/src/index.ts"
       ],
+      "@island.is/service-portal/consent": [
+        "libs/service-portal/consent/src/index.ts"
+      ],
       "@island.is/service-portal/constants": [
         "libs/service-portal/constants/src/index.ts"
       ],
       "@island.is/service-portal/core": [
         "libs/service-portal/core/src/index.ts"
       ],
+      "@island.is/service-portal/core/messages": [
+        "libs/service-portal/core/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"
+      ],
+      "@island.is/service-portal/documents/messages": [
+        "libs/service-portal/documents/src/utils/messages.ts"
       ],
       "@island.is/service-portal/education": [
         "libs/service-portal/education/src/index.ts"
@@ -699,6 +724,9 @@
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
+      "@island.is/service-portal/finance/messages": [
+        "libs/service-portal/finance/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
       ],
@@ -708,8 +736,14 @@
       "@island.is/service-portal/information": [
         "libs/service-portal/information/src/index.ts"
       ],
+      "@island.is/service-portal/information/messages": [
+        "libs/service-portal/information/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/licenses": [
         "libs/service-portal/licenses/src/index.ts"
+      ],
+      "@island.is/service-portal/licenses/messages": [
+        "libs/service-portal/licenses/src/lib/messages.ts"
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
@@ -728,6 +762,9 @@
       ],
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
+      ],
+      "@island.is/service-portal/vehicles/messages": [
+        "libs/service-portal/vehicles/src/lib/messages.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"

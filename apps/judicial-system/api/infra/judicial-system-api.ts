@@ -34,8 +34,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'INDICTMENTS, INDICTMENT_ROUTE, APPEAL_TO_COURT_OF_APPEALS',
-        prod: 'INDICTMENTS, INDICTMENT_ROUTE, APPEAL_TO_COURT_OF_APPEALS',
+        staging: 'APPEAL_TO_COURT_OF_APPEALS',
+        prod: 'APPEAL_TO_COURT_OF_APPEALS',
       },
     })
     .secrets({

@@ -113,7 +113,6 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         const vehicleTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
-        const dummyField = `${fieldIndex}.dummy`
         const marketValueField = `${fieldIndex}.marketValue`
         const fieldError = error && error[index] ? error[index] : null
 
@@ -122,7 +121,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
             position="relative"
             key={field.id}
             marginTop={2}
-            hidden={field.initial || field?.dummy}
+            hidden={field.initial}
           >
             <Controller
               name={initialField}
@@ -136,15 +135,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               defaultValue={true}
               render={() => <input type="hidden" />}
             />
-            <Controller
-              name={dummyField}
-              control={control}
-              defaultValue={field.dummy || false}
-              render={() => <input type="hidden" />}
-            />
-            <Text variant="h4">
-              {formatMessage(m.vehiclesTitle) + ' ' + (index + 1)}
-            </Text>
+            <Text variant="h4">{formatMessage(m.vehiclesTitle)}</Text>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"

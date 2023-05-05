@@ -41,12 +41,12 @@ export class MeClientSecretsController {
   @Audit<ClientSecretDto[]>({
     resources: (secrets) => secrets.map((secret) => secret.secretId),
   })
-  find(
+  findAll(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
   ): Promise<ClientSecretDto[]> {
-    return this.clientSecretsService.find(tenantId, clientId)
+    return this.clientSecretsService.findAll(tenantId, clientId)
   }
 
   @Post()

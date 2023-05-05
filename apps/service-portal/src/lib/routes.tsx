@@ -1,5 +1,4 @@
 import { RouteObject } from 'react-router-dom'
-import { Dashboard } from '../screens/Dashboard/Dashboard'
 import { Root } from '../components/Root'
 
 /**
@@ -9,12 +8,6 @@ import { Root } from '../components/Root'
 export const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
   {
     element: <Root />,
-    children: [
-      {
-        path: '/',
-        element: <Dashboard />,
-      },
-      ...moduleRoutes,
-    ],
+    children: moduleRoutes,
   },
 ]

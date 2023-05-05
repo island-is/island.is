@@ -7,20 +7,10 @@ export const cases = {
       defaultMessage: 'Drög',
       description: 'Notað sem merki þegar mál í stöðu "Drög" í málalista',
     },
-    new: {
-      id: 'judicial.system.core:cases.tags.new',
-      defaultMessage: 'Nýtt',
-      description: 'Notað sem merki þegar mál í stöðu "Nýtt" í málalista',
-    },
     sent: {
       id: 'judicial.system.core:cases.tags.sent',
       defaultMessage: 'Sent',
       description: 'Notað sem merki þegar mál í stöðu "Sent" í málalista',
-    },
-    received: {
-      id: 'judicial.system.core:cases.tags.received',
-      defaultMessage: 'Móttekið',
-      description: 'Notað sem merki þegar mál í stöðu "Móttekið" í málalista',
     },
     scheduled: {
       id: 'judicial.system.core:cases.tags.scheduled',
@@ -75,25 +65,13 @@ export const cases = {
   activeRequests: {
     table: {
       headers: defineMessages({
-        caseNumber: {
-          id:
-            'judicial.system.core:cases.active_requests.table.headers.case_number',
-          defaultMessage: 'Málsnr.',
-          description:
-            'Notaður sem titill fyrir málsnúmer dálk í lista yfir mál í vinnslu.',
-        },
         type: {
           id: 'judicial.system.core:cases.active_requests.table.headers.type',
           defaultMessage: 'Tegund',
           description:
             'Notaður sem titill fyrir tegund dálk í lista yfir mál í vinnslu.',
         },
-        state: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.state',
-          defaultMessage: 'Staða',
-          description:
-            'Notaður sem titill fyrir staða dálk í lista yfir mál í vinnslu.',
-        },
+
         date: {
           id: 'judicial.system.core:cases.active_requests.table.headers.date',
           defaultMessage: 'Stofnað/Fyrirtaka',
@@ -185,19 +163,8 @@ export const cases = {
           description:
             'Notaður sem titill fyrir staða dálk í lista yfir afgreidd mál.',
         },
-        duration: {
-          id: 'judicial.system.core:cases.past_requests.table.headers.duration',
-          defaultMessage: 'Gildistími',
-          description:
-            'Notaður sem titill fyrir gildistíma dálk í lista yfir afgreidd mál.',
-        },
       }),
     },
-    title: defineMessage({
-      id: 'judicial.system.core:cases.past_requests.title',
-      defaultMessage: 'Afgreidd mál',
-      description: 'Notaður sem titill í seinni málalista á heimaskjá.',
-    }),
     infoContainerTitle: defineMessage({
       id: 'judicial.system.core:cases.past_requests.info_container_title',
       defaultMessage: 'Engin mál hafa verið afgreidd.',

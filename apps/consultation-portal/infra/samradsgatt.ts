@@ -22,10 +22,21 @@ export const serviceSetup = (services: {
       BASEPATH: '/consultation-portal',
       ENVIRONMENT: ref((h) => h.env.type),
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      IDENTITY_SERVER_ISSUER_DOMAIN: {
+        dev: 'identity-server.dev01.devland.is',
+        staging: 'identity-server.staging01.devland.is',
+        prod: 'innskra.island.is',
+      },
+      NEXTAUTH_URL: {
+        dev: 'https://beta.dev01.devland.is/samradsgatt/api/auth',
+        staging: 'https://staging.staging01.devland.is/samradsgatt/api/auth',
+        prod: 'https://island.is/samradsgatt/api/auth',
+      },
     })
     .secrets({
       DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID',
       DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN',
+      IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET',
     })
     .ingress({
       primary: {

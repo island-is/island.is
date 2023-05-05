@@ -7,38 +7,79 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { tableRowBackgroundColor } from '../../utils/helpers'
+import { mapIsToEn, tableRowBackgroundColor } from '../../utils/helpers'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import * as styles from './SubscriptionTableItem.css'
 import { Area } from '../../types/enums'
-import { Case } from '../../types/interfaces'
+import {
+  SubscriptionArray,
+  SubscriptionTableItem,
+} from '../../types/interfaces'
 
-export interface SubscriptionTableItemProps {
-  item: Case
+interface Props {
+  item: SubscriptionTableItem
   idx: number
-  checkboxStatus: boolean
-  onCheckboxChange: () => void
   currentTab: Area
   mdBreakpoint: boolean
+  isGeneralSubscription?: boolean
+  subscriptionArray: SubscriptionArray
+  setSubscriptionArray: (_: SubscriptionArray) => void
 }
 
 const SubscriptionTableItem = ({
   item,
   idx,
-  checkboxStatus,
-  onCheckboxChange,
   currentTab,
   mdBreakpoint,
-}) => {
+  isGeneralSubscription,
+  subscriptionArray,
+  setSubscriptionArray,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false)
+
   const onClick = () => {
     setIsOpen(!isOpen)
   }
 
   const borderColor = 'transparent'
-  const checkboxChange = (itemId: number, checked: boolean) => {
-    onClick()
-    onCheckboxChange(itemId, checked)
+
+  const onCheckboxChange = () => {
+    if (isGeneralSubscription) {
+      const subscriptionArrayCopy = { ...subscriptionArray }
+      // idx 0 is All, idx 1 is changes
+      if (idx === 0) {
+        const thisData = subscriptionArray.subscribedToAllNewObj
+        thisData.checked = !thisData.checked
+        subscriptionArrayCopy.subscribedToAllNewObj = thisData
+        if (thisData.checked) {
+          if (subscriptionArrayCopy.subscribedToAllChangesObj.checked) {
+            subscriptionArrayCopy.subscribedToAllChangesObj.checked = false
+          }
+        }
+      } else if (idx === 1) {
+        const thisData = subscriptionArray.subscribedToAllChangesObj
+        thisData.checked = !thisData.checked
+        subscriptionArrayCopy.subscribedToAllChangesObj = thisData
+        if (thisData.checked) {
+          if (subscriptionArrayCopy.subscribedToAllNewObj.checked) {
+            subscriptionArrayCopy.subscribedToAllNewObj.checked = false
+          }
+        }
+      }
+      setSubscriptionArray(subscriptionArrayCopy)
+    } else {
+      const subscriptionArrayCopy = { ...subscriptionArray }
+      const thisData = subscriptionArrayCopy[mapIsToEn[currentTab]]
+      const thisInstance = thisData.findIndex((elem) => elem.key === item.key)
+      const oldVal = thisData[thisInstance].checked
+      thisData[thisInstance].checked = !oldVal
+      subscriptionArrayCopy[mapIsToEn[currentTab]] = thisData
+      setSubscriptionArray(subscriptionArrayCopy)
+
+      if ((oldVal && isOpen) || (!oldVal && !isOpen)) {
+        setIsOpen(!isOpen)
+      }
+    }
   }
 
   const { Row, Data: TData } = T
@@ -57,24 +98,39 @@ const SubscriptionTableItem = ({
 
   return (
     <>
-      <Row key={idx}>
+      <Row key={item.key}>
         <Data width="10">
           <Checkbox
-            checked={checkboxStatus(item.id)}
-            onChange={(e) => checkboxChange(item.id, e.target.checked)}
+            checked={item.checked}
+            onChange={() => onCheckboxChange()}
           />
         </Data>
         {currentTab !== Area.case ? (
-          <Data>
-            <FocusableBox onClick={onClick}>
-              <Text variant="h5">{item.name}</Text>
-            </FocusableBox>
-          </Data>
+          isGeneralSubscription ? (
+            <Data>
+              <FocusableBox>
+                <Text variant="h5">Öll mál</Text>
+              </FocusableBox>
+              <FocusableBox>
+                <Text variant="medium" fontWeight="light">
+                  {item.name}
+                </Text>
+              </FocusableBox>
+            </Data>
+          ) : (
+            <Data>
+              <FocusableBox onClick={onClick}>
+                <Text variant="h5">{item.name}</Text>
+              </FocusableBox>
+            </Data>
+          )
         ) : mdBreakpoint ? (
           <>
             <Data>
               <FocusableBox onClick={onClick}>
-                <Text variant="h5">{item.caseNumber}</Text>
+                <Text variant="h5">
+                  {isGeneralSubscription ? 'Öll mál' : item.caseNumber}
+                </Text>
               </FocusableBox>
             </Data>
             <Data>
@@ -90,7 +146,9 @@ const SubscriptionTableItem = ({
             <Data>
               <FocusableBox onClick={onClick}>
                 <Stack space={1}>
-                  <Text variant="h5">{item.caseNumber}</Text>
+                  <Text variant="h5">
+                    {isGeneralSubscription ? 'Öll mál' : item.caseNumber}
+                  </Text>
                   <Text variant="medium" fontWeight="light">
                     {item.name}
                   </Text>
@@ -99,6 +157,7 @@ const SubscriptionTableItem = ({
             </Data>
           </>
         )}
+
         <TData
           borderColor={borderColor}
           box={{
@@ -107,17 +166,22 @@ const SubscriptionTableItem = ({
           }}
           align="right"
         >
-          <FocusableBox
-            onClick={onClick}
-            style={{ height: '24px' }}
-            flexDirection="rowReverse"
-          >
-            <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
-          </FocusableBox>
+          {!isGeneralSubscription && (
+            <FocusableBox
+              onClick={onClick}
+              style={{ height: '24px' }}
+              flexDirection="rowReverse"
+            >
+              <Icon
+                icon={isOpen ? 'chevronUp' : 'chevronDown'}
+                color="blue400"
+              />
+            </FocusableBox>
+          )}
         </TData>
       </Row>
       {isOpen && (
-        <Row>
+        <Row key={idx * 21 + 1}>
           <TData
             colSpan={4}
             borderColor={borderColor}
@@ -126,7 +190,12 @@ const SubscriptionTableItem = ({
               background: tableRowBackgroundColor(idx),
             }}
           >
-            <SubscriptionChoices />
+            <SubscriptionChoices
+              item={item}
+              currentTab={currentTab}
+              subscriptionArray={subscriptionArray}
+              setSubscriptionArray={setSubscriptionArray}
+            />
           </TData>
         </Row>
       )}

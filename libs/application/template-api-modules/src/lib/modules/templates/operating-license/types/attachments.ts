@@ -38,3 +38,11 @@ export type File = {
 export interface CriminalRecord {
   contentBase64: string
 }
+
+export interface DebtLessCertificateResult {
+  debtLess: boolean
+  certificate?: {
+    type: string
+    document: string
+  }
+}

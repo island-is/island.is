@@ -23,8 +23,9 @@ import {
   DEFENDER_ROUTE,
   CASES_ROUTE,
   USERS_ROUTE,
+  COURT_OF_APPEAL_CASES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { UserRole } from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
@@ -178,6 +179,8 @@ export class AuthController {
           ? requestedRedirectRoute
           : user.role === UserRole.ADMIN
           ? USERS_ROUTE
+          : user.institution?.type === InstitutionType.HIGH_COURT
+          ? COURT_OF_APPEAL_CASES_ROUTE
           : CASES_ROUTE,
       }
     } else if (requestedRedirectRoute?.startsWith(`${DEFENDER_ROUTE}/`)) {
