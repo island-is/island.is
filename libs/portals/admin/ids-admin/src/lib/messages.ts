@@ -59,7 +59,7 @@ export const m = defineMessages({
   },
   advancedSettings: {
     id: 'ap.ids-admin:advanced-settings',
-    defaultMessage: 'Avanced settings',
+    defaultMessage: 'Advanced settings',
   },
   back: {
     id: 'ap.ids-admin:back',
@@ -85,6 +85,10 @@ export const m = defineMessages({
   cancel: {
     id: 'ap.ids-admin:cancel',
     defaultMessage: 'Cancel',
+  },
+  add: {
+    id: 'ap.ids-admin:add',
+    defaultMessage: 'Add',
   },
   create: {
     id: 'ap.ids-admin:create',
@@ -444,6 +448,44 @@ export const m = defineMessages({
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
   },
+  permissions: {
+    id: 'ap.ids-admin:permissions',
+    defaultMessage: 'Permissions',
+  },
+  permissionsDescription: {
+    id: 'ap.ids-admin:permissions-description',
+    defaultMessage:
+      'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.\n\nHere you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
+  },
+  permissionsAdd: {
+    id: 'ap.ids-admin:permissions-add',
+    defaultMessage: 'Add permissions',
+  },
+  permissionsTableLabelName: {
+    id: 'ap.ids-admin:permissions-table-label-name',
+    defaultMessage: 'Name',
+  },
+  permissionsTableLabelDescription: {
+    id: 'ap.ids-admin:permissions-table-label-description',
+    defaultMessage: 'Description',
+  },
+  permissionsTableLabelAPI: {
+    id: 'ap.ids-admin:permissions-table-label-api',
+    defaultMessage: 'API',
+  },
+  permissionsButtonLabelRemove: {
+    id: 'ap.ids-admin:permissions-button-label-remove',
+    defaultMessage: 'Remove',
+  },
+  permissionsModalTitle: {
+    id: 'ap.ids-admin:permissions-modal-title',
+    defaultMessage: 'Add permissions',
+  },
+  permissionsModalDescription: {
+    id: 'ap.ids-admin:permissions-modal-description',
+    defaultMessage:
+      'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',
@@ -471,5 +513,30 @@ export const m = defineMessages({
   outOfSync: {
     id: 'ap.ids-admin:out-of-sync',
     defaultMessage: 'Out of sync',
+  },
+  publishEnvironment: {
+    id: 'ap.ids-admin:publish-environment',
+    defaultMessage: 'Publish to {environment}',
+  },
+  publishEnvironmentDescription: {
+    id: 'ap.ids-admin:publish-environment-description',
+    defaultMessage:
+      'The application will inherit settings from the selected environment excluding URLs and client secrets.',
+  },
+  chooseEnvironmentToCopyFrom: {
+    id: 'ap.ids-admin:choose-environment-to-copy-from',
+    defaultMessage: 'Choose environment to copy settings from',
+  },
+  publish: {
+    id: 'ap.ids-admin:publish',
+    defaultMessage: 'Publish',
+  },
+  errorPublishingEnvironment: {
+    id: 'ap.ids-admin:error-publishing-environment',
+    defaultMessage: 'Error publishing environment',
+  },
+  closeModal: {
+    id: 'ap.ids-admin:close-modal',
+    defaultMessage: 'Close dialog',
   },
 })
