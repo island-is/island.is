@@ -118,6 +118,8 @@ function collectEncryptionProperties(
 
 @Injectable()
 export class InternalCaseService {
+  private throttle = Promise.resolve(false)
+
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -267,11 +269,18 @@ export class InternalCaseService {
       })
   }
 
-  private async uploadCaseFilesRecordPdfToCourt(
+  private async throttleUploadCaseFilesRecordPdfToCourt(
     theCase: Case,
     policeCaseNumber: string,
     user: TUser,
   ): Promise<boolean> {
+    // Serialize all case files pdf uploads in this process
+    await this.throttle.catch((reason) => {
+      this.logger.info('Previous case files pdf generation failed', { reason })
+    })
+
+    await this.refreshFormatMessage()
+
     const caseFiles = theCase.caseFiles
       ?.filter(
         (caseFile) =>
@@ -568,13 +577,13 @@ export class InternalCaseService {
     policeCaseNumber: string,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
-    const delivered = await this.uploadCaseFilesRecordPdfToCourt(
+    this.throttle = this.throttleUploadCaseFilesRecordPdfToCourt(
       theCase,
       policeCaseNumber,
       user,
     )
+
+    const delivered = await this.throttle
 
     return { delivered }
   }
