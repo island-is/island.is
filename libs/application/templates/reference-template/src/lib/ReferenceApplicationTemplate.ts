@@ -142,7 +142,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
           actionCard: {
             description: m.draftDescription,
-            onExitHistoryLog: 'Umsókn send inn',
+            historyLogs: [
+              {
+                event: DefaultEvents.SUBMIT,
+                log: 'Umsókn send inn',
+              },
+            ],
           },
           progress: 0.25,
           status: 'draft',
@@ -182,7 +187,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 'Umsóknin bíður nú þess að yfirferðaraðili sé skráður á umsóknina. Þú getur líka skráð þig sjálfur inn og farið yfir umsóknina.',
               displayStatus: 'warning',
             },
-            onExitHistoryLog: 'Yfirferðaraðili skráður á umsókn og látin vita',
+            historyLogs: [
+              {
+                event: DefaultEvents.ASSIGN,
+                log: 'Yfirferðaraðili skráður á umsókn og látin vita',
+              },
+            ],
           },
           onEntry: [
             defineTemplateApi({
@@ -235,7 +245,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
               displayStatus: 'info',
             },
-            onEntryHistoryLog: 'Yfirferð hafin',
+            historyLogs: [
+              {
+                event: DefaultEvents.REJECT,
+                log: 'Umsókn samþykkt',
+              },
+              {
+                event: DefaultEvents.REJECT,
+                log: 'Umsókn hafnað',
+              },
+            ],
           },
           onExit: [
             defineTemplateApi({
@@ -280,9 +299,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'approved',
           lifecycle: DefaultStateLifeCycle,
-          actionCard: {
-            onEntryHistoryLog: 'Umsókn var samþykkt af yfirferðaraðila',
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -301,9 +317,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
-          actionCard: {
-            onEntryHistoryLog: 'Umsókn var hafnað af yfirferðaraðila',
-          },
+
           roles: [
             {
               id: Roles.APPLICANT,

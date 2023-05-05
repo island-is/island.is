@@ -90,8 +90,11 @@ export interface ApplicationStateMeta<
     title?: StaticText
     /** @deprecated use pendingAction field instead */
     description?: StaticText
-    onExitHistoryLog?: StaticText
-    onEntryHistoryLog?: StaticText
+    historyLogs?: {
+      event: Event<T> | string
+      log: StaticText
+    }[]
+
     pendingAction?:
       | PendingAction
       | ((application: Application, role: ApplicationRole) => PendingAction)

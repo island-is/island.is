@@ -39,6 +39,14 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
             shouldBePruned: true,
             whenToPrune: 5 * 60000, //5 minutes
           },
+          actionCard: {
+            historyLogs: [
+              {
+                event: DefaultEvents.SUBMIT,
+                log: application.applicationSubmitted,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -66,9 +74,6 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
           name: 'Completed',
           status: 'completed',
           progress: 1,
-          actionCard: {
-            onEntryHistoryLog: application.applicationSubmitted,
-          },
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
