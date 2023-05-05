@@ -1,6 +1,5 @@
 import React, { ReactNode, useCallback, useContext, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { ValueType } from 'react-select/src/types'
 import { IntlShape, useIntl } from 'react-intl'
@@ -59,6 +58,7 @@ import {
   Select,
   Tooltip,
   AlertMessage,
+  toast,
 } from '@island.is/island-ui/core'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -73,6 +73,7 @@ import {
   UserRole,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { errors } from '@island.is/judicial-system-web/messages'
 
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
@@ -82,9 +83,12 @@ import { AlertBanner } from '@island.is/judicial-system-web/src/components/Alert
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 import AppealSection from './Components/AppealSection/AppealSection'
-import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ReopenModal from './Components/ReopenModal/ReopenModal'
+import {
+  useCourtRecordSignatureConfirmationLazyQuery,
+  useRequestCourtRecordSignatureMutation,
+} from './CourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
 
 interface ModalControls {
@@ -264,8 +268,6 @@ export const SignedVerdictOverview: React.FC = () => {
   const {
     updateCase,
     isUpdatingCase,
-    requestCourtRecordSignature,
-    isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
     isSendingNotification,
@@ -302,50 +304,51 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }, [workingCase.type, user])
 
-  const [getCourtRecordSignatureConfirmation] = useLazyQuery(
-    CourtRecordSignatureConfirmationQuery,
-    {
-      fetchPolicy: 'no-cache',
-      onCompleted: (courtRecordSignatureConfirmationData) => {
-        if (
-          courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
-        ) {
-          setCourtRecordSignatureConfirmationResponse(
-            courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation,
-          )
-          refreshCase()
-        } else {
-          setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-        }
-      },
-      onError: () => {
-        setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-      },
-    },
-  )
-
-  const handleRequestCourtRecordSignature = async () => {
-    if (!workingCase) {
-      return
-    }
-
-    // Request court record signature to get control code
-    requestCourtRecordSignature(workingCase.id).then(
-      (requestCourtRecordSignatureResponse) => {
-        setRequestCourtRecordSignatureResponse(
-          requestCourtRecordSignatureResponse,
+  const [
+    getCourtRecordSignatureConfirmation,
+  ] = useCourtRecordSignatureConfirmationLazyQuery({
+    fetchPolicy: 'no-cache',
+    onCompleted: (courtRecordSignatureConfirmationData) => {
+      if (
+        courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
+      ) {
+        setCourtRecordSignatureConfirmationResponse(
+          courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
         )
-        getCourtRecordSignatureConfirmation({
-          variables: {
-            input: {
-              caseId: workingCase.id,
-              documentToken: requestCourtRecordSignatureResponse?.documentToken,
-            },
+        refreshCase()
+      } else {
+        setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+      }
+    },
+    onError: () => {
+      setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+    },
+  })
+
+  const [
+    handleRequestCourtRecordSignature,
+    { loading: isRequestingCourtRecordSignature },
+  ] = useRequestCourtRecordSignatureMutation({
+    variables: { input: { caseId: workingCase.id } },
+    onCompleted: (data) => {
+      setRequestCourtRecordSignatureResponse(
+        data.requestCourtRecordSignature as RequestSignatureResponse,
+      )
+      getCourtRecordSignatureConfirmation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            documentToken:
+              data.requestCourtRecordSignature?.documentToken || '',
           },
-        })
-      },
-    )
-  }
+        },
+      })
+      return data.requestCourtRecordSignature
+    },
+    onError: () => {
+      toast.error(formatMessage(errors.requestCourtRecordSignature))
+    },
+  })
 
   const handleNextButtonClick = async () => {
     if (user?.role === UserRole.Prosecutor) {
