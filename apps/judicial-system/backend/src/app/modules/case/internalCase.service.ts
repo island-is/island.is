@@ -269,16 +269,10 @@ export class InternalCaseService {
       })
   }
 
-  private async throttleUploadCaseFilesRecordPdfToCourt(
+  private async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
-    user: TUser,
-  ): Promise<boolean> {
-    // Serialize all case files pdf uploads in this process
-    await this.throttle.catch((reason) => {
-      this.logger.info('Previous case files pdf generation failed', { reason })
-    })
-
+  ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
     const caseFiles = theCase.caseFiles
@@ -322,6 +316,21 @@ export class InternalCaseService {
       caseFiles ?? [],
       this.formatMessage,
     )
+  }
+
+  private async throttleUploadCaseFilesRecordPdfToCourt(
+    theCase: Case,
+    policeCaseNumber: string,
+    user: TUser,
+  ): Promise<boolean> {
+    // Serialize all case files pdf uploads in this process
+    await this.throttle.catch((reason) => {
+      this.logger.info('Previous case files pdf generation failed', { reason })
+    })
+
+    const pdfPromise = this.getCaseFilesRecordPdf(theCase, policeCaseNumber)
+
+    return pdfPromise
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.caseFilesRecord, {
           policeCaseNumber,
