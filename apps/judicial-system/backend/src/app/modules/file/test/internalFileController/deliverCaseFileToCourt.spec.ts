@@ -155,7 +155,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     ${CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE}  | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     ${CaseFileCategory.APPEAL_RULING}                         | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     `.describe(
-    'indictment file upload to court',
+    'indictment $caseFileCategory file upload to court folder $courtDocumentFolder',
     ({ caseFileCategory, courtDocumentFolder }) => {
       const caseId = uuid()
       const courtId = uuid()
