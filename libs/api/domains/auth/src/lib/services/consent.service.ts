@@ -13,17 +13,7 @@ export class ConsentService {
     return this.consentsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getConsent(user: User): Promise<ConsentsPaginated> {
-    const response = await this.consentsApiWithAuth(user).v1ActorConsentsGet()
-
-    return {
-      totalCount: response.totalCount,
-      data: response.data.map((c) => ({
-        clientId: c.clientId,
-        consentedScopes: c.consentedScopes,
-        rejectedScopes: c.rejectedScopes,
-      })),
-      pageInfo: response.pageInfo,
-    }
+  getConsent(user: User): Promise<ConsentsPaginated> {
+    return this.consentsApiWithAuth(user).v1ActorConsentsGet()
   }
 }
