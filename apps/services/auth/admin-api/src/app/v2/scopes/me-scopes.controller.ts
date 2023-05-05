@@ -1,10 +1,12 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   AdminScopeService,
-  AdminScopeDto,
+  AdminScopeDTO,
   MeTenantGuard,
+  ClientCreateScopeDTO,
+  ApiScopesDTO,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
@@ -28,12 +30,27 @@ export class MeScopesController {
   @Get()
   @Documentation({
     description: 'Get all scopes by tenant id.',
-    response: { status: 200, type: [AdminScopeDto] },
+    response: { status: 200, type: [AdminScopeDTO] },
   })
-  @Audit<AdminScopeDto[]>({
+  @Audit<AdminScopeDTO[]>({
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
-  findAll(@Param('tenantId') id: string): Promise<AdminScopeDto[]> {
+  findAll(@Param('tenantId') id: string): Promise<AdminScopeDTO[]> {
     return this.adminScopeService.findApiScopesByTenantId(id)
+  }
+
+  @Post()
+  @Documentation({
+    description: 'Creates api scope for specific tenant.',
+    response: { status: 200, type: AdminScopeDTO },
+  })
+  @Audit<AdminScopeDTO>({
+    resources: (scope) => scope.name,
+  })
+  create(
+    @Param('tenantId') tenantId: string,
+    @Body() input: ClientCreateScopeDTO,
+  ): Promise<ApiScopesDTO> {
+    return this.adminScopeService.createScope(tenantId, input)
   }
 }

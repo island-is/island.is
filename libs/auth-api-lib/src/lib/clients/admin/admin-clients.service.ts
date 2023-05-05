@@ -10,6 +10,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
+import { validateClientId } from '@island.is/auth/shared'
 
 import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
@@ -35,6 +36,7 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
+import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -133,8 +135,12 @@ export class AdminClientsService {
       throw new NoContentException()
     }
 
-    // validate that client id starts with the tenant id
-    if (!clientDto.clientId.startsWith(`${tenantId}/`)) {
+    if (
+      !validateClientId({
+        prefix: tenantId,
+        value: clientDto.clientId,
+      })
+    ) {
       throw new BadRequestException('Invalid client id')
     }
 
@@ -477,11 +483,6 @@ export class AdminClientsService {
           type: claim.type,
           value: claim.value,
         })) ?? [],
-      allowedScopes:
-        client.allowedScopes?.map(({ scopeName, clientId }) => ({
-          scopeName,
-          clientId,
-        })) ?? [],
     }
   }
 
@@ -543,18 +544,6 @@ export class AdminClientsService {
       { model: ClientGrantType, as: 'allowedGrantTypes' },
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
-      {
-        model: ClientAllowedScope,
-        as: 'allowedScopes',
-        where: {
-          scopeName: {
-            [Op.notIn]: Sequelize.literal(
-              `(SELECT name FROM identity_resource)`,
-            ),
-          },
-        },
-        required: false,
-      },
     ]
   }
 
@@ -692,5 +681,53 @@ export class AdminClientsService {
         ignoreDuplicates: true,
       })
     }
+  }
+
+  async findAllowedScopes({
+    clientId,
+    tenantId,
+  }: {
+    clientId: string
+    tenantId: string
+  }): Promise<AdminScopeDTO[]> {
+    const client = await this.clientModel.findOne({
+      where: {
+        clientId,
+        domainName: tenantId,
+        enabled: true,
+      },
+      include: {
+        model: ClientAllowedScope,
+        as: 'allowedScopes',
+        where: {
+          scopeName: {
+            [Op.notIn]: Sequelize.literal(
+              `(SELECT name FROM identity_resource)`,
+            ),
+          },
+        },
+        required: false,
+      },
+    })
+
+    if (!client) {
+      throw new NoContentException()
+    } else if (!client?.allowedScopes?.length) {
+      return []
+    }
+
+    const scopeNames = client.allowedScopes.map((scope) => scope.scopeName)
+
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: {
+        name: {
+          [Op.in]: scopeNames,
+        },
+        enabled: true,
+        domainName: tenantId,
+      },
+    })
+
+    return apiScopes.map((apiScope) => new AdminScopeDTO(apiScope))
   }
 }

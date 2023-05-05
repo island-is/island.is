@@ -72,10 +72,24 @@ export const overview = buildSection({
                     ? formatNationalId(member.nationalId)
                     : member.dateOfBirth,
                   member.relation,
+                  formatPhoneNumber(member.phone || ''),
+                  member.email,
                 ],
               })),
           },
         ),
+        buildKeyValueField({
+          label: m.doesWillExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.wills'),
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.doesAgreementExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.agreement'),
+          width: 'half',
+        }),
         buildDescriptionField({
           id: 'space1',
           title: '',

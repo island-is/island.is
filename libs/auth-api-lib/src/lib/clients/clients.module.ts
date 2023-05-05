@@ -16,6 +16,8 @@ import { ClientSecret } from './models/client-secret.model'
 import { ClientsTranslationService } from './clients-translation.service'
 import { Domain } from '../resources/models/domain.model'
 import { ApiScope } from '../resources/models/api-scope.model'
+import { AdminScopeService } from '../resources/admin/admin-scope.service'
+import { ApiScopeUserClaim } from '../resources/models/api-scope-user-claim.model'
 
 @Module({
   imports: [
@@ -31,10 +33,21 @@ import { ApiScope } from '../resources/models/api-scope.model'
       ClientSecret,
       Domain,
       ApiScope,
+      ApiScopeUserClaim,
     ]),
     TranslationModule,
   ],
-  providers: [ClientsService, AdminClientsService, ClientsTranslationService],
-  exports: [ClientsService, AdminClientsService, SequelizeModule],
+  providers: [
+    ClientsService,
+    AdminClientsService,
+    ClientsTranslationService,
+    AdminScopeService,
+  ],
+  exports: [
+    ClientsService,
+    AdminClientsService,
+    AdminScopeService,
+    SequelizeModule,
+  ],
 })
 export class ClientsModule {}

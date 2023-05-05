@@ -1,5 +1,6 @@
 import {
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -7,14 +8,20 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { YES } from '../../lib/constants'
-import { estateMembersFields } from './externalDataFields/estateMembersFields'
 import { propertiesFields } from './externalDataFields/propertiesFields'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
+import { EstateMember, EstateRegistrant } from '@island.is/clients/syslumenn'
+import { format as formatNationalId } from 'kennitala'
 
 export const form: Form = buildForm({
   id: 'estateWithoutProperty',
@@ -33,7 +40,13 @@ export const form: Form = buildForm({
           id: 'estateMembersInfo',
           title: m.estateMembersTitle,
           description: m.estateMembersSubtitle,
-          children: estateMembersFields,
+          children: [
+            buildCustomField({
+              title: '',
+              id: 'estate.estateMembers',
+              component: 'EstateMembersRepeater',
+            }),
+          ],
         }),
       ],
     }),
@@ -92,7 +105,28 @@ export const form: Form = buildForm({
               title: '',
               space: 'gutter',
             }),
-            ...estateMembersFields,
+            buildCustomField(
+              {
+                title: '',
+                id: 'estateMembersCards',
+                component: 'Cards',
+                doesNotRequireAnswer: true,
+              },
+              {
+                cards: ({ externalData }: Application) =>
+                  (
+                    (externalData.syslumennOnEntry.data as {
+                      estate: EstateRegistrant
+                    })?.estate?.estateMembers ?? []
+                  ).map((member: EstateMember) => ({
+                    title: member.name,
+                    description: [
+                      formatNationalId(member.nationalId),
+                      member.relation,
+                    ],
+                  })),
+              },
+            ),
             buildDescriptionField({
               id: 'space3',
               title: '',

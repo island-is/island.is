@@ -26,7 +26,7 @@ export const AdvicesLayout = ({ children }) => {
     <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
       <BreadcrumbsWithMobileDivider
         items={[
-          { title: 'Samráðsgátt', href: '/' },
+          { title: 'Samráðsgátt', href: '/samradsgatt' },
           { title: 'Mínar umsagnir' },
         ]}
       />

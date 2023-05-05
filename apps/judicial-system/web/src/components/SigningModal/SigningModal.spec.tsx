@@ -1,9 +1,9 @@
 import { ApolloError } from '@apollo/client'
 
-import { RulingSignatureConfirmationQueryQuery } from '../../graphql/schema'
+import { RulingSignatureConfirmationQuery } from '../../graphql/schema'
 import { getSigningProgress } from './SigningModal'
 
-type SignatureConfirmation = RulingSignatureConfirmationQueryQuery['rulingSignatureConfirmation']
+type SignatureConfirmation = RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
 describe('getSigningProcess', () => {
   test('should return success when document has been signed', () => {
     const signatureConfirmation: SignatureConfirmation = {
