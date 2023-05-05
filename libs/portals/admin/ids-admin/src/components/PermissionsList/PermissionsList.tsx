@@ -1,14 +1,15 @@
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, GridRow, LinkV2, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { useLoaderData } from 'react-router-dom'
+import * as styles from './PermissionsList.css'
 
 function PermissionsList() {
   const { formatMessage } = useLocale()
-  const isEmpty = true
+  const loaderData = useLoaderData() as string[]
+  const isEmpty = !Array.isArray(loaderData) || loaderData.length === 0
 
-  const createButton = () => {
-    return <Button size="small">Create permission</Button>
-  }
+  const createButton = <Button size="small">Create permission</Button>
 
   const emptyState = () => {
     return (
@@ -16,29 +17,60 @@ function PermissionsList() {
         borderRadius="large"
         borderColor="blue200"
         borderWidth="standard"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        rowGap={2}
-        paddingY={8}
-        paddingX={8}
+        paddingY={[5, 8]}
+        paddingX={[5, 8]}
+        textAlign="center"
+        maxLength={10}
       >
-        <Text as="h2" variant="h3">
-          No permission created
-        </Text>
-        <Text marginBottom={3}>
-          Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris
-          accumsan at tellus facilisi.
-        </Text>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          rowGap={3}
+          className={styles.emptyContainer}
+          marginX="auto"
+        >
+          <Text as="h2" variant="h3">
+            No permission created
+          </Text>
+          <Text marginBottom={3}>
+            Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris
+            accumsan at tellus facilisi.
+          </Text>
 
-        {createButton()}
+          {createButton}
+
+          <LinkV2
+            href="#"
+            color="blue400"
+            underline="normal"
+            underlineVisibility="always"
+          >
+            Learn more
+          </LinkV2>
+        </Box>
+      </Box>
+    )
+  }
+
+  const list = () => {
+    return (
+      <Box>
+        {loaderData.map((item) => {
+          return <Text key={item}>{item}</Text>
+        })}
       </Box>
     )
   }
 
   return (
-    <Box>
-      <Box display="flex" columnGap={5} marginBottom={5}>
+    <GridRow direction="column">
+      <Box
+        className={styles.headerContainer}
+        rowGap={2}
+        columnGap={5}
+        marginBottom={5}
+      >
         <Box display="flex" flexDirection="column" rowGap={2}>
           <Text as="h1" variant="h2">
             {formatMessage(m.permissions)}
@@ -50,13 +82,13 @@ function PermissionsList() {
         </Box>
         {isEmpty ? null : (
           <Box display="flex" alignItems="center">
-            {createButton()}
+            {createButton}
           </Box>
         )}
       </Box>
 
-      {isEmpty ? emptyState() : null}
-    </Box>
+      {isEmpty ? emptyState() : list()}
+    </GridRow>
   )
 }
 
