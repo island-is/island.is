@@ -237,7 +237,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             </Box>
           )}
           {!cta.hide && (
-            <Box marginLeft={[0, 3]}>
+            <Box dataTestId="action-card-cta" marginLeft={[0, 3]}>
               {cta.url ? (
                 <LinkResolver href={cta.url}>
                   <Button

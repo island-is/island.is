@@ -45,8 +45,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       initial: false,
       enabled: true,
       name: '',
-      phone: '',
-      email: '',
     })
 
   useEffect(() => {
@@ -140,6 +138,8 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   backgroundColor="blue"
                   disabled={!member.enabled}
                   format="###-####"
+                  defaultValue={member.phone || ''}
+                  error={error && error[index] && error[index].phone}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -149,6 +149,8 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={m.email.defaultMessage}
                   backgroundColor="blue"
                   disabled={!member.enabled}
+                  defaultValue={member.email || ''}
+                  error={error && error[index] && error[index].email}
                 />
               </GridColumn>
             </GridRow>

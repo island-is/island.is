@@ -33,11 +33,6 @@ const dataNotFoundMessage = defineMessage({
   defaultMessage: 'Gögn fundust ekki',
 })
 
-const changeInNationalReg = defineMessage({
-  id: 'sp.family:change-in-national-registry',
-  defaultMessage: 'Breyta hjá Þjóðskrá',
-})
-
 const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
@@ -92,7 +87,7 @@ const SubjectInfo = () => {
           }
           editLink={{
             external: true,
-            title: changeInNationalReg,
+            title: spmm.changeInNationalReg,
             url: formatMessage(urls.editAdult),
           }}
         />
@@ -114,7 +109,7 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
+            title: spmm.changeInNationalReg,
             url: formatMessage(urls.editResidence),
           }}
         />
@@ -177,7 +172,7 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
+            title: spmm.changeInNationalReg,
             url: formatMessage(urls.editReligion),
           }}
         />
@@ -205,7 +200,7 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
+            title: spmm.changeInNationalReg,
             url: formatMessage(urls.editBanmarking),
           }}
         />
