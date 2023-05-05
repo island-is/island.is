@@ -80,7 +80,7 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       description: 'Data collection checkbox label',
     },
     dataCollectionButtonLabel: {
-      id: 'ehic.application:data.dataCollectionCheckboxLabel',
+      id: 'ehic.application:data.dataCollectionButtonLabel',
       defaultMessage: 'Halda áfram',
       description: 'Button label for retrieving data collection',
     },
@@ -128,28 +128,28 @@ export const europeanHealthInsuranceCardApplicationMessages = {
   // Plastic
   applicants: defineMessages({
     sectionLabel: {
-      id: 'ehic.application:applicant.section.label',
+      id: 'ehic.application:applicants.section.label',
       defaultMessage: 'Umsækjendur',
       description: 'Section label',
     },
     sectionTitle: {
-      id: 'ehic.application:applicant.name',
+      id: 'ehic.application:applicants.name',
       defaultMessage: 'Umsækjendur',
       description: 'Applicants for European Health Insurance Card',
     },
     sectionDescription: {
-      id: 'ehic.application:applicant.description',
+      id: 'ehic.application:applicants.description',
       defaultMessage:
         'Haka þarf við hvern einstakling til þess að umsókn hans verði virk.',
       description: 'Section description',
     },
     sectionHasNoPlasticLabel: {
-      id: 'ehic.application:temp.sectionSubLabel',
+      id: 'ehic.application:applicants.sectionSubLabel',
       defaultMessage: 'Heimild til að sækja um ES kort',
       description: 'Button label for PDF step',
     },
     submitButtonLabel: {
-      id: 'ehic.application:applicant.submitButtonLabel',
+      id: 'ehic.application:applicants.submitButtonLabel',
       defaultMessage: 'Halda áfram',
       description: 'Button label for Plastic card step',
     },
@@ -226,12 +226,12 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       description: 'Form label for persons name formfield',
     },
     sectionDeliveryLabel: {
-      id: 'ehic.application:review.phone.label',
+      id: 'ehic.application:review.sectionDeliveryLabel',
       defaultMessage: 'Afhending',
       description: 'Form label for delivery formfield',
     },
     sectionDeliveryDescription: {
-      id: 'ehic.application:review.phone.label',
+      id: 'ehic.application:review.sectionDeliveryDescription',
       defaultMessage:
         'Kortið verður sent á lögheimili umsækjanda og tekur 10-14 virka daga fyrir kortið að berast.',
       description: 'Form description for delivery formfield',
@@ -266,12 +266,12 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       description: 'First information sentence, in bullet list',
     },
     sectionInfoBulletSecondOne: {
-      id: 'ehic.application:confirmation.section.infoBullet.second',
+      id: 'ehic.application:confirmation.section.infoBullet.second.one',
       defaultMessage: 'Kortið verður sent á',
       description: 'Second part one information sentence, in bullet list',
     },
     sectionInfoBulletSecondTwo: {
-      id: 'ehic.application:confirmation.section.infoBullet.second',
+      id: 'ehic.application:confirmation.section.infoBullet.second.two',
       defaultMessage: 'og tekur 10-14 virka daga fyrir kortið að berast.',
       description: 'Second part two information sentence, in bullet list',
     },
@@ -306,7 +306,7 @@ export const europeanHealthInsuranceCardApplicationMessages = {
   // Applicants already have plastic and PDF
   noApplicants: defineMessages({
     checkboxTitle: {
-      id: 'ehic.application:noapplicants.checkbox.description',
+      id: 'ehic.application:noapplicants.checkbox.title',
       defaultMessage: 'Umsækjendur',
       description: 'Checkbox Title',
     },
