@@ -200,7 +200,9 @@ export class EndorsementListService {
       ])
     }
     if (new Date() >= list.closedDate) {
-      this.logger.warn('closedDate can not have already passed on creation of Endorsement List')
+      this.logger.warn(
+        'closedDate can not have already passed on creation of Endorsement List',
+      )
       throw new BadRequestException([
         'closedDate can not have already passed on creation of Endorsement List',
       ])
