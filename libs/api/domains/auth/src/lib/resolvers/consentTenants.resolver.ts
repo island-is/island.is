@@ -13,8 +13,8 @@ import type { DomainDataLoader } from '../loaders/domain.loader'
 @UseGuards(IdsUserGuard)
 @Resolver(() => ConsentTenant)
 export class ConsentTenantsResolver {
-  @ResolveField('owner', () => Domain)
-  resolvePermissions(
+  @ResolveField('tenant', () => Domain)
+  resolveTenant(
     @Loader(DomainLoader) domainLoader: DomainDataLoader,
     @Parent() consentTenant: ConsentTenant,
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })

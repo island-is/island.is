@@ -16,21 +16,14 @@ export class ConsentService {
   async getConsent(user: User): Promise<ConsentsPaginated> {
     const response = await this.consentsApiWithAuth(user).v1ActorConsentsGet()
 
-    const consents = response.consents ?? []
-
     return {
-      totalCount: consents.length,
-      data: consents.map((c) => ({
-        clientId: c.clientId ?? '',
-        consentedScopes: c.consentedScopes ?? [],
-        rejectedScopes: c.rejectedScopes ?? [],
+      totalCount: response.totalCount,
+      data: response.data.map((c) => ({
+        clientId: c.clientId,
+        consentedScopes: c.consentedScopes,
+        rejectedScopes: c.rejectedScopes,
       })),
-      pageInfo: {
-        hasNextPage: false,
-        hasPreviousPage: false,
-        startCursor: '',
-        endCursor: '',
-      },
+      pageInfo: response.pageInfo,
     }
   }
 }

@@ -18,18 +18,27 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConsentsResponse'
+                $ref: '#/components/schemas/ConsentsPaginatedResponse'
         '401':
           description: 'Unauthorized'
 components:
   schemas:
-    ConsentsResponse:
+    ConsentsPaginatedResponse:
       type: object
       properties:
-        consents:
+        data:
           type: array
           items:
             $ref: '#/components/schemas/Consent'
+        totalCount:
+          type: integer
+          format: int32
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - data
+        - totalCount
+        - pageInfo
     Consent:
       type: object
       properties:
@@ -43,6 +52,26 @@ components:
           type: array
           items:
             type: string
+      required:
+        - clientId
+        - consentedScopes
+        - rejectedScopes
+    PageInfo:
+      type: object
+      properties:
+        hasNextPage:
+          type: boolean
+        hasPreviousPage:
+          type: boolean
+        startCursor:
+          type: string
+        endCursor:
+          type: string
+      required:
+        - hasNextPage
+        - hasPreviousPage
+        - startCursor
+        - endCursor
   securitySchemes:
     Bearer:
       type: http
