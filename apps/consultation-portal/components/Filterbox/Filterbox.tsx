@@ -1,4 +1,8 @@
-import { CaseFilter, FilterInputItems } from '../../types/interfaces'
+import {
+  CaseFilter,
+  FilterInputItem,
+  FilterInputItems,
+} from '../../types/interfaces'
 import {
   Box,
   Button,
@@ -61,7 +65,7 @@ const FilterBox = ({
     if (type === 'sorting') {
       onChangeRadio(0)
     } else {
-      filtersCopy[type].items.map((item: FilterInputItems) => {
+      filtersCopy[type].items.map((item: FilterInputItem) => {
         item.checked = true
       })
     }

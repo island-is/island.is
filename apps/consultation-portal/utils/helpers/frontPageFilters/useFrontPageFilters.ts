@@ -3,22 +3,24 @@ import getInitFilterValues from './getInitFilterValues'
 import {
   ArrOfTypes,
   CaseFilter,
-  FilterInputItems,
-  ValueCountPair,
+  FilterInputItem,
 } from '../../../types/interfaces'
 import { useEffect, useState } from 'react'
 import { CaseSortOptions } from '../../../types/enums'
 import useFetchCases from '../useFetchCases'
 import mapListToValueCountObject from './mapObjectToValueCountObject'
 import isObjectEmpty from '../isObjectEmpty'
+import getFilteredItemsOrAll from './getFilteredItemsOrAll'
+import { setItem } from '../localStorage'
+import { FILTERS_FRONT_PAGE_KEY } from '../../consts/consts'
+import { getInitialFilters } from './getInitialFilters'
 
 interface Props {
   types: ArrOfTypes
-  CARDS_PER_PAGE: number
   page: number
 }
 
-export const useFrontPageFilters = ({ types, CARDS_PER_PAGE, page }: Props) => {
+export const useFrontPageFilters = ({ types, page }: Props) => {
   const {
     caseStatuses,
     caseTypes,
@@ -30,7 +32,7 @@ export const useFrontPageFilters = ({ types, CARDS_PER_PAGE, page }: Props) => {
     period,
   } = getInitFilterValues({ types: types })
 
-  const defaultValues = getDefaultFilters({
+  const initialValues = getInitialFilters({
     sorting: sorting,
     caseStatuses: caseStatuses,
     caseTypes: caseTypes,
@@ -39,80 +41,88 @@ export const useFrontPageFilters = ({ types, CARDS_PER_PAGE, page }: Props) => {
     period: period,
   })
 
+  const defaultValues = getDefaultFilters({ initialValues: initialValues })
+
   const [filters, setFilters] = useState<CaseFilter>({
     ...defaultValues,
   })
 
+  const _caseStatuses = getFilteredItemsOrAll({
+    items: [...filters?.caseStatuses?.items],
+    defaultItems: initialValues?.caseStatuses?.items,
+  })
+
+  const _caseTypes = getFilteredItemsOrAll({
+    items: [...filters?.caseTypes?.items],
+    defaultItems: initialValues?.caseTypes?.items,
+  })
+
   const input = {
-    caseStatuses: filters?.caseStatuses?.items
-      .filter((item: FilterInputItems) => item.checked)
-      .map((item: FilterInputItems) => parseInt(item.value)),
-    caseTypes: filters.caseTypes.items
-      .filter((item: FilterInputItems) => item.checked)
-      .map((item: FilterInputItems) => parseInt(item.value)),
+    caseStatuses: _caseStatuses,
+    caseTypes: _caseTypes,
     orderBy: Object.keys(CaseSortOptions).find(
       (key) =>
         CaseSortOptions[key] ===
-        filters.sorting.items.filter(
-          (item: FilterInputItems) => item.checked,
-        )[0].label,
+        filters.sorting.items.filter((item: FilterInputItem) => item.checked)[0]
+          .label,
     ),
     searchQuery: filters.searchQuery,
     policyAreas: filters.policyAreas,
     institutions: filters.institutions,
     dateFrom: filters.period.from,
     dateTo: filters.period.to,
-    pageSize: CARDS_PER_PAGE,
-    pageNumber: page,
+    pageSize: filters.pageSize,
+    pageNumber: filters.pageNumber,
   }
 
-  const { cases, filterGroups, total, getCasesLoading } = useFetchCases({
+  const {
+    cases,
+    filterGroups,
+    total,
+    getCasesLoading,
+    refetchCases,
+  } = useFetchCases({
     input: input,
   })
 
   useEffect(() => {
     if (!isObjectEmpty(filterGroups) && !getCasesLoading) {
       const caseTypesList = mapListToValueCountObject(filterGroups.CaseTypes)
-      const caseTypesMerged = filters.caseTypes.items.map(
-        (item: ValueCountPair) => ({
-          ...item,
-          ...(caseTypesList.find((val) => val.value === item.value) || {
-            count: 0,
-          }),
+      const caseTypesMerged = filters.caseTypes.items.map((item) => ({
+        ...item,
+        ...(caseTypesList.find((val) => val.value === item.value) || {
+          count: 0,
         }),
-      )
+      }))
 
       const caseStatusesList = mapListToValueCountObject(filterGroups.Statuses)
-      const caseStatusesMerged = filters.caseStatuses.items.map(
-        (item: ValueCountPair) => ({
-          ...item,
-          ...(caseStatusesList.find((val) => val.value === item.value) || {
-            count: 0,
-          }),
+      const caseStatusesMerged = filters.caseStatuses.items.map((item) => ({
+        ...item,
+        ...(caseStatusesList.find((val) => val.value === item.value) || {
+          count: 0,
         }),
-      )
+      }))
 
       const filtersCopy = { ...filters }
       filtersCopy.caseTypes.items = caseTypesMerged
       filtersCopy.caseStatuses.items = caseStatusesMerged
 
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('filtersFrontPage', JSON.stringify(filtersCopy))
-      }
+      setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
       setFilters(filtersCopy)
     }
   }, [filterGroups])
 
   return {
-    cases,
-    total,
-    getCasesLoading,
-    PolicyAreas,
-    allPolicyAreas,
-    Institutions,
-    allInstitutions,
-    filters,
-    setFilters,
-    defaultValues,
+    cases: cases,
+    total: total,
+    getCasesLoading: getCasesLoading,
+    PolicyAreas: PolicyAreas,
+    allPolicyAreas: allPolicyAreas,
+    Institutions: Institutions,
+    allInstitutions: allInstitutions,
+    filters: filters,
+    setFilters: setFilters,
+    initialValues: initialValues,
+    refetchCases: refetchCases,
   }
 }

@@ -6,8 +6,10 @@ import {
   Tiles,
   Text,
   Stack,
-  Hidden,
   LoadingDots,
+  Filter as IslandUIFilter,
+  FilterInput,
+  FilterMultiChoice,
 } from '@island.is/island-ui/core'
 import React, { useState } from 'react'
 import { HeroBanner } from '../../components'
@@ -22,8 +24,9 @@ import {
 } from '../../types/interfaces'
 import EmptyState from '../../components/EmptyState/EmptyState'
 import Filter from '../../components/Filter/Filter'
-import { useFrontPageFilters } from '../../utils/helpers'
+import { useFrontPageFilters, useIsMobile } from '../../utils/helpers'
 import Pagination from '../../components/Pagination/Pagination'
+import MobileFilter from '../../components/Filter/MobileFilter'
 
 const CARDS_PER_PAGE = 12
 interface HomeProps {
@@ -33,6 +36,7 @@ interface HomeProps {
 
 export const Home = ({ types, statistics }: HomeProps) => {
   const [page, setPage] = useState<number>(0)
+  const { isMobile } = useIsMobile()
 
   const {
     cases,
@@ -44,10 +48,10 @@ export const Home = ({ types, statistics }: HomeProps) => {
     allInstitutions,
     filters,
     setFilters,
-    defaultValues,
+    initialValues,
+    refetchCases,
   } = useFrontPageFilters({
     types: types,
-    CARDS_PER_PAGE: CARDS_PER_PAGE,
     page: page,
   })
 
@@ -119,26 +123,36 @@ export const Home = ({ types, statistics }: HomeProps) => {
   return (
     <Layout isFrontPage seo={{ title: 'Öll mál' }}>
       <HeroBanner statistics={statistics} />
-      <SearchAndFilter
-        PolicyAreas={PolicyAreas}
-        defaultPolicyAreas={allPolicyAreas}
-        Institutions={Institutions}
-        defaultInstitutions={allInstitutions}
-        filters={filters}
-        setFilters={(arr: CaseFilter) => setFilters(arr)}
-        loading={getCasesLoading}
-      />
+      {isMobile ? (
+        <MobileFilter
+          filters={filters}
+          setFilters={(arr: CaseFilter) => setFilters(arr)}
+          total={total}
+          initialValues={initialValues}
+        />
+      ) : (
+        <SearchAndFilter
+          PolicyAreas={PolicyAreas}
+          defaultPolicyAreas={allPolicyAreas}
+          Institutions={Institutions}
+          defaultInstitutions={allInstitutions}
+          filters={filters}
+          setFilters={(arr: CaseFilter) => setFilters(arr)}
+          loading={getCasesLoading}
+        />
+      )}
+
       <GridContainer>
         <GridRow>
           <GridColumn span={['0', '0', '0', '3/12', '3/12']}>
-            <Hidden below="lg">
+            {!isMobile && (
               <Filter
                 filters={filters}
                 setFilters={(arr: CaseFilter) => setFilters(arr)}
-                defaultValues={defaultValues}
+                defaultValues={initialValues}
                 loading={getCasesLoading}
               />
-            </Hidden>
+            )}
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
             {renderCards()}
