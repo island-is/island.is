@@ -11,7 +11,10 @@ export const AuthIdsApiClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      basePath: env.required('AUTH_IDS_API_URL', 'https://localhost:6001'),
+      basePath: env.required(
+        'AUTH_IDS_API_URL',
+        'https://identity-server.dev01.devland.is',
+      ),
     }
   },
 })

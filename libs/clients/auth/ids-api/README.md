@@ -1,7 +1,21 @@
-# clients-auth-ids-api
+<!-- gitbook-navigation: "IDS API" -->
 
-This library was generated with [Nx](https://nx.dev).
+# Auth IDS API Client
 
-## Running unit tests
+## About
 
-Run `nx test clients-auth-ids-api` to execute the unit tests via [Jest](https://jestjs.io).
+This library provides a client for the [IdentityServer API](https://github.com/island-is/identity-server.web/blob/main/README.md).
+
+## Usage
+
+It is used by our [Auth GraphQL Domain](../../../../libs/api/domains/auth/README.md) to communicate with the IdentityServer API. See for instance [ConsentService](../../../../libs/api/domains/auth/src/lib/services/consent.service.ts).
+
+When developing locally you would normally communicate with the IDS endpoints on dev, using an access token with the appropriate scope.
+
+## Regenerating the client
+
+To regenerate the client from the [OpenAPI](./src/clientConfig.yaml) specification, run
+
+```sh
+yarn nx run clients-auth-ids-api:schemas/external-openapi-generator
+```
