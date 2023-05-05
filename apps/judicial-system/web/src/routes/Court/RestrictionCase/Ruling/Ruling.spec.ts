@@ -50,7 +50,7 @@ describe('getConclusionAutofill', () => {
     it('should format extended travel ban case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
-        type: CaseType.TravelBan,
+        type: CaseType.TRAVEL_BAN,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 

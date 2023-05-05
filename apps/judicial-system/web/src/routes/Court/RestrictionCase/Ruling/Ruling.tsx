@@ -102,7 +102,7 @@ export function getConclusionAutofill(
           decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         caseType:
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TravelBan
+            ? CaseType.TRAVEL_BAN
             : workingCase.type,
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
@@ -546,7 +546,7 @@ export const Ruling: React.FC = () => {
                         caseType:
                           workingCase.decision ===
                           CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TravelBan
+                            ? CaseType.TRAVEL_BAN
                             : workingCase.type,
                       },
                     ),
@@ -565,7 +565,7 @@ export const Ruling: React.FC = () => {
                           caseType:
                             workingCase.decision ===
                             CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                              ? CaseType.TravelBan
+                              ? CaseType.TRAVEL_BAN
                               : workingCase.type,
                         },
                       ),

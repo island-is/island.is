@@ -53,7 +53,7 @@ describe('Page layout utils', () => {
         // Arrange
         const workingCase = {
           ...mockCase(CaseType.CUSTODY),
-          type: CaseType.TravelBan,
+          type: CaseType.TRAVEL_BAN,
           state: CaseState.REJECTED,
         }
 
@@ -110,7 +110,7 @@ describe('Page layout utils', () => {
       // Arrange
       const workingCase = {
         ...mockCase(CaseType.CUSTODY),
-        type: CaseType.TravelBan,
+        type: CaseType.TRAVEL_BAN,
         state: CaseState.ACCEPTED,
       }
 
@@ -147,7 +147,7 @@ describe('Page layout utils', () => {
       // Arrange
       const workingCase = {
         ...mockCase(CaseType.CUSTODY),
-        type: CaseType.TravelBan,
+        type: CaseType.TRAVEL_BAN,
         state: CaseState.ACCEPTED,
         isValidToDateInThePast: true,
       }

@@ -177,7 +177,7 @@ export const Defendant: React.FC = () => {
                 setWorkingCase={setWorkingCase}
               />
             </Box>
-            {workingCase.type !== CaseType.TravelBan && (
+            {workingCase.type !== CaseType.TRAVEL_BAN && (
               <Box component="section" marginBottom={10}>
                 <Box
                   display="flex"

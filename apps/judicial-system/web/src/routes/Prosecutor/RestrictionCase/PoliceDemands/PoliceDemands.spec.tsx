@@ -73,7 +73,7 @@ describe('getDemandsAutofill', () => {
 
   it('should format travel ban case', () => {
     const props = {
-      caseType: CaseType.TravelBan,
+      caseType: CaseType.TRAVEL_BAN,
       defendant: {
         ...baseDefendant,
         noNationalId: true,

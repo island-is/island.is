@@ -69,7 +69,7 @@ describe('titleForCase', () => {
   test('should handle travel ban case with valid to date in past', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       isValidToDateInThePast: true,
     } as Case
     const res = fn(theCase)
@@ -106,7 +106,7 @@ describe('titleForCase', () => {
   test('should handle active travel case', () => {
     const theCase = {
       state: CaseState.ACCEPTED,
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
     } as Case
     const res = fn(theCase)
     expect(res).toEqual('Farbann virkt')
@@ -237,7 +237,7 @@ describe('getExtensionInfoText', () => {
 
   test('should format for rejected travel ban case', () => {
     const theCase = {
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       state: CaseState.REJECTED,
     } as Case
     const res = fn(theCase, prosecutor)

@@ -62,7 +62,7 @@ const RestrictionTags: React.FC<Props> = (props) => {
       }
       {
         // Travel ban restrictions
-        workingCase.type === CaseType.TravelBan &&
+        workingCase.type === CaseType.TRAVEL_BAN &&
           isAcceptingCaseDecision(workingCase.decision) &&
           workingCase.requestedCustodyRestrictions
             ?.filter(

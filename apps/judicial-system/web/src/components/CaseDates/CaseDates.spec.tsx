@@ -44,7 +44,7 @@ describe('<CaseDates /> expired', () => {
   test('should render expired travel ban case', () => {
     const theCase = {
       isValidToDateInThePast: true,
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 
@@ -70,7 +70,7 @@ describe('<CaseDates /> still valid', () => {
 
   test('should render valid travel ban case', () => {
     const theCase = {
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       validToDate: '2022-06-15T19:50:08.033Z',
     } as Case
 

@@ -79,7 +79,7 @@ const FormProvider = ({ children }: Props) => {
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')
-    ? CaseType.TravelBan
+    ? CaseType.TRAVEL_BAN
     : router.pathname.includes('gaesluvardhald')
     ? CaseType.CUSTODY
     : router.pathname.includes('akaera')

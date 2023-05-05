@@ -115,7 +115,7 @@ export const titleForCase = (
 ) => {
   const isTravelBan =
     theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    theCase.type === CaseType.TravelBan
+    theCase.type === CaseType.TRAVEL_BAN
 
   if (theCase.state === CaseState.REJECTED) {
     if (isInvestigationCase(theCase.type)) {
@@ -131,14 +131,14 @@ export const titleForCase = (
 
   if (theCase.isValidToDateInThePast) {
     return formatMessage(m.validToDateInThePast, {
-      caseType: isTravelBan ? CaseType.TravelBan : theCase.type,
+      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
     })
   }
 
   return isInvestigationCase(theCase.type)
     ? formatMessage(m.investigationAccepted)
     : formatMessage(m.restrictionActive, {
-        caseType: isTravelBan ? CaseType.TravelBan : theCase.type,
+        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
       })
 }
 

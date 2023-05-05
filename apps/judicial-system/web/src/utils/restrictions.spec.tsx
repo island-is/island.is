@@ -83,7 +83,7 @@ describe('formatRequestedCustodyRestrictions', () => {
 
   test('should return "Ekki er farið fram á takmarkanir á farbanni" if no custody restriction is supplied', async () => {
     // Arrange
-    const type = CaseType.TravelBan
+    const type = CaseType.TRAVEL_BAN
     const requestedCustodyRestrictions: CaseCustodyRestrictions[] = []
 
     // Act

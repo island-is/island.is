@@ -44,7 +44,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted travel ban cases', () => {
     const theCase = {
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.MEDIA,
@@ -63,7 +63,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted travel ban cases', () => {
     const theCase = {
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,

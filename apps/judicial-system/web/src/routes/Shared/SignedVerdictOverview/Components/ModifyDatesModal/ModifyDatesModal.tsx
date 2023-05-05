@@ -92,7 +92,7 @@ const getModificationSuccessText = (
     modifiedIsolationToDate?.value,
   )
 
-  if (workingCase.type === CaseType.TravelBan) {
+  if (workingCase.type === CaseType.TRAVEL_BAN) {
     return formatMessage(m.sections.modifyDatesModal.travelBanSuccessText, {
       date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
         'dagur,',
@@ -371,7 +371,7 @@ const ModifyDatesModal: React.FC<Props> = ({
           caseType: workingCase.type,
         })}
         text={
-          workingCase.type === CaseType.TravelBan
+          workingCase.type === CaseType.TRAVEL_BAN
             ? formatMessage(m.sections.modifyDatesModal.travelBanText)
             : formatMessage(m.sections.modifyDatesModal.textV2, {
                 caseType: workingCase.type,
