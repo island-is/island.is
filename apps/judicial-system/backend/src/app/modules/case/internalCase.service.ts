@@ -632,6 +632,41 @@ export class InternalCaseService {
     return { delivered }
   }
 
+  async archiveCaseFilesRecord(
+    theCase: Case,
+    policeCaseNumber: string,
+  ): Promise<DeliverResponse> {
+    return this.awsS3Service
+      .copyObject(
+        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+      .then(() => {
+        // Fire and forget, no need to wait for the result
+        this.awsS3Service
+          .deleteObject(
+            `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+          )
+          .catch((reason) => {
+            // Tolerate failure, but log what happened
+            this.logger.error(
+              `Could not delete case files records for case ${theCase.id} and police case ${policeCaseNumber} from AWS S3`,
+              { reason },
+            )
+          })
+
+        return { delivered: true }
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to archive case files records for case ${theCase.id} and police case ${policeCaseNumber}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
   async deliverRequestToCourt(
     theCase: Case,
     user: TUser,

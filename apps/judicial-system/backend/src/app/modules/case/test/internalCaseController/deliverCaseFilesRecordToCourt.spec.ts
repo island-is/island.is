@@ -6,6 +6,7 @@ import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { createCaseFilesRecord } from '../../../../formatters'
+import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
@@ -27,6 +28,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
+  let mockawsS3Service: AwsS3Service
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
@@ -35,9 +37,16 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     mockGet.mockRejectedValue(new Error('Some error'))
 
     const {
+      awsS3Service,
       courtService,
       internalCaseController,
     } = await createTestingCaseModule()
+
+    mockawsS3Service = awsS3Service
+    const mockGetObject = mockawsS3Service.getObject as jest.Mock
+    mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockPutObject = mockawsS3Service.putObject as jest.Mock
+    mockPutObject.mockRejectedValue(new Error('Some error'))
 
     mockCourtService = courtService
     const mockCreateDocument = mockCourtService.createDocument as jest.Mock

@@ -7,6 +7,7 @@ import { CaseFileCategory } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
 import { createCaseFilesRecord } from '../../../../formatters'
+import { AwsS3Service } from '../../../aws-s3'
 import { CaseFile } from '../../../file'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -25,10 +26,15 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get case files record pdf', () => {
+  let mockawsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseController } = await createTestingCaseModule()
+    const { awsS3Service, caseController } = await createTestingCaseModule()
+
+    mockawsS3Service = awsS3Service
+    const mockGetObject = mockawsS3Service.getObject as jest.Mock
+    mockGetObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (
       caseId: string,
