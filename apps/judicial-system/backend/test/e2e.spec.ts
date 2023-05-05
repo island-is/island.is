@@ -712,7 +712,7 @@ describe('Case', () => {
       })
   })
 
-  it.only('PATCH /api/case/:id should update judge fields of a case by id', async () => {
+  it('PATCH /api/case/:id should update judge fields of a case by id', async () => {
     const judgeCaseData = getJudgeCaseData()
     let dbCase: CCase
     let apiCase: CCase
