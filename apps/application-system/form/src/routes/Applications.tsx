@@ -36,6 +36,7 @@ import {
   ApplicationTemplate,
 } from '@island.is/application/types'
 import { EventObject } from 'xstate'
+import { plausibleCustomEvent } from '@island.is/plausible'
 
 type UseParams = {
   slug: string
@@ -85,6 +86,16 @@ export const Applications: FC = () => {
     {
       onCompleted({ createApplication }) {
         if (slug) {
+          const event = {
+            eventName: 'Start New Application',
+            featureName: 'Application-System',
+            params: {
+              applicationType: type,
+              timestamp: Date.now().toString(),
+              applicationId: createApplication.id,
+            },
+          }
+          plausibleCustomEvent(event)
           navigate(`../${slug}/${createApplication.id}`)
         }
       },
@@ -113,6 +124,7 @@ export const Applications: FC = () => {
     getTemplate().catch(console.error)
   }, [type, template])
 
+  // If there is no application, create one
   useEffect(() => {
     if (
       type &&
@@ -175,10 +187,9 @@ export const Applications: FC = () => {
   ).length
 
   const shouldRenderNewApplicationButton =
-    template.allowMultipleApplicationsInDraft === undefined
-      ? true
-      : template.allowMultipleApplicationsInDraft ||
-        numberOfApplicationsInDraft < 1
+    template.allowMultipleApplicationsInDraft === undefined ||
+    template.allowMultipleApplicationsInDraft ||
+    numberOfApplicationsInDraft < 1
 
   return (
     <Page>

@@ -8,20 +8,6 @@ import { ErrorShell, LoadingShell } from '@island.is/application/ui-shell'
 import { ASSIGN_APPLICATION } from '@island.is/application/graphql'
 import { getSlugFromType, coreErrorMessages } from '@island.is/application/core'
 
-const parseGraphQLError = (
-  error?: GraphQLError,
-): (ServerError & Record<string, unknown>) | null => {
-  if (!error) {
-    return null
-  }
-
-  try {
-    return JSON.parse(error.message)
-  } catch {
-    return null
-  }
-}
-
 export const AssignApplication = () => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -70,7 +56,6 @@ export const AssignApplication = () => {
     return <LoadingShell />
   }
 
-  const graphQLError = parseGraphQLError(error?.graphQLErrors?.[0])
   const couldNotAssignApplication = !!error
 
   return (

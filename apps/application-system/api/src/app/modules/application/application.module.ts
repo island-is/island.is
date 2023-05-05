@@ -24,6 +24,7 @@ import { ApplicationChargeModule } from './charge/application-charge.module'
 import { ApplicationFilesModule } from '@island.is/application/api/files'
 import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
+import { PlausibleModule } from '@island.is/plausible-api'
 @Module({
   imports: [
     PaymentModule,
@@ -43,6 +44,7 @@ import { HistoryModule } from '@island.is/application/api/history'
     HistoryModule,
     LoggingModule,
     ApplicationChargeModule,
+    PlausibleModule,
   ],
   controllers: [ApplicationController, AdminController],
   providers: [

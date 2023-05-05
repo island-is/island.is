@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   NotFoundException,
   Param,
   Post,
@@ -88,6 +89,7 @@ import {
   TemplateAPIModuleActionResult,
 } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
+import { PlausibleService } from '@island.is/plausible-api'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
 import { Documentation } from '@island.is/nest/swagger'
@@ -127,6 +129,7 @@ export class ApplicationController {
     private paymentService: PaymentService,
     private applicationChargeService: ApplicationChargeService,
     private readonly historyService: HistoryService,
+    private plausibleService: PlausibleService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
   ) {}
 
@@ -277,6 +280,8 @@ export class ApplicationController {
   @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async create(
+    @Headers('user-agent') userAgent: string,
+    @Headers('x-forwarded-for') xForwardedFor: string,
     @Body()
     application: CreateApplicationDto,
     @CurrentUser()
@@ -330,6 +335,26 @@ export class ApplicationController {
       applicationDto,
     )
 
+    const event = {
+      name: 'application-system-application-completed',
+      url: `https://island.is/umsoknir/${createdApplication.typeId}/${createdApplication.id}`,
+      domain: 'island.is',
+      params: {
+        applicationType: createdApplication.typeId,
+        timestamp: Date.now().toString(),
+        applicationId: createdApplication.id,
+      },
+    }
+    try {
+      const response = await this.plausibleService.sendEvent(event, {
+        userAgent,
+        xForwardedFor,
+      })
+      console.log('Event sent successfully:', response)
+    } catch (error) {
+      console.error('Error sending event:', error)
+    }
+
     // Make sure the application has the correct lifecycle values persisted to database.
     // Requires an application object that is created in the previous step.
     const {
@@ -342,6 +367,43 @@ export class ApplicationController {
       createdApplication.status,
       getApplicationLifecycle(createdApplication as BaseApplication, template),
     )
+
+    const isFinalState = (status: ApplicationStatus): boolean =>
+      status === ApplicationStatus.COMPLETED ||
+      status === ApplicationStatus.REJECTED ||
+      status === ApplicationStatus.APPROVED
+
+    const hasTransitionedToFinalState = (
+      originalApplication: Application,
+      updatedApplication: Application,
+    ): boolean => {
+      const originalInFinalState = isFinalState(originalApplication.status)
+      const updatedInFinalState = isFinalState(updatedApplication.status)
+
+      return !originalInFinalState && updatedInFinalState
+    }
+
+    if (hasTransitionedToFinalState(createdApplication, updatedApplication)) {
+      const event = {
+        name: 'application-system-application-completed',
+        url: `https://island.is/umsoknir/${createdApplication.typeId}/${createdApplication.id}`,
+        domain: 'island.is',
+        params: {
+          applicationType: createdApplication.typeId,
+          timestamp: Date.now().toString(),
+          applicationId: createdApplication.id,
+        },
+      }
+      try {
+        const response = await this.plausibleService.sendEvent(event, {
+          userAgent,
+          xForwardedFor,
+        })
+        console.log('Event sent successfully:', response)
+      } catch (error) {
+        console.error('Error sending event:', error)
+      }
+    }
 
     this.auditService.audit({
       auth: user,

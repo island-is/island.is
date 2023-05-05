@@ -253,6 +253,7 @@
     "next-ids-auth": "libs/next-ids-auth",
     "nova-sms": "libs/nova-sms",
     "plausible": "libs/plausible",
+    "plausible-api": "libs/plausible-api",
     "portals-admin": "apps/portals/admin",
     "portals-admin-air-discount-scheme": "libs/portals/admin/air-discount-scheme",
     "portals-admin-application-system": "libs/portals/admin/application-system",
