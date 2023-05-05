@@ -16,13 +16,21 @@ export const applicantInformationSchema = (
     address: z.string(),
     postalCode: z.string(),
     city: z.string(),
-    email: z.string().refine((x) => (emailRequired ? isValidEmail(x) : true), {
-      params: applicantInformation.error.email,
-    }),
+    email: z
+      .string()
+      .refine(
+        (x) => (emailRequired ? isValidEmail(x) : !x || isValidEmail(x)),
+        {
+          params: applicantInformation.error.email,
+        },
+      ),
     phoneNumber: z
       .string()
-      .refine((x) => (phoneRequired ? isValidNumber(x) : true), {
-        params: applicantInformation.error.phoneNumber,
-      }),
+      .refine(
+        (x) => (phoneRequired ? isValidNumber(x) : !x || isValidNumber(x)),
+        {
+          params: applicantInformation.error.phoneNumber,
+        },
+      ),
   })
 }
