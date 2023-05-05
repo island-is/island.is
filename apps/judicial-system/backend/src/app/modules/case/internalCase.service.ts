@@ -4,7 +4,6 @@ import { Sequelize } from 'sequelize-typescript'
 import format from 'date-fns/format'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -44,7 +43,7 @@ import { Defendant, DefendantService } from '../defendant'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { CaseFile, FileService } from '../file'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
-import { oldFilter } from './filters/case.filters'
+import { archiveFilter } from './filters/case.archiveFilter'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { ArchiveResponse } from './models/archive.response'
@@ -367,20 +366,21 @@ export class InternalCaseService {
     let courtId: string | undefined
 
     if (caseToCreate.prosecutorNationalId) {
-      const prosecutor = await this.userService.findByNationalId(
-        caseToCreate.prosecutorNationalId,
-      )
+      const prosecutor = await this.userService
+        .findByNationalId(caseToCreate.prosecutorNationalId)
+        .catch(() => undefined) // Tolerate failure
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        throw new BadRequestException(
+        // Tolerate failure, but log error
+        this.logger.error(
           `User ${
             prosecutor?.id ?? 'unknown'
           } is not registered as a prosecutor`,
         )
+      } else {
+        prosecutorId = prosecutor.id
+        courtId = prosecutor.institution?.defaultCourtId
       }
-
-      prosecutorId = prosecutor.id
-      courtId = prosecutor.institution?.defaultCourtId
     }
 
     return this.sequelize.transaction(async (transaction) => {
@@ -446,7 +446,7 @@ export class InternalCaseService {
       ],
       where: {
         isArchived: false,
-        [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+        [Op.or]: [{ state: CaseState.DELETED }, archiveFilter],
       },
     })
 

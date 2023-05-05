@@ -7,13 +7,19 @@ import {
   MeClientsControllerUpdateRequest,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
+import { AdminScopeDTO } from '@island.is/auth-api-lib'
+import { isDefined } from '@island.is/shared/utils'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import { ClientSecretInput } from './dto/client-secret.input'
 import { CreateClientInput } from './dto/create-client.input'
 import { CreateClientResponse } from './dto/create-client.response'
-import { ClientEnvironment } from './models/client-environment.model'
-import { Client } from './models/client.model'
 import { PatchClientInput } from './dto/patch-client.input'
+import { PublishClientInput } from './dto/publish-client.input'
+import { ClientAllowedScopeInput } from './dto/client-allowed-scope.input'
+import { ClientEnvironment } from './models/client-environment.model'
+import { ClientSecret } from './models/client-secret.model'
+import { Client } from './models/client.model'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -128,8 +134,6 @@ export class ClientsService extends MultiEnvironmentService {
       },
     }
 
-    const createApplicationResponse = [] as CreateClientResponse[]
-
     const created = await Promise.allSettled(
       input.environments.map(async (environment) => {
         return this.adminApiByEnvironmentWithAuth(
@@ -139,21 +143,21 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    created.map((resp, index) => {
-      if (resp.status === 'fulfilled' && resp.value) {
-        createApplicationResponse.push({
-          clientId: resp.value.clientId,
-          environment: input.environments[index],
-        })
-      } else if (resp.status === 'rejected') {
-        this.logger.error(
-          `Failed to create application ${input.clientId} in environment ${input.environments[index]}`,
-          resp.reason,
-        )
-      }
-    })
-
-    return createApplicationResponse
+    return created
+      .map((resp, index) => {
+        if (resp.status === 'fulfilled' && resp.value) {
+          return {
+            clientId: resp.value.clientId,
+            environment: input.environments[index],
+          }
+        } else if (resp.status === 'rejected') {
+          this.logger.error(
+            `Failed to create application ${input.clientId} in environment ${input.environments[index]}`,
+            resp.reason,
+          )
+        }
+      })
+      .filter(isDefined)
   }
 
   async patchClient(
@@ -204,7 +208,91 @@ export class ClientsService extends MultiEnvironmentService {
     return patchClientResponses
   }
 
+  async getClientSecrets(
+    user: User,
+    input: ClientSecretInput,
+  ): Promise<ClientSecret[]> {
+    const secrets = await this.adminApiByEnvironmentWithAuth(
+      input.environment,
+      user,
+    )?.meClientSecretsControllerFindAll({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+    })
+
+    return secrets ?? []
+  }
+
+  async publishClient(
+    user: User,
+    input: PublishClientInput,
+  ): Promise<ClientEnvironment> {
+    // Fetch the client from source environment
+
+    const sourceInput = await this.adminApiByEnvironmentWithAuth(
+      input.sourceEnvironment,
+      user,
+    )
+      ?.meClientsControllerFindByTenantIdAndClientId({
+        tenantId: input.tenantId,
+        clientId: input.clientId,
+      })
+      .catch((error) => this.handleError(error, input.sourceEnvironment))
+
+    if (!sourceInput) {
+      throw new Error(`Client ${input.clientId} not found`)
+    }
+
+    const created = await this.adminApiByEnvironmentWithAuth(
+      input.targetEnvironment,
+      user,
+    )?.meClientsControllerCreate({
+      tenantId: input.tenantId,
+      adminCreateClientDto: {
+        ...sourceInput,
+        clientId: input.clientId,
+        clientType:
+          CreateClientType[
+            sourceInput.clientType as keyof typeof CreateClientType
+          ],
+        clientName:
+          sourceInput.displayName.find(({ locale }) => locale === 'is')
+            ?.value || sourceInput.clientId,
+        //exclude the uris
+        postLogoutRedirectUris: [],
+        redirectUris: [],
+      },
+    })
+
+    if (!created) {
+      throw new Error(
+        `Failed to create client ${input.clientId} on ${input.targetEnvironment}`,
+      )
+    }
+
+    return {
+      ...created,
+      id: this.formatClientId(created.clientId, input.targetEnvironment),
+      environment: input.targetEnvironment,
+    }
+  }
+
   private formatClientId(clientId: string, environment: Environment) {
     return `${clientId}#${environment}`
+  }
+
+  async getAllowedScopes(
+    user: User,
+    input: ClientAllowedScopeInput,
+  ): Promise<AdminScopeDTO[]> {
+    const apiScopes = await this.adminApiByEnvironmentWithAuth(
+      input.environment,
+      user,
+    )?.meClientsScopesControllerFindAll({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+    })
+
+    return apiScopes ?? []
   }
 }

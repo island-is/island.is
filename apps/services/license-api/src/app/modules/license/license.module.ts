@@ -5,23 +5,29 @@ import {
 } from './license.controller'
 import { LicenseService } from './license.service'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
-import { DisabilityLicenseApiClientModule } from './clients/disabilityLicense/disabilityLicenseClient.module'
-import { FirearmLicenseApiClientModule } from './clients/firearmLicense/firearmLicenseApiClient.module'
+import { ConfigType } from '@nestjs/config'
 import {
-  CLIENT_FACTORY,
-  GenericLicenseClient,
-  LicenseId,
+  DisabilityLicenseApiClientModule,
+  DisabilityLicenseApiClientConfig,
+  DisabilityLicenseClientService,
+} from './clients/disabilityLicense'
+import {
+  DrivingLicenseApiClientModule,
+  DrivingLicenseApiClientConfig,
+  DrivingLicenseApiClientService,
+} from './clients/drivingLicense'
+import {
+  FirearmLicenseApiClientModule,
+  FirearmLicenseApiClientConfig,
+  FirearmLicenseApiClientService,
+} from './clients/firearmLicense'
+import {
   PASS_TEMPLATE_IDS,
   PassTemplateIds,
+  CLIENT_FACTORY,
+  LicenseId,
+  GenericLicenseClient,
 } from './license.types'
-import { DisabilityLicenseClientService } from './clients/disabilityLicense/disabilityLicenseClient.service'
-import { FirearmLicenseApiClientService } from './clients/firearmLicense/firearmLicenseApiClient.service'
-import { ConfigType } from '@nestjs/config'
-import { FirearmLicenseApiClientConfig } from './clients/firearmLicense/firearmLicenseApiClient.config'
-import { DisabilityLicenseApiClientConfig } from './clients/disabilityLicense/disabilityLicenseClient.config'
-
-import { DrivingLicenseApiClientService } from './clients/drivingLicense/drivingLicenseApiClient.service'
-import { DrivingLicenseApiClientModule } from './clients/drivingLicense/drivingLicenseApiClient.module'
 
 @Module({
   imports: [
@@ -40,16 +46,19 @@ import { DrivingLicenseApiClientModule } from './clients/drivingLicense/drivingL
       useFactory: (
         firearmConfig: ConfigType<typeof FirearmLicenseApiClientConfig>,
         disabilityConfig: ConfigType<typeof DisabilityLicenseApiClientConfig>,
+        drivingConfig: ConfigType<typeof DrivingLicenseApiClientConfig>,
       ) => {
         const ids: PassTemplateIds = {
           firearm: firearmConfig.passTemplateId,
           disability: disabilityConfig.passTemplateId,
+          driving: drivingConfig.passTemplateId,
         }
         return ids
       },
       inject: [
         FirearmLicenseApiClientConfig.KEY,
         DisabilityLicenseApiClientConfig.KEY,
+        DrivingLicenseApiClientConfig.KEY,
       ],
     },
     {

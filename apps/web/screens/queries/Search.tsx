@@ -110,6 +110,9 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
+          organizationPage {
+            slug
+          }
         }
       }
       processEntryCount

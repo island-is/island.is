@@ -358,6 +358,9 @@ const Indictment: React.FC = () => {
                     [
                       {
                         requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                        demands: !workingCase.requestDriversLicenseSuspension
+                          ? formatMessage(strings.demandsAutofillWithSuspension)
+                          : formatMessage(strings.demandsAutofill),
                         force: true,
                       },
                     ],
