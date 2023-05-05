@@ -18,7 +18,6 @@ import {
   AnchorNavigation,
   BackgroundImage,
   HeadWithSocialSharing,
-  PlausibleDomainTracking,
   Sticky,
 } from '@island.is/web/components'
 import {
@@ -41,6 +40,7 @@ import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeR
 import { webRichText } from '@island.is/web/utils/richText'
 import { Webreader } from '@island.is/web/components'
 import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
+import { usePlausiblePageview } from '@island.is/web/hooks/usePlausiblePageView'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -60,6 +60,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 
   useContentfulId(id)
   useLocalLinkTypeResolver()
+
+  usePlausiblePageview(DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN)
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -111,11 +113,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
         imageContentType={featuredImage?.contentType}
         imageWidth={featuredImage?.width?.toString()}
         imageHeight={featuredImage?.height?.toString()}
-      >
-        <PlausibleDomainTracking
-          domain={DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN}
-        />
-      </HeadWithSocialSharing>
+      />
 
       <GridContainer id="main-content">
         <GridRow>

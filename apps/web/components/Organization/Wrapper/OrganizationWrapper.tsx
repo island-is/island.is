@@ -32,7 +32,6 @@ import {
   SidebarShipSearchInput,
   Webreader,
   SearchBox,
-  PlausibleDomainTracking,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useFeatureFlag } from '@island.is/web/hooks'
@@ -78,6 +77,7 @@ import { GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
 
 import * as styles from './OrganizationWrapper.css'
+import { usePlausiblePageview } from '@island.is/web/hooks/usePlausiblePageView'
 
 interface NavigationData {
   title: string
@@ -571,6 +571,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
 
+  usePlausiblePageview(organizationPage.organization?.plausibleTrackingDomain)
+
   const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
     'isWebReaderEnabledForOrganizationPages',
     false,
@@ -604,11 +606,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         imageContentType={pageFeaturedImage?.contentType}
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
-      >
-        <PlausibleDomainTracking
-          domain={organizationPage.organization?.plausibleTrackingDomain}
-        />
-      </HeadWithSocialSharing>
+      />
       <OrganizationHeader organizationPage={organizationPage} />
       {!minimal && (
         <SidebarLayout

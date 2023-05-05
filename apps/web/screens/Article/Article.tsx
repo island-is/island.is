@@ -63,7 +63,7 @@ import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
 import { getOrganizationLink } from '@island.is/web/utils/organization'
-import { PlausibleDomainTracking } from '@island.is/web/components'
+import { usePlausiblePageview } from '@island.is/web/hooks/usePlausiblePageView'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 type SubArticle = GetSingleArticleQuery['getSingleArticle']['subArticles'][0]
@@ -334,6 +334,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
 
   useContentfulId(article.id, subArticle?.id)
 
+  usePlausiblePageview(article.organization?.[0]?.plausibleTrackingDomain)
+
   useScrollPosition(
     ({ currPos }) => {
       let px = -600
@@ -432,12 +434,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         imageUrl={article.featuredImage?.url}
         imageWidth={article.featuredImage?.width.toString()}
         imageHeight={article.featuredImage?.height.toString()}
-      >
-        <PlausibleDomainTracking
-          // The first organization is considered to be the main organization responsible for this article
-          domain={article.organization?.[0]?.plausibleTrackingDomain}
-        />
-      </HeadWithSocialSharing>
+      />
       <SidebarLayout
         isSticky={false}
         sidebarContent={
