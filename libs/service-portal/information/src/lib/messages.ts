@@ -138,6 +138,14 @@ export const spmm = defineMessages({
     id: 'sp.family:person-last-name',
     defaultMessage: 'Kenninafn',
   },
+  changeInNationalReg: {
+    id: 'sp.family:change-in-national-registry',
+    defaultMessage: 'Breyta í Þjóðskrá',
+  },
+  seeInfo: {
+    id: 'sp.family:see-info',
+    defaultMessage: 'Skoða upplýsingar',
+  },
 })
 
 export const urls = defineMessages({
