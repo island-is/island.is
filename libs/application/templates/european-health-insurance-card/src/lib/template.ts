@@ -22,6 +22,7 @@ import {
 } from './helpers/applicantHelper'
 import { dataSchema } from './dataSchema'
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
+import { Features } from '@island.is/feature-flags'
 
 type Events = { type: DefaultEvents.SUBMIT } | { type: DefaultEvents.ABORT }
 
@@ -37,7 +38,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD,
   name: e.application.applicationName,
   institution: e.application.institutionName,
-  readyForProduction: false,
+  featureFlag: Features.europeanHealthInsuranceCard,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
