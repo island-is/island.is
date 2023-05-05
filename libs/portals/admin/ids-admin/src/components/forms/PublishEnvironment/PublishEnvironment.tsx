@@ -69,6 +69,9 @@ export default function PublishEnvironment() {
       title={formatMessage(m.publishEnvironment, {
         environment: publishData?.toEnvironment,
       })}
+      label={formatMessage(m.publishEnvironment, {
+        environment: publishData?.toEnvironment,
+      })}
       onClose={cancel}
     >
       <Form method="post">

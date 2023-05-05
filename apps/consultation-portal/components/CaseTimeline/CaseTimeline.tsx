@@ -1,5 +1,8 @@
 import { Case } from '../../types/interfaces'
-import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
+import {
+  getStatusEndDate,
+  getTimeLineDate,
+} from '../../utils/helpers/dateFormatter'
 import {
   FormStepperV2,
   Text,
@@ -19,13 +22,20 @@ export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
   const sectionItems = Sections.map((item, index) => (
     <Section
       key={index}
-      isActive={item === chosenCase.statusName}
+      isActive={
+        Sections.indexOf(chosenCase.statusName) == 0
+          ? item === chosenCase.statusName
+          : Sections.indexOf(chosenCase.statusName) == 1 &&
+            Sections.indexOf(item) == 2
+          ? false
+          : true
+      }
       section={SectionsRenamed[index]}
       theme={FormStepperThemes.PURPLE}
       sectionIndex={index}
       subSections={[
         <Text variant="medium" key="sub0">
-          {getTimeLineDate({ Case: chosenCase })}
+          {getStatusEndDate(Sections[index], chosenCase)}
         </Text>,
       ]}
       isComplete={

@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import cn from 'classnames'
 
-import { PoliceCaseFile } from '@island.is/judicial-system/types'
+import {
+  PoliceCaseFile,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import {
   AlertMessage,
   Box,
@@ -211,8 +214,12 @@ const PoliceCaseFiles: React.FC<Props> = ({
       {workingCase.origin !== CaseOrigin.Loke && (
         <AlertMessage
           type="info"
-          title={formatMessage(m.originNotLokeTitle)}
-          message={formatMessage(m.originNotLokeMessage)}
+          title={formatMessage(m.originNotLokeTitle, {
+            isIndictmentCase: isIndictmentCase(workingCase.type),
+          })}
+          message={formatMessage(m.originNotLokeMessage, {
+            isIndictmentCase: isIndictmentCase(workingCase.type),
+          })}
         ></AlertMessage>
       )}
     </Box>
