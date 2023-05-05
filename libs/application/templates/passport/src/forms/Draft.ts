@@ -16,13 +16,13 @@ import {
   Form,
   FormModes,
   NationalRegistryUserApi,
-  UserProfileApi,
   YES,
 } from '@island.is/application/types'
 import {
   DeliveryAddressApi,
   IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
+  UserInfoApi,
 } from '../dataProviders'
 import {
   DistrictCommissionerAgencies,
@@ -78,7 +78,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: UserInfoApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),

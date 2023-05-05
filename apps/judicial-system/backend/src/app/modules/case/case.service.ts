@@ -250,6 +250,8 @@ export const listOrder: OrderItem[] = [
 
 @Injectable()
 export class CaseService {
+  private throttle = Promise.resolve(Buffer.from(''))
+
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -294,6 +296,60 @@ export class CaseService {
 
         return false
       })
+  }
+
+  private async throttleGetCaseFilesPdf(
+    theCase: Case,
+    policeCaseNumber: string,
+  ) {
+    // Serialize all case files pdf generations in this process
+    await this.throttle.catch((reason) => {
+      this.logger.info('Previous case files pdf generation failed', { reason })
+    })
+
+    await this.refreshFormatMessage()
+
+    const caseFiles = theCase.caseFiles
+      ?.filter(
+        (caseFile) =>
+          caseFile.policeCaseNumber === policeCaseNumber &&
+          caseFile.category === CaseFileCategory.CASE_FILE &&
+          caseFile.type === 'application/pdf' &&
+          caseFile.key &&
+          caseFile.chapter !== null &&
+          caseFile.orderWithinChapter !== null,
+      )
+      ?.sort(
+        (caseFile1, caseFile2) =>
+          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
+          (caseFile1.orderWithinChapter ?? 0) -
+            (caseFile2.orderWithinChapter ?? 0),
+      )
+      ?.map((caseFile) => async () => {
+        const buffer = await this.awsS3Service
+          .getObject(caseFile.key ?? '')
+          .catch((reason) => {
+            // Tolerate failure, but log error
+            this.logger.error(
+              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
+              { reason },
+            )
+          })
+
+        return {
+          chapter: caseFile.chapter as number,
+          date: caseFile.displayDate ?? caseFile.created,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          buffer: buffer ?? undefined,
+        }
+      })
+
+    return createCaseFilesRecord(
+      theCase,
+      policeCaseNumber,
+      caseFiles ?? [],
+      this.formatMessage,
+    )
   }
 
   private async createCase(
@@ -673,13 +729,31 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
-      {
-        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
-        user,
-        caseId: theCase.id,
-      },
-    ])
+    const messages: CaseMessage[] =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            [
+              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+            ].includes(caseFile.category),
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          user,
+          caseId: theCase.id,
+          caseFileId: caseFile.id,
+        })) ?? []
+    messages.push({
+      type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+    })
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -921,49 +995,9 @@ export class CaseService {
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
-    await this.refreshFormatMessage()
+    this.throttle = this.throttleGetCaseFilesPdf(theCase, policeCaseNumber)
 
-    const caseFiles = theCase.caseFiles
-      ?.filter(
-        (caseFile) =>
-          caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
-          caseFile.type === 'application/pdf' &&
-          caseFile.key &&
-          caseFile.chapter !== null &&
-          caseFile.orderWithinChapter !== null,
-      )
-      ?.sort(
-        (caseFile1, caseFile2) =>
-          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
-          (caseFile1.orderWithinChapter ?? 0) -
-            (caseFile2.orderWithinChapter ?? 0),
-      )
-      ?.map((caseFile) => async () => {
-        const buffer = await this.awsS3Service
-          .getObject(caseFile.key ?? '')
-          .catch((reason) => {
-            // Tolerate failure, but log error
-            this.logger.error(
-              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
-              { reason },
-            )
-          })
-
-        return {
-          chapter: caseFile.chapter as number,
-          date: caseFile.displayDate ?? caseFile.created,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          buffer: buffer ?? undefined,
-        }
-      })
-
-    return createCaseFilesRecord(
-      theCase,
-      policeCaseNumber,
-      caseFiles ?? [],
-      this.formatMessage,
-    )
+    return this.throttle
   }
 
   async getRulingPdf(theCase: Case): Promise<Buffer> {

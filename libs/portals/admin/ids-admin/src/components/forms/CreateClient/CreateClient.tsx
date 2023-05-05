@@ -200,6 +200,7 @@ export default function CreateClient() {
     <Modal
       id="create-client"
       isVisible
+      label={formatMessage(m.createClient)}
       title={formatMessage(m.createClient)}
       onClose={onCancel}
     >

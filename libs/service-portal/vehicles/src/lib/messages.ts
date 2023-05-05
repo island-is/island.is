@@ -622,6 +622,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:signup-to-driving-school',
     defaultMessage: 'Skrá mig í ökunám',
   },
+  seeInfo: {
+    id: 'sp.vehicles:see-info',
+    defaultMessage: 'Skoða nánar',
+  },
 })
 
 export const urls = defineMessages({
