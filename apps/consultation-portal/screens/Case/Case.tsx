@@ -1,17 +1,11 @@
 import {
   Box,
   Breadcrumbs,
-  Bullet,
-  BulletList,
-  Button,
   Divider,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
-  Icon,
-  Inline,
   LinkV2,
   Stack,
   Text,
@@ -20,14 +14,15 @@ import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
-import Link from 'next/link'
-import { useFetchAdvicesById, useLogIn } from '../../utils/helpers'
-import { useContext, useState } from 'react'
+import { useFetchAdvicesById } from '../../utils/helpers'
+import { useContext } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'
 import { Case } from '../../types/interfaces'
 import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
 import env from '../../lib/environment'
+import StakeholdersCard from './components/Stakeholders'
+import { AdviceCTACard } from './components/AdviceCTA'
 
 interface Props {
   chosenCase: Case
@@ -37,8 +32,6 @@ interface Props {
 const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const { contactEmail, contactName } = chosenCase
   const { isAuthenticated, user } = useContext(UserContext)
-  const [showStakeholders, setShowStakeholders] = useState(false)
-  const LogIn = useLogIn()
 
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
@@ -147,98 +140,8 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              <SimpleCardSkeleton>
-                {chosenCase.statusName === 'Til umsagnar' ? (
-                  <>
-                    <StackedTitleAndDescription
-                      headingColor="blue400"
-                      title="Viltu senda umsögn?"
-                    >
-                      <Text>
-                        Öllum er frjálst að taka þátt í samráðinu.
-                        {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
-                      </Text>
-                    </StackedTitleAndDescription>
-                    <Box paddingTop={2}>
-                      {isAuthenticated ? (
-                        <Link href="#write-review" shallow>
-                          <Button fluid iconType="outline" nowrap as="a">
-                            Senda umsögn
-                          </Button>
-                        </Link>
-                      ) : (
-                        <Button fluid iconType="outline" nowrap onClick={LogIn}>
-                          Skrá mig inn
-                        </Button>
-                      )}
-                    </Box>
-                  </>
-                ) : chosenCase.statusName === 'Niðurstöður í vinnslu' ? (
-                  <StackedTitleAndDescription
-                    headingColor="blue400"
-                    title="Niðurstöður í vinnslu"
-                  >
-                    <Text>
-                      Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum
-                      og þær bárust.
-                    </Text>
-                  </StackedTitleAndDescription>
-                ) : (
-                  <StackedTitleAndDescription
-                    headingColor="blue400"
-                    title="Lokið"
-                  >
-                    <Text>
-                      Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum
-                      og þær bárust. Niðurstöður samráðsins hafa verið birtar og
-                      málinu lokið.
-                    </Text>
-                  </StackedTitleAndDescription>
-                )}
-              </SimpleCardSkeleton>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Aðilar sem hafa fengið boð um þáttöku."
-                >
-                  <Text>
-                    Öllum er frjálst að taka þátt í samráðsgátt en eftirtöldum
-                    hefur verið boðið að senda inn umsögn:
-                  </Text>
-                  {chosenCase?.stakeholders.length < 1 ? (
-                    <Text>Enginn listi skráður.</Text>
-                  ) : (
-                    <Inline justifyContent="spaceBetween" alignY="center">
-                      <Text>
-                        Samtals: {chosenCase?.stakeholders?.length}{' '}
-                        {chosenCase?.stakeholders?.length === 1
-                          ? 'aðili'
-                          : 'aðilar'}
-                      </Text>
-                      <FocusableBox
-                        component="button"
-                        onClick={() => setShowStakeholders(!showStakeholders)}
-                      >
-                        <Icon
-                          icon={showStakeholders ? 'close' : 'add'}
-                          type="outline"
-                          size="small"
-                          color="blue400"
-                        />
-                      </FocusableBox>
-                    </Inline>
-                  )}
-                  {showStakeholders && (
-                    <Box padding="smallGutter">
-                      <BulletList type="ul">
-                        {chosenCase?.stakeholders.map((stakeholder, index) => {
-                          return <Bullet key={index}>{stakeholder.name}</Bullet>
-                        })}
-                      </BulletList>
-                    </Box>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
+              <AdviceCTACard chosenCase={chosenCase} />
+              <StakeholdersCard chosenCase={chosenCase} />
 
               <SimpleCardSkeleton>
                 <StackedTitleAndDescription

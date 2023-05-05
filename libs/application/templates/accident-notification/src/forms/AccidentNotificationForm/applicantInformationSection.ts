@@ -6,5 +6,5 @@ import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 export const applicantInformationSection = buildSection({
   id: 'informationAboutApplicantSection',
   title: applicantInformation.general.title,
-  children: [applicantInformationMultiField],
+  children: [applicantInformationMultiField()],
 })
