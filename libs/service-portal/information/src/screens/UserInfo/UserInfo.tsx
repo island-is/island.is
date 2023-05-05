@@ -15,18 +15,18 @@ import {
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
-import {
-  natRegGenderMessageDescriptorRecord,
-  natRegMaritalStatusMessageDescriptorRecord,
-} from '../../helpers/localizationHelpers'
+import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { spmm } from '../../lib/messages'
 import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
-import { formatNameBreaks } from '../../helpers/formatting'
+import {
+  formatNameBreaks,
+  formatResidenceString,
+} from '../../helpers/formatting'
 import {
   FeatureFlagClient,
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
+import { useNationalRegistryUserV3Query } from './UserInfo.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -43,10 +43,12 @@ const SubjectInfo = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [showTooltip, setShowTooltip] = useState(false)
-  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
+
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const { nationalRegistryUser } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)
+
+  const { data, loading, error } = useNationalRegistryUserV3Query()
+  const { nationalRegistryUserV3: nationalRegistryUser } = data || {}
 
   // User's Family members
   const { data: famData, loading: familyLoading } = useQuery<Query>(
@@ -80,7 +82,7 @@ const SubjectInfo = () => {
           title={formatMessage(m.myRegistration)}
           label={m.fullName}
           loading={loading}
-          content={nationalRegistryUser?.fullName}
+          content={nationalRegistryUser?.fullName ?? ''}
           tooltip={
             showTooltip
               ? formatNameBreaks(nationalRegistryUser ?? undefined, {
@@ -110,7 +112,9 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.legalResidence || ''
+              : formatResidenceString(
+                  nationalRegistryUser?.address ?? undefined,
+                )
           }
           loading={loading}
           editLink={{
@@ -128,7 +132,7 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.birthPlace || ''
+              : nationalRegistryUser?.birthplace?.location || ''
           }
           loading={loading}
         />
@@ -138,7 +142,7 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.familyNr || ''
+              : nationalRegistryUser?.familyRegistrationCode || ''
           }
           loading={loading}
           tooltip={formatMessage({
@@ -155,12 +159,8 @@ const SubjectInfo = () => {
               content={
                 error
                   ? formatMessage(dataNotFoundMessage)
-                  : nationalRegistryUser?.maritalStatus
-                  ? formatMessage(
-                      natRegMaritalStatusMessageDescriptorRecord[
-                        nationalRegistryUser?.maritalStatus
-                      ],
-                    )
+                  : nationalRegistryUser?.spouse?.maritalStatus
+                  ? formatMessage(nationalRegistryUser?.spouse?.maritalStatus)
                   : ''
               }
               loading={loading}
@@ -174,7 +174,7 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.religion || ''
+              : nationalRegistryUser?.religion?.name || ''
           }
           loading={loading}
           editLink={{
@@ -190,7 +190,7 @@ const SubjectInfo = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : nationalRegistryUser?.banMarking?.banMarked
+              : nationalRegistryUser?.banMarking
               ? formatMessage({
                   id: 'sp.family:yes',
                   defaultMessage: 'Já',
@@ -219,11 +219,7 @@ const SubjectInfo = () => {
             error
               ? formatMessage(dataNotFoundMessage)
               : nationalRegistryUser?.gender
-              ? formatMessage(
-                  natRegGenderMessageDescriptorRecord[
-                    nationalRegistryUser.gender
-                  ],
-                )
+              ? formatMessage(nationalRegistryUser.gender)
               : ''
           }
           loading={loading}

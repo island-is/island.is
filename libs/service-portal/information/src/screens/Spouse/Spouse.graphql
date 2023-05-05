@@ -1,0 +1,9 @@
+query NationalRegistrySpouseV3 {
+  nationalRegistryUserV3 {
+    spouse {
+      nationalId
+      maritalStatus
+      fullName
+    }
+  }
+}

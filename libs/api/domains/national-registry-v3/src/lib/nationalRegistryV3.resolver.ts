@@ -26,6 +26,8 @@ import { NationalRegistryV3Address } from './graphql/models/nationalRegistryAddr
 import { NationalRegistryV3Birthplace } from './graphql/models/nationalRegistryBirthplace.model'
 import { NationalRegistryV3Residence } from './graphql/models/nationalRegistryResidence.model'
 import { NationalRegistryV3Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
+import { NationalRegistryV3Name } from './graphql/models/nationalRegistryName.model'
+import { NationalRegistryV3Religion } from './graphql/models/nationalRegistryReligion.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -126,5 +128,23 @@ export class NationalRegistryV3Resolver {
     @Parent() person: NationalRegistryV3Person,
   ): Promise<NationalRegistryV3Address | null> {
     return this.nationalRegistryV3Service.getAddress(person.nationalId)
+  }
+
+  @ResolveField('name', () => NationalRegistryV3Name, { nullable: true })
+  @Audit()
+  async resolveName(
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<NationalRegistryV3Name | null> {
+    return this.nationalRegistryV3Service.getName(person.nationalId)
+  }
+
+  @ResolveField('religion', () => NationalRegistryV3Religion, {
+    nullable: true,
+  })
+  @Audit()
+  async resolveReligion(
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<NationalRegistryV3Religion | null> {
+    return this.nationalRegistryV3Service.getReligion(person.nationalId)
   }
 }

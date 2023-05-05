@@ -5,8 +5,11 @@ export class NationalRegistryV3Spouse {
   nationalId?: string | null
 
   @Field(() => String, { nullable: true })
+  fullName?: string | null
+
+  @Field(() => String, { nullable: true })
   maritalStatus?: string | null
 
   @Field(() => String, { nullable: true })
-  name?: string | null
+  cohabitation?: string | null
 }

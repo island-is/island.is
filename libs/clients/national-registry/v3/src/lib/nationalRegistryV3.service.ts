@@ -1,22 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import {
-  EinstaklingarApi,
-  EinstaklingurDTOAllt,
-  GerviEinstaklingarApi,
-} from '../../gen/fetch'
+import { EinstaklingarApi, EinstaklingurDTOAllt } from '../../gen/fetch'
 
 @Injectable()
 export class NationalRegistryV3ClientService {
-  constructor(
-    private individualApi: EinstaklingarApi,
-    private fakeApi: GerviEinstaklingarApi,
-  ) {}
+  constructor(private individualApi: EinstaklingarApi) {}
 
   async getData(nationalId: string): Promise<EinstaklingurDTOAllt> {
-    return this.individualApi.midlunEinstaklingarNationalIdGet({ nationalId })
-  }
-
-  getGerviData(nationalId: string): Promise<EinstaklingurDTOAllt> {
-    return this.fakeApi.midlunGerviEinstaklingarNationalIdGet({ nationalId })
+    return this.individualApi.midlunV02EinstaklingarNationalIdGet({
+      nationalId,
+    })
   }
 }

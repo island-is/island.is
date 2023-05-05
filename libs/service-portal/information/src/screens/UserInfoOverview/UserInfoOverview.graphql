@@ -1,0 +1,12 @@
+query NationalRegistryUserInfoOverviewV3 {
+  nationalRegistryUserV3 {
+    spouse {
+      nationalId
+      fullName
+    }
+    children {
+      nationalId
+      fullName
+    }
+  }
+}

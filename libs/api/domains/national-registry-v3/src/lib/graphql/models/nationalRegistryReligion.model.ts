@@ -4,7 +4,4 @@ import { Field, ObjectType } from '@nestjs/graphql'
 export class NationalRegistryV3Religion {
   @Field(() => String, { nullable: true })
   name?: string | null
-
-  @Field(() => String, { nullable: true })
-  code?: string | null
 }

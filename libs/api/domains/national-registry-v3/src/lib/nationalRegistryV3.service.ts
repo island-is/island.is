@@ -12,6 +12,8 @@ import { Inject } from '@nestjs/common'
 import { NationalRegistryV3Address } from './graphql/models/nationalRegistryAddress.model'
 import { NationalRegistryV3Birthplace } from './graphql/models/nationalRegistryBirthplace.model'
 import { NationalRegistryV3Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
+import { NationalRegistryV3Name } from './graphql/models/nationalRegistryName.model'
+import { NationalRegistryV3Religion } from './graphql/models/nationalRegistryReligion.model'
 
 type ExcludesFalse = <T>(x: T | null | undefined | '') => x is T
 
@@ -34,7 +36,9 @@ export class NationalRegistryV3Service {
       data && {
         nationalId: data.kennitala,
         fullName: data.nafn,
-        genderCode: data.pakkiD?.kynKodi,
+        gender: data.kyn?.kynTexti,
+        familyRegistrationCode: data.itarupplysingar?.logheimilistengsl,
+        banMarking: data.bannmerking === 'true',
       }
     )
   }
@@ -69,11 +73,11 @@ export class NationalRegistryV3Service {
   ): Promise<ChildGuardianship | null> {
     const data = await this.fetchData(user.nationalId)
 
-    if (!data.pakkiF?.born) {
+    if (!data.forsja?.born) {
       return null
     }
 
-    const childrenNationalIds = data.pakkiF.born.map((b) => b.barnKennitala)
+    const childrenNationalIds = data.forsja.born.map((b) => b.barnKennitala)
 
     const isChildOfUser = childrenNationalIds.some(
       (childId) => childId === childNationalId,
@@ -85,9 +89,9 @@ export class NationalRegistryV3Service {
 
     const childData = await this.fetchData(childNationalId)
 
-    const legalDomicileParent = childData.pakkiL?.logForeldrar
-      ? childData.pakkiL?.logForeldrar
-          .map((l) => l.logForeldriKennitala)
+    const legalDomicileParent = childData.logforeldrar
+      ? childData.logforeldrar?.logForeldrar
+          ?.map((l) => l.logForeldriKennitala)
           .filter((Boolean as unknown) as ExcludesFalse)
       : []
 
@@ -103,10 +107,11 @@ export class NationalRegistryV3Service {
     const data = await this.fetchData(nationalId)
 
     return (
-      (data.pakkiC && {
-        nationalId: data.pakkiC.makiKennitala,
-        name: data.pakkiC.makiNafn,
-        maritalStatus: data.pakkiC.hjuskaparstadaKodi,
+      (data.hjuskaparstada && {
+        nationalId: data.hjuskaparstada.makiKennitala,
+        fullName: data.hjuskaparstada.makiNafn,
+        maritalStatus: data.hjuskaparstada.hjuskaparstadaTexti,
+        cohabitation: data.hjuskaparstada.sambudTexti,
       }) ??
       null
     )
@@ -118,9 +123,9 @@ export class NationalRegistryV3Service {
     const data = await this.fetchData(nationalId)
 
     return (
-      (data.pakkiE && {
-        name: data.pakkiE.rikisfangLand,
-        code: data.pakkiE.rikisfangKodi,
+      (data.rikisfang && {
+        name: data.rikisfang.rikisfangLand,
+        code: data.rikisfang.rikisfangKodi,
       }) ??
       null
     )
@@ -131,20 +136,20 @@ export class NationalRegistryV3Service {
   ): Promise<Array<NationalRegistryV3Person> | null> {
     const parentData = await this.fetchData(nationalId)
 
-    const children = parentData.pakkiF?.born?.length
-      ? parentData.pakkiF.born
+    const children = parentData.forsja?.born?.length
+      ? parentData.forsja.born
       : []
 
     const childDetails: Array<NationalRegistryV3Person | null> = await Promise.all(
       children.map(async (child) => {
-        if (!child.barnKennitala) {
+        if (!child.barnKennitala || !child.barnNafn) {
           return null
         }
 
         const childDetails = await this.fetchData(child.barnKennitala)
 
         const otherParents =
-          childDetails.pakkiF?.forsjaradilar?.filter(
+          childDetails.forsja?.forsjaradilar?.filter(
             (f) => f.forsjaAdiliKennitala !== nationalId,
           ) ?? []
 
@@ -158,20 +163,20 @@ export class NationalRegistryV3Service {
         )
 
         const livesWithApplicant =
-          childDetails.pakkiB?.logheimilistengsl ==
-          parentData.pakkiB?.logheimilistengsl
+          childDetails.itarupplysingar?.logheimilistengsl ==
+          parentData.itarupplysingar?.logheimilistengsl
 
         return {
+          ...this.extractPerson(childDetails),
           nationalId: child.barnKennitala,
           fullName: child.barnNafn,
-          genderCode: childDetails.pakkiD?.kynKodi,
           livesWithApplicant,
           livesWithBothParents:
             livesWithApplicant &&
             otherParentsDetails.every(
               (o) =>
-                o?.pakkiB?.logheimilistengsl ===
-                childDetails.pakkiB?.logheimilistengsl,
+                o?.itarupplysingar?.logheimilistengsl ===
+                childDetails.itarupplysingar?.logheimilistengsl,
             ),
           otherParent:
             otherParentsDetails.length && otherParentsDetails[0]
@@ -192,12 +197,38 @@ export class NationalRegistryV3Service {
     const data = await this.fetchData(nationalId)
 
     return (
-      (data.pakkiG && {
-        location: data.pakkiG.faedingarStadurHeiti,
-        municipalityCode: data.pakkiG.faedingarStadurKodi,
-        dateOfBirth: data.pakkiG.faedingarDagur
-          ? new Date(data.pakkiG.faedingarDagur)
+      (data.faedingarstadur && {
+        location: data.faedingarstadur.faedingarStadurHeiti,
+        municipalityCode: data.faedingarstadur.faedingarStadurKodi,
+        dateOfBirth: data.faedingarstadur.faedingarDagur
+          ? new Date(data.faedingarstadur.faedingarDagur)
           : undefined,
+      }) ??
+      null
+    )
+  }
+
+  async getName(nationalId: string): Promise<NationalRegistryV3Name | null> {
+    const data = await this.fetchData(nationalId)
+
+    return (
+      (data.fulltNafn && {
+        givenName: data.fulltNafn.eiginNafn,
+        middleName: data.fulltNafn.milliNafn,
+        lastName: data.fulltNafn.kenniNafn,
+      }) ??
+      null
+    )
+  }
+
+  async getReligion(
+    nationalId: string,
+  ): Promise<NationalRegistryV3Religion | null> {
+    const data = await this.fetchData(nationalId)
+
+    return (
+      (data.trufelag && {
+        name: data.trufelag.trufelagHeiti,
       }) ??
       null
     )

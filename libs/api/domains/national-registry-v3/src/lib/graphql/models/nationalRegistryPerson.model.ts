@@ -4,6 +4,8 @@ import { NationalRegistryV3Birthplace } from './nationalRegistryBirthplace.model
 import { NationalRegistryV3Residence } from './nationalRegistryResidence.model'
 import { NationalRegistryV3Spouse } from './nationalRegistrySpouse.model'
 import { NationalRegistryV3Citizenship } from './nationalRegistryCitizenship.model'
+import { NationalRegistryV3Name } from './nationalRegistryName.model'
+import { NationalRegistryV3Religion } from './nationalRegistryReligion.model'
 
 @ObjectType()
 export class NationalRegistryV3Person {
@@ -13,8 +15,17 @@ export class NationalRegistryV3Person {
   @Field(() => String, { nullable: true })
   fullName?: string | null
 
+  @Field(() => NationalRegistryV3Name, { nullable: true })
+  name?: NationalRegistryV3Name | null
+
   @Field(() => String, { nullable: true })
-  genderCode?: string | null
+  gender?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  banMarking?: boolean | null
+
+  @Field(() => String)
+  familyRegistrationCode?: string | null
 
   @Field(() => NationalRegistryV3Address, { nullable: true })
   address?: NationalRegistryV3Address | null
@@ -42,4 +53,7 @@ export class NationalRegistryV3Person {
 
   @Field(() => NationalRegistryV3Citizenship, { nullable: true })
   citizenship?: NationalRegistryV3Citizenship | null
+
+  @Field(() => NationalRegistryV3Religion, { nullable: true })
+  religion?: NationalRegistryV3Religion | null
 }
