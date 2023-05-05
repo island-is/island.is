@@ -24,7 +24,7 @@ type GivenWhenThen = (
   res: Response,
 ) => Promise<Then>
 
-describe('CaseController - Get case files pdf', () => {
+describe('CaseController - Get case files record pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -39,7 +39,7 @@ describe('CaseController - Get case files pdf', () => {
       const then = {} as Then
 
       try {
-        await caseController.getCaseFilesPdf(
+        await caseController.getCaseFilesRecordPdf(
           caseId,
           policeCaseNumber,
           theCase,

@@ -298,10 +298,10 @@ export class CaseService {
       })
   }
 
-  private async throttleGetCaseFilesPdf(
+  private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
-  ) {
+  ): Promise<Buffer> {
     // Serialize all case files pdf generations in this process
     await this.throttle.catch((reason) => {
       this.logger.info('Previous case files pdf generation failed', { reason })
@@ -992,11 +992,38 @@ export class CaseService {
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }
 
-  async getCaseFilesPdf(
+  async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
-    this.throttle = this.throttleGetCaseFilesPdf(theCase, policeCaseNumber)
+    if (
+      ![CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED].includes(
+        theCase.state,
+      )
+    ) {
+      if (completedCaseStates.includes(theCase.state)) {
+        try {
+          return await this.awsS3Service.getObject(
+            `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+          )
+        } catch {
+          // Ignore the error and try the original key
+        }
+      }
+
+      try {
+        return await this.awsS3Service.getObject(
+          `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        )
+      } catch {
+        // Ignore the error and generate the pdf
+      }
+    }
+
+    this.throttle = this.throttleGetCaseFilesRecordPdf(
+      theCase,
+      policeCaseNumber,
+    )
 
     return this.throttle
   }

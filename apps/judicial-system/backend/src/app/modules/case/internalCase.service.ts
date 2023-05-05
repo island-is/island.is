@@ -20,6 +20,7 @@ import {
   CaseFileCategory,
   CaseOrigin,
   CaseState,
+  completedCaseStates,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -273,6 +274,24 @@ export class InternalCaseService {
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
+    if (completedCaseStates.includes(theCase.state)) {
+      try {
+        return await this.awsS3Service.getObject(
+          `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        )
+      } catch {
+        // Ignore the error and try the original key
+      }
+    }
+
+    try {
+      return await this.awsS3Service.getObject(
+        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+    } catch {
+      // Ignore the error and generate the pdf
+    }
+
     await this.refreshFormatMessage()
 
     const caseFiles = theCase.caseFiles
@@ -310,12 +329,28 @@ export class InternalCaseService {
         }
       })
 
-    return createCaseFilesRecord(
+    const pdf = await createCaseFilesRecord(
       theCase,
       policeCaseNumber,
       caseFiles ?? [],
       this.formatMessage,
     )
+
+    await this.awsS3Service
+      .putObject(
+        `indictments/${
+          completedCaseStates.includes(theCase.state) ? 'completed/' : ''
+        }${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        pdf.toString(),
+      )
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload case files record pdf to AWS S3 for case ${theCase.id} and police case ${policeCaseNumber}`,
+          { reason },
+        )
+      })
+
+    return pdf
   }
 
   private async throttleUploadCaseFilesRecordPdfToCourt(
