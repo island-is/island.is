@@ -43,13 +43,13 @@ export function getTimeLineDate({ Case }: Props) {
   }
 }
 export function getStatusEndDate(status: string, Case: Case) {
+  const date = new Date(Case.processEnds)
+  date.setDate(date.getDate() + 1)
   switch (status) {
     case 'Til umsagnar':
       return getDateBeginDateEnd(Case.processBegins, Case.processEnds)
     case 'Niðurstöður í vinnslu':
-      return Case.statusName != 'Til umsagnar'
-        ? `frá ${getShortDate(Case.processEnds)}`
-        : ''
+      return Case.statusName != 'Til umsagnar' ? `${getShortDate(date)}` : ''
     case 'Niðurstöður birtar':
       return getShortDate(Case.summaryDate)
   }
