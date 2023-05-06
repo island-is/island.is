@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleProvider } from '@island.is/localization'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
-import { CurrentUserQueryDocument } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CurrentUserDocument } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UserProvider,
   Header,
@@ -11,7 +11,7 @@ import {
 
 const mockJudgeQuery = {
   request: {
-    query: CurrentUserQueryDocument,
+    query: CurrentUserDocument,
   },
   result: {
     data: {
