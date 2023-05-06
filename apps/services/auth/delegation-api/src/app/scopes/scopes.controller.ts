@@ -16,14 +16,14 @@ const namespace = '@island.is/auth/delegation-api/scopes'
 @ApiSecurity('ias')
 @ApiTags('scopes')
 @Controller({
-  path: 'scopes/scope-tree',
+  path: 'scopes',
   version: ['1'],
 })
 @Audit({ namespace })
 export class ScopesController {
   constructor(private readonly scopeService: ScopeService) {}
 
-  @Get()
+  @Get('scope-tree')
   @Documentation({
     description: 'Returns a sorted scope tree for the requested scopes.',
     request: {
