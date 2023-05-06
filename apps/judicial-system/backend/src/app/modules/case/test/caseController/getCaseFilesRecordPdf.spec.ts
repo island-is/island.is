@@ -3,7 +3,7 @@ import { Response } from 'express'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { CaseFileCategory, CaseState } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../../test'
 import { createCaseFilesRecord } from '../../../../formatters'
@@ -26,6 +26,29 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Get case files record pdf', () => {
+  const caseId = uuid()
+  const policeCaseNumber = uuid()
+  const caseFiles = [
+    {
+      policeCaseNumber,
+      category: CaseFileCategory.CASE_FILE,
+      type: 'application/pdf',
+      key: uuid(),
+      chapter: 0,
+      orderWithinChapter: 0,
+      displayDate: randomDate(),
+      userGeneratedFilename: uuid(),
+    },
+  ] as CaseFile[]
+  const theCase = {
+    id: caseId,
+    state: CaseState.ACCEPTED,
+    policeCaseNumbers: [uuid(), policeCaseNumber, uuid()],
+    caseFiles,
+  } as Case
+  const pdf = uuid()
+  const res = ({ end: jest.fn() } as unknown) as Response
+
   let mockawsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
 
@@ -60,33 +83,25 @@ describe('CaseController - Get case files record pdf', () => {
   })
 
   describe('pdf generated', () => {
-    const caseId = uuid()
-    const policeCaseNumber = uuid()
-    const caseFiles = [
-      {
-        policeCaseNumber,
-        category: CaseFileCategory.CASE_FILE,
-        type: 'application/pdf',
-        key: uuid(),
-        chapter: 0,
-        orderWithinChapter: 0,
-        displayDate: randomDate(),
-        userGeneratedFilename: uuid(),
-      },
-    ] as CaseFile[]
-    const theCase = {
-      id: caseId,
-      policeCaseNumbers: [uuid(), policeCaseNumber, uuid()],
-      caseFiles,
-    } as Case
-    const pdf = uuid()
-    const res = ({ end: jest.fn() } as unknown) as Response
-
     beforeEach(async () => {
       const getMock = createCaseFilesRecord as jest.Mock
       getMock.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, policeCaseNumber, theCase, res)
+    })
+
+    it('should try to get the pdf from AWS S3 indictment completed folder', () => {
+      expect(mockawsS3Service.getObject).toHaveBeenNthCalledWith(
+        1,
+        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+    })
+
+    it('should try to get the pdf from AWS S3 indictment folder', () => {
+      expect(mockawsS3Service.getObject).toHaveBeenNthCalledWith(
+        2,
+        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
     })
 
     it('should generate pdf', () => {
@@ -103,14 +118,35 @@ describe('CaseController - Get case files record pdf', () => {
     })
   })
 
+  describe('pdf returned from AWS S3 indictment completed folder', () => {
+    beforeEach(async () => {
+      const mockGetObject = mockawsS3Service.getObject as jest.Mock
+      mockGetObject.mockReturnValueOnce(pdf)
+
+      await givenWhenThen(caseId, policeCaseNumber, theCase, res)
+    })
+
+    it('should return pdf', () => {
+      expect(res.end).toHaveBeenCalledWith(pdf)
+    })
+  })
+
+  describe('pdf returned from AWS S3 indictment folder', () => {
+    beforeEach(async () => {
+      const mockGetObject = mockawsS3Service.getObject as jest.Mock
+      mockGetObject.mockRejectedValueOnce(new Error('Some error'))
+      mockGetObject.mockReturnValueOnce(pdf)
+
+      await givenWhenThen(caseId, policeCaseNumber, theCase, res)
+    })
+
+    it('should return pdf', () => {
+      expect(res.end).toHaveBeenCalledWith(pdf)
+    })
+  })
+
   describe('police case number not included in case', () => {
-    const caseId = uuid()
     const policeCaseNumber = uuid()
-    const theCase = {
-      id: caseId,
-      policeCaseNumbers: [uuid(), uuid(), uuid()],
-    } as Case
-    const res = {} as Response
     let then: Then
 
     beforeEach(async () => {
