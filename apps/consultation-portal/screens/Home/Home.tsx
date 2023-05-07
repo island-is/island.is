@@ -7,11 +7,7 @@ import {
   Text,
   Stack,
   LoadingDots,
-  Filter as IslandUIFilter,
-  FilterInput,
-  FilterMultiChoice,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
 import { HeroBanner } from '../../components'
 import Card from '../../components/Card/Card'
 import Layout from '../../components/Layout/Layout'
@@ -27,7 +23,10 @@ import Filter from '../../components/Filter/Filter'
 import { useFrontPageFilters, useIsMobile } from '../../utils/helpers'
 import Pagination from '../../components/Pagination/Pagination'
 import MobileFilter from '../../components/Filter/MobileFilter'
-import { CARDS_PER_PAGE } from '../../utils/consts/consts'
+import {
+  CARDS_PER_PAGE,
+  FILTERS_FRONT_PAGE_KEY,
+} from '../../utils/consts/consts'
 
 interface HomeProps {
   types: ArrOfTypes
@@ -51,8 +50,6 @@ export const Home = ({ types, statistics }: HomeProps) => {
   } = useFrontPageFilters({
     types: types,
   })
-
-  console.log("filters", filters)
 
   const renderCards = () => {
     if (getCasesLoading) {
@@ -114,6 +111,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
           filters={filters}
           setFilters={(arr: CaseFilter) => setFilters(arr)}
           totalPages={Math.ceil(total / CARDS_PER_PAGE)}
+          localStorageId={FILTERS_FRONT_PAGE_KEY}
         />
       </>
     )

@@ -2,20 +2,28 @@ import {
   Box,
   Pagination as PaginationComponent,
 } from '@island.is/island-ui/core'
-import { CaseFilter } from '../../types/interfaces'
+import { AdviceFilter, CaseFilter } from '../../types/interfaces'
+import { setItem } from '../../utils/helpers/localStorage'
 
 interface Props {
-  filters: CaseFilter
-  setFilters: (arr: CaseFilter) => void
+  filters: CaseFilter | AdviceFilter
+  setFilters: (arr: CaseFilter | AdviceFilter) => void
   totalPages: number
+  localStorageId: string
 }
 
-const Pagination = ({ filters, setFilters, totalPages }: Props) => {
+const Pagination = ({
+  filters,
+  setFilters,
+  totalPages,
+  localStorageId,
+}: Props) => {
   const { pageNumber } = filters
 
   const goToPage = (pageNumber = 0, scrollTop = true) => {
     const filtersCopy = { ...filters }
     filtersCopy.pageNumber = pageNumber
+    setItem({ key: localStorageId, value: filtersCopy })
     setFilters(filtersCopy)
     if (scrollTop) {
       window.scrollTo(0, 0)

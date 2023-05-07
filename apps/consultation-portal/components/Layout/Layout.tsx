@@ -24,15 +24,16 @@ export const Layout: FC<LayoutProps> = ({
       display="flex"
       className={styles.processContainer}
     >
-      <SEO title={seo.title} url={seo.url} image={seo.image} />
       <Box>
+        <SEO title={seo.title} url={seo.url} image={seo.image} />
         <Menu isFrontPage={isFrontPage} />
         <Divider />
+        <ToastContainer />
+        {children}
       </Box>
-      <ToastContainer />
-
-      {children}
-      <Footer />
+      <Box>
+        <Footer />
+      </Box>
     </Box>
   )
 }

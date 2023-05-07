@@ -7,6 +7,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
+import { FILTERS_FRONT_PAGE_KEY } from '@island.is/consultation-portal/utils/consts/consts'
 
 interface SearchAndFilterProps {
   PolicyAreas: Array<ArrOfValueAndLabel>
@@ -47,6 +48,7 @@ const SearchAndFilter = ({
               filters={filters}
               setFilters={setFilters}
               name="front_page_search"
+              localStorageId={FILTERS_FRONT_PAGE_KEY}
             />
           </GridColumn>
           <GridColumn span={['2/12', '2/12', '3/12', '3/12', '3/12']}>
