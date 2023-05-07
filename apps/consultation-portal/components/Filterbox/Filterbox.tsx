@@ -1,3 +1,4 @@
+import { setItem } from '../../utils/helpers/localStorage'
 import { CaseFilter, FilterInputItem } from '../../types/interfaces'
 import {
   Box,
@@ -7,6 +8,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
 
 interface FilterBoxProps {
   title: string
@@ -29,31 +31,34 @@ const FilterBox = ({
     const filtersCopy = { ...filters }
     const updatedInstance = { ...thisFilters, isOpen: !thisFilters.isOpen }
     filtersCopy[type] = updatedInstance
+    setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
     setFilters(filtersCopy)
   }
 
-  const onChangeCheckbox = (value: number) => {
+  const onChangeCheckbox = (value: string) => {
     const filtersCopy = { ...filters }
     const index = filtersCopy[type].items.findIndex((x) => x.value === value)
     const instance = filtersCopy[type].items[index]
     instance.checked = !instance.checked
     filtersCopy[type].items[index] = instance
     filtersCopy.pageNumber = 0
+    setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
     setFilters(filtersCopy)
   }
 
-  const onChangeRadio = (value: number) => {
+  const onChangeRadio = (value: string) => {
     const filtersCopy = { ...filters }
     const prevIndex = filtersCopy[type].items.findIndex(
       (x) => x.checked === true,
     )
-    const thisIndex = filtersCopy[type].items.findIndex(
+    const nextIndex = filtersCopy[type].items.findIndex(
       (x) => x.value === value,
     )
-    if (prevIndex !== thisIndex) {
-      filtersCopy[type].items[prevIndex].checked = false
-      filtersCopy[type].items[thisIndex].checked = true
+    if (prevIndex !== nextIndex) {
+      filtersCopy.sorting.items[prevIndex].checked = false
+      filtersCopy.sorting.items[nextIndex].checked = true
       filtersCopy.pageNumber = 0
+      setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
       setFilters(filtersCopy)
     }
   }
@@ -61,13 +66,14 @@ const FilterBox = ({
   const onClear = () => {
     const filtersCopy = { ...filters }
     if (type === 'sorting') {
-      onChangeRadio(0)
+      onChangeRadio('0')
     } else {
       filtersCopy[type].items.map((item: FilterInputItem) => {
         item.checked = false
       })
     }
     filtersCopy.pageNumber = 0
+    setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
     setFilters(filtersCopy)
   }
 
@@ -76,7 +82,10 @@ const FilterBox = ({
     return `${item.label}${renderCount}`
   }
 
-  const checkedItems = thisFilters.items.filter((item) => item.checked)
+  const checkedItems = thisFilters.items.filter(
+    (item: FilterInputItem) => item.checked,
+  )
+
   const clearCategoryCheck = (thisFilters) => {
     if (type === 'sorting') {
       if (!thisFilters?.items[0].checked) {
@@ -110,18 +119,18 @@ const FilterBox = ({
         </Inline>
         {thisFilters?.isOpen && (
           <>
-            {thisFilters?.items.map((item, index) =>
+            {thisFilters?.items.map((item: FilterInputItem, index: number) =>
               type === 'sorting' ? (
                 <Checkbox
                   key={index}
-                  checked={item?.checked}
+                  checked={item.checked}
                   label={item?.label}
                   onChange={() => onChangeRadio(item?.value)}
                 />
               ) : (
                 <Checkbox
                   key={index}
-                  checked={item?.checked}
+                  checked={item.checked}
                   label={renderLabel(item)}
                   onChange={() => onChangeCheckbox(item?.value)}
                 />

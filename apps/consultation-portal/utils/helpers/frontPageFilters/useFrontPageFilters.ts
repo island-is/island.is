@@ -11,7 +11,7 @@ import useFetchCases from '../useFetchCases'
 import mapListToValueCountObject from './mapObjectToValueCountObject'
 import isObjectEmpty from '../isObjectEmpty'
 import getFilteredItemsOrAll from './getFilteredItemsOrAll'
-import { setItem } from '../localStorage'
+import { getItem, setItem } from '../localStorage'
 import { FILTERS_FRONT_PAGE_KEY } from '../../consts/consts'
 import { getInitialFilters } from './getInitialFilters'
 
@@ -55,6 +55,7 @@ export const useFrontPageFilters = ({ types }: Props) => {
     items: [...filters?.caseTypes?.items],
     defaultItems: initialValues?.caseTypes?.items,
   })
+  
   const input = {
     caseStatuses: _caseStatuses,
     caseTypes: _caseTypes,

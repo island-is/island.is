@@ -52,6 +52,8 @@ export const Home = ({ types, statistics }: HomeProps) => {
     types: types,
   })
 
+  console.log("filters", filters)
+
   const renderCards = () => {
     if (getCasesLoading) {
       return (

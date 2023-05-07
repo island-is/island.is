@@ -1,5 +1,4 @@
-//https://www.developerway.com/posts/debouncing-in-react
-import { useDebounce } from '@island.is/consultation-portal/utils/helpers'
+import { useDebounce } from '../../utils/helpers'
 import { Input } from '@island.is/island-ui/core'
 import { BaseSyntheticEvent, useState } from 'react'
 
