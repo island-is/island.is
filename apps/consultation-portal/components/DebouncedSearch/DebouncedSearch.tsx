@@ -13,6 +13,7 @@ interface Props {
   localStorageId?: string
   label?: string
   isSubscriptions?: boolean
+  isDisabled?: boolean
 }
 
 export const DebouncedSearch = ({
@@ -24,6 +25,7 @@ export const DebouncedSearch = ({
   localStorageId,
   label = 'Leit',
   isSubscriptions,
+  isDisabled,
 }: Props) => {
   const [value, setValue] = useState(
     isSubscriptions ? searchValue : filters?.searchQuery,
@@ -59,6 +61,7 @@ export const DebouncedSearch = ({
       }
       value={value}
       onChange={onChange}
+      disabled={isDisabled}
     />
   )
 }
