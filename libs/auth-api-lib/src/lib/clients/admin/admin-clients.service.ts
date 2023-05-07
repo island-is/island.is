@@ -10,6 +10,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
+import { validateClientId } from '@island.is/auth/shared'
 
 import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
@@ -134,8 +135,12 @@ export class AdminClientsService {
       throw new NoContentException()
     }
 
-    // validate that client id starts with the tenant id
-    if (!clientDto.clientId.startsWith(`${tenantId}/`)) {
+    if (
+      !validateClientId({
+        prefix: tenantId,
+        value: clientDto.clientId,
+      })
+    ) {
       throw new BadRequestException('Invalid client id')
     }
 
@@ -675,14 +680,6 @@ export class AdminClientsService {
         transaction,
         ignoreDuplicates: true,
       })
-    }
-  }
-
-  mapApiScopesToDto({ name, description, displayName }: ApiScope) {
-    return {
-      name,
-      description,
-      displayName,
     }
   }
 
