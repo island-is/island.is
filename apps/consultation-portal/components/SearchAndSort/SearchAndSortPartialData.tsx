@@ -6,7 +6,7 @@ import { Area, SortOptionsAdvices } from '../../types/enums'
 import { useIsMobile } from '../../utils/helpers'
 import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
 import cn from 'classnames'
-import * as styles from './SearchAndSortPartialData.css'
+import * as styles from './SearchAndSort.css'
 import { setItem } from '../../utils/helpers/localStorage'
 import { FILTERS_ADVICE_KEY } from '../../utils/consts/consts'
 
