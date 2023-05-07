@@ -7,7 +7,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
-import { FILTERS_FRONT_PAGE_KEY } from '@island.is/consultation-portal/utils/consts/consts'
+import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
 
 interface SearchAndFilterProps {
   PolicyAreas: Array<ArrOfValueAndLabel>

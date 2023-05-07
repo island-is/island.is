@@ -47,12 +47,12 @@ export const useFrontPageFilters = ({ types }: Props) => {
   })
 
   const _caseStatuses = getFilteredItemsOrAll({
-    items: [...filters?.caseStatuses?.items],
+    items: [...filters.caseStatuses.items],
     defaultItems: initialValues?.caseStatuses?.items,
   })
 
   const _caseTypes = getFilteredItemsOrAll({
-    items: [...filters?.caseTypes?.items],
+    items: [...filters.caseTypes.items],
     defaultItems: initialValues?.caseTypes?.items,
   })
 

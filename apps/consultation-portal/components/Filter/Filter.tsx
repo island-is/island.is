@@ -1,8 +1,8 @@
 import { CaseFilter } from '../../types/interfaces'
 import { Box, Button, DatePicker, Stack } from '@island.is/island-ui/core'
 import FilterBox from '../Filterbox/Filterbox'
-import { FILTERS_FRONT_PAGE_KEY } from '@island.is/consultation-portal/utils/consts/consts'
-import { getItem } from '@island.is/consultation-portal/utils/helpers/localStorage'
+import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
+import { getItem } from '../../utils/helpers/localStorage'
 
 interface FilterProps {
   filters: CaseFilter
@@ -25,7 +25,7 @@ export const Filter = ({
   }
 
   const handleClear = () => {
-    getItem({ key: FILTERS_FRONT_PAGE_KEY, clear: true})
+    getItem({ key: FILTERS_FRONT_PAGE_KEY, clear: true })
     setFilters(initialValues)
   }
 

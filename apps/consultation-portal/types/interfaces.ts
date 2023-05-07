@@ -1,9 +1,4 @@
-import {
-  CaseSortOptions,
-  CaseSubscriptionType,
-  SortOptions,
-  SubscriptionType,
-} from './enums'
+import { CaseSubscriptionType, SortOptions, SubscriptionType } from './enums'
 
 export interface Case {
   id?: number

@@ -9,7 +9,7 @@ interface Props {
 
 export const useFetchCases = ({ input }: Props) => {
   const client = initApollo()
-  const { data, loading, } = useQuery(HOME_GET_CASES, {
+  const { data, loading } = useQuery(HOME_GET_CASES, {
     client: client,
     ssr: false,
     fetchPolicy: 'network-only',

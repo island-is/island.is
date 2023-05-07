@@ -78,7 +78,7 @@ const FilterBox = ({
   }
 
   const renderLabel = (item) => {
-    const renderCount = item.count !== 0 ? ` (${item.count})` : ``
+    const renderCount = item?.count !== 0 ? ` (${item.count})` : ``
     return `${item.label}${renderCount}`
   }
 
@@ -119,7 +119,7 @@ const FilterBox = ({
         </Inline>
         {thisFilters?.isOpen && (
           <>
-            {thisFilters?.items.map((item: FilterInputItem, index: number) =>
+            {thisFilters?.items?.map((item: FilterInputItem, index: number) =>
               type === 'sorting' ? (
                 <Checkbox
                   key={index}
