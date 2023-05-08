@@ -292,8 +292,6 @@ export class InternalCaseService {
       // Ignore the error and generate the pdf
     }
 
-    await this.refreshFormatMessage()
-
     const caseFiles = theCase.caseFiles
       ?.filter(
         (caseFile) =>
@@ -362,6 +360,8 @@ export class InternalCaseService {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous case files pdf generation failed', { reason })
     })
+
+    await this.refreshFormatMessage()
 
     const pdfPromise = this.getCaseFilesRecordPdf(theCase, policeCaseNumber)
 
