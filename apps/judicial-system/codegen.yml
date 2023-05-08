@@ -44,6 +44,8 @@ generates:
       withComponent: false
       avoidOptionals:
         object: true
+      namingConvention:
+        enumValues: 'change-case-all#upperCase'
   ./apps/judicial-system/web/src/graphql/possibleTypes.json:
     schema:
       - ./apps/judicial-system/api.graphql
