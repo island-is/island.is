@@ -10,6 +10,7 @@ query NationalRegistryChildrenV3 {
       gender
       familyRegistrationCode
       banMarking
+      fate
       name {
         givenName
         middleName
@@ -31,6 +32,16 @@ query NationalRegistryChildrenV3 {
       }
       religion {
         name
+      }
+      parents {
+        fullName
+        nationalId
+      }
+      custodians {
+        fullName
+        nationalId
+        custodyText
+        livesWithChild
       }
     }
   }

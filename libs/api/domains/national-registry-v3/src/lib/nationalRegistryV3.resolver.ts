@@ -28,6 +28,7 @@ import { NationalRegistryV3Residence } from './graphql/models/nationalRegistryRe
 import { NationalRegistryV3Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
 import { NationalRegistryV3Name } from './graphql/models/nationalRegistryName.model'
 import { NationalRegistryV3Religion } from './graphql/models/nationalRegistryReligion.model'
+import { NationalRegistryV3Custodian } from './graphql/models/nationalRegistryCustodian.model'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.meDetails)
@@ -75,9 +76,35 @@ export class NationalRegistryV3Resolver {
     if (person.nationalId !== user.nationalId) {
       return null
     }
-    return this.nationalRegistryV3Service.getChildrenCustodyInformation(
-      user.nationalId,
-    )
+    return this.nationalRegistryV3Service.getChildren(user.nationalId)
+  }
+
+  @ResolveField('parents', () => [NationalRegistryV3Person], {
+    nullable: true,
+  })
+  @Audit()
+  async resolveParents(
+    @Context('req') { user }: { user: User },
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<Array<NationalRegistryV3Person> | null> {
+    if (person.nationalId !== user.nationalId) {
+      return null
+    }
+    return this.nationalRegistryV3Service.getParents(user.nationalId)
+  }
+
+  @ResolveField('custodians', () => [NationalRegistryV3Custodian], {
+    nullable: true,
+  })
+  @Audit()
+  async resolveCustodians(
+    @Context('req') { user }: { user: User },
+    @Parent() person: NationalRegistryV3Person,
+  ): Promise<Array<NationalRegistryV3Custodian> | null> {
+    if (person.nationalId !== user.nationalId) {
+      return null
+    }
+    return this.nationalRegistryV3Service.getCustodians(user.nationalId)
   }
 
   @ResolveField('residenceHistory', () => [NationalRegistryV3Residence], {

@@ -29,17 +29,7 @@ import {
 } from '@island.is/island-ui/core'
 import ChildRegistrationModal from './ChildRegistrationModal'
 import * as styles from './Child.css'
-
-const ChildGuardianshipQuery = gql`
-  query NationalRegistryChildrenGuardianshipQuery(
-    $input: NationalRegistryXRoadChildGuardianshipInput!
-  ) {
-    nationalRegistryUserV2ChildGuardianship(input: $input) {
-      legalDomicileParent
-      residenceParent
-    }
-  }
-`
+import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 
 type UseParams = {
   nationalId: string
@@ -70,14 +60,13 @@ const Child = () => {
       (x) => x.nationalId === nationalId,
     ) || null
 
+  const parent1 = person?.parents ? person.parents[0] : undefined
+  const parent2 = person?.parents ? person.parents[1] : undefined
+
+  const custodian1 = person?.custodians?.[0]
+  const custodian2 = person?.custodians?.[1]
+
   const isChild = nationalId === userInfo.profile.nationalId
-
-  const { data: guardianshipData } = useQuery<Query>(ChildGuardianshipQuery, {
-    variables: { input: { childNationalId: nationalId } },
-  })
-
-  const { nationalRegistryUserV2ChildGuardianship: guardianship } =
-    guardianshipData || {}
 
   /* Should show name breakdown tooltip? */
   useEffect(() => {
@@ -309,7 +298,7 @@ const Child = () => {
             </>
           )}
         </Stack>
-        {(person?.parent1 || person?.parent2 || loading) && (
+        {(parent1 || parent2 || loading) && (
           <Stack component="ul" space={2}>
             <TwoColumnUserInfoLine
               title={formatMessage({
@@ -317,8 +306,8 @@ const Child = () => {
                 defaultMessage: 'Foreldrar',
               })}
               label={formatMessage(m.name)}
-              firstValue={person?.nameParent1}
-              secondValue={person?.nameParent2}
+              firstValue={parent1?.fullName}
+              secondValue={parent2?.fullName}
               loading={loading}
               className={styles.printable}
             />
@@ -327,12 +316,8 @@ const Child = () => {
             </Box>
             <TwoColumnUserInfoLine
               label={formatMessage(m.natreg)}
-              firstValue={
-                person?.parent1 ? formatNationalId(person.parent1) : ''
-              }
-              secondValue={
-                person?.parent2 ? formatNationalId(person.parent2) : ''
-              }
+              firstValue={parent1 ? formatNationalId(parent1.nationalId) : ''}
+              secondValue={parent2 ? formatNationalId(parent2.nationalId) : ''}
               loading={loading}
               className={styles.printable}
             />
@@ -341,7 +326,7 @@ const Child = () => {
             </Box>
           </Stack>
         )}
-        {!person?.fate && !error && hasDetails && (
+        {!person?.fate && !error && (
           <Stack component="ul" space={2}>
             <TwoColumnUserInfoLine
               title={formatMessage({
@@ -352,8 +337,8 @@ const Child = () => {
                 id: 'sp.family:name',
                 defaultMessage: 'Nafn',
               })}
-              firstValue={person?.nameCustody1}
-              secondValue={person?.nameCustody2}
+              firstValue={custodian1?.fullName}
+              secondValue={custodian2?.fullName}
               loading={loading}
               className={styles.printable}
             />
@@ -363,10 +348,10 @@ const Child = () => {
             <TwoColumnUserInfoLine
               label={formatMessage(m.natreg)}
               firstValue={
-                person?.custody1 ? formatNationalId(person.custody1) : ''
+                custodian1 ? formatNationalId(custodian1.nationalId) : ''
               }
               secondValue={
-                person?.custody2 ? formatNationalId(person.custody2) : ''
+                custodian2 ? formatNationalId(custodian2.nationalId) : ''
               }
               loading={loading}
               className={styles.printable}
@@ -379,32 +364,32 @@ const Child = () => {
                 id: 'sp.family:custody-status',
                 defaultMessage: 'Staða forsjár',
               })}
-              firstValue={person?.custodyText1}
-              secondValue={person?.custodyText2}
+              firstValue={custodian1?.custodyText}
+              secondValue={custodian2?.custodyText}
               loading={loading}
               className={styles.printable}
             />
             <Box printHidden>
               <Divider />
             </Box>
-            {guardianship &&
-              !loading &&
-              guardianship.residenceParent &&
-              guardianship.residenceParent.length > 0 && (
+            {!loading &&
+              (custodian1?.livesWithChild || custodian2?.livesWithChild) && (
                 <>
                   <TwoColumnUserInfoLine
                     label={formatMessage({
                       id: 'sp.family:residence-parent',
                       defaultMessage: 'Búsetuforeldri',
                     })}
-                    firstValue={livingArrangment(
-                      guardianship?.residenceParent ?? [],
-                      person?.parent1 ?? '',
-                    )}
-                    secondValue={livingArrangment(
-                      guardianship?.residenceParent ?? [],
-                      person?.parent2 ?? '',
-                    )}
+                    firstValue={
+                      custodian1?.livesWithChild
+                        ? formatMessage(m.yes)
+                        : formatMessage(m.no)
+                    }
+                    secondValue={
+                      custodian2?.livesWithChild
+                        ? formatMessage(m.yes)
+                        : formatMessage(m.no)
+                    }
                   />
                   <Divider />
                 </>

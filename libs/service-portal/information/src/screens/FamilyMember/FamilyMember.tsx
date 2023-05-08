@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/auth/react'
-import ChildView from '../../components/ChildView/ChildView'
 
 import { NATIONAL_REGISTRY_FAMILY_DETAIL } from '../../lib/queries/getNationalRegistryFamily'
+import { ChildView } from '../../components/ChildView/ChildView'
 
 type UseParams = {
   nationalId: string

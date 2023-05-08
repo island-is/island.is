@@ -14,6 +14,7 @@ import { NationalRegistryV3Birthplace } from './graphql/models/nationalRegistryB
 import { NationalRegistryV3Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
 import { NationalRegistryV3Name } from './graphql/models/nationalRegistryName.model'
 import { NationalRegistryV3Religion } from './graphql/models/nationalRegistryReligion.model'
+import { NationalRegistryV3Custodian } from './graphql/models/nationalRegistryCustodian.model'
 
 type ExcludesFalse = <T>(x: T | null | undefined | '') => x is T
 
@@ -39,6 +40,7 @@ export class NationalRegistryV3Service {
         gender: data.kyn?.kynTexti,
         familyRegistrationCode: data.itarupplysingar?.logheimilistengsl,
         banMarking: data.bannmerking === 'true',
+        fate: data.afdrif,
       }
     )
   }
@@ -64,6 +66,77 @@ export class NationalRegistryV3Service {
         municipalityText: data.heimilisfang.sveitarfelag,
       }) ??
       null
+    )
+  }
+
+  async getParents(
+    nationalId: string,
+  ): Promise<Array<NationalRegistryV3Person> | null> {
+    const data = await this.fetchData(nationalId)
+
+    if (!data.logforeldrar?.logForeldrar) {
+      return null
+    }
+
+    const parentData: Array<NationalRegistryV3Person | null> =
+      (await Promise.all(
+        data.logforeldrar?.logForeldrar
+          .map(async (parent) => {
+            if (!parent.logForeldriKennitala || !parent.logForeldriNafn) {
+              return null
+            }
+            const personData = await this.fetchData(parent.logForeldriKennitala)
+            return {
+              ...this.extractPerson(personData),
+              nationalId: parent.logForeldriKennitala,
+              fullName: parent.logForeldriNafn,
+            }
+          })
+          .filter((Boolean as unknown) as ExcludesFalse),
+      )) ?? []
+
+    return parentData.filter(
+      (parent): parent is NationalRegistryV3Person => parent != null,
+    )
+  }
+
+  async getCustodians(
+    nationalId: string,
+  ): Promise<Array<NationalRegistryV3Custodian> | null> {
+    const data = await this.fetchData(nationalId)
+
+    if (!data.forsja?.forsjaradilar) {
+      return null
+    }
+
+    const custodianData: Array<NationalRegistryV3Custodian | null> =
+      (await Promise.all(
+        data.forsja.forsjaradilar
+          .map(async (custodian) => {
+            if (!custodian.forsjaAdiliKennitala || !custodian.forsjaAdiliNafn) {
+              return null
+            }
+            const personData = await this.fetchData(
+              custodian.forsjaAdiliKennitala,
+            )
+            return {
+              ...this.extractPerson(personData),
+              nationalId: custodian.forsjaAdiliKennitala,
+              fullName: custodian.forsjaAdiliNafn,
+              custodyText: custodian.forsjaTexti,
+              livesWithChild:
+                personData.itarupplysingar?.logheimilistengsl ===
+                data.itarupplysingar?.logheimilistengsl
+                  ? 'true'
+                  : 'false',
+            }
+          })
+          .filter((Boolean as unknown) as ExcludesFalse),
+      )) ?? []
+
+    return custodianData.filter(
+      (custodian): custodian is NationalRegistryV3Custodian =>
+        custodian != null,
     )
   }
 
@@ -131,7 +204,7 @@ export class NationalRegistryV3Service {
     )
   }
 
-  async getChildrenCustodyInformation(
+  async getChildren(
     nationalId: string,
   ): Promise<Array<NationalRegistryV3Person> | null> {
     const parentData = await this.fetchData(nationalId)

@@ -1,15 +1,15 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { NationalRegistryV3Person } from './nationalRegistryPerson.model'
 import { NationalRegistryV3Address } from './nationalRegistryAddress.model'
 import { NationalRegistryV3Birthplace } from './nationalRegistryBirthplace.model'
-import { NationalRegistryV3Residence } from './nationalRegistryResidence.model'
-import { NationalRegistryV3Spouse } from './nationalRegistrySpouse.model'
 import { NationalRegistryV3Citizenship } from './nationalRegistryCitizenship.model'
 import { NationalRegistryV3Name } from './nationalRegistryName.model'
 import { NationalRegistryV3Religion } from './nationalRegistryReligion.model'
-import { NationalRegistryV3Custodian } from './nationalRegistryCustodian.model'
+import { NationalRegistryV3Residence } from './nationalRegistryResidence.model'
+import { NationalRegistryV3Spouse } from './nationalRegistrySpouse.model'
 
 @ObjectType()
-export class NationalRegistryV3Person {
+export class NationalRegistryV3Custodian {
   @Field(() => ID)
   nationalId!: string
 
@@ -66,4 +66,18 @@ export class NationalRegistryV3Person {
 
   @Field(() => NationalRegistryV3Religion, { nullable: true })
   religion?: NationalRegistryV3Religion | null
+
+  @Field(() => String, { nullable: true })
+  custodyText?: string | null
+
+  @Field(() => String, { nullable: true })
+  livesWithChild?: string | null
 }
+
+/*
+@ObjectType()
+export class NationalRegistryV3Custodian extends IntersectionType(
+  NationalRegistryV3Person,
+  NationalRegistryV3CustodianInfo,
+) {}
+*/
