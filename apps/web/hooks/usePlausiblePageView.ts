@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
-let hasSentInitialPageview = false
+let hasSentInitialLoadPageview = false
 
 export const usePlausiblePageview = (domain?: string) => {
   const router = useRouter()
@@ -27,9 +27,11 @@ export const usePlausiblePageview = (domain?: string) => {
     router.events.on('routeChangeComplete', onRouteChangeComplete)
 
     // Initial page load should trigger a pageview
-    if (!hasSentInitialPageview && domain) {
+    const isInitialPageLoad = window.history?.state?.idx === 0
+
+    if (!hasSentInitialLoadPageview && isInitialPageLoad) {
       onRouteChangeComplete()
-      hasSentInitialPageview = true
+      hasSentInitialLoadPageview = true
     }
 
     return () => {
