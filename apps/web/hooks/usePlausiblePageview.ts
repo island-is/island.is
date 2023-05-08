@@ -1,5 +1,8 @@
+import getConfig from 'next/config'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+
+const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 let hasSentInitialLoadPageview = false
 
@@ -7,6 +10,8 @@ export const usePlausiblePageview = (domain?: string) => {
   const router = useRouter()
 
   useEffect(() => {
+    if (publicRuntimeConfig.environment !== 'prod') return
+
     const onRouteChangeComplete = () => {
       if (!domain) return
 
