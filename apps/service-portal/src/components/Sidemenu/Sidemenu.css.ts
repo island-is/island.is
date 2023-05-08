@@ -28,6 +28,12 @@ export const categories = style({
   flexGrow: 2,
 })
 
+export const itemBlock = style({
+  ':hover': {
+    background: theme.color.blue100,
+  },
+})
+
 const iconBase: StyleWithSelectors = {
   width: 30,
   display: 'flex',

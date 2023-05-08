@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react'
-import { Box, Icon } from '@island.is/island-ui/core'
+import { Box, Hyphen, Icon } from '@island.is/island-ui/core'
 import * as styles from './Sidemenu.css'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Link } from 'react-router-dom'
@@ -40,7 +40,9 @@ const SidemenuItem = ({
         border="standard"
         borderColor="blue200"
         borderRadius="standard"
-        className={itemTextHover && styles.item}
+        className={cn(styles.itemBlock, {
+          [`${styles.item}`]: itemTextHover,
+        })}
         background="white"
         onMouseEnter={(value) => toggleIsHovered(value)}
         onMouseLeave={(value) => toggleIsHovered(value)}
@@ -55,6 +57,7 @@ const SidemenuItem = ({
             flexDirection="column"
             alignItems="center"
             justifyContent="center"
+            paddingX={1}
             position={
               item.subscribesTo === 'documents' ? 'relative' : undefined
             }
@@ -66,7 +69,11 @@ const SidemenuItem = ({
               </Box>
             )}
             <p className={styles.itemText}>
-              {isHovered && itemTextHover ? formatMessage(item.name) : itemText}
+              {isHovered && itemTextHover ? (
+                <Hyphen>{formatMessage(item.name)}</Hyphen>
+              ) : (
+                itemText
+              )}
             </p>
           </Box>
         </Link>

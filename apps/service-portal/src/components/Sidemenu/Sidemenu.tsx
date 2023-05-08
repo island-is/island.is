@@ -127,7 +127,7 @@ const Sidemenu = ({
         defaultMessage: 'Valmynd fyrir yfirlit',
       })}
       removeOnClose={true}
-      preventBodyScroll={true}
+      preventBodyScroll={false}
       onVisibilityChange={(visibility: boolean) => {
         if (visibility !== sideMenuOpen) {
           onClose()
