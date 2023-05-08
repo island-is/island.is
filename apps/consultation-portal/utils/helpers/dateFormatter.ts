@@ -9,6 +9,7 @@ export function removeZeroInDate(date: string) {
   return updatedDate
 }
 export function getShortDate(date: string | Date, noYear?: boolean) {
+  if (!date) return ''
   if (noYear) {
     return removeZeroInDate(format(new Date(date), 'dd.MM'))
   }
@@ -37,6 +38,18 @@ export function getTimeLineDate({ Case }: Props) {
       return getDateBeginDateEnd(Case.processBegins, Case.processEnds)
     case 'Niðurstöður í vinnslu':
       return `frá ${getShortDate(Case.processEnds)}`
+    case 'Niðurstöður birtar':
+      return getShortDate(Case.summaryDate)
+  }
+}
+export function getStatusEndDate(status: string, Case: Case) {
+  const date = new Date(Case.processEnds)
+  date.setDate(date.getDate() + 1)
+  switch (status) {
+    case 'Til umsagnar':
+      return getDateBeginDateEnd(Case.processBegins, Case.processEnds)
+    case 'Niðurstöður í vinnslu':
+      return Case.statusName != 'Til umsagnar' ? `${getShortDate(date)}` : ''
     case 'Niðurstöður birtar':
       return getShortDate(Case.summaryDate)
   }

@@ -115,7 +115,7 @@ export const AdditionalEstateMember = ({
               remove(index)
             }}
           >
-            {'Eyða'}
+            {formatMessage(m.inheritanceDeleteMember)}
           </Button>
         </Box>
       </Box>
@@ -192,7 +192,7 @@ export const AdditionalEstateMember = ({
             label={formatMessage(m.inheritanceRelationLabel)}
             defaultValue={field.relation}
             options={relationOptions}
-            error={error?.relation ?? undefined}
+            error={error?.relation}
             backgroundColor="blue"
           />
         </GridColumn>
@@ -201,9 +201,10 @@ export const AdditionalEstateMember = ({
             id={phoneField}
             name={phoneField}
             label={m.phone.defaultMessage}
-            defaultValue={field.phone}
+            defaultValue={field.phone || ''}
             backgroundColor="blue"
             format={'###-####'}
+            error={error?.phone}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -211,8 +212,9 @@ export const AdditionalEstateMember = ({
             id={emailField}
             name={emailField}
             label={m.email.defaultMessage}
-            defaultValue={field.email}
+            defaultValue={field.email || ''}
             backgroundColor="blue"
+            error={error?.email}
           />
         </GridColumn>
         <GridColumn span="1/1" paddingBottom={2}>
