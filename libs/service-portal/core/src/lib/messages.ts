@@ -507,7 +507,7 @@ export const m = defineMessages({
   },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
-    defaultMessage: 'Laungreiðendakröfur',
+    defaultMessage: 'Launagreiðendakröfur',
   },
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
@@ -734,6 +734,10 @@ export const m = defineMessages({
   refuseEmailTitle: {
     id: 'service.portal:refuse-email-title',
     defaultMessage: 'Tölvupóstur',
+  },
+  requestPaperMailTitle: {
+    id: 'service.portal:req-paper-mail-title',
+    defaultMessage: 'Bréfpóstur',
   },
   nextStep: {
     id: 'service.portal:next-step',
@@ -963,5 +967,13 @@ export const m = defineMessages({
     id: 'service.portal:tjodskra-tooltip',
     defaultMessage:
       'Þjóðskrá Íslands hefur umsjón með gögnum um þig og fjölskyldu þína.',
+  },
+  financeBreakdown: {
+    id: 'service.portal:finance-detail-breakdown',
+    defaultMessage: 'Sundurliðun',
+  },
+  consent: {
+    id: 'service.portal:consent',
+    defaultMessage: 'Gagnaöflun',
   },
 })

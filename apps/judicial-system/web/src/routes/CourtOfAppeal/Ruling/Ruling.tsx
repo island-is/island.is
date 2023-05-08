@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -8,10 +8,28 @@ import {
   PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  InputFileUpload,
+  RadioButton,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
-import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
+
+import {
+  CaseAppealRulingDecision,
+  CaseFileCategory,
+} from '@island.is/judicial-system/types'
+import {
+  TUploadFile,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import * as constants from '@island.is/judicial-system/consts'
+import { useRouter } from 'next/router'
 
 const CourtOfAppealRuling: React.FC = () => {
   const {
@@ -22,10 +40,40 @@ const CourtOfAppealRuling: React.FC = () => {
   } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
+  const [hasError, setError] = useState<boolean>(false)
 
   const [checkedRadio, setCheckedRadio] = useState<CaseAppealRulingDecision>(
     CaseAppealRulingDecision.ACCEPTING,
   )
+  const router = useRouter()
+  const { id } = router.query
+  const previousUrl = `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`
+
+  const {
+    handleChange,
+    handleRemove,
+    handleRetry,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
+
+  const handleUIUpdate = useCallback(
+    (displayFile: TUploadFile, newId?: string) => {
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
+    },
+    [generateSingleFileUpdate],
+  )
+
+  const removeFileCB = useCallback((file: UploadFile) => {
+    setDisplayFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+  }, [])
+
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}`)
 
   return (
     <PageLayout
@@ -53,9 +101,16 @@ const CourtOfAppealRuling: React.FC = () => {
           </Text>
         </Box>
         <Box marginBottom={5}>
-          <Text as="h3" variant="h3" marginBottom={3}>
-            {formatMessage(strings.decision)}
-          </Text>
+          <Box marginBottom={3} display="flex">
+            <Text as="h3" variant="h3">
+              {formatMessage(strings.decision)}
+            </Text>
+            <Box marginLeft="smallGutter">
+              <Text as="span" variant="h3" color="red400">
+                *
+              </Text>
+            </Box>
+          </Box>
           <Box background="blue100" padding={3}>
             <Box marginBottom={2}>
               <RadioButton
@@ -154,26 +209,68 @@ const CourtOfAppealRuling: React.FC = () => {
             label={formatMessage(strings.conclusionHeading)}
             name="rulingConclusion"
             value={workingCase.appealConclusion || ''}
-            onChange={(event) =>
+            onChange={(event) => {
+              setError(false)
               setWorkingCase({
                 ...workingCase,
                 appealConclusion: event.target.value,
               })
-            }
+            }}
             textarea
             rows={7}
             required
             autoExpand={{ on: true, maxHeight: 300 }}
+            hasError={hasError && !workingCase.appealConclusion}
+          />
+        </Box>
+        <Box marginBottom={10}>
+          <Box marginBottom={3} display="flex">
+            <Text as="h3" variant="h3">
+              {formatMessage(strings.courtConclusionHeading)}
+            </Text>
+            <Box marginLeft="smallGutter">
+              <Text as="span" variant="h3" color="red400">
+                *
+              </Text>
+            </Box>
+          </Box>
+
+          <InputFileUpload
+            fileList={displayFiles.filter(
+              (file) => file.category === CaseFileCategory.APPEAL_RULING,
+            )}
+            accept="application/pdf"
+            header={formatMessage(strings.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
+            buttonLabel={formatMessage(strings.uploadButtonText)}
+            onChange={(files) => {
+              handleChange(
+                files,
+                CaseFileCategory.APPEAL_RULING,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
+            }}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          previousUrl={previousUrl}
           onNextButtonClick={() => {
+            if (!workingCase.appealConclusion) {
+              setError(true)
+              return
+            }
             setWorkingCase({
               ...workingCase,
               appealRulingDecision: checkedRadio,
             })
+            handleNavigationTo(constants.CASES_ROUTE)
           }}
           nextButtonIcon="arrowForward"
           nextButtonText={formatMessage(strings.nextButtonFooter)}

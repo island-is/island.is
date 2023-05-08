@@ -186,7 +186,6 @@ export const prepareServiceForEnv = (
           env,
           `${serviceDef.name}-initContainers`,
         )
-
         mergeObjects(result.initContainers.envs, featureEnvs)
         addToErrors(featureErrors)
         mergeObjects(result.initContainers.secrets, featureSecrets)

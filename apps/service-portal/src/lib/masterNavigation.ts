@@ -18,6 +18,7 @@ import {
   delegationsNavigationChildren,
 } from '@island.is/portals/shared-modules/delegations'
 import { sessionsNavigation } from '@island.is/service-portal/sessions'
+import { consentNavigation } from '@island.is/service-portal/consent'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -35,7 +36,11 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     applicationsNavigation,
     {
       ...delegationsNavigation,
-      children: [...delegationsNavigationChildren, sessionsNavigation],
+      children: [
+        ...delegationsNavigationChildren,
+        sessionsNavigation,
+        consentNavigation,
+      ],
     },
     companyNavigation,
     personalInformationNavigation,

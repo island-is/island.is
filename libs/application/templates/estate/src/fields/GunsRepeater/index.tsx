@@ -113,7 +113,6 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
         const gunTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
-        const dummyField = `${fieldIndex}.dummy`
         const marketValueField = `${fieldIndex}.marketValue`
         const fieldError = error && error[index] ? error[index] : null
 
@@ -122,7 +121,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
             position="relative"
             key={field.id}
             marginTop={2}
-            hidden={field.initial || field?.dummy}
+            hidden={field.initial}
           >
             <Controller
               name={initialField}
@@ -134,12 +133,6 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
               name={enabledField}
               control={control}
               defaultValue={true}
-              render={() => <input type="hidden" />}
-            />
-            <Controller
-              name={dummyField}
-              control={control}
-              defaultValue={field.dummy || false}
               render={() => <input type="hidden" />}
             />
             <Text variant="h4">{formatMessage(m.gunTitle)}</Text>

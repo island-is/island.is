@@ -1,9 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const RulingSignatureConfirmationQuery = gql`
-  query RulingSignatureConfirmationQuery(
-    $input: SignatureConfirmationQueryInput!
-  ) {
+  query RulingSignatureConfirmation($input: SignatureConfirmationQueryInput!) {
     rulingSignatureConfirmation(input: $input) {
       documentSigned
       code
@@ -38,7 +36,7 @@ export const coreCaseListFields = gql`
 
 export const CasesQuery = gql`
   ${coreCaseListFields}
-  query CaseListQuery {
+  query CaseList {
     cases {
       created
       courtDate
@@ -77,7 +75,7 @@ export const AppealedCasesQuery = gql`
 `
 
 export const CreateUserMutation = gql`
-  mutation CreateUserMutation($input: CreateUserInput!) {
+  mutation CreateUser($input: CreateUserInput!) {
     createUser(input: $input) {
       id
       name
@@ -97,7 +95,7 @@ export const CreateUserMutation = gql`
 `
 
 export const UsersQuery = gql`
-  query UsersQuery {
+  query Users {
     users {
       id
       name
@@ -117,7 +115,7 @@ export const UsersQuery = gql`
 `
 
 export const UserQuery = gql`
-  query UserQuery($input: UserQueryInput!) {
+  query User($input: UserQueryInput!) {
     user(input: $input) {
       id
       name
@@ -137,7 +135,7 @@ export const UserQuery = gql`
 `
 
 export const UpdateUserMutation = gql`
-  mutation UpdateUserMutation($input: UpdateUserInput!) {
+  mutation UpdateUser($input: UpdateUserInput!) {
     updateUser(input: $input) {
       id
       modified
@@ -146,7 +144,7 @@ export const UpdateUserMutation = gql`
 `
 
 export const InstitutionsQuery = gql`
-  query InstitutionsQuery {
+  query Institutions {
     institutions {
       id
       type

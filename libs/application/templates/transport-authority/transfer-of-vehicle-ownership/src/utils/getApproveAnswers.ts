@@ -79,7 +79,6 @@ export const getApproveAnswers = (
           name: coOwner.name,
           email: coOwner.email,
           phone: coOwner.phone,
-          type: coOwner.type,
           approved:
             coOwner.nationalId === reviewerNationalId
               ? true

@@ -712,6 +712,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og á eyjum eiga rétt á Loftbrú (sjá kort á loftbru.is).',
   },
+  seeInfo: {
+    id: 'sp.vehicles:see-info',
+    defaultMessage: 'Skoða nánar',
+  },
 })
 
 export const urls = defineMessages({
