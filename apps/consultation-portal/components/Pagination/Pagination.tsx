@@ -2,17 +2,29 @@ import {
   Box,
   Pagination as PaginationComponent,
 } from '@island.is/island-ui/core'
-import * as styles from './Pagination.css'
+import { AdviceFilter, CaseFilter } from '../../types/interfaces'
+import { setItem } from '../../utils/helpers/localStorage'
 
-interface PaginationProps {
-  page: number
-  setPage: (argo0: number) => void
+interface Props {
+  filters: CaseFilter | AdviceFilter
+  setFilters: (arr: CaseFilter | AdviceFilter) => void
   totalPages: number
+  localStorageId: string
 }
 
-const Pagination = ({ page, setPage, totalPages }: PaginationProps) => {
-  const goToPage = (page = 0, scrollTop = true) => {
-    setPage(page)
+const Pagination = ({
+  filters,
+  setFilters,
+  totalPages,
+  localStorageId,
+}: Props) => {
+  const { pageNumber } = filters
+
+  const goToPage = (pageNumber = 0, scrollTop = true) => {
+    const filtersCopy = { ...filters }
+    filtersCopy.pageNumber = pageNumber
+    setItem({ key: localStorageId, value: filtersCopy })
+    setFilters(filtersCopy)
     if (scrollTop) {
       window.scrollTo(0, 0)
     }
@@ -21,18 +33,17 @@ const Pagination = ({ page, setPage, totalPages }: PaginationProps) => {
   return (
     <Box paddingTop={[5, 5, 5, 8, 8]}>
       <PaginationComponent
-        page={page + 1}
+        page={pageNumber + 1}
         totalPages={totalPages}
         variant="blue"
-        renderLink={(page, className, children) => (
-          <button
-            onClick={() => {
-              goToPage(page - 1)
-            }}
+        renderLink={(pageNumber, className, children) => (
+          <Box
+            cursor="pointer"
+            className={className}
+            onClick={() => goToPage(pageNumber - 1)}
           >
-            <div className={styles.spanStyle}>Síða</div>
-            <div className={className}>{children}</div>
-          </button>
+            {children}
+          </Box>
         )}
       />
     </Box>
