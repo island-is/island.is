@@ -339,7 +339,7 @@ export class InternalCaseService {
         `indictments/${
           completedCaseStates.includes(theCase.state) ? 'completed/' : ''
         }${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        pdf.toString(),
+        pdf.toString('binary'),
       )
       .catch((reason) => {
         this.logger.error(
@@ -389,7 +389,7 @@ export class InternalCaseService {
       .catch((error) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to upload request pdf to court for case ${theCase.id}`,
+          `Failed to upload case files record pdf to court for case ${theCase.id}`,
           { error },
         )
 

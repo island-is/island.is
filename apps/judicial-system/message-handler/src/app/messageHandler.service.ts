@@ -111,7 +111,7 @@ export class MessageHandlerService implements OnModuleDestroy {
         handled = await this.internalDeliveryService.deliver(
           message.user,
           policeCaseMessage.caseId,
-          `archiveCaseFilesRecordToCourt/${policeCaseMessage.policeCaseNumber}`,
+          `archiveCaseFilesRecord/${policeCaseMessage.policeCaseNumber}`,
         )
         break
       }
