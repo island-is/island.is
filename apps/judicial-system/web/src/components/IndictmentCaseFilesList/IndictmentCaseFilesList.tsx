@@ -64,10 +64,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
     caseId: workingCase.id,
   })
 
-  const showTrafficViolationCaseFiles = isTrafficViolationCase(
-    workingCase,
-    user,
-  )
+  const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
 
   const cf = workingCase.caseFiles
 

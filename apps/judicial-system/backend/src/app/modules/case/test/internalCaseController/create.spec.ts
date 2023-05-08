@@ -1,8 +1,6 @@
 import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
 
-import { BadRequestException } from '@nestjs/common'
-
 import {
   Gender,
   CaseType,

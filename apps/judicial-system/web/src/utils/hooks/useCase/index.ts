@@ -191,7 +191,7 @@ export const formatDateForServer = (date: Date) => {
 
 const openCase = (caseToOpen: Case, user: User) => {
   let routeTo = null
-  const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
+  const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
   if (
     caseToOpen.state === CaseState.ACCEPTED ||
