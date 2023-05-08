@@ -1,6 +1,7 @@
 import {
   DefaultStateLifeCycle,
   getValueViaPath,
+  coreHistoryMessages,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -14,7 +15,6 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
-  PendingAction,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
@@ -142,12 +142,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
           actionCard: {
             description: m.draftDescription,
-            historyLogs: [
-              {
-                event: DefaultEvents.SUBMIT,
-                log: 'Umsókn send inn',
-              },
-            ],
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.applicationSent,
+            },
           },
           progress: 0.25,
           status: 'draft',
@@ -189,8 +187,8 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                event: DefaultEvents.ASSIGN,
-                log: 'Yfirferðaraðili skráður á umsókn og látin vita',
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationAssigned,
               },
             ],
           },
@@ -247,12 +245,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                event: DefaultEvents.REJECT,
-                log: 'Umsókn samþykkt',
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
               },
               {
-                event: DefaultEvents.REJECT,
-                log: 'Umsókn hafnað',
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
               },
             ],
           },

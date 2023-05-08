@@ -43,6 +43,7 @@ export class HistoryService {
       application_id: applicationId,
       stateKey: newStateKey,
       entryTimestamp: new Date(),
+      previousState: lastState ? lastState.id : null,
     })
   }
 

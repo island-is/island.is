@@ -79,6 +79,11 @@ export type PendingAction = {
   content?: StaticText
 }
 
+export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
+  onEvent: Event<T> | string
+  logMessage: StaticText
+}
+
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
   R = unknown
@@ -90,10 +95,7 @@ export interface ApplicationStateMeta<
     title?: StaticText
     /** @deprecated use pendingAction field instead */
     description?: StaticText
-    historyLogs?: {
-      event: Event<T> | string
-      log: StaticText
-    }[]
+    historyLogs?: HistoryEventMessage[] | HistoryEventMessage
 
     pendingAction?:
       | PendingAction

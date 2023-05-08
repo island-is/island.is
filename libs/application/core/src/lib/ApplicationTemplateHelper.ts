@@ -303,6 +303,13 @@ export class ApplicationTemplateHelper<
 
     const historyLogs = stateInfo?.actionCard?.historyLogs
 
-    return historyLogs?.find((historyLog) => historyLog.event === event)?.log
+    if (Array.isArray(historyLogs)) {
+      return historyLogs?.find((historyLog) => historyLog.onEvent === event)
+        ?.logMessage
+    } else {
+      return historyLogs?.onEvent === event
+        ? historyLogs?.logMessage
+        : undefined
+    }
   }
 }

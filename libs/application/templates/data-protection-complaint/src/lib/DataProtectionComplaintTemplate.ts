@@ -17,6 +17,11 @@ import { States } from '../constants'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
 
+export const DefaultSubmitHistoryLog = {
+  onEvent: DefaultEvents.SUBMIT,
+  logMessage: application.applicationSubmitted,
+}
+
 const DataProtectionComplaintTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<DataProtectionComplaintEvent>,
@@ -40,12 +45,7 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
             whenToPrune: 5 * 60000, //5 minutes
           },
           actionCard: {
-            historyLogs: [
-              {
-                event: DefaultEvents.SUBMIT,
-                log: application.applicationSubmitted,
-              },
-            ],
+            historyLogs: [DefaultSubmitHistoryLog],
           },
           roles: [
             {
