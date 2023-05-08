@@ -10,6 +10,7 @@ export const usePlausiblePageview = (domain?: string) => {
   const router = useRouter()
 
   useEffect(() => {
+    // Only track pageviews in production
     if (publicRuntimeConfig.environment !== 'prod') return
 
     const onRouteChangeComplete = () => {
