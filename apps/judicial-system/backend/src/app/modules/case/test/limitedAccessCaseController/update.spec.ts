@@ -1,7 +1,11 @@
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
-import { User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseFileState,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
@@ -21,12 +25,33 @@ describe('LimitedAccessCaseController - Update', () => {
   const date = randomDate()
   const userId = uuid()
   const user = { id: userId } as User
+  const statementId = uuid()
+  const fileId = uuid()
+  const caseFiles = [
+    {
+      id: statementId,
+      key: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+    },
+    {
+      id: fileId,
+      key: uuid(),
+      state: CaseFileState.STORED_IN_RVG,
+      category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+    },
+  ]
   const caseId = uuid()
   const theCase = {
     id: caseId,
+    caseFiles,
   } as Case
   const updateDto = { defendantStatementDate: new Date() }
-  const updatedCase = { ...theCase, defendantStatementDate: date } as Case
+  const updatedCase = {
+    ...theCase,
+    defendantStatementDate: date,
+    caseFiles,
+  } as Case
 
   let mockMessageService: MessageService
   let mockCaseModel: typeof Case
@@ -83,6 +108,18 @@ describe('LimitedAccessCaseController - Update', () => {
 
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          caseFileId: statementId,
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          user,
+          caseId,
+        },
+        {
+          caseFileId: fileId,
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          user,
+          caseId,
+        },
         {
           type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
           user,

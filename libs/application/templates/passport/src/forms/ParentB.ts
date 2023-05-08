@@ -13,7 +13,6 @@ import {
   Form,
   FormModes,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -22,6 +21,7 @@ import {
   IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
+  UserInfoApi,
 } from '../dataProviders'
 
 export const ParentB: Form = buildForm({
@@ -71,7 +71,7 @@ export const ParentB: Form = buildForm({
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: UserInfoApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),

@@ -1,6 +1,6 @@
 import { ArrOfIdAndName, CaseForSubscriptions } from '../../../types/interfaces'
 import { createUUIDString } from '../createUUIDString'
-import { CaseSubscriptionType, SubscriptionType } from '../../../types/enums'
+import { SubscriptionType } from '../../../types/enums'
 
 interface Props {
   casesData: Array<CaseForSubscriptions>

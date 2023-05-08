@@ -24,6 +24,8 @@ type EstateMember = {
   relation?: string
   dateOfBirth?: string
   foreignCitizenShip?: 'yes' | 'no'
+  phone?: string
+  email?: string
 }
 
 type Representative = {
