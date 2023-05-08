@@ -26,6 +26,13 @@ export const options: Record<BackgroundVariations, Options> = {
     textMode: 'blueberry',
   },
 
+  utlendingastofnun: {
+    textMode: 'light',
+  },
+  'directorate-of-immigration': {
+    textMode: 'light',
+  },
+
   default: {
     textMode: 'dark',
   },

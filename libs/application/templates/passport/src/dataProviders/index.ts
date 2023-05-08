@@ -14,7 +14,7 @@ export const IdentityDocumentApi = defineTemplateApi({
 })
 export const UserInfoApi = UserProfileApi.configure({
   params: {
-    throwOnDev: true,
+    catchMock: true,
   },
 })
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
