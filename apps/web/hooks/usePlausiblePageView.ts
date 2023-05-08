@@ -9,6 +9,9 @@ export const usePlausiblePageview = (domain?: string) => {
   useEffect(() => {
     const onRouteChangeComplete = () => {
       if (!domain) return
+
+      // Documentation: https://plausible.io/docs/events-api
+
       fetch('https://plausible.io/api/event', {
         method: 'POST',
         headers: {
