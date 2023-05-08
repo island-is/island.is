@@ -42,7 +42,7 @@ const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
       </Text>
       {uniqueDefenders.map((defender) =>
         defender?.name ? (
-          <Box display="flex">
+          <Box display="flex" key={`${defender.name}`}>
             <Text>
               {`${defender.name}${defender.email ? `, ${defender.email}` : ''}${
                 defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''

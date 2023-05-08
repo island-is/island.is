@@ -211,6 +211,7 @@ const CourtOfAppealOverview: React.FC = () => {
               </Text>
               {appealCaseFiles.map((file) => (
                 <PdfButton
+                  key={file.id}
                   renderAs="row"
                   caseId={workingCase.id}
                   title={file.name}
