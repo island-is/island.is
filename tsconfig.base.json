@@ -763,8 +763,8 @@
       "@island.is/service-portal/transports": [
         "libs/service-portal/transports/src/index.ts"
       ],
-      "@island.is/service-portal/vehicles/messages": [
-        "libs/service-portal/vehicles/src/lib/messages.ts"
+      "@island.is/service-portal/transports/messages": [
+        "libs/service-portal/transports/src/lib/messages.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
