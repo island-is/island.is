@@ -97,10 +97,6 @@ interface SendNotificationMutationResponse {
   sendNotification: SendNotificationResponse
 }
 
-interface RequestCourtRecordSignatureMutationResponse {
-  requestCourtRecordSignature: RequestSignatureResponse
-}
-
 interface ExtendCaseMutationResponse {
   extendCase: Case
 }
