@@ -325,7 +325,7 @@ describe('MessageHandlerService - Handle message', () => {
 
     it('should archive case files record to court', async () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${config.backendUrl}/api/internal/case/${caseId}/archiveCaseFilesRecordToCourt/${policeCaseNumber}`,
+        `${config.backendUrl}/api/internal/case/${caseId}/archiveCaseFilesRecord/${policeCaseNumber}`,
         {
           method: 'POST',
           headers: {
