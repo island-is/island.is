@@ -1,4 +1,7 @@
 import * as React from 'react'
+
+import type { Colors } from '@island.is/island-ui/theme'
+
 import { Box } from '../Box/Box'
 import { Button, ButtonSizes, ButtonTypes } from '../Button/Button'
 import { Tag, TagVariant } from '../Tag/Tag'
@@ -108,18 +111,18 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   const tag = { ...defaultTag, ..._tag }
   const unavailable = { ...defaultUnavailable, ..._unavailable }
   const deleteButton = { ...defaultDelete, ..._delete }
-  const bgr =
-    backgroundColor === 'white'
-      ? 'white'
-      : backgroundColor === 'red'
-      ? 'red100'
-      : 'blue100'
-  const color =
-    backgroundColor === 'blue'
-      ? 'blue600'
-      : backgroundColor === 'red'
-      ? 'red600'
-      : 'currentColor'
+  const backgroundMap: Record<typeof backgroundColor, Colors> = {
+    blue: 'blue100',
+    red: 'red100',
+    white: 'white',
+  }
+  const colorMap: Record<typeof backgroundColor, Colors> = {
+    blue: 'blue600',
+    red: 'red600',
+    white: 'currentColor',
+  }
+  const bgr = backgroundMap[backgroundColor]
+  const color = colorMap[backgroundColor]
 
   const renderAvatar = () => {
     if (!avatar) {
