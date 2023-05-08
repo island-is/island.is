@@ -10,9 +10,8 @@ export const usePlausiblePageview = (domain?: string) => {
   const router = useRouter()
 
   useEffect(() => {
-    // Only track pageviews in production
-
     const onRouteChangeComplete = () => {
+      // Only track pageviews in production
       if (publicRuntimeConfig.environment !== 'prod' || !domain) return
 
       // Documentation: https://plausible.io/docs/events-api
