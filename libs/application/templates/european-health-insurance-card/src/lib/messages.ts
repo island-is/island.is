@@ -94,6 +94,11 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       defaultMessage: 'Gagnaöflun tókst.',
       description: 'Data collection completed description',
     },
+    checkboxError: {
+      id: 'ehic.application:checkbox.error',
+      defaultMessage: 'Vinsamlegast veldu að minnsta kosti einn valmöguleika',
+      description: 'Error message for checkbox',
+    },
   }),
 
   // No health insurance
