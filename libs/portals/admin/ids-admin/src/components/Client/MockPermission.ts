@@ -1,109 +1,79 @@
-export type Permission = {
-  id: string
-  label: string
-  description: string
-  api: string
-  locked?: boolean
-}
+import { Scopes } from '../forms/AddPermissions/AddPermissions.loader'
 
-export const mockData = [
+export const mockData: Scopes[] = [
   {
-    label: '1-Staða og hreyfingar',
-    id: '1@island.is/finance:overview',
+    displayName: '1-Staða og hreyfingar',
+    name: '1@island.is/finance:overview',
     description:
       'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-    api: 'Island.is APIs',
-    locked: false,
   },
   {
-    label: '2-Full Access',
-    id: '2@island.is/auth/admin:full',
+    displayName: '2-Full Access',
+    name: '2@island.is/auth/admin:full',
     description:
       'Full access to authorization admin something description here',
-    api: 'Island.is APIs',
-    locked: false,
   },
   {
-    label: '3-Skattskýrslur',
-    id: '3@skatturinn.is/skattskyrslur',
+    displayName: '3-Skattskýrslur',
+    name: '3@skatturinn.is/skattskyrslur',
     description:
       'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
   },
   {
-    label: '4-Staða og hreyfingar',
-    id: '4@island.is/finance:overview',
+    displayName: '4-Staða og hreyfingar',
+    name: '4@island.is/finance:overview',
     description:
       'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-    api: 'Island.is APIs',
-    locked: false,
   },
   {
-    label: '5-Full Access',
-    id: '5@island.is/auth/admin:full',
+    displayName: '5-Full Access',
+    name: '5@island.is/auth/admin:full',
     description:
       'Full access to authorization admin something description here',
-    api: 'Island.is APIs',
-    locked: false,
   },
   {
-    label: '6-Skattskýrslur',
-    id: '6@skatturinn.is/skattskyrslur',
+    displayName: '6-Skattskýrslur',
+    name: '6@skatturinn.is/skattskyrslur',
     description:
       'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
   },
-] as Permission[]
+]
 
-export const mockDataUnused = [
+export const mockDataUnused: Scopes[] = [
   {
-    label: 'Unused:Staða og hreyfingar',
-    id: 'auth-admin-api.full_control',
+    displayName: 'Unused:Staða og hreyfingar',
+    name: 'auth-admin-api.full_control',
     description:
       'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-    api: 'Island.is APIs',
-    locked: false,
   },
   {
-    label: 'Unused:Full Access',
-    id: '@island.is/auth/not-admin:full',
+    displayName: 'Unused:Full Access',
+    name: '@island.is/auth/not-admin:full',
     description:
       'Full access to authorization admin something description here',
-    api: 'Island.is APIs',
-    locked: false,
   },
   {
-    label: 'Unused:Skattskýrslur',
-    id: '@skatturinn.is/not-skattskyrslur',
+    displayName: 'Unused:Skattskýrslur',
+    name: '@skatturinn.is/not-skattskyrslur',
     description:
       'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
   },
   {
-    label: 'Unused:Staða og hreyfingar',
-    id: '@island.is/not-finance:overview',
+    displayName: 'Unused:Staða og hreyfingar',
+    name: '@island.is/not-finance:overview',
     description:
       'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-    api: 'Island.is APIs',
-    locked: false,
   },
   {
-    label: 'Unused:Full Access',
-    id: '@island.is/auth/not-admin:full',
+    displayName: 'Unused:Full Access',
+    name: '@island.is/auth/not-admin:full',
     description:
       'Full access to authorization admin something description here',
-    api: 'Island.is APIs',
-    locked: false,
   },
   {
-    label: 'Unused:Skattskýrslur',
-    id: '@skatturinn.is/not-skattskyrslur',
+    displayName: 'Unused:Skattskýrslur',
+    name: '@skatturinn.is/not-skattskyrslur',
     description:
       'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
   },
-] as Permission[]
+]

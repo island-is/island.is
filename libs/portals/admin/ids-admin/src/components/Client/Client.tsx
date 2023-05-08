@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
+  AuthAdminClientAllowedScope,
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
@@ -40,6 +41,12 @@ const Client = () => {
   const client = useLoaderData() as AuthAdminClient
   const navigate = useNavigate()
   const params = useParams()
+  const [addedScopes, setAddedScopes] = useState<AuthAdminClientAllowedScope[]>(
+    [],
+  )
+  const [removedScopes, setRemovedScopes] = useState<
+    AuthAdminClientAllowedScope[]
+  >([])
 
   const { formatMessage } = useLocale()
   const [publishData, setPublishData] = useState<PublishData>({
@@ -132,6 +139,10 @@ const Client = () => {
         },
         publishData: publishData,
         setPublishData: setPublishData,
+        addedScopes,
+        setAddedScopes,
+        removedScopes,
+        setRemovedScopes,
       }}
     >
       <Stack space={4}>
@@ -221,7 +232,12 @@ const Client = () => {
             AuthAdminRefreshTokenExpiration.Sliding
           }
         />
-        <Permissions key={`${selectedEnvironment.environment}-Permissions`} />
+        <Permissions
+          key={`${selectedEnvironment.environment}-Permissions`}
+          allowedScopes={
+            selectedEnvironment.allowedScopes as AuthAdminClientAllowedScope[]
+          }
+        />
         <Delegation
           key={`${selectedEnvironment.environment}-Delegation`}
           supportsProcuringHolders={

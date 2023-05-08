@@ -7,6 +7,7 @@ export class AdminScopeDTO {
     this.name = apiScope.name
     this.displayName = apiScope.displayName
     this.description = apiScope.description
+    this.domainName = apiScope.domainName
   }
 
   @IsString()
@@ -24,4 +25,8 @@ export class AdminScopeDTO {
     example: 'Description about the scope',
   })
   description!: string
+
+  @IsString()
+  @ApiProperty({ example: '@island.is' })
+  domainName!: string
 }

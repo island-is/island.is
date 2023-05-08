@@ -2,78 +2,73 @@ import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Box, Button, Table as T, Text, Icon } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
-import AddPermissions from '../forms/AddPermissions/AddPermissions'
+import React, { useContext, useState } from 'react'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { ShadowBox } from '../ShadowBox/ShadowBox'
-import { mockData } from './MockPermission'
-
-type Permission = {
-  id: string
-  label: string
-  description: string
-  api: string
-  locked?: boolean
-}
+import { useNavigate, useParams } from 'react-router-dom'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { IDSAdminPaths } from '../../lib/paths'
+import { ClientContext } from '../../shared/context/ClientContext'
+import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 
 interface PermissionsProps {
-  data?: Permission[]
+  allowedScopes?: AuthAdminClientAllowedScope[] | null
 }
 
-function Permissions({ data = mockData }: PermissionsProps) {
+function Permissions({ allowedScopes }: PermissionsProps) {
   const { formatMessage } = useLocale()
-  const [permissions, setPermissions] = useState<Permission[]>(data)
-  const [addedScopes, setAddedScopes] = useState<Permission[]>([])
-  const [removedScopes, setRemovedScopes] = useState<Permission[]>([])
-  const [isModalVisible, setIsModalVisible] = useState(false)
+  const navigate = useNavigate()
+  const params = useParams()
+  const [permissions, setPermissions] = useState<AuthAdminClientAllowedScope[]>(
+    allowedScopes as AuthAdminClientAllowedScope[],
+  )
+  const {
+    addedScopes,
+    removedScopes,
+    setRemovedScopes,
+    setAddedScopes,
+  } = useContext(ClientContext)
 
-  const handleModalClose = () => {
-    setIsModalVisible(false)
-  }
+  const tenant = params['tenant']
 
   const handleModalOpen = () => {
-    setIsModalVisible(true)
-  }
-
-  // If adding permissions, we want to add it to both the permissions and addedPermissions array and remove it from the removedPermissions array if it exists there
-  const handleAddedPermissions = (newPermissions: Permission[]) => {
-    // Add to both permissions and addedPermissions
-    setAddedScopes([...addedScopes, ...newPermissions])
-    setPermissions([...newPermissions])
-    // Remove from removedPermissions if it exists there
-    setRemovedScopes(
-      removedScopes.filter(
-        (removedScope) =>
-          !newPermissions.some(
-            (newPermission) => newPermission.id === removedScope.id,
-          ),
-      ),
+    navigate(
+      replaceParams({
+        href: IDSAdminPaths.IDSAdminClientScopes,
+        params: { tenant: params['tenant'], client: params['client'] },
+      }),
     )
   }
 
   // If removing permissions, we want to remove it from both the permissions and addedPermissions array and add it to the removedPermissions array if it doesn't exist there
-  const handleRemovedPermissions = (removedPermissions: Permission) => {
+  const handleRemovedPermissions = (
+    removedPermission: AuthAdminClientAllowedScope,
+  ) => {
     // Remove from both permissions and addedPermissions
     const newPermissions = permissions.filter(
-      (permission) => permission.id !== removedPermissions.id,
+      (permission) => permission.name !== removedPermission.name,
     )
 
     const newAddedSCopes = addedScopes.filter(
-      (addedScope) => addedScope.id !== removedPermissions.id,
+      (addedScope) => addedScope.name !== removedPermission.name,
     )
     setPermissions(newPermissions)
     setAddedScopes(newAddedSCopes)
-    // Add to removedPermissions if it doesn't exist there
+
+    // Add to removedScopes if it doesn't exist there and is not in the newAddedScopes array (meaning it was added and then removed)
     if (
       !removedScopes.some(
-        (removedScope) => removedScope.id === removedPermissions.id,
+        (removedScope) => removedScope.name === removedPermission.name,
+      ) &&
+      !newAddedSCopes.some(
+        (addedScope) => addedScope.name === removedPermission.name,
       )
     ) {
-      setRemovedScopes([...removedScopes, removedPermissions])
+      setRemovedScopes([...removedScopes, removedPermission])
     }
   }
 
-  const hasData = Array.isArray(data) && data.length > 0
+  const hasData = Array.isArray(allowedScopes) && allowedScopes.length > 0
 
   return (
     <ContentCard
@@ -81,6 +76,7 @@ function Permissions({ data = mockData }: PermissionsProps) {
       description={formatMessage(m.permissionsDescription)}
       isDirty={addedScopes.length > 0 || removedScopes.length > 0}
       intent={ClientFormTypes.permissions}
+      shouldSupportMultiEnvironment={false}
     >
       <Box marginBottom={5}>
         <Button onClick={handleModalOpen}>
@@ -98,18 +94,15 @@ function Permissions({ data = mockData }: PermissionsProps) {
                 <T.HeadData>
                   {formatMessage(m.permissionsTableLabelDescription)}
                 </T.HeadData>
-                <T.HeadData>
-                  {formatMessage(m.permissionsTableLabelAPI)}
-                </T.HeadData>
                 <T.HeadData>{/* For matching column count */}</T.HeadData>
               </T.Row>
             </T.Head>
             <T.Body>
-              {permissions.map((item) => (
-                <T.Row key={item.id}>
+              {[...permissions, ...addedScopes].map((item) => (
+                <T.Row key={item.name}>
                   <T.Data>
                     <Box display="flex" columnGap={1} alignItems="center">
-                      {item.locked && (
+                      {item.domainName !== tenant && (
                         <Icon
                           type="outline"
                           icon="lockClosed"
@@ -117,12 +110,11 @@ function Permissions({ data = mockData }: PermissionsProps) {
                           color="blue400"
                         />
                       )}
-                      <Text variant="eyebrow">{item.label}</Text>
+                      <Text variant="eyebrow">{item.displayName}</Text>
                     </Box>
-                    {item.id}
+                    {item.name}
                   </T.Data>
                   <T.Data>{item.description}</T.Data>
-                  <T.Data>{item.api}</T.Data>
                   <T.Data>
                     <Button
                       onClick={() => handleRemovedPermissions(item)}
@@ -142,18 +134,12 @@ function Permissions({ data = mockData }: PermissionsProps) {
       <input
         type="hidden"
         name="addedScopes"
-        value={addedScopes.map((permission) => permission.id).join(',')}
+        value={addedScopes.map((scope) => scope.name).join(',')}
       />
       <input
         type="hidden"
         name="removedScopes"
-        value={removedScopes.map((permission) => permission.id).join(',')}
-      />
-      <AddPermissions
-        handleAddPermission={handleAddedPermissions}
-        handleRemovedPermissions={handleRemovedPermissions}
-        onClose={handleModalClose}
-        isVisible={isModalVisible}
+        value={removedScopes.map((scope) => scope.name).join(',')}
       />
     </ContentCard>
   )

@@ -38,6 +38,7 @@ interface ContentCardProps {
    * The children will be wrapped in an accordion when a label is provided to the component.
    */
   accordionLabel?: string
+  shouldSupportMultiEnvironment?: boolean
 }
 
 function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
@@ -57,6 +58,7 @@ const ContentCard: FC<ContentCardProps> = ({
   isDirty = defaultIsDirty,
   intent = ClientFormTypes.none,
   accordionLabel = false,
+  shouldSupportMultiEnvironment = true,
 }) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
@@ -173,7 +175,7 @@ const ContentCard: FC<ContentCardProps> = ({
             <Text ref={titleRef} variant="h3">
               {title}
             </Text>
-            {intent !== 'none' && (
+            {shouldSupportMultiEnvironment && intent !== 'none' && (
               <Box>
                 <DropdownMenu
                   title={
@@ -269,17 +271,21 @@ const ContentCard: FC<ContentCardProps> = ({
                 alignItems={['flexStart', 'center']}
                 marginTop="containerGutter"
                 display="flex"
-                justifyContent="spaceBetween"
+                justifyContent={
+                  shouldSupportMultiEnvironment ? 'spaceBetween' : 'flexEnd'
+                }
                 rowGap={[2, 0]}
                 flexDirection={['column', 'row']}
               >
-                <Checkbox
-                  label={formatMessage(m.saveForAllEnvironments)}
-                  value={`${allEnvironments}`}
-                  disabled={!dirty}
-                  name="allEnvironments"
-                  onChange={() => setAllEnvironments(!allEnvironments)}
-                />
+                {shouldSupportMultiEnvironment && (
+                  <Checkbox
+                    label={formatMessage(m.saveForAllEnvironments)}
+                    value={`${allEnvironments}`}
+                    disabled={!dirty}
+                    name="allEnvironments"
+                    onChange={() => setAllEnvironments(!allEnvironments)}
+                  />
+                )}
                 <Button
                   disabled={!dirty}
                   type="submit"

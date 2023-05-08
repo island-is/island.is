@@ -9,8 +9,7 @@ import { TenantsPayload } from './dto/tenants.payload'
 import { Tenant } from './models/tenant.model'
 import { TenantsService } from './tenants.service'
 import { TenantEnvironment } from './models/tenant-environment.model'
-import { ScopesInput } from './dto/scopes-input'
-import { ScopesPayload } from './dto/scopes-payload'
+import { ScopesEnvironmentPayload } from './dto/scopes-environment-payload'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Tenant)
@@ -42,11 +41,11 @@ export class TenantResolver {
     return tenant.environments.map((env) => env.environment)
   }
 
-  @Query(() => [ScopesPayload], { name: 'authAdminTenantsScopes' })
+  @Query(() => [ScopesEnvironmentPayload], { name: 'authAdminTenantsScopes' })
   getScopesByTenantId(
-    @Args('input') input: ScopesInput,
+    @Args('tenantId') tenantId: string,
     @CurrentUser() user: User,
   ) {
-    return this.tenantsService.getScopesByTenantId(input, user)
+    return this.tenantsService.getScopesByTenantId(tenantId, user)
   }
 }

@@ -30,11 +30,13 @@ const mockedApiScopes = [
     name: '@scope1',
     displayName: 'Scope 1 display name',
     description: 'Scope 1 description',
+    domainName: '@tenant1',
   },
   {
     name: '@scope2',
     displayName: 'Scope 2 display name',
     description: 'Scope 2 description',
+    domainName: '@tenant1',
   },
 ]
 

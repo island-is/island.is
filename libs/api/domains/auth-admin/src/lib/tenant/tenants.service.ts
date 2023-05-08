@@ -7,8 +7,7 @@ import { MultiEnvironmentService } from '../shared/services/multi-environment.se
 import { TenantEnvironment } from './models/tenant-environment.model'
 import { TenantsPayload } from './dto/tenants.payload'
 import { Tenant } from './models/tenant.model'
-import { ScopesInput } from './dto/scopes-input'
-import { ScopesPayload } from './dto/scopes-payload'
+import { ScopesEnvironmentPayload } from './dto/scopes-environment-payload'
 
 @Injectable()
 export class TenantsService extends MultiEnvironmentService {
@@ -100,14 +99,29 @@ export class TenantsService extends MultiEnvironmentService {
   }
 
   async getScopesByTenantId(
-    input: ScopesInput,
+    tenantId: string,
     user: User,
-  ): Promise<ScopesPayload[]> {
-    const scopes = await this.adminApiByEnvironmentWithAuth(
-      input.environment,
-      user,
-    )?.meScopesControllerFindAll({ tenantId: input.tenantId })
+  ): Promise<ScopesEnvironmentPayload[]> {
+    const scopes: ScopesEnvironmentPayload[] = []
 
-    return scopes as ScopesPayload[]
+    for (const [index, env] of [
+      Environment.Development,
+      Environment.Staging,
+      Environment.Production,
+    ].entries()) {
+      const scopesForEnv = await this.adminApiByEnvironmentWithAuth(env, user)
+        ?.meScopesControllerFindAll({
+          tenantId: tenantId,
+        })
+        .catch((error) => this.handleError(error, env))
+      if (scopesForEnv) {
+        scopes.push({
+          scopes: scopesForEnv,
+          environment: env,
+        })
+      }
+    }
+
+    return scopes as ScopesEnvironmentPayload[]
   }
 }

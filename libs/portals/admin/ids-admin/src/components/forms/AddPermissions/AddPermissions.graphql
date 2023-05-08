@@ -1,0 +1,11 @@
+query GetScopes($tenantId: String!) {
+  authAdminTenantsScopes(tenantId: $tenantId) {
+    environment
+    scopes {
+      name
+      displayName
+      description
+      domainName
+    }
+  }
+}
