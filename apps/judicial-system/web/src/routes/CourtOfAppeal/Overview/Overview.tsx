@@ -19,7 +19,7 @@ import {
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -28,6 +28,7 @@ import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -99,6 +100,23 @@ const CourtOfAppealOverview: React.FC = () => {
               {workingCase.courtEndTime && (
                 <Box>
                   <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+                </Box>
+              )}
+              {workingCase.appealedDate && (
+                <Box marginTop={1}>
+                  <Text as="h5" variant="h5">
+                    {formatMessage(strings.appealedInfo, {
+                      appealedByProsecutor:
+                        workingCase.appealedByRole === UserRole.Prosecutor,
+                      appealedDate: `${formatDate(
+                        workingCase.appealedDate,
+                        'PPP',
+                      )} kl. ${formatDate(
+                        workingCase.appealedDate,
+                        constants.TIME_FORMAT,
+                      )}`,
+                    })}
+                  </Text>
                 </Box>
               )}
             </Box>
