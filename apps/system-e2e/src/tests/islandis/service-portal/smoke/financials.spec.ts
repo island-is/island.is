@@ -84,15 +84,25 @@ test.describe('MS - Fjármál overview', () => {
       await page.goto('/minarsidur/fjarmal/greidslusedlar-og-greidslukvittanir')
 
       // Act
-      const inputField = page.getByRole('textbox', {
+      const filterButton = page
+        .locator(`role=button[name="${label(m.openFilter)}"]`)
+        .first()
+      await filterButton.click()
+
+      const inputField = page.getByPlaceholder(label(m.datepickLabel)).first()
+      await inputField.click()
+      await inputField.fill('')
+      await inputField.type('15.01.2023', { delay: 200 })
+
+      const filterInput = page.getByRole('textbox', {
         name: label(m.searchPlaceholder),
       })
-      await inputField.click()
-      await inputField.type('27.01.2023', { delay: 100 })
+      await filterInput.click()
+      await filterInput.type('27.01.2023', { delay: 100 })
 
       // Assert
       await expect(page.locator('role=table')).toContainText('27.01.2023')
-      await expect(page.locator('role=table')).not.toContainText('11.04.2023')
+      await expect(page.locator('role=table')).not.toContainText('10.01.2023')
     })
   })
 

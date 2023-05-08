@@ -5,14 +5,16 @@ import { useQuery } from '@apollo/client'
 
 interface Props {
   input: AdviceFilter
+  isAuthenticated: boolean
 }
 
-export const useFetchAdvices = ({ input }: Props) => {
+export const useFetchAdvices = ({ input, isAuthenticated }: Props) => {
   const client = initApollo()
   const { data, loading } = useQuery(ADVICES_GET_ALL_USER_ADVICES, {
     client: client,
     ssr: false,
     fetchPolicy: 'network-only',
+    skip: !isAuthenticated,
     variables: {
       input,
     },
