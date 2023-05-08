@@ -86,7 +86,7 @@ export class ClientsResolver {
   rotateSecret(
     @CurrentUser() user: User,
     @Args('input', { type: () => RotateSecretInput }) input: RotateSecretInput,
-  ) {
+  ): Promise<ClientSecret> {
     return this.clientsService.rotateSecret(user, input)
   }
 

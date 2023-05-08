@@ -274,7 +274,10 @@ export class ClientsService extends MultiEnvironmentService {
     )
   }
 
-  async rotateSecret(user: User, input: RotateSecretInput) {
+  async rotateSecret(
+    user: User,
+    input: RotateSecretInput,
+  ): Promise<ClientSecret> {
     const adminApi = this.adminApiByEnvironmentWithAuth(input.environment, user)
 
     if (!adminApi) {
@@ -282,16 +285,15 @@ export class ClientsService extends MultiEnvironmentService {
     }
 
     if (input.revokeOldSecrets) {
-      const oldSecrets = await adminApi.meClientSecretsControllerFindAll({
+      const secrets = await adminApi.meClientSecretsControllerFindAll({
         tenantId: input.tenantId,
         clientId: input.clientId,
       })
-
-      if (oldSecrets && oldSecrets.length > 0) {
+      if (secrets && secrets.length > 0) {
         // We don't care about the result of the delete as we can't have it in a single transaction between environments.
         // If it fails the UI will prompt the user about there being old secrets and they can clear them.
         await Promise.allSettled(
-          oldSecrets.map(async (secret) => {
+          secrets.map(async (secret) => {
             return adminApi.meClientSecretsControllerDelete({
               tenantId: input.tenantId,
               clientId: input.clientId,

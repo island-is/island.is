@@ -12,6 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { AuthAdminClientSecret } from './Client.loader'
+import { useCopyToClipboard } from '../../shared/hooks/useCopyToClipboard'
 
 interface BasicInfoProps {
   clientId: string
@@ -25,6 +26,7 @@ const BasicInfoContent = ({
   issuerUrl,
 }: BasicInfoProps) => {
   const { formatMessage } = useLocale()
+  const { handleCopy } = useCopyToClipboard()
   const [showSecret, toggleSecret] = useReducer((s) => !s, false)
   const clientIdRef = useRef<HTMLInputElement>(null)
   const clientSecretRef = useRef<HTMLInputElement>(null)
@@ -35,14 +37,6 @@ const BasicInfoContent = ({
   const endSessionUrlRef = useRef<HTMLInputElement>(null)
   const openIdConfigurationUrlRef = useRef<HTMLInputElement>(null)
   const jsonWebSetKeyUrlRef = useRef<HTMLInputElement>(null)
-
-  const handleCopy = (ref: RefObject<HTMLInputElement>) => {
-    if (!ref.current) return
-
-    navigator.clipboard.writeText(ref.current.value).then(() => {
-      toast.success(formatMessage(m.copySuccess))
-    })
-  }
 
   const secret = clientSecrets?.find((secret) => secret.decryptedValue)
   const hasClientSecrets = Boolean(clientSecrets && clientSecrets.length > 0)

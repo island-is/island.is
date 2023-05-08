@@ -10,9 +10,9 @@ export class RotateSecretInput {
   @Field(() => String, { nullable: false })
   clientId!: string
 
-  @Field(() => Boolean, { nullable: true })
-  revokeOldSecrets?: boolean
-
   @Field(() => Environment, { nullable: false })
   environment!: Environment
+
+  @Field(() => Boolean, { nullable: true })
+  revokeOldSecrets?: boolean
 }
