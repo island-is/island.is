@@ -1,28 +1,32 @@
 import { CaseFilter } from '../../types/interfaces'
 import { Box, Button, DatePicker, Stack } from '@island.is/island-ui/core'
 import FilterBox from '../Filterbox/Filterbox'
+import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
+import { getItem } from '../../utils/helpers/localStorage'
 
 interface FilterProps {
   filters: CaseFilter
   setFilters: (arr: CaseFilter) => void
-  defaultValues: CaseFilter
+  initialValues: CaseFilter
   loading?: boolean
 }
 
 export const Filter = ({
   filters,
   setFilters,
-  defaultValues,
+  initialValues,
   loading,
 }: FilterProps) => {
   const onChange = (e, type: string) => {
     const filtersCopy = { ...filters }
     filtersCopy.period[type] = e
+    filtersCopy.pageNumber = 0
     setFilters(filtersCopy)
   }
 
   const handleClear = () => {
-    setFilters(defaultValues)
+    getItem({ key: FILTERS_FRONT_PAGE_KEY, clear: true })
+    setFilters(initialValues)
   }
 
   return (
