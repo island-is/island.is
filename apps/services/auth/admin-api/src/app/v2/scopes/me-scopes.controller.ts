@@ -39,6 +39,24 @@ export class MeScopesController {
     return this.adminScopeService.findApiScopesByTenantId(id)
   }
 
+  @Get(':scopeName')
+  @Documentation({
+    description: 'Get scope by name and tenant id.',
+    response: { status: 200, type: [AdminScopeDTO] },
+  })
+  @Audit<ApiScopesDTO>({
+    resources: (scope) => scope.name,
+  })
+  findById(
+    @Param('tenantId') tenantId: string,
+    @Param('scopeName') scopeName: string,
+  ): Promise<ApiScopesDTO> {
+    return this.adminScopeService.findApiScope({
+      name: scopeName,
+      tenantId,
+    })
+  }
+
   @Post()
   @Documentation({
     description: 'Creates api scope for specific tenant.',

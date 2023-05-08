@@ -1,4 +1,5 @@
 import request from 'supertest'
+import { getModelToken } from '@nestjs/sequelize'
 
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
@@ -16,9 +17,9 @@ import { setupApp, TestApp } from '@island.is/testing/nest'
 import { User } from '@island.is/auth-nest-tools'
 
 import { AppModule } from '../../../app.module'
-import { getModelToken } from '@nestjs/sequelize'
 
 const TENANT_ID = '@tenant'
+const SCOPE_NAME = `${TENANT_ID}/scope`
 
 const currentUser = createCurrentUser({
   delegationType: AuthDelegationType.Custom,
@@ -112,6 +113,51 @@ const getTestCases: Record<string, GetTestCase> = {
   'should throw no content because of tenant does not exist': {
     user: superUser,
     tenantId: SHOULD_NOT_CREATE_TENANT_ID,
+    expected: {
+      status: 204,
+      body: {},
+    },
+  },
+}
+
+interface GetSingleTestCase extends GetTestCase {
+  scopeName: string
+}
+
+const getSingleTestCases: Record<string, GetSingleTestCase> = {
+  'should have access as current user': {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedApiScopes[0].name,
+    expected: {
+      status: 200,
+      body: mockedApiScopes[0],
+    },
+  },
+  'should have access as super user': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedApiScopes[0].name,
+    tenantOwnerNationalId: createNationalId('company'),
+    expected: {
+      status: 200,
+      body: mockedApiScopes[0],
+    },
+  },
+  'should return no content where user is not tenant owner': {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedApiScopes[0].name,
+    tenantOwnerNationalId: createNationalId('company'),
+    expected: {
+      status: 204,
+      body: {},
+    },
+  },
+  'should throw no content because of tenant does not exist': {
+    user: superUser,
+    tenantId: SHOULD_NOT_CREATE_TENANT_ID,
+    scopeName: mockedApiScopes[0].name,
     expected: {
       status: 204,
       body: {},
@@ -216,6 +262,64 @@ describe('MeScopesController', () => {
         // Assert
         expect(response.status).toEqual(testCase.expected.status)
         expect(response.body).toMatchObject(testCase.expected.body)
+      })
+    })
+
+    // GET: /v2/me/tenants/:tenantId/scopes/:scopeName
+    describe.each(Object.keys(getTestCases))('%s', (testCaseName) => {
+      const testCase = getSingleTestCases[testCaseName]
+      let app: TestApp
+      let server: request.SuperTest<request.Test>
+
+      beforeAll(async () => {
+        app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: testCase.user,
+        })
+        server = request(app.getHttpServer())
+
+        if (testCase.tenantId !== SHOULD_NOT_CREATE_TENANT_ID) {
+          await createTestData({
+            app,
+            tenantId: testCase.tenantId,
+            tenantOwnerNationalId:
+              testCase.tenantOwnerNationalId ?? testCase.user.nationalId,
+          })
+        }
+      })
+
+      it(testCaseName, async () => {
+        // Act
+        const response = await server.get(
+          `/v2/me/tenants/${testCase.tenantId}/scopes/${encodeURIComponent(
+            testCase.scopeName,
+          )}`,
+        )
+
+        // Assert
+        expect(response.status).toEqual(testCase.expected.status)
+
+        if (response.status === 204) {
+          expect(response.body).toMatchObject(testCase.expected.body)
+        } else {
+          expect(response.body).toMatchObject({
+            enabled: true,
+            order: 0,
+            showInDiscoveryDocument: true,
+            grantToAuthenticatedUser: true,
+            grantToLegalGuardians: false,
+            grantToProcuringHolders: false,
+            grantToPersonalRepresentatives: false,
+            allowExplicitDelegationGrant: false,
+            automaticDelegationGrant: false,
+            alsoForDelegatedUser: false,
+            required: false,
+            emphasize: false,
+            domainName: TENANT_ID,
+            ...testCase.expected.body,
+          })
+        }
       })
     })
 

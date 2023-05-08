@@ -37,6 +37,32 @@ export class AdminScopeService {
   }
 
   /**
+   * Finds a scope by name and tenantId
+   */
+  async findApiScope({
+    name,
+    tenantId,
+  }: {
+    name: string
+    tenantId: string
+  }): Promise<ApiScopesDTO> {
+    const apiScope = await this.apiScope.findOne({
+      where: {
+        name,
+        domainName: tenantId,
+      },
+    })
+
+    if (!apiScope) {
+      throw new BadRequestException(
+        `Scope name "${name}" does not exist for tenant ${tenantId}`,
+      )
+    }
+
+    return apiScope.toDTO()
+  }
+
+  /**
    * Creates a new scope in api_scope table and adds row in api_scope_user_claim table with the newly created scope
    */
   async createScope(

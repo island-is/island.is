@@ -14,6 +14,7 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { AppModule } from '../../../app.module'
 
 const tenantId = '@test.is'
+const scopeName = '@test.is/scope'
 const clientId = '@test.is/test-client'
 
 const createTestData = async (app: TestApp) => {
@@ -29,6 +30,7 @@ describe('withoutAuth and permissions', () => {
   it.each`
     method   | endpoint
     ${'GET'} | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes`}
+    ${'GET'} | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes/${encodeURIComponent(scopeName)}`}
   `(
     '$method $endpoint should return 401 when user is not authenticated',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -59,6 +61,7 @@ describe('withoutAuth and permissions', () => {
   it.each`
     method   | endpoint
     ${'GET'} | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes`}
+    ${'GET'} | ${`/v2/me/tenants/${encodeURIComponent(tenantId)}/scopes/${encodeURIComponent(scopeName)}`}
   `(
     '$method $endpoint should return 403 Forbidden when user does not have the correct scope',
     async ({ method, endpoint }: TestEndpointOptions) => {
