@@ -355,7 +355,8 @@ export const ActionCard: React.FC<ActionCardProps> = ({
           alignItems={['flexStart', 'flexEnd']}
           flexDirection="column"
           flexShrink={0}
-          marginTop={[1, 0]}
+          marginTop={[1, 'auto']}
+          marginBottom={[0, 'auto']}
           marginLeft={[0, 'auto']}
           className={styles.button}
         >
