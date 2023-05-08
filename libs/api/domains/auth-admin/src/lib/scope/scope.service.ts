@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common'
 
 import { User } from '@island.is/auth-nest-tools'
 import { isDefined } from '@island.is/shared/utils'
+import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeResponse } from './dto/create-scope.response'
-import { Environment } from 'environment'
 import { ScopesPayload } from './dto/scopes.payload'
 
 const environments = [
