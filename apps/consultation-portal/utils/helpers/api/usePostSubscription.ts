@@ -5,17 +5,12 @@ import { SUB_POST_SUBS } from '../../../graphql/queries.graphql'
 export const usePostSubscription = () => {
   const client = initApollo()
 
-  const [
-    postSubsMutation,
+  const [postSubsMutation, { loading: postLoading }] = useMutation(
+    SUB_POST_SUBS,
     {
-      data: postData,
-      loading: postLoading,
-      error: postError,
-      called: postCalled,
+      client: client,
     },
-  ] = useMutation(SUB_POST_SUBS, {
-    client: client,
-  })
+  )
 
   return {
     postSubsMutation,
