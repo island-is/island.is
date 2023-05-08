@@ -35,7 +35,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
-import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
+import { titleForCase } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
