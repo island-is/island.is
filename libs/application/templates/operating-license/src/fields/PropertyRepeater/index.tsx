@@ -22,6 +22,7 @@ import { GET_REAL_ESTATE_ADDRESS } from '../../graphql'
 import { PropertyField } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
 import { formatText, getValueViaPath } from '@island.is/application/core'
+import { error as errorMsg } from '../../lib/error'
 
 export const PropertyRepeater: FC<FieldBaseProps> = ({
   field,
@@ -30,7 +31,6 @@ export const PropertyRepeater: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { id, title } = field
-
   const { fields, append, remove } = useFieldArray({
     name: `${id}`,
   })
@@ -105,12 +105,15 @@ const PropertyItem = ({
   const addressField = `${fieldIndex}.address`
   const spaceNumberField = `${fieldIndex}.spaceNumber`
   const customerCountField = `${fieldIndex}.customerCount`
+
   const propertyNumberInput = useWatch({
     name: propertyNumberField,
     defaultValue: '',
   })
-
   const address = useWatch({ name: addressField, defaultValue: '' })
+  const spaceNumber = useWatch({ name: spaceNumberField })
+  const customerCount = useWatch({ name: customerCountField })
+
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
@@ -138,7 +141,6 @@ const PropertyItem = ({
       setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
-
   const hasPropertyNumberButEmptyAddress = propertyNumberInput && !address
 
   return (
@@ -175,7 +177,9 @@ const PropertyItem = ({
             backgroundColor="blue"
             defaultValue={field.propertyNumber}
             error={
-              error?.assetNumber || hasPropertyNumberButEmptyAddress
+              hasPropertyNumberButEmptyAddress
+                ? formatMessage(errorMsg.missingAddressForPropertyNumber)
+                : !propertyNumberInput
                 ? error
                 : undefined
             }
@@ -201,6 +205,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.spaceNumber?.toString()}
+            error={error && !spaceNumber ? error : undefined}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -211,6 +216,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.customerCount?.toString()}
+            error={error && !customerCount ? error : undefined}
           />
         </GridColumn>
       </GridRow>
