@@ -93,20 +93,6 @@ export class NationalRegistryV3Resolver {
     return this.nationalRegistryV3Service.getParents(user.nationalId)
   }
 
-  @ResolveField('custodians', () => [NationalRegistryV3Custodian], {
-    nullable: true,
-  })
-  @Audit()
-  async resolveCustodians(
-    @Context('req') { user }: { user: User },
-    @Parent() person: NationalRegistryV3Person,
-  ): Promise<Array<NationalRegistryV3Custodian> | null> {
-    if (person.nationalId !== user.nationalId) {
-      return null
-    }
-    return this.nationalRegistryV3Service.getCustodians(user.nationalId)
-  }
-
   @ResolveField('residenceHistory', () => [NationalRegistryV3Residence], {
     nullable: true,
   })

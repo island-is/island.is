@@ -16,6 +16,12 @@ export class NationalRegistryV3Custodian {
   @Field(() => String, { nullable: true })
   fullName?: string | null
 
+  @Field(() => String, { nullable: true })
+  custodyText?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  livesWithChild?: boolean
+
   @Field(() => NationalRegistryV3Name, { nullable: true })
   name?: NationalRegistryV3Name | null
 
@@ -66,12 +72,6 @@ export class NationalRegistryV3Custodian {
 
   @Field(() => NationalRegistryV3Religion, { nullable: true })
   religion?: NationalRegistryV3Religion | null
-
-  @Field(() => String, { nullable: true })
-  custodyText?: string | null
-
-  @Field(() => String, { nullable: true })
-  livesWithChild?: string | null
 }
 
 /*

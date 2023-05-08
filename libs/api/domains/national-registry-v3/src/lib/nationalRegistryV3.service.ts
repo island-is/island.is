@@ -105,7 +105,7 @@ export class NationalRegistryV3Service {
   ): Promise<Array<NationalRegistryV3Custodian> | null> {
     const data = await this.fetchData(nationalId)
 
-    if (!data.forsja?.forsjaradilar) {
+    if (!data.forsja || !data.forsja.forsjaradilar) {
       return null
     }
 
@@ -126,9 +126,7 @@ export class NationalRegistryV3Service {
               custodyText: custodian.forsjaTexti,
               livesWithChild:
                 personData.itarupplysingar?.logheimilistengsl ===
-                data.itarupplysingar?.logheimilistengsl
-                  ? 'true'
-                  : 'false',
+                data.itarupplysingar?.logheimilistengsl,
             }
           })
           .filter((Boolean as unknown) as ExcludesFalse),
@@ -235,6 +233,9 @@ export class NationalRegistryV3Service {
           }),
         )
 
+        const parents = (await this.getParents(child.barnKennitala)) ?? []
+        const custodians = (await this.getCustodians(child.barnKennitala)) ?? []
+
         const livesWithApplicant =
           childDetails.itarupplysingar?.logheimilistengsl ==
           parentData.itarupplysingar?.logheimilistengsl
@@ -243,7 +244,9 @@ export class NationalRegistryV3Service {
           ...this.extractPerson(childDetails),
           nationalId: child.barnKennitala,
           fullName: child.barnNafn,
-          livesWithApplicant,
+          parents,
+          custodians,
+          /*livesWithApplicant,
           livesWithBothParents:
             livesWithApplicant &&
             otherParentsDetails.every(
@@ -255,6 +258,7 @@ export class NationalRegistryV3Service {
             otherParentsDetails.length && otherParentsDetails[0]
               ? this.extractPerson(otherParentsDetails[0])
               : null,
+              */
         }
       }),
     )
