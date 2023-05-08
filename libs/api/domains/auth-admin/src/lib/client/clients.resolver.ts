@@ -22,6 +22,8 @@ import { CreateClientResponse } from './dto/create-client.response'
 import { CreateClientInput } from './dto/create-client.input'
 import { PatchClientInput } from './dto/patch-client.input'
 import { PublishClientInput } from './dto/publish-client.input'
+import { RotateSecretInput } from './dto/rotate-secret.input'
+import { ClientSecret } from './models/client-secret.model'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Client)
@@ -78,6 +80,14 @@ export class ClientsResolver {
     @Args('input', { type: () => PatchClientInput }) input: PatchClientInput,
   ) {
     return this.clientsService.patchClient(user, input)
+  }
+
+  @Mutation(() => ClientSecret, { name: 'rotateAuthAdminClientSecret' })
+  rotateSecret(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => RotateSecretInput }) input: RotateSecretInput,
+  ) {
+    return this.clientsService.rotateSecret(user, input)
   }
 
   @ResolveField('defaultEnvironment', () => ClientEnvironment)
