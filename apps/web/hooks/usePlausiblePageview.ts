@@ -22,7 +22,7 @@ export const usePlausiblePageview = (domain?: string) => {
           'Content-Type': 'text/plain',
         },
         body: JSON.stringify({
-          domain,
+          domain: domain,
           name: 'pageview',
           url: window.location.href,
           referrer: window.document.referrer || null,
