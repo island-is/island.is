@@ -11,7 +11,6 @@ import {
   NotificationType,
   SendNotificationResponse,
   CaseTransition,
-  RequestSignatureResponse,
   CaseState,
   isIndictmentCase,
   isExtendedCourtRole,
