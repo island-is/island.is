@@ -16,7 +16,7 @@ export const GET_PUBLISHED_MATERIAL_QUERY = gql`
         organization {
           title
           slug
-          plausibleTrackingDomain
+          trackingDomain
         }
         releaseDate
         genericTags {

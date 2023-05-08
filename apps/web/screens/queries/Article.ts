@@ -58,7 +58,7 @@ export const GET_ARTICLE_QUERY = gql`
         slug
         link
         hasALandingPage
-        plausibleTrackingDomain
+        trackingDomain
         logo {
           url
           width

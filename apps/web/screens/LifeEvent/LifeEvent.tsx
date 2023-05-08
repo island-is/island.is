@@ -31,7 +31,11 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import {
+  useFeatureFlag,
+  useNamespace,
+  usePlausiblePageview,
+} from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
@@ -40,7 +44,6 @@ import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeR
 import { webRichText } from '@island.is/web/utils/richText'
 import { Webreader } from '@island.is/web/components'
 import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
-import { usePlausiblePageview } from '@island.is/web/hooks/usePlausiblePageView'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']

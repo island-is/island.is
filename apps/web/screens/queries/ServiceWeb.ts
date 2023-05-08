@@ -184,7 +184,7 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       shortTitle
       slug
       link
-      plausibleTrackingDomain
+      trackingDomain
       logo {
         url
         width

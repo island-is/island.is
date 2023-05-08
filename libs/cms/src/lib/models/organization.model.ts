@@ -66,7 +66,7 @@ export class Organization {
   hasALandingPage?: boolean
 
   @Field({ nullable: true })
-  plausibleTrackingDomain?: string
+  trackingDomain?: string
 }
 
 export const mapOrganization = ({
@@ -97,6 +97,6 @@ export const mapOrganization = ({
       : [],
     showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
     hasALandingPage: fields.hasALandingPage ?? true,
-    plausibleTrackingDomain: fields.plausibleTrackingDomain ?? '',
+    trackingDomain: fields.trackingDomain ?? '',
   }
 }
