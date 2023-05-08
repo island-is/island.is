@@ -905,6 +905,7 @@ export const m = defineMessages({
   aidsAndNutrition: {
     id: 'service.portal:aids-and-nutrition',
     defaultMessage: 'Hjálpartæki og næring',
+  },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',
     defaultMessage: 'Sundurliðun',
