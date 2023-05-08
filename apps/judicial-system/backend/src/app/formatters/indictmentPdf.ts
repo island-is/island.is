@@ -99,7 +99,7 @@ export const createIndictment = async (
   addEmptyLines(doc, 2)
   addNormalPlusJustifiedText(doc, theCase.demands || '')
   addEmptyLines(doc, 2)
-  addNormalPlusText(
+  addNormalPlusCenteredText(
     doc,
     formatMessage(
       indictment.signature,
