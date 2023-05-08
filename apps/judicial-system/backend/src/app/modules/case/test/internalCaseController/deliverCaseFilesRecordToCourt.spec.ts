@@ -138,7 +138,7 @@ describe('InternalCaseController - Deliver case files record to court', () => {
     })
 
     it('should return a success response', async () => {
-      expect(then.result.delivered).toEqual(true)
+      expect(then.result).toEqual({ delivered: true })
     })
   })
 
