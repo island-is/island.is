@@ -7,6 +7,7 @@ import {
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { PowerBiConfig } from './powerbi.config'
+import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
 
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
@@ -22,7 +23,7 @@ export class PowerBiService {
     owner?: string
     workspaceId?: string
     reportId?: string
-  }) {
+  }): Promise<GetPowerBiEmbedPropsFromServerResponse | null> {
     if (
       !powerBiSlice.owner ||
       !powerBiSlice.workspaceId ||

@@ -589,7 +589,10 @@ export const slices = gql`
     workspaceId
     reportId
     owner
-    powerBiEmbedPropsFromServer
+    powerBiEmbedPropsFromServer {
+      accessToken
+      embedUrl
+    }
   }
 
   fragment TableSliceFields on TableSlice {

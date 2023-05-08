@@ -97,7 +97,7 @@ import { GenericTag } from './models/genericTag.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
 import { PowerBiSlice } from './models/powerBiSlice.model'
-import GraphQLJSON from 'graphql-type-json'
+import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
 
 const { cacheTime } = environment
 
@@ -617,7 +617,9 @@ export class FeaturedSupportQNAsResolver {
 export class PowerBiSliceResolver {
   constructor(private powerBiService: PowerBiService) {}
 
-  @ResolveField(() => GraphQLJSON)
+  @ResolveField(() => GetPowerBiEmbedPropsFromServerResponse, {
+    nullable: true,
+  })
   async powerBiEmbedPropsFromServer(@Parent() powerBiSlice: PowerBiSlice) {
     return this.powerBiService.getEmbedProps(powerBiSlice)
   }
