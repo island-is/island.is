@@ -7,6 +7,8 @@ import {
   Inline,
   Button,
   SkeletonLoader,
+  Tabs,
+  TabType,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -18,6 +20,7 @@ import {
 import { messages } from '../../lib/messages'
 import { SUPPORT_PRODUCTS } from '../../utils/constants'
 import { FootNote } from '../../components/FootNote.tsx/FootNote'
+import { FC } from 'react'
 
 const GetAidsAndNutrition = gql`
   query GetAidsAndNutrition {
@@ -48,32 +51,6 @@ const GetAidsAndNutrition = gql`
   }
 `
 
-const generateRow = (rowItem: AidOrNutrition) => {
-  const row = (
-    <T.Row>
-      <T.Data>
-        <Text variant="medium">{rowItem.name}</Text>
-      </T.Data>
-      <T.Data>
-        <Text variant="medium">{rowItem.maxUnitRefund}</Text>
-      </T.Data>
-      <T.Data>
-        <Text variant="medium">{`${rowItem.refund.value}${
-          rowItem.refund.type === 'amount' ? ' kr.' : '%'
-        }`}</Text>
-      </T.Data>
-      <T.Data>
-        <Text variant="medium">{rowItem.available}</Text>
-      </T.Data>
-      <T.Data>
-        <Text variant="medium">{rowItem.location}</Text>
-      </T.Data>
-    </T.Row>
-  )
-
-  return row
-}
-
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
@@ -83,6 +60,19 @@ const AidsAndNutrition = () => {
     aids: data?.getRightsPortalAidsAndNutrition?.aids ?? [],
     nutrition: data?.getRightsPortalAidsAndNutrition?.nutrition ?? [],
   }
+
+  const tabs = [
+    supportData.aids.length > 0 && {
+      label: formatMessage(messages.aids),
+      content: <AidsAndNutritionTabsContent data={supportData.aids} />,
+    },
+    supportData.nutrition.length > 0 && {
+      label: formatMessage(messages.nutrition),
+      content: <AidsAndNutritionTabsContent data={supportData.nutrition} />,
+    },
+  ].filter((x) => x !== false) as TabType[]
+
+  console.log(tabs)
 
   if (error && !loading) {
     return (
@@ -113,8 +103,8 @@ const AidsAndNutrition = () => {
         </Box>
       )}
 
-      {!loading && !!(supportData.aids.length || supportData.nutrition.length) && (
-        <>
+      {!loading && !error && tabs.length > 0 && (
+        <Box>
           <Inline space={3}>
             <>
               <a
@@ -148,53 +138,92 @@ const AidsAndNutrition = () => {
             </>
           </Inline>
 
-          <Box marginTop={[2, 2, 5]}>
-            <Box marginTop={2}>
-              <T.Table>
-                <T.Head>
-                  <T.Row>
-                    <T.HeadData>
-                      <Text variant="medium" fontWeight="semiBold">
-                        {formatMessage(messages.name)}
-                      </Text>
-                    </T.HeadData>
-                    <T.HeadData>
-                      <Text variant="medium" fontWeight="semiBold">
-                        {formatMessage(messages.maxUnitRefund)}
-                      </Text>
-                    </T.HeadData>
-                    <T.HeadData>
-                      <Text variant="medium" fontWeight="semiBold">
-                        {formatMessage(messages.insuranceRatio)}
-                      </Text>
-                    </T.HeadData>
-                    <T.HeadData>
-                      <Text variant="medium" fontWeight="semiBold">
-                        {formatMessage(messages.availableRefund)}
-                      </Text>
-                    </T.HeadData>
-                    <T.HeadData>
-                      <Text variant="medium" fontWeight="semiBold">
-                        {formatMessage(messages.location)}
-                      </Text>
-                    </T.HeadData>
-                    <T.HeadData />
-                  </T.Row>
-                </T.Head>
-                <T.Body>
-                  {supportData.aids &&
-                    supportData.aids.map((rowItem) => generateRow(rowItem))}
-                  {supportData.nutrition &&
-                    supportData.nutrition.map((rowItem) =>
-                      generateRow(rowItem),
-                    )}
-                </T.Body>
-              </T.Table>
-            </Box>
-            <FootNote type={SUPPORT_PRODUCTS} />
+          <Box marginTop={[0, 0, 5]}>
+            <Tabs
+              label={formatMessage(messages.chooseAidsOrNutrition)}
+              tabs={tabs}
+              contentBackground="transparent"
+              selected="0"
+              size="xs"
+            />
           </Box>
-        </>
+        </Box>
       )}
+    </Box>
+  )
+}
+
+interface Props {
+  data: Array<AidOrNutrition>
+}
+
+const AidsAndNutritionTabsContent: FC<Props> = ({ data }) => {
+  useNamespaces('sp.health')
+  const { formatMessage } = useLocale()
+
+  const generateRow = (rowItem: AidOrNutrition) => {
+    const row = (
+      <T.Row>
+        <T.Data>
+          <Text variant="medium">{rowItem.name}</Text>
+        </T.Data>
+        <T.Data>
+          <Text variant="medium">{rowItem.maxUnitRefund}</Text>
+        </T.Data>
+        <T.Data>
+          <Text variant="medium">{`${rowItem.refund.value}${
+            rowItem.refund.type === 'amount' ? ' kr.' : '%'
+          }`}</Text>
+        </T.Data>
+        <T.Data>
+          <Text variant="medium">{rowItem.available}</Text>
+        </T.Data>
+        <T.Data>
+          <Text variant="medium">{rowItem.location}</Text>
+        </T.Data>
+      </T.Row>
+    )
+
+    return row
+  }
+  return (
+    <Box marginTop={[2, 2, 5]}>
+      <Box marginTop={2}>
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(messages.name)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(messages.maxUnitRefund)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(messages.insuranceRatio)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(messages.availableRefund)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(messages.location)}
+                </Text>
+              </T.HeadData>
+              <T.HeadData />
+            </T.Row>
+          </T.Head>
+          <T.Body>{data.map((rowItem) => generateRow(rowItem))}</T.Body>
+        </T.Table>
+      </Box>
+      <FootNote type={SUPPORT_PRODUCTS} />
     </Box>
   )
 }
