@@ -205,7 +205,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.spaceNumber?.toString()}
-            error= {(error && !spaceNumber) ?? error}
+            error={(error && !spaceNumber) ?? error}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -216,7 +216,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.customerCount?.toString()}
-            error= {(error && !customerCount) ?? error}
+            error={(error && !customerCount) ?? error}
           />
         </GridColumn>
       </GridRow>
