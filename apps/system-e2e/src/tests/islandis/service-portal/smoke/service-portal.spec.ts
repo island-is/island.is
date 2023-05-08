@@ -38,4 +38,16 @@ test.describe('Service portal', () => {
     await findByRole('link', 'Pósthólf').click()
     await expect(page.locator('text=Hér getur þú fundið skjöl')).toBeVisible()
   })
+  test('should change language', async () => {
+    const page = await context.newPage()
+    const { findByTestId } = helpers(page)
+    await page.goto('/minarsidur')
+
+    const languageButton = findByTestId('language-switcher-button')
+    await languageButton.click()
+    const greeting = findByTestId('greeting')
+
+    await expect(languageButton).toContainText('IS')
+    await expect(greeting).toContainText(/(?:day|evening)/)
+  })
 })
