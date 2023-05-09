@@ -21,41 +21,14 @@ import { messages } from '../../lib/messages'
 import { SUPPORT_PRODUCTS } from '../../utils/constants'
 import { FootNote } from '../../components/FootNote.tsx/FootNote'
 import { FC } from 'react'
-
-const GetAidsAndNutrition = gql`
-  query GetAidsAndNutrition {
-    getRightsPortalAidsAndNutrition {
-      aids {
-        name
-        available
-        expiring
-        location
-        maxUnitRefund
-        refund {
-          type
-          value
-        }
-      }
-      nutrition {
-        name
-        available
-        expiring
-        location
-        maxUnitRefund
-        refund {
-          type
-          value
-        }
-      }
-    }
-  }
-`
+import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
-  const { loading, error, data } = useQuery<Query>(GetAidsAndNutrition)
+  const { loading, error, data } = useGetAidsAndNutritionQuery()
+
   const supportData = {
     aids: data?.getRightsPortalAidsAndNutrition?.aids ?? [],
     nutrition: data?.getRightsPortalAidsAndNutrition?.nutrition ?? [],
@@ -71,8 +44,6 @@ const AidsAndNutrition = () => {
       content: <AidsAndNutritionTabsContent data={supportData.nutrition} />,
     },
   ].filter((x) => x !== false) as TabType[]
-
-  console.log(tabs)
 
   if (error && !loading) {
     return (

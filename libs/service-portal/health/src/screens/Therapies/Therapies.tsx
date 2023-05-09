@@ -25,34 +25,13 @@ import {
   PHYSIO_THERAPY,
   SPEECH_THERAPY,
 } from '../../utils/constants'
-
-const GetTherapies = gql`
-  query GetTherapies {
-    getRightsPortalTherapies {
-      id
-      name
-      periods {
-        from
-        to
-        sessions {
-          available
-          used
-        }
-      }
-      postStation
-      state {
-        code
-        display
-      }
-    }
-  }
-`
+import { useGetTherapiesQuery } from './Therapies.generated'
 
 const Therapies = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
-  const { loading, error, data } = useQuery<Query>(GetTherapies)
+  const { loading, error, data } = useGetTherapiesQuery()
 
   const therapiesData = data?.getRightsPortalTherapies ?? []
 
