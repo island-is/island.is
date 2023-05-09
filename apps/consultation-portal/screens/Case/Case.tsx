@@ -6,24 +6,22 @@ import {
   GridContainer,
   GridRow,
   Hidden,
-  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
-import { SimpleCardSkeleton } from '../../components/Card'
-import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { useFetchAdvicesById, useIsMobile } from '../../utils/helpers'
 import { useContext } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'
 import { Case } from '../../types/interfaces'
 import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
-import env from '../../lib/environment'
 import StakeholdersCard from './components/Stakeholders'
 import { AdviceCTACard } from './components/AdviceCTA'
 import { CaseStatusFilterOptions } from '../../types/enums'
+import { RenderDocumentsBox } from './components/RenderDocumentsBox'
+import { CoOrdinator } from './components/CoOrdinator'
 
 interface Props {
   chosenCase: Case
@@ -72,31 +70,14 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
 
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Skjöl til samráðs"
-                >
-                  {chosenCase.documents.length > 0 ? (
-                    chosenCase.documents.map((doc, index) => {
-                      return (
-                        <LinkV2
-                          href={`${env.backendDownloadUrl}${doc.id}`}
-                          color="blue400"
-                          underline="normal"
-                          underlineVisibility="always"
-                          newTab
-                          key={index}
-                        >
-                          {doc.fileName}
-                        </LinkV2>
-                      )
-                    })
-                  ) : (
-                    <Text>Engin skjöl fundust.</Text>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
+              <RenderDocumentsBox
+                title="Skjöl til samráðs"
+                documents={chosenCase?.documents}
+              />
+              <RenderDocumentsBox
+                title="Fylgiskjöl"
+                documents={chosenCase?.additionalDocuments}
+              />
               {chosenCase?.statusName !==
                 CaseStatusFilterOptions.resultsPublished && (
                 <CaseEmailBox
@@ -126,7 +107,8 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                       />
                     </>
                   )}
-                  {chosenCase.statusName === 'Til umsagnar' && (
+                  {chosenCase.statusName ===
+                    CaseStatusFilterOptions.forReview && (
                     <WriteReviewCard
                       card={chosenCase}
                       isLoggedIn={isAuthenticated}
@@ -146,22 +128,10 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             <Stack space={3}>
               {!isMobile && <AdviceCTACard chosenCase={chosenCase} />}
               <StakeholdersCard chosenCase={chosenCase} />
-
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Umsjónaraðili"
-                >
-                  {contactName || contactEmail ? (
-                    <>
-                      {contactName && <Text>{contactName}</Text>}
-                      {contactEmail && <Text>{contactEmail}</Text>}
-                    </>
-                  ) : (
-                    <Text>Engin skráður umsjónaraðili.</Text>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
+              <CoOrdinator
+                contactEmail={contactEmail}
+                contactName={contactName}
+              />
             </Stack>
           </GridColumn>
         </GridRow>

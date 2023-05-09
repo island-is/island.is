@@ -18,7 +18,6 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
       {chosenCase.statusName === 'Til umsagnar' ? (
         <>
           <StackedTitleAndDescription
-            headingColor="blue400"
             title="Viltu senda umsögn?"
           >
             <Text>
