@@ -203,7 +203,6 @@ const PastCases: React.FC<Props> = (props) => {
           }
         }) => {
           const initialRulingDate = row.row.original.initialRulingDate
-          const rulingDate = row.row.original.rulingDate
           const validToDate = row.row.original.validToDate
           const courtEndTime = row.row.original.courtEndTime
           const state = row.row.original.state
