@@ -62,6 +62,13 @@ describe('getCasesQueryFilter', () => {
             { prosecutor_id: 'Prosecutor Id' },
           ],
         },
+        {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
+        },
       ],
     })
   })

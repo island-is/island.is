@@ -6,7 +6,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common'
 
-import { isCaseBlockedFromUser } from '../filters/case.filter'
+import { canUserAccessCase } from '../filters/case.filter'
 
 @Injectable()
 export class CaseReadGuard implements CanActivate {
@@ -25,7 +25,7 @@ export class CaseReadGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    if (isCaseBlockedFromUser(theCase, user, false)) {
+    if (!canUserAccessCase(theCase, user, false)) {
       throw new ForbiddenException(
         `User ${user.id} does not have read access to case ${theCase.id}`,
       )

@@ -4,7 +4,11 @@ import getDefaultFilters from './getDefaultFilters'
 import { useFetchAdvices } from '../useFetchAdvices'
 import { CARDS_PER_PAGE } from '../../consts/consts'
 
-export const useAdviceFilters = () => {
+interface Props {
+  isAuthenticated: boolean
+}
+
+export const useAdviceFilters = ({ isAuthenticated }: Props) => {
   const initialValues = {
     searchQuery: '',
     oldestFirst: false,
@@ -20,6 +24,7 @@ export const useAdviceFilters = () => {
 
   const { advices, total, getAdvicesLoading } = useFetchAdvices({
     input: filters,
+    isAuthenticated: isAuthenticated,
   })
 
   return {
