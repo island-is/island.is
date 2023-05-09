@@ -47,7 +47,11 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .redis()
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
-      EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic',
+      EHIC_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic',
+        staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic',
+        prod: 'IS/GOV/4804080550/SJUKRA-Protected/ehic'
+      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
