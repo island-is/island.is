@@ -36,7 +36,7 @@ const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
     <>
       <Text variant="h4">
         {defenders[0].sessionArrangement ===
-        SessionArrangements.AllPresentSpokesperson
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
           ? 'Talsmaður'
           : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
       </Text>

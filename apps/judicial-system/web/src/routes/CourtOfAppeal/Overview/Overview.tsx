@@ -125,7 +125,7 @@ const CourtOfAppealOverview: React.FC = () => {
                   <Text as="h5" variant="h5">
                     {formatMessage(strings.appealedInfo, {
                       appealedByProsecutor:
-                        workingCase.appealedByRole === UserRole.Prosecutor,
+                        workingCase.appealedByRole === UserRole.PROSECUTOR,
                       appealedDate: `${formatDate(
                         workingCase.appealedDate,
                         'PPP',
