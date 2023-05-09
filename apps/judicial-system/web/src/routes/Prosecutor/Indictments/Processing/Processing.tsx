@@ -8,7 +8,6 @@ import {
   FormFooter,
   PageLayout,
   ProsecutorCaseInfo,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
@@ -40,9 +39,8 @@ const Processing: React.FC = () => {
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
-  const { user } = useContext(UserContext)
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase, user)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {

@@ -7,14 +7,14 @@ import {
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
-describe('CaseController - Get case files pdf rules', () => {
+describe('CaseController - Get case files record pdf rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let rules: any[]
 
   beforeEach(() => {
     rules = Reflect.getMetadata(
       'roles-rules',
-      CaseController.prototype.getCaseFilesPdf,
+      CaseController.prototype.getCaseFilesRecordPdf,
     )
   })
 
