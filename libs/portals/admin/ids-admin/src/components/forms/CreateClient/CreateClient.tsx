@@ -26,7 +26,7 @@ import {
   tenantLoaderId,
   TenantLoaderResult,
 } from '../../../screens/Tenant/Tenant.loader'
-import { Modal } from '../../Modal/Modal'
+import { Modal } from '@island.is/react/components'
 import { IDSAdminPaths } from '../../../lib/paths'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 import { useErrorFormatMessage } from '../../../shared/hooks/useFormatErrorMessage'
@@ -203,6 +203,7 @@ export default function CreateClient() {
       label={formatMessage(m.createClient)}
       title={formatMessage(m.createClient)}
       onClose={onCancel}
+      closeButtonLabel={formatMessage(m.closeModal)}
     >
       {actionData?.globalError && (
         <Box marginTop={3}>
