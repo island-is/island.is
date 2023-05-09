@@ -65,7 +65,7 @@ const DropdownSort = ({
         aria-label={menuAriaLabel}
         className={cn(styles.menu, menuBoxStyle)}
       >
-        {items.map((item, index) => {
+        {items?.map((item, index) => {
           const render = item.render || ((i: ReactElement, _) => i)
           const classNames = cn(
             menuItemBoxStyle,

@@ -71,12 +71,12 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
             position="relative"
             key={repeaterField.id}
             marginTop={2}
-            hidden={repeaterField.initial || repeaterField?.dummy}
+            hidden={repeaterField.initial}
           >
             {index > 0 && (
               <>
                 <Text variant="h4" marginBottom={2}>
-                  {props.repeaterHeaderText + ' ' + (index + 1)}
+                  {props.repeaterHeaderText}
                 </Text>
                 <Box position="absolute" className={styles.removeFieldButton}>
                   <Button

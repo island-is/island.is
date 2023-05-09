@@ -28,7 +28,7 @@ import {
 } from '../../../screens/Tenant/Tenant.loader'
 import { Modal } from '../../Modal/Modal'
 import { IDSAdminPaths } from '../../../lib/paths'
-import { replaceParams, useIsSubmitting } from '@island.is/react-spa/shared'
+import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 import { useErrorFormatMessage } from '../../../shared/hooks/useFormatErrorMessage'
 
 const environments = [
@@ -118,7 +118,7 @@ type InputState = {
  */
 export default function CreateClient() {
   const navigate = useNavigate()
-  const isLoading = useIsSubmitting()
+  const { isLoading, isSubmitting } = useSubmitting()
 
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
   const actionData = useActionData() as CreateClientResult
@@ -200,6 +200,7 @@ export default function CreateClient() {
     <Modal
       id="create-client"
       isVisible
+      label={formatMessage(m.createClient)}
       title={formatMessage(m.createClient)}
       onClose={onCancel}
     >
@@ -310,7 +311,7 @@ export default function CreateClient() {
           <Button onClick={onCancel} variant="ghost">
             {formatMessage(m.cancel)}
           </Button>
-          <Button type="submit" loading={isLoading}>
+          <Button type="submit" loading={isLoading || isSubmitting}>
             {formatMessage(m.create)}
           </Button>
         </Box>

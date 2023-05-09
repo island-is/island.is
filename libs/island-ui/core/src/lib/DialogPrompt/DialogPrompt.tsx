@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '../Button/Button'
+import { Button, ButtonTypes } from '../Button/Button'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { GridRow } from '../Grid/GridRow/GridRow'
@@ -7,6 +7,7 @@ import { GridColumn } from '../Grid/GridColumn/GridColumn'
 import { ModalBase } from '../ModalBase/ModalBase'
 import * as styles from './DialogPrompt.css'
 import { Hidden } from '../Hidden/Hidden'
+
 interface DialogPromptProps {
   /**
    * The heading text content
@@ -26,7 +27,7 @@ interface DialogPromptProps {
   baseId: string
   /**
    * Element that opens the dialog.
-   * It will be forwarded neccessery props for a11y and event handling.
+   * It will be forwarded necessary props for a11y and event handling.
    */
   disclosureElement: React.ReactElement
   /**
@@ -53,6 +54,14 @@ interface DialogPromptProps {
    * Image to be displayed in the dialog
    */
   img?: React.ReactElement
+  /**
+   * Color and variant props that will be passed to the confirm button
+   */
+  buttonPropsConfirm?: ButtonTypes
+  /**
+   * Color and variant props that will be passed to the cancel button
+   */
+  buttonPropsCancel?: ButtonTypes
 }
 
 export const DialogPrompt = ({
@@ -67,6 +76,8 @@ export const DialogPrompt = ({
   buttonTextConfirm,
   initialVisibility,
   img,
+  buttonPropsConfirm = { variant: 'ghost', colorScheme: 'default' },
+  buttonPropsCancel = { variant: 'ghost', colorScheme: 'default' },
 }: DialogPromptProps) => {
   const hasButtons = !!buttonTextCancel || !!buttonTextConfirm
 
@@ -129,7 +140,7 @@ export const DialogPrompt = ({
                     <Box paddingRight={2}>
                       {buttonTextCancel && (
                         <Button
-                          variant="ghost"
+                          {...buttonPropsCancel}
                           size="small"
                           onClick={handleClose}
                         >
@@ -140,7 +151,7 @@ export const DialogPrompt = ({
                     <Box>
                       {buttonTextConfirm && (
                         <Button
-                          variant="ghost"
+                          {...buttonPropsConfirm}
                           size="small"
                           onClick={handleConfirm}
                         >

@@ -10,6 +10,7 @@ globalStyle(`${spanStyle} > div > ol`, {
   fontWeight: theme.typography.light,
   lineHeight: theme.typography.baseLineHeight,
   marginBottom: 10,
+  paddingLeft: 40,
 })
 
 globalStyle(`${spanStyle} > div > ul`, {
@@ -18,6 +19,7 @@ globalStyle(`${spanStyle} > div > ul`, {
   fontWeight: theme.typography.light,
   lineHeight: theme.typography.baseLineHeight,
   marginBottom: 10,
+  paddingLeft: 40,
 })
 
 globalStyle(`${spanStyle} > div > h4`, {

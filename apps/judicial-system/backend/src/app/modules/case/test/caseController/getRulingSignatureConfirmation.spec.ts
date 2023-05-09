@@ -4,7 +4,6 @@ import { Transaction } from 'sequelize/types'
 import { ForbiddenException } from '@nestjs/common'
 
 import {
-  CaseFileCategory,
   CaseFileState,
   CaseOrigin,
   User,
@@ -104,13 +103,11 @@ describe('CaseController - Get ruling signature confirmation', () => {
           id: caseFileId,
           key: uuid(),
           state: CaseFileState.STORED_IN_RVG,
-          category: CaseFileCategory.CASE_FILE,
         },
         {
           id: uuid(),
           key: uuid(),
           state: CaseFileState.STORED_IN_COURT,
-          category: CaseFileCategory.CASE_FILE,
         },
       ],
       judgeId: userId,

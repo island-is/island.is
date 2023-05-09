@@ -32,6 +32,37 @@ export const SUB_GET_EMAIL = gql`
     }
   }
 `
+
+export const SUB_POST_SUBS = gql`
+  mutation SUB_POST_SUBS(
+    $input: ConsultationPortalUserSubscriptionsCommandInput!
+  ) {
+    consultationPortalPostSubscriptions(input: $input)
+  }
+`
+
+// screens/UserSubscriptions
+export const SUB_GET_USERSUBS = gql`
+  query SUB_GET_USERSUBS {
+    consultationPortalUserSubscriptions {
+      subscribedToAll
+      subscribedToAllType
+      cases {
+        id
+        subscriptionType
+      }
+      institutions {
+        id
+        subscriptionType
+      }
+      policyAreas {
+        id
+        subscriptionType
+      }
+    }
+  }
+`
+
 export const SUB_POST_EMAIL = gql`
   mutation SUB_POST_EMAIL($input: ConsultationPortalPostEmailCommandInput!) {
     consultationPortalPostUserEmail(input: $input)
@@ -106,6 +137,10 @@ export const CASE_GET_CASE_BY_ID = gql`
       changed
       oldInstitutionName
       statusName
+      stakeholders {
+        name
+        email
+      }
       documents {
         id
         fileName
@@ -137,12 +172,25 @@ export const CASE_POST_ADVICE = gql`
   }
 `
 
-export const CREATE_UPLOAD_URL = gql`
-  mutation CreateUploadUrl($filename: String!) {
-    createUploadUrl(filename: $filename) {
-      url
-      fields
+export const CASE_GET_CASE_SUBSCRIPTION = gql`
+  query CASE_GET_CASE_SUBSCRIPTION($input: ConsultationPortalCaseInput!) {
+    consultationPortalSubscriptionType(input: $input) {
+      type
     }
+  }
+`
+
+export const CASE_POST_CASE_SUBSCRIPTION = gql`
+  mutation CASE_POST_CASE_SUBSCRIPTION(
+    $input: ConsultationPortalPostCaseSubscriptionTypeInput!
+  ) {
+    consultationPortalPostSubscriptionType(input: $input)
+  }
+`
+
+export const CASE_DELETE_CASE_SUBSCRIPTION = gql`
+  mutation CASE_DELETE_CASE_SUBSCRIPTION($input: ConsultationPortalCaseInput!) {
+    consultationPortalDeleteSubscriptionType(input: $input)
   }
 `
 
@@ -177,6 +225,16 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
           size
         }
       }
+    }
+  }
+`
+
+// OTHER
+export const CREATE_UPLOAD_URL = gql`
+  mutation CreateUploadUrl($filename: String!) {
+    createUploadUrl(filename: $filename) {
+      url
+      fields
     }
   }
 `

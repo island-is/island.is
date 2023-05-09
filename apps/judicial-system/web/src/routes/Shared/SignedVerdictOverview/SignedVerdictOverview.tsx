@@ -18,6 +18,7 @@ import {
   isCourtRole,
   Feature,
   isProsecutionRole,
+  CaseTransition,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -40,7 +41,6 @@ import {
   useRequestRulingSignature,
   SigningModal,
   UserContext,
-  AppealAlertBanner,
 } from '@island.is/judicial-system-web/src/components'
 import {
   useCase,
@@ -78,6 +78,8 @@ import { FeatureContext } from '@island.is/judicial-system-web/src/components/Fe
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import * as constants from '@island.is/judicial-system/consts'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 import AppealSection from './Components/AppealSection/AppealSection'
 import { CourtRecordSignatureConfirmationQuery } from './courtRecordSignatureConfirmationGql'
@@ -213,32 +215,13 @@ export const getExtensionInfoText = (
       })
 }
 
-type availableModals = 'NoModal' | 'SigningModal'
+type availableModals =
+  | 'NoModal'
+  | 'SigningModal'
+  | 'ConfirmAppealAfterDeadline'
+  | 'AppealReceived'
 
 export const SignedVerdictOverview: React.FC = () => {
-  // Date modification state
-  const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
-
-  // Case sharing state
-  const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
-  const [
-    selectedSharingInstitutionId,
-    setSelectedSharingInstitutionId,
-  ] = useState<ValueType<ReactSelectOption>>()
-
-  // Court record signature state
-  const [
-    requestCourtRecordSignatureResponse,
-    setRequestCourtRecordSignatureResponse,
-  ] = useState<RequestSignatureResponse>()
-  const [
-    courtRecordSignatureConfirmationResponse,
-    setCourtRecordSignatureConfirmationResponse,
-  ] = useState<SignatureConfirmationResponse>()
-
-  // Reopen case state
-  const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
-
   const {
     workingCase,
     setWorkingCase,
@@ -247,8 +230,26 @@ export const SignedVerdictOverview: React.FC = () => {
     refreshCase,
   } = useContext(FormContext)
 
-  // Ruling signature state
+  const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
+  const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
+  const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
+
+  const [
+    selectedSharingInstitutionId,
+    setSelectedSharingInstitutionId,
+  ] = useState<ValueType<ReactSelectOption>>()
+
+  const [
+    requestCourtRecordSignatureResponse,
+    setRequestCourtRecordSignatureResponse,
+  ] = useState<RequestSignatureResponse>()
+
+  const [
+    courtRecordSignatureConfirmationResponse,
+    setCourtRecordSignatureConfirmationResponse,
+  ] = useState<SignatureConfirmationResponse>()
+
   const {
     requestRulingSignature,
     requestRulingSignatureResponse,
@@ -268,7 +269,13 @@ export const SignedVerdictOverview: React.FC = () => {
     extendCase,
     isExtendingCase,
     isSendingNotification,
+    transitionCase,
   } = useCase()
+  const { title, description, child } = useAppealAlertBanner(
+    workingCase,
+    () => setModalVisible('ConfirmAppealAfterDeadline'),
+    () => handleReceivedTransition(workingCase),
+  )
 
   // skip loading institutions if the user does not have an id
   const { prosecutorsOffices } = useInstitution(!user?.id)
@@ -287,10 +294,9 @@ export const SignedVerdictOverview: React.FC = () => {
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
-      ([UserRole.Judge, UserRole.Registrar, UserRole.Prosecutor].includes(
+      [UserRole.Judge, UserRole.Registrar, UserRole.Prosecutor].includes(
         user.role,
-      ) ||
-        user.institution?.type === InstitutionType.PrisonAdmin) &&
+      ) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
@@ -370,6 +376,18 @@ export const SignedVerdictOverview: React.FC = () => {
     } else {
       setIsReopeningCase(true)
     }
+  }
+
+  const handleReceivedTransition = (workingCase: Case) => {
+    transitionCase(
+      workingCase.id,
+      CaseTransition.RECEIVE_APPEAL,
+      setWorkingCase,
+    ).then((updatedCase) => {
+      if (updatedCase) {
+        setModalVisible('AppealReceived')
+      }
+    })
   }
 
   const setAccusedAppealDate = (date?: Date) => {
@@ -505,11 +523,23 @@ export const SignedVerdictOverview: React.FC = () => {
     return true
   }
 
+  const shouldDisplayAlertBanner =
+    (workingCase.hasBeenAppealed &&
+      (isProsecutionRole(user?.role) || isCourtRole(user?.role))) ||
+    (isProsecutionRole(user?.role) &&
+      workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
+
   return (
     <>
       {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        (isProsecutionRole(user?.role) || isCourtRole(user?.role)) && (
-          <AppealAlertBanner workingCase={workingCase} />
+        shouldDisplayAlertBanner && (
+          <AlertBanner
+            variant="warning"
+            title={title}
+            description={description}
+          >
+            {child}
+          </AlertBanner>
         )}
       <PageLayout
         workingCase={workingCase}
@@ -979,6 +1009,40 @@ export const SignedVerdictOverview: React.FC = () => {
         )}
         {isReopeningCase && (
           <ReopenModal onClose={() => setIsReopeningCase(false)} />
+        )}
+        {modalVisible === 'ConfirmAppealAfterDeadline' && (
+          <Modal
+            title={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.title,
+            )}
+            text={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.text,
+            )}
+            primaryButtonText={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.primaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              m.sections.confirmAppealAfterDeadlineModal.secondaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
+        {modalVisible === 'AppealReceived' && (
+          <Modal
+            title={formatMessage(m.sections.appealReceived.title)}
+            text={formatMessage(m.sections.appealReceived.text)}
+            primaryButtonText={formatMessage(
+              m.sections.appealReceived.primaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
         )}
       </PageLayout>
     </>

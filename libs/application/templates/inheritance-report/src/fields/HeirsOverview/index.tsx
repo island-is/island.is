@@ -16,7 +16,7 @@ export const HeirsOverview: FC<FieldBaseProps> = ({ application }) => {
         return (
           <Box key={index}>
             <Text marginBottom={2} variant="h4">
-              {formatMessage(m.heir) + ' ' + (index + 1)}
+              {formatMessage(m.heir)}
             </Text>
             <Box display="flex" marginBottom={2}>
               <Box width="half">
