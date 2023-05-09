@@ -1,38 +1,39 @@
+import React, { useState } from 'react'
+import { useActionData } from 'react-router-dom'
+
+import { AuthAdminClientEnvironment } from '@island.is/api/schema'
+import { useAuth } from '@island.is/auth/react'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Checkbox, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
+import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
 import {
   ClientFormTypes,
   EditApplicationResult,
   schema,
 } from '../forms/EditApplication/EditApplication.action'
-import React, { useState } from 'react'
-import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
-import { useActionData } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { useReadableSeconds } from './ReadableSeconds'
 
-interface AdvancedSettingsProps {
-  requirePkce: boolean
-  allowOfflineAccess: boolean
-  requireConsent: boolean
-  supportTokenExchange: boolean
-  slidingRefreshTokenLifetime: number
-  customClaims: string[]
-  selectedEnvironment: AuthAdminEnvironment
-}
+type AdvancedSettingsProps = Pick<
+  AuthAdminClientEnvironment,
+  | 'requirePkce'
+  | 'allowOfflineAccess'
+  | 'requireConsent'
+  | 'supportTokenExchange'
+  | 'accessTokenLifetime'
+  | 'customClaims'
+>
 
 const AdvancedSettings = ({
   requirePkce,
   allowOfflineAccess,
   requireConsent,
   supportTokenExchange,
-  slidingRefreshTokenLifetime,
+  accessTokenLifetime,
   customClaims,
-  selectedEnvironment,
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
   const actionData = useActionData() as EditApplicationResult<
@@ -44,26 +45,29 @@ const AdvancedSettings = ({
     AdminPortalScope.idsAdminSuperUser,
   )
 
+  const customClaimsString = (
+    customClaims?.map((claim) => {
+      return `${claim.type}=${claim.value}`
+    }) ?? []
+  ).join('\n')
   const [inputValues, setInputValues] = useState({
     requirePkce,
     allowOfflineAccess,
     requireConsent,
     supportTokenExchange,
-    slidingRefreshTokenLifetime,
-    customClaims,
+    accessTokenLifetime,
+    customClaims: customClaimsString,
   })
 
   const { formatErrorMessage } = useErrorFormatMessage()
 
-  const readableSlidingRefreshToken = useReadableSeconds(
-    slidingRefreshTokenLifetime,
-  )
+  const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
 
   return (
     <ContentCard
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
-      selectedEnvironment={selectedEnvironment}
+      accordionLabel={formatMessage(m.settings)}
     >
       <Stack space={3}>
         <Checkbox
@@ -139,25 +143,24 @@ const AdvancedSettings = ({
             size="sm"
             type="number"
             disabled={!isSuperAdmin}
-            name="slidingRefreshTokenLifetime"
-            value={inputValues.slidingRefreshTokenLifetime}
+            name="accessTokenLifetime"
+            value={inputValues.accessTokenLifetime}
             backgroundColor="blue"
             onChange={(e) => {
               setInputValues({
                 ...inputValues,
-                slidingRefreshTokenLifetime: parseInt(e.target.value),
+                accessTokenLifetime: parseInt(e.target.value),
               })
             }}
             label={formatMessage(m.accessTokenExpiration)}
             errorMessage={formatErrorMessage(
-              (actionData?.errors
-                ?.slidingRefreshTokenLifetime as unknown) as string,
+              (actionData?.errors?.accessTokenLifetime as unknown) as string,
             )}
           />
           <Text variant={'small'}>
             {formatMessage(m.accessTokenExpirationDescription)}
             <br />
-            {readableSlidingRefreshToken}
+            {readableAccessTokenLifetime}
           </Text>
         </Stack>
         <Stack space={1}>
@@ -172,16 +175,12 @@ const AdvancedSettings = ({
             onChange={(e) => {
               setInputValues({
                 ...inputValues,
-                customClaims: e.target.value.split(/\r?\n/),
+                customClaims: e.target.value,
               })
             }}
             backgroundColor="blue"
-            value={
-              inputValues.customClaims.length > 0
-                ? inputValues.customClaims.join('\n')
-                : ''
-            }
-            placeholder={'claim=Value'}
+            value={inputValues.customClaims}
+            placeholder={'claim=value'}
             errorMessage={formatErrorMessage(
               (actionData?.errors?.customClaims as unknown) as string,
             )}

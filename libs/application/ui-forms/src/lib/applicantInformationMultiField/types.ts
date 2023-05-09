@@ -26,3 +26,8 @@ export interface ApplicantInformationInterface {
     }
   }
 }
+
+export type applicantInformationProps = {
+  phoneRequired?: boolean
+  emailRequired?: boolean
+}

@@ -8,8 +8,10 @@ export enum Features {
   accidentNotification = 'isAccidentNotificationEnabled',
   announcementOfDeath = 'isAnnouncementOfDeathEnabled',
   noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
+  drivingLearnersPermit = 'isDrivingLearnersPermitEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
+  europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
   generalPetition = 'isGeneralPetitionEnabled',
   passportApplication = 'isPassportApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
@@ -44,6 +46,7 @@ export enum Features {
   servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
   servicePortalEducationGraduation = 'isServicePortalEducationGratuationModuleEnabled',
   sessionHistory = 'sessionHistory',
+  servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
 
   // Application delegation flags
   transportAuthorityTransferOfVehicleOwnershipDelegations = 'applicationTransportAuthorityTransferOfVehicleOwnershipDelegations',

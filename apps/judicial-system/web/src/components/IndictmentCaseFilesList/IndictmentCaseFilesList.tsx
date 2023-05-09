@@ -23,7 +23,6 @@ import SectionHeading from '../SectionHeading/SectionHeading'
 import * as styles from './IndictmentCaseFilesList.css'
 import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
 import Modal from '../Modal/Modal'
-import { FeatureContext } from '../FeatureProvider/FeatureProvider'
 
 interface Props {
   workingCase: Case
@@ -60,17 +59,12 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
 const IndictmentCaseFilesList: React.FC<Props> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
   const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId: workingCase.id,
   })
 
-  const showTrafficViolationCaseFiles = isTrafficViolationCase(
-    workingCase,
-    features,
-    user,
-  )
+  const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
 
   const cf = workingCase.caseFiles
 
@@ -196,7 +190,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
                   title={formatMessage(strings.caseFileButtonText, {
                     policeCaseNumber,
                   })}
-                  pdfType="caseFiles"
+                  pdfType="caseFilesRecord"
                   policeCaseNumber={policeCaseNumber}
                   renderAs="row"
                 />

@@ -4,6 +4,8 @@ import { InstitutionTypes } from './InstitutionTypes'
 export const institutionMapper = {
   [ApplicationTypes.EXAMPLE]: InstitutionTypes.STAFRAENT_ISLAND,
   [ApplicationTypes.PASSPORT]: InstitutionTypes.SYSLUMENN,
+  [ApplicationTypes.DRIVING_LEARNERS_PERMIT]:
+    InstitutionTypes.RIKISLOGREGLUSTJORI,
   [ApplicationTypes.DRIVING_LICENSE]: InstitutionTypes.RIKISLOGREGLUSTJORI,
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]:
     InstitutionTypes.SAMGONGUSTOFA,
@@ -25,6 +27,8 @@ export const institutionMapper = {
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]:
     InstitutionTypes.UMBODSMADUR_ALTHINGIS,
   [ApplicationTypes.ACCIDENT_NOTIFICATION]:
+    InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]:
     InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
   [ApplicationTypes.GENERAL_PETITION]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.GENERAL_FISHING_LICENSE]: InstitutionTypes.FISKISTOFA,

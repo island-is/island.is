@@ -21,6 +21,7 @@ import { ClientsInput } from './dto/clients.input'
 import { CreateClientResponse } from './dto/create-client.response'
 import { CreateClientInput } from './dto/create-client.input'
 import { PatchClientInput } from './dto/patch-client.input'
+import { PublishClientInput } from './dto/publish-client.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Client)
@@ -56,6 +57,17 @@ export class ClientsResolver {
     input: CreateClientInput,
   ) {
     return this.clientsService.createClient(user, input)
+  }
+
+  @Mutation(() => ClientEnvironment, {
+    name: 'publishAuthAdminClient',
+  })
+  publishClient(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => PublishClientInput })
+    input: PublishClientInput,
+  ) {
+    return this.clientsService.publishClient(user, input)
   }
 
   @Mutation(() => [ClientEnvironment], {

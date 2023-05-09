@@ -190,6 +190,30 @@ We use the standalone `<AccordionCard />` component
   </Story>
 </Canvas>
 
+### With single red card
+
+We use the standalone `<AccordionCard />` component
+
+<Canvas>
+  <Story name="Single red card">
+    <ContentBlock>
+      <Box paddingY={[1, 2]}>
+        <AccordionCard
+          colorVariant="red"
+          id="id_1"
+          label="Danger zone"
+          labelColor="red600"
+        >
+          <Text color="red600">
+            Danger Zone is a 1986 song by Kenny Loggins written exclusively for
+            the movie Top Gun starring Tom Cruise.
+          </Text>
+        </AccordionCard>
+      </Box>
+    </ContentBlock>
+  </Story>
+</Canvas>
+
 ### As a sidebar
 
 We use the standalone `<SidebarAccordion />` component

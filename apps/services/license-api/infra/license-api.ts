@@ -14,6 +14,13 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '15m', memory: '256Mi' },
     })
+    .env({
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+    })
     .secrets({
       SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL',
       RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY',
@@ -23,6 +30,8 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
       TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY',
       DISABILITY_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID',
+      DRIVING_LICENSE_PASS_TEMPLATE_ID:
+        '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',

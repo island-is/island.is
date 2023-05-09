@@ -76,14 +76,23 @@ import { OrderVehicleRegistrationCertificateModule } from './transport-authority
 import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
+import {
+  EuropeanHealthInsuranceCardModule,
+  EuropeanHealthInsuranceCardService,
+} from './european-health-insurance-card'
 import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book-update-instructor/driving-license-book-update-instructor.module'
 import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
+import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
+import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 import { ResidencePermitPermanentModule } from './directorate-of-immigration/residence-permit-permanent/residence-permit-permanent.module'
 import { ResidencePermitPermanentService } from './directorate-of-immigration/residence-permit-permanent/residence-permit-permanent.service'
 import { ResidencePermitRenewalModule } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.module'
 import { ResidencePermitRenewalService } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.service'
+
+//TODO: ADD These templates.
+import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -127,7 +136,9 @@ export const modules = [
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
+  EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
+  DrivingLearnersPermitModule,
   CitizenshipModule,
   ResidencePermitPermanentModule,
   ResidencePermitRenewalModule,
@@ -175,7 +186,9 @@ export const services = [
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
+  EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
+  DrivingLearnersPermitService,
   CitizenshipService,
   ResidencePermitPermanentService,
   ResidencePermitRenewalService,

@@ -16,13 +16,13 @@ import {
   Form,
   FormModes,
   NationalRegistryUserApi,
-  UserProfileApi,
-  DistrictsApi,
   YES,
 } from '@island.is/application/types'
 import {
+  DeliveryAddressApi,
   IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
+  UserInfoApi,
 } from '../dataProviders'
 import {
   DistrictCommissionerAgencies,
@@ -78,7 +78,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: UserInfoApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
@@ -92,7 +92,7 @@ export const Draft: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: DistrictsApi,
+              provider: DeliveryAddressApi,
               title: '',
             }),
           ],
@@ -189,14 +189,13 @@ export const Draft: Form = buildForm({
               placeholder: m.dropLocationPlaceholder.defaultMessage,
               options: ({
                 externalData: {
-                  districtCommissioners: { data },
+                  deliveryAddress: { data },
                 },
               }) => {
                 return (data as DistrictCommissionerAgencies[])?.map(
-                  ({ id, name, place, address }) => ({
-                    value: id,
-                    label: `${name}, ${place}`,
-                    tooltip: `${address}`,
+                  ({ key, name }) => ({
+                    value: key,
+                    label: name,
                   }),
                 )
               },
