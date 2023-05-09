@@ -13,7 +13,6 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -50,24 +49,8 @@ export class FileService {
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
-    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async deleteFileFromDatabase(
     fileId: string,
@@ -152,6 +135,7 @@ export class FileService {
     theCase: Case,
     user: User,
   ): Promise<string> {
+    // Serialise all uploads in this process
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
     })
@@ -267,8 +251,6 @@ export class FileService {
     theCase: Case,
     user: User,
   ): Promise<UploadFileToCourtResponse> {
-    await this.refreshFormatMessage()
-
     if (file.state === CaseFileState.STORED_IN_COURT) {
       return { success: true }
     }

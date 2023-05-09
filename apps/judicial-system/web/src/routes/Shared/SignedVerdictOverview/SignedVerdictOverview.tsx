@@ -296,10 +296,9 @@ export const SignedVerdictOverview: React.FC = () => {
   const canModifyCaseDates = useCallback(() => {
     return (
       user &&
-      ([UserRole.Judge, UserRole.Registrar, UserRole.Prosecutor].includes(
+      [UserRole.Judge, UserRole.Registrar, UserRole.Prosecutor].includes(
         user.role,
-      ) ||
-        user.institution?.type === InstitutionType.PrisonAdmin) &&
+      ) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])

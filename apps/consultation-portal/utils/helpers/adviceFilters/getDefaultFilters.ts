@@ -1,21 +1,15 @@
-export const getDefaultFilters = () => {
-  if (typeof window !== 'undefined') {
-    const filtersFromLocalStorage = localStorage.getItem('filtersAdvice')
-    if (filtersFromLocalStorage) {
-      return JSON.parse(filtersFromLocalStorage)
-    }
+import { AdviceFilter } from '../../../types/interfaces'
+import { FILTERS_ADVICE_KEY } from '../../consts/consts'
+import { getItem, setItem } from '../localStorage'
+
+export const getDefaultFilters = (initialValues: AdviceFilter) => {
+  const filtersFromLS = getItem({ key: FILTERS_ADVICE_KEY })
+  if (filtersFromLS) {
+    return filtersFromLS
   }
 
-  const filters = {
-    searchQuery: '',
-    oldestFirst: false,
-  }
-
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('filtersAdvice', JSON.stringify(filters))
-  }
-
-  return filters
+  setItem({ key: FILTERS_ADVICE_KEY, value: initialValues })
+  return initialValues
 }
 
 export default getDefaultFilters

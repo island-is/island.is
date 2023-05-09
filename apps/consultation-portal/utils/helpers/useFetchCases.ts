@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { HOME_GET_CASES } from '../../graphql/queries.graphql'
-import { CaseFilter } from '../../types/interfaces'
+import { CaseFilter, FetchCasesInput } from '../../types/interfaces'
 
 interface Props {
-  input: CaseFilter
+  input: FetchCasesInput
 }
 
 export const useFetchCases = ({ input }: Props) => {
