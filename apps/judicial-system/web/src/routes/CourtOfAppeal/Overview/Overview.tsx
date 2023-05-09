@@ -214,7 +214,7 @@ const CourtOfAppealOverview: React.FC = () => {
                       file.category !== CaseFileCategory.APPEAL_RULING && (
                         <Box
                           display="flex"
-                          alignItems="flex-end"
+                          alignItems="flexEnd"
                           flexDirection="column"
                         >
                           <Text>
