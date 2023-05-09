@@ -47,6 +47,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .redis()
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
+      EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -86,8 +87,6 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
-      EHIC_XROAD_PROVIDER_ID:
-        '/k8s/application-system-api/EHIC_XROAD_PROVIDER_ID',
       DRIVING_LICENSE_BOOK_XROAD_PATH:
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
       DRIVING_LICENSE_BOOK_USERNAME:
