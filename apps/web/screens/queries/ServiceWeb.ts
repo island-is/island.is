@@ -184,6 +184,7 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
       shortTitle
       slug
       link
+      trackingDomain
       logo {
         url
         width

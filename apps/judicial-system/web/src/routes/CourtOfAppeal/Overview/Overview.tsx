@@ -9,6 +9,7 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PdfButton,
@@ -16,18 +17,25 @@ import {
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseFileCategory,
+  CaseState,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 import * as constants from '@island.is/judicial-system/consts'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
+import { titleForCase } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -103,7 +111,7 @@ const CourtOfAppealOverview: React.FC = () => {
             <Box>
               <Box marginBottom={1}>
                 <Text as="h1" variant="h1">
-                  {formatMessage(strings.title)}
+                  {titleForCase(formatMessage, workingCase)}
                 </Text>
               </Box>
               {workingCase.courtEndTime && (
@@ -117,8 +125,43 @@ const CourtOfAppealOverview: React.FC = () => {
             </Box>
           </Box>
           <Box marginBottom={5}>
-            <CaseDates workingCase={workingCase} />
+            {isRestrictionCase(workingCase.type) &&
+              workingCase.decision !==
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+              workingCase.state === CaseState.ACCEPTED && (
+                <CaseDates workingCase={workingCase} />
+              )}
           </Box>
+          {workingCase.caseModifiedExplanation && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.sections.modifyDatesInfo.titleV3, {
+                  caseType: workingCase.type,
+                })}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.caseModifiedExplanation}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
+          {workingCase.rulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.sections.modifyRulingInfo.title)}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.rulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           <Box marginBottom={5}>
             <InfoCard
               defendants={

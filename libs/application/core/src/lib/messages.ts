@@ -651,3 +651,26 @@ export const coreErrorScreenMessages = defineMessages({
     description: 'Error screen application',
   },
 })
+
+export const coreHistoryMessages = defineMessages({
+  applicationApproved: {
+    id: 'application.system:core.history.applicationApproved',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'History application accepted',
+  },
+  applicationRejected: {
+    id: 'application.system:core.history.applicationRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'History application rejected',
+  },
+  applicationSent: {
+    id: 'application.system:core.history.applicationSent',
+    defaultMessage: 'Umsókn send',
+    description: 'History application sent',
+  },
+  applicationAssigned: {
+    id: 'application.system:core.history.applicationAssigned',
+    defaultMessage: 'Umsókn úthlutað yfirferðaraðila',
+    description: 'History application assigned',
+  },
+})
