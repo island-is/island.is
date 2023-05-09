@@ -13,10 +13,12 @@ import { AgentSection } from './AgentSection'
 import { ExpeditedProcessingSection } from './ExpeditedProcessingSection'
 import { PaymentSection } from './PaymentSection'
 import { Logo } from '../../assets/Logo'
+import { MAX_CNT_APPLICANTS } from '../../shared'
 
 const buildInformationSections = (): Section[] => {
-  // TODOx look at answer to know how many times should be repeated
-  return [...Array(2)].map((_key, index) => InformationSection(index))
+  return [...Array(MAX_CNT_APPLICANTS)].map((_key, index) =>
+    InformationSection(index),
+  )
 }
 
 export const ResidencePermitRenewalForm: Form = buildForm({

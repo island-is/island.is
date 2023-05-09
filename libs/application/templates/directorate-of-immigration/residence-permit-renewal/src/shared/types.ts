@@ -7,6 +7,6 @@ interface IdentityResult extends SuccessfulDataProviderResult {
   data: NationalRegistryIndividual
 }
 
-export type ResidencePermitExternalData = {
+export type ResidencePermitRenewalExternalData = {
   nationalRegistry?: IdentityResult
 }

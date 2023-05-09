@@ -1,8 +1,4 @@
-import {
-  buildForm,
-  buildSection,
-  buildCustomField,
-} from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   agent,
@@ -13,16 +9,15 @@ import {
   information,
   payment,
   personal,
-} from '../lib/messages'
-import { Logo } from '../assets/Logo'
+} from '../../lib/messages'
+import { Logo } from '../../assets/Logo'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
-export const PaymentPending: Form = buildForm({
-  id: 'PaymentPendingForm',
+export const Confirmation: Form = buildForm({
+  id: 'ConfirmationForm',
   title: '',
   logo: Logo,
-  mode: FormModes.IN_PROGRESS,
-  renderLastScreenButton: false,
-  renderLastScreenBackButton: false,
+  mode: FormModes.COMPLETED,
   children: [
     buildSection({
       id: 'externalData',
@@ -57,18 +52,13 @@ export const PaymentPending: Form = buildForm({
     buildSection({
       id: 'payment',
       title: payment.general.sectionTitle,
-      children: [
-        buildCustomField({
-          id: 'subSectionPaymentPendingField',
-          component: 'PaymentPendingField',
-          title: confirmation.general.sectionTitle,
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: confirmation.general.sectionTitle,
       children: [],
+    }),
+    buildFormConclusionSection({
+      alertTitle: confirmation.general.alertTitle,
+      alertMessage: confirmation.general.alertMessage,
+      expandableHeader: confirmation.general.accordionTitle,
+      expandableDescription: confirmation.general.accordionText,
     }),
   ],
 })

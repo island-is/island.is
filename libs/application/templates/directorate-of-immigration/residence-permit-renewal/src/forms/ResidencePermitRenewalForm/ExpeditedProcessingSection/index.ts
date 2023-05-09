@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { expeditedProcessing } from '../../lib/messages'
+import { expeditedProcessing } from '../../../lib/messages'
 
 export const ExpeditedProcessingSection = buildSection({
   id: 'expeditedProcessing',

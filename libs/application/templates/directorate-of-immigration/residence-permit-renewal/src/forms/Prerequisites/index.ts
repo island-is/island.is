@@ -2,22 +2,25 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import {
+  agent,
+  applicant,
   confirmation,
+  expeditedProcessing,
   externalData,
   information,
   payment,
-} from '../lib/messages'
+  personal,
+} from '../../lib/messages'
 import {
   NationalRegistryUserApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
-} from '../dataProviders'
+} from '../../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -31,8 +34,8 @@ export const Prerequisites: Form = buildForm({
       title: externalData.dataProvider.sectionTitle,
       children: [
         buildExternalDataProvider({
-          title: externalData.dataProvider.pageTitle,
           id: 'approveExternalData',
+          title: externalData.dataProvider.pageTitle,
           subTitle: externalData.dataProvider.subTitle,
           description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
@@ -79,8 +82,28 @@ export const Prerequisites: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'personal',
+      title: personal.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'applicant',
+      title: applicant.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
       id: 'information',
       title: information.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'agent',
+      title: agent.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'expeditedProcessing',
+      title: expeditedProcessing.general.sectionTitle,
       children: [],
     }),
     buildSection({

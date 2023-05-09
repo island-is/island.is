@@ -9,8 +9,10 @@ import {
   externalData,
   payment,
   confirmation,
-} from '../lib/messages'
-import { Logo } from '../assets/Logo'
+  personal,
+  supportingDocuments,
+} from '../../lib/messages'
+import { Logo } from '../../assets/Logo'
 
 export const PaymentPending: Form = buildForm({
   id: 'PaymentPendingForm',
@@ -26,8 +28,18 @@ export const PaymentPending: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'personal',
+      title: personal.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
       id: 'informationSection',
       title: information.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'supportingDocuments',
+      title: supportingDocuments.general.sectionTitle,
       children: [],
     }),
     buildSection({

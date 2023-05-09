@@ -3,7 +3,7 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import { agent } from '../../lib/messages'
+import { agent } from '../../../lib/messages'
 
 export const AgentSection = buildSection({
   id: 'agent',

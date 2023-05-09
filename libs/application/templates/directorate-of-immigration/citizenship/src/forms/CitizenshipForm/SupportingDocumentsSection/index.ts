@@ -1,20 +1,19 @@
 import { buildSection } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { information } from '../../../lib/messages'
-import { StaysAbroadSubSection } from './StaysAbroadSubSection'
-import { CriminalRecordSubSection } from './CriminalRecordSubSection'
+import { supportingDocuments } from '../../../lib/messages'
 import { PassportSubSection } from './PassportSubSection'
 import { OtherDocumentsSubSection } from './OtherDocumentsSubSection'
-import { ResidencePermitRenewalExternalData } from '../../../shared/types'
+import { CitizenshipExternalData } from '../../../shared/types'
 
-export const InformationSection = (index: number) =>
+export const SupportingDocumentsSection = (index: number) =>
   buildSection({
-    id: `information${index}`,
+    id: `supportingDocuments${index}`,
+    // title: supportingDocuments.general.sectionTitle,
     title: (application: Application) => {
-      const externalData = application.externalData as ResidencePermitRenewalExternalData
+      const externalData = application.externalData as CitizenshipExternalData
 
       return {
-        ...information.general.sectionTitleWithPerson,
+        ...supportingDocuments.general.sectionTitleWithPerson,
         values: {
           person: `${externalData?.nationalRegistry?.data?.fullName} ${
             index + 1
@@ -26,10 +25,5 @@ export const InformationSection = (index: number) =>
       // TODOx look at answers to know if we should display this information section
       return index < 2
     },
-    children: [
-      StaysAbroadSubSection,
-      CriminalRecordSubSection,
-      PassportSubSection,
-      OtherDocumentsSubSection,
-    ],
+    children: [PassportSubSection, OtherDocumentsSubSection],
   })

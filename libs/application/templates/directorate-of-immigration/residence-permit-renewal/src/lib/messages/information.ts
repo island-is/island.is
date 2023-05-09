@@ -87,30 +87,28 @@ export const information = {
         description: 'Passport title',
       },
     }),
-    supportingDocuments: defineMessages({
+    otherDocuments: defineMessages({
       subSectionTitle: {
         id:
-          'doi.rpr.application:information.labels.supportingDocuments.subSectionTitle',
+          'doi.rpr.application:information.labels.otherDocuments.subSectionTitle',
         defaultMessage: 'Önnur fylgigögn',
-        description: 'Supporting documents sub section title',
+        description: 'Other documents sub section title',
       },
       pageTitle: {
-        id:
-          'doi.rpr.application:information.labels.supportingDocuments.pageTitle',
+        id: 'doi.rpr.application:information.labels.otherDocuments.pageTitle',
         defaultMessage: 'Önnur fylgigögn',
-        description: 'Supporting documents page title',
+        description: 'Other documents page title',
       },
       description: {
-        id:
-          'doi.rpr.application:information.labels.supportingDocuments.description',
+        id: 'doi.rpr.application:information.labels.otherDocuments.description',
         defaultMessage:
           'Nunc vitae turpis faucibus, facilisis justo in, hendrerit odio.',
-        description: 'Supporting documents description',
+        description: 'Other documents description',
       },
       title: {
-        id: 'doi.rpr.application:information.labels.supportingDocuments.title',
+        id: 'doi.rpr.application:information.labels.otherDocuments.title',
         defaultMessage: 'Test',
-        description: 'Supporting documents title',
+        description: 'Other documents title',
       },
     }),
   },

@@ -5,7 +5,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { payment } from '../../lib/messages'
+import { payment } from '../../../lib/messages'
 
 export const PaymentSection = buildSection({
   id: 'payment',
