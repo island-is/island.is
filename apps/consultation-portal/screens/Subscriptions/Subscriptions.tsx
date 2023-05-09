@@ -1,6 +1,6 @@
 import { toast } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { Area, SubscriptionTypeKey } from '../../types/enums'
+import { Area } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,

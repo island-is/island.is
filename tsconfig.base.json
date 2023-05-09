@@ -279,6 +279,9 @@
       "@island.is/application/templates/estate/types": [
         "libs/application/templates/estate/src/types.ts"
       ],
+      "@island.is/application/templates/european-health-insurance-card": [
+        "libs/application/templates/european-health-insurance-card/src/index.ts"
+      ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
       ],
@@ -449,6 +452,9 @@
       ],
       "@island.is/clients/driving-license-book": [
         "libs/clients/driving-license-book/src/index.ts"
+      ],
+      "@island.is/clients/ehic-client-v1": [
+        "libs/clients/ehic-client-v1/src/index.ts"
       ],
       "@island.is/clients/electronic-registration-statistics": [
         "libs/clients/electronic-registration-statistics/src/index.ts"

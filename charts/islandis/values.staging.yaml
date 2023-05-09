@@ -782,6 +782,7 @@ application-system-api-worker:
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
+    EHIC_XROAD_PROVIDER_ID: '/k8s/application-system-api/EHIC_XROAD_PROVIDER_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
