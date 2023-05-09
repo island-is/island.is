@@ -241,6 +241,7 @@
 - [Next Ids Auth Lib](libs/next-ids-auth/README.md)
 - [NOVA SMS](libs/nova-sms/README.md)
 - [Plausible](libs/plausible/README.md)
+- [Plausible Analytics Service](libs/plausible-api/README.md)
 - [Portals](libs/portals/README.md)
   - [Admin](libs/portals/admin/README.md)
     - [Core](libs/portals/admin/core/README.md)
