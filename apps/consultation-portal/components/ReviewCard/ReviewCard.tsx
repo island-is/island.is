@@ -12,10 +12,8 @@ import { useEffect, useRef, useState } from 'react'
 import * as styles from './ReviewCard.css'
 import { getShortDate } from '../../utils/helpers/dateFormatter'
 import env from '../../lib/environment'
-import {
-  REVIEW_CARD_MAX_FILENAME_LENGTH,
-  REVIEW_CARD_SCROLL_HEIGHT,
-} from '../../utils/consts/consts'
+import { REVIEW_CARD_SCROLL_HEIGHT } from '../../utils/consts/consts'
+import { renderDocFileName } from '../../utils/helpers'
 
 export const ReviewCard = ({ advice }) => {
   const [open, setOpen] = useState(true)
@@ -32,24 +30,6 @@ export const ReviewCard = ({ advice }) => {
     }
     ref.current && setScrollHeight(ref.current.scrollHeight)
   }, [])
-
-  const renderDocFileName = (docFileName: string) => {
-    if (docFileName.length < REVIEW_CARD_MAX_FILENAME_LENGTH) {
-      return docFileName
-    } else {
-      // finding the first 38 characters in filename
-      // to return a shorter name
-      const indexOfLastDot = docFileName.lastIndexOf('.')
-      const fileName = docFileName.substring(0, indexOfLastDot)
-      const extensionName = docFileName.substring(indexOfLastDot)
-      const shortFileName = fileName.substring(
-        0,
-        REVIEW_CARD_MAX_FILENAME_LENGTH - extensionName.length,
-      )
-      const retFileName = `${shortFileName}..${extensionName}`
-      return retFileName
-    }
-  }
 
   return (
     <SimpleCardSkeleton>
