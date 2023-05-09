@@ -119,7 +119,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
   const onSubmit = async () => {
     setSubmitSubsIsLoading(true)
 
-    if (!isAuthenticated) {
+    if (!userLoading && !isAuthenticated) {
       LogIn()
     }
 
@@ -208,17 +208,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
   }
 
   if (!userLoading && !isAuthenticated) {
-    return (
-      <SubscriptionsSkeleton
-        isMySubscriptions
-        currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
-        tabs={tabs}
-        getUserSubsLoading={true}
-      >
-        <></>
-      </SubscriptionsSkeleton>
-    )
+    LogIn()
   }
 
   return (
