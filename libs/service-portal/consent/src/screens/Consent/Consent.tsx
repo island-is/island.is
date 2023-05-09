@@ -105,18 +105,23 @@ function Consent() {
                     </Box>
                   }
                 >
-                  <Box
-                    paddingTop={3}
-                    paddingBottom={3}
-                    paddingLeft={4}
-                    component="ul"
-                  >
+                  <Box paddingY={3} paddingX={[3, 6]}>
                     <Text variant="eyebrow" marginBottom={4}>
                       {formatMessage(m.consentExplanation)}
                     </Text>
-                    {permissions?.map((permission, index) => {
-                      return <ConsentSection {...permission} key={index} />
-                    })}
+                    <ul>
+                      {permissions
+                        ?.filter(Boolean)
+                        ?.map((permission, permissionIndex, arr) => {
+                          return (
+                            <ConsentSection
+                              {...permission}
+                              key={permissionIndex}
+                              isLast={permissionIndex + 1 === arr.length}
+                            />
+                          )
+                        })}
+                    </ul>
                   </Box>
                 </AccordionCard>
               )
@@ -133,13 +138,17 @@ function Consent() {
   )
 }
 
-function ConsentSection({ scopes = [], owner }: ConsentSectionProps) {
+function ConsentSection({
+  scopes = [],
+  owner,
+  isLast = false,
+}: ConsentSectionProps) {
   if (!scopes?.length || !owner) {
     return null
   }
 
   return (
-    <Box marginBottom={1}>
+    <Box marginBottom={2} component="li">
       <Box display="flex" columnGap={2} alignItems="center">
         {owner?.organisationLogoUrl ? (
           <img src={owner.organisationLogoUrl} alt={''} width={16} />
@@ -192,6 +201,12 @@ function ConsentSection({ scopes = [], owner }: ConsentSectionProps) {
           return null
         })}
       </Box>
+
+      {!isLast && (
+        <Box marginBottom={3}>
+          <Divider />
+        </Box>
+      )}
     </Box>
   )
 }
@@ -202,12 +217,17 @@ function ConsentGroup({
   children,
 }: ConsentGroupProps) {
   return (
-    <Box marginY={2}>
+    <Box marginY={2} component="li">
       <Box marginBottom={2}>
         <Text as="h4">{displayName}</Text>
         {description ? <Text variant="small">{description}</Text> : null}
       </Box>
-      <Box borderLeftWidth="standard" borderColor={'blue200'} paddingLeft={3}>
+      <Box
+        component="ul"
+        borderLeftWidth="standard"
+        borderColor="blue200"
+        paddingLeft={3}
+      >
         {children}
       </Box>
     </Box>
@@ -254,6 +274,7 @@ function ConsentLine({
           />
         </span>
       </Box>
+
       {!isLast && <Divider />}
     </li>
   )
