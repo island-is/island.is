@@ -140,7 +140,7 @@ const FilterBox = ({
               <Box textAlign="right">
                 <Button
                   size="small"
-                  icon="arrowForward"
+                  icon="reload"
                   variant="text"
                   onClick={onClear}
                   loading={loading}
