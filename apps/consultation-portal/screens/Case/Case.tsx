@@ -54,11 +54,11 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           />
         </Box>
       </GridContainer>
-      <Hidden above={'md'}>
+      {isMobile && (
         <Box paddingBottom={3}>
           <Divider />
         </Box>
-      </Hidden>
+      )}
       <GridContainer>
         <GridRow rowGap={3}>
           <GridColumn
@@ -67,7 +67,6 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           >
             <Stack space={3}>
               <Divider />
-
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
               <RenderDocumentsBox
