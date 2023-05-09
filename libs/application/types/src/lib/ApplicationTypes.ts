@@ -44,6 +44,7 @@ export enum ApplicationTypes {
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
+  EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
 }
 
 export const ApplicationConfigurations = {
@@ -56,7 +57,7 @@ export const ApplicationConfigurations = {
     translation: 'pa.application',
   },
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
-    slug: 'aefingarakstur',
+    slug: 'aefingaakstur',
     translation: 'dlp.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
@@ -226,5 +227,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
     slug: 'endugreidsla-afengisutgjalda',
     translation: 'atr.application',
+  },
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
+    slug: 'sjukrakort',
+    translation: 'ehic.application',
   },
 }

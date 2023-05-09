@@ -9,7 +9,6 @@ import {
   DefaultEvents,
   defineTemplateApi,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -17,6 +16,7 @@ import {
   IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
+  UserInfoApi,
 } from '../dataProviders'
 import { m } from '../lib/messages'
 import {
@@ -35,6 +35,7 @@ const pruneAfter = (time: number) => {
     shouldBeListed: true,
     shouldBePruned: true,
     whenToPrune: time,
+    shouldDeleteChargeIfPaymentFulfilled: true,
   }
 }
 
@@ -82,7 +83,7 @@ const PassportTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryUserApi,
-                UserProfileApi,
+                UserInfoApi,
                 SyslumadurPaymentCatalogApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,
@@ -162,7 +163,7 @@ const PassportTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
-                UserProfileApi,
+                UserInfoApi,
                 SyslumadurPaymentCatalogApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,

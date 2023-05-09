@@ -30,7 +30,10 @@ const orgs: Orgs[] = [
     organisationName: 'Heilbrigðisstofnun Suðurlands',
     organisationHome: '/hsu',
   },
-  { organisationName: 'Landlæknir', target: { role: 'link' } },
+  {
+    organisationName: 'Landlæknir',
+    target: { role: 'link', options: { name: 'Eyðublöð' } },
+  },
   { organisationName: 'Útlendingastofnun', target: { role: 'link' } },
 ]
 
