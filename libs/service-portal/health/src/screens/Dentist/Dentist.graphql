@@ -1,0 +1,12 @@
+query getDentist {
+  rightsPortalDentist {
+    currentDentistName
+    billHistory {
+      number
+      amount
+      coveredAmount
+      date
+      refundDate
+    }
+  }
+}

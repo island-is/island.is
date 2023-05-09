@@ -1,16 +1,25 @@
 import { Injectable } from '@nestjs/common'
 import {
   AidsandnutritionApi,
+  DentistApi,
+  HealthcenterApi,
   TherapyApi,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
+import { HealthCenterHistory } from './models/getHealthCenter.model'
+import { Dentist, DentistBill } from './models/getDentist.model'
+
+/** Category to attach each log message to */
+const LOG_CATEGORY = 'rights-portal-service'
 
 @Injectable()
 export class RightsPortalService {
   constructor(
     private therapyApi: TherapyApi,
     private aidsAndNutritionApi: AidsandnutritionApi,
+    private dentistApi: DentistApi,
+    private healthCenterApi: HealthcenterApi,
   ) {}
   getTherapies = (user: User) =>
     this.therapyApi
@@ -23,4 +32,50 @@ export class RightsPortalService {
       .withMiddleware(new AuthMiddleware(user as Auth))
       .aidsandnutrition()
       .catch(handle404)
+
+  async getDentist(user: User): Promise<Dentist | null> {
+    const api = this.dentistApi.withMiddleware(new AuthMiddleware(user as Auth))
+    try {
+      const res = await Promise.all([
+        api.dentistsCurrent(),
+        api.dentistsBills({
+          dateFrom: new Date().toISOString(),
+          dateTo: new Date().toISOString(),
+        }),
+      ])
+
+      if (!res) return null
+      return {
+        currentDentistName: res[0].name,
+        billHistory: res[1] as DentistBill[],
+      }
+    } catch (e) {
+      return handle404(e)
+    }
+  }
+
+  async getHealthCenterHistory(
+    user: User,
+  ): Promise<HealthCenterHistory | null> {
+    const api = this.healthCenterApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
+    try {
+      const res = await Promise.all([
+        api.healthcentersCurrent(),
+        api.healthcentersHistory({
+          dateFrom: new Date().toISOString(),
+          dateTo: new Date().toISOString(),
+        }),
+      ])
+
+      if (!res) return null
+      return {
+        current: res[0],
+        history: res[1],
+      }
+    } catch (e) {
+      return handle404(e)
+    }
+  }
 }
