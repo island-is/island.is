@@ -1,7 +1,7 @@
 import request from 'supertest'
 
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AdminScopeDTO, SequelizeConfigService } from '@island.is/auth-api-lib'
+import { ApiScopeDTO, SequelizeConfigService } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { AuthDelegationType } from '@island.is/shared/types'
 import {
@@ -80,7 +80,9 @@ interface TestCase {
   hasNoScopes?: boolean
   expected: {
     status: number
-    body: AdminScopeDTO[] | Record<string, unknown>
+    body:
+      | Pick<ApiScopeDTO, 'name' | 'displayName' | 'description'>[]
+      | Record<string, unknown>
   }
 }
 

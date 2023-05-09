@@ -1,11 +1,22 @@
 import { Injectable } from '@nestjs/common'
+import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
-import { isDefined } from '@island.is/shared/utils'
+import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateScopeInput } from './dto/create-scope.input'
 import { CreateScopeResponse } from './dto/create-scope.response'
+import { ScopeInput } from './dto/scope.input'
+import { Scope } from './models/scope.model'
+import { ScopesPayload } from './dto/scopes.payload'
+import { ScopeEnvironment } from './models/scope-environment.model'
+
+const environments = [
+  Environment.Development,
+  Environment.Staging,
+  Environment.Production,
+]
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -32,20 +43,81 @@ export class ScopeService extends MultiEnvironmentService {
       }),
     )
 
-    return createdScopes
-      .map((resp, index) => {
-        if (resp.status === 'fulfilled' && resp.value) {
-          return {
-            scopeName: resp.value.name,
-            environment: input.environments[index],
-          }
-        } else if (resp.status === 'rejected') {
-          this.logger.error(
-            `Failed to create scope ${input.name} in environment ${input.environments[index]}`,
-            resp.reason,
-          )
-        }
-      })
-      .filter(isDefined)
+    return this.handleSettledPromises({
+      promises: createdScopes,
+      mapper: (scope, index) => ({
+        scopeName: scope.name,
+        environment: input.environments[index],
+      }),
+      prefixErrorMessage: `Failed to create scope ${input.name}`,
+    })
+  }
+
+  async getScopes(user: User, tenantId: string): Promise<ScopesPayload> {
+    const scopesSettled = await Promise.allSettled(
+      environments.map((environment) =>
+        this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meScopesControllerFindAll({
+          tenantId,
+        }),
+      ),
+    )
+
+    const scopeEnvironments = this.handleSettledPromises({
+      promises: scopesSettled,
+      mapper: (scopes, index) =>
+        scopes.map(
+          (scope) =>
+            ({
+              ...scope,
+              environment: environments[index],
+            } as ScopeEnvironment),
+        ),
+      prefixErrorMessage: `Failed to get scopes by tenantId ${tenantId}`,
+    }).flat()
+
+    const groupedScopes = groupBy(scopeEnvironments, 'name')
+
+    const scopeModels: Scope[] = Object.entries(groupedScopes).map(
+      ([scopeName, scopes]) => ({
+        scopeName,
+        environments: scopes,
+      }),
+    )
+
+    return {
+      data: scopeModels,
+      totalCount: scopeModels.length,
+      pageInfo: {
+        hasNextPage: false,
+      },
+    }
+  }
+
+  async getScope(user: User, input: ScopeInput): Promise<Scope> {
+    const scopesSettled = await Promise.allSettled(
+      environments.map((environment) =>
+        this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meScopesControllerFindByName(input),
+      ),
+    )
+
+    const environmentsScopes = this.handleSettledPromises({
+      promises: scopesSettled,
+      mapper: (scope, index) => ({
+        ...scope,
+        environment: environments[index],
+      }),
+      prefixErrorMessage: `Failed to get scope ${input.scopeName}`,
+    })
+
+    return {
+      scopeName: input.scopeName,
+      environments: environmentsScopes,
+    }
   }
 }

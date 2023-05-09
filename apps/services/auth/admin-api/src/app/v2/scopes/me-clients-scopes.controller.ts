@@ -2,9 +2,9 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
-  AdminScopeDTO,
   MeTenantGuard,
   AdminClientsService,
+  ApiScopeDTO,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
@@ -28,15 +28,15 @@ export class MeClientsScopesController {
   @Get()
   @Documentation({
     description: 'Gets all allowed scopes for the specified client and tenant.',
-    response: { status: 200, type: [AdminScopeDTO] },
+    response: { status: 200, type: [ApiScopeDTO] },
   })
-  @Audit<AdminScopeDTO[]>({
+  @Audit<ApiScopeDTO[]>({
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
   findAll(
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
-  ): Promise<AdminScopeDTO[]> {
+  ): Promise<ApiScopeDTO[]> {
     return this.adminClientsService.findAllowedScopes({
       tenantId,
       clientId,

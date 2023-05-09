@@ -4,6 +4,7 @@ import { getModelToken } from '@nestjs/sequelize'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   AdminScopeDTO,
+  ApiScopeDTO,
   ApiScopeUserClaim,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -19,7 +20,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { AppModule } from '../../../app.module'
 
 const TENANT_ID = '@tenant'
-const SCOPE_NAME = `${TENANT_ID}/scope`
+const SHOULD_NOT_CREATE_TENANT_ID = '@should_not_create'
 
 const currentUser = createCurrentUser({
   delegationType: AuthDelegationType.Custom,
@@ -33,19 +34,27 @@ const superUser = createCurrentUser({
   scope: [AdminPortalScope.idsAdminSuperUser],
 })
 
-const mockedApiScopes = [
-  {
-    name: `${TENANT_ID}/scope1`,
-    displayName: 'Scope 1 display name',
-    description: 'Scope 1 description',
-  },
-  {
-    name: `${TENANT_ID}/scope2`,
-    displayName: 'Scope 2 display name',
-    description: 'Scope 2 description',
-  },
-]
+const createMockedApiScopes = (len = 3) =>
+  Array.from({ length: len }).map(
+    (_, i) =>
+      ({
+        name: `${TENANT_ID}/scope${i + 1}}`,
+        description: [
+          {
+            locale: 'is',
+            value: `Scope ${i + 1} description`,
+          },
+        ],
+        displayName: [
+          {
+            locale: 'is',
+            value: `Scope ${i + 1} display name`,
+          },
+        ],
+      } as AdminScopeDTO),
+  )
 
+const mockedApiScopes = createMockedApiScopes(2)
 const mockedCreateApiScope = {
   name: `${TENANT_ID}/scope`,
   displayName: 'Scope 1 display name',
@@ -67,7 +76,11 @@ const createTestData = async ({
   await fixtureFactory.createDomain({
     name: tenantId,
     nationalId: tenantOwnerNationalId || createNationalId('company'),
-    apiScopes: mockedApiScopes,
+    apiScopes: mockedApiScopes.map(({ name, displayName, description }) => ({
+      name,
+      displayName: displayName[0].value,
+      description: description[0].value,
+    })),
   })
 }
 
@@ -77,11 +90,11 @@ interface GetTestCase {
   tenantOwnerNationalId?: string
   expected: {
     status: number
-    body: AdminScopeDTO[] | Record<string, unknown>
+    body:
+      | Pick<AdminScopeDTO, 'name' | 'displayName' | 'description'>[]
+      | Record<string, unknown>
   }
 }
-
-const SHOULD_NOT_CREATE_TENANT_ID = '@should_not_create'
 
 const getTestCases: Record<string, GetTestCase> = {
   'should have access as current user': {
@@ -122,6 +135,15 @@ const getTestCases: Record<string, GetTestCase> = {
 
 interface GetSingleTestCase extends GetTestCase {
   scopeName: string
+  user: User
+  tenantId: string
+  tenantOwnerNationalId?: string
+  expected: {
+    status: number
+    body:
+      | Pick<AdminScopeDTO, 'name' | 'displayName' | 'description'>
+      | Record<string, unknown>
+  }
 }
 
 const getSingleTestCases: Record<string, GetSingleTestCase> = {
@@ -171,7 +193,7 @@ interface CreateTestCase {
   input: typeof mockedCreateApiScope
   expected: {
     status: number
-    body: AdminScopeDTO | Record<string, unknown>
+    body: ApiScopeDTO | Record<string, unknown>
   }
 }
 
@@ -254,7 +276,7 @@ describe('MeScopesController', () => {
         }
       })
 
-      it(testCaseName, async () => {
+      it(`Get scopes: ${testCaseName}`, async () => {
         // Act
         const response = await server.get(
           `/v2/me/tenants/${testCase.tenantId}/scopes`,
@@ -266,7 +288,7 @@ describe('MeScopesController', () => {
     })
 
     // GET: /v2/me/tenants/:tenantId/scopes/:scopeName
-    describe.each(Object.keys(getTestCases))('%s', (testCaseName) => {
+    describe.each(Object.keys(getSingleTestCases))('%s', (testCaseName) => {
       const testCase = getSingleTestCases[testCaseName]
       let app: TestApp
       let server: request.SuperTest<request.Test>
@@ -289,7 +311,7 @@ describe('MeScopesController', () => {
         }
       })
 
-      it(testCaseName, async () => {
+      it(`Get scope: ${testCaseName}`, async () => {
         // Act
         const response = await server.get(
           `/v2/me/tenants/${testCase.tenantId}/scopes/${encodeURIComponent(

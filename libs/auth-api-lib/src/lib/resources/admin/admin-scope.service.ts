@@ -5,11 +5,13 @@ import { InjectModel } from '@nestjs/sequelize'
 import { validateClientId } from '@island.is/auth/shared'
 
 import { ApiScope } from '../models/api-scope.model'
-import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { Client } from '../../clients/models/client.model'
 import { ClientCreateScopeDTO } from './dto/client-create-scope.dto'
 import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
-import { ApiScopesDTO } from '../dto/api-scopes.dto'
+import { ApiScopeDTO } from '../dto/api-scope.dto'
+import { TranslationService } from '../../translation/translation.service'
+import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
+import { AdminScopeDTO } from './dto/admin-scope.dto'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -23,6 +25,7 @@ export class AdminScopeService {
     private readonly clientModel: typeof Client,
     @InjectModel(ApiScopeUserClaim)
     private readonly apiScopeUserClaim: typeof ApiScopeUserClaim,
+    private readonly translationService: TranslationService,
     private sequelize: Sequelize,
   ) {}
 
@@ -33,7 +36,41 @@ export class AdminScopeService {
       },
     })
 
-    return apiScopes.map((apiScope) => new AdminScopeDTO(apiScope))
+    const scopeTranslations = await this.translationService.findTranslationMap(
+      'apiscope',
+      apiScopes.map(({ name }) => name),
+    )
+
+    return apiScopes.map((apiScope) => ({
+      ...apiScope.toDTO(),
+      displayName: this.formatTranslationsByKey(
+        'displayName',
+        apiScope.displayName,
+        scopeTranslations.get(apiScope.name),
+      ),
+      description: this.formatTranslationsByKey(
+        'description',
+        apiScope.description,
+        scopeTranslations.get(apiScope.name),
+      ),
+    }))
+  }
+
+  private formatTranslationsByKey(
+    key: string,
+    defaultValueIS: string,
+    translations?: Map<string, Map<string, string>>,
+  ): TranslatedValueDto[] {
+    return [
+      {
+        locale: 'is',
+        value: defaultValueIS,
+      },
+      ...Array.from(translations || []).map(([locale, translation]) => ({
+        locale,
+        value: translation.get(key) ?? '',
+      })),
+    ]
   }
 
   /**
@@ -45,7 +82,7 @@ export class AdminScopeService {
   }: {
     name: string
     tenantId: string
-  }): Promise<ApiScopesDTO> {
+  }): Promise<AdminScopeDTO> {
     const apiScope = await this.apiScope.findOne({
       where: {
         name,
@@ -59,7 +96,26 @@ export class AdminScopeService {
       )
     }
 
-    return apiScope.toDTO()
+    const scopeTranslations = await this.translationService.findTranslationMap(
+      'apiscope',
+      [apiScope.name],
+    )
+
+    const translations = scopeTranslations.get(apiScope.name)
+
+    return {
+      ...apiScope.toDTO(),
+      displayName: this.formatTranslationsByKey(
+        'displayName',
+        apiScope.displayName,
+        translations,
+      ),
+      description: this.formatTranslationsByKey(
+        'description',
+        apiScope.description,
+        translations,
+      ),
+    }
   }
 
   /**
@@ -68,7 +124,7 @@ export class AdminScopeService {
   async createScope(
     tenantId: string,
     input: ClientCreateScopeDTO,
-  ): Promise<ApiScopesDTO> {
+  ): Promise<ApiScopeDTO> {
     if (
       !validateClientId({
         prefix: tenantId,
