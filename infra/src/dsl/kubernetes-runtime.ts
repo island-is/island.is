@@ -15,7 +15,7 @@ export class Kubernetes implements ReferenceResolver {
   constructor(env: EnvironmentConfig, withMocks?: Mocks) {
     this.releaseName = env.releaseName
     this.feature = env.feature
-    this.withMocks = 'no-mocks'
+    this.withMocks = withMocks ?? 'no-mocks'
   }
 
   ref(from: ServiceDefinitionCore, to: ServiceDefinition | string) {
