@@ -94,7 +94,7 @@ export const AccidentNotificationSchema = z.object({
   }),
   timePassedHindrance: z.enum([YES, NO]),
   carAccidentHindrance: z.enum([YES, NO]),
-  applicant: applicantInformationSchema,
+  applicant: applicantInformationSchema(),
   whoIsTheNotificationFor: z.object({
     answer: z.enum([
       WhoIsTheNotificationForEnum.JURIDICALPERSON,

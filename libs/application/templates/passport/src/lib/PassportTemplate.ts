@@ -35,6 +35,7 @@ const pruneAfter = (time: number) => {
     shouldBeListed: true,
     shouldBePruned: true,
     whenToPrune: time,
+    shouldDeleteChargeIfPaymentFulfilled: true,
   }
 }
 

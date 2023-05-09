@@ -93,7 +93,7 @@ export function isDistrictCourtUser(user: User): boolean {
   )
 }
 
-export const appealsCourtRoles: string[] = [UserRole.JUDGE, UserRole.ASSISTANT]
+export const appealsCourtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
 
 function isAppealsCourtRole(role: string): boolean {
   return appealsCourtRoles.includes(role)
@@ -103,5 +103,19 @@ export function isAppealsCourtUser(user: User): boolean {
   return (
     user.institution?.type === InstitutionType.HIGH_COURT &&
     isAppealsCourtRole(user.role)
+  )
+}
+
+const prisonSystemRoles: string[] = [UserRole.STAFF]
+
+function isPrisonSystemRole(role: string): boolean {
+  return prisonSystemRoles.includes(role)
+}
+
+export function isPrisonSystemUser(user: User): boolean {
+  return (
+    [InstitutionType.PRISON, InstitutionType.PRISON_ADMIN].includes(
+      user.institution?.type as InstitutionType,
+    ) && isPrisonSystemRole(user.role)
   )
 }

@@ -98,7 +98,7 @@ export class EndorsementController {
   @ApiOkResponse({ type: PaginatedEndorsementDto })
   @UseInterceptors(PaginatedEndorsementInterceptor)
   @ApiResponse({ status: 200 })
-  @BypassAuth()
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async find(
     @Param(
       'listId',
