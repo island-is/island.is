@@ -113,6 +113,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: () =>
     import('@island.is/application/templates/alcohol-tax-redemption'),
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
+    import('@island.is/application/templates/european-health-insurance-card'),
 }
 
 export default templates
