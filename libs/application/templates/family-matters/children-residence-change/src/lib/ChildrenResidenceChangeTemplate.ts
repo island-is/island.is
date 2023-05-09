@@ -25,7 +25,10 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
-import { pruneAfterDays } from '@island.is/application/core'
+import {
+  pruneAfterDays,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import set from 'lodash/set'
 
 type Events =
@@ -62,6 +65,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 0,
           actionCard: {
             description: stateDescriptions.draft,
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.applicationSent,
+            },
           },
           lifecycle: pruneAfterDays(365),
           roles: [
@@ -122,7 +129,16 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 0.5,
           actionCard: {
             description: stateDescriptions.inReview,
-            onEntryHistoryLog: history.general.onSubmit,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: history.general.onCounterPartyApprove,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: history.general.onCounterPartyReject,
+              },
+            ],
             pendingAction: (_, role) =>
               role === Roles.ParentB
                 ? {
@@ -197,7 +213,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 1,
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
-            onEntryHistoryLog: history.general.onCounterPartyReject,
             tag: {
               variant: 'red',
               label: stateLabels.rejected,
@@ -239,7 +254,16 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           }),
           lifecycle: pruneAfterDays(365),
           actionCard: {
-            onEntryHistoryLog: history.general.onCounterPartyApprove,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: history.general.onCommissionerApprove,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: history.general.onCommissionerReject,
+              },
+            ],
             pendingAction: {
               displayStatus: 'info',
               title: history.actions.waitingForOrganizationTitle,
@@ -300,7 +324,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 1,
           actionCard: {
             description: stateDescriptions.rejected,
-            onEntryHistoryLog: history.general.onCommissionerReject,
             tag: { label: stateLabels.rejected, variant: 'red' },
           },
           lifecycle: pruneAfterDays(365),
@@ -334,7 +357,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 1,
           actionCard: {
             description: stateDescriptions.approved,
-            onEntryHistoryLog: history.general.onCommissionerApprove,
             tag: { label: stateLabels.approved, variant: 'mint' },
           },
           lifecycle: pruneAfterDays(365),
