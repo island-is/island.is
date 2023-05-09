@@ -265,6 +265,16 @@ export const Disability = new XroadConf({
   },
 })
 
+export const EHIC = new XroadConf({
+  env: {
+    EHIC_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic',
+      staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic',
+      prod: 'IS/GOV/4804080550/SJUKRA-Protected/ehic',
+    },
+  },
+})
+
 export const UniversityOfIceland = new XroadConf({
   env: {
     XROAD_UNIVERSITY_OF_ICELAND_PATH: {
