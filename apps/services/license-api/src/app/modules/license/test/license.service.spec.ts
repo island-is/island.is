@@ -205,7 +205,7 @@ describe('LicenseService', () => {
           useValue: {
             disability: LicenseId.DISABILITY_LICENSE,
             firearm: LicenseId.FIREARM_LICENSE,
-            driving: LicenseId.DRIVING_LICENSE,
+            driving: LicenseId.DRIVERS_LICENSE,
           },
         },
         {
