@@ -153,6 +153,7 @@
   - [Templates](libs/application/templates/README.md)
     - [Alcohol Tax Redemption](libs/application/templates/alcohol-tax-redemption/README.md)
     - [Estate](libs/application/templates/estate/README.md)
+    - [European Health Insurance Card](libs/application/templates/european-health-insurance-card/README.md)
     - [Application Templates Example Payment](libs/application/templates/example-payment/README.md)
     - [Application Templates General Fishing License](libs/application/templates/general-fishing-license/README.md)
     - [Inheritance Report](libs/application/templates/inheritance-report/README.md)

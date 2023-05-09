@@ -93,7 +93,7 @@ test.describe('Front page', () => {
         const result = await page.goto(url!)
         expect(result?.url()).not.toBe(home)
         await page.locator('[data-testid="link-back-home"]').click()
-        await page.waitForLoadState('networkidle')
+        await expect(page.locator('data-testid=home-heading')).toBeVisible()
         await expect(page).toHaveURL(home)
         await page.close()
       }
@@ -106,9 +106,8 @@ test.describe('Front page', () => {
     const homeHeading = page.locator('h1[data-testid="home-heading"]')
     const icelandicHeading = await homeHeading.textContent()
     await page.locator('button[data-testid="language-toggler"]:visible').click()
-    await page.waitForLoadState('networkidle')
-    await expect(page).toHaveURL('/en')
     await expect(homeHeading).not.toHaveText(icelandicHeading!)
+    await expect(page).toHaveURL('/en')
   })
 
   test('should toggle mega-menu @lang:is', async () => {

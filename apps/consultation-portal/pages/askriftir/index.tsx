@@ -12,7 +12,7 @@ import {
 } from '../../graphql/queries.graphql.generated'
 
 const STATUSES_TO_FETCH = [1, 2, 3]
-const PAGE_SIZE = 20
+const PAGE_SIZE = 1000
 
 interface SubProps {
   cases: CaseForSubscriptions[]

@@ -167,6 +167,24 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
   ],
+  canActivate: (request) => {
+    const theCase = request.case
+
+    // Deny if the case is missing - shuould never happen
+    if (!theCase) {
+      return false
+    }
+
+    // Deny certain transitions on indictment cases
+    if (
+      isIndictmentCase(theCase.type) &&
+      request.body.transition === CaseTransition.APPEAL
+    ) {
+      return false
+    }
+
+    return true
+  },
 }
 
 // Allows representatives to open, submit and delete cases
@@ -189,6 +207,24 @@ export const defenderTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.APPEAL],
+  canActivate: (request) => {
+    const theCase = request.case
+
+    // Deny if the case is missing - should never happen
+    if (!theCase) {
+      return false
+    }
+
+    // Deny certain transitions on indictment cases
+    if (
+      isIndictmentCase(theCase.type) &&
+      request.body.transition === CaseTransition.APPEAL
+    ) {
+      return false
+    }
+
+    return true
+  },
 }
 
 // Allows judges to receive, accept, reject and dismiss cases,
@@ -204,6 +240,7 @@ export const judgeTransitionRule: RolesRule = {
     CaseTransition.DISMISS,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
+    CaseTransition.COMPLETE_APPEAL,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -213,13 +250,15 @@ export const judgeTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny if rejecting, dismissing or reopening an indictment case
+    // Deny certain transitions on indictment cases
     if (
       isIndictmentCase(theCase.type) &&
       [
         CaseTransition.REJECT,
         CaseTransition.DISMISS,
         CaseTransition.REOPEN,
+        CaseTransition.RECEIVE_APPEAL,
+        CaseTransition.COMPLETE_APPEAL,
       ].includes(request.body.transition)
     ) {
       return false
@@ -240,6 +279,8 @@ export const registrarTransitionRule: RolesRule = {
     CaseTransition.RECEIVE,
     CaseTransition.ACCEPT,
     CaseTransition.REOPEN,
+    CaseTransition.RECEIVE_APPEAL,
+    CaseTransition.COMPLETE_APPEAL,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -249,7 +290,7 @@ export const registrarTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny if accepting a non indictment case
+    // Deny certain transactions on non indictment cases
     if (
       !isIndictmentCase(theCase.type) &&
       request.body.transition === CaseTransition.ACCEPT
@@ -257,10 +298,14 @@ export const registrarTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny if reopening an indictment case
+    // Deny certain transitions on indictment cases
     if (
       isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.REOPEN
+      [
+        CaseTransition.REOPEN,
+        CaseTransition.RECEIVE_APPEAL,
+        CaseTransition.COMPLETE_APPEAL,
+      ].includes(request.body.transition)
     ) {
       return false
     }
