@@ -30,6 +30,8 @@ import { DocumentProviderOnboardingService } from './document-provider-onboardin
 import { InstitutionCollaborationService } from './institution-collaboration/institution-collaboration.service'
 import { HealthInsuranceService } from './health-insurance/health-insurance.service'
 import { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
+import { ChildrenResidenceChangeServiceOld } from './children-residence-change-old/children-residence-change.service'
+import { ChildrenResidenceChangeModuleOld } from './children-residence-change-old/children-residence-change.module'
 import { LoginServiceService } from './login-service/login-service.service'
 import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 import { DrivingLicenseSubmissionService } from './driving-license-submission/driving-license-submission.service'
@@ -98,6 +100,7 @@ export const modules = [
   InstitutionCollaborationModule,
   HealthInsuranceModule,
   ChildrenResidenceChangeModule,
+  ChildrenResidenceChangeModuleOld,
   LoginServiceModule,
   FundingGovernmentProjectsModule,
   DrivingLicenseSubmissionModule,
@@ -145,6 +148,7 @@ export const services = [
   InstitutionCollaborationService,
   HealthInsuranceService,
   ChildrenResidenceChangeService,
+  ChildrenResidenceChangeServiceOld,
   LoginServiceService,
   FundingGovernmentProjectsService,
   DrivingLicenseSubmissionService,
