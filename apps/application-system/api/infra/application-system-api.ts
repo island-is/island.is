@@ -19,6 +19,7 @@ import {
   TransportAuthority,
   Vehicles,
   Passports,
+  EHIC
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -47,11 +48,6 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
     .redis()
     .env({
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system',
-      EHIC_XROAD_PROVIDER_ID: {
-        dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic',
-        staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic',
-        prod: 'IS/GOV/4804080550/SJUKRA-Protected/ehic',
-      },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -84,7 +80,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         local: 'http://localhost:4200/umsoknir',
       },
     })
-    .xroad(Base, Client, Payment)
+    .xroad(Base, Client, Payment, EHIC)
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -241,6 +237,7 @@ export const serviceSetup = (services: {
       TransportAuthority,
       Vehicles,
       Passports,
+      EHIC
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
