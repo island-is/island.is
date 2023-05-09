@@ -11,7 +11,6 @@ import {
   NotificationType,
   SendNotificationResponse,
   CaseTransition,
-  RequestSignatureResponse,
   CaseState,
   isIndictmentCase,
   isExtendedCourtRole,
@@ -95,10 +94,6 @@ interface LimitedAccessTransitionCaseMutationResponse {
 
 interface SendNotificationMutationResponse {
   sendNotification: SendNotificationResponse
-}
-
-interface RequestCourtRecordSignatureMutationResponse {
-  requestCourtRecordSignature: RequestSignatureResponse
 }
 
 interface ExtendCaseMutationResponse {

@@ -190,7 +190,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
                   title={formatMessage(strings.caseFileButtonText, {
                     policeCaseNumber,
                   })}
-                  pdfType="caseFiles"
+                  pdfType="caseFilesRecord"
                   policeCaseNumber={policeCaseNumber}
                   renderAs="row"
                 />

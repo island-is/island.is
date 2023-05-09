@@ -16,7 +16,6 @@ import {
   FormContext,
   SectionHeading,
   PdfButton,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -50,7 +49,6 @@ const CaseFiles: React.FC = () => {
     handleRetry,
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
-  const { user } = useContext(UserContext)
 
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
