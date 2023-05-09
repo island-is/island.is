@@ -23,6 +23,13 @@ export const courtOfAppealOverview = defineMessages({
     description:
       'Titill á skjöl kærumáls hlutanum á yfirlitsskjá afgreiddra mála hjá Landsrétti',
   },
+  appealFilesCategory: {
+    id: 'judicial.system.core:court_of_appeal_overview.appeal_files_category',
+    defaultMessage:
+      '{filesCategory, select, true {Sækjandi } other {Varnaraðili }} lagði fram',
+    description:
+      'Titill á hver lagði skjöl kærumáls á yfirlitsskjá afgreiddra mála hjá Landsrétti',
+  },
   courtCaseFilesTitle: {
     id: 'judicial.system.core:court_of_appeal_overview.court_case_files_title',
     defaultMessage: 'Skjöl héraðsdómsmáls',
