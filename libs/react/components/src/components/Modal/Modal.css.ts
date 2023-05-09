@@ -27,10 +27,6 @@ export const modal = recipe({
       md: {
         position: 'relative',
         margin: `${theme.spacing['6']}px auto`,
-        maxHeight: [
-          `calc(100vh - ${theme.spacing[12]}px)`,
-          `calc(100dvh - ${theme.spacing[12]}px)`,
-        ],
 
         maxWidth: 'min(calc(100vw - 64px), 888px)',
 
@@ -44,7 +40,26 @@ export const modal = recipe({
         paddingBottom: theme.spacing[3],
         ...themeUtils.responsiveStyle({
           md: {
-            paddingBottom: theme.spacing[9],
+            paddingBottom: theme.spacing[6],
+          },
+        }),
+      },
+    },
+    scrollType: {
+      inside: {
+        ...themeUtils.responsiveStyle({
+          md: {
+            maxHeight: [
+              `calc(100vh - ${theme.spacing[12]}px)`,
+              `calc(100dvh - ${theme.spacing[12]}px)`,
+            ],
+          },
+        }),
+      },
+      outside: {
+        ...themeUtils.responsiveStyle({
+          md: {
+            maxHeight: 'none',
           },
         }),
       },
@@ -87,14 +102,32 @@ export const close = style({
   }),
 })
 
-export const content = style([
-  sharedPaddingX,
-  {
-    overflowX: 'hidden',
-    WebkitOverflowScrolling: 'touch',
+export const content = recipe({
+  base: [
+    sharedPaddingX,
+    {
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'relative',
 
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative',
+      overflowX: 'hidden',
+      WebkitOverflowScrolling: 'touch',
+    },
+  ],
+  variants: {
+    scrollType: {
+      inside: {
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+      },
+      outside: {
+        ...themeUtils.responsiveStyle({
+          md: {
+            overflow: 'initial',
+          },
+        }),
+      },
+    },
   },
-])
+})
