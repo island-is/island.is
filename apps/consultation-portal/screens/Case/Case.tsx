@@ -14,7 +14,7 @@ import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
 import { SimpleCardSkeleton } from '../../components/Card'
 import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
-import { useFetchAdvicesById } from '../../utils/helpers'
+import { useFetchAdvicesById, useIsMobile } from '../../utils/helpers'
 import { useContext } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'
@@ -32,6 +32,7 @@ interface Props {
 const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const { contactEmail, contactName } = chosenCase
   const { isAuthenticated, user } = useContext(UserContext)
+  const { isMobile } = useIsMobile()
 
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
@@ -138,7 +139,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              <AdviceCTACard chosenCase={chosenCase} />
+              {!isMobile && <AdviceCTACard chosenCase={chosenCase} />}
               <StakeholdersCard chosenCase={chosenCase} />
 
               <SimpleCardSkeleton>
