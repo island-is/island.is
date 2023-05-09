@@ -6,6 +6,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { ExpandHeader, dateParse } from '@island.is/service-portal/core'
 import { PaymentSchedule } from '@island.is/api/schema'
 import FinanceScheduleTableRow from './FinanceScheduleTableRow'
+import { m } from '../../lib/messages'
 const ITEMS_ON_PAGE = 20
 
 interface Props {
@@ -51,10 +52,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
               value: '',
             },
             {
-              value: formatMessage({
-                id: 'sp.finance-schedule:created-date',
-                defaultMessage: 'Stofndagur',
-              }),
+              value: formatMessage(m.createdDate),
             },
             {
               value: formatMessage({

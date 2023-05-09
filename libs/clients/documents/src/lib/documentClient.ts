@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { HttpService } from '@nestjs/axios'
-import { AxiosRequestConfig } from 'axios'
+import { AxiosRequestConfig, Method } from 'axios'
 import {
   CategoriesResponse,
   DocumentDTO,
@@ -14,6 +14,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { lastValueFrom } from 'rxjs'
 import { GetDocumentListInput } from './models/DocumentInput'
+import { PaperMailResponse } from './models/PaperMailRes'
+import { RequestPaperDTO } from './models/RequestPaperDTO'
 
 export const DOCUMENT_CLIENT_CONFIG = 'DOCUMENT_CLIENT_CONFIG'
 
@@ -73,6 +75,35 @@ export class DocumentClient {
       return response.data
     } catch (e) {
       const errMsg = 'Failed to get from Postholf'
+      const error = e.toJSON()
+      const description = error.message
+      const message = [errMsg, error, description].filter(Boolean).join(' - ')
+      throw new Error(message)
+    }
+  }
+
+  private async postRequest<T>(requestRoute: string, body: any): Promise<T> {
+    await this.rehydrateToken()
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: `Bearer ${this.accessToken}`,
+      },
+    }
+
+    try {
+      const response: {
+        data: T
+      } = await lastValueFrom(
+        this.httpService.post(
+          `${this.clientConfig.basePath}${requestRoute}`,
+          body,
+          config,
+        ),
+      )
+
+      return response.data
+    } catch (e) {
+      const errMsg = 'Failed to POST to Postholf'
       const error = e.toJSON()
       const description = error.message
       const message = [errMsg, error, description].filter(Boolean).join(' - ')
@@ -144,5 +175,19 @@ export class DocumentClient {
   async customersSenders(nationalId: string): Promise<SendersResponse | null> {
     const requestRoute = `/api/mail/v1/customers/${nationalId}/messages/senders`
     return await this.getRequest<SendersResponse>(requestRoute)
+  }
+
+  async requestPaperMail(
+    nationalId: string,
+  ): Promise<PaperMailResponse | null> {
+    const requestRoute = `/api/mail/v1/customers/${nationalId}/paper`
+    return await this.getRequest<PaperMailResponse>(requestRoute)
+  }
+
+  async postPaperMail(
+    body: RequestPaperDTO,
+  ): Promise<PaperMailResponse | null> {
+    const requestRoute = `/api/mail/v1/customers/${body.kennitala}/paper`
+    return await this.postRequest<PaperMailResponse>(requestRoute, body)
   }
 }

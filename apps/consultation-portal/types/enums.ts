@@ -34,3 +34,20 @@ export enum CaseSortOptions {
   latestCases = 'Nýjast',
   adviceDeadline = 'Frestur að renna út',
 }
+
+export enum CaseSubscriptionType {
+  AllChanges = 'Allar breytingar',
+  StatusChanges = 'Breytingar á stöðu',
+}
+
+export enum SubscriptionType {
+  AllChanges = 'Allar breytingar',
+  StatusChanges = 'Breytingar á stöðu',
+  OnlyNew = 'Aðeins ný',
+}
+
+export enum SubscriptionTypeKey {
+  'Allar breytingar' = 'AllChanges',
+  'Breytingar á stöðu' = 'StatusChanges',
+  'Aðeins ný' = 'OnlyNew',
+}

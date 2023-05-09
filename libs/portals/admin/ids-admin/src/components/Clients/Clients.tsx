@@ -102,7 +102,7 @@ const Clients = () => {
           alignItems="center"
           padding={10}
         >
-          <Text variant="h3">{formatMessage(m.noApplications)}</Text>
+          <Text variant="h3">{formatMessage(m.noClients)}</Text>
           <Text paddingTop="gutter">
             {formatMessage(m.noClientsDescription)}
           </Text>

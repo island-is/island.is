@@ -80,6 +80,7 @@ export class EndorsementListController {
   @Get()
   @UseInterceptors(EndorsementListsInterceptor)
   @Scopes(EndorsementsScope.main)
+  @Audit()
   async findByTags(
     @CurrentUser() user: User,
     @Query() query: FindTagPaginationComboDto,
@@ -96,7 +97,7 @@ export class EndorsementListController {
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('general-petition-lists')
   @UseInterceptors(EndorsementListsInterceptor)
-  @BypassAuth()
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionLists(
     @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementListDto> {
@@ -109,8 +110,9 @@ export class EndorsementListController {
   @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })
   @Get('general-petition-list/:listId')
+  @Audit()
   @UseInterceptors(EndorsementListInterceptor)
-  @BypassAuth()
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionList(
     @Param('listId') listId: string,
   ): Promise<EndorsementList | null> {
@@ -337,7 +339,7 @@ export class EndorsementListController {
     type: String,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @BypassAuth()
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   @Get(':listId/ownerInfo')
   async getOwnerInfo(@Param('listId') listId: string): Promise<string> {
     return await this.endorsementListService.getOwnerInfo(listId)
@@ -351,6 +353,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: SendPdfEmailResponse })
   @Post(':listId/email-pdf')
+  @Audit()
   async emailEndorsementsPDF(
     @Param(
       'listId',

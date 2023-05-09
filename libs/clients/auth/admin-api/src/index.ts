@@ -1,6 +1,7 @@
 export {
   AdminApi,
   AdminCreateClientDto,
+  ClientSecretDto,
   ClientType,
   CreateClientType,
   MeClientsControllerCreateRequest,

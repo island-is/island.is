@@ -104,7 +104,7 @@ const ExpandableLine: FC<Props> = ({
                 onClick={onExpandButton}
                 preTextIconType="filled"
                 size="small"
-                title="Sundurliðun"
+                title={formatMessage(m.financeBreakdown)}
                 type="button"
                 variant="primary"
               />
