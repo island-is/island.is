@@ -98,7 +98,7 @@ const FamilyMember = () => {
           content={
             error
               ? formatMessage(dataNotFoundMessage)
-              : person?.spouse?.maritalStatus || ''
+              : person?.spouse?.cohabitation || ''
           }
           loading={loading}
         />

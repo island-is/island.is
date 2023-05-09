@@ -3,6 +3,7 @@ query NationalRegistrySpouseV3 {
     spouse {
       nationalId
       maritalStatus
+      cohabitation
       fullName
     }
   }

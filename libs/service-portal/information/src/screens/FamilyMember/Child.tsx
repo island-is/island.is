@@ -369,31 +369,6 @@ const Child = () => {
               loading={loading}
               className={styles.printable}
             />
-            <Box printHidden>
-              <Divider />
-            </Box>
-            {!loading &&
-              (custodian1?.livesWithChild || custodian2?.livesWithChild) && (
-                <>
-                  <TwoColumnUserInfoLine
-                    label={formatMessage({
-                      id: 'sp.family:residence-parent',
-                      defaultMessage: 'Búsetuforeldri',
-                    })}
-                    firstValue={
-                      custodian1?.livesWithChild
-                        ? formatMessage(m.yes)
-                        : formatMessage(m.no)
-                    }
-                    secondValue={
-                      custodian2?.livesWithChild
-                        ? formatMessage(m.yes)
-                        : formatMessage(m.no)
-                    }
-                  />
-                  <Divider />
-                </>
-              )}
           </Stack>
         )}
       </Stack>

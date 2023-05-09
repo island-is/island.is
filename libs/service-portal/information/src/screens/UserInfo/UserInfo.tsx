@@ -3,8 +3,6 @@ import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
 
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { Box, Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -14,10 +12,7 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
-
-import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { spmm } from '../../lib/messages'
-import { NATIONAL_REGISTRY_FAMILY } from '../../lib/queries/getNationalRegistryFamily'
 import {
   formatNameBreaks,
   formatResidenceString,
@@ -50,14 +45,6 @@ const SubjectInfo = () => {
   const { data, loading, error } = useNationalRegistryUserV3Query()
   const { nationalRegistryUserV3: nationalRegistryUser } = data || {}
 
-  // User's Family members
-  const { data: famData, loading: familyLoading } = useQuery<Query>(
-    NATIONAL_REGISTRY_FAMILY,
-    {
-      skip: isDelegation,
-    },
-  )
-  const { nationalRegistryFamily } = famData || {}
   const isUserAdult = info(userInfo.profile.nationalId).age >= 18
 
   /* Should show name breakdown tooltip? */
@@ -238,7 +225,7 @@ const SubjectInfo = () => {
             />
           </>
         ) : null}
-        {!isDelegation && (
+        {/*!isDelegation && (
           <>
             <Divider />
             <Box marginY={3} />
@@ -262,7 +249,7 @@ const SubjectInfo = () => {
                 ))
               : null}
           </>
-        )}
+              )*/}
       </Stack>
     </>
   )
