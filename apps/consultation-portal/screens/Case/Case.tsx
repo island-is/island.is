@@ -23,6 +23,7 @@ import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
 import env from '../../lib/environment'
 import StakeholdersCard from './components/Stakeholders'
 import { AdviceCTACard } from './components/AdviceCTA'
+import { CaseStatusFilterOptions } from '../../types/enums'
 
 interface Props {
   chosenCase: Case
@@ -68,6 +69,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           >
             <Stack space={3}>
               <Divider />
+
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
               <SimpleCardSkeleton>
@@ -95,10 +97,13 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                   )}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
-              <CaseEmailBox
-                caseId={caseId}
-                caseNumber={chosenCase?.caseNumber}
-              />
+              {chosenCase?.statusName !==
+                CaseStatusFilterOptions.resultsPublished && (
+                <CaseEmailBox
+                  caseId={caseId}
+                  caseNumber={chosenCase?.caseNumber}
+                />
+              )}
             </Stack>
           </GridColumn>
           <GridColumn
