@@ -45,7 +45,7 @@ export class ChildrenResidenceChangeServiceOld extends BaseTemplateApiService {
     private readonly smsService: SmsService,
     private nationalRegistryApi: NationalRegistryClientService,
   ) {
-    super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
+    super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_OLD)
     this.s3 = new S3()
   }
 
