@@ -1,4 +1,4 @@
-import { Modal } from '../../Modal/Modal' // TODO: Change this to react-components when merged to main
+import { Modal } from '@island.is/react/components'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../../lib/paths'
 import { Form, useNavigate, useRouteLoaderData } from 'react-router-dom'
@@ -78,6 +78,7 @@ export default function CreatePermission() {
       id="creat-permission"
       isVisible
       onClose={handleClose}
+      closeButtonLabel={formatMessage(m.closeModal)}
     >
       <Box paddingTop={2}>
         <Form method="post">
