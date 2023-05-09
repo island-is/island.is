@@ -8,7 +8,7 @@ export const messages = defineMessages({
   therapyDescription: {
     id: 'sp.health:therapies-intro',
     defaultMessage:
-      'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá sjúkraþjálfara.',
+      'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá þjálfara.',
   },
   aidsAndNutritionTitle: {
     id: 'sp.health:aids-and-nutrition-title',
