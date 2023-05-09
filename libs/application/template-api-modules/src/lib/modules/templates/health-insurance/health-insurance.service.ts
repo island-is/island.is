@@ -58,9 +58,16 @@ export class HealthInsuranceService extends BaseTemplateApiService {
       this.bucketService,
     )
 
-    await this.documentApi.documentPost({
-      document: { doc: xml, documentType: 570 },
-    })
+    try {
+      await this.documentApi.documentPost({
+        document: { doc: xml, documentType: 570 },
+      })
+    } catch (error) {
+      if (error.status === 412) {
+        error.status = 500
+      }
+      throw error
+    }
 
     logger.info(`Finished send Health Insurance application`)
   }
