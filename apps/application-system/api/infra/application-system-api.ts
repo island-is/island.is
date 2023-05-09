@@ -50,7 +50,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       EHIC_XROAD_PROVIDER_ID: {
         dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic',
         staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic',
-        prod: 'IS/GOV/4804080550/SJUKRA-Protected/ehic'
+        prod: 'IS/GOV/4804080550/SJUKRA-Protected/ehic',
       },
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
