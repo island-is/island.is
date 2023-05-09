@@ -26,9 +26,9 @@ import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 import * as constants from '@island.is/judicial-system/consts'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
