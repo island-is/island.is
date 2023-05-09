@@ -4,7 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { Defendant } from '@island.is/judicial-system/types'
 import { formatDOB } from '@island.is/judicial-system/formatters'
 
-import { SessionArrangements } from '../../graphql/schema'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as styles from './InfoCard.css'
 
 interface Defender {
