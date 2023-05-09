@@ -1,15 +1,53 @@
-import { Box, Button, GridRow, LinkV2, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  GridRow,
+  LinkV2,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { useLoaderData } from 'react-router-dom'
+import {
+  Outlet,
+  // useLoaderData,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 import * as styles from './PermissionsList.css'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { IDSAdminPaths } from '../../lib/paths'
+import React from 'react'
+
+const loaderData = [
+  {
+    displayName: 'Stjórnborð Ísland.is',
+    id: '@admin.island.is',
+    environments: ['Production', 'Staging', 'Development'],
+  },
+]
 
 function PermissionsList() {
   const { formatMessage } = useLocale()
-  const loaderData = useLoaderData() as string[]
+  // const loaderData = useLoaderData() as string[]
   const isEmpty = !Array.isArray(loaderData) || loaderData.length === 0
+  const navigate = useNavigate()
+  const { tenant } = useParams()
 
-  const createButton = <Button size="small">Create permission</Button>
+  const handleCreatePermission = () => {
+    navigate(
+      replaceParams({
+        href: IDSAdminPaths.IDSAdminPermissionsCreate,
+        params: { tenant },
+      }),
+    )
+  }
+
+  const createButton = (
+    <Button onClick={handleCreatePermission} size="small">
+      {formatMessage(m.createPermission)}
+    </Button>
+  )
 
   const emptyState = () => {
     return (
@@ -57,7 +95,14 @@ function PermissionsList() {
     return (
       <Box>
         {loaderData.map((item) => {
-          return <Text key={item}>{item}</Text>
+          return (
+            <ActionCard
+              key={item.id}
+              cta={{ label: 'Breyta', variant: 'ghost' }}
+              heading={item.displayName}
+              text={item.id}
+            />
+          )
         })}
       </Box>
     )
@@ -88,6 +133,7 @@ function PermissionsList() {
       </Box>
 
       {isEmpty ? emptyState() : list()}
+      <Outlet />
     </GridRow>
   )
 }

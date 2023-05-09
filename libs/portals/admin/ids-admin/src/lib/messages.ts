@@ -551,4 +551,24 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permissions-management',
     defaultMessage: 'Management',
   },
+  createPermission: {
+    id: 'ap.ids-admin:create-permission',
+    defaultMessage: 'Create permission',
+  },
+  permissionId: {
+    id: 'ap.ids-admin:permission-id',
+    defaultMessage: 'Permission ID',
+  },
+  permissionDescription: {
+    id: 'ap.ids-admin:permission-description',
+    defaultMessage: 'Description',
+  },
+  permissionDescriptionInfo: {
+    id: 'ap.ids-admin:permission-description-info',
+    defaultMessage: 'Users see this when they sign in, and manage consents.',
+  },
+  permissionDisplayNameInfo: {
+    id: 'ap.ids-admin:permission-display-name-info',
+    defaultMessage: 'Displayed on the log-in screen of your app',
+  },
 })

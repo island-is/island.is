@@ -30,6 +30,9 @@ const PermissionsList = lazy(() =>
 const PermissionsManagement = lazy(() =>
   import('./components/PermissionsManagement/PermissionsManagement'),
 )
+const CreatePermission = lazy(() =>
+  import('./components/forms/CreatePermission/CreatePermission'),
+)
 
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
 
@@ -125,15 +128,15 @@ export const idsAdminModule: PortalModule = {
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
                 },
-                // children: [
-                //   { TODO
-                //     name: create permission,
-                //     navHide: true,
-                //     path: IDSAdminPaths.IDSAdminClientCreate,
-                //     element: <CreateApplication />,
-                //     action: createClientAction(props),
-                //   },
-                // ],
+                children: [
+                  {
+                    name: m.createPermission,
+                    navHide: true,
+                    path: IDSAdminPaths.IDSAdminPermissionsCreate,
+                    element: <CreatePermission />,
+                    // action:
+                  },
+                ],
               },
               {
                 name: m.permissionsManagement,
