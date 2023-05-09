@@ -20,7 +20,7 @@ import {
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import {
   CaseDecision,
@@ -71,6 +71,16 @@ const CourtOfAppealOverview: React.FC = () => {
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
       ].includes(caseFile.category),
+  )
+
+  const appealRulingFiles = workingCase.caseFiles?.filter(
+    (caseFile) =>
+      caseFile.category &&
+      /* 
+      Please do not change the order of the following lines as they
+      are rendered in the same order as they are listed here
+      */
+      [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
   )
 
   const handleNavigationTo = (destination: string) =>
@@ -234,14 +244,45 @@ const CourtOfAppealOverview: React.FC = () => {
               <Text as="h3" variant="h3">
                 {formatMessage(strings.appealFilesTitle)}
               </Text>
-              {appealCaseFiles.map((file) => (
-                <PdfButton
-                  renderAs="row"
-                  caseId={workingCase.id}
-                  title={file.name}
-                  handleClick={() => onOpen(file.id)}
-                />
-              ))}
+              {appealCaseFiles
+                .concat(appealRulingFiles ? appealRulingFiles : [])
+                .map((file) => (
+                  <PdfButton
+                    renderAs="row"
+                    caseId={workingCase.id}
+                    title={file.name}
+                    handleClick={() => onOpen(file.id)}
+                  >
+                    {file.category &&
+                      file.category !== CaseFileCategory.APPEAL_RULING && (
+                        <Box
+                          display="flex"
+                          alignItems="flexEnd"
+                          flexDirection="column"
+                        >
+                          <Text>
+                            {`
+                       ${formatDate(
+                         file.created,
+                         'dd.MM.y',
+                       )}   kl. ${formatDate(
+                              file.created,
+                              constants.TIME_FORMAT,
+                            )}
+                    `}
+                          </Text>
+
+                          <Text variant="small">
+                            {formatMessage(strings.appealFilesCategory, {
+                              filesCategory: file.category?.includes(
+                                'PROSECUTOR',
+                              ),
+                            })}
+                          </Text>
+                        </Box>
+                      )}
+                  </PdfButton>
+                ))}
             </Box>
           )}
           <Box marginBottom={6}>
