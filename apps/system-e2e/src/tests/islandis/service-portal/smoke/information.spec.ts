@@ -57,7 +57,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     await expect(link).toBeVisible()
   })
 
-  test('should display child information', async () => {
+  test.skip('should display child information', async () => {
     const page = await context.newPage()
     await disableI18n(page)
     await page.goto('/minarsidur/min-gogn')

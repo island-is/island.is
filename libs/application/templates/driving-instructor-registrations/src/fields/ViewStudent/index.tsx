@@ -107,7 +107,8 @@ const ViewStudent = ({
   const studentRegistrations = student?.book
     ?.teachersAndLessons as Array<DrivingBookLesson>
 
-  const isUsersStudent = userNationalId === student?.book?.teacherNationalId
+  const doesStudentBelongToUser =
+    userNationalId === student?.book?.teacherNationalId
 
   useEffect(() => {
     setStudent(
@@ -280,7 +281,7 @@ const ViewStudent = ({
             </GridColumn>
           </GridRow>
 
-          {isUsersStudent && (
+          {doesStudentBelongToUser && (
             <>
               <GridRow>
                 {/* Completed hours */}
@@ -557,79 +558,84 @@ const ViewStudent = ({
                         })
 
                         return (
-                          <T.Row key={key}>
-                            <T.Data
-                              style={styles.tableStyles}
-                              box={{ className: bgr }}
-                            >
-                              {format(
-                                new Date(entry.registerDate),
-                                'dd.MM.yyyy',
-                              )}
-                            </T.Data>
-                            <T.Data
-                              style={styles.tableStyles}
-                              box={{ className: bgr }}
-                            >
-                              {entry.teacherName}
-                            </T.Data>
-                            <T.Data
-                              style={styles.tableStyles}
-                              box={{
-                                className: bgr,
-                                textAlign: ['center', 'left'],
-                              }}
-                            >
-                              {entry.lessonTime}
-                            </T.Data>
-                            <T.Data
-                              style={styles.tableStyles}
-                              box={{ className: bgr, textAlign: 'center' }}
-                            >
-                              {entry.teacherNationalId === userNationalId && (
-                                <Box display="flex" alignItems="center">
-                                  <Button
-                                    variant="text"
-                                    size="small"
-                                    icon={
-                                      editingRegistration &&
+                          (doesStudentBelongToUser ||
+                            entry.teacherNationalId === userNationalId) && (
+                            <T.Row key={key}>
+                              <T.Data
+                                style={styles.tableStyles}
+                                box={{ className: bgr }}
+                              >
+                                {format(
+                                  new Date(entry.registerDate),
+                                  'dd.MM.yyyy',
+                                )}
+                              </T.Data>
+                              <T.Data
+                                style={styles.tableStyles}
+                                box={{ className: bgr }}
+                              >
+                                {entry.teacherName}
+                              </T.Data>
+                              <T.Data
+                                style={styles.tableStyles}
+                                box={{
+                                  className: bgr,
+                                  textAlign: ['center', 'left'],
+                                }}
+                              >
+                                {entry.lessonTime}
+                              </T.Data>
+                              <T.Data
+                                style={styles.tableStyles}
+                                box={{ className: bgr, textAlign: 'center' }}
+                              >
+                                {entry.teacherNationalId === userNationalId && (
+                                  <Box display="flex" alignItems="center">
+                                    <Button
+                                      variant="text"
+                                      size="small"
+                                      icon={
+                                        editingRegistration &&
+                                        editingRegistration.id === entry.id
+                                          ? 'close'
+                                          : undefined
+                                      }
+                                      onClick={() => {
+                                        setEditingRegistration(
+                                          editingRegistration
+                                            ? undefined
+                                            : entry,
+                                        )
+                                        setNewRegId(undefined)
+                                        setMinutes(entry.lessonTime)
+                                        setDate(entry.registerDate)
+                                      }}
+                                    >
+                                      {editingRegistration &&
                                       editingRegistration.id === entry.id
-                                        ? 'close'
-                                        : undefined
-                                    }
-                                    onClick={() => {
-                                      setEditingRegistration(
-                                        editingRegistration ? undefined : entry,
-                                      )
-                                      setNewRegId(undefined)
-                                      setMinutes(entry.lessonTime)
-                                      setDate(entry.registerDate)
-                                    }}
-                                  >
-                                    {editingRegistration &&
-                                    editingRegistration.id === entry.id
-                                      ? ''
-                                      : formatMessage(
-                                          m.viewStudentEditRegistration,
-                                        )}
-                                  </Button>
-                                  {newRegId &&
-                                    entry.id === newRegId &&
-                                    !loadingStudentsBook && (
-                                      <Box
-                                        paddingLeft={3}
-                                        className={styles.showSuccessIcon}
-                                      >
-                                        <Icon
-                                          icon="checkmarkCircle"
-                                          color="mint400"
-                                        />
-                                      </Box>
-                                    )}
-                                </Box>
-                              )}
-                            </T.Data>
-                          </T.Row>
+                                        ? ''
+                                        : formatMessage(
+                                            m.viewStudentEditRegistration,
+                                          )}
+                                    </Button>
+                                    {newRegId &&
+                                      entry.id === newRegId &&
+                                      !loadingStudentsBook && (
+                                        <Box
+                                          paddingLeft={3}
+                                          className={styles.showSuccessIcon}
+                                        >
+                                          <Icon
+                                            icon="checkmarkCircle"
+                                            color="mint400"
+                                          />
+                                        </Box>
+                                      )}
+                                  </Box>
+                                )}
+                              </T.Data>
+                            </T.Row>
+                          )
                         )
                       })
                       .reverse()}
