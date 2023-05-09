@@ -65,7 +65,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             span={['12/12', '12/12', '12/12', '3/12', '3/12']}
             order={[3, 3, 3, 1, 1]}
           >
-            <Stack space={2}>
+            <Stack space={3}>
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
@@ -94,12 +94,10 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                   )}
                 </StackedTitleAndDescription>
               </SimpleCardSkeleton>
-              <Box paddingTop={1}>
-                <CaseEmailBox
-                  caseId={caseId}
-                  caseNumber={chosenCase?.caseNumber}
-                />
-              </Box>
+              <CaseEmailBox
+                caseId={caseId}
+                caseNumber={chosenCase?.caseNumber}
+              />
             </Stack>
           </GridColumn>
           <GridColumn
