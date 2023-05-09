@@ -585,4 +585,8 @@ export const m = defineMessages({
     defaultMessage:
       'Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi.',
   },
+  permissionsSearchPlaceholder: {
+    id: 'ap.ids-admin:permissions-search-placeholder',
+    defaultMessage: 'Search by name or ID',
+  },
 })

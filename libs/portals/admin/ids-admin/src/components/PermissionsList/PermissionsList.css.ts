@@ -14,3 +14,7 @@ export const headerContainer = style({
     },
   }),
 })
+
+export const filterContainer = style({
+  maxWidth: 300,
+})

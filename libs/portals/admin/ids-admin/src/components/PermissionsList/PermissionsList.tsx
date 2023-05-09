@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  FilterInput,
   GridRow,
   LinkV2,
   Stack,
@@ -8,38 +9,39 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import {
-  Outlet,
-  // useLoaderData,
-  useNavigate,
-  useParams,
-} from 'react-router-dom'
+import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import * as styles from './PermissionsList.css'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
-import React from 'react'
+import React, { useState } from 'react'
 import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
-
-// TODO: MOCK DATA
-const loaderData = [
-  {
-    displayName: 'Stjórnborð Ísland.is',
-    id: '@admin.island.is',
-    environments: ['Production', 'Staging', 'Development'],
-  },
-  {
-    displayName: 'Vegagerðin',
-    id: '@admin.island.is',
-    environments: ['Production', 'Staging', 'Development'],
-  },
-]
+import { MockData } from './PermissionsList.loader'
 
 function PermissionsList() {
   const { formatMessage } = useLocale()
-  // const loaderData = useLoaderData()
+  const loaderData = useLoaderData() as MockData
   const isEmpty = !Array.isArray(loaderData) || loaderData.length === 0
   const navigate = useNavigate()
   const { tenant } = useParams()
+  const [filteredPermissions, setFilteredPermissions] = useState(loaderData)
+  const [inputSearchValue, setInputSearchValue] = useState<string>('')
+
+  const handleSearch = (value: string) => {
+    setInputSearchValue(value)
+
+    if (value.length > 0) {
+      const filteredList = loaderData.filter((item) => {
+        const val = value.toLowerCase()
+        return (
+          item.displayName.toLowerCase().includes(val) ||
+          item.id.toLowerCase().includes(val)
+        )
+      })
+      setFilteredPermissions(filteredList)
+    } else {
+      setFilteredPermissions(loaderData)
+    }
+  }
 
   const handleCreatePermission = () => {
     navigate(
@@ -56,7 +58,7 @@ function PermissionsList() {
     </Button>
   )
 
-  const emptyState = () => {
+  const renderEmptyState = () => {
     return (
       <Box
         borderRadius="large"
@@ -97,22 +99,34 @@ function PermissionsList() {
     )
   }
 
-  const list = () => {
+  const renderList = () => {
     return (
-      <Stack space={2}>
-        {loaderData.map((item) => {
-          const tags = item.environments.map((env) => ({ children: env }))
-          return (
-            <IdsAdminCard
-              key={item.id}
-              // cta={{ label: formatMessage(m.change), to: '#' }} TODO
-              title={item.displayName}
-              text={item.id}
-              tags={tags}
-            />
-          )
-        })}
-      </Stack>
+      <Box marginY={1}>
+        <Box className={styles.filterContainer} marginBottom={3}>
+          <FilterInput
+            placeholder={formatMessage(m.permissionsSearchPlaceholder)}
+            name="permission-search"
+            value={inputSearchValue}
+            onChange={handleSearch}
+            backgroundColor="blue"
+          />
+        </Box>
+
+        <Stack space={2}>
+          {filteredPermissions.map((item) => {
+            const tags = item.environments.map((env) => ({ children: env }))
+            return (
+              <IdsAdminCard
+                key={item.id}
+                // cta={{ label: formatMessage(m.change), to: '#' }} TODO
+                title={item.displayName}
+                text={item.id}
+                tags={tags}
+              />
+            )
+          })}
+        </Stack>
+      </Box>
     )
   }
 
@@ -137,7 +151,7 @@ function PermissionsList() {
         )}
       </Box>
 
-      {isEmpty ? emptyState() : list()}
+      {isEmpty ? renderEmptyState() : renderList()}
       <Outlet />
     </GridRow>
   )
