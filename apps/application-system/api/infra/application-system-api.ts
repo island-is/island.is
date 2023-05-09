@@ -86,6 +86,8 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD',
+      EHIC_XROAD_PROVIDER_ID:
+        '/k8s/application-system-api/EHIC_XROAD_PROVIDER_ID',
       DRIVING_LICENSE_BOOK_XROAD_PATH:
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH',
       DRIVING_LICENSE_BOOK_USERNAME:
