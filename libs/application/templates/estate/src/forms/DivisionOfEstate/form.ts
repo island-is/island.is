@@ -41,11 +41,7 @@ export const form: Form = buildForm({
               id: 'deceasedHeader',
               title: m.theDeceased,
               titleVariant: 'h3',
-            }),
-            buildDescriptionField({
-              id: 'space0',
-              title: '',
-              space: 'gutter',
+              marginBottom: 2,
             }),
             ...deceasedInfoFields,
           ],
@@ -61,11 +57,6 @@ export const form: Form = buildForm({
           title: m.divisionOfEstateTerms,
           description: m.divisionOfEstateTermsText,
           children: [
-            buildDescriptionField({
-              id: 'space',
-              title: '',
-              space: 'containerGutter',
-            }),
             buildCheckboxField({
               id: 'readTerms',
               title: '',
