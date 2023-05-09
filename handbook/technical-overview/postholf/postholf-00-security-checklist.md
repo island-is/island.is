@@ -1,52 +1,52 @@
-# Gátlisti
+# Security checklist
 
-Í þessum gátlista má finna atriði sem vefþjónusta skjalaveitna (SkjalaveitaAPI) þarf að uppfylla áður en tenging við Pósthólf Ísland.is getur átt sér stað. Tilgangurinn með gátlistanum er að koma í veg fyrir mögulegar öryggisholur þegar vefþjónustur eru útfærðar af skjalaveitum.
+This checklist defines requirements that Skjalaveita web services need to fulfill before a connection to the Ísland.is Pósthólf can take place. The purpose of this checklist is to prevent possible security issues when web services are implemented.
 
-## Flutningslag
+## Transport layer
 
-Öll samskipti eiga að vera dulkóðuð, notast þar við https (TLS 1.2+). Skilríki á vefþjón ættu að vera útgefin af vottuðum skilríkjaútgefanda (ekki self signed).
+All communication is encoded using HTTPS (TLS 1.2+). Web servers certificate is issued by a trusted certificate authority (not self signed).
 
-- [ ] Samskipti eru dulkóðuð á þjóni sem styður TLS 1.2+.
-- [ ] Skilríki á þjóni eru útgefin af vottuðum skilríkjaútgefanda.
+- [ ] Communication is encoded on a server that supports TLS 1.2+.
+- [ ] Certificates are issued by a trusted certificate authority.
 
-## Auðkenning
+## Authorization
 
-Vefþjónusta ætti að vera útfærð með OAuth2 auðkenningu, þar sem aðgangstóki (e. Access token) er sannreyndur út frá undirritunarskilríki auðkenningarþjóns. Einnig skal þjónustan sannreyna gildissvið (e. Scope) og gildistíma aðgangstókans. Þjónustan ætti ekki að vera aðgengileg með öðrum hætti.
+The web service is implemented with OAuth 2.0, where an access token is verified against the authentication server's signed credentials. The web service also validates a scope and the token's expiration date. The web service is not accessible by any other means.
 
-- [ ] Vefþjónustan er einungis aðgengileg með OAuth2.
-- [ ] Vefþjónustan sannreynir að aðgangstóki sé undirritaður af auðkenningarþjóni.
-- [ ] Aðgangur er aðeins heimill sé rétt gildissvið (e. Scope) í aðgangstóka.
-- [ ] Aðgangstóka er hafnað sé reynt að nota hann utan gildistíma hans.
+- [ ] The web service is only accessible with OAuth 2.0.
+- [ ] The web service validates that the access token is signed by the authorization service.
+- [ ] Authorization is only given when the correct scope is in the access token.
+- [ ] An expired access token is rejected when used.
 
-## Skilríkjatraust
+## Tokens
 
-Í raunumhverfi skjalaveitu ætti einungis að treysta aðgangstókum sem gefnir eru út af auðkenningarþjóni raunumhverfis Ísland.is. Prófunarumhverfi Pósthólfsins notast við annan auðkenningarþjón sem ætti aldrei að vera treyst í raunumhverfi.
+The Skjalaveita production environment only trusts tokens that are issued by the Ísland.is production authentication server. The Ísland.is test environment uses a different authentication server and is never be trusted in production.
 
-- [ ] Raunumhverfi treystir einungis auðkenningarþjóni raunumhverfis Ísland.is
+- [ ] The production environment only trust the Ísland.is production authentication server.
 
-## Aðgangstakmarkanir
+## Access restriction
 
-Vefþjónustan ætti að vera lokuð á netlagi. Þ.e. hún ætti einungis að vera aðgengileg þeim IP tölum sem Pósthólfið á ísland.is notar þegar kallað er í þjónustuna.
+The web service's network layer is closed and only accessible by the IP addresses that the Ísland.is Pósthólf uses to query the service.
 
-- [ ] Vefþjónustan er einungis aðgengileg IP tölum sem Pósthólfið á Ísland.is notar.
+- [ ] The web service is only accessible by IP addresses that the Ísland.is Pósthólf uses.
 
-## Sannreyna Inntaksform
+## Form validation
 
-Inntak ætti að sannreyna með tilliti til innspýtingar (e. Injection) ásamt því að tryggja rétt snið (e. format).
+An input hsa to be sanitized to avoid possible injections, the correct format is also ensured.
 
-- [ ] Vefþjónustan skilar villu ef inntak er tómt (þ.e. annað hvort kennitala eða skjalId er tómt).
-- [ ] Vefþjónustan skilar villu ef kennitala er ekki á réttu sniði.
-- [ ] Vefþjónustan skilar villu ef einkenni skjals (skjalId) er ekki á réttu sniði. Snið er ákveðið af skjalaveitu.
-- [ ] Vefþjónustan er varin fyrir innspýtingu (e. Injection). https://www.owasp.org/index.php/Top_10-2017_A1-Injection
+- [ ] The web service returns an error if the input is empty (i.e the nationalId or documentId is empty).
+- [ ] The web service returns an error if the nationalId is incorrectly formatted.
+- [ ] The web service returns an error if the documentId is not in the correct format. The format is determined by the Skjalaveita.
+- [ ] The web service is protected against injections. https://www.owasp.org/index.php/Top_10-2017_A1-Injection
 
-## Sannreyna Inntaksgögn
+## Data input validation
 
-Þegar Pósthólfið á Ísland.is sækir skjöl frá skjalaveitum er sent par af kennitölu og einkenni skjal (SkjalId). Skjalaveitan ætti alltaf að sannreyna að skjalið sem vísað er í (skjalId) sé í eigu gefinnar kennitölu. M.ö.o. er skjalinu ekki skilað eingöngu útfrá gefnu einkenni skjals (skjalId).
+When the Ísland.is Pósthólf retrieves a document from a Skjalaveita, it sends a nationalId and documentId pair. The Skjalaveita validates that the document is owned by the given nationalId. The document is not returned solely based on the documentId.
 
-- [ ] Vefþjónustan ber saman kennitölu og einkenni skjals áður en skjali er skilað.
+- [ ] The web service validates the nationalId and documentId pair with the document before it is returned.
 
-## Atburðarskráning
+## Logging
 
-Þegar kallað er í þjónustuna ætti skrá öll köll í atburðarskráningu. Þar ætti að koma fram kennitala og einkenni skjals sem var sótt (eða reynt að sækja).
+The web service logs all requests. The log contains the nationalId, documentId and when the document was requested.
 
-- [ ] Aðgerðir eru skráðar í atburðarskráningu.
+- [ ] Requests are logged.
