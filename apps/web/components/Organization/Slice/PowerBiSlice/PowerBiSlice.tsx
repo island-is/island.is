@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { EventHandler, PowerBIEmbed } from 'powerbi-client-react'
 import { Embed, models, Report, VisualDescriptor } from 'powerbi-client'
 import { useApolloClient, useQuery } from '@apollo/client'
@@ -12,6 +12,7 @@ import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
 import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
+import { theme } from '@island.is/island-ui/theme'
 
 type EventType =
   | 'loaded'
@@ -65,6 +66,18 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
   const router = useRouter()
   const [embeddedReport, setEmbeddedReport] = useState<Report | null>(null)
   const { activeLocale } = useI18n()
+  const width = useMemo(() => {
+    return (
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth
+    )
+  }, [])
+  const embedRef = useRef<Embed | null>(null)
+
+  const layoutShouldBeMobilePortrait =
+    slice?.powerBiEmbedProps?.displayMobilePortraitLayoutOnSmallScreens &&
+    width < theme.breakpoints.md
 
   const namespaceResponse = useQuery<
     GetNamespaceQuery,
@@ -177,6 +190,27 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
         const pageName = event.detail?.newPage?.name
 
         if (pageName) {
+          if (layoutShouldBeMobilePortrait && embedRef.current) {
+            embedRef.current.element.style.height = '100%'
+
+            const pageElementStyle =
+              slice?.powerBiEmbedProps?.style?.pages?.[pageName]?.element ?? {}
+            for (const key of Object.keys(pageElementStyle)) {
+              const value = pageElementStyle?.[key]
+              if (value) {
+                embedRef.current.element.style[key] = value
+              }
+            }
+            const pageIframeStyle =
+              slice?.powerBiEmbedProps?.style?.pages?.[pageName]?.iframe ?? {}
+            for (const key of Object.keys(pageIframeStyle)) {
+              const value = pageIframeStyle?.[key]
+              if (value) {
+                embedRef.current.iframe.style[key] = value
+              }
+            }
+          }
+
           const params = new URLSearchParams(window.location.search)
 
           const query = {}
@@ -273,6 +307,8 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
     embed.element.style.height = '600px'
     embed.iframe.style.border = 'none'
 
+    embedRef.current = embed
+
     // Apply styles to containing element from CMS
     const elementStyle = slice?.powerBiEmbedProps?.style?.element
     if (elementStyle) {
@@ -303,6 +339,12 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
       embedConfig={{
         type: 'report',
         ...embedProps,
+        ...(layoutShouldBeMobilePortrait && {
+          settings: {
+            ...embedProps?.settings,
+            layoutType: models.LayoutType.MobilePortrait,
+          },
+        }),
         ...(slice?.powerBiEmbedPropsFromServer && {
           ...slice.powerBiEmbedPropsFromServer,
           tokenType: models.TokenType.Embed,
