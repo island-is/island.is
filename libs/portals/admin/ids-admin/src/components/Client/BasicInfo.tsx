@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import ContentCard from '../../shared/components/ContentCard'
+import ContentCard from '../../shared/components/ContentCard/ContentCard'
 import { AuthAdminClientSecret } from './Client.loader'
 
 interface BasicInfoProps {

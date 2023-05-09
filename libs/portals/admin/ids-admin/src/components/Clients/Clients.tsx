@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Link,
-  useNavigate,
-  useParams,
-  useLoaderData,
-  Outlet,
-} from 'react-router-dom'
+import { useNavigate, useParams, useLoaderData, Outlet } from 'react-router-dom'
 import {
   Box,
   Button,
@@ -20,8 +14,8 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
-import * as styles from './Clients.css'
 import { AuthClients } from './Clients.loader'
+import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
 
 const Clients = () => {
   const originalClients = useLoaderData() as AuthClients
@@ -119,8 +113,9 @@ const Clients = () => {
       <Outlet />
     </GridContainer>
   ) : (
-    <GridContainer className={styles.relative}>
+    <GridContainer position="relative">
       {getHeader()}
+
       <Box paddingTop="gutter">
         <Stack space={[1, 1, 2, 2]}>
           <GridRow>
@@ -132,103 +127,36 @@ const Clients = () => {
               backgroundColor="blue"
             />
           </GridRow>
-          {clients.map((item) => (
-            <GridRow key={`clients-${item.clientId}`}>
-              <Link
-                className={styles.fill}
-                to={replaceParams({
-                  href: IDSAdminPaths.IDSAdminClient,
-                  params: {
-                    tenant,
-                    client: item.clientId,
-                  },
-                })}
-              >
-                <Box
-                  className={styles.linkContainer}
-                  borderRadius="large"
-                  border="standard"
-                  width="full"
-                  paddingX={4}
-                  paddingY={3}
-                >
-                  <GridRow className={styles.fill}>
-                    <Box
-                      display="flex"
-                      justifyContent="spaceBetween"
-                      width="full"
-                      marginBottom="gutter"
-                    >
-                      <Box
-                        display="flex"
-                        alignItems="flexStart"
-                        flexDirection={[
-                          'column',
-                          'column',
-                          'row',
-                          'row',
-                          'row',
-                        ]}
-                      >
-                        <Box marginRight={1} marginBottom={1}>
-                          <Tag variant="blue" outlined>
-                            {item.clientType}
-                          </Tag>
-                        </Box>
-                      </Box>
-                      <Box
-                        display="flex"
-                        alignItems="flexEnd"
-                        flexDirection={[
-                          'column',
-                          'column',
-                          'row',
-                          'row',
-                          'row',
-                        ]}
-                      >
-                        {item.availableEnvironments.map((tag) => (
-                          <Box
-                            key={`clients-${tag}`}
-                            marginLeft={1}
-                            marginBottom={1}
-                          >
-                            <Tag variant="purple" outlined>
-                              {tag}
-                            </Tag>
-                          </Box>
-                        ))}
-                      </Box>
-                    </Box>
-                  </GridRow>
-                  <GridRow className={styles.fill}>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="spaceBetween"
-                      width="full"
-                    >
-                      <Box>
-                        <Text variant="h3">
-                          {item.defaultEnvironment.displayName[0].value}
-                        </Text>
-                        <Text variant="default">
-                          {item.defaultEnvironment.clientId}
-                        </Text>
-                      </Box>
-                      <Button
-                        title={formatMessage(m.change)}
-                        icon="pencil"
-                        variant="utility"
-                      >
-                        <Text variant="eyebrow">{formatMessage(m.change)}</Text>
-                      </Button>
-                    </Box>
-                  </GridRow>
-                </Box>
-              </Link>
-            </GridRow>
-          ))}
+
+          {clients.map((item, index) => {
+            const tags = item.availableEnvironments.map((tag) => ({
+              children: tag,
+            }))
+            return (
+              <GridRow key={`clients-${item.clientId}`}>
+                <IdsAdminCard
+                  title={item.defaultEnvironment.displayName[0].value}
+                  text={item.defaultEnvironment.clientId}
+                  tags={tags}
+                  eyebrow={
+                    <Tag variant="blue" outlined disabled>
+                      {item.clientType}
+                    </Tag>
+                  }
+                  cta={{
+                    label: formatMessage(m.change),
+                    to: replaceParams({
+                      href: IDSAdminPaths.IDSAdminClient,
+                      params: {
+                        tenant,
+                        client: item.clientId,
+                      },
+                    }),
+                  }}
+                />
+              </GridRow>
+            )
+          })}
         </Stack>
       </Box>
       <Outlet />

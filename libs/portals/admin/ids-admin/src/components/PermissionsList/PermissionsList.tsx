@@ -1,9 +1,9 @@
 import {
-  ActionCard,
   Box,
   Button,
   GridRow,
   LinkV2,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -18,10 +18,17 @@ import * as styles from './PermissionsList.css'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
 import React from 'react'
+import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
 
+// TODO: MOCK DATA
 const loaderData = [
   {
     displayName: 'Stjórnborð Ísland.is',
+    id: '@admin.island.is',
+    environments: ['Production', 'Staging', 'Development'],
+  },
+  {
+    displayName: 'Wow',
     id: '@admin.island.is',
     environments: ['Production', 'Staging', 'Development'],
   },
@@ -29,7 +36,7 @@ const loaderData = [
 
 function PermissionsList() {
   const { formatMessage } = useLocale()
-  // const loaderData = useLoaderData() as string[]
+  // const loaderData = useLoaderData()
   const isEmpty = !Array.isArray(loaderData) || loaderData.length === 0
   const navigate = useNavigate()
   const { tenant } = useParams()
@@ -93,18 +100,20 @@ function PermissionsList() {
 
   const list = () => {
     return (
-      <Box>
+      <Stack space={2}>
         {loaderData.map((item) => {
+          const tags = item.environments.map((env) => ({ children: env }))
           return (
-            <ActionCard
+            <IdsAdminCard
               key={item.id}
-              cta={{ label: 'Breyta', variant: 'ghost' }}
-              heading={item.displayName}
+              cta={{ label: 'Breyta', to: '#' }}
+              title={item.displayName}
               text={item.id}
+              tags={tags}
             />
           )
         })}
-      </Box>
+      </Stack>
     )
   }
 
