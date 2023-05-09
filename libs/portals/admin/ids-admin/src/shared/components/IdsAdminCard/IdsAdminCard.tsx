@@ -40,6 +40,7 @@ export default function IdsAdminCard({
         icon="pencil"
         variant="utility"
         onClick={cta.onClick}
+        type="button"
         as={isLink ? 'span' : 'button'}
       >
         {cta.label}
@@ -76,7 +77,7 @@ export default function IdsAdminCard({
       >
         {eyebrow ? <Box marginBottom={2}>{eyebrow}</Box> : null}
 
-        <Text variant="h3" as="h3">
+        <Text variant="h3" as="h2">
           {title}
         </Text>
         {text ? <Text>{text}</Text> : null}

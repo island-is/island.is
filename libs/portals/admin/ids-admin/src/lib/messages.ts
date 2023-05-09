@@ -571,4 +571,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-display-name-info',
     defaultMessage: 'Displayed on the log-in screen of your app',
   },
+  permissionEmptyHeading: {
+    id: 'ap.ids-admin:permission-empty-heading',
+    defaultMessage: 'No permission created',
+  },
+  permissionEmptyDescription: {
+    id: 'ap.ids-admin:permission-empty-description',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi.',
+  },
+  permissionListDescription: {
+    id: 'ap.ids-admin:permission-list-description',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi.',
+  },
 })

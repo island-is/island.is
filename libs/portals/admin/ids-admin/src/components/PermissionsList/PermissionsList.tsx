@@ -28,7 +28,7 @@ const loaderData = [
     environments: ['Production', 'Staging', 'Development'],
   },
   {
-    displayName: 'Wow',
+    displayName: 'Vegagerðin',
     id: '@admin.island.is',
     environments: ['Production', 'Staging', 'Development'],
   },
@@ -76,11 +76,10 @@ function PermissionsList() {
           marginX="auto"
         >
           <Text as="h2" variant="h3">
-            No permission created
+            {formatMessage(m.permissionEmptyHeading)}
           </Text>
           <Text marginBottom={3}>
-            Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris
-            accumsan at tellus facilisi.
+            {formatMessage(m.permissionEmptyDescription)}
           </Text>
 
           {createButton}
@@ -91,7 +90,7 @@ function PermissionsList() {
             underline="normal"
             underlineVisibility="always"
           >
-            Learn more
+            {formatMessage(m.learnMore)}
           </LinkV2>
         </Box>
       </Box>
@@ -106,7 +105,7 @@ function PermissionsList() {
           return (
             <IdsAdminCard
               key={item.id}
-              cta={{ label: 'Breyta', to: '#' }}
+              // cta={{ label: formatMessage(m.change), to: '#' }} TODO
               title={item.displayName}
               text={item.id}
               tags={tags}
@@ -129,10 +128,7 @@ function PermissionsList() {
           <Text as="h1" variant="h2">
             {formatMessage(m.permissions)}
           </Text>
-          <Text>
-            Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris
-            accumsan at tellus facilisi.
-          </Text>
+          <Text>{formatMessage(m.permissionListDescription)}</Text>
         </Box>
         {isEmpty ? null : (
           <Box display="flex" alignItems="center">
