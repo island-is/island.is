@@ -31,7 +31,7 @@ export const StakeholdersCard = ({ chosenCase }: Props) => {
             className={styles.blowout}
           >
             <Icon
-              icon={showStakeholders ? 'close' : 'add'}
+              icon={showStakeholders ? 'remove' : 'add'}
               type="outline"
               size="small"
               color="blue400"
