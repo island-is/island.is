@@ -371,7 +371,7 @@ const useSections = (
   ): RouteSection => {
     const { id, type } = workingCase
     const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
-    const isTrafficViolation = isTrafficViolationCase(workingCase, user)
+    const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     const routes = prosecutorIndictmentRoutes(isTrafficViolation)
 
