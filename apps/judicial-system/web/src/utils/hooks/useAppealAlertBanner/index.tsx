@@ -23,6 +23,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './strings'
+import router from 'next/router'
 
 const renderLink = (text: string, href: string) => {
   return (
@@ -118,11 +119,19 @@ const useAppealAlertBanner = (
         </Text>
       )
     } else {
-      child = renderLink(
-        formatMessage(strings.statementLinkText),
-        isDefenderRoleUser
-          ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
-          : `${STATEMENT_ROUTE}/${workingCase.id}`,
+      child = (
+        <Button
+          variant="text"
+          size="small"
+          onClick={() => {
+            const href = isDefenderRoleUser
+              ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
+              : `${STATEMENT_ROUTE}/${workingCase.id}`
+            router.push(href)
+          }}
+        >
+          {formatMessage(strings.statementLinkText)}
+        </Button>
       )
     }
   }
@@ -147,12 +156,19 @@ const useAppealAlertBanner = (
               })}
             </Text>
           ))
-        : renderLink(
-            formatMessage(strings.statementLinkText),
-            `${
-              isDefenderRoleUser ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
-            }/${workingCase.id}`,
-          )
+        : (child = (
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => {
+                router.push(`${
+                isDefenderRoleUser ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
+                }/${workingCase.id}`)
+              }}
+            >
+              {formatMessage(strings.statementLinkText)}
+            </Button>
+          ))
     } else if (isCourtRoleUser) {
       child = (
         <Button variant="text" size="small" onClick={onReceiveAppeal}>
