@@ -21,6 +21,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/health-insurance'),
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: () =>
     import('@island.is/application/templates/children-residence-change'),
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_OLD]: () =>
+    import('@island.is/application/templates/children-residence-change-old'),
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: () =>
     import('@island.is/application/templates/data-protection-complaint'),
   [ApplicationTypes.LOGIN_SERVICE]: () =>

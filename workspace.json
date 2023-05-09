@@ -74,6 +74,7 @@
     "application-templates-alcohol-tax-redemption": "libs/application/templates/alcohol-tax-redemption",
     "application-templates-announcement-of-death": "libs/application/templates/announcement-of-death",
     "application-templates-children-residence-change": "libs/application/templates/family-matters/children-residence-change",
+    "application-templates-children-residence-change-old": "libs/application/templates/family-matters/children-residence-change-old",
     "application-templates-complaints-to-althingi-ombudsman": "libs/application/templates/complaints-to-althingi-ombudsman",
     "application-templates-criminal-record": "libs/application/templates/criminal-record",
     "application-templates-data-protection-complaint": "libs/application/templates/data-protection-complaint",
