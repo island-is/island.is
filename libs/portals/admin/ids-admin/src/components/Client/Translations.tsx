@@ -4,10 +4,10 @@ import React, { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
-import { AuthApplicationTranslation } from './Client.loader'
+import { AuthAdminClientTranslation } from './Client.loader'
 
 interface TranslationsProps {
-  translations: AuthApplicationTranslation[]
+  translations: AuthAdminClientTranslation[]
   inSync?: boolean
 }
 const Translations = ({ translations, inSync = true }: TranslationsProps) => {

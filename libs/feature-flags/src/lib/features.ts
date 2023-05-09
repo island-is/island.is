@@ -43,6 +43,7 @@ export enum Features {
   servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
   servicePortalEducationGraduation = 'isServicePortalEducationGratuationModuleEnabled',
   sessionHistory = 'sessionHistory',
+  servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
 
   // Application delegation flags
   transportAuthorityTransferOfVehicleOwnershipDelegations = 'applicationTransportAuthorityTransferOfVehicleOwnershipDelegations',

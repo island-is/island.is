@@ -3,12 +3,12 @@ import { useLazyQuery } from '@apollo/client'
 
 import { CaseFileState } from '@island.is/judicial-system/types'
 import {
-  LimitedAccessGetSignedUrlQueryQuery,
-  LimitedAccessGetSignedUrlQueryQueryVariables,
-  GetSignedUrlQueryQuery,
-  GetSignedUrlQueryQueryVariables,
-  GetSignedUrlQueryDocument,
-  LimitedAccessGetSignedUrlQueryDocument,
+  LimitedAccessGetSignedUrlQuery,
+  LimitedAccessGetSignedUrlQueryVariables,
+  GetSignedUrlQuery,
+  GetSignedUrlQueryVariables,
+  GetSignedUrlDocument,
+  LimitedAccessGetSignedUrlDocument,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   FormContext,
@@ -27,8 +27,8 @@ const useFileList = ({ caseId }: Parameters) => {
   const [
     getSignedUrl,
     { error: fullAccessError, variables: fullAccessVariables },
-  ] = useLazyQuery<GetSignedUrlQueryQuery, GetSignedUrlQueryQueryVariables>(
-    GetSignedUrlQueryDocument,
+  ] = useLazyQuery<GetSignedUrlQuery, GetSignedUrlQueryVariables>(
+    GetSignedUrlDocument,
     {
       fetchPolicy: 'no-cache',
       onCompleted(data) {
@@ -43,9 +43,9 @@ const useFileList = ({ caseId }: Parameters) => {
     limitedAccessGetSignedUrl,
     { error: limitedAccessError, variables: limitedAccessVariables },
   ] = useLazyQuery<
-    LimitedAccessGetSignedUrlQueryQuery,
-    LimitedAccessGetSignedUrlQueryQueryVariables
-  >(LimitedAccessGetSignedUrlQueryDocument, {
+    LimitedAccessGetSignedUrlQuery,
+    LimitedAccessGetSignedUrlQueryVariables
+  >(LimitedAccessGetSignedUrlDocument, {
     fetchPolicy: 'no-cache',
     onCompleted(data) {
       if (data?.limitedAccessGetSignedUrl?.url) {

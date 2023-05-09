@@ -57,7 +57,7 @@ export const ApplicationConfigurations = {
     translation: 'pa.application',
   },
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
-    slug: 'aefingarakstur',
+    slug: 'aefingaakstur',
     translation: 'dlp.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {

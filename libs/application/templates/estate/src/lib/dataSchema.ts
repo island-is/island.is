@@ -9,6 +9,9 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+export const isValidEmail = (value: string) => emailRegex.test(value)
+
 const checkIfFilledOut = (arr: Array<string | undefined>) => {
   if (arr.every((v) => v === '')) {
     return true
@@ -26,7 +29,6 @@ const asset = z
     marketValue: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    dummy: z.boolean().optional(),
     share: z.number().optional(),
   })
   .refine(
@@ -68,13 +70,20 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        nationalId: z.string().optional(),
+        nationalId: z.string().length(10).optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().min(1).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        dummy: z.boolean().optional(),
+        phone: z
+          .string()
+          .refine((v) => isValidPhoneNumber(v) || v === '')
+          .optional(),
+        email: z
+          .string()
+          .refine((v) => isValidEmail(v) || v === '')
+          .optional(),
       })
       .array()
       .optional(),
@@ -89,6 +98,14 @@ export const estateSchema = z.object({
     nameOfDeceased: z.string().min(1).optional(),
     nationalIdOfDeceased: z.string().optional(),
     districtCommissionerHasWill: z.boolean().optional(),
+    testament: z
+      .object({
+        wills: z.enum([YES, NO]),
+        agreement: z.enum([YES, NO]),
+        dividedEstate: z.enum([YES, NO]).optional(),
+        additionalInfo: z.string().optional(),
+      })
+      .optional(),
   }),
 
   // is: Innbú

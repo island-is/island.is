@@ -1,4 +1,4 @@
-import { SortOptions } from './enums'
+import { CaseSubscriptionType, SortOptions, SubscriptionType } from './enums'
 
 export interface Case {
   id?: number
@@ -73,12 +73,13 @@ export interface ArrOfValueAndLabel {
   label: string
 }
 
-export interface SubscriptionArray {
-  caseIds: Array<SubscriptionItem>
-  institutionIds: Array<SubscriptionItem>
-  policyAreaIds: Array<SubscriptionItem>
-  generalSubscription: string
-}
+// export interface SubscriptionArray {
+//   caseIds: Array<SubscriptionItem>
+//   institutionIds: Array<SubscriptionItem>
+//   policyAreaIds: Array<SubscriptionItem>
+//   generalSubscription: string
+// }
+
 export interface SubscriptionItem {
   id: number
   subscriptionType: string
@@ -108,15 +109,16 @@ export interface ArrOfTypesForSubscriptions {
   institutions: { [key: string]: string }
 }
 
-export type FilterInputItems = {
+export type FilterInputItem = {
   checked: boolean
   value: string
   label: string
+  count?: number | unknown
 }
 
-export interface FilterInputIsOpen {
-  items: FilterInputItems
-  isOpen: boolean
+export interface FilterInputItems {
+  items: Array<FilterInputItem>
+  isOpen?: boolean
 }
 
 export type PeriodInput = {
@@ -125,15 +127,28 @@ export type PeriodInput = {
 }
 
 export interface CaseFilter {
-  caseStatuses?: any
-  caseTypes?: any
+  caseStatuses?: FilterInputItems
+  caseTypes?: FilterInputItems
   period?: PeriodInput
   institutions?: Array<number>
-  sorting?: any
+  sorting?: FilterInputItems
   pageNumber?: number
   pageSize?: number
   policyAreas?: Array<number>
   searchQuery?: string
+}
+
+export interface FetchCasesInput {
+  caseStatuses: Array<number>
+  caseTypes: Array<number>
+  orderBy: string
+  searchQuery: string
+  policyAreas: Array<number>
+  institutions: Array<number>
+  dateFrom: Date
+  dateTo: Date
+  pageSize: number
+  pageNumber: number
 }
 
 export interface SEOProps {
@@ -194,4 +209,81 @@ export interface AdviceFilter {
   pageNumber?: number
   pageSize?: number
   searchQuery?: string
+}
+
+export interface CasesSubscription {
+  id?: number
+  subscriptionType?: CaseSubscriptionType
+}
+
+export interface CasesSubscriptionData {
+  id?: number | string
+  caseNumber?: string
+  institutionName?: string
+  name?: string
+  policyAreaName?: string
+  key?: string
+  checked?: boolean
+  subscriptionType?: SubscriptionType
+}
+
+export interface InstitutionsSubscription {
+  id?: number
+  subscriptionType?: SubscriptionType
+}
+
+export interface InstitutionsSubscriptionData {
+  name?: string
+  id?: string
+  subscriptionType?: SubscriptionType
+  checked?: boolean
+  key?: string
+}
+
+export interface PolicyAreasSubscription {
+  id?: number
+  subscriptionType?: SubscriptionType
+}
+
+export interface PolicyAreasSubscriptionData {
+  name?: string
+  id?: string
+  subscriptionType?: SubscriptionType
+  checked?: boolean
+  key?: string
+}
+
+export interface GeneralSubscriptionData {
+  name?: string
+  key?: string
+  checked?: boolean
+  subscriptionType?: SubscriptionType
+}
+
+export interface SubscriptionArray {
+  cases?: Array<CasesSubscriptionData>
+  institutions?: Array<InstitutionsSubscriptionData>
+  policyAreas?: Array<PolicyAreasSubscriptionData>
+  subscribedToAllNewObj?: GeneralSubscriptionData
+  subscribedToAllChangesObj?: GeneralSubscriptionData
+}
+
+export interface SubscriptionArrayForValue {
+  case?: CasesSubscriptionData
+  institution?: InstitutionsSubscriptionData
+  policyArea?: PolicyAreasSubscriptionData
+  subscribedToAllNewObj?: GeneralSubscriptionData
+  subscribedToAllChangesObj?: GeneralSubscriptionData
+}
+
+export interface SubscriptionTableItem extends CasesSubscriptionData {
+  subscriptionType?: SubscriptionType
+}
+
+export interface Subscription {
+  subscribedToAll?: boolean
+  subscribedToAllType?: SubscriptionType
+  cases?: Array<CasesSubscription>
+  institutions?: Array<InstitutionsSubscription>
+  policyAreas?: Array<PolicyAreasSubscription>
 }
