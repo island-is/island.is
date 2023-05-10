@@ -106,6 +106,15 @@ export class MessageHandlerService implements OnModuleDestroy {
         )
         break
       }
+      case MessageType.ARCHIVE_CASE_FILES_RECORD: {
+        const policeCaseMessage = message as PoliceCaseMessage
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          policeCaseMessage.caseId,
+          `archiveCaseFilesRecord/${policeCaseMessage.policeCaseNumber}`,
+        )
+        break
+      }
       case MessageType.SEND_HEADS_UP_NOTIFICATION:
         handled = await this.internalDeliveryService.deliver(
           message.user,

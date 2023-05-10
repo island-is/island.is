@@ -4,18 +4,18 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubmitField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { NO, YES, NEI, JA } from '../../lib/constants'
+import { YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
+import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
   id: 'divisionOfEstateByHeirsForm',
@@ -55,60 +55,7 @@ export const form: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'testamentInfo',
-          title: m.willsAndAgreements,
-          children: [
-            buildMultiField({
-              id: 'testamentInfo',
-              title: m.estateMembersTitle,
-              description: m.estateMembersSubtitle,
-              children: [
-                buildDescriptionField({
-                  id: 'willsAndAgreementsTitle',
-                  title: m.willsAndAgreements,
-                  description: m.willsAndAgreementsDescription,
-                  titleVariant: 'h3',
-                  marginBottom: 2,
-                }),
-                buildRadioField({
-                  id: 'estate.testament.wills',
-                  title: m.doesWillExist,
-                  largeButtons: false,
-                  width: 'half',
-                  space: 2,
-                  options: [
-                    { value: YES, label: JA },
-                    { value: NO, label: NEI },
-                  ],
-                }),
-                buildRadioField({
-                  id: 'estate.testament.agreement',
-                  title: m.doesAgreementExist,
-                  largeButtons: false,
-                  width: 'half',
-                  space: 2,
-                  options: [
-                    { value: YES, label: JA },
-                    { value: NO, label: NEI },
-                  ],
-                }),
-                buildDescriptionField({
-                  id: 'space',
-                  title: '',
-                  marginBottom: 2,
-                }),
-                buildTextField({
-                  id: 'estate.testament.additionalInfo',
-                  title: m.additionalInfo,
-                  placeholder: m.additionalInfoPlaceholder,
-                  variant: 'textarea',
-                  rows: 7,
-                }),
-              ],
-            }),
-          ],
-        }),
+        testamentInfo,
       ],
     }),
     buildSection({
@@ -476,24 +423,24 @@ export const form: Form = buildForm({
           description: m.representativeDescription,
           children: [
             buildTextField({
-              id: 'representative.representativeNationalId',
+              id: 'representative.nationalId',
               title: m.nationalId,
               width: 'half',
               format: '######-####',
             }),
             buildTextField({
-              id: 'representative.representativeName',
+              id: 'representative.name',
               title: m.name,
               width: 'half',
             }),
             buildTextField({
-              id: 'representative.representativePhoneNumber',
+              id: 'representative.phone',
               title: m.phone,
               width: 'half',
               format: '###-####',
             }),
             buildTextField({
-              id: 'representative.representativeEmail',
+              id: 'representative.email',
               title: m.email,
               width: 'half',
             }),

@@ -101,6 +101,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                   defaultValue={asset.marketValue}
                   currency
                   size="sm"
+                  error={error && error[index]?.marketValue}
                 />
               </Box>
             </GridColumn>,
@@ -182,6 +183,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.marketValueTitle)}
                   defaultValue={field.marketValue}
                   placeholder={'0 kr.'}
+                  error={fieldError?.assetNumber}
                   currency
                   size="sm"
                 />

@@ -1,5 +1,10 @@
 import React from 'react'
-import { Table as T, useBreakpoint } from '@island.is/island-ui/core'
+import {
+  Stack,
+  Table as T,
+  Text,
+  useBreakpoint,
+} from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../utils/helpers'
 import SubscriptionTableItem from './SubscriptionTableItem'
 import { SubscriptionArray } from '../../types/interfaces'
@@ -12,6 +17,8 @@ export interface SubscriptionTableProps {
   setSubscriptionArray: (_: SubscriptionArray) => void
   dontShowNew?: boolean
   dontShowChanges?: boolean
+  searchValue?: string
+  isMySubscriptions?: boolean
 }
 
 const SubscriptionTable = ({
@@ -20,12 +27,35 @@ const SubscriptionTable = ({
   setSubscriptionArray,
   dontShowNew,
   dontShowChanges,
+  searchValue,
+  isMySubscriptions,
 }: SubscriptionTableProps) => {
   const { md: mdBreakpoint } = useBreakpoint()
   const { Table, Body } = T
 
   const { subscribedToAllNewObj, subscribedToAllChangesObj } = subscriptionArray
   const thisData = subscriptionArray[mapIsToEn[currentTab]]
+
+  if (
+    thisData.length === 0 &&
+    !subscribedToAllNewObj.checked &&
+    !subscribedToAllChangesObj.checked
+  ) {
+    return (
+      <Stack space={1}>
+        <Text variant="medium">
+          {isMySubscriptions
+            ? `Engar áskriftir fundust fyrir ${currentTab.toLocaleLowerCase()}`
+            : `Engin gögn fundust fyrir ${currentTab.toLocaleLowerCase()}`}
+        </Text>
+        {searchValue && (
+          <Text variant="small">
+            Prófaðu að fjarlægja úr leit til að sjá fleiri mál.
+          </Text>
+        )}
+      </Stack>
+    )
+  }
 
   return (
     <Table>

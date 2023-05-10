@@ -40,7 +40,7 @@ const AppealSection: React.FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const isHighCourt = user?.institution?.type === InstitutionType.HighCourt
+  const isHighCourt = user?.institution?.type === InstitutionType.HIGH_COURT
 
   const [isInitialMount, setIsInitialMount] = useState<boolean>(true)
 

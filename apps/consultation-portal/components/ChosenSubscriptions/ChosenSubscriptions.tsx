@@ -66,6 +66,7 @@ const ChosenSubscriptions = ({
             chosenCases.map((item) => {
               return (
                 <ChosenSubscriptionCard
+                  isCase
                   key={item.key}
                   item={item}
                   area={Area.case}
