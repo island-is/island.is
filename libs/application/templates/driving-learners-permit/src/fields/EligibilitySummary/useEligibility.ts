@@ -53,6 +53,8 @@ export const useEligibility = (
     }
   }
 
+  console.log(JSON.stringify(data, null, 2))
+
   return {
     loading,
     eligibility: data.learnerMentorEligibility,

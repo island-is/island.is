@@ -132,9 +132,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
             : undefined,
       }
     }
+    console.log('auth', auth)
 
     const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
       nationalId: auth.nationalId,
+      token: auth.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
     })
 
     const categoryB = (drivingLicense?.categories ?? []).find(
@@ -199,6 +201,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   private async getDrivingAssessment(
     nationalId: string,
   ): Promise<StudentAssessment | null> {
+    console.log('WE ARE HERE FOR SOME HEKCING REASON')
     const assessment = await this.drivingLicenseService.getDrivingAssessment({
       nationalId,
     })
