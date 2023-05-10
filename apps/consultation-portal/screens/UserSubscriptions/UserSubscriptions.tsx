@@ -42,6 +42,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
     cases: allcases,
     dontShowNew: dontShowNew,
     dontShowChanges: dontShowChanges,
+    isMySubscriptions: true,
   })
 
   const {
