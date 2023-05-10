@@ -32,7 +32,7 @@ export class CourseController {
   @ApiOperation({
     summary: 'Endpoint description for get courses',
   })
-  async etCourses(
+  async getCourses(
     @Query('majorId') majorId: string,
     @Query('universityId') universityId: string,
   ): Promise<Course[]> {
