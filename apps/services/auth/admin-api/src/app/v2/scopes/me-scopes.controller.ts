@@ -34,8 +34,8 @@ export class MeScopesController {
   @Audit<AdminScopeDTO[]>({
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
-  findAll(@Param('tenantId') id: string): Promise<AdminScopeDTO[]> {
-    return this.adminScopeService.findApiScopesByTenantId(id)
+  findAllByTenantId(@Param('tenantId') id: string): Promise<AdminScopeDTO[]> {
+    return this.adminScopeService.findAllByTenantId(id)
   }
 
   @Get(':scopeName')
@@ -46,12 +46,12 @@ export class MeScopesController {
   @Audit<AdminScopeDTO>({
     resources: (scope) => scope.name,
   })
-  findByName(
+  findByTenantIdAndScopeName(
     @Param('tenantId') tenantId: string,
     @Param('scopeName') scopeName: string,
   ): Promise<AdminScopeDTO> {
-    return this.adminScopeService.findApiScope({
-      name: scopeName,
+    return this.adminScopeService.findByTenantIdAndScopeName({
+      scopeName,
       tenantId,
     })
   }

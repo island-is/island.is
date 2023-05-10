@@ -61,7 +61,7 @@ export class ScopeService extends MultiEnvironmentService {
         this.adminApiByEnvironmentWithAuth(
           environment,
           user,
-        )?.meScopesControllerFindAll({
+        )?.meScopesControllerFindAllByTenantId({
           tenantId,
         }),
       ),
@@ -109,7 +109,7 @@ export class ScopeService extends MultiEnvironmentService {
         this.adminApiByEnvironmentWithAuth(
           environment,
           user,
-        )?.meScopesControllerFindByName(input),
+        )?.meScopesControllerFindByTenantIdAndScopeName(input),
       ),
     )
 

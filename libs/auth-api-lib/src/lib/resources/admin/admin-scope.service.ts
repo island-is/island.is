@@ -58,7 +58,7 @@ export class AdminScopeService {
     }
   }
 
-  async findApiScopesByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
+  async findAllByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
     const apiScopes = await this.apiScope.findAll({
       where: {
         domainName: tenantId,
@@ -77,23 +77,23 @@ export class AdminScopeService {
   /**
    * Finds a scope by name and tenantId
    */
-  async findApiScope({
-    name,
+  async findByTenantIdAndScopeName({
+    scopeName,
     tenantId,
   }: {
-    name: string
+    scopeName: string
     tenantId: string
   }): Promise<AdminScopeDTO> {
     const apiScope = await this.apiScope.findOne({
       where: {
-        name,
+        name: scopeName,
         domainName: tenantId,
       },
     })
 
     if (!apiScope) {
       throw new BadRequestException(
-        `Scope name "${name}" does not exist for tenant ${tenantId}`,
+        `Scope name "${scopeName}" does not exist for tenant ${tenantId}`,
       )
     }
 
