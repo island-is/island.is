@@ -10,51 +10,68 @@ import { m } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import React, { useContext } from 'react'
 import { ShadowBox } from '../../ShadowBox/ShadowBox'
-import { replaceParams } from '@island.is/react-spa/shared'
-import { IDSAdminPaths } from '../../../lib/paths'
-import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { ClientContext } from '../../../shared/context/ClientContext'
-import { AuthScopes } from './AddPermissions.loader'
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 
-function AddPermissions() {
-  const params = useParams()
-  const navigate = useNavigate()
+interface AddPermissionsProps {
+  isVisible: boolean
+  onClose: () => void
+  onAdd: (permissions: AuthAdminClientAllowedScope[]) => void
+}
+
+function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
   const { formatMessage } = useLocale()
   const [selected, setSelected] = React.useState<
     Map<string, AuthAdminClientAllowedScope>
   >(new Map())
-  const data = useLoaderData() as AuthScopes
-  const { selectedEnvironment, setAddedScopes, addedScopes } = useContext(
-    ClientContext,
-  )
 
-  const permissions = data.find(
-    (item) => item.environment === selectedEnvironment.environment,
-  )
+  const {
+    selectedEnvironment,
+    setAddedScopes,
+    addedScopes,
+    removedScopes,
+    setRemovedScopes,
+  } = useContext(ClientContext)
 
-  const final = permissions?.scopes.filter((item) => {
-    return (
-      !selectedEnvironment.allowedScopes?.some((i) => i.name === item.name) &&
-      !addedScopes.some((i) => i.name === item.name)
-    )
-  }) as AuthAdminClientAllowedScope[]
+  // Get the available scopes for the selected environment including the scopes that have already been deleted
+  const available = selectedEnvironment.availableScopes
+    ?.filter((item) => {
+      return ![
+        ...addedScopes,
+        ...(selectedEnvironment?.allowedScopes ?? []),
+      ].find((added) => added.name === item.name)
+    })
+    .concat(removedScopes)
 
-  const close = () => {
-    navigate(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClient,
-        params: { tenant: params['tenant'], client: params['client'] },
-      }),
-    )
-  }
-
+  // Add the selected scopes to the addedScopes array for
   const handleAdd = () => {
-    setAddedScopes([...selected.values()])
+    // Combine the previously added scopes and the newly selected scopes
+    const newAddedScopes = [...addedScopes, ...selected.values()]
+
+    // Remove the scopes that were added that were also in the removedScopes array
+    setAddedScopes(
+      newAddedScopes.filter(
+        (item) => !removedScopes.some((rem) => rem.name === item.name),
+      ),
+    )
+    // Remove the scopes that were added from the removedScopes array
+    setRemovedScopes(
+      removedScopes.filter(
+        (item) => !newAddedScopes.find((added) => added.name === item.name),
+      ),
+    )
+
+    // Add the new scopes to the permissions array
+    onAdd([...selected.values()])
+
+    // Reset the selected scopes
+    setSelected(new Map())
+
     // Close the modal
-    close()
+    onClose()
   }
 
+  // Handle checkbox change
   const onChange = (value: AuthAdminClientAllowedScope) => {
     if (selected.has(value.name)) {
       selected.delete(value.name)
@@ -68,8 +85,8 @@ function AddPermissions() {
     <Modal
       title={formatMessage(m.permissionsModalTitle)}
       id="add-permissions"
-      isVisible
-      onClose={close}
+      isVisible={isVisible}
+      onClose={onClose}
     >
       <Box marginTop={1} marginBottom={4}>
         <Text>{formatMessage(m.permissionsModalDescription)}</Text>
@@ -88,12 +105,12 @@ function AddPermissions() {
             </T.Row>
           </T.Head>
           <T.Body>
-            {final?.map((item) => (
+            {available?.map((item) => (
               <T.Row key={item.name}>
                 <T.Data>
                   <Checkbox
                     onChange={() => {
-                      onChange(item)
+                      onChange(item as AuthAdminClientAllowedScope)
                     }}
                     value={item.name}
                   />
@@ -109,7 +126,7 @@ function AddPermissions() {
         </T.Table>
       </ShadowBox>
       <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
-        <Button onClick={close} variant="ghost">
+        <Button onClick={onClose} variant="ghost">
           {formatMessage(m.cancel)}
         </Button>
         <Button onClick={handleAdd}>{formatMessage(m.add)}</Button>

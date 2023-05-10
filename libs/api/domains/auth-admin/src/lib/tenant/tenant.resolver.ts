@@ -1,15 +1,14 @@
 import { UseGuards } from '@nestjs/common'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Environment } from '@island.is/shared/types'
 
 import { TenantsPayload } from './dto/tenants.payload'
 import { Tenant } from './models/tenant.model'
 import { TenantsService } from './tenants.service'
 import { TenantEnvironment } from './models/tenant-environment.model'
-import { ScopesEnvironmentPayload } from './dto/scopes-environment-payload'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Tenant)
@@ -39,13 +38,5 @@ export class TenantResolver {
   @ResolveField('availableEnvironments', () => [Environment])
   resolveAvailableEnvironments(@Parent() tenant: Tenant): Environment[] {
     return tenant.environments.map((env) => env.environment)
-  }
-
-  @Query(() => [ScopesEnvironmentPayload], { name: 'authAdminTenantsScopes' })
-  getScopesByTenantId(
-    @Args('tenantId') tenantId: string,
-    @CurrentUser() user: User,
-  ) {
-    return this.tenantsService.getScopesByTenantId(tenantId, user)
   }
 }

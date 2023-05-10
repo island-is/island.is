@@ -13,8 +13,6 @@ import { clientLoader } from './components/Client/Client.loader'
 import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
 import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
 import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
-import AddPermissions from './components/forms/AddPermissions/AddPermissions'
-import { addPermissionsLoader } from './components/forms/AddPermissions/AddPermissions.loader'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -67,7 +65,6 @@ export const idsAdminModule: PortalModule = {
                 path: IDSAdminPaths.IDSAdminClient,
                 element: <Client />,
                 loader: clientLoader(props),
-                id: 'client-loader',
                 action: editApplicationAction(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminTenants,
@@ -79,13 +76,6 @@ export const idsAdminModule: PortalModule = {
                     path: IDSAdminPaths.IDSAdminClientPublish,
                     action: publishEnvironmentAction(props),
                     element: <PublishEnvironment />,
-                  },
-                  {
-                    name: m.permissionsAdd,
-                    navHide: true,
-                    path: IDSAdminPaths.IDSAdminClientScopes,
-                    loader: addPermissionsLoader(props),
-                    element: <AddPermissions />,
                   },
                 ],
               },

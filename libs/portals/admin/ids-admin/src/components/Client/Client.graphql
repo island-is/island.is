@@ -42,6 +42,12 @@ query GetClient($input: ClientInput!) {
         description
         domainName
       }
+      availableScopes {
+        name
+        domainName
+        displayName
+        description
+      }
     }
   }
 }

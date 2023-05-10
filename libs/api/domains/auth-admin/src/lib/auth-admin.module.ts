@@ -10,6 +10,7 @@ import { ClientsService } from './client/clients.service'
 import { ClientEnvironmentResolver } from './client/client-environment.resolver'
 import { ClientAllowedScopesLoader } from './client/client-allowed-scopes.loader'
 import { ClientSecretLoader } from './client/client-secret.loader'
+import { ClientAvailableScopesLoader } from './client/client-available-scopes.loader'
 
 @Module({
   imports: [AuthAdminApiClientModule],
@@ -19,6 +20,7 @@ import { ClientSecretLoader } from './client/client-secret.loader'
     TenantsService,
     ClientsResolver,
     ClientAllowedScopesLoader,
+    ClientAvailableScopesLoader,
     ClientEnvironmentResolver,
     ClientsService,
     ClientSecretLoader,
