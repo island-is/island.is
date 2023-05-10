@@ -193,9 +193,6 @@ export const WriteReviewCard = ({
     setFileList(newFileList)
   }
 
-  console.log('length', review.length)
-  console.log('showInputError', showInputError)
-
   return isLoggedIn ? (
     <Box
       paddingY={3}
