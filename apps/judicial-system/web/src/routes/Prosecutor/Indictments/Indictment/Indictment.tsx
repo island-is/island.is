@@ -78,9 +78,9 @@ const Indictment: React.FC = () => {
       const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
         count.offenses?.some((offense) =>
           [
-            IndictmentCountOffense.DrunkDriving,
-            IndictmentCountOffense.IllegalDrugsDriving,
-            IndictmentCountOffense.PrescriptionDrugsDriving,
+            IndictmentCountOffense.DRUNK_DRIVING,
+            IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+            IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
           ].includes(offense),
         ),
       )

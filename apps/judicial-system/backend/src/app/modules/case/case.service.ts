@@ -298,10 +298,10 @@ export class CaseService {
       })
   }
 
-  private async throttleGetCaseFilesPdf(
+  private async throttleGetCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
-  ) {
+  ): Promise<Buffer> {
     // Serialize all case files pdf generations in this process
     await this.throttle.catch((reason) => {
       this.logger.info('Previous case files pdf generation failed', { reason })
@@ -461,11 +461,12 @@ export class CaseService {
     return messages
   }
 
-  private getArchiveCaseFileMessages(
+  private getIndictmentArchiveMessages(
     theCase: Case,
     user: TUser,
+    archiveCaseFilesRecords: boolean,
   ): CaseMessage[] {
-    return (
+    const messages: CaseMessage[] =
       theCase.caseFiles
         ?.filter((caseFile) => caseFile.key)
         .map((caseFile) => ({
@@ -474,7 +475,20 @@ export class CaseService {
           caseId: theCase.id,
           caseFileId: caseFile.id,
         })) ?? []
-    )
+
+    if (archiveCaseFilesRecords) {
+      const caseFilesRecordMessages =
+        theCase.policeCaseNumbers?.map((policeCaseNumber) => ({
+          type: MessageType.ARCHIVE_CASE_FILES_RECORD,
+          user,
+          caseId: theCase.id,
+          policeCaseNumber,
+        })) ?? []
+
+      messages.push(...caseFilesRecordMessages)
+    }
+
+    return messages
   }
 
   private addMessagesForSubmittedIndicitmentCaseToQueue(
@@ -638,7 +652,7 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     return this.messageService.sendMessagesToQueue(
-      this.getArchiveCaseFileMessages(theCase, user).concat([
+      this.getIndictmentArchiveMessages(theCase, user, true).concat([
         {
           type: MessageType.SEND_RULING_NOTIFICATION,
           user,
@@ -664,6 +678,7 @@ export class CaseService {
   private addMessagesForDeletedCaseToQueue(
     theCase: Case,
     user: TUser,
+    previousState: CaseState,
   ): Promise<void> {
     const messages: CaseMessage[] = [
       {
@@ -675,7 +690,13 @@ export class CaseService {
 
     // Indictment cases need some case file cleanup
     if (isIndictmentCase(theCase.type)) {
-      messages.push(...this.getArchiveCaseFileMessages(theCase, user))
+      messages.push(
+        ...this.getIndictmentArchiveMessages(
+          theCase,
+          user,
+          previousState === CaseState.RECEIVED,
+        ),
+      )
     }
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -746,42 +767,49 @@ export class CaseService {
     if (updatedCase.state !== theCase.state) {
       // New case state
       if (updatedCase.state === CaseState.RECEIVED) {
-        await this.addMessagesForReceivedCaseToQueue(theCase, user)
+        await this.addMessagesForReceivedCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
-        await this.addMessagesForDeletedCaseToQueue(theCase, user)
-      } else if (isIndictmentCase(theCase.type)) {
+        await this.addMessagesForDeletedCaseToQueue(
+          updatedCase,
+          user,
+          theCase.state,
+        )
+      } else if (isIndictmentCase(updatedCase.type)) {
         if (updatedCase.state === CaseState.SUBMITTED) {
           await this.addMessagesForSubmittedIndicitmentCaseToQueue(
-            theCase,
+            updatedCase,
             user,
           )
         } else if (completedCaseStates.includes(updatedCase.state)) {
           // Indictment cases are not signed
-          await this.addMessagesForCompletedIndictmentCaseToQueue(theCase, user)
+          await this.addMessagesForCompletedIndictmentCaseToQueue(
+            updatedCase,
+            user,
+          )
         }
       }
     }
 
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
-        await this.addMessagesForAppealedCaseToQueue(theCase, user)
+        await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
-        await this.addMessagesForReceivedAppealCaseToQueue(theCase, user)
+        await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       }
     }
 
-    if (isRestrictionCase(theCase.type)) {
+    if (isRestrictionCase(updatedCase.type)) {
       if (
         updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
       ) {
         // Case to dates modified
-        await this.addMessagesForModifiedCaseToQueue(theCase, user)
+        await this.addMessagesForModifiedCaseToQueue(updatedCase, user)
       }
 
       if (
         updatedCase.prosecutorStatementDate !== theCase.prosecutorStatementDate
       ) {
-        await this.addMessagesForAppealStatementToQueue(theCase, user)
+        await this.addMessagesForAppealStatementToQueue(updatedCase, user)
       }
     }
 
@@ -796,16 +824,16 @@ export class CaseService {
             user,
           )
         : await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
-    } else if (theCase.courtCaseNumber) {
+    } else if (updatedCase.courtCaseNumber) {
       if (updatedCase.prosecutorId !== theCase.prosecutorId) {
         // New prosecutor
         await this.addMessagesForProsecutorChangeToQueue(updatedCase, user)
       }
 
       if (
-        !isIndictmentCase(theCase.type) &&
-        theCase.defendants &&
-        theCase.defendants.length > 0 &&
+        !isIndictmentCase(updatedCase.type) &&
+        updatedCase.defendants &&
+        updatedCase.defendants.length > 0 &&
         updatedCase.defenderEmail !== theCase.defenderEmail
       ) {
         // New defender email
@@ -861,7 +889,6 @@ export class CaseService {
   }
 
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
-    this.logger.debug('Creating case', { caseToCreate, user })
     return this.sequelize
       .transaction(async (transaction) => {
         const caseId = await this.createCase(
@@ -974,11 +1001,38 @@ export class CaseService {
     return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
   }
 
-  async getCaseFilesPdf(
+  async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
   ): Promise<Buffer> {
-    this.throttle = this.throttleGetCaseFilesPdf(theCase, policeCaseNumber)
+    if (
+      ![CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED].includes(
+        theCase.state,
+      )
+    ) {
+      if (completedCaseStates.includes(theCase.state)) {
+        try {
+          return await this.awsS3Service.getObject(
+            `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+          )
+        } catch {
+          // Ignore the error and try the original key
+        }
+      }
+
+      try {
+        return await this.awsS3Service.getObject(
+          `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        )
+      } catch {
+        // Ignore the error and generate the pdf
+      }
+    }
+
+    this.throttle = this.throttleGetCaseFilesRecordPdf(
+      theCase,
+      policeCaseNumber,
+    )
 
     return this.throttle
   }

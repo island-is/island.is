@@ -18,9 +18,7 @@ import { AdviceFilter, UserAdvice } from '../../types/interfaces'
 import Pagination from '../../components/Pagination/Pagination'
 import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSortPartialData'
 import env from '../../lib/environment'
-import { FILTERS_ADVICE_KEY } from '../../utils/consts/consts'
-
-const CARDS_PER_PAGE = 12
+import { CARDS_PER_PAGE, FILTERS_ADVICE_KEY } from '../../utils/consts/consts'
 
 const AdvicesLayout = ({ children }) => {
   return (
@@ -63,7 +61,7 @@ export const AdvicesScreen = () => {
     getAdvicesLoading,
     filters,
     setFilters,
-  } = useAdviceFilters()
+  } = useAdviceFilters({ isAuthenticated: isAuthenticated })
 
   if (!userLoading && !isAuthenticated) {
     return (
@@ -78,7 +76,7 @@ export const AdvicesScreen = () => {
   }
 
   const renderCards = () => {
-    if (getAdvicesLoading) {
+    if (userLoading || getAdvicesLoading) {
       return (
         <Box
           display="flex"

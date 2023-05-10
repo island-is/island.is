@@ -1,27 +1,16 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
-  buildDividerField,
   buildForm,
   buildMultiField,
   buildSection,
-  buildSubmitField,
+  buildSubSection,
 } from '@island.is/application/core'
-import {
-  Application,
-  DefaultEvents,
-  Form,
-  FormModes,
-} from '@island.is/application/types'
+import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
-import { YES } from '../../lib/constants'
-import { propertiesFields } from './externalDataFields/propertiesFields'
-import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
-import { EstateMember, EstateRegistrant } from '@island.is/clients/syslumenn'
-import { format as formatNationalId } from 'kennitala'
+import { overviewSection } from './overviewSection'
 
 export const form: Form = buildForm({
   id: 'estateWithoutProperty',
@@ -54,106 +43,56 @@ export const form: Form = buildForm({
       id: 'properties',
       title: m.properties,
       children: [
-        buildMultiField({
+        buildSubSection({
           id: 'propertiesInfo',
-          title: m.properties,
-          description: m.propertiesDescription,
+          title: m.realEstate,
           children: [
-            ...propertiesFields,
-            buildCheckboxField({
-              id: 'acceptDebts',
-              title: '',
-              defaultValue: [],
-              backgroundColor: 'blue',
-              large: true,
-              options: [
-                {
-                  label: m.acceptDebtsLabel,
-                  value: YES,
-                },
+            buildMultiField({
+              id: 'propertiesInfo',
+              title: m.properties,
+              description: m.propertiesDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'propertiesHeader',
+                  title: m.realEstate,
+                  titleVariant: 'h3',
+                  description: m.realEstateDescription,
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.assets',
+                  component: 'RealEstateRepeater',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'vehiclesInfo',
+          title: m.vehicles,
+          children: [
+            buildMultiField({
+              id: 'propertiesInfo',
+              title: m.properties,
+              description: m.propertiesDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'vehiclesHeader',
+                  title: m.vehicles,
+                  titleVariant: 'h3',
+                  description: m.vehiclesDescription,
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.vehicles',
+                  component: 'VehiclesRepeater',
+                }),
               ],
             }),
           ],
         }),
       ],
     }),
-    buildSection({
-      id: 'overview',
-      title: m.overviewTitle,
-      children: [
-        buildMultiField({
-          id: 'overview',
-          title: m.overviewTitle,
-          description: m.overviewSubtitleWithoutAssets,
-          children: [
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'overviewDeceasedHeader',
-              title: m.theDeceased,
-              titleVariant: 'h3',
-              marginBottom: 'gutter',
-            }),
-            ...deceasedInfoFields,
-            buildDescriptionField({
-              id: 'space1',
-              title: '',
-              space: 'gutter',
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'space2',
-              title: '',
-              space: 'gutter',
-            }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'estateMembersCards',
-                component: 'Cards',
-                doesNotRequireAnswer: true,
-              },
-              {
-                cards: ({ externalData }: Application) =>
-                  (
-                    (externalData.syslumennOnEntry.data as {
-                      estate: EstateRegistrant
-                    })?.estate?.estateMembers ?? []
-                  ).map((member: EstateMember) => ({
-                    title: member.name,
-                    description: [
-                      formatNationalId(member.nationalId),
-                      member.relation,
-                    ],
-                  })),
-              },
-            ),
-            buildDescriptionField({
-              id: 'space3',
-              title: '',
-              space: 'gutter',
-            }),
-            buildDividerField({}),
-            buildDescriptionField({
-              id: 'space4',
-              title: '',
-              space: 'gutter',
-            }),
-            ...propertiesFields,
-            buildSubmitField({
-              id: 'estateWithoutAssets.submit',
-              title: '',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.submitApplication,
-                  type: 'primary',
-                },
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
+    overviewSection,
   ],
 })

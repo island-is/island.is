@@ -140,7 +140,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                user?.institution?.type === InstitutionType.HighCourt
+                user?.institution?.type === InstitutionType.HIGH_COURT
                   ? formStepperSections.appealedCaseTitle
                   : isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
@@ -196,18 +196,18 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.Defender
+        user?.role === UserRole.DEFENDER
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.Defender
+        user?.role === UserRole.DEFENDER
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
       link={
-        user?.role === UserRole.Defender
+        user?.role === UserRole.DEFENDER
           ? undefined
           : {
               href: constants.CASES_ROUTE,
