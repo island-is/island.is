@@ -45,8 +45,8 @@ const initialState: Case = {
   id: '',
   created: '',
   modified: '',
-  origin: CaseOrigin.Unknown,
-  type: CaseType.Custody,
+  origin: CaseOrigin.UNKNOWN,
+  type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumbers: [],
   defendants: [{ id: '', noNationalId: false } as Defendant],
@@ -79,14 +79,14 @@ const FormProvider = ({ children }: Props) => {
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')
-    ? CaseType.TravelBan
+    ? CaseType.TRAVEL_BAN
     : router.pathname.includes('gaesluvardhald')
-    ? CaseType.Custody
+    ? CaseType.CUSTODY
     : router.pathname.includes('akaera')
-    ? CaseType.Indictment
+    ? CaseType.INDICTMENT
     : // This is a random case type for the default value.
       // It is updated when the case is created.
-      CaseType.Other
+      CaseType.OTHER
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
@@ -94,7 +94,7 @@ const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
-    policeCaseNumbers: caseType === CaseType.Indictment ? [''] : [],
+    policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
   })
 
   // Used in exported indicators

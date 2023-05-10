@@ -71,9 +71,9 @@ const HeaderContainer: React.FC = () => {
   const logoHref =
     !user || !isAuthenticated
       ? '/'
-      : user.role === UserRole.Defender
+      : user.role === UserRole.DEFENDER
       ? '#' // Defenders should never be able to navigate anywhere from the logo
-      : user.role === UserRole.Admin
+      : user.role === UserRole.ADMIN
       ? constants.USERS_ROUTE
       : constants.CASES_ROUTE
 
@@ -83,7 +83,7 @@ const HeaderContainer: React.FC = () => {
   }
 
   const { practice, email, phoneNr } =
-    useGetLawyer(user?.nationalId, user?.role === UserRole.Defender) ?? {}
+    useGetLawyer(user?.nationalId, user?.role === UserRole.DEFENDER) ?? {}
 
   return (
     <Container>
@@ -144,7 +144,7 @@ const HeaderContainer: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {capitalize(
-                            user.role === UserRole.Defender
+                            user.role === UserRole.DEFENDER
                               ? formatMessage(header.defender)
                               : user.title,
                           )}
@@ -153,7 +153,7 @@ const HeaderContainer: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {capitalize(
-                            user.role === UserRole.Defender
+                            user.role === UserRole.DEFENDER
                               ? practice
                               : user.institution?.name,
                           )}
@@ -162,7 +162,7 @@ const HeaderContainer: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {formatPhoneNumber(
-                            user.role === UserRole.Defender
+                            user.role === UserRole.DEFENDER
                               ? phoneNr
                               : user.mobileNumber,
                           )}
@@ -170,7 +170,7 @@ const HeaderContainer: React.FC = () => {
                       </Box>
                       <Box>
                         <Text>
-                          {user.role === UserRole.Defender ? email : user.email}
+                          {user.role === UserRole.DEFENDER ? email : user.email}
                         </Text>
                       </Box>
                     </Box>
@@ -184,7 +184,7 @@ const HeaderContainer: React.FC = () => {
                       />
                     </Box>
                     <Box>
-                      {user.role === UserRole.Defender ? (
+                      {user.role === UserRole.DEFENDER ? (
                         <Text>
                           {formatMessage(header.headerTipDisclaimerDefenders)}
                         </Text>

@@ -882,6 +882,13 @@
               "$ref": "#/components/schemas/DocumentInfoResult"
             },
             "nullable": true
+          },
+          "additionalDocuments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentInfoResult"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

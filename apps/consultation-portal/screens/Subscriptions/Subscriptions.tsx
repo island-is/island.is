@@ -21,7 +21,7 @@ interface SubProps {
 }
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
-  const { isAuthenticated, userLoading } = useUser()
+  const { isAuthenticated } = useUser()
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
   const {
     initSubs,
@@ -34,7 +34,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const [submitSubsIsLoading, setSubmitSubsIsLoading] = useState(false)
   const LogIn = useLogIn()
 
-  const { userSubscriptions } = useFetchSubscriptions({
+  const { userSubscriptions, getUserSubsLoading } = useFetchSubscriptions({
     isAuthenticated: isAuthenticated,
   })
 
@@ -133,6 +133,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       currentTab={currentTab}
       setCurrentTab={setCurrentTab}
       tabs={tabs}
+      getUserSubsLoading={getUserSubsLoading}
     >
       <ChosenSubscriptions
         subscriptionArray={subscriptionArray}

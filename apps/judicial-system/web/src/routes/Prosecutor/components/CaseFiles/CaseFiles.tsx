@@ -86,7 +86,7 @@ export const CaseFiles: React.FC = () => {
   } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
     variables: { input: { caseId: workingCase.id } },
     fetchPolicy: 'no-cache',
-    skip: workingCase.origin !== CaseOrigin.Loke,
+    skip: workingCase.origin !== CaseOrigin.LOKE,
   })
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -111,7 +111,7 @@ export const CaseFiles: React.FC = () => {
   useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
-    if (workingCase.origin !== CaseOrigin.Loke) {
+    if (workingCase.origin !== CaseOrigin.LOKE) {
       setPoliceCaseFiles({
         files: [],
         isLoading: false,

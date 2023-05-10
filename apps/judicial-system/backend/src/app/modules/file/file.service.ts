@@ -121,6 +121,11 @@ export class FileService {
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
+      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
+      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
+      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
+      case CaseFileCategory.APPEAL_RULING:
         courtDocumentFolder = CourtDocumentFolder.APPEAL_DOCUMENTS
         break
       default:
