@@ -11,6 +11,7 @@ import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
 import { TranslationService } from '../../translation/translation.service'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { AdminTranslationService } from './services/admin-translation.service'
+import { NoContentException } from '@island.is/nest/problem'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -88,13 +89,12 @@ export class AdminScopeService {
       where: {
         name: scopeName,
         domainName: tenantId,
+        enabled: true,
       },
     })
 
     if (!apiScope) {
-      throw new BadRequestException(
-        `Scope name "${scopeName}" does not exist for tenant ${tenantId}`,
-      )
+      throw new NoContentException()
     }
 
     const translations = await this.getApiScopeTranslations([apiScope.name])
