@@ -8,7 +8,6 @@ import {
   FormFooter,
   PageLayout,
   ProsecutorCaseInfo,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
@@ -24,7 +23,6 @@ import {
 import CommentsInput from '@island.is/judicial-system-web/src/components/CommentsInput/CommentsInput'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -41,14 +39,8 @@ const Processing: React.FC = () => {
   const { formatMessage } = useIntl()
   const { courts } = useInstitution()
   const router = useRouter()
-  const { features } = useContext(FeatureContext)
-  const { user } = useContext(UserContext)
 
-  const isTrafficViolationCaseCheck = isTrafficViolationCase(
-    workingCase,
-    features,
-    user,
-  )
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {

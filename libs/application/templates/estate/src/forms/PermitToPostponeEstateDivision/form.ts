@@ -3,15 +3,19 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
+import { JA, NEI, NO, YES } from '../../lib/constants'
+import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
   id: 'permitToPostponeEstateDivisionForm',
@@ -23,27 +27,35 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'estateMembersInfo',
+      id: 'estateMembersAndWillsInfo',
       title: m.estateMembersTitle,
       children: [
-        buildMultiField({
-          id: 'estateMembersInfo',
-          title: m.estateMembersTitle,
-          description: m.estateMembersSubtitle,
+        buildSubSection({
+          id: 'estateMembers',
+          title: m.estateMembers,
           children: [
-            buildDescriptionField({
-              id: 'membersOfEstateTitle',
-              title: m.estateMembers,
-              description: m.estateMembersHeaderDescription,
-              titleVariant: 'h3',
-            }),
-            buildCustomField({
-              title: '',
-              id: 'estate.estateMembers',
-              component: 'EstateMembersRepeater',
+            buildMultiField({
+              id: 'estateMembersInfo',
+              title: m.estateMembersTitle,
+              description: m.estateMembersSubtitle,
+              children: [
+                buildDescriptionField({
+                  id: 'membersOfEstateTitle',
+                  title: m.estateMembers,
+                  description: m.estateMembersHeaderDescription,
+                  titleVariant: 'h3',
+                  marginBottom: 5,
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.estateMembers',
+                  component: 'EstateMembersRepeater',
+                }),
+              ],
             }),
           ],
         }),
+        testamentInfo,
       ],
     }),
     buildSection({
@@ -125,6 +137,30 @@ export const form: Form = buildForm({
                   title: '',
                   id: 'estate.vehicles',
                   component: 'VehiclesRepeater',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'guns',
+          title: m.guns,
+          children: [
+            buildMultiField({
+              id: 'realEstate',
+              title: m.propertiesTitle,
+              description: m.propertiesDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'gunsTitle',
+                  title: m.guns,
+                  description: m.gunsDescription,
+                  titleVariant: 'h3',
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.guns',
+                  component: 'GunsRepeater',
                 }),
               ],
             }),

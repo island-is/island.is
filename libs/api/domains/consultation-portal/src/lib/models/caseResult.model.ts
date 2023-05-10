@@ -69,4 +69,7 @@ export class CaseResult {
 
   @Field(() => [DocumentInfoResult], { nullable: true })
   documents?: DocumentInfoResult[] | null
+
+  @Field(() => [DocumentInfoResult], { nullable: true })
+  additionalDocuments?: DocumentInfoResult[] | null
 }

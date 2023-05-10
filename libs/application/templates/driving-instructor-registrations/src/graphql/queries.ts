@@ -14,6 +14,7 @@ export const ViewSingleStudentQuery = gql`
         totalLessonTime
         totalLessonCount
         practiceDriving
+        teacherNationalId
         testResults {
           hasPassed
         }

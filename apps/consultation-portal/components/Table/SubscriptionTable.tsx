@@ -1,138 +1,112 @@
 import React from 'react'
 import {
-  Icon,
+  Stack,
   Table as T,
-  Box,
-  ResponsiveSpace,
+  Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import * as styles from './SubscriptionTable.css'
 import { mapIsToEn } from '../../utils/helpers'
 import SubscriptionTableItem from './SubscriptionTableItem'
-import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
+import { SubscriptionArray } from '../../types/interfaces'
 import { Area } from '../../types/enums'
+import SubscriptionTableHeader from './components/SubscriptionTableHeader'
 
 export interface SubscriptionTableProps {
-  data: Array<Case> | Array<ArrOfIdAndName>
   currentTab: Area
   subscriptionArray: SubscriptionArray
-  setSubscriptionArray: (obj: SubscriptionArray) => void
-}
-
-const Headers = {
-  Mál: ['Málsnr.', 'Heiti máls', 'Málsnúmer og heiti máls'],
-  Stofnanir: ['Stofnun'],
-  Málefnasvið: ['Málefnasvið'],
+  setSubscriptionArray: (_: SubscriptionArray) => void
+  dontShowNew?: boolean
+  dontShowChanges?: boolean
+  searchValue?: string
+  isMySubscriptions?: boolean
 }
 
 const SubscriptionTable = ({
-  data,
   currentTab,
   subscriptionArray,
   setSubscriptionArray,
+  dontShowNew,
+  dontShowChanges,
+  searchValue,
+  isMySubscriptions,
 }: SubscriptionTableProps) => {
-  const onCheckboxChange = (id: number, action: boolean) => {
-    const sub = [...subscriptionArray[mapIsToEn[currentTab]]]
-    const subArr = { ...subscriptionArray }
-    if (action) {
-      sub.push(id)
-    } else {
-      const idx = sub.indexOf(id)
-      sub.splice(idx, 1)
-    }
-    subArr[mapIsToEn[currentTab]] = sub
-    return setSubscriptionArray(subArr)
-  }
-
-  const checkboxStatus = (id: number) => {
-    return subscriptionArray[mapIsToEn[currentTab]].includes(id)
-  }
-
-  const paddingTop = [3, 3, 3, 5, 5] as ResponsiveSpace
-
   const { md: mdBreakpoint } = useBreakpoint()
-  const { Table, Head, Row, HeadData, Body } = T
+  const { Table, Body } = T
+
+  const { subscribedToAllNewObj, subscribedToAllChangesObj } = subscriptionArray
+  const thisData = subscriptionArray[mapIsToEn[currentTab]]
+
+  if (
+    thisData.length === 0 &&
+    !subscribedToAllNewObj.checked &&
+    !subscribedToAllChangesObj.checked
+  ) {
+    return (
+      <Stack space={1}>
+        <Text variant="medium">
+          {isMySubscriptions
+            ? `Engar áskriftir fundust fyrir ${currentTab.toLocaleLowerCase()}`
+            : `Engin gögn fundust fyrir ${currentTab.toLocaleLowerCase()}`}
+        </Text>
+        {searchValue && (
+          <Text variant="small">
+            Prófaðu að fjarlægja úr leit til að sjá fleiri mál.
+          </Text>
+        )}
+      </Stack>
+    )
+  }
 
   return (
-    <Box paddingTop={paddingTop}>
-      <Table>
-        <Head>
-          <Row>
-            <HeadData
-              width="10"
-              key={'tableHeaderKey_checkmark'}
-              box={{
-                background: 'transparent',
-                borderColor: 'transparent',
-              }}
-            >
-              <Icon
-                icon="checkmark"
-                color="blue400"
-                className={styles.checkmarkIcon}
+    <Table>
+      <SubscriptionTableHeader currentTab={currentTab} />
+      <Body>
+        {dontShowNew ? (
+          <></>
+        ) : (
+          <SubscriptionTableItem
+            key={subscribedToAllNewObj.key}
+            item={subscribedToAllNewObj}
+            idx={0}
+            mdBreakpoint={mdBreakpoint}
+            currentTab={currentTab}
+            isGeneralSubscription
+            subscriptionArray={subscriptionArray}
+            setSubscriptionArray={setSubscriptionArray}
+          />
+        )}
+        {dontShowChanges ? (
+          <></>
+        ) : (
+          <SubscriptionTableItem
+            key={subscribedToAllChangesObj.key}
+            item={subscribedToAllChangesObj}
+            idx={1}
+            mdBreakpoint={mdBreakpoint}
+            currentTab={currentTab}
+            isGeneralSubscription
+            subscriptionArray={subscriptionArray}
+            setSubscriptionArray={setSubscriptionArray}
+          />
+        )}
+
+        {thisData &&
+          thisData.length > 0 &&
+          thisData.map((item, idx) => {
+            return (
+              <SubscriptionTableItem
+                key={item.key}
+                item={item}
+                idx={idx}
+                mdBreakpoint={mdBreakpoint}
+                currentTab={currentTab}
+                subscriptionArray={subscriptionArray}
+                setSubscriptionArray={setSubscriptionArray}
               />
-            </HeadData>
-            {currentTab !== Area.case ? (
-              <HeadData
-                text={{ variant: 'h4' }}
-                key={'tableHeaderKey_0'}
-                box={{
-                  background: 'transparent',
-                  borderColor: 'transparent',
-                }}
-              >
-                {Headers[currentTab][0]}
-              </HeadData>
-            ) : mdBreakpoint ? (
-              <>
-                <HeadData
-                  width="120"
-                  text={{ variant: 'h4' }}
-                  box={{
-                    background: 'transparent',
-                    borderColor: 'transparent',
-                  }}
-                  key={'tableHeaderKey_1'}
-                >
-                  {Headers[currentTab][0]}
-                </HeadData>
-                <HeadData
-                  text={{ variant: 'h4' }}
-                  box={{
-                    background: 'transparent',
-                    borderColor: 'transparent',
-                  }}
-                  key={'tableHeaderKey_2'}
-                >
-                  {Headers[currentTab][1]}
-                </HeadData>
-              </>
-            ) : (
-              <HeadData
-                text={{ variant: 'h4' }}
-                box={{ background: 'transparent', borderColor: 'transparent' }}
-                key={'tableHeaderKey_3'}
-              >
-                {Headers[currentTab][2]}
-              </HeadData>
-            )}
-          </Row>
-        </Head>
-        <Body>
-          {data.map((item, idx: number) => (
-            <SubscriptionTableItem
-              key={item.id}
-              item={item}
-              idx={idx}
-              checkboxStatus={checkboxStatus}
-              onCheckboxChange={onCheckboxChange}
-              currentTab={currentTab}
-              mdBreakpoint={mdBreakpoint}
-            />
-          ))}
-        </Body>
-      </Table>
-    </Box>
+            )
+          })}
+      </Body>
+    </Table>
   )
 }
 

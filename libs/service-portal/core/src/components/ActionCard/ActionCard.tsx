@@ -20,6 +20,7 @@ type ActionCardProps = {
   date?: string
   heading?: string
   text?: string
+  subText?: string
   secondaryText?: string
   eyebrow?: string
   loading?: boolean
@@ -72,6 +73,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   date,
   heading,
   text,
+  subText,
   secondaryText,
   eyebrow,
   loading,
@@ -235,7 +237,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             </Box>
           )}
           {!cta.hide && (
-            <Box marginLeft={[0, 3]}>
+            <Box dataTestId="action-card-cta" marginLeft={[0, 3]}>
               {cta.url ? (
                 <LinkResolver href={cta.url}>
                   <Button
@@ -328,6 +330,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
             </Box>
           )}
           {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+          {subText && <Text>{subText}</Text>}
         </Box>
         <Box
           display="flex"

@@ -1,10 +1,12 @@
+import { MIDEIND_TRANSLATION_API_BASE_URL } from '../../../constants'
+
 const defaultParams = {
   sourceLanguageCode: 'is',
   targetLanguageCode: 'en',
 }
 
-async function translateTexts(texts: string[]) {
-  const baseUrl = process.env.MIDEIND_TRANSLATION_API_BASE_URL
+async function translateTexts(texts: string[], apiKey: string) {
+  const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
 
   const translations = []
   const body = {
@@ -16,7 +18,7 @@ async function translateTexts(texts: string[]) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': process.env.MIDEIND_TRANSLATION_API_KEY,
+      'X-API-Key': apiKey,
     },
     body: JSON.stringify(body),
   }).then((res) => res.json())
@@ -32,8 +34,9 @@ async function sendTexts(
   iceTexts: string[],
   enTexts: string[],
   reference: string,
+  apiKey: string,
 ) {
-  const baseUrl = process.env.MIDEIND_TRANSLATION_API_BASE_URL
+  const baseUrl = MIDEIND_TRANSLATION_API_BASE_URL
 
   const body = {
     machineTranslatedText: '', // Required even if empty
@@ -48,7 +51,7 @@ async function sendTexts(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-API-Key': process.env.MIDEIND_TRANSLATION_API_KEY,
+      'X-API-Key': apiKey,
     },
     body: JSON.stringify(body),
   })

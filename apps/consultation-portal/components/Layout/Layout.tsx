@@ -3,29 +3,37 @@ import React, { FC } from 'react'
 import Footer from '../Footer/Footer'
 import Menu from '../Menu/Menu'
 import SEO from '../SEO/SEO'
-import { Box, Divider } from '@island.is/island-ui/core'
+import { Box, Divider, ToastContainer } from '@island.is/island-ui/core'
 import * as styles from './Layout.css'
 
 type LayoutProps = {
   isFrontPage?: boolean
   seo?: SEOProps
+  justifyContent?: 'spaceBetween' | 'flexStart'
 }
-export const Layout: FC<LayoutProps> = ({ children, isFrontPage, seo }) => {
+export const Layout: FC<LayoutProps> = ({
+  children,
+  isFrontPage,
+  seo,
+  justifyContent = 'spaceBetween',
+}) => {
   return (
     <Box
       flexDirection="column"
-      justifyContent="spaceBetween"
+      justifyContent={justifyContent}
       display="flex"
       className={styles.processContainer}
     >
-      <SEO title={seo.title} url={seo.url} image={seo.image} />
       <Box>
+        <SEO title={seo.title} url={seo.url} image={seo.image} />
         <Menu isFrontPage={isFrontPage} />
         <Divider />
+        <ToastContainer />
+        {children}
       </Box>
-
-      {children}
-      <Footer />
+      <Box>
+        <Footer />
+      </Box>
     </Box>
   )
 }

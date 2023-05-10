@@ -14,6 +14,7 @@ import { Answers, AssetFormField } from '../../types'
 import { m } from '../../lib/messages'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
+import { InputController } from '@island.is/shared/form-fields'
 
 export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   application,
@@ -44,6 +45,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
       description: '',
       initial: false,
       enabled: true,
+      marketValue: '',
     })
   const handleRemoveProperty = (index: number) => remove(index)
 
@@ -51,6 +53,8 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
+          const fieldError = error && error[index] ? error[index] : null
+
           if (!asset.initial) {
             return acc
           }
@@ -89,14 +93,27 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                     </Button>
                   </Box>,
                 ]}
-                heightFull
               />
+              <Box marginTop={2}>
+                <InputController
+                  id={`${id}[${index}].marketValue`}
+                  name={`${id}[${index}].marketValue`}
+                  label={formatMessage(m.marketValueTitle)}
+                  disabled={!asset.enabled}
+                  backgroundColor="blue"
+                  placeholder="0 kr."
+                  defaultValue={(asset as any).marketValue}
+                  error={fieldError?.marketValue}
+                  currency
+                  size="sm"
+                />
+              </Box>
             </GridColumn>,
           ]
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field: AssetFormField, index) => (
-        <Box key={field.id} hidden={field.initial || field?.dummy}>
+        <Box key={field.id} hidden={field.initial}>
           <AdditionalRealEstate
             field={field}
             fieldName={id}

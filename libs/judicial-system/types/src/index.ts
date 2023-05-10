@@ -36,11 +36,17 @@ export type {
 
 export {
   UserRole,
-  isExtendedCourtRole,
-  isCourtRole,
-  courtRoles,
-  isProsecutionRole,
   prosecutionRoles,
+  isProsecutionRole,
+  isProsecutionUser,
+  courtRoles,
+  isCourtRole,
+  extendedCourtRoles,
+  isExtendedCourtRole,
+  isDistrictCourtUser,
+  appealsCourtRoles,
+  isAppealsCourtUser,
+  isPrisonSystemUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
@@ -54,6 +60,7 @@ export {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
   SessionArrangements,
   restrictionCases,
   investigationCases,
@@ -66,6 +73,9 @@ export {
   hasCaseBeenAppealed,
   SubpoenaType,
   CaseAppealState,
+  getAppealInfo,
+  getStatementDeadline,
+  getAppealedDate,
 } from './lib/case'
 export type {
   Case,

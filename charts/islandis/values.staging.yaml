@@ -319,7 +319,7 @@ api:
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
-    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
@@ -407,9 +407,14 @@ api:
       cpu: '150m'
       memory: '512Mi'
   secrets:
+    ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
     DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
     DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH'
     DOCUMENT_PROVIDER_BASE_PATH_TEST: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST'
@@ -424,8 +429,10 @@ api:
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
@@ -508,6 +515,7 @@ application-system-api:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    EHIC_XROAD_PROVIDER_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-staging-fs-presign-bucket'
@@ -543,7 +551,7 @@ application-system-api:
     XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
-    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
@@ -712,6 +720,7 @@ application-system-api-worker:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    EHIC_XROAD_PROVIDER_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-staging-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
@@ -1240,12 +1249,16 @@ island-ui-storybook:
 license-api:
   enabled: true
   env:
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
     XROAD_DISABILITY_LICENSE_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1'
+    XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
+    XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -1295,7 +1308,11 @@ license-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
     DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
+    DRIVING_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
     PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
@@ -1307,6 +1324,7 @@ license-api:
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1921,6 +1939,7 @@ services-sessions-worker:
     - 'node'
   enabled: true
   env:
+    DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_sessions'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -1969,6 +1988,7 @@ services-sessions-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_sessions'
       DB_REPLICAS_HOST: 'postgres-applications.internal'

@@ -3,11 +3,15 @@ import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { customZodError } from './utils/customZodError'
 import { EstateTypes, YES, NO } from './constants'
+import * as kennitala from 'kennitala'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
 }
+
+const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+export const isValidEmail = (value: string) => emailRegex.test(value)
 
 const checkIfFilledOut = (arr: Array<string | undefined>) => {
   if (arr.every((v) => v === '')) {
@@ -23,9 +27,9 @@ const asset = z
   .object({
     assetNumber: z.string().optional(),
     description: z.string().optional(),
+    marketValue: z.string().optional(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    dummy: z.boolean().optional(),
     share: z.number().optional(),
   })
   .refine(
@@ -67,13 +71,20 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        nationalId: z.string().optional(),
+        nationalId: z.string().length(10).optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().min(1).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        dummy: z.boolean().optional(),
+        phone: z
+          .string()
+          .refine((v) => isValidPhoneNumber(v) || v === '')
+          .optional(),
+        email: z
+          .string()
+          .refine((v) => isValidEmail(v) || v === '')
+          .optional(),
       })
       .array()
       .optional(),
@@ -81,12 +92,21 @@ export const estateSchema = z.object({
     flyers: asset,
     vehicles: asset,
     ships: asset,
+    guns: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().min(1).optional(),
     nationalIdOfDeceased: z.string().optional(),
     districtCommissionerHasWill: z.boolean().optional(),
+    testament: z
+      .object({
+        wills: z.enum([YES, NO]),
+        agreement: z.enum([YES, NO]),
+        dividedEstate: z.enum([YES, NO]).optional(),
+        additionalInfo: z.string().optional(),
+      })
+      .optional(),
   }),
 
   // is: Innbú
@@ -220,36 +240,27 @@ export const estateSchema = z.object({
   // is: Umboðsmaður
   representative: z
     .object({
-      representativeName: z.string().min(1).optional(),
-      representativeNationalId: z.string().length(10).optional(),
-      representativePhoneNumber: z
-        .string()
-        .refine((v) => isValidPhoneNumber(v), {
-          params: m.errorPhoneNumber,
-        })
-        .optional(),
-      representativeEmail: customZodError(
-        z.string().email(),
-        m.errorEmail,
-      ).optional(),
+      name: z.string(),
+      nationalId: z.string(),
+      phone: z.string(),
+      email: z.string(),
     })
     .refine(
-      ({
-        representativeName,
-        representativeNationalId,
-        representativePhoneNumber,
-        representativeEmail,
-      }) => {
-        return checkIfFilledOut([
-          representativeName,
-          representativeNationalId,
-          representativePhoneNumber,
-          representativeEmail,
-        ])
+      ({ name, nationalId, phone, email }) => {
+        const allEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return allEmpty ? true : name.length > 1
       },
       {
-        params: m.fillOutRates,
-        path: ['balance'],
+        path: ['name'],
+      },
+    )
+    .refine(
+      ({ name, nationalId, phone, email }) => {
+        const allEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return allEmpty ? true : kennitala.isPerson(nationalId)
+      },
+      {
+        path: ['nationalId'],
       },
     )
     .optional(),

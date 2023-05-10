@@ -10,6 +10,11 @@ export enum SortOptions {
   oldest = 'Elst efst',
 }
 
+export enum SortOptionsAdvices {
+  oldest = 'Elst efst',
+  latest = 'Nýjast efst',
+}
+
 export enum CaseStatusFilterOptions {
   forReview = 'Til umsagnar',
   resultsInProgress = 'Niðurstöður í vinnslu',
@@ -28,4 +33,21 @@ export enum CaseSortOptions {
   lastUpdated = 'Síðast uppfært',
   latestCases = 'Nýjast',
   adviceDeadline = 'Frestur að renna út',
+}
+
+export enum CaseSubscriptionType {
+  AllChanges = 'Allar breytingar',
+  StatusChanges = 'Breytingar á stöðu',
+}
+
+export enum SubscriptionType {
+  AllChanges = 'Allar breytingar',
+  StatusChanges = 'Breytingar á stöðu',
+  OnlyNew = 'Einungis ný mál',
+}
+
+export enum SubscriptionTypeKey {
+  'Allar breytingar' = 'AllChanges',
+  'Breytingar á stöðu' = 'StatusChanges',
+  'Einungis ný mál' = 'OnlyNew',
 }

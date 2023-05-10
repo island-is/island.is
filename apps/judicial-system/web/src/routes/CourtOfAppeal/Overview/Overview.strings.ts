@@ -1,17 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const courtOfAppealOverview = defineMessages({
-  alertBannerTitle: {
-    id: 'judicial.system.core:court_of_appeal_overview.alert_banner_title',
-    defaultMessage: 'Úrskurður kærður',
-    description: 'Titill á tilkynningu um móttöku kæru',
-  },
-  alertBannerMessage: {
-    id: 'judicial.system.core:court_of_appeal_overview.alert_banner_message',
-    defaultMessage:
-      'Frestur til að skila greinargerð {isStatementDeadlineExpired, select, true {rann} other {rennur}} út {statementDeadline}',
-    description: 'Texti á tilkynningu um móttöku kæru',
-  },
   alertBannerLinkText: {
     id: 'judicial.system.core:court_of_appeal_overview.alert_banner_link_text',
     defaultMessage: 'Senda tilkynningu um móttöku',
@@ -34,6 +23,13 @@ export const courtOfAppealOverview = defineMessages({
     description:
       'Titill á skjöl kærumáls hlutanum á yfirlitsskjá afgreiddra mála hjá Landsrétti',
   },
+  appealFilesCategory: {
+    id: 'judicial.system.core:court_of_appeal_overview.appeal_files_category',
+    defaultMessage:
+      '{filesCategory, select, true {Sækjandi } other {Varnaraðili }} lagði fram',
+    description:
+      'Titill á hver lagði skjöl kærumáls á yfirlitsskjá afgreiddra mála hjá Landsrétti',
+  },
   courtCaseFilesTitle: {
     id: 'judicial.system.core:court_of_appeal_overview.court_case_files_title',
     defaultMessage: 'Skjöl héraðsdómsmáls',
@@ -45,5 +41,12 @@ export const courtOfAppealOverview = defineMessages({
     defaultMessage: 'Bíður undirritunar',
     description:
       'Notaður sem texti fyrir óundirritað í "Skjöl málsins" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
+  },
+  appealedInfo: {
+    id: 'judicial.system.core:court_of_appeal_overview.appealed_by',
+    defaultMessage:
+      'Kært af {appealedByProsecutor, select, true {sækjanda} other {verjanda}} {appealedDate}',
+    description:
+      'Notaður sem texti fyrir "Kært af" á yfirlitsskjá mála hjá Landsrétti.',
   },
 })

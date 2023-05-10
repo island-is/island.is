@@ -1,0 +1,32 @@
+{
+  "root": "libs/auth/shared",
+  "sourceRoot": "libs/auth/shared/src",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/auth/shared",
+        "main": "libs/auth/shared/src/index.ts",
+        "tsConfig": "libs/auth/shared/tsconfig.lib.json",
+        "assets": ["libs/auth/shared/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/auth/shared/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/auth/shared"],
+      "options": {
+        "jestConfig": "libs/auth/shared/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:js", "scope:js"]
+}

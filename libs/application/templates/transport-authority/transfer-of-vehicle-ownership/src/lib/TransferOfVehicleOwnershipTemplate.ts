@@ -193,10 +193,10 @@ const template: ApplicationTemplate<
               write: {
                 answers: [
                   'sellerCoOwner',
-                  'buyerCoOwnerAndOperator',
-                  'rejecter',
-                  'insurance',
                   'buyer',
+                  'buyerCoOwnerAndOperator',
+                  'insurance',
+                  'rejecter',
                 ],
               },
               read: 'all',
@@ -210,11 +210,12 @@ const template: ApplicationTemplate<
                 ),
               write: {
                 answers: [
-                  'buyerCoOwnerAndOperator',
-                  'insurance',
+                  'sellerCoOwner',
                   'buyer',
-                  'rejecter',
+                  'buyerCoOwnerAndOperator',
                   'buyerMainOperator',
+                  'insurance',
+                  'rejecter',
                 ],
               },
               read: 'all',
@@ -370,7 +371,7 @@ const template: ApplicationTemplate<
     buyerCoOwnerAndOperator
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId)
+        reviewerNationalIdList.push(nationalId!)
         return nationalId
       })
     if (id === application.applicant) {
@@ -417,7 +418,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
     buyerCoOwnerAndOperator
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId)
+        reviewerNationalIdList.push(nationalId!)
         return nationalId
       })
     return reviewerNationalIdList

@@ -1,6 +1,7 @@
 import {
   DefaultStateLifeCycle,
   getValueViaPath,
+  coreHistoryMessages,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -14,7 +15,6 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
-  PendingAction,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
@@ -142,7 +142,10 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
 
           actionCard: {
             description: m.draftDescription,
-            onExitHistoryLog: 'Umsókn send inn',
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.applicationSent,
+            },
           },
           progress: 0.25,
           status: 'draft',
@@ -182,7 +185,12 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 'Umsóknin bíður nú þess að yfirferðaraðili sé skráður á umsóknina. Þú getur líka skráð þig sjálfur inn og farið yfir umsóknina.',
               displayStatus: 'warning',
             },
-            onExitHistoryLog: 'Yfirferðaraðili skráður á umsókn og látin vita',
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationAssigned,
+              },
+            ],
           },
           onEntry: [
             defineTemplateApi({
@@ -235,7 +243,16 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
                 'Example stofnun fer núna yfir umsóknina og því getur þetta tekið nokkra daga',
               displayStatus: 'info',
             },
-            onEntryHistoryLog: 'Yfirferð hafin',
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
           },
           onExit: [
             defineTemplateApi({
@@ -280,9 +297,6 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'approved',
           lifecycle: DefaultStateLifeCycle,
-          actionCard: {
-            onEntryHistoryLog: 'Umsókn var samþykkt af yfirferðaraðila',
-          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -301,9 +315,7 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
-          actionCard: {
-            onEntryHistoryLog: 'Umsókn var hafnað af yfirferðaraðila',
-          },
+
           roles: [
             {
               id: Roles.APPLICANT,

@@ -12,7 +12,7 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
-import { spmm } from '../../lib/messages'
+import { spmm, urls } from '../../lib/messages'
 import {
   formatNameBreaks,
   formatResidenceString,
@@ -26,11 +26,6 @@ import { useNationalRegistryUserV3Query } from './UserInfo.generated'
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
   defaultMessage: 'Gögn fundust ekki',
-})
-
-const changeInNationalReg = defineMessage({
-  id: 'sp.family:change-in-national-registry',
-  defaultMessage: 'Breyta hjá Þjóðskrá',
 })
 
 const SubjectInfo = () => {
@@ -81,9 +76,8 @@ const SubjectInfo = () => {
           }
           editLink={{
             external: true,
-            title: changeInNationalReg,
-            url:
-              'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2',
+            title: spmm.changeInNationalReg,
+            url: formatMessage(urls.editAdult),
           }}
         />
         <Divider />
@@ -106,9 +100,8 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
-            url:
-              'https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/',
+            title: spmm.changeInNationalReg,
+            url: formatMessage(urls.editResidence),
           }}
         />
         <Divider />
@@ -166,9 +159,8 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
-            url:
-              'https://www.skra.is/umsoknir/rafraen-skil/tru-og-lifsskodunarfelag',
+            title: spmm.changeInNationalReg,
+            url: formatMessage(urls.editReligion),
           }}
         />
         <Divider />
@@ -195,8 +187,8 @@ const SubjectInfo = () => {
           loading={loading}
           editLink={{
             external: true,
-            title: changeInNationalReg,
-            url: 'https://www.skra.is/umsoknir/rafraen-skil/bannmerking/',
+            title: spmm.changeInNationalReg,
+            url: formatMessage(urls.editBanmarking),
           }}
         />
         <Divider />

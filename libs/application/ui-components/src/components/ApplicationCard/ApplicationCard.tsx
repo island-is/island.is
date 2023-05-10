@@ -38,6 +38,10 @@ export type ApplicationCardProps = {
    * Defaults to opening the application in a new tab
    */
   onClick?: (id: string) => void
+  /**
+   * Should the card buttons be shown?
+   */
+  shouldShowCardButtons?: boolean
 }
 
 export const ApplicationCard = ({
@@ -46,6 +50,7 @@ export const ApplicationCard = ({
   onClick,
   logo,
   focused = false,
+  shouldShowCardButtons = true,
 }: ApplicationCardProps) => {
   const { status, actionCard, modified } = application
   const { lang: locale, formatMessage } = useLocale()
@@ -60,7 +65,7 @@ export const ApplicationCard = ({
     application,
     formatMessage,
     formattedDate,
-    openApplication,
+    shouldShowCardButtons ? openApplication : undefined,
   )
 
   const shouldRenderProgress = status === 'draft'
@@ -78,10 +83,11 @@ export const ApplicationCard = ({
       borderWidth="standard"
       paddingX={[3, 3, 4]}
       paddingY={3}
+      dataTestId={`application-card`}
       background="white"
     >
       <Box
-        alignItems="center"
+        alignItems={['flexStart', 'center']}
         display="flex"
         flexDirection="row"
         justifyContent="spaceBetween"
@@ -97,15 +103,17 @@ export const ApplicationCard = ({
             </Text>
           </Box>
         </Box>
-        <Inline alignY="center" space={1}>
+        <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag
             actionCard={actionCard}
             defaultData={defaultData}
           />
-          <ApplicationCardDelete
-            application={application}
-            onDelete={onDelete}
-          />
+          {actionCard && actionCard.deleteButton && (
+            <ApplicationCardDelete
+              application={application}
+              onDelete={onDelete}
+            />
+          )}
         </Inline>
       </Box>
 
@@ -142,6 +150,7 @@ export const ApplicationCard = ({
         <ApplicationCardProgress
           application={application}
           defaultData={defaultData}
+          shouldShowCardButtons={shouldShowCardButtons}
           onOpenApplication={openApplication}
         />
       ) : showHistory ? (
@@ -150,6 +159,7 @@ export const ApplicationCard = ({
         <ApplicationCardProgress
           application={application}
           defaultData={defaultData}
+          shouldShowCardButtons={shouldShowCardButtons}
           onOpenApplication={openApplication}
           forceDefault
         />

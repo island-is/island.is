@@ -721,6 +721,7 @@ describe('Case', () => {
       ...getCaseData(),
       origin: CaseOrigin.RVG,
       state: CaseState.DRAFT,
+      courtId: judge.institution?.id,
     })
       .then((value) => {
         dbCase = caseToCCase(value)
@@ -742,6 +743,7 @@ describe('Case', () => {
           ...judgeCaseData,
           judge,
           registrar,
+          court,
         } as CCase)
 
         // Check the data in the database

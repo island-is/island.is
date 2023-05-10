@@ -1,6 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { CaseSubscriptionService } from './caseSubscription.service'
-import { PostCaseSubscriptionCommand } from '../models/postCaseSubscriptionsCommand.model'
 import { UseGuards } from '@nestjs/common'
 import {
   FeatureFlagGuard,
@@ -12,60 +11,57 @@ import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
-  User,
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { ConsultationPortalScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+import { ApiScope } from '@island.is/auth/scopes'
+import { PostCaseSubscriptionTypeInput } from '../dto/postCaseSubscriptionType.input'
+import { GetCaseInput } from '../dto/case.input'
 
 @Resolver()
-@UseGuards(FeatureFlagGuard, IdsUserGuard)
-@Scopes(ConsultationPortalScope.default)
+@UseGuards(FeatureFlagGuard, IdsUserGuard, ScopesGuard)
+@Scopes(ApiScope.samradsgatt)
+@FeatureFlag(Features.consultationPortalApplication)
 export class CaseSubscriptionResolver {
   constructor(private caseSubscriptionService: CaseSubscriptionService) {}
 
-  @Query(() => [CaseSubscriptionResult], {
-    name: 'consultationPortalSubscriptionType',
-  })
-  @FeatureFlag(Features.consultationPortalApplication)
-  async getCaseSubscriptionType(
-    @CurrentUser() user: User,
-    @Args('caseId') caseId: number,
-  ): Promise<CaseSubscriptionResult> {
-    return this.caseSubscriptionService.getCaseSubscriptionType(user, caseId)
-  }
-
   @Mutation(() => Boolean!, {
     nullable: true,
-    name: 'consultationPortalPostSubscriptionType',
+    name: 'consultationPortalDeleteSubscriptionType',
   })
-  @FeatureFlag(Features.consultationPortalApplication)
-  async postCaseSubscriptionType(
+  async deleteCaseSubscription(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
     @CurrentUser() user: User,
-    @Args('PostCaseSubscriptionCommand', {
-      type: () => PostCaseSubscriptionCommand,
-    })
-    PostCaseSubscriptionCommand: PostCaseSubscriptionCommand,
-    @Args('caseId') caseId: number,
   ): Promise<void> {
-    const response = await this.caseSubscriptionService.postCaseSubscriptionType(
+    const response = await this.caseSubscriptionService.deleteCaseSubscription(
       user,
-      caseId,
-      PostCaseSubscriptionCommand,
+      input,
     )
     return response
   }
 
+  @Query(() => CaseSubscriptionResult, {
+    name: 'consultationPortalSubscriptionType',
+  })
+  async getCaseSubscriptionType(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
+    @CurrentUser() user: User,
+  ): Promise<CaseSubscriptionResult> {
+    return this.caseSubscriptionService.getCaseSubscriptionType(user, input)
+  }
+
   @Mutation(() => Boolean!, {
     nullable: true,
     name: 'consultationPortalPostSubscriptionType',
   })
-  @FeatureFlag(Features.consultationPortalApplication)
-  async deleteCaseSubscription(
+  async postCaseSubscriptionType(
+    @Args('input', { type: () => PostCaseSubscriptionTypeInput })
+    input: PostCaseSubscriptionTypeInput,
     @CurrentUser() user: User,
-    @Args('caseId') caseId: number,
   ): Promise<void> {
-    const response = await this.caseSubscriptionService.deleteCaseSubscription(
+    const response = await this.caseSubscriptionService.postCaseSubscriptionType(
       user,
-      caseId,
+      input,
     )
     return response
   }

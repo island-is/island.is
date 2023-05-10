@@ -1,8 +1,6 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import isValid from 'date-fns/isValid'
-import addDays from 'date-fns/addDays'
 
 import {
   CaseDates,
@@ -11,6 +9,7 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  MarkdownWrapper,
   PageHeader,
   PageLayout,
   PdfButton,
@@ -18,29 +17,26 @@ import {
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { AlertBanner, Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseFileCategory,
+  CaseState,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 import * as constants from '@island.is/judicial-system/consts'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
-
-export const getStatementDeadline = (appealDate?: string) => {
-  if (appealDate === undefined) {
-    return
-  }
-
-  const appealDateAsDate = new Date(appealDate)
-  if (!isValid(appealDateAsDate)) {
-    return
-  }
-
-  return addDays(appealDateAsDate, 1)
-}
+import { titleForCase } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -54,6 +50,7 @@ const CourtOfAppealOverview: React.FC = () => {
     caseId: workingCase.id,
   })
 
+  const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const router = useRouter()
@@ -77,23 +74,22 @@ const CourtOfAppealOverview: React.FC = () => {
       ].includes(caseFile.category),
   )
 
+  const appealRulingFiles = workingCase.caseFiles?.filter(
+    (caseFile) =>
+      caseFile.category &&
+      /* 
+      Please do not change the order of the following lines as they
+      are rendered in the same order as they are listed here
+      */
+      [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
+  )
+
+  const handleNavigationTo = (destination: string) =>
+    router.push(`${destination}/${workingCase.id}`)
+
   return (
     <>
-      <AlertBanner
-        title={formatMessage(strings.alertBannerTitle)}
-        description={formatMessage(strings.alertBannerMessage, {
-          isStatementDeadlineExpired:
-            workingCase.isStatementDeadlineExpired || false,
-          statementDeadline: formatDate(
-            getStatementDeadline(
-              workingCase.prosecutorPostponedAppealDate ??
-                workingCase.accusedPostponedAppealDate,
-            ),
-            'PPPp',
-          ),
-        })}
-        variant="warning"
-      />
+      <AlertBanner variant="warning" title={title} description={description} />
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -116,12 +112,29 @@ const CourtOfAppealOverview: React.FC = () => {
             <Box>
               <Box marginBottom={1}>
                 <Text as="h1" variant="h1">
-                  {formatMessage(strings.title)}
+                  {titleForCase(formatMessage, workingCase)}
                 </Text>
               </Box>
               {workingCase.courtEndTime && (
                 <Box>
                   <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+                </Box>
+              )}
+              {workingCase.appealedDate && (
+                <Box marginTop={1}>
+                  <Text as="h5" variant="h5">
+                    {formatMessage(strings.appealedInfo, {
+                      appealedByProsecutor:
+                        workingCase.appealedByRole === UserRole.PROSECUTOR,
+                      appealedDate: `${formatDate(
+                        workingCase.appealedDate,
+                        'PPP',
+                      )} kl. ${formatDate(
+                        workingCase.appealedDate,
+                        constants.TIME_FORMAT,
+                      )}`,
+                    })}
+                  </Text>
                 </Box>
               )}
             </Box>
@@ -130,8 +143,43 @@ const CourtOfAppealOverview: React.FC = () => {
             </Box>
           </Box>
           <Box marginBottom={5}>
-            <CaseDates workingCase={workingCase} />
+            {isRestrictionCase(workingCase.type) &&
+              workingCase.decision !==
+                CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&
+              workingCase.state === CaseState.ACCEPTED && (
+                <CaseDates workingCase={workingCase} />
+              )}
           </Box>
+          {workingCase.caseModifiedExplanation && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.sections.modifyDatesInfo.titleV3, {
+                  caseType: workingCase.type,
+                })}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.caseModifiedExplanation}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
+          {workingCase.rulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.sections.modifyRulingInfo.title)}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.rulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           <Box marginBottom={5}>
             <InfoCard
               defendants={
@@ -214,14 +262,46 @@ const CourtOfAppealOverview: React.FC = () => {
               <Text as="h3" variant="h3">
                 {formatMessage(strings.appealFilesTitle)}
               </Text>
-              {appealCaseFiles.map((file) => (
-                <PdfButton
-                  renderAs="row"
-                  caseId={workingCase.id}
-                  title={file.name}
-                  handleClick={() => onOpen(file.id)}
-                />
-              ))}
+              {appealCaseFiles
+                .concat(appealRulingFiles ? appealRulingFiles : [])
+                .map((file) => (
+                  <PdfButton
+                    key={file.id}
+                    renderAs="row"
+                    caseId={workingCase.id}
+                    title={file.name}
+                    handleClick={() => onOpen(file.id)}
+                  >
+                    {file.category &&
+                      file.category !== CaseFileCategory.APPEAL_RULING && (
+                        <Box
+                          display="flex"
+                          alignItems="flexEnd"
+                          flexDirection="column"
+                        >
+                          <Text>
+                            {`
+                       ${formatDate(
+                         file.created,
+                         'dd.MM.y',
+                       )}   kl. ${formatDate(
+                              file.created,
+                              constants.TIME_FORMAT,
+                            )}
+                    `}
+                          </Text>
+
+                          <Text variant="small">
+                            {formatMessage(strings.appealFilesCategory, {
+                              filesCategory: file.category?.includes(
+                                'PROSECUTOR',
+                              ),
+                            })}
+                          </Text>
+                        </Box>
+                      )}
+                  </PdfButton>
+                ))}
             </Box>
           )}
           <Box marginBottom={6}>
@@ -260,7 +340,9 @@ const CourtOfAppealOverview: React.FC = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={constants.CASES_ROUTE}
-            onNextButtonClick={() => console.log('23')}
+            onNextButtonClick={() =>
+              handleNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
+            }
             nextButtonIcon="arrowForward"
           />
         </FormContentContainer>
