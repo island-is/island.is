@@ -80,7 +80,7 @@ const useAppealAlertBanner = (
     (isDefenderRoleUser && defendantStatementDate)
 
   // HIGH COURT BANNER INFO IS HANDLED HERE
-  if (user?.institution?.type === InstitutionType.HighCourt) {
+  if (user?.institution?.type === InstitutionType.HIGH_COURT) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired:
@@ -90,7 +90,7 @@ const useAppealAlertBanner = (
   }
   // DEFENDER, PROSECUTOR AND COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
-  else if (appealState === CaseAppealState.Received) {
+  else if (appealState === CaseAppealState.RECEIVED) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired:
@@ -131,7 +131,7 @@ const useAppealAlertBanner = (
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDescription, {
       actor:
-        appealedByRole === UserRole.Prosecutor
+        appealedByRole === UserRole.PROSECUTOR
           ? formatMessage(core.prosecutor)
           : formatMessage(core.defender),
       appealDate: formatDate(appealedDate, 'PPPp'),

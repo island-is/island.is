@@ -32,6 +32,7 @@ import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 import * as constants from '@island.is/judicial-system/consts'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import { courtOfAppealOverview as strings } from './Overview.strings'
@@ -117,6 +118,23 @@ const CourtOfAppealOverview: React.FC = () => {
               {workingCase.courtEndTime && (
                 <Box>
                   <RulingDateLabel courtEndTime={workingCase.courtEndTime} />
+                </Box>
+              )}
+              {workingCase.appealedDate && (
+                <Box marginTop={1}>
+                  <Text as="h5" variant="h5">
+                    {formatMessage(strings.appealedInfo, {
+                      appealedByProsecutor:
+                        workingCase.appealedByRole === UserRole.PROSECUTOR,
+                      appealedDate: `${formatDate(
+                        workingCase.appealedDate,
+                        'PPP',
+                      )} kl. ${formatDate(
+                        workingCase.appealedDate,
+                        constants.TIME_FORMAT,
+                      )}`,
+                    })}
+                  </Text>
                 </Box>
               )}
             </Box>
@@ -248,6 +266,7 @@ const CourtOfAppealOverview: React.FC = () => {
                 .concat(appealRulingFiles ? appealRulingFiles : [])
                 .map((file) => (
                   <PdfButton
+                    key={file.id}
                     renderAs="row"
                     caseId={workingCase.id}
                     title={file.name}
