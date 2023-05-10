@@ -8,9 +8,6 @@ export class ScopeEnvironment {
   @Field(() => Environment)
   environment!: Environment
 
-  @Field(() => Boolean)
-  enabled!: boolean
-
   @Field(() => ID)
   name!: string
 
