@@ -1,13 +1,13 @@
 import { Stack, Text } from '@island.is/island-ui/core'
 
 export type StackedTitleAndDescriptionProps = {
-  headingColor: 'blue400' | 'blue600' | 'dark400'
+  headingColor?: 'blue400' | 'blue600' | 'dark400'
   title: string
   children: any
 }
 
 export const StackedTitleAndDescription = ({
-  headingColor,
+  headingColor = 'blue400',
   title,
   children,
 }: StackedTitleAndDescriptionProps) => {
