@@ -19,6 +19,7 @@ import { ClientEnvironment } from './models/client-environment.model'
 import { ClientSecret } from './models/client-secret.model'
 import { Client } from './models/client.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
+import { environments } from '../shared/constants/environments'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -43,11 +44,7 @@ export class ClientsService extends MultiEnvironmentService {
 
     const clientsMap = new Map<string, ClientEnvironment[]>()
 
-    for (const [index, env] of [
-      Environment.Development,
-      Environment.Staging,
-      Environment.Production,
-    ].entries()) {
+    for (const [index, env] of environments.entries()) {
       for (const client of clients[index] ?? []) {
         if (!clientsMap.has(client.clientId)) {
           clientsMap.set(client.clientId, [])
@@ -98,11 +95,7 @@ export class ClientsService extends MultiEnvironmentService {
     ])
 
     const clientEnvs: ClientEnvironment[] = []
-    for (const [index, env] of [
-      Environment.Development,
-      Environment.Staging,
-      Environment.Production,
-    ].entries()) {
+    for (const [index, env] of environments.entries()) {
       const client = clients[index]
       if (client) {
         clientEnvs.push({

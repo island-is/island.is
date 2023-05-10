@@ -11,12 +11,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Environment } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
-
-const environments = [
-  Environment.Development,
-  Environment.Staging,
-  Environment.Production,
-]
+import { environments } from '../constants/environments'
 
 @Injectable()
 export abstract class MultiEnvironmentService {

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
-import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateScopeInput } from './dto/create-scope.input'
@@ -11,12 +10,7 @@ import { ScopeInput } from './dto/scope.input'
 import { Scope } from './models/scope.model'
 import { ScopesPayload } from './dto/scopes.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
-
-const environments = [
-  Environment.Development,
-  Environment.Staging,
-  Environment.Production,
-]
+import { environments } from '../shared/constants/environments'
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
