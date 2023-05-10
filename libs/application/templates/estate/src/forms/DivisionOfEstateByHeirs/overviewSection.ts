@@ -91,6 +91,17 @@ export const overview = buildSection({
           width: 'half',
         }),
         buildDescriptionField({
+          id: 'space0',
+          title: '',
+          space: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.additionalInfo,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.additionalInfo'),
+          width: 'half',
+        }),
+        buildDescriptionField({
           id: 'space1',
           title: '',
           space: 'gutter',
@@ -439,23 +450,18 @@ export const overview = buildSection({
         }),
         buildKeyValueField({
           width: 'half',
-          label: m.name,
+          label: m.nationalId,
           value: ({ answers }) =>
-            getValueViaPath<string>(
-              answers,
-              'representative.representativeName',
+            formatNationalId(
+              getValueViaPath<string>(answers, 'representative.nationalId') ??
+                '',
             ),
         }),
         buildKeyValueField({
           width: 'half',
-          label: m.nationalId,
+          label: m.name,
           value: ({ answers }) =>
-            formatNationalId(
-              getValueViaPath<string>(
-                answers,
-                'representative.representativeNationalId',
-              ) ?? '',
-            ),
+            getValueViaPath<string>(answers, 'representative.name'),
         }),
         buildDescriptionField({
           id: 'space4',
@@ -467,20 +473,14 @@ export const overview = buildSection({
           label: m.phone,
           value: ({ answers }) =>
             formatPhoneNumber(
-              getValueViaPath<string>(
-                answers,
-                'representative.representativePhoneNumber',
-              ) ?? '',
+              getValueViaPath<string>(answers, 'representative.phone') ?? '',
             ),
         }),
         buildKeyValueField({
           width: 'half',
           label: m.email,
           value: ({ answers }) =>
-            getValueViaPath<string>(
-              answers,
-              'representative.representativeEmail',
-            ),
+            getValueViaPath<string>(answers, 'representative.email'),
         }),
       ],
     }),
