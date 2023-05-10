@@ -22,6 +22,12 @@ import { useState } from 'react'
 import { useLogIn, usePostAdvice } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
 import { PresignedPost } from '@island.is/api/schema'
+import {
+  REVIEW_FILENAME_MAXIMUM_LENGTH,
+  REVIEW_MAXIMUM_LENGTH,
+  REVIEW_MINIMUM_LENGTH,
+} from '../../utils/consts/consts'
+import { AgencyText } from './components/AgencyText'
 
 type CardProps = {
   card: Case
@@ -31,8 +37,6 @@ type CardProps = {
   refetchAdvices: any
 }
 
-const REVIEW_MINIMUM_LENGTH = 10
-
 const fileExtensionWhitelist = {
   '.pdf': 'application/pdf',
   '.doc': 'application/msword',
@@ -41,22 +45,6 @@ const fileExtensionWhitelist = {
 }
 
 const date = getShortDate(new Date())
-
-const AgencyText = () => {
-  return (
-    <Text marginTop={2} variant="small">
-      Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð
-      þaðan,{' '}
-      <a
-        target="_blank"
-        href="https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf"
-        rel="noopener noreferrer"
-      >
-        sjá nánar hér.
-      </a>
-    </Text>
-  )
-}
 
 export const WriteReviewCard = ({
   card,
@@ -127,12 +115,15 @@ export const WriteReviewCard = ({
   const onClick = async () => {
     setIsSubmitting(true)
 
-    if (review.length > 10) {
+    if (
+      review.length >= REVIEW_MINIMUM_LENGTH &&
+      review.length <= REVIEW_MAXIMUM_LENGTH
+    ) {
       setShowInputError(false)
       const fileListCheck = fileList.filter((file) => {
         const indexOfDot = file.name.lastIndexOf('.')
         const fileName = file.name.substring(0, indexOfDot)
-        return fileName.length > 100
+        return fileName.length > REVIEW_FILENAME_MAXIMUM_LENGTH
       })
       if (fileListCheck.length > 0) {
         setShowInputFileError(true)
@@ -202,6 +193,9 @@ export const WriteReviewCard = ({
     setFileList(newFileList)
   }
 
+  console.log('length', review.length)
+  console.log('showInputError', showInputError)
+
   return isLoggedIn ? (
     <Box
       paddingY={3}
@@ -255,8 +249,20 @@ export const WriteReviewCard = ({
         rows={10}
         value={review}
         onChange={(e) => setReview(e.target.value)}
-        hasError={showInputError && review.length <= REVIEW_MINIMUM_LENGTH}
-        errorMessage="Texti þarf að vera að minnsta kosti 10 stafbil og mesta lagi."
+        hasError={
+          showInputError &&
+          (review.length < REVIEW_MINIMUM_LENGTH ||
+            review.length > REVIEW_MAXIMUM_LENGTH)
+        }
+        errorMessage={
+          review.length < REVIEW_MINIMUM_LENGTH
+            ? `Texti þarf að vera að minnsta kosti 10 stafbil, texti er núna ${review.length.toLocaleString(
+                'de-DE',
+              )} stafbil.`
+            : `Texti má vera í mesta lagi 290.000 stafbil, texti er núna ${review.length.toLocaleString(
+                'de-DE',
+              )} stafbil.`
+        }
       />
       <Box paddingTop={3}>
         {showUpload && (
