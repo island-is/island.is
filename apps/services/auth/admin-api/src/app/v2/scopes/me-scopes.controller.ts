@@ -6,7 +6,6 @@ import {
   AdminScopeDTO,
   MeTenantGuard,
   ClientCreateScopeDTO,
-  ApiScopeDTO,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
@@ -60,15 +59,15 @@ export class MeScopesController {
   @Post()
   @Documentation({
     description: 'Creates api scope for specific tenant.',
-    response: { status: 200, type: ApiScopeDTO },
+    response: { status: 200, type: AdminScopeDTO },
   })
-  @Audit<ApiScopeDTO>({
+  @Audit<AdminScopeDTO>({
     resources: (scope) => scope.name,
   })
   create(
     @Param('tenantId') tenantId: string,
     @Body() input: ClientCreateScopeDTO,
-  ): Promise<ApiScopeDTO> {
+  ): Promise<AdminScopeDTO> {
     return this.adminScopeService.createScope(tenantId, input)
   }
 }

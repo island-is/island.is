@@ -8,10 +8,9 @@ import { ApiScope } from '../models/api-scope.model'
 import { Client } from '../../clients/models/client.model'
 import { ClientCreateScopeDTO } from './dto/client-create-scope.dto'
 import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
-import { ApiScopeDTO } from '../dto/api-scope.dto'
 import { TranslationService } from '../../translation/translation.service'
-import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
+import { AdminTranslationService } from './services/admin-translation.service'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -26,8 +25,38 @@ export class AdminScopeService {
     @InjectModel(ApiScopeUserClaim)
     private readonly apiScopeUserClaim: typeof ApiScopeUserClaim,
     private readonly translationService: TranslationService,
+    private readonly adminTranslationService: AdminTranslationService,
     private sequelize: Sequelize,
   ) {}
+
+  /**
+   * Creates new api scope translations
+   */
+  private async getApiScopeTranslations(keys: string[]) {
+    return this.translationService.findTranslationMap('apiscope', keys)
+  }
+
+  /**
+   * Maps api scope to admin api scope
+   */
+  private mapApiScopeToAdminScopeDTO(
+    apiScope: ApiScope,
+    translations: Map<string, Map<string, Map<string, string>>>,
+  ): AdminScopeDTO {
+    return {
+      ...apiScope.toDTO(),
+      displayName: this.adminTranslationService.createTranslatedValueDTOs({
+        key: 'displayName',
+        defaultValueIS: apiScope.displayName,
+        translations: translations.get(apiScope.name),
+      }),
+      description: this.adminTranslationService.createTranslatedValueDTOs({
+        key: 'description',
+        defaultValueIS: apiScope.description,
+        translations: translations.get(apiScope.name),
+      }),
+    }
+  }
 
   async findApiScopesByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
     const apiScopes = await this.apiScope.findAll({
@@ -36,41 +65,13 @@ export class AdminScopeService {
       },
     })
 
-    const scopeTranslations = await this.translationService.findTranslationMap(
-      'apiscope',
+    const translations = await this.getApiScopeTranslations(
       apiScopes.map(({ name }) => name),
     )
 
-    return apiScopes.map((apiScope) => ({
-      ...apiScope.toDTO(),
-      displayName: this.formatTranslationsByKey(
-        'displayName',
-        apiScope.displayName,
-        scopeTranslations.get(apiScope.name),
-      ),
-      description: this.formatTranslationsByKey(
-        'description',
-        apiScope.description,
-        scopeTranslations.get(apiScope.name),
-      ),
-    }))
-  }
-
-  private formatTranslationsByKey(
-    key: string,
-    defaultValueIS: string,
-    translations?: Map<string, Map<string, string>>,
-  ): TranslatedValueDto[] {
-    return [
-      {
-        locale: 'is',
-        value: defaultValueIS,
-      },
-      ...Array.from(translations || []).map(([locale, translation]) => ({
-        locale,
-        value: translation.get(key) ?? '',
-      })),
-    ]
+    return apiScopes.map((apiScope) =>
+      this.mapApiScopeToAdminScopeDTO(apiScope, translations),
+    )
   }
 
   /**
@@ -96,26 +97,9 @@ export class AdminScopeService {
       )
     }
 
-    const scopeTranslations = await this.translationService.findTranslationMap(
-      'apiscope',
-      [apiScope.name],
-    )
+    const translations = await this.getApiScopeTranslations([apiScope.name])
 
-    const translations = scopeTranslations.get(apiScope.name)
-
-    return {
-      ...apiScope.toDTO(),
-      displayName: this.formatTranslationsByKey(
-        'displayName',
-        apiScope.displayName,
-        translations,
-      ),
-      description: this.formatTranslationsByKey(
-        'description',
-        apiScope.description,
-        translations,
-      ),
-    }
+    return this.mapApiScopeToAdminScopeDTO(apiScope, translations)
   }
 
   /**
@@ -124,7 +108,7 @@ export class AdminScopeService {
   async createScope(
     tenantId: string,
     input: ClientCreateScopeDTO,
-  ): Promise<ApiScopeDTO> {
+  ): Promise<AdminScopeDTO> {
     if (
       !validateClientId({
         prefix: tenantId,
@@ -167,6 +151,8 @@ export class AdminScopeService {
       return scope
     })
 
-    return apiScope.toDTO()
+    const translations = await this.getApiScopeTranslations([apiScope.name])
+
+    return this.mapApiScopeToAdminScopeDTO(apiScope, translations)
   }
 }

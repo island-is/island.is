@@ -1,10 +1,10 @@
 import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
 
+import { faker } from '@island.is/shared/mocking'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   AdminScopeDTO,
-  ApiScopeDTO,
   ApiScopeUserClaim,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
@@ -38,7 +38,7 @@ const createMockedApiScopes = (len = 3) =>
   Array.from({ length: len }).map(
     (_, i) =>
       ({
-        name: `${TENANT_ID}/scope${i + 1}}`,
+        name: `${TENANT_ID}/scope${i + 1}`,
         description: [
           {
             locale: 'is',
@@ -55,11 +55,7 @@ const createMockedApiScopes = (len = 3) =>
   )
 
 const mockedApiScopes = createMockedApiScopes(2)
-const mockedCreateApiScope = {
-  name: `${TENANT_ID}/scope`,
-  displayName: 'Scope 1 display name',
-  description: 'Scope 1 description',
-}
+const mockedCreateApiScope = createMockedApiScopes(1)[0]
 
 type CreateTestData = {
   app: TestApp
@@ -190,36 +186,63 @@ const getSingleTestCases: Record<string, GetSingleTestCase> = {
 interface CreateTestCase {
   user: User
   tenantId: string
-  input: typeof mockedCreateApiScope
+  input: {
+    name: string
+    displayName: string
+    description: string
+  }
   expected: {
     status: number
-    body: ApiScopeDTO | Record<string, unknown>
+    body: AdminScopeDTO | Record<string, unknown>
   }
+}
+
+const createInput = {
+  name: `${TENANT_ID}/${faker.random.word()}`,
+  displayName: faker.random.word(),
+  description: faker.random.words(),
+}
+
+const expectedCreateOutput = {
+  ...mockedCreateApiScope,
+  name: createInput.name,
+  displayName: [
+    {
+      locale: 'is',
+      value: createInput.displayName,
+    },
+  ],
+  description: [
+    {
+      locale: 'is',
+      value: createInput.description,
+    },
+  ],
 }
 
 const createTestCases: Record<string, CreateTestCase> = {
   'should create scope and have access as current user': {
     user: currentUser,
     tenantId: TENANT_ID,
-    input: mockedCreateApiScope,
+    input: createInput,
     expected: {
       status: 200,
-      body: mockedCreateApiScope,
+      body: expectedCreateOutput,
     },
   },
   'should create scope and have access as super user': {
     user: superUser,
     tenantId: TENANT_ID,
-    input: mockedCreateApiScope,
+    input: createInput,
     expected: {
       status: 200,
-      body: mockedCreateApiScope,
+      body: expectedCreateOutput,
     },
   },
   'should return a bad request because of invalid input': {
     user: superUser,
     tenantId: TENANT_ID,
-    input: {} as typeof mockedCreateApiScope,
+    input: {} as typeof createInput,
     expected: {
       status: 400,
       body: {
@@ -238,7 +261,7 @@ const createTestCases: Record<string, CreateTestCase> = {
     user: superUser,
     tenantId: TENANT_ID,
     input: {
-      ...mockedCreateApiScope,
+      ...createInput,
       name: 'invalid_scope_name',
     },
     expected: {
