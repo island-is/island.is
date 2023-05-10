@@ -25,4 +25,4 @@ export interface ServerSideFeatureClientType {
   isOn(feature: ServerSideFeature): boolean
 }
 
-export { SettingTypeOf, SettingValue }
+export type { SettingTypeOf, SettingValue }
