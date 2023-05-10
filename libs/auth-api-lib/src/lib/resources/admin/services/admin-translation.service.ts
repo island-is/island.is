@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { TranslatedValueDto } from '@island.is/auth-api-lib'
+import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
 
 @Injectable()
 export class AdminTranslationService {
