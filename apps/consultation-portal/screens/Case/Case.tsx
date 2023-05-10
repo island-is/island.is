@@ -6,23 +6,22 @@ import {
   GridContainer,
   GridRow,
   Hidden,
-  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
-import { SimpleCardSkeleton } from '../../components/Card'
-import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
-import { useFetchAdvicesById } from '../../utils/helpers'
+import { useFetchAdvicesById, useIsMobile } from '../../utils/helpers'
 import { useContext } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'
 import { Case } from '../../types/interfaces'
 import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
-import env from '../../lib/environment'
 import StakeholdersCard from './components/Stakeholders'
 import { AdviceCTACard } from './components/AdviceCTA'
+import { CaseStatusFilterOptions } from '../../types/enums'
+import { RenderDocumentsBox } from './components/RenderDocumentsBox'
+import { CoOrdinator } from './components/CoOrdinator'
 
 interface Props {
   chosenCase: Case
@@ -32,6 +31,7 @@ interface Props {
 const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const { contactEmail, contactName } = chosenCase
   const { isAuthenticated, user } = useContext(UserContext)
+  const { isMobile } = useIsMobile()
 
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
@@ -54,52 +54,36 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           />
         </Box>
       </GridContainer>
-      <Hidden above={'md'}>
+      {isMobile && (
         <Box paddingBottom={3}>
           <Divider />
         </Box>
-      </Hidden>
+      )}
       <GridContainer>
         <GridRow rowGap={3}>
           <GridColumn
             span={['12/12', '12/12', '12/12', '3/12', '3/12']}
             order={[3, 3, 3, 1, 1]}
           >
-            <Stack space={2}>
+            <Stack space={3}>
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Skjöl til samráðs"
-                >
-                  {chosenCase.documents.length > 0 ? (
-                    chosenCase.documents.map((doc, index) => {
-                      return (
-                        <LinkV2
-                          href={`${env.backendDownloadUrl}${doc.id}`}
-                          color="blue400"
-                          underline="normal"
-                          underlineVisibility="always"
-                          newTab
-                          key={index}
-                        >
-                          {doc.fileName}
-                        </LinkV2>
-                      )
-                    })
-                  ) : (
-                    <Text>Engin skjöl fundust.</Text>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
-              <Box paddingTop={1}>
+              <RenderDocumentsBox
+                title="Skjöl til samráðs"
+                documents={chosenCase?.documents}
+              />
+              <RenderDocumentsBox
+                title="Fylgiskjöl"
+                documents={chosenCase?.additionalDocuments}
+              />
+              {chosenCase?.statusName !==
+                CaseStatusFilterOptions.resultsPublished && (
                 <CaseEmailBox
                   caseId={caseId}
                   caseNumber={chosenCase?.caseNumber}
                 />
-              </Box>
+              )}
             </Stack>
           </GridColumn>
           <GridColumn
@@ -122,7 +106,8 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                       />
                     </>
                   )}
-                  {chosenCase.statusName === 'Til umsagnar' && (
+                  {chosenCase.statusName ===
+                    CaseStatusFilterOptions.forReview && (
                     <WriteReviewCard
                       card={chosenCase}
                       isLoggedIn={isAuthenticated}
@@ -140,24 +125,12 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              <AdviceCTACard chosenCase={chosenCase} />
+              {!isMobile && <AdviceCTACard chosenCase={chosenCase} />}
               <StakeholdersCard chosenCase={chosenCase} />
-
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Umsjónaraðili"
-                >
-                  {contactName || contactEmail ? (
-                    <>
-                      {contactName && <Text>{contactName}</Text>}
-                      {contactEmail && <Text>{contactEmail}</Text>}
-                    </>
-                  ) : (
-                    <Text>Engin skráður umsjónaraðili.</Text>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
+              <CoOrdinator
+                contactEmail={contactEmail}
+                contactName={contactName}
+              />
             </Stack>
           </GridColumn>
         </GridRow>
