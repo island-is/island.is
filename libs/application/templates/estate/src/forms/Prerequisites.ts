@@ -38,13 +38,13 @@ export const Prerequisites: Form = buildForm({
               width: 'full',
               options: [
                 {
-                  value: EstateTypes.estateWithoutAssets,
-                  label: EstateTypes.estateWithoutAssets,
+                  value: EstateTypes.divisionOfEstate,
+                  label: EstateTypes.divisionOfEstate,
                   tooltip: 'Sjá nánar linkur hér',
                 },
                 {
-                  value: EstateTypes.divisionOfEstate,
-                  label: EstateTypes.divisionOfEstate,
+                  value: EstateTypes.estateWithoutAssets,
+                  label: EstateTypes.estateWithoutAssets,
                   tooltip: 'Sjá nánar linkur hér',
                 },
                 {

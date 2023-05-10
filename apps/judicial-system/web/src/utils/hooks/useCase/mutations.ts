@@ -28,15 +28,6 @@ export const ExtendCaseMutation = gql`
   }
 `
 
-export const RequestCourtRecordSignatureMutation = gql`
-  mutation RequestCourtRecordSignature($input: RequestSignatureInput!) {
-    requestCourtRecordSignature(input: $input) {
-      controlCode
-      documentToken
-    }
-  }
-`
-
 export const SendNotificationMutation = gql`
   mutation SendNotification($input: SendNotificationInput!) {
     sendNotification(input: $input) {

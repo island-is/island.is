@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react'
 import router from 'next/router'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import omitBy from 'lodash/omitBy'
@@ -11,7 +11,6 @@ import {
   NotificationType,
   SendNotificationResponse,
   CaseTransition,
-  RequestSignatureResponse,
   CaseState,
   isIndictmentCase,
   isExtendedCourtRole,
@@ -22,16 +21,13 @@ import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
   TempCreateCase as CreateCase,
-  CaseData,
 } from '@island.is/judicial-system-web/src/types'
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import {
-  CaseQuery,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   InstitutionType,
+  useCaseLazyQuery,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
@@ -46,7 +42,6 @@ import {
   TransitionCaseMutation,
   LimitedAccessTransitionCaseMutation,
   SendNotificationMutation,
-  RequestCourtRecordSignatureMutation,
   ExtendCaseMutation,
 } from './mutations'
 
@@ -99,10 +94,6 @@ interface LimitedAccessTransitionCaseMutationResponse {
 
 interface SendNotificationMutationResponse {
   sendNotification: SendNotificationResponse
-}
-
-interface RequestCourtRecordSignatureMutationResponse {
-  requestCourtRecordSignature: RequestSignatureResponse
 }
 
 interface ExtendCaseMutationResponse {
@@ -191,7 +182,7 @@ export const formatDateForServer = (date: Date) => {
 
 const openCase = (caseToOpen: Case, user: User) => {
   let routeTo = null
-  const isTrafficViolation = isTrafficViolationCase(caseToOpen, user)
+  const isTrafficViolation = isTrafficViolationCase(caseToOpen)
 
   if (
     caseToOpen.state === CaseState.ACCEPTED ||
@@ -200,7 +191,7 @@ const openCase = (caseToOpen: Case, user: User) => {
   ) {
     if (isIndictmentCase(caseToOpen.type)) {
       routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
-    } else if (user?.institution?.type === InstitutionType.HighCourt) {
+    } else if (user?.institution?.type === InstitutionType.HIGH_COURT) {
       routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
     } else {
       routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
@@ -291,22 +282,15 @@ const useCase = () => {
   ] = useMutation<SendNotificationMutationResponse>(SendNotificationMutation)
 
   const [
-    requestCourtRecordSignatureMutation,
-    { loading: isRequestingCourtRecordSignature },
-  ] = useMutation<RequestCourtRecordSignatureMutationResponse>(
-    RequestCourtRecordSignatureMutation,
-  )
-
-  const [
     extendCaseMutation,
     { loading: isExtendingCase },
   ] = useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
-  const [getCaseToOpen] = useLazyQuery<CaseData>(CaseQuery, {
+  const [getCaseToOpen] = useCaseLazyQuery({
     fetchPolicy: 'no-cache',
     onCompleted: (caseData) => {
       if (user && caseData?.case) {
-        openCase(caseData.case, user)
+        openCase(caseData.case as Case, user)
       }
     },
     onError: () => {
@@ -499,21 +483,6 @@ const useCase = () => {
     [sendNotificationMutation],
   )
 
-  const requestCourtRecordSignature = useMemo(
-    () => async (id: string) => {
-      try {
-        const { data } = await requestCourtRecordSignatureMutation({
-          variables: { input: { caseId: id } },
-        })
-
-        return data?.requestCourtRecordSignature
-      } catch (error) {
-        toast.error(formatMessage(errors.requestCourtRecordSignature))
-      }
-    },
-    [formatMessage, requestCourtRecordSignatureMutation],
-  )
-
   const extendCase = useMemo(
     () => async (id: string) => {
       try {
@@ -573,8 +542,6 @@ const useCase = () => {
     sendNotification,
     isSendingNotification,
     sendNotificationError,
-    requestCourtRecordSignature,
-    isRequestingCourtRecordSignature,
     extendCase,
     isExtendingCase,
     setAndSendCaseToServer,

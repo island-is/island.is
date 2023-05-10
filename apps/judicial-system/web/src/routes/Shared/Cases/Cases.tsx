@@ -44,7 +44,7 @@ const CreateCaseButton: React.FC<{
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
-    if (user.role === UserRole.Representative) {
+    if (user.role === UserRole.REPRESENTATIVE) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -53,7 +53,7 @@ const CreateCaseButton: React.FC<{
       ]
     }
 
-    if (user.role === UserRole.Prosecutor) {
+    if (user.role === UserRole.PROSECUTOR) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -96,11 +96,11 @@ export const Cases: React.FC = () => {
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutor = user?.role === UserRole.Prosecutor
-  const isRepresentative = user?.role === UserRole.Representative
+  const isProsecutor = user?.role === UserRole.PROSECUTOR
+  const isRepresentative = user?.role === UserRole.REPRESENTATIVE
   const isPrisonAdminUser =
-    user?.institution?.type === InstitutionType.PrisonAdmin
-  const isPrisonUser = user?.institution?.type === InstitutionType.Prison
+    user?.institution?.type === InstitutionType.PRISON_ADMIN
+  const isPrisonUser = user?.institution?.type === InstitutionType.PRISON
 
   const {
     transitionCase,
@@ -186,7 +186,7 @@ export const Cases: React.FC = () => {
           <CreateCaseButton user={user} />
         ) : null}
       </div>
-      {user?.role !== UserRole.Staff && (
+      {user?.role !== UserRole.STAFF && (
         <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
           <Select
             name="filter-cases"
