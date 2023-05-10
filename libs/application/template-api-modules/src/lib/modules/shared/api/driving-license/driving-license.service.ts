@@ -132,7 +132,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
             : undefined,
       }
     }
-    console.log('auth', auth)
 
     const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
       nationalId: auth.nationalId,

@@ -28,23 +28,29 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
         'studentMentorability.studentNationalId',
         '',
       ) ?? ''
-    const practicePermitApplication = await this.drivingLicenseService.postPracticePermitApplication(
-      {
-        token: auth.authorization.split(' ')[1], // Removes the Bearer prefix 
+    const practicePermitApplication = await this.drivingLicenseService
+      .postPracticePermitApplication({
+        token: auth.authorization.split(' ')[1], // Removes the Bearer prefix
         studentSSN,
-      },
-    ).catch(() => {
-      throw new TemplateApiError({
-        summary: 'Umsókn hafnað af ökuskírteinaskrá',
-        title: 'Villa í umsókn',
-      }, 400)
-    })
+      })
+      .catch(() => {
+        throw new TemplateApiError(
+          {
+            summary: 'Umsókn hafnað af ökuskírteinaskrá',
+            title: 'Villa í umsókn',
+          },
+          400,
+        )
+      })
 
-    if(!practicePermitApplication.isOk) {
-      throw new TemplateApiError({
-        summary: 'Umsókn hafnað af ökuskírteinaskrá',
-        title: 'Villa í umsókn',
-      }, 400)
+    if (!practicePermitApplication.isOk) {
+      throw new TemplateApiError(
+        {
+          summary: 'Umsókn hafnað af ökuskírteinaskrá',
+          title: 'Villa í umsókn',
+        },
+        400,
+      )
     }
 
     return {
