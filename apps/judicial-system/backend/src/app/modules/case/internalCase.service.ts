@@ -20,6 +20,7 @@ import {
   CaseFileCategory,
   CaseOrigin,
   CaseState,
+  CaseType,
   completedCaseStates,
   isIndictmentCase,
   UserRole,
@@ -32,6 +33,7 @@ import {
   getCourtRecordPdfAsString,
   getRequestPdfAsBuffer,
   createCaseFilesRecord,
+  getRulingPdfAsString,
 } from '../../formatters'
 import { courtUpload } from '../../messages'
 import { CaseEvent, EventService } from '../event'
@@ -706,8 +708,13 @@ export class InternalCaseService {
   ): Promise<DeliverResponse> {
     await this.refreshFormatMessage()
 
-    return getCourtRecordPdfAsString(theCase, this.formatMessage)
-      .then(async (courtRecord) => {
+    const pdfPromises = [
+      getCourtRecordPdfAsString(theCase, this.formatMessage),
+      getRulingPdfAsString(theCase, this.formatMessage),
+    ]
+
+    return Promise.all(pdfPromises)
+      .then(async ([courtRecordPdf, rulingPdf]) => {
         const defendantNationalIds = theCase.defendants?.reduce<string[]>(
           (ids, defendant) =>
             !defendant.noNationalId && defendant.nationalId
@@ -721,12 +728,22 @@ export class InternalCaseService {
           theCase.id,
           theCase.type,
           theCase.state,
-          courtRecord,
           theCase.policeCaseNumbers.length > 0
             ? theCase.policeCaseNumbers[0]
             : '',
-          defendantNationalIds,
-          theCase.conclusion,
+          defendantNationalIds && defendantNationalIds[0]
+            ? defendantNationalIds[0].replace('-', '')
+            : '',
+          [
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.TRAVEL_BAN,
+          ].includes(theCase.type) && theCase.state === CaseState.ACCEPTED
+            ? theCase.validToDate
+            : undefined,
+          theCase.conclusion ?? '',
+          courtRecordPdf,
+          rulingPdf,
         )
 
         return { delivered }

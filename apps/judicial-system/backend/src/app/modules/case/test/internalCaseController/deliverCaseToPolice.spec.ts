@@ -8,12 +8,17 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { getCourtRecordPdfAsString } from '../../../../formatters'
+import {
+  getCourtRecordPdfAsString,
+  getRulingPdfAsString,
+} from '../../../../formatters'
+import { randomDate } from '../../../../test'
 import { PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/courtRecordPdf')
+jest.mock('../../../../formatters/rulingPdf')
 
 interface Then {
   result: DeliverResponse
@@ -54,7 +59,8 @@ describe('InternalCaseController - Deliver case to police', () => {
     const caseType = CaseType.CUSTODY
     const caseState = CaseState.ACCEPTED
     const policeCaseNumber = uuid()
-    const defendantNationalId = uuid()
+    const defendantNationalId = '0123456789'
+    const validToDate = randomDate()
     const caseConclusion = 'test conclusion'
     const theCase = {
       id: caseId,
@@ -63,22 +69,34 @@ describe('InternalCaseController - Deliver case to police', () => {
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
       defendants: [{ nationalId: defendantNationalId }],
+      validToDate,
       conclusion: caseConclusion,
     } as Case
-    const pdf = 'test court record'
+    const courtRecordPdf = 'test court record'
+    const rulingPdf = 'test ruling'
+
     let then: Then
 
     beforeEach(async () => {
-      const mockGet = getCourtRecordPdfAsString as jest.Mock
-      mockGet.mockResolvedValueOnce(pdf)
+      const mockGetCourtRecord = getCourtRecordPdfAsString as jest.Mock
+      mockGetCourtRecord.mockResolvedValueOnce(courtRecordPdf)
+      const mockGetRuling = getRulingPdfAsString as jest.Mock
+      mockGetRuling.mockResolvedValueOnce(rulingPdf)
       const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)
     })
 
-    it('should generate the court record string', async () => {
+    it('should generate the court record pdf', async () => {
       expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
+    })
+
+    it('should generate the ruling pdf', async () => {
+      expect(getRulingPdfAsString).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
       )
@@ -90,10 +108,12 @@ describe('InternalCaseController - Deliver case to police', () => {
         caseId,
         caseType,
         caseState,
-        pdf,
         policeCaseNumber,
-        [defendantNationalId],
+        defendantNationalId,
+        validToDate,
         caseConclusion,
+        courtRecordPdf,
+        rulingPdf,
       )
     })
 

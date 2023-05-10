@@ -21,7 +21,6 @@ import {
 import {
   CaseState,
   CaseType,
-  IndictmentSubtype,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
@@ -63,7 +62,7 @@ export class PoliceService {
 
   private async fetchPoliceDocumentApi(url: string): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
-      throw 'Police document API not available'
+      throw new ServiceUnavailableException('Police document API not available')
     }
 
     return fetch(url, {
@@ -80,7 +79,7 @@ export class PoliceService {
     requestInit: RequestInit,
   ): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
-      throw 'Police case API not available'
+      throw new ServiceUnavailableException('Police case API not available')
     }
 
     return fetch(url, requestInit)
@@ -241,35 +240,60 @@ export class PoliceService {
   async updatePoliceCase(
     user: User,
     caseId: string,
-    caseType: CaseType | IndictmentSubtype,
+    caseType: CaseType,
     caseState: CaseState,
-    courtRecordPdf: string,
     policeCaseNumber: string,
-    defendantNationalIds?: string[],
-    caseConclusion?: string,
+    defendantNationalId: string,
+    validToDate: Date | undefined,
+    caseConclusion: string,
+    courtRecordPdf: string,
+    rulingPdf: string,
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
-      method: 'PUT',
-      headers: {
-        accept: '*/*',
-        'Content-Type': 'application/json',
-        'X-Road-Client': this.config.clientId,
-        'X-API-KEY': this.config.policeApiKey,
-      },
-      agent: this.agent,
-      body: JSON.stringify({
-        rvMal_ID: caseId,
-        caseNumber: policeCaseNumber,
-        ssn:
-          defendantNationalIds && defendantNationalIds[0]
-            ? defendantNationalIds[0].replace('-', '')
-            : '',
-        type: caseType,
-        courtVerdict: caseState,
-        courtVerdictString: caseConclusion,
-        courtDocument: Base64.btoa(courtRecordPdf),
-      }),
-    } as RequestInit)
+    const promise = this.config.policeCaseApiV2Available
+      ? this.fetchPoliceCaseApi(`${this.xRoadPath}/V2/UpdateRVCase/${caseId}`, {
+          method: 'PUT',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+          body: JSON.stringify({
+            rvMal_ID: caseId,
+            caseNumber: policeCaseNumber,
+            ssn: defendantNationalId,
+            type: caseType,
+            courtVerdict: caseState,
+            expiringDate: validToDate?.toISOString(),
+            courtVerdictString: caseConclusion,
+            courtDocuments: [
+              { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
+              { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+            ],
+          }),
+        } as RequestInit)
+      : this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
+          method: 'PUT',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+          body: JSON.stringify({
+            rvMal_ID: caseId,
+            caseNumber: policeCaseNumber,
+            ssn: defendantNationalId,
+            type: caseType,
+            courtVerdict: caseState,
+            courtVerdictString: caseConclusion,
+            courtDocument: Base64.btoa(courtRecordPdf),
+          }),
+        } as RequestInit)
+
+    return promise
       .then(async (res) => {
         if (res.ok) {
           return true
