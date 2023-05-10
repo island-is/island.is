@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
@@ -149,7 +149,7 @@ const CourtOfAppealCases = () => {
       }) => {
         const thisRow = row.row.original
         const tagVariant: { color: TagVariant; text: string } =
-          thisRow.appealState === CaseAppealState.Appealed
+          thisRow.appealState === CaseAppealState.APPEALED
             ? {
                 color: 'purple',
                 text: formatMessage(tables.newTag),
@@ -220,7 +220,7 @@ const CourtOfAppealCases = () => {
           columns={appealedCasesColumns}
           data={
             appealedCasesData?.filter(
-              (a) => a.appealState !== CaseAppealState.Completed,
+              (a) => a.appealState !== CaseAppealState.COMPLETED,
             ) || []
           }
         />
@@ -235,7 +235,7 @@ const CourtOfAppealCases = () => {
         columns={completedCasesColumns}
         data={
           appealedCasesData?.filter(
-            (a) => a.appealState === CaseAppealState.Completed,
+            (a) => a.appealState === CaseAppealState.COMPLETED,
           ) || []
         }
       />

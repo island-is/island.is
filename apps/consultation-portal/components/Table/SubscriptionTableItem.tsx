@@ -2,13 +2,11 @@ import {
   Checkbox,
   Table as T,
   Text,
-  Icon,
   Stack,
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { mapIsToEn, tableRowBackgroundColor } from '../../utils/helpers'
-import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import * as styles from './SubscriptionTableItem.css'
 import { Area } from '../../types/enums'
 import {
@@ -165,40 +163,8 @@ const SubscriptionTableItem = ({
             background: tableRowBackgroundColor(idx),
           }}
           align="right"
-        >
-          {!isGeneralSubscription && (
-            <FocusableBox
-              onClick={onClick}
-              style={{ height: '24px' }}
-              flexDirection="rowReverse"
-            >
-              <Icon
-                icon={isOpen ? 'chevronUp' : 'chevronDown'}
-                color="blue400"
-              />
-            </FocusableBox>
-          )}
-        </TData>
+        ></TData>
       </Row>
-      {isOpen && (
-        <Row key={idx * 21 + 1}>
-          <TData
-            colSpan={4}
-            borderColor={borderColor}
-            box={{
-              paddingTop: 'none',
-              background: tableRowBackgroundColor(idx),
-            }}
-          >
-            <SubscriptionChoices
-              item={item}
-              currentTab={currentTab}
-              subscriptionArray={subscriptionArray}
-              setSubscriptionArray={setSubscriptionArray}
-            />
-          </TData>
-        </Row>
-      )}
     </>
   )
 }

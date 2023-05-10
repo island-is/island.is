@@ -84,12 +84,12 @@ const useSections = (
         caseType: type,
       }),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.ProsecutorsOffice
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
           : [
               {
@@ -111,7 +111,7 @@ const useSections = (
                   validateFormStepper(
                     isValid,
                     [
-                      workingCase.type === CaseType.Custody
+                      workingCase.type === CaseType.CUSTODY
                         ? constants.RESTRICTION_CASE_DEFENDANT_ROUTE
                         : constants.CREATE_TRAVEL_BAN_ROUTE,
                     ],
@@ -237,12 +237,12 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.ProsecutorsOffice
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
           : [
               {
@@ -371,7 +371,7 @@ const useSections = (
   ): RouteSection => {
     const { id, type } = workingCase
     const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
-    const isTrafficViolation = isTrafficViolationCase(workingCase, user)
+    const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     const routes = prosecutorIndictmentRoutes(isTrafficViolation)
 
@@ -390,7 +390,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       // Prosecutor can only view the overview when case has been received by court
@@ -576,7 +576,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.Court
+        user?.institution?.type !== InstitutionType.COURT
           ? []
           : [
               {
@@ -709,7 +709,7 @@ const useSections = (
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
-        user?.institution?.type !== InstitutionType.Court
+        user?.institution?.type !== InstitutionType.COURT
           ? []
           : [
               {
@@ -852,7 +852,7 @@ const useSections = (
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
-          isActive: user?.role === UserRole.Defender ? false : routeIndex === 0,
+          isActive: user?.role === UserRole.DEFENDER ? false : routeIndex === 0,
           href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
         },
         {
@@ -948,11 +948,11 @@ const useSections = (
     return {
       name: formatMessage(sections.extensionSection.title),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isRestrictionCase(type) &&
         parentCase !== undefined,
       children:
-        user?.institution?.type !== InstitutionType.ProsecutorsOffice
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
           : [
               {
@@ -1042,11 +1042,11 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseExtensionSection.title),
       isActive:
-        user?.role === UserRole.Prosecutor &&
+        user?.role === UserRole.PROSECUTOR &&
         isInvestigationCase(type) &&
         parentCase !== undefined,
       children:
-        user?.institution?.type !== InstitutionType.ProsecutorsOffice
+        user?.institution?.type !== InstitutionType.PROSECUTORS_OFFICE
           ? []
           : [
               {
@@ -1126,12 +1126,12 @@ const useSections = (
     return [
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
-        isActive: user?.institution?.type !== InstitutionType.HighCourt,
+        isActive: user?.institution?.type !== InstitutionType.HIGH_COURT,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
-        isActive: user?.institution?.type === InstitutionType.HighCourt,
+        isActive: user?.institution?.type === InstitutionType.HIGH_COURT,
         children: [
           {
             name: formatMessage(sections.courtOfAppealSection.overview),
