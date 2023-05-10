@@ -34,6 +34,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       phone
       title
       hasALandingPage
+      trackingDomain
       logo {
         title
         url
@@ -110,6 +111,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         slug
         email
         phone
+        trackingDomain
         publishedMaterialSearchFilterGenericTags {
           id
           title

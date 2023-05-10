@@ -32,6 +32,7 @@ export const SingleLicenseCard = ({
   additionalLinkText,
   background,
   linkText,
+  dataTestId,
 }: {
   title: string
   subtitle: string
@@ -43,6 +44,7 @@ export const SingleLicenseCard = ({
   additionalLinkText?: string
   background?: BoxProps['background']
   secondaryTag?: tag
+  dataTestId?: string
 }) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
@@ -55,6 +57,7 @@ export const SingleLicenseCard = ({
       display="flex"
       flexDirection="row"
       background={background}
+      dataTestId={dataTestId}
     >
       <Hidden below="sm">
         <img className={styles.image} src={img} alt={title} />

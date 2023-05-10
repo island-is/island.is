@@ -40,11 +40,10 @@ export class LicenseService {
     code < 10 ? 'BadRequest' : 'ServerError'
 
   //Error message is an array to maintain consistency
-  private getException = (errorType: ErrorType, message?: string) => {
-    const errorMessage = message ?? 'Unknown error'
+  private getException = (errorType: ErrorType, details?: string | object) => {
     return errorType === 'BadRequest'
-      ? new BadRequestException([errorMessage])
-      : new InternalServerErrorException([errorMessage])
+      ? new BadRequestException([details ?? 'Unknown error'])
+      : new InternalServerErrorException([details ?? 'Unknown error'])
   }
 
   private async pushUpdateLicense(
@@ -167,20 +166,20 @@ export class LicenseService {
   ): Promise<VerifyLicenseResponse> {
     const { passTemplateId } = JSON.parse(inputData.barcodeData)
 
-    let licenseId: LicenseId | null
     if (!passTemplateId) {
-      //No pass template id means old drivers license
-      licenseId = LicenseId.DRIVING_LICENSE
-      //throw new BadRequestException('Missing passTemplateId from request input')
-    } else {
-      licenseId = this.getTypeFromPassTemplateId(passTemplateId)
-    }
-
-    if (!licenseId) {
-      this.logger.error('PassTemplateID parsing failed', {
+      this.logger.error('No pass template id supplied', {
         category: LOG_CATEGORY,
       })
-      throw this.getException('ServerError', 'PassTemplateID parsing failed')
+      throw this.getException('BadRequest', 'Missing pass template id')
+    }
+
+    const licenseId = this.getTypeFromPassTemplateId(passTemplateId)
+
+    if (!licenseId) {
+      this.logger.error('Invalid passTemplate id', {
+        category: LOG_CATEGORY,
+      })
+      throw this.getException('BadRequest', 'Invalid pass template id')
     }
 
     const service = await this.clientFactory(licenseId)
@@ -195,11 +194,12 @@ export class LicenseService {
     this.logger.error('verify license failed', {
       category: LOG_CATEGORY,
       ...verifyRes.error,
+      requestId: inputData.requestId,
     })
-    throw this.getException(
-      this.getErrorTypeByCode(verifyRes.error.code),
-      verifyRes.error.message,
-    )
+    throw this.getException(this.getErrorTypeByCode(verifyRes.error.code), {
+      message: verifyRes.error.message,
+      requestId: inputData.requestId,
+    })
   }
 
   private getTypeFromPassTemplateId(passTemplateId: string): LicenseId | null {
