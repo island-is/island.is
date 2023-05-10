@@ -1,5 +1,4 @@
-import { gql, useQuery } from '@apollo/client'
-import { AidOrNutrition, Query } from '@island.is/api/schema'
+import { AidOrNutrition } from '@island.is/api/schema'
 import {
   Box,
   Table as T,
@@ -15,6 +14,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
+  amountFormat,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -149,9 +149,11 @@ const AidsAndNutritionTabsContent: FC<Props> = ({ data }) => {
       <T.Row key={rowItem.id}>
         <DataRowWithYellow>{rowItem.name}</DataRowWithYellow>
         <DataRowWithYellow>{rowItem.maxUnitRefund}</DataRowWithYellow>
-        <DataRowWithYellow>{`${rowItem.refund.value}${
-          rowItem.refund.type === 'amount' ? ' kr.' : '%'
-        }`}</DataRowWithYellow>
+        <DataRowWithYellow>
+          {rowItem.refund.type === 'amount'
+            ? amountFormat(123456)
+            : `${rowItem.refund.value}%`}
+        </DataRowWithYellow>
         <DataRowWithYellow>{rowItem.available}</DataRowWithYellow>
         <DataRowWithYellow>{rowItem.location}</DataRowWithYellow>
         <DataRowWithYellow />
