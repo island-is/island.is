@@ -3,6 +3,7 @@ import { m } from './messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { customZodError } from './utils/customZodError'
 import { EstateTypes, YES, NO } from './constants'
+import * as kennitala from 'kennitala'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -239,36 +240,27 @@ export const estateSchema = z.object({
   // is: Umboðsmaður
   representative: z
     .object({
-      representativeName: z.string().min(1).optional(),
-      representativeNationalId: z.string().length(10).optional(),
-      representativePhoneNumber: z
-        .string()
-        .refine((v) => isValidPhoneNumber(v), {
-          params: m.errorPhoneNumber,
-        })
-        .optional(),
-      representativeEmail: customZodError(
-        z.string().email(),
-        m.errorEmail,
-      ).optional(),
+      name: z.string(),
+      nationalId: z.string(),
+      phone: z.string(),
+      email: z.string(),
     })
     .refine(
-      ({
-        representativeName,
-        representativeNationalId,
-        representativePhoneNumber,
-        representativeEmail,
-      }) => {
-        return checkIfFilledOut([
-          representativeName,
-          representativeNationalId,
-          representativePhoneNumber,
-          representativeEmail,
-        ])
+      ({ name, nationalId, phone, email }) => {
+        const allEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return allEmpty ? true : name.length > 1
       },
       {
-        params: m.fillOutRates,
-        path: ['balance'],
+        path: ['name'],
+      },
+    )
+    .refine(
+      ({ name, nationalId, phone, email }) => {
+        const allEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return allEmpty ? true : kennitala.isPerson(nationalId)
+      },
+      {
+        path: ['nationalId'],
       },
     )
     .optional(),
