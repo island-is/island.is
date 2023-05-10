@@ -160,7 +160,14 @@ const ReferenceApplicationTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
-              write: 'all',
+              write: {
+                answers: [
+                  'person.nationalId',
+                  'person.email',
+                  'person.phoneNumber',
+                  'person.name',
+                ],
+              },
               delete: true,
             },
           ],

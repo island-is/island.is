@@ -171,11 +171,36 @@ export class ApplicationValidationService {
       trimmedAnswers = {}
       const illegalAnswers: string[] = []
 
+      const isKeyPermitted = (key: string): boolean => {
+        return permittedAnswers.indexOf(key) !== -1
+      }
+
+      const processNestedKeys = (key: string): void => {
+        const nestedKeys =
+          newAnswers[key] instanceof Object
+            ? Object.keys(newAnswers[key] as Record<string, unknown>)
+            : []
+
+        nestedKeys.forEach((nestedKey) => {
+          const fullKey = `${key}.${nestedKey}`
+          if (isKeyPermitted(fullKey)) {
+            if (!trimmedAnswers[key]) {
+              trimmedAnswers[key] = {}
+            }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            trimmedAnswers[key][nestedKey] = newAnswers[key][nestedKey]
+          } else {
+            illegalAnswers.push(fullKey)
+          }
+        })
+      }
+
       Object.keys(newAnswers).forEach((key) => {
-        if (permittedAnswers.indexOf(key) === -1) {
-          illegalAnswers.push(key)
-        } else {
+        if (isKeyPermitted(key)) {
           trimmedAnswers[key] = newAnswers[key]
+        } else {
+          processNestedKeys(key)
         }
       })
 
