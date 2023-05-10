@@ -11,6 +11,7 @@ interface Props {
   setSortTitle: (_: SortOptions) => void
   dontShowNew?: boolean
   dontShowChanges?: boolean
+  isMySubscriptions?: boolean
 }
 
 export const TabsList = ({
@@ -22,6 +23,7 @@ export const TabsList = ({
   setSortTitle,
   dontShowNew,
   dontShowChanges,
+  isMySubscriptions,
 }: Props) => {
   return [
     {
@@ -38,6 +40,7 @@ export const TabsList = ({
           setSortTitle={setSortTitle}
           dontShowNew={dontShowNew}
           dontShowChanges={dontShowChanges}
+          isMySubscriptions={isMySubscriptions}
         />
       ),
       disabled: false,
@@ -56,6 +59,7 @@ export const TabsList = ({
           setSortTitle={setSortTitle}
           dontShowNew={dontShowNew}
           dontShowChanges={dontShowChanges}
+          isMySubscriptions={isMySubscriptions}
         />
       ),
       disabled: false,
@@ -74,6 +78,7 @@ export const TabsList = ({
           setSortTitle={setSortTitle}
           dontShowNew={dontShowNew}
           dontShowChanges={dontShowChanges}
+          isMySubscriptions={isMySubscriptions}
         />
       ),
       disabled: false,
