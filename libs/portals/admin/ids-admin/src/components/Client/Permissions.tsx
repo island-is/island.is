@@ -19,7 +19,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const params = useParams()
   const [permissions, setPermissions] = useState<AuthAdminClientAllowedScope[]>(
-    allowedScopes as AuthAdminClientAllowedScope[],
+    allowedScopes ?? [],
   )
   const {
     addedScopes,

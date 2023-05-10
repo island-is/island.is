@@ -52,11 +52,10 @@ export class ClientEnvironmentResolver {
     @Loader(ClientAvailableScopesLoader)
     apiScopeLoader: ClientAvailableScopesDataLoader,
     @Parent()
-    { tenantId, clientId, environment }: ClientEnvironment,
+    { tenantId, environment }: ClientEnvironment,
   ): Promise<ClientAllowedScope[]> {
     return apiScopeLoader.load({
       tenantId,
-      clientId,
       environment,
     })
   }

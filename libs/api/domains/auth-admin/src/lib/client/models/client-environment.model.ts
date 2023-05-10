@@ -6,7 +6,6 @@ import { RefreshTokenExpiration } from '../../models/refreshTokenExpiration.enum
 import { ClientType } from '../../models/client-type.enum'
 import { TranslatedValue } from '../../models/translated-value.model'
 import { ClientClaim } from './client-claim.model'
-import { ClientSecret } from './client-secret.model'
 
 @ObjectType('AuthAdminClientEnvironment')
 export class ClientEnvironment {
@@ -78,10 +77,4 @@ export class ClientEnvironment {
 
   @Field(() => [ClientClaim], { nullable: true })
   customClaims?: ClientClaim[]
-
-  @Field(() => [String], { nullable: true })
-  addedScopes?: string[]
-
-  @Field(() => [String], { nullable: true })
-  removedScopes?: string[]
 }
