@@ -2,6 +2,7 @@ import each from 'jest-each'
 
 import {
   CaseAppealDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
@@ -16,9 +17,9 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { randomDate } from '../../../test'
 import { Case } from '../models/case.model'
-import { isCaseBlockedFromUser } from './case.filter'
+import { canUserAccessCase } from './case.filter'
 
-describe('isCaseBlockedFromUser', () => {
+describe('canUserAccessCase', () => {
   describe.each([...restrictionCases, investigationCases])(
     'given %s case',
     (caseType) => {
@@ -29,7 +30,6 @@ describe('isCaseBlockedFromUser', () => {
         ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
         ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.COURT}
         ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
-        ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
@@ -81,8 +81,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -143,8 +143,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(true)
@@ -182,8 +182,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -206,8 +206,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -231,8 +231,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -261,8 +261,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -275,11 +275,12 @@ describe('isCaseBlockedFromUser', () => {
             state,
             type,
             isHeightenedSecurityLevel: true,
+            creatingProsecutorId: 'Creating Prosecutor',
             creatingProsecutor: {
               id: 'Creating Prosecutor',
               institution: { id: 'Prosecutors Office' },
             },
-            prosecutor: { id: 'Assigned Prosecutor' },
+            prosecutorId: 'Assigned Prosecutor',
           } as Case
           const user = {
             id: 'Creating Prosecutor',
@@ -291,8 +292,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -305,11 +306,12 @@ describe('isCaseBlockedFromUser', () => {
             state,
             type,
             isHeightenedSecurityLevel: true,
+            creatingProsecutorId: 'Creating Prosecutor',
             creatingProsecutor: {
               id: 'Creating Prosecutor',
               institution: { id: 'Prosecutors Office' },
             },
-            prosecutor: { id: 'Assigned Prosecutor' },
+            prosecutorId: 'Assigned Prosecutor',
           } as Case
           const user = {
             id: 'Assigned Prosecutor',
@@ -321,8 +323,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -358,8 +360,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -379,8 +381,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -407,8 +409,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -427,129 +429,15 @@ describe('isCaseBlockedFromUser', () => {
       `.describe(
         'given a $state case and $role at high court',
         ({ state, role }) => {
-          it('should not read block the case if the accused appealed in court', () => {
-            // Arrange
-            const theCase = {
-              state,
-              type,
-              courtId: 'Court',
-              accusedAppealDecision: CaseAppealDecision.APPEAL,
-            } as Case
-            const user = {
-              role,
-              institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
-              },
-            } as User
-
-            // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
-
-            // Assert
-            expect(isWriteBlocked).toBe(true)
-            expect(isReadBlocked).toBe(false)
-          })
-
-          it('should not read block the case if the prosecutor appealed in court', () => {
-            // Arrange
-            const theCase = {
-              state,
-              type,
-              courtId: 'Court',
-              prosecutorAppealDecision: CaseAppealDecision.APPEAL,
-            } as Case
-            const user = {
-              role,
-              institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
-              },
-            } as User
-
-            // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
-
-            // Assert
-            expect(isWriteBlocked).toBe(true)
-            expect(isReadBlocked).toBe(false)
-          })
-
-          it('should not read block the case if the accused appealed out of court', () => {
-            // Arrange
-            const theCase = {
-              state,
-              type,
-              courtId: 'Court',
-              accusedAppealDecision: CaseAppealDecision.POSTPONE,
-              accusedPostponedAppealDate: randomDate(),
-            } as Case
-            const user = {
-              role,
-              institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
-              },
-            } as User
-
-            // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
-
-            // Assert
-            expect(isWriteBlocked).toBe(true)
-            expect(isReadBlocked).toBe(false)
-          })
-
-          it('should not read block the case if the prosecutor appealed out of court', () => {
-            // Arrange
-            const theCase = {
-              state,
-              type,
-              courtId: 'Court',
-              prosecutorAppealDecision: CaseAppealDecision.POSTPONE,
-              prosecutorPostponedAppealDate: randomDate(),
-            } as Case
-            const user = {
-              role,
-              institution: {
-                id: 'High Court',
-                type: InstitutionType.HIGH_COURT,
-              },
-            } as User
-
-            // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
-
-            // Assert
-            expect(isWriteBlocked).toBe(true)
-            expect(isReadBlocked).toBe(false)
-          })
-
-          each`
-            accusedAppealDecision  | prosecutorAppealDecision
-            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.ACCEPT}
-            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.NOT_APPLICABLE}
-            ${CaseAppealDecision.ACCEPT}          | ${CaseAppealDecision.POSTPONE}
-            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.ACCEPT}
-            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.NOT_APPLICABLE}
-            ${CaseAppealDecision.NOT_APPLICABLE}  | ${CaseAppealDecision.POSTPONE}
-            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.ACCEPT}
-            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.NOT_APPLICABLE}
-            ${CaseAppealDecision.POSTPONE}        | ${CaseAppealDecision.POSTPONE}
-          `.it(
-            'should block the case if it has not been appealed',
-            ({ accusedAppealDecision, prosecutorAppealDecision }) => {
+          it.each([CaseAppealState.RECEIVED, CaseAppealState.COMPLETED])(
+            'should not block the case if the accused appealed in court',
+            (appealState) => {
               // Arrange
               const theCase = {
                 state,
                 type,
                 courtId: 'Court',
-                accusedAppealDecision,
-                prosecutorAppealDecision,
+                appealState,
               } as Case
               const user = {
                 role,
@@ -560,8 +448,36 @@ describe('isCaseBlockedFromUser', () => {
               } as User
 
               // Act
-              const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-              const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+              const isWriteBlocked = !canUserAccessCase(theCase, user)
+              const isReadBlocked = !canUserAccessCase(theCase, user, false)
+
+              // Assert
+              expect(isWriteBlocked).toBe(false)
+              expect(isReadBlocked).toBe(false)
+            },
+          )
+
+          it.each([undefined, CaseAppealState.APPEALED])(
+            'should block the case if an appealed has not been received',
+            (appealState) => {
+              // Arrange
+              const theCase = {
+                state,
+                type,
+                courtId: 'Court',
+                appealState,
+              } as Case
+              const user = {
+                role,
+                institution: {
+                  id: 'High Court',
+                  type: InstitutionType.HIGH_COURT,
+                },
+              } as User
+
+              // Act
+              const isWriteBlocked = !canUserAccessCase(theCase, user)
+              const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
               // Assert
               expect(isWriteBlocked).toBe(true)
@@ -602,8 +518,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -629,8 +545,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(false)
@@ -657,8 +573,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -690,8 +606,8 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
@@ -705,11 +621,12 @@ describe('isCaseBlockedFromUser', () => {
           state,
           type,
           isHeightenedSecurityLevel: true,
+          creatingProsecutorId: 'Creating Prosecutor',
           creatingProsecutor: {
             id: 'Creating Prosecutor',
             institution: { id: 'Prosecutors Office' },
           },
-          prosecutor: { id: 'Assigned Prosecutor' },
+          prosecutorId: 'Assigned Prosecutor',
         } as Case
         const user = {
           id: 'Creating Prosecutor',
@@ -721,8 +638,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(false)
@@ -739,7 +656,7 @@ describe('isCaseBlockedFromUser', () => {
             id: 'Creating Prosecutor',
             institution: { id: 'Prosecutors Office' },
           },
-          prosecutor: { id: 'Assigned Prosecutor' },
+          prosecutorId: 'Assigned Prosecutor',
         } as Case
         const user = {
           id: 'Assigned Prosecutor',
@@ -751,8 +668,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(false)
@@ -791,8 +708,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(true)
@@ -812,8 +729,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(false)
@@ -840,8 +757,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(false)
@@ -860,7 +777,7 @@ describe('isCaseBlockedFromUser', () => {
       `.describe(
       'given a $state case and $role at high court',
       ({ state, role }) => {
-        it('should not read block the case if the accused appealed in court', () => {
+        it('should read block the case if the accused appealed in court', () => {
           // Arrange
           const theCase = {
             state,
@@ -877,15 +794,15 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(false)
+          expect(isReadBlocked).toBe(true)
         })
 
-        it('should not read block the case if the prosecutor appealed in court', () => {
+        it('should read block the case if the prosecutor appealed in court', () => {
           // Arrange
           const theCase = {
             state,
@@ -902,15 +819,15 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(false)
+          expect(isReadBlocked).toBe(true)
         })
 
-        it('should not read block the case if the accused appealed out of court', () => {
+        it('should read block the case if the accused appealed out of court', () => {
           // Arrange
           const theCase = {
             state,
@@ -928,15 +845,15 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(false)
+          expect(isReadBlocked).toBe(true)
         })
 
-        it('should not read block the case if the prosecutor appealed out of court', () => {
+        it('should read block the case if the prosecutor appealed out of court', () => {
           // Arrange
           const theCase = {
             state,
@@ -954,12 +871,12 @@ describe('isCaseBlockedFromUser', () => {
           } as User
 
           // Act
-          const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-          const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+          const isWriteBlocked = !canUserAccessCase(theCase, user)
+          const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
           // Assert
           expect(isWriteBlocked).toBe(true)
-          expect(isReadBlocked).toBe(false)
+          expect(isReadBlocked).toBe(true)
         })
 
         each`
@@ -993,8 +910,8 @@ describe('isCaseBlockedFromUser', () => {
             } as User
 
             // Act
-            const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-            const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+            const isWriteBlocked = !canUserAccessCase(theCase, user)
+            const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
             // Assert
             expect(isWriteBlocked).toBe(true)
@@ -1024,8 +941,8 @@ describe('isCaseBlockedFromUser', () => {
         } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(true)
@@ -1046,8 +963,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1066,8 +983,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1087,8 +1004,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1108,8 +1025,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1129,8 +1046,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1150,8 +1067,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1171,8 +1088,8 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
     expect(isWriteBlocked).toBe(true)
@@ -1191,11 +1108,11 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
-    expect(isWriteBlocked).toBe(false)
+    expect(isWriteBlocked).toBe(true)
     expect(isReadBlocked).toBe(false)
   })
 
@@ -1211,11 +1128,11 @@ describe('isCaseBlockedFromUser', () => {
     } as User
 
     // Act
-    const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-    const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+    const isWriteBlocked = !canUserAccessCase(theCase, user)
+    const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
     // Assert
-    expect(isWriteBlocked).toBe(false)
+    expect(isWriteBlocked).toBe(true)
     expect(isReadBlocked).toBe(false)
   })
 
@@ -1232,8 +1149,8 @@ describe('isCaseBlockedFromUser', () => {
         const user = { role: UserRole.ADMIN } as User
 
         // Act
-        const isWriteBlocked = isCaseBlockedFromUser(theCase, user)
-        const isReadBlocked = isCaseBlockedFromUser(theCase, user, false)
+        const isWriteBlocked = !canUserAccessCase(theCase, user)
+        const isReadBlocked = !canUserAccessCase(theCase, user, false)
 
         // Assert
         expect(isWriteBlocked).toBe(true)

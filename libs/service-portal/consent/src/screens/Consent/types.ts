@@ -4,7 +4,11 @@ import type {
 } from './Consent.generated'
 import type { ReactNode } from 'react'
 
-export type ConsentSectionProps = GetConsentListQuery['consentsList']['data'][0]['permissions'][0]
+type PermissionGroup = GetConsentListQuery['consentsList']['data'][0]['permissions'][0]
+
+export type ConsentSectionProps = {
+  isLast?: boolean
+} & PermissionGroup
 
 export interface ConsentLineProps extends AuthConsentScopeFragment {
   onChange: (newChecked: boolean) => void
