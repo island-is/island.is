@@ -48,6 +48,8 @@ export class ClientSecretsService {
           attributes: [],
         },
       ],
+      // The secret considered active is the one with the latest created date if there are two or more of the new version (contain encrypted value)
+      order: [['created', 'DESC']],
     })
 
     return secrets.map((secret) => this.formatSecret(secret))
