@@ -22,7 +22,6 @@ export const StakeholdersCard = ({ chosenCase }: Props) => {
     <FocusableBox onClick={() => setShowStakeholders(!showStakeholders)}>
       <SimpleCardSkeleton className={styles.relativeBox}>
         <StackedTitleAndDescription
-          headingColor="blue400"
           title={`Aðilar sem hafa fengið boð um þátttöku (${chosenCase?.stakeholders?.length})`}
         >
           <FocusableBox
@@ -31,7 +30,7 @@ export const StakeholdersCard = ({ chosenCase }: Props) => {
             className={styles.blowout}
           >
             <Icon
-              icon={showStakeholders ? 'close' : 'add'}
+              icon={showStakeholders ? 'remove' : 'add'}
               type="outline"
               size="small"
               color="blue400"
