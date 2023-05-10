@@ -23,10 +23,10 @@ export class ScopeEnvironment {
   @Field(() => String)
   domainName!: string
 
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   order?: number
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   groupId?: string
 
   @Field(() => Boolean)
@@ -60,5 +60,5 @@ export class ScopeEnvironment {
   alsoForDelegatedUser!: boolean
 
   @Field(() => Boolean)
-  isAccessControlled?: boolean
+  isAccessControlled!: boolean
 }
