@@ -1,0 +1,10 @@
+schema:
+  - apps/api/src/api.graphql
+generates:
+  apps/native/app/src/graphql/types/schema.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+hooks:
+  afterAllFileWrite:
+    - prettier --write
