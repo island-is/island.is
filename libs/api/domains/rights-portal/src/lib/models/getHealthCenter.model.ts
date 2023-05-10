@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('RightsPortalHealthCenter')
 export class HealthCenter {
   @Field(() => String, { nullable: true })
-  healthCenter?: string | null
+  name?: string | null
 
   @Field(() => String, { nullable: true })
   doctor?: string | null

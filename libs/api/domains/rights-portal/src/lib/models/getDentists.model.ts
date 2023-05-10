@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('RightsPortalDentist')
-export class Dentist {
+@ObjectType('RightsPortalDentists')
+export class Dentists {
   @Field(() => String, { nullable: true })
   currentDentistName?: string | null
 

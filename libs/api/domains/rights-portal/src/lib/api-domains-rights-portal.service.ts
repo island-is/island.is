@@ -8,7 +8,7 @@ import {
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { HealthCenterHistory } from './models/getHealthCenter.model'
-import { Dentist, DentistBill } from './models/getDentist.model'
+import { Dentists, DentistBill } from './models/getDentists.model'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'rights-portal-service'
@@ -33,7 +33,7 @@ export class RightsPortalService {
       .aidsandnutrition()
       .catch(handle404)
 
-  async getDentist(user: User): Promise<Dentist | null> {
+  async getDentists(user: User): Promise<Dentists | null> {
     const api = this.dentistApi.withMiddleware(new AuthMiddleware(user as Auth))
     try {
       const res = await Promise.all([

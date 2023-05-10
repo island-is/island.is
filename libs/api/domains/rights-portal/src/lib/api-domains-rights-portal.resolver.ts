@@ -17,8 +17,8 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { Dentist } from './models/getDentist.model'
 import { HealthCenterHistory } from './models/getHealthCenter.model'
+import { Dentists } from './models/getDentists.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -48,13 +48,13 @@ export class RightsPortalResolver {
   }
 
   @Scopes(ApiScope.internal)
-  @Query(() => Dentist, {
-    name: 'rightsPortalDentist',
+  @Query(() => Dentists, {
+    name: 'rightsPortalDentists',
     nullable: true,
   })
   @Audit()
-  getRightsPortalDentist(@CurrentUser() user: User) {
-    return this.rightsPortalService.getDentist(user)
+  getRightsPortalDentists(@CurrentUser() user: User) {
+    return this.rightsPortalService.getDentists(user)
   }
 
   @Scopes(ApiScope.internal)

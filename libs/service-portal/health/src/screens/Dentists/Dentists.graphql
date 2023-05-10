@@ -1,5 +1,5 @@
-query getDentist {
-  rightsPortalDentist {
+query getDentists {
+  rightsPortalDentists {
     currentDentistName
     billHistory {
       number
