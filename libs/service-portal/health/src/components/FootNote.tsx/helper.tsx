@@ -7,7 +7,6 @@ import {
   PHYSIO_HOME_THERAPY,
   PHYSIO_THERAPY,
   SPEECH_THERAPY,
-  SUPPORT_PRODUCTS,
 } from '../../utils/constants'
 
 //TODO: Get correct paths from Sjúkratryggingar
@@ -24,10 +23,6 @@ export const getFootNoteByType = (
   formatMessage: FormatMessage,
 ) => {
   switch (type) {
-    case SUPPORT_PRODUCTS:
-      return {
-        first: formatMessage(messages['aidsAndNutritionDisclaimer']),
-      }
     case PHYSIO_THERAPY:
       return {
         first: formatMessage(messages['physioDisclaimer1']),

@@ -30,7 +30,7 @@ export const messages = defineMessages({
   aidsAndNutritionDisclaimer: {
     id: 'sp.health:aids-and-nutrition-disclaimer',
     defaultMessage:
-      'Styrkur getur ýmist verið greiddur sem ákveðið hlutfall af verði hjálpartækis og næringar og/eða ákveðin fjárhæð til kaupa á hjálpartæki eða næringu. Í neðangreindri töflu birta SÍ þín réttindi til notkunar/úttektar á hjálpartækjum og næringu sem sótt hefur verið um til Hjálpartækjamiðstöðvar. Þegar innan við 60 dagar eru eftir af heimild, þá litast viðkomandi lína gul í töflu. Sjá frekari upplýsingar um hjálpartæki',
+      'Styrkur getur ýmist verið greiddur sem ákveðið hlutfall af verði hjálpartækis og næringar og/eða ákveðin fjárhæð til kaupa á hjálpartæki eða næringu. Í neðangreindri töflu birta SÍ þín réttindi til notkunar/úttektar á hjálpartækjum og næringu sem sótt hefur verið um til Hjálpartækjamiðstöðvar. Þegar innan við 60 dagar eru eftir af heimild, þá litast viðkomandi lína gul í töflu.',
   },
   aids: {
     id: 'sp.health:aids',

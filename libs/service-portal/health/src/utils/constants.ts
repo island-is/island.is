@@ -3,7 +3,6 @@ export const PHYSIO_ACCIDENT_THERAPY = 'accident'
 export const PHYSIO_HOME_THERAPY = 'home'
 export const SPEECH_THERAPY = 'speech'
 export const OCCUPATIONAL_THERAPY = 'occupational'
-export const SUPPORT_PRODUCTS = 'support'
 // TODO: Decide an ID for "Ljósböð" therapy and talk to Sjúkratryggingar (fasi 2)
 
 export enum TherapyStatus {
