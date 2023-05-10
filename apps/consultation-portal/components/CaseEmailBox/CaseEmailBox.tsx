@@ -29,7 +29,7 @@ interface CardSkeletonProps {
 const CardSkeleton = ({ text, children }: CardSkeletonProps) => {
   return (
     <SimpleCardSkeleton>
-      <StackedTitleAndDescription headingColor="dark400" title="Skrá áskrift">
+      <StackedTitleAndDescription headingColor="blue400" title="Fylgstu með">
         {text && <Text>{text}</Text>}
       </StackedTitleAndDescription>
       <Box paddingTop={2}>{children}</Box>
@@ -217,7 +217,7 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       <CardSkeleton
         text={
           userClickedChange
-            ? 'Veldu hvernig tilkynningar þú vilt af þessu máli.'
+            ? ''
             : 'Þú ert þegar með áskrift af þessu máli. Þú getur valið um að breyta tegund áskriftar eða fjarlægja áskrift.'
         }
       >
@@ -251,11 +251,6 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
           <CaseEmailActionBox
             button={[
               {
-                label: 'Breyta áskrift',
-                onClick: () => handleUserClickedChange(),
-                isDisabled: deleteCaseSubscriptionLoading,
-              },
-              {
                 label: 'Fjarlægja áskrift',
                 onClick: () => onDeleteCaseSubscription(),
                 isLoading: deleteCaseSubscriptionLoading,
@@ -265,23 +260,9 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
         )}
       </CardSkeleton>
     ) : (
-      <CardSkeleton text="Veldu hvernig tilkynningar þú vilt af þessu máli.">
+      <CardSkeleton text="Fáðu allar tilkynningar um málið og breytingar tengt því beint í inboxið">
         <Box paddingTop={1}>
           <CaseEmailActionBox
-            selection={[
-              {
-                label: CaseSubscriptionType['AllChanges'],
-                checked: allChecked,
-                onChange: () => setAllChecked(true),
-                isDisabled: caseSubscriptionLoading,
-              },
-              {
-                label: CaseSubscriptionType['StatusChanges'],
-                checked: !allChecked,
-                onChange: () => setAllChecked(false),
-                isDisabled: caseSubscriptionLoading,
-              },
-            ]}
             button={[
               {
                 label: 'Skrá í áskrift',
