@@ -32,6 +32,7 @@ export class AdminScopeService {
     const apiScopes = await this.apiScope.findAll({
       where: {
         domainName: tenantId,
+        enabled: true,
       },
     })
 
