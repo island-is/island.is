@@ -117,24 +117,30 @@ describe('CaseController - Transition', () => {
         const caseId = uuid()
         const caseFileId1 = uuid()
         const caseFileId2 = uuid()
+        const caseFiles = [
+          {
+            id: caseFileId1,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_RVG,
+          },
+          {
+            id: caseFileId2,
+            key: uuid(),
+            state: CaseFileState.STORED_IN_COURT,
+          },
+        ]
         const theCase = {
           id: caseId,
           type,
           state: oldState,
-          caseFiles: [
-            {
-              id: caseFileId1,
-              key: uuid(),
-              state: CaseFileState.STORED_IN_RVG,
-            },
-            {
-              id: caseFileId2,
-              key: uuid(),
-              state: CaseFileState.STORED_IN_COURT,
-            },
-          ],
+          caseFiles,
         } as Case
-        const updatedCase = { id: caseId, type, state: newState } as Case
+        const updatedCase = {
+          id: caseId,
+          type,
+          state: newState,
+          caseFiles,
+        } as Case
         let then: Then
 
         beforeEach(async () => {

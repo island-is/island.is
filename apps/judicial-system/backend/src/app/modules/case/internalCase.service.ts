@@ -20,6 +20,7 @@ import {
   CaseFileCategory,
   CaseOrigin,
   CaseState,
+  completedCaseStates,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -118,6 +119,8 @@ function collectEncryptionProperties(
 
 @Injectable()
 export class InternalCaseService {
+  private throttle = Promise.resolve(false)
+
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -267,11 +270,28 @@ export class InternalCaseService {
       })
   }
 
-  private async uploadCaseFilesRecordPdfToCourt(
+  private async getCaseFilesRecordPdf(
     theCase: Case,
     policeCaseNumber: string,
-    user: TUser,
-  ): Promise<boolean> {
+  ): Promise<Buffer> {
+    if (completedCaseStates.includes(theCase.state)) {
+      try {
+        return await this.awsS3Service.getObject(
+          `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        )
+      } catch {
+        // Ignore the error and try the original key
+      }
+    }
+
+    try {
+      return await this.awsS3Service.getObject(
+        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+    } catch {
+      // Ignore the error and generate the pdf
+    }
+
     const caseFiles = theCase.caseFiles
       ?.filter(
         (caseFile) =>
@@ -307,12 +327,45 @@ export class InternalCaseService {
         }
       })
 
-    return createCaseFilesRecord(
+    const pdf = await createCaseFilesRecord(
       theCase,
       policeCaseNumber,
       caseFiles ?? [],
       this.formatMessage,
     )
+
+    await this.awsS3Service
+      .putObject(
+        `indictments/${
+          completedCaseStates.includes(theCase.state) ? 'completed/' : ''
+        }${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        pdf.toString('binary'),
+      )
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload case files record pdf to AWS S3 for case ${theCase.id} and police case ${policeCaseNumber}`,
+          { reason },
+        )
+      })
+
+    return pdf
+  }
+
+  private async throttleUploadCaseFilesRecordPdfToCourt(
+    theCase: Case,
+    policeCaseNumber: string,
+    user: TUser,
+  ): Promise<boolean> {
+    // Serialize all case files pdf uploads in this process
+    await this.throttle.catch((reason) => {
+      this.logger.info('Previous case files pdf generation failed', { reason })
+    })
+
+    await this.refreshFormatMessage()
+
+    const pdfPromise = this.getCaseFilesRecordPdf(theCase, policeCaseNumber)
+
+    return pdfPromise
       .then((pdf) => {
         const fileName = this.formatMessage(courtUpload.caseFilesRecord, {
           policeCaseNumber,
@@ -336,7 +389,7 @@ export class InternalCaseService {
       .catch((error) => {
         // Tolerate failure, but log error
         this.logger.error(
-          `Failed to upload request pdf to court for case ${theCase.id}`,
+          `Failed to upload case files record pdf to court for case ${theCase.id}`,
           { error },
         )
 
@@ -568,15 +621,50 @@ export class InternalCaseService {
     policeCaseNumber: string,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
-    const delivered = await this.uploadCaseFilesRecordPdfToCourt(
+    this.throttle = this.throttleUploadCaseFilesRecordPdfToCourt(
       theCase,
       policeCaseNumber,
       user,
     )
 
+    const delivered = await this.throttle
+
     return { delivered }
+  }
+
+  async archiveCaseFilesRecord(
+    theCase: Case,
+    policeCaseNumber: string,
+  ): Promise<DeliverResponse> {
+    return this.awsS3Service
+      .copyObject(
+        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+      )
+      .then(() => {
+        // Fire and forget, no need to wait for the result
+        this.awsS3Service
+          .deleteObject(
+            `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+          )
+          .catch((reason) => {
+            // Tolerate failure, but log what happened
+            this.logger.error(
+              `Could not delete case files records for case ${theCase.id} and police case ${policeCaseNumber} from AWS S3`,
+              { reason },
+            )
+          })
+
+        return { delivered: true }
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to archive case files records for case ${theCase.id} and police case ${policeCaseNumber}`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
   }
 
   async deliverRequestToCourt(

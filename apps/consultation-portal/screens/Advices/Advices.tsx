@@ -76,7 +76,7 @@ export const AdvicesScreen = () => {
   }
 
   const renderCards = () => {
-    if (getAdvicesLoading) {
+    if (userLoading || getAdvicesLoading) {
       return (
         <Box
           display="flex"
