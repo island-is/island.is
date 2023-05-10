@@ -42,6 +42,22 @@ const fileExtensionWhitelist = {
 
 const date = getShortDate(new Date())
 
+const AgencyText = () => {
+  return (
+    <Text marginTop={2} variant="small">
+      Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð
+      þaðan,{' '}
+      <a
+        target="_blank"
+        href="https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf"
+        rel="noopener noreferrer"
+      >
+        sjá nánar hér.
+      </a>
+    </Text>
+  )
+}
+
 export const WriteReviewCard = ({
   card,
   isLoggedIn,
@@ -55,6 +71,8 @@ export const WriteReviewCard = ({
   const [showUpload, setShowUpload] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showInputFileError, setShowInputFileError] = useState(false)
+  const [inputFileErrorText, setInputFileErrorText] = useState('')
 
   const { createUploadUrl, postAdviceMutation } = usePostAdvice()
 
@@ -108,48 +126,61 @@ export const WriteReviewCard = ({
 
   const onClick = async () => {
     setIsSubmitting(true)
+
     if (review.length > 10) {
       setShowInputError(false)
-      const mappedFileList = await Promise.all(
-        fileList.map((file) => {
-          return new Promise((resolve, reject) => {
-            createUploadUrl({
-              variables: {
-                filename: file.name,
-              },
-            })
-              .then((response) => {
-                uploadFile(file, response.data.createUploadUrl)
-                  .then(() => {
-                    resolve(response.data.createUploadUrl.fields.key)
-                  })
-                  .catch(() => reject())
-              })
-              .catch(() => reject())
-          })
-        }),
-      )
-
-      const objToSend = {
-        caseId: caseId,
-        caseAdviceCommand: {
-          content: review,
-          fileUrls: mappedFileList,
-        },
-      }
-
-      await postAdviceMutation({
-        variables: {
-          input: objToSend,
-        },
+      const fileListCheck = fileList.filter((file) => {
+        const indexOfDot = file.name.lastIndexOf('.')
+        const fileName = file.name.substring(0, indexOfDot)
+        return fileName.length > 100
       })
-        .then(() => {
-          setReview('')
-          setFileList([])
-          refetchAdvices()
-          toast.success('Umsögn send inn')
+      if (fileListCheck.length > 0) {
+        setShowInputFileError(true)
+        setInputFileErrorText('Skráarnafn má í mesta lagi vera 100 stafbil.')
+        toast.error('Skráarnafn má í mesta lagi vera 100 stafbil.')
+      } else {
+        setShowInputFileError(false)
+        setInputFileErrorText('')
+        const mappedFileList = await Promise.all(
+          fileList.map((file) => {
+            return new Promise((resolve, reject) => {
+              createUploadUrl({
+                variables: {
+                  filename: file.name,
+                },
+              })
+                .then((response) => {
+                  uploadFile(file, response.data.createUploadUrl)
+                    .then(() => {
+                      resolve(response.data.createUploadUrl.fields.key)
+                    })
+                    .catch(() => reject())
+                })
+                .catch(() => reject())
+            })
+          }),
+        )
+        const objToSend = {
+          caseId: caseId,
+          caseAdviceCommand: {
+            content: review,
+            fileUrls: mappedFileList,
+          },
+        }
+
+        await postAdviceMutation({
+          variables: {
+            input: objToSend,
+          },
         })
-        .catch(() => toast.error('Ekki tókst að senda inn umsögn'))
+          .then(() => {
+            setReview('')
+            setFileList([])
+            refetchAdvices()
+            toast.success('Umsögn send inn')
+          })
+          .catch(() => toast.error('Ekki tókst að senda inn umsögn'))
+      }
     } else {
       setShowInputError(true)
     }
@@ -225,7 +256,7 @@ export const WriteReviewCard = ({
         value={review}
         onChange={(e) => setReview(e.target.value)}
         hasError={showInputError && review.length <= REVIEW_MINIMUM_LENGTH}
-        errorMessage="Texti þarf að vera að minnsta kosti 10 stafbil."
+        errorMessage="Texti þarf að vera að minnsta kosti 10 stafbil og mesta lagi."
       />
       <Box paddingTop={3}>
         {showUpload && (
@@ -241,6 +272,7 @@ export const WriteReviewCard = ({
               onChange={onChange}
               onRemove={onRemove}
               maxSize={10000000}
+              errorMessage={showInputFileError && inputFileErrorText}
             />
           </Box>
         )}
@@ -268,26 +300,17 @@ export const WriteReviewCard = ({
         Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er
         10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.
       </Text>
+      <AgencyText />
     </Box>
   ) : (
-    <Box>
+    <>
       <SubscriptionActionBox
-        heading="Skrifa umsögn"
-        text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur."
+        heading="Viltu skrifa umsögn?"
+        text="Öllum er frjálst að taka þátt í samráðinu. Umsagnir verða birtar jafnóðum og þær berast. Þú þarft að vera skráð(ur) inn til að geta sent umsögn."
         cta={{ label: 'Skrá mig inn', onClick: LogIn }}
       />
-      <Text marginTop={2}>
-        Ef umsögnin er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf
-        umboð þaðan,{' '}
-        <a
-          target="_blank"
-          href="https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf"
-          rel="noopener noreferrer"
-        >
-          sjá nánar hér.
-        </a>
-      </Text>
-    </Box>
+      <AgencyText />
+    </>
   )
 }
 

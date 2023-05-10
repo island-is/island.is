@@ -48,6 +48,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/announcement-of-death                   @island-is/juni
 /libs/application/templates/driving-license/                                                             @island-is/juni
 /libs/application/templates/driving-assessment-approval/                                                 @island-is/juni
+/libs/application/templates/driving-learners-permit/                                                     @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/driving-learners-permit/                @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission              @island-is/juni
 /libs/api/domains/driving-license/                                                                       @island-is/juni
 /libs/api/domains/education/                                                                             @island-is/juni
@@ -89,6 +91,7 @@
 /libs/clients/sessions                                                                                   @island-is/aranja
 /libs/portals/shared-modules/delegations                                                                 @island-is/aranja
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
+/libs/service-portal/consent                                                                             @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
@@ -220,6 +223,9 @@
 /apps/auth-admin-web/                                                                                    @island-is/fuglar @island-is/aranja
 /libs/auth-api-lib/                                                                                      @island-is/fuglar @island-is/aranja
 /libs/auth-nest-tools/                                                                                   @island-is/fuglar @island-is/aranja
+/libs/application/templates/european-health-insurance-card/                                              @island-is/fuglar
+/libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/         @island-is/fuglar
+/libs/clients/ehic-client-v1                                                                             @island-is/fuglar
 
 /apps/services/auth/personal-representative/                                                             @island-is/programm @island-is/aranja
 /apps/services/auth/personal-representative-public/                                                      @island-is/programm @island-is/aranja

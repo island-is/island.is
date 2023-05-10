@@ -175,7 +175,7 @@ export const m = defineMessages({
   // Estate members, assets, vehicles
   estateMembersTitle: {
     id: 'es.application:estateMembersTitle',
-    defaultMessage: 'Erfingjar',
+    defaultMessage: 'Erfingjar og erfðaskrá',
     description: '',
   },
   estateMembersSubtitle: {
@@ -215,9 +215,45 @@ export const m = defineMessages({
     defaultMessage: 'Erfðaskrá í vörslu sýslumanns',
     description: '',
   },
+  willsAndAgreements: {
+    id: 'es.application:willsAndAgreements',
+    defaultMessage: 'Erfðaskrá og kaupmáli',
+    description: '',
+  },
+  willsAndAgreementsDescription: {
+    id: 'es.application:willsAndAgreementsDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  doesWillExist: {
+    id: 'es.application:doesWillExist',
+    defaultMessage: 'Er til erfðaskrá?',
+    description: '',
+  },
+  doesAgreementExist: {
+    id: 'es.application:doesAgreementExist',
+    defaultMessage: 'Er til kaupmáli?',
+    description: '',
+  },
+  doesPermissionToPostponeExist: {
+    id: 'es.application:doesPermissionToPostponeExist',
+    defaultMessage: 'Er til leyfi til setu í óskiptu búi?',
+    description: '',
+  },
   agreements: {
     id: 'es.application:agreements',
     defaultMessage: 'Kaupmáli',
+    description: '',
+  },
+  additionalInfo: {
+    id: 'es.application:additionalInfo',
+    defaultMessage: 'Athugasemdir',
+    description: '',
+  },
+  additionalInfoPlaceholder: {
+    id: 'es.application:additionalInfoPlaceholder',
+    defaultMessage: 'Skráðu athugasemdir ef einhverjar eru',
     description: '',
   },
   otherWills: {
@@ -528,6 +564,22 @@ export const m = defineMessages({
       'Þú hefur valið að lýsa því yfir að þú óskir eftir að ofangreint dánarbú verði tekið til opinberra skipta. Nánari upplýsingar um skilyrði opinberra skipta má finna á eftirfarandi vefslóð á Ísland.is',
     description: '',
   },
+  divisionOfEstateTerms: {
+    id: 'es.application:divisionOfEstateTerms',
+    defaultMessage: 'Skilmálar',
+    description: '',
+  },
+  divisionOfEstateTermsText: {
+    id: 'es.application:divisionOfEstateTermsText#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar sendar í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  divisionOfEstateSubmissionCheckbox: {
+    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
+    defaultMessage: 'Ég hef lesið skilmálana',
+    description: '',
+  },
   overviewSubtitlePermitToPostpone: {
     id: 'es.application:overviewSubtitlePermitToPostpone#markdown',
     defaultMessage:
@@ -643,6 +695,11 @@ export const m = defineMessages({
     id: 'es.application:inheritanceEnableMember',
     defaultMessage: 'Virkja',
     description: 'Inheritance step enable member of estate',
+  },
+  inheritanceDeleteMember: {
+    id: 'es.application:inheritanceDeleteMember',
+    defaultMessage: 'Eyða',
+    description: 'Inheritance step delete member of estate',
   },
   inheritanceKtLabel: {
     id: 'es.application:inheritanceKtLabel',
@@ -773,7 +830,7 @@ export const m = defineMessages({
   },
   gunNumberLabel: {
     id: 'es.application:gunNumberLabel',
-    defaultMessage: 'Raðnúmer ökutækis',
+    defaultMessage: 'Raðnúmer skotvopns',
     description: 'Gun number label',
   },
   gunTypeLabel: {

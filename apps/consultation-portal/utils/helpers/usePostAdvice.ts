@@ -8,20 +8,9 @@ import {
 export const usePostAdvice = () => {
   const client = initApollo()
 
-  const [
-    createUploadUrl,
-    { error: createError },
-  ] = useMutation(CREATE_UPLOAD_URL, { client: client })
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL, { client: client })
 
-  const [
-    postAdviceMutation,
-    {
-      data: postData,
-      loading: postLoading,
-      error: postError,
-      called: postCalled,
-    },
-  ] = useMutation(CASE_POST_ADVICE, {
+  const [postAdviceMutation] = useMutation(CASE_POST_ADVICE, {
     client: client,
   })
 

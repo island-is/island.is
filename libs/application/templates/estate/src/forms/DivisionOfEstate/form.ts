@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -11,6 +12,7 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
+import { YES } from '../../lib/constants'
 
 export const form: Form = buildForm({
   id: 'divisionOfEstate',
@@ -35,15 +37,37 @@ export const form: Form = buildForm({
               id: 'deceasedHeader',
               title: m.theDeceased,
               titleVariant: 'h3',
-            }),
-            buildDescriptionField({
-              id: 'space0',
-              title: '',
-              space: 'gutter',
+              marginBottom: 2,
             }),
             ...deceasedInfoFields,
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'approveSubmission',
+      title: m.divisionOfEstateTerms,
+      children: [
+        buildMultiField({
+          id: 'approveSubmission',
+          title: m.divisionOfEstateTerms,
+          description: m.divisionOfEstateTermsText,
+          children: [
+            buildCheckboxField({
+              id: 'readTerms',
+              title: '',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: m.divisionOfEstateSubmissionCheckbox.defaultMessage,
+                },
+              ],
+            }),
             buildSubmitField({
-              id: 'divisionOfEstate.submit',
+              id: 'divisionOfEstateByHeirs.submit',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [

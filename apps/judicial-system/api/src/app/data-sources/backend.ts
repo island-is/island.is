@@ -292,6 +292,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`case/${id}/limitedAccess`)
   }
 
+  limitedAccessUpdateCase(id: string, updateCase: UpdateCase): Promise<Case> {
+    return this.patch(`case/${id}/limitedAccess`, updateCase)
+  }
+
   limitedAccessTransitionCase(
     id: string,
     transitionCase: TransitionCase,

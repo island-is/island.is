@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -15,9 +16,11 @@ import { format as formatNationalId } from 'kennitala'
 import {
   formatBankInfo,
   formatCurrency,
+  formatPhoneNumber,
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
+import { YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
@@ -69,10 +72,39 @@ export const overview = buildSection({
                     ? formatNationalId(member.nationalId)
                     : member.dateOfBirth,
                   member.relation,
+                  formatPhoneNumber(member.phone || ''),
+                  member.email,
                 ],
               })),
           },
         ),
+        buildKeyValueField({
+          label: m.doesWillExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.wills'),
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.doesAgreementExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.agreement'),
+          width: 'half',
+        }),
+        buildDescriptionField({
+          id: 'spaceTestament',
+          title: '',
+          space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
+        }),
+        buildKeyValueField({
+          label: m.doesPermissionToPostponeExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.dividedEstate'),
+          width: 'half',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
+        }),
         buildDescriptionField({
           id: 'space1',
           title: '',
@@ -100,6 +132,11 @@ export const overview = buildSection({
                   title: asset.description,
                   description: [
                     `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                    m.overviewMarketValue.defaultMessage +
+                      ': ' +
+                      (asset.marketValue
+                        ? formatCurrency(asset.marketValue)
+                        : '0 kr.'),
                   ],
                 }),
               ),

@@ -1,18 +1,22 @@
 import {
   defineTemplateApi,
   PaymentCatalogApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
 export {
   NationalRegistryUserApi,
-  UserProfileApi,
   MockProviderApi,
 } from '@island.is/application/types'
 
 export const IdentityDocumentApi = defineTemplateApi({
   action: 'identityDocument',
 })
-
+export const UserInfoApi = UserProfileApi.configure({
+  params: {
+    catchMock: true,
+  },
+})
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
     organizationId: SYSLUMADUR_NATIONAL_ID,

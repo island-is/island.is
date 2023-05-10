@@ -6,27 +6,27 @@ import { uuid } from 'uuidv4'
 import { toast, UploadFile } from '@island.is/island-ui/core'
 import { CaseFileCategory } from '@island.is/judicial-system/types'
 import {
-  CreateFileMutationDocument,
-  CreateFileMutationMutation,
-  CreateFileMutationMutationVariables,
-  CreatePresignedPostMutationDocument,
-  CreatePresignedPostMutationMutation,
-  CreatePresignedPostMutationMutationVariables,
-  DeleteFileMutationDocument,
-  DeleteFileMutationMutation,
-  DeleteFileMutationMutationVariables,
-  LimitedAccessCreateFileMutationDocument,
-  LimitedAccessCreateFileMutationMutation,
-  LimitedAccessCreateFileMutationMutationVariables,
-  LimitedAccessCreatePresignedPostMutationDocument,
-  LimitedAccessCreatePresignedPostMutationMutation,
-  LimitedAccessCreatePresignedPostMutationMutationVariables,
-  LimitedAccessDeleteFileMutationDocument,
-  LimitedAccessDeleteFileMutationMutation,
-  LimitedAccessDeleteFileMutationMutationVariables,
+  CreateFileDocument,
+  CreateFileMutation,
+  CreateFileMutationVariables,
+  CreatePresignedPostDocument,
+  CreatePresignedPostMutation,
+  CreatePresignedPostMutationVariables,
+  DeleteFileDocument,
+  DeleteFileMutation,
+  DeleteFileMutationVariables,
+  LimitedAccessCreateFileDocument,
+  LimitedAccessCreateFileMutation,
+  LimitedAccessCreateFileMutationVariables,
+  LimitedAccessCreatePresignedPostDocument,
+  LimitedAccessCreatePresignedPostMutation,
+  LimitedAccessCreatePresignedPostMutationVariables,
+  LimitedAccessDeleteFileDocument,
+  LimitedAccessDeleteFileMutation,
+  LimitedAccessDeleteFileMutationVariables,
   PresignedPost,
-  UploadPoliceCaseFileMutationDocument,
-  UploadPoliceCaseFileMutationMutation,
+  UploadPoliceCaseFileDocument,
+  UploadPoliceCaseFileMutation,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { errors } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
@@ -87,34 +87,32 @@ export const useS3Upload = (caseId: string) => {
   const { formatMessage } = useIntl()
 
   const [createPresignedPostMutation] = useMutation<
-    CreatePresignedPostMutationMutation,
-    CreatePresignedPostMutationMutationVariables
-  >(CreatePresignedPostMutationDocument)
+    CreatePresignedPostMutation,
+    CreatePresignedPostMutationVariables
+  >(CreatePresignedPostDocument)
   const [limitedAccessCreatePresignedPostMutation] = useMutation<
-    LimitedAccessCreatePresignedPostMutationMutation,
-    LimitedAccessCreatePresignedPostMutationMutationVariables
-  >(LimitedAccessCreatePresignedPostMutationDocument)
+    LimitedAccessCreatePresignedPostMutation,
+    LimitedAccessCreatePresignedPostMutationVariables
+  >(LimitedAccessCreatePresignedPostDocument)
   const [createFileMutation] = useMutation<
-    CreateFileMutationMutation,
-    CreateFileMutationMutationVariables
-  >(CreateFileMutationDocument)
+    CreateFileMutation,
+    CreateFileMutationVariables
+  >(CreateFileDocument)
   const [limitedAccessCreateFileMutation] = useMutation<
-    LimitedAccessCreateFileMutationMutation,
-    LimitedAccessCreateFileMutationMutationVariables
-  >(LimitedAccessCreateFileMutationDocument)
+    LimitedAccessCreateFileMutation,
+    LimitedAccessCreateFileMutationVariables
+  >(LimitedAccessCreateFileDocument)
   const [deleteFileMutation] = useMutation<
-    DeleteFileMutationMutation,
-    DeleteFileMutationMutationVariables
-  >(DeleteFileMutationDocument)
+    DeleteFileMutation,
+    DeleteFileMutationVariables
+  >(DeleteFileDocument)
   const [limitedAccessDeleteFileMutation] = useMutation<
-    LimitedAccessDeleteFileMutationMutation,
-    LimitedAccessDeleteFileMutationMutationVariables
-  >(LimitedAccessDeleteFileMutationDocument)
+    LimitedAccessDeleteFileMutation,
+    LimitedAccessDeleteFileMutationVariables
+  >(LimitedAccessDeleteFileDocument)
   const [
     uploadPoliceCaseFileMutation,
-  ] = useMutation<UploadPoliceCaseFileMutationMutation>(
-    UploadPoliceCaseFileMutationDocument,
-  )
+  ] = useMutation<UploadPoliceCaseFileMutation>(UploadPoliceCaseFileDocument)
 
   const upload = useCallback(
     async (
@@ -139,9 +137,9 @@ export const useS3Upload = (caseId: string) => {
         })
 
         const presignedPost = limitedAccess
-          ? (data as LimitedAccessCreatePresignedPostMutationMutation)
+          ? (data as LimitedAccessCreatePresignedPostMutation)
               ?.limitedAccessCreatePresignedPost
-          : (data as CreatePresignedPostMutationMutation)?.createPresignedPost
+          : (data as CreatePresignedPostMutation)?.createPresignedPost
 
         if (!presignedPost?.fields?.key) {
           throw Error('failed to get presigned post')
@@ -174,9 +172,8 @@ export const useS3Upload = (caseId: string) => {
         })
 
         const createdFile = limitedAccess
-          ? (data as LimitedAccessCreateFileMutationMutation)
-              ?.limitedAccessCreateFile
-          : (data as CreateFileMutationMutation)?.createFile
+          ? (data as LimitedAccessCreateFileMutation)?.limitedAccessCreateFile
+          : (data as CreateFileMutation)?.createFile
 
         if (!createdFile?.id) {
           throw Error('failed to add file to case')
@@ -395,9 +392,9 @@ export const useS3Upload = (caseId: string) => {
           const { data } = await remove(file.id)
 
           const success = limitedAccess
-            ? (data as LimitedAccessDeleteFileMutationMutation)
-                ?.limitedAccessDeleteFile.success
-            : (data as DeleteFileMutationMutation)?.deleteFile.success
+            ? (data as LimitedAccessDeleteFileMutation)?.limitedAccessDeleteFile
+                .success
+            : (data as DeleteFileMutation)?.deleteFile.success
 
           if (!success) {
             throw new Error(`Failed to delete file: ${file.id}`)

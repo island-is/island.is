@@ -45,6 +45,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'crimeScenes',
   'indictmentIntroduction',
   'requestDriversLicenseSuspension',
+  'prosecutorStatementDate',
 ]
 
 const courtFields: (keyof UpdateCaseDto)[] = [
@@ -87,6 +88,13 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'subpoenaType',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
+  'appealCaseNumber',
+  'appealAssistantId',
+  'appealJudge1Id',
+  'appealJudge2Id',
+  'appealJudge3Id',
+  'appealConclusion',
+  'appealRulingDecision',
 ]
 
 const staffFields: (keyof UpdateCaseDto)[] = [
@@ -94,6 +102,8 @@ const staffFields: (keyof UpdateCaseDto)[] = [
   'isolationToDate',
   'caseModifiedExplanation',
 ]
+
+const limitedAccessFields: (keyof UpdateCaseDto)[] = ['defendantStatementDate']
 
 // Allows prosecutors to update a specific set of fields
 export const prosecutorUpdateRule: RolesRule = {
@@ -139,6 +149,13 @@ export const staffUpdateRule: RolesRule = {
   dtoFields: staffFields,
 }
 
+// Allows defenders to update a specific set of fields
+export const defenderUpdateRule: RolesRule = {
+  role: UserRole.DEFENDER,
+  type: RulesType.FIELD,
+  dtoFields: limitedAccessFields,
+}
+
 // Allows prosecutors to open, submit and delete cases
 export const prosecutorTransitionRule: RolesRule = {
   role: UserRole.PROSECUTOR,
@@ -150,6 +167,24 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
   ],
+  canActivate: (request) => {
+    const theCase = request.case
+
+    // Deny if the case is missing - shuould never happen
+    if (!theCase) {
+      return false
+    }
+
+    // Deny certain transitions on indictment cases
+    if (
+      isIndictmentCase(theCase.type) &&
+      request.body.transition === CaseTransition.APPEAL
+    ) {
+      return false
+    }
+
+    return true
+  },
 }
 
 // Allows representatives to open, submit and delete cases
@@ -172,6 +207,24 @@ export const defenderTransitionRule: RolesRule = {
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [CaseTransition.APPEAL],
+  canActivate: (request) => {
+    const theCase = request.case
+
+    // Deny if the case is missing - should never happen
+    if (!theCase) {
+      return false
+    }
+
+    // Deny certain transitions on indictment cases
+    if (
+      isIndictmentCase(theCase.type) &&
+      request.body.transition === CaseTransition.APPEAL
+    ) {
+      return false
+    }
+
+    return true
+  },
 }
 
 // Allows judges to receive, accept, reject and dismiss cases,
@@ -187,6 +240,7 @@ export const judgeTransitionRule: RolesRule = {
     CaseTransition.DISMISS,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
+    CaseTransition.COMPLETE_APPEAL,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -196,13 +250,15 @@ export const judgeTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny if rejecting, dismissing or reopening an indictment case
+    // Deny certain transitions on indictment cases
     if (
       isIndictmentCase(theCase.type) &&
       [
         CaseTransition.REJECT,
         CaseTransition.DISMISS,
         CaseTransition.REOPEN,
+        CaseTransition.RECEIVE_APPEAL,
+        CaseTransition.COMPLETE_APPEAL,
       ].includes(request.body.transition)
     ) {
       return false
@@ -223,6 +279,8 @@ export const registrarTransitionRule: RolesRule = {
     CaseTransition.RECEIVE,
     CaseTransition.ACCEPT,
     CaseTransition.REOPEN,
+    CaseTransition.RECEIVE_APPEAL,
+    CaseTransition.COMPLETE_APPEAL,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -232,7 +290,7 @@ export const registrarTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny if accepting a non indictment case
+    // Deny certain transactions on non indictment cases
     if (
       !isIndictmentCase(theCase.type) &&
       request.body.transition === CaseTransition.ACCEPT
@@ -240,10 +298,14 @@ export const registrarTransitionRule: RolesRule = {
       return false
     }
 
-    // Deny if reopening an indictment case
+    // Deny certain transitions on indictment cases
     if (
       isIndictmentCase(theCase.type) &&
-      request.body.transition === CaseTransition.REOPEN
+      [
+        CaseTransition.REOPEN,
+        CaseTransition.RECEIVE_APPEAL,
+        CaseTransition.COMPLETE_APPEAL,
+      ].includes(request.body.transition)
     ) {
       return false
     }
