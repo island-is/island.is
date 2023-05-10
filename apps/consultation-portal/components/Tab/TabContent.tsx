@@ -14,6 +14,7 @@ export interface TabContentProps {
   setSortTitle: (val: SortOptions) => void
   dontShowNew?: boolean
   dontShowChanges?: boolean
+  isMySubscriptions?: boolean
 }
 
 export const TabContent = ({
@@ -26,6 +27,7 @@ export const TabContent = ({
   setSortTitle,
   dontShowNew,
   dontShowChanges,
+  isMySubscriptions,
 }: TabContentProps) => {
   return (
     <Box paddingTop={[3, 3, 3, 5, 5]}>
@@ -39,20 +41,16 @@ export const TabContent = ({
         currentTab={currentTab}
       />
       <Box paddingTop={[3, 3, 3, 5, 5]}>
-        {subscriptionArray ? (
+        {subscriptionArray && (
           <SubscriptionTable
             currentTab={currentTab}
             subscriptionArray={subscriptionArray}
             setSubscriptionArray={setSubscriptionArray}
             dontShowNew={dontShowNew}
             dontShowChanges={dontShowChanges}
+            searchValue={searchValue}
+            isMySubscriptions={isMySubscriptions}
           />
-        ) : (
-          <Text variant="h4">
-            {searchValue
-              ? 'Engin áskrift fannst. Prófaðu að hreinsa úr leit til að sjá áskriftir.'
-              : 'Engin áskrift fannst.'}
-          </Text>
         )}
       </Box>
     </Box>

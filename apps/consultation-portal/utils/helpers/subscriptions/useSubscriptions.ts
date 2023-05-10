@@ -15,6 +15,7 @@ interface Props {
   cases: CaseForSubscriptions[]
   dontShowNew?: boolean
   dontShowChanges?: boolean
+  isMySubscriptions?: boolean
 }
 
 const useSubscriptions = ({
@@ -22,6 +23,7 @@ const useSubscriptions = ({
   cases,
   dontShowNew,
   dontShowChanges,
+  isMySubscriptions,
 }: Props) => {
   const { Institutions, PolicyAreas } = getInitValues({ types: types })
   const initSubs = initSubscriptions({
@@ -54,6 +56,7 @@ const useSubscriptions = ({
     },
     dontShowNew: dontShowNew,
     dontShowChanges: dontShowChanges,
+    isMySubscriptions: isMySubscriptions,
   })
 
   return {
