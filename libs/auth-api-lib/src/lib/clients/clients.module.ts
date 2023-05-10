@@ -17,6 +17,7 @@ import { ClientsTranslationService } from './clients-translation.service'
 import { Domain } from '../resources/models/domain.model'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { AdminScopeService } from '../resources/admin/admin-scope.service'
+import { ApiScopeUserClaim } from '../resources/models/api-scope-user-claim.model'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AdminScopeService } from '../resources/admin/admin-scope.service'
       ClientSecret,
       Domain,
       ApiScope,
+      ApiScopeUserClaim,
     ]),
     TranslationModule,
   ],

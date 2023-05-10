@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildKeyValueField,
   buildMultiField,
   buildSection,
   buildSubmitField,
@@ -19,6 +20,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
+import { YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
@@ -76,6 +78,33 @@ export const overview = buildSection({
               })),
           },
         ),
+        buildKeyValueField({
+          label: m.doesWillExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.wills'),
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.doesAgreementExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.agreement'),
+          width: 'half',
+        }),
+        buildDescriptionField({
+          id: 'spaceTestament',
+          title: '',
+          space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
+        }),
+        buildKeyValueField({
+          label: m.doesPermissionToPostponeExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.dividedEstate'),
+          width: 'half',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
+        }),
         buildDescriptionField({
           id: 'space1',
           title: '',

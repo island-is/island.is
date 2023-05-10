@@ -1,6 +1,6 @@
 import { toast } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
-import { Area, SubscriptionTypeKey } from '../../types/enums'
+import { Area } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
@@ -10,7 +10,10 @@ import { useLogIn, useSearchSubscriptions, useUser } from '../../utils/helpers'
 import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
 import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
 import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
-import { useSubscriptions } from '../../utils/helpers/subscriptions'
+import {
+  useSubscriptions,
+  filterSubscriptions as F,
+} from '../../utils/helpers/subscriptions'
 import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
 
 interface SubProps {
@@ -19,11 +22,7 @@ interface SubProps {
   isNotAuthorized: boolean
 }
 
-export const UserSubscriptions = ({
-  allcases,
-  types,
-  isNotAuthorized,
-}: SubProps) => {
+export const UserSubscriptions = ({ allcases, types }: SubProps) => {
   const { isAuthenticated, userLoading } = useUser()
   const [submitSubsIsLoading, setSubmitSubsIsLoading] = useState(false)
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
@@ -132,33 +131,9 @@ export const UserSubscriptions = ({
       subscribedToAllChangesObj,
     } = subscriptionArray
 
-    const filteredCases = cases
-      .filter((item) => !item.checked)
-      .map((i) => {
-        const obj = {
-          id: i.id,
-          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
-        }
-        return obj
-      })
-    const filteredInstitutions = institutions
-      .filter((item) => !item.checked)
-      .map((i) => {
-        const obj = {
-          id: parseInt(i.id),
-          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
-        }
-        return obj
-      })
-    const filteredPolicyAreas = policyAreas
-      .filter((item) => !item.checked)
-      .map((i) => {
-        const obj = {
-          id: parseInt(i.id),
-          subscriptionType: SubscriptionTypeKey[i.subscriptionType],
-        }
-        return obj
-      })
+    const filteredCases = F.filterOutChecked(cases)
+    const filteredInstitutions = F.filterOutChecked(institutions)
+    const filteredPolicyAreas = F.filterOutChecked(policyAreas)
     const subscribeToAll =
       subscribedToAllNewObj.checked || subscribedToAllChangesObj.checked
         ? false
@@ -170,7 +145,6 @@ export const UserSubscriptions = ({
       subscribeToAll: subscribeToAll,
       subscribeToAllType: userSubscriptions?.subscribedToAllType,
     }
-
     await postSubsMutation({
       variables: {
         input: objToSend,

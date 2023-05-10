@@ -1,4 +1,4 @@
-import { Modal } from '../../Modal/Modal'
+import { Modal } from '@island.is/react/components'
 import {
   Box,
   Button,
@@ -83,10 +83,13 @@ function AddPermissions({ isVisible, onClose }: AddPermissionsProps) {
   return (
     <Form method="post">
       <Modal
+        label={formatMessage(m.permissionsModalTitle)}
         title={formatMessage(m.permissionsModalTitle)}
         id="add-permissions"
         isVisible={isVisible}
         onClose={onClose}
+        closeButtonLabel={formatMessage(m.closeModal)}
+        scrollType="outside"
       >
         <Box marginTop={1} marginBottom={4}>
           <Text>{formatMessage(m.permissionsModalDescription)}</Text>
