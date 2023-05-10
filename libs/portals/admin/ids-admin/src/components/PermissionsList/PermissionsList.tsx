@@ -16,6 +16,7 @@ import { IDSAdminPaths } from '../../lib/paths'
 import React, { useState } from 'react'
 import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
 import { MockData } from './PermissionsList.loader'
+import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
 
 function PermissionsList() {
   const { formatMessage } = useLocale()
@@ -23,24 +24,17 @@ function PermissionsList() {
   const isEmpty = !Array.isArray(loaderData) || loaderData.length === 0
   const navigate = useNavigate()
   const { tenant } = useParams()
-  const [filteredPermissions, setFilteredPermissions] = useState(loaderData)
+
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
+  const [filteredPermissions, filterPermissions] = useLooseSearch(
+    loaderData,
+    ['displayName', 'id'],
+    'id',
+  )
 
-  const handleSearch = (value: string) => {
+  const handleSearch = (value = '') => {
     setInputSearchValue(value)
-
-    if (value.length > 0) {
-      const filteredList = loaderData.filter((item) => {
-        const val = value.toLowerCase()
-        return (
-          item.displayName.toLowerCase().includes(val) ||
-          item.id.toLowerCase().includes(val)
-        )
-      })
-      setFilteredPermissions(filteredList)
-    } else {
-      setFilteredPermissions(loaderData)
-    }
+    filterPermissions(value)
   }
 
   const handleCreatePermission = () => {

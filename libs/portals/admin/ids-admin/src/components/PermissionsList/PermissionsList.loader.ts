@@ -8,7 +8,7 @@ const mock = [
   },
   {
     displayName: 'Vegagerðin',
-    id: '@admin.island.is',
+    id: '@admin.vegagerdin.is',
     environments: ['Production', 'Staging', 'Development'],
   },
 ]

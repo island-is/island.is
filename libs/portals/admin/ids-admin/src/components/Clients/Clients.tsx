@@ -16,6 +16,7 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
 import { AuthClients } from './Clients.loader'
 import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
+import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
 
 const Clients = () => {
   const originalClients = useLoaderData() as AuthClients
@@ -23,26 +24,16 @@ const Clients = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const [clients, setClients] = useState<AuthClients>(originalClients)
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
+  const [clients, filterClients] = useLooseSearch(
+    originalClients,
+    ['defaultEnvironment.displayName[0].value', 'clientId'],
+    'clientId',
+  )
 
   const handleSearch = (value: string) => {
     setInputSearchValue(value)
-
-    if (value.length > 0) {
-      const filteredList = originalClients.filter((client) => {
-        return (
-          client?.defaultEnvironment.displayName[0].value
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          client.clientId.toLowerCase().includes(value.toLowerCase())
-        )
-      })
-
-      setClients(filteredList)
-    } else {
-      setClients(originalClients)
-    }
+    filterClients(value)
   }
 
   const openCreateClientModal = () => {

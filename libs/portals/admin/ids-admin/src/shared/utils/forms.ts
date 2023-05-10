@@ -21,6 +21,12 @@ const pseudolocalizationMap = {
   Ý: 'y',
 }
 
+export const pseudolocalizeString = (str = ''): string => {
+  return str.replace(/[ðþæöáéíóúýÐÞÆÖÁÉÍÓÚÝ]/g, (m) => {
+    return pseudolocalizationMap[m as keyof typeof pseudolocalizationMap]
+  })
+}
+
 /**
  * Formats the client id to be lowercase and replace spaces with dashes.
  */
@@ -56,9 +62,7 @@ export const parseID = ({
     value = value.replace(prefixWithoutSlash, '')
   }
 
-  value = value.replace(/[ðþæöáéíóúýÐÞÆÖÁÉÍÓÚÝ]/g, (m) => {
-    return pseudolocalizationMap[m as keyof typeof pseudolocalizationMap]
-  })
+  value = pseudolocalizeString(value)
 
   // If user tries to erase the prefix, we add it back
   return `${prefix}${formatID(value).split('/').pop()}`
