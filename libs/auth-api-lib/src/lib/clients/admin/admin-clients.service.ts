@@ -36,8 +36,8 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
-import { ApiScopeDTO } from '../../resources/dto/api-scope.dto'
 import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
+import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -679,7 +679,7 @@ export class AdminClientsService {
   }: {
     clientId: string
     tenantId: string
-  }): Promise<ApiScopeDTO[]> {
+  }): Promise<AdminScopeDTO[]> {
     const client = await this.clientModel.findOne({
       where: {
         clientId,
@@ -718,6 +718,15 @@ export class AdminClientsService {
       },
     })
 
-    return apiScopes.map((apiScope) => apiScope.toDTO())
+    const translations = await this.adminTranslationService.getApiScopeTranslations(
+      apiScopes.map(({ name }) => name),
+    )
+
+    return apiScopes.map((apiScope) =>
+      this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+        apiScope,
+        translations,
+      ),
+    )
   }
 }
