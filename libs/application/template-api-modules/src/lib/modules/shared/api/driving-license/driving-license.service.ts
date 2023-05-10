@@ -200,7 +200,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   private async getDrivingAssessment(
     nationalId: string,
   ): Promise<StudentAssessment | null> {
-    console.log('WE ARE HERE FOR SOME HEKCING REASON')
     const assessment = await this.drivingLicenseService.getDrivingAssessment({
       nationalId,
     })
