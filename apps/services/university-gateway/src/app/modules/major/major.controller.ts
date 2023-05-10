@@ -15,7 +15,7 @@ import {
   University,
 } from './major.model'
 
-@ApiTags('Major')
+@ApiTags('Majors')
 @Controller()
 export class MajorController {
   constructor(private readonly majorService: MajorService) {}
@@ -71,7 +71,7 @@ export class MajorController {
     return this.majorService.getMajors(year, season, universityId, degreeType)
   }
 
-  @Get('major/:id')
+  @Get('majors/:id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -89,7 +89,7 @@ export class MajorController {
     return this.majorService.getMajor(id)
   }
 
-  @Get('major/:id/details')
+  @Get('majors/:id/details')
   @ApiParam({
     name: 'id',
     required: true,

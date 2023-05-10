@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
 import { RegistrationService } from './registration.service'
 import {
   ApiBody,
@@ -10,12 +10,12 @@ import {
 } from '@nestjs/swagger'
 import { RegistrationDto, Registration } from './registration.model'
 
-@ApiTags('Registration')
+@ApiTags('Registrations')
 @Controller()
 export class RegistrationController {
   constructor(private readonly registrationService: RegistrationService) {}
 
-  @Get('registration/:id')
+  @Get('registrations/:id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -33,7 +33,7 @@ export class RegistrationController {
     return this.registrationService.getRegistration(id)
   }
 
-  @Post('registration')
+  @Post('registrations')
   @ApiBody({
     type: RegistrationDto,
   })
@@ -50,7 +50,7 @@ export class RegistrationController {
     return this.registrationService.postRegistration(registrationDto)
   }
 
-  @Put('registration/:id')
+  @Patch('registrations/:id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -67,10 +67,10 @@ export class RegistrationController {
   @ApiOperation({
     summary: 'Endpoint description for put registration',
   })
-  async putRegistration(
+  async patchRegistration(
     @Param('id') id: string,
     @Body() registrationDto: RegistrationDto,
   ): Promise<Registration> {
-    return this.registrationService.putRegistration(id, registrationDto)
+    return this.registrationService.patchRegistration(id, registrationDto)
   }
 }

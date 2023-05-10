@@ -9,7 +9,7 @@ import {
 } from '@nestjs/swagger'
 import { Course } from './course.model'
 
-@ApiTags('Course')
+@ApiTags('Courses')
 @Controller()
 export class CourseController {
   constructor(private readonly courseService: CourseService) {}
@@ -39,7 +39,7 @@ export class CourseController {
     return this.courseService.getCourses(majorId, universityId)
   }
 
-  @Get('course/:id')
+  @Get('courses/:id')
   @ApiParam({
     name: 'id',
     required: true,
