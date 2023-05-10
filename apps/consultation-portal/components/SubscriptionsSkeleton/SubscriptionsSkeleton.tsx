@@ -88,8 +88,10 @@ const SubscriptionsSkeleton = ({
       <Divider />
       <GridContainer>
         <Box paddingX={[0, 0, 0, 8, 15]} paddingTop={[3, 3, 3, 5, 5]}>
-          {getUserSubsLoading ? (
-            <LoadingDots />
+          {isMySubscriptions && getUserSubsLoading ? (
+            <>
+              <LoadingDots />
+            </>
           ) : (
             <Tabs
               selected={currentTab}
