@@ -9,6 +9,9 @@ import {
 } from '@nestjs/swagger'
 import { Course } from './course.model'
 
+//TODOx pagination á allt
+//TODOx bæta við nýju reitina
+
 @ApiTags('Courses')
 @Controller()
 export class CourseController {

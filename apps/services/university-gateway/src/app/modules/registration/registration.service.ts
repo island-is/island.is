@@ -34,7 +34,7 @@ export class RegistrationService {
     return updatedRegistration
   }
 
-  async patchRegistration(
+  async putRegistration(
     id: string,
     registrationDto: RegistrationDto,
   ): Promise<Registration> {

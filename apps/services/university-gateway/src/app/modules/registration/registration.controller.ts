@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common'
 import { RegistrationService } from './registration.service'
 import {
   ApiBody,
@@ -50,7 +50,7 @@ export class RegistrationController {
     return this.registrationService.postRegistration(registrationDto)
   }
 
-  @Patch('registrations/:id')
+  @Put('registrations/:id')
   @ApiParam({
     name: 'id',
     required: true,
@@ -67,10 +67,10 @@ export class RegistrationController {
   @ApiOperation({
     summary: 'Endpoint description for put registration',
   })
-  async patchRegistration(
+  async putRegistration(
     @Param('id') id: string,
     @Body() registrationDto: RegistrationDto,
   ): Promise<Registration> {
-    return this.registrationService.patchRegistration(id, registrationDto)
+    return this.registrationService.putRegistration(id, registrationDto)
   }
 }
