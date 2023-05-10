@@ -4,16 +4,18 @@ import {
   Column,
   Columns,
   GridContainer,
+  IconMapIcon,
   Input,
   Text,
 } from '@island.is/island-ui/core'
 import * as styles from './SubscriptionActionCard.css'
-import { useState } from 'react'
 
 interface SubscriptionButton {
   label: string
   onClick?: () => void
   disabled?: boolean
+  isLoading?: boolean
+  icon?: IconMapIcon
 }
 
 export interface SubscriptionActionCardProps {
@@ -82,13 +84,14 @@ export const SubscriptionActionCard = ({
                   return (
                     <Button
                       key={index}
-                      icon={'open'}
+                      icon={btn.icon}
                       iconType="outline"
                       nowrap
                       fluid
                       size="default"
                       onClick={btn.onClick}
                       disabled={btn.disabled}
+                      loading={btn.isLoading}
                     >
                       {btn.label}
                     </Button>
@@ -122,6 +125,7 @@ export const SubscriptionActionCard = ({
                     size="small"
                     onClick={btn.onClick}
                     disabled={btn.disabled}
+                    loading={btn.isLoading}
                   >
                     {btn.label}
                   </Button>

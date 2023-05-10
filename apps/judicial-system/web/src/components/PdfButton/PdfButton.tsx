@@ -10,7 +10,7 @@ interface Props {
   title: string
   pdfType?:
     | 'ruling'
-    | 'caseFiles'
+    | 'caseFilesRecord'
     | 'courtRecord'
     | 'request'
     | 'custodyNotice'
@@ -21,7 +21,7 @@ interface Props {
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType is caseFiles
+  policeCaseNumber?: string // Only used if pdfType is caseFilesRecord
 }
 
 const PdfButton: React.FC<Props> = ({
@@ -36,7 +36,7 @@ const PdfButton: React.FC<Props> = ({
 }) => {
   const handlePdfClick = async () => {
     const newPdfType =
-      pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
+      pdfType === 'caseFilesRecord' ? `${pdfType}/${policeCaseNumber}` : pdfType
     const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
 
     window.open(url, '_blank')
