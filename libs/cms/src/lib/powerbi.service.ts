@@ -27,8 +27,7 @@ export class PowerBiService {
     if (
       !powerBiSlice.owner ||
       !powerBiSlice.workspaceId ||
-      !powerBiSlice.reportId ||
-      !this.config.isConfigured
+      !powerBiSlice.reportId
     )
       return null
 
