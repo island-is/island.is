@@ -75,16 +75,17 @@ export abstract class MultiEnvironmentService {
    * The method will resolve the fulfilled promises and log errors for rejected promises
    * The return value of the fulfilled promises are mapped with the given mapper function
    */
-  public handleSettledPromises<T, K>({
-    promises,
-    mapper,
-    prefixErrorMessage,
-  }: {
-    promises: PromiseSettledResult<T | undefined>[]
-    mapper: (value: PromiseFulfilledResult<T>['value'], index: number) => K
-    prefixErrorMessage?: string
-  }): K[] {
-    return promises
+  public handleSettledPromises<T, K>(
+    settledPromises: PromiseSettledResult<T | undefined>[],
+    {
+      mapper,
+      prefixErrorMessage,
+    }: {
+      mapper: (value: PromiseFulfilledResult<T>['value'], index: number) => K
+      prefixErrorMessage?: string
+    },
+  ): K[] {
+    return settledPromises
       .map((resp, index) => {
         if (resp.status === 'fulfilled' && resp.value) {
           return mapper(resp.value, index)

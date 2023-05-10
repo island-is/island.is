@@ -14,10 +14,10 @@ export class ScopeEnvironment {
   @Field(() => ID)
   name!: string
 
-  @Field(() => [TranslatedValue])
+  @Field(() => [TranslatedValue], { nullable: false })
   displayName!: TranslatedValue[]
 
-  @Field(() => [TranslatedValue])
+  @Field(() => [TranslatedValue], { nullable: false })
   description!: TranslatedValue[]
 
   @Field(() => String)

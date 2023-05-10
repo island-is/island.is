@@ -27,7 +27,7 @@ export class ScopeService extends MultiEnvironmentService {
     user: User,
     input: CreateScopeInput,
   ): Promise<CreateScopeResponse[]> {
-    const createdScopes = await Promise.allSettled(
+    const createdSettledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
         return this.adminApiByEnvironmentWithAuth(
           environment,
@@ -43,8 +43,7 @@ export class ScopeService extends MultiEnvironmentService {
       }),
     )
 
-    return this.handleSettledPromises({
-      promises: createdScopes,
+    return this.handleSettledPromises(createdSettledPromises, {
       mapper: (scope, index) => ({
         scopeName: scope.name,
         environment: input.environments[index],
@@ -53,8 +52,11 @@ export class ScopeService extends MultiEnvironmentService {
     })
   }
 
+  /**
+   * Gets all scopes for all available environments for a specific tenant
+   */
   async getScopes(user: User, tenantId: string): Promise<ScopesPayload> {
-    const scopesSettled = await Promise.allSettled(
+    const scopesSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
         this.adminApiByEnvironmentWithAuth(
           environment,
@@ -65,18 +67,20 @@ export class ScopeService extends MultiEnvironmentService {
       ),
     )
 
-    const scopeEnvironments = this.handleSettledPromises({
-      promises: scopesSettled,
-      mapper: (scopes, index) =>
-        scopes.map(
-          (scope) =>
-            ({
-              ...scope,
-              environment: environments[index],
-            } as ScopeEnvironment),
-        ),
-      prefixErrorMessage: `Failed to get scopes by tenantId ${tenantId}`,
-    }).flat()
+    const scopeEnvironments = this.handleSettledPromises(
+      scopesSettledPromises,
+      {
+        mapper: (scopes, index) =>
+          scopes.map(
+            (scope) =>
+              ({
+                ...scope,
+                environment: environments[index],
+              } as ScopeEnvironment),
+          ),
+        prefixErrorMessage: `Failed to get scopes by tenantId ${tenantId}`,
+      },
+    ).flat()
 
     const groupedScopes = groupBy(scopeEnvironments, 'name')
 
@@ -96,8 +100,11 @@ export class ScopeService extends MultiEnvironmentService {
     }
   }
 
+  /**
+   * Gets a specific scope by scope name for all available environments
+   */
   async getScope(user: User, input: ScopeInput): Promise<Scope> {
-    const scopesSettled = await Promise.allSettled(
+    const scopeSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
         this.adminApiByEnvironmentWithAuth(
           environment,
@@ -106,14 +113,16 @@ export class ScopeService extends MultiEnvironmentService {
       ),
     )
 
-    const environmentsScopes = this.handleSettledPromises({
-      promises: scopesSettled,
-      mapper: (scope, index) => ({
-        ...scope,
-        environment: environments[index],
-      }),
-      prefixErrorMessage: `Failed to get scope ${input.scopeName}`,
-    })
+    const environmentsScopes = this.handleSettledPromises(
+      scopeSettledPromises,
+      {
+        mapper: (scope, index) => ({
+          ...scope,
+          environment: environments[index],
+        }),
+        prefixErrorMessage: `Failed to get scope ${input.scopeName}`,
+      },
+    )
 
     return {
       scopeName: input.scopeName,

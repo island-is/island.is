@@ -142,8 +142,7 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    return this.handleSettledPromises({
-      promises: settledPromises,
+    return this.handleSettledPromises(settledPromises, {
       mapper: (client, index) => ({
         clientId: client.clientId,
         environment: input.environments[index],
@@ -177,8 +176,7 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    return this.handleSettledPromises({
-      promises: updated,
+    return this.handleSettledPromises(updated, {
       mapper: (client, index) => ({
         ...client,
         id: this.formatClientId(client.clientId, input.environments[index]),
