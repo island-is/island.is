@@ -133,25 +133,28 @@ const AidsAndNutritionTabsContent: FC<Props> = ({ data }) => {
   const { formatMessage } = useLocale()
 
   const generateRow = (rowItem: AidOrNutrition) => {
+    const DataRowWithYellow: FC = ({ children }) => {
+      return (
+        <T.Data
+          box={{
+            background: rowItem.expiring ? 'yellow300' : 'transparent',
+          }}
+        >
+          <Text variant="medium">{children}</Text>
+        </T.Data>
+      )
+    }
+
     const row = (
-      <T.Row>
-        <T.Data>
-          <Text variant="medium">{rowItem.name}</Text>
-        </T.Data>
-        <T.Data>
-          <Text variant="medium">{rowItem.maxUnitRefund}</Text>
-        </T.Data>
-        <T.Data>
-          <Text variant="medium">{`${rowItem.refund.value}${
-            rowItem.refund.type === 'amount' ? ' kr.' : '%'
-          }`}</Text>
-        </T.Data>
-        <T.Data>
-          <Text variant="medium">{rowItem.available}</Text>
-        </T.Data>
-        <T.Data>
-          <Text variant="medium">{rowItem.location}</Text>
-        </T.Data>
+      <T.Row key={rowItem.id}>
+        <DataRowWithYellow>{rowItem.name}</DataRowWithYellow>
+        <DataRowWithYellow>{rowItem.maxUnitRefund}</DataRowWithYellow>
+        <DataRowWithYellow>{`${rowItem.refund.value}${
+          rowItem.refund.type === 'amount' ? ' kr.' : '%'
+        }`}</DataRowWithYellow>
+        <DataRowWithYellow>{rowItem.available}</DataRowWithYellow>
+        <DataRowWithYellow>{rowItem.location}</DataRowWithYellow>
+        <DataRowWithYellow />
       </T.Row>
     )
 
