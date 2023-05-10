@@ -295,14 +295,21 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getHistoryLog(
-    transition: 'exit' | 'entry',
+  getHistoryLogs(
     stateKey: string = this.application.state,
+    event: Event<TEvents>,
   ): StaticText | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
-    return transition === 'entry'
-      ? stateInfo?.actionCard?.onEntryHistoryLog
-      : stateInfo?.actionCard?.onExitHistoryLog
+    const historyLogs = stateInfo?.actionCard?.historyLogs
+
+    if (Array.isArray(historyLogs)) {
+      return historyLogs?.find((historyLog) => historyLog.onEvent === event)
+        ?.logMessage
+    } else {
+      return historyLogs?.onEvent === event
+        ? historyLogs?.logMessage
+        : undefined
+    }
   }
 }

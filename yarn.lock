@@ -59,6 +59,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@anatine/esbuildnx@patch:@anatine/esbuildnx@npm%3A0.2.0#./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch::locator=island.is%40workspace%3A.":
+  version: 0.2.0
+  resolution: "@anatine/esbuildnx@patch:@anatine/esbuildnx@npm%3A0.2.0#./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch::version=0.2.0&hash=9054d7&locator=island.is%40workspace%3A."
+  dependencies:
+    "@anatine/esbuild-decorators": ^0.2.18
+    "@nrwl/devkit": ^12.9.0
+    "@nrwl/workspace": ^12.9.0
+    chalk: ^4.1.2
+    date-fns: ^2.24.0
+    fs-extra: ^10.0.0
+    node-watch: ^0.7.2
+    recursive-copy: ^2.0.13
+    rxjs: ^6.6.7
+    rxjs-for-await: ^0.0.2
+  peerDependencies:
+    esbuild: ~0.14.29
+  checksum: d312884e34798dace3dfe032b5fe2dd53412eb5aa42f885b386080a0d1b7c88aa95b239319eb69274a138eb98e7491cf7791b4809a94fea51f44a9cb3e61302b
+  languageName: node
+  linkType: hard
+
 "@anev/ts-mountebank@npm:^1.6.0":
   version: 1.6.0
   resolution: "@anev/ts-mountebank@npm:1.6.0"

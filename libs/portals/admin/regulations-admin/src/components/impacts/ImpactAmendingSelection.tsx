@@ -41,7 +41,7 @@ export const ImpactAmendingSelection = ({
     {
       onCompleted: (data) => {
         setResults(
-          (data.getRegulationsSearch?.data as RegulationOptionList) ||
+          (data.getRegulationsOptionSearch as RegulationOptionList) ||
             undefined,
         )
       },

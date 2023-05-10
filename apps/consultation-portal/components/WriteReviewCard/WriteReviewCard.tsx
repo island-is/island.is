@@ -272,12 +272,12 @@ export const WriteReviewCard = ({
   ) : (
     <Box>
       <SubscriptionActionBox
-        heading="Skrifa umsögn"
-        text="Þú verður að vera skráð(ur) inn til þess að geta skrifað umsögn um tillögur."
+        heading="Viltu skrifa umsögn?"
+        text="Öllum er frjálst að taka þátt í samráðinu. Umsagnir verða birtar jafnóðum og þær berast. Þú þarft að vera skráð(ur) inn til að geta sent umsögn."
         cta={{ label: 'Skrá mig inn', onClick: LogIn }}
       />
       <Text marginTop={2}>
-        Ef umsögnin er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf
+        Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf
         umboð þaðan,{' '}
         <a
           target="_blank"

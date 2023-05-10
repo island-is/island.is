@@ -9,6 +9,7 @@ import {
   CATEGORIES,
   Operation,
   Property,
+  BankruptcyHistoryResult,
 } from './types/application'
 import { YES } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
@@ -18,6 +19,10 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
   const chargeItems = getValueViaPath<PaymentCatalogItem[]>(
     application.externalData,
     'payment.data',
+  )
+  const bankruptcyHistory = getValueViaPath<BankruptcyHistoryResult>(
+    application.externalData,
+    'courtBankruptcyCert.data',
   )
   const { chargeItemCode } = answers
   const charge =
@@ -106,6 +111,7 @@ export const getExtraData = (application: ApplicationWithAttachments) => {
     annad: answers.otherInfoText || '',
     vskNr: answers.info.vskNr,
     upphaed: charge,
+    busforraedisvottord: JSON.stringify(bankruptcyHistory),
   }
   return extraData
 }

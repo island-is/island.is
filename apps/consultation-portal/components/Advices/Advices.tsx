@@ -1,7 +1,8 @@
-import { SkeletonLoader, Stack, Text } from '@island.is/island-ui/core'
+import { Button, SkeletonLoader, Stack, Text } from '@island.is/island-ui/core'
 import { SimpleCardSkeleton } from '../Card'
 import ReviewCard from '../ReviewCard/ReviewCard'
 import { UserAdvice } from '../../types/interfaces'
+import { useState } from 'react'
 
 interface Props {
   advices: Array<UserAdvice>
@@ -9,6 +10,8 @@ interface Props {
 }
 
 const Advices = ({ advices, advicesLoading }: Props) => {
+  const [showAll, setShowAll] = useState<boolean>(false)
+  const showAmount = 4
   if (advicesLoading) {
     return (
       <SimpleCardSkeleton borderColor="blue200">
@@ -22,9 +25,23 @@ const Advices = ({ advices, advicesLoading }: Props) => {
 
   return (
     <Stack space={3}>
-      {advices.map((advice: UserAdvice) => {
-        return <ReviewCard advice={advice} key={advice.id} />
+      {advices.map((advice: UserAdvice, index) => {
+        if (!showAll && index < showAmount)
+          return <ReviewCard advice={advice} key={advice.id} />
+        else if (showAll) {
+          return <ReviewCard advice={advice} key={advice.id} />
+        }
       })}
+      {advices.length > showAmount && (
+        <Button
+          onClick={() => setShowAll(!showAll)}
+          variant="text"
+          icon={showAll ? 'chevronUp' : 'chevronDown'}
+        >
+          {' '}
+          {showAll ? 'Fela umsagnir' : 'Sjá allar umsagnir'}
+        </Button>
+      )}
     </Stack>
   )
 }

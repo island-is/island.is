@@ -11,6 +11,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseFileState,
   CaseState,
@@ -71,10 +72,22 @@ export const attributes: (keyof Case)[] = [
   'prosecutorAppealDecision',
   'accusedPostponedAppealDate',
   'prosecutorPostponedAppealDate',
+  'prosecutorStatementDate',
+  'defendantStatementDate',
+  'appealCaseNumber',
+  'appealAssistantId',
+  'appealJudge1Id',
+  'appealJudge2Id',
+  'appealJudge3Id',
+  'appealConclusion',
+  'appealRulingDecision',
 ]
 
-export interface LimitedUpdateCase
-  extends Pick<Case, 'accusedPostponedAppealDate' | 'appealState'> {}
+export interface LimitedAccessUpdateCase
+  extends Pick<
+    Case,
+    'accusedPostponedAppealDate' | 'appealState' | 'defendantStatementDate'
+  > {}
 
 export const include: Includeable[] = [
   { model: Defendant, as: 'defendants' },
@@ -165,12 +178,11 @@ export class LimitedAccessCaseService {
 
   async update(
     theCase: Case,
-    update: LimitedUpdateCase,
+    update: LimitedAccessUpdateCase,
     user: TUser,
   ): Promise<Case> {
-    // Here we assume that the case is being appealed
     const [numberOfAffectedRows] = await this.caseModel.update(
-      { ...update, accusedPostponedAppealDate: nowFactory() },
+      { ...update },
       { where: { id: theCase.id } },
     )
 
@@ -185,8 +197,9 @@ export class LimitedAccessCaseService {
       )
     }
 
-    // Here we assume that the case is being appealed
-    const messages: CaseMessage[] =
+    const messages: CaseMessage[] = []
+
+    if (update.appealState === CaseAppealState.APPEALED) {
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
@@ -198,22 +211,58 @@ export class LimitedAccessCaseService {
               CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
             ].includes(caseFile.category),
         )
-        .map((caseFile) => ({
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-          user,
-          caseId: theCase.id,
-          caseFileId: caseFile.id,
-        })) ?? []
-    messages.push({
-      type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
-      user,
-      caseId: theCase.id,
-    })
+        .forEach((caseFile) => {
+          const message = {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId: theCase.id,
+            caseFileId: caseFile.id,
+          }
+          messages.push(message)
+        })
+
+      messages.push({
+        type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    // Return limited access case
+    const updatedCase = await this.findById(theCase.id)
+
+    if (updatedCase.defendantStatementDate !== theCase.defendantStatementDate) {
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            [
+              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+            ].includes(caseFile.category),
+        )
+        .forEach((caseFile) => {
+          const message = {
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId: theCase.id,
+            caseFileId: caseFile.id,
+          }
+          messages.push(message)
+        })
+
+      messages.push({
+        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      })
+    }
 
     await this.messageService.sendMessagesToQueue(messages)
 
-    // Return limited access case
-    return await this.findById(theCase.id)
+    return updatedCase
   }
 
   findDefenderNationalId(theCase: Case, nationalId: string): User {

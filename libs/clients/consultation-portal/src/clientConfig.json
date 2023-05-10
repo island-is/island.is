@@ -1174,8 +1174,8 @@
           "subscribedToAll": {
             "type": "boolean"
           },
-          "subscribedToAllNew": {
-            "type": "boolean"
+          "subscribedToAllType": {
+            "$ref": "#/components/schemas/SubscriptionType"
           },
           "cases": {
             "type": "array",
@@ -1208,8 +1208,7 @@
             "type": "boolean"
           },
           "subscribeToAllType": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/SubscriptionType"
           },
           "caseIds": {
             "type": "array",
