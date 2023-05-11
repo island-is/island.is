@@ -2,17 +2,13 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 
-import {
-  ApiScope,
-  ApiScopeGroup,
-  DEFAULT_DOMAIN,
-  IdentityResource,
-  ResourceTranslationService,
-} from '@island.is/auth-api-lib'
-
-import { ScopeGroupDTO } from './scope-group.dto'
-import { ScopeNodeDTO } from './scope-node.dto'
-import { ScopeDTO } from './scope.dto'
+import { DEFAULT_DOMAIN } from '../types'
+import { ApiScopeTreeDTO } from './dto/api-scope-tree.dto'
+import { ScopeDTO } from './dto/scope.dto'
+import { ApiScopeGroup } from './models/api-scope-group.model'
+import { ApiScope } from './models/api-scope.model'
+import { IdentityResource } from './models/identity-resource.model'
+import { ResourceTranslationService } from './resource-translation.service'
 
 @Injectable()
 export class ScopeService {
@@ -27,13 +23,13 @@ export class ScopeService {
   async findScopeTree(
     requestedScopes: string[],
     language?: string,
-  ): Promise<ScopeNodeDTO[]> {
+  ): Promise<ApiScopeTreeDTO[]> {
     const scopes = await this.findScopesInternal({
       requestedScopes,
       language,
     })
-    const groupChildren = new Map<string, ScopeNodeDTO[]>()
-    const scopeTree: Array<ScopeDTO | ScopeGroupDTO> = []
+    const groupChildren = new Map<string, ApiScopeTreeDTO[]>()
+    const scopeTree: Array<ScopeDTO | ApiScopeGroup> = []
 
     for (const scope of scopes) {
       if (scope.group) {
@@ -43,7 +39,7 @@ export class ScopeService {
           children = []
           groupChildren.set(scope.group.name, children)
         }
-        children.push(new ScopeNodeDTO(scope))
+        children.push(new ApiScopeTreeDTO(scope))
       } else {
         scopeTree.push(scope)
       }
@@ -52,7 +48,7 @@ export class ScopeService {
     return scopeTree
       .sort((a, b) => a.order - b.order)
       .map((node) => ({
-        ...new ScopeNodeDTO(node),
+        ...new ApiScopeTreeDTO(node),
         children: groupChildren.get(node.name),
       }))
   }

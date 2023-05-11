@@ -1,13 +1,11 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
+import { ApiScopeTreeDTO, ScopeService } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AuthScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
-
-import { ScopeNodeDTO } from './scope-node.dto'
-import { ScopeService } from './scope.service'
 
 const namespace = '@island.is/auth/delegation-api/scopes'
 
@@ -40,15 +38,15 @@ export class ScopesController {
         },
       },
     },
-    response: { status: 200, type: [ScopeNodeDTO] },
+    response: { status: 200, type: [ApiScopeTreeDTO] },
   })
-  @Audit<ScopeNodeDTO[]>({
+  @Audit<ApiScopeTreeDTO[]>({
     resources: (scopeTree) => scopeTree.map((node) => node.name),
   })
   findScopeTree(
     @Query('requestedScopes') requestedScopes: string[],
     @Query('lang') language?: string,
-  ): Promise<ScopeNodeDTO[]> {
+  ): Promise<ApiScopeTreeDTO[]> {
     if (!Array.isArray(requestedScopes)) requestedScopes = [requestedScopes]
 
     return this.scopeService.findScopeTree(requestedScopes, language)

@@ -74,6 +74,7 @@ export * from './lib/resources/dto/tenant.dto'
 export * from './lib/resources/admin/dto/admin-scope.dto'
 export * from './lib/resources/admin/dto/client-create-scope.dto'
 export * from './lib/resources/resource-translation.service'
+export * from './lib/resources/scope.service'
 
 // Clients module
 export * from './lib/clients/clients.module'

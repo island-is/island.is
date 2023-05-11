@@ -2,9 +2,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { ApiScopeGroup } from '../models/api-scope-group.model'
 import { ApiScope } from '../models/api-scope.model'
+import { ScopeDTO } from './scope.dto'
 
 export class ApiScopeTreeDTO {
-  constructor(model: ApiScope | ApiScopeGroup) {
+  constructor(model: ApiScope | ApiScopeGroup | ScopeDTO) {
     this.name = model.name
     this.displayName = model.displayName
     this.description = model.description
