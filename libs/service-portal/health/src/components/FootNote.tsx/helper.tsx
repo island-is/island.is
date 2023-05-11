@@ -30,9 +30,6 @@ export const getFootNoteByType = (
           link: (str) => button(str),
         }),
         third: formatMessage(messages['physioDisclaimer3']),
-        fourth: formatMessage(messages['physioDisclaimer4'], {
-          link: (str) => button(str),
-        }),
       }
       break
     case PHYSIO_ACCIDENT_THERAPY:
@@ -43,9 +40,6 @@ export const getFootNoteByType = (
           link: (str) => button(str),
         }),
         third: formatMessage(messages['physioDisclaimer3']),
-        fourth: formatMessage(messages['physioDisclaimer4'], {
-          link: (str) => button(str),
-        }),
       }
       break
     case PHYSIO_HOME_THERAPY:
@@ -57,9 +51,6 @@ export const getFootNoteByType = (
           link: (str) => button(str),
         }),
         third: formatMessage(messages['physioDisclaimer3']),
-        fourth: formatMessage(messages['physioDisclaimer4'], {
-          link: (str) => button(str),
-        }),
       }
       break
     case SPEECH_THERAPY:
@@ -71,9 +62,6 @@ export const getFootNoteByType = (
           link: (str) => button(str),
         }),
         third: formatMessage(messages['physioDisclaimer3']),
-        fourth: formatMessage(messages['physioDisclaimer4'], {
-          link: (str) => button(str),
-        }),
       }
       break
     case OCCUPATIONAL_THERAPY:
@@ -84,9 +72,6 @@ export const getFootNoteByType = (
           link: (str) => button(str),
         }),
         third: formatMessage(messages['physioDisclaimer3']),
-        fourth: formatMessage(messages['physioDisclaimer4'], {
-          link: (str) => button(str),
-        }),
       }
       break
     default:
@@ -96,9 +81,6 @@ export const getFootNoteByType = (
           link: (str) => button(str),
         }),
         third: formatMessage(messages['physioDisclaimer3']),
-        fourth: formatMessage(messages['physioDisclaimer4'], {
-          link: (str) => button(str),
-        }),
       }
       break
   }

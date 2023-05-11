@@ -21,9 +21,6 @@ export const FootNote: FC<Props> = ({ type }) => {
       <Text variant="small" paddingBottom={2}>
         {getFootNoteByType(type, formatMessage).third}
       </Text>
-      <Text variant="small">
-        {getFootNoteByType(type, formatMessage).fourth}
-      </Text>
     </Box>
   )
 }

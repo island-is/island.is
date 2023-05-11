@@ -4,7 +4,6 @@ import {
   Table as T,
   Text,
   Inline,
-  Button,
   SkeletonLoader,
   Tabs,
   TabType,

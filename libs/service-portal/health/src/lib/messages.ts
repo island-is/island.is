@@ -107,9 +107,9 @@ export const messages = defineMessages({
     defaultMessage:
       'Sé beiðni samþykkt fær einstaklingur 20 skipti í talþjálfun á hverju 12 mánaða tímabili. Hann á einnig rétt á nauðsynlegri viðbótarþjálfun hafi Sjúkratryggingar Íslands samþykkt slíka meðferð.',
   },
-  physioDisclaimer4: {
-    id: 'sp.health:therapy-disclaimer-3',
-    defaultMessage: '<link>Frekari upplýsingar um sjúkraþjálfun</link>',
+  physioLink: {
+    id: 'sp.health:therapy-link',
+    defaultMessage: 'Nánar um sjúkraþjálfun',
   },
   noValidTimePeriod: {
     id: 'sp.health:no-valid-time-period',

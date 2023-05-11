@@ -6,7 +6,7 @@ interface Props {
   text: string
 }
 
-export const LinkButton: FC<Props> = ({ to, text }) => (
+const LinkButton: FC<Props> = ({ to, text }) => (
   <a href={to} target="_blank" rel="noreferrer">
     <Button size="small" variant="text" icon="open" iconType="outline">
       {text}

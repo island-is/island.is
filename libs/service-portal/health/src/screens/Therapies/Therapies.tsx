@@ -1,14 +1,5 @@
-import React from 'react'
-import { gql, useQuery } from '@apollo/client'
-import { Query, Therapies as TherapiesType } from '@island.is/api/schema'
-import {
-  Box,
-  Button,
-  SkeletonLoader,
-  Tabs,
-  TabType,
-  Text,
-} from '@island.is/island-ui/core'
+import { Therapies as TherapiesType } from '@island.is/api/schema'
+import { Box, Tabs, TabType } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
@@ -26,12 +17,14 @@ import {
   SPEECH_THERAPY,
 } from '../../utils/constants'
 import { useGetTherapiesQuery } from './Therapies.generated'
+import LinkButton from '../../components/LinkButton/LinkButton'
 
 const Therapies = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
   const { loading, error, data } = useGetTherapiesQuery()
+  console.log(data)
 
   const therapiesData = data?.getRightsPortalTherapies ?? []
 
@@ -108,6 +101,11 @@ const Therapies = () => {
             contentBackground="transparent"
             selected="0"
             size="xs"
+          />
+
+          <LinkButton
+            to="https://island.is/s/sjukratryggingar/thjalfun"
+            text={formatMessage(messages.physioLink)}
           />
         </Box>
       )}
