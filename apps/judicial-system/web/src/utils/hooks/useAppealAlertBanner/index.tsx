@@ -25,7 +25,7 @@ import {
 import { strings } from './strings'
 import router from 'next/router'
 
-const renderLink = (text: string, href: string) => {
+const renderLinkButton = (text: string, href: string) => {
   return (
     <Button
       variant="text"
@@ -110,7 +110,7 @@ const useAppealAlertBanner = (
         </Text>
       )
     } else {
-      child = renderLink(
+      child = renderLinkButton(
         formatMessage(strings.statementLinkText),
         isDefenderRoleUser
           ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
@@ -139,7 +139,7 @@ const useAppealAlertBanner = (
               })}
             </Text>
           ))
-        : renderLink(
+        : renderLinkButton(
             formatMessage(strings.statementLinkText),
             `${
               isDefenderRoleUser ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
@@ -164,7 +164,7 @@ const useAppealAlertBanner = (
         {formatMessage(strings.appealLinkText)}
       </Button>
     ) : (
-      renderLink(
+      renderLinkButton(
         formatMessage(strings.appealLinkText),
         `${isDefenderRoleUser ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
           workingCase.id
