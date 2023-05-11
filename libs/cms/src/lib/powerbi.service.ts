@@ -1,5 +1,5 @@
 import { Configuration, ConfidentialClientApplication } from '@azure/msal-node'
-import { Provider } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { LazyDuringDevScope } from '@island.is/nest/config'
 import { ConfigType } from '@island.is/nest/config'
 import {
@@ -12,10 +12,14 @@ import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPro
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
 
+@Injectable({ scope: LazyDuringDevScope })
 export class PowerBiService {
   private fetch: EnhancedFetchAPI
 
-  constructor(private config: ConfigType<typeof PowerBiConfig>) {
+  constructor(
+    @Inject(PowerBiConfig.KEY)
+    private config: ConfigType<typeof PowerBiConfig>,
+  ) {
     this.fetch = createEnhancedFetch({ name: 'PowerBiService' })
   }
 
@@ -134,13 +138,4 @@ export class PowerBiService {
     const data = await response.json()
     return data?.token
   }
-}
-
-export const PowerBiServiceProvider: Provider<PowerBiService> = {
-  provide: PowerBiService,
-  scope: LazyDuringDevScope,
-  useFactory(config: ConfigType<typeof PowerBiConfig>) {
-    return new PowerBiService(config)
-  },
-  inject: [PowerBiConfig.KEY],
 }

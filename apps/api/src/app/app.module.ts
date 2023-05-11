@@ -6,7 +6,7 @@ import { TerminusModule } from '@nestjs/terminus'
 //import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
-import { CmsModule } from '@island.is/cms'
+import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
@@ -321,6 +321,7 @@ const autoSchemaFile = environment.production
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
+        PowerBiConfig,
       ],
     }),
   ],
