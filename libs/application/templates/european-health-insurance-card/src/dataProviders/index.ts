@@ -1,3 +1,4 @@
+// Api Definitions
 import { defineTemplateApi } from '@island.is/application/types'
 import { ApiActions } from './apiActions.enum'
 
