@@ -1,3 +1,4 @@
+import { BLOCKS } from '@contentful/rich-text-types'
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Text,
@@ -61,7 +62,15 @@ const GevFooter = ({ title, namespace, footerItems }: GevFooterProps) => {
                     {item.title}
                   </Text>
                 )}
-                {webRichText(item.content as SliceType[])}
+                {webRichText(item.content as SliceType[], {
+                  renderNode: {
+                    [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      <Text color="dark400" marginY={1}>
+                        {children}
+                      </Text>
+                    ),
+                  },
+                })}
               </GridColumn>
             ))}
           </GridRow>
@@ -88,7 +97,15 @@ const GevFooter = ({ title, namespace, footerItems }: GevFooterProps) => {
                   {item.title && (
                     <Text fontWeight="semiBold">{item.title}</Text>
                   )}
-                  {webRichText(item.content as SliceType[])}
+                  {webRichText(item.content as SliceType[], {
+                    renderNode: {
+                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                        <Text color="dark400" marginY={1}>
+                          {children}
+                        </Text>
+                      ),
+                    },
+                  })}
                 </GridColumn>
               ))}
             </GridColumn>
