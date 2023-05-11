@@ -27,10 +27,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             description
             slug
           }
-          relatedArticles {
-            title
-            slug
-          }
           processEntry {
             id
             processTitle
@@ -203,11 +199,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             id
             title
             description
-            slug
-          }
-          relatedArticles {
-            id
-            title
             slug
           }
           subArticles {
