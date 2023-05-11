@@ -10,6 +10,8 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Environment } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
+import { environments } from '../constants/environments'
 
 @Injectable()
 export abstract class MultiEnvironmentService {
@@ -61,5 +63,36 @@ export abstract class MultiEnvironmentService {
 
     // We swallow the errors
     return undefined
+  }
+
+  /**
+   * Generic method for handling settled promises
+   * The method will resolve the fulfilled promises and log errors for rejected promises
+   * The return value of the fulfilled promises are mapped with the given mapper function
+   */
+  public handleSettledPromises<T, K>(
+    settledPromises: PromiseSettledResult<T | undefined>[],
+    {
+      mapper,
+      prefixErrorMessage,
+    }: {
+      mapper: (value: PromiseFulfilledResult<T>['value'], index: number) => K
+      prefixErrorMessage?: string
+    },
+  ): K[] {
+    return settledPromises
+      .map((resp, index) => {
+        if (resp.status === 'fulfilled' && resp.value) {
+          return mapper(resp.value, index)
+        } else if (resp.status === 'rejected') {
+          this.logger.error(
+            `${prefixErrorMessage ?? 'Error'} in environment ${
+              environments[index]
+            }`,
+            resp.reason,
+          )
+        }
+      })
+      .filter(isDefined)
   }
 }
