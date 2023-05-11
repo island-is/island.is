@@ -68,7 +68,7 @@ export const RenderAdvices = ({
       </StackedChildren>
     )
   }
-  
+
   return (
     <StackedChildren>
       <TitleText adviceCount={chosenCase?.adviceCount} />
