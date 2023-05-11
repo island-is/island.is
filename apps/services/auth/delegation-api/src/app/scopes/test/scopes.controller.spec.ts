@@ -2,6 +2,7 @@ import faker from 'faker'
 import shuffle from 'lodash/shuffle'
 import request from 'supertest'
 
+import { ScopeTreeDTO } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -16,7 +17,6 @@ import {
   setupWithoutAuth,
   setupWithoutPermission,
 } from '../../../../test/setup'
-import { ScopeNodeDTO } from '../scope-node.dto'
 
 describe('ScopesController', () => {
   describe('withAuth', () => {
@@ -60,7 +60,7 @@ describe('ScopesController', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toHaveLength(requestedScopes.length)
-      expect(res.body.map((s: ScopeNodeDTO) => s.name)).toMatchObject(
+      expect(res.body.map((s: ScopeTreeDTO) => s.name)).toMatchObject(
         requestedScopes,
       )
     })
