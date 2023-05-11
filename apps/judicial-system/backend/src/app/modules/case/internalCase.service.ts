@@ -399,12 +399,15 @@ export class InternalCaseService {
       })
   }
 
+  private getSignedRulingPdf(theCase: Case) {
+    return this.awsS3Service.getObject(`generated/${theCase.id}/ruling.pdf`)
+  }
+
   private async deliverSignedRulingPdfToCourt(
     theCase: Case,
     user: TUser,
   ): Promise<boolean> {
-    return this.awsS3Service
-      .getObject(`generated/${theCase.id}/ruling.pdf`)
+    return this.getSignedRulingPdf(theCase)
       .then((pdf) => this.uploadSignedRulingPdfToCourt(theCase, pdf, user))
       .catch((reason) => {
         this.logger.error(
@@ -710,7 +713,7 @@ export class InternalCaseService {
 
     const pdfPromises = [
       getCourtRecordPdfAsString(theCase, this.formatMessage),
-      getRulingPdfAsString(theCase, this.formatMessage),
+      this.getSignedRulingPdf(theCase).then((pdf) => pdf.toString('binary')),
     ]
 
     return Promise.all(pdfPromises)
