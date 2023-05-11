@@ -34,6 +34,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
+  validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -60,7 +61,7 @@ const CourtOfAppealRuling: React.FC = () => {
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
 
-  const { setAndSendCaseToServer, transitionCase } = useCase()
+  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
@@ -268,15 +269,13 @@ const CourtOfAppealRuling: React.FC = () => {
               )
             }}
             onBlur={(event) =>
-              setAndSendCaseToServer(
-                [
-                  {
-                    appealConclusion: event.target.value,
-                    force: true,
-                  },
-                ],
+              validateAndSendToServer(
+                'appealConclusion',
+                event.target.value,
+                ['empty'],
                 workingCase,
-                setWorkingCase,
+                updateCase,
+                setAppealConclusionErrorMessage,
               )
             }
             textarea
@@ -329,6 +328,7 @@ const CourtOfAppealRuling: React.FC = () => {
             const caseTransitioned = await transitionCase(
               workingCase.id,
               CaseTransition.COMPLETE_APPEAL,
+              setWorkingCase,
             )
 
             if (caseTransitioned) {
