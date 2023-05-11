@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
