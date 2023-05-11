@@ -1,7 +1,7 @@
 import { Configuration, ConfidentialClientApplication } from '@azure/msal-node'
 import { Inject, Injectable } from '@nestjs/common'
 import { LazyDuringDevScope } from '@island.is/nest/config'
-import { ConfigType } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
