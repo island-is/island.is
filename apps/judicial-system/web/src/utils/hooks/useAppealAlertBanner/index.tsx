@@ -111,7 +111,7 @@ const useAppealAlertBanner = (
       )
     } else if (isCourtRoleUser) {
       child = (
-        <Text variant="h4" color="mint800">
+        <Text variant="small" color="mint800" fontWeight="semiBold">
           {formatMessage(strings.appealReceivedNotificationSent, {
             appealReceivedDate: formatDate(appealReceivedByCourtDate, 'PPPp'),
           })}
