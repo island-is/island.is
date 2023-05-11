@@ -38,8 +38,14 @@ query GetClient($input: ClientInput!) {
       allowOfflineAccess
       allowedScopes {
         name
-        displayName
-        description
+        displayName {
+          locale
+          value
+        }
+        description {
+          locale
+          value
+        }
       }
     }
   }

@@ -422,16 +422,10 @@ export const form: Form = buildForm({
           title: m.representativeTitle,
           description: m.representativeDescription,
           children: [
-            buildTextField({
-              id: 'representative.nationalId',
-              title: m.nationalId,
-              width: 'half',
-              format: '######-####',
-            }),
-            buildTextField({
-              id: 'representative.name',
-              title: m.name,
-              width: 'half',
+            buildCustomField({
+              title: '',
+              id: 'representative',
+              component: 'LookupPerson',
             }),
             buildTextField({
               id: 'representative.phone',

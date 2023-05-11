@@ -75,7 +75,7 @@ export const EmailBox = () => {
     return (
       <SubscriptionActionCard
         heading="Skrá áskrift"
-        text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
+        text="Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift."
         button={[
           {
             label: 'Skrá mig inn',

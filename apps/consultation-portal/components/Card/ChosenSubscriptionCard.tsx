@@ -1,6 +1,6 @@
-import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
-import { mapIsToEn, useIsMobile } from '../../utils/helpers'
-import { useState } from 'react'
+import { Box, FocusableBox } from '@island.is/island-ui/core'
+import { mapIsToEn } from '../../utils/helpers'
+import { ReactNode, useState } from 'react'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import { Area } from '../../types/enums'
 import {
@@ -18,6 +18,9 @@ export interface ChosenSubscriptionCardProps {
   area?: Area
   subscriptionArray: SubscriptionArray
   setSubscriptionArray: (_: SubscriptionArray) => void
+  titleColumn?: ReactNode
+  children?: ReactNode
+  toggleAble?: boolean
 }
 
 export const ChosenSubscriptionCard = ({
@@ -27,10 +30,11 @@ export const ChosenSubscriptionCard = ({
   idx,
   subscriptionArray,
   setSubscriptionArray,
-  isCase = false,
+  titleColumn,
+  children,
+  toggleAble = false,
 }: ChosenSubscriptionCardProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const { isMobile } = useIsMobile()
   const onCheckboxChange = () => {
     if (isGeneralSubscription) {
       const subscriptionArrayCopy = { ...subscriptionArray }
@@ -72,36 +76,16 @@ export const ChosenSubscriptionCard = ({
       <CardGridContainer
         checked={item.checked}
         onChecked={onCheckboxChange}
-        isToggleable={!isCase && !isGeneralSubscription}
+        isToggleable={toggleAble}
         isToggled={isOpen}
         onToggle={onClick}
       >
         <FocusableBox onClick={onClick} style={{ minHeight: '24px' }}>
-          {isGeneralSubscription ? (
-            <Text lineHeight="sm" variant="h5" color={'dark400'}>
-              Öll mál
-            </Text>
-          ) : (
-            <Text
-              variant="h5"
-              truncate={isMobile}
-              color={area === Area.case ? 'dark400' : 'blue400'}
-            >
-              {area === Area.case ? item.caseNumber : item.name}
-            </Text>
-          )}
+          {titleColumn}
         </FocusableBox>
-
-        {(area === Area.case || isGeneralSubscription) && (
-          <Text variant="medium">&emsp;{item.name}</Text>
-        )}
-        {!isGeneralSubscription && (
-          <Text variant="medium">
-            <em>&emsp;&mdash;{item.subscriptionType}</em>
-          </Text>
-        )}
+        {children}
       </CardGridContainer>
-      {!isOpen && !isCase && !isGeneralSubscription && (
+      {!isOpen && toggleAble && (
         <Box paddingTop={3}>
           <SubscriptionChoices
             item={item}

@@ -36,6 +36,7 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
+import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
 import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
 
 export const clientBaseAttributes: Partial<Client> = {
@@ -75,6 +76,7 @@ export class AdminClientsService {
     private readonly apiScopeModel: typeof ApiScope,
     private readonly translationService: TranslationService,
     private readonly clientsService: ClientsService,
+    private readonly adminTranslationService: AdminTranslationService,
     private sequelize: Sequelize,
   ) {}
 
@@ -454,7 +456,11 @@ export class AdminClientsService {
       clientId: client.clientId,
       clientType: client.clientType,
       tenantId: client.domainName ?? '',
-      displayName: this.formatDisplayName(client.clientName, translations),
+      displayName: this.adminTranslationService.createTranslatedValueDTOs({
+        key: 'clientName',
+        defaultValueIS: client.clientName ?? '',
+        translations,
+      }),
       absoluteRefreshTokenLifetime: client.absoluteRefreshTokenLifetime,
       slidingRefreshTokenLifetime: client.slidingRefreshTokenLifetime,
       refreshTokenExpiration:
@@ -484,22 +490,6 @@ export class AdminClientsService {
           value: claim.value,
         })) ?? [],
     }
-  }
-
-  private formatDisplayName(
-    clientName?: string,
-    translations?: Map<string, Map<string, string>>,
-  ): TranslatedValueDto[] {
-    const displayNames = [{ locale: 'is', value: clientName ?? '' }]
-
-    for (const [locale, translation] of translations?.entries() ?? []) {
-      displayNames.push({
-        locale,
-        value: translation.get('clientName') ?? '',
-      })
-    }
-
-    return displayNames
   }
 
   private defaultClientGrantType(client: Client) {
@@ -728,6 +718,15 @@ export class AdminClientsService {
       },
     })
 
-    return apiScopes.map((apiScope) => new AdminScopeDTO(apiScope))
+    const translations = await this.adminTranslationService.getApiScopeTranslations(
+      apiScopes.map(({ name }) => name),
+    )
+
+    return apiScopes.map((apiScope) =>
+      this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+        apiScope,
+        translations,
+      ),
+    )
   }
 }
