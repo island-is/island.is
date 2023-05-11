@@ -8,13 +8,17 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { getCourtRecordPdfAsString } from '../../../../formatters'
+import {
+  getCourtRecordPdfAsString,
+  getRequestPdfAsString,
+} from '../../../../formatters'
 import { randomDate } from '../../../../test'
 import { PoliceService } from '../../../police'
 import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
+jest.mock('../../../../formatters/requestPdf')
 jest.mock('../../../../formatters/courtRecordPdf')
 
 interface Then {
@@ -42,6 +46,8 @@ describe('InternalCaseController - Deliver case to police', () => {
     mockAwsS3Service = awsS3Service
     mockPoliceService = policeService
 
+    const mockGetRequest = getRequestPdfAsString as jest.Mock
+    mockGetRequest.mockRejectedValue(new Error('Some error'))
     const mockGetCourtRecord = getCourtRecordPdfAsString as jest.Mock
     mockGetCourtRecord.mockRejectedValue(new Error('Some error'))
     const mockGetObject = awsS3Service.getObject as jest.Mock
@@ -79,12 +85,15 @@ describe('InternalCaseController - Deliver case to police', () => {
       validToDate,
       conclusion: caseConclusion,
     } as Case
+    const requestPdf = 'test request'
     const courtRecordPdf = 'test court record'
     const rulingPdf = 'test ruling'
 
     let then: Then
 
     beforeEach(async () => {
+      const mockGetRequest = getRequestPdfAsString as jest.Mock
+      mockGetRequest.mockResolvedValueOnce(requestPdf)
       const mockGetCourtRecord = getCourtRecordPdfAsString as jest.Mock
       mockGetCourtRecord.mockResolvedValueOnce(courtRecordPdf)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
@@ -118,6 +127,7 @@ describe('InternalCaseController - Deliver case to police', () => {
         defendantNationalId,
         validToDate,
         caseConclusion,
+        requestPdf,
         courtRecordPdf,
         rulingPdf,
       )

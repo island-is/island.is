@@ -246,6 +246,7 @@ export class PoliceService {
     defendantNationalId: string,
     validToDate: Date | undefined,
     caseConclusion: string,
+    requestPdf: string,
     courtRecordPdf: string,
     rulingPdf: string,
   ): Promise<boolean> {
@@ -268,6 +269,7 @@ export class PoliceService {
             expiringDate: validToDate?.toISOString(),
             courtVerdictString: caseConclusion,
             courtDocuments: [
+              { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
               { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
               { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
             ],

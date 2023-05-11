@@ -33,7 +33,7 @@ import {
   getCourtRecordPdfAsString,
   getRequestPdfAsBuffer,
   createCaseFilesRecord,
-  getRulingPdfAsString,
+  getRequestPdfAsString,
 } from '../../formatters'
 import { courtUpload } from '../../messages'
 import { CaseEvent, EventService } from '../event'
@@ -712,12 +712,13 @@ export class InternalCaseService {
     await this.refreshFormatMessage()
 
     const pdfPromises = [
+      getRequestPdfAsString(theCase, this.formatMessage),
       getCourtRecordPdfAsString(theCase, this.formatMessage),
       this.getSignedRulingPdf(theCase).then((pdf) => pdf.toString('binary')),
     ]
 
     return Promise.all(pdfPromises)
-      .then(async ([courtRecordPdf, rulingPdf]) => {
+      .then(async ([requestPdf, courtRecordPdf, rulingPdf]) => {
         const defendantNationalIds = theCase.defendants?.reduce<string[]>(
           (ids, defendant) =>
             !defendant.noNationalId && defendant.nationalId
@@ -745,6 +746,7 @@ export class InternalCaseService {
             ? theCase.validToDate
             : undefined,
           theCase.conclusion ?? '',
+          requestPdf,
           courtRecordPdf,
           rulingPdf,
         )

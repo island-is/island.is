@@ -32,6 +32,7 @@ describe('PoliceController - Update Police Case', () => {
   const defendantNationalId = uuid()
   const validToDate = randomDate()
   const caseConclusion = 'test conclusion'
+  const requestPdf = 'test request pdf'
   const courtRecordPdf = 'test court record pdf'
   const rulingPdf = 'test ruling pdf'
 
@@ -69,6 +70,7 @@ describe('PoliceController - Update Police Case', () => {
           defendantNationalId,
           validToDate,
           caseConclusion,
+          requestPdf,
           courtRecordPdf,
           rulingPdf,
         )
@@ -107,6 +109,7 @@ describe('PoliceController - Update Police Case', () => {
             expiringDate: validToDate,
             courtVerdictString: caseConclusion,
             courtDocuments: [
+              { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
               { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
               { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
             ],
