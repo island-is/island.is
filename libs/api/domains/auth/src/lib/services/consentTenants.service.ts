@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ScopeNodeDTO, ScopesApi } from '@island.is/clients/auth/delegation-api'
+import { ScopesApi, ScopeTreeDTO } from '@island.is/clients/auth/delegation-api'
 
 import { ConsentScopeNode } from '../models/consentScopeNode.model'
 import { ConsentTenant } from '../models/consentTenants.model'
@@ -15,7 +15,7 @@ export class ConsentTenantsService {
   }
 
   private scopeNodeMapper(
-    node: ScopeNodeDTO,
+    node: ScopeTreeDTO,
     consentedScopes: string[],
   ): ConsentScopeNode {
     return {
@@ -44,7 +44,7 @@ export class ConsentTenantsService {
       lang,
     })
 
-    const map = new Map<string, ScopeNodeDTO[]>()
+    const map = new Map<string, ScopeTreeDTO[]>()
     response.forEach((item) => {
       const key = item.domainName
       const existing = map.get(key)
