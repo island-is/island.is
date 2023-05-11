@@ -23,27 +23,19 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './strings'
+import router from 'next/router'
 
 const renderLink = (text: string, href: string) => {
   return (
-    <LinkContext.Provider
-      value={{
-        linkRenderer: (href, children) => (
-          <LinkV2
-            href={href}
-            color="blue400"
-            underline="small"
-            underlineVisibility="always"
-          >
-            {children}
-          </LinkV2>
-        ),
+    <Button
+      variant="text"
+      size="small"
+      onClick={() => {
+        router.push(href)
       }}
     >
-      <Text>
-        <a href={href}>{text}</a>
-      </Text>
-    </LinkContext.Provider>
+      {text}
+    </Button>
   )
 }
 
