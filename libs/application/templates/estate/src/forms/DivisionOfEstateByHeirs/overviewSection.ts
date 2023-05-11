@@ -444,7 +444,6 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'overviewRepresentativeTitle',
           title: m.representativeTitle,
-          description: m.representativeDescription,
           titleVariant: 'h3',
           marginBottom: 'gutter',
         }),
@@ -456,12 +455,16 @@ export const overview = buildSection({
               getValueViaPath<string>(answers, 'representative.nationalId') ??
                 '',
             ),
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.name'),
         }),
         buildKeyValueField({
           width: 'half',
           label: m.name,
           value: ({ answers }) =>
             getValueViaPath<string>(answers, 'representative.name'),
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.name'),
         }),
         buildDescriptionField({
           id: 'space4',
@@ -475,12 +478,16 @@ export const overview = buildSection({
             formatPhoneNumber(
               getValueViaPath<string>(answers, 'representative.phone') ?? '',
             ),
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.phone'),
         }),
         buildKeyValueField({
           width: 'half',
           label: m.email,
           value: ({ answers }) =>
             getValueViaPath<string>(answers, 'representative.email'),
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.email'),
         }),
       ],
     }),
