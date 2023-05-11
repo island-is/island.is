@@ -2,7 +2,7 @@ import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { ChosenSubscriptionCard } from '../Card'
 import { Area } from '../../types/enums'
 import { SubscriptionArray } from '../../types/interfaces'
-import { useIsMobile } from '@island.is/consultation-portal/utils/helpers'
+import { useIsMobile } from '../../utils/helpers'
 
 interface Props {
   subscriptionArray: SubscriptionArray
