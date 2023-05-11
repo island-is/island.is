@@ -43,11 +43,11 @@ export enum CaseSubscriptionType {
 export enum SubscriptionType {
   AllChanges = 'Allar breytingar',
   StatusChanges = 'Breytingar á stöðu',
-  OnlyNew = 'Aðeins ný',
+  OnlyNew = 'Einungis ný mál',
 }
 
 export enum SubscriptionTypeKey {
   'Allar breytingar' = 'AllChanges',
   'Breytingar á stöðu' = 'StatusChanges',
-  'Aðeins ný' = 'OnlyNew',
+  'Einungis ný mál' = 'OnlyNew',
 }

@@ -1,11 +1,5 @@
-import {
-  Box,
-  Checkbox,
-  FocusableBox,
-  Icon,
-  Text,
-} from '@island.is/island-ui/core'
-import { mapIsToEn } from '../../utils/helpers'
+import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
+import { mapIsToEn, useIsMobile } from '../../utils/helpers'
 import { useState } from 'react'
 import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import { Area } from '../../types/enums'
@@ -13,29 +7,17 @@ import {
   SubscriptionArray,
   SubscriptionTableItem,
 } from '../../types/interfaces'
+import { SimpleCardSkeleton } from './components/SimpleCardSkeleton'
+import { CardGridContainer } from './components/CardGridContainer'
 
 export interface ChosenSubscriptionCardProps {
   isGeneralSubscription?: boolean
+  isCase?: boolean
   item: SubscriptionTableItem
   idx?: number
   area?: Area
   subscriptionArray: SubscriptionArray
   setSubscriptionArray: (_: SubscriptionArray) => void
-}
-
-const ChosenSubscriptionCardSkeleton = ({ children }) => {
-  return (
-    <Box
-      borderColor={'blue400'}
-      borderRadius="large"
-      borderWidth="standard"
-      background="white"
-      padding={3}
-      rowGap={3}
-    >
-      {children}
-    </Box>
-  )
 }
 
 export const ChosenSubscriptionCard = ({
@@ -45,9 +27,10 @@ export const ChosenSubscriptionCard = ({
   idx,
   subscriptionArray,
   setSubscriptionArray,
+  isCase = false,
 }: ChosenSubscriptionCardProps) => {
   const [isOpen, setIsOpen] = useState(false)
-
+  const { isMobile } = useIsMobile()
   const onCheckboxChange = () => {
     if (isGeneralSubscription) {
       const subscriptionArrayCopy = { ...subscriptionArray }
@@ -75,72 +58,61 @@ export const ChosenSubscriptionCard = ({
       }
     }
   }
-
   const onClick = () => {
     setIsOpen(!isOpen)
   }
 
-  if (isGeneralSubscription) {
-    return (
-      <ChosenSubscriptionCardSkeleton>
-        <Box display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
-          <Box display="flex" flexDirection="row" columnGap={3}>
-            <Checkbox
-              checked={item.checked}
-              onChange={() => onCheckboxChange()}
-            />
-            <Box>
-              <Text lineHeight="sm" variant="h5" color={'dark400'}>
-                Öll mál
-              </Text>
-            </Box>
-            <Box>
-              <Text variant="medium">{item.name}</Text>
-            </Box>
-          </Box>
-          <Box style={{ height: '24px' }} />
-        </Box>
-      </ChosenSubscriptionCardSkeleton>
-    )
-  }
   return (
-    <ChosenSubscriptionCardSkeleton>
-      <Box display="flex" flexDirection="row" justifyContent={'spaceBetween'}>
-        <Box display="flex" flexDirection="row" columnGap={3}>
-          <Checkbox
-            checked={item.checked}
-            onChange={() => onCheckboxChange()}
-          />
-          <FocusableBox onClick={onClick}>
+    <SimpleCardSkeleton
+      borderColor="blue400"
+      borderRadius="large"
+      background="white"
+      padding={3}
+    >
+      <CardGridContainer
+        checked={item.checked}
+        onChecked={onCheckboxChange}
+        isToggleable={!isCase && !isGeneralSubscription}
+        isToggled={isOpen}
+        onToggle={onClick}
+      >
+        <FocusableBox onClick={onClick} style={{ minHeight: '24px' }}>
+          {isGeneralSubscription ? (
+            <Text lineHeight="sm" variant="h5" color={'dark400'}>
+              Öll mál
+            </Text>
+          ) : (
             <Text
-              lineHeight="sm"
               variant="h5"
+              truncate={isMobile}
               color={area === Area.case ? 'dark400' : 'blue400'}
             >
               {area === Area.case ? item.caseNumber : item.name}
             </Text>
-          </FocusableBox>
-          {area === Area.case && (
-            <FocusableBox onClick={onClick}>
-              <Text variant="medium">{item.name}</Text>
-            </FocusableBox>
           )}
-        </Box>
-        <FocusableBox onClick={onClick} style={{ height: '24px' }}>
-          <Icon icon={isOpen ? 'chevronUp' : 'chevronDown'} color="blue400" />
         </FocusableBox>
-      </Box>
-      {!isOpen && (
+
+        {(area === Area.case || isGeneralSubscription) && (
+          <Text variant="medium">&emsp;{item.name}</Text>
+        )}
+        {!isGeneralSubscription && (
+          <Text variant="medium">
+            <em>&emsp;&mdash;{item.subscriptionType}</em>
+          </Text>
+        )}
+      </CardGridContainer>
+      {!isOpen && !isCase && !isGeneralSubscription && (
         <Box paddingTop={3}>
           <SubscriptionChoices
             item={item}
             currentTab={area}
             subscriptionArray={subscriptionArray}
             setSubscriptionArray={setSubscriptionArray}
+            onChecked={() => setIsOpen(!isOpen)}
           />
         </Box>
       )}
-    </ChosenSubscriptionCardSkeleton>
+    </SimpleCardSkeleton>
   )
 }
 

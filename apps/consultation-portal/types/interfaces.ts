@@ -22,6 +22,7 @@ export interface Case {
   contactName?: string
   contactEmail?: string
   documents?: Array<Document>
+  additionalDocuments?: Array<Document>
   stakeholders?: Array<Stakeholder>
 }
 
