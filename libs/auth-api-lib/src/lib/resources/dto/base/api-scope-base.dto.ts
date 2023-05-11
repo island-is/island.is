@@ -9,7 +9,7 @@ import {
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
-export class ApiScopesDTO {
+export class ApiScopeBaseDTO {
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty({
@@ -23,19 +23,6 @@ export class ApiScopesDTO {
     example: 'set_name',
   })
   readonly name!: string
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: 'set_display_name',
-  })
-  readonly displayName!: string
-
-  @IsString()
-  @ApiProperty({
-    example: 'set_description',
-  })
-  readonly description!: string
 
   @IsString()
   @ApiProperty({
