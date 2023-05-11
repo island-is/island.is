@@ -31,3 +31,11 @@ globalStyle(`${footerBg} a, ${footerBg} a:hover`, {
 globalStyle(`${footerSecondRow} a, ${footerSecondRow} a:hover`, {
   boxShadow: `inset 0 -1px 0 0 ${dark400} !important`,
 })
+
+export const link = style({
+  fontSize: '16px',
+  textDecoration: 'underline',
+  ':hover': {
+    textDecoration: 'underline',
+  },
+})
