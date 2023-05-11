@@ -4,7 +4,7 @@ import { ApiScopeGroup } from '../models/api-scope-group.model'
 import { ApiScope } from '../models/api-scope.model'
 import { ScopeDTO } from './scope.dto'
 
-export class ApiScopeTreeDTO {
+export class ScopeTreeDTO {
   constructor(model: ApiScope | ApiScopeGroup | ScopeDTO) {
     this.name = model.name
     this.displayName = model.displayName
@@ -44,7 +44,7 @@ export class ApiScopeTreeDTO {
     description:
       'List of scopes belonging to the group. When children is undefined it represents a scope instead of a group.',
     isArray: true,
-    type: ApiScopeTreeDTO,
+    type: ScopeTreeDTO,
     example: [
       {
         name: '@island.is/finances/schedule',
@@ -60,5 +60,5 @@ export class ApiScopeTreeDTO {
       },
     ],
   })
-  children?: ApiScopeTreeDTO[]
+  children?: ScopeTreeDTO[]
 }

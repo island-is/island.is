@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
 
 import { DEFAULT_DOMAIN } from '../types'
-import { ApiScopeTreeDTO } from './dto/api-scope-tree.dto'
+import { ScopeTreeDTO } from './dto/scope-tree.dto'
 import { ScopeDTO } from './dto/scope.dto'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
@@ -23,12 +23,12 @@ export class ScopeService {
   async findScopeTree(
     requestedScopes: string[],
     language?: string,
-  ): Promise<ApiScopeTreeDTO[]> {
+  ): Promise<ScopeTreeDTO[]> {
     const scopes = await this.findScopesInternal({
       requestedScopes,
       language,
     })
-    const groupChildren = new Map<string, ApiScopeTreeDTO[]>()
+    const groupChildren = new Map<string, ScopeTreeDTO[]>()
     const scopeTree: Array<ScopeDTO | ApiScopeGroup> = []
 
     for (const scope of scopes) {
@@ -39,7 +39,7 @@ export class ScopeService {
           children = []
           groupChildren.set(scope.group.name, children)
         }
-        children.push(new ApiScopeTreeDTO(scope))
+        children.push(new ScopeTreeDTO(scope))
       } else {
         scopeTree.push(scope)
       }
@@ -48,7 +48,7 @@ export class ScopeService {
     return scopeTree
       .sort((a, b) => a.order - b.order)
       .map((node) => ({
-        ...new ApiScopeTreeDTO(node),
+        ...new ScopeTreeDTO(node),
         children: groupChildren.get(node.name),
       }))
   }
