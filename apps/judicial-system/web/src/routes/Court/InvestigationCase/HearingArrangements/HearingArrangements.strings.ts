@@ -32,14 +32,6 @@ export const icHearingArrangements = {
         description:
           'Notaður sem titill fyrir "fyrirtöku" hlutan á fyrirtöku skrefi í rannsóknarheimildum.',
       }),
-      tooltip: defineMessage({
-        id:
-          'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.tooltip',
-        defaultMessage:
-          'Hér er hægt að merkja hvaða aðilar málsins mæta í fyrirtöku eða hvort fyrirtakan fari fram rafrænt.',
-        description:
-          'Notaður sem upplýsingatexti í upplýsingasvæði við "Fyrirtaka" titlinn á fyrirtöku skrefi í rannsóknarheimildum.',
-      }),
       options: {
         allPresent: defineMessage({
           id:

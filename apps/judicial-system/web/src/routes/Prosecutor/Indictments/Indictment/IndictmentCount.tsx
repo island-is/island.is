@@ -256,13 +256,15 @@ export function getLegalArguments(
   let articles = `${lawsBroken[0][1]}.`
 
   for (let i = 1; i < lawsBroken.length; i++) {
+    let useSbr = true
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
       articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
+      useSbr = i > andIndex
     }
 
-    articles = `${articles}${i === andIndex ? ' og' : ', sbr.'} ${
-      lawsBroken[i][1]
-    }.`
+    articles = `${articles}${
+      i === andIndex ? ' og' : useSbr ? ', sbr.' : ','
+    } ${lawsBroken[i][1]}.`
   }
 
   return formatMessage(strings.legalArgumentsAutofill, {

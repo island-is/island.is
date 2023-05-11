@@ -149,10 +149,6 @@ describe('InternalFileController - Deliver case file to court', () => {
     ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE}     | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF}                | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE}      | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT}           | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE} | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_APPEAL_STATEMENT}            | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE}  | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     ${CaseFileCategory.APPEAL_RULING}                         | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     `.describe(
     'indictment $caseFileCategory file upload to court folder $courtDocumentFolder',

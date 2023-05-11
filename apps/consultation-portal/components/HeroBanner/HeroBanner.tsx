@@ -17,6 +17,7 @@ import { StatisticBox } from '..'
 import HeroTiles from './HeroTiles'
 import SplashSmall from '../svg/SplashSmall'
 import { ArrOfStatistics } from '../../types/interfaces'
+import Splash from '../svg/Splash'
 
 interface HeroBannerProps {
   statistics: ArrOfStatistics
@@ -33,7 +34,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
       flexDirection={'column'}
     >
       <GridContainer>
-        <Box paddingX={[0, 0, 0, 0, 15]}>
+        <Box>
           <GridRow className={styles.rowAlign}>
             <Hidden above="md">
               <GridColumn span="12/12" order={[1, 1]}>
@@ -71,7 +72,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               order={[1, 1, 1, 2, 2]}
             >
               <Box className={styles.bg}>
-                <SplashSmall />
+                <Splash />
               </Box>
               <Box className={styles.alignTiles}>
                 <HeroTiles space={2} columns={[1, 1, 1, 1, 1]}>
