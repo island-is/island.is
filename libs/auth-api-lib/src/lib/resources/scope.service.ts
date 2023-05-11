@@ -9,6 +9,7 @@ import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
 import { IdentityResource } from './models/identity-resource.model'
 import { ResourceTranslationService } from './resource-translation.service'
+import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 @Injectable()
 export class ScopeService {
@@ -28,29 +29,8 @@ export class ScopeService {
       requestedScopes,
       language,
     })
-    const groupChildren = new Map<string, ScopeTreeDTO[]>()
-    const scopeTree: Array<ScopeDTO | ApiScopeGroup> = []
 
-    for (const scope of scopes) {
-      if (scope.group) {
-        let children = groupChildren.get(scope.group.name)
-        if (!children) {
-          scopeTree.push(scope.group)
-          children = []
-          groupChildren.set(scope.group.name, children)
-        }
-        children.push(new ScopeTreeDTO(scope))
-      } else {
-        scopeTree.push(scope)
-      }
-    }
-
-    return scopeTree
-      .sort((a, b) => a.order - b.order)
-      .map((node) => ({
-        ...new ScopeTreeDTO(node),
-        children: groupChildren.get(node.name),
-      }))
+    return mapToScopeTree(scopes)
   }
 
   private async findScopesInternal({

@@ -20,6 +20,7 @@ import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
 import { ResourceTranslationService } from './resource-translation.service'
 import { col } from './utils/col'
+import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 import type { Attributes, WhereOptions } from 'sequelize'
 import type { ConfigType } from '@island.is/nest/config'
@@ -153,29 +154,7 @@ export class DelegationResourcesService {
       language,
     })
 
-    const groupChildren = new Map<string, ScopeTreeDTO[]>()
-    const scopeTree: Array<ApiScope | ApiScopeGroup> = []
-
-    for (const scope of scopes) {
-      if (scope.group) {
-        let children = groupChildren.get(scope.group.name)
-        if (!children) {
-          scopeTree.push(scope.group)
-          children = []
-          groupChildren.set(scope.group.name, children)
-        }
-        children.push(new ScopeTreeDTO(scope))
-      } else {
-        scopeTree.push(scope)
-      }
-    }
-
-    return scopeTree
-      .sort((a, b) => a.order - b.order)
-      .map((node) => ({
-        ...new ScopeTreeDTO(node),
-        children: groupChildren.get(node.name),
-      }))
+    return mapToScopeTree(scopes)
   }
 
   async findScopeNames(
