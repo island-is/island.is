@@ -115,7 +115,7 @@ const AidsAndNutritionTabsContent: FC<Props> = ({ data }) => {
         <DataRowWithYellow>{rowItem.maxUnitRefund}</DataRowWithYellow>
         <DataRowWithYellow>
           {rowItem.refund.type === 'amount'
-            ? amountFormat(123456)
+            ? amountFormat(rowItem.refund.value)
             : `${rowItem.refund.value}%`}
         </DataRowWithYellow>
         <DataRowWithYellow>{rowItem.available}</DataRowWithYellow>
