@@ -5,7 +5,7 @@ import { TempCase } from '@island.is/judicial-system-web/src/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { Button, LinkContext, LinkV2, Text } from '@island.is/island-ui/core'
+import { Button, Text } from '@island.is/island-ui/core'
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
