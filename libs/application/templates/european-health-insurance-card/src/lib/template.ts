@@ -12,7 +12,11 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { DefaultStateLifeCycle } from '@island.is/application/core'
-import { EhicCardResponseApi, EhicGetTemporaryCardApi } from '../dataProviders'
+import {
+  EhicApplyForPhysicalAndTemporary,
+  EhicCardResponseApi,
+  EhicGetTemporaryCardApi,
+} from '../dataProviders'
 
 import { ApiActions } from '../dataProviders/apiActions.enum'
 import { States } from './types'
@@ -105,11 +109,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'application',
           status: 'inprogress',
-          onExit: defineTemplateApi({
-            action: ApiActions.applyForPhysicalAndTemporary,
-            shouldPersistToExternalData: true,
-            throwOnError: true,
-          }),
+          onExit: EhicApplyForPhysicalAndTemporary,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
