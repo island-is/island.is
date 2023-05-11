@@ -1,10 +1,12 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
@@ -18,7 +20,10 @@ import {
 } from '@island.is/island-ui/core'
 
 import { core } from '@island.is/judicial-system-web/messages'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
@@ -26,7 +31,6 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
-import { useRouter } from 'next/router'
 import {
   mapCaseFileToUploadFile,
   removeTabsValidateAndSet,
@@ -56,20 +60,17 @@ const CourtOfAppealRuling: React.FC = () => {
     generateSingleFileUpdate,
   } = useS3Upload(workingCase.id)
 
-  const { setAndSendCaseToServer } = useCase()
+  const { setAndSendCaseToServer, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
   const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
+  const [visibleModal, setVisibleModal] = useState(false)
 
   const [
     appealConclusionErrorMessage,
     setAppealConclusionErrorMessage,
   ] = useState<string>('')
-
-  const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}`)
-  const previousUrl = `${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`
 
   const isStepValid =
     displayFiles.some(
@@ -323,15 +324,35 @@ const CourtOfAppealRuling: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={previousUrl}
-          onNextButtonClick={() => {
-            handleNavigationTo(constants.CASES_ROUTE)
+          previousUrl={`${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`}
+          onNextButtonClick={async () => {
+            const caseTransitioned = await transitionCase(
+              workingCase.id,
+              CaseTransition.COMPLETE_APPEAL,
+            )
+
+            if (caseTransitioned) {
+              setVisibleModal(true)
+            }
           }}
           nextIsDisabled={!isStepValid}
           nextButtonIcon="arrowForward"
           nextButtonText={formatMessage(strings.nextButtonFooter)}
         />
       </FormContentContainer>
+      {visibleModal && (
+        <Modal
+          title={formatMessage(strings.uploadCompletedModalTitle)}
+          text={formatMessage(strings.uploadCompletedModalText)}
+          secondaryButtonText={formatMessage(core.closeModal)}
+          onClose={() => setVisibleModal(false)}
+          onSecondaryButtonClick={() => {
+            router.push(
+              `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+            )
+          }}
+        />
+      )}
     </PageLayout>
   )
 }
