@@ -26,8 +26,8 @@ export const alignTiles = style({
 export const bg = style({
   display: 'block',
   position: 'relative',
-  maxHeight: '317px',
-  maxWidth: '317px',
+  // maxHeight: '317px',
+  // maxWidth: '317px',
   // top: 16,
   width: '100%',
 })
