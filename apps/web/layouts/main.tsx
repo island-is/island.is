@@ -216,7 +216,7 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
-  const isServiceWeb = pathIsRoute(asPath, 'serviceweb')
+  const isServiceWeb = pathIsRoute(asPath, 'serviceweb', activeLocale)
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>

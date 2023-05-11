@@ -135,6 +135,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
       nationalId: auth.nationalId,
+      token: auth.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
     })
 
     const categoryB = (drivingLicense?.categories ?? []).find(

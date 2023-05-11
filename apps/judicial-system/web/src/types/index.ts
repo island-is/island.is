@@ -7,6 +7,7 @@ import {
   SessionArrangements,
   CaseOrigin,
   CaseAppealState,
+  CaseAppealRulingDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Case,
@@ -234,6 +235,7 @@ export interface TempCase
     | 'sessionArrangements'
     | 'appealState'
     | 'appealedByRole'
+    | 'appealRulingDecision'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -246,17 +248,23 @@ export interface TempCase
   sessionArrangements?: SessionArrangements
   appealState?: CaseAppealState
   appealedByRole?: UserRole
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface TempUpdateCase
   extends Omit<
     UpdateCase,
-    'courtDocuments' | 'type' | 'sessionArrangements' | 'appealState'
+    | 'courtDocuments'
+    | 'type'
+    | 'sessionArrangements'
+    | 'appealState'
+    | 'appealRulingDecision'
   > {
   courtDocuments?: CourtDocument[]
   type?: CaseType
   sessionArrangements?: SessionArrangements
   appealState?: CaseAppealState
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface TempCreateCase extends Omit<CreateCase, 'type'> {
