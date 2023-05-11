@@ -245,6 +245,7 @@
     "localization": "libs/localization",
     "logging": "libs/logging",
     "message-queue": "libs/message-queue",
+    "native-app": "apps/native/app",
     "nest-audit": "libs/nest/audit",
     "nest-aws": "libs/nest/aws",
     "nest-config": "libs/nest/config",

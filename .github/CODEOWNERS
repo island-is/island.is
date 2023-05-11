@@ -93,6 +93,7 @@
 /libs/portals/admin/ids-admin                                                                            @island-is/aranja
 /libs/service-portal/consent                                                                             @island-is/aranja
 /libs/service-portal/sessions                                                                            @island-is/aranja
+/apps/native/app/                                                                                        @island-is/aranja-enum-app
 
 /apps/judicial-system/                                                                                   @island-is/kolibri-justice-league
 /libs/judicial-system/                                                                                   @island-is/kolibri-justice-league
