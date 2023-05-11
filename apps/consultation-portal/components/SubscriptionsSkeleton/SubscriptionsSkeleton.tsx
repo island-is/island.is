@@ -2,6 +2,7 @@ import {
   Box,
   Divider,
   GridContainer,
+  LinkV2,
   LoadingDots,
   Stack,
   Tabs,
@@ -12,6 +13,7 @@ import { BreadcrumbsWithMobileDivider } from '../BreadcrumbsWithMobileDivider'
 import { ReactNode } from 'react'
 import EmailBox from '../EmailBox/EmailBox'
 import { Area } from '../../types/enums'
+import Link from 'next/link'
 
 interface Props {
   children: ReactNode
@@ -77,9 +79,14 @@ const SubscriptionsSkeleton = ({
                       ? 'Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál. Kerfið er uppfært einu sinni á sólarhring.'
                       : 'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.'}
                   </Text>
+                  {!isMySubscriptions && (
+                    <Link href={'/minaraskriftir'}>
+                      <a> Hægt er að afskrá sig hér</a>
+                    </Link>
+                  )}
                 </Stack>
               </Stack>
-              {isMySubscriptions ? <></> : <EmailBox />}
+              {!isMySubscriptions && <EmailBox />}
             </Stack>
             {children}
           </Box>
@@ -88,8 +95,10 @@ const SubscriptionsSkeleton = ({
       <Divider />
       <GridContainer>
         <Box paddingX={[0, 0, 0, 8, 15]} paddingTop={[3, 3, 3, 5, 5]}>
-          {getUserSubsLoading ? (
-            <LoadingDots />
+          {isMySubscriptions && getUserSubsLoading ? (
+            <>
+              <LoadingDots />
+            </>
           ) : (
             <Tabs
               selected={currentTab}

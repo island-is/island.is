@@ -17,10 +17,7 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
     <SimpleCardSkeleton>
       {chosenCase.statusName === 'Til umsagnar' ? (
         <>
-          <StackedTitleAndDescription
-            headingColor="blue400"
-            title="Viltu senda umsögn?"
-          >
+          <StackedTitleAndDescription title="Viltu senda umsögn?">
             <Text>
               Öllum er frjálst að taka þátt í samráðinu.
               {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}

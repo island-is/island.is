@@ -2,6 +2,7 @@ import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { ChosenSubscriptionCard } from '../Card'
 import { Area } from '../../types/enums'
 import { SubscriptionArray } from '../../types/interfaces'
+import { useIsMobile } from '../../utils/helpers'
 
 interface Props {
   subscriptionArray: SubscriptionArray
@@ -10,6 +11,7 @@ interface Props {
   onSubmit?: () => void
   buttonText?: string
   submitSubsIsLoading?: boolean
+  toggleAble?: boolean
 }
 
 const ChosenSubscriptions = ({
@@ -19,6 +21,7 @@ const ChosenSubscriptions = ({
   onSubmit,
   buttonText,
   submitSubsIsLoading,
+  toggleAble = true,
 }: Props) => {
   const {
     cases,
@@ -30,6 +33,12 @@ const ChosenSubscriptions = ({
   const chosenCases = cases.filter((item) => item.checked)
   const chosenInstitutions = institutions.filter((item) => item.checked)
   const chosenPolicyAreas = policyAreas.filter((item) => item.checked)
+  const { isMobile } = useIsMobile()
+  const subscribeToAllChecked = subscribedToAllNewObj.checked
+    ? subscribedToAllNewObj
+    : subscribedToAllChangesObj.checked
+    ? subscribedToAllChangesObj
+    : undefined
 
   return (
     <Stack space={0}>
@@ -37,31 +46,29 @@ const ChosenSubscriptions = ({
         chosenCases.length === 0 &&
         chosenInstitutions.length === 0 &&
         chosenPolicyAreas.length === 0 &&
-        !subscribedToAllNewObj.checked &&
-        !subscribedToAllChangesObj.checked
+        !subscribeToAllChecked
       ) && (
         <>
           <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
             Valin mál
           </Text>
-          {subscribedToAllNewObj.checked && (
+          {subscribeToAllChecked && (
             <ChosenSubscriptionCard
               isGeneralSubscription
               idx={0}
-              item={subscribedToAllNewObj}
+              item={subscribeToAllChecked}
               subscriptionArray={subscriptionArray}
               setSubscriptionArray={setSubscriptionArray}
-            />
+              titleColumn={
+                <Text lineHeight="sm" variant="h5" color={'dark400'}>
+                  Öll mál
+                </Text>
+              }
+            >
+              <Text variant="medium">&emsp;{subscribeToAllChecked.name}</Text>
+            </ChosenSubscriptionCard>
           )}
-          {subscribedToAllChangesObj.checked && (
-            <ChosenSubscriptionCard
-              isGeneralSubscription
-              idx={1}
-              item={subscribedToAllChangesObj}
-              subscriptionArray={subscriptionArray}
-              setSubscriptionArray={setSubscriptionArray}
-            />
-          )}
+
           {chosenCases.length !== 0 &&
             chosenCases.map((item) => {
               return (
@@ -71,7 +78,14 @@ const ChosenSubscriptions = ({
                   area={Area.case}
                   subscriptionArray={subscriptionArray}
                   setSubscriptionArray={setSubscriptionArray}
-                />
+                  titleColumn={
+                    <Text variant="h5" truncate={isMobile} color={'dark400'}>
+                      {item.caseNumber}
+                    </Text>
+                  }
+                >
+                  <Text variant="medium">&emsp;{item.name}</Text>
+                </ChosenSubscriptionCard>
               )
             })}
           {chosenInstitutions.length !== 0 &&
@@ -82,8 +96,18 @@ const ChosenSubscriptions = ({
                   item={item}
                   area={Area.institution}
                   subscriptionArray={subscriptionArray}
+                  toggleAble={toggleAble}
                   setSubscriptionArray={setSubscriptionArray}
-                />
+                  titleColumn={
+                    <Text variant="h5" truncate={isMobile} color={'blue400'}>
+                      {item.name}
+                    </Text>
+                  }
+                >
+                  <Text variant="medium">
+                    <em>&emsp;&mdash;{item.subscriptionType}</em>
+                  </Text>
+                </ChosenSubscriptionCard>
               )
             })}
           {chosenPolicyAreas.length !== 0 &&
@@ -93,9 +117,19 @@ const ChosenSubscriptions = ({
                   key={item.key}
                   item={item}
                   area={Area.policyArea}
+                  toggleAble={toggleAble}
                   subscriptionArray={subscriptionArray}
                   setSubscriptionArray={setSubscriptionArray}
-                />
+                  titleColumn={
+                    <Text variant="h5" truncate={isMobile} color={'blue400'}>
+                      {item.name}
+                    </Text>
+                  }
+                >
+                  <Text variant="medium">
+                    <em>&emsp;&mdash;{item.subscriptionType}</em>
+                  </Text>
+                </ChosenSubscriptionCard>
               )
             })}
           <Box

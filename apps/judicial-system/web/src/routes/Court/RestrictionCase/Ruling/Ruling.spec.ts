@@ -37,7 +37,7 @@ describe('getConclusionAutofill', () => {
     it('should format custody case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
-        type: CaseType.Custody,
+        type: CaseType.CUSTODY,
       } as Case
 
       const result = fn(theCase, decision)
@@ -50,7 +50,7 @@ describe('getConclusionAutofill', () => {
     it('should format extended travel ban case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
-        type: CaseType.TravelBan,
+        type: CaseType.TRAVEL_BAN,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
@@ -69,7 +69,7 @@ describe('getConclusionAutofill', () => {
       }
 
       const theCase = {
-        type: CaseType.AdmissionToFacility,
+        type: CaseType.ADMISSION_TO_FACILITY,
       } as Case
 
       const result = fn(theCase, decision, defendant)
@@ -86,7 +86,7 @@ describe('getConclusionAutofill', () => {
     it('should format custody case', () => {
       const theCase = {
         defendants: [{ ...defendantBase }],
-        type: CaseType.Custody,
+        type: CaseType.CUSTODY,
       } as Case
 
       const result = fn(theCase, decision)
@@ -103,7 +103,7 @@ describe('getConclusionAutofill', () => {
         nationalId: '0000000000',
       }
       const theCase = {
-        type: CaseType.Custody,
+        type: CaseType.CUSTODY,
       } as Case
 
       const result = fn(theCase, decision, defendant)
@@ -120,7 +120,7 @@ describe('getConclusionAutofill', () => {
         nationalId: '1990-01-01',
       }
       const theCase = {
-        type: CaseType.AdmissionToFacility,
+        type: CaseType.ADMISSION_TO_FACILITY,
         parentCase: { decision: CaseDecision.ACCEPTING },
       } as Case
 
@@ -138,7 +138,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format custody case', () => {
       const theCase = {
-        type: CaseType.Custody,
+        type: CaseType.CUSTODY,
       } as Case
 
       const result = fn(theCase, decision, defendantBase, validToDate)
@@ -152,7 +152,7 @@ describe('getConclusionAutofill', () => {
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:00:00Z'
       const theCase = {
-        type: CaseType.Custody,
+        type: CaseType.CUSTODY,
       } as Case
 
       const result = fn(
@@ -176,7 +176,7 @@ describe('getConclusionAutofill', () => {
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
-        type: CaseType.AdmissionToFacility,
+        type: CaseType.ADMISSION_TO_FACILITY,
       } as Case
 
       const result = fn(
@@ -202,7 +202,7 @@ describe('getConclusionAutofill', () => {
       const isCustodyIsolation = true
       const isolationToDate = '2020-01-01T12:31:00Z'
       const theCase = {
-        type: CaseType.AdmissionToFacility,
+        type: CaseType.ADMISSION_TO_FACILITY,
       } as Case
 
       const result = fn(
@@ -227,7 +227,7 @@ describe('getConclusionAutofill', () => {
     it('should format as non extended travel ban case', () => {
       const defendant = { ...defendantBase }
       const theCase = {
-        type: CaseType.Custody,
+        type: CaseType.CUSTODY,
         parentCase: { decision: CaseDecision.ACCEPTING } as Case,
       } as Case
 
@@ -240,7 +240,7 @@ describe('getConclusionAutofill', () => {
 
     it('should format custody case as travel ban case', () => {
       const theCase = {
-        type: CaseType.Custody,
+        type: CaseType.CUSTODY,
       } as Case
 
       const result = fn(theCase, decision, defendantBase, validToDate)
