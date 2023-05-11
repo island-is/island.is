@@ -5,7 +5,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { Modal } from '../../Modal/Modal'
+import { Modal } from '@island.is/react/components'
 import { m } from '../../../lib/messages'
 import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
@@ -69,7 +69,11 @@ export default function PublishEnvironment() {
       title={formatMessage(m.publishEnvironment, {
         environment: publishData?.toEnvironment,
       })}
+      label={formatMessage(m.publishEnvironment, {
+        environment: publishData?.toEnvironment,
+      })}
       onClose={cancel}
+      closeButtonLabel={formatMessage(m.closeModal)}
     >
       <Form method="post">
         <Box paddingTop={3}>

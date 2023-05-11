@@ -457,12 +457,29 @@ describe('CaseController - Update', () => {
   describe.each(restrictionCases)(
     'prosecutor statement date is updated for %s case',
     (type) => {
-      const originalCase = { ...theCase, type } as Case
+      const statementId = uuid()
+      const fileId = uuid()
+      const caseFiles = [
+        {
+          id: statementId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        },
+        {
+          id: fileId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+        },
+      ]
+      const originalCase = { ...theCase, type, caseFiles } as Case
       const caseToUdate = { prosecutorStatementDate: new Date() }
       const updatedCase = {
         ...theCase,
         type,
         prosecutorStatementDate: date,
+        caseFiles,
       }
       let then: Then
 
@@ -482,6 +499,18 @@ describe('CaseController - Update', () => {
 
       it('should queue messages', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            caseFileId: statementId,
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId,
+          },
+          {
+            caseFileId: fileId,
+            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            user,
+            caseId,
+          },
           {
             type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
             user,

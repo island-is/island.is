@@ -68,7 +68,29 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
 
-  const [validateVehicle, { data, loading }] = useLazyQuery<
+  const doSubmitApplication = async () => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: isLastReviewer(
+            reviewerNationalId,
+            application.answers,
+            coOwnersAndOperators,
+          )
+            ? DefaultEvents.SUBMIT
+            : DefaultEvents.APPROVE,
+          answers: getApproveAnswers(reviewerNationalId, application.answers),
+        },
+      },
+    })
+
+    if (res?.data) {
+      setStep && setStep('conclusion')
+    }
+  }
+
+  const [validateVehicleThenSubmit, { data, loading }] = useLazyQuery<
     any,
     { answers: OwnerChangeAnswers }
   >(
@@ -78,28 +100,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     {
       onCompleted: async (data) => {
         if (!data?.vehicleOwnerChangeValidation?.hasError) {
-          const res = await submitApplication({
-            variables: {
-              input: {
-                id: application.id,
-                event: isLastReviewer(
-                  reviewerNationalId,
-                  application.answers,
-                  coOwnersAndOperators,
-                )
-                  ? DefaultEvents.SUBMIT
-                  : DefaultEvents.APPROVE,
-                answers: getApproveAnswers(
-                  reviewerNationalId,
-                  application.answers,
-                ),
-              },
-            },
-          })
-
-          if (res?.data) {
-            setStep && setStep('conclusion')
-          }
+          await doSubmitApplication()
         }
       },
     },
@@ -119,7 +120,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     } else {
       setNoInsuranceError(false)
       if (isBuyer) {
-        validateVehicle({
+        validateVehicleThenSubmit({
           variables: {
             answers: {
               pickVehicle: {
@@ -155,28 +156,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           },
         })
       } else {
-        const res = await submitApplication({
-          variables: {
-            input: {
-              id: application.id,
-              event: isLastReviewer(
-                reviewerNationalId,
-                application.answers,
-                coOwnersAndOperators,
-              )
-                ? DefaultEvents.SUBMIT
-                : DefaultEvents.APPROVE,
-              answers: getApproveAnswers(
-                reviewerNationalId,
-                application.answers,
-              ),
-            },
-          },
-        })
-
-        if (res?.data) {
-          setStep && setStep('conclusion')
-        }
+        await doSubmitApplication()
       }
     }
   }

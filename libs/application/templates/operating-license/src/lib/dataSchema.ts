@@ -16,6 +16,16 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+const checkIfFilledOut = (arr: Array<string | undefined>) => {
+  if (arr.every((v) => v === '')) {
+    return false
+  } else if (arr.every((v) => v !== '')) {
+    return true
+  } else {
+    return false
+  }
+}
+
 const Properties = z
   .object({
     propertyNumber: z.string(),
@@ -23,15 +33,18 @@ const Properties = z
     spaceNumber: z.string(),
     customerCount: z.string(),
   })
-  .array()
   .refine(
-    (arr) => {
-      return !arr.some((item) => {
-        return item.propertyNumber.length > 0 && item.address.length === 0
-      })
+    ({ propertyNumber, address, spaceNumber, customerCount }) => {
+      return checkIfFilledOut([
+        propertyNumber,
+        address,
+        spaceNumber,
+        customerCount,
+      ])
     },
-    { params: error.missingAddressForPropertyNumber },
+    { params: error.invalidValue },
   )
+  .array()
 
 const TimeRefine = z.object({
   from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {

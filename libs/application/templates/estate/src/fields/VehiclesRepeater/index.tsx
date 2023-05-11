@@ -53,6 +53,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
+          const fieldError = error && error[index] ? error[index] : null
+
           if (!asset.initial) {
             return acc
           }
@@ -99,6 +101,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   backgroundColor="blue"
                   placeholder="0 kr."
                   defaultValue={(asset as any).marketValue}
+                  error={fieldError?.marketValue}
                   currency
                   size="sm"
                 />
@@ -113,7 +116,6 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
         const vehicleTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
-        const dummyField = `${fieldIndex}.dummy`
         const marketValueField = `${fieldIndex}.marketValue`
         const fieldError = error && error[index] ? error[index] : null
 
@@ -122,7 +124,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
             position="relative"
             key={field.id}
             marginTop={2}
-            hidden={field.initial || field?.dummy}
+            hidden={field.initial}
           >
             <Controller
               name={initialField}
@@ -134,12 +136,6 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               name={enabledField}
               control={control}
               defaultValue={true}
-              render={() => <input type="hidden" />}
-            />
-            <Controller
-              name={dummyField}
-              control={control}
-              defaultValue={field.dummy || false}
               render={() => <input type="hidden" />}
             />
             <Text variant="h4">{formatMessage(m.vehiclesTitle)}</Text>

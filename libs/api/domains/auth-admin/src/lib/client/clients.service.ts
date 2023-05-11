@@ -8,6 +8,7 @@ import {
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
 import { AdminScopeDTO } from '@island.is/auth-api-lib'
+import { isDefined } from '@island.is/shared/utils'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { ClientSecretInput } from './dto/client-secret.input'
@@ -135,8 +136,6 @@ export class ClientsService extends MultiEnvironmentService {
       },
     }
 
-    const createApplicationResponse = [] as CreateClientResponse[]
-
     const created = await Promise.allSettled(
       input.environments.map(async (environment) => {
         return this.adminApiByEnvironmentWithAuth(
@@ -146,21 +145,21 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    created.map((resp, index) => {
-      if (resp.status === 'fulfilled' && resp.value) {
-        createApplicationResponse.push({
-          clientId: resp.value.clientId,
-          environment: input.environments[index],
-        })
-      } else if (resp.status === 'rejected') {
-        this.logger.error(
-          `Failed to create application ${input.clientId} in environment ${input.environments[index]}`,
-          resp.reason,
-        )
-      }
-    })
-
-    return createApplicationResponse
+    return created
+      .map((resp, index) => {
+        if (resp.status === 'fulfilled' && resp.value) {
+          return {
+            clientId: resp.value.clientId,
+            environment: input.environments[index],
+          }
+        } else if (resp.status === 'rejected') {
+          this.logger.error(
+            `Failed to create application ${input.clientId} in environment ${input.environments[index]}`,
+            resp.reason,
+          )
+        }
+      })
+      .filter(isDefined)
   }
 
   async patchClient(

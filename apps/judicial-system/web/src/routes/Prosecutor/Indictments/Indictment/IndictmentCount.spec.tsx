@@ -15,9 +15,9 @@ const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
 describe('getRelevantSubstances', () => {
   test('should return relevant substances in the correct order for the indictment description', () => {
     const offenses = [
-      offense.DrunkDriving,
-      offense.IllegalDrugsDriving,
-      offense.PrescriptionDrugsDriving,
+      offense.DRUNK_DRIVING,
+      offense.ILLEGAL_DRUGS_DRIVING,
+      offense.PRESCRIPTION_DRUGS_DRIVING,
     ]
     const substances: SubstanceMap = {
       [Substance.AMPHETAMINE]: '10',
@@ -96,7 +96,7 @@ describe('getLegalArguments', () => {
 
 describe('getIncidentDescriptionReason', () => {
   test('should return a description for one offense', () => {
-    const offenses = [offense.DrivingWithoutLicence]
+    const offenses = [offense.DRIVING_WITHOUT_LICENCE]
 
     const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
 
@@ -104,7 +104,7 @@ describe('getIncidentDescriptionReason', () => {
   })
 
   test('should return a description for two offense', () => {
-    const offenses = [offense.DrivingWithoutLicence, offense.DrunkDriving]
+    const offenses = [offense.DRIVING_WITHOUT_LICENCE, offense.DRUNK_DRIVING]
 
     const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
 
@@ -112,7 +112,7 @@ describe('getIncidentDescriptionReason', () => {
   })
 
   test('should return a description with prescription drugs', () => {
-    const offenses = [offense.DrunkDriving, offense.PrescriptionDrugsDriving]
+    const offenses = [offense.DRUNK_DRIVING, offense.PRESCRIPTION_DRUGS_DRIVING]
 
     const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
 
@@ -123,9 +123,9 @@ describe('getIncidentDescriptionReason', () => {
 
   test('should return a description with illegal and prescription drugs', () => {
     const offenses = [
-      offense.DrunkDriving,
-      offense.IllegalDrugsDriving,
-      offense.PrescriptionDrugsDriving,
+      offense.DRUNK_DRIVING,
+      offense.ILLEGAL_DRUGS_DRIVING,
+      offense.PRESCRIPTION_DRUGS_DRIVING,
     ]
 
     const result = getIncidentDescriptionReason(offenses, {}, formatMessage)
