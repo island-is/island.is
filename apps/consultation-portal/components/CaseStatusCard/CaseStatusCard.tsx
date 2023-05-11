@@ -14,12 +14,7 @@ export const CaseStatusCard = ({ status }) => {
   //TODO: Get proper wording and info for card
   switch (status) {
     case 'Niðurstöður birtar':
-      return (
-        <StatusCard
-          heading="Niðurstöður birtar"
-          text="Sjá meðfylgjandi skjal."
-        />
-      )
+      return <StatusCard heading="Niðurstöður" text="Sjá meðfylgjandi skjal." />
     default:
       return <></>
   }
