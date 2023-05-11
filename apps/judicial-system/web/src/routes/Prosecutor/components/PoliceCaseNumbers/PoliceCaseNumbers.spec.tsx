@@ -20,8 +20,8 @@ describe('PoliceCaseNumbers component', () => {
       created: faker.date.past().toISOString(),
       modified: faker.date.past().toISOString(),
       id: faker.datatype.uuid(),
-      type: CaseType.Custody,
-      origin: CaseOrigin.Loke,
+      type: CaseType.CUSTODY,
+      origin: CaseOrigin.LOKE,
       state: CaseState.DRAFT,
       policeCaseNumbers: ['007-0000-0000', '008-0000-0000'],
     }

@@ -21,7 +21,7 @@ export const displayCaseType = (
   decision?: CaseDecision,
 ) => {
   if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
-    return capitalize(caseTypes[CaseType.TravelBan])
+    return capitalize(caseTypes[CaseType.TRAVEL_BAN])
   }
 
   const type = isIndictmentCase(caseType)

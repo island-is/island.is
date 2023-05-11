@@ -328,6 +328,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+          organizationSlug={organization.slug}
         />
       )
       break
