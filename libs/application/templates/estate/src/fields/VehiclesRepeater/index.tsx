@@ -53,6 +53,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
+          const fieldError = error && error[index] ? error[index] : null
+
           if (!asset.initial) {
             return acc
           }
@@ -99,6 +101,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   backgroundColor="blue"
                   placeholder="0 kr."
                   defaultValue={(asset as any).marketValue}
+                  error={fieldError?.marketValue}
                   currency
                   size="sm"
                 />

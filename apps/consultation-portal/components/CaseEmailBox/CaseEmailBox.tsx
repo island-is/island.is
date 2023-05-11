@@ -152,7 +152,7 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
     setUserClickedChange(true)
   }
 
-  if (!isAuthenticated) {
+  if (!userLoading && !isAuthenticated) {
     return (
       <CardSkeleton text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift.">
         <Button fluid iconType="outline" nowrap onClick={LogIn}>
