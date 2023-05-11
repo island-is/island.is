@@ -73,7 +73,7 @@ import {
   TryggingastofnunHeader,
 } from './Themes/TryggingastofnunTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
-import { GevHeader } from './Themes/GevTheme'
+import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
 
 import * as styles from './OrganizationWrapper.css'
@@ -148,6 +148,8 @@ export const footerEnabled = [
 
   'tryggingastofnun',
   'insurance-administration',
+
+  'gev',
 ]
 
 export const getThemeConfig = (
@@ -439,6 +441,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <TryggingastofnunFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+        />
+      )
+      break
+    case 'gev':
+      OrganizationFooterComponent = (
+        <GevFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
         />
       )
       break
