@@ -6,7 +6,10 @@ import {
   VinnuvelaApi,
   VinnuvelaDto,
 } from '@island.is/clients/adr-and-machine-license'
-import { createPkPassDataInput } from './machineLicenseMapper'
+import {
+  createPkPassDataInput,
+  findLatestExpirationDate,
+} from './machineLicenseMapper'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
   Pass,
@@ -93,6 +96,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
   licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
     return this.checkLicenseValidityForPkPass(payload as VinnuvelaDto)
   }
+
   async getLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
     const licenseData = await this.fetchLicense(user)
     return licenseData
@@ -123,7 +127,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     if (!inputValues) return null
     return {
       inputFieldValues: inputValues,
-      //expirationDate???
+      expirationDate: findLatestExpirationDate(license.data),
     }
   }
 

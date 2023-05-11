@@ -111,6 +111,7 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
+      expirationDate: data.expires?.toISOString(),
       thumbnail: image
         ? {
             imageBase64String: image ?? '',
