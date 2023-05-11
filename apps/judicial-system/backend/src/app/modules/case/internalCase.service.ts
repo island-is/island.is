@@ -744,7 +744,7 @@ export class InternalCaseService {
             CaseType.TRAVEL_BAN,
           ].includes(theCase.type) && theCase.state === CaseState.ACCEPTED
             ? theCase.validToDate
-            : undefined,
+            : new Date(0), // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
           theCase.conclusion ?? '',
           requestPdf,
           courtRecordPdf,
