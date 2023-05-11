@@ -456,7 +456,7 @@ export const overview = buildSection({
                 '',
             ),
           condition: (answers) =>
-            !!getValueViaPath<string>(answers, 'representative.name'),
+            !!getValueViaPath<string>(answers, 'representative.nationalId'),
         }),
         buildKeyValueField({
           width: 'half',
