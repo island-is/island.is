@@ -32,7 +32,7 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "curl https://midgardur-test.sjukra.is/minarsidur-jwt/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+          "curl https://midgardur-test.sjukra.is/minarsidur/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/icelandic-health-insurance/rights-portal"
