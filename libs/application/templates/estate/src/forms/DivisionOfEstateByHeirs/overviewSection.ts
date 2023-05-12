@@ -102,7 +102,7 @@ export const overview = buildSection({
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'space1',
+          id: 'space2',
           title: '',
           space: 'gutter',
         }),

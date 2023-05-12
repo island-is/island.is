@@ -30,10 +30,11 @@ export const LookupPerson: FC<FieldBaseProps | LookupProps> = ({
 
   const [
     getIdentity,
-    { loading: queryLoading, error: queryError },
+    { loading: queryLoading },
   ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
     onCompleted: (data) => {
       setValue(`${id}.name`, data.identity?.name ?? '')
+      clearErrors(`${id}.name`)
     },
     fetchPolicy: 'network-only',
   })
@@ -68,7 +69,7 @@ export const LookupPerson: FC<FieldBaseProps | LookupProps> = ({
             backgroundColor="blue"
             loading={queryLoading}
             required
-            error={queryError ?? error?.nationalId}
+            error={error?.nationalId || error?.name}
           />
         </GridColumn>
         <GridColumn span="6/12">

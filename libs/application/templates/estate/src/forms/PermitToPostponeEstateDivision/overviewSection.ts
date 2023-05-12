@@ -112,6 +112,17 @@ export const overview = buildSection({
           title: '',
           space: 'gutter',
         }),
+        buildKeyValueField({
+          label: m.additionalInfo,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.additionalInfo'),
+          width: 'half',
+        }),
+        buildDescriptionField({
+          id: 'space2',
+          title: '',
+          space: 'gutter',
+        }),
         buildDividerField({}),
         buildDescriptionField({
           id: 'overviewEstateHeader',

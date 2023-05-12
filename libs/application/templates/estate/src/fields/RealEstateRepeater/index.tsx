@@ -28,8 +28,6 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
     name: id,
   })
 
-  console.log('errorrrr', error)
-
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { assets: EstateAsset[] }
   }

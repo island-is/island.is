@@ -19,6 +19,7 @@ import { GenericFormField } from '@island.is/application/types'
 import { EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
+import { useEffect } from 'react'
 
 export const AdditionalEstateMember = ({
   field,
@@ -51,7 +52,14 @@ export const AdditionalEstateMember = ({
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
   })
 
-  const { control, setValue } = useFormContext()
+  const { control, setValue, clearErrors } = useFormContext()
+
+  useEffect(() => {
+    clearErrors(nameField)
+    clearErrors(relationField)
+    clearErrors(dateOfBirthField)
+    clearErrors(`${fieldIndex}.nationalId`)
+  }, [foreignCitizenship])
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
@@ -107,7 +115,6 @@ export const AdditionalEstateMember = ({
                 locale="is"
                 maxDate={new Date()}
                 backgroundColor="blue"
-                required
                 onChange={(d) => {
                   setValue(dateOfBirthField, d)
                 }}
@@ -167,6 +174,9 @@ export const AdditionalEstateMember = ({
                   value: YES,
                 },
               ]}
+              onSelect={(val) => {
+                setValue(foreignCitizenshipField, val)
+              }}
             />
           </Box>
         </GridColumn>

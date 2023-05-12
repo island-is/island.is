@@ -41,10 +41,10 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 
   const handleAddMember = () =>
     append({
-      nationalId: '',
+      nationalId: undefined,
       initial: false,
       enabled: true,
-      name: '',
+      name: undefined,
     })
 
   useEffect(() => {
