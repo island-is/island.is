@@ -75,7 +75,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                   documents={chosenCase?.documents}
                 />
               )}
-              {chosenCase?.additionalDdocuments?.length > 0 && (
+              {chosenCase?.additionalDocuments?.length > 0 && (
                 <RenderDocumentsBox
                   title="Fylgiskjöl"
                   documents={chosenCase?.additionalDocuments}
