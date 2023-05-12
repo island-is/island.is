@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, TableOfContents } from '@island.is/island-ui/core'
-import { scrollTo } from '../../utils/helpers/useScrollSpy'
+import { scrollTo } from '../../hooks/useScrollSpy'
 
 const RightSideColumn = () => {
   const aboutHeadings = [
