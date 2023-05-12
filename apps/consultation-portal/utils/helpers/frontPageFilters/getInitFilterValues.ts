@@ -1,7 +1,5 @@
 import { CaseSortOptions } from '../../../types/enums'
 import { ArrOfTypes } from '../../../types/interfaces'
-import { FILTERS_FRONT_PAGE_KEY } from '../../consts/consts'
-import { getItem } from '../localStorage'
 
 const TODAY = new Date()
 

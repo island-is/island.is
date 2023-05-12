@@ -202,13 +202,6 @@ export interface User {
   image?: string
 }
 
-export interface TypeForSubscriptions {
-  id: string
-  type: string
-  name: string
-  nr: any
-}
-
 export interface AdviceFilter {
   oldestFirst?: boolean
   pageNumber?: number
