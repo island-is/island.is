@@ -108,6 +108,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                   error={fieldError?.marketValue}
                   currency
                   size="sm"
+                  required
                 />
               </Box>
             </GridColumn>,

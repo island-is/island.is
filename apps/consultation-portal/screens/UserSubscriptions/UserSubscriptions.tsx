@@ -226,6 +226,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
         onSubmit={onSubmit}
         onClear={onClear}
         buttonText="Skrá úr áskrift"
+        toggleAble={false}
         submitSubsIsLoading={submitSubsIsLoading}
       />
     </SubscriptionsSkeleton>

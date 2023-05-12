@@ -5,11 +5,12 @@ import { InjectModel } from '@nestjs/sequelize'
 import { validateClientId } from '@island.is/auth/shared'
 
 import { ApiScope } from '../models/api-scope.model'
-import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { Client } from '../../clients/models/client.model'
 import { ClientCreateScopeDTO } from './dto/client-create-scope.dto'
 import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
-import { ApiScopesDTO } from '../dto/api-scopes.dto'
+import { AdminScopeDTO } from './dto/admin-scope.dto'
+import { AdminTranslationService } from './services/admin-translation.service'
+import { NoContentException } from '@island.is/nest/problem'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -23,17 +24,60 @@ export class AdminScopeService {
     private readonly clientModel: typeof Client,
     @InjectModel(ApiScopeUserClaim)
     private readonly apiScopeUserClaim: typeof ApiScopeUserClaim,
+    private readonly adminTranslationService: AdminTranslationService,
     private sequelize: Sequelize,
   ) {}
 
-  async findApiScopesByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
+  async findAllByTenantId(tenantId: string): Promise<AdminScopeDTO[]> {
     const apiScopes = await this.apiScope.findAll({
       where: {
         domainName: tenantId,
+        enabled: true,
       },
     })
 
-    return apiScopes.map((apiScope) => new AdminScopeDTO(apiScope))
+    const translations = await this.adminTranslationService.getApiScopeTranslations(
+      apiScopes.map(({ name }) => name),
+    )
+
+    return apiScopes.map((apiScope) =>
+      this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+        apiScope,
+        translations,
+      ),
+    )
+  }
+
+  /**
+   * Finds a scope by name and tenantId
+   */
+  async findByTenantIdAndScopeName({
+    scopeName,
+    tenantId,
+  }: {
+    scopeName: string
+    tenantId: string
+  }): Promise<AdminScopeDTO> {
+    const apiScope = await this.apiScope.findOne({
+      where: {
+        name: scopeName,
+        domainName: tenantId,
+        enabled: true,
+      },
+    })
+
+    if (!apiScope) {
+      throw new NoContentException()
+    }
+
+    const translations = await this.adminTranslationService.getApiScopeTranslations(
+      [apiScope.name],
+    )
+
+    return this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+      apiScope,
+      translations,
+    )
   }
 
   /**
@@ -42,7 +86,7 @@ export class AdminScopeService {
   async createScope(
     tenantId: string,
     input: ClientCreateScopeDTO,
-  ): Promise<ApiScopesDTO> {
+  ): Promise<AdminScopeDTO> {
     if (
       !validateClientId({
         prefix: tenantId,
@@ -85,6 +129,13 @@ export class AdminScopeService {
       return scope
     })
 
-    return apiScope.toDTO()
+    const translations = await this.adminTranslationService.getApiScopeTranslations(
+      [apiScope.name],
+    )
+
+    return this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+      apiScope,
+      translations,
+    )
   }
 }

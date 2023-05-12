@@ -3,18 +3,15 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
-import { JA, NEI, NO, YES } from '../../lib/constants'
 import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
