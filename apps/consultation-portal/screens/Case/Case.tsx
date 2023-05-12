@@ -7,7 +7,7 @@ import {
   GridRow,
   Stack,
 } from '@island.is/island-ui/core'
-import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
+import { CaseOverview, CaseTimeline } from '../../components'
 import Layout from '../../components/Layout/Layout'
 import { useFetchAdvicesById, useIsMobile } from '../../utils/helpers'
 import { Case } from '../../types/interfaces'
