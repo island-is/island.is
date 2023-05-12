@@ -31,7 +31,7 @@ import { AgencyText } from './components/AgencyText'
 import {
   advicePublishTypeKey,
   advicePublishTypeKeyHelper,
-} from '@island.is/consultation-portal/types/enums'
+} from '../../types/enums'
 
 type CardProps = {
   card: Case

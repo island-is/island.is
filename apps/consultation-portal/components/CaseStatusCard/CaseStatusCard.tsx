@@ -1,4 +1,4 @@
-import { Case } from '@island.is/consultation-portal/types/interfaces'
+import { Case } from '../../types/interfaces'
 import { SimpleCardSkeleton } from '../Card'
 import StackedTitleAndDescription from '../StackedTitleAndDescription/StackedTitleAndDescription'
 import { Box, LinkV2 } from '@island.is/island-ui/core'

@@ -9,7 +9,7 @@ import { Case } from '../../../types/interfaces'
 import {
   advicePublishTypeKeyHelper,
   pastAdvicePublishTypeKey,
-} from '@island.is/consultation-portal/types/enums'
+} from '../../../types/enums'
 interface Props {
   chosenCase: Case
 }

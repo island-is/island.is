@@ -6,8 +6,8 @@ import { useState } from 'react'
 import {
   advicePublishTypeKey,
   advicePublishTypeKeyHelper,
-} from '@island.is/consultation-portal/types/enums'
-import { hasDatePassed } from '@island.is/consultation-portal/utils/helpers/dateFormatter'
+} from '../../types/enums'
+import { hasDatePassed } from '../../utils/helpers/dateFormatter'
 
 interface Props {
   advices: Array<UserAdvice>
