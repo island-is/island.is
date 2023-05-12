@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class PowerBiEmbedTokenResponse {
+export class GetPowerBiEmbedPropsFromServerResponse {
   @Field(() => String, { nullable: true })
-  token?: string | null
+  accessToken?: string | null
 
   @Field(() => String, { nullable: true })
   embedUrl?: string | null
