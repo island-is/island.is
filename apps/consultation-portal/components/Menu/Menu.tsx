@@ -48,49 +48,28 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
           <GridRow>
             <GridColumn span="12/12" paddingTop={3} paddingBottom={3}>
               <Columns alignY="center" space={2}>
-                {isFrontPage && (
-                  <Column width="content">
-                    <FocusableBox href="https://island.is/">
-                      <Logo />
-                    </FocusableBox>
-                  </Column>
-                )}
-                {!isFrontPage && (
-                  <Hidden below="xl">
-                    <Column width="content">
-                      <FocusableBox href="https://island.is/">
-                        <Logo iconOnly />
-                      </FocusableBox>
-                    </Column>
-                  </Hidden>
-                )}
+                <Column width="content">
+                  {isFrontPage ? <Logo /> : !isMobile && <Logo iconOnly />}
+                </Column>
                 {!isFrontPage && (
                   <>
-                    <Hidden below="xl">
+                    {!isMobile && (
                       <Column width="content">
-                        <Box>
-                          <Box
-                            style={{
-                              transform: 'rotate(90deg)',
-                              width: 56,
-                            }}
-                            marginX={1}
-                          >
-                            <Divider />
-                          </Box>
+                        <Box
+                          style={{
+                            transform: 'rotate(90deg)',
+                            width: 56,
+                          }}
+                          marginX={1}
+                        >
+                          <Divider />
                         </Box>
                       </Column>
-                    </Hidden>
+                    )}
                     <Column width="content">
-                      {isMobile ? (
-                        <FocusableBox href="/" alignItems="center">
-                          <MenuLogoMobile />
-                        </FocusableBox>
-                      ) : (
-                        <FocusableBox href="/" alignItems="center">
-                          <MenuLogo />
-                        </FocusableBox>
-                      )}
+                      <FocusableBox href="/" alignItems="center">
+                        {isMobile ? <MenuLogoMobile /> : <MenuLogo />}
+                      </FocusableBox>
                     </Column>
                   </>
                 )}
