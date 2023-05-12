@@ -1,13 +1,13 @@
-import TabsList from '../../../screens/Subscriptions/tabsList'
-import { Area, SortOptions } from '../../../types/enums'
+import TabsList from '../screens/Subscriptions/tabsList'
+import { Area, SortOptions } from '../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
   SortTitle,
   SubscriptionArray,
-} from '../../../types/interfaces'
-import getInitValues from './getInitValues'
-import initSubscriptions from './initSubscriptions'
+} from '../types/interfaces'
+import getInitValues from '../utils/helpers/subscriptions/getInitValues'
+import initSubscriptions from '../utils/helpers/subscriptions/initSubscriptions'
 import { useState } from 'react'
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
   isMySubscriptions?: boolean
 }
 
-const useSubscriptions = ({
+export const useSubscriptions = ({
   types,
   cases,
   dontShowNew,

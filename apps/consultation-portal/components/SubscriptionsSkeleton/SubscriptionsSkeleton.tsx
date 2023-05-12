@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   GridContainer,
-  LinkV2,
   LoadingDots,
   Stack,
   Tabs,
@@ -14,7 +13,7 @@ import { ReactNode } from 'react'
 import EmailBox from '../EmailBox/EmailBox'
 import { Area } from '../../types/enums'
 import Link from 'next/link'
-import { useUser } from '../../utils/helpers'
+import { useUser } from '../../hooks/useUser'
 
 interface Props {
   children: ReactNode
