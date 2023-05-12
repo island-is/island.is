@@ -138,7 +138,6 @@ const AppealToCourtOfAppeals = () => {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                multiple={false}
                 onChange={(files) =>
                   handleChange(
                     files,
@@ -169,7 +168,6 @@ const AppealToCourtOfAppeals = () => {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                multiple={false}
                 onChange={(files) =>
                   handleChange(
                     files,
