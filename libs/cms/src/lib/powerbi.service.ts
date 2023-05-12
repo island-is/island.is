@@ -1,22 +1,62 @@
 import { Configuration, ConfidentialClientApplication } from '@azure/msal-node'
-import { ConfigType } from '@island.is/nest/config'
+import { Inject, Injectable } from '@nestjs/common'
+import { LazyDuringDevScope } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import { PowerBiConfig } from './powerbi.config'
+import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
 
 type Owner = 'Fiskistofa'
 const BASE_URL = 'https://api.powerbi.com/v1.0/myorg'
 
+@Injectable({ scope: LazyDuringDevScope })
 export class PowerBiService {
   private fetch: EnhancedFetchAPI
 
-  constructor(private config: ConfigType<typeof PowerBiConfig>) {
+  constructor(
+    @Inject(PowerBiConfig.KEY)
+    private config: ConfigType<typeof PowerBiConfig>,
+  ) {
     this.fetch = createEnhancedFetch({ name: 'PowerBiService' })
   }
 
-  async getAccessToken(owner: Owner) {
+  async getEmbedProps(powerBiSlice: {
+    owner?: string
+    workspaceId?: string
+    reportId?: string
+  }): Promise<GetPowerBiEmbedPropsFromServerResponse | null> {
+    if (
+      !powerBiSlice.owner ||
+      !powerBiSlice.workspaceId ||
+      !powerBiSlice.reportId
+    )
+      return null
+
+    const accessToken = await this.getAccessToken(powerBiSlice.owner as Owner)
+
+    const report = await this.getReport(
+      powerBiSlice.workspaceId,
+      powerBiSlice.reportId,
+      accessToken,
+    )
+
+    const embedToken = await this.getEmbedToken(
+      powerBiSlice.reportId,
+      [report.datasetId],
+      powerBiSlice.workspaceId,
+      accessToken,
+    )
+
+    return {
+      accessToken: embedToken,
+      embedUrl: report.embedUrl,
+    }
+  }
+
+  private async getAccessToken(owner: Owner) {
     let clientId = ''
     let clientSecret = ''
     let tenantId = ''
@@ -49,7 +89,11 @@ export class PowerBiService {
     return tokenResponse?.accessToken as string
   }
 
-  async getReport(workspaceId: string, reportId: string, accessToken: string) {
+  private async getReport(
+    workspaceId: string,
+    reportId: string,
+    accessToken: string,
+  ) {
     const url = `${BASE_URL}/groups/${workspaceId}/reports/${reportId}`
 
     const response = await this.fetch(url, {
@@ -63,7 +107,7 @@ export class PowerBiService {
     return response.json()
   }
 
-  async getEmbedToken(
+  private async getEmbedToken(
     reportId: string,
     datasetIds: string[],
     targetWorkspaceId: string,
