@@ -19,7 +19,7 @@ import {
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { useLogIn, usePostAdvice } from '../../utils/helpers'
+import { createUUIDString, useLogIn, usePostAdvice } from '../../utils/helpers'
 import { SubscriptionActionBox } from '../Card'
 import { PresignedPost } from '@island.is/api/schema'
 import {
@@ -182,7 +182,7 @@ export const WriteReviewCard = ({
     const uploadFiles = files.map((file) => fileToObject(file))
     const uploadFilesWithKey = uploadFiles.map((f) => ({
       ...f,
-      key: crypto.randomUUID(),
+      key: createUUIDString(),
     }))
     const newFileList = [...fileList, ...uploadFilesWithKey]
     setFileList(newFileList)

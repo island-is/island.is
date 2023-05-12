@@ -22,13 +22,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
-import {
-  AlertMessage,
-  RadioButton,
-  Box,
-  Tooltip,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, RadioButton, Box, Text } from '@island.is/island-ui/core'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -177,9 +171,6 @@ const HearingArrangements = () => {
                   <Text as="span" color="red600" fontWeight="semiBold">
                     *
                   </Text>
-                  <Tooltip
-                    text={formatMessage(m.sections.sessionArrangements.tooltip)}
-                  />
                 </Text>
               </Box>
               <BlueBox>

@@ -6,7 +6,6 @@ import {
   AdminScopeDTO,
   MeTenantGuard,
   ClientCreateScopeDTO,
-  ApiScopesDTO,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
@@ -35,8 +34,26 @@ export class MeScopesController {
   @Audit<AdminScopeDTO[]>({
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
-  findAll(@Param('tenantId') id: string): Promise<AdminScopeDTO[]> {
-    return this.adminScopeService.findApiScopesByTenantId(id)
+  findAllByTenantId(@Param('tenantId') id: string): Promise<AdminScopeDTO[]> {
+    return this.adminScopeService.findAllByTenantId(id)
+  }
+
+  @Get(':scopeName')
+  @Documentation({
+    description: 'Get scope by name and tenant id.',
+    response: { status: 200, type: AdminScopeDTO },
+  })
+  @Audit<AdminScopeDTO>({
+    resources: (scope) => scope.name,
+  })
+  findByTenantIdAndScopeName(
+    @Param('tenantId') tenantId: string,
+    @Param('scopeName') scopeName: string,
+  ): Promise<AdminScopeDTO> {
+    return this.adminScopeService.findByTenantIdAndScopeName({
+      scopeName,
+      tenantId,
+    })
   }
 
   @Post()
@@ -50,7 +67,7 @@ export class MeScopesController {
   create(
     @Param('tenantId') tenantId: string,
     @Body() input: ClientCreateScopeDTO,
-  ): Promise<ApiScopesDTO> {
+  ): Promise<AdminScopeDTO> {
     return this.adminScopeService.createScope(tenantId, input)
   }
 }
