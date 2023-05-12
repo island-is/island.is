@@ -126,7 +126,9 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           >
             <Stack space={3}>
               {!isMobile && <AdviceCTACard chosenCase={chosenCase} />}
-              <StakeholdersCard chosenCase={chosenCase} />
+              {chosenCase?.stakeholders?.length > 0 && (
+                <StakeholdersCard chosenCase={chosenCase} />
+              )}
               <CoOrdinator
                 contactEmail={contactEmail}
                 contactName={contactName}
