@@ -18,7 +18,12 @@ import React, { useContext } from 'react'
 import { MenuLogo, MenuLogoMobile } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
-import { checkActiveHeaderLink, useLogIn, useLogOut } from '../../utils/helpers'
+import {
+  checkActiveHeaderLink,
+  useIsMobile,
+  useLogIn,
+  useLogOut,
+} from '../../utils/helpers'
 import { useRouter } from 'next/router'
 import { UserContext } from '../../context'
 type MenuProps = {
@@ -27,6 +32,7 @@ type MenuProps = {
 
 export const Menu = ({ isFrontPage = false }: MenuProps) => {
   const { isAuthenticated, user } = useContext(UserContext)
+  const { isMobile } = useIsMobile()
 
   const router = useRouter()
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -76,22 +82,38 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                       </Column>
                     </Hidden>
                     <Column width="content">
-                      <Hidden below="md">
+                      {!isMobile && (
                         <FocusableBox href="/" alignItems="center">
                           <MenuLogo />
                         </FocusableBox>
-                      </Hidden>
-                      <Hidden above="sm">
+                      )}
+                      {isMobile && (
                         <FocusableBox href="/" alignItems="center">
                           <MenuLogoMobile />
                         </FocusableBox>
-                      </Hidden>
+                      )}
                     </Column>
                   </>
                 )}
-
                 <Column>
-                  <Hidden below="xl">
+                  {isMobile ? (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexEnd"
+                      width="full"
+                    >
+                      <MenuModal
+                        baseId="menuModal"
+                        modalLabel="Menu modal"
+                        isLoggedIn={isAuthenticated}
+                        logIn={LogIn}
+                        logOut={LogOut}
+                        router={router}
+                        isFrontPage={isFrontPage}
+                      />
+                    </Box>
+                  ) : (
                     <Box
                       display="flex"
                       alignItems="center"
@@ -139,25 +161,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                         )}
                       </Box>
                     </Box>
-                  </Hidden>
-                  <Hidden above="lg">
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="flexEnd"
-                      width="full"
-                    >
-                      <MenuModal
-                        baseId="menuModal"
-                        modalLabel="Menu modal"
-                        isLoggedIn={isAuthenticated}
-                        logIn={LogIn}
-                        logOut={LogOut}
-                        router={router}
-                        isFrontPage={isFrontPage}
-                      />
-                    </Box>
-                  </Hidden>
+                  )}
                 </Column>
               </Columns>
             </GridColumn>
