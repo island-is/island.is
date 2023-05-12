@@ -29,6 +29,8 @@ generates:
       withComponent: false
       avoidOptionals:
         object: true
+      namingConvention:
+        enumValues: 'change-case-all#upperCase'
   ./apps/judicial-system/web-e2e-regression/src/graphql/schema.ts:
     schema:
       - ./apps/judicial-system/api.graphql

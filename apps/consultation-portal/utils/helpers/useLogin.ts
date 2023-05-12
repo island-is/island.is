@@ -6,7 +6,9 @@ export const useLogIn = () => {
   const path = router.basePath + router.asPath
 
   const LogIn = async () => {
-    signIn('identity-server', { callbackUrl: path })
+    if (typeof window !== 'undefined') {
+      signIn('identity-server', { callbackUrl: path })
+    }
   }
 
   return LogIn

@@ -2,9 +2,9 @@ import { Controller, Get, Param, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
-  AdminScopeDTO,
   MeTenantGuard,
   AdminClientsService,
+  AdminScopeDTO,
 } from '@island.is/auth-api-lib'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'

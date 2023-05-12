@@ -73,7 +73,7 @@ const UploadFilesToPoliceCase: React.FC<{
   } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
     variables: { input: { caseId } },
     fetchPolicy: 'no-cache',
-    skip: caseOrigin !== CaseOrigin.Loke,
+    skip: caseOrigin !== CaseOrigin.LOKE,
   })
 
   const [displayFiles, setDisplayFiles] = useState<UploadFile[]>(
@@ -106,7 +106,7 @@ const UploadFilesToPoliceCase: React.FC<{
   }, [setAllUploaded, displayFiles])
 
   useEffect(() => {
-    if (caseOrigin !== CaseOrigin.Loke) {
+    if (caseOrigin !== CaseOrigin.LOKE) {
       setPoliceCaseFiles({
         files: [],
         isLoading: false,

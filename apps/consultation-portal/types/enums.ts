@@ -41,13 +41,18 @@ export enum CaseSubscriptionType {
 }
 
 export enum SubscriptionType {
-  AllChanges = 'Allar breytingar',
+  AllChanges = 'Ný mál og breytingar',
   StatusChanges = 'Breytingar á stöðu',
-  OnlyNew = 'Aðeins ný',
+  OnlyNew = 'Einungis ný mál',
 }
 
 export enum SubscriptionTypeKey {
-  'Allar breytingar' = 'AllChanges',
+  'Ný mál og breytingar' = 'AllChanges',
   'Breytingar á stöðu' = 'StatusChanges',
-  'Aðeins ný' = 'OnlyNew',
+  'Einungis ný mál' = 'OnlyNew',
+}
+export enum SubscriptionDescriptionKey {
+  'Ný mál og breytingar' = 'Tilkynningar um ný mál, breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna',
+  'Breytingar á stöðu' = 'StatusChanges',
+  'Einungis ný mál' = 'Tilkynningar um ný mál',
 }

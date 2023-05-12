@@ -35,13 +35,13 @@ const DefenderInfo: React.FC<Props> = (props) => {
 
   const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
-      if (user?.role === UserRole.Prosecutor) {
+      if (user?.role === UserRole.PROSECUTOR) {
         return defenderInfo.restrictionCases.sections.defender.heading
       } else {
         return defenderInfo.restrictionCases.sections.defender.title
       }
     } else {
-      if (user?.role === UserRole.Prosecutor) {
+      if (user?.role === UserRole.PROSECUTOR) {
         return defenderInfo.investigationCases.sections.defender.heading
       } else {
         return defenderInfo.investigationCases.sections.defender.title
@@ -90,7 +90,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
         title={formatMessage(getSectionTitle(), {
           defenderType:
             workingCase.sessionArrangements ===
-            SessionArrangements.AllPresentSpokesperson
+            SessionArrangements.ALL_PRESENT_SPOKESPERSON
               ? 'Talsmaður'
               : 'Verjandi',
         })}
@@ -99,7 +99,7 @@ const DefenderInfo: React.FC<Props> = (props) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
-        {user?.role === UserRole.Prosecutor && (
+        {user?.role === UserRole.PROSECUTOR && (
           <Box marginTop={2}>
             <Checkbox
               name="sendRequestToDefender"
