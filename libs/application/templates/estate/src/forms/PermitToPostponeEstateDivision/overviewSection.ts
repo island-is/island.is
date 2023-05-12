@@ -64,7 +64,9 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo).estateMembers ?? []
+                ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
+                  (member) => member.enabled,
+                ) ?? []
               ).map((member) => ({
                 title: member.name,
                 description: [

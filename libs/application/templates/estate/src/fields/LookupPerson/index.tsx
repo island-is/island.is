@@ -10,14 +10,23 @@ import { useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql'
 
-export const LookupPerson: FC<FieldBaseProps> = ({ field, error }) => {
+type LookupProps = {
+  field: {
+    id: string
+  }
+  error: Record<string, string> | any
+}
+
+export const LookupPerson: FC<FieldBaseProps | LookupProps> = ({
+  field,
+  error,
+}) => {
   const { formatMessage } = useLocale()
   const { id } = field
   const { setValue, watch, clearErrors } = useFormContext()
 
   const personNationalId: string = watch(`${id}.nationalId`)
   const personName: string = watch(`${id}.name`)
-  const e = error as Record<string, string> | undefined
 
   const [
     getIdentity,
@@ -44,7 +53,7 @@ export const LookupPerson: FC<FieldBaseProps> = ({ field, error }) => {
     } else if (personNationalId?.length === 0) {
       clearErrors(`${id}.name`)
     }
-  }, [personName, personNationalId, getIdentity, setValue])
+  }, [personName, personNationalId, getIdentity, setValue, clearErrors, id])
 
   return (
     <Box>
@@ -55,12 +64,11 @@ export const LookupPerson: FC<FieldBaseProps> = ({ field, error }) => {
             name={`${id}.nationalId`}
             label={formatMessage(m.nationalId)}
             format="######-####"
-            defaultValue=""
+            defaultValue={undefined}
             backgroundColor="blue"
             loading={queryLoading}
-            error={
-              queryError ? e?.name : e?.nationalId ? e?.nationalId : undefined
-            }
+            required
+            error={queryError ?? error?.nationalId}
           />
         </GridColumn>
         <GridColumn span="6/12">
@@ -69,8 +77,8 @@ export const LookupPerson: FC<FieldBaseProps> = ({ field, error }) => {
             name={`${id}.name`}
             label={formatMessage(m.name)}
             readOnly
-            defaultValue=""
-            error={e?.name ? e?.name : undefined}
+            defaultValue={undefined}
+            error={error?.name ? error?.name : undefined}
           />
         </GridColumn>
       </GridRow>

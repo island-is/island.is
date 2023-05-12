@@ -160,7 +160,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
       {fields.map((member: GenericFormField<EstateMember>, index) => (
         <Box key={member.id} hidden={member.initial}>
           <AdditionalEstateMember
-            application={application}
             field={member}
             fieldName={id}
             index={index}

@@ -71,10 +71,7 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        nationalId: z
-          .string()
-          .refine((v) => (v ? v.length === 10 : true))
-          .optional(),
+        nationalId: z.string(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().min(1).optional(),
@@ -89,6 +86,18 @@ export const estateSchema = z.object({
           .refine((v) => isValidEmail(v) || v === '')
           .optional(),
       })
+      .refine(
+        ({ nationalId, foreignCitizenship }) => {
+          if (foreignCitizenship && foreignCitizenship.length > 0) {
+            return true
+          } else {
+            return kennitala.isValid(nationalId)
+          }
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
       .array()
       .optional(),
     assets: asset,
