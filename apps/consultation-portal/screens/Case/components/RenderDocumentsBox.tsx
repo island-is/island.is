@@ -11,10 +11,10 @@ interface Props {
 
 export const RenderDocumentsBox = ({ title, documents }: Props) => {
   return (
-    <SimpleCardSkeleton>
-      <StackedTitleAndDescription title={title}>
-        {documents?.length > 0 ? (
-          documents.map((document, index) => {
+    documents?.length > 0 && (
+      <SimpleCardSkeleton>
+        <StackedTitleAndDescription title={title}>
+          {documents.map((document, index) => {
             return (
               <LinkV2
                 href={`${env.backendDownloadUrl}${document.id}`}
@@ -26,11 +26,9 @@ export const RenderDocumentsBox = ({ title, documents }: Props) => {
                 {document.fileName}
               </LinkV2>
             )
-          })
-        ) : (
-          <Text>Engin skjöl fundust.</Text>
-        )}
-      </StackedTitleAndDescription>
-    </SimpleCardSkeleton>
+          })}
+        </StackedTitleAndDescription>
+      </SimpleCardSkeleton>
+    )
   )
 }
