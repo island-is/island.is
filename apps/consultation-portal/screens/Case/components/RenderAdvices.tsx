@@ -72,7 +72,11 @@ export const RenderAdvices = ({
   return (
     <StackedChildren>
       <TitleText adviceCount={chosenCase?.adviceCount} />
-      <Advices advices={advices} />
+      <Advices
+        advices={advices}
+        publishType={chosenCase?.advicePublishTypeId}
+        processEndDate={chosenCase?.processEnds}
+      />
       {chosenCase?.statusName === CaseStatusFilterOptions.forReview && (
         <WriteReviewCard
           card={chosenCase}
