@@ -63,7 +63,7 @@ export const FiskistofaDashboardHeader: React.FC<FiskistofaDashboardHeaderProps>
           className={styles.logo}
           src={n(
             'logo',
-            'https://images.ctfassets.net/8k0h54kbe6bj/3W68zG8kVqVY7DU1qHxVEA/4d403503b05488cc8385578a92ef399e/fiskist-merki_2x.png',
+            'https://images.ctfassets.net/8k0h54kbe6bj/2Ar2rGJETbegBE39jxEAmt/386c0a4877789a6d9eade785cb24163a/fiskistofa-logo-gagnasidur.svg',
           )}
           alt="fiskistofa-header"
         />
