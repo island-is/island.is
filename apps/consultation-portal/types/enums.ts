@@ -56,3 +56,14 @@ export enum SubscriptionDescriptionKey {
   'Breytingar á stöðu' = 'StatusChanges',
   'Einungis ný mál' = 'Tilkynningar um ný mál',
 }
+
+export enum advicePublishTypeKey {
+  closed = 'Umsagnir verða ekki birtar.',
+  open = 'Umsagnir verða birtar jafnóðum og þær berast.',
+  delayed = 'Umsagnir verða birtar að loknum umsagnafresti.',
+}
+export const advicePublishTypeKeyHelper = {
+  1: 'open',
+  2: 'delayed',
+  3: 'closed',
+}
