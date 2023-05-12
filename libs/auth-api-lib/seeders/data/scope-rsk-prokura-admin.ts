@@ -19,5 +19,6 @@ export const up = compose(
     description:
       'A test web client for Skatturinn to get access tokens with delegations to test APIs.',
     allowedScopes: ['openid', '@rsk/prokura', '@rsk/prokura:admin'],
+    supportDelegations: true,
   }),
 )
