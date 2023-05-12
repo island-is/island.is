@@ -69,14 +69,18 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <RenderDocumentsBox
-                title="Skjöl til samráðs"
-                documents={chosenCase?.documents}
-              />
-              <RenderDocumentsBox
-                title="Fylgiskjöl"
-                documents={chosenCase?.additionalDocuments}
-              />
+              {chosenCase?.documents?.length > 0 && (
+                <RenderDocumentsBox
+                  title="Skjöl til samráðs"
+                  documents={chosenCase?.documents}
+                />
+              )}
+              {chosenCase?.documents?.length > 0 && (
+                <RenderDocumentsBox
+                  title="Fylgiskjöl"
+                  documents={chosenCase?.additionalDocuments}
+                />
+              )}
               {chosenCase?.statusName !==
                 CaseStatusFilterOptions.resultsPublished && (
                 <CaseEmailBox
