@@ -171,6 +171,17 @@ export const estateSchema = z.object({
         path: ['value'],
       },
     )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId === ''
+          ? true
+          : nationalId && kennitala.isValid(nationalId)
+      },
+      {
+        params: m.errorNationalIdIncorrect,
+        path: ['nationalId'],
+      },
+    )
     .array()
     .optional(),
 

@@ -28,10 +28,10 @@ export const LookupPerson: FC<FieldBaseProps | LookupProps> = ({
   const personNationalId: string = watch(`${id}.nationalId`)
   const personName: string = watch(`${id}.name`)
 
-  const [
-    getIdentity,
-    { loading: queryLoading },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
+  const [getIdentity, { loading: queryLoading }] = useLazyQuery<
+    Query,
+    { input: IdentityInput }
+  >(IDENTITY_QUERY, {
     onCompleted: (data) => {
       setValue(`${id}.name`, data.identity?.name ?? '')
       clearErrors(`${id}.name`)
