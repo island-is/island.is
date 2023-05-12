@@ -485,6 +485,11 @@ export const m = defineMessages({
     id: 'service.portal:finance',
     defaultMessage: 'Fjármál',
   },
+  financeHeading: {
+    id: 'service.portal:finance-heading',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir allt sem tengist þínum fjámálum við ríkissjóð og aðrar ríkisreknar stofnanir.',
+  },
   financeDescription: {
     id: 'service.portal:finance-description',
     defaultMessage: 'Staða þín við ríkissjóð og aðrar aðgerðir því tengdu',

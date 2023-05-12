@@ -24,7 +24,6 @@ import {
   FJARSYSLAN_ID,
   FootNote,
   formSubmit,
-  IntroHeader,
   m,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
@@ -120,19 +119,7 @@ const FinanceStatus = () => {
     )
   }
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={{
-          id: 'sp.finance-status:title',
-          defaultMessage: 'Staða við ríkissjóð og stofnanir',
-        }}
-        intro={{
-          id: 'sp.finance-status:intro',
-          defaultMessage:
-            'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
-        }}
-        serviceProviderID={FJARSYSLAN_ID}
-      />
+    <Box marginTop={[1, 1, 2, 2, 6]} marginBottom={[6, 6, 10]}>
       <Stack space={2}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>

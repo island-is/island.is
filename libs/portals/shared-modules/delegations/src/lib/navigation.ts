@@ -6,7 +6,6 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     name: m.accessControlDelegations,
     path: DelegationPaths.Delegations,
     navHide: false,
-    serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
     breadcrumbHide: true,
     isKeyItem: true,
     children: [
@@ -21,14 +20,12 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     name: m.accessControlDelegationsIncoming,
     path: DelegationPaths.DelegationsIncoming,
     navHide: true,
-    serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
     breadcrumbHide: true,
   },
   {
     name: m.accessControlAccess,
     path: DelegationPaths.DelegationAccess,
     navHide: true,
-    serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
   },
 ]
 
@@ -40,6 +37,5 @@ export const delegationsNavigation: PortalNavigationItem = {
   },
   description: m.accessControlDescription,
   children: delegationsNavigationChildren,
-  serviceProvider: '1JHJe1NDwbBjEr7OVdjuFD',
   isKeyItem: true,
 }

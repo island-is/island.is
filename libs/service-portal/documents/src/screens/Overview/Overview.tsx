@@ -14,7 +14,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import {
   useScrollToRefOnUpdate,
-  IntroHeader,
   EmptyState,
   ServicePortalPath,
   formatPlausiblePathToParams,
@@ -275,19 +274,12 @@ export const ServicePortalDocuments = () => {
         paddingX={[3, 3, 6]}
         paddingTop={[2, 2, 4]}
       >
-        <IntroHeader title={messages.title} intro={messages.intro} />
         <EmptyState />
       </Box>
     )
   }
   return (
-    <Box
-      marginBottom={[4, 4, 6, 10]}
-      paddingX={[3, 3, 6]}
-      paddingTop={[2, 2, 4]}
-    >
-      <IntroHeader title={messages.title} intro={messages.intro} />
-
+    <Box marginBottom={[4, 4, 6, 10]}>
       {loading && filterValue === defaultFilterValues ? (
         <Box
           display="flex"

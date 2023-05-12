@@ -54,7 +54,6 @@ export const Dashboard: FC<{}> = () => {
             navRoot.path !== ServicePortalPath.MinarSidurRoot && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
-                offset={index % 3 === 0 ? ['0', '0', '0', '1/12'] : '0'}
                 span={['12/12', '12/12', '12/12', '3/12', '3/12']}
                 paddingBottom={3}
               >
@@ -107,7 +106,7 @@ export const Dashboard: FC<{}> = () => {
   return (
     <Box>
       <Greeting />
-      <Box paddingTop={[0, 0, 0, 6]} marginBottom={3}>
+      <Box paddingTop={[0, 0, 0, 4]} marginBottom={3}>
         <GridContainer>
           <GridRow>{displayCards()}</GridRow>
         </GridContainer>

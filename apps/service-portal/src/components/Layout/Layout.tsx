@@ -11,10 +11,9 @@ import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
 import {
   m,
   ServicePortalNavigationItem,
-  ServicePortalPath,
   useScrollTopOnUpdate,
 } from '@island.is/service-portal/core'
-import { useLocation } from 'react-router-dom'
+import { useLocation, matchPath } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { GlobalAlertBannerSection } from '../AlertBanners/GlobalAlertBannerSection'
 import { useAlertBanners } from '@island.is/service-portal/graphql'
@@ -26,13 +25,14 @@ import GoBack from '../GoBack/GoBack'
 import { useDynamicRoutesWithNavigation } from '@island.is/service-portal/core'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import { theme } from '@island.is/island-ui/theme'
+import FullWidthLayout from './FullWidthLayout'
+import { fwPaths } from '../../lib/fullWidthPaths'
 
 export const Layout: FC = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals'])
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
-  const [isDashboard, setIsDashboard] = useState(true)
-  const [isMailbox, setIsMailbox] = useState(false)
+  const [isFullwidth, setIsFullwidth] = useState(true)
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
 
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
@@ -71,26 +71,12 @@ export const Layout: FC = ({ children }) => {
   const subNavItems: NavigationItem[] | undefined = activeParent?.children
     ?.filter((item) => !item.navHide)
     ?.map((item: ServicePortalNavigationItem) => {
-      return mapChildren(item) as NavigationItem
+      return mapChildren(item)
     })
 
   useEffect(() => {
-    if (
-      pathname === ServicePortalPath.MinarSidurPath + '/' ||
-      pathname === ServicePortalPath.MinarSidurRoot
-    ) {
-      setIsDashboard(true)
-    } else {
-      setIsDashboard(false)
-    }
-  }, [pathname])
-
-  useEffect(() => {
-    if (pathname === ServicePortalPath.ElectronicDocumentsRoot) {
-      setIsMailbox(true)
-    } else {
-      setIsMailbox(false)
-    }
+    const matches = fwPaths.find((route) => matchPath(route, pathname))
+    setIsFullwidth(!!matches)
   }, [pathname])
 
   return (
@@ -106,7 +92,7 @@ export const Layout: FC = ({ children }) => {
         position={height ? height : 0}
       />
 
-      {!isDashboard && !isMailbox && activeParent && (
+      {!isFullwidth && activeParent && (
         <SidebarLayout
           isSticky={true}
           sidebarContent={
@@ -166,11 +152,10 @@ export const Layout: FC = ({ children }) => {
           </Box>
         </SidebarLayout>
       )}
-      {(isDashboard || isMailbox || !activeParent) && (
-        <Box as="main" component="main" style={{ marginTop: height }}>
-          {!isMailbox && !activeParent && <ContentBreadcrumbs />}
+      {(isFullwidth || !activeParent) && (
+        <FullWidthLayout activeParent={activeParent} height={height}>
           {children}
-        </Box>
+        </FullWidthLayout>
       )}
     </div>
   )

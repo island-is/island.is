@@ -24,7 +24,6 @@ import {
   DynamicWrapper,
   FJARSYSLAN_ID,
   FootNote,
-  IntroHeader,
   m,
 } from '@island.is/service-portal/core'
 import {
@@ -123,19 +122,7 @@ const FinanceTransactions = () => {
 
   return (
     <DynamicWrapper>
-      <Box marginBottom={[6, 6, 10]}>
-        <IntroHeader
-          title={{
-            id: 'sp.finance-transactions:title',
-            defaultMessage: 'Hreyfingar',
-          }}
-          intro={{
-            id: 'sp.finance-transactions:intro',
-            defaultMessage:
-              'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
-          }}
-          serviceProviderID={FJARSYSLAN_ID}
-        />
+      <Box marginTop={[1, 1, 2, 2, 6]} marginBottom={[6, 6, 10]}>
         <Stack space={2}>
           <GridRow>
             <GridColumn span={['11/12', '6/12']}>

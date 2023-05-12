@@ -15,6 +15,7 @@ import { theme } from '@island.is/island-ui/theme'
 interface Props {
   serviceProviderID?: string
   serviceProviderTooltip?: string
+  narrow?: boolean
 }
 export const IntroHeader = (
   props: Omit<IntroHeaderProps & Props, 'children'>,
@@ -42,12 +43,12 @@ export const IntroHeader = (
   return (
     <>
       <GridRow marginBottom={marginBottom}>
-        <GridColumn span={isMobile ? '8/8' : '5/8'}>
+        <GridColumn span={isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'}>
           <Text variant="h3" as="h1">
             {formatMessage(props.title)}
           </Text>
           {props.intro && (
-            <Text variant="default" paddingTop={2}>
+            <Text variant="default" paddingTop={1}>
               {formatMessage(props.intro)}
             </Text>
           )}
@@ -60,6 +61,7 @@ export const IntroHeader = (
               img={currentOrganization?.logo?.url ?? ''}
               imgContainerDisplay="block"
               tooltipText={props.serviceProviderTooltip}
+              backgroundColor="white"
             />
           </GridColumn>
         )}

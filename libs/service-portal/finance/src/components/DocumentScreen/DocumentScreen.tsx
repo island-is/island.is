@@ -29,7 +29,6 @@ import {
   FJARSYSLAN_ID,
   FootNote,
   formSubmit,
-  IntroHeader,
   m,
   tableStyles,
 } from '@island.is/service-portal/core'
@@ -137,12 +136,7 @@ const DocumentScreen: FC<Props> = ({
   }
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={title}
-        intro={intro}
-        serviceProviderID={FJARSYSLAN_ID}
-      />
+    <Box marginTop={[1, 1, 2, 2, 6]} marginBottom={[6, 6, 10]}>
       <Stack space={2}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>

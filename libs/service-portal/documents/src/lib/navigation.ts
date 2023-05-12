@@ -1,5 +1,6 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/service-portal/core'
+import { messages } from '../utils/messages'
 import { DocumentsPaths } from './paths'
 
 export const documentsNavigation: PortalNavigationItem = {
@@ -10,5 +11,6 @@ export const documentsNavigation: PortalNavigationItem = {
   },
   subscribesTo: 'documents',
   description: m.documentsDescription,
+  heading: messages.intro,
   isKeyItem: true,
 }
