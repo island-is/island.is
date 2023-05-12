@@ -1,10 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class ClientInput {
+export class ScopeInput {
   @Field(() => String, { nullable: false })
   tenantId!: string
 
   @Field(() => String, { nullable: false })
-  clientId!: string
+  scopeName!: string
 }
