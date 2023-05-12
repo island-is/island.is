@@ -1,6 +1,6 @@
 import { useSession } from 'next-auth/client'
 import { useEffect, useState } from 'react'
-import { User } from '../../types/interfaces'
+import { User } from '../types/interfaces'
 
 export const useUser = () => {
   const [user, setUser] = useState<User>()

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
-import sorting from './sorting'
-import { Area } from '../../types/enums'
+import sorting from '../utils/helpers/sorting'
+import { Area } from '../types/enums'
 import {
   CasesSubscriptionData,
   InstitutionsSubscriptionData,
   PolicyAreasSubscriptionData,
   SortTitle,
   SubscriptionArray,
-} from '../../types/interfaces'
+} from '../types/interfaces'
 
 interface Props {
   searchValue: string

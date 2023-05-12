@@ -1,19 +1,15 @@
-import getDefaultFilters from './getDefaultFilters'
-import getInitFilterValues from './getInitFilterValues'
-import {
-  ArrOfTypes,
-  CaseFilter,
-  FilterInputItem,
-} from '../../../types/interfaces'
+import getDefaultFilters from '../utils/helpers/frontPageFilters/getDefaultFilters'
+import getInitFilterValues from '../utils/helpers/frontPageFilters/getInitFilterValues'
+import { ArrOfTypes, CaseFilter, FilterInputItem } from '../types/interfaces'
 import { useEffect, useState } from 'react'
-import { CaseSortOptions } from '../../../types/enums'
-import useFetchCases from '../useFetchCases'
-import mapListToValueCountObject from './mapObjectToValueCountObject'
-import isObjectEmpty from '../isObjectEmpty'
-import getFilteredItemsOrAll from './getFilteredItemsOrAll'
-import { setItem } from '../localStorage'
-import { FILTERS_FRONT_PAGE_KEY } from '../../consts/consts'
-import { getInitialFilters } from './getInitialFilters'
+import { CaseSortOptions } from '../types/enums'
+import useFetchCases from './api/useFetchCases'
+import mapListToValueCountObject from '../utils/helpers/frontPageFilters/mapObjectToValueCountObject'
+import isObjectEmpty from '../utils/helpers/isObjectEmpty'
+import getFilteredItemsOrAll from '../utils/helpers/frontPageFilters/getFilteredItemsOrAll'
+import { setItem } from '../utils/helpers/localStorage'
+import { FILTERS_FRONT_PAGE_KEY } from '../utils/consts/consts'
+import { getInitialFilters } from '../utils/helpers/frontPageFilters/getInitialFilters'
 
 interface Props {
   types: ArrOfTypes

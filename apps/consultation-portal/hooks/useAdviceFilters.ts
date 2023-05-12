@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { AdviceFilter } from '../../../types/interfaces'
-import getDefaultFilters from './getDefaultFilters'
-import { useFetchAdvices } from '../useFetchAdvices'
-import { CARDS_PER_PAGE } from '../../consts/consts'
+import { AdviceFilter } from '../types/interfaces'
+import getDefaultFilters from '../utils/helpers/adviceFilters/getDefaultFilters'
+import { useFetchAdvices } from './api/useFetchAdvices'
+import { CARDS_PER_PAGE } from '../utils/consts/consts'
 
 interface Props {
   isAuthenticated: boolean

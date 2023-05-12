@@ -5,13 +5,12 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
 import Layout from '../../components/Layout/Layout'
-import { useFetchAdvicesById, useIsMobile } from '../../utils/helpers'
+import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { useContext } from 'react'
 import { UserContext } from '../../context'
 import Advices from '../../components/Advices/Advices'

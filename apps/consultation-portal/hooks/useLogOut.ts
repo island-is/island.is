@@ -1,7 +1,7 @@
 import { signOut, useSession } from 'next-auth/client'
 import useUser from './useUser'
 import { AuthSession } from '@island.is/next-ids-auth'
-import { signOutUrl } from '../../lib/idsConfig'
+import { signOutUrl } from '../lib/idsConfig'
 
 export const useLogOut = () => {
   const { setUser, setIsAuthenticated } = useUser()

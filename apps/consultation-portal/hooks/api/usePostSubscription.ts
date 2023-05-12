@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client'
-import initApollo from '../../../graphql/client'
-import { SUB_POST_SUBS } from '../../../graphql/queries.graphql'
+import initApollo from '../../graphql/client'
+import { SUB_POST_SUBS } from '../../graphql/queries.graphql'
 
 export const usePostSubscription = () => {
   const client = initApollo()

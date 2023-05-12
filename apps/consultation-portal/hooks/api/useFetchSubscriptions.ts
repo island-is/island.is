@@ -1,5 +1,5 @@
-import initApollo from '../../../graphql/client'
-import { SUB_GET_USERSUBS } from '../../../graphql/queries.graphql'
+import initApollo from '../../graphql/client'
+import { SUB_GET_USERSUBS } from '../../graphql/queries.graphql'
 import { useQuery } from '@apollo/client'
 
 interface Props {
