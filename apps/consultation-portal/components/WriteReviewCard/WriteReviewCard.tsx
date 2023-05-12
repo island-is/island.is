@@ -29,6 +29,10 @@ import {
 } from '../../utils/consts/consts'
 import { AgencyText } from './components/AgencyText'
 import { createUUIDString } from '../../utils/helpers'
+import {
+  advicePublishTypeKey,
+  advicePublishTypeKeyHelper,
+} from '../../types/enums'
 
 type CardProps = {
   card: Case
@@ -232,8 +236,13 @@ export const WriteReviewCard = ({
       </Text>
 
       <Text marginBottom={2}>
-        Hér er hægt að senda inn umsögn. Umsagnir í þessu máli birtast jafnóðum
-        og þær berast. Upplýsingalög gilda, sjá nánar í{' '}
+        Hér er hægt að senda inn umsögn.
+        {` ${
+          advicePublishTypeKey[
+            advicePublishTypeKeyHelper[card.advicePublishTypeId]
+          ]
+        } `}
+        Upplýsingalög gilda, sjá nánar í{' '}
         <Link href="/um">um samráðsgáttina.</Link>
       </Text>
 

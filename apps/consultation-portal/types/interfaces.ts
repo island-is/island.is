@@ -5,6 +5,8 @@ export interface Case {
   caseNumber?: string
   name?: string
   adviceCount?: number
+  advicePublishTypeId?: number
+  advicePublishTypeName?: string
   shortDescription?: string
   detailedDescription?: string
   statusName?: string
@@ -19,6 +21,8 @@ export interface Case {
   changed?: string
   summaryDate?: string
   summaryText?: string
+  summaryLink?: string
+  summaryDocumentId?: string
   contactName?: string
   contactEmail?: string
   documents?: Array<Document>
