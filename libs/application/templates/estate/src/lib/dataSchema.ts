@@ -235,6 +235,17 @@ export const estateSchema = z.object({
         path: ['balance'],
       },
     )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId === ''
+          ? true
+          : nationalId && kennitala.isValid(nationalId)
+      },
+      {
+        params: m.errorNationalIdIncorrect,
+        path: ['nationalId'],
+      },
+    )
     .array()
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
