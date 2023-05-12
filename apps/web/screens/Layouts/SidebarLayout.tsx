@@ -6,9 +6,14 @@ import {
   GridColumn,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
+import cn from 'classnames'
 
 import * as styles from './SidebarLayout.css'
-import cn from 'classnames'
+
+const Container = ({ fullWidth = false, children }) => {
+  if (fullWidth) return <Box>{children}</Box>
+  return <GridContainer position="none">{children}</GridContainer>
+}
 
 interface SidebarLayoutProps {
   sidebarContent: ReactNode
@@ -32,14 +37,9 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   fullWidthContainer = false,
   children,
 }) => {
-  const Container = fullWidthContainer ? Box : GridContainer
-
   return (
     <Box paddingTop={paddingTop}>
-      <Container
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        {...(!fullWidthContainer && { position: ('none' as unknown) as any })}
-      >
+      <Container fullWidth={fullWidthContainer}>
         <Box
           {...(contentId && { id: contentId })}
           display="flex"
@@ -51,7 +51,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
           <Box
             printHidden
             className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
-            marginLeft={fullWidthContainer ? 12 : 0}
+            marginLeft={fullWidthContainer ? [0, 0, 6, 8, 12] : 0}
             display={
               hiddenOnTablet
                 ? ['none', 'none', 'none', 'block']
