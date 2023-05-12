@@ -10,11 +10,6 @@ import cn from 'classnames'
 
 import * as styles from './SidebarLayout.css'
 
-const Container = ({ fullWidth = false, children }) => {
-  if (fullWidth) return <Box>{children}</Box>
-  return <GridContainer position="none">{children}</GridContainer>
-}
-
 interface SidebarLayoutProps {
   sidebarContent: ReactNode
   isSticky?: boolean
@@ -23,7 +18,6 @@ interface SidebarLayoutProps {
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
   contentId?: string
-  fullWidthContainer?: boolean
 }
 
 export const SidebarLayout: FC<SidebarLayoutProps> = ({
@@ -34,12 +28,11 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   paddingTop = [0, 0, 8],
   paddingBottom = 6,
   contentId,
-  fullWidthContainer = false,
   children,
 }) => {
   return (
     <Box paddingTop={paddingTop}>
-      <Container fullWidth={fullWidthContainer}>
+      <GridContainer position="none">
         <Box
           {...(contentId && { id: contentId })}
           display="flex"
@@ -51,7 +44,6 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
           <Box
             printHidden
             className={cn(styles.sidebarWrapper, { [styles.sticky]: isSticky })}
-            marginLeft={fullWidthContainer ? [0, 0, 6, 8, 12] : 0}
             display={
               hiddenOnTablet
                 ? ['none', 'none', 'none', 'block']
@@ -79,7 +71,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
             </GridRow>
           </GridContainer>
         </Box>
-      </Container>
+      </GridContainer>
     </Box>
   )
 }

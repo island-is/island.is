@@ -87,8 +87,6 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
       {withSidebar ? (
         <SidebarLayout
           isSticky={true}
-          fullWidthContent={projectPage.contentIsFullWidth}
-          fullWidthContainer={projectPage.contentIsFullWidth}
           sidebarContent={
             <>
               {showBackLink && (
