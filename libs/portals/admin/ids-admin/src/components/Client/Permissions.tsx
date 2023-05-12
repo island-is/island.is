@@ -97,8 +97,8 @@ function Permissions({ data = mockData }: PermissionsProps) {
       </Box>
       {hasData && (
         <ShadowBox style={{ maxHeight: 440 }}>
-          <T.Table>
-            <T.Head>
+          <T.Table box={{ overflow: 'initial' }}>
+            <T.Head sticky>
               <T.Row>
                 <T.HeadData>
                   {formatMessage(m.permissionsTableLabelName)}

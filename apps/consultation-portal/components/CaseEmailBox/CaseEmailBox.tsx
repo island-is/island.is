@@ -154,7 +154,7 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
 
   if (!userLoading && !isAuthenticated) {
     return (
-      <CardSkeleton text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift.">
+      <CardSkeleton text="Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.">
         <Button fluid iconType="outline" nowrap onClick={LogIn}>
           Skrá mig inn
         </Button>

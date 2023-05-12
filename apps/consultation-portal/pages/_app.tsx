@@ -39,11 +39,11 @@ ConsultationPortalApplication.getInitialProps = async (
     pageProps = (await Component.getInitialProps(customContext)) as any
   }
   const apolloState = apolloClient.cache.extract()
-  const session = await getSession()
+  const session = await getSession(customContext)
   return {
     pageProps: {
       session: session,
-      isAuthenticated: isAuthenticated(appContext.ctx),
+      isAuthenticated: isAuthenticated(customContext),
       apolloState: apolloState,
     },
   }

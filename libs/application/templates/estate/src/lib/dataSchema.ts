@@ -27,7 +27,7 @@ const asset = z
   .object({
     assetNumber: z.string().optional(),
     description: z.string().optional(),
-    marketValue: z.string().optional(),
+    marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
     share: z.number().optional(),
@@ -71,7 +71,10 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        nationalId: z.string().length(10).optional(),
+        nationalId: z
+          .string()
+          .refine((v) => (v ? v.length === 10 : true))
+          .optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
         dateOfBirth: z.string().min(1).optional(),
