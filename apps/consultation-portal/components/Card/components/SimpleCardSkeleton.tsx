@@ -1,10 +1,11 @@
 import { Box, BoxProps } from '@island.is/island-ui/core'
+import { ReactNode } from 'react'
 
 export interface SimpleCardSkeletonProps extends BoxProps {
   borderColor?: 'blue300' | 'blue600' | 'blue200' | 'blue400'
   borderWidth?: 'large' | 'standard'
   borderRadius?: 'large' | 'standard'
-  children: any
+  children: ReactNode
   className?: string
 }
 
