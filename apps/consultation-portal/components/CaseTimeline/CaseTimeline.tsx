@@ -1,7 +1,5 @@
 import { Case } from '../../types/interfaces'
-import {
-  getStatusEndDate,
-} from '../../utils/helpers/dateFormatter'
+import { getStatusEndDate } from '../../utils/helpers/dateFormatter'
 import {
   FormStepperV2,
   Text,

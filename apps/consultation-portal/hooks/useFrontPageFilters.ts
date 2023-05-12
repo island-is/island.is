@@ -1,10 +1,6 @@
 import getDefaultFilters from '../utils/helpers/frontPageFilters/getDefaultFilters'
 import getInitFilterValues from '../utils/helpers/frontPageFilters/getInitFilterValues'
-import {
-  ArrOfTypes,
-  CaseFilter,
-  FilterInputItem,
-} from '../types/interfaces'
+import { ArrOfTypes, CaseFilter, FilterInputItem } from '../types/interfaces'
 import { useEffect, useState } from 'react'
 import { CaseSortOptions } from '../types/enums'
 import useFetchCases from './api/useFetchCases'
