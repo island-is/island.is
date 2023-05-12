@@ -134,6 +134,7 @@
     "clients-assets": "libs/clients/assets",
     "clients-auth-admin-api": "libs/clients/auth/admin-api",
     "clients-auth-delegation-api": "libs/clients/auth/delegation-api",
+    "clients-auth-ids-api": "libs/clients/auth/ids-api",
     "clients-auth-public-api": "libs/clients/auth/public-api",
     "clients-charge-fjs-v2": "libs/clients/charge-fjs-v2",
     "clients-consultation-portal": "libs/clients/consultation-portal",
