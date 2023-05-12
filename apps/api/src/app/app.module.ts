@@ -6,7 +6,7 @@ import { TerminusModule } from '@nestjs/terminus'
 //import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
-import { CmsModule } from '@island.is/cms'
+import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
@@ -78,8 +78,6 @@ import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalit
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
-import { PowerBiModule } from '@island.is/api/domains/powerbi'
-import { PowerBiConfig } from '@island.is/api/domains/powerbi'
 import {
   WatsonAssistantChatModule,
   WatsonAssistantChatConfig,
@@ -148,7 +146,6 @@ const autoSchemaFile = environment.production
         // }),
       ],
     }),
-
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
@@ -243,7 +240,6 @@ const autoSchemaFile = environment.production
     DisabilityLicenseModule,
     ElectronicRegistrationsModule,
     FiskistofaModule,
-    PowerBiModule,
     WatsonAssistantChatModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
@@ -315,7 +311,6 @@ const autoSchemaFile = environment.production
         PassportsClientConfig,
         FileStorageConfig,
         FiskistofaClientConfig,
-        PowerBiConfig,
         ChargeFjsV2ClientConfig,
         DisabilityLicenseClientConfig,
         ZenterSignupConfig,
@@ -326,6 +321,7 @@ const autoSchemaFile = environment.production
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
         WatsonAssistantChatConfig,
+        PowerBiConfig,
       ],
     }),
   ],
