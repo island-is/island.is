@@ -27,7 +27,7 @@ const asset = z
   .object({
     assetNumber: z.string(),
     description: z.string(),
-    marketValue: z.string().refine((v) => v !== '0' && v !== ''),
+    marketValue: z.string().refine((v) => v !== ''),
     initial: z.boolean(),
     enabled: z.boolean(),
     share: z.number().optional(),
