@@ -1,22 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const courtOfAppealOverview = defineMessages({
-  alertBannerLinkText: {
-    id: 'judicial.system.core:court_of_appeal_overview.alert_banner_link_text',
-    defaultMessage: 'Senda tilkynningu um móttöku',
-    description: 'Texti í link á tilkynningu um móttöku kæru',
-  },
-  alertBannerTooltip: {
-    id: 'judicial.system.core:court_of_appeal_overview.alert_banner_tooltip',
-    defaultMessage:
-      'Tilkynning um móttöku kæru og frest til að skila greinargerð sendist á Landsrétt og aðila málsins',
-    description: 'Texti í tooltip á tilkynningu um móttöku kæru',
-  },
-  title: {
-    id: 'judicial.system.core:court_of_appeal_overview.title',
-    defaultMessage: 'Gæsluvarðhald virkt',
-    description: 'Titill á yfirlitsskjá afgreiddra mála hjá Landsrétti',
-  },
   appealFilesTitle: {
     id: 'judicial.system.core:court_of_appeal_overview.appeal_files_title',
     defaultMessage: 'Skjöl kærumáls',
@@ -41,12 +25,5 @@ export const courtOfAppealOverview = defineMessages({
     defaultMessage: 'Bíður undirritunar',
     description:
       'Notaður sem texti fyrir óundirritað í "Skjöl málsins" hlutanum á úrskurðar skrefi á yfirlitsskjá afgreiddra mála.',
-  },
-  appealedInfo: {
-    id: 'judicial.system.core:court_of_appeal_overview.appealed_by',
-    defaultMessage:
-      'Kært af {appealedByProsecutor, select, true {sækjanda} other {verjanda}} {appealedDate}',
-    description:
-      'Notaður sem texti fyrir "Kært af" á yfirlitsskjá mála hjá Landsrétti.',
   },
 })
