@@ -356,11 +356,11 @@ const inputPatch = {
 const patchExpectedOutput = {
   alsoForDelegatedUser: false,
   automaticDelegationGrant: false,
-  domainName: '@tenant',
+  domainName: TENANT_ID,
   emphasize: false,
   enabled: true,
   grantToPersonalRepresentatives: false,
-  name: '@tenant/scope1',
+  name: `${TENANT_ID}/scope1`,
   order: 0,
   required: false,
   showInDiscoveryDocument: true,
