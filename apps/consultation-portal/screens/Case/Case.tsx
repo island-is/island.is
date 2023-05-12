@@ -107,6 +107,8 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                       <Advices
                         advices={advices}
                         advicesLoading={advicesLoading}
+                        publishType={chosenCase.advicePublishTypeId}
+                        processEndDate={chosenCase.processEnds}
                       />
                     </>
                   )}
