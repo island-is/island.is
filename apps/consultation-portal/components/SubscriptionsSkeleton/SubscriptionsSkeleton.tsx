@@ -60,7 +60,7 @@ const SubscriptionsSkeleton = ({
   return (
     <Layout
       seo={isMySubscriptions ? MY_SUBSCRIPTIONS : SUBSCRIPTIONS}
-      justifyContent="flexStart"
+      justifyContent={isAuthenticated ? 'flexStart' : 'spaceBetween'}
     >
       <Divider />
       <Box background="blue100">
