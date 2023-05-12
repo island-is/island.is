@@ -82,14 +82,13 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                       </Column>
                     </Hidden>
                     <Column width="content">
-                      {!isMobile && (
-                        <FocusableBox href="/" alignItems="center">
-                          <MenuLogo />
-                        </FocusableBox>
-                      )}
-                      {isMobile && (
+                      {isMobile ? (
                         <FocusableBox href="/" alignItems="center">
                           <MenuLogoMobile />
+                        </FocusableBox>
+                      ) : (
+                        <FocusableBox href="/" alignItems="center">
+                          <MenuLogo />
                         </FocusableBox>
                       )}
                     </Column>
