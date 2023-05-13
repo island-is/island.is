@@ -13,7 +13,6 @@ import {
 import { setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
-import { ClientSecretDto } from '../dto/client-secret.dto'
 
 const currentUser = createCurrentUser({
   delegationType: AuthDelegationType.Custom,
