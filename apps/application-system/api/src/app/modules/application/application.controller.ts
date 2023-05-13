@@ -335,6 +335,7 @@ export class ApplicationController {
     const {
       updatedApplication,
     } = await this.applicationService.updateApplicationState(
+      '',
       createdApplication.id,
       createdApplication.state,
       createdApplication.answers as FormValue,
@@ -470,6 +471,7 @@ export class ApplicationController {
       error,
       application: updatedApplication,
     } = await this.changeState(
+      '',
       mergedApplication,
       template,
       DefaultEvents.ASSIGN,
@@ -669,11 +671,22 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
+    this.logger.info(`Submit Application 1 --`, {
+      payload: updateApplicationStateDto,
+      applicationRequestId: id,
+    })
     const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
       id,
       user,
       { shouldThrowIfPruned: true },
     )
+
+    this.logger.info(`Submit Application 2 --`, {
+      payload: updateApplicationStateDto,
+      applicationRequestId: id,
+      existingApplication,
+    })
+
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
 
@@ -709,11 +722,20 @@ export class ApplicationController {
       existingApplication.answers,
       permittedAnswers,
     )
-
+    this.logger.info(`Submit Application 3 --`, {
+      payload: updateApplicationStateDto,
+      applicationRequestId: id,
+      mergedAnswers,
+    })
     const mergedApplication: BaseApplication = {
       ...(existingApplication.toJSON() as BaseApplication),
       answers: mergedAnswers,
     }
+    this.logger.info(`Submit Application 3 --`, {
+      payload: updateApplicationStateDto,
+      applicationRequestId: id,
+      mergedApplication,
+    })
 
     const {
       hasChanged,
@@ -721,12 +743,19 @@ export class ApplicationController {
       error,
       application: updatedApplication,
     } = await this.changeState(
+      id,
       mergedApplication,
       template,
       updateApplicationStateDto.event,
       user,
       locale,
     )
+
+    this.logger.info(`Submit Application 4 --`, {
+      payload: updateApplicationStateDto,
+      applicationRequestId: id,
+      updatedApplication,
+    })
 
     this.auditService.audit({
       auth: user,
@@ -809,6 +838,7 @@ export class ApplicationController {
   }
 
   private async changeState(
+    requestId: string,
     application: BaseApplication,
     template: Unwrap<typeof getApplicationTemplateByTypeId>,
     event: string,
@@ -834,6 +864,11 @@ export class ApplicationController {
       )
       updatedApplication = withUpdatedExternalData
 
+      this.logger.info(`Submit Application changeState 1 --`, {
+        applicationRequestId: requestId,
+        onExitStateActionApplication: withUpdatedExternalData,
+      })
+
       if (hasError) {
         return {
           hasChanged: false,
@@ -857,7 +892,10 @@ export class ApplicationController {
       assignees: withUpdatedState.assignees,
       state: withUpdatedState.state,
     }
-
+    this.logger.info(`Submit Application changeState 2 --`, {
+      applicationRequestId: requestId,
+      updatedApplication,
+    })
     if (!hasChanged) {
       return {
         hasChanged: false,
@@ -884,7 +922,10 @@ export class ApplicationController {
         locale,
       )
       updatedApplication = withUpdatedExternalData
-
+      this.logger.info(`Submit Application changeState 3 --`, {
+        applicationRequestId: requestId,
+        onEnterStateActionApplicationdfs: withUpdatedExternalData,
+      })
       if (hasError) {
         return {
           hasError: true,
@@ -902,6 +943,7 @@ export class ApplicationController {
 
     try {
       const update = await this.applicationService.updateApplicationState(
+        requestId,
         application.id,
         newState,
         updatedApplication.answers,
@@ -911,6 +953,11 @@ export class ApplicationController {
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
+      this.logger.info(`Submit Application changeState 4 --`, {
+        applicationRequestId: requestId,
+        updateApplicationState: updatedApplication,
+      })
+
       await this.historyService.saveStateTransition(
         application.id,
         newState,

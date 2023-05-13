@@ -9,6 +9,7 @@ import {
   ApplicationLifecycle,
 } from '@island.is/application/types'
 import { Application } from './application.model'
+import { logger } from '@island.is/logging'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -276,6 +277,7 @@ export class ApplicationService {
   }
 
   async updateApplicationState(
+    requestId: string,
     id: string,
     state: string,
     answers: FormValue,
@@ -283,6 +285,14 @@ export class ApplicationService {
     status: ApplicationStatus,
     lifecycle: ApplicationLifecycle,
   ) {
+    logger.info(`Submit Application changeState  updateApplicationState 1 --`, {
+      usedId: id,
+      applicationRequestId: id,
+      state,
+      answers,
+      assignees,
+      status,
+    })
     const [
       numberOfAffectedRows,
       [updatedApplication],
@@ -293,7 +303,11 @@ export class ApplicationService {
         returning: true,
       },
     )
-
+    logger.info(`Submit Application changeState  updateApplicationState 2 --`, {
+      usedId: id,
+      applicationRequestId: id,
+      updateApplicationState: updatedApplication,
+    })
     return { numberOfAffectedRows, updatedApplication }
   }
 
