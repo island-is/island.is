@@ -31,7 +31,7 @@ type CardProps = {
   dropdown?: ReactNode
   showAttachment?: boolean
   frontPage: boolean
-  children: any
+  children: ReactNode
   showPublished?: boolean
 }
 

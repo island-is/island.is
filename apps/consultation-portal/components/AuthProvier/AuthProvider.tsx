@@ -1,5 +1,5 @@
 import { UserContext } from '../../context'
-import useUser from '../../utils/helpers/useUser'
+import useUser from '../../hooks/useUser'
 import { ReactNode } from 'react'
 
 export interface UserProps {

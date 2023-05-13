@@ -6,15 +6,17 @@ import {
   CaseForSubscriptions,
   SubscriptionArray,
 } from '../../types/interfaces'
-import { useLogIn, useSearchSubscriptions, useUser } from '../../utils/helpers'
-import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
+import {
+  useLogIn,
+  useSearchSubscriptions,
+  useUser,
+  useSubscriptions,
+  usePostSubscription,
+  useFetchSubscriptions,
+} from '../../hooks/'
 import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
 import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
-import {
-  useSubscriptions,
-  filterSubscriptions as F,
-} from '../../utils/helpers/subscriptions'
-import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
+import { filterSubscriptions as F } from '../../utils/helpers/subscriptions'
 
 interface SubProps {
   allcases: CaseForSubscriptions[]
