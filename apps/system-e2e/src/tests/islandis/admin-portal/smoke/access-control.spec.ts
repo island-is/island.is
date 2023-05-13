@@ -22,6 +22,11 @@ test.describe('Admin portal access control', () => {
     await contextGranter.close()
   })
 
+  // Smoke test: Sjá yfirlit með Loftbrú og Aðganggstýringu þegar prókúruhafi
+  // Smoke test: Fara inn í Aðgangsstýringu með fellivali í haus
+  // Smoke test: Eyða umboði fyrir Loftbrú admin
+  // Smoke test: Veita umboð fyrir Loftbrú admin
+  // Smoke test: Vera sendur beint á Loftbrú þegar umboðshafi
   test('can manage delegations', async ({ browser }) => {
     // Arrange
     const granterPage = await contextGranter.newPage()

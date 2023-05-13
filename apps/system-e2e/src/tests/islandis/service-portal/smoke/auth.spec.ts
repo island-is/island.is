@@ -47,6 +47,7 @@ test.describe('Service portal', () => {
     await context.close()
   })
 
+  // Smoke test: Innskráning umboð forsjáraðili
   test('can sign in as legal guardian', async () => {
     // Arrange
     const page = await context.newPage()
@@ -61,6 +62,7 @@ test.describe('Service portal', () => {
     ).toBeVisible()
   })
 
+  // Smoke test: Útskrá
   test('can sign out', async () => {
     // Arrange
     const page = await context.newPage()
@@ -77,6 +79,7 @@ test.describe('Service portal', () => {
   })
 })
 
+// Smoke test: Innskráning á ensku
 test('Service portal can use english sign-in', async ({ browser }) => {
   // Arrange
   const context = await session({

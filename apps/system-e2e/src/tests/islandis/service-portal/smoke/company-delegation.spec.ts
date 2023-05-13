@@ -30,6 +30,7 @@ test.describe('Service portal', () => {
     await context.close()
   })
 
+  // Smoke test: Innskráning umboð fyrirtæki
   test('can sign in as company', async () => {
     // Arrange
     const page = await context.newPage()
