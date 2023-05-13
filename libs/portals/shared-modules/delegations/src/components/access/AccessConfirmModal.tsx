@@ -7,7 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
-import { Modal, ModalProps } from '../Modal/Modal'
+import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from './AccessList/AccessListContainer/AccessListContainer'
 import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
@@ -52,7 +52,7 @@ export const AccessConfirmModal = ({
       return
     }
 
-    onConfirm()
+    await onConfirm()
   }
 
   if (isDefined(formError) && formError !== error) {
@@ -66,12 +66,15 @@ export const AccessConfirmModal = ({
 
   return (
     <Modal
-      id={`access-confirm-modal`}
-      label={formatMessage(m.accessControl)}
+      id="access-confirm-modal"
+      label={formatMessage(m.accessConfirmModalTitle)}
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessConfirmModalTitle)}
       {...rest}
       onClose={onClose}
       noPaddingBottom
+      scrollType="inside"
+      closeButtonLabel={formatMessage(m.closeModal)}
     >
       <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
         {error && (

@@ -77,6 +77,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseOrigin),
   })
+  @ApiProperty({ enum: CaseOrigin })
   origin!: CaseOrigin
 
   /**********
@@ -87,6 +88,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseType),
   })
+  @ApiProperty({ enum: CaseType })
   type!: CaseType
 
   /**********
@@ -981,6 +983,26 @@ export class Case extends Model {
   })
   @ApiProperty({ enum: CaseAppealState })
   appealState?: CaseAppealState
+
+  /**********
+   * The date and time when the prosecutor appeal statement was sent
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  prosecutorStatementDate?: Date
+
+  /**********
+   * The date and time when the defendant appeal statement was sent
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defendantStatementDate?: Date
 
   /**********
    * The time and date that the court marked an appeal as received

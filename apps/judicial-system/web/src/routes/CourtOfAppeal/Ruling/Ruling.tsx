@@ -1,17 +1,44 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  InputFileUpload,
+  RadioButton,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
+
+import { core } from '@island.is/judicial-system-web/messages'
+import {
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
+import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  TUploadFile,
+  useCase,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  mapCaseFileToUploadFile,
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
-import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
 
 const CourtOfAppealRuling: React.FC = () => {
   const {
@@ -21,11 +48,65 @@ const CourtOfAppealRuling: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
 
-  const { formatMessage } = useIntl()
+  useEffect(() => {
+    if (workingCase.caseFiles) {
+      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
+    }
+  }, [workingCase.caseFiles])
 
-  const [checkedRadio, setCheckedRadio] = useState<CaseAppealRulingDecision>(
-    CaseAppealRulingDecision.ACCEPTING,
+  const {
+    handleChange,
+    handleRemove,
+    handleRetry,
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
+
+  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
+  const { formatMessage } = useIntl()
+  const router = useRouter()
+  const { id } = router.query
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
+  const [visibleModal, setVisibleModal] = useState(false)
+
+  const [
+    appealConclusionErrorMessage,
+    setAppealConclusionErrorMessage,
+  ] = useState<string>('')
+
+  const isStepValid =
+    displayFiles.some(
+      (file) => file.category === CaseFileCategory.APPEAL_RULING,
+    ) && isCourtOfAppealRulingStepValid(workingCase)
+
+  const handleUIUpdate = useCallback(
+    (displayFile: TUploadFile, newId?: string) => {
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
+    },
+    [generateSingleFileUpdate],
   )
+
+  const removeFileCB = (file: UploadFile) => {
+    setDisplayFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+  }
+
+  const handleRulingDecisionChange = (
+    appealRulingDecision: CaseAppealRulingDecision,
+  ) => {
+    setAndSendCaseToServer(
+      [
+        {
+          appealRulingDecision,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
 
   return (
     <PageLayout
@@ -43,7 +124,7 @@ const CourtOfAppealRuling: React.FC = () => {
         <Box marginBottom={7}>
           <Text as="h2" variant="h2">
             {formatMessage(strings.caseNumber, {
-              caseNumber: `${workingCase.appealCaseNumber}/2023`,
+              caseNumber: `${workingCase.appealCaseNumber}`,
             })}
           </Text>
           <Text as="h3" variant="default" fontWeight="semiBold">
@@ -53,19 +134,29 @@ const CourtOfAppealRuling: React.FC = () => {
           </Text>
         </Box>
         <Box marginBottom={5}>
-          <Text as="h3" variant="h3" marginBottom={3}>
-            {formatMessage(strings.decision)}
-          </Text>
+          <Box marginBottom={3} display="flex">
+            <Text as="h3" variant="h3">
+              {formatMessage(strings.decision)}
+            </Text>
+            <Box marginLeft="smallGutter">
+              <Text as="span" variant="h3" color="red400">
+                *
+              </Text>
+            </Box>
+          </Box>
           <Box background="blue100" padding={3}>
             <Box marginBottom={2}>
               <RadioButton
                 name="case-decision"
                 id="case-decision-accepting"
                 label={formatMessage(strings.decisionAccept)}
-                checked={checkedRadio === CaseAppealRulingDecision.ACCEPTING}
-                onChange={() =>
-                  setCheckedRadio(CaseAppealRulingDecision.ACCEPTING)
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.ACCEPTING
                 }
+                onChange={() => {
+                  handleRulingDecisionChange(CaseAppealRulingDecision.ACCEPTING)
+                }}
                 backgroundColor="white"
                 large
               />
@@ -75,9 +166,12 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-repeal"
                 label={formatMessage(strings.decisionRepeal)}
-                checked={checkedRadio === CaseAppealRulingDecision.REPEAL}
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.REPEAL
+                }
                 onChange={() =>
-                  setCheckedRadio(CaseAppealRulingDecision.REPEAL)
+                  handleRulingDecisionChange(CaseAppealRulingDecision.REPEAL)
                 }
                 backgroundColor="white"
                 large
@@ -88,9 +182,12 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-changed"
                 label={formatMessage(strings.decisionChanged)}
-                checked={checkedRadio === CaseAppealRulingDecision.CHANGED}
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.CHANGED
+                }
                 onChange={() =>
-                  setCheckedRadio(CaseAppealRulingDecision.CHANGED)
+                  handleRulingDecisionChange(CaseAppealRulingDecision.CHANGED)
                 }
                 backgroundColor="white"
                 large
@@ -104,11 +201,11 @@ const CourtOfAppealRuling: React.FC = () => {
                   strings.decisionDismissedFromCourtOfAppeal,
                 )}
                 checked={
-                  checkedRadio ===
+                  workingCase.appealRulingDecision ===
                   CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
                 }
                 onChange={() =>
-                  setCheckedRadio(
+                  handleRulingDecisionChange(
                     CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL,
                   )
                 }
@@ -122,10 +219,13 @@ const CourtOfAppealRuling: React.FC = () => {
                 id="case-decision-dismissed-from-court"
                 label={formatMessage(strings.decisionDismissedFromCourt)}
                 checked={
-                  checkedRadio === CaseAppealRulingDecision.DISMISSED_FROM_COURT
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.DISMISSED_FROM_COURT
                 }
                 onChange={() =>
-                  setCheckedRadio(CaseAppealRulingDecision.DISMISSED_FROM_COURT)
+                  handleRulingDecisionChange(
+                    CaseAppealRulingDecision.DISMISSED_FROM_COURT,
+                  )
                 }
                 backgroundColor="white"
                 large
@@ -136,9 +236,12 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-unlabeling"
                 label={formatMessage(strings.decisionUnlabeling)}
-                checked={checkedRadio === CaseAppealRulingDecision.REMAND}
+                checked={
+                  workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.REMAND
+                }
                 onChange={() =>
-                  setCheckedRadio(CaseAppealRulingDecision.REMAND)
+                  handleRulingDecisionChange(CaseAppealRulingDecision.REMAND)
                 }
                 backgroundColor="white"
                 large
@@ -154,31 +257,102 @@ const CourtOfAppealRuling: React.FC = () => {
             label={formatMessage(strings.conclusionHeading)}
             name="rulingConclusion"
             value={workingCase.appealConclusion || ''}
-            onChange={(event) =>
-              setWorkingCase({
-                ...workingCase,
-                appealConclusion: event.target.value,
-              })
+            onChange={(event) => {
+              removeTabsValidateAndSet(
+                'appealConclusion',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                setWorkingCase,
+                appealConclusionErrorMessage,
+                setAppealConclusionErrorMessage,
+              )
+            }}
+            onBlur={(event) =>
+              validateAndSendToServer(
+                'appealConclusion',
+                event.target.value,
+                ['empty'],
+                workingCase,
+                updateCase,
+                setAppealConclusionErrorMessage,
+              )
             }
             textarea
             rows={7}
             required
             autoExpand={{ on: true, maxHeight: 300 }}
+            hasError={appealConclusionErrorMessage !== ''}
+            errorMessage={appealConclusionErrorMessage}
+          />
+        </Box>
+        <Box marginBottom={10}>
+          <Box marginBottom={3} display="flex">
+            <Text as="h3" variant="h3">
+              {formatMessage(strings.courtConclusionHeading)}
+            </Text>
+            <Box marginLeft="smallGutter">
+              <Text as="span" variant="h3" color="red400">
+                *
+              </Text>
+            </Box>
+          </Box>
+
+          <InputFileUpload
+            fileList={displayFiles.filter(
+              (file) => file.category === CaseFileCategory.APPEAL_RULING,
+            )}
+            accept="application/pdf"
+            header={formatMessage(strings.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
+            buttonLabel={formatMessage(strings.uploadButtonText)}
+            onChange={(files) => {
+              handleChange(
+                files,
+                CaseFileCategory.APPEAL_RULING,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
+            }}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          onNextButtonClick={() => {
-            setWorkingCase({
-              ...workingCase,
-              appealRulingDecision: checkedRadio,
-            })
+          previousUrl={`${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`}
+          onNextButtonClick={async () => {
+            const caseTransitioned = await transitionCase(
+              workingCase.id,
+              CaseTransition.COMPLETE_APPEAL,
+              setWorkingCase,
+            )
+
+            if (caseTransitioned) {
+              setVisibleModal(true)
+            }
           }}
+          nextIsDisabled={!isStepValid}
           nextButtonIcon="arrowForward"
           nextButtonText={formatMessage(strings.nextButtonFooter)}
         />
       </FormContentContainer>
+      {visibleModal && (
+        <Modal
+          title={formatMessage(strings.uploadCompletedModalTitle)}
+          text={formatMessage(strings.uploadCompletedModalText)}
+          secondaryButtonText={formatMessage(core.closeModal)}
+          onClose={() => setVisibleModal(false)}
+          onSecondaryButtonClick={() => {
+            router.push(
+              `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+            )
+          }}
+        />
+      )}
     </PageLayout>
   )
 }

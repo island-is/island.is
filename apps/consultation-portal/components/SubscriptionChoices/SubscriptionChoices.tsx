@@ -1,58 +1,80 @@
+import { ReactNode } from 'react'
+import { Area, SubscriptionType } from '../../types/enums'
+import {
+  SubscriptionArray,
+  SubscriptionTableItem,
+} from '../../types/interfaces'
+import { mapIsToEn } from '../../utils/helpers'
 import { Box, Checkbox, Inline } from '@island.is/island-ui/core'
-interface Subscriptiontype {
-  id: number
-  label: string
-  value: string
-  checked: boolean
+interface CProps {
+  children: ReactNode
 }
-const SubscriptionTypeArray: Array<Subscriptiontype> = [
-  {
-    id: 0,
-    label: 'Fá allar tilkynningar um mál',
-    value: 'AllChanges',
-    checked: true,
-  },
-  {
-    id: 1,
-    label: 'Tilkynningar um breytingar',
-    value: 'StatusChanges',
-    checked: false,
-  },
-]
-interface SubscriptionChoicesProps {
-  itemId: number | string
-  checkboxCheck: (val, id) => boolean
-  checkboxChange: (val, id?) => void
-  id?: string
+
+const CheckboxBox = ({ children }: CProps) => {
+  return (
+    <Box
+      padding={2}
+      background="blue100"
+      borderColor="blue400"
+      borderRadius="standard"
+      border="standard"
+    >
+      {children}
+    </Box>
+  )
+}
+interface Props {
+  item: SubscriptionTableItem
+  currentTab: Area
+  subscriptionArray: SubscriptionArray
+  setSubscriptionArray: (_: SubscriptionArray) => void
+  onChecked?: () => void
 }
 
 const SubscriptionChoices = ({
-  itemId,
-  checkboxCheck,
-  checkboxChange,
-  id,
-}: SubscriptionChoicesProps) => {
+  item,
+  currentTab,
+  subscriptionArray,
+  setSubscriptionArray,
+  onChecked,
+}: Props) => {
+  const allKey = `${item.key}_all`
+  const statusKey = `${item.key}_status`
+
+  const onCheckboxChange = (subscriptionType: SubscriptionType) => {
+    const subscriptionArrayCopy = { ...subscriptionArray }
+    const thisData = subscriptionArrayCopy[mapIsToEn[currentTab]]
+    const thisInstance = thisData.findIndex((elem) => elem.key === item.key)
+    if (thisData[thisInstance].subscriptionType !== subscriptionType)
+      thisData[thisInstance].subscriptionType = subscriptionType
+    subscriptionArrayCopy[mapIsToEn[currentTab]] = thisData
+    setSubscriptionArray(subscriptionArrayCopy)
+    onChecked()
+  }
+
   return (
-    <Box paddingTop={3}>
-      <Inline
-        collapseBelow="xl"
-        alignY="center"
-        justifyContent="spaceBetween"
-        space="smallGutter"
-      >
-        {SubscriptionTypeArray.map((box, index) => {
-          return (
-            <Checkbox
-              key={index}
-              id={box.value + itemId + id}
-              large
-              backgroundColor="blue"
-              label={box.label}
-              checked={checkboxCheck(box.value, itemId)}
-              onChange={() => checkboxChange(box.value, itemId)}
-            />
-          )
-        })}
+    <Box>
+      <Inline collapseBelow="lg" space="gutter">
+        <CheckboxBox>
+          <Checkbox
+            id={statusKey}
+            label="Einungis ný mál"
+            checked={Boolean(
+              item.subscriptionType === SubscriptionType.OnlyNew,
+            )}
+            onChange={() => onCheckboxChange(SubscriptionType.OnlyNew)}
+          />
+        </CheckboxBox>
+        <CheckboxBox>
+          <Checkbox
+            id={allKey}
+            label="Ný mál og breytingar"
+            checked={Boolean(
+              item.subscriptionType === SubscriptionType.AllChanges,
+            )}
+            onChange={() => onCheckboxChange(SubscriptionType.AllChanges)}
+          />
+        </CheckboxBox>
       </Inline>
     </Box>
   )

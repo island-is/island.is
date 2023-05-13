@@ -35,7 +35,41 @@ export enum CaseSortOptions {
   adviceDeadline = 'Frestur að renna út',
 }
 
-export enum SubscriptionTypeOptions {
+export enum CaseSubscriptionType {
   AllChanges = 'Allar breytingar',
   StatusChanges = 'Breytingar á stöðu',
+}
+
+export enum SubscriptionType {
+  AllChanges = 'Ný mál og breytingar',
+  StatusChanges = 'Breytingar á stöðu',
+  OnlyNew = 'Einungis ný mál',
+}
+
+export enum SubscriptionTypeKey {
+  'Ný mál og breytingar' = 'AllChanges',
+  'Breytingar á stöðu' = 'StatusChanges',
+  'Einungis ný mál' = 'OnlyNew',
+}
+export enum SubscriptionDescriptionKey {
+  'Ný mál og breytingar' = 'Tilkynningar um ný mál, breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna',
+  'Breytingar á stöðu' = 'StatusChanges',
+  'Einungis ný mál' = 'Tilkynningar um ný mál',
+}
+
+export enum advicePublishTypeKey {
+  closed = 'Umsagnir verða ekki birtar.',
+  open = 'Umsagnir verða birtar jafnóðum og þær berast.',
+  delayed = 'Umsagnir verða birtar að loknum umsagnarfresti.',
+}
+
+export enum pastAdvicePublishTypeKey {
+  closed = 'Umsagnir voru ekki birtar.',
+  open = 'Umsagnir voru birtar jafnóðum og þær bárust.',
+  delayed = 'Umsagnir voru birtar að loknum umsagnarfresti.',
+}
+export const advicePublishTypeKeyHelper = {
+  1: 'open',
+  2: 'delayed',
+  3: 'closed',
 }

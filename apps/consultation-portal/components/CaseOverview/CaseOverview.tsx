@@ -2,7 +2,7 @@ import { Box, Stack, Text } from '@island.is/island-ui/core'
 import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
 import * as styles from './CaseOverview.css'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
-import { getShortDate } from '../../utils/helpers/dateFormatter'
+import { getShortDate, hasDatePassed } from '../../utils/helpers/dateFormatter'
 import { Case, UserAdvice } from '../../types/interfaces'
 
 interface CaseOverviewProps {
@@ -14,6 +14,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   const upperInstances = [
     `Mál nr. S-${chosenCase?.caseNumber}`,
     `Birt: ${getShortDate(chosenCase.created)}`,
+    `Fjöldi umsagna: ${chosenCase?.adviceCount}`,
   ]
 
   const lowerInstances = [
@@ -24,13 +25,15 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
   return (
     <Stack space={[4, 4, 4, 6, 6]}>
       <Stack space={3}>
-        <EyebrowsWithSeperator
-          instances={upperInstances}
-          color="purple400"
-          style={styles.upperSeperator}
-          wrap={false}
-          truncate={false}
-        />
+        <Box display={'flex'} justifyContent={'spaceBetween'}>
+          <EyebrowsWithSeperator
+            instances={upperInstances}
+            color="purple400"
+            style={styles.upperSeperator}
+            wrap={false}
+            truncate={false}
+          />
+        </Box>
         <EyebrowsWithSeperator
           instances={lowerInstances}
           color="blue600"
@@ -42,7 +45,10 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           {chosenCase?.name}
         </Text>
       </Stack>
-      <CaseStatusCard status={chosenCase?.statusName} />
+      {chosenCase.statusName === 'Niðurstöður birtar' &&
+        hasDatePassed(chosenCase.summaryDate) && (
+          <CaseStatusCard {...chosenCase} />
+        )}
       <Stack space={[3, 3, 3, 4, 4]}>
         <Box>
           <Text variant="h4">Málsefni</Text>

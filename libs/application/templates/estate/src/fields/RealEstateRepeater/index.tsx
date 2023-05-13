@@ -53,6 +53,8 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
+          const fieldError = error && error[index] ? error[index] : null
+
           if (!asset.initial) {
             return acc
           }
@@ -101,8 +103,10 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                   backgroundColor="blue"
                   placeholder="0 kr."
                   defaultValue={(asset as any).marketValue}
+                  error={fieldError?.marketValue}
                   currency
                   size="sm"
+                  required
                 />
               </Box>
             </GridColumn>,
@@ -110,7 +114,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field: AssetFormField, index) => (
-        <Box key={field.id} hidden={field.initial || field?.dummy}>
+        <Box key={field.id} hidden={field.initial}>
           <AdditionalRealEstate
             field={field}
             fieldName={id}

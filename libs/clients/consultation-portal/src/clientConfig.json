@@ -853,9 +853,26 @@
             "type": "string",
             "nullable": true
           },
+          "summaryLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "summaryDocumentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "adviceCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "advicePublishTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "advicePublishTypeName": {
+            "type": "string",
+            "nullable": true
           },
           "created": {
             "type": "string",
@@ -877,6 +894,13 @@
             "nullable": true
           },
           "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentInfoResult"
+            },
+            "nullable": true
+          },
+          "additionalDocuments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DocumentInfoResult"
@@ -1174,8 +1198,8 @@
           "subscribedToAll": {
             "type": "boolean"
           },
-          "subscribedToAllNew": {
-            "type": "boolean"
+          "subscribedToAllType": {
+            "$ref": "#/components/schemas/SubscriptionType"
           },
           "cases": {
             "type": "array",
@@ -1208,8 +1232,7 @@
             "type": "boolean"
           },
           "subscribeToAllType": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/SubscriptionType"
           },
           "caseIds": {
             "type": "array",

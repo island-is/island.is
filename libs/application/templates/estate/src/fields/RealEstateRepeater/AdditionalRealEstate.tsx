@@ -39,7 +39,6 @@ export const AdditionalRealEstate = ({
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
-  const dummyField = `${fieldIndex}.dummy`
   const shareField = `${fieldIndex}.share`
   const marketValueField = `${fieldIndex}.marketValue`
 
@@ -93,12 +92,6 @@ export const AdditionalRealEstate = ({
         render={() => <input type="hidden" />}
       />
       <Controller
-        name={dummyField}
-        control={control}
-        defaultValue={field.dummy || false}
-        render={() => <input type="hidden" />}
-      />
-      <Controller
         name={shareField}
         control={control}
         defaultValue={field.share || ''}
@@ -142,6 +135,7 @@ export const AdditionalRealEstate = ({
             label={formatMessage(m.marketValueTitle)}
             defaultValue={(field as any).marketValue}
             placeholder={'0 kr.'}
+            error={error?.marketValue ?? undefined}
             currency
             size="sm"
           />

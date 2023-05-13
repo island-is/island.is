@@ -1,58 +1,58 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { Area, SortOptions } from '../../types/enums'
-import { ArrOfIdAndName, Case, SubscriptionArray } from '../../types/interfaces'
+import { SubscriptionArray } from '../../types/interfaces'
 import SearchAndSort from '../SearchAndSort/SearchAndSort'
 import SubscriptionTable from '../Table/SubscriptionTable'
 
 export interface TabContentProps {
-  data: Array<Case> | Array<ArrOfIdAndName>
-  setData: (arr: Array<any>) => void
   currentTab: Area
   subscriptionArray: SubscriptionArray
-  setSubscriptionArray: (obj: SubscriptionArray) => void
-  generalSubArray?: any
+  setSubscriptionArray: (_: SubscriptionArray) => void
   searchValue: string
   setSearchValue: (str: string) => void
   sortTitle: SortOptions
   setSortTitle: (val: SortOptions) => void
+  dontShowNew?: boolean
+  dontShowChanges?: boolean
+  isMySubscriptions?: boolean
 }
 
 export const TabContent = ({
-  data,
-  setData,
   currentTab,
   subscriptionArray,
   setSubscriptionArray,
-  generalSubArray,
   searchValue,
   setSearchValue,
   sortTitle,
   setSortTitle,
+  dontShowNew,
+  dontShowChanges,
+  isMySubscriptions,
 }: TabContentProps) => {
   return (
     <Box paddingTop={[3, 3, 3, 5, 5]}>
       <SearchAndSort
-        data={data}
-        setData={setData}
+        subscriptionArray={subscriptionArray}
+        setSubscriptionArray={setSubscriptionArray}
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         sortTitle={sortTitle}
         setSortTitle={setSortTitle}
         currentTab={currentTab}
       />
-      {data && data.length > 0 ? (
-        <SubscriptionTable
-          data={data}
-          generalSubArray={generalSubArray}
-          currentTab={currentTab}
-          subscriptionArray={subscriptionArray}
-          setSubscriptionArray={setSubscriptionArray}
-        />
-      ) : (
-        <Text paddingY={4} variant="h3">
-          Engin áskrift fannst
-        </Text>
-      )}
+      <Box paddingTop={[3, 3, 3, 5, 5]}>
+        {subscriptionArray && (
+          <SubscriptionTable
+            currentTab={currentTab}
+            subscriptionArray={subscriptionArray}
+            setSubscriptionArray={setSubscriptionArray}
+            dontShowNew={dontShowNew}
+            dontShowChanges={dontShowChanges}
+            searchValue={searchValue}
+            isMySubscriptions={isMySubscriptions}
+          />
+        )}
+      </Box>
     </Box>
   )
 }

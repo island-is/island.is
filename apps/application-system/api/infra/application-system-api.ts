@@ -19,6 +19,7 @@ import {
   TransportAuthority,
   Vehicles,
   Passports,
+  EHIC,
 } from '../../../../infra/src/dsl/xroad'
 import {
   ref,
@@ -79,7 +80,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
         local: 'http://localhost:4200/umsoknir',
       },
     })
-    .xroad(Base, Client, Payment)
+    .xroad(Base, Client, Payment, EHIC)
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -236,6 +237,7 @@ export const serviceSetup = (services: {
       TransportAuthority,
       Vehicles,
       Passports,
+      EHIC,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

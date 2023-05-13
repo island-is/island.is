@@ -34,7 +34,7 @@ import {
   SearchBox,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag } from '@island.is/web/hooks'
+import { useFeatureFlag, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -328,6 +328,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+          organizationSlug={organization.slug}
         />
       )
       break
@@ -417,9 +418,8 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'the-financial-management-authority':
       OrganizationFooterComponent = (
         <FjarsyslaRikisinsFooter
-          footerItems={organization.footerItems}
-          logo={organization.logo?.url}
           namespace={namespace}
+          title={organization.title}
         />
       )
       break
@@ -569,6 +569,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
+
+  usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
     'isWebReaderEnabledForOrganizationPages',

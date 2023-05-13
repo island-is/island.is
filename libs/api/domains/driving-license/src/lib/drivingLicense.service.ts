@@ -52,10 +52,12 @@ export class DrivingLicenseService {
 
   async getDrivingLicense(
     nationalId: User['nationalId'],
+    token?: string,
   ): Promise<DriversLicense | null> {
     try {
       return await this.drivingLicenseApi.getCurrentLicense({
         nationalId,
+        token,
       })
     } catch (e) {
       return this.handleGetLicenseError(e)
@@ -143,7 +145,10 @@ export class DrivingLicenseService {
     user: User,
     nationalId: string,
   ): Promise<ApplicationEligibility> {
-    const license = await this.getDrivingLicense(nationalId)
+    const license = await this.getDrivingLicense(
+      nationalId,
+      user.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
+    )
     const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
       nationalId,
     )
@@ -316,12 +321,10 @@ export class DrivingLicenseService {
 
   async studentCanGetPracticePermit(params: {
     studentSSN: string
-    mentorSSN: string
     token: string
   }) {
-    const { mentorSSN, studentSSN, token } = params
+    const { studentSSN, token } = params
     return await this.drivingLicenseApi.postCanApplyForPracticePermit({
-      mentorSSN,
       studentSSN,
       token,
     })

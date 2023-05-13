@@ -44,6 +44,9 @@ export class LifeEventPage {
 
   @Field({ nullable: true })
   pageType?: 'Life Event' | 'Digital Iceland Service'
+
+  @Field(() => Image, { nullable: true })
+  featuredImage?: Image | null
 }
 
 export const mapLifeEventPage = ({
@@ -65,4 +68,5 @@ export const mapLifeEventPage = ({
   shortIntro: fields.shortIntro ?? '',
   seeMoreText: fields.seeMoreText ?? '',
   pageType: fields.pageType ?? 'Life Event',
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
 })

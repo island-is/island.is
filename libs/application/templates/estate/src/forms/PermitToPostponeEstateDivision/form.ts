@@ -12,6 +12,7 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
+import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
   id: 'permitToPostponeEstateDivisionForm',
@@ -23,27 +24,35 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'estateMembersInfo',
+      id: 'estateMembersAndWillsInfo',
       title: m.estateMembersTitle,
       children: [
-        buildMultiField({
-          id: 'estateMembersInfo',
-          title: m.estateMembersTitle,
-          description: m.estateMembersSubtitle,
+        buildSubSection({
+          id: 'estateMembers',
+          title: m.estateMembers,
           children: [
-            buildDescriptionField({
-              id: 'membersOfEstateTitle',
-              title: m.estateMembers,
-              description: m.estateMembersHeaderDescription,
-              titleVariant: 'h3',
-            }),
-            buildCustomField({
-              title: '',
-              id: 'estate.estateMembers',
-              component: 'EstateMembersRepeater',
+            buildMultiField({
+              id: 'estateMembersInfo',
+              title: m.estateMembersTitle,
+              description: m.estateMembersSubtitle,
+              children: [
+                buildDescriptionField({
+                  id: 'membersOfEstateTitle',
+                  title: m.estateMembers,
+                  description: m.estateMembersHeaderDescription,
+                  titleVariant: 'h3',
+                  marginBottom: 5,
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.estateMembers',
+                  component: 'EstateMembersRepeater',
+                }),
+              ],
             }),
           ],
         }),
+        testamentInfo,
       ],
     }),
     buildSection({

@@ -5,7 +5,7 @@ import { session } from '../../../../support/session'
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-async function switchDelegation(
+export async function switchDelegation(
   page: Page,
   delegationType: 'Prókúra' | 'Forsjá',
 ) {
@@ -45,20 +45,6 @@ test.describe('Service portal', () => {
 
   test.afterAll(async () => {
     await context.close()
-  })
-
-  test('can sign in as company', async () => {
-    // Arrange
-    const page = await context.newPage()
-    await page.goto('/minarsidur?locale=is&hide_onboarding_modal=true')
-
-    // Act
-    const delegationName = await switchDelegation(page, 'Prókúra')
-
-    // Assert
-    await expect(
-      page.getByRole('heading', { name: delegationName ?? '' }),
-    ).toBeVisible()
   })
 
   test('can sign in as legal guardian', async () => {

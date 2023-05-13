@@ -9,12 +9,17 @@ import {
 import { Environment } from '@island.is/shared/types'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
+import { ClientSecretInput } from './dto/client-secret.input'
 import { CreateClientInput } from './dto/create-client.input'
 import { CreateClientResponse } from './dto/create-client.response'
-import { ClientEnvironment } from './models/client-environment.model'
-import { Client } from './models/client.model'
 import { PatchClientInput } from './dto/patch-client.input'
 import { PublishClientInput } from './dto/publish-client.input'
+import { ClientAllowedScopeInput } from './dto/client-allowed-scope.input'
+import { ClientEnvironment } from './models/client-environment.model'
+import { ClientSecret } from './models/client-secret.model'
+import { Client } from './models/client.model'
+import { ClientAllowedScope } from './models/client-allowed-scope.model'
+import { environments } from '../shared/constants/environments'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -39,11 +44,7 @@ export class ClientsService extends MultiEnvironmentService {
 
     const clientsMap = new Map<string, ClientEnvironment[]>()
 
-    for (const [index, env] of [
-      Environment.Development,
-      Environment.Staging,
-      Environment.Production,
-    ].entries()) {
+    for (const [index, env] of environments.entries()) {
       for (const client of clients[index] ?? []) {
         if (!clientsMap.has(client.clientId)) {
           clientsMap.set(client.clientId, [])
@@ -94,11 +95,7 @@ export class ClientsService extends MultiEnvironmentService {
     ])
 
     const clientEnvs: ClientEnvironment[] = []
-    for (const [index, env] of [
-      Environment.Development,
-      Environment.Staging,
-      Environment.Production,
-    ].entries()) {
+    for (const [index, env] of environments.entries()) {
       const client = clients[index]
       if (client) {
         clientEnvs.push({
@@ -129,9 +126,7 @@ export class ClientsService extends MultiEnvironmentService {
       },
     }
 
-    const createApplicationResponse = [] as CreateClientResponse[]
-
-    const created = await Promise.allSettled(
+    const settledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
         return this.adminApiByEnvironmentWithAuth(
           environment,
@@ -140,21 +135,13 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    created.map((resp, index) => {
-      if (resp.status === 'fulfilled' && resp.value) {
-        createApplicationResponse.push({
-          clientId: resp.value.clientId,
-          environment: input.environments[index],
-        })
-      } else if (resp.status === 'rejected') {
-        this.logger.error(
-          `Failed to create application ${input.clientId} in environment ${input.environments[index]}`,
-          resp.reason,
-        )
-      }
+    return this.handleSettledPromises(settledPromises, {
+      mapper: (client, index) => ({
+        clientId: client.clientId,
+        environment: input.environments[index],
+      }),
+      prefixErrorMessage: `Failed to create application ${input.clientId}`,
     })
-
-    return createApplicationResponse
   }
 
   async patchClient(
@@ -182,27 +169,29 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    const patchClientResponses = [] as ClientEnvironment[]
+    return this.handleSettledPromises(updated, {
+      mapper: (client, index) => ({
+        ...client,
+        id: this.formatClientId(client.clientId, input.environments[index]),
+        environment: input.environments[index],
+      }),
+      prefixErrorMessage: `Failed to update application ${input.clientId}`,
+    })
+  }
 
-    updated.map((resp, index) => {
-      if (resp.status === 'fulfilled' && resp.value) {
-        patchClientResponses.push({
-          ...resp.value,
-          id: this.formatClientId(
-            resp.value.clientId,
-            input.environments[index],
-          ),
-          environment: input.environments[index],
-        })
-      } else if (resp.status === 'rejected') {
-        this.logger.error(
-          `Failed to update application ${input.clientId} in environment ${input.environments[index]}`,
-          resp.reason,
-        )
-      }
+  async getClientSecrets(
+    user: User,
+    input: ClientSecretInput,
+  ): Promise<ClientSecret[]> {
+    const secrets = await this.adminApiByEnvironmentWithAuth(
+      input.environment,
+      user,
+    )?.meClientSecretsControllerFindAll({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
     })
 
-    return patchClientResponses
+    return secrets ?? []
   }
 
   async publishClient(
@@ -261,5 +250,26 @@ export class ClientsService extends MultiEnvironmentService {
 
   private formatClientId(clientId: string, environment: Environment) {
     return `${clientId}#${environment}`
+  }
+
+  async getAllowedScopes(
+    user: User,
+    input: ClientAllowedScopeInput,
+  ): Promise<ClientAllowedScope[]> {
+    const apiScopes = await this.adminApiByEnvironmentWithAuth(
+      input.environment,
+      user,
+    )?.meClientsScopesControllerFindAll({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+    })
+
+    return (
+      apiScopes?.map(({ name, displayName, description }) => ({
+        name,
+        displayName,
+        description,
+      })) ?? []
+    )
   }
 }

@@ -64,10 +64,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
     caseId: workingCase.id,
   })
 
-  const showTrafficViolationCaseFiles = isTrafficViolationCase(
-    workingCase,
-    user,
-  )
+  const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
 
   const cf = workingCase.caseFiles
 
@@ -122,7 +119,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        {user?.role !== UserRole.Defender && showTrafficViolationCaseFiles && (
+        {user?.role !== UserRole.DEFENDER && showTrafficViolationCaseFiles && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(caseFiles.indictmentSection)}
@@ -177,7 +174,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        {user?.role !== UserRole.Defender && (
+        {user?.role !== UserRole.DEFENDER && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(strings.caseFileTitle)}
@@ -193,7 +190,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
                   title={formatMessage(strings.caseFileButtonText, {
                     policeCaseNumber,
                   })}
-                  pdfType="caseFiles"
+                  pdfType="caseFilesRecord"
                   policeCaseNumber={policeCaseNumber}
                   renderAs="row"
                 />

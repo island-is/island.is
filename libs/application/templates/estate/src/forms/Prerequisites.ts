@@ -36,26 +36,23 @@ export const Prerequisites: Form = buildForm({
               id: 'selectedEstate',
               title: '',
               width: 'full',
+              defaultValue: EstateTypes.divisionOfEstate,
               options: [
-                {
-                  value: EstateTypes.estateWithoutAssets,
-                  label: EstateTypes.estateWithoutAssets,
-                  tooltip: 'Sjá nánar linkur hér',
-                },
                 {
                   value: EstateTypes.divisionOfEstate,
                   label: EstateTypes.divisionOfEstate,
-                  tooltip: 'Sjá nánar linkur hér',
+                },
+                {
+                  value: EstateTypes.estateWithoutAssets,
+                  label: EstateTypes.estateWithoutAssets,
                 },
                 {
                   value: EstateTypes.permitToPostponeEstateDivision,
                   label: EstateTypes.permitToPostponeEstateDivision,
-                  tooltip: 'Sjá nánar linkur hér',
                 },
                 {
                   value: EstateTypes.divisionOfEstateByHeirs,
                   label: EstateTypes.divisionOfEstateByHeirs,
-                  tooltip: 'Sjá nánar linkur hér',
                 },
               ],
             }),

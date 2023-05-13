@@ -10,7 +10,9 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
+import { validateClientId } from '@island.is/auth/shared'
 
+import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
@@ -20,7 +22,9 @@ import {
   RefreshTokenExpiration,
   translateRefreshTokenExpiration,
 } from '../../types'
+import { ClientsService } from '../clients.service'
 import { Client } from '../models/client.model'
+import { ClientAllowedScope } from '../models/client-allowed-scope.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
 import { ClientRedirectUri } from '../models/client-redirect-uri.model'
@@ -32,9 +36,8 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
-import { ClientsService } from '../clients.service'
-import { ClientAllowedScope } from '../models/client-allowed-scope.model'
-import { ApiScope } from '../../resources/models/api-scope.model'
+import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
+import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -67,10 +70,13 @@ export class AdminClientsService {
     private clientClaimModel: typeof ClientClaim,
     @InjectModel(ClientGrantType)
     private readonly clientGrantType: typeof ClientGrantType,
+    @InjectModel(ClientAllowedScope)
+    private readonly clientAllowedScope: typeof ClientAllowedScope,
     @InjectModel(ApiScope)
     private readonly apiScopeModel: typeof ApiScope,
     private readonly translationService: TranslationService,
     private readonly clientsService: ClientsService,
+    private readonly adminTranslationService: AdminTranslationService,
     private sequelize: Sequelize,
   ) {}
 
@@ -78,6 +84,7 @@ export class AdminClientsService {
     const clients = await this.clientModel.findAll({
       where: {
         domainName: tenantId,
+        enabled: true,
       },
       include: this.clientInclude(),
     })
@@ -100,6 +107,7 @@ export class AdminClientsService {
       where: {
         clientId,
         domainName: tenantId,
+        enabled: true,
       },
       include: this.clientInclude(),
     })
@@ -129,8 +137,12 @@ export class AdminClientsService {
       throw new NoContentException()
     }
 
-    // validate that client id starts with the tenant id
-    if (!clientDto.clientId.startsWith(`${tenantId}/`)) {
+    if (
+      !validateClientId({
+        prefix: tenantId,
+        value: clientDto.clientId,
+      })
+    ) {
       throw new BadRequestException('Invalid client id')
     }
 
@@ -146,42 +158,49 @@ export class AdminClientsService {
       ...clientAttributes
     } = clientDto
 
-    const client = await this.sequelize.transaction(async (transaction) => {
-      const newClient = await this.clientModel.create(
-        {
-          clientId: clientDto.clientId,
-          clientType: clientDto.clientType,
-          domainName: tenantId,
-          nationalId: tenant.nationalId,
-          clientName: clientDto.clientName,
-          ...this.defaultClientAttributes(clientDto.clientType),
-        },
-        { transaction },
-      )
+    const { clientId } = await this.sequelize.transaction(
+      async (transaction) => {
+        const client = await this.clientModel.create(
+          {
+            clientId: clientDto.clientId,
+            clientType: clientDto.clientType,
+            domainName: tenantId,
+            nationalId: tenant.nationalId,
+            clientName: clientDto.clientName,
+            ...this.defaultClientAttributes(clientDto.clientType),
+          },
+          { transaction },
+        )
 
-      const { clientId } = newClient
+        await this.updateConnectionsForClient(transaction, {
+          clientId: client.clientId,
+          tenantId,
+          displayName,
+          refreshTokenExpiration,
+          clientAttributes,
+          redirectUris,
+          postLogoutRedirectUris,
+          customClaims,
+          supportTokenExchange,
+          addedScopes,
+          removedScopes,
+        })
 
-      await this.updateConnectionsForClient(transaction, {
-        clientId,
-        tenantId,
-        displayName,
-        refreshTokenExpiration,
-        clientAttributes,
-        redirectUris,
-        postLogoutRedirectUris,
-        customClaims,
-        supportTokenExchange,
-        addedScopes,
-        removedScopes,
-      })
+        await this.clientGrantType.create(this.defaultClientGrantType(client), {
+          transaction,
+        })
+        await this.clientAllowedScope.bulkCreate(
+          this.defaultClientScopes(client),
+          {
+            transaction,
+          },
+        )
 
-      // TODO: Add client type specific openid profile identity resources
-      await this.clientGrantType.create(this.defaultClientGrantTypes(newClient))
+        return client
+      },
+    )
 
-      return newClient
-    })
-
-    return this.findByTenantIdAndClientId(tenantId, client.clientId)
+    return this.findByTenantIdAndClientId(tenantId, clientId)
   }
 
   async update(
@@ -437,7 +456,11 @@ export class AdminClientsService {
       clientId: client.clientId,
       clientType: client.clientType,
       tenantId: client.domainName ?? '',
-      displayName: this.formatDisplayName(client.clientName, translations),
+      displayName: this.adminTranslationService.createTranslatedValueDTOs({
+        key: 'clientName',
+        defaultValueIS: client.clientName ?? '',
+        translations,
+      }),
       absoluteRefreshTokenLifetime: client.absoluteRefreshTokenLifetime,
       slidingRefreshTokenLifetime: client.slidingRefreshTokenLifetime,
       refreshTokenExpiration:
@@ -466,37 +489,12 @@ export class AdminClientsService {
           type: claim.type,
           value: claim.value,
         })) ?? [],
-      allowedScopes:
-        client.allowedScopes?.map(({ scopeName, clientId }) => ({
-          scopeName,
-          clientId,
-        })) ?? [],
     }
   }
 
-  private formatDisplayName(
-    clientName?: string,
-    translations?: Map<string, Map<string, string>>,
-  ): TranslatedValueDto[] {
-    const displayNames = [{ locale: 'is', value: clientName ?? '' }]
-
-    for (const [locale, translation] of translations?.entries() ?? []) {
-      displayNames.push({
-        locale,
-        value: translation.get('clientName') ?? '',
-      })
-    }
-
-    return displayNames
-  }
-
-  private defaultClientGrantTypes(client: Client) {
+  private defaultClientGrantType(client: Client) {
     switch (client.clientType) {
       case ClientType.web:
-        return {
-          clientId: client.clientId,
-          grantType: 'authorization_code',
-        }
       case ClientType.native:
         return {
           clientId: client.clientId,
@@ -510,13 +508,32 @@ export class AdminClientsService {
     }
   }
 
+  private defaultClientScopes(client: Client) {
+    const scopes = [
+      {
+        clientId: client.clientId,
+        scopeName: 'openid',
+      },
+    ]
+
+    switch (client.clientType) {
+      case ClientType.web:
+      case ClientType.native:
+        scopes.push({
+          clientId: client.clientId,
+          scopeName: 'profile',
+        })
+    }
+
+    return scopes
+  }
+
   private clientInclude(): Includeable[] {
     return [
       { model: ClientClaim, as: 'claims' },
       { model: ClientGrantType, as: 'allowedGrantTypes' },
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
-      { model: ClientAllowedScope, as: 'allowedScopes' },
     ]
   }
 
@@ -654,5 +671,62 @@ export class AdminClientsService {
         ignoreDuplicates: true,
       })
     }
+  }
+
+  async findAllowedScopes({
+    clientId,
+    tenantId,
+  }: {
+    clientId: string
+    tenantId: string
+  }): Promise<AdminScopeDTO[]> {
+    const client = await this.clientModel.findOne({
+      where: {
+        clientId,
+        domainName: tenantId,
+        enabled: true,
+      },
+      include: {
+        model: ClientAllowedScope,
+        as: 'allowedScopes',
+        where: {
+          scopeName: {
+            [Op.notIn]: Sequelize.literal(
+              `(SELECT name FROM identity_resource)`,
+            ),
+          },
+        },
+        required: false,
+      },
+    })
+
+    if (!client) {
+      throw new NoContentException()
+    } else if (!client?.allowedScopes?.length) {
+      return []
+    }
+
+    const scopeNames = client.allowedScopes.map((scope) => scope.scopeName)
+
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: {
+        name: {
+          [Op.in]: scopeNames,
+        },
+        enabled: true,
+        domainName: tenantId,
+      },
+    })
+
+    const translations = await this.adminTranslationService.getApiScopeTranslations(
+      apiScopes.map(({ name }) => name),
+    )
+
+    return apiScopes.map((apiScope) =>
+      this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+        apiScope,
+        translations,
+      ),
+    )
   }
 }

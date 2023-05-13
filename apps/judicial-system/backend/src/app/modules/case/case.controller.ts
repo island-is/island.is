@@ -187,6 +187,10 @@ export class CaseController {
       update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
     }
 
+    if (update.prosecutorStatementDate) {
+      update.prosecutorStatementDate = nowFactory()
+    }
+
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
@@ -335,19 +339,20 @@ export class CaseController {
     registrarRule,
     assistantRule,
   )
-  @Get('case/:caseId/caseFiles/:policeCaseNumber')
+  @Get('case/:caseId/caseFilesRecord/:policeCaseNumber')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Gets the case files for an existing case as a pdf document',
+    description:
+      'Gets the case files record for an existing case as a pdf document',
   })
-  async getCaseFilesPdf(
+  async getCaseFilesRecordPdf(
     @Param('caseId') caseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(
-      `Getting the case files for case ${caseId} as a pdf document`,
+      `Getting the case files record for case ${caseId} and police case ${policeCaseNumber} as a pdf document`,
     )
 
     if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
@@ -356,7 +361,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesPdf(
+    const pdf = await this.caseService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )

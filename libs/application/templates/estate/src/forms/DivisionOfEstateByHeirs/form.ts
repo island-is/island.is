@@ -15,6 +15,7 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
+import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
   id: 'divisionOfEstateByHeirsForm',
@@ -26,27 +27,35 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'estateMembersInfo',
+      id: 'estateMembersAndWillsInfo',
       title: m.estateMembersTitle,
       children: [
-        buildMultiField({
-          id: 'estateMembersInfo',
+        buildSubSection({
+          id: 'estateMembers',
           title: m.estateMembersTitle,
-          description: m.estateMembersSubtitle,
           children: [
-            buildDescriptionField({
-              id: 'membersOfEstateTitle',
-              title: m.estateMembers,
-              description: m.estateMembersHeaderDescription,
-              titleVariant: 'h3',
-            }),
-            buildCustomField({
-              title: '',
-              id: 'estate.estateMembers',
-              component: 'EstateMembersRepeater',
+            buildMultiField({
+              id: 'estateMembersInfo',
+              title: m.estateMembersTitle,
+              description: m.estateMembersSubtitle,
+              children: [
+                buildDescriptionField({
+                  id: 'membersOfEstateTitle',
+                  title: m.estateMembers,
+                  description: m.estateMembersHeaderDescription,
+                  titleVariant: 'h3',
+                  marginBottom: 5,
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.estateMembers',
+                  component: 'EstateMembersRepeater',
+                }),
+              ],
             }),
           ],
         }),
+        testamentInfo,
       ],
     }),
     buildSection({
@@ -413,25 +422,19 @@ export const form: Form = buildForm({
           title: m.representativeTitle,
           description: m.representativeDescription,
           children: [
-            buildTextField({
-              id: 'representative.representativeNationalId',
-              title: m.nationalId,
-              width: 'half',
-              format: '######-####',
+            buildCustomField({
+              title: '',
+              id: 'representative',
+              component: 'LookupPerson',
             }),
             buildTextField({
-              id: 'representative.representativeName',
-              title: m.name,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'representative.representativePhoneNumber',
+              id: 'representative.phone',
               title: m.phone,
               width: 'half',
               format: '###-####',
             }),
             buildTextField({
-              id: 'representative.representativeEmail',
+              id: 'representative.email',
               title: m.email,
               width: 'half',
             }),
