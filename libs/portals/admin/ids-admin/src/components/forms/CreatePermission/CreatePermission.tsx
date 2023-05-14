@@ -1,38 +1,48 @@
+import React, { ComponentPropsWithoutRef, useState } from 'react'
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useRouteLoaderData,
+} from 'react-router-dom'
+
 import { Modal } from '@island.is/react/components'
 import { replaceParams } from '@island.is/react-spa/shared'
-import { IDSAdminPaths } from '../../../lib/paths'
-import { Form, useNavigate, useRouteLoaderData } from 'react-router-dom'
-import {
-  tenantLoaderId,
-  TenantLoaderResult,
-} from '../../../screens/Tenant/Tenant.loader'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
 import {
+  AlertMessage,
   Box,
   Button,
   Checkbox,
   GridColumn,
   GridRow,
   Input,
+  InputError,
   Text,
 } from '@island.is/island-ui/core'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import React, { ComponentPropsWithoutRef } from 'react'
+
+import { IDSAdminPaths } from '../../../lib/paths'
+import {
+  tenantLoaderId,
+  TenantLoaderResult,
+} from '../../../screens/Tenant/Tenant.loader'
+import { m } from '../../../lib/messages'
 import { parseID } from '../../../shared/utils/forms'
+import { useErrorFormatMessage } from '../../../shared/hooks/useFormatErrorMessage'
+import { CreateScopeResult } from './CreatePermission.action'
 
 type InputOnChange = ComponentPropsWithoutRef<typeof Input>['onChange']
 
-const environments = [
-  AuthAdminEnvironment.Development,
-  AuthAdminEnvironment.Staging,
-  AuthAdminEnvironment.Production,
-]
+const environments = Object.values(AuthAdminEnvironment).map(
+  (env: AuthAdminEnvironment) => env,
+)
 
 export default function CreatePermission() {
   const { formatMessage } = useLocale()
-
   const navigate = useNavigate()
+  const actionData = useActionData() as CreateScopeResult
+  const { formatErrorMessage } = useErrorFormatMessage()
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
 
   const handleClose = () => {
@@ -44,8 +54,8 @@ export default function CreatePermission() {
     )
   }
 
-  const prefix = `prefix/`
-  const [idState, setIdState] = React.useState({
+  const prefix = `${tenant.id}/`
+  const [idState, setIdState] = useState({
     value: prefix,
     dirty: false,
   })
@@ -83,13 +93,30 @@ export default function CreatePermission() {
       <Box paddingTop={2}>
         <Form method="post">
           <GridRow rowGap={3}>
+            {actionData?.globalError && (
+              <GridColumn span={['12/12']}>
+                <AlertMessage
+                  message={formatMessage(m.errorDefault)}
+                  type="error"
+                />
+              </GridColumn>
+            )}
             <GridColumn span={['12/12', '6/12']}>
+              <input
+                type="text"
+                hidden
+                name="tenantId"
+                defaultValue={tenant.id}
+              />
               <Input
                 name="displayName"
                 label={formatMessage(m.displayName)}
                 size="sm"
                 backgroundColor="blue"
                 onChange={handleNameChange}
+                errorMessage={formatErrorMessage(
+                  actionData?.errors?.displayName,
+                )}
               />
               <Text variant="small" marginTop={1}>
                 {formatMessage(m.permissionDisplayNameInfo)}
@@ -97,12 +124,13 @@ export default function CreatePermission() {
             </GridColumn>
             <GridColumn span={['12/12', '6/12']}>
               <Input
-                name="permissionId"
+                name="name"
                 label={formatMessage(m.permissionId)}
                 size="sm"
                 backgroundColor="blue"
                 value={idState.value}
                 onChange={handleIdChange}
+                errorMessage={formatErrorMessage(actionData?.errors?.name)}
               />
             </GridColumn>
             <GridColumn span={['12/12']}>
@@ -111,6 +139,9 @@ export default function CreatePermission() {
                 label={formatMessage(m.permissionDescription)}
                 size="sm"
                 backgroundColor="blue"
+                errorMessage={formatErrorMessage(
+                  actionData?.errors?.description,
+                )}
               />
               <Text variant="small" marginTop={1}>
                 {formatMessage(m.permissionDescriptionInfo)}
@@ -119,25 +150,41 @@ export default function CreatePermission() {
             <GridColumn span="12/12">
               <Text variant="h4">{formatMessage(m.chooseEnvironment)}</Text>
             </GridColumn>
-            {environments.map((env) => {
-              const envName = tenant.availableEnvironments.find(
-                (environment) => env === environment,
-              )
+            <GridColumn span="12/12">
+              <GridRow rowGap={3}>
+                {environments.map((env) => {
+                  const envName = tenant.availableEnvironments.find(
+                    (environment) => env === environment,
+                  )
 
-              return (
-                <GridColumn span={['12/12', '4/12']}>
-                  <Checkbox
-                    label={env}
-                    name="environments"
-                    id={`environments.${envName}`}
-                    value={envName}
-                    disabled={!tenant.availableEnvironments.includes(env)}
-                    large
-                    backgroundColor="blue"
-                  />
-                </GridColumn>
-              )
-            })}
+                  return (
+                    <GridColumn span={['12/12', '4/12']} key={env}>
+                      <Checkbox
+                        label={env}
+                        name="environments"
+                        id={`environments.${envName}`}
+                        value={envName}
+                        disabled={!tenant.availableEnvironments.includes(env)}
+                        large
+                        backgroundColor="blue"
+                      />
+                    </GridColumn>
+                  )
+                })}
+              </GridRow>
+              {actionData?.errors?.environments && (
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <InputError
+                      id="environments"
+                      errorMessage={formatErrorMessage(
+                        (actionData?.errors?.environments as unknown) as string,
+                      )}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
+            </GridColumn>
           </GridRow>
 
           <Box display="flex" justifyContent="spaceBetween" marginTop={7}>

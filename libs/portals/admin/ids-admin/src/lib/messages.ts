@@ -114,12 +114,24 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-display-name',
     defaultMessage: 'Name is required.',
   },
+  errorDescription: {
+    id: 'ap.ids-admin:error-description',
+    defaultMessage: 'Description is required.',
+  },
   errorClientId: {
     id: 'ap.ids-admin:error-client-id',
     defaultMessage: 'Application ID is required.',
   },
   errorClientIdRegex: {
     id: 'ap.ids-admin:error-client-id-regex',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+  },
+  errorScopeId: {
+    id: 'ap.ids-admin:error-scope-id',
+    defaultMessage: 'Scope ID is required.',
+  },
+  errorScopeIdRegex: {
+    id: 'ap.ids-admin:error-scope-id-regex',
     defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
   },
   errorEnvironment: {

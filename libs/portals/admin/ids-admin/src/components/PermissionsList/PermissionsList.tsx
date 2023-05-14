@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from 'react'
+import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
+
 import {
   Box,
   Button,
@@ -8,29 +11,33 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
-import * as styles from './PermissionsList.css'
 import { replaceParams } from '@island.is/react-spa/shared'
+
+import { m } from '../../lib/messages'
+import * as styles from './PermissionsList.css'
 import { IDSAdminPaths } from '../../lib/paths'
-import React, { useState } from 'react'
 import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
-import { MockData } from './PermissionsList.loader'
+import { PermissionsListLoaderData } from './PermissionsList.loader'
 import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
 
 function PermissionsList() {
   const { formatMessage } = useLocale()
-  const loaderData = useLoaderData() as MockData
-  const isEmpty = !Array.isArray(loaderData) || loaderData.length === 0
+  const { locale } = useLocale()
+  const permissionsList = useLoaderData() as PermissionsListLoaderData
+  const isEmpty = permissionsList.data.length === 0
   const navigate = useNavigate()
   const { tenant } = useParams()
-
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
   const [filteredPermissions, filterPermissions] = useLooseSearch(
-    loaderData,
-    ['displayName', 'id'],
-    'id',
+    permissionsList.data,
+    ['environments[0].displayName[0].value', 'scopeName'],
+    'environments[0].displayName[0].value',
   )
+
+  useEffect(() => {
+    // If item is added to the list, then we need to update the filtered list.
+    filterPermissions(inputSearchValue)
+  }, [permissionsList.data])
 
   const handleSearch = (value = '') => {
     setInputSearchValue(value)
@@ -93,6 +100,19 @@ function PermissionsList() {
     )
   }
 
+  /**
+   * Finds the title of the permission, a.k.a displayName for default environment
+   */
+  const findPermissionTitle = (
+    permission: PermissionsListLoaderData['data'][0],
+    defaultEnvironment: PermissionsListLoaderData['data'][0]['defaultEnvironment']['environment'],
+  ) => {
+    return permission.environments
+      .find(({ environment }) => environment === defaultEnvironment)
+      ?.displayName.find((translatedValue) => translatedValue.locale === locale)
+      ?.value
+  }
+
   const renderList = () => {
     return (
       <Box marginY={1}>
@@ -108,13 +128,28 @@ function PermissionsList() {
 
         <Stack space={2}>
           {filteredPermissions.map((item) => {
-            const tags = item.environments.map((env) => ({ children: env }))
+            const tags = item.environments.map(({ environment }) => ({
+              children: environment,
+            }))
+
             return (
               <IdsAdminCard
-                key={item.id}
-                // cta={{ label: formatMessage(m.change), to: '#' }} TODO
-                title={item.displayName}
-                text={item.id}
+                key={item.scopeName}
+                cta={{
+                  label: formatMessage(m.change),
+                  to: replaceParams({
+                    href: IDSAdminPaths.IDSAdminPermissionsManagement,
+                    params: {
+                      tenant,
+                      scopeName: item.scopeName,
+                    },
+                  }),
+                }}
+                title={findPermissionTitle(
+                  item,
+                  item.defaultEnvironment.environment,
+                )}
+                text={item.scopeName}
                 tags={tags}
               />
             )

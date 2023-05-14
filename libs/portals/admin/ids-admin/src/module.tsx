@@ -14,6 +14,7 @@ import { editApplicationAction } from './components/forms/EditApplication/EditAp
 import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
 import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
 import { permissionsListLoader } from './components/PermissionsList/PermissionsList.loader'
+import { createPermissionAction } from './components/forms/CreatePermission/CreatePermission.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -134,7 +135,7 @@ export const idsAdminModule: PortalModule = {
                     navHide: true,
                     path: IDSAdminPaths.IDSAdminPermissionsCreate,
                     element: <CreatePermission />,
-                    // action:
+                    action: createPermissionAction(props),
                   },
                 ],
               },

@@ -22,12 +22,14 @@ export function useLooseSearch<T>(
 
     fullList.forEach((item) => {
       const key = get(item, keyPath)
+
       if (!key) {
         return
       }
 
       const concatenatedString = searchPaths.reduce((acc, path) => {
         const value = get(item, path)
+
         if (!value) {
           return acc
         }
@@ -54,6 +56,7 @@ export function useLooseSearch<T>(
     setFilteredList(
       fullList.filter((item) => {
         const key = get(item, keyPath)
+
         if (!key) {
           return false
         }

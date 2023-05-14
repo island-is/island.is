@@ -4,7 +4,7 @@ export enum IDSAdminPaths {
   IDSAdminDomainsAPIS = '/innskraningarkerfi/:tenant/vefthjonustur',
   IDSAdminPermissions = '/innskraningarkerfi/:tenant/rettindi',
   IDSAdminPermissionsCreate = '/innskraningarkerfi/:tenant/rettindi/stofna',
-  IDSAdminPermissionsManagement = '/innskraningarkerfi/:tenant/rettindi/stjornbord',
+  IDSAdminPermissionsManagement = '/innskraningarkerfi/:tenant/rettindi/:scopeName',
   IDSAdminClient = '/innskraningarkerfi/:tenant/forrit/:client',
   IDSAdminClientCreate = '/innskraningarkerfi/:tenant/forrit/stofna',
   IDSAdminClientPublish = '/innskraningarkerfi/:tenant/forrit/:client/gefa-ut',
