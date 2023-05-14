@@ -14,6 +14,7 @@ import { editApplicationAction } from './components/forms/EditApplication/EditAp
 import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
 import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
 import { rotateSecretAction } from './components/forms/RotateSecret/RotateSecret.action'
+import { revokeSecretsAction } from './components/forms/RevokeSecrets/RevokeSecrets.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -26,8 +27,14 @@ const ClientsScreen = lazy(() => import('./screens/ClientsScreen'))
 const RotateSecret = lazy(() =>
   import('./components/forms/RotateSecret/RotateSecret'),
 )
+const RevokeSecrets = lazy(() =>
+  import('./components/forms/RevokeSecrets/RevokeSecrets'),
+)
 
-const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
+const allowedScopes: string[] = [
+  AdminPortalScope.idsAdmin,
+  AdminPortalScope.idsAdminSuperUser,
+]
 
 export type IDSAdminRouteHandle = {
   backPath?: string
@@ -87,6 +94,13 @@ export const idsAdminModule: PortalModule = {
                     path: IDSAdminPaths.IDSAdminClientRotateSecret,
                     action: rotateSecretAction(props),
                     element: <RotateSecret />,
+                  },
+                  {
+                    name: m.revokeSecrets,
+                    navHide: true,
+                    path: IDSAdminPaths.IDSAdminClientRevokeSecrets,
+                    action: revokeSecretsAction(props),
+                    element: <RevokeSecrets />,
                   },
                 ],
               },

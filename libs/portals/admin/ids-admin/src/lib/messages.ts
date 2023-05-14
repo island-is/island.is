@@ -577,6 +577,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:generate',
     defaultMessage: 'Generate',
   },
+  revoke: {
+    id: 'ap.ids-admin:revoke',
+    defaultMessage: 'Revoke',
+  },
   revokeExistingSecrets: {
     id: 'ap.ids-admin:revoke-existing-secrets',
     defaultMessage: 'Revoke existing secret(s) immediately.',
@@ -589,5 +593,30 @@ export const m = defineMessages({
     id: 'ap.ids-admin:rotated-secret-description',
     defaultMessage:
       'Please update the application configuration with the following secret.',
+  },
+  errorRevokingSecrets: {
+    id: 'ap.ids-admin:error-revoking-secrets',
+    defaultMessage: 'Error revoking secret(s)',
+  },
+  revokeSecrets: {
+    id: 'ap.ids-admin:revoke-secrets',
+    defaultMessage: 'Revoke old secret(s)',
+  },
+  revokeSecretsDescription: {
+    id: 'ap.ids-admin:revoke-secrets-description',
+    defaultMessage:
+      'This will revoke all secrets except the current active secret. Please make sure that they are not in use anymore.',
+  },
+  successRevokingSecrets: {
+    id: 'ap.ids-admin:success-revoking-secrets',
+    defaultMessage: 'Successfully revoked old secret(s)',
+  },
+  multipleSecrets: {
+    id: 'ap.ids-admin:multiple-secrets',
+    defaultMessage: 'Multiple secrets',
+  },
+  multipleSecretsDescription: {
+    id: 'ap.ids-admin:multiple-secrets-description',
+    defaultMessage: 'There are one or more old secrets which are still active.',
   },
 })

@@ -5,7 +5,15 @@ import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import { Box, Select, Stack, Tag, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Select,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { replaceParams } from '@island.is/react-spa/shared'
 
@@ -81,20 +89,28 @@ const Client = () => {
     return true
   }
 
+  const openModal = (
+    path:
+      | IDSAdminPaths.IDSAdminClientPublish
+      | IDSAdminPaths.IDSAdminClientRevokeSecrets,
+  ) => {
+    navigate(
+      replaceParams({
+        href: path,
+        params: {
+          tenant: params['tenant'],
+          client: params['client'],
+        },
+      }),
+    )
+  }
+
   const openPublishModal = (to: AuthAdminEnvironment) => {
     setPublishData({
       toEnvironment: to,
       fromEnvironment: selectedEnvironment.environment,
     })
-    navigate(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClientPublish,
-        params: {
-          tenant: params['tenant'],
-          client: selectedEnvironment.clientId,
-        },
-      }),
-    )
+    openModal(IDSAdminPaths.IDSAdminClientPublish)
   }
 
   const environmentExists = (environment: AuthAdminEnvironment) => {
@@ -203,6 +219,29 @@ const Client = () => {
             />
           </Box>
         </Box>
+
+        {selectedEnvironment.secrets.length > 1 && (
+          <AlertMessage
+            type="warning"
+            title={formatMessage(m.multipleSecrets)}
+            message={
+              <Stack space={1}>
+                <Text variant="small">
+                  {formatMessage(m.multipleSecretsDescription)}
+                </Text>
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={() =>
+                    openModal(IDSAdminPaths.IDSAdminClientRevokeSecrets)
+                  }
+                >
+                  {formatMessage(m.revokeSecrets)}
+                </Button>
+              </Stack>
+            }
+          />
+        )}
 
         <BasicInfo
           key={`${selectedEnvironment.environment}-BasicInfo`}
