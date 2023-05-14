@@ -1,5 +1,5 @@
 import { setItem } from '../../utils/helpers/localStorage'
-import { useDebounce } from '../../utils/helpers'
+import { useDebounce } from '../../hooks'
 import { Input } from '@island.is/island-ui/core'
 import { BaseSyntheticEvent, useState } from 'react'
 import { AdviceFilter, CaseFilter } from '../../types/interfaces'

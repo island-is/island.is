@@ -7,10 +7,11 @@ export const menuItems = [
     label: 'Áskriftir',
     href: '/askriftir',
   },
-  {
-    label: 'Tölfræði',
-    href: '/tolfraedi',
-  },
+  // Tölfræði is hidden until PowerBI
+  // {
+  //   label: 'Tölfræði',
+  //   href: '/tolfraedi',
+  // },
   {
     label: 'Mínar umsagnir',
     href: '/umsagnir',
