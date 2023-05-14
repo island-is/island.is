@@ -4,4 +4,3 @@ mutation CreateAuthAdminScope($input: CreateScopeInput!) {
     environment
   }
 }
-
