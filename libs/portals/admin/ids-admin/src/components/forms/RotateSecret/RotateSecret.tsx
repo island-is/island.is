@@ -1,4 +1,4 @@
-import { useContext, useReducer, useRef } from 'react'
+import { useCallback, useContext, useEffect, useReducer, useRef } from 'react'
 import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -38,14 +38,24 @@ export const RotateSecret = () => {
   const secretRef = useRef<HTMLInputElement>(null)
   const isResult = !!actionData?.data?.decryptedValue
 
-  const onCancel = () => {
+  useEffect(() => {
+    if (
+      (actionData?.globalError || actionData?.errors) &&
+      !isLoading &&
+      !isSubmitting
+    ) {
+      toast.error(formatMessage(m.errorRotatingSecret))
+    }
+  }, [actionData, isLoading, isSubmitting, formatMessage])
+
+  const onCancel = useCallback(() => {
     navigate(
       replaceParams({
         href: IDSAdminPaths.IDSAdminClient,
         params: { tenant: params['tenant'], client: params['client'] },
       }),
     )
-  }
+  }, [params, navigate])
 
   const modalTitle = isResult
     ? formatMessage(m.newSecret)
