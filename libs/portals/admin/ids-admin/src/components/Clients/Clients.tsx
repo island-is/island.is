@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate, useParams, useLoaderData, Outlet } from 'react-router-dom'
+
 import {
   Box,
   Button,
@@ -11,8 +12,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import { replaceParams } from '@island.is/react-spa/shared'
+
+import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
 import { AuthClients } from './Clients.loader'
 import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
@@ -23,6 +25,7 @@ const Clients = () => {
   const { tenant } = useParams()
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { locale } = useLocale()
 
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
   const [clients, filterClients] = useLooseSearch(
@@ -106,7 +109,6 @@ const Clients = () => {
   ) : (
     <GridContainer position="relative">
       {getHeader()}
-
       <Box paddingTop="gutter">
         <Stack space={[1, 1, 2, 2]}>
           <GridRow>
@@ -119,35 +121,36 @@ const Clients = () => {
             />
           </GridRow>
 
-          {clients.map((item, index) => {
-            const tags = item.availableEnvironments.map((tag) => ({
-              children: tag,
-            }))
-            return (
-              <GridRow key={`clients-${item.clientId}`}>
-                <IdsAdminCard
-                  title={item.defaultEnvironment.displayName[0].value}
-                  text={item.defaultEnvironment.clientId}
-                  tags={tags}
-                  eyebrow={
-                    <Tag variant="blue" outlined disabled>
-                      {item.clientType}
-                    </Tag>
-                  }
-                  cta={{
-                    label: formatMessage(m.change),
-                    to: replaceParams({
-                      href: IDSAdminPaths.IDSAdminClient,
-                      params: {
-                        tenant,
-                        client: item.clientId,
-                      },
-                    }),
-                  }}
-                />
-              </GridRow>
-            )
-          })}
+          {clients.map((item) => (
+            <GridRow key={`clients-${item.clientId}`}>
+              <IdsAdminCard
+                title={
+                  item.defaultEnvironment.displayName.find(
+                    (translatedValue) => locale === translatedValue.locale,
+                  )?.value
+                }
+                text={item.defaultEnvironment.clientId}
+                tags={item.availableEnvironments.map((tag) => ({
+                  children: tag,
+                }))}
+                eyebrow={
+                  <Tag variant="blue" outlined disabled>
+                    {item.clientType}
+                  </Tag>
+                }
+                cta={{
+                  label: formatMessage(m.change),
+                  to: replaceParams({
+                    href: IDSAdminPaths.IDSAdminClient,
+                    params: {
+                      tenant,
+                      client: item.clientId,
+                    },
+                  }),
+                }}
+              />
+            </GridRow>
+          ))}
         </Stack>
       </Box>
       <Outlet />

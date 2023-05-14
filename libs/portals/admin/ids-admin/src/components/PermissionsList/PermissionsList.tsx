@@ -127,33 +127,29 @@ function PermissionsList() {
         </Box>
 
         <Stack space={2}>
-          {filteredPermissions.map((item) => {
-            const tags = item.environments.map(({ environment }) => ({
-              children: environment,
-            }))
-
-            return (
-              <IdsAdminCard
-                key={item.scopeName}
-                cta={{
-                  label: formatMessage(m.change),
-                  to: replaceParams({
-                    href: IDSAdminPaths.IDSAdminPermissionsManagement,
-                    params: {
-                      tenant,
-                      scopeName: item.scopeName,
-                    },
-                  }),
-                }}
-                title={findPermissionTitle(
-                  item,
-                  item.defaultEnvironment.environment,
-                )}
-                text={item.scopeName}
-                tags={tags}
-              />
-            )
-          })}
+          {filteredPermissions.map((item) => (
+            <IdsAdminCard
+              key={item.scopeName}
+              cta={{
+                label: formatMessage(m.change),
+                to: replaceParams({
+                  href: IDSAdminPaths.IDSAdminPermissionsManagement,
+                  params: {
+                    tenant,
+                    scopeName: item.scopeName,
+                  },
+                }),
+              }}
+              title={findPermissionTitle(
+                item,
+                item.defaultEnvironment.environment,
+              )}
+              text={item.scopeName}
+              tags={item.environments.map(({ environment }) => ({
+                children: environment,
+              }))}
+            />
+          ))}
         </Stack>
       </Box>
     )
