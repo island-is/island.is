@@ -54,3 +54,8 @@ export function getStatusEndDate(status: string, Case: Case) {
       return getShortDate(Case.summaryDate)
   }
 }
+
+export function hasDatePassed(date: string | Date) {
+  const dateFormatted = new Date(date)
+  return dateFormatted < new Date()
+}

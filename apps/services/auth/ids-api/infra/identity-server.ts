@@ -68,6 +68,7 @@ export const serviceSetup = (services: {
         staging: 'true',
         prod: 'true',
       },
+      IdentityServer__ConsentsScope: '@island.is/auth/consents',
       PersistenceSettings__BaseAddress: ref(
         (h) => `http://${h.svc(services.authIdsApi)}`,
       ),
