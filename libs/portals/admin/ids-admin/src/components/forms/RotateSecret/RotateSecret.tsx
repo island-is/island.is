@@ -38,14 +38,6 @@ export const RotateSecret = () => {
   const secretRef = useRef<HTMLInputElement>(null)
   const isResult = !!actionData?.data?.decryptedValue
 
-  if (
-    (actionData?.globalError || actionData?.errors) &&
-    !isLoading &&
-    !isSubmitting
-  ) {
-    toast.error(formatMessage(m.errorRotatingSecret))
-  }
-
   const onCancel = () => {
     navigate(
       replaceParams({
@@ -58,6 +50,14 @@ export const RotateSecret = () => {
   const modalTitle = isResult
     ? formatMessage(m.newSecret)
     : formatMessage(m.rotateSecret)
+
+  if (
+    (actionData?.globalError || actionData?.errors) &&
+    !isLoading &&
+    !isSubmitting
+  ) {
+    toast.error(formatMessage(m.errorRotatingSecret))
+  }
 
   return (
     <Modal
@@ -134,7 +134,6 @@ export const RotateSecret = () => {
               colorScheme={revokeOldSecrets ? 'destructive' : 'default'}
               type="submit"
               loading={isLoading || isSubmitting}
-              disabled={isLoading || isSubmitting}
             >
               {formatMessage(revokeOldSecrets ? m.rotate : m.generate)}
             </Button>
