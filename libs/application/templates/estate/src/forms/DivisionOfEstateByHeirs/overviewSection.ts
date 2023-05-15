@@ -99,7 +99,6 @@ export const overview = buildSection({
           label: m.additionalInfo,
           value: ({ answers }) =>
             getValueViaPath(answers, 'estate.testament.additionalInfo'),
-          width: 'half',
         }),
         buildDescriptionField({
           id: 'space2',
