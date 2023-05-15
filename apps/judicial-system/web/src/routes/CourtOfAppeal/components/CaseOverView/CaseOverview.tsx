@@ -181,7 +181,7 @@ const CourtOfAppealCaseOverview: React.FC = () => {
           ]}
         />
       </Box>
-      {user ? (
+      {user && user.role !== UserRole.STAFF ? (
         <Box marginBottom={3}>
           <CaseFilesAccordionItem
             workingCase={workingCase}
