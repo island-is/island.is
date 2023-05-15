@@ -20,7 +20,7 @@ const initialMapper = <T>(element: T) => {
     ...element,
     initial: true,
     enabled: true,
-    marketValue: '0',
+    marketValue: '',
   }
 }
 
