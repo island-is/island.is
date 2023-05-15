@@ -33,30 +33,3 @@ export const EstateTypes = {
   permitToPostponeEstateDivision: 'Búsetuleyfi',
   divisionOfEstateByHeirs: 'Einkaskipti',
 }
-
-export const EstateApplicationOptions =
-  process.env.NODE_ENV !== 'production'
-    ? [
-        {
-          value: EstateTypes.divisionOfEstate,
-          label: EstateTypes.divisionOfEstate,
-        },
-        {
-          value: EstateTypes.estateWithoutAssets,
-          label: EstateTypes.estateWithoutAssets,
-        },
-        {
-          value: EstateTypes.permitToPostponeEstateDivision,
-          label: EstateTypes.permitToPostponeEstateDivision,
-        },
-        {
-          value: EstateTypes.divisionOfEstateByHeirs,
-          label: EstateTypes.divisionOfEstateByHeirs,
-        },
-      ]
-    : [
-        {
-          value: EstateTypes.permitToPostponeEstateDivision,
-          label: EstateTypes.permitToPostponeEstateDivision,
-        },
-      ]

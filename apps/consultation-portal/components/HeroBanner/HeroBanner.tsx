@@ -1,28 +1,29 @@
 import {
   Box,
-  Columns,
-  Column,
   GridColumn,
   GridContainer,
   GridRow,
-  Text,
-  ArrowLink,
-  Hidden,
+  Stack,
+  Inline,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeroBanner.css'
 
-import { HeroLogo } from '../svg'
+import { HeroLogo, HeroLogoMobile, LESchoolMobile } from '../svg'
 import { StatisticBox } from '..'
-import HeroTiles from './HeroTiles'
+import HeroTiles from './components/HeroTiles'
 import { ArrOfStatistics } from '../../types/interfaces'
 import Splash from '../svg/Splash'
+import { useIsMobile } from '../../hooks'
+import IntroText from './components/IntroText'
+import ArrowLink from './components/ArrowLink'
 
 interface HeroBannerProps {
   statistics: ArrOfStatistics
 }
 
 export const HeroBanner = ({ statistics }: HeroBannerProps) => {
+  const { isMobile } = useIsMobile()
   return (
     <Box
       style={{
@@ -33,48 +34,36 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
       flexDirection={'column'}
     >
       <GridContainer>
-        <Box>
+        {isMobile ? (
+          <Box paddingY={6}>
+            <Stack space={2}>
+              <HeroLogoMobile />
+              <LESchoolMobile />
+              <IntroText />
+              <ArrowLink isReadMore />
+              <ArrowLink />
+            </Stack>
+          </Box>
+        ) : (
           <GridRow className={styles.rowAlign}>
-            <Hidden above="md">
-              <GridColumn span="12/12" order={[1, 1]}>
-                <HeroLogo width="0.81" height="0.81" />
-              </GridColumn>
-            </Hidden>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '6/12']}
-              order={[2, 2, 2, 1, 1]}
-            >
-              <Hidden below="lg">
+            <GridColumn span={['6/12']}>
+              <Stack space={4}>
                 <HeroLogo />
-              </Hidden>
-              <Text paddingY={4}>
-                Markmið Samráðsgáttarinnar er að auka gagnsæi og möguleika
-                almennings og hagsmunaaðila á þátttöku í stefnumótun,
-                reglusetningu og ákvarðanatöku opinberra aðila. Hér er á einum
-                stað hægt að finna öll mál ráðuneyta sem birt hafa verið til
-                samráðs við almenning. Öllum er frjálst að senda inn umsögn eða
-                ábendingu.
-              </Text>
-              <Columns collapseBelow="lg" space={2}>
-                <Column>
-                  <ArrowLink href="/um">Lesa meira</ArrowLink>
-                </Column>
-                <Column width="content">
-                  <ArrowLink href="https://www.stjornarradid.is/rikisstjorn/thingmalaskra/">
-                    Skoða þingmálaskrá ríkisstjórnar
-                  </ArrowLink>
-                </Column>
-              </Columns>
+                <Stack space={3}>
+                  <IntroText />
+                  <Inline justifyContent="spaceBetween">
+                    <ArrowLink isReadMore />
+                    <ArrowLink />
+                  </Inline>
+                </Stack>
+              </Stack>
             </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '6/12']}
-              order={[1, 1, 1, 2, 2]}
-            >
+            <GridColumn span={'6/12'}>
               <Box className={styles.bg}>
                 <Splash />
               </Box>
               <Box className={styles.alignTiles}>
-                <HeroTiles space={2} columns={[1, 1, 1, 1, 1]}>
+                <HeroTiles space={2} columns={[1]}>
                   <StatisticBox
                     label="Til umsagnar"
                     statistic={statistics?.casesInReview?.toLocaleString(
@@ -86,7 +75,7 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               </Box>
             </GridColumn>
           </GridRow>
-        </Box>
+        )}
       </GridContainer>
     </Box>
   )

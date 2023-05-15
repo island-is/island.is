@@ -42,6 +42,7 @@ const renderLinkButton = (text: string, href: string) => {
 const useAppealAlertBanner = (
   workingCase: TempCase,
   onAppealAfterDeadline?: () => void,
+  onStatementAfterDeadline?: () => void,
   onReceiveAppeal?: () => void,
 ) => {
   const { formatMessage } = useIntl()
@@ -65,6 +66,7 @@ const useAppealAlertBanner = (
     appealState,
     isAppealDeadlineExpired,
     appealReceivedByCourtDate,
+    isStatementDeadlineExpired,
   } = workingCase
 
   const hasCurrentUserSentStatement =
@@ -75,8 +77,7 @@ const useAppealAlertBanner = (
   if (user?.institution?.type === InstitutionType.HIGH_COURT) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired:
-        workingCase.isStatementDeadlineExpired || false,
+      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
   }
@@ -85,15 +86,14 @@ const useAppealAlertBanner = (
   else if (appealState === CaseAppealState.RECEIVED) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired:
-        workingCase.isStatementDeadlineExpired || false,
+      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
     // if the current user has already sent a statement, we don't want to display
     // the link to send a statement, instead we want to display the date it was sent
     if (hasCurrentUserSentStatement) {
       child = (
-        <Text variant="h4" color="mint800">
+        <Text variant="small" color="mint800" fontWeight="semiBold">
           {formatMessage(strings.statementSentDescription, {
             statementSentDate: isProsecutionRoleUser
               ? formatDate(prosecutorStatementDate, 'PPPp')
@@ -103,18 +103,24 @@ const useAppealAlertBanner = (
       )
     } else if (isCourtRoleUser) {
       child = (
-        <Text variant="h4" color="mint800">
+        <Text variant="small" color="mint800" fontWeight="semiBold">
           {formatMessage(strings.appealReceivedNotificationSent, {
             appealReceivedDate: formatDate(appealReceivedByCourtDate, 'PPPp'),
           })}
         </Text>
       )
     } else {
-      child = renderLinkButton(
-        formatMessage(strings.statementLinkText),
-        isDefenderRoleUser
-          ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
-          : `${STATEMENT_ROUTE}/${workingCase.id}`,
+      child = isStatementDeadlineExpired ? (
+        <Button variant="text" size="small" onClick={onStatementAfterDeadline}>
+          {formatMessage(strings.statementLinkText)}
+        </Button>
+      ) : (
+        renderLinkButton(
+          formatMessage(strings.statementLinkText),
+          isDefenderRoleUser
+            ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
+            : `${STATEMENT_ROUTE}/${workingCase.id}`,
+        )
       )
     }
   }
@@ -131,7 +137,7 @@ const useAppealAlertBanner = (
     if (isProsecutionRoleUser || isDefenderRoleUser) {
       child = hasCurrentUserSentStatement
         ? (child = (
-            <Text variant="h4" color="mint800">
+            <Text variant="small" color="mint800" fontWeight="semiBold">
               {formatMessage(strings.statementSentDescription, {
                 statementSentDate: isProsecutionRoleUser
                   ? formatDate(prosecutorStatementDate, 'PPPp')

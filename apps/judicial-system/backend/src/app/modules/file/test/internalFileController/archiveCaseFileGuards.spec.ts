@@ -28,7 +28,7 @@ describe('InternalFileController - Archive case file guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have CaseHasExistedGuard as quard 1', () => {
+    it('should have CaseHasExistedGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseHasExistedGuard)
     })
   })
@@ -40,7 +40,7 @@ describe('InternalFileController - Archive case file guards', () => {
       guard = guards[1]
     })
 
-    it('should have CaseTypeGuard as quard 2', () => {
+    it('should have CaseTypeGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: indictmentCases,
@@ -55,7 +55,7 @@ describe('InternalFileController - Archive case file guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseFileExistsGuard as quard 3', () => {
+    it('should have CaseFileExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseFileExistsGuard)
     })
   })
