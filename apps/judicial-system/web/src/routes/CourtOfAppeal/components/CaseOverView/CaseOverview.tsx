@@ -4,18 +4,14 @@ import { useRouter } from 'next/router'
 
 import {
   CaseDates,
-  CaseFilesAccordionItem,
   FormContext,
-  InfoCard,
   MarkdownWrapper,
   RestrictionTags,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseDecision,
   CaseState,
@@ -29,10 +25,9 @@ import { courtOfAppealCaseOverview as strings } from './CaseOverView.strings'
 import { titleForCase } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const CourtOfAppealCaseOverview: React.FC = () => {
-  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
   const router = useRouter()
 
   return (
@@ -120,83 +115,6 @@ const CourtOfAppealCaseOverview: React.FC = () => {
           />
         </Box>
       )}
-      <Box marginBottom={5}>
-        <InfoCard
-          defendants={
-            workingCase.defendants
-              ? {
-                  title: capitalize(
-                    formatMessage(core.defendant, {
-                      suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
-                    }),
-                  ),
-                  items: workingCase.defendants,
-                }
-              : undefined
-          }
-          defenders={[
-            {
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            },
-          ]}
-          data={[
-            {
-              title: formatMessage(core.policeCaseNumber),
-              value: workingCase.policeCaseNumbers.map((n) => (
-                <Text key={n}>{n}</Text>
-              )),
-            },
-            {
-              title: formatMessage(core.courtCaseNumber),
-              value: workingCase.courtCaseNumber,
-            },
-            {
-              title: formatMessage(core.prosecutor),
-              value: `${workingCase.creatingProsecutor?.institution?.name}`,
-            },
-            {
-              title: formatMessage(core.court),
-              value: workingCase.court?.name,
-            },
-            {
-              title: formatMessage(core.prosecutorPerson),
-              value: workingCase.prosecutor?.name,
-            },
-            {
-              title: formatMessage(core.judge),
-              value: workingCase.judge?.name,
-            },
-            ...(workingCase.registrar
-              ? [
-                  {
-                    title: formatMessage(core.registrar),
-                    value: workingCase.registrar?.name,
-                  },
-                ]
-              : []),
-          ]}
-        />
-      </Box>
-      {user && user.role !== UserRole.STAFF ? (
-        <Box marginBottom={3}>
-          <CaseFilesAccordionItem
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            user={user}
-          />
-        </Box>
-      ) : null}
-      <Box marginBottom={6}>
-        <Conclusion
-          conclusionText={workingCase.conclusion}
-          judgeName={workingCase.judge?.name}
-          title="héraðsdóm"
-        />
-      </Box>
     </>
   )
 }

@@ -55,10 +55,9 @@ const CaseFilesOverview: React.FC = () => {
       [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
   )
 
-  const allFiles =
-    user?.role === UserRole.STAFF
-      ? appealRulingFiles
-      : appealCaseFiles?.concat(appealRulingFiles ? appealRulingFiles : [])
+  const allFiles = appealCaseFiles?.concat(
+    appealRulingFiles ? appealRulingFiles : [],
+  )
 
   return (
     <>
