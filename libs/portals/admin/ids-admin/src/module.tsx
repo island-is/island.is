@@ -149,7 +149,7 @@ export const idsAdminModule: PortalModule = {
               },
               {
                 name: m.apis,
-                path: IDSAdminPaths.IDSAdminDomainsAPIS,
+                path: IDSAdminPaths.IDSAdminTenantsAPIS,
                 element: <div>APIs</div>,
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
