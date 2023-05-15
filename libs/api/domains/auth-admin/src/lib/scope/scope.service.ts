@@ -11,6 +11,7 @@ import { Scope } from './models/scope.model'
 import { ScopesPayload } from './dto/scopes.payload'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
+import { AdminPatchScopeInput } from './dto/patch-scope.input'
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -43,6 +44,43 @@ export class ScopeService extends MultiEnvironmentService {
         environment: input.environments[index],
       }),
       prefixErrorMessage: `Failed to create scope ${input.name}`,
+    })
+  }
+
+  /**
+   * Updates a scope for a specific tenant for the given environments
+   */
+  async updateScope({
+    user,
+    input: { environments, scopeName, tenantId, ...adminPatchScopeDto },
+  }: {
+    user: User
+    input: AdminPatchScopeInput
+  }): Promise<ScopeEnvironment[]> {
+    if (Object.keys(adminPatchScopeDto).length === 0) {
+      throw new Error('Nothing provided to update')
+    }
+
+    const updatedSettledPromises = await Promise.allSettled(
+      environments.map(async (environment) => {
+        return this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meScopesControllerUpdate({
+          tenantId,
+          scopeName,
+          adminPatchScopeDto,
+        })
+      }),
+    )
+
+    return this.handleSettledPromises(updatedSettledPromises, {
+      mapper: (scope, index) => ({
+        ...scope,
+        scopeName: scope.name,
+        environment: environments[index],
+      }),
+      prefixErrorMessage: `Failed to update scope ${scopeName}`,
     })
   }
 
