@@ -7,7 +7,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { EstateTypes } from '../lib/constants'
+import { EstateApplicationOptions, EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
 import { deceasedInfoFields } from './sharedSections/deceasedInfoFields'
 
@@ -37,24 +37,7 @@ export const Prerequisites: Form = buildForm({
               title: '',
               width: 'full',
               defaultValue: EstateTypes.divisionOfEstate,
-              options: [
-                {
-                  value: EstateTypes.divisionOfEstate,
-                  label: EstateTypes.divisionOfEstate,
-                },
-                {
-                  value: EstateTypes.estateWithoutAssets,
-                  label: EstateTypes.estateWithoutAssets,
-                },
-                {
-                  value: EstateTypes.permitToPostponeEstateDivision,
-                  label: EstateTypes.permitToPostponeEstateDivision,
-                },
-                {
-                  value: EstateTypes.divisionOfEstateByHeirs,
-                  label: EstateTypes.divisionOfEstateByHeirs,
-                },
-              ],
+              options: EstateApplicationOptions,
             }),
             buildSubmitField({
               id: 'estate.submit',
