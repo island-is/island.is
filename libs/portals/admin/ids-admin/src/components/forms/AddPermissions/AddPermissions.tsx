@@ -95,7 +95,7 @@ function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
       <Box marginTop={1} marginBottom={4}>
         <Text>{formatMessage(m.permissionsModalDescription)}</Text>
       </Box>
-      <ShadowBox isDisabled={false} flexShrink={1} overflow="auto">
+      <ShadowBox isDisabled={!isVisible} flexShrink={1} overflow="auto">
         <T.Table>
           <T.Head>
             <T.Row>

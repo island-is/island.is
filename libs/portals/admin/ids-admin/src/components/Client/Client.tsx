@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -8,21 +8,23 @@ import {
 } from '@island.is/api/schema'
 import { Box, Select, Stack, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
+import { IDSAdminPaths } from '../../lib/paths'
+import { ClientContext } from '../../shared/context/ClientContext'
+import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import AdvancedSettings from './AdvancedSettings'
 import BasicInfo from './BasicInfo'
 import { AuthAdminClient } from './Client.loader'
 import ClientsUrl from './ClientsUrl'
-import Lifetime from './Lifetime'
-import Translations from './Translations'
+import { DangerZone } from './DangerZone'
 import Delegation from './Delegation'
+import Lifetime from './Lifetime'
 import Permissions from './Permissions'
-import AdvancedSettings from './AdvancedSettings'
-import { ClientContext } from '../../shared/context/ClientContext'
-import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import Translations from './Translations'
+
 import * as styles from './Client.css'
-import { replaceParams } from '@island.is/react-spa/shared'
-import { IDSAdminPaths } from '../../lib/paths'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -56,6 +58,16 @@ const Client = () => {
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     AuthAdminClient['environments'][0]
   >(client.environments[0])
+
+  useEffect(() => {
+    const newSelectedEnvironment = client.environments.find(
+      ({ environment }) => environment === selectedEnvironment.environment,
+    )
+
+    if (newSelectedEnvironment) {
+      setSelectedEnvironment(newSelectedEnvironment)
+    }
+  }, [client, setSelectedEnvironment])
 
   const checkIfInSync = (variables: string[]) => {
     for (const variable of variables) {
@@ -145,7 +157,7 @@ const Client = () => {
         setRemovedScopes,
       }}
     >
-      <Stack space={4}>
+      <Stack space={3}>
         <Box
           display="flex"
           columnGap={2}
@@ -262,6 +274,7 @@ const Client = () => {
           accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
           customClaims={selectedEnvironment.customClaims}
         />
+        <DangerZone />
       </Stack>
       <Outlet />
     </ClientContext.Provider>

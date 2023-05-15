@@ -25,11 +25,15 @@ interface SliceProps {
   slice: TabSection
   contentColumnProps?: GridColumnProps
   contentPaddingTop?: ResponsiveSpace
+  containerPaddingTop?: ResponsiveSpace
+  containerPaddingBottom?: ResponsiveSpace
 }
 
 export const TabSectionSlice: React.FC<SliceProps> = ({
   slice,
   contentPaddingTop = [0, 4, 6],
+  containerPaddingBottom = [0, 4, 4],
+  containerPaddingTop = 2,
 }) => {
   const [tabSection, setTabSection] = useState(slice)
   const router = useRouter()
@@ -66,7 +70,10 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
       id={tabSection.id}
       aria-labelledby={'sliceTitle-' + tabSection.id}
     >
-      <Box paddingTop={2} paddingBottom={[0, 4, 4]}>
+      <Box
+        paddingTop={containerPaddingTop}
+        paddingBottom={containerPaddingBottom}
+      >
         <Tabs
           selected={selected}
           onChange={(id) => {
