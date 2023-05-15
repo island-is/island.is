@@ -4,7 +4,11 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { CurrentLicenseApi } from '@island.is/application/types'
+import {
+  CurrentLicenseApi,
+  QualityPhotoApi,
+  QualitySignatureApi,
+} from '@island.is/application/types'
 
 export const sectionDataProviders = buildSection({
   id: 'externalData',
@@ -24,14 +28,12 @@ export const sectionDataProviders = buildSection({
           subTitle: m.dataCollectionNationalRegistrySubtitle,
         }),
         buildDataProviderItem({
-          id: 'qualityPhoto',
-          type: 'QualityPhotoProvider',
+          provider: QualityPhotoApi,
           title: m.dataCollectionQualityPhotoTitle,
           subTitle: m.dataCollectionQualityPhotoSubtitle,
         }),
         buildDataProviderItem({
-          id: 'qualitySignature',
-          type: 'QualitySignatureProvider',
+          provider: QualitySignatureApi,
           title: '',
           subTitle: '',
         }),

@@ -26,6 +26,11 @@ export const QualityPhotoApi = defineTemplateApi({
   namespace,
 })
 
+export const QualitySignatureApi = defineTemplateApi({
+  action: 'qualitySignature',
+  namespace,
+})
+
 export const DrivingAssessmentApi = defineTemplateApi({
   action: 'drivingAssessment',
   namespace,

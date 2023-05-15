@@ -8,6 +8,8 @@ import {
   DefaultEvents,
   defineTemplateApi,
   CurrentLicenseApi,
+  QualitySignatureApi,
+  QualityPhotoApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -61,7 +63,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [CurrentLicenseApi],
+              api: [CurrentLicenseApi, QualitySignatureApi, QualityPhotoApi],
               write: 'all',
               delete: true,
             },

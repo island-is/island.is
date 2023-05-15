@@ -17,6 +17,7 @@ import {
 import {
   DrivingLicenseApi,
   Juristiction,
+  QualitySignature,
   Teacher,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
@@ -191,6 +192,14 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     return {
       hasQualityPhoto,
     }
+  }
+
+  async qualitySignature({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<QualitySignature | null> {
+    return this.drivingLicenseService.getQualitySignature({
+      nationalId: auth.nationalId,
+    })
   }
 
   async juristictions(): Promise<Juristiction[]> {
