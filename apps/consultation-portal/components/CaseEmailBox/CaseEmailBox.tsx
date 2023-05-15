@@ -1,13 +1,13 @@
-import { useFetchEmail } from '../../utils/helpers/api/useFetchEmail'
 import {
   useLogIn,
   usePostEmail,
   useUser,
-  IsEmailValid,
+  useFetchEmail,
   useFetchCaseSubscription,
   usePostCaseSubscription,
   useDeleteCaseSubscription,
-} from '../../utils/helpers'
+} from '../../hooks'
+import { IsEmailValid } from '../../utils/helpers'
 import { ReactNode, useEffect, useState } from 'react'
 import { SimpleCardSkeleton } from '../Card'
 import StackedTitleAndDescription from '../StackedTitleAndDescription/StackedTitleAndDescription'
@@ -154,7 +154,7 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
 
   if (!userLoading && !isAuthenticated) {
     return (
-      <CardSkeleton text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift.">
+      <CardSkeleton text="Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.">
         <Button fluid iconType="outline" nowrap onClick={LogIn}>
           Skrá mig inn
         </Button>

@@ -746,7 +746,7 @@ export class CaseService {
     ])
   }
 
-  private addMessagesForAppealStatementToQueue(
+  private addMessagesForCompletedAppealCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
@@ -757,10 +757,7 @@ export class CaseService {
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
             caseFile.category &&
-            [
-              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-              CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-            ].includes(caseFile.category),
+            CaseFileCategory.APPEAL_RULING === caseFile.category,
         )
         .map((caseFile) => ({
           type: MessageType.DELIVER_CASE_FILE_TO_COURT,
@@ -768,13 +765,21 @@ export class CaseService {
           caseId: theCase.id,
           caseFileId: caseFile.id,
         })) ?? []
-    messages.push({
-      type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
-      user,
-      caseId: theCase.id,
-    })
 
     return this.messageService.sendMessagesToQueue(messages)
+  }
+
+  private addMessagesForAppealStatementToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        user,
+        caseId: theCase.id,
+      },
+    ])
   }
 
   private async addMessagesForUpdatedCaseToQueue(
@@ -813,6 +818,8 @@ export class CaseService {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
+        await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
       }
     }
 

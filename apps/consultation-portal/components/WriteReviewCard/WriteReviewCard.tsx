@@ -19,7 +19,7 @@ import {
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { useLogIn, usePostAdvice } from '../../utils/helpers'
+import { useLogIn, usePostAdvice } from '../../hooks'
 import { SubscriptionActionBox } from '../Card'
 import { PresignedPost } from '@island.is/api/schema'
 import {
@@ -28,6 +28,11 @@ import {
   REVIEW_MINIMUM_LENGTH,
 } from '../../utils/consts/consts'
 import { AgencyText } from './components/AgencyText'
+import { createUUIDString } from '../../utils/helpers'
+import {
+  advicePublishTypeKey,
+  advicePublishTypeKeyHelper,
+} from '../../types/enums'
 
 type CardProps = {
   card: Case
@@ -182,7 +187,7 @@ export const WriteReviewCard = ({
     const uploadFiles = files.map((file) => fileToObject(file))
     const uploadFilesWithKey = uploadFiles.map((f) => ({
       ...f,
-      key: crypto.randomUUID(),
+      key: createUUIDString(),
     }))
     const newFileList = [...fileList, ...uploadFilesWithKey]
     setFileList(newFileList)
@@ -231,8 +236,13 @@ export const WriteReviewCard = ({
       </Text>
 
       <Text marginBottom={2}>
-        Hér er hægt að senda inn umsögn. Umsagnir í þessu máli birtast jafnóðum
-        og þær berast. Upplýsingalög gilda, sjá nánar í{' '}
+        Hér er hægt að senda inn umsögn.
+        {` ${
+          advicePublishTypeKey[
+            advicePublishTypeKeyHelper[card.advicePublishTypeId]
+          ]
+        } `}
+        Upplýsingalög gilda, sjá nánar í{' '}
         <Link href="/um">um samráðsgáttina.</Link>
       </Text>
 

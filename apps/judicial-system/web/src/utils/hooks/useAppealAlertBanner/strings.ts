@@ -18,8 +18,8 @@ export const strings = defineMessages({
     description: 'Texti í viðvörunarglugga um að úrskurður hafi verið kærður',
   },
   statementDescription: {
-    id: 'judicial.system.core:appeal_alert_banner.statement_description',
-    defaultMessage: '{actor} hefur kært úrskurðinn {appealDate}',
+    id: 'judicial.system.core:appeal_alert_banner.statement_description_v1',
+    defaultMessage: '{actor} kærði úrskurðinn {appealDate}',
     description: 'Texti í viðvörunarglugga um að úrskurður hafi verið kærður',
   },
   appealedInCourtStatementDescription: {

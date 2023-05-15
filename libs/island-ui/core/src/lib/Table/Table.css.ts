@@ -7,3 +7,8 @@ export const table = style({
 export const cell = style({
   verticalAlign: 'middle',
 })
+
+export const stickyHead = style({
+  position: 'sticky',
+  top: 0,
+})

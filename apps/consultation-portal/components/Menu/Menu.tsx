@@ -18,7 +18,8 @@ import React, { useContext } from 'react'
 import { MenuLogo, MenuLogoMobile } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
-import { checkActiveHeaderLink, useLogIn, useLogOut } from '../../utils/helpers'
+import { useIsMobile, useLogIn, useLogOut } from '../../hooks'
+import { checkActiveHeaderLink } from '../../utils/helpers'
 import { useRouter } from 'next/router'
 import { UserContext } from '../../context'
 type MenuProps = {
@@ -27,6 +28,7 @@ type MenuProps = {
 
 export const Menu = ({ isFrontPage = false }: MenuProps) => {
   const { isAuthenticated, user } = useContext(UserContext)
+  const { isMobile } = useIsMobile()
 
   const router = useRouter()
   const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -42,56 +44,50 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
           <GridRow>
             <GridColumn span="12/12" paddingTop={3} paddingBottom={3}>
               <Columns alignY="center" space={2}>
-                {isFrontPage && (
-                  <Column width="content">
-                    <FocusableBox href="https://island.is/">
-                      <Logo />
-                    </FocusableBox>
-                  </Column>
-                )}
-                {!isFrontPage && (
-                  <Hidden below="xl">
-                    <Column width="content">
-                      <FocusableBox href="https://island.is/">
-                        <Logo iconOnly />
-                      </FocusableBox>
-                    </Column>
-                  </Hidden>
-                )}
+                <Column width="content">
+                  {isFrontPage ? <Logo /> : !isMobile && <Logo iconOnly />}
+                </Column>
                 {!isFrontPage && (
                   <>
-                    <Hidden below="xl">
+                    {!isMobile && (
                       <Column width="content">
-                        <Box>
-                          <Box
-                            style={{
-                              transform: 'rotate(90deg)',
-                              width: 56,
-                            }}
-                            marginX={1}
-                          >
-                            <Divider />
-                          </Box>
+                        <Box
+                          style={{
+                            transform: 'rotate(90deg)',
+                            width: 56,
+                          }}
+                          marginX={1}
+                        >
+                          <Divider />
                         </Box>
                       </Column>
-                    </Hidden>
+                    )}
                     <Column width="content">
-                      <Hidden below="md">
-                        <FocusableBox href="/" alignItems="center">
-                          <MenuLogo />
-                        </FocusableBox>
-                      </Hidden>
-                      <Hidden above="sm">
-                        <FocusableBox href="/" alignItems="center">
-                          <MenuLogoMobile />
-                        </FocusableBox>
-                      </Hidden>
+                      <FocusableBox href="/" alignItems="center">
+                        {isMobile ? <MenuLogoMobile /> : <MenuLogo />}
+                      </FocusableBox>
                     </Column>
                   </>
                 )}
-
                 <Column>
-                  <Hidden below="xl">
+                  {isMobile ? (
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexEnd"
+                      width="full"
+                    >
+                      <MenuModal
+                        baseId="menuModal"
+                        modalLabel="Menu modal"
+                        isLoggedIn={isAuthenticated}
+                        logIn={LogIn}
+                        logOut={LogOut}
+                        router={router}
+                        isFrontPage={isFrontPage}
+                      />
+                    </Box>
+                  ) : (
                     <Box
                       display="flex"
                       alignItems="center"
@@ -139,25 +135,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                         )}
                       </Box>
                     </Box>
-                  </Hidden>
-                  <Hidden above="lg">
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="flexEnd"
-                      width="full"
-                    >
-                      <MenuModal
-                        baseId="menuModal"
-                        modalLabel="Menu modal"
-                        isLoggedIn={isAuthenticated}
-                        logIn={LogIn}
-                        logOut={LogOut}
-                        router={router}
-                        isFrontPage={isFrontPage}
-                      />
-                    </Box>
-                  </Hidden>
+                  )}
                 </Column>
               </Columns>
             </GridColumn>
