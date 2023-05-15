@@ -2,7 +2,7 @@ import { compose, createClient, createScope } from './helpers'
 
 export const up = compose(
   createScope({
-    name: '@rsk/prokura:admin',
+    name: '@rsk.is/prokura:admin',
     displayName: 'Skatturinn prókúra admin',
     description:
       'Veitir aðgang að admin endapunktum í prókúru vefþjónustu Skattsins.',
