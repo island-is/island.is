@@ -114,7 +114,6 @@ const CaseFiles: React.FC = () => {
             accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.inputFieldLabel)}
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-            multiple={false}
             onChange={(files) =>
               handleChange(
                 files,
@@ -139,7 +138,6 @@ const CaseFiles: React.FC = () => {
               accept={Object.values(fileExtensionWhitelist)}
               header={formatMessage(strings.caseFiles.inputFieldLabel)}
               buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-              multiple={false}
               onChange={(files) =>
                 handleChange(
                   files,

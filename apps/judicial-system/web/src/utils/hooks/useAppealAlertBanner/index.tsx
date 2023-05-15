@@ -5,7 +5,7 @@ import { TempCase } from '@island.is/judicial-system-web/src/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { Button, LinkContext, LinkV2, Text } from '@island.is/island-ui/core'
+import { Button, Text } from '@island.is/island-ui/core'
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
@@ -23,33 +23,26 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './strings'
+import router from 'next/router'
 
-const renderLink = (text: string, href: string) => {
+const renderLinkButton = (text: string, href: string) => {
   return (
-    <LinkContext.Provider
-      value={{
-        linkRenderer: (href, children) => (
-          <LinkV2
-            href={href}
-            color="blue400"
-            underline="small"
-            underlineVisibility="always"
-          >
-            {children}
-          </LinkV2>
-        ),
+    <Button
+      variant="text"
+      size="small"
+      onClick={() => {
+        router.push(href)
       }}
     >
-      <Text>
-        <a href={href}>{text}</a>
-      </Text>
-    </LinkContext.Provider>
+      {text}
+    </Button>
   )
 }
 
 const useAppealAlertBanner = (
   workingCase: TempCase,
   onAppealAfterDeadline?: () => void,
+  onStatementAfterDeadline?: () => void,
   onReceiveAppeal?: () => void,
 ) => {
   const { formatMessage } = useIntl()
@@ -73,6 +66,7 @@ const useAppealAlertBanner = (
     appealState,
     isAppealDeadlineExpired,
     appealReceivedByCourtDate,
+    isStatementDeadlineExpired,
   } = workingCase
 
   const hasCurrentUserSentStatement =
@@ -83,8 +77,7 @@ const useAppealAlertBanner = (
   if (user?.institution?.type === InstitutionType.HIGH_COURT) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired:
-        workingCase.isStatementDeadlineExpired || false,
+      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
   }
@@ -93,8 +86,7 @@ const useAppealAlertBanner = (
   else if (appealState === CaseAppealState.RECEIVED) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired:
-        workingCase.isStatementDeadlineExpired || false,
+      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
     // if the current user has already sent a statement, we don't want to display
@@ -118,11 +110,17 @@ const useAppealAlertBanner = (
         </Text>
       )
     } else {
-      child = renderLink(
-        formatMessage(strings.statementLinkText),
-        isDefenderRoleUser
-          ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
-          : `${STATEMENT_ROUTE}/${workingCase.id}`,
+      child = isStatementDeadlineExpired ? (
+        <Button variant="text" size="small" onClick={onStatementAfterDeadline}>
+          {formatMessage(strings.statementLinkText)}
+        </Button>
+      ) : (
+        renderLinkButton(
+          formatMessage(strings.statementLinkText),
+          isDefenderRoleUser
+            ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
+            : `${STATEMENT_ROUTE}/${workingCase.id}`,
+        )
       )
     }
   }
@@ -147,7 +145,7 @@ const useAppealAlertBanner = (
               })}
             </Text>
           ))
-        : renderLink(
+        : renderLinkButton(
             formatMessage(strings.statementLinkText),
             `${
               isDefenderRoleUser ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
@@ -172,7 +170,7 @@ const useAppealAlertBanner = (
         {formatMessage(strings.appealLinkText)}
       </Button>
     ) : (
-      renderLink(
+      renderLinkButton(
         formatMessage(strings.appealLinkText),
         `${isDefenderRoleUser ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
           workingCase.id
