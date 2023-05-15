@@ -15,7 +15,6 @@ interface FakeEligibilityInput {
 
 export const fakeEligibility = ({
   categoryType = 'none',
-  localResidency = true,
   deprivationDateTo,
   deprivationDateFrom,
   mentorAge = '20',
@@ -35,7 +34,7 @@ export const fakeEligibility = ({
   if (deprivationDateFrom && deprivationDateTo) {
     activeDisqualification = Date.now() < Date.parse(deprivationDateTo)
     disqualificationInTheLastTwelveMonths =
-      new Date(Date.parse(deprivationDateFrom)) > twelveMonthsAgo
+      new Date(Date.parse(deprivationDateTo)) > twelveMonthsAgo
   }
 
   const requirements: ApplicationEligibilityRequirement[] = [
@@ -44,10 +43,6 @@ export const fakeEligibility = ({
       requirementMet: !(
         activeDisqualification || disqualificationInTheLastTwelveMonths
       ),
-    },
-    {
-      key: RequirementKey.CurrentLocalResidency,
-      requirementMet: localResidency,
     },
     {
       key: RequirementKey.PersonNotAtLeast24YearsOld,
