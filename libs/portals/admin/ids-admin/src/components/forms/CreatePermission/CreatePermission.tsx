@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom'
 
 import { Modal } from '@island.is/react/components'
-import { replaceParams } from '@island.is/react-spa/shared'
+import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 import { useLocale } from '@island.is/localization'
 import {
   AlertMessage,
@@ -41,9 +41,10 @@ const environments = Object.values(AuthAdminEnvironment).map(
 export default function CreatePermission() {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const actionData = useActionData() as CreateScopeResult
   const { formatErrorMessage } = useErrorFormatMessage()
+  const actionData = useActionData() as CreateScopeResult
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
+  const { isLoading, isSubmitting } = useSubmitting()
 
   const handleClose = () => {
     navigate(
@@ -191,7 +192,9 @@ export default function CreatePermission() {
             <Button onClick={handleClose} variant="ghost" type="button">
               {formatMessage(m.cancel)}
             </Button>
-            <Button type="submit">{formatMessage(m.create)}</Button>
+            <Button type="submit" loading={isLoading || isSubmitting}>
+              {formatMessage(m.create)}
+            </Button>
           </Box>
         </Form>
       </Box>

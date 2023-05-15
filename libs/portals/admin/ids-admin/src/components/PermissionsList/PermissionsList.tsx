@@ -126,7 +126,7 @@ function PermissionsList() {
                   href: IDSAdminPaths.IDSAdminPermissionsManagement,
                   params: {
                     tenant,
-                    scopeName: item.scopeName,
+                    permission: item.scopeName,
                   },
                 }),
               }}

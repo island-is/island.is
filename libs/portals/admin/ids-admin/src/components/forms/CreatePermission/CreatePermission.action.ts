@@ -83,7 +83,7 @@ export const createPermissionAction: WrappedActionFn = ({ client }) => async ({
         href: IDSAdminPaths.IDSAdminPermissionsManagement,
         params: {
           tenant: data?.tenantId,
-          scopeName: data?.name,
+          permission: data?.name,
         },
       }),
     )
