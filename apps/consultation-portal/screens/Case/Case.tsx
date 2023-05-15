@@ -6,14 +6,10 @@ import {
   GridContainer,
   GridRow,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
-import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
+import { CaseOverview, CaseTimeline } from '../../components'
 import Layout from '../../components/Layout/Layout'
 import { useFetchAdvicesById, useIsMobile } from '../../hooks'
-import { useContext } from 'react'
-import { UserContext } from '../../context'
-import Advices from '../../components/Advices/Advices'
 import { Case } from '../../types/interfaces'
 import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
 import StakeholdersCard from './components/Stakeholders'
@@ -21,6 +17,7 @@ import { AdviceCTACard } from './components/AdviceCTA'
 import { CaseStatusFilterOptions } from '../../types/enums'
 import { RenderDocumentsBox } from './components/RenderDocumentsBox'
 import { CoOrdinator } from './components/CoOrdinator'
+import { RenderAdvices } from './components/RenderAdvices'
 
 interface Props {
   chosenCase: Case
@@ -29,7 +26,6 @@ interface Props {
 
 const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const { contactEmail, contactName } = chosenCase
-  const { isAuthenticated, user } = useContext(UserContext)
   const { isMobile } = useIsMobile()
 
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
@@ -95,34 +91,12 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           >
             <Stack space={[3, 3, 3, 9, 9]}>
               <CaseOverview chosenCase={chosenCase} />
-              <Box>
-                <Stack space={3}>
-                  {advices.length !== 0 && (
-                    <>
-                      <Text variant="h1" color="blue400">
-                        Innsendar umsagnir ({chosenCase.adviceCount})
-                      </Text>
-
-                      <Advices
-                        advices={advices}
-                        advicesLoading={advicesLoading}
-                        publishType={chosenCase.advicePublishTypeId}
-                        processEndDate={chosenCase.processEnds}
-                      />
-                    </>
-                  )}
-                  {chosenCase.statusName ===
-                    CaseStatusFilterOptions.forReview && (
-                    <WriteReviewCard
-                      card={chosenCase}
-                      isLoggedIn={isAuthenticated}
-                      username={user?.name}
-                      caseId={chosenCase.id}
-                      refetchAdvices={refetchAdvices}
-                    />
-                  )}
-                </Stack>
-              </Box>
+              <RenderAdvices
+                advices={advices}
+                chosenCase={chosenCase}
+                refetchAdvices={refetchAdvices}
+                advicesLoading={advicesLoading}
+              />
             </Stack>
           </GridColumn>
           <GridColumn
