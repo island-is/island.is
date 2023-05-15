@@ -18,7 +18,7 @@ import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks
 import * as constants from '@island.is/judicial-system/consts'
 import { courtOfAppealResult as strings } from '../Result/Result.strings'
 
-import CourtOfAppealCaseOverview from '../components/CaseOverView/CaseOverview'
+import CourtOfAppealCaseOverview from '../components/CaseOverViewHeader/CaseOverViewHeader'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 import { core } from '@island.is/judicial-system-web/messages'

@@ -15,7 +15,7 @@ import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import CourtOfAppealCaseOverview from '../components/CaseOverView/CaseOverview'
+import CourtOfAppealCaseOverview from '../components/CaseOverViewHeader/CaseOverViewHeader'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 
 import { courtOfAppealResult as strings } from './Result.strings'

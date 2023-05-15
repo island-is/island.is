@@ -21,10 +21,10 @@ import * as constants from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
-import { courtOfAppealCaseOverview as strings } from './CaseOverView.strings'
+import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverViewHeader.strings'
 import { titleForCase } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
-const CourtOfAppealCaseOverview: React.FC = () => {
+const CourtOfAppealCaseOverViewHeader: React.FC = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -119,4 +119,4 @@ const CourtOfAppealCaseOverview: React.FC = () => {
   )
 }
 
-export default CourtOfAppealCaseOverview
+export default CourtOfAppealCaseOverViewHeader
