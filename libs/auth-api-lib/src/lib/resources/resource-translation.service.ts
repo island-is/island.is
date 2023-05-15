@@ -4,10 +4,31 @@ import { TranslationService } from '../translation/translation.service'
 import { ApiScopeGroup } from './models/api-scope-group.model'
 import { ApiScope } from './models/api-scope.model'
 import { Domain } from './models/domain.model'
+import { IdentityResource } from './models/identity-resource.model'
 
 @Injectable()
 export class ResourceTranslationService {
   constructor(private readonly translationService: TranslationService) {}
+
+  async translateIdentityResources(
+    scopes: IdentityResource[],
+    language: string,
+  ): Promise<IdentityResource[]> {
+    const translationMap = await this.translationService.findTranslationMap(
+      'identityresource',
+      scopes.map((scope) => scope.name),
+      language,
+    )
+
+    for (const scope of scopes) {
+      scope.displayName =
+        translationMap.get(scope.name)?.get('displayName') ?? scope.displayName
+      scope.description =
+        translationMap.get(scope.name)?.get('description') ?? scope.description
+    }
+
+    return scopes
+  }
 
   async translateApiScopes(
     scopes: ApiScope[],

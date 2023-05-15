@@ -63,4 +63,16 @@ export class AdminTranslationService {
       })),
     ]
   }
+
+  /**
+   * Finds the translation by locale
+   */
+  findTranslationByLocale(
+    translatedValueDTO: TranslatedValueDto[],
+    locale: string,
+  ): TranslatedValueDto | undefined {
+    return translatedValueDTO.find(
+      (translatedValue) => translatedValue.locale === locale,
+    )
+  }
 }
