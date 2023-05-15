@@ -159,7 +159,6 @@ const Statement = () => {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                multiple={false}
                 onChange={(files) =>
                   handleChange(
                     files,
@@ -190,7 +189,6 @@ const Statement = () => {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                multiple={false}
                 onChange={(files) =>
                   handleChange(
                     files,
