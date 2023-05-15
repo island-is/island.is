@@ -21,6 +21,7 @@ import { courtOfAppealRuling as rulingStrings } from '../Ruling/Ruling.strings'
 import { useIntl } from 'react-intl'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
+import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 
 const CourtOfAppealResult: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -28,7 +29,6 @@ const CourtOfAppealResult: React.FC = () => {
   )
 
   const { formatMessage } = useIntl()
-  console.log('workingCase', workingCase)
 
   const { appealReceivedByCourtDate, appealRulingDecision } = workingCase
 
@@ -74,7 +74,7 @@ const CourtOfAppealResult: React.FC = () => {
         isLoading={isLoadingWorkingCase}
         notFound={caseNotFound}
       >
-        <PageHeader title="nidurstada" />
+        <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
           <CourtOfAppealCaseOverview />
           <Box marginBottom={6}>

@@ -14,7 +14,7 @@ import { CaseFileCategory, UserRole } from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { courtOfAppealOverview as strings } from './CaseFilesOverview.strings'
+import { courtOfAppealCaseFilesOverview as strings } from './CaseFilesOverview.strings'
 
 const CaseFilesOverview: React.FC = () => {
   const { workingCase } = useContext(FormContext)

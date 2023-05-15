@@ -1131,7 +1131,9 @@ const useSections = (
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
-        isActive: user?.institution?.type === InstitutionType.HIGH_COURT,
+        isActive:
+          user?.institution?.type === InstitutionType.HIGH_COURT &&
+          routeIndex !== 3,
         children: [
           {
             name: formatMessage(sections.courtOfAppealSection.overview),
@@ -1161,7 +1163,7 @@ const useSections = (
       },
       {
         name: formatMessage(sections.caseResults.result),
-        isActive: false,
+        isActive: routeIndex === 3,
         children: [],
       },
     ]

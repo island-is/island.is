@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const courtOfAppealCaseOverview = defineMessages({
   appealedInfo: {
-    id: 'judicial.system.core:court_of_appeal_overview.appealed_by',
+    id: 'judicial.system.core:court_of_appeal_case_overview.appealed_by',
     defaultMessage:
       'Kært af {appealedByProsecutor, select, true {sækjanda} other {verjanda}} {appealedDate}',
     description:
