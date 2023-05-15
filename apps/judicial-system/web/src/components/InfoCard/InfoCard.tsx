@@ -120,7 +120,7 @@ const InfoCard: React.FC<Props> = (props) => {
         })}
       </Box>
       {courtOfAppealData && (
-        <Box className={styles.infoCardCourtOfAppealDataDataContainer}>
+        <Box className={styles.infoCardCourtOfAppealDataContainer}>
           {courtOfAppealData.map((dataItem, index) => {
             return (
               <Box data-testid={`infoCardDataContainer${index}`} key={index}>

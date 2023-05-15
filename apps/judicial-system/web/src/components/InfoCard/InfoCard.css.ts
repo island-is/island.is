@@ -21,7 +21,7 @@ export const infoCardDataContainer = style({
   },
 })
 
-export const infoCardCourtOfAppealDataDataContainer = style({
+export const infoCardCourtOfAppealDataContainer = style({
   display: 'grid',
   gap: theme.spacing[2],
   borderTop: `2px solid ${theme.color.blue200}`,
