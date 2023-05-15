@@ -35,7 +35,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
   const [faceValue, setFaceValue] = useState(0)
   const [index, setIndex] = useState('0')
 
-  const { setValue } = useFormContext()
+  const { setValue, clearErrors } = useFormContext()
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
@@ -59,6 +59,10 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
     }
 
     setValue(`${index}.value`, String(faceValue * rateOfExchange))
+
+    if (faceValue * rateOfExchange > 0) {
+      clearErrors(`${index}.value`)
+    }
   }, [fields, faceValue, rateOfExchange, setValue])
 
   return (
@@ -111,7 +115,7 @@ export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
                       type={field.type}
                       error={
                         !!errors && errors[id] && (errors[id] as any)[index]
-                          ? (errors[id] as any)[index][field.id] ?? ''
+                          ? (errors[id] as any)[index][field.id]
                           : undefined
                       }
                       onChange={(e) => {
