@@ -672,6 +672,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
     description: '',
   },
+  errorNationalIdIncorrect: {
+    id: 'es.application:error.nationalIdIncorrect',
+    defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
+    description: 'National id is invalid',
+  },
 
   // Assets
   errorNumberEmpty: {
