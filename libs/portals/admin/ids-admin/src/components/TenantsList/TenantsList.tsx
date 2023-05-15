@@ -58,7 +58,7 @@ const TenantsList = () => {
                 <Link
                   className={styles.fill}
                   to={replaceParams({
-                    href: IDSAdminPaths.IDSAdminTenants,
+                    href: IDSAdminPaths.IDSAdminClients,
                     params: {
                       tenant: item.id,
                     },

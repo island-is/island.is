@@ -125,7 +125,7 @@ export default function CreateClient() {
   const onCancel = () => {
     navigate(
       replaceParams({
-        href: IDSAdminPaths.IDSAdminTenants,
+        href: IDSAdminPaths.IDSAdminClients,
         params: { tenant: tenant.id },
       }),
     )

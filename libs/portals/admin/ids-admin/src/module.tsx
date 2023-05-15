@@ -79,7 +79,7 @@ export const idsAdminModule: PortalModule = {
                 loader: clientLoader(props),
                 action: editApplicationAction(props),
                 handle: {
-                  backPath: IDSAdminPaths.IDSAdminTenants,
+                  backPath: IDSAdminPaths.IDSAdminClients,
                 },
                 children: [
                   {
@@ -105,7 +105,7 @@ export const idsAdminModule: PortalModule = {
             children: [
               {
                 name: m.clients,
-                path: IDSAdminPaths.IDSAdminTenants,
+                path: IDSAdminPaths.IDSAdminClients,
                 loader: clientsLoader(props),
                 element: <Applications />,
                 handle: {
@@ -141,10 +141,11 @@ export const idsAdminModule: PortalModule = {
               },
               {
                 name: m.permissionsManagement,
+                navHide: true,
                 path: IDSAdminPaths.IDSAdminPermission,
                 element: <PermissionsManagement />,
                 handle: {
-                  backPath: IDSAdminPaths.IDSAdmin,
+                  backPath: IDSAdminPaths.IDSAdminPermissions,
                 },
               },
               {

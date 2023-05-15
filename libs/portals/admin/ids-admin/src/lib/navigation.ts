@@ -2,24 +2,27 @@ import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from './messages'
 import { IDSAdminPaths } from './paths'
 
-export const domainNav: PortalNavigationItem = {
+export const idsAdminNav: PortalNavigationItem = {
   name: m.tenants,
-  path: IDSAdminPaths.IDSAdminTenants,
+  path: IDSAdminPaths.IDSAdminClients,
   description: m.idsAdmin,
   activeIfExact: true,
   children: [
     {
       name: m.clients,
-      path: IDSAdminPaths.IDSAdminTenants,
+      path: IDSAdminPaths.IDSAdminClients,
       description: m.idsAdmin,
       activeIfExact: true,
+      children: [
+        {
+          name: m.clients,
+          path: IDSAdminPaths.IDSAdminClient,
+          description: m.idsAdmin,
+          activeIfExact: true,
+          navHide: true,
+        },
+      ],
     },
-    // {
-    //   name: m.apis,
-    //   path: IDSAdminPaths.IDSAdminDomainsAPIS,
-    //   description: m.idsAdmin,
-    //   activeIfExact: true,
-    // },
     {
       name: m.permissions,
       path: IDSAdminPaths.IDSAdminPermissions,
@@ -27,33 +30,13 @@ export const domainNav: PortalNavigationItem = {
       activeIfExact: true,
       children: [
         {
-          name: m.listOfPermissions,
-          path: IDSAdminPaths.IDSAdminPermissions,
-          description: m.idsAdmin,
-          activeIfExact: true,
-        },
-        {
-          name: m.permissionsManagement,
+          name: m.permissions,
           path: IDSAdminPaths.IDSAdminPermission,
           description: m.idsAdmin,
           activeIfExact: true,
+          navHide: true,
         },
       ],
-    },
-  ],
-}
-
-export const applicationNav: PortalNavigationItem = {
-  name: m.clients,
-  path: IDSAdminPaths.IDSAdminClient,
-  description: m.idsAdmin,
-  activeIfExact: true,
-  children: [
-    {
-      name: m.clients,
-      path: IDSAdminPaths.IDSAdminClient,
-      description: m.idsAdmin,
-      activeIfExact: true,
     },
   ],
 }
@@ -65,5 +48,5 @@ export const idsAdminNavigation: PortalNavigationItem = {
     icon: 'settings',
   },
   description: m.idsAdmin,
-  children: [{ ...domainNav }, { ...applicationNav }],
+  children: [idsAdminNav],
 }
