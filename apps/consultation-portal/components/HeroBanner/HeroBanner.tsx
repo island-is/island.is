@@ -14,7 +14,7 @@ import { StatisticBox } from '..'
 import HeroTiles from './components/HeroTiles'
 import { ArrOfStatistics } from '../../types/interfaces'
 import Splash from '../svg/Splash'
-import { useIsMobile } from '../../utils/helpers'
+import { useIsMobile } from '../../hooks'
 import IntroText from './components/IntroText'
 import ArrowLink from './components/ArrowLink'
 
