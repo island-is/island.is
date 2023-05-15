@@ -32,7 +32,7 @@ const CourtOfAppealResult: React.FC = () => {
 
   const { appealReceivedByCourtDate, appealRulingDecision } = workingCase
 
-  const getDecision = () => {
+  const getAppealDecision = () => {
     if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
       return formatMessage(rulingStrings.decisionAccept)
     }
@@ -66,7 +66,7 @@ const CourtOfAppealResult: React.FC = () => {
         title={formatMessage(strings.title, {
           appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
         })}
-        description={getDecision()}
+        description={getAppealDecision()}
       />
 
       <PageLayout
