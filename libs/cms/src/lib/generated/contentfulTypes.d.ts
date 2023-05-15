@@ -1967,6 +1967,9 @@ export interface INewsFields {
 
   /** Initial Publish Date */
   initialPublishDate?: string | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2726,6 +2729,8 @@ export interface IProjectPageFields {
         | IOneColumnText
         | ITimeline
         | ITwoColumnText
+        | ITabSection
+        | ISliceConnectedComponent
       )[]
     | undefined
 
@@ -2793,6 +2798,9 @@ export interface IProjectSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: IPowerBiSlice[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {

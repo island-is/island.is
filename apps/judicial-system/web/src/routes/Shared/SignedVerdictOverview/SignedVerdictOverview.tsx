@@ -223,6 +223,7 @@ type availableModals =
   | 'NoModal'
   | 'SigningModal'
   | 'ConfirmAppealAfterDeadline'
+  | 'ConfirmStatementAfterDeadline'
   | 'AppealReceived'
 
 export const SignedVerdictOverview: React.FC = () => {
@@ -276,6 +277,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const { title, description, child } = useAppealAlertBanner(
     workingCase,
     () => setModalVisible('ConfirmAppealAfterDeadline'),
+    () => setModalVisible('ConfirmStatementAfterDeadline'),
     () => handleReceivedTransition(workingCase),
   )
 
@@ -1028,6 +1030,26 @@ export const SignedVerdictOverview: React.FC = () => {
             )}
             onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
+        {modalVisible === 'ConfirmStatementAfterDeadline' && (
+          <Modal
+            title={formatMessage(
+              strings.confirmStatementAfterDeadlineModalTitle,
+            )}
+            text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
+            primaryButtonText={formatMessage(
+              strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              router.push(`${constants.STATEMENT_ROUTE}/${workingCase.id}`)
             }}
             onSecondaryButtonClick={() => {
               setModalVisible('NoModal')
