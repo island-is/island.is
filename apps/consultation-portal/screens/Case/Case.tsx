@@ -9,7 +9,10 @@ import {
 } from '@island.is/island-ui/core'
 import { CaseOverview, CaseTimeline } from '../../components'
 import Layout from '../../components/Layout/Layout'
-import { useFetchAdvicesById, useIsMobile } from '../../utils/helpers'
+import { useFetchAdvicesById, useIsMobile } from '../../hooks'
+import { useContext } from 'react'
+import { UserContext } from '../../context'
+import Advices from '../../components/Advices/Advices'
 import { Case } from '../../types/interfaces'
 import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
 import StakeholdersCard from './components/Stakeholders'
@@ -64,14 +67,18 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <RenderDocumentsBox
-                title="Skjöl til samráðs"
-                documents={chosenCase?.documents}
-              />
-              <RenderDocumentsBox
-                title="Fylgiskjöl"
-                documents={chosenCase?.additionalDocuments}
-              />
+              {chosenCase?.documents?.length > 0 && (
+                <RenderDocumentsBox
+                  title="Skjöl til samráðs"
+                  documents={chosenCase?.documents}
+                />
+              )}
+              {chosenCase?.additionalDocuments?.length > 0 && (
+                <RenderDocumentsBox
+                  title="Fylgiskjöl"
+                  documents={chosenCase?.additionalDocuments}
+                />
+              )}
               {chosenCase?.statusName !==
                 CaseStatusFilterOptions.resultsPublished && (
                 <CaseEmailBox

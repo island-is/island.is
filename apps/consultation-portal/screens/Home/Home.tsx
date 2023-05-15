@@ -20,7 +20,7 @@ import {
 } from '../../types/interfaces'
 import EmptyState from '../../components/EmptyState/EmptyState'
 import Filter from '../../components/Filter/Filter'
-import { useFrontPageFilters, useIsMobile } from '../../utils/helpers'
+import { useFrontPageFilters, useIsMobile } from '../../hooks'
 import Pagination from '../../components/Pagination/Pagination'
 import MobileFilter from '../../components/Filter/MobileFilter'
 import {
