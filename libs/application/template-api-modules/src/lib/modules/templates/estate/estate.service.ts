@@ -109,9 +109,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
         ],
         estateMembers: [
           {
-            name: 'Stúfur Mack',
+            name: 'Gervimaður Afríka',
             relation: 'Sonur',
-            nationalId: '2222222229',
+            nationalId: '0101303019',
           },
           {
             name: 'Gervimaður Færeyja',
