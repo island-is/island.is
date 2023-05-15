@@ -19,10 +19,13 @@ interface Props {
 export const StakeholdersCard = ({ chosenCase }: Props) => {
   const [showStakeholders, setShowStakeholders] = useState<boolean>(false)
   return (
-    <FocusableBox onClick={() => setShowStakeholders(!showStakeholders)}>
+    <FocusableBox
+      onClick={() => setShowStakeholders(!showStakeholders)}
+      display="block"
+    >
       <SimpleCardSkeleton className={styles.relativeBox}>
         <StackedTitleAndDescription
-          title={`Aðilar sem hafa fengið boð um þátttöku (${chosenCase?.stakeholders?.length})`}
+          title={`Boð um þátttöku (${chosenCase?.stakeholders?.length})`}
         >
           <FocusableBox
             component="button"
@@ -39,8 +42,9 @@ export const StakeholdersCard = ({ chosenCase }: Props) => {
           {showStakeholders && (
             <>
               <Text>
-                Öllum er frjálst að taka þátt í samráðsgátt en eftirtöldum hefur
-                verið boðið að senda inn umsögn:
+                Allir geta sent inn umsögn og verið áskrifendur að málum í
+                Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent
+                eftirtöldum:
               </Text>
               {chosenCase?.stakeholders.length < 1 && (
                 <Text>Enginn listi skráður.</Text>
