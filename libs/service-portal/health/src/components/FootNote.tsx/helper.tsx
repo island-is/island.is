@@ -10,10 +10,10 @@ import {
 } from '../../utils/constants'
 
 //TODO: Get correct paths from Sjúkratryggingar
-const button = (str: any) => (
-  <a href="" target="_blank" rel="noreferrer">
+const button = (text: string[], to?: string) => (
+  <a href={to ?? ''} target="_blank" rel="noreferrer">
     <Button size="small" variant="text">
-      {str}
+      {text}
     </Button>
   </a>
 )
@@ -27,9 +27,12 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+          link: (str) =>
+            button(
+              str,
+              'https://assets.ctfassets.net/8k0h54kbe6bj/7DTXLMx7vNP3CIPlZgl1uE/a5c0fea1979db348a8377023f6e40044/Vinnureglur_vegna_grei__slu____ttt__ku_Sj__kratrygginga____sj__kra__j__lfun.pdf',
+            ),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
       break
     case PHYSIO_ACCIDENT_THERAPY:
@@ -39,9 +42,7 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str) => button(str),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
-      break
     case PHYSIO_HOME_THERAPY:
       //TODO: Get correct disclaimer for different therapies
 
@@ -50,20 +51,12 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str) => button(str),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
-      break
     case SPEECH_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
-
       return {
-        first: formatMessage(messages['physioDisclaimer1']),
-        second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
-        }),
-        third: formatMessage(messages['physioDisclaimer3']),
+        first: formatMessage(messages['speechDisclaimer1']),
+        second: formatMessage(messages['speechDisclaimer2']),
       }
-      break
     case OCCUPATIONAL_THERAPY:
       //TODO: Get correct disclaimer for different therapies
       return {
@@ -71,7 +64,6 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str) => button(str),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
       break
     default:
@@ -80,7 +72,6 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str) => button(str),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
       break
   }

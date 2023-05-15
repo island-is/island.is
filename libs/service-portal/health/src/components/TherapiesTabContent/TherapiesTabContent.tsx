@@ -8,15 +8,18 @@ import { FootNote } from '../FootNote.tsx/FootNote'
 import * as styles from './TherapiesTabContent.css'
 import { formatNumberToString } from '../../utils/format'
 import { TherapyStatus } from '../../utils/constants'
+import LinkButton from '../LinkButton/LinkButton'
 interface Props {
   data: Therapies[]
+  link?: string
+  linkText?: string
 }
 
 type OptionType = {
   label: string
   value: string
 }
-export const TherapiesTabContent: FC<Props> = ({ data }) => {
+export const TherapiesTabContent: FC<Props> = ({ data, link, linkText }) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [dropDownValue, setDropDownValue] = useState<OptionType>()
@@ -110,6 +113,7 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
         <Divider />
       </Stack>
       <FootNote type={data[0].id.toString()} />
+      {link && linkText && <LinkButton to={link} text={linkText} />}
     </Box>
   )
 }

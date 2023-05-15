@@ -69,11 +69,23 @@ const Therapies = () => {
   const tabs = [
     physicalTherapyData.length > 0 && {
       label: formatMessage(messages.physicalTherapy),
-      content: <TherapiesTabContent data={physioTherapyData} />,
+      content: (
+        <TherapiesTabContent
+          data={physioTherapyData}
+          link="https://island.is/greidsluthatttaka-vegna-sjukrathjalfunar"
+          linkText={formatMessage(messages.physioLink)}
+        />
+      ),
     },
     speechTherapyData.length > 0 && {
       label: formatMessage(messages.speechTherapy),
-      content: <TherapiesTabContent data={speechTherapyData} />,
+      content: (
+        <TherapiesTabContent
+          data={speechTherapyData}
+          link="https://island.is/greidsluthatttaka-vegna-talthjalfunar"
+          linkText={formatMessage(messages.speechLink)}
+        />
+      ),
     },
     occupationalTherapyData.length > 0 && {
       label: formatMessage(messages.occupationalTherapy),
@@ -101,11 +113,6 @@ const Therapies = () => {
             contentBackground="transparent"
             selected="0"
             size="xs"
-          />
-
-          <LinkButton
-            to="https://island.is/s/sjukratryggingar/thjalfun"
-            text={formatMessage(messages.physioLink)}
           />
         </Box>
       )}

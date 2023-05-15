@@ -98,23 +98,32 @@ export const messages = defineMessages({
     defaultMessage: 'Heimild á þjálfunartímabili',
   },
   physioDisclaimer1: {
-    id: 'sp.health:therapy-disclaimer-1',
+    id: 'sp.health:physio-therapy-disclaimer-1',
     defaultMessage:
-      'Sjúkratryggður einstaklingur sem þarf á þjálfun að halda og er með beiðni í gildi á rétt á allt að 15 nauðsynlegum meðferðarskiptum á 365 dögum talið frá fyrsta meðferðarskipti. Hann á einnig rétt á nauðsynlegri viðbótarþjálfun hafi Sjúkratryggingar Íslands samþykkt slíka meðferð.',
+      'Sjúkratryggingar greiða hluta af kostnaði við meðferð hjá sjúkraþjálfara. Sjúkratryggður einstaklingur sem þarf á þjálfun að halda hefur heimild til greiðsluþátttöku Sjúkratrygginga í allt að 15 nauðsynlegum meðferðarskiptum á 365 dögum talið frá fyrsta meðferðarskipti. Gerð er krafa um beiðni frá lækni ef notuð eru fleiri en 6 meðferðarskipti á 365 dögum.',
   },
   physioDisclaimer2: {
-    id: 'sp.health:therapy-disclaimer-2',
+    id: 'sp.health:physio-therapy-disclaimer-2',
     defaultMessage:
-      'Forsendur fyrir greiðsluþátttöku SÍ í talþjálfun er að fyrir liggi sjúkdómsgreining frá lækni og skrifleg þjálfunarbeiðni frá talmeinafræðingi sem starfar samkvæmt <link>rammasamningi við SÍ</link>.',
+      'Sjúkratryggður getur einnig átt rétt á nauðsynlegri viðbótarþjálfun umfram 15 skipti, hafi Sjúkratryggingar samþykkt slíka meðferð. Skilyrði fyrir greiðsluþátttöku Sjúkratrygginga í slíkri viðbótarþjálfun er að Sjúkratryggingar hafi samþykkt umsókn um greiðsluþátttöku. Sjá frekari upplýsingar í <link>vinnureglum á heimasíðu.</link>',
   },
-  physioDisclaimer3: {
-    id: 'sp.health:therapy-disclaimer-3',
+  speechDisclaimer1: {
+    id: 'sp.health:speech-therapy-disclaimer-1',
     defaultMessage:
-      'Sé beiðni samþykkt fær einstaklingur 20 skipti í talþjálfun á hverju 12 mánaða tímabili. Hann á einnig rétt á nauðsynlegri viðbótarþjálfun hafi Sjúkratryggingar Íslands samþykkt slíka meðferð.',
+      'Forsendur fyrir greiðsluþátttöku Sjúkratrygginga í talþjálfun er að fyrir liggi skrifleg beiðni frá lækni um talþjálfun og greining talmeinafræðings uppfylli þau skilyrði sem gerð eru til greiðsluþátttöku Sjúkratrygginga í talþjálfun samkvæmt samningi Sjúkratrygginga og talmeinafræðinga. Talmeinafræðingur þarf að starfa samkvæmt samningi við Sjúkratryggingar.',
+  },
+  speechDisclaimer2: {
+    id: 'sp.health:speech-therapy-disclaimer-2',
+    defaultMessage:
+      'Sé beiðni samþykkt fær einstaklingur 15 skipti í talþjálfun á hverju 12 mánaða tímabili. Hann á einnig rétt á nauðsynlegri viðbótarþjálfun hafi Sjúkratrygginga samþykkt slíka meðferð.',
   },
   physioLink: {
-    id: 'sp.health:therapy-link',
+    id: 'sp.health:physio-therapy-link',
     defaultMessage: 'Nánar um sjúkraþjálfun',
+  },
+  speechLink: {
+    id: 'sp.health:speech-therapy-link',
+    defaultMessage: 'Nánar um talþjálfun',
   },
   noValidTimePeriod: {
     id: 'sp.health:no-valid-time-period',
