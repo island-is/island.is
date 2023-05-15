@@ -1,7 +1,13 @@
 import { useCallback, useContext, useEffect } from 'react'
 import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
 
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
@@ -31,14 +37,6 @@ export const RevokeSecrets = () => {
   }, [params, navigate])
 
   useEffect(() => {
-    if (
-      (actionData?.globalError || actionData?.errors) &&
-      !isLoading &&
-      !isSubmitting
-    ) {
-      toast.error(formatMessage(m.errorRevokingSecrets))
-    }
-
     if (actionData?.data && !isLoading && !isSubmitting) {
       toast.success(formatMessage(m.successRevokingSecrets))
       onCancel()
@@ -58,6 +56,15 @@ export const RevokeSecrets = () => {
 
       <Form method="post">
         <input type="hidden" name="environment" value={environment} />
+
+        {actionData?.globalError && (
+          <Box marginTop={4}>
+            <AlertMessage
+              message={formatMessage(m.errorDefault)}
+              type="error"
+            />
+          </Box>
+        )}
 
         <Box marginTop={7} display="flex" justifyContent="spaceBetween">
           <Button variant="ghost" onClick={onCancel}>

@@ -594,10 +594,6 @@ export const m = defineMessages({
     defaultMessage:
       'Please update the application configuration with the following secret.',
   },
-  errorRevokingSecrets: {
-    id: 'ap.ids-admin:error-revoking-secrets',
-    defaultMessage: 'Error revoking secret(s)',
-  },
   revokeSecrets: {
     id: 'ap.ids-admin:revoke-secrets',
     defaultMessage: 'Revoke old secret(s)',
