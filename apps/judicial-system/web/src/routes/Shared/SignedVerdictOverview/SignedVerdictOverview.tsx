@@ -723,34 +723,32 @@ export const SignedVerdictOverview: React.FC = () => {
               </Box>
             )}
           {user?.role !== UserRole.STAFF && (
-            <>
-              <Box marginBottom={5} data-testid="accordionItems">
-                <Accordion>
-                  <PoliceRequestAccordionItem workingCase={workingCase} />
-                  <CourtRecordAccordionItem workingCase={workingCase} />
-                  <RulingAccordionItem workingCase={workingCase} />
-                  {user && (
-                    <CaseFilesAccordionItem
-                      workingCase={workingCase}
-                      setWorkingCase={setWorkingCase}
-                      user={user}
-                    />
-                  )}
-                  {(workingCase.comments ||
-                    workingCase.caseFilesComments ||
-                    workingCase.caseResentExplanation) && (
-                    <CommentsAccordionItem workingCase={workingCase} />
-                  )}
-                </Accordion>
-              </Box>
-              <Box marginBottom={6}>
-                <Conclusion
-                  conclusionText={workingCase.conclusion}
-                  judgeName={workingCase.judge?.name}
-                />
-              </Box>
-            </>
+            <Box marginBottom={5} data-testid="accordionItems">
+              <Accordion>
+                <PoliceRequestAccordionItem workingCase={workingCase} />
+                <CourtRecordAccordionItem workingCase={workingCase} />
+                <RulingAccordionItem workingCase={workingCase} />
+                {user && (
+                  <CaseFilesAccordionItem
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    user={user}
+                  />
+                )}
+                {(workingCase.comments ||
+                  workingCase.caseFilesComments ||
+                  workingCase.caseResentExplanation) && (
+                  <CommentsAccordionItem workingCase={workingCase} />
+                )}
+              </Accordion>
+            </Box>
           )}
+          <Box marginBottom={6}>
+            <Conclusion
+              conclusionText={workingCase.conclusion}
+              judgeName={workingCase.judge?.name}
+            />
+          </Box>
           <Box marginBottom={10}>
             <Text as="h3" variant="h3" marginBottom={3}>
               {formatMessage(m.caseDocuments)}
