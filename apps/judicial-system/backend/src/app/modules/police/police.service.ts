@@ -244,11 +244,12 @@ export class PoliceService {
     caseState: CaseState,
     policeCaseNumber: string,
     defendantNationalId: string,
-    validToDate: Date | undefined,
+    validToDate: Date,
     caseConclusion: string,
     requestPdf: string,
     courtRecordPdf: string,
     rulingPdf: string,
+    custodyNoticePdf?: string,
   ): Promise<boolean> {
     const promise = this.config.policeCaseApiV2Available
       ? this.fetchPoliceCaseApi(`${this.xRoadPath}/V2/UpdateRVCase/${caseId}`, {
@@ -272,6 +273,14 @@ export class PoliceService {
               { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
               { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
               { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+              ...(custodyNoticePdf
+                ? [
+                    {
+                      type: 'RVVI',
+                      courtDocument: Base64.btoa(custodyNoticePdf),
+                    },
+                  ]
+                : []),
             ],
           }),
         } as RequestInit)
