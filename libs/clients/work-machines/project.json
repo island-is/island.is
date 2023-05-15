@@ -16,6 +16,23 @@
         "jestConfig": "libs/clients/work-machines/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl  https://xroad-dev.ver.is/vinnuvelar-token/swagger/v1/swagger.json > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/work-machines"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/work-machines/gen/fetch -i libs/clients/work-machines/src/clientConfig.json"
+      }
     }
   },
   "tags": []

@@ -1,1 +1,1 @@
-export * from './lib/clients-work-machines.module'
+export * from './lib/workMachines.module'
