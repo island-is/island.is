@@ -27,7 +27,7 @@ import {
   CARDS_PER_PAGE,
   FILTERS_FRONT_PAGE_KEY,
 } from '../../utils/consts/consts'
-import { MapCaseStatuses } from '@island.is/consultation-portal/types/enums'
+import { MapCaseStatuses } from '../../types/enums'
 
 interface HomeProps {
   types: ArrOfTypes

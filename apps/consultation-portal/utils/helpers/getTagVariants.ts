@@ -1,4 +1,4 @@
-import { MapCaseStatuses } from '@island.is/consultation-portal/types/enums'
+import { MapCaseStatuses } from '../../types/enums'
 
 export function getTagVariants(status) {
   switch (status) {

@@ -7,7 +7,7 @@ import {
   FormStepperThemes,
   Stack,
 } from '@island.is/island-ui/core'
-import { MapCaseStatuses } from '@island.is/consultation-portal/types/enums'
+import { MapCaseStatuses } from '../../types/enums'
 
 interface CaseTimelineProps {
   chosenCase: Case
