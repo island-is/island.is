@@ -43,9 +43,9 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
 
   const handleAddGun = () =>
     append({
-      assetNumber: '',
-      description: '',
-      marketValue: '',
+      assetNumber: undefined,
+      description: undefined,
+      marketValue: undefined,
     })
   const handleRemoveGun = (index: number) => remove(index)
 
@@ -174,6 +174,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.gunTypeLabel)}
                   defaultValue={field.description}
                   placeholder={''}
+                  error={fieldError?.description}
                   size="sm"
                 />
               </GridColumn>
@@ -184,7 +185,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.marketValueTitle)}
                   defaultValue={field.marketValue}
                   placeholder={'0 kr.'}
-                  error={fieldError?.assetNumber}
+                  error={fieldError?.marketValue}
                   currency
                   size="sm"
                 />
