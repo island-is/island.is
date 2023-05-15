@@ -80,9 +80,10 @@ export const createPermissionAction: WrappedActionFn = ({ client }) => async ({
 
     return redirect(
       replaceParams({
-        href: IDSAdminPaths.IDSAdminPermissions,
+        href: IDSAdminPaths.IDSAdminPermissionsManagement,
         params: {
           tenant: data?.tenantId,
+          scopeName: data?.name,
         },
       }),
     )
