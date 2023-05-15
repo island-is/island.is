@@ -746,6 +746,29 @@ export class CaseService {
     ])
   }
 
+  private addMessagesForCompletedAppealCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    const messages: CaseMessage[] =
+      theCase.caseFiles
+        ?.filter(
+          (caseFile) =>
+            caseFile.state === CaseFileState.STORED_IN_RVG &&
+            caseFile.key &&
+            caseFile.category &&
+            CaseFileCategory.APPEAL_RULING === caseFile.category,
+        )
+        .map((caseFile) => ({
+          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          user,
+          caseId: theCase.id,
+          caseFileId: caseFile.id,
+        })) ?? []
+
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
   private addMessagesForAppealStatementToQueue(
     theCase: Case,
     user: TUser,
@@ -795,6 +818,8 @@ export class CaseService {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
+      } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
+        await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
       }
     }
 
