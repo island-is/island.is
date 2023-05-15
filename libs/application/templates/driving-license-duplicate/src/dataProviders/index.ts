@@ -1,3 +1,3 @@
 export { DistrictsProvider } from './DistrictsProvider'
 export { QualitySignatureProvider } from './QualitySignatureProvider'
-export { CurrentLicenseProvider } from './CurrentLicenseProvider'
+export { CurrentLicenseApi } from '@island.is/application/types'

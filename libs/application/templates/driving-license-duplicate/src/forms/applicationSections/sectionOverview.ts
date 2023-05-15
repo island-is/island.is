@@ -10,7 +10,6 @@ import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
-import { CurrentLicenseProviderResult } from '../../dataProviders/CurrentLicenseProvider'
 import format from 'date-fns/format'
 
 export const sectionOverview = buildSection({
@@ -52,13 +51,14 @@ export const sectionOverview = buildSection({
         buildKeyValueField({
           label: m.overviewLicenseExpires,
           width: 'half',
-          value: ({ externalData: { currentLicense } }) =>
-            format(
-              new Date(
-                (currentLicense.data as CurrentLicenseProviderResult).expires,
-              ),
-              'dd.MM.yyyy',
-            ),
+          value: ({ externalData: { currentLicense } }) => 'Bingo',
+          // TODO: figure out replacement
+          //format(
+          //  new Date(
+          //    (currentLicense.data as CurrentLicenseProviderResult).expires,
+          //  ),
+          //  'dd.MM.yyyy',
+          //),
         }),
         buildDividerField({}),
         buildDescriptionField({

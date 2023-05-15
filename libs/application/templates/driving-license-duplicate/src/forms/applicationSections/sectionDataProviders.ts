@@ -4,6 +4,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { CurrentLicenseApi } from '@island.is/application/types'
 
 export const sectionDataProviders = buildSection({
   id: 'externalData',
@@ -47,8 +48,7 @@ export const sectionDataProviders = buildSection({
           subTitle: '',
         }),
         buildDataProviderItem({
-          id: 'currentLicense',
-          type: 'CurrentLicenseProvider',
+          provider: CurrentLicenseApi,
           title: '',
           subTitle: '',
         }),
