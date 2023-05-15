@@ -10,12 +10,3 @@ export const footerColor = style({
   margin: 0,
   width: '100%',
 })
-
-export const verticalLine = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      transform: 'rotate(90deg)',
-      width: 80,
-    },
-  },
-})

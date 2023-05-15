@@ -140,7 +140,7 @@ USER pwuser
 RUN yarn set version berry
 RUN yarn install
 
-ENV PLAYWRIGHT_BROWSER=webkit
+ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
