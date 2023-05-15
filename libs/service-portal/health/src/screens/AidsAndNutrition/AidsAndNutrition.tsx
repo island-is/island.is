@@ -17,7 +17,7 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
 import LinkButton from '../../components/LinkButton/LinkButton'
 
@@ -26,6 +26,8 @@ const AidsAndNutrition = () => {
   const { formatMessage } = useLocale()
 
   const { loading, error, data } = useGetAidsAndNutritionQuery()
+
+  const [selectedTab, setSelectedTab] = useState('0')
 
   const supportData = {
     aids: data?.getRightsPortalAidsAndNutrition?.aids ?? [],
@@ -78,7 +80,8 @@ const AidsAndNutrition = () => {
             label={formatMessage(messages.chooseAidsOrNutrition)}
             tabs={tabs}
             contentBackground="transparent"
-            selected="0"
+            selected={selectedTab}
+            onChange={(id) => setSelectedTab(id)}
             size="xs"
           />
         </Box>
