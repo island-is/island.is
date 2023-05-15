@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType('UpdateAuthConsentInput')
-export class UpdateConsentInput {
+@InputType('PatchAuthConsentInput')
+export class PatchConsentInput {
   @Field(() => String)
   clientId!: string
   @Field(() => [String])
