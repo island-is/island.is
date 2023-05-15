@@ -1967,6 +1967,9 @@ export interface INewsFields {
 
   /** Initial Publish Date */
   initialPublishDate?: string | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
