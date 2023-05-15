@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -21,23 +21,17 @@ import { PermissionsListLoaderData } from './PermissionsList.loader'
 import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
 
 function PermissionsList() {
-  const { formatMessage } = useLocale()
-  const { locale } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const permissionsList = useLoaderData() as PermissionsListLoaderData
   const isEmpty = permissionsList.data.length === 0
   const navigate = useNavigate()
   const { tenant } = useParams()
-  const [inputSearchValue, setInputSearchValue] = useState<string>('')
+  const [inputSearchValue, setInputSearchValue] = useState('')
   const [filteredPermissions, filterPermissions] = useLooseSearch(
     permissionsList.data,
     ['environments[0].displayName[0].value', 'scopeName'],
     'environments[0].displayName[0].value',
   )
-
-  useEffect(() => {
-    // If item is added to the list, then we need to update the filtered list.
-    filterPermissions(inputSearchValue)
-  }, [permissionsList.data])
 
   const handleSearch = (value = '') => {
     setInputSearchValue(value)
@@ -59,46 +53,42 @@ function PermissionsList() {
     </Button>
   )
 
-  const renderEmptyState = () => {
-    return (
+  const renderEmptyState = () => (
+    <Box
+      borderRadius="large"
+      borderColor="blue200"
+      borderWidth="standard"
+      paddingY={[5, 8]}
+      paddingX={[5, 8]}
+      textAlign="center"
+      maxLength={10}
+    >
       <Box
-        borderRadius="large"
-        borderColor="blue200"
-        borderWidth="standard"
-        paddingY={[5, 8]}
-        paddingX={[5, 8]}
-        textAlign="center"
-        maxLength={10}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        rowGap={3}
+        className={styles.emptyContainer}
+        marginX="auto"
       >
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          rowGap={3}
-          className={styles.emptyContainer}
-          marginX="auto"
+        <Text as="h2" variant="h3">
+          {formatMessage(m.permissionEmptyHeading)}
+        </Text>
+        <Text marginBottom={3}>
+          {formatMessage(m.permissionEmptyDescription)}
+        </Text>
+        {createButton}
+        <LinkV2
+          href="#"
+          color="blue400"
+          underline="normal"
+          underlineVisibility="always"
         >
-          <Text as="h2" variant="h3">
-            {formatMessage(m.permissionEmptyHeading)}
-          </Text>
-          <Text marginBottom={3}>
-            {formatMessage(m.permissionEmptyDescription)}
-          </Text>
-
-          {createButton}
-
-          <LinkV2
-            href="#"
-            color="blue400"
-            underline="normal"
-            underlineVisibility="always"
-          >
-            {formatMessage(m.learnMore)}
-          </LinkV2>
-        </Box>
+          {formatMessage(m.learnMore)}
+        </LinkV2>
       </Box>
-    )
-  }
+    </Box>
+  )
 
   /**
    * Finds the title of the permission, a.k.a displayName for default environment

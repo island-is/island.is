@@ -1,10 +1,12 @@
 import get from 'lodash/get'
 import { useMemo, useState } from 'react'
+
 import { pseudolocalizeString } from '../utils/forms'
 
 /**
  * This hook allows you to filter a list of objects and search through multiple keys and paths.
  * The search is tokenized, case-insensitive and pseudo localized.
+ *
  * @param fullList
  * @param searchPaths Uses the lodash get syntax to search through nested objects.
  * @param keyPath Uses the lodash get syntax to search through nested objects.

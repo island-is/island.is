@@ -85,7 +85,7 @@ export default function CreatePermission() {
     <Modal
       label={formatMessage(m.createPermission)}
       title={formatMessage(m.createPermission)}
-      id="creat-permission"
+      id="create-permission"
       isVisible
       onClose={handleClose}
       closeButtonLabel={formatMessage(m.closeModal)}

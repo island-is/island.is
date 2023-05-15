@@ -36,7 +36,7 @@ export default function IdsAdminCard({
       return null
     }
 
-    const button = (isLink: boolean) => (
+    const renderButton = (isLink: boolean) => (
       <Button
         icon="pencil"
         variant="utility"
@@ -51,12 +51,12 @@ export default function IdsAdminCard({
     if (cta.to) {
       return (
         <Link className={styles.cta} to={cta.to}>
-          {button(true)}
+          {renderButton(true)}
         </Link>
       )
     }
 
-    return button(false)
+    return renderButton(false)
   }
 
   return (

@@ -36,8 +36,9 @@ const formatID = (value: string) =>
 /**
  * Parses the client id to be lowercase and replace spaces with dashes
  * Also makes sure that the prefix is always present and cannot be erased
- * @param prefix
- * @param value
+ *
+ * @param prefix The prefix to be added to the id
+ * @param value The value which will be concatenated with the prefix
  */
 export const parseID = ({
   prefix,
