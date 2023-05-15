@@ -20,7 +20,7 @@ export const WorkMachinesApiProvider: Provider<MachinesApi> = {
     new MachinesApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-work-machines-license',
+          name: 'clients-work-machines',
           logErrorResponseBody: true,
           autoAuth: idsClientConfig.isConfigured
             ? {
@@ -28,7 +28,7 @@ export const WorkMachinesApiProvider: Provider<MachinesApi> = {
                 issuer: idsClientConfig.issuer,
                 clientId: idsClientConfig.clientId,
                 clientSecret: idsClientConfig.clientSecret,
-                scope: [''],
+                scope: config.fetch.scope,
               }
             : undefined,
           timeout: config.fetch.timeout,

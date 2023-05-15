@@ -5,6 +5,7 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
     timeout: z.number().int(),
+    scope: z.array(z.string()),
   }),
 })
 
@@ -18,6 +19,11 @@ export const WorkMachinesClientConfig = defineConfig<z.infer<typeof schema>>({
     ),
     fetch: {
       timeout: 10000,
+      scope: [
+        '@ver.is/umsyslavinnuvela',
+        '@ver.is/rettindaskra',
+        '@ver.is/umsyslaslysaskraning',
+      ],
     },
   }),
 })
