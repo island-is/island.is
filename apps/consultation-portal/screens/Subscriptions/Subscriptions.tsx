@@ -5,15 +5,17 @@ import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
 } from '../../types/interfaces'
-import { useLogIn, useSearchSubscriptions, useUser } from '../../utils/helpers'
-import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
+import {
+  useLogIn,
+  useSearchSubscriptions,
+  useUser,
+  useSubscriptions,
+  useFetchSubscriptions,
+  usePostSubscription,
+} from '../../hooks'
 import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
 import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
-import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
-import {
-  useSubscriptions,
-  filterSubscriptions as F,
-} from '../../utils/helpers/subscriptions'
+import { filterSubscriptions as F } from '../../utils/helpers/subscriptions'
 
 interface SubProps {
   cases: CaseForSubscriptions[]

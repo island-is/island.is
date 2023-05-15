@@ -1,8 +1,8 @@
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { ChosenSubscriptionCard } from '../Card'
-import { Area } from '../../types/enums'
+import { Area, SubscriptionDescriptionKey } from '../../types/enums'
 import { SubscriptionArray } from '../../types/interfaces'
-import { useIsMobile } from '../../utils/helpers'
+import { useIsMobile } from '../../hooks'
 
 interface Props {
   subscriptionArray: SubscriptionArray
@@ -105,7 +105,10 @@ const ChosenSubscriptions = ({
                   }
                 >
                   <Text variant="medium">
-                    <em>&emsp;&mdash;{item.subscriptionType}</em>
+                    <em>
+                      &emsp;&mdash;
+                      {SubscriptionDescriptionKey[item.subscriptionType]}
+                    </em>
                   </Text>
                 </ChosenSubscriptionCard>
               )
@@ -127,7 +130,10 @@ const ChosenSubscriptions = ({
                   }
                 >
                   <Text variant="medium">
-                    <em>&emsp;&mdash;{item.subscriptionType}</em>
+                    <em>
+                      &emsp;&mdash;
+                      {SubscriptionDescriptionKey[item.subscriptionType]}
+                    </em>
                   </Text>
                 </ChosenSubscriptionCard>
               )

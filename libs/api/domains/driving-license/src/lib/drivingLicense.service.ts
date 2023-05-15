@@ -149,11 +149,6 @@ export class DrivingLicenseService {
       nationalId,
       user.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
     )
-    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      nationalId,
-    )
-
-    const localRecidency = hasLocalResidence(residenceHistory)
 
     const year = 1000 * 3600 * 24 * 365.25
     const twelveMonthsAgo = new Date(Date.now() - year)
@@ -168,9 +163,8 @@ export class DrivingLicenseService {
     const activeDisqualification = license?.disqualification?.to
       ? Date.now() < license.disqualification.to.getTime()
       : false
-    const disqualificationInTheLastTwelveMonths = license?.disqualification
-      ?.from
-      ? license.disqualification.from > twelveMonthsAgo
+    const disqualificationInTheLastTwelveMonths = license?.disqualification?.to
+      ? license.disqualification.to > twelveMonthsAgo
       : false
 
     const requirements: ApplicationEligibilityRequirement[] = [
@@ -179,10 +173,6 @@ export class DrivingLicenseService {
         requirementMet: !(
           activeDisqualification || disqualificationInTheLastTwelveMonths
         ),
-      },
-      {
-        key: RequirementKey.currentLocalResidency,
-        requirementMet: localRecidency,
       },
       {
         key: RequirementKey.personNotAtLeast24YearsOld,

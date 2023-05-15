@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   GridContainer,
-  LinkV2,
   LoadingDots,
   Stack,
   Tabs,
@@ -14,6 +13,7 @@ import { ReactNode } from 'react'
 import EmailBox from '../EmailBox/EmailBox'
 import { Area } from '../../types/enums'
 import Link from 'next/link'
+import { useUser } from '../../hooks/useUser'
 
 interface Props {
   children: ReactNode
@@ -55,10 +55,12 @@ const SubscriptionsSkeleton = ({
   tabs,
   getUserSubsLoading,
 }: Props) => {
+  const { isAuthenticated, userLoading } = useUser()
+
   return (
     <Layout
       seo={isMySubscriptions ? MY_SUBSCRIPTIONS : SUBSCRIPTIONS}
-      justifyContent="flexStart"
+      justifyContent={isAuthenticated ? 'flexStart' : 'spaceBetween'}
     >
       <Divider />
       <Box background="blue100">
@@ -79,7 +81,7 @@ const SubscriptionsSkeleton = ({
                       ? 'Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál. Kerfið er uppfært einu sinni á sólarhring.'
                       : 'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.'}
                   </Text>
-                  {!isMySubscriptions && (
+                  {!isMySubscriptions && isAuthenticated && (
                     <Link href={'/minaraskriftir'}>
                       <a> Hægt er að afskrá sig hér</a>
                     </Link>
@@ -93,24 +95,26 @@ const SubscriptionsSkeleton = ({
         </GridContainer>
       </Box>
       <Divider />
-      <GridContainer>
-        <Box paddingX={[0, 0, 0, 8, 15]} paddingTop={[3, 3, 3, 5, 5]}>
-          {isMySubscriptions && getUserSubsLoading ? (
-            <>
-              <LoadingDots />
-            </>
-          ) : (
-            <Tabs
-              selected={currentTab}
-              onlyRenderSelectedTab={true}
-              label="Veldu tegund áskrifta"
-              tabs={tabs}
-              contentBackground="transparent"
-              onChange={(e: Area) => setCurrentTab(e)}
-            />
-          )}
-        </Box>
-      </GridContainer>
+      {isAuthenticated && !userLoading && (
+        <GridContainer>
+          <Box paddingX={[0, 0, 0, 8, 15]} paddingTop={[3, 3, 3, 5, 5]}>
+            {isMySubscriptions && getUserSubsLoading ? (
+              <>
+                <LoadingDots />
+              </>
+            ) : (
+              <Tabs
+                selected={currentTab}
+                onlyRenderSelectedTab={true}
+                label="Veldu tegund áskrifta"
+                tabs={tabs}
+                contentBackground="transparent"
+                onChange={(e: Area) => setCurrentTab(e)}
+              />
+            )}
+          </Box>
+        </GridContainer>
+      )}
     </Layout>
   )
 }
