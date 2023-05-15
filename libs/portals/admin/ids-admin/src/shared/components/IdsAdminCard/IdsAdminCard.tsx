@@ -2,6 +2,7 @@ import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 import * as styles from './IdsAdminCard.css'
+import { mobileTextRestriction } from './IdsAdminCard.css'
 
 interface ButtonAction {
   onClick?: ComponentPropsWithoutRef<typeof Button>['onClick']
@@ -75,12 +76,15 @@ export default function IdsAdminCard({
         flexDirection="column"
         flexGrow={1}
       >
-        {eyebrow ? <Box marginBottom={2}>{eyebrow}</Box> : null}
-
+        {eyebrow && <Box marginBottom={2}>{eyebrow}</Box>}
         <Text variant="h3" as="h2">
-          {title}
+          <span className={styles.mobileTextRestriction}>{title}</span>
         </Text>
-        {text ? <Text>{text}</Text> : null}
+        {text && (
+          <Text>
+            <span className={styles.mobileTextRestriction}>{text}</span>
+          </Text>
+        )}
       </Box>
 
       <Box
