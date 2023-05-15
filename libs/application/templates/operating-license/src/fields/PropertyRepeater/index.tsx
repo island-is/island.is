@@ -122,7 +122,11 @@ const PropertyItem = ({
     { loading: _queryLoading, error: _queryError },
   ] = useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
     onCompleted: (data) => {
-      setValue(addressField, data.getRealEstateAddress[0].name ?? '')
+      setValue(
+        addressField,
+        data.getRealEstateAddress[0]?.name ??
+          formatMessage(m.propertyNameNotFound),
+      )
     },
   })
 
