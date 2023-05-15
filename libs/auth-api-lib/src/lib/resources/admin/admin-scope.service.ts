@@ -1,8 +1,11 @@
 import { Sequelize } from 'sequelize-typescript'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Transaction } from 'sequelize'
+import omit from 'lodash/omit'
 
 import { validateClientId } from '@island.is/auth/shared'
+import { isDefined } from '@island.is/shared/utils'
 
 import { ApiScope } from '../models/api-scope.model'
 import { Client } from '../../clients/models/client.model'
@@ -11,6 +14,9 @@ import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
 import { AdminScopeDTO } from './dto/admin-scope.dto'
 import { AdminTranslationService } from './services/admin-translation.service'
 import { NoContentException } from '@island.is/nest/problem'
+import { AdminPatchScopeDto } from './dto/admin-patch-scope.dto'
+import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
+import { TranslationService } from '../../translation/translation.service'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -25,6 +31,7 @@ export class AdminScopeService {
     @InjectModel(ApiScopeUserClaim)
     private readonly apiScopeUserClaim: typeof ApiScopeUserClaim,
     private readonly adminTranslationService: AdminTranslationService,
+    private readonly translationService: TranslationService,
     private sequelize: Sequelize,
   ) {}
 
@@ -137,5 +144,128 @@ export class AdminScopeService {
       apiScope,
       translations,
     )
+  }
+
+  /**
+   * Finds all none icelandic translated values
+   */
+  private findNoneIcelandicTranslatedValueDto(
+    translatedValueDTO: TranslatedValueDto[],
+  ): TranslatedValueDto[] | undefined {
+    return translatedValueDTO.filter(
+      (translatedValue) => translatedValue.locale !== 'is',
+    )
+  }
+
+  /**
+   * Updates translations for scope fields which are of type  TranslatedValueDto, i.e. displayName and description
+   */
+  private async updateScopeTranslatedValueFields(
+    scopeName: string,
+    input: AdminPatchScopeDto,
+    transaction: Transaction,
+  ) {
+    // Find all translations that are not Icelandic for displayName and description
+    const translationNames: Record<
+      keyof Pick<AdminScopeDTO, 'displayName' | 'description'>,
+      TranslatedValueDto[] | undefined
+    > = {
+      displayName:
+        input.displayName &&
+        this.findNoneIcelandicTranslatedValueDto(input.displayName),
+      description:
+        input.description &&
+        this.findNoneIcelandicTranslatedValueDto(input.description),
+    }
+
+    // Update or create translations for all fields in translationNames
+    await Promise.all(
+      Object.entries(translationNames)
+        .map(([property, translatedValueDtos]) => {
+          if (translatedValueDtos && translatedValueDtos.length > 0) {
+            return translatedValueDtos.map((translatedValueDto) =>
+              this.translationService.upsertTranslation(
+                {
+                  className: 'apiscope',
+                  key: scopeName,
+                  language: translatedValueDto.locale,
+                  property,
+                  value: translatedValueDto.value,
+                },
+                transaction,
+              ),
+            )
+          }
+        })
+        .filter(isDefined)
+        .flat(),
+    )
+  }
+
+  /**
+   * Updates a scope by scope name and tenant id in api_scope table
+   */
+  async updateScope({
+    scopeName,
+    tenantId,
+    input,
+  }: {
+    scopeName: string
+    tenantId: string
+    input: AdminPatchScopeDto
+  }): Promise<AdminScopeDTO> {
+    if (Object.keys(input).length === 0) {
+      throw new BadRequestException('No fields provided to update.')
+    }
+
+    // Check if scope exists
+    const existingScope = await this.apiScope.findOne({
+      where: {
+        name: scopeName,
+        domainName: tenantId,
+        enabled: true,
+      },
+    })
+
+    if (!existingScope) {
+      throw new NoContentException()
+    }
+
+    const displayName =
+      input.displayName &&
+      this.adminTranslationService.findTranslationByLocale(
+        input.displayName,
+        'is',
+      )?.value
+    const description =
+      input.description &&
+      this.adminTranslationService.findTranslationByLocale(
+        input.description,
+        'is',
+      )?.value
+
+    await this.sequelize.transaction(async (transaction) => {
+      // Update apiScope row and get the Icelandic translations for displayName and description
+      await this.apiScope.update(
+        {
+          ...omit(input, ['displayName', 'description']),
+          ...(displayName && { displayName }),
+          ...(description && { description }),
+        },
+        {
+          where: {
+            name: scopeName,
+          },
+          transaction,
+        },
+      )
+
+      await this.updateScopeTranslatedValueFields(scopeName, input, transaction)
+    })
+
+    return this.findByTenantIdAndScopeName({
+      scopeName,
+      tenantId,
+    })
   }
 }

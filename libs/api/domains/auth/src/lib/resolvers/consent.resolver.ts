@@ -8,9 +8,9 @@ import { ConsentsPaginated } from '../dto/consentsPaginated.response'
 import { ClientLoader } from '../loaders/client.loader'
 import { Client } from '../models/client.model'
 import { Consent } from '../models/consent.model'
-import { ScopePermissions } from '../models/scopePermissions.model'
+import { ConsentTenant } from '../models/consentTenants.model'
 import { ConsentService } from '../services/consent.service'
-import { ScopePermissionsService } from '../services/scopePermissions.service'
+import { ConsentTenantsService } from '../services/consentTenants.service'
 
 import type { User } from '@island.is/auth-nest-tools'
 import type { ClientDataLoader } from '../loaders/client.loader'
@@ -20,7 +20,7 @@ import type { ClientDataLoader } from '../loaders/client.loader'
 export class ConsentResolver {
   constructor(
     private readonly consentService: ConsentService,
-    private readonly scopeService: ScopePermissionsService,
+    private readonly consentTenantsService: ConsentTenantsService,
   ) {}
 
   @Query(() => ConsentsPaginated, { name: 'consentsList' })
@@ -38,14 +38,14 @@ export class ConsentResolver {
     return clientLoader.load({ lang, clientId: consent.clientId })
   }
 
-  @ResolveField('permissions', () => [ScopePermissions])
-  resolveScopePermissions(
+  @ResolveField('tenants', () => [ConsentTenant])
+  resolveConsentTenants(
     @CurrentUser() user: User,
     @Parent() consent: Consent,
     @Args('lang', { type: () => String, nullable: true, defaultValue: 'is' })
     lang: string,
-  ): Promise<ScopePermissions[]> {
-    return this.scopeService.getPermissions(
+  ): Promise<ConsentTenant[]> {
+    return this.consentTenantsService.getPermissions(
       user,
       lang,
       consent.consentedScopes,

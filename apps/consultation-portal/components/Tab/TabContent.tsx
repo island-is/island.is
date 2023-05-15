@@ -1,4 +1,4 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { Area, SortOptions } from '../../types/enums'
 import { SubscriptionArray } from '../../types/interfaces'
 import SearchAndSort from '../SearchAndSort/SearchAndSort'
