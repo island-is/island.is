@@ -43,9 +43,9 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
 
   const handleAddVehicle = () =>
     append({
-      assetNumber: '',
-      description: '',
-      marketValue: '',
+      assetNumber: undefined,
+      description: undefined,
+      marketValue: undefined,
     })
   const handleRemoveVehicle = (index: number) => remove(index)
 
@@ -53,6 +53,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
+          const fieldError = error && error[index] ? error[index] : null
+
           if (!asset.initial) {
             return acc
           }
@@ -99,8 +101,10 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   backgroundColor="blue"
                   placeholder="0 kr."
                   defaultValue={(asset as any).marketValue}
+                  error={fieldError?.marketValue}
                   currency
                   size="sm"
+                  required
                 />
               </Box>
             </GridColumn>,
@@ -172,9 +176,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.vehicleTypeLabel)}
                   defaultValue={field.description}
                   placeholder={formatMessage(m.vehiclesPlaceholder)}
+                  error={fieldError?.description}
                   size="sm"
-                  //Make readOnly again when Vehicle Registry query is available
-                  //readOnly
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']}>
@@ -184,6 +187,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.marketValueTitle)}
                   defaultValue={(field as any).marketValue}
                   placeholder={'0 kr.'}
+                  error={fieldError?.marketValue}
                   currency
                   size="sm"
                 />

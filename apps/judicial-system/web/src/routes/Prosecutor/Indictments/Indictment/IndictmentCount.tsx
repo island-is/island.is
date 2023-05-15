@@ -74,15 +74,15 @@ const offenseLawsMap: Record<
   IndictmentCountOffense | 'DRUNK_DRIVING_MINOR' | 'DRUNK_DRIVING_MAJOR',
   [number, number][]
 > = {
-  [IndictmentCountOffense.DrivingWithoutLicence]: [[58, 1]],
-  [IndictmentCountOffense.DrunkDriving]: [[49, 1]],
+  [IndictmentCountOffense.DRIVING_WITHOUT_LICENCE]: [[58, 1]],
+  [IndictmentCountOffense.DRUNK_DRIVING]: [[49, 1]],
   DRUNK_DRIVING_MINOR: [[49, 2]],
   DRUNK_DRIVING_MAJOR: [[49, 3]],
-  [IndictmentCountOffense.IllegalDrugsDriving]: [
+  [IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING]: [
     [50, 1],
     [50, 2],
   ],
-  [IndictmentCountOffense.PrescriptionDrugsDriving]: [
+  [IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING]: [
     [48, 1],
     [48, 2],
   ],
@@ -124,7 +124,7 @@ function getLawsBroken(
   offenses.forEach((offence) => {
     lawsBroken = lawsBroken.concat(offenseLawsMap[offence])
 
-    if (offence === IndictmentCountOffense.DrunkDriving) {
+    if (offence === IndictmentCountOffense.DRUNK_DRIVING) {
       lawsBroken = lawsBroken.concat(
         ((substances && substances.ALCOHOL) || '') >= '1,20'
           ? offenseLawsMap.DRUNK_DRIVING_MAJOR
@@ -170,31 +170,31 @@ export function getIncidentDescriptionReason(
     if (
       offenses.length > 1 &&
       (index === offenses.length - 1 ||
-        offense === IndictmentCountOffense.IllegalDrugsDriving)
+        offense === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
     ) {
       acc += ' og '
     } else if (index > 0) {
       acc += ', '
     }
     switch (offense) {
-      case IndictmentCountOffense.DrivingWithoutLicence:
+      case IndictmentCountOffense.DRIVING_WITHOUT_LICENCE:
         acc += formatMessage(
           strings.incidentDescriptionDrivingWithoutLicenceAutofill,
         )
         break
-      case IndictmentCountOffense.DrunkDriving:
+      case IndictmentCountOffense.DRUNK_DRIVING:
         acc += formatMessage(strings.incidentDescriptionDrunkDrivingAutofill)
         break
-      case IndictmentCountOffense.IllegalDrugsDriving:
+      case IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING:
         acc += `${formatMessage(
           strings.incidentDescriptionDrugsDrivingPrefixAutofill,
         )} ${formatMessage(
           strings.incidentDescriptionIllegalDrugsDrivingAutofill,
         )}`
         break
-      case IndictmentCountOffense.PrescriptionDrugsDriving:
+      case IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING:
         acc +=
-          (offenses.includes(IndictmentCountOffense.IllegalDrugsDriving)
+          (offenses.includes(IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING)
             ? ''
             : `${formatMessage(
                 strings.incidentDescriptionDrugsDrivingPrefixAutofill,
@@ -256,13 +256,15 @@ export function getLegalArguments(
   let articles = `${lawsBroken[0][1]}.`
 
   for (let i = 1; i < lawsBroken.length; i++) {
+    let useSbr = true
     if (lawsBroken[i][0] !== lawsBroken[i - 1][0]) {
       articles = `${articles} mgr. ${lawsBroken[i - 1][0]}. gr.`
+      useSbr = i > andIndex
     }
 
-    articles = `${articles}${i === andIndex ? ' og' : ', sbr.'} ${
-      lawsBroken[i][1]
-    }.`
+    articles = `${articles}${
+      i === andIndex ? ' og' : useSbr ? ', sbr.' : ','
+    } ${lawsBroken[i][1]}.`
   }
 
   return formatMessage(strings.legalArgumentsAutofill, {
@@ -566,7 +568,7 @@ export const IndictmentCount: React.FC<Props> = (props) => {
         </Box>
       )}
       {indictmentCount.offenses?.includes(
-        IndictmentCountOffense.DrunkDriving,
+        IndictmentCountOffense.DRUNK_DRIVING,
       ) && (
         <Box marginBottom={2}>
           <InputMask
@@ -633,8 +635,8 @@ export const IndictmentCount: React.FC<Props> = (props) => {
       {indictmentCount.offenses
         ?.filter(
           (offenseType) =>
-            offenseType === IndictmentCountOffense.IllegalDrugsDriving ||
-            offenseType === IndictmentCountOffense.PrescriptionDrugsDriving,
+            offenseType === IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING ||
+            offenseType === IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
         )
         .map((offenseType) => (
           <Box key={`${indictmentCount.id}-${offenseType}-substances`}>

@@ -109,9 +109,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
         ],
         estateMembers: [
           {
-            name: 'Stúfur Mack',
+            name: 'Gervimaður Afríka',
             relation: 'Sonur',
-            nationalId: '2222222229',
+            nationalId: '0101303019',
           },
           {
             name: 'Gervimaður Færeyja',
@@ -225,14 +225,13 @@ export class EstateTemplateService extends BaseTemplateApiService {
       },
       stocks: answers.stocks ?? [],
       vehicles: processedVehicles,
-      ...(answers.representative?.representativeName
+      ...(answers.representative?.name
         ? {
             representative: {
-              email: answers.representative.representativeEmail ?? '',
-              name: answers.representative.representativeName ?? '',
-              phoneNumber:
-                answers.representative.representativePhoneNumber ?? '',
-              ssn: answers.representative.representativeNationalId ?? '',
+              email: answers.representative.email ?? '',
+              name: answers.representative.name ?? '',
+              phoneNumber: answers.representative.phone ?? '',
+              ssn: answers.representative.nationalId ?? '',
             },
           }
         : {}),

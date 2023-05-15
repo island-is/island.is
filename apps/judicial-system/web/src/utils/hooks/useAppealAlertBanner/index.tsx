@@ -5,7 +5,7 @@ import { TempCase } from '@island.is/judicial-system-web/src/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { Button, LinkContext, LinkV2, Text } from '@island.is/island-ui/core'
+import { Button, Text } from '@island.is/island-ui/core'
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
@@ -23,27 +23,19 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './strings'
+import router from 'next/router'
 
-const renderLink = (text: string, href: string) => {
+const renderLinkButton = (text: string, href: string) => {
   return (
-    <LinkContext.Provider
-      value={{
-        linkRenderer: (href, children) => (
-          <LinkV2
-            href={href}
-            color="blue400"
-            underline="small"
-            underlineVisibility="always"
-          >
-            {children}
-          </LinkV2>
-        ),
+    <Button
+      variant="text"
+      size="small"
+      onClick={() => {
+        router.push(href)
       }}
     >
-      <Text>
-        <a href={href}>{text}</a>
-      </Text>
-    </LinkContext.Provider>
+      {text}
+    </Button>
   )
 }
 
@@ -80,7 +72,7 @@ const useAppealAlertBanner = (
     (isDefenderRoleUser && defendantStatementDate)
 
   // HIGH COURT BANNER INFO IS HANDLED HERE
-  if (user?.institution?.type === InstitutionType.HighCourt) {
+  if (user?.institution?.type === InstitutionType.HIGH_COURT) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired:
@@ -90,7 +82,7 @@ const useAppealAlertBanner = (
   }
   // DEFENDER, PROSECUTOR AND COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
-  else if (appealState === CaseAppealState.Received) {
+  else if (appealState === CaseAppealState.RECEIVED) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired:
@@ -118,7 +110,7 @@ const useAppealAlertBanner = (
         </Text>
       )
     } else {
-      child = renderLink(
+      child = renderLinkButton(
         formatMessage(strings.statementLinkText),
         isDefenderRoleUser
           ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
@@ -131,7 +123,7 @@ const useAppealAlertBanner = (
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDescription, {
       actor:
-        appealedByRole === UserRole.Prosecutor
+        appealedByRole === UserRole.PROSECUTOR
           ? formatMessage(core.prosecutor)
           : formatMessage(core.defender),
       appealDate: formatDate(appealedDate, 'PPPp'),
@@ -147,7 +139,7 @@ const useAppealAlertBanner = (
               })}
             </Text>
           ))
-        : renderLink(
+        : renderLinkButton(
             formatMessage(strings.statementLinkText),
             `${
               isDefenderRoleUser ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
@@ -172,7 +164,7 @@ const useAppealAlertBanner = (
         {formatMessage(strings.appealLinkText)}
       </Button>
     ) : (
-      renderLink(
+      renderLinkButton(
         formatMessage(strings.appealLinkText),
         `${isDefenderRoleUser ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
           workingCase.id

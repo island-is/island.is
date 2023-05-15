@@ -853,9 +853,26 @@
             "type": "string",
             "nullable": true
           },
+          "summaryLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "summaryDocumentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "adviceCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "advicePublishTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "advicePublishTypeName": {
+            "type": "string",
+            "nullable": true
           },
           "created": {
             "type": "string",
@@ -877,6 +894,13 @@
             "nullable": true
           },
           "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentInfoResult"
+            },
+            "nullable": true
+          },
+          "additionalDocuments": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DocumentInfoResult"

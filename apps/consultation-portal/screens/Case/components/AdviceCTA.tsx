@@ -2,10 +2,14 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SimpleCardSkeleton } from '../../../components/Card'
 import StackedTitleAndDescription from '../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import Link from 'next/link'
-import { useLogIn } from '../../../utils/helpers'
+import { useLogIn } from '../../../hooks'
 import { useContext } from 'react'
 import { UserContext } from '../../../context'
 import { Case } from '../../../types/interfaces'
+import {
+  advicePublishTypeKeyHelper,
+  pastAdvicePublishTypeKey,
+} from '../../../types/enums'
 interface Props {
   chosenCase: Case
 }
@@ -17,10 +21,7 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
     <SimpleCardSkeleton>
       {chosenCase.statusName === 'Til umsagnar' ? (
         <>
-          <StackedTitleAndDescription
-            headingColor="blue400"
-            title="Viltu senda umsögn?"
-          >
+          <StackedTitleAndDescription title="Viltu senda umsögn?">
             <Text>
               Öllum er frjálst að taka þátt í samráðinu.
               {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
@@ -46,15 +47,24 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
           title="Niðurstöður í vinnslu"
         >
           <Text>
-            Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum og þær
-            bárust.
+            Umsagnarfrestur er liðinn.
+            {` ${
+              pastAdvicePublishTypeKey[
+                advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
+              ]
+            } `}
           </Text>
         </StackedTitleAndDescription>
       ) : (
         <StackedTitleAndDescription headingColor="blue400" title="Lokið">
           <Text>
-            Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum og þær
-            bárust. Niðurstöður samráðsins hafa verið birtar og málinu lokið.
+            Umsagnarfrestur er liðinn.
+            {` ${
+              pastAdvicePublishTypeKey[
+                advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
+              ]
+            } `}
+            Niðurstöður samráðsins hafa verið birtar og málinu lokið.
           </Text>
         </StackedTitleAndDescription>
       )}

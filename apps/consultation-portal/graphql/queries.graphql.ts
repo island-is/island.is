@@ -132,7 +132,11 @@ export const CASE_GET_CASE_BY_ID = gql`
       announcementText
       summaryDate
       summaryText
+      summaryLink
+      summaryDocumentId
       adviceCount
+      advicePublishTypeId
+      advicePublishTypeName
       created
       changed
       oldInstitutionName
@@ -142,6 +146,10 @@ export const CASE_GET_CASE_BY_ID = gql`
         email
       }
       documents {
+        id
+        fileName
+      }
+      additionalDocuments {
         id
         fileName
       }
