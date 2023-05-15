@@ -1,6 +1,6 @@
 import { Box, Text } from '@island.is/island-ui/core'
 
-function PermissionsManagement() {
+function Permission() {
   return (
     <Box>
       <Box display="flex" columnGap={5}>
@@ -18,4 +18,4 @@ function PermissionsManagement() {
   )
 }
 
-export default PermissionsManagement
+export default Permission

@@ -29,7 +29,7 @@ const PermissionsList = lazy(() =>
   import('./components/PermissionsList/PermissionsList'),
 )
 const PermissionsManagement = lazy(() =>
-  import('./components/PermissionsManagement/PermissionsManagement'),
+  import('./components/Permission/Permission'),
 )
 const CreatePermission = lazy(() =>
   import('./components/forms/CreatePermission/CreatePermission'),
@@ -141,7 +141,7 @@ export const idsAdminModule: PortalModule = {
               },
               {
                 name: m.permissionsManagement,
-                path: IDSAdminPaths.IDSAdminPermissionsManagement,
+                path: IDSAdminPaths.IDSAdminPermission,
                 element: <PermissionsManagement />,
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,

@@ -123,7 +123,7 @@ function PermissionsList() {
               cta={{
                 label: formatMessage(m.change),
                 to: replaceParams({
-                  href: IDSAdminPaths.IDSAdminPermissionsManagement,
+                  href: IDSAdminPaths.IDSAdminPermission,
                   params: {
                     tenant,
                     permission: item.scopeName,

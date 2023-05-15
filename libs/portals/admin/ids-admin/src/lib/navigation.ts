@@ -34,7 +34,7 @@ export const domainNav: PortalNavigationItem = {
         },
         {
           name: m.permissionsManagement,
-          path: IDSAdminPaths.IDSAdminPermissionsManagement,
+          path: IDSAdminPaths.IDSAdminPermission,
           description: m.idsAdmin,
           activeIfExact: true,
         },
