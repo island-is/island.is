@@ -43,11 +43,11 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   const handleAddProperty = () =>
     append({
       share: 1,
-      assetNumber: '',
-      description: '',
+      assetNumber: undefined,
+      description: undefined,
+      marketValue: undefined,
       initial: false,
       enabled: true,
-      marketValue: '',
     })
   const handleRemoveProperty = (index: number) => remove(index)
 
