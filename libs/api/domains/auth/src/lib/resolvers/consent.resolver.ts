@@ -1,10 +1,18 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
 import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Loader } from '@island.is/nest/dataloader'
 
 import { ConsentsPaginated } from '../dto/consentsPaginated.response'
+import { PatchConsentInput } from '../dto/updateConsent.input'
 import { ClientLoader } from '../loaders/client.loader'
 import { Client } from '../models/client.model'
 import { Consent } from '../models/consent.model'
@@ -14,7 +22,6 @@ import { ConsentTenantsService } from '../services/consentTenants.service'
 
 import type { User } from '@island.is/auth-nest-tools'
 import type { ClientDataLoader } from '../loaders/client.loader'
-
 @UseGuards(IdsUserGuard)
 @Resolver(() => Consent)
 export class ConsentResolver {
@@ -51,5 +58,14 @@ export class ConsentResolver {
       consent.consentedScopes,
       consent.rejectedScopes,
     )
+  }
+
+  @Mutation(() => Consent, { name: 'patchAuthConsent' })
+  patchConsent(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => PatchConsentInput })
+    input: PatchConsentInput,
+  ): Promise<Consent> {
+    return this.consentService.updateConsent(user, input)
   }
 }

@@ -34,6 +34,7 @@ import {
   getRequestPdfAsBuffer,
   createCaseFilesRecord,
   getRequestPdfAsString,
+  getCustodyNoticePdfAsString,
 } from '../../formatters'
 import { courtUpload } from '../../messages'
 import { CaseEvent, EventService } from '../event'
@@ -80,6 +81,7 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'caseResentExplanation',
   'crimeScenes',
   'indictmentIntroduction',
+  'appealConclusion',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -709,16 +711,25 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    await this.refreshFormatMessage()
-
-    const pdfPromises = [
-      getRequestPdfAsString(theCase, this.formatMessage),
-      getCourtRecordPdfAsString(theCase, this.formatMessage),
-      this.getSignedRulingPdf(theCase).then((pdf) => pdf.toString('binary')),
-    ]
-
-    return Promise.all(pdfPromises)
-      .then(async ([requestPdf, courtRecordPdf, rulingPdf]) => {
+    return this.refreshFormatMessage()
+      .then(async () => {
+        const requestPdf = await getRequestPdfAsString(
+          theCase,
+          this.formatMessage,
+        )
+        const courtRecordPdf = await getCourtRecordPdfAsString(
+          theCase,
+          this.formatMessage,
+        )
+        const rulingPdf = await this.getSignedRulingPdf(theCase).then((pdf) =>
+          pdf.toString('binary'),
+        )
+        const custodyNoticePdf =
+          [CaseType.CUSTODY, CaseType.ADMISSION_TO_FACILITY].includes(
+            theCase.type,
+          ) && theCase.state === CaseState.ACCEPTED
+            ? await getCustodyNoticePdfAsString(theCase, this.formatMessage)
+            : undefined
         const defendantNationalIds = theCase.defendants?.reduce<string[]>(
           (ids, defendant) =>
             !defendant.noNationalId && defendant.nationalId
@@ -726,6 +737,15 @@ export class InternalCaseService {
               : ids,
           [],
         )
+        const validToDate =
+          ([
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.TRAVEL_BAN,
+          ].includes(theCase.type) &&
+            theCase.state === CaseState.ACCEPTED &&
+            theCase.validToDate) ||
+          new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
 
         const delivered = await this.policeService.updatePoliceCase(
           user,
@@ -738,17 +758,12 @@ export class InternalCaseService {
           defendantNationalIds && defendantNationalIds[0]
             ? defendantNationalIds[0].replace('-', '')
             : '',
-          [
-            CaseType.CUSTODY,
-            CaseType.ADMISSION_TO_FACILITY,
-            CaseType.TRAVEL_BAN,
-          ].includes(theCase.type) && theCase.state === CaseState.ACCEPTED
-            ? theCase.validToDate
-            : new Date(0), // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
+          validToDate,
           theCase.conclusion ?? '',
-          requestPdf,
-          courtRecordPdf,
-          rulingPdf,
+          requestPdf as string,
+          courtRecordPdf as string,
+          rulingPdf as string,
+          custodyNoticePdf,
         )
 
         return { delivered }
