@@ -765,6 +765,11 @@ export class CaseService {
           caseId: theCase.id,
           caseFileId: caseFile.id,
         })) ?? []
+    messages.push({
+      type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+    })
 
     return this.messageService.sendMessagesToQueue(messages)
   }

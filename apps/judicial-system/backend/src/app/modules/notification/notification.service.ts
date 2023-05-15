@@ -1611,6 +1611,12 @@ export class NotificationService {
     )
   }
 
+  private async sendAppealCompletedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    return { notificationSent: false }
+  }
+
   /* Messages */
 
   private getNotificationMessage(
@@ -1687,6 +1693,8 @@ export class NotificationService {
         return this.sendAppealReceivedByCourtNotifications(theCase)
       case NotificationType.APPEAL_STATEMENT:
         return this.sendAppealStatementNotifications(theCase, user)
+      case NotificationType.APPEAL_COMPLETED:
+        return this.sendAppealCompletedNotifications(theCase)
     }
   }
 
