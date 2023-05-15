@@ -32,7 +32,7 @@ export const useFeatureFlag = <T extends SettingValue>(
       .getValue(featureFlag, defaultValue, user)
       .then((value) => {
         if (mounted) {
-          setState({ value: value as SettingTypeOf<T>, loading: false })
+          setState({ value, loading: false })
         }
       })
     return () => {
