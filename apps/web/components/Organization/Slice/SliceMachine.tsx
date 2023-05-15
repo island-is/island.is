@@ -139,8 +139,6 @@ const renderSlice = (slice, namespace, slug, params) => {
       return webRenderConnectedComponent(slice)
     case 'FeaturedSupportQNAs':
       return <FeaturedSupportQNAs slice={slice} />
-    case 'connectedComponent':
-      return webRenderConnectedComponent(slice)
     case 'PowerBiSlice':
       return <PowerBiSlice slice={slice} />
     default:
