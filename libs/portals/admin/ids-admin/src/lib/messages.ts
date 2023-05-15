@@ -581,10 +581,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:revoke-existing-secrets',
     defaultMessage: 'Revoke existing secret(s) immediately.',
   },
-  errorRotatingSecret: {
-    id: 'ap.ids-admin:error-rotating-secret',
-    defaultMessage: 'Error rotating secret',
-  },
   newSecret: {
     id: 'ap.ids-admin:new-secret',
     defaultMessage: 'New secret',

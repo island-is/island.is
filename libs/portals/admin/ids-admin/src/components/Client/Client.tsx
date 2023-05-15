@@ -53,7 +53,7 @@ const Client = () => {
 
   useEffect(() => {
     const newSelectedEnvironment = client.environments.find(
-      (e) => e.environment === selectedEnvironment.environment,
+      ({ environment }) => environment === selectedEnvironment.environment,
     )
 
     if (newSelectedEnvironment) {

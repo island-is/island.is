@@ -293,13 +293,13 @@ export class ClientsService extends MultiEnvironmentService {
         // We don't care about the result of the delete as we can't have it in a single transaction between environments.
         // If it fails the UI will prompt the user about there being old secrets and they can clear them.
         await Promise.allSettled(
-          secrets.map(async (secret) => {
-            return adminApi.meClientSecretsControllerDelete({
+          secrets.map((secret) =>
+            adminApi.meClientSecretsControllerDelete({
               tenantId: input.tenantId,
               clientId: input.clientId,
               secretId: secret.secretId,
-            })
-          }),
+            }),
+          ),
         )
       }
     }

@@ -25,7 +25,7 @@ export const DangerZone = () => {
     <AccordionCard
       id="danger-zone"
       label={formatMessage(m.dangerZone)}
-      labelColor={'red600'}
+      labelColor="red600"
       colorVariant="red"
     >
       <ActionCard

@@ -8,7 +8,7 @@ import { m } from '../../lib/messages'
 export const useCopyToClipboard = () => {
   const { formatMessage } = useLocale()
 
-  const handleCopy = useCallback(
+  const copyToClipboard = useCallback(
     (ref: RefObject<HTMLInputElement>) => {
       if (!ref.current) return
 
@@ -19,5 +19,5 @@ export const useCopyToClipboard = () => {
     [formatMessage],
   )
 
-  return { handleCopy }
+  return { copyToClipboard }
 }

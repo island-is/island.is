@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useReducer, useRef } from 'react'
+import { useCallback, useContext, useReducer, useRef } from 'react'
 import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -9,7 +9,6 @@ import {
   Input,
   Stack,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
@@ -23,7 +22,7 @@ import { RotateSecretResult } from './RotateSecret.action'
 
 export const RotateSecret = () => {
   const { formatMessage } = useLocale()
-  const { handleCopy } = useCopyToClipboard()
+  const { copyToClipboard } = useCopyToClipboard()
   const {
     selectedEnvironment: { environment },
   } = useContext(ClientContext)
@@ -36,17 +35,7 @@ export const RotateSecret = () => {
     false,
   )
   const secretRef = useRef<HTMLInputElement>(null)
-  const isResult = !!actionData?.data?.decryptedValue
-
-  useEffect(() => {
-    if (
-      (actionData?.globalError || actionData?.errors) &&
-      !isLoading &&
-      !isSubmitting
-    ) {
-      toast.error(formatMessage(m.errorRotatingSecret))
-    }
-  }, [actionData, isLoading, isSubmitting, formatMessage])
+  const isResult = !!actionData?.data
 
   const onCancel = useCallback(() => {
     navigate(
@@ -60,14 +49,6 @@ export const RotateSecret = () => {
   const modalTitle = isResult
     ? formatMessage(m.newSecret)
     : formatMessage(m.rotateSecret)
-
-  if (
-    (actionData?.globalError || actionData?.errors) &&
-    !isLoading &&
-    !isSubmitting
-  ) {
-    toast.error(formatMessage(m.errorRotatingSecret))
-  }
 
   return (
     <Modal
@@ -99,14 +80,14 @@ export const RotateSecret = () => {
                 type="text"
                 size="sm"
                 name="clientId"
-                value={actionData?.data?.decryptedValue}
+                value={actionData?.data?.decryptedValue ?? ''}
                 label={formatMessage(m.clientSecret)}
                 buttons={[
                   {
                     name: 'copy',
                     label: 'copy',
                     type: 'outline',
-                    onClick: () => handleCopy(secretRef),
+                    onClick: () => copyToClipboard(secretRef),
                   },
                 ]}
               />
@@ -135,7 +116,20 @@ export const RotateSecret = () => {
           )}
         </Box>
 
-        <Box marginTop={7} display="flex" justifyContent="spaceBetween">
+        {actionData?.globalError && (
+          <Box marginTop={4}>
+            <AlertMessage
+              message={formatMessage(m.errorDefault)}
+              type="error"
+            />
+          </Box>
+        )}
+
+        <Box
+          marginTop={7}
+          display="flex"
+          justifyContent={isResult ? 'flexEnd' : 'spaceBetween'}
+        >
           <Button variant="ghost" onClick={onCancel}>
             {formatMessage(isResult ? m.close : m.cancel)}
           </Button>

@@ -26,7 +26,7 @@ const BasicInfoContent = ({
   issuerUrl,
 }: BasicInfoProps) => {
   const { formatMessage } = useLocale()
-  const { handleCopy } = useCopyToClipboard()
+  const { copyToClipboard } = useCopyToClipboard()
   const [showSecret, toggleSecret] = useReducer((s) => !s, false)
   const clientIdRef = useRef<HTMLInputElement>(null)
   const clientSecretRef = useRef<HTMLInputElement>(null)
@@ -58,7 +58,7 @@ const BasicInfoContent = ({
               name: 'copy',
               label: 'copy',
               type: 'outline',
-              onClick: () => handleCopy(clientIdRef),
+              onClick: () => copyToClipboard(clientIdRef),
             },
           ]}
         />
@@ -76,7 +76,7 @@ const BasicInfoContent = ({
                 {
                   name: 'copy',
                   type: 'outline',
-                  onClick: () => handleCopy(clientSecretRef),
+                  onClick: () => copyToClipboard(clientSecretRef),
                   label: 'Copy value',
                   disabled: isLegacySecret,
                 },
@@ -109,7 +109,7 @@ const BasicInfoContent = ({
               name: 'copy',
               label: 'copy',
               type: 'outline',
-              onClick: () => handleCopy(issuerUrlRef),
+              onClick: () => copyToClipboard(issuerUrlRef),
             },
           ]}
         />
@@ -131,7 +131,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: () => handleCopy(authorizationUrlRef),
+                  onClick: () => copyToClipboard(authorizationUrlRef),
                 },
               ]}
             />
@@ -148,7 +148,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: () => handleCopy(tokenUrlRef),
+                  onClick: () => copyToClipboard(tokenUrlRef),
                 },
               ]}
             />
@@ -165,7 +165,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: () => handleCopy(userInfoUrlRef),
+                  onClick: () => copyToClipboard(userInfoUrlRef),
                 },
               ]}
             />
@@ -182,7 +182,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: () => handleCopy(endSessionUrlRef),
+                  onClick: () => copyToClipboard(endSessionUrlRef),
                 },
               ]}
             />
@@ -199,7 +199,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: () => handleCopy(openIdConfigurationUrlRef),
+                  onClick: () => copyToClipboard(openIdConfigurationUrlRef),
                 },
               ]}
             />
@@ -216,7 +216,7 @@ const BasicInfoContent = ({
                   name: 'copy',
                   label: 'copy',
                   type: 'outline',
-                  onClick: () => handleCopy(jsonWebSetKeyUrlRef),
+                  onClick: () => copyToClipboard(jsonWebSetKeyUrlRef),
                 },
               ]}
             />

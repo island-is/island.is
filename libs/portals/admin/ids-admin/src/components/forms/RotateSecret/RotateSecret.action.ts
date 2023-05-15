@@ -1,34 +1,27 @@
 import { z } from 'zod'
 
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { WrappedActionFn } from '@island.is/portals/core'
-import {
-  validateFormData,
-  ValidateFormDataResult,
-} from '@island.is/react-spa/shared'
+import { validateFormData } from '@island.is/react-spa/shared'
 
 import {
   RotateSecretDocument,
   RotateSecretMutation,
   RotateSecretMutationVariables,
 } from './RotateSecret.generated'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 const schema = z.object({
   environment: z.nativeEnum(AuthAdminEnvironment),
   revokeOldSecrets: z
     .string()
     .optional()
-    .transform((s) => {
-      return s === 'true'
-    }),
-})
-
-const resultSchema = z.object({
-  decryptedValue: z.string(),
+    .transform((s) => s === 'true'),
 })
 
 export type RotateSecretResult =
-  | (ValidateFormDataResult<typeof resultSchema> & {
+  | ({
+      data: RotateSecretMutation['rotateAuthAdminClientSecret']
+    } & {
       /** Global error message if the mutation fails */
       globalError?: boolean
     })
