@@ -20,6 +20,7 @@ import { ScopeInput } from './dto/scope.input'
 import { ScopeEnvironment } from './models/scope-environment.model'
 import { ScopesInput } from './dto/scopes.input'
 import { ScopesPayload } from './dto/scopes.payload'
+import { AdminPatchScopeInput } from './dto/patch-scope.input'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Scope)
@@ -35,6 +36,17 @@ export class ScopeResolver {
     input: CreateScopeInput,
   ): Promise<CreateScopeResponse[]> {
     return this.scopeService.createScope(user, input)
+  }
+
+  @Mutation(() => [ScopeEnvironment], {
+    name: 'patchAuthAdminScope',
+  })
+  patchScope(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => AdminPatchScopeInput })
+    input: AdminPatchScopeInput,
+  ): Promise<ScopeEnvironment[]> {
+    return this.scopeService.updateScope({ user, input })
   }
 
   @Query(() => Scope, { name: 'authAdminScope' })
