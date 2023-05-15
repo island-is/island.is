@@ -55,8 +55,8 @@ const GevFooter = ({ title, namespace, footerItems }: GevFooterProps) => {
               alt=""
             />
 
-            {footerItems.map((item) => (
-              <GridColumn span="3/12" key={item.id}>
+            {footerItems.map((item, index) => (
+              <GridColumn span="3/12" key={index}>
                 {item.title && (
                   <Text marginTop={2} fontWeight="semiBold">
                     {item.title}
@@ -92,8 +92,8 @@ const GevFooter = ({ title, namespace, footerItems }: GevFooterProps) => {
             />
 
             <GridColumn>
-              {footerItems.map((item) => (
-                <GridColumn paddingTop={2} span="1/1" key={item.id}>
+              {footerItems.map((item, index) => (
+                <GridColumn paddingTop={2} span="1/1" key={index}>
                   {item.title && (
                     <Text fontWeight="semiBold">{item.title}</Text>
                   )}
