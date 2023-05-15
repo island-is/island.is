@@ -186,6 +186,7 @@
     "clients-vehicle-service-fjs-v1": "libs/clients/vehicle-service-fjs-v1",
     "clients-vehicles": "libs/clients/vehicles",
     "clients-vmst": "libs/clients/vmst",
+    "clients-work-machines": "libs/clients/work-machines",
     "clients-zendesk": "libs/clients/zendesk",
     "cms": "libs/cms",
     "cms-translations": "libs/cms-translations",

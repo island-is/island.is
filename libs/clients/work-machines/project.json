@@ -1,0 +1,22 @@
+{
+  "root": "libs/clients/work-machines",
+  "sourceRoot": "libs/clients/work-machines/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/work-machines/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/work-machines"],
+      "options": {
+        "jestConfig": "libs/clients/work-machines/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
