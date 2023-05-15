@@ -15,7 +15,6 @@ import * as styles from './HeroBanner.css'
 import { HeroLogo } from '../svg'
 import { StatisticBox } from '..'
 import HeroTiles from './HeroTiles'
-import SplashSmall from '../svg/SplashSmall'
 import { ArrOfStatistics } from '../../types/interfaces'
 import Splash from '../svg/Splash'
 
