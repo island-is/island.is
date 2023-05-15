@@ -1,12 +1,7 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
-import {
-  getStatementDeadline,
-  NotificationType,
-  User,
-} from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -19,15 +14,17 @@ interface Then {
 
 type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal received by court notifications', () => {
+describe('InternalNotificationController - Send appeal completed notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
   const prosecutorEmail = uuid()
   const defenderName = uuid()
   const defenderEmail = uuid()
+  const judgeName = uuid()
+  const judgeEmail = uuid()
   const courtCaseNumber = uuid()
-  const receivedDate = new Date()
+  const appealCaseNumber = uuid()
 
   let mockEmailService: EmailService
 
@@ -50,16 +47,17 @@ describe('InternalNotificationController - Send appeal received by court notific
           {
             id: caseId,
             prosecutor: { name: prosecutorName, email: prosecutorEmail },
+            judge: { name: judgeName, email: judgeEmail },
             court: { name: 'Héraðsdómur Reykjavíkur' },
             defenderNationalId,
             defenderName: defenderName,
             defenderEmail: defenderEmail,
             courtCaseNumber,
-            appealReceivedByCourtDate: receivedDate,
+            appealCaseNumber,
           } as Case,
           {
             user: { id: userId } as User,
-            type: NotificationType.APPEAL_RECEIVED_BY_COURT,
+            type: NotificationType.APPEAL_COMPLETED,
           },
         )
         .then((result) => (then.result = result))
@@ -75,25 +73,26 @@ describe('InternalNotificationController - Send appeal received by court notific
       then = await givenWhenThen(uuid())
     })
 
-    it('should send notification to prosecutor and defender', () => {
+    it('should send notifications', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: judgeName, address: judgeEmail }],
+          subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        }),
+      )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
-          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
-          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
-            getStatementDeadline(receivedDate),
-            'PPPp',
-          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
-          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
-          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
-            getStatementDeadline(receivedDate),
-            'PPPp',
-          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -107,25 +106,12 @@ describe('InternalNotificationController - Send appeal received by court notific
       then = await givenWhenThen()
     })
 
-    it('should send notification to prosecutor and defender', () => {
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-        expect.objectContaining({
-          to: [{ name: prosecutorName, address: prosecutorEmail }],
-          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
-          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
-            getStatementDeadline(receivedDate),
-            'PPPp',
-          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
-        }),
-      )
+    it('should send notification without a link to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
-          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
-          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
-            getStatementDeadline(receivedDate),
-            'PPPp',
-          )}. Hægt er að skila greinargerð og nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
+          subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Hægt er að nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
