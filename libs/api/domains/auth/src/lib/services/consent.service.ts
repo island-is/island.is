@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common'
 
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ConsentsApi } from '@island.is/clients/auth/ids-api'
+import { Consent, ConsentsApi } from '@island.is/clients/auth/ids-api'
 
 import { ConsentsPaginated } from '../dto/consentsPaginated.response'
+import { UpdateConsentInput } from '../dto/updateConsent.input'
 
 @Injectable()
 export class ConsentService {
@@ -15,5 +16,15 @@ export class ConsentService {
 
   getConsent(user: User): Promise<ConsentsPaginated> {
     return this.consentsApiWithAuth(user).v1ActorConsentsGet()
+  }
+
+  updateConsent(user: User, input: UpdateConsentInput): Promise<Consent> {
+    return this.consentsApiWithAuth(user).v1ActorConsentsClientIdPatch({
+      clientId: input.clientId,
+      consentUpdate: {
+        consented: input.consentedScopes,
+        rejected: input.rejectedScopes,
+      },
+    })
   }
 }
