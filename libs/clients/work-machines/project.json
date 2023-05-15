@@ -21,7 +21,8 @@
       "executor": "@nrwl/workspace:run-commands",
       "options": {
         "commands": [
-          "curl  https://xroad-dev.ver.is/vinnuvelar-token/swagger/v1/swagger.json > src/clientConfig.json",
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token/api/Openapi > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
@@ -35,5 +36,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["lib:client", "scope:client"]
 }

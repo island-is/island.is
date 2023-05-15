@@ -1,5 +1,10 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
+import {
+  ConfigType,
+  IdsClientConfig,
+  LazyDuringDevScope,
+  XRoadConfig,
+} from '@island.is/nest/config'
 import { Configuration, MachinesApi } from '../../gen/fetch'
 import { WorkMachinesClientConfig } from './workMachines.config'
 import { Provider } from '@nestjs/common'
@@ -7,15 +12,33 @@ import { Provider } from '@nestjs/common'
 export const WorkMachinesApiProvider: Provider<MachinesApi> = {
   provide: MachinesApi,
   scope: LazyDuringDevScope,
-  useFactory: (config: ConfigType<typeof WorkMachinesClientConfig>) =>
+  useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof WorkMachinesClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) =>
     new MachinesApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-work-machines-license',
           logErrorResponseBody: true,
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: [''],
+              }
+            : undefined,
           timeout: config.fetch.timeout,
         }),
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        headers: {
+          'X-Road-Client': xroadConfig.xRoadClient,
+          Accept: 'application/json',
+        },
       }),
     ),
-  inject: [WorkMachinesClientConfig.KEY],
+  inject: [XRoadConfig.KEY, WorkMachinesClientConfig.KEY, IdsClientConfig.KEY],
 }

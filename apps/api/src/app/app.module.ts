@@ -113,6 +113,7 @@ import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
+import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -285,6 +286,7 @@ const autoSchemaFile = environment.production
       isGlobal: true,
       load: [
         AdrAndMachineLicenseClientConfig,
+        WorkMachinesClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,

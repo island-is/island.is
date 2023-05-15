@@ -10,15 +10,8 @@
     "version": "v1",
     "x-pricing": "free",
     "x-category": "official",
-    "x-links": {
-      "responsibleParty ": "https://www.vinnueftirlit.is"
-    }
+    "x-links": { "responsibleParty ": "https://www.vinnueftirlit.is" }
   },
-  "servers": [
-    {
-      "url": "/vinnuvelar-token"
-    }
-  ],
   "paths": {
     "/api/Machines": {
       "get": {
@@ -28,41 +21,24 @@
           {
             "name": "searchQuery",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "PageNumber",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "PageSize",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "OrderBy", "in": "query", "schema": { "type": "string" } },
           {
             "name": "locale",
             "in": "query",
             "description": "",
-            "schema": {
-              "type": "string",
-              "default": "is"
-            }
+            "schema": { "type": "string", "default": "is" }
           }
         ],
         "responses": {
@@ -100,14 +76,10 @@
             "description": "Unauthorized",
             "content": {
               "application/vnd.ver.machines.hateaos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -115,14 +87,10 @@
             "description": "Forbidden",
             "content": {
               "application/vnd.ver.machines.hateaos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -130,14 +98,10 @@
             "description": "Not Found",
             "content": {
               "application/vnd.ver.machines.hateaos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -145,14 +109,10 @@
             "description": "Client Error",
             "content": {
               "application/vnd.ver.machines.hateaos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -160,14 +120,10 @@
             "description": "Server Error",
             "content": {
               "application/vnd.ver.machines.hateaos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -183,18 +139,12 @@
             "name": "Id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "locale",
             "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "is"
-            }
+            "schema": { "type": "string", "default": "is" }
           }
         ],
         "responses": {
@@ -202,14 +152,10 @@
             "description": "Success",
             "content": {
               "application/vnd.ver.machine.hateos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MachineHateoasDto"
-                }
+                "schema": { "$ref": "#/components/schemas/MachineHateoasDto" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MachineHateoasDto"
-                }
+                "schema": { "$ref": "#/components/schemas/MachineHateoasDto" }
               }
             }
           },
@@ -232,14 +178,10 @@
             "description": "Unauthorized",
             "content": {
               "application/vnd.ver.machine.hateos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -247,14 +189,10 @@
             "description": "Forbidden",
             "content": {
               "application/vnd.ver.machine.hateos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -262,14 +200,10 @@
             "description": "Not Found",
             "content": {
               "application/vnd.ver.machine.hateos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -277,14 +211,10 @@
             "description": "Client Error",
             "content": {
               "application/vnd.ver.machine.hateos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -292,14 +222,10 @@
             "description": "Server Error",
             "content": {
               "application/vnd.ver.machine.hateos.v1+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -309,11 +235,7 @@
     "/api/Openapi": {
       "get": {
         "tags": ["Openapi"],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
+        "responses": { "200": { "description": "Success" } }
       }
     }
   },
@@ -322,124 +244,54 @@
       "LabelDto": {
         "type": "object",
         "properties": {
-          "columnName": {
-            "type": "string",
-            "nullable": true
-          },
-          "displayTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "tooltip": {
-            "type": "string",
-            "nullable": true
-          }
+          "columnName": { "type": "string", "nullable": true },
+          "displayTitle": { "type": "string", "nullable": true },
+          "tooltip": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "LinkDtoWithDisplayTitle": {
         "type": "object",
         "properties": {
-          "href": {
-            "type": "string",
-            "nullable": true
-          },
-          "rel": {
-            "type": "string",
-            "nullable": true
-          },
-          "method": {
-            "type": "string",
-            "nullable": true
-          },
-          "displayTitle": {
-            "type": "string",
-            "nullable": true
-          }
+          "href": { "type": "string", "nullable": true },
+          "rel": { "type": "string", "nullable": true },
+          "method": { "type": "string", "nullable": true },
+          "displayTitle": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "MachineFriendlyDto": {
         "type": "object",
         "properties": {
-          "registrationNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "owner": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "dateLastInspection": {
-            "type": "string",
-            "nullable": true
-          }
+          "registrationNumber": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "owner": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "dateLastInspection": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "MachineHateoasDto": {
         "type": "object",
         "properties": {
-          "registrationNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "ownerNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "productionNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "productionCountry": {
-            "type": "string",
-            "nullable": true
-          },
-          "productionYear": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "licensePlateNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "ownerName": {
-            "type": "string",
-            "nullable": true
-          },
-          "supervisorName": {
-            "type": "string",
-            "nullable": true
-          },
+          "registrationNumber": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "status": { "type": "string", "nullable": true },
+          "ownerNumber": { "type": "string", "nullable": true },
+          "productionNumber": { "type": "string", "nullable": true },
+          "productionCountry": { "type": "string", "nullable": true },
+          "productionYear": { "type": "integer", "format": "int32" },
+          "licensePlateNumber": { "type": "string", "nullable": true },
+          "ownerName": { "type": "string", "nullable": true },
+          "supervisorName": { "type": "string", "nullable": true },
           "_links": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LinkDtoWithDisplayTitle"
-            },
+            "items": { "$ref": "#/components/schemas/LinkDtoWithDisplayTitle" },
             "nullable": true
           },
           "_labels": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LabelDto"
-            },
+            "items": { "$ref": "#/components/schemas/LabelDto" },
             "nullable": true
           }
         },
@@ -450,23 +302,17 @@
         "properties": {
           "value": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MachineFriendlyDto"
-            },
+            "items": { "$ref": "#/components/schemas/MachineFriendlyDto" },
             "nullable": true
           },
           "_links": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LinkDtoWithDisplayTitle"
-            },
+            "items": { "$ref": "#/components/schemas/LinkDtoWithDisplayTitle" },
             "nullable": true
           },
           "_labels": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/LabelDto"
-            },
+            "items": { "$ref": "#/components/schemas/LabelDto" },
             "nullable": true
           }
         },
@@ -475,29 +321,13 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "ValidationProblemDetails": {
         "type": "object",
@@ -506,35 +336,17 @@
             "type": "object",
             "additionalProperties": {
               "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "items": { "type": "string" }
             },
             "nullable": true
           },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -546,9 +358,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

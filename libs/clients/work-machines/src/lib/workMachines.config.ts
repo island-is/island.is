@@ -2,6 +2,7 @@ import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
 const schema = z.object({
+  xRoadServicePath: z.string(),
   fetch: z.object({
     timeout: z.number().int(),
   }),
@@ -10,7 +11,11 @@ const schema = z.object({
 export const WorkMachinesClientConfig = defineConfig<z.infer<typeof schema>>({
   name: 'WorkMachinesClientConfig',
   schema,
-  load: () => ({
+  load: (env) => ({
+    xRoadServicePath: env.required(
+      'XROAD_WORK_MACHINE_LICENSE_PATH',
+      'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token',
+    ),
     fetch: {
       timeout: 10000,
     },
