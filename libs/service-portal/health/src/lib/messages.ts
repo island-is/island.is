@@ -17,28 +17,33 @@ export const messages = defineMessages({
   aidsAndNutritionDescription: {
     id: 'sp.health:aids-and-nutrition-title',
     defaultMessage:
-      'Sjúkratryggingar annast afgreiðslu umsókna um styrki vegna hjálpartækja, heyrnartækja og næringar og sérfæðis. Veita einnig faglega ráðgjöf um val á hjálpartækjum og sinnir viðgerðarþjónustu.',
+      'Sjúkratryggingar annast afgreiðslu umsókna um styrki vegna hjálpartækja, heyrnartækja og næringar og sérfæðis. Veita einnig faglega ráðgjöf um val á hjálpartækjum og sinna viðgerðarþjónustu.',
   },
-  aidsAndNutritionDescriptionInfo1: {
-    id: 'sp.health:aids-and-nutrition-description-info-1',
+  nutritionDescriptionInfo: {
+    id: 'sp.health:nutrition-description-info-',
     defaultMessage: 'Nánar um næringu og sérfæði',
   },
-  aidsAndNutritionDescriptionInfo2: {
-    id: 'sp.health:aids-and-nutrition-description-info-2',
+  aidsDescriptionInfo: {
+    id: 'sp.health:aids-description-info',
     defaultMessage: 'Nánar um hjálpartæki',
-  },
-  aidsAndNutritionDisclaimer: {
-    id: 'sp.health:aids-and-nutrition-disclaimer',
-    defaultMessage:
-      'Styrkur getur ýmist verið greiddur sem ákveðið hlutfall af verði hjálpartækis og næringar og/eða ákveðin fjárhæð til kaupa á hjálpartæki eða næringu. Í neðangreindri töflu birta SÍ þín réttindi til notkunar/úttektar á hjálpartækjum og næringu sem sótt hefur verið um til Hjálpartækjamiðstöðvar. Þegar innan við 60 dagar eru eftir af heimild, þá litast viðkomandi lína gul í töflu.',
   },
   aids: {
     id: 'sp.health:aids',
     defaultMessage: 'Hjálpartæki',
   },
+  aidsDisclaimer: {
+    id: 'sp.health:aids-disclaimer',
+    defaultMessage:
+      'Styrkur getur ýmist verið greiddur sem ákveðið hlutfall af verði hjálpartækis og/eða ákveðin fjárhæð til kaupa á hjálpartæki. Í ofangreindri töflu birta Sjúkratryggingar þín réttindi vegna hjálpartækja sem sótt hefur verið um. Þegar um er að ræða innkaupaheimild litast viðkomandi lína gul þegar innan við 60 dagar eru eftir af gildistíma heimildar.',
+  },
   nutrition: {
     id: 'sp.health:nutrition',
     defaultMessage: 'Næring',
+  },
+  nutritionDisclaimer: {
+    id: 'sp.health:nutrition-disclaimer',
+    defaultMessage:
+      'Styrkur getur ýmist verið greiddur sem ákveðið hlutfall af af verði næringarefnis eða sérfæðis og/eða ákveðin fjárhæð til kaupa á næringarefni eða sérfæði. Í ofangreindri töflu birta Sjúkratryggingar þín réttindi vegna næringar og/eða sérfæðis sem sótt hefur verið um. Þegar innan við 60 dagar eru eftir af innklaupaheimild, þá litast viðkomandi lína gul í töflu.',
   },
   physicalTherapy: {
     id: 'sp.health:physical-therapy',

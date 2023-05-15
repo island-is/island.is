@@ -17,7 +17,7 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
 import LinkButton from '../../components/LinkButton/LinkButton'
 
@@ -27,8 +27,6 @@ const AidsAndNutrition = () => {
 
   const { loading, error, data } = useGetAidsAndNutritionQuery()
 
-  const [selectedTab, setSelectedTab] = useState('0')
-
   const supportData = {
     aids: data?.getRightsPortalAidsAndNutrition?.aids ?? [],
     nutrition: data?.getRightsPortalAidsAndNutrition?.nutrition ?? [],
@@ -37,11 +35,25 @@ const AidsAndNutrition = () => {
   const tabs = [
     supportData.aids.length > 0 && {
       label: formatMessage(messages.aids),
-      content: <AidsAndNutritionTabsContent data={supportData.aids} />,
+      content: (
+        <AidsAndNutritionTabsContent
+          data={supportData.aids}
+          footnote={formatMessage(messages['aidsDisclaimer'])}
+          link="https://island.is/einnota-hjalpartaeki"
+          linkText={formatMessage(messages.aidsDescriptionInfo)}
+        />
+      ),
     },
     supportData.nutrition.length > 0 && {
       label: formatMessage(messages.nutrition),
-      content: <AidsAndNutritionTabsContent data={supportData.nutrition} />,
+      content: (
+        <AidsAndNutritionTabsContent
+          data={supportData.nutrition}
+          footnote={formatMessage(messages['nutritionDisclaimer'])}
+          link="https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis"
+          linkText={formatMessage(messages.nutritionDescriptionInfo)}
+        />
+      ),
     },
   ].filter((x) => x !== false) as TabType[]
 
@@ -80,8 +92,7 @@ const AidsAndNutrition = () => {
             label={formatMessage(messages.chooseAidsOrNutrition)}
             tabs={tabs}
             contentBackground="transparent"
-            selected={selectedTab}
-            onChange={(id) => setSelectedTab(id)}
+            selected="0"
             size="xs"
           />
         </Box>
@@ -92,9 +103,17 @@ const AidsAndNutrition = () => {
 
 interface Props {
   data: Array<AidOrNutrition>
+  footnote: string
+  link: string
+  linkText: string
 }
 
-const AidsAndNutritionTabsContent: FC<Props> = ({ data }) => {
+const AidsAndNutritionTabsContent: FC<Props> = ({
+  data,
+  footnote,
+  link,
+  linkText,
+}) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
@@ -168,19 +187,10 @@ const AidsAndNutritionTabsContent: FC<Props> = ({ data }) => {
       </Box>{' '}
       <Box paddingTop={4}>
         <Text variant="small" paddingBottom={2}>
-          {formatMessage(messages['aidsAndNutritionDisclaimer'])}
+          {footnote}
         </Text>
         {}
-        <Inline space={3}>
-          <LinkButton
-            to="https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis"
-            text={formatMessage(messages.aidsAndNutritionDescriptionInfo1)}
-          />
-          <LinkButton
-            to="https://island.is/einnota-hjalpartaeki"
-            text={formatMessage(messages.aidsAndNutritionDescriptionInfo2)}
-          />
-        </Inline>
+        <LinkButton to={link} text={linkText} />
       </Box>
     </Box>
   )
