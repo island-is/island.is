@@ -260,11 +260,13 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   const metaTitle = `${newsItem?.title ?? n('pageTitle')} | Ísland.is`
 
+  const socialImage = newsItem?.featuredImage ?? newsItem?.image
+
   const newsItemMeta = !!newsItem && {
     description: newsItem.intro,
-    imageUrl: newsItem.image?.url,
-    imageWidth: newsItem.image?.width?.toString(),
-    imageHeight: newsItem.image?.height?.toString(),
+    imageUrl: socialImage?.url,
+    imageWidth: socialImage?.width?.toString(),
+    imageHeight: socialImage?.height?.toString(),
   }
 
   return (

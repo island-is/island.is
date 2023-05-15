@@ -42,6 +42,7 @@ const renderLinkButton = (text: string, href: string) => {
 const useAppealAlertBanner = (
   workingCase: TempCase,
   onAppealAfterDeadline?: () => void,
+  onStatementAfterDeadline?: () => void,
   onReceiveAppeal?: () => void,
 ) => {
   const { formatMessage } = useIntl()
@@ -65,6 +66,7 @@ const useAppealAlertBanner = (
     appealState,
     isAppealDeadlineExpired,
     appealReceivedByCourtDate,
+    isStatementDeadlineExpired,
   } = workingCase
 
   const hasCurrentUserSentStatement =
@@ -75,8 +77,7 @@ const useAppealAlertBanner = (
   if (user?.institution?.type === InstitutionType.HIGH_COURT) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired:
-        workingCase.isStatementDeadlineExpired || false,
+      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
   }
@@ -85,8 +86,7 @@ const useAppealAlertBanner = (
   else if (appealState === CaseAppealState.RECEIVED) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired:
-        workingCase.isStatementDeadlineExpired || false,
+      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
       statementDeadline: formatDate(statementDeadline, 'PPPp'),
     })
     // if the current user has already sent a statement, we don't want to display
@@ -110,11 +110,17 @@ const useAppealAlertBanner = (
         </Text>
       )
     } else {
-      child = renderLinkButton(
-        formatMessage(strings.statementLinkText),
-        isDefenderRoleUser
-          ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
-          : `${STATEMENT_ROUTE}/${workingCase.id}`,
+      child = isStatementDeadlineExpired ? (
+        <Button variant="text" size="small" onClick={onStatementAfterDeadline}>
+          {formatMessage(strings.statementLinkText)}
+        </Button>
+      ) : (
+        renderLinkButton(
+          formatMessage(strings.statementLinkText),
+          isDefenderRoleUser
+            ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
+            : `${STATEMENT_ROUTE}/${workingCase.id}`,
+        )
       )
     }
   }
