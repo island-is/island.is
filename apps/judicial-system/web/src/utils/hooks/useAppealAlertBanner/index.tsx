@@ -101,7 +101,7 @@ const useAppealAlertBanner = (
     // the link to send a statement, instead we want to display the date it was sent
     if (hasCurrentUserSentStatement) {
       child = (
-        <Text variant="h4" color="mint800">
+        <Text variant="small" color="mint800" fontWeight="semiBold">
           {formatMessage(strings.statementSentDescription, {
             statementSentDate: isProsecutionRoleUser
               ? formatDate(prosecutorStatementDate, 'PPPp')
@@ -139,7 +139,7 @@ const useAppealAlertBanner = (
     if (isProsecutionRoleUser || isDefenderRoleUser) {
       child = hasCurrentUserSentStatement
         ? (child = (
-            <Text variant="h4" color="mint800">
+            <Text variant="small" color="mint800" fontWeight="semiBold">
               {formatMessage(strings.statementSentDescription, {
                 statementSentDate: isProsecutionRoleUser
                   ? formatDate(prosecutorStatementDate, 'PPPp')
