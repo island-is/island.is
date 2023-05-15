@@ -19,12 +19,11 @@ const schema = z.object({
 })
 
 export type RotateSecretResult =
-  | ({
+  | {
       data: RotateSecretMutation['rotateAuthAdminClientSecret']
-    } & {
       /** Global error message if the mutation fails */
       globalError?: boolean
-    })
+    }
   | undefined
 
 export const rotateSecretAction: WrappedActionFn = ({ client }) => async ({

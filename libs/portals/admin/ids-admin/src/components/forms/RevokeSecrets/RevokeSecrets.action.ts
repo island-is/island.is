@@ -1,10 +1,7 @@
 import { z } from 'zod'
 
 import { WrappedActionFn } from '@island.is/portals/core'
-import {
-  validateFormData,
-  ValidateFormDataResult,
-} from '@island.is/react-spa/shared'
+import { validateFormData } from '@island.is/react-spa/shared'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import {
@@ -12,21 +9,17 @@ import {
   RevokeSecretsMutation,
   RevokeSecretsMutationVariables,
 } from './RevokeSecrets.generated'
-import IDSAdmin from '../../../screens/IDSAdmin'
-import { IDSAdminPaths } from '../../../lib/paths'
-import { redirect } from 'react-router-dom'
 
 const schema = z.object({
   environment: z.nativeEnum(AuthAdminEnvironment),
 })
 
-const resultSchema = z.boolean()
-
 export type RevokeSecretsResult =
-  | (ValidateFormDataResult<typeof resultSchema> & {
+  | {
+      data: boolean
       /** Global error message if the mutation fails */
       globalError?: boolean
-    })
+    }
   | undefined
 
 export const revokeSecretsAction: WrappedActionFn = ({ client }) => async ({
