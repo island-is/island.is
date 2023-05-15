@@ -12,6 +12,7 @@ import React, { useContext } from 'react'
 import { ShadowBox } from '../../ShadowBox/ShadowBox'
 import { ClientContext } from '../../../shared/context/ClientContext'
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
+import { getTranslatedValue } from '@island.is/portals/core'
 
 interface AddPermissionsProps {
   isVisible: boolean
@@ -20,7 +21,7 @@ interface AddPermissionsProps {
 }
 
 function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const [selected, setSelected] = React.useState<
     Map<string, AuthAdminClientAllowedScope>
   >(new Map())
@@ -119,10 +120,14 @@ function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
                   />
                 </T.Data>
                 <T.Data>
-                  <Text variant="eyebrow">{item.displayName}</Text>
+                  <Text variant="eyebrow">
+                    {getTranslatedValue(item.displayName, locale)}
+                  </Text>
                   {item.name}
                 </T.Data>
-                <T.Data>{item.description}</T.Data>
+                <T.Data>
+                  {getTranslatedValue(item.description ?? [], locale)}
+                </T.Data>
               </T.Row>
             ))}
           </T.Body>

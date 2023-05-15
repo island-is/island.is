@@ -9,13 +9,14 @@ import { useParams } from 'react-router-dom'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import AddPermissions from '../forms/AddPermissions/AddPermissions'
+import { getTranslatedValue } from '@island.is/portals/core'
 
 interface PermissionsProps {
-  allowedScopes?: AuthAdminClientAllowedScope[] | null
+  allowedScopes?: AuthAdminClientAllowedScope[] | undefined
 }
 
 function Permissions({ allowedScopes }: PermissionsProps) {
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const params = useParams()
   const [permissions, setPermissions] = useState<AuthAdminClientAllowedScope[]>(
@@ -50,6 +51,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
     )
     setAddedScopes(newAddedScopes)
     setPermissions(newPermissions)
+
     setRemovedScopes((prevState) => {
       if (
         [...addedScopes, ...prevState].find(
@@ -79,8 +81,8 @@ function Permissions({ allowedScopes }: PermissionsProps) {
       </Box>
       {hasData && (
         <ShadowBox style={{ maxHeight: 440 }}>
-          <T.Table>
-            <T.Head>
+          <T.Table box={{ overflow: 'initial' }}>
+            <T.Head sticky>
               <T.Row>
                 <T.HeadData>
                   {formatMessage(m.permissionsTableLabelName)}
@@ -104,11 +106,15 @@ function Permissions({ allowedScopes }: PermissionsProps) {
                           color="blue400"
                         />
                       )}
-                      <Text variant="eyebrow">{item.displayName}</Text>
+                      <Text variant="eyebrow">
+                        {getTranslatedValue(item.displayName, locale)}
+                      </Text>
                     </Box>
                     {item.name}
                   </T.Data>
-                  <T.Data>{item.description}</T.Data>
+                  <T.Data>
+                    {getTranslatedValue(item.description ?? [], locale)}
+                  </T.Data>
                   <T.Data>
                     <Button
                       onClick={() => handleRemovedPermissions(item)}

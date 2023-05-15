@@ -57,22 +57,22 @@ const SubscriptionChoices = ({
       <Inline collapseBelow="lg" space="gutter">
         <CheckboxBox>
           <Checkbox
-            id={allKey}
-            label="Allar breytingar"
-            checked={Boolean(
-              item.subscriptionType === SubscriptionType.AllChanges,
-            )}
-            onChange={() => onCheckboxChange(SubscriptionType.AllChanges)}
-          />
-        </CheckboxBox>
-        <CheckboxBox>
-          <Checkbox
             id={statusKey}
             label="Einungis ný mál"
             checked={Boolean(
               item.subscriptionType === SubscriptionType.OnlyNew,
             )}
             onChange={() => onCheckboxChange(SubscriptionType.OnlyNew)}
+          />
+        </CheckboxBox>
+        <CheckboxBox>
+          <Checkbox
+            id={allKey}
+            label="Ný mál og breytingar"
+            checked={Boolean(
+              item.subscriptionType === SubscriptionType.AllChanges,
+            )}
+            onChange={() => onCheckboxChange(SubscriptionType.AllChanges)}
           />
         </CheckboxBox>
       </Inline>

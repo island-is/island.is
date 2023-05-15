@@ -7,8 +7,6 @@ import {
   MeClientsControllerUpdateRequest,
 } from '@island.is/clients/auth/admin-api'
 import { Environment } from '@island.is/shared/types'
-import { AdminScopeDTO } from '@island.is/auth-api-lib'
-import { isDefined } from '@island.is/shared/utils'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { ClientSecretInput } from './dto/client-secret.input'
@@ -22,6 +20,7 @@ import { ClientSecret } from './models/client-secret.model'
 import { Client } from './models/client.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import { ClientAvailableScopeInput } from './dto/client-available-scope.input'
+import { environments } from '../shared/constants/environments'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -46,11 +45,7 @@ export class ClientsService extends MultiEnvironmentService {
 
     const clientsMap = new Map<string, ClientEnvironment[]>()
 
-    for (const [index, env] of [
-      Environment.Development,
-      Environment.Staging,
-      Environment.Production,
-    ].entries()) {
+    for (const [index, env] of environments.entries()) {
       for (const client of clients[index] ?? []) {
         if (!clientsMap.has(client.clientId)) {
           clientsMap.set(client.clientId, [])
@@ -101,11 +96,7 @@ export class ClientsService extends MultiEnvironmentService {
     ])
 
     const clientEnvs: ClientEnvironment[] = []
-    for (const [index, env] of [
-      Environment.Development,
-      Environment.Staging,
-      Environment.Production,
-    ].entries()) {
+    for (const [index, env] of environments.entries()) {
       const client = clients[index]
       if (client) {
         clientEnvs.push({
@@ -136,7 +127,7 @@ export class ClientsService extends MultiEnvironmentService {
       },
     }
 
-    const created = await Promise.allSettled(
+    const settledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
         return this.adminApiByEnvironmentWithAuth(
           environment,
@@ -145,21 +136,13 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    return created
-      .map((resp, index) => {
-        if (resp.status === 'fulfilled' && resp.value) {
-          return {
-            clientId: resp.value.clientId,
-            environment: input.environments[index],
-          }
-        } else if (resp.status === 'rejected') {
-          this.logger.error(
-            `Failed to create application ${input.clientId} in environment ${input.environments[index]}`,
-            resp.reason,
-          )
-        }
-      })
-      .filter(isDefined)
+    return this.handleSettledPromises(settledPromises, {
+      mapper: (client, index) => ({
+        clientId: client.clientId,
+        environment: input.environments[index],
+      }),
+      prefixErrorMessage: `Failed to create application ${input.clientId}`,
+    })
   }
 
   async patchClient(
@@ -187,27 +170,14 @@ export class ClientsService extends MultiEnvironmentService {
       }),
     )
 
-    const patchClientResponses = [] as ClientEnvironment[]
-
-    updated.map((resp, index) => {
-      if (resp.status === 'fulfilled' && resp.value) {
-        patchClientResponses.push({
-          ...resp.value,
-          id: this.formatClientId(
-            resp.value.clientId,
-            input.environments[index],
-          ),
-          environment: input.environments[index],
-        })
-      } else if (resp.status === 'rejected') {
-        this.logger.error(
-          `Failed to update application ${input.clientId} in environment ${input.environments[index]}`,
-          resp.reason,
-        )
-      }
+    return this.handleSettledPromises(updated, {
+      mapper: (client, index) => ({
+        ...client,
+        id: this.formatClientId(client.clientId, input.environments[index]),
+        environment: input.environments[index],
+      }),
+      prefixErrorMessage: `Failed to update application ${input.clientId}`,
     })
-
-    return patchClientResponses
   }
 
   async getClientSecrets(
@@ -286,7 +256,7 @@ export class ClientsService extends MultiEnvironmentService {
   async getAllowedScopes(
     user: User,
     input: ClientAllowedScopeInput,
-  ): Promise<AdminScopeDTO[]> {
+  ): Promise<ClientAllowedScope[]> {
     const apiScopes = await this.adminApiByEnvironmentWithAuth(
       input.environment,
       user,
@@ -295,7 +265,13 @@ export class ClientsService extends MultiEnvironmentService {
       clientId: input.clientId,
     })
 
-    return apiScopes ?? []
+    return (
+      apiScopes?.map(({ name, displayName, description }) => ({
+        name,
+        displayName,
+        description,
+      })) ?? []
+    )
   }
 
   async getScopesByTenantId(
@@ -305,7 +281,7 @@ export class ClientsService extends MultiEnvironmentService {
     const apiScopes = await this.adminApiByEnvironmentWithAuth(
       input.environment,
       user,
-    )?.meScopesControllerFindAll({
+    )?.meScopesControllerFindAllByTenantId({
       tenantId: input.tenantId,
     })
 
