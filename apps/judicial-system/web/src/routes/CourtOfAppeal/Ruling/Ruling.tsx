@@ -124,7 +124,7 @@ const CourtOfAppealRuling: React.FC = () => {
         <Box marginBottom={7}>
           <Text as="h2" variant="h2">
             {formatMessage(strings.caseNumber, {
-              caseNumber: `${workingCase.appealCaseNumber}/2023`,
+              caseNumber: `${workingCase.appealCaseNumber}`,
             })}
           </Text>
           <Text as="h3" variant="default" fontWeight="semiBold">

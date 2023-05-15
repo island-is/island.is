@@ -7,6 +7,7 @@ import {
   AdminScopeDTO,
   ApiScopeUserClaim,
   SequelizeConfigService,
+  TranslatedValueDto,
 } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -34,7 +35,10 @@ const superUser = createCurrentUser({
   scope: [AdminPortalScope.idsAdminSuperUser],
 })
 
-const createMockedApiScopes = (len = 3) =>
+const createMockedApiScopes = (
+  len = 3,
+  scope?: Partial<Omit<AdminScopeDTO, 'name' | 'displayName' | 'description'>>,
+) =>
   Array.from({ length: len }).map(
     (_, i) =>
       ({
@@ -44,19 +48,27 @@ const createMockedApiScopes = (len = 3) =>
             locale: 'is',
             value: `Scope ${i + 1} description`,
           },
+          {
+            locale: 'en',
+            value: `Scope ${i + 1} EN description`,
+          },
         ],
         displayName: [
           {
             locale: 'is',
             value: `Scope ${i + 1} display name`,
           },
+          {
+            locale: 'en',
+            value: `Scope ${i + 1} EN display name`,
+          },
         ],
         domainName: TENANT_ID,
+        ...scope,
       } as AdminScopeDTO),
   )
 
 const mockedApiScopes = createMockedApiScopes(2)
-const mockedCreateApiScope = createMockedApiScopes(1)[0]
 
 type CreateTestData = {
   app: TestApp
@@ -70,7 +82,7 @@ const createTestData = async ({
   tenantOwnerNationalId,
 }: CreateTestData) => {
   const fixtureFactory = new FixtureFactory(app)
-  await fixtureFactory.createDomain({
+  const domain = await fixtureFactory.createDomain({
     name: tenantId,
     nationalId: tenantOwnerNationalId || createNationalId('company'),
     apiScopes: mockedApiScopes.map(({ name, displayName, description }) => ({
@@ -79,6 +91,17 @@ const createTestData = async ({
       description: description[0].value,
     })),
   })
+
+  if (domain.scopes) {
+    await Promise.all(
+      domain.scopes.map((apiScope, i) =>
+        fixtureFactory.createTranslations(apiScope, 'en', {
+          displayName: `Scope ${i + 1} EN display name`,
+          description: `Scope ${i + 1} EN description`,
+        }),
+      ),
+    )
+  }
 }
 
 interface GetTestCase {
@@ -198,6 +221,8 @@ interface CreateTestCase {
   }
 }
 
+const mockedCreateApiScope = createMockedApiScopes(1)[0]
+
 const createInput = {
   name: `${TENANT_ID}/${faker.random.word()}`,
   displayName: faker.random.word(),
@@ -270,6 +295,123 @@ const createTestCases: Record<string, CreateTestCase> = {
       body: {
         detail: 'Invalid scope name: "invalid_scope_name"',
       },
+    },
+  },
+}
+
+interface PatchTestCase {
+  user: User
+  tenantId: string
+  scopeName: string
+  input: {
+    displayName?: TranslatedValueDto[]
+    description?: TranslatedValueDto[]
+    grantToAuthenticatedUser?: boolean
+    grantToLegalGuardians?: boolean
+    grantToProcuringHolders?: boolean
+    allowExplicitDelegationGrant?: boolean
+    isAccessControlled?: boolean
+  }
+  expected: {
+    status: number
+    body: AdminScopeDTO | Record<string, unknown>
+  }
+}
+
+const mockedPatchApiScope = createMockedApiScopes(1, {
+  grantToAuthenticatedUser: false,
+  grantToLegalGuardians: false,
+  grantToProcuringHolders: false,
+  allowExplicitDelegationGrant: false,
+  isAccessControlled: false,
+})[0]
+
+const inputPatch = {
+  displayName: [
+    {
+      locale: 'is',
+      value: 'Updated scope displayName',
+    },
+    {
+      locale: 'en',
+      value: 'Updated EN scope displayName',
+    },
+  ],
+  description: [
+    {
+      locale: 'is',
+      value: 'Updated scope description',
+    },
+    {
+      locale: 'en',
+      value: 'Updated EN scope description',
+    },
+  ],
+  grantToAuthenticatedUser: true,
+  grantToLegalGuardians: true,
+  grantToProcuringHolders: true,
+  allowExplicitDelegationGrant: true,
+  isAccessControlled: true,
+}
+
+const patchExpectedOutput = {
+  alsoForDelegatedUser: false,
+  automaticDelegationGrant: false,
+  domainName: TENANT_ID,
+  emphasize: false,
+  enabled: true,
+  grantToPersonalRepresentatives: false,
+  name: `${TENANT_ID}/scope1`,
+  order: 0,
+  required: false,
+  showInDiscoveryDocument: true,
+  ...inputPatch,
+}
+
+const patchTestCases: Record<string, PatchTestCase> = {
+  'should update scope and have access as current user': {
+    user: currentUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: inputPatch,
+    expected: {
+      status: 200,
+      body: patchExpectedOutput,
+    },
+  },
+  'should update scope and have access as super user': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: inputPatch,
+    expected: {
+      status: 200,
+      body: patchExpectedOutput,
+    },
+  },
+  'should return a bad request because of invalid input': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    scopeName: mockedPatchApiScope.name,
+    input: {} as typeof inputPatch,
+    expected: {
+      status: 400,
+      body: {
+        detail: 'No fields provided to update.',
+        status: 400,
+        title: 'Bad Request',
+        type: 'https://httpstatuses.org/400',
+      },
+    },
+  },
+  'should return a no content exception because scope does not exist': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    scopeName: 'scope_does_not_exist',
+    input: inputPatch,
+    expected: {
+      status: 204,
+      body: {},
     },
   },
 }
@@ -360,6 +502,7 @@ describe('MeScopesController', () => {
             allowExplicitDelegationGrant: false,
             automaticDelegationGrant: false,
             alsoForDelegatedUser: false,
+            isAccessControlled: false,
             required: false,
             emphasize: false,
             domainName: TENANT_ID,
@@ -390,7 +533,7 @@ describe('MeScopesController', () => {
         })
       })
 
-      it(testCaseName, async () => {
+      it(`POST: ${testCaseName}`, async () => {
         const apiScopeUserClaim = app.get(getModelToken(ApiScopeUserClaim))
 
         // Act
@@ -415,6 +558,7 @@ describe('MeScopesController', () => {
             grantToLegalGuardians: false,
             grantToPersonalRepresentatives: false,
             grantToProcuringHolders: false,
+            isAccessControlled: false,
             order: 0,
             required: false,
             showInDiscoveryDocument: true,
@@ -433,6 +577,43 @@ describe('MeScopesController', () => {
           // Assert response
           expect(response.body).toMatchObject(testCase.expected.body)
         }
+      })
+    })
+
+    // PATCH: /v2/me/tenants/:tenantId/scopes/:scopeName
+    describe.each(Object.keys(patchTestCases))('%s', (testCaseName) => {
+      const testCase = patchTestCases[testCaseName]
+      let app: TestApp
+      let server: request.SuperTest<request.Test>
+
+      beforeAll(async () => {
+        app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: testCase.user,
+        })
+        server = request(app.getHttpServer())
+
+        await createTestData({
+          app,
+          tenantId: testCase.tenantId,
+          tenantOwnerNationalId: testCase.user.nationalId,
+        })
+      })
+
+      it(`PATCH: ${testCaseName}`, async () => {
+        // Act
+        const response = await server
+          .patch(
+            `/v2/me/tenants/${testCase.tenantId}/scopes/${encodeURIComponent(
+              testCase.scopeName,
+            )}`,
+          )
+          .send(testCase.input)
+
+        // Assert response
+        expect(response.status).toEqual(testCase.expected.status)
+        expect(response.body).toEqual(testCase.expected.body)
       })
     })
   })
