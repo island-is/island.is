@@ -102,7 +102,9 @@ const CourtOfAppealOverview: React.FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() => router.push(constants.CASES_ROUTE)}
+                onClick={() =>
+                  router.push(constants.COURT_OF_APPEAL_CASES_ROUTE)
+                }
               >
                 {formatMessage(core.back)}
               </Button>
