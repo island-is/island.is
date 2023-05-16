@@ -75,7 +75,7 @@ import {
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
-import { ShhFooter } from './Themes/SHHTheme'
+import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -234,6 +234,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <GevHeader organizationPage={organizationPage} />
     case 'hve':
       return <HveHeader organizationPage={organizationPage} />
+    case 'shh':
+      return <ShhHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
