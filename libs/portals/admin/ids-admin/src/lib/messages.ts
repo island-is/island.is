@@ -585,7 +585,7 @@ export const m = defineMessages({
   },
   permissionDisplayNameInfo: {
     id: 'ap.ids-admin:permission-display-name-info',
-    defaultMessage: 'Displayed on the log-in screen of your app',
+    defaultMessage: 'Displayed on the login screen of your app',
   },
   permissionEmptyHeading: {
     id: 'ap.ids-admin:permission-empty-heading',
