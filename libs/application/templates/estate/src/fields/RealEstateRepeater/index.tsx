@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -27,6 +27,8 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
+
+  const { clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { assets: EstateAsset[] }
@@ -85,6 +87,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                           enabled: !asset.enabled,
                         }
                         update(index, updatedAsset)
+                        clearErrors(`${id}[${index}].marketValue`)
                       }}
                     >
                       {asset.enabled
