@@ -169,6 +169,15 @@ export class PaymentService {
         chargeItemCodes,
       )
 
+      //check if payment already exists
+      const foundPayment = await this.findPaymentByApplicationId(applicationId)
+      if (foundPayment) {
+        const currentCharge = await this.chargeFjsV2ClientService.getChargeStatus(
+          foundPayment.id,
+        )
+        //update charge with new stuff.
+      }
+
       //2. Create and insert payment db entry
       const paymentModel = await this.createPaymentModel(
         chargeItems,
