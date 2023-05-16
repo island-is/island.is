@@ -594,12 +594,11 @@ export const m = defineMessages({
   permissionEmptyDescription: {
     id: 'ap.ids-admin:permission-empty-description',
     defaultMessage:
-      'Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi.',
+      'You can create an permission by clicking on Create permission.',
   },
   permissionListDescription: {
     id: 'ap.ids-admin:permission-list-description',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi.',
+    defaultMessage: 'Here you can view and create permissions.',
   },
   permissionsSearchPlaceholder: {
     id: 'ap.ids-admin:permissions-search-placeholder',
