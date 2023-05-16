@@ -118,12 +118,24 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-display-name',
     defaultMessage: 'Name is required.',
   },
+  errorDescription: {
+    id: 'ap.ids-admin:error-description',
+    defaultMessage: 'Description is required.',
+  },
   errorClientId: {
     id: 'ap.ids-admin:error-client-id',
     defaultMessage: 'Application ID is required.',
   },
   errorClientIdRegex: {
     id: 'ap.ids-admin:error-client-id-regex',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+  },
+  errorScopeId: {
+    id: 'ap.ids-admin:error-scope-id',
+    defaultMessage: 'Scope ID is required.',
+  },
+  errorScopeIdRegex: {
+    id: 'ap.ids-admin:error-scope-id-regex',
     defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
   },
   errorEnvironment: {
@@ -546,6 +558,51 @@ export const m = defineMessages({
   closeModal: {
     id: 'ap.ids-admin:close-modal',
     defaultMessage: 'Close dialog',
+  },
+  listOfPermissions: {
+    id: 'ap.ids-admin:list-of-permissions',
+    defaultMessage: 'List of permissions',
+  },
+  permissionsManagement: {
+    id: 'ap.ids-admin:permissions-management',
+    defaultMessage: 'Management',
+  },
+  createPermission: {
+    id: 'ap.ids-admin:create-permission',
+    defaultMessage: 'Create permission',
+  },
+  permissionId: {
+    id: 'ap.ids-admin:permission-id',
+    defaultMessage: 'Permission ID',
+  },
+  permissionDescription: {
+    id: 'ap.ids-admin:permission-description',
+    defaultMessage: 'Description',
+  },
+  permissionDescriptionInfo: {
+    id: 'ap.ids-admin:permission-description-info',
+    defaultMessage: 'Users see this when they sign in, and manage consents.',
+  },
+  permissionDisplayNameInfo: {
+    id: 'ap.ids-admin:permission-display-name-info',
+    defaultMessage: 'Displayed on the login screen of your app',
+  },
+  permissionEmptyHeading: {
+    id: 'ap.ids-admin:permission-empty-heading',
+    defaultMessage: 'No permission created',
+  },
+  permissionEmptyDescription: {
+    id: 'ap.ids-admin:permission-empty-description',
+    defaultMessage:
+      'You can create an permission by clicking on Create permission.',
+  },
+  permissionListDescription: {
+    id: 'ap.ids-admin:permission-list-description',
+    defaultMessage: 'Here you can view and create permissions.',
+  },
+  permissionsSearchPlaceholder: {
+    id: 'ap.ids-admin:permissions-search-placeholder',
+    defaultMessage: 'Search by name or ID',
   },
   dangerZone: {
     id: 'ap.ids-admin:danger-zone',

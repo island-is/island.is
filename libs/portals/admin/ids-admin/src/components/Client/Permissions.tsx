@@ -1,4 +1,4 @@
-import ContentCard from '../../shared/components/ContentCard'
+import ContentCard from '../../shared/components/ContentCard/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Box, Button, Table as T, Text, Icon } from '@island.is/island-ui/core'
