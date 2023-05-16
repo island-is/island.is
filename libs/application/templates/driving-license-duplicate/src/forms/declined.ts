@@ -3,12 +3,14 @@ import {
   buildCustomField,
   buildMultiField,
   buildDescriptionField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhoto'
 import { HasQualitySignatureData } from '../fields/QualitySignature/hooks/useQualitySignature'
 import { m } from '../lib/messages'
-import { requirementsMet } from '../lib/utils'
+import { allowFakeCondition, requirementsMet } from '../lib/utils'
+import { YES } from '../lib/constants'
 
 export const declined: Form = buildForm({
   id: 'declined',
@@ -20,7 +22,8 @@ export const declined: Form = buildForm({
       id: 'listRejected',
       title: m.rejectedTitle,
       description: m.rejectedSubtitle,
-      condition: (_, externalData) => !requirementsMet(externalData),
+      condition: (application, externalData) =>
+        !requirementsMet(application, externalData),
       children: [
         buildCustomField({
           id: 'categories',
@@ -45,7 +48,13 @@ export const declined: Form = buildForm({
             id: 'qphotoRejetedAlert',
             title: '',
             component: 'Alert',
-            condition: (_, externalData) => {
+            condition: (answers, externalData) => {
+              if (allowFakeCondition(YES)) {
+                return !getValueViaPath<boolean>(
+                  answers,
+                  'fakeData.hasQualityPhoto',
+                )
+              }
               return (
                 (externalData.qualityPhoto as HasQualityPhotoData)?.data
                   ?.hasQualityPhoto === false

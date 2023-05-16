@@ -27,7 +27,7 @@ export const sectionDelivery = buildSection({
           placeholder: m.deliveryMethodOfficeSelectPlaceholder,
           options: ({
             externalData: {
-              districts: { data },
+              districtCommissioners: { data },
             },
           }) => {
             return (data as DistrictCommissionerAgencies[]).map(

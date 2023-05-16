@@ -1,12 +1,14 @@
-import { buildForm } from '@island.is/application/core'
+import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { sectionDataProviders } from './applicationSections/sectionDataProviders'
 import { sectionInformation } from './applicationSections/sectionInformation'
 import { sectionDelivery } from './applicationSections/sectionDelivery'
 import { sectionOverview } from './applicationSections/sectionOverview'
 import { sectionPayment } from './applicationSections/sectionPayment'
+import { m } from '../lib/messages'
+import { sectionFakeData } from './applicationSections/sectionFakeData'
 
-export const getApplication = (): Form => {
+export const getApplication = ({ allowFakeData = false }): Form => {
   return buildForm({
     id: 'DrivingLicenseDuplicateDraftForm',
     title: '',
@@ -14,7 +16,14 @@ export const getApplication = (): Form => {
     renderLastScreenButton: true,
     renderLastScreenBackButton: true,
     children: [
-      sectionDataProviders,
+      buildSection({
+        id: 'externalData',
+        title: m.dataCollectionTitle,
+        children: [
+          ...(allowFakeData ? [sectionFakeData] : []),
+          sectionDataProviders,
+        ],
+      }),
       sectionInformation,
       sectionDelivery,
       sectionOverview,

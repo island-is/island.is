@@ -13,10 +13,20 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const chargeCode = 'AY110'
-  const chargeItems = getValueViaPath(
-    application.externalData,
-    'payment.data',
-  ) as PaymentCatalogItem[]
+  // TODO: uncomment when payment is no longer being throttled for testing stress
+  //const chargeItems = getValueViaPath(
+  //  application.externalData,
+  //  'payment.data',
+  //) as PaymentCatalogItem[]
+
+  // TODO: remove when payment is no longer being throttled for testing stress
+  const chargeItems = [
+    {
+      chargeItemCode: 'AY110',
+      chargeItemName: 'Ökuskírteini',
+      priceAmount: 15000,
+    },
+  ] as PaymentCatalogItem[]
   const chargeItem = chargeItems.find(
     (item) => item.chargeItemCode === chargeCode,
   )

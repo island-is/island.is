@@ -35,3 +35,11 @@ export type SubmitResponse = {
   success: boolean
   orderId?: string
 }
+
+export type DrivingLicenseDuplicateFakeData = {
+  useFakeData: YesOrNo
+  currentLicense: 'none' | 'B-full'
+  licenseIssuedDate?: string
+  hasQualityPhoto: YesOrNo
+  hasQualitySignature: YesOrNo
+}

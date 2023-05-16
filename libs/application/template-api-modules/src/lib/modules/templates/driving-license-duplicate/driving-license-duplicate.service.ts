@@ -3,23 +3,28 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
-const calculateNeedsHealthCert = (healthDeclaration = {}) => {
-  return !!Object.values(healthDeclaration).find((val) => val === 'yes')
-}
+
 
 @Injectable()
-export class DrivingLicenseDuplicateService {
+export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
+  
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
+  ) {
+    super(ApplicationTypes.DRIVING_LICENSE_DUPLICATE)
+  }
+
+  calculateNeedsHealthCert = (healthDeclaration = {}) => {
+    return !!Object.values(healthDeclaration).find((val) => val === 'yes')
+  }
 
   async createCharge({
     application: { id, answers },

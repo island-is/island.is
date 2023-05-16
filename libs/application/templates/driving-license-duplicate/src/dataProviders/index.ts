@@ -1,3 +1,11 @@
-export { DistrictsProvider } from './DistrictsProvider'
-export { QualitySignatureProvider } from './QualitySignatureProvider'
-export { CurrentLicenseApi } from '@island.is/application/types'
+import {
+  InstitutionNationalIds,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+
+export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: InstitutionNationalIds.SYSLUMENN,
+  },
+  externalDataId: 'payment',
+})

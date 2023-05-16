@@ -2,6 +2,8 @@ import { applicationForMessages } from './messages'
 import { MessageDescriptor } from 'react-intl'
 import { ExternalData } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
+import { FormValue } from '@island.is/application/types'
+import { YES } from './constants'
 
 type CurrentRightsMessages = {
   title: MessageDescriptor
@@ -22,14 +24,23 @@ export const getApplicationInfo = (rights: string): CurrentRightsMessages => {
 export const getCurrencyString = (n: number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
-export const requirementsMet = (externalData: ExternalData): boolean => {
-  const photo = getValueViaPath(
-    externalData,
-    'qualityPhoto.data.hasQualityPhoto',
-  )
+export const requirementsMet = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
+  let photoPath = 'qualityPhoto.data.hasQualityPhoto'
+  let signaturePath = 'qualitySignature.data.hasQualitySignature'
+  if (allowFakeCondition(YES)) {
+    photoPath = 'fakeData.hasQualityPhoto'
+    signaturePath = 'fakeData.hasQualitySignature'
+  }
+  const photo = getValueViaPath({ ...externalData, ...answers }, photoPath)
   const signature = getValueViaPath(
-    externalData,
-    'qualitySignature.data.hasQualitySignature',
+    { ...externalData, ...answers },
+    signaturePath,
   )
   return !!photo && !!signature
 }
+
+export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
+  getValueViaPath(answers, 'fakeData.useFakeData') === result

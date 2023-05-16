@@ -5,12 +5,15 @@ import {
   buildDividerField,
   buildKeyValueField,
   buildDescriptionField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
-import { NationalRegistryUser } from '@island.is/api/schema'
+import { DrivingLicense, NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
+import { allowFakeCondition } from '../../lib/utils'
+import { YES } from '../../lib/constants'
 
 export const sectionOverview = buildSection({
   id: 'overview',
@@ -51,14 +54,19 @@ export const sectionOverview = buildSection({
         buildKeyValueField({
           label: m.overviewLicenseExpires,
           width: 'half',
-          value: ({ externalData: { currentLicense } }) => 'Bingo',
-          // TODO: figure out replacement
-          //format(
-          //  new Date(
-          //    (currentLicense.data as CurrentLicenseProviderResult).expires,
-          //  ),
-          //  'dd.MM.yyyy',
-          //),
+          value: ({ externalData: { currentLicense }, answers}) => {
+            //check if fake data is being used using the utility function
+            let expiryDate = (currentLicense.data as DrivingLicense).expires
+
+            // Shouldn't get this far without B-license anyway so assuming date is set
+            if(getValueViaPath(answers, 'fakeData.useFakeData') === YES) {
+              expiryDate = new Date(new Date().setFullYear(new Date().getFullYear() + 3))
+            }
+            return format(
+              new Date(expiryDate),
+              'dd.MM.yyyy',
+            )
+          }
         }),
         buildDividerField({}),
         buildDescriptionField({

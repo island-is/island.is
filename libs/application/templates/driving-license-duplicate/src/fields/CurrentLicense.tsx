@@ -11,15 +11,28 @@ import { getApplicationInfo } from '../lib/utils'
 export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
 
-  const currentLicense =
+  const fakeLicense = getValueViaPath<string>(
+    application.answers,
+    'fakeData.currentLicense',
+  )
+
+  let currentLicense =
     getValueViaPath<any>(application.externalData, 'currentLicense.data') ??
     null
 
   if (!currentLicense || !currentLicense.categories) {
-    throw new Error('no existing license - should not happen')
+    if (!fakeLicense) {
+      throw new Error('no existing license - should not happen')
+    }
+    currentLicense = {
+      categories: [
+        {
+          name: fakeLicense,
+          expires: '2065-04-04',
+        },
+      ],
+    }
   }
-
-  console.log('currentLicense', JSON.stringify(currentLicense, null, 2))
 
   return (
     <>
@@ -29,9 +42,11 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
         </Text>
       </Box>
       <Box marginBottom={4}>
-        {
-          //currentLicense.categories.map((category, index) => {
-          [{ name: 'B', expires: '2065-04-04' }].map((category, index) => {
+        {currentLicense.categories.map(
+          (
+            category: { expires: string | number | Date; name: string },
+            index: number,
+          ) => {
             const expires =
               formatMessage(m.validTag) +
               ' ' +
@@ -95,8 +110,8 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
                 </Box>
               </Box>
             )
-          })
-        }
+          },
+        )}
       </Box>
     </>
   )
