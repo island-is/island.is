@@ -5,11 +5,10 @@ import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import { Box, Select, Stack, Tag, Text } from '@island.is/island-ui/core'
+import { Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { replaceParams } from '@island.is/react-spa/shared'
 
-import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
@@ -23,7 +22,8 @@ import Lifetime from './Lifetime'
 import Permissions from './Permissions'
 import Translations from './Translations'
 
-import * as styles from './Client.css'
+import { EnvironmentHeader } from '../forms/EnvironmentHeader/EnvironmentHeader'
+import { getTranslatedValue } from '@island.is/portals/core'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -42,7 +42,7 @@ const Client = () => {
   const client = useLoaderData() as AuthAdminClient
   const navigate = useNavigate()
   const params = useParams()
-  const { formatMessage } = useLocale()
+  const { locale } = useLocale()
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
     fromEnvironment: null,
@@ -146,64 +146,22 @@ const Client = () => {
       }}
     >
       <Stack space={3}>
-        <Box
-          display="flex"
-          columnGap={2}
-          rowGap={2}
-          justifyContent="spaceBetween"
-          flexDirection={['column', 'row']}
-        >
-          <Box flexGrow={1}>
-            <Tag outlined>{client.clientType}</Tag>
-            <Text variant="h2">
-              {client.environments[0].displayName[0].value}
-            </Text>
-          </Box>
-          <Box className={styles.select}>
-            <Select
-              name="env"
-              icon="chevronDown"
-              size="sm"
-              backgroundColor="blue"
-              label={formatMessage(m.environment)}
-              onChange={(event: any) => {
-                if (environmentExists(event.value)) {
-                  setSelectedEnvironment(
-                    client.environments.find(
-                      (env) => env.environment === event.value,
-                    ) as AuthAdminClient['environments'][0],
-                  )
-                } else {
-                  openPublishModal(event.value)
-                }
-              }}
-              value={{
-                label: selectedEnvironment.environment,
-                value: selectedEnvironment.environment,
-              }}
-              options={[
-                AuthAdminEnvironment.Development,
-                AuthAdminEnvironment.Staging,
-                AuthAdminEnvironment.Production,
-              ].map((env) => {
-                const selectedEnv = environmentExists(env)
-                if (selectedEnv) {
-                  return {
-                    label: env,
-                    value: env,
-                  }
-                }
-                return {
-                  label: formatMessage(m.publishEnvironment, {
-                    environment: env,
-                  }),
-                  value: env,
-                }
-              })}
-            />
-          </Box>
-        </Box>
-
+        <EnvironmentHeader
+          title={getTranslatedValue(selectedEnvironment.displayName, locale)}
+          selectedEnvironment={selectedEnvironment.environment}
+          onChange={(environment) => {
+            if (environmentExists(environment)) {
+              setSelectedEnvironment(
+                client.environments.find(
+                  (env) => env.environment === environment,
+                ) as AuthAdminClient['environments'][0],
+              )
+            } else {
+              openPublishModal(environment)
+            }
+          }}
+          tag={client.clientType}
+        />
         <BasicInfo
           key={`${selectedEnvironment.environment}-BasicInfo`}
           clientId={selectedEnvironment.clientId}

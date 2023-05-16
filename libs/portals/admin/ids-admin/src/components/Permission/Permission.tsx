@@ -1,19 +1,30 @@
-import { Box, Text } from '@island.is/island-ui/core'
+import { useState } from 'react'
+import { useLoaderData } from 'react-router-dom'
+import { Box } from '@island.is/island-ui/core'
+
+import { getTranslatedValue } from '@island.is/portals/core'
+import { useLocale } from '@island.is/localization'
+
+import { PermissionLoaderResult } from './Permission.loader'
+import { EnvironmentHeader } from '../forms/EnvironmentHeader/EnvironmentHeader'
 
 function Permission() {
+  const { locale } = useLocale()
+  const permissionResult = useLoaderData() as PermissionLoaderResult
+  const [selectedPermission, setSelectedPermission] = useState(
+    permissionResult.environments.find(
+      ({ environment }) =>
+        environment === permissionResult.defaultEnvironment.name,
+    ) ?? permissionResult.environments[0],
+  )
+
   return (
     <Box>
-      <Box display="flex" columnGap={5}>
-        <Box display="flex" flexDirection="column" rowGap={2}>
-          <Text as="h1" variant="h2">
-            Management
-          </Text>
-          <Text>
-            Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris
-            accumsan at tellus facilisi.
-          </Text>
-        </Box>
-      </Box>
+      <EnvironmentHeader
+        title={getTranslatedValue(selectedPermission.displayName, locale)}
+        selectedEnvironment={selectedPermission.environment}
+        onChange={(env) => console.log('onChange', env)}
+      />
     </Box>
   )
 }

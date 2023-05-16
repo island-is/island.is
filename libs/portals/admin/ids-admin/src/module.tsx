@@ -14,9 +14,10 @@ import { clientLoader } from './components/Client/Client.loader'
 import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
 import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
 import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
-import { permissionsListLoader } from './components/PermissionsList/PermissionsList.loader'
 import { createPermissionAction } from './components/forms/CreatePermission/CreatePermission.action'
 import { rotateSecretAction } from './components/forms/RotateSecret/RotateSecret.action'
+import { permissionsListLoader } from './components/PermissionsList/PermissionsList.loader'
+import { permissionLoader } from './components/Permission/Permission.loader'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -156,6 +157,7 @@ export const idsAdminModule: PortalModule = {
                 navHide: true,
                 path: IDSAdminPaths.IDSAdminPermission,
                 element: <PermissionsManagement />,
+                loader: permissionLoader(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminPermissions,
                 },
