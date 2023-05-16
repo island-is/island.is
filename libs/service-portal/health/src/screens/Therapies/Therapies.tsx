@@ -17,14 +17,12 @@ import {
   SPEECH_THERAPY,
 } from '../../utils/constants'
 import { useGetTherapiesQuery } from './Therapies.generated'
-import LinkButton from '../../components/LinkButton/LinkButton'
 
 const Therapies = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
   const { loading, error, data } = useGetTherapiesQuery()
-  console.log(data)
 
   const therapiesData = data?.getRightsPortalTherapies ?? []
 

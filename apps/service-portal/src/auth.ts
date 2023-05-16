@@ -39,6 +39,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.licensesVerify,
   ApiScope.company,
   ApiScope.vehicles,
+  ApiScope.rightsPortal,
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'

@@ -28,7 +28,7 @@ export const ApiConfig = {
             }
           : undefined,
       }),
-      basePath: 'https://midgardur-test.sjukra.is/minarsidur-jwt',
+      basePath: 'https://midgardur-test.sjukra.is/minarsidur',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',

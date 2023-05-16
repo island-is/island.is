@@ -19,14 +19,14 @@ import { AidsAndNutrition } from './models/getAidsAndNutrition.model'
 export class RightsPortalResolver {
   constructor(private readonly rightsPortalService: RightsPortalService) {}
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.rightsPortal)
   @Query(() => [Therapies], { nullable: true })
   @Audit()
   getRightsPortalTherapies(@CurrentUser() user: User) {
     return this.rightsPortalService.getTherapies(user)
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.rightsPortal)
   @Query(() => AidsAndNutrition, { nullable: true })
   @Audit()
   getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {

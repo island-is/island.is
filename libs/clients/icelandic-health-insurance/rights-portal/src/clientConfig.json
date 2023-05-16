@@ -12,7 +12,9 @@
   "paths": {
     "/v1/aidsandnutrition": {
       "get": {
-        "tags": ["aidsandnutrition"],
+        "tags": [
+          "aidsandnutrition"
+        ],
         "operationId": "aidsandnutrition",
         "responses": {
           "200": {
@@ -49,7 +51,9 @@
     },
     "/v1/dentists/current": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "dentists/current",
         "responses": {
           "200": {
@@ -86,7 +90,9 @@
     },
     "/v1/dentists/bills": {
       "get": {
-        "tags": ["dentist"],
+        "tags": [
+          "dentist"
+        ],
         "operationId": "dentists/bills",
         "parameters": [
           {
@@ -146,7 +152,9 @@
     },
     "/v1/healthcenters/current": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": [
+          "healthcenter"
+        ],
         "operationId": "healthcenters/current",
         "responses": {
           "200": {
@@ -183,8 +191,30 @@
     },
     "/v1/healthcenters/history": {
       "get": {
-        "tags": ["healthcenter"],
+        "tags": [
+          "healthcenter"
+        ],
         "operationId": "healthcenters/history",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -223,7 +253,9 @@
     },
     "/v1/therapies": {
       "get": {
-        "tags": ["therapy"],
+        "tags": [
+          "therapy"
+        ],
         "operationId": "therapies",
         "responses": {
           "200": {
@@ -294,6 +326,19 @@
             "type": "string",
             "nullable": true
           },
+          "explanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "nextAllowedMonth": {
+            "type": "string",
+            "nullable": true
+          },
           "expiring": {
             "type": "boolean",
             "nullable": true
@@ -340,8 +385,7 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "integer",
-            "format": "int32",
+            "type": "string",
             "nullable": true
           },
           "date": {
@@ -355,13 +399,13 @@
             "nullable": true
           },
           "amount": {
-            "type": "integer",
-            "format": "int32",
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "coveredAmount": {
-            "type": "integer",
-            "format": "int32",
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },
