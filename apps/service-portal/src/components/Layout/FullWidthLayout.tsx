@@ -7,7 +7,9 @@ import {
   Tabs,
   BreadcrumbsDeprecated as Breadcrumbs,
   Icon,
+  Button,
 } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import * as styles from './Layout.css'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
@@ -54,18 +56,18 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                 <GridRow>
                   <GridColumn span="12/12">
                     <Breadcrumbs color="blue400" separatorColor="blue400">
-                      <Link to="/">
-                        <Box display="inline" position="relative">
-                          <Icon
-                            className={styles.breadIcon}
-                            color="blue400"
-                            icon="chevronBack"
-                            size="small"
-                            type="outline"
-                          />
-                        </Box>
-                        <span>Til baka í yfirlit</span>
-                      </Link>
+                      <Box display="inline" className={styles.btn}>
+                        <Button
+                          preTextIcon="arrowBack"
+                          preTextIconType="filled"
+                          size="small"
+                          type="button"
+                          variant="text"
+                          onClick={() => navigate('/')}
+                        >
+                          {formatMessage(m.goBackToDashboard)}
+                        </Button>
+                      </Box>
                       {activeParent?.path && activeParent?.name && (
                         <Link to={activeParent.path}>
                           {formatMessage(activeParent.name)}

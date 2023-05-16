@@ -36,7 +36,11 @@ export const Layout: FC = ({ children }) => {
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
 
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
-  const activeParent = navigation?.children?.find((item) => item.active)
+  const activeParent = navigation?.children?.find((item) => {
+    const currentItemIsActive = item.active
+    const hasActiveChild = item.children?.find((child) => child.active)
+    return currentItemIsActive || hasActiveChild
+  })
   useScrollTopOnUpdate([pathname])
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
@@ -101,7 +105,7 @@ export const Layout: FC = ({ children }) => {
                 <GoBack />
 
                 {subNavItems && subNavItems.length > 0 && (
-                  <Box background="blue100">
+                  <Box borderRadius="large" background="blue100">
                     <Navigation
                       renderLink={(link, item) => {
                         return item?.href ? (
@@ -124,7 +128,12 @@ export const Layout: FC = ({ children }) => {
             </Sticky>
           }
         >
-          <Box as="main" component="main" style={{ marginTop: height }}>
+          <Box
+            as="main"
+            paddingBottom={9}
+            component="main"
+            style={{ marginTop: height }}
+          >
             <ContentBreadcrumbs />
             {isMobile && subNavItems && subNavItems.length > 0 && (
               <Box paddingBottom={3} width="full">

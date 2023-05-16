@@ -26,9 +26,9 @@ const SidemenuItem = ({
     unreadCounter > 0 ? 'active' : 'inactive'
   let itemText = formatMessage(item.name)
   const itemTextLength = itemText.length
-  const itemTextHover = itemTextLength > 11
+  const itemTextHover = itemTextLength > 17
   if (itemTextHover) {
-    itemText = itemText.slice(0, 10).padEnd(11, '.')
+    itemText = itemText.slice(0, 16).padEnd(17, '.')
   }
 
   return (

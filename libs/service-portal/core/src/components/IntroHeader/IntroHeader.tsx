@@ -2,7 +2,7 @@ import { GridColumn, GridRow, Hidden, Text } from '@island.is/island-ui/core'
 import { ModuleAlertBannerSection } from '../AlertMessage/ModuleAlertMessageSection'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Organization,
   useOrganizations,
@@ -17,9 +17,7 @@ interface Props {
   serviceProviderTooltip?: string
   narrow?: boolean
 }
-export const IntroHeader = (
-  props: Omit<IntroHeaderProps & Props, 'children'>,
-) => {
+export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const { marginBottom } = props
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -52,6 +50,7 @@ export const IntroHeader = (
               {formatMessage(props.intro)}
             </Text>
           )}
+          {props.children}
         </GridColumn>
         {!isMobile && currentOrganization && (
           <GridColumn span={'2/8'} offset={'1/8'}>

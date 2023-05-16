@@ -129,7 +129,6 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
 
                       {/* Display X button instead if open in mobile*/}
                       <UserMenu
-                        fullscreen
                         setUserMenuOpen={closeUserMenu}
                         showLanguageSwitcher={false}
                         userMenuOpen={userMenuOpen}

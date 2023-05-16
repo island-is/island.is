@@ -1,3 +1,3 @@
 export enum ConsentPaths {
-  Consent = 'adgangsstyring/gagnaoflun',
+  Consent = '/adgangsstyring/gagnaoflun',
 }

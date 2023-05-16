@@ -91,13 +91,14 @@ const dropdownBase: StyleWithSelectors = {
 
 const dropdownBaseMD: StyleWithSelectors = {
   top: spacing[3],
-  width: 358,
+  width: 448,
   borderRadius: theme.border.radius.large,
   filter: 'drop-shadow(0px 4px 70px rgba(0, 97, 255, 0.1))',
 }
 
 export const dropdown = style({
   ...dropdownBase,
+  overflow: 'auto',
   ...themeUtils.responsiveStyle({
     md: {
       ...dropdownBaseMD,
@@ -120,8 +121,8 @@ export const fullScreen = style({
 
 export const wrapper = style({
   maxHeight: `calc(100vh - ${spacing[12]}px)`,
-  overflowY: 'auto',
-  overflowX: 'hidden',
+  // overflowY: 'auto',
+  // overflowX: 'hidden',
 })
 
 export const closeButton = style({
@@ -164,11 +165,21 @@ export const itemContainer = style({
   height: 88,
   maxHeight: 88,
   transition: 'max-height 200ms ease-out',
-  width: '31.6%',
   ':hover': {
     borderColor: theme.color.blue600,
     cursor: 'pointer',
   },
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: '31.6%',
+    },
+    sm: {
+      width: `calc(50% - ${theme.spacing[2]}px)`,
+    },
+    xs: {
+      width: '100%',
+    },
+  }),
 })
 
 export const item = style({
