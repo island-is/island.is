@@ -16,6 +16,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
+import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 import { courtOfAppealResult as strings } from './Result.strings'
 import { courtOfAppealRuling as rulingStrings } from '../Ruling/Ruling.strings'
@@ -84,6 +85,8 @@ const CourtOfAppealResult: React.FC = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
+          <CourtOfAppealCaseOverviewHeader />
+
           <Box marginBottom={5}>
             <InfoCard
               defendants={

@@ -20,6 +20,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import { titleForCase } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
+import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
 const CourtOfAppealCaseOverviewHeader: React.FC = () => {
   const { workingCase } = useContext(FormContext)
@@ -54,7 +55,7 @@ const CourtOfAppealCaseOverviewHeader: React.FC = () => {
           )}
           {workingCase.appealedDate && (
             <Box marginTop={1}>
-              {/* <Text as="h5" variant="h5">
+              <Text as="h5" variant="h5">
                 {formatMessage(strings.appealedInfo, {
                   appealedByProsecutor:
                     workingCase.appealedByRole === UserRole.PROSECUTOR,
@@ -66,7 +67,7 @@ const CourtOfAppealCaseOverviewHeader: React.FC = () => {
                     constants.TIME_FORMAT,
                   )}`,
                 })}
-              </Text> */}
+              </Text>
             </Box>
           )}
         </Box>
