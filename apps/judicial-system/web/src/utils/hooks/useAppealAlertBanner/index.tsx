@@ -106,11 +106,18 @@ const useAppealAlertBanner = (
 
   // HIGH COURT BANNER INFO IS HANDLED HERE
   if (user?.institution?.type === InstitutionType.HIGH_COURT) {
-    title = formatMessage(strings.statementTitle)
-    description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
-      statementDeadline: formatDate(statementDeadline, 'PPPp'),
-    })
+    if (appealState === CaseAppealState.COMPLETED) {
+      title = formatMessage(strings.appealCompletedTitle, {
+        appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
+      })
+      description = getAppealDecision(formatMessage, appealRulingDecision)
+    } else {
+      title = formatMessage(strings.statementTitle)
+      description = formatMessage(strings.statementDeadlineDescription, {
+        isStatementDeadlineExpired: isStatementDeadlineExpired || false,
+        statementDeadline: formatDate(statementDeadline, 'PPPp'),
+      })
+    }
   }
   // DEFENDER, PROSECUTOR AND COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
