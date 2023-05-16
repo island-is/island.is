@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
-import { Box, LoadingDots, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Inline, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'
 
@@ -55,7 +55,7 @@ const SelectedShip = ({ namespace }: SelectedShipProps) => {
 
   return (
     <Box className={styles.container}>
-      <Stack space={1}>
+      <Inline space={3}>
         {ship?.name ? (
           <Text variant="h2">{ship?.name}</Text>
         ) : (
@@ -67,7 +67,7 @@ const SelectedShip = ({ namespace }: SelectedShipProps) => {
             {shipNumber}
           </Text>
         </Box>
-      </Stack>
+      </Inline>
     </Box>
   )
 }

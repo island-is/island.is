@@ -223,6 +223,7 @@ type availableModals =
   | 'NoModal'
   | 'SigningModal'
   | 'ConfirmAppealAfterDeadline'
+  | 'ConfirmStatementAfterDeadline'
   | 'AppealReceived'
 
 export const SignedVerdictOverview: React.FC = () => {
@@ -276,6 +277,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const { title, description, child } = useAppealAlertBanner(
     workingCase,
     () => setModalVisible('ConfirmAppealAfterDeadline'),
+    () => setModalVisible('ConfirmStatementAfterDeadline'),
     () => handleReceivedTransition(workingCase),
   )
 
@@ -721,34 +723,32 @@ export const SignedVerdictOverview: React.FC = () => {
               </Box>
             )}
           {user?.role !== UserRole.STAFF && (
-            <>
-              <Box marginBottom={5} data-testid="accordionItems">
-                <Accordion>
-                  <PoliceRequestAccordionItem workingCase={workingCase} />
-                  <CourtRecordAccordionItem workingCase={workingCase} />
-                  <RulingAccordionItem workingCase={workingCase} />
-                  {user && (
-                    <CaseFilesAccordionItem
-                      workingCase={workingCase}
-                      setWorkingCase={setWorkingCase}
-                      user={user}
-                    />
-                  )}
-                  {(workingCase.comments ||
-                    workingCase.caseFilesComments ||
-                    workingCase.caseResentExplanation) && (
-                    <CommentsAccordionItem workingCase={workingCase} />
-                  )}
-                </Accordion>
-              </Box>
-              <Box marginBottom={6}>
-                <Conclusion
-                  conclusionText={workingCase.conclusion}
-                  judgeName={workingCase.judge?.name}
-                />
-              </Box>
-            </>
+            <Box marginBottom={5} data-testid="accordionItems">
+              <Accordion>
+                <PoliceRequestAccordionItem workingCase={workingCase} />
+                <CourtRecordAccordionItem workingCase={workingCase} />
+                <RulingAccordionItem workingCase={workingCase} />
+                {user && (
+                  <CaseFilesAccordionItem
+                    workingCase={workingCase}
+                    setWorkingCase={setWorkingCase}
+                    user={user}
+                  />
+                )}
+                {(workingCase.comments ||
+                  workingCase.caseFilesComments ||
+                  workingCase.caseResentExplanation) && (
+                  <CommentsAccordionItem workingCase={workingCase} />
+                )}
+              </Accordion>
+            </Box>
           )}
+          <Box marginBottom={6}>
+            <Conclusion
+              conclusionText={workingCase.conclusion}
+              judgeName={workingCase.judge?.name}
+            />
+          </Box>
           <Box marginBottom={10}>
             <Text as="h3" variant="h3" marginBottom={3}>
               {formatMessage(m.caseDocuments)}
@@ -1030,6 +1030,26 @@ export const SignedVerdictOverview: React.FC = () => {
             )}
             onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
+        {modalVisible === 'ConfirmStatementAfterDeadline' && (
+          <Modal
+            title={formatMessage(
+              strings.confirmStatementAfterDeadlineModalTitle,
+            )}
+            text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
+            primaryButtonText={formatMessage(
+              strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              router.push(`${constants.STATEMENT_ROUTE}/${workingCase.id}`)
             }}
             onSecondaryButtonClick={() => {
               setModalVisible('NoModal')

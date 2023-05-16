@@ -2,10 +2,10 @@ import SubscriptionActionCard from '../Card/SubscriptionActionCard'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { SUB_POST_EMAIL } from '../../graphql/queries.graphql'
-import { useLogIn, useUser } from '../../utils/helpers'
+import { useLogIn, useUser } from '../../hooks'
 import { BaseSyntheticEvent, useEffect, useState } from 'react'
-import { useFetchEmail } from '../../utils/helpers/api/useFetchEmail'
-import { LoadingDots, SkeletonLoader, toast } from '@island.is/island-ui/core'
+import { useFetchEmail } from '../../hooks/api/useFetchEmail'
+import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 const emailIsValid = (email: string) => {
@@ -75,7 +75,7 @@ export const EmailBox = () => {
     return (
       <SubscriptionActionCard
         heading="Skrá áskrift"
-        text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
+        text="Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift."
         button={[
           {
             label: 'Skrá mig inn',

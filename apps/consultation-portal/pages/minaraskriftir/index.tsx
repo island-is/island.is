@@ -4,15 +4,10 @@ import {
   CaseForSubscriptions,
 } from '../../types/interfaces'
 import { QueryConsultationPortalGetCasesArgs } from '@island.is/api/schema'
-import {
-  SUB_GET_CASES,
-  SUB_GET_TYPES,
-  SUB_GET_USERSUBS,
-} from '../../graphql/queries.graphql'
+import { SUB_GET_CASES, SUB_GET_TYPES } from '../../graphql/queries.graphql'
 import {
   SubGetCasesQuery,
   SubGetTypesQuery,
-  SubGetUsersubsQuery,
 } from '../../graphql/queries.graphql.generated'
 import UserSubscriptions from '../../screens/UserSubscriptions/UserSubscriptions'
 import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'

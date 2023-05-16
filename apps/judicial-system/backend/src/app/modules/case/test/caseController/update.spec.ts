@@ -5,6 +5,7 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   CaseState,
   indictmentCases,
   investigationCases,
@@ -432,6 +433,7 @@ describe('CaseController - Update', () => {
       const updatedCase = {
         ...theCase,
         type,
+        origin: CaseOrigin.LOKE,
         caseModifiedExplanation: 'some explanation',
       }
 
@@ -449,6 +451,7 @@ describe('CaseController - Update', () => {
             user,
             caseId,
           },
+          { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
         ])
       })
     },

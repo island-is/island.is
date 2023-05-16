@@ -102,7 +102,9 @@ const CourtOfAppealOverview: React.FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() => router.push(constants.CASES_ROUTE)}
+                onClick={() =>
+                  router.push(constants.COURT_OF_APPEAL_CASES_ROUTE)
+                }
               >
                 {formatMessage(core.back)}
               </Button>
@@ -339,7 +341,7 @@ const CourtOfAppealOverview: React.FC = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={constants.CASES_ROUTE}
+            previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
             onNextButtonClick={() =>
               handleNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
             }
