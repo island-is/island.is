@@ -46,18 +46,16 @@ const schema = z
     },
   )
 
-export type CreateScopeResult =
-  | (ValidateFormDataResult<typeof schema> & {
-      /**
-       * Global error message if the mutation fails
-       */
-      globalError?: boolean
-    })
-  | undefined
+export type CreateScopeResult = ValidateFormDataResult<typeof schema> & {
+  /**
+   * Global error message if the mutation fails
+   */
+  globalError?: boolean
+}
 
 export const createPermissionAction: WrappedActionFn = ({ client }) => async ({
   request,
-}) => {
+}): Promise<CreateScopeResult | Response> => {
   const formData = await request.formData()
   const result = await validateFormData({ formData, schema })
 
