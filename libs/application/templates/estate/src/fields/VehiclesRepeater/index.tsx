@@ -29,7 +29,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-  const { control } = useFormContext()
+  const { control, clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { vehicles: EstateAsset[] }
@@ -43,9 +43,9 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
 
   const handleAddVehicle = () =>
     append({
-      assetNumber: '',
-      description: '',
-      marketValue: '',
+      assetNumber: undefined,
+      description: undefined,
+      marketValue: undefined,
     })
   const handleRemoveVehicle = (index: number) => remove(index)
 
@@ -83,6 +83,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                           enabled: !asset.enabled,
                         }
                         update(index, updatedAsset)
+                        clearErrors(`${id}[${index}].marketValue`)
                       }}
                     >
                       {asset.enabled
@@ -176,9 +177,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.vehicleTypeLabel)}
                   defaultValue={field.description}
                   placeholder={formatMessage(m.vehiclesPlaceholder)}
+                  error={fieldError?.description}
                   size="sm"
-                  //Make readOnly again when Vehicle Registry query is available
-                  //readOnly
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']}>
@@ -188,6 +188,7 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.marketValueTitle)}
                   defaultValue={(field as any).marketValue}
                   placeholder={'0 kr.'}
+                  error={fieldError?.marketValue}
                   currency
                   size="sm"
                 />

@@ -31,7 +31,7 @@ describe('LimitedAccessFileController - Create case file guards', () => {
       guard = guards[0]
     })
 
-    it('should have CaseTypeGuard as quard 1', () => {
+    it('should have CaseTypeGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...restrictionCases, ...investigationCases],
@@ -46,7 +46,7 @@ describe('LimitedAccessFileController - Create case file guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have LimitedAccessWriteCaseFileGuard as quard 2', () => {
+    it('should have LimitedAccessWriteCaseFileGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(LimitedAccessWriteCaseFileGuard)
     })
   })
