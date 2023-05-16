@@ -29,7 +29,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
   const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-  const { control } = useFormContext()
+  const { control, clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { guns: EstateAsset[] }
@@ -81,6 +81,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                           enabled: !asset.enabled,
                         }
                         update(index, updatedAsset)
+                        clearErrors(`${id}[${index}].marketValue`)
                       }}
                     >
                       {asset.enabled

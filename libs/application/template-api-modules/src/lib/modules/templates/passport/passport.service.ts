@@ -184,7 +184,7 @@ export class PassportService extends BaseTemplateApiService {
             name: childsPersonalInfo.guardian1.name,
             approved: application.created,
           },
-          approvalB: {
+          approvalB: childsPersonalInfo.guardian2 && {
             personId: childsPersonalInfo.guardian2.nationalId.replace('-', ''),
             name: childsPersonalInfo.guardian2.name,
             approved: new Date(),
