@@ -5,7 +5,6 @@ import {
   FormContext,
   PdfButton,
   SignedDocument,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'

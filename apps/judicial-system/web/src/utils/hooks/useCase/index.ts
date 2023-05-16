@@ -193,6 +193,7 @@ const openCase = (caseToOpen: Case, user: User) => {
     if (isIndictmentCase(caseToOpen.type)) {
       routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
     } else if (user?.institution?.type === InstitutionType.HIGH_COURT) {
+      //TODO add a validation check here to see which step we should route
       if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
         routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
       } else {

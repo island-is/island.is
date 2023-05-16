@@ -14,7 +14,7 @@ export const courtOfAppealResult = defineMessages({
   },
   conclusionTitle: {
     id: 'judicial.system.core:court_of_appeal_result.conclusion_title',
-    defaultMessage: 'héraðsdóm',
+    defaultMessage: 'héraðsdóms',
     description: 'Titill á Úrskurðarorðum héraðsdóms',
   },
 })

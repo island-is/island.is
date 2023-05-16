@@ -15,7 +15,7 @@ import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import CourtOfAppealCaseOverview from '../components/CaseOverViewHeader/CaseOverViewHeader'
+import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 
 import { courtOfAppealResult as strings } from './Result.strings'
@@ -85,7 +85,7 @@ const CourtOfAppealResult: React.FC = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CourtOfAppealCaseOverview />
+          <CourtOfAppealCaseOverviewHeader />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
@@ -159,7 +159,7 @@ const CourtOfAppealResult: React.FC = () => {
                   title: formatMessage(appealCase.judgesHeading),
                   value: (
                     <>
-                      <Text>{workingCase.appealJudge1?.name}</Text>{' '}
+                      <Text>{workingCase.appealJudge1?.name}</Text>
                       <Text>{workingCase.appealJudge2?.name}</Text>
                       <Text>{workingCase.appealJudge3?.name}</Text>
                     </>

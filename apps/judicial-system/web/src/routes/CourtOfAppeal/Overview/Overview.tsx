@@ -12,18 +12,18 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-
+import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
+import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
+import * as constants from '@island.is/judicial-system/consts'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
-import * as constants from '@island.is/judicial-system/consts'
-import { courtOfAppealResult as strings } from '../Result/Result.strings'
 
-import CourtOfAppealCaseOverview from '../components/CaseOverViewHeader/CaseOverViewHeader'
-import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
+
+import { courtOfAppealResult as strings } from '../Result/Result.strings'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
@@ -51,7 +51,7 @@ const CourtOfAppealOverview: React.FC = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CourtOfAppealCaseOverview />
+          <CourtOfAppealCaseOverviewHeader />
           <Box marginBottom={5}>
             <InfoCard
               defendants={

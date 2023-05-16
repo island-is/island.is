@@ -1,7 +1,6 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-
 import {
   CaseDates,
   FormContext,
@@ -20,11 +19,10 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
-
-import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverViewHeader.strings'
+import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 import { titleForCase } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
 
-const CourtOfAppealCaseOverViewHeader: React.FC = () => {
+const CourtOfAppealCaseOverviewHeader: React.FC = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -119,4 +117,4 @@ const CourtOfAppealCaseOverViewHeader: React.FC = () => {
   )
 }
 
-export default CourtOfAppealCaseOverViewHeader
+export default CourtOfAppealCaseOverviewHeader
