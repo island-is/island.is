@@ -181,5 +181,5 @@ export const services = [
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
-  DrivingLicenseDuplicateService
+  DrivingLicenseDuplicateService,
 ]
