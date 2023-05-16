@@ -2,7 +2,6 @@ import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 import * as styles from './IdsAdminCard.css'
-import { mobileTextRestriction } from './IdsAdminCard.css'
 
 interface ButtonAction {
   onClick?: ComponentPropsWithoutRef<typeof Button>['onClick']

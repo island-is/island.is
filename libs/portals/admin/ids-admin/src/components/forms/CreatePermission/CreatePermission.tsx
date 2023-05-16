@@ -90,14 +90,6 @@ export default function CreatePermission() {
       <Box paddingTop={2}>
         <Form method="post">
           <GridRow rowGap={3}>
-            {actionData?.globalError && (
-              <GridColumn span={['12/12']}>
-                <AlertMessage
-                  message={formatMessage(m.errorDefault)}
-                  type="error"
-                />
-              </GridColumn>
-            )}
             <GridColumn span={['12/12', '6/12']}>
               <input
                 type="text"
@@ -182,6 +174,14 @@ export default function CreatePermission() {
                 </GridRow>
               )}
             </GridColumn>
+            {actionData?.globalError && (
+              <GridColumn span={['12/12']}>
+                <AlertMessage
+                  message={formatMessage(m.errorDefault)}
+                  type="error"
+                />
+              </GridColumn>
+            )}
           </GridRow>
 
           <Box display="flex" justifyContent="spaceBetween" marginTop={7}>

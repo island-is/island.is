@@ -233,7 +233,7 @@ export const m = defineMessages({
   },
   clientSecretDescription: {
     id: 'ap.ids-admin:client-secret-description',
-    defaultMessage: 'The application Secret is not base64 encoded.',
+    defaultMessage: 'The application secret is not base64 encoded.',
   },
   clientSecretLegacy: {
     id: 'ap.ids-admin:client-secret-legacy',
@@ -585,7 +585,7 @@ export const m = defineMessages({
   },
   permissionDisplayNameInfo: {
     id: 'ap.ids-admin:permission-display-name-info',
-    defaultMessage: 'Displayed on the log-in screen of your app',
+    defaultMessage: 'Displayed on the login screen of your app',
   },
   permissionEmptyHeading: {
     id: 'ap.ids-admin:permission-empty-heading',
@@ -594,12 +594,11 @@ export const m = defineMessages({
   permissionEmptyDescription: {
     id: 'ap.ids-admin:permission-empty-description',
     defaultMessage:
-      'Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi.',
+      'You can create an permission by clicking on Create permission.',
   },
   permissionListDescription: {
     id: 'ap.ids-admin:permission-list-description',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet consectetur. A non ut nulla vitae mauris accumsan at tellus facilisi.',
+    defaultMessage: 'Here you can view and create permissions.',
   },
   permissionsSearchPlaceholder: {
     id: 'ap.ids-admin:permissions-search-placeholder',

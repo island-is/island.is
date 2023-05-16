@@ -1,4 +1,4 @@
-import { CaseSortOptions } from '../../../types/enums'
+import { CaseSortOptions, MapCaseStatuses } from '../../../types/enums'
 import { ArrOfTypes } from '../../../types/interfaces'
 
 const TODAY = new Date()
@@ -13,7 +13,11 @@ export const getInitFilterValues = ({ types }: Props) => {
       value,
       label,
     }))
-    .map((item) => ({ ...item, checked: false }))
+    .map((item) => ({
+      ...item,
+      label: MapCaseStatuses[item.label],
+      checked: false,
+    }))
 
   const caseTypes = Object.entries(types.caseTypes)
     .map(([value, label]) => ({
