@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -32,6 +32,7 @@ import Permissions from './Permissions'
 import Translations from './Translations'
 
 import * as styles from './Client.css'
+import RevokeSecrets from '../RevokeSecrets/RevokeSecrets'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -58,6 +59,7 @@ const Client = () => {
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     AuthAdminClient['environments'][0]
   >(client.environments[0])
+  const [isRevokeSecretsVisible, setRevokeSecretsVisibility] = useState(false)
 
   useEffect(() => {
     const newSelectedEnvironment = client.environments.find(
@@ -89,28 +91,20 @@ const Client = () => {
     return true
   }
 
-  const openModal = (
-    path:
-      | IDSAdminPaths.IDSAdminClientPublish
-      | IDSAdminPaths.IDSAdminClientRevokeSecrets,
-  ) => {
+  const openPublishModal = (to: AuthAdminEnvironment) => {
+    setPublishData({
+      toEnvironment: to,
+      fromEnvironment: selectedEnvironment.environment,
+    })
     navigate(
       replaceParams({
-        href: path,
+        href: IDSAdminPaths.IDSAdminClientPublish,
         params: {
           tenant: params['tenant'],
           client: params['client'],
         },
       }),
     )
-  }
-
-  const openPublishModal = (to: AuthAdminEnvironment) => {
-    setPublishData({
-      toEnvironment: to,
-      fromEnvironment: selectedEnvironment.environment,
-    })
-    openModal(IDSAdminPaths.IDSAdminClientPublish)
   }
 
   const environmentExists = (environment: AuthAdminEnvironment) => {
@@ -221,26 +215,30 @@ const Client = () => {
         </Box>
 
         {selectedEnvironment.secrets.length > 1 && (
-          <AlertMessage
-            type="warning"
-            title={formatMessage(m.multipleSecrets)}
-            message={
-              <Stack space={1}>
-                <Text variant="small">
-                  {formatMessage(m.multipleSecretsDescription)}
-                </Text>
-                <Button
-                  variant="text"
-                  size="small"
-                  onClick={() =>
-                    openModal(IDSAdminPaths.IDSAdminClientRevokeSecrets)
-                  }
-                >
-                  {formatMessage(m.revokeSecrets)}
-                </Button>
-              </Stack>
-            }
-          />
+          <>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.multipleSecrets)}
+              message={
+                <Stack space={1}>
+                  <Text variant="small">
+                    {formatMessage(m.multipleSecretsDescription)}
+                  </Text>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => setRevokeSecretsVisibility(true)}
+                  >
+                    {formatMessage(m.revokeSecrets)}
+                  </Button>
+                </Stack>
+              }
+            />
+            <RevokeSecrets
+              isVisible={isRevokeSecretsVisible}
+              onClose={() => setRevokeSecretsVisibility(false)}
+            />
+          </>
         )}
 
         <BasicInfo
