@@ -90,6 +90,7 @@ import {
   useRequestCourtRecordSignatureMutation,
 } from './CourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
+import { appealCase } from '../../CourtOfAppeal/AppealCase/AppealCase.strings'
 
 interface ModalControls {
   open: boolean
@@ -702,6 +703,26 @@ export const SignedVerdictOverview: React.FC = () => {
                   phoneNumber: workingCase.defenderPhoneNumber,
                 },
               ]}
+              courtOfAppealData={[
+                {
+                  title: formatMessage(appealCase.caseNumberHeading),
+                  value: workingCase.appealCaseNumber,
+                },
+                {
+                  title: formatMessage(appealCase.assistantHeading),
+                  value: workingCase.appealAssistant?.name,
+                },
+                {
+                  title: formatMessage(appealCase.judgesHeading),
+                  value: (
+                    <>
+                      <Text>{workingCase.appealJudge1?.name}</Text>
+                      <Text>{workingCase.appealJudge2?.name}</Text>
+                      <Text>{workingCase.appealJudge3?.name}</Text>
+                    </>
+                  ),
+                },
+              ]}
             />
           </Box>
           {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
@@ -747,6 +768,12 @@ export const SignedVerdictOverview: React.FC = () => {
             <Conclusion
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
+            />
+          </Box>
+          <Box marginBottom={6}>
+            <Conclusion
+              conclusionText={workingCase.appealConclusion}
+              judgeName={workingCase.appealJudge1?.name}
             />
           </Box>
           <Box marginBottom={10}>
