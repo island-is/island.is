@@ -233,7 +233,7 @@ export const m = defineMessages({
   },
   clientSecretDescription: {
     id: 'ap.ids-admin:client-secret-description',
-    defaultMessage: 'The application Secret is not base64 encoded.',
+    defaultMessage: 'The application secret is not base64 encoded.',
   },
   clientSecretLegacy: {
     id: 'ap.ids-admin:client-secret-legacy',
