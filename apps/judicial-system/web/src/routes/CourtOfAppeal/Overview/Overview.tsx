@@ -17,7 +17,6 @@ import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion
 import * as constants from '@island.is/judicial-system/consts'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
-import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -51,7 +50,6 @@ const CourtOfAppealOverview: React.FC = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CourtOfAppealCaseOverviewHeader />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
