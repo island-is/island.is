@@ -1,3 +1,5 @@
+<!-- gitbook-navigation: "Consultation Portal" -->
+
 # Consultation Portal Client
 
 ## About
