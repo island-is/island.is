@@ -6,15 +6,17 @@ import {
   CaseForSubscriptions,
   SubscriptionArray,
 } from '../../types/interfaces'
-import { useLogIn, useSearchSubscriptions, useUser } from '../../utils/helpers'
-import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
+import {
+  useLogIn,
+  useSearchSubscriptions,
+  useUser,
+  useSubscriptions,
+  usePostSubscription,
+  useFetchSubscriptions,
+} from '../../hooks/'
 import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
 import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
-import {
-  useSubscriptions,
-  filterSubscriptions as F,
-} from '../../utils/helpers/subscriptions'
-import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
+import { filterSubscriptions as F } from '../../utils/helpers/subscriptions'
 
 interface SubProps {
   allcases: CaseForSubscriptions[]
@@ -42,6 +44,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
     cases: allcases,
     dontShowNew: dontShowNew,
     dontShowChanges: dontShowChanges,
+    isMySubscriptions: true,
   })
 
   const {
@@ -119,7 +122,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
   const onSubmit = async () => {
     setSubmitSubsIsLoading(true)
 
-    if (!isAuthenticated) {
+    if (!userLoading && !isAuthenticated) {
       LogIn()
     }
 
@@ -208,17 +211,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
   }
 
   if (!userLoading && !isAuthenticated) {
-    return (
-      <SubscriptionsSkeleton
-        isMySubscriptions
-        currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
-        tabs={tabs}
-        getUserSubsLoading={true}
-      >
-        <></>
-      </SubscriptionsSkeleton>
-    )
+    LogIn()
   }
 
   return (
@@ -235,6 +228,7 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
         onSubmit={onSubmit}
         onClear={onClear}
         buttonText="Skrá úr áskrift"
+        toggleAble={false}
         submitSubsIsLoading={submitSubsIsLoading}
       />
     </SubscriptionsSkeleton>

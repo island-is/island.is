@@ -4,8 +4,8 @@ echo "Image to check: $IMAGE"
 
 set -euo pipefail
 
-# This is a script to re-tag a Docker image without pulling the pushing the image but rather directly in the registry.
-
+# This is a script to re-tag a Docker image without pulling or pushing the image but rather add the new
+# docker tag to it directly in the registry.
 MANIFEST=$(aws ecr batch-get-image --repository-name "$IMAGE" --image-ids imageTag="$LAST_GOOD_BUILD_DOCKER_TAG" --query 'images[].imageManifest' --output text)
 
 if [[ -z $MANIFEST ]]; then

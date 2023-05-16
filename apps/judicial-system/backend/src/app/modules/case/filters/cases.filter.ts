@@ -13,6 +13,7 @@ import {
   CaseAppealState,
   isDistrictCourtUser,
   isAppealsCourtUser,
+  isPrisonSystemUser,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -49,7 +50,11 @@ function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  if (user.role === UserRole.REPRESENTATIVE) {
+  if (user.role === UserRole.PROSECUTOR) {
+    options.push({
+      type: [...restrictionCases, ...investigationCases, ...indictmentCases],
+    })
+  } else {
     options.push({ type: indictmentCases })
   }
 
@@ -136,7 +141,7 @@ function getAppealsCourtUserCasesQueryFilter(): WhereOptions {
   }
 }
 
-function getStaffRoleCasesQueryFilter(user: User): WhereOptions {
+function getStaffUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
     { state: CaseState.ACCEPTED },
@@ -176,8 +181,8 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     return getAppealsCourtUserCasesQueryFilter()
   }
 
-  if (user.role === UserRole.STAFF) {
-    return getStaffRoleCasesQueryFilter(user)
+  if (isPrisonSystemUser(user)) {
+    return getStaffUserCasesQueryFilter(user)
   }
 
   throw new ForbiddenException(`User ${user.id} does not have access to cases`)

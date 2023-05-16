@@ -13,15 +13,19 @@ import { clientLoader } from './components/Client/Client.loader'
 import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
 import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
 import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
+import { rotateSecretAction } from './components/forms/RotateSecret/RotateSecret.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
 const TenantsList = lazy(() => import('./components/TenantsList/TenantsList'))
-const CreateApplication = lazy(() =>
+const CreateClient = lazy(() =>
   import('./components/forms/CreateClient/CreateClient'),
 )
-const Applications = lazy(() => import('./components/Clients/Clients'))
-const ApplicationsScreen = lazy(() => import('./screens/ApplicationsScreen'))
+const Clients = lazy(() => import('./components/Clients/Clients'))
+const ClientsScreen = lazy(() => import('./screens/ClientsScreen'))
+const RotateSecret = lazy(() =>
+  import('./components/forms/RotateSecret/RotateSecret'),
+)
 
 const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
 
@@ -55,7 +59,7 @@ export const idsAdminModule: PortalModule = {
           {
             name: m.clients,
             path: '',
-            element: <ApplicationsScreen />,
+            element: <ClientsScreen />,
             handle: {
               backPath: IDSAdminPaths.IDSAdmin,
             },
@@ -77,6 +81,13 @@ export const idsAdminModule: PortalModule = {
                     action: publishEnvironmentAction(props),
                     element: <PublishEnvironment />,
                   },
+                  {
+                    name: m.rotateSecret,
+                    navHide: true,
+                    path: IDSAdminPaths.IDSAdminClientRotateSecret,
+                    action: rotateSecretAction(props),
+                    element: <RotateSecret />,
+                  },
                 ],
               },
             ],
@@ -95,7 +106,7 @@ export const idsAdminModule: PortalModule = {
                 name: m.clients,
                 path: IDSAdminPaths.IDSAdminTenants,
                 loader: clientsLoader(props),
-                element: <Applications />,
+                element: <Clients />,
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
                 },
@@ -104,7 +115,7 @@ export const idsAdminModule: PortalModule = {
                     name: m.applicationCreate,
                     navHide: true,
                     path: IDSAdminPaths.IDSAdminClientCreate,
-                    element: <CreateApplication />,
+                    element: <CreateClient />,
                     action: createClientAction(props),
                   },
                 ],

@@ -2,10 +2,10 @@ import SubscriptionActionCard from '../Card/SubscriptionActionCard'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { SUB_POST_EMAIL } from '../../graphql/queries.graphql'
-import { useLogIn, useUser } from '../../utils/helpers'
-import { useEffect, useState } from 'react'
-import { useFetchEmail } from '../../utils/helpers/api/useFetchEmail'
-import { LoadingDots } from '@island.is/island-ui/core'
+import { useLogIn, useUser } from '../../hooks'
+import { BaseSyntheticEvent, useEffect, useState } from 'react'
+import { useFetchEmail } from '../../hooks/api/useFetchEmail'
+import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 const emailIsValid = (email: string) => {
@@ -13,7 +13,7 @@ const emailIsValid = (email: string) => {
 }
 
 export const EmailBox = () => {
-  const { isAuthenticated } = useUser()
+  const { isAuthenticated, userLoading } = useUser()
   const [isVerified, setIsVerified] = useState<boolean>(false)
   const LogIn = useLogIn()
   const [userEmail, setUserEmail] = useState('')
@@ -30,26 +30,34 @@ export const EmailBox = () => {
   const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
     isAuthenticated: isAuthenticated,
   })
+
   useEffect(() => {
     if (!getUserEmailLoading) {
       setUserEmail(email)
       setIsVerified(emailVerified)
     }
   }, [getUserEmailLoading])
-  const onChangeEmail = (e) => {
-    const nextInputVal = e.target.value
 
+  const onChangeEmail = (e: BaseSyntheticEvent) => {
+    const nextInputVal = e.target.value
     setInputVal(nextInputVal)
   }
 
   const onSetEmail = async () => {
     const nextEmail = inputVal
-    const post = await postEmailMutation({
+    await postEmailMutation({
       variables: {
         input: { email: nextEmail },
       },
     })
-    setUserEmail(nextEmail)
+      .then(() => {
+        toast.success(`Netfang hefur verið breytt í ${nextEmail}`)
+        setUserEmail(nextEmail)
+      })
+      .catch((e) => {
+        console.error(e)
+        toast.error('Ekki tókst að breyta netfangi')
+      })
   }
 
   const resetEmail = () => {
@@ -59,14 +67,15 @@ export const EmailBox = () => {
     setIsVerified(false)
   }
 
-  if (getUserEmailLoading) {
-    return <LoadingDots></LoadingDots>
+  if (userLoading || getUserEmailLoading) {
+    return <LoadingDots />
   }
-  if (!isAuthenticated) {
+
+  if (!userLoading && !isAuthenticated) {
     return (
       <SubscriptionActionCard
         heading="Skrá áskrift"
-        text="Þú verður að vera skráð(ur) inn til þess að geta skráð þig í áskrift."
+        text="Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift."
         button={[
           {
             label: 'Skrá mig inn',
@@ -77,7 +86,7 @@ export const EmailBox = () => {
     )
   }
 
-  if (!userEmail) {
+  if (!userLoading && isAuthenticated && !userEmail) {
     return (
       <SubscriptionActionCard
         heading="Skrá netfang"
@@ -94,6 +103,7 @@ export const EmailBox = () => {
             label: 'Skrá netfang',
             onClick: onSetEmail,
             disabled: !emailIsValid(inputVal),
+            isLoading: postEmailLoading,
           },
         ]}
       />

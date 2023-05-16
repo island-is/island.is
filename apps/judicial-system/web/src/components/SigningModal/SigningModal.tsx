@@ -4,13 +4,14 @@ import {
   ApolloError,
   FetchResult,
   MutationFunctionOptions,
-  OperationVariables,
-  useMutation,
-  useQuery,
 } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseType,
+  Exact,
+  RequestSignatureInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import {
   core,
@@ -19,14 +20,14 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { RulingSignatureConfirmationQuery } from '../../utils/mutations'
 import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import {
-  RequestRulingSignatureMutation as RequestRulingSignatureMutationMutation,
-  RulingSignatureConfirmationQuery as RulingSignatureConfirmationQueryQuery,
-} from '../../graphql/schema'
-import RequestRulingSignatureMutation from './requestRulingSignatureGql'
+  RequestRulingSignatureMutation,
+  useRequestRulingSignatureMutation,
+  useRulingSignatureConfirmationQuery,
+  RulingSignatureConfirmationQuery,
+} from './RulingSignature.generated'
 import { signingModal as m } from './SigningModal.strings'
 
 const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
@@ -49,12 +50,14 @@ interface SigningModalProps {
   requestRulingSignature: (
     options?:
       | MutationFunctionOptions<
-          RequestRulingSignatureMutationMutation,
-          OperationVariables
+          RequestRulingSignatureMutation,
+          Exact<{
+            input: RequestSignatureInput
+          }>
         >
       | undefined,
-  ) => Promise<FetchResult<RequestRulingSignatureMutationMutation>>
-  requestRulingSignatureResponse?: RequestRulingSignatureMutationMutation['requestRulingSignature']
+  ) => Promise<FetchResult<RequestRulingSignatureMutation>>
+  requestRulingSignatureResponse?: RequestRulingSignatureMutation['requestRulingSignature']
   onClose: () => void
   navigateOnClose?: boolean
 }
@@ -68,16 +71,13 @@ export const useRequestRulingSignature = (
   const [
     requestRulingSignature,
     { loading: isRequestingRulingSignature, data, error },
-  ] = useMutation<RequestRulingSignatureMutationMutation>(
-    RequestRulingSignatureMutation,
-    {
-      variables: { input: { caseId } },
-      onError: () => {
-        toast.error(formatMessage(errorMessages.requestRulingSignature))
-      },
-      onCompleted: () => onSuccess(),
+  ] = useRequestRulingSignatureMutation({
+    variables: { input: { caseId } },
+    onError: () => {
+      toast.error(formatMessage(errorMessages.requestRulingSignature))
     },
-  )
+    onCompleted: () => onSuccess(),
+  })
 
   if (!data && error) {
     return {
@@ -97,7 +97,9 @@ export const useRequestRulingSignature = (
 type signingProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 export const getSigningProgress = (
-  rulingSignatureConfirmation: RulingSignatureConfirmationQueryQuery['rulingSignatureConfirmation'],
+  rulingSignatureConfirmation:
+    | RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
+    | undefined,
   error: ApolloError | undefined,
 ): signingProgress => {
   if (rulingSignatureConfirmation?.documentSigned) return 'success'
@@ -119,19 +121,16 @@ export const SigningModal: React.FC<SigningModalProps> = ({
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  const { data, error } = useQuery<RulingSignatureConfirmationQueryQuery>(
-    RulingSignatureConfirmationQuery,
-    {
-      variables: {
-        input: {
-          documentToken: requestRulingSignatureResponse?.documentToken,
-          caseId: workingCase.id,
-        },
+  const { data, error } = useRulingSignatureConfirmationQuery({
+    variables: {
+      input: {
+        documentToken: requestRulingSignatureResponse?.documentToken || '',
+        caseId: workingCase.id,
       },
-      fetchPolicy: 'no-cache',
-      skip: !requestRulingSignatureResponse,
     },
-  )
+    fetchPolicy: 'no-cache',
+    skip: !requestRulingSignatureResponse,
+  })
 
   const signingProgress = getSigningProgress(
     data?.rulingSignatureConfirmation,
@@ -158,8 +157,8 @@ export const SigningModal: React.FC<SigningModalProps> = ({
           <MarkdownWrapper
             markdown={formatMessage(m.successText, {
               summarySentToPrison:
-                workingCase.type === CaseType.Custody ||
-                workingCase.type === CaseType.AdmissionToFacility,
+                workingCase.type === CaseType.CUSTODY ||
+                workingCase.type === CaseType.ADMISSION_TO_FACILITY,
             })}
           />
         ) : (

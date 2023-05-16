@@ -34,7 +34,7 @@ import {
   SearchBox,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag } from '@island.is/web/hooks'
+import { useFeatureFlag, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -73,7 +73,7 @@ import {
   TryggingastofnunHeader,
 } from './Themes/TryggingastofnunTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
-import { GevHeader } from './Themes/GevTheme'
+import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
 
 import * as styles from './OrganizationWrapper.css'
@@ -148,6 +148,8 @@ export const footerEnabled = [
 
   'tryggingastofnun',
   'insurance-administration',
+
+  'gev',
 ]
 
 export const getThemeConfig = (
@@ -328,6 +330,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+          organizationSlug={organization.slug}
         />
       )
       break
@@ -438,6 +441,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <TryggingastofnunFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+        />
+      )
+      break
+    case 'gev':
+      OrganizationFooterComponent = (
+        <GevFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
         />
       )
       break
@@ -568,6 +580,8 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
+
+  usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
   const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
     'isWebReaderEnabledForOrganizationPages',

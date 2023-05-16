@@ -14,16 +14,10 @@ export const domainNav: PortalNavigationItem = {
       description: m.idsAdmin,
       activeIfExact: true,
     },
-    // {
-    //   name: m.apis,
-    //   path: IDSAdminPaths.IDSAdminDomainsAPIS,
-    //   description: m.idsAdmin,
-    //   activeIfExact: true,
-    // },
   ],
 }
 
-export const applicationNav: PortalNavigationItem = {
+export const clientNav: PortalNavigationItem = {
   name: m.clients,
   path: IDSAdminPaths.IDSAdminClient,
   description: m.idsAdmin,
@@ -45,5 +39,5 @@ export const idsAdminNavigation: PortalNavigationItem = {
     icon: 'settings',
   },
   description: m.idsAdmin,
-  children: [{ ...domainNav }, { ...applicationNav }],
+  children: [{ ...domainNav }, { ...clientNav }],
 }

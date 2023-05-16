@@ -52,8 +52,20 @@ export class CaseResult {
   @Field(() => String, { nullable: true })
   summaryText?: string | null
 
+  @Field(() => String, { nullable: true })
+  summaryLink?: string | null
+
+  @Field(() => String, { nullable: true })
+  summaryDocumentId?: string | null
+
   @Field(() => Number, { nullable: true })
   adviceCount?: number
+
+  @Field(() => Number, { nullable: true })
+  advicePublishTypeId?: number
+
+  @Field(() => String, { nullable: true })
+  advicePublishTypeName?: string | null
 
   @Field(() => Date, { nullable: true })
   created?: Date
@@ -69,4 +81,7 @@ export class CaseResult {
 
   @Field(() => [DocumentInfoResult], { nullable: true })
   documents?: DocumentInfoResult[] | null
+
+  @Field(() => [DocumentInfoResult], { nullable: true })
+  additionalDocuments?: DocumentInfoResult[] | null
 }

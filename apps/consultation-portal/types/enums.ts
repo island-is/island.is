@@ -41,13 +41,41 @@ export enum CaseSubscriptionType {
 }
 
 export enum SubscriptionType {
-  AllChanges = 'Allar breytingar',
+  AllChanges = 'Ný mál og breytingar',
   StatusChanges = 'Breytingar á stöðu',
-  OnlyNew = 'Aðeins ný',
+  OnlyNew = 'Einungis ný mál',
 }
 
 export enum SubscriptionTypeKey {
-  'Allar breytingar' = 'AllChanges',
+  'Ný mál og breytingar' = 'AllChanges',
   'Breytingar á stöðu' = 'StatusChanges',
-  'Aðeins ný' = 'OnlyNew',
+  'Einungis ný mál' = 'OnlyNew',
+}
+export enum SubscriptionDescriptionKey {
+  'Ný mál og breytingar' = 'Tilkynningar um ný mál, breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna',
+  'Breytingar á stöðu' = 'StatusChanges',
+  'Einungis ný mál' = 'Tilkynningar um ný mál',
+}
+
+export enum advicePublishTypeKey {
+  closed = 'Umsagnir verða ekki birtar.',
+  open = 'Umsagnir verða birtar jafnóðum og þær berast.',
+  delayed = 'Umsagnir verða birtar að loknum umsagnarfresti.',
+}
+
+export enum pastAdvicePublishTypeKey {
+  closed = 'Umsagnir voru ekki birtar.',
+  open = 'Umsagnir voru birtar jafnóðum og þær bárust.',
+  delayed = 'Umsagnir voru birtar að loknum umsagnarfresti.',
+}
+export const advicePublishTypeKeyHelper = {
+  1: 'open',
+  2: 'delayed',
+  3: 'closed',
+}
+
+export enum MapCaseStatuses {
+  'Til umsagnar' = 'Til umsagnar',
+  'Niðurstöður í vinnslu' = 'Í vinnslu',
+  'Niðurstöður birtar' = 'Samráði lokið',
 }

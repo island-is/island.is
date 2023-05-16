@@ -60,7 +60,6 @@ import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
-  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -135,7 +134,6 @@ export class CaseController {
     judgeUpdateRule,
     registrarUpdateRule,
     assistantUpdateRule,
-    staffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -339,19 +337,20 @@ export class CaseController {
     registrarRule,
     assistantRule,
   )
-  @Get('case/:caseId/caseFiles/:policeCaseNumber')
+  @Get('case/:caseId/caseFilesRecord/:policeCaseNumber')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Gets the case files for an existing case as a pdf document',
+    description:
+      'Gets the case files record for an existing case as a pdf document',
   })
-  async getCaseFilesPdf(
+  async getCaseFilesRecordPdf(
     @Param('caseId') caseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(
-      `Getting the case files for police case number ${policeCaseNumber} in case ${caseId} as a pdf document`,
+      `Getting the case files record for case ${caseId} and police case ${policeCaseNumber} as a pdf document`,
     )
 
     if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
@@ -360,7 +359,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesPdf(
+    const pdf = await this.caseService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )

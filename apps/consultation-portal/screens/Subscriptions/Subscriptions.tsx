@@ -1,19 +1,21 @@
 import { toast } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { Area, SubscriptionTypeKey } from '../../types/enums'
+import { Area } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
 } from '../../types/interfaces'
-import { useLogIn, useSearchSubscriptions, useUser } from '../../utils/helpers'
-import usePostSubscription from '../../utils/helpers/api/usePostSubscription'
+import {
+  useLogIn,
+  useSearchSubscriptions,
+  useUser,
+  useSubscriptions,
+  useFetchSubscriptions,
+  usePostSubscription,
+} from '../../hooks'
 import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
 import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
-import { useFetchSubscriptions } from '../../utils/helpers/api/useFetchSubscriptions'
-import {
-  useSubscriptions,
-  filterSubscriptions as F,
-} from '../../utils/helpers/subscriptions'
+import { filterSubscriptions as F } from '../../utils/helpers/subscriptions'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -21,7 +23,7 @@ interface SubProps {
 }
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
-  const { isAuthenticated, userLoading } = useUser()
+  const { isAuthenticated } = useUser()
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
   const {
     initSubs,
@@ -34,7 +36,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
   const [submitSubsIsLoading, setSubmitSubsIsLoading] = useState(false)
   const LogIn = useLogIn()
 
-  const { userSubscriptions } = useFetchSubscriptions({
+  const { userSubscriptions, getUserSubsLoading } = useFetchSubscriptions({
     isAuthenticated: isAuthenticated,
   })
 
@@ -133,6 +135,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       currentTab={currentTab}
       setCurrentTab={setCurrentTab}
       tabs={tabs}
+      getUserSubsLoading={getUserSubsLoading}
     >
       <ChosenSubscriptions
         subscriptionArray={subscriptionArray}

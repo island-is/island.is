@@ -46,7 +46,7 @@ const mockData: NonNullable<PermissionsProps['data']> = [
   },
   {
     label: 'Staða og hreyfingar',
-    id: '@island.is/finance:overview',
+    id: '@island.is/finance',
     description:
       'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
     api: 'Island.is APIs',
@@ -54,19 +54,11 @@ const mockData: NonNullable<PermissionsProps['data']> = [
   },
   {
     label: 'Full Access',
-    id: '@island.is/auth/admin:full',
+    id: '@island.is/auth/admin',
     description:
       'Full access to authorization admin something description here',
     api: 'Island.is APIs',
     locked: false,
-  },
-  {
-    label: 'Skattskýrslur',
-    id: '@skatturinn.is/skattskyrslur',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
   },
 ]
 
@@ -97,8 +89,8 @@ function Permissions({ data = mockData }: PermissionsProps) {
       </Box>
       {hasData && (
         <ShadowBox style={{ maxHeight: 440 }}>
-          <T.Table>
-            <T.Head>
+          <T.Table box={{ overflow: 'initial' }}>
+            <T.Head sticky>
               <T.Row>
                 <T.HeadData>
                   {formatMessage(m.permissionsTableLabelName)}

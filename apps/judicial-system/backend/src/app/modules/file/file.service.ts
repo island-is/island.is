@@ -115,16 +115,19 @@ export class FileService {
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
+      case undefined:
+      case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
         break
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+      case CaseFileCategory.APPEAL_RULING:
         courtDocumentFolder = CourtDocumentFolder.APPEAL_DOCUMENTS
         break
       default:
-        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+        throw new BadRequestException(`Invalid file category ${file.category}`)
     }
 
     return courtDocumentFolder
