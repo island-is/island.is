@@ -601,4 +601,47 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permissions-search-placeholder',
     defaultMessage: 'Search by name or ID',
   },
+  dangerZone: {
+    id: 'ap.ids-admin:danger-zone',
+    defaultMessage: 'Danger zone',
+  },
+  rotateSecret: {
+    id: 'ap.ids-admin:rotate-secret',
+    defaultMessage: 'Rotate secret',
+  },
+  rotateSecretActionCardLabel: {
+    id: 'ap.ids-admin:rotate-secret-action-card-label',
+    defaultMessage:
+      'All authorized apps will need to be updated with the new client secret.',
+  },
+  rotateSecretDescription: {
+    id: 'ap.ids-admin:rotate-secret-description',
+    defaultMessage: `This will generate a new secret for your application. You should revoke existing secret(s) after you have deployed your application with the new secret.{br}{br}If your existing secret(s) have been compromised it is recommended to revoke them immediately.`,
+  },
+  rotateSecretInfoAlert: {
+    id: 'ap.ids-admin:rotate-secret-alert',
+    defaultMessage:
+      'Authentications will stop working for your application until you have deployed the new secret.',
+  },
+  rotate: {
+    id: 'ap.ids-admin:rotate',
+    defaultMessage: 'Rotate',
+  },
+  generate: {
+    id: 'ap.ids-admin:generate',
+    defaultMessage: 'Generate',
+  },
+  revokeExistingSecrets: {
+    id: 'ap.ids-admin:revoke-existing-secrets',
+    defaultMessage: 'Revoke existing secret(s) immediately.',
+  },
+  newSecret: {
+    id: 'ap.ids-admin:new-secret',
+    defaultMessage: 'New secret',
+  },
+  rotatedSecretDescription: {
+    id: 'ap.ids-admin:rotated-secret-description',
+    defaultMessage:
+      'Please update the application configuration with the following secret.',
+  },
 })

@@ -61,7 +61,7 @@ const SjukratryggingarFooter: React.FC<FooterProps> = ({
                   <GridColumn span={['0', '0', '3/12', '3/12']}></GridColumn>
                   <GridColumn
                     paddingBottom={[3, 3, 0]}
-                    span={['1/1', '5/12', '4/12', '5/12']}
+                    span={['1/1', '5/12', '5/12', '4/12']}
                   >
                     <Box>
                       <Text fontWeight="semiBold">
