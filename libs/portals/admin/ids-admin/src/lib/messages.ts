@@ -86,6 +86,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:cancel',
     defaultMessage: 'Cancel',
   },
+  close: {
+    id: 'ap.ids-admin:close',
+    defaultMessage: 'Close',
+  },
   add: {
     id: 'ap.ids-admin:add',
     defaultMessage: 'Add',
