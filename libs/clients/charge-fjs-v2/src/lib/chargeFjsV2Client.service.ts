@@ -1,17 +1,22 @@
 import { Injectable } from '@nestjs/common'
-import { DefaultApi } from '../../gen/fetch'
+import {
+  ChargeStatusByRequestIDrequestIDGETResponse,
+  DefaultApi,
+} from '../../gen/fetch'
 import { Catalog, Charge, ChargeResponse } from './chargeFjsV2Client.types'
 
 @Injectable()
 export class ChargeFjsV2ClientService {
   constructor(private api: DefaultApi) {}
 
-  async getChargeStatus(chargeId: string): Promise<string> {
+  async pgetChargeStatus(
+    chargeId: string,
+  ): Promise<ChargeStatusByRequestIDrequestIDGETResponse> {
     const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
       requestID: chargeId,
     })
 
-    return response.statusResult?.status
+    return response
   }
 
   async deleteCharge(chargeId: string): Promise<string> {
