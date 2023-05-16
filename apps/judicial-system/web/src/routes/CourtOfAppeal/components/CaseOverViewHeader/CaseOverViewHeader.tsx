@@ -19,8 +19,8 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
-import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 import { titleForCase } from '@island.is/judicial-system-web/src/routes/Shared/SignedVerdictOverview/SignedVerdictOverview'
+import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
 const CourtOfAppealCaseOverviewHeader: React.FC = () => {
   const { workingCase } = useContext(FormContext)
