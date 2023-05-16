@@ -90,6 +90,7 @@ import {
 import { strings } from './SignedVerdictOverview.strings'
 import { appealCase } from '../../CourtOfAppeal/AppealCase/AppealCase.strings'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
+import CaseFilesOverview from '../../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
 
 interface ModalControls {
   open: boolean
@@ -763,14 +764,22 @@ export const SignedVerdictOverview: React.FC = () => {
               judgeName={workingCase.appealJudge1?.name}
             />
           </Box>
-          <CaseDocuments
-            isRequestingCourtRecordSignature={isRequestingCourtRecordSignature}
-            handleRequestCourtRecordSignature={
-              handleRequestCourtRecordSignature
-            }
-            isRequestingRulingSignature={isRequestingRulingSignature}
-            requestRulingSignature={requestRulingSignature}
-          />
+
+          {workingCase.appealState ? (
+            <CaseFilesOverview />
+          ) : (
+            <CaseDocuments
+              isRequestingCourtRecordSignature={
+                isRequestingCourtRecordSignature
+              }
+              handleRequestCourtRecordSignature={
+                handleRequestCourtRecordSignature
+              }
+              isRequestingRulingSignature={isRequestingRulingSignature}
+              requestRulingSignature={requestRulingSignature}
+            />
+          )}
+
           {user?.role === UserRole.PROSECUTOR &&
             user.institution?.id ===
               workingCase.creatingProsecutor?.institution?.id &&
