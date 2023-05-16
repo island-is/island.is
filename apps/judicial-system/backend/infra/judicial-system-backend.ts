@@ -39,7 +39,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
-        dev: 'POLICE_CASE_V2',
+        dev: '',
         staging: 'COURT,COURT_LITIGANT,POLICE_CASE,POLICE_CASE_V2',
         prod: 'COURT_LITIGANT,POLICE_CASE_V2',
       },
