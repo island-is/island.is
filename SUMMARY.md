@@ -103,7 +103,7 @@
 - [Air Discount Scheme](apps/air-discount-scheme/README.md)
 - [API](apps/api/README.md)
 - [Application System](apps/application-system/README.md)
-- [Samráðsgáttin](apps/consultation-portal/README.md)
+- [Consultation Portal](apps/consultation-portal/README.md)
 - [Financial Aid System for Samband Sveitarfélaga](apps/financial-aid/README.md)
 - [Judicial System](apps/judicial-system/README.md)
 - [Mobile Apps](apps/native/README.md)
