@@ -2,11 +2,11 @@
 
 ## About
 
-The aim of the consultation portal is to increase transparency and the possibility for the public and interested parties to participate in policy-making, regulstion and decision-making by public bodies.
+The aim of the consultation portal is to increase transparency and the possibility for the public and interested parties to participate in policy-making, regulations and decision-making by public bodies.
 
 In the consultation portal, you can find plans for legislation, drafts of bills and regulations, documents on strategic planning (eg draft policies) and more. You can submit a comment or suggestion, and it is also possible to subscribe to automatic monitoring of information, whether by subject area, organization or specific issue.
 
-To be able to submit a comment or suggestion and subscribe to automatic monitoring, the user needs to use his "Rafræn skilríki" credentials.
+To be able to submit a comment or suggestion and subscribe to automatic monitoring, the user needs to use his "electronic ID" credentials.
 
 ## URLs
 
@@ -59,7 +59,7 @@ The frontend can be accessed through the following urls, the backend is hosted e
     yarn start consultation-portal
 ```
 
-7. Navigate to [localhost:4200/consultation-portal](http://localhost:4200/consultation-portal)
+7. Navigate to [localhost:4200/samradsgatt](http://localhost:4200/samradsgatt)
 
 8. Navigate to the [graphql playground](http://localhost:4200/api/graphql)
 
