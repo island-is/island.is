@@ -182,7 +182,7 @@
     - [IDS API](libs/clients/auth/ids-api/README.md)
     - [Public API](libs/clients/auth/public-api/README.md)
   - [Ark](libs/clients/charge-fjs-v2/README.md)
-  - [Consultation Portal Client](libs/clients/consultation-portal/README.md)
+  - [Consultation Portal](libs/clients/consultation-portal/README.md)
   - [Criminal Record](libs/clients/criminal-record/README.md)
   - [Data Protection Complaint](libs/clients/data-protection-complaint/README.md)
   - [Disability License](libs/clients/disability-license/README.md)
