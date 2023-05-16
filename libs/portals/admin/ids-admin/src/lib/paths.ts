@@ -1,7 +1,5 @@
 export enum IDSAdminPaths {
   IDSAdmin = '/innskraningarkerfi',
-  // Tenants
-  IDSAdminTenantsAPIS = '/innskraningarkerfi/:tenant/vefthjonustur',
   // Permissions
   IDSAdminPermissions = '/innskraningarkerfi/:tenant/rettindi',
   IDSAdminPermissionsCreate = '/innskraningarkerfi/:tenant/rettindi/stofna',

@@ -34,7 +34,7 @@ const formatID = (value: string) =>
   value.trim().toLowerCase().replace(/\s+/g, '-')
 
 /**
- * Parses the client id to be lowercase and replace spaces with dashes
+ * Parses the client/permission id to be lowercase and replace spaces with dashes
  * Also makes sure that the prefix is always present and cannot be erased
  *
  * @param prefix The prefix to be added to the id
@@ -66,5 +66,5 @@ export const parseID = ({
   value = pseudolocalizeString(value)
 
   // If user tries to erase the prefix, we add it back
-  return `${prefix}${formatID(value).split('/').pop()}`
+  return `${prefix}${formatID(value).split('/').join('/')}`
 }

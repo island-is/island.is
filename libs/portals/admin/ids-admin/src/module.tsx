@@ -160,14 +160,6 @@ export const idsAdminModule: PortalModule = {
                   backPath: IDSAdminPaths.IDSAdminPermissions,
                 },
               },
-              {
-                name: m.apis,
-                path: IDSAdminPaths.IDSAdminTenantsAPIS,
-                element: <div>APIs</div>,
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdmin,
-                },
-              },
             ],
           },
         ],
