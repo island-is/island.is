@@ -39,7 +39,7 @@ const AidsAndNutrition = () => {
         <AidsAndNutritionTabsContent
           data={supportData.aids}
           footnote={formatMessage(messages['aidsDisclaimer'])}
-          link="https://island.is/einnota-hjalpartaeki"
+          link="https://island.is/s/sjukratryggingar/hjalpartaeki-og-naering"
           linkText={formatMessage(messages.aidsDescriptionInfo)}
         />
       ),
