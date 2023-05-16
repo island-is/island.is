@@ -1,9 +1,17 @@
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import {
+  CaseDecision,
+  CaseState,
+  CaseType,
+  NotificationType,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
+import { notificationModuleConfig } from '../../notification.config'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
@@ -27,16 +35,18 @@ describe('InternalNotificationController - Send appeal completed notifications',
   const appealCaseNumber = uuid()
 
   let mockEmailService: EmailService
-
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       emailService,
+      notificationConfig,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
+    mockConfig = notificationConfig
 
     givenWhenThen = async (defenderNationalId?: string) => {
       const then = {} as Then
@@ -46,6 +56,9 @@ describe('InternalNotificationController - Send appeal completed notifications',
           caseId,
           {
             id: caseId,
+            type: CaseType.CUSTODY,
+            state: CaseState.ACCEPTED,
+            decision: CaseDecision.ACCEPTING,
             prosecutor: { name: prosecutorName, email: prosecutorEmail },
             judge: { name: judgeName, email: judgeEmail },
             court: { name: 'Héraðsdómur Reykjavíkur' },
@@ -84,6 +97,30 @@ describe('InternalNotificationController - Send appeal completed notifications',
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
+          subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Fangelsismálastofnun',
+              address: mockConfig.email.prisonAdminEmail,
+            },
+          ],
+          subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
+          html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Gæsluvarðhaldsfangelsi',
+              address: mockConfig.email.prisonEmail,
+            },
+          ],
           subject: `Úrskurður í landsréttarmáli ${appealCaseNumber} (${courtCaseNumber})`,
           html: `Landsréttur hefur úrskurðað í máli ${appealCaseNumber} (héraðsdómsmál nr. ${courtCaseNumber}). Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),

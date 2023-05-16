@@ -701,7 +701,11 @@ export class NotificationService {
       )
     }
 
-    if (await this.shouldSendNotificationToPrison(theCase)) {
+    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
+      theCase,
+    )
+
+    if (shouldSendNotificationToPrison) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 
@@ -891,7 +895,10 @@ export class NotificationService {
       )
     }
 
-    if (isRestrictionCase(theCase.type)) {
+    if (
+      isRestrictionCase(theCase.type) &&
+      theCase.state === CaseState.ACCEPTED
+    ) {
       promises.push(
         this.sendRulingEmailNotificationToPrisonAdministration(theCase),
       )
@@ -901,11 +908,11 @@ export class NotificationService {
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      const shouldSendCustodyNoticeToPrison = await this.shouldSendNotificationToPrison(
+      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
         theCase,
       )
 
-      if (shouldSendCustodyNoticeToPrison) {
+      if (shouldSendNotificationToPrison) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
       }
     } else if (
@@ -975,11 +982,11 @@ export class NotificationService {
       ),
     ]
 
-    const shouldSendCustodyNoticeToPrison = await this.shouldSendNotificationToPrison(
+    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
       theCase,
     )
 
-    if (shouldSendCustodyNoticeToPrison) {
+    if (shouldSendNotificationToPrison) {
       promises.push(
         this.sendEmail(
           subject,
@@ -1639,6 +1646,40 @@ export class NotificationService {
         theCase.prosecutor?.email,
       ),
     ]
+
+    if (
+      isRestrictionCase(theCase.type) &&
+      theCase.state === CaseState.ACCEPTED
+    ) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          'Fangelsismálastofnun',
+          this.config.email.prisonAdminEmail,
+        ),
+      )
+    }
+
+    if (
+      theCase.decision === CaseDecision.ACCEPTING ||
+      theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+    ) {
+      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
+        theCase,
+      )
+
+      if (shouldSendNotificationToPrison) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            html,
+            'Gæsluvarðhaldsfangelsi',
+            this.config.email.prisonEmail,
+          ),
+        )
+      }
+    }
 
     if (theCase.defenderEmail) {
       const url =
