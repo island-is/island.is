@@ -1,12 +1,6 @@
-import React, { RefObject, useReducer, useRef } from 'react'
+import React, { useReducer, useRef } from 'react'
 
-import {
-  AccordionCard,
-  Input,
-  Stack,
-  toast,
-  Text,
-} from '@island.is/island-ui/core'
+import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'

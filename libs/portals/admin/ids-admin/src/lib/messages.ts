@@ -648,4 +648,8 @@ export const m = defineMessages({
     defaultMessage:
       'Please update the application configuration with the following secret.',
   },
+  content: {
+    id: 'ap.ids-admin:content',
+    defaultMessage: 'Content',
+  },
 })
