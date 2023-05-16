@@ -1,6 +1,4 @@
 import React, { useContext } from 'react'
-import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 
 import {
   CaseFilesAccordionItem,
@@ -12,21 +10,25 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
+
+import * as constants from '@island.is/judicial-system/consts'
+
+import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
-import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import * as constants from '@island.is/judicial-system/consts'
-import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
-import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
+import { courtOfAppealResult as strings } from './Result.strings'
+import { courtOfAppealRuling as rulingStrings } from '../Ruling/Ruling.strings'
 
+import { useIntl } from 'react-intl'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
 import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 import { core } from '@island.is/judicial-system-web/messages'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { appealCase } from '../AppealCase/AppealCase.strings'
 
-import { courtOfAppealResult as strings } from '../Result/Result.strings'
-
-const CourtOfAppealOverview: React.FC = () => {
+const CourtOfAppealResult: React.FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -34,17 +36,48 @@ const CourtOfAppealOverview: React.FC = () => {
     caseNotFound,
   } = useContext(FormContext)
 
-  const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
-  const router = useRouter()
   const { user } = useContext(UserContext)
 
-  const handleNavigationTo = (destination: string) =>
-    router.push(`${destination}/${workingCase.id}`)
+  const { appealReceivedByCourtDate, appealRulingDecision } = workingCase
+
+  const getAppealDecision = () => {
+    if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
+      return formatMessage(rulingStrings.decisionAccept)
+    }
+    if (appealRulingDecision === CaseAppealRulingDecision.REPEAL) {
+      return formatMessage(rulingStrings.decisionRepeal)
+    }
+    if (appealRulingDecision === CaseAppealRulingDecision.CHANGED) {
+      return formatMessage(rulingStrings.decisionChanged)
+    }
+    if (
+      appealRulingDecision ===
+      CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
+    ) {
+      return formatMessage(rulingStrings.decisionDismissedFromCourtOfAppeal)
+    }
+    if (
+      appealRulingDecision === CaseAppealRulingDecision.DISMISSED_FROM_COURT
+    ) {
+      return formatMessage(rulingStrings.decisionDismissedFromCourt)
+    }
+    if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
+      return formatMessage(rulingStrings.decisionUnlabeling)
+    }
+    return undefined
+  }
 
   return (
     <>
-      <AlertBanner variant="warning" title={title} description={description} />
+      <AlertBanner
+        variant="warning"
+        title={formatMessage(strings.title, {
+          appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
+        })}
+        description={getAppealDecision()}
+      />
+
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -53,6 +86,7 @@ const CourtOfAppealOverview: React.FC = () => {
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
           <CourtOfAppealCaseOverviewHeader />
+
           <Box marginBottom={5}>
             <InfoCard
               defendants={
@@ -113,6 +147,26 @@ const CourtOfAppealOverview: React.FC = () => {
                     ]
                   : []),
               ]}
+              courtOfAppealData={[
+                {
+                  title: formatMessage(appealCase.caseNumberHeading),
+                  value: workingCase.appealCaseNumber,
+                },
+                {
+                  title: formatMessage(appealCase.assistantHeading),
+                  value: workingCase.appealAssistant?.name,
+                },
+                {
+                  title: formatMessage(appealCase.judgesHeading),
+                  value: (
+                    <>
+                      <Text>{workingCase.appealJudge1?.name}</Text>
+                      <Text>{workingCase.appealJudge2?.name}</Text>
+                      <Text>{workingCase.appealJudge3?.name}</Text>
+                    </>
+                  ),
+                },
+              ]}
             />
           </Box>
           {user ? (
@@ -131,15 +185,19 @@ const CourtOfAppealOverview: React.FC = () => {
               title={formatMessage(strings.conclusionTitle)}
             />
           </Box>
+          <Box marginBottom={6}>
+            <Conclusion
+              conclusionText={workingCase.appealConclusion}
+              judgeName={workingCase.appealJudge1?.name}
+              title={formatMessage(strings.conclusionCourtOfAppealTitle)}
+            />
+          </Box>
           <CaseFilesOverview />
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
-            onNextButtonClick={() =>
-              handleNavigationTo(constants.COURT_OF_APPEAL_CASE_ROUTE)
-            }
-            nextButtonIcon="arrowForward"
+            hideNextButton={true}
           />
         </FormContentContainer>
       </PageLayout>
@@ -147,4 +205,4 @@ const CourtOfAppealOverview: React.FC = () => {
   )
 }
 
-export default CourtOfAppealOverview
+export default CourtOfAppealResult
