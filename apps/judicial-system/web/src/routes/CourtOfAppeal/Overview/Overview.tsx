@@ -12,12 +12,12 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import * as constants from '@island.is/judicial-system/consts'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
+import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 import { core } from '@island.is/judicial-system-web/messages'

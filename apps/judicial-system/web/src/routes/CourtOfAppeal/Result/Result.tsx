@@ -15,7 +15,6 @@ import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 
 import { courtOfAppealResult as strings } from './Result.strings'
@@ -27,6 +26,7 @@ import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
 import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealCase } from '../AppealCase/AppealCase.strings'
+import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealResult: React.FC = () => {
   const {
