@@ -13,7 +13,6 @@ import {
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   CaseAppealDecision,
-  isAcceptingCaseDecision,
   isCourtRole,
   Feature,
   isProsecutionRole,
@@ -23,7 +22,6 @@ import {
   FormFooter,
   PageLayout,
   Modal,
-  BlueBox,
   InfoCard,
   CourtRecordAccordionItem,
   FormContentContainer,
@@ -39,10 +37,7 @@ import {
   SigningModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  useCase,
-  useInstitution,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   ReactSelectOption,
   TempCase as Case,
@@ -53,8 +48,6 @@ import {
   Text,
   Accordion,
   Button,
-  Select,
-  Tooltip,
   AlertMessage,
   toast,
 } from '@island.is/island-ui/core'
@@ -270,9 +263,6 @@ export const SignedVerdictOverview: React.FC = () => {
     () => setModalVisible('ConfirmStatementAfterDeadline'),
     () => handleReceivedTransition(workingCase),
   )
-
-  // skip loading institutions if the user does not have an id
-  const { prosecutorsOffices } = useInstitution(!user?.id)
 
   /**
    * If the case is not rejected it must be accepted because

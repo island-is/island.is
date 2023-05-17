@@ -2,6 +2,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  CaseAppealState,
   CaseState,
   completedCaseStates,
   Gender,
@@ -1126,7 +1127,9 @@ const useSections = (
     return [
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
-        isActive: user?.institution?.type !== InstitutionType.HIGH_COURT,
+        isActive:
+          user?.institution?.type !== InstitutionType.HIGH_COURT &&
+          workingCase.appealState === CaseAppealState.RECEIVED,
         children: [],
       },
       {
@@ -1163,7 +1166,9 @@ const useSections = (
       },
       {
         name: formatMessage(sections.caseResults.result),
-        isActive: routeIndex === 3,
+        isActive:
+          routeIndex === 3 ||
+          workingCase.appealState === CaseAppealState.COMPLETED,
         children: [],
       },
     ]
