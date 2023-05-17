@@ -4,6 +4,7 @@ import { ConfigType } from '@island.is/nest/config'
 import { EmailService } from '@island.is/email-service'
 import {
   CaseDecision,
+  CaseState,
   CaseType,
   NotificationType,
   User,
@@ -115,6 +116,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const prosecutor = { name: 'Lögmaður', email: 'logmadur@gmail.com' }
     const theCase = {
       id: caseId,
+      state: CaseState.ACCEPTED,
       type: CaseType.CUSTODY,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
@@ -145,6 +147,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
       courtCaseNumber: '007-2022-07',
       court: { name: 'Héraðsdómur Reykjavíkur' },
       rulingModifiedHistory: 'Some modified ruling',
@@ -176,6 +179,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
       const theCase = {
         id: caseId,
         type: CaseType.CUSTODY,
+        state: CaseState.ACCEPTED,
         decision,
         courtCaseNumber: '007-2022-07',
         rulingDate: new Date('2021-07-01'),
@@ -218,6 +222,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const theCase = {
       id: caseId,
       type: CaseType.CUSTODY,
+      state: CaseState.ACCEPTED,
       decision,
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
@@ -242,6 +247,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const theCase = {
       id: caseId,
       type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
@@ -266,6 +272,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const theCase = {
       id: caseId,
       type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
@@ -306,6 +313,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const theCase = {
       id: caseId,
       type: CaseType.ADMISSION_TO_FACILITY,
+      state: CaseState.ACCEPTED,
       decision: CaseDecision.ACCEPTING,
       courtCaseNumber: '007-2022-07',
       rulingDate: new Date('2021-07-01'),
