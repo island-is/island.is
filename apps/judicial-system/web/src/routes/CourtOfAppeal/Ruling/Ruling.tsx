@@ -348,7 +348,7 @@ const CourtOfAppealRuling: React.FC = () => {
           onClose={() => setVisibleModal(false)}
           onSecondaryButtonClick={() => {
             router.push(
-              `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+              `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
             )
           }}
         />
