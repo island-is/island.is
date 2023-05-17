@@ -46,3 +46,7 @@ query GetConsentList {
     }
   }
 }
+
+mutation PatchConsent($input: PatchAuthConsentInput!) {
+  patchAuthConsent(input: $input)
+}
