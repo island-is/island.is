@@ -10,6 +10,7 @@ import {
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { logger } from 'handlebars'
 
 const TWO_HOURS_IN_SECONDS = 2 * 60 * 60
 @Injectable()
@@ -83,11 +84,15 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
-    // Use the shared service to send an email using a custom email generator
-    await this.sharedTemplateAPIService.sendEmail(
-      generateApplicationApprovedEmail,
-      application,
-    )
+    try {
+      // Use the shared service to send an email using a custom email generator
+      await this.sharedTemplateAPIService.sendEmail(
+        generateApplicationApprovedEmail,
+        application,
+      )
+    } catch (e) {
+      console.log(e)
+    }
 
     return {
       id: 1337,
