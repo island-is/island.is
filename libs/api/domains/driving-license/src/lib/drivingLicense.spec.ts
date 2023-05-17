@@ -177,10 +177,10 @@ describe('DrivingLicenseService', () => {
   })
 
   describe('getLearnerMentorEligibility', () => {
-    it('should return true for applicable mentors', async () => {
+    it('should not disqualify for disqualifications older than 12 months', async () => {
       const response = await service.getLearnerMentorEligibility(
         MOCK_USER,
-        DISQUALIFIED_NATIONAL_IDS[0],
+        DISQUALIFIED_NATIONAL_IDS[2],
       )
       expect(response).toStrictEqual({
         isEligible: true,
@@ -190,11 +190,83 @@ describe('DrivingLicenseService', () => {
             requirementMet: true,
           },
           {
-            key: 'CurrentLocalResidency',
+            key: 'PersonNotAtLeast24YearsOld',
             requirementMet: true,
           },
           {
+            key: 'HasHadValidCategoryForFiveYearsOrMore',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+
+    it('should disqualify for expired disqualifications that happened less than 12 months ago', async () => {
+      const response = await service.getLearnerMentorEligibility(
+        MOCK_USER,
+        DISQUALIFIED_NATIONAL_IDS[1],
+      )
+      expect(response).toStrictEqual({
+        isEligible: false,
+        requirements: [
+          {
+            key: 'HasDeprivation',
+            requirementMet: false,
+          },
+          {
             key: 'PersonNotAtLeast24YearsOld',
+            requirementMet: true,
+          },
+          {
+            key: 'HasHadValidCategoryForFiveYearsOrMore',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+
+    it('should disqualify for active disqualifications', async () => {
+      const response = await service.getLearnerMentorEligibility(
+        MOCK_USER,
+        DISQUALIFIED_NATIONAL_IDS[0],
+      )
+      expect(response).toStrictEqual({
+        isEligible: false,
+        requirements: [
+          {
+            key: 'HasDeprivation',
+            requirementMet: false,
+          },
+          {
+            key: 'PersonNotAtLeast24YearsOld',
+            requirementMet: true,
+          },
+          {
+            key: 'HasHadValidCategoryForFiveYearsOrMore',
+            requirementMet: true,
+          },
+        ],
+      })
+    })
+
+    it('should disqualify for disqualifications with a from date, but no specified end date', async () => {
+      const response = await service.getLearnerMentorEligibility(
+        MOCK_USER,
+        DISQUALIFIED_NATIONAL_IDS[0],
+      )
+      expect(response).toStrictEqual({
+        isEligible: false,
+        requirements: [
+          {
+            key: 'HasDeprivation',
+            requirementMet: false,
+          },
+          {
+            key: 'PersonNotAtLeast24YearsOld',
+            requirementMet: true,
+          },
+          {
+            key: 'HasHadValidCategoryForFiveYearsOrMore',
             requirementMet: true,
           },
         ],

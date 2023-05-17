@@ -91,17 +91,18 @@ export class DrivingLicenseService {
       return true
     }
 
+    const now = Date.now()
     const year = 1000 * 3600 * 24 * 365.25
     const twelveMonthsAgo = new Date(Date.now() - year)
 
-    // With the two checks above, to is guaranteed to be defined
-    // Either !from returns or !to returns since !from || from is a tautology
+    // With the two checks above, 'to' is guaranteed to be defined
+    // Either !from returns or !to returns since '!from || from' is a tautology
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const activeDisqualification = from.getTime() < Date.now() && Date.now() < to!.getTime()
+    const activeDisqualification = from.getTime() < now && now < to!.getTime()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const disqualificationInTheLastTwelveMonths = to! > twelveMonthsAgo
 
-    return !(activeDisqualification || disqualificationInTheLastTwelveMonths)
+    return activeDisqualification || disqualificationInTheLastTwelveMonths
   }
 
   async getStudentInformation(

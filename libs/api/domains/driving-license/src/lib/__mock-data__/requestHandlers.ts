@@ -16,7 +16,12 @@ export const MOCK_NATIONAL_ID = '0'
 export const MOCK_NATIONAL_ID_EXPIRED = '1'
 export const MOCK_NATIONAL_ID_TEACHER = '2'
 export const MOCK_NATIONAL_ID_NO_ASSESSMENT = '9'
-export const DISQUALIFIED_NATIONAL_IDS = ['d0', 'd1', 'd2', 'd3']
+export const DISQUALIFIED_NATIONAL_IDS = [
+  '0101302399',
+  '0101302719',
+  '0101305069',
+  '0101303019',
+]
 
 type MockLicenseRaw =
   | typeof ValidLicense
@@ -243,12 +248,12 @@ export const requestHandlers = [
         req.params.nationalId,
       )
       return res(
-        ctx.status(isExpired ? 400 : 200),
+        ctx.status(isExpired || isDisqualified ? 400 : 200),
         ctx.json(
           isExpired
             ? { message: 'Ökuskírteini er ekki í gildi' }
             : isDisqualified
-            ? { message: 'Einstaklingur er sviptur ökuréttindum' }
+            ? { detail: 'Einstaklingur er sviptur ökuréttindum' }
             : ValidLicense,
         ),
       )
