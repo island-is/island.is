@@ -25,7 +25,7 @@
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",
       "options": {
-        "command": "yarn ts-node libs/localization/scripts/extract libs/service-portal/air-discount/src/lib/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/air-discount/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
       }
     }
   }

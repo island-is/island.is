@@ -14,9 +14,9 @@ const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A
 export const isValidEmail = (value: string) => emailRegex.test(value)
 
 const checkIfFilledOut = (arr: Array<string | undefined>) => {
-  if (arr.every((v) => v === '')) {
+  if (arr.every((v) => v === '' || v === undefined)) {
     return true
-  } else if (arr.every((v) => v !== '')) {
+  } else if (arr.every((v) => v !== '' && v !== undefined)) {
     return true
   } else {
     return false
@@ -261,15 +261,15 @@ export const estateSchema = z.object({
   // is: Umboðsmaður
   representative: z
     .object({
-      name: z.string(),
-      nationalId: z.string(),
+      name: z.string().or(z.undefined()),
+      nationalId: z.string().or(z.undefined()),
       phone: z.string(),
       email: z.string(),
     })
     .refine(
       ({ name, nationalId, phone, email }) => {
-        const allEmpty = checkIfFilledOut([name, nationalId, phone, email])
-        return allEmpty ? true : name.length > 1
+        const isAllEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return isAllEmpty ? true : name && name.length > 1
       },
       {
         path: ['name'],
@@ -277,8 +277,8 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        const allEmpty = checkIfFilledOut([name, nationalId, phone, email])
-        return allEmpty ? true : kennitala.isPerson(nationalId)
+        const isAllEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return isAllEmpty ? true : nationalId && kennitala.isPerson(nationalId)
       },
       {
         path: ['nationalId'],

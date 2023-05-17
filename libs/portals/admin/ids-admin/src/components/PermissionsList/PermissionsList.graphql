@@ -1,0 +1,23 @@
+query AuthAdminScopes($input: ScopesInput!) {
+  authAdminScopes(input: $input) {
+    data {
+      scopeName
+      environments {
+        environment
+        displayName {
+          locale
+          value
+        }
+        description {
+          locale
+          value
+        }
+      }
+      defaultEnvironment {
+        name
+        environment
+      }
+      availableEnvironments
+    }
+  }
+}

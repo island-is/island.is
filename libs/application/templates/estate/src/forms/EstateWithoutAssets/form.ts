@@ -82,11 +82,22 @@ export const form: Form = buildForm({
                   titleVariant: 'h3',
                   description: m.vehiclesDescription,
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.vehicles',
-                  component: 'VehiclesRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.vehicles',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'vehicles',
+                    texts: {
+                      assetTitle: m.vehiclesTitle,
+                      assetNumber: m.vehicleNumberLabel,
+                      assetType: m.vehicleTypeLabel,
+                      addAsset: m.addVehicle,
+                    },
+                  },
+                ),
               ],
             }),
           ],

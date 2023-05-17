@@ -136,7 +136,7 @@ export const AdditionalRealEstate = ({
             id={marketValueField}
             name={marketValueField}
             label={formatMessage(m.marketValueTitle)}
-            defaultValue={(field as any).marketValue}
+            defaultValue={field.marketValue}
             placeholder={'0 kr.'}
             error={error?.marketValue}
             currency

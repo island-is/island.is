@@ -12,9 +12,9 @@ import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 import { Case } from '../../../case'
-import { DeliverResponse } from '../../models/deliver.response'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { notificationModuleConfig } from '../../notification.config'
+import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 
 jest.mock('../../../factories')
