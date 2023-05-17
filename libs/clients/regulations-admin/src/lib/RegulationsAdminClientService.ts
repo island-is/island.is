@@ -17,7 +17,6 @@ import {
   CreateDraftRegulationCancelDto,
   CreateDraftRegulationChangeDto,
   CreateDraftRegulationDto,
-  DraftRegulationCancelModel,
   UpdateDraftRegulationCancelDto,
   UpdateDraftRegulationChangeDto,
   UpdateDraftRegulationDto,
@@ -53,49 +52,39 @@ export class RegulationsAdminClientService {
     return this.draftRegulationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getDraftRegulations(auth: Auth, page?: number) {
-    const allDrafts = await this.draftRegulationsApiWithAuth(
+  getDraftRegulations(auth: Auth, page?: number) {
+    return this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerGetAll({
       page: page ?? 0,
     })
-    return allDrafts
   }
 
-  async getShippedRegulations(auth: Auth) {
-    return await this.draftRegulationsApiWithAuth(
+  getShippedRegulations(auth: Auth) {
+    return this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerGetAllShipped()
   }
 
-  async getDraftRegulation(
-    draftId: string,
-    auth: Auth,
-  ): Promise<RegulationDraft | null> {
-    const draftRegulation = ((await this.draftRegulationsApiWithAuth(
+  getDraftRegulation(draftId: string, auth: Auth) {
+    console.log('GET THE DRAFT')
+    return (this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerGetById({
       id: draftId,
-    })) as unknown) as RegulationDraft
-
-    return draftRegulation
+    }) as unknown) as RegulationDraft | null
   }
 
-  async getImpactsByName(
-    name: string,
-    auth: Auth,
-  ): Promise<DraftImpact[] | null> {
-    const res = ((await this.draftRegulationsApiWithAuth(
+  getImpactsByName(name: string, auth: Auth) {
+    return (this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerGetImpactsByName({
       name,
-    })) as unknown) as DraftImpact[]
-
-    return res
+    }) as unknown) as DraftImpact[] | null
   }
 
-  async create(auth: Auth, input: CreateDraftRegulationDto): Promise<any> {
-    return await this.draftRegulationsApiWithAuth(
+  create(auth: Auth, input: CreateDraftRegulationDto) {
+    return this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerCreate({
       createDraftRegulationDto: {
@@ -104,12 +93,8 @@ export class RegulationsAdminClientService {
     })
   }
 
-  async updateById(
-    draftId: string,
-    body: UpdateDraftRegulationDto,
-    auth: Auth,
-  ): Promise<any> {
-    return await this.draftRegulationsApiWithAuth(
+  updateById(draftId: string, body: UpdateDraftRegulationDto, auth: Auth) {
+    return this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerUpdate({
       updateDraftRegulationDto: body,
@@ -117,31 +102,31 @@ export class RegulationsAdminClientService {
     })
   }
 
-  async deleteById(draftId: string, auth: Auth): Promise<void> {
-    return await this.draftRegulationsApiWithAuth(
+  deleteById(draftId: string, auth: Auth) {
+    return this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerDelete({
       id: draftId,
     })
   }
 
-  async createDraftRegulationCancel(
+  createDraftRegulationCancel(
     input: CreateDraftRegulationCancelDto,
     auth: Auth,
-  ): Promise<DraftRegulationCancelModel> {
-    return await this.draftRegulationCancelApiWithAuth(
+  ) {
+    return this.draftRegulationCancelApiWithAuth(
       auth,
     ).draftRegulationCancelControllerCreate({
       createDraftRegulationCancelDto: input,
     })
   }
 
-  async updateDraftRegulationCancel(
+  updateDraftRegulationCancel(
     update: UpdateDraftRegulationCancelDto & { id: string },
     auth: Auth,
-  ): Promise<DraftRegulationCancelModel> {
+  ) {
     const { id, ...input } = update
-    return await this.draftRegulationCancelApiWithAuth(
+    return this.draftRegulationCancelApiWithAuth(
       auth,
     ).draftRegulationCancelControllerUpdate({
       updateDraftRegulationCancelDto: input,
@@ -149,43 +134,40 @@ export class RegulationsAdminClientService {
     })
   }
 
-  async deleteDraftRegulationCancel(
-    input: { id: string },
-    auth: Auth,
-  ): Promise<void> {
-    return await this.draftRegulationCancelApiWithAuth(
+  deleteDraftRegulationCancel(input: { id: string }, auth: Auth) {
+    return this.draftRegulationCancelApiWithAuth(
       auth,
     ).draftRegulationCancelControllerDelete({
       id: input.id,
     })
   }
 
-  async createDraftRegulationChange(
+  createDraftRegulationChange(
     input: CreateDraftRegulationChangeDto,
     auth: Auth,
-  ): Promise<DraftRegulationChange> {
-    return ((await this.draftRegulationChangeApiWithAuth(
+  ) {
+    return (this.draftRegulationChangeApiWithAuth(
       auth,
     ).draftRegulationChangeControllerCreate({
       createDraftRegulationChangeDto: input,
-    })) as unknown) as DraftRegulationChange
+    }) as unknown) as DraftRegulationChange
   }
 
-  async updateDraftRegulationChange(
+  updateDraftRegulationChange(
     update: UpdateDraftRegulationChangeDto,
     id: string,
     auth: Auth,
-  ): Promise<DraftRegulationChange> {
-    return ((await this.draftRegulationChangeApiWithAuth(
+  ) {
+    return (this.draftRegulationChangeApiWithAuth(
       auth,
     ).draftRegulationChangeControllerUpdate({
       id,
       updateDraftRegulationChangeDto: update,
-    })) as unknown) as DraftRegulationChange
+    }) as unknown) as DraftRegulationChange
   }
 
-  async deleteDraftRegulationChange(id: string, auth: Auth): Promise<any> {
-    return await this.draftRegulationChangeApiWithAuth(
+  deleteDraftRegulationChange(id: string, auth: Auth): Promise<any> {
+    return this.draftRegulationChangeApiWithAuth(
       auth,
     ).draftRegulationChangeControllerDelete({
       id,
