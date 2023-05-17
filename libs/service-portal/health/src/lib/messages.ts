@@ -181,9 +181,30 @@ export const messages = defineMessages({
     id: 'sp.health:max-unit-refund',
     defaultMessage: 'Hámarksgr. af stk.',
   },
+  maxAmountPerMonth: {
+    id: 'sp.health:max-amount-per-month',
+    defaultMessage: 'Hámarksupphæð á mánuði',
+  },
   availableRefund: {
     id: 'sp.health:available-unit-refund',
-    defaultMessage: 'Heimild til úttektar',
+    defaultMessage: 'Heimild nú til úttektar',
+  },
+
+  availableTo: {
+    id: 'sp.health:available-to',
+    defaultMessage: 'Heimild gildir til',
+  },
+  availableEvery12Months: {
+    id: 'sp.health:available-every-12-months',
+    defaultMessage: 'Heimild á 12 mán. tímabili',
+  },
+  extraDetail: {
+    id: 'sp.health:extra-detail',
+    defaultMessage: 'Nánari skýring',
+  },
+  nextAvailableRefund: {
+    id: 'sp.health:available-unit-refund',
+    defaultMessage: 'Næst heimild til úttektar',
   },
   location: {
     id: 'sp.health:location',
@@ -192,5 +213,9 @@ export const messages = defineMessages({
   insuranceRatio: {
     id: 'sp.health:insurance-ratio',
     defaultMessage: 'Hlutfall Sjúkratrygginga',
+  },
+  maxPaidByApplicant: {
+    id: 'sp.health:max-paid-by-applicant',
+    defaultMessage: 'Fyrst greitt af umsækjanda á mánuði',
   },
 })

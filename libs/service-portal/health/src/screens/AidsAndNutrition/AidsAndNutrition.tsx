@@ -20,6 +20,8 @@ import { messages } from '../../lib/messages'
 import { FC } from 'react'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
 import LinkButton from '../../components/LinkButton/LinkButton'
+import AidsTable from './AidsTable'
+import NutritionTable from './NutritionTable'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -36,7 +38,7 @@ const AidsAndNutrition = () => {
     supportData.aids.length > 0 && {
       label: formatMessage(messages.aids),
       content: (
-        <AidsAndNutritionTabsContent
+        <AidsTable
           data={supportData.aids}
           footnote={formatMessage(messages['aidsDisclaimer'])}
           link="https://island.is/s/sjukratryggingar/hjalpartaeki-og-naering"
@@ -47,7 +49,7 @@ const AidsAndNutrition = () => {
     supportData.nutrition.length > 0 && {
       label: formatMessage(messages.nutrition),
       content: (
-        <AidsAndNutritionTabsContent
+        <NutritionTable
           data={supportData.nutrition}
           footnote={formatMessage(messages['nutritionDisclaimer'])}
           link="https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis"

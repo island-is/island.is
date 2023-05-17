@@ -31,6 +31,15 @@ export class AidOrNutrition {
   @Field({ nullable: true })
   location?: string
 
+  @Field({ nullable: true })
+  explanation?: string
+
+  @Field({ nullable: true })
+  validUntil?: Date
+
+  @Field({ nullable: true })
+  nextAllowedMonth?: string
+
   @Field()
   expiring!: boolean
 }

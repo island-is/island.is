@@ -5,6 +5,9 @@ query GetAidsAndNutrition {
       id
       iso
       available
+      explanation
+      validUntil
+      nextAllowedMonth
       expiring
       location
       maxUnitRefund
@@ -19,6 +22,9 @@ query GetAidsAndNutrition {
       iso
       available
       expiring
+      explanation
+      validUntil
+      nextAllowedMonth
       location
       maxUnitRefund
       refund {
