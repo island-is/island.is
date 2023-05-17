@@ -48,14 +48,16 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               <Hidden below="lg">
                 <HeroLogo />
               </Hidden>
-              <Text paddingY={4}>
-                Markmið Samráðsgáttarinnar er að auka gagnsæi og möguleika
-                almennings og hagsmunaaðila á þátttöku í stefnumótun,
-                reglusetningu og ákvarðanatöku opinberra aðila. Hér er á einum
-                stað hægt að finna öll mál ráðuneyta sem birt hafa verið til
-                samráðs við almenning. Öllum er frjálst að senda inn umsögn eða
-                ábendingu.
-              </Text>
+              <div role="heading" aria-level={1}>
+                <Text paddingY={4}>
+                  Markmið Samráðsgáttarinnar er að auka gagnsæi og möguleika
+                  almennings og hagsmunaaðila á þátttöku í stefnumótun,
+                  reglusetningu og ákvarðanatöku opinberra aðila. Hér er á einum
+                  stað hægt að finna öll mál ráðuneyta sem birt hafa verið til
+                  samráðs við almenning. Öllum er frjálst að senda inn umsögn
+                  eða ábendingu.
+                </Text>
+              </div>
               <Columns collapseBelow="lg" space={2}>
                 <Column>
                   <ArrowLink href="/um">Lesa meira</ArrowLink>

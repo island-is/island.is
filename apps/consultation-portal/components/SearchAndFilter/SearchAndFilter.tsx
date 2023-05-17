@@ -59,7 +59,6 @@ const SearchAndFilter = ({
               size="xs"
               label="Málefnasvið"
               name="policyAreas"
-              aria-selected="false"
               noOptionsMessage="Ekkert málefnasvið"
               options={[...PolicyAreas].sort((a, b) =>
                 a.label.localeCompare(b.label),
@@ -82,7 +81,6 @@ const SearchAndFilter = ({
               size="xs"
               label="Stofnun"
               name="institutions"
-              aria-selected="false"
               noOptionsMessage="Enginn stofnun"
               options={[...Institutions].sort((a, b) =>
                 a.label.localeCompare(b.label),
