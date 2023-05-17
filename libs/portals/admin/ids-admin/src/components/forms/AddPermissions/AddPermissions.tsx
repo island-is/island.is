@@ -13,6 +13,8 @@ import { ShadowBox } from '../../ShadowBox/ShadowBox'
 import { ClientContext } from '../../../shared/context/ClientContext'
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import { getTranslatedValue } from '@island.is/portals/core'
+import { useGetAvailableScopesQuery } from './AvailableScopes.generated'
+import { useParams } from 'react-router-dom'
 
 interface AddPermissionsProps {
   isVisible: boolean
@@ -25,6 +27,10 @@ function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
   const [selected, setSelected] = React.useState<
     Map<string, AuthAdminClientAllowedScope>
   >(new Map())
+  const params = useParams()
+  const [availableScopes, setAvailableScopes] = React.useState<
+    AuthAdminClientAllowedScope[]
+  >([])
 
   const {
     selectedEnvironment,
@@ -34,8 +40,29 @@ function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
     setRemovedScopes,
   } = useContext(ClientContext)
 
+  const { loading } = useGetAvailableScopesQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      input: {
+        tenantId: params['tenant'] ?? '',
+      },
+    },
+    onCompleted: (data) => {
+      const scopes = data.authAdminScopes?.data
+        .map((item) => {
+          return (
+            item.environments.find(
+              (scope) => scope.environment === selectedEnvironment.environment,
+            ) ?? null
+          )
+        })
+        .filter((item) => item !== null)
+
+      setAvailableScopes(scopes as AuthAdminClientAllowedScope[])
+    },
+  })
   // Get the available scopes for the selected environment including the scopes that have already been deleted
-  const available = selectedEnvironment.availableScopes
+  const available = availableScopes
     ?.filter((item) => {
       return ![
         ...addedScopes,
@@ -108,29 +135,31 @@ function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
               </T.HeadData>
             </T.Row>
           </T.Head>
-          <T.Body>
-            {available?.map((item) => (
-              <T.Row key={item.name}>
-                <T.Data>
-                  <Checkbox
-                    onChange={() => {
-                      onChange(item as AuthAdminClientAllowedScope)
-                    }}
-                    value={item.name}
-                  />
-                </T.Data>
-                <T.Data>
-                  <Text variant="eyebrow">
-                    {getTranslatedValue(item.displayName, locale)}
-                  </Text>
-                  {item.name}
-                </T.Data>
-                <T.Data>
-                  {getTranslatedValue(item.description ?? [], locale)}
-                </T.Data>
-              </T.Row>
-            ))}
-          </T.Body>
+          {!loading && (
+            <T.Body>
+              {available?.map((item) => (
+                <T.Row key={item.name}>
+                  <T.Data>
+                    <Checkbox
+                      onChange={() => {
+                        onChange(item as AuthAdminClientAllowedScope)
+                      }}
+                      value={item.name}
+                    />
+                  </T.Data>
+                  <T.Data>
+                    <Text variant="eyebrow">
+                      {getTranslatedValue(item.displayName, locale)}
+                    </Text>
+                    {item.name}
+                  </T.Data>
+                  <T.Data>
+                    {getTranslatedValue(item.description ?? [], locale)}
+                  </T.Data>
+                </T.Row>
+              ))}
+            </T.Body>
+          )}
         </T.Table>
       </ShadowBox>
       <Box display="flex" justifyContent="spaceBetween" marginTop={2}>

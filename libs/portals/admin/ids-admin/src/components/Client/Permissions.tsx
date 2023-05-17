@@ -1,18 +1,30 @@
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
-import React, { useContext, useState } from 'react'
-import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import {
+  Box,
+  Button,
+  Icon,
+  Table as T,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import {
+  ClientFormTypes,
+  EditApplicationResult,
+  schema,
+} from '../forms/EditApplication/EditApplication.action'
 import { ShadowBox } from '../ShadowBox/ShadowBox'
-import { useParams } from 'react-router-dom'
+import { useActionData, useParams } from 'react-router-dom'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import AddPermissions from '../forms/AddPermissions/AddPermissions'
 import { getTranslatedValue } from '@island.is/portals/core'
+import isEqual from 'lodash/isEqual'
 
 interface PermissionsProps {
-  allowedScopes?: AuthAdminClientAllowedScope[] | undefined
+  allowedScopes?: AuthAdminClientAllowedScope[]
 }
 
 function Permissions({ allowedScopes }: PermissionsProps) {
@@ -22,6 +34,26 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   const [permissions, setPermissions] = useState<AuthAdminClientAllowedScope[]>(
     allowedScopes ?? [],
   )
+  const actionData = useActionData() as EditApplicationResult<
+    typeof schema[typeof ClientFormTypes.permissions]
+  >
+
+  const actionDataRef = useRef(actionData?.data)
+
+  useEffect(() => {
+    if (actionData?.intent === ClientFormTypes.permissions) {
+      if (!isEqual(actionData?.data, actionDataRef?.current)) {
+        if (actionData?.data) {
+          setAddedScopes([])
+          setRemovedScopes([])
+        }
+        if (actionData?.globalError) {
+          toast.error(formatMessage(m.globalErrorMessage))
+        }
+      }
+    }
+  }, [actionData])
+
   const {
     addedScopes,
     removedScopes,
@@ -40,7 +72,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   }
 
   // If removing permissions, we want to remove it from both the permissions and addedPermissions array and add it to the removedPermissions array if it doesn't exist there
-  const handleRemovedPermissions = (
+  const handleRemovedPermission = (
     removedPermission: AuthAdminClientAllowedScope,
   ) => {
     const newPermissions = permissions.filter(
@@ -117,7 +149,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
                   </T.Data>
                   <T.Data>
                     <Button
-                      onClick={() => handleRemovedPermissions(item)}
+                      onClick={() => handleRemovedPermission(item)}
                       aria-label={formatMessage(m.permissionsButtonLabelRemove)}
                       icon="trash"
                       variant="ghost"

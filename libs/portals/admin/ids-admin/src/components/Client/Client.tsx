@@ -246,9 +246,7 @@ const Client = () => {
         />
         <Permissions
           key={`${selectedEnvironment.environment}-Permissions`}
-          allowedScopes={
-            (selectedEnvironment?.allowedScopes as unknown) as AuthAdminClientAllowedScope[]
-          }
+          allowedScopes={selectedEnvironment?.allowedScopes ?? []}
         />
         <Delegation
           key={`${selectedEnvironment.environment}-Delegation`}

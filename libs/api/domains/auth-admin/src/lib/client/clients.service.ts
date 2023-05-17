@@ -20,7 +20,6 @@ import { ClientEnvironment } from './models/client-environment.model'
 import { ClientSecret } from './models/client-secret.model'
 import { Client } from './models/client.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
-import { ClientAvailableScopeInput } from './dto/client-available-scope.input'
 import { environments } from '../shared/constants/environments'
 
 @Injectable()
@@ -267,26 +266,13 @@ export class ClientsService extends MultiEnvironmentService {
     })
 
     return (
-      apiScopes?.map(({ name, displayName, description }) => ({
+      apiScopes?.map(({ name, displayName, description, domainName }) => ({
         name,
         displayName,
         description,
+        domainName,
       })) ?? []
     )
-  }
-
-  async getScopesByTenantId(
-    input: ClientAvailableScopeInput,
-    user: User,
-  ): Promise<ClientAllowedScope[]> {
-    const apiScopes = await this.adminApiByEnvironmentWithAuth(
-      input.environment,
-      user,
-    )?.meScopesControllerFindAllByTenantId({
-      tenantId: input.tenantId,
-    })
-
-    return apiScopes ?? []
   }
 
   async rotateSecret(

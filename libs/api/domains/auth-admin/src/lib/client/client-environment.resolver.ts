@@ -11,8 +11,6 @@ import { ClientSecretLoader } from './client-secret.loader'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import type { ClientAllowedScopesDataLoader } from './client-allowed-scopes.loader'
 import { ClientAllowedScopesLoader } from './client-allowed-scopes.loader'
-import { ClientAvailableScopesLoader } from './client-available-scopes.loader'
-import type { ClientAvailableScopesDataLoader } from './client-available-scopes.loader'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ClientEnvironment)
@@ -39,21 +37,6 @@ export class ClientEnvironmentResolver {
     return apiScopeLoader.load({
       tenantId,
       clientId,
-      environment,
-    })
-  }
-
-  @ResolveField('availableScopes', () => [ClientAllowedScope], {
-    nullable: true,
-  })
-  async resolveAvailableScopes(
-    @Loader(ClientAvailableScopesLoader)
-    apiScopeLoader: ClientAvailableScopesDataLoader,
-    @Parent()
-    { tenantId, environment }: ClientEnvironment,
-  ): Promise<ClientAllowedScope[]> {
-    return apiScopeLoader.load({
-      tenantId,
       environment,
     })
   }

@@ -48,18 +48,6 @@ query GetClient($input: AuthAdminClientInput!) {
         }
         domainName
       }
-      availableScopes {
-        name
-        domainName
-        displayName {
-          locale
-          value
-        }
-        description {
-          locale
-          value
-        }
-      }
     }
   }
 }
