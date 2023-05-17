@@ -91,6 +91,7 @@ import { strings } from './SignedVerdictOverview.strings'
 import { appealCase } from '../../CourtOfAppeal/AppealCase/AppealCase.strings'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import CaseFilesOverview from '../../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
+import ShareCase from './Components/ShareCase/ShareCase'
 
 interface ModalControls {
   open: boolean
@@ -691,26 +692,30 @@ export const SignedVerdictOverview: React.FC = () => {
                   phoneNumber: workingCase.defenderPhoneNumber,
                 },
               ]}
-              courtOfAppealData={[
-                {
-                  title: formatMessage(appealCase.caseNumberHeading),
-                  value: workingCase.appealCaseNumber,
-                },
-                {
-                  title: formatMessage(appealCase.assistantHeading),
-                  value: workingCase.appealAssistant?.name,
-                },
-                {
-                  title: formatMessage(appealCase.judgesHeading),
-                  value: (
-                    <>
-                      <Text>{workingCase.appealJudge1?.name}</Text>
-                      <Text>{workingCase.appealJudge2?.name}</Text>
-                      <Text>{workingCase.appealJudge3?.name}</Text>
-                    </>
-                  ),
-                },
-              ]}
+              courtOfAppealData={
+                workingCase.appealCaseNumber
+                  ? [
+                      {
+                        title: formatMessage(appealCase.caseNumberHeading),
+                        value: workingCase.appealCaseNumber,
+                      },
+                      {
+                        title: formatMessage(appealCase.assistantHeading),
+                        value: workingCase.appealAssistant?.name,
+                      },
+                      {
+                        title: formatMessage(appealCase.judgesHeading),
+                        value: (
+                          <>
+                            <Text>{workingCase.appealJudge1?.name}</Text>
+                            <Text>{workingCase.appealJudge2?.name}</Text>
+                            <Text>{workingCase.appealJudge3?.name}</Text>
+                          </>
+                        ),
+                      },
+                    ]
+                  : undefined
+              }
             />
           </Box>
           {(workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
@@ -758,12 +763,15 @@ export const SignedVerdictOverview: React.FC = () => {
               judgeName={workingCase.judge?.name}
             />
           </Box>
-          <Box marginBottom={6}>
-            <Conclusion
-              conclusionText={workingCase.appealConclusion}
-              judgeName={workingCase.appealJudge1?.name}
-            />
-          </Box>
+          {workingCase.appealConclusion && (
+            <Box marginBottom={6}>
+              {/* TODO add appeal conclusion when merged */}
+              <Conclusion
+                conclusionText={workingCase.appealConclusion}
+                judgeName={workingCase.appealJudge1?.name}
+              />
+            </Box>
+          )}
 
           {workingCase.appealState ? (
             <CaseFilesOverview />
@@ -783,79 +791,17 @@ export const SignedVerdictOverview: React.FC = () => {
           {user?.role === UserRole.PROSECUTOR &&
             user.institution?.id ===
               workingCase.creatingProsecutor?.institution?.id &&
-            isRestrictionCase(workingCase.type) && (
-              <Box marginBottom={9}>
-                <Box marginBottom={3}>
-                  <Text variant="h3">
-                    {formatMessage(m.sections.shareCase.title)}{' '}
-                    <Tooltip text={formatMessage(m.sections.shareCase.info)} />
-                  </Text>
-                </Box>
-                <BlueBox>
-                  <Box display="flex">
-                    <Box flexGrow={1} marginRight={2}>
-                      <Select
-                        name="sharedWithProsecutorsOfficeId"
-                        label={formatMessage(m.sections.shareCase.label)}
-                        placeholder={formatMessage(
-                          m.sections.shareCase.placeholder,
-                        )}
-                        size="sm"
-                        icon={
-                          workingCase.sharedWithProsecutorsOffice
-                            ? 'checkmark'
-                            : undefined
-                        }
-                        options={prosecutorsOffices
-                          .map((prosecutorsOffice) => ({
-                            label: prosecutorsOffice.name,
-                            value: prosecutorsOffice.id,
-                          }))
-                          .filter((t) => t.value !== user?.institution?.id)}
-                        value={
-                          workingCase.sharedWithProsecutorsOffice
-                            ? {
-                                label:
-                                  workingCase.sharedWithProsecutorsOffice.name,
-                                value:
-                                  workingCase.sharedWithProsecutorsOffice.id,
-                              }
-                            : selectedSharingInstitutionId
-                            ? {
-                                label: (selectedSharingInstitutionId as ReactSelectOption)
-                                  .label,
-                                value: (selectedSharingInstitutionId as ReactSelectOption)
-                                  .value as string,
-                              }
-                            : null
-                        }
-                        onChange={(so: ValueType<ReactSelectOption>) =>
-                          setSelectedSharingInstitutionId(so)
-                        }
-                        disabled={Boolean(
-                          workingCase.sharedWithProsecutorsOffice,
-                        )}
-                      />
-                    </Box>
-                    <Button
-                      size="small"
-                      disabled={
-                        !selectedSharingInstitutionId &&
-                        !workingCase.sharedWithProsecutorsOffice
-                      }
-                      onClick={() =>
-                        shareCaseWithAnotherInstitution(
-                          selectedSharingInstitutionId,
-                        )
-                      }
-                    >
-                      {workingCase.sharedWithProsecutorsOffice
-                        ? formatMessage(m.sections.shareCase.close)
-                        : formatMessage(m.sections.shareCase.open)}
-                    </Button>
-                  </Box>
-                </BlueBox>
-              </Box>
+            isRestrictionCase(workingCase.type) &&
+            !workingCase.appealState && (
+              <ShareCase
+                selectedSharingInstitutionId={selectedSharingInstitutionId}
+                setSelectedSharingInstitutionId={
+                  setSelectedSharingInstitutionId
+                }
+                shareCaseWithAnotherInstitution={
+                  shareCaseWithAnotherInstitution
+                }
+              />
             )}
         </FormContentContainer>
         <FormContentContainer isFooter>
