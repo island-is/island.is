@@ -205,6 +205,9 @@ export class PaymentService {
           )
           user4 = chargeResult.user4
         } else if (currentCharge.statusResult.status === 'inProgress') {
+          //handle this somehow better in the future
+          //just log and throw for now and let the user try again
+          this.logger.error('Charge in progress')
           throw new Error('Wait for charge to complete')
         } else if (
           currentCharge.statusResult.status === 'unpaid' &&
