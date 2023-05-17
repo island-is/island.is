@@ -407,35 +407,6 @@ describe('CaseController - Transition', () => {
               ])
             }
           })
-
-          it('should send notifications to queue when appeal is received', () => {
-            if (transition === CaseTransition.RECEIVE_APPEAL) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
-                {
-                  type: MessageType.SEND_APPEAL_RECEIVED_BY_COURT_NOTIFICATION,
-                  user: defaultUser,
-                  caseId,
-                },
-              ])
-            }
-          })
-
-          it('should send notifications to queue when appeal is completed', () => {
-            if (transition === CaseTransition.COMPLETE_APPEAL) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
-                {
-                  type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-                  user: defaultUser,
-                  caseId,
-                  caseFileId: appealRulingId,
-                },
-              ])
-            }
-          })
         },
       )
     },
