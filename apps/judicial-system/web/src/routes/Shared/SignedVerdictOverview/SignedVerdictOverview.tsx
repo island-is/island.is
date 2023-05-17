@@ -85,6 +85,7 @@ import { appealCase } from '../../CourtOfAppeal/AppealCase/AppealCase.strings'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import CaseFilesOverview from '../../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
 import ShareCase from './Components/ShareCase/ShareCase'
+import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
 
 interface ModalControls {
   open: boolean
@@ -755,8 +756,7 @@ export const SignedVerdictOverview: React.FC = () => {
           </Box>
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              {/* TODO add appeal conclusion when merged */}
-              <Conclusion
+              <AppealConclusion
                 conclusionText={workingCase.appealConclusion}
                 judgeName={workingCase.appealJudge1?.name}
               />

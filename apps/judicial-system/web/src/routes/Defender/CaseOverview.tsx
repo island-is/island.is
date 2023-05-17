@@ -45,6 +45,7 @@ import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
 import { appealCase } from '../CourtOfAppeal/AppealCase/AppealCase.strings'
 import Conclusion from '../../components/Conclusion/Conclusion'
 import CaseFilesOverview from '../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
+import AppealConclusion from '../../components/Conclusion/AppealConclusion'
 
 type availableModals =
   | 'NoModal'
@@ -293,8 +294,7 @@ export const CaseOverview: React.FC = () => {
           )}
           {workingCase.appealConclusion && (
             <Box marginBottom={6}>
-              {/* TODO add appeal conclusion when merged */}
-              <Conclusion
+              <AppealConclusion
                 conclusionText={workingCase.appealConclusion}
                 judgeName={workingCase.appealJudge1?.name}
               />
