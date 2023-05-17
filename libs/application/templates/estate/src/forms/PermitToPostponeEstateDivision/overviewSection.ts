@@ -113,7 +113,7 @@ export const overview = buildSection({
             getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
         }),
         buildDescriptionField({
-          id: 'space1',
+          id: 'space2',
           title: '',
           space: 'gutter',
         }),
@@ -123,7 +123,7 @@ export const overview = buildSection({
             getValueViaPath(answers, 'estate.testament.additionalInfo'),
         }),
         buildDescriptionField({
-          id: 'space2',
+          id: 'space3',
           title: '',
           space: 'gutter',
         }),
