@@ -17,11 +17,13 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PostCaseSubscriptionTypeInput } from '../dto/postCaseSubscriptionType.input'
 import { GetCaseInput } from '../dto/case.input'
+import { Audit } from '@island.is/nest/audit'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.samradsgatt)
 @FeatureFlag(Features.consultationPortalApplication)
+@Audit({ namespace: '@island.is/samradsgatt' })
 export class CaseSubscriptionResolver {
   constructor(private caseSubscriptionService: CaseSubscriptionService) {}
 

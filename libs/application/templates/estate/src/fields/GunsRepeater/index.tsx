@@ -29,7 +29,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
   const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-  const { control } = useFormContext()
+  const { control, clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { guns: EstateAsset[] }
@@ -43,9 +43,9 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
 
   const handleAddGun = () =>
     append({
-      assetNumber: '',
-      description: '',
-      marketValue: '',
+      assetNumber: undefined,
+      description: undefined,
+      marketValue: undefined,
     })
   const handleRemoveGun = (index: number) => remove(index)
 
@@ -81,6 +81,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                           enabled: !asset.enabled,
                         }
                         update(index, updatedAsset)
+                        clearErrors(`${id}[${index}].marketValue`)
                       }}
                     >
                       {asset.enabled
@@ -174,6 +175,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.gunTypeLabel)}
                   defaultValue={field.description}
                   placeholder={''}
+                  error={fieldError?.description}
                   size="sm"
                 />
               </GridColumn>
@@ -184,7 +186,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                   label={formatMessage(m.marketValueTitle)}
                   defaultValue={field.marketValue}
                   placeholder={'0 kr.'}
-                  error={fieldError?.assetNumber}
+                  error={fieldError?.marketValue}
                   currency
                   size="sm"
                 />

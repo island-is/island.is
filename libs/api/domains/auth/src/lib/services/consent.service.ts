@@ -1,35 +1,30 @@
 import { Injectable } from '@nestjs/common'
 
-import { User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Consent, ConsentsApi } from '@island.is/clients/auth/ids-api'
 
 import { ConsentsPaginated } from '../dto/consentsPaginated.response'
+import { PatchConsentInput } from '../dto/updateConsent.input'
 
 @Injectable()
 export class ConsentService {
-  async getConsent(user: User): Promise<ConsentsPaginated> {
-    // TODO: Get consents from IDS
-    const data = [
-      {
-        clientId: '@reykjavik-web',
-        consentedScopes: ['scope1, scope2'],
-        rejectedScopes: ['scope3'],
-      },
-      {
-        clientId: '@hms.is/minarsidur',
-        consentedScopes: ['scope1, scope2'],
-        rejectedScopes: ['scope3'],
-      },
-    ]
+  constructor(private readonly consentsApi: ConsentsApi) {}
 
-    return {
-      totalCount: data.length,
-      data: data,
-      pageInfo: {
-        hasNextPage: false,
-        hasPreviousPage: false,
-        startCursor: '',
-        endCursor: '',
+  private consentsApiWithAuth(auth: Auth) {
+    return this.consentsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  getConsent(user: User): Promise<ConsentsPaginated> {
+    return this.consentsApiWithAuth(user).v1ActorConsentsGet()
+  }
+
+  updateConsent(user: User, input: PatchConsentInput): Promise<Consent> {
+    return this.consentsApiWithAuth(user).v1ActorConsentsClientIdPatch({
+      clientId: input.clientId,
+      consentUpdate: {
+        consented: input.consentedScopes,
+        rejected: input.rejectedScopes,
       },
-    }
+    })
   }
 }

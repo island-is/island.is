@@ -1,5 +1,5 @@
 # Get Clients by TenantId
-query GetClients($input: ClientsInput!) {
+query GetClients($input: AuthAdminClientsInput!) {
   authAdminClients(input: $input) {
     data {
       clientId

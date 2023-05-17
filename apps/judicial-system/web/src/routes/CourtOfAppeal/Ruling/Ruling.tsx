@@ -124,7 +124,7 @@ const CourtOfAppealRuling: React.FC = () => {
         <Box marginBottom={7}>
           <Text as="h2" variant="h2">
             {formatMessage(strings.caseNumber, {
-              caseNumber: `${workingCase.appealCaseNumber}/2023`,
+              caseNumber: `${workingCase.appealCaseNumber}`,
             })}
           </Text>
           <Text as="h3" variant="default" fontWeight="semiBold">
@@ -348,7 +348,7 @@ const CourtOfAppealRuling: React.FC = () => {
           onClose={() => setVisibleModal(false)}
           onSecondaryButtonClick={() => {
             router.push(
-              `${constants.COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`,
+              `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
             )
           }}
         />

@@ -2,10 +2,10 @@ import SubscriptionActionCard from '../Card/SubscriptionActionCard'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { SUB_POST_EMAIL } from '../../graphql/queries.graphql'
-import { useLogIn, useUser } from '../../utils/helpers'
+import { useLogIn, useUser } from '../../hooks'
 import { BaseSyntheticEvent, useEffect, useState } from 'react'
-import { useFetchEmail } from '../../utils/helpers/api/useFetchEmail'
-import { LoadingDots, SkeletonLoader, toast } from '@island.is/island-ui/core'
+import { useFetchEmail } from '../../hooks/api/useFetchEmail'
+import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 
 const emailIsValid = (email: string) => {
