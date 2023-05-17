@@ -11,8 +11,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 
-import { m } from '../../lib/messages'
-import { ClientContext } from '../../shared/context/ClientContext'
+import { m } from '../../../lib/messages'
+import { ClientContext } from '../../../shared/context/ClientContext'
 import { useRevokeSecretsMutation } from './RevokeSecrets.generated'
 
 interface RevokeSecretsProps {

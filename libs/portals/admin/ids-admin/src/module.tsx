@@ -13,7 +13,6 @@ import { clientLoader } from './components/Client/Client.loader'
 import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
 import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
 import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
-import { rotateSecretAction } from './components/forms/RotateSecret/RotateSecret.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -23,9 +22,6 @@ const CreateClient = lazy(() =>
 )
 const Clients = lazy(() => import('./components/Clients/Clients'))
 const ClientsScreen = lazy(() => import('./screens/ClientsScreen'))
-const RotateSecret = lazy(() =>
-  import('./components/forms/RotateSecret/RotateSecret'),
-)
 
 const allowedScopes: string[] = [
   AdminPortalScope.idsAdmin,
@@ -83,13 +79,6 @@ export const idsAdminModule: PortalModule = {
                     path: IDSAdminPaths.IDSAdminClientPublish,
                     action: publishEnvironmentAction(props),
                     element: <PublishEnvironment />,
-                  },
-                  {
-                    name: m.rotateSecret,
-                    navHide: true,
-                    path: IDSAdminPaths.IDSAdminClientRotateSecret,
-                    action: rotateSecretAction(props),
-                    element: <RotateSecret />,
                   },
                 ],
               },

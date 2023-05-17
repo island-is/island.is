@@ -74,17 +74,17 @@ const BasicInfoContent = ({
               label={formatMessage(m.clientSecret)}
               buttons={[
                 {
-                  name: 'copy',
-                  type: 'outline',
-                  onClick: () => copyToClipboard(clientSecretRef),
-                  label: 'Copy value',
-                  disabled: isLegacySecret,
-                },
-                {
                   name: showSecret ? 'eyeOff' : 'eye',
                   type: 'outline',
                   onClick: toggleSecret,
                   label: showSecret ? 'Hide password' : 'Show password',
+                  disabled: isLegacySecret,
+                },
+                {
+                  name: 'copy',
+                  type: 'outline',
+                  onClick: () => copyToClipboard(clientSecretRef),
+                  label: 'Copy value',
                   disabled: isLegacySecret,
                 },
               ]}

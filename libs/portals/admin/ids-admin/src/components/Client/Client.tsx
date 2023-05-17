@@ -32,7 +32,7 @@ import Permissions from './Permissions'
 import Translations from './Translations'
 
 import * as styles from './Client.css'
-import RevokeSecrets from '../RevokeSecrets/RevokeSecrets'
+import RevokeSecrets from './RevokeSecrets/RevokeSecrets'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
