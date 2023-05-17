@@ -9,18 +9,16 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Modal } from '@island.is/react/components'
+import { Modal, ModalProps } from '@island.is/react/components'
 
 import { m } from '../../../lib/messages'
 import { ClientContext } from '../../../shared/context/ClientContext'
 import { useRevokeSecretsMutation } from './RevokeSecrets.generated'
 
-interface RevokeSecretsProps {
-  isVisible: boolean
-  onClose: () => void
-}
-
-export const RevokeSecrets = ({ isVisible, onClose }: RevokeSecretsProps) => {
+export const RevokeSecrets = ({
+  isVisible,
+  onClose,
+}: Pick<ModalProps, 'isVisible' | 'onClose'>) => {
   const { formatMessage } = useLocale()
   const {
     selectedEnvironment: { environment },
@@ -53,7 +51,7 @@ export const RevokeSecrets = ({ isVisible, onClose }: RevokeSecretsProps) => {
     if (res.data?.revokeAuthAdminClientSecrets) {
       revalidate()
       toast.success(formatMessage(m.successRevokingSecrets))
-      onClose()
+      onClose?.()
     }
   }
 
@@ -89,5 +87,3 @@ export const RevokeSecrets = ({ isVisible, onClose }: RevokeSecretsProps) => {
     </Modal>
   )
 }
-
-export default RevokeSecrets

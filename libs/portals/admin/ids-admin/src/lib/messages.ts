@@ -464,6 +464,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-claims',
     defaultMessage: 'Invalid claim format',
   },
+  hidePassword: {
+    id: 'ap.ids-admin:hide-password',
+    defaultMessage: 'Hide password',
+  },
+  showPassword: {
+    id: 'ap.ids-admin:show-password',
+    defaultMessage: 'Show password',
+  },
+  copy: {
+    id: 'ap.ids-admin:copy',
+    defaultMessage: 'Copy value',
+  },
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',

@@ -11,19 +11,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Modal } from '@island.is/react/components'
+import { Modal, ModalProps } from '@island.is/react/components'
 
 import { m } from '../../../lib/messages'
 import { ClientContext } from '../../../shared/context/ClientContext'
 import { useCopyToClipboard } from '../../../shared/hooks/useCopyToClipboard'
 import { useRotateSecretMutation } from './RotateSecret.generated'
 
-interface RotateSecretProps {
-  isVisible: boolean
-  onClose: () => void
-}
-
-export const RotateSecret = ({ isVisible, onClose }: RotateSecretProps) => {
+export const RotateSecret = ({
+  isVisible,
+  onClose,
+}: Pick<ModalProps, 'isVisible' | 'onClose'>) => {
   const { formatMessage } = useLocale()
   const { copyToClipboard } = useCopyToClipboard()
   const { revalidate } = useRevalidator()
@@ -73,7 +71,7 @@ export const RotateSecret = ({ isVisible, onClose }: RotateSecretProps) => {
 
   const handleClose = useCallback(() => {
     setNewSecret('')
-    onClose()
+    onClose?.()
     revalidate()
   }, [onClose, revalidate])
 
@@ -167,5 +165,3 @@ export const RotateSecret = ({ isVisible, onClose }: RotateSecretProps) => {
     </Modal>
   )
 }
-
-export default RotateSecret

@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
@@ -21,18 +21,18 @@ import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
-import AdvancedSettings from './AdvancedSettings'
-import BasicInfo from './BasicInfo'
+import { AdvancedSettings } from './AdvancedSettings'
+import { BasicInfo } from './BasicInfo'
 import { AuthAdminClient } from './Client.loader'
 import ClientsUrl from './ClientsUrl'
 import { DangerZone } from './DangerZone'
 import Delegation from './Delegation'
 import Lifetime from './Lifetime'
 import Permissions from './Permissions'
+import { RevokeSecrets } from './RevokeSecrets/RevokeSecrets'
 import Translations from './Translations'
 
 import * as styles from './Client.css'
-import RevokeSecrets from './RevokeSecrets/RevokeSecrets'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
