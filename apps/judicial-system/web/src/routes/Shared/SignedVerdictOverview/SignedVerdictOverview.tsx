@@ -17,6 +17,7 @@ import {
   Feature,
   isProsecutionRole,
   CaseTransition,
+  CaseAppealState,
 } from '@island.is/judicial-system/types'
 import {
   FormFooter,
@@ -514,7 +515,8 @@ export const SignedVerdictOverview: React.FC = () => {
     (workingCase.hasBeenAppealed &&
       (isProsecutionRole(user?.role) || isCourtRole(user?.role))) ||
     (isProsecutionRole(user?.role) &&
-      workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE)
+      workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) ||
+    workingCase.appealState === CaseAppealState.COMPLETED
 
   return (
     <>
