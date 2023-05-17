@@ -239,6 +239,24 @@ enum SjuktratryggingarCategories {
 
   // Önnur þjónusta Sjúkratrygginga
   ONNUR_THJONUSTA_SJUKRATRYGGINGA = 'vVBHhkPz8AF9BEzLJsoZo',
+
+  // Hjálpartæki
+  HJALPARTAEKI = 'hjalpartaeki',
+
+  // Næring
+  NAERING = 'naering',
+
+  // Slysatrygging
+  SLYSATRYGGING = 'slysatrygging',
+
+  // Sjúklingatrygging
+  SJUKLINGATRYGGING = 'sjuklingatrygging',
+
+  // Hjúkrunarheimili
+  HJUKRUNARHEIMILI = 'hjukrunarheimili',
+
+  // Túlkaþjónusta
+  TULKATHJONUSTA = 'tulkathjonusta',
 }
 
 const sjukratryggingarEmails = {
@@ -247,25 +265,23 @@ const sjukratryggingarEmails = {
     'laeknareikningar@sjukra.is',
   [SjuktratryggingarCategories.HEILBRIGDISTHJONUSTA]:
     'laeknareikningar@sjukra.is',
-  [SjuktratryggingarCategories.HJALPARTAEKI_OG_NAERING]: [
-    'htm@sjukra.is',
-    'naering@sjukra.is',
-  ],
+  [SjuktratryggingarCategories.HJALPARTAEKI_OG_NAERING]: 'hjalpart@sjukra.is',
+  [SjuktratryggingarCategories.HJALPARTAEKI]: 'hjalpart@sjukra.is',
+  [SjuktratryggingarCategories.NAERING]: 'naering@sjukra.is',
   [SjuktratryggingarCategories.LYF_OG_LYFJAKOSTNADUR]: 'lyf@sjukra.is',
   [SjuktratryggingarCategories.RETTINDI_MILLI_LANDA]: 'international@sjukra.is',
   [SjuktratryggingarCategories.SJUKRADAGPENINGAR]: 'dagpeningar@sjukra.is',
-  [SjuktratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING]: [
-    'slys@sjukra.is',
+  [SjuktratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING]: 'slys@sjukra.is',
+  [SjuktratryggingarCategories.SLYSATRYGGING]: 'slys@sjukra.is',
+  [SjuktratryggingarCategories.SJUKLINGATRYGGING]:
     'sjuklingatrygging@sjukra.is',
-  ],
   [SjuktratryggingarCategories.TANNLAEKNINGAR]: 'tannmal@sjukra.is',
   [SjuktratryggingarCategories.VEFGATTIR]: 'sjukra@sjukra.is',
   [SjuktratryggingarCategories.THJALFUN]: 'thjalfunarmal@sjukra.is',
-  [SjuktratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA]: [
+  [SjuktratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA]:
     'sjukra@sjukra.is',
-    'hjukrunarheimili@sjukra.is',
-    'laeknareikningar@sjukra.is',
-  ],
+  [SjuktratryggingarCategories.HJUKRUNARHEIMILI]: 'hjukrunarheimili@sjukra.is',
+  [SjuktratryggingarCategories.TULKATHJONUSTA]: 'laeknareikningar@sjukra.is',
 }
 
 export const getTemplate = (
@@ -275,7 +291,7 @@ export const getTemplate = (
   const syslumadurId = input.syslumadur
   const institutionEmail = input.institutionEmail
 
-  let toAddress: string | string[] = institutionEmail
+  let toAddress = institutionEmail
 
   if (syslumadurId) {
     const emailList = syslumennEmails[syslumadurId as Syslumenn]
@@ -306,18 +322,12 @@ export const getTemplate = (
       name: input.name,
       address: input.email,
     },
-    to:
-      typeof toAddress === 'string'
-        ? [
-            {
-              name,
-              address: toAddress,
-            },
-          ]
-        : toAddress.map((address) => ({
-            name,
-            address,
-          })),
+    to: [
+      {
+        name,
+        address: toAddress,
+      },
+    ],
     subject: input.subject,
     text: input.message,
   }

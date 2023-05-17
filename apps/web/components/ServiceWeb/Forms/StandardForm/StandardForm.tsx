@@ -229,7 +229,6 @@ export const StandardForm = ({
     () => supportCategories.find((c) => c.id === categoryId)?.description ?? '',
     [categoryId, supportCategories],
   )
-  console.log(errors)
 
   const stateEntityOptions = useMemo(() => {
     const options = [...stateEntities]
