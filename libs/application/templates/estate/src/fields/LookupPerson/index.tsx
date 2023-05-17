@@ -2,7 +2,6 @@ import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import * as nationalId from 'kennitala'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -13,16 +12,16 @@ import { IDENTITY_QUERY } from '../../graphql'
 type LookupProps = {
   field: {
     id: string
+    props?: {
+      requiredNationalId: boolean
+    }
   }
   error: Record<string, string> | any
 }
 
-export const LookupPerson: FC<FieldBaseProps | LookupProps> = ({
-  field,
-  error,
-}) => {
+export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
   const { formatMessage } = useLocale()
-  const { id } = field
+  const { id, props } = field
   const { setValue, watch, clearErrors } = useFormContext()
 
   const personNationalId: string = watch(`${id}.nationalId`)
@@ -53,6 +52,8 @@ export const LookupPerson: FC<FieldBaseProps | LookupProps> = ({
       }
     } else if (personNationalId?.length === 0) {
       clearErrors(`${id}.name`)
+      clearErrors(`${id}.nationalId`)
+      setValue(`${id}.name`, '')
     }
   }, [personName, personNationalId, getIdentity, setValue, clearErrors, id])
 
@@ -65,10 +66,9 @@ export const LookupPerson: FC<FieldBaseProps | LookupProps> = ({
             name={`${id}.nationalId`}
             label={formatMessage(m.nationalId)}
             format="######-####"
-            defaultValue={undefined}
             backgroundColor="blue"
             loading={queryLoading}
-            required
+            required={props?.requiredNationalId ?? true}
             error={error?.nationalId || error?.name}
           />
         </GridColumn>
@@ -78,7 +78,6 @@ export const LookupPerson: FC<FieldBaseProps | LookupProps> = ({
             name={`${id}.name`}
             label={formatMessage(m.name)}
             readOnly
-            defaultValue={undefined}
             error={error?.name ? error?.name : undefined}
           />
         </GridColumn>
