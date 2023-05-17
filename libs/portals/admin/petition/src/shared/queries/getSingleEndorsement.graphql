@@ -1,0 +1,5 @@
+query endorsementSystemGetSingleEndorsement($input: FindEndorsementListInput!) {
+  endorsementSystemGetSingleEndorsement(input: $input) {
+    hasEndorsed
+  }
+}

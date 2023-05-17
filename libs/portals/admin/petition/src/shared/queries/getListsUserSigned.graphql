@@ -1,0 +1,28 @@
+query endorsementSystemUserEndorsements($input: EndorsementPaginationInput!) {
+  endorsementSystemUserEndorsements(input: $input) {
+    totalCount
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    data {
+      id
+      endorser
+      endorsementList {
+        id
+        title
+        description
+        tags
+        closedDate
+        openedDate
+      }
+      meta {
+        fullName
+      }
+      created
+      modified
+    }
+  }
+}

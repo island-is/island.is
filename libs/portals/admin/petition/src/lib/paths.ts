@@ -1,3 +1,4 @@
 export enum PetitionPaths {
-  Root = '/listar',
+  PetitionsRoot = '/listar',
+  PetitionsSingle = '/listar/:listId',
 }

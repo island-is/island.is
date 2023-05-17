@@ -1,0 +1,3 @@
+mutation unendorseList($input: FindEndorsementListInput!) {
+  endorsementSystemUnendorseList(input: $input)
+}
