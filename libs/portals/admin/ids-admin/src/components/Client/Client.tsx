@@ -1,27 +1,38 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import { Box, Select, Stack, Tag, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Select,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
-import BasicInfo from './BasicInfo'
-import { AuthAdminClient } from './Client.loader'
-import ClientsUrl from './ClientsUrl'
-import Lifetime from './Lifetime'
-import Translations from './Translations'
-import Delegation from './Delegation'
-import Permissions from './Permissions'
-import AdvancedSettings from './AdvancedSettings'
+import { IDSAdminPaths } from '../../lib/paths'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import { AdvancedSettings } from './AdvancedSettings'
+import { BasicInfo } from './BasicInfo'
+import { AuthAdminClient } from './Client.loader'
+import ClientsUrl from './ClientsUrl'
+import { DangerZone } from './DangerZone'
+import Delegation from './Delegation'
+import Lifetime from './Lifetime'
+import Permissions from './Permissions'
+import { RevokeSecrets } from './RevokeSecrets/RevokeSecrets'
+import Translations from './Translations'
+
 import * as styles from './Client.css'
-import { replaceParams } from '@island.is/react-spa/shared'
-import { IDSAdminPaths } from '../../lib/paths'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -40,7 +51,6 @@ const Client = () => {
   const client = useLoaderData() as AuthAdminClient
   const navigate = useNavigate()
   const params = useParams()
-
   const { formatMessage } = useLocale()
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
@@ -49,6 +59,17 @@ const Client = () => {
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     AuthAdminClient['environments'][0]
   >(client.environments[0])
+  const [isRevokeSecretsVisible, setRevokeSecretsVisibility] = useState(false)
+
+  useEffect(() => {
+    const newSelectedEnvironment = client.environments.find(
+      ({ environment }) => environment === selectedEnvironment.environment,
+    )
+
+    if (newSelectedEnvironment) {
+      setSelectedEnvironment(newSelectedEnvironment)
+    }
+  }, [client, setSelectedEnvironment])
 
   const checkIfInSync = (variables: string[]) => {
     for (const variable of variables) {
@@ -80,7 +101,7 @@ const Client = () => {
         href: IDSAdminPaths.IDSAdminClientPublish,
         params: {
           tenant: params['tenant'],
-          client: selectedEnvironment.clientId,
+          client: params['client'],
         },
       }),
     )
@@ -134,7 +155,7 @@ const Client = () => {
         setPublishData: setPublishData,
       }}
     >
-      <Stack space={4}>
+      <Stack space={3}>
         <Box
           display="flex"
           columnGap={2}
@@ -193,6 +214,33 @@ const Client = () => {
           </Box>
         </Box>
 
+        {selectedEnvironment.secrets.length > 1 && (
+          <>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.multipleSecrets)}
+              message={
+                <Stack space={1}>
+                  <Text variant="small">
+                    {formatMessage(m.multipleSecretsDescription)}
+                  </Text>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => setRevokeSecretsVisibility(true)}
+                  >
+                    {formatMessage(m.revokeSecrets)}
+                  </Button>
+                </Stack>
+              }
+            />
+            <RevokeSecrets
+              isVisible={isRevokeSecretsVisible}
+              onClose={() => setRevokeSecretsVisibility(false)}
+            />
+          </>
+        )}
+
         <BasicInfo
           key={`${selectedEnvironment.environment}-BasicInfo`}
           clientId={selectedEnvironment.clientId}
@@ -246,6 +294,7 @@ const Client = () => {
           accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
           customClaims={selectedEnvironment.customClaims}
         />
+        <DangerZone />
       </Stack>
       <Outlet />
     </ClientContext.Provider>

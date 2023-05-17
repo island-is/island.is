@@ -97,7 +97,7 @@ export class DrivingLicenseService {
     // With the two checks above, to is guaranteed to be defined
     // Either !from returns or !to returns since !from || from is a tautology
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const activeDisqualification = Date.now() < to!.getTime()
+    const activeDisqualification = from.getTime() < Date.now() && Date.now() < to!.getTime()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const disqualificationInTheLastTwelveMonths = to! > twelveMonthsAgo
 
@@ -175,11 +175,6 @@ export class DrivingLicenseService {
       nationalId,
       user.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
     )
-    const residenceHistory = await this.nationalRegistryXRoadService.getNationalRegistryResidenceHistory(
-      nationalId,
-    )
-
-    const localRecidency = hasLocalResidence(residenceHistory)
 
     const year = 1000 * 3600 * 24 * 365.25
     const fiveYearsAgo = new Date(Date.now() - year * 5)

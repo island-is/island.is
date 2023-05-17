@@ -18,12 +18,8 @@ import React, { useContext } from 'react'
 import { MenuLogo, MenuLogoMobile } from '../svg'
 import { menuItems } from './MenuItems'
 import MenuModal from '../Modal/MenuModal'
-import {
-  checkActiveHeaderLink,
-  useIsMobile,
-  useLogIn,
-  useLogOut,
-} from '../../utils/helpers'
+import { useIsMobile, useLogIn, useLogOut } from '../../hooks'
+import { checkActiveHeaderLink } from '../../utils/helpers'
 import { useRouter } from 'next/router'
 import { UserContext } from '../../context'
 type MenuProps = {

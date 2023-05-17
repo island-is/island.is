@@ -583,6 +583,24 @@ export const homeMessages = defineMessages({
     id: 'ap.regulations-admin:idealpublishdate-today',
     defaultMessage: 'Í dag',
   },
+  noDataTitle: {
+    id: 'ap.regulations-admin:no-data-title',
+    defaultMessage: 'Engar reglugerðir í vinnslu til birtingar',
+  },
+  noDataText: {
+    id: 'ap.regulations-admin:no-data-text',
+    defaultMessage:
+      'Í augnablikinu eru engar reglugerðir í vinnslu hér. Veldu "Skrá reglugerð" hér að oftan til að byrja skráningu. Ef þú telur að um villu sé að ræða skal hafa samband við ritstjóra.',
+  },
+  errorTitle: {
+    id: 'ap.regulations-admin:error-title',
+    defaultMessage: 'Villa í þjónustu',
+  },
+  errorText: {
+    id: 'ap.regulations-admin:error-text',
+    defaultMessage:
+      'Villa kom upp í þjónustu. Vinsamlegast hafið samband við ritstjóra.',
+  },
 })
 
 export const ministryMessages = defineMessages({

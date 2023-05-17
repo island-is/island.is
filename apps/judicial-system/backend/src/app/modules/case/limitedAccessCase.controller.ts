@@ -112,8 +112,8 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthGuard,
-    RolesGuard,
     LimitedAccessCaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
     CaseDefenderGuard,
