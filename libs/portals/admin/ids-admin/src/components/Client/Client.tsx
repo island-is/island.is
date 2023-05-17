@@ -6,7 +6,15 @@ import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import { Box, Select, Stack, Tag, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Select,
+  Stack,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { replaceParams } from '@island.is/react-spa/shared'
 
@@ -14,14 +22,15 @@ import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
-import AdvancedSettings from './AdvancedSettings'
-import BasicInfo from './BasicInfo'
+import { AdvancedSettings } from './AdvancedSettings'
+import { BasicInfo } from './BasicInfo'
 import { AuthAdminClient } from './Client.loader'
 import ClientsUrl from './ClientsUrl'
 import { DangerZone } from './DangerZone'
 import Delegation from './Delegation'
 import Lifetime from './Lifetime'
 import Permissions from './Permissions'
+import { RevokeSecrets } from './RevokeSecrets/RevokeSecrets'
 import Translations from './Translations'
 
 import * as styles from './Client.css'
@@ -58,6 +67,7 @@ const Client = () => {
   const [selectedEnvironment, setSelectedEnvironment] = useState<
     AuthAdminClient['environments'][0]
   >(client.environments[0])
+  const [isRevokeSecretsVisible, setRevokeSecretsVisibility] = useState(false)
 
   useEffect(() => {
     const newSelectedEnvironment = client.environments.find(
@@ -99,7 +109,7 @@ const Client = () => {
         href: IDSAdminPaths.IDSAdminClientPublish,
         params: {
           tenant: params['tenant'],
-          client: selectedEnvironment.clientId,
+          client: params['client'],
         },
       }),
     )
@@ -215,6 +225,33 @@ const Client = () => {
             />
           </Box>
         </Box>
+
+        {selectedEnvironment.secrets.length > 1 && (
+          <>
+            <AlertMessage
+              type="warning"
+              title={formatMessage(m.multipleSecrets)}
+              message={
+                <Stack space={1}>
+                  <Text variant="small">
+                    {formatMessage(m.multipleSecretsDescription)}
+                  </Text>
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={() => setRevokeSecretsVisibility(true)}
+                  >
+                    {formatMessage(m.revokeSecrets)}
+                  </Button>
+                </Stack>
+              }
+            />
+            <RevokeSecrets
+              isVisible={isRevokeSecretsVisible}
+              onClose={() => setRevokeSecretsVisibility(false)}
+            />
+          </>
+        )}
 
         <BasicInfo
           key={`${selectedEnvironment.environment}-BasicInfo`}

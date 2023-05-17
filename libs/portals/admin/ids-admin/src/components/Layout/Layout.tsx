@@ -20,10 +20,7 @@ const Layout: React.FC<LayoutProps> = ({ children, navTitle, navItems }) => {
     <GridContainer>
       <Hidden above="md">
         <Box paddingBottom={4}>
-          <PortalNavigation
-            title={navTitle}
-            navigation={navItems as PortalNavigationItem}
-          />
+          <PortalNavigation title={navTitle} navigation={navItems} />
         </Box>
       </Hidden>
       <GridRow rowGap={'gutter'}>

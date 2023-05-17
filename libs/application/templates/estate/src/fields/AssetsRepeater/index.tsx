@@ -11,43 +11,63 @@ import {
   ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
-import { Answers, AssetFormField } from '../../types'
+import { AssetFormField } from '../../types'
 
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 
-export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
+type AssetsRepeaterProps = {
+  field: {
+    id: string
+    props: {
+      assetName: 'guns' | 'vehicles'
+      texts: {
+        assetTitle: object
+        assetNumber: object
+        assetType: object
+        addAsset: object
+      }
+    }
+  }
+  error: Record<string, string> | any
+}
+
+export const AssetsRepeater: FC<FieldBaseProps & AssetsRepeaterProps> = ({
   application,
   field,
   errors,
 }) => {
-  const error = (errors as any)?.estate?.guns
   const { id } = field
+  const texts = field?.props?.texts
+  const assetName = field?.props?.assetName
+  const error = (errors as any)?.estate?.[assetName]
   const { formatMessage } = useLocale()
   const { fields, append, remove, update } = useFieldArray({
     name: id,
   })
-  const { control } = useFormContext()
+  const { control, clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
-    estate: { guns: EstateAsset[] }
+    estate: {
+      [key: string]: EstateAsset[]
+    }
   }
 
   useEffect(() => {
-    if (fields.length === 0 && externalData.estate.guns) {
-      append(externalData.estate.guns)
+    if (fields.length === 0 && externalData.estate[assetName]) {
+      append(externalData.estate[assetName])
     }
   }, [])
 
-  const handleAddGun = () =>
+  const handleAddAsset = () =>
     append({
       assetNumber: undefined,
       description: undefined,
       marketValue: undefined,
     })
-  const handleRemoveGun = (index: number) => remove(index)
+  const handleRemoveAsset = (index: number) => remove(index)
 
   return (
     <Box marginTop={2}>
@@ -81,6 +101,7 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                           enabled: !asset.enabled,
                         }
                         update(index, updatedAsset)
+                        clearErrors(`${id}[${index}].marketValue`)
                       }}
                     >
                       {asset.enabled
@@ -111,8 +132,8 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
       </GridRow>
       {fields.map((field: AssetFormField, index) => {
         const fieldIndex = `${id}[${index}]`
-        const gunNumberField = `${fieldIndex}.assetNumber`
-        const gunTypeField = `${fieldIndex}.description`
+        const assetNumberField = `${fieldIndex}.assetNumber`
+        const assetTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const marketValueField = `${fieldIndex}.marketValue`
@@ -137,14 +158,14 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
               defaultValue={true}
               render={() => <input type="hidden" />}
             />
-            <Text variant="h4">{formatMessage(m.gunTitle)}</Text>
+            <Text variant="h4">{formatMessage(texts.assetTitle)}</Text>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
                 size="small"
                 circle
                 icon="remove"
-                onClick={handleRemoveGun.bind(null, index)}
+                onClick={handleRemoveAsset.bind(null, index)}
               />
             </Box>
             <GridRow>
@@ -154,9 +175,9 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                 paddingTop={2}
               >
                 <InputController
-                  id={gunNumberField}
-                  name={gunNumberField}
-                  label={formatMessage(m.gunNumberLabel)}
+                  id={assetNumberField}
+                  name={assetNumberField}
+                  label={formatMessage(texts.assetNumber)}
                   backgroundColor="blue"
                   defaultValue={field.assetNumber}
                   error={fieldError?.assetNumber}
@@ -169,16 +190,16 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
                 paddingTop={2}
               >
                 <InputController
-                  id={gunTypeField}
-                  name={gunTypeField}
-                  label={formatMessage(m.gunTypeLabel)}
+                  id={assetTypeField}
+                  name={assetTypeField}
+                  label={formatMessage(texts.assetType)}
                   defaultValue={field.description}
                   placeholder={''}
                   error={fieldError?.description}
                   size="sm"
                 />
               </GridColumn>
-              <GridColumn span={['1/1', '1/2']}>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
                   id={marketValueField}
                   name={marketValueField}
@@ -199,14 +220,14 @@ export const GunsRepeater: FC<FieldBaseProps<Answers>> = ({
           variant="text"
           icon="add"
           iconType="outline"
-          onClick={handleAddGun}
+          onClick={handleAddAsset}
           size="small"
         >
-          {formatMessage(m.addGun)}
+          {formatMessage(texts.addAsset)}
         </Button>
       </Box>
     </Box>
   )
 }
 
-export default GunsRepeater
+export default AssetsRepeater

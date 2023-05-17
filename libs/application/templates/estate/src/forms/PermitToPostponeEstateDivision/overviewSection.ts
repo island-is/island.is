@@ -113,7 +113,7 @@ export const overview = buildSection({
             getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
         }),
         buildDescriptionField({
-          id: 'space1',
+          id: 'space2',
           title: '',
           space: 'gutter',
         }),
@@ -123,7 +123,7 @@ export const overview = buildSection({
             getValueViaPath(answers, 'estate.testament.additionalInfo'),
         }),
         buildDescriptionField({
-          id: 'space2',
+          id: 'space3',
           title: '',
           space: 'gutter',
         }),
@@ -144,19 +144,21 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              (((answers.estate as unknown) as EstateInfo).assets ?? []).map(
-                (asset) => ({
-                  title: asset.description,
-                  description: [
-                    `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
-                    m.overviewMarketValue.defaultMessage +
-                      ': ' +
-                      (asset.marketValue
-                        ? formatCurrency(asset.marketValue)
-                        : '0 kr.'),
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo).assets.filter(
+                  (asset) => asset.enabled,
+                ) ?? []
+              ).map((asset) => ({
+                title: asset.description,
+                description: [
+                  `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (asset.marketValue
+                      ? formatCurrency(asset.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
           },
         ),
         buildDividerField({}),
@@ -205,21 +207,21 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              (((answers.estate as unknown) as EstateInfo)?.vehicles ?? []).map(
-                (vehicle) => ({
-                  title: vehicle.description,
-                  description: [
-                    m.propertyNumber.defaultMessage +
-                      ': ' +
-                      vehicle.assetNumber,
-                    m.overviewMarketValue.defaultMessage +
-                      ': ' +
-                      (vehicle.marketValue
-                        ? formatCurrency(vehicle.marketValue)
-                        : '0 kr.'),
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
+                  (vehicle) => vehicle.enabled,
+                ) ?? []
+              ).map((vehicle) => ({
+                title: vehicle.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (vehicle.marketValue
+                      ? formatCurrency(vehicle.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
           },
         ),
         buildDividerField({}),

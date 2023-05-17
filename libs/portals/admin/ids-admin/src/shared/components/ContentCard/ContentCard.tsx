@@ -13,18 +13,18 @@ import {
 } from '@island.is/island-ui/core'
 import { Form, useActionData } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import {
   ClientFormTypes,
   EditApplicationResult,
   getIntentWithSyncCheck,
   schema,
-} from '../../components/forms/EditApplication/EditApplication.action'
+} from '../../../components/forms/EditApplication/EditApplication.action'
 import * as styles from './ContentCard.css'
-import { ClientContext } from '../context/ClientContext'
+import { ClientContext } from '../../context/ClientContext'
 import { useSubmitting } from '@island.is/react-spa/shared'
 import isEqual from 'lodash/isEqual'
-import { ConditionalWrapper } from './ConditionalWrapper'
+import { ConditionalWrapper } from '../ConditionalWrapper'
 
 interface ContentCardProps {
   title: string

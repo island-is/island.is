@@ -30,6 +30,7 @@ import { Modal } from '@island.is/react/components'
 import { IDSAdminPaths } from '../../../lib/paths'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 import { useErrorFormatMessage } from '../../../shared/hooks/useFormatErrorMessage'
+import { parseID } from '../../../shared/utils/forms'
 
 const environments = [
   AuthAdminEnvironment.Development,
@@ -41,72 +42,6 @@ const clientTypes = [
   AuthAdminClientType.native,
   AuthAdminClientType.machine,
 ]
-
-const isToEnChar = {
-  ð: 'd',
-  þ: 'th',
-  æ: 'ae',
-  ö: 'o',
-  á: 'a',
-  é: 'e',
-  í: 'i',
-  ó: 'o',
-  ú: 'u',
-  ý: 'y',
-  Ð: 'd',
-  Þ: 'th',
-  Æ: 'ae',
-  Ö: 'o',
-  Á: 'a',
-  É: 'e',
-  Í: 'i',
-  Ó: 'o',
-  Ú: 'u',
-  Ý: 'y',
-}
-
-/**
- * Formats the client id to be lowercase and replace spaces with dashes
- */
-const formatClientId = (value: string) =>
-  value.trim().toLowerCase().replace(/\s+/g, '-')
-
-/**
- * Parses the client id to be lowercase and replace spaces with dashes
- * Also makes sure that the prefix is always present and cannot be erased
- * @param prefix
- * @param value
- */
-const parseClientId = ({
-  prefix,
-  value,
-}: {
-  prefix: string
-  value: string
-}) => {
-  // If user tries to erase the prefix, we add it back
-  if (prefix.startsWith(value) && value.length < prefix.length) {
-    return prefix
-  }
-
-  if (value.includes(prefix)) {
-    value = value.replace(prefix, '')
-    return `${prefix}${formatClientId(value)}`
-  }
-
-  const prefixWithoutSlash = prefix.split('/')[0]
-
-  if (value.startsWith(prefixWithoutSlash)) {
-    value = value.replace(prefixWithoutSlash, '')
-  }
-
-  value = value.replace(/[ðþæöáéíóúýÐÞÆÖÁÉÍÓÚÝ]/g, (m) => {
-    return isToEnChar[m as keyof typeof isToEnChar]
-  })
-
-  // If user tries to erase the prefix, we add it back
-  return `${prefix}${formatClientId(value).split('/').pop()}`
-}
 
 type InputState = {
   value: string
@@ -144,7 +79,7 @@ export default function CreateClient() {
 
     setClientIdState({
       ...clientIdState,
-      value: parseClientId({
+      value: parseID({
         value: e.target.value,
         prefix,
       }),
@@ -157,7 +92,7 @@ export default function CreateClient() {
     const val = e.target.value
 
     setClientIdState({
-      value: parseClientId({
+      value: parseID({
         value: val,
         prefix,
       }),
@@ -190,7 +125,7 @@ export default function CreateClient() {
   const onCancel = () => {
     navigate(
       replaceParams({
-        href: IDSAdminPaths.IDSAdminTenants,
+        href: IDSAdminPaths.IDSAdminClients,
         params: { tenant: tenant.id },
       }),
     )

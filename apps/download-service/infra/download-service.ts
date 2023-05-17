@@ -21,7 +21,7 @@ export const serviceSetup = (services: {
       },
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service',
       REGULATIONS_ADMIN_URL: ref(
-        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
     })
     .secrets({
