@@ -11,20 +11,38 @@ import {
   ProfileCard,
   Text,
 } from '@island.is/island-ui/core'
-import { Answers, AssetFormField } from '../../types'
+import { AssetFormField } from '../../types'
 
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 
-export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
+type AssetsRepeaterProps = {
+  field: {
+    id: string
+    props: {
+      assetName: 'guns' | 'vehicles'
+      texts: {
+        assetTitle: object
+        assetNumber: object
+        assetType: object
+        addAsset: object
+      }
+    }
+  }
+  error: Record<string, string> | any
+}
+
+export const AssetsRepeater: FC<FieldBaseProps & AssetsRepeaterProps> = ({
   application,
   field,
   errors,
 }) => {
-  const error = (errors as any)?.estate?.vehicles
   const { id } = field
+  const texts = field?.props?.texts
+  const assetName = field?.props?.assetName
+  const error = (errors as any)?.estate?.[assetName]
   const { formatMessage } = useLocale()
   const { fields, append, remove, update } = useFieldArray({
     name: id,
@@ -32,29 +50,29 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
   const { control, clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
-    estate: { vehicles: EstateAsset[] }
+    estate: {
+      [key: string]: EstateAsset[]
+    }
   }
 
   useEffect(() => {
-    if (fields.length === 0 && externalData.estate.vehicles) {
-      append(externalData.estate.vehicles)
+    if (fields.length === 0 && externalData.estate[assetName]) {
+      append(externalData.estate[assetName])
     }
   }, [])
 
-  const handleAddVehicle = () =>
+  const handleAddAsset = () =>
     append({
       assetNumber: undefined,
       description: undefined,
       marketValue: undefined,
     })
-  const handleRemoveVehicle = (index: number) => remove(index)
+  const handleRemoveAsset = (index: number) => remove(index)
 
   return (
     <Box marginTop={2}>
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
-          const fieldError = error && error[index] ? error[index] : null
-
           if (!asset.initial) {
             return acc
           }
@@ -101,8 +119,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                   disabled={!asset.enabled}
                   backgroundColor="blue"
                   placeholder="0 kr."
-                  defaultValue={(asset as any).marketValue}
-                  error={fieldError?.marketValue}
+                  defaultValue={asset.marketValue}
+                  error={error && error[index]?.marketValue}
                   currency
                   size="sm"
                   required
@@ -114,8 +132,8 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
       </GridRow>
       {fields.map((field: AssetFormField, index) => {
         const fieldIndex = `${id}[${index}]`
-        const vehicleNumberField = `${fieldIndex}.assetNumber`
-        const vehicleTypeField = `${fieldIndex}.description`
+        const assetNumberField = `${fieldIndex}.assetNumber`
+        const assetTypeField = `${fieldIndex}.description`
         const initialField = `${fieldIndex}.initial`
         const enabledField = `${fieldIndex}.enabled`
         const marketValueField = `${fieldIndex}.marketValue`
@@ -140,14 +158,14 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
               defaultValue={true}
               render={() => <input type="hidden" />}
             />
-            <Text variant="h4">{formatMessage(m.vehiclesTitle)}</Text>
+            <Text variant="h4">{formatMessage(texts.assetTitle)}</Text>
             <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
                 size="small"
                 circle
                 icon="remove"
-                onClick={handleRemoveVehicle.bind(null, index)}
+                onClick={handleRemoveAsset.bind(null, index)}
               />
             </Box>
             <GridRow>
@@ -157,9 +175,9 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                 paddingTop={2}
               >
                 <InputController
-                  id={vehicleNumberField}
-                  name={vehicleNumberField}
-                  label={formatMessage(m.vehicleNumberLabel)}
+                  id={assetNumberField}
+                  name={assetNumberField}
+                  label={formatMessage(texts.assetNumber)}
                   backgroundColor="blue"
                   defaultValue={field.assetNumber}
                   error={fieldError?.assetNumber}
@@ -172,21 +190,21 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
                 paddingTop={2}
               >
                 <InputController
-                  id={vehicleTypeField}
-                  name={vehicleTypeField}
-                  label={formatMessage(m.vehicleTypeLabel)}
+                  id={assetTypeField}
+                  name={assetTypeField}
+                  label={formatMessage(texts.assetType)}
                   defaultValue={field.description}
-                  placeholder={formatMessage(m.vehiclesPlaceholder)}
+                  placeholder={''}
                   error={fieldError?.description}
                   size="sm"
                 />
               </GridColumn>
-              <GridColumn span={['1/1', '1/2']}>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
                   id={marketValueField}
                   name={marketValueField}
                   label={formatMessage(m.marketValueTitle)}
-                  defaultValue={(field as any).marketValue}
+                  defaultValue={field.marketValue}
                   placeholder={'0 kr.'}
                   error={fieldError?.marketValue}
                   currency
@@ -202,14 +220,14 @@ export const VehiclesRepeater: FC<FieldBaseProps<Answers>> = ({
           variant="text"
           icon="add"
           iconType="outline"
-          onClick={handleAddVehicle}
+          onClick={handleAddAsset}
           size="small"
         >
-          {formatMessage(m.addVehicle)}
+          {formatMessage(texts.addAsset)}
         </Button>
       </Box>
     </Box>
   )
 }
 
-export default VehiclesRepeater
+export default AssetsRepeater
