@@ -78,6 +78,32 @@ export class DrivingLicenseService {
     throw e
   }
 
+  // Disqualification is a bit tricky
+  // You're not allowed to have had a disqualification in the last 12 months
+  // You're not allowed to have an active disqualification
+  // Some disqualifications do not have an end date, so we have to assume they're still active
+  private isDisqualified(from?: Date, to?: Date): boolean {
+    if (!from) {
+      return false
+    }
+
+    if (!to && from) {
+      return true
+    }
+
+    const year = 1000 * 3600 * 24 * 365.25
+    const twelveMonthsAgo = new Date(Date.now() - year)
+
+    // With the two checks above, to is guaranteed to be defined
+    // Either !from returns or !to returns since !from || from is a tautology
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const activeDisqualification = Date.now() < to!.getTime()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const disqualificationInTheLastTwelveMonths = to! > twelveMonthsAgo
+
+    return !(activeDisqualification || disqualificationInTheLastTwelveMonths)
+  }
+
   async getStudentInformation(
     nationalId: string,
   ): Promise<StudentInformation | null> {
@@ -156,7 +182,6 @@ export class DrivingLicenseService {
     const localRecidency = hasLocalResidence(residenceHistory)
 
     const year = 1000 * 3600 * 24 * 365.25
-    const twelveMonthsAgo = new Date(Date.now() - year)
     const fiveYearsAgo = new Date(Date.now() - year * 5)
 
     const categoryB = license?.categories
@@ -165,24 +190,15 @@ export class DrivingLicenseService {
         )
       : undefined
 
-    const activeDisqualification = license?.disqualification?.to
-      ? Date.now() < license.disqualification.to.getTime()
-      : false
-    const disqualificationInTheLastTwelveMonths = license?.disqualification
-      ?.from
-      ? license.disqualification.from > twelveMonthsAgo
-      : false
+    const isDisqualified = this.isDisqualified(
+      license?.disqualification?.from,
+      license?.disqualification?.to,
+    )
 
     const requirements: ApplicationEligibilityRequirement[] = [
       {
         key: RequirementKey.hasDeprivation,
-        requirementMet: !(
-          activeDisqualification || disqualificationInTheLastTwelveMonths
-        ),
-      },
-      {
-        key: RequirementKey.currentLocalResidency,
-        requirementMet: localRecidency,
+        requirementMet: !isDisqualified,
       },
       {
         key: RequirementKey.personNotAtLeast24YearsOld,

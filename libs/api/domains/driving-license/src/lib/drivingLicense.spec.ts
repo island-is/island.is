@@ -5,6 +5,7 @@ import {
   DrivingLicenseApiModule,
 } from '@island.is/clients/driving-license'
 import {
+  DISQUALIFIED_NATIONAL_IDS,
   MOCK_NATIONAL_ID,
   MOCK_NATIONAL_ID_EXPIRED,
   MOCK_NATIONAL_ID_NO_ASSESSMENT,
@@ -172,6 +173,32 @@ describe('DrivingLicenseService', () => {
       )
 
       expect(response).toStrictEqual(null)
+    })
+  })
+
+  describe('getLearnerMentorEligibility', () => {
+    it('should return true for applicable mentors', async () => {
+      const response = await service.getLearnerMentorEligibility(
+        MOCK_USER,
+        DISQUALIFIED_NATIONAL_IDS[0],
+      )
+      expect(response).toStrictEqual({
+        isEligible: true,
+        requirements: [
+          {
+            key: 'HasDeprivation',
+            requirementMet: true,
+          },
+          {
+            key: 'CurrentLocalResidency',
+            requirementMet: true,
+          },
+          {
+            key: 'PersonNotAtLeast24YearsOld',
+            requirementMet: true,
+          },
+        ],
+      })
     })
   })
 
