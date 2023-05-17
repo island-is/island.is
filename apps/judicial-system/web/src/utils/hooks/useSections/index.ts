@@ -1123,7 +1123,6 @@ const useSections = (
        */
       (route) => route === router.pathname.slice(0, -5),
     )
-
     return [
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
@@ -1215,7 +1214,8 @@ const useSections = (
         isActive:
           completedCaseStates.includes(workingCase.state) &&
           !workingCase.prosecutorPostponedAppealDate &&
-          !workingCase.accusedPostponedAppealDate,
+          !workingCase.accusedPostponedAppealDate &&
+          workingCase.appealState !== CaseAppealState.COMPLETED,
         children: [],
       },
       ...(isRestrictionCase(workingCase.type) && workingCase.appealState
