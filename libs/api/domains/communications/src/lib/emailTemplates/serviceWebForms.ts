@@ -203,7 +203,7 @@ export const syslumennEmails: Record<
   },
 }
 
-enum SjuktratryggingarCategories {
+enum SjukratryggingarCategories {
   // Ferðakostnaður
   FERDAKOSTNADUR = '5IetjgJbs6lgS5umDC6k17',
 
@@ -260,28 +260,27 @@ enum SjuktratryggingarCategories {
 }
 
 const sjukratryggingarEmails = {
-  [SjuktratryggingarCategories.FERDAKOSTNADUR]: 'ferdakostnadur@sjukra.is',
-  [SjuktratryggingarCategories.HEILBRIGDISSTARFSFOLK]:
+  [SjukratryggingarCategories.FERDAKOSTNADUR]: 'ferdakostnadur@sjukra.is',
+  [SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK]:
     'laeknareikningar@sjukra.is',
-  [SjuktratryggingarCategories.HEILBRIGDISTHJONUSTA]:
+  [SjukratryggingarCategories.HEILBRIGDISTHJONUSTA]:
     'laeknareikningar@sjukra.is',
-  [SjuktratryggingarCategories.HJALPARTAEKI_OG_NAERING]: 'hjalpart@sjukra.is',
-  [SjuktratryggingarCategories.HJALPARTAEKI]: 'hjalpart@sjukra.is',
-  [SjuktratryggingarCategories.NAERING]: 'naering@sjukra.is',
-  [SjuktratryggingarCategories.LYF_OG_LYFJAKOSTNADUR]: 'lyf@sjukra.is',
-  [SjuktratryggingarCategories.RETTINDI_MILLI_LANDA]: 'international@sjukra.is',
-  [SjuktratryggingarCategories.SJUKRADAGPENINGAR]: 'dagpeningar@sjukra.is',
-  [SjuktratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING]: 'slys@sjukra.is',
-  [SjuktratryggingarCategories.SLYSATRYGGING]: 'slys@sjukra.is',
-  [SjuktratryggingarCategories.SJUKLINGATRYGGING]:
-    'sjuklingatrygging@sjukra.is',
-  [SjuktratryggingarCategories.TANNLAEKNINGAR]: 'tannmal@sjukra.is',
-  [SjuktratryggingarCategories.VEFGATTIR]: 'sjukra@sjukra.is',
-  [SjuktratryggingarCategories.THJALFUN]: 'thjalfunarmal@sjukra.is',
-  [SjuktratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA]:
+  [SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING]: 'hjalpart@sjukra.is',
+  [SjukratryggingarCategories.HJALPARTAEKI]: 'hjalpart@sjukra.is',
+  [SjukratryggingarCategories.NAERING]: 'naering@sjukra.is',
+  [SjukratryggingarCategories.LYF_OG_LYFJAKOSTNADUR]: 'lyf@sjukra.is',
+  [SjukratryggingarCategories.RETTINDI_MILLI_LANDA]: 'international@sjukra.is',
+  [SjukratryggingarCategories.SJUKRADAGPENINGAR]: 'dagpeningar@sjukra.is',
+  [SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING]: 'slys@sjukra.is',
+  [SjukratryggingarCategories.SLYSATRYGGING]: 'slys@sjukra.is',
+  [SjukratryggingarCategories.SJUKLINGATRYGGING]: 'sjuklingatrygging@sjukra.is',
+  [SjukratryggingarCategories.TANNLAEKNINGAR]: 'tannmal@sjukra.is',
+  [SjukratryggingarCategories.VEFGATTIR]: 'sjukra@sjukra.is',
+  [SjukratryggingarCategories.THJALFUN]: 'thjalfunarmal@sjukra.is',
+  [SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA]:
     'sjukra@sjukra.is',
-  [SjuktratryggingarCategories.HJUKRUNARHEIMILI]: 'hjukrunarheimili@sjukra.is',
-  [SjuktratryggingarCategories.TULKATHJONUSTA]: 'laeknareikningar@sjukra.is',
+  [SjukratryggingarCategories.HJUKRUNARHEIMILI]: 'hjukrunarheimili@sjukra.is',
+  [SjukratryggingarCategories.TULKATHJONUSTA]: 'laeknareikningar@sjukra.is',
 }
 
 export const getTemplate = (
@@ -307,7 +306,7 @@ export const getTemplate = (
     input.institutionSlug === 'icelandic-health-insurance'
   ) {
     toAddress =
-      sjukratryggingarEmails[categoryId as SjuktratryggingarCategories] ??
+      sjukratryggingarEmails[categoryId as SjukratryggingarCategories] ??
       institutionEmail
   }
 

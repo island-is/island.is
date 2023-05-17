@@ -1,6 +1,6 @@
 import { Organization, SupportCategory } from '@island.is/web/graphql/schema'
 
-enum SjuktratryggingarCategories {
+export enum SjukratryggingarCategories {
   // Ferðakostnaður
   FERDAKOSTNADUR = '5IetjgJbs6lgS5umDC6k17',
 
@@ -70,72 +70,72 @@ export const filterSupportCategories = (
   return supportCategories
     ?.filter(
       (c) =>
-        c?.id !== SjuktratryggingarCategories.HJALPARTAEKI_OG_NAERING &&
-        c?.id !== SjuktratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING,
+        c?.id !== SjukratryggingarCategories.HJALPARTAEKI_OG_NAERING &&
+        c?.id !== SjukratryggingarCategories.SLYS_OG_SJUKLINGATRYGGING,
     )
     .concat([
       {
-        id: SjuktratryggingarCategories.HJALPARTAEKI,
+        id: SjukratryggingarCategories.HJALPARTAEKI,
         importance: 0,
         __typename: 'SupportCategory',
         description: '',
         organization: organization,
-        slug: SjuktratryggingarCategories.HJALPARTAEKI,
+        slug: SjukratryggingarCategories.HJALPARTAEKI,
         title:
           namespace?.['sjukratryggingarAssistiveDevices'] ||
           (locale === 'is' ? 'Hjálpartæki' : 'Assistive devices'),
       },
       {
-        id: SjuktratryggingarCategories.NAERING,
+        id: SjukratryggingarCategories.NAERING,
         importance: 0,
         __typename: 'SupportCategory',
         description: '',
         organization: organization,
-        slug: SjuktratryggingarCategories.NAERING,
+        slug: SjukratryggingarCategories.NAERING,
         title:
           namespace?.['sjukratryggingarNutrition'] ||
           (locale === 'is' ? 'Næring' : 'Nutrition'),
       },
       {
-        id: SjuktratryggingarCategories.SLYSATRYGGING,
+        id: SjukratryggingarCategories.SLYSATRYGGING,
         importance: 0,
         __typename: 'SupportCategory',
         description: '',
         organization: organization,
-        slug: SjuktratryggingarCategories.SLYSATRYGGING,
+        slug: SjukratryggingarCategories.SLYSATRYGGING,
         title:
           namespace?.['sjukratryggingarAccidentInsurance'] ||
           (locale === 'is' ? 'Slysatrygging' : 'Accident insurance'),
       },
       {
-        id: SjuktratryggingarCategories.SJUKLINGATRYGGING,
+        id: SjukratryggingarCategories.SJUKLINGATRYGGING,
         importance: 0,
         __typename: 'SupportCategory',
         description: '',
         organization: organization,
-        slug: SjuktratryggingarCategories.SJUKLINGATRYGGING,
+        slug: SjukratryggingarCategories.SJUKLINGATRYGGING,
         title:
           namespace?.['sjukratryggingarPatientInsurance'] ||
           (locale === 'is' ? 'Sjúklingatrygging' : 'Patient insurance'),
       },
       {
-        id: SjuktratryggingarCategories.HJUKRUNARHEIMILI,
+        id: SjukratryggingarCategories.HJUKRUNARHEIMILI,
         importance: 0,
         __typename: 'SupportCategory',
         description: '',
         organization: organization,
-        slug: SjuktratryggingarCategories.HJUKRUNARHEIMILI,
+        slug: SjukratryggingarCategories.HJUKRUNARHEIMILI,
         title:
           namespace?.['sjukratryggingarNursingHome'] ||
           (locale === 'is' ? 'Hjúkrunarheimili' : 'Nursing home'),
       },
       {
-        id: SjuktratryggingarCategories.TULKATHJONUSTA,
+        id: SjukratryggingarCategories.TULKATHJONUSTA,
         importance: 0,
         __typename: 'SupportCategory',
         description: '',
         organization: organization,
-        slug: SjuktratryggingarCategories.TULKATHJONUSTA,
+        slug: SjukratryggingarCategories.TULKATHJONUSTA,
         title:
           namespace?.['sjukratryggingarInterpretationServices'] ||
           (locale === 'is' ? 'Túlkaþjónusta' : 'Interpretation services'),
