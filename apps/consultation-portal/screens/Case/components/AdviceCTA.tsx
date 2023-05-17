@@ -7,6 +7,7 @@ import { useContext } from 'react'
 import { UserContext } from '../../../context'
 import { Case } from '../../../types/interfaces'
 import {
+  advicePublishTypeKey,
   advicePublishTypeKeyHelper,
   pastAdvicePublishTypeKey,
 } from '../../../types/enums'
@@ -23,8 +24,15 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
         <>
           <StackedTitleAndDescription title="Viltu senda umsögn?">
             <Text>
-              Öllum er frjálst að taka þátt í samráðinu.
-              {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
+              {`
+                 Málið er opið til umsagnar og öllum frjálst að taka þátt.
+                 ${
+                   advicePublishTypeKey[
+                     advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
+                   ]
+                 }
+                 ${!isAuthenticated && 'Skráðu þig inn og sendu umsögn.'}
+              `}
             </Text>
           </StackedTitleAndDescription>
           <Box paddingTop={2}>
@@ -42,29 +50,34 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
           </Box>
         </>
       ) : chosenCase.statusName === 'Niðurstöður í vinnslu' ? (
-        <StackedTitleAndDescription
-          headingColor="blue400"
-          title="Niðurstöður í vinnslu"
-        >
+        <StackedTitleAndDescription headingColor="blue400" title="Í vinnslu">
           <Text>
-            Umsagnarfrestur er liðinn.
-            {` ${
+            {`
+              Umsagnarfrestur er liðinn.
+            ${
               pastAdvicePublishTypeKey[
                 advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
               ]
-            } `}
+            }
+              Niðurstöður samráðsins eru væntanlegar.
+            `}
           </Text>
         </StackedTitleAndDescription>
       ) : (
-        <StackedTitleAndDescription headingColor="blue400" title="Lokið">
+        <StackedTitleAndDescription
+          headingColor="blue400"
+          title="Samráði lokið"
+        >
           <Text>
-            Umsagnarfrestur er liðinn.
-            {` ${
-              pastAdvicePublishTypeKey[
-                advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
-              ]
-            } `}
-            Niðurstöður samráðsins hafa verið birtar og málinu lokið.
+            {` 
+              Umsagnarfrestur er liðinn.
+              ${
+                pastAdvicePublishTypeKey[
+                  advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
+                ]
+              } 
+              Niðurstöður hafa verið birtar og samráði lokið.
+            `}
           </Text>
         </StackedTitleAndDescription>
       )}
