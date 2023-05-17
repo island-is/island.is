@@ -63,7 +63,7 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
   async createApplication({ application }: TemplateApiModuleActionProps) {
     // Pretend to be doing stuff for a short while
     await new Promise((resolve) => setTimeout(resolve, 2000))
-
+    /*
     const token = await this.sharedTemplateAPIService.createAssignToken(
       application,
       TWO_HOURS_IN_SECONDS,
@@ -74,7 +74,7 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
       application,
       token,
     )
-
+*/
     return {
       id: 1337,
     }
