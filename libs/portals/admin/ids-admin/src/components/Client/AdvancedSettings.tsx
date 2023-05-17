@@ -27,7 +27,7 @@ type AdvancedSettingsProps = Pick<
   | 'customClaims'
 >
 
-const AdvancedSettings = ({
+export const AdvancedSettings = ({
   requirePkce,
   allowOfflineAccess,
   requireConsent,
@@ -191,5 +191,3 @@ const AdvancedSettings = ({
     </ContentCard>
   )
 }
-
-export default AdvancedSettings
