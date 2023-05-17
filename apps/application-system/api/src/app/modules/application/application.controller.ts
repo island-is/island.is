@@ -787,6 +787,7 @@ export class ApplicationController {
     auth: User,
     apis: TemplateApi | TemplateApi[],
     locale: Locale,
+    requestId = '',
   ): Promise<TemplateAPIModuleActionResult> {
     if (!Array.isArray(apis)) {
       apis = [apis]
@@ -799,15 +800,26 @@ export class ApplicationController {
     )
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)
-
+    if (requestId !== '') {
+      this.logger.info(`performActionOnApplication 1 --`, {
+        applicationRequestId: requestId,
+        application: application,
+      })
+    }
     const updatedApplication = await this.templateApiActionRunner.run(
       application,
       apis,
       auth,
       locale,
       intl.formatMessage,
+      requestId,
     )
-
+    if (requestId !== '') {
+      this.logger.info(`performActionOnApplication 2 --`, {
+        applicationRequestId: requestId,
+        application: updatedApplication,
+      })
+    }
     for (const api of apis) {
       const result =
         updatedApplication.externalData[api.externalDataId || api.action]

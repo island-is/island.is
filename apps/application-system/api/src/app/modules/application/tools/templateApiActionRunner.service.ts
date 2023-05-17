@@ -15,7 +15,7 @@ import {
   isTranslationObject,
 } from '@island.is/application/core'
 import type { Locale } from '@island.is/shared/types'
-import { Logger, logger as islandis_logger } from '@island.is/logging'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class TemplateApiActionRunner {
@@ -49,8 +49,17 @@ export class TemplateApiActionRunner {
     auth: User,
     currentUserLocale: Locale,
     formatMessage: FormatMessage,
+    requestId = '',
   ): Promise<ApplicationWithAttachments> {
+    if (requestId !== '') {
+      logger.info(`TemplateApiActionRunner run 1 --`, {
+        applicationRequestId: requestId,
+        application: application,
+        thisApplication: this.application,
+      })
+    }
     this.application = application
+
     this.auth = auth
     this.newExternalData = {}
     this.oldExternalData = application.externalData
@@ -62,7 +71,13 @@ export class TemplateApiActionRunner {
     await this.runActions(groupedActions)
 
     await this.persistExternalData(actions)
-
+    if (requestId !== '') {
+      logger.info(`TemplateApiActionRunner run 2 --`, {
+        applicationRequestId: requestId,
+        application: application,
+        thisApplication: this.application,
+      })
+    }
     return this.application
   }
 
