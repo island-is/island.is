@@ -36,8 +36,6 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
   )
 
   const canCaseFilesBeOpened = () => {
-    const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
-
     const canProsecutorOpen =
       user.role === UserRole.PROSECUTOR &&
       user.institution?.id === workingCase.creatingProsecutor?.institution?.id
@@ -50,19 +48,15 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         ...completedCaseStates,
       ].includes(workingCase.state)
 
-    return (
-      !isAppealGracePeriodExpired && (canProsecutorOpen || canCourtRoleOpen)
-    )
+    return canProsecutorOpen || canCourtRoleOpen
   }
 
   const canCaseFilesBeUploaded = () => {
-    const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
-
     const canCourtRoleUpload =
       isCourtRole(user.role) &&
       [CaseState.RECEIVED, ...completedCaseStates].includes(workingCase.state)
 
-    return !isAppealGracePeriodExpired && canCourtRoleUpload
+    return canCourtRoleUpload
   }
 
   return (
