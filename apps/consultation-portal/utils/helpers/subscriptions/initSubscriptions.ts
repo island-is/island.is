@@ -1,6 +1,6 @@
 import { ArrOfIdAndName, CaseForSubscriptions } from '../../../types/interfaces'
 import { createUUIDString } from '../createUUIDString'
-import { CaseSubscriptionType, SubscriptionType } from '../../../types/enums'
+import { SubscriptionType } from '../../../types/enums'
 
 interface Props {
   casesData: Array<CaseForSubscriptions>
@@ -50,7 +50,8 @@ const initSubscriptions = ({
   const subscribedToAllChangesObj = {
     key: createUUIDString(),
     checked: false,
-    name: 'Allar tilkynningar um ný mál og breytingar',
+    name:
+      'Tilkynningar um ný mál, breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna',
     subscriptionType: SubscriptionType.AllChanges,
   }
 

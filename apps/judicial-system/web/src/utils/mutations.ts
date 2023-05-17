@@ -1,15 +1,5 @@
 import { gql } from '@apollo/client'
 
-export const RulingSignatureConfirmationQuery = gql`
-  query RulingSignatureConfirmation($input: SignatureConfirmationQueryInput!) {
-    rulingSignatureConfirmation(input: $input) {
-      documentSigned
-      code
-      message
-    }
-  }
-`
-
 export const coreCaseListFields = gql`
   fragment CoreCaseListFields on CaseListEntry {
     id

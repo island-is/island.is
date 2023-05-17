@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+
 import {
   Accordion,
   AccordionCard,
@@ -12,17 +13,18 @@ import {
   toast,
   ToggleSwitchButton,
 } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
+import { IntroHeader } from '@island.is/portals/core'
+
 import { m } from '../../lib/messages'
+import * as styles from './Consent.css'
+import { useGetConsentListQuery } from './Consent.generated'
+
 import type {
   ConsentLineProps,
   ConsentSectionProps,
   ConsentGroupProps,
 } from './types'
-
-import { useGetConsentListQuery } from './Consent.generated'
-import * as styles from './Consent.css'
 
 function Consent() {
   const { formatMessage } = useLocale()
@@ -64,7 +66,7 @@ function Consent() {
               />
             </Box>
           ) : isData ? (
-            data?.consentsList?.data?.map(({ client, permissions }) => {
+            data?.consentsList?.data?.map(({ client, tenants }) => {
               const title = client?.clientName || client.clientId
               return (
                 <AccordionCard
@@ -105,18 +107,23 @@ function Consent() {
                     </Box>
                   }
                 >
-                  <Box
-                    paddingTop={3}
-                    paddingBottom={3}
-                    paddingLeft={4}
-                    component="ul"
-                  >
+                  <Box paddingY={3} paddingX={[3, 6]}>
                     <Text variant="eyebrow" marginBottom={4}>
                       {formatMessage(m.consentExplanation)}
                     </Text>
-                    {permissions?.map((permission, index) => {
-                      return <ConsentSection {...permission} key={index} />
-                    })}
+                    <ul>
+                      {tenants
+                        ?.filter(Boolean)
+                        ?.map((tenant, permissionIndex, arr) => {
+                          return (
+                            <ConsentSection
+                              {...tenant}
+                              key={permissionIndex}
+                              isLast={permissionIndex + 1 === arr.length}
+                            />
+                          )
+                        })}
+                    </ul>
                   </Box>
                 </AccordionCard>
               )
@@ -133,20 +140,24 @@ function Consent() {
   )
 }
 
-function ConsentSection({ scopes = [], owner }: ConsentSectionProps) {
-  if (!scopes?.length || !owner) {
+function ConsentSection({
+  scopes = [],
+  tenant,
+  isLast = false,
+}: ConsentSectionProps) {
+  if (!scopes?.length || !tenant) {
     return null
   }
 
   return (
-    <Box marginBottom={1}>
+    <Box marginBottom={2} component="li">
       <Box display="flex" columnGap={2} alignItems="center">
-        {owner?.organisationLogoUrl ? (
-          <img src={owner.organisationLogoUrl} alt={''} width={16} />
+        {tenant?.organisationLogoUrl ? (
+          <img src={tenant.organisationLogoUrl} alt={''} width={16} />
         ) : null}
         <Box flexGrow={1}>
           <Text as="h3" variant="h5">
-            {owner.displayName}
+            {tenant.displayName}
           </Text>
         </Box>
       </Box>
@@ -156,7 +167,7 @@ function ConsentSection({ scopes = [], owner }: ConsentSectionProps) {
             console.log('change', newChecked)
           }
 
-          if (scope?.__typename === 'AuthConsentScopeGroup') {
+          if (scope?.children?.length) {
             return (
               <ConsentGroup
                 description={scope.description}
@@ -177,7 +188,7 @@ function ConsentSection({ scopes = [], owner }: ConsentSectionProps) {
             )
           }
 
-          if (scope?.__typename === 'AuthConsentScope') {
+          if (scope?.children?.length === 0) {
             return (
               <ConsentLine
                 {...scope}
@@ -192,6 +203,12 @@ function ConsentSection({ scopes = [], owner }: ConsentSectionProps) {
           return null
         })}
       </Box>
+
+      {!isLast && (
+        <Box marginBottom={3}>
+          <Divider />
+        </Box>
+      )}
     </Box>
   )
 }
@@ -202,12 +219,17 @@ function ConsentGroup({
   children,
 }: ConsentGroupProps) {
   return (
-    <Box marginY={2}>
+    <Box marginY={2} component="li">
       <Box marginBottom={2}>
         <Text as="h4">{displayName}</Text>
         {description ? <Text variant="small">{description}</Text> : null}
       </Box>
-      <Box borderLeftWidth="standard" borderColor={'blue200'} paddingLeft={3}>
+      <Box
+        component="ul"
+        borderLeftWidth="standard"
+        borderColor="blue200"
+        paddingLeft={3}
+      >
         {children}
       </Box>
     </Box>
@@ -249,11 +271,12 @@ function ConsentLine({
           <ToggleSwitchButton
             label={formatMessage(m.consentToggleButton, { item: displayName })}
             hiddenLabel
-            checked={localConsent}
+            checked={localConsent ?? false}
             onChange={handleChange}
           />
         </span>
       </Box>
+
       {!isLast && <Divider />}
     </li>
   )

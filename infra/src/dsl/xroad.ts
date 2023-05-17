@@ -118,7 +118,7 @@ export const DrivingLicense = new XroadConf({
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
     XROAD_DRIVING_LICENSE_V5_PATH: {
-      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5',
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5',
       staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
     },
@@ -261,6 +261,16 @@ export const Disability = new XroadConf({
       dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
       staging: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1',
       prod: 'IS/GOV/5012130120/TR-Protected/oryrki-v1',
+    },
+  },
+})
+
+export const EHIC = new XroadConf({
+  env: {
+    EHIC_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic',
+      staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic',
+      prod: 'IS/GOV/4804080550/SJUKRA-Protected/ehic',
     },
   },
 })

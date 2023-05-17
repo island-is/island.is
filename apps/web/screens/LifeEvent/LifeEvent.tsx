@@ -31,7 +31,11 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import {
+  useFeatureFlag,
+  useNamespace,
+  usePlausiblePageview,
+} from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
@@ -39,6 +43,7 @@ import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { webRichText } from '@island.is/web/utils/richText'
 import { Webreader } from '@island.is/web/components'
+import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -58,6 +63,8 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 
   useContentfulId(id)
   useLocalLinkTypeResolver()
+
+  usePlausiblePageview(DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN)
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -100,15 +107,17 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     return items
   }, [])
 
+  const socialImage = featuredImage ?? image
+
   return (
     <Box paddingBottom={[2, 2, 10]}>
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
-        imageUrl={featuredImage?.url}
-        imageContentType={featuredImage?.contentType}
-        imageWidth={featuredImage?.width?.toString()}
-        imageHeight={featuredImage?.height?.toString()}
+        imageUrl={socialImage?.url}
+        imageContentType={socialImage?.contentType}
+        imageWidth={socialImage?.width?.toString()}
+        imageHeight={socialImage?.height?.toString()}
       />
 
       <GridContainer id="main-content">

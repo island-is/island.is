@@ -10,18 +10,17 @@ import {
 } from '@island.is/island-ui/core'
 import Layout from '../../components/Layout/Layout'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
-import { useLogIn, useUser, useAdviceFilters } from '../../utils/helpers'
+import { useLogIn, useUser, useAdviceFilters } from '../../hooks'
 import { Card, SubscriptionActionCard } from '../../components/Card'
 import { useState } from 'react'
 import EmptyState from '../../components/EmptyState/EmptyState'
-import { UserAdvice } from '../../types/interfaces'
+import { AdviceFilter, UserAdvice } from '../../types/interfaces'
 import Pagination from '../../components/Pagination/Pagination'
 import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSortPartialData'
 import env from '../../lib/environment'
+import { CARDS_PER_PAGE, FILTERS_ADVICE_KEY } from '../../utils/consts/consts'
 
-const CARDS_PER_PAGE = 12
-
-export const AdvicesLayout = ({ children }) => {
+const AdvicesLayout = ({ children }) => {
   return (
     <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
       <BreadcrumbsWithMobileDivider
@@ -48,7 +47,6 @@ export const AdvicesLayout = ({ children }) => {
 export const AdvicesScreen = () => {
   const LogIn = useLogIn()
   const { isAuthenticated, userLoading } = useUser()
-  const [page, setPage] = useState(0)
   const [dropdownState, setDropdownState] = useState('')
 
   const handleDropdown = (id: string) => {
@@ -63,7 +61,7 @@ export const AdvicesScreen = () => {
     getAdvicesLoading,
     filters,
     setFilters,
-  } = useAdviceFilters({ cards_per_page: CARDS_PER_PAGE, page: page })
+  } = useAdviceFilters({ isAuthenticated: isAuthenticated })
 
   if (!userLoading && !isAuthenticated) {
     return (
@@ -78,7 +76,7 @@ export const AdvicesScreen = () => {
   }
 
   const renderCards = () => {
-    if (getAdvicesLoading) {
+    if (userLoading || getAdvicesLoading) {
       return (
         <Box
           display="flex"
@@ -91,11 +89,9 @@ export const AdvicesScreen = () => {
         </Box>
       )
     }
-
     if (!getAdvicesLoading && advices?.length === 0) {
       return <EmptyState />
     }
-
     return (
       <>
         {advices && (
@@ -103,7 +99,7 @@ export const AdvicesScreen = () => {
             {advices.map((item: UserAdvice, index: number) => {
               const card = {
                 id: item.caseId,
-                title: item.participantName,
+                title: item._case?.name,
                 tag: item._case?.statusName,
                 published: item.created,
                 processEnds: item._case?.processEnds,
@@ -162,9 +158,10 @@ export const AdvicesScreen = () => {
           </Tiles>
         )}
         <Pagination
-          page={page}
-          setPage={(page: number) => setPage(page)}
+          filters={filters}
+          setFilters={(arr: AdviceFilter) => setFilters(arr)}
           totalPages={Math.ceil(total / CARDS_PER_PAGE)}
+          localStorageId={FILTERS_ADVICE_KEY}
         />
       </>
     )
@@ -172,11 +169,7 @@ export const AdvicesScreen = () => {
 
   return (
     <AdvicesLayout>
-      <SearchAndSortPartialData
-        filters={filters}
-        setFilters={setFilters}
-        loading={getAdvicesLoading}
-      />
+      <SearchAndSortPartialData filters={filters} setFilters={setFilters} />
       {renderCards()}
     </AdvicesLayout>
   )

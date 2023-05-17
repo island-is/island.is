@@ -5,6 +5,8 @@ export interface Case {
   caseNumber?: string
   name?: string
   adviceCount?: number
+  advicePublishTypeId?: number
+  advicePublishTypeName?: string
   shortDescription?: string
   detailedDescription?: string
   statusName?: string
@@ -19,9 +21,12 @@ export interface Case {
   changed?: string
   summaryDate?: string
   summaryText?: string
+  summaryLink?: string
+  summaryDocumentId?: string
   contactName?: string
   contactEmail?: string
   documents?: Array<Document>
+  additionalDocuments?: Array<Document>
   stakeholders?: Array<Stakeholder>
 }
 
@@ -109,15 +114,16 @@ export interface ArrOfTypesForSubscriptions {
   institutions: { [key: string]: string }
 }
 
-export type FilterInputItems = {
+export type FilterInputItem = {
   checked: boolean
   value: string
   label: string
+  count?: number | unknown
 }
 
-export interface FilterInputIsOpen {
-  items: FilterInputItems
-  isOpen: boolean
+export interface FilterInputItems {
+  items: Array<FilterInputItem>
+  isOpen?: boolean
 }
 
 export type PeriodInput = {
@@ -126,15 +132,28 @@ export type PeriodInput = {
 }
 
 export interface CaseFilter {
-  caseStatuses?: any
-  caseTypes?: any
+  caseStatuses?: FilterInputItems
+  caseTypes?: FilterInputItems
   period?: PeriodInput
   institutions?: Array<number>
-  sorting?: any
+  sorting?: FilterInputItems
   pageNumber?: number
   pageSize?: number
   policyAreas?: Array<number>
   searchQuery?: string
+}
+
+export interface FetchCasesInput {
+  caseStatuses: Array<number>
+  caseTypes: Array<number>
+  orderBy: string
+  searchQuery: string
+  policyAreas: Array<number>
+  institutions: Array<number>
+  dateFrom: Date
+  dateTo: Date
+  pageSize: number
+  pageNumber: number
 }
 
 export interface SEOProps {
@@ -181,13 +200,6 @@ export interface User {
   name?: string
   email?: string
   image?: string
-}
-
-export interface TypeForSubscriptions {
-  id: string
-  type: string
-  name: string
-  nr: any
 }
 
 export interface AdviceFilter {

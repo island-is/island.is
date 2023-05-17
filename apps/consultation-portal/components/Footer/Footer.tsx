@@ -1,66 +1,58 @@
 import {
   ArrowLink,
-  Box,
-  Column,
   Columns,
-  Divider,
+  GridColumn,
   GridContainer,
+  GridRow,
+  Hidden,
   Logo,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { SGLogo } from '../svg/index'
+import FooterColumn from './components/FooterColumn'
 
 import * as styles from './Footer.css'
 
 const Footer = () => {
   return (
     <footer className={styles.footer}>
-      <div className={styles.footerColor}>
-        <GridContainer>
-          <Box paddingY={6}>
-            <Columns collapseBelow="lg" space={6} alignY="center">
-              <Column width="3/12">
-                <SGLogo />
-              </Column>
-              <Column width="1/12">
-                <div className={styles.verticalLine}>
-                  <Divider />
-                </div>
-              </Column>
-              <Column width="3/12">
-                <Logo width={231} />
-              </Column>
-              <Column width="1/12">
-                <div className={styles.verticalLine}>
-                  <Divider />
-                </div>
-              </Column>
-              <Column width="4/12">
-                <Box display="flex" flexDirection="column">
-                  <Box>
-                    <Text variant="small">
-                      Hér er á einum stað hægt að finna öll mál ráðuneyta sem
-                      birt hafa verið til samráðs við almenning. Öllum er
-                      frjálst að senda inn umsögn eða ábendingu.
-                    </Text>
-                  </Box>
-                  <Box
-                    paddingTop={1}
-                    display="flex"
-                    flexDirection="row"
-                    justifyContent="spaceBetween"
-                  >
-                    <ArrowLink href="/um">Lesa meira</ArrowLink>
-                    <ArrowLink href="mailto:samradsgatt@stjornarradid.is">
-                      Senda ábendingu til samráðsgáttar
-                    </ArrowLink>
-                  </Box>
-                </Box>
-              </Column>
-            </Columns>
-          </Box>
-        </GridContainer>
-      </div>
+      <Hidden print={true}>
+        <div className={styles.footerColor}>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span="12/12" paddingTop={6} paddingBottom={6}>
+                <Columns
+                  alignY="center"
+                  space={2}
+                  collapseBelow="lg"
+                  align="center"
+                >
+                  <FooterColumn justifyContent="flexStart">
+                    <SGLogo />
+                  </FooterColumn>
+                  <FooterColumn isDivider />
+                  <FooterColumn justifyContent="center">
+                    <Logo />
+                  </FooterColumn>
+                  <FooterColumn isDivider />
+                  <FooterColumn justifyContent="flexEnd">
+                    <Stack space={1}>
+                      <Text variant="small">
+                        Viltu hjálpa okkur að bæta samráðsgáttina? Ábendingar
+                        eru vel þegnar.
+                      </Text>
+                      <ArrowLink href="mailto:samradsgatt@stjornarradid.is">
+                        Senda ábendingu
+                      </ArrowLink>
+                    </Stack>
+                  </FooterColumn>
+                </Columns>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </div>
+      </Hidden>
     </footer>
   )
 }
