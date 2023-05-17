@@ -19,7 +19,7 @@ import environment, {
 } from '../../../environments/environment'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
@@ -44,7 +44,7 @@ export class EndorsementListService {
 
   async hasAdminScope(user: User): Promise<boolean> {
     for (const [_, value] of Object.entries(user.scope)) {
-      if (value == EndorsementsScope.admin) {
+      if (value == AdminPortalScope.petitionsAdmin) {
         return true
       }
     }

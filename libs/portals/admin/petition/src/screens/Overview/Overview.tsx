@@ -1,5 +1,5 @@
 import { Box, Text } from '@island.is/island-ui/core'
-import {useEndorsementSystemFindEndorsementListsQuery} from '../../queries/overview.generated'
+import { useEndorsementSystemFindEndorsementListsQuery } from '../../queries/overview.generated'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { EndorsementListControllerFindByTagsTagsEnum } from '@island.is/api/schema'
@@ -7,7 +7,11 @@ import { EndorsementListControllerFindByTagsTagsEnum } from '@island.is/api/sche
 const Overview = () => {
   const { formatMessage } = useLocale()
 
-  const { data, loading: queryLoading } = useEndorsementSystemFindEndorsementListsQuery({
+  const {
+    data,
+    loading: queryLoading,
+    error,
+  } = useEndorsementSystemFindEndorsementListsQuery({
     variables: {
       input: {
         tags: [EndorsementListControllerFindByTagsTagsEnum.generalPetition],
@@ -20,11 +24,10 @@ const Overview = () => {
   })
   console.log(queryLoading)
   console.log(data)
+  console.log(error)
   return (
     <Box>
       <Text> {formatMessage(m.petitions)}</Text>
-      <Text> {queryLoading}</Text>
-      <Text> {data}</Text>
     </Box>
   )
 }
