@@ -23,7 +23,7 @@ class MyDocument extends Document<Props> {
     const { lang } = this.props
 
     return (
-      <Html lang={String(lang)}>
+      <Html lang="is">
         <Head>
           <link rel="manifest" href="/site.webmanifest"></link>
           <link rel="shortcut icon" href="/favicon.ico" />

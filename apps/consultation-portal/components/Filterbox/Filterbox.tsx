@@ -125,11 +125,13 @@ const FilterBox = ({
                   key={index}
                   checked={item.checked}
                   label={item?.label}
+                  id={item.label}
                   onChange={() => onChangeRadio(item?.value)}
                 />
               ) : (
                 <Checkbox
                   key={index}
+                  id={item.label}
                   checked={item.checked}
                   label={renderLabel(item)}
                   onChange={() => onChangeCheckbox(item?.value)}
