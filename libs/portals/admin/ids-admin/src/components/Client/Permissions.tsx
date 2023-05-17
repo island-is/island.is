@@ -163,16 +163,12 @@ function Permissions({ allowedScopes }: PermissionsProps) {
           </T.Table>
         </ShadowBox>
       )}
-      <input
-        type="hidden"
-        name="addedScopes"
-        value={addedScopes.map((scope) => scope.name).join(',')}
-      />
-      <input
-        type="hidden"
-        name="removedScopes"
-        value={removedScopes.map((scope) => scope.name).join(',')}
-      />
+      {addedScopes.map(({ name }) => (
+        <input key={name} type="hidden" name="addedScopes" value={name} />
+      ))}
+      {removedScopes.map(({ name }) => (
+        <input key={name} type="hidden" name="removedScopes" value={name} />
+      ))}
       <AddPermissions
         onAdd={(add) => setPermissions([...permissions, ...add])}
         onClose={handleModalClose}

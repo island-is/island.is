@@ -15,6 +15,7 @@ import {
   AuthAdminRefreshTokenExpiration,
   AuthAdminClientClaim,
 } from '@island.is/api/schema'
+import { zfd } from 'zod-form-data'
 
 export enum ClientFormTypes {
   applicationUrls = 'applicationUrls',
@@ -222,8 +223,8 @@ export const schema = {
     .merge(defaultSchema),
   [ClientFormTypes.permissions]: z
     .object({
-      addedScopes: z.string().transform(splitStringOnCommaOrSpaceOrNewLine),
-      removedScopes: z.string().transform(splitStringOnCommaOrSpaceOrNewLine),
+      addedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
+      removedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
     })
     .merge(defaultSchema),
   [ClientFormTypes.none]: defaultSchema,
