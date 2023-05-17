@@ -13,10 +13,11 @@ import {
   AlertMessage,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
-import { ArrayElement } from '@nestjs/graphql'
 
 const DEFAULT_PAGE_SIZE = 5
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
+
+type Broker = Query['getBrokers'][number]
 
 interface BrokersListProps {
   slice: ConnectedComponent
@@ -32,18 +33,14 @@ const getSortedAndFilteredBrokers = (
   const brokersStartingWithFullSearchString: Query['getBrokers'] = []
   const brokersContainingAllTerm: Query['getBrokers'] = []
 
-  const startsWithFullSearchString = (
-    broker: ArrayElement<Query['getBrokers']>,
-  ): boolean => {
+  const startsWithFullSearchString = (broker: Broker): boolean => {
     return (
       broker.name?.trim().toLowerCase().startsWith(fullSearchString) ||
       broker.nationalId?.trim().toLowerCase().startsWith(fullSearchString)
     )
   }
 
-  const containsAllTerms = (
-    broker: ArrayElement<Query['getBrokers']>,
-  ): boolean => {
+  const containsAllTerms = (broker: Broker): boolean => {
     return searchTerms.every(
       (searchTerm) =>
         broker.name?.trim().toLowerCase().includes(searchTerm) ||
