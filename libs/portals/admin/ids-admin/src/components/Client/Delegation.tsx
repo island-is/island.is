@@ -6,6 +6,7 @@ import { Checkbox, Stack } from '@island.is/island-ui/core'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { useAuth } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -26,6 +27,7 @@ const Delegation = ({
 }: DelegationProps) => {
   const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
+  const { shouldSupportMultiEnv } = useMultiEnvSupport()
 
   const [inputValues, setInputValues] = useState({
     supportsCustomDelegation,
@@ -46,6 +48,7 @@ const Delegation = ({
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
+      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={2}>
         <Checkbox

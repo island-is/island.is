@@ -45,6 +45,7 @@ const ClientsUrl = ({
     <ContentCard
       title={formatMessage(m.clientUris)}
       intent={ClientFormTypes.applicationUrls}
+      shouldSupportMultiEnvironment={false}
     >
       <Stack space={3}>
         <Stack space={1}>
