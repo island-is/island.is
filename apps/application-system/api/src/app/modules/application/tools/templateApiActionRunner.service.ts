@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/types'
 import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Scope } from '@nestjs/common'
 import { TemplateApiErrorProblem } from '@island.is/shared/problem'
 import type { FormatMessage } from '@island.is/cms-translations'
 import {
@@ -17,7 +17,7 @@ import {
 import type { Locale } from '@island.is/shared/types'
 import { logger } from '@island.is/logging'
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class TemplateApiActionRunner {
   private application: ApplicationWithAttachments = {} as ApplicationWithAttachments
   private auth: User = {} as User
