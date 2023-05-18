@@ -223,9 +223,7 @@ export class TemplateApiActionRunner {
       formatMessage,
       externalDataId,
     )
-    console.log('updateExternalData newExternalDataEntry', newExternalDataEntry)
     Object.assign(newExternalData.data, newExternalDataEntry)
-    console.log('updateExternalData newExternalData2', newExternalData)
     application.externalData = {
       ...application.externalData,
       ...newExternalDataEntry,
@@ -243,9 +241,6 @@ export class TemplateApiActionRunner {
         delete newExternalData.data[api.externalDataId || api.action]
       }
     })
-
-    console.log('persistExternalData newExternalData', newExternalData)
-    console.log('persistExternalData oldExternalData', oldExternalData)
 
     await this.applicationService.updateExternalData(
       applicationId,
