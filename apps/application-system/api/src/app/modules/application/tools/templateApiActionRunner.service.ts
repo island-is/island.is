@@ -15,17 +15,10 @@ import {
   isTranslationObject,
 } from '@island.is/application/core'
 import type { Locale } from '@island.is/shared/types'
-import { Logger, logger as islandis_logger } from '@island.is/logging'
 
 @Injectable()
 export class TemplateApiActionRunner {
-  private application: ApplicationWithAttachments = {} as ApplicationWithAttachments
-  private auth: User = {} as User
-  private oldExternalData: ExternalData = {}
-  private newExternalData: ExternalData = {}
   private formatMessage!: FormatMessage
-  private currentUserLocale!: Locale
-
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly templateAPIService: TemplateAPIService,
@@ -50,20 +43,30 @@ export class TemplateApiActionRunner {
     currentUserLocale: Locale,
     formatMessage: FormatMessage,
   ): Promise<ApplicationWithAttachments> {
-    this.application = application
-    this.auth = auth
-    this.newExternalData = {}
-    this.oldExternalData = application.externalData
+    const oldExternalData = application.externalData
+
+    // eslint-disable-next-line
+    const newExternalData = { data: {} }
     this.formatMessage = formatMessage
-    this.currentUserLocale = currentUserLocale
 
     const groupedActions = this.groupByOrder(this.sortActions(actions))
 
-    await this.runActions(groupedActions)
+    await this.runActions(
+      groupedActions,
+      application,
+      newExternalData,
+      auth,
+      currentUserLocale,
+      formatMessage,
+    )
 
-    await this.persistExternalData(actions)
-
-    return this.application
+    await this.persistExternalData(
+      actions,
+      application.id,
+      oldExternalData,
+      newExternalData,
+    )
+    return application
   }
 
   sortActions(actions: TemplateApi[]) {
@@ -99,10 +102,28 @@ export class TemplateApiActionRunner {
     return result
   }
 
-  async runActions(actionGroups: TemplateApi[][]) {
+  async runActions(
+    actionGroups: TemplateApi[][],
+    application: ApplicationWithAttachments,
+    newExternalData: { data: ExternalData },
+    auth: User,
+    currentUserLocale: Locale,
+    formatMessage: FormatMessage,
+  ) {
     const result = actionGroups.reduce((accumulatorPromise, actions) => {
       return accumulatorPromise.then(() => {
-        const ps = Promise.all(actions.map((action) => this.callAction(action)))
+        const ps = Promise.all(
+          actions.map((action) =>
+            this.callAction(
+              action,
+              application,
+              newExternalData,
+              auth,
+              currentUserLocale,
+              formatMessage,
+            ),
+          ),
+        )
         return ps.then(() => {
           return
         })
@@ -112,29 +133,44 @@ export class TemplateApiActionRunner {
     await result
   }
 
-  async callAction(api: TemplateApi) {
+  async callAction(
+    api: TemplateApi,
+    application: ApplicationWithAttachments,
+    newExternalData: { data: ExternalData },
+    auth: User,
+    currentUserLocale: Locale,
+    formatMessage: FormatMessage,
+  ) {
     const { actionId, action, externalDataId, params } = api
 
     const actionResult = await this.templateAPIService.performAction({
-      templateId: this.application.typeId,
+      templateId: application.typeId,
       actionId,
       action,
       props: {
-        application: this.application,
-        auth: this.auth,
-        currentUserLocale: this.currentUserLocale,
+        application: application,
+        auth: auth,
+        currentUserLocale: currentUserLocale,
         params,
       },
     })
 
     if (!actionResult) throw new Error(`No Action is defined for ${actionId}`)
 
-    await this.updateExternalData(actionResult, action, externalDataId)
+    await this.updateExternalData(
+      actionResult,
+      action,
+      application,
+      newExternalData,
+      formatMessage,
+      externalDataId,
+    )
   }
 
   buildExternalData(
     actionResult: PerformActionResult,
     action: string,
+    formatMessage: FormatMessage,
     externalDataId?: string,
   ): ExternalData {
     if (actionResult.success) {
@@ -176,34 +212,45 @@ export class TemplateApiActionRunner {
   async updateExternalData(
     actionResult: PerformActionResult,
     action: string,
+    application: ApplicationWithAttachments,
+    newExternalData: { data: ExternalData },
+    formatMessage: FormatMessage,
     externalDataId?: string,
   ): Promise<void> {
     const newExternalDataEntry = this.buildExternalData(
       actionResult,
       action,
+      formatMessage,
       externalDataId,
     )
-
-    this.newExternalData = { ...this.newExternalData, ...newExternalDataEntry }
-
-    this.application.externalData = {
-      ...this.application.externalData,
+    console.log('updateExternalData newExternalDataEntry', newExternalDataEntry)
+    Object.assign(newExternalData.data, newExternalDataEntry)
+    console.log('updateExternalData newExternalData2', newExternalData)
+    application.externalData = {
+      ...application.externalData,
       ...newExternalDataEntry,
     }
   }
 
-  async persistExternalData(api: TemplateApi[]): Promise<void> {
+  async persistExternalData(
+    api: TemplateApi[],
+    applicationId: string,
+    oldExternalData: ExternalData,
+    newExternalData: { data: ExternalData },
+  ): Promise<void> {
     api.map((api) => {
       if (api.shouldPersistToExternalData === false) {
-        //default should be true
-        delete this.newExternalData[api.externalDataId || api.action]
+        delete newExternalData.data[api.externalDataId || api.action]
       }
     })
 
+    console.log('persistExternalData newExternalData', newExternalData)
+    console.log('persistExternalData oldExternalData', oldExternalData)
+
     await this.applicationService.updateExternalData(
-      this.application.id,
-      this.oldExternalData,
-      this.newExternalData,
+      applicationId,
+      oldExternalData,
+      newExternalData.data,
     )
   }
 }
