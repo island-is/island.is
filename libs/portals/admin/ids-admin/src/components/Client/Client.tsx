@@ -33,6 +33,7 @@ import { RevokeSecrets } from './RevokeSecrets/RevokeSecrets'
 import Translations from './Translations'
 
 import * as styles from './Client.css'
+import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -52,6 +53,7 @@ const Client = () => {
   const navigate = useNavigate()
   const params = useParams()
   const { formatMessage } = useLocale()
+  const { isSuperAdmin } = useSuperAdmin()
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
     fromEnvironment: null,
@@ -270,30 +272,34 @@ const Client = () => {
           }
         />
         <Permissions />
-        <Delegation
-          key={`${selectedEnvironment.environment}-Delegation`}
-          supportsProcuringHolders={
-            selectedEnvironment.supportsProcuringHolders
-          }
-          supportsLegalGuardians={selectedEnvironment.supportsLegalGuardians}
-          promptDelegations={selectedEnvironment.promptDelegations}
-          supportsPersonalRepresentatives={
-            selectedEnvironment.supportsPersonalRepresentatives
-          }
-          supportsCustomDelegation={
-            selectedEnvironment.supportsCustomDelegation
-          }
-          requireApiScopes={selectedEnvironment.requireApiScopes}
-        />
-        <AdvancedSettings
-          key={`${selectedEnvironment.environment}-AdvancedSettings`}
-          requirePkce={selectedEnvironment.requirePkce}
-          allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
-          requireConsent={selectedEnvironment.requireConsent}
-          supportTokenExchange={selectedEnvironment.supportTokenExchange}
-          accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
-          customClaims={selectedEnvironment.customClaims}
-        />
+        {isSuperAdmin && (
+          <Delegation
+            key={`${selectedEnvironment.environment}-Delegation`}
+            supportsProcuringHolders={
+              selectedEnvironment.supportsProcuringHolders
+            }
+            supportsLegalGuardians={selectedEnvironment.supportsLegalGuardians}
+            promptDelegations={selectedEnvironment.promptDelegations}
+            supportsPersonalRepresentatives={
+              selectedEnvironment.supportsPersonalRepresentatives
+            }
+            supportsCustomDelegation={
+              selectedEnvironment.supportsCustomDelegation
+            }
+            requireApiScopes={selectedEnvironment.requireApiScopes}
+          />
+        )}
+        {isSuperAdmin && (
+          <AdvancedSettings
+            key={`${selectedEnvironment.environment}-AdvancedSettings`}
+            requirePkce={selectedEnvironment.requirePkce}
+            allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
+            requireConsent={selectedEnvironment.requireConsent}
+            supportTokenExchange={selectedEnvironment.supportTokenExchange}
+            accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
+            customClaims={selectedEnvironment.customClaims}
+          />
+        )}
         <DangerZone />
       </Stack>
       <Outlet />
