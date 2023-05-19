@@ -64,36 +64,41 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               <Divider />
             </>
           )}
-          <Box>
-            <Text variant="h5">
-              {formatText(
-                e.review.sectionDeliveryLabel,
-                application,
-                formatMessage,
-              )}
-            </Text>
-            <Text>
-              {formatText(
-                e.review.sectionDeliveryDescription,
-                application,
-                formatMessage,
-              )}
-            </Text>
-          </Box>
-          <Divider />
-          <Box paddingBottom={8}>
-            <Text variant="h5">
-              {formatText(
-                e.review.sectionAddressLabel,
-                application,
-                formatMessage,
-              )}
-            </Text>
-            <Text>
-              {residence.streetAddress}, {residence.postalCode}{' '}
-              {residence.locality}
-            </Text>
-          </Box>
+          {plastic?.length > 0 && (
+            <>
+              <Box>
+                <Text variant="h5">
+                  {formatText(
+                    e.review.sectionDeliveryLabel,
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
+                <Text>
+                  {formatText(
+                    e.review.sectionDeliveryDescription,
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
+              </Box>
+              <Divider />
+
+              <Box paddingBottom={8}>
+                <Text variant="h5">
+                  {formatText(
+                    e.review.sectionAddressLabel,
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
+                <Text>
+                  {residence.streetAddress}, {residence.postalCode}{' '}
+                  {residence.locality}
+                </Text>
+              </Box>
+            </>
+          )}
           {application?.state === 'approved' && <Box marginBottom={8} />}
         </Stack>
       </Stack>
