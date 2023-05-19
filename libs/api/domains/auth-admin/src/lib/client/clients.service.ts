@@ -15,6 +15,7 @@ import { CreateClientResponse } from './dto/create-client.response'
 import { PatchClientInput } from './dto/patch-client.input'
 import { PublishClientInput } from './dto/publish-client.input'
 import { ClientAllowedScopeInput } from './dto/client-allowed-scope.input'
+import { RotateSecretInput } from './dto/rotate-secret.input'
 import { ClientEnvironment } from './models/client-environment.model'
 import { ClientSecret } from './models/client-secret.model'
 import { Client } from './models/client.model'
@@ -271,5 +272,70 @@ export class ClientsService extends MultiEnvironmentService {
         description,
       })) ?? []
     )
+  }
+
+  async rotateSecret(
+    user: User,
+    input: RotateSecretInput,
+  ): Promise<ClientSecret> {
+    const adminApi = this.adminApiByEnvironmentWithAuth(input.environment, user)
+
+    if (!adminApi) {
+      throw new Error(`Environment ${input.environment} not configured`)
+    }
+
+    if (input.revokeOldSecrets) {
+      const secrets = await adminApi.meClientSecretsControllerFindAll({
+        tenantId: input.tenantId,
+        clientId: input.clientId,
+      })
+      if (secrets && secrets.length > 0) {
+        // We don't care about the result of the delete as we can't have it in a single transaction between environments.
+        // If it fails the UI will prompt the user about there being old secrets and they can clear them.
+        await Promise.allSettled(
+          secrets.map((secret) =>
+            adminApi.meClientSecretsControllerDelete({
+              tenantId: input.tenantId,
+              clientId: input.clientId,
+              secretId: secret.secretId,
+            }),
+          ),
+        )
+      }
+    }
+
+    return adminApi.meClientSecretsControllerCreate({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+    })
+  }
+
+  async revokeSecret(user: User, input: RotateSecretInput) {
+    const adminApi = this.adminApiByEnvironmentWithAuth(input.environment, user)
+
+    if (!adminApi) {
+      throw new Error(`Environment ${input.environment} not configured`)
+    }
+
+    // We consider the first secret to be the active one and the rest as the old secrets to revoke
+    const [_, ...oldSecrets] = await adminApi.meClientSecretsControllerFindAll({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+    })
+
+    // We revoke the old secrets
+    if (oldSecrets && oldSecrets.length > 0) {
+      await Promise.all(
+        oldSecrets.map((secret) =>
+          adminApi.meClientSecretsControllerDelete({
+            tenantId: input.tenantId,
+            clientId: input.clientId,
+            secretId: secret.secretId,
+          }),
+        ),
+      )
+    }
+
+    return true
   }
 }

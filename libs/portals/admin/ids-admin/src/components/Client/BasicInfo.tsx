@@ -1,17 +1,12 @@
-import React, { RefObject, useReducer, useRef } from 'react'
+import React, { useReducer, useRef } from 'react'
 
-import {
-  AccordionCard,
-  Input,
-  Stack,
-  toast,
-  Text,
-} from '@island.is/island-ui/core'
+import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import ContentCard from '../../shared/components/ContentCard'
+import ContentCard from '../../shared/components/ContentCard/ContentCard'
 import { AuthAdminClientSecret } from './Client.loader'
+import { useCopyToClipboard } from '../../shared/hooks/useCopyToClipboard'
 
 interface BasicInfoProps {
   clientId: string
@@ -19,12 +14,13 @@ interface BasicInfoProps {
   issuerUrl: string
 }
 
-const BasicInfoContent = ({
+export const BasicInfo = ({
   clientId,
   clientSecrets = [],
   issuerUrl,
 }: BasicInfoProps) => {
   const { formatMessage } = useLocale()
+  const { copyToClipboard } = useCopyToClipboard()
   const [showSecret, toggleSecret] = useReducer((s) => !s, false)
   const clientIdRef = useRef<HTMLInputElement>(null)
   const clientSecretRef = useRef<HTMLInputElement>(null)
@@ -35,14 +31,6 @@ const BasicInfoContent = ({
   const endSessionUrlRef = useRef<HTMLInputElement>(null)
   const openIdConfigurationUrlRef = useRef<HTMLInputElement>(null)
   const jsonWebSetKeyUrlRef = useRef<HTMLInputElement>(null)
-
-  const handleCopy = (ref: RefObject<HTMLInputElement>) => {
-    if (!ref.current) return
-
-    navigator.clipboard.writeText(ref.current.value).then(() => {
-      toast.success(formatMessage(m.copySuccess))
-    })
-  }
 
   const secret = clientSecrets?.find((secret) => secret.decryptedValue)
   const hasClientSecrets = Boolean(clientSecrets && clientSecrets.length > 0)
@@ -62,9 +50,9 @@ const BasicInfoContent = ({
           buttons={[
             {
               name: 'copy',
-              label: 'copy',
+              label: formatMessage(m.copy),
               type: 'outline',
-              onClick: () => handleCopy(clientIdRef),
+              onClick: () => copyToClipboard(clientIdRef),
             },
           ]}
         />
@@ -80,17 +68,19 @@ const BasicInfoContent = ({
               label={formatMessage(m.clientSecret)}
               buttons={[
                 {
-                  name: 'copy',
-                  type: 'outline',
-                  onClick: () => handleCopy(clientSecretRef),
-                  label: 'Copy value',
-                  disabled: isLegacySecret,
-                },
-                {
                   name: showSecret ? 'eyeOff' : 'eye',
                   type: 'outline',
                   onClick: toggleSecret,
-                  label: showSecret ? 'Hide password' : 'Show password',
+                  label: showSecret
+                    ? formatMessage(m.hidePassword)
+                    : formatMessage(m.showPassword),
+                  disabled: isLegacySecret,
+                },
+                {
+                  name: 'copy',
+                  type: 'outline',
+                  onClick: () => copyToClipboard(clientSecretRef),
+                  label: formatMessage(m.copy),
                   disabled: isLegacySecret,
                 },
               ]}
@@ -113,9 +103,9 @@ const BasicInfoContent = ({
           buttons={[
             {
               name: 'copy',
-              label: 'copy',
+              label: formatMessage(m.copy),
               type: 'outline',
-              onClick: () => handleCopy(issuerUrlRef),
+              onClick: () => copyToClipboard(issuerUrlRef),
             },
           ]}
         />
@@ -135,9 +125,9 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
-                  onClick: () => handleCopy(authorizationUrlRef),
+                  onClick: () => copyToClipboard(authorizationUrlRef),
                 },
               ]}
             />
@@ -152,9 +142,9 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
-                  onClick: () => handleCopy(tokenUrlRef),
+                  onClick: () => copyToClipboard(tokenUrlRef),
                 },
               ]}
             />
@@ -169,9 +159,9 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
-                  onClick: () => handleCopy(userInfoUrlRef),
+                  onClick: () => copyToClipboard(userInfoUrlRef),
                 },
               ]}
             />
@@ -186,9 +176,9 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
-                  onClick: () => handleCopy(endSessionUrlRef),
+                  onClick: () => copyToClipboard(endSessionUrlRef),
                 },
               ]}
             />
@@ -203,9 +193,9 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
-                  onClick: () => handleCopy(openIdConfigurationUrlRef),
+                  onClick: () => copyToClipboard(openIdConfigurationUrlRef),
                 },
               ]}
             />
@@ -220,9 +210,9 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
-                  onClick: () => handleCopy(jsonWebSetKeyUrlRef),
+                  onClick: () => copyToClipboard(jsonWebSetKeyUrlRef),
                 },
               ]}
             />
@@ -232,5 +222,3 @@ const BasicInfoContent = ({
     </ContentCard>
   )
 }
-
-export default BasicInfoContent

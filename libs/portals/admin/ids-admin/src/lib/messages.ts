@@ -86,6 +86,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:cancel',
     defaultMessage: 'Cancel',
   },
+  close: {
+    id: 'ap.ids-admin:close',
+    defaultMessage: 'Close',
+  },
   add: {
     id: 'ap.ids-admin:add',
     defaultMessage: 'Add',
@@ -114,12 +118,24 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-display-name',
     defaultMessage: 'Name is required.',
   },
+  errorDescription: {
+    id: 'ap.ids-admin:error-description',
+    defaultMessage: 'Description is required.',
+  },
   errorClientId: {
     id: 'ap.ids-admin:error-client-id',
     defaultMessage: 'Application ID is required.',
   },
   errorClientIdRegex: {
     id: 'ap.ids-admin:error-client-id-regex',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+  },
+  errorScopeId: {
+    id: 'ap.ids-admin:error-scope-id',
+    defaultMessage: 'Scope ID is required.',
+  },
+  errorScopeIdRegex: {
+    id: 'ap.ids-admin:error-scope-id-regex',
     defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
   },
   errorEnvironment: {
@@ -217,7 +233,7 @@ export const m = defineMessages({
   },
   clientSecretDescription: {
     id: 'ap.ids-admin:client-secret-description',
-    defaultMessage: 'The application Secret is not base64 encoded.',
+    defaultMessage: 'The application secret is not base64 encoded.',
   },
   clientSecretLegacy: {
     id: 'ap.ids-admin:client-secret-legacy',
@@ -448,6 +464,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-claims',
     defaultMessage: 'Invalid claim format',
   },
+  hidePassword: {
+    id: 'ap.ids-admin:hide-password',
+    defaultMessage: 'Hide password',
+  },
+  showPassword: {
+    id: 'ap.ids-admin:show-password',
+    defaultMessage: 'Show password',
+  },
+  copy: {
+    id: 'ap.ids-admin:copy',
+    defaultMessage: 'Copy value',
+  },
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
@@ -542,5 +570,118 @@ export const m = defineMessages({
   closeModal: {
     id: 'ap.ids-admin:close-modal',
     defaultMessage: 'Close dialog',
+  },
+  listOfPermissions: {
+    id: 'ap.ids-admin:list-of-permissions',
+    defaultMessage: 'List of permissions',
+  },
+  permissionsManagement: {
+    id: 'ap.ids-admin:permissions-management',
+    defaultMessage: 'Management',
+  },
+  createPermission: {
+    id: 'ap.ids-admin:create-permission',
+    defaultMessage: 'Create permission',
+  },
+  permissionId: {
+    id: 'ap.ids-admin:permission-id',
+    defaultMessage: 'Permission ID',
+  },
+  permissionDescription: {
+    id: 'ap.ids-admin:permission-description',
+    defaultMessage: 'Description',
+  },
+  permissionDescriptionInfo: {
+    id: 'ap.ids-admin:permission-description-info',
+    defaultMessage: 'Users see this when they sign in, and manage consents.',
+  },
+  permissionDisplayNameInfo: {
+    id: 'ap.ids-admin:permission-display-name-info',
+    defaultMessage: 'Displayed on the login screen of your app',
+  },
+  permissionEmptyHeading: {
+    id: 'ap.ids-admin:permission-empty-heading',
+    defaultMessage: 'No permission created',
+  },
+  permissionEmptyDescription: {
+    id: 'ap.ids-admin:permission-empty-description',
+    defaultMessage:
+      'You can create an permission by clicking on Create permission.',
+  },
+  permissionListDescription: {
+    id: 'ap.ids-admin:permission-list-description',
+    defaultMessage: 'Here you can view and create permissions.',
+  },
+  permissionsSearchPlaceholder: {
+    id: 'ap.ids-admin:permissions-search-placeholder',
+    defaultMessage: 'Search by name or ID',
+  },
+  dangerZone: {
+    id: 'ap.ids-admin:danger-zone',
+    defaultMessage: 'Danger zone',
+  },
+  rotateSecret: {
+    id: 'ap.ids-admin:rotate-secret',
+    defaultMessage: 'Rotate secret',
+  },
+  rotateSecretActionCardLabel: {
+    id: 'ap.ids-admin:rotate-secret-action-card-label',
+    defaultMessage:
+      'All authorized apps will need to be updated with the new client secret.',
+  },
+  rotateSecretDescription: {
+    id: 'ap.ids-admin:rotate-secret-description',
+    defaultMessage: `This will generate a new secret for your application. You should revoke existing secret(s) after you have deployed your application with the new secret.{br}{br}If your existing secret(s) have been compromised it is recommended to revoke them immediately.`,
+  },
+  rotateSecretInfoAlert: {
+    id: 'ap.ids-admin:rotate-secret-alert',
+    defaultMessage:
+      'Authentications will stop working for your application until you have deployed the new secret.',
+  },
+  rotate: {
+    id: 'ap.ids-admin:rotate',
+    defaultMessage: 'Rotate',
+  },
+  generate: {
+    id: 'ap.ids-admin:generate',
+    defaultMessage: 'Generate',
+  },
+  revoke: {
+    id: 'ap.ids-admin:revoke',
+    defaultMessage: 'Revoke',
+  },
+  revokeExistingSecrets: {
+    id: 'ap.ids-admin:revoke-existing-secrets',
+    defaultMessage: 'Revoke existing secret(s) immediately.',
+  },
+  newSecret: {
+    id: 'ap.ids-admin:new-secret',
+    defaultMessage: 'New secret',
+  },
+  rotatedSecretDescription: {
+    id: 'ap.ids-admin:rotated-secret-description',
+    defaultMessage:
+      'Please update the application configuration with the following secret.',
+  },
+  revokeSecrets: {
+    id: 'ap.ids-admin:revoke-secrets',
+    defaultMessage: 'Revoke old secret(s)',
+  },
+  revokeSecretsDescription: {
+    id: 'ap.ids-admin:revoke-secrets-description',
+    defaultMessage:
+      'This will revoke all secrets except the current active secret. Please make sure that they are not in use anymore.',
+  },
+  successRevokingSecrets: {
+    id: 'ap.ids-admin:success-revoking-secrets',
+    defaultMessage: 'Successfully revoked old secret(s)',
+  },
+  multipleSecrets: {
+    id: 'ap.ids-admin:multiple-secrets',
+    defaultMessage: 'Multiple secrets',
+  },
+  multipleSecretsDescription: {
+    id: 'ap.ids-admin:multiple-secrets-description',
+    defaultMessage: 'There are one or more old secrets which are still active.',
   },
 })

@@ -31,12 +31,12 @@ const schema = z
       required_error: 'errorClientType',
     }),
   })
-  // First refine is to check if the applicationId is prefixed with the tenant and is empty
+  // First refine is to check if the clientId is prefixed with the tenant and is empty
   .refine((data) => `${data.tenant}/` !== data.clientId, {
     message: 'errorClientId',
     path: ['clientId'],
   })
-  // Second refine is to check if the applicationId is prefixed with the tenant and matches the regex
+  // Second refine is to check if the clientId is prefixed with the tenant and matches the regex
   .refine(
     (data) =>
       validateClientId({
