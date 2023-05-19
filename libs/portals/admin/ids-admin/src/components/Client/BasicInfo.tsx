@@ -118,6 +118,23 @@ export const BasicInfo = ({
               readOnly
               type="text"
               size="sm"
+              ref={openIdConfigurationUrlRef}
+              name="openIdConfigurationUrl"
+              value={issuerUrl + '.well-known/openid-configuration'}
+              label={formatMessage(m.openIdConfiguration)}
+              buttons={[
+                {
+                  name: 'copy',
+                  label: formatMessage(m.copy),
+                  type: 'outline',
+                  onClick: () => copyToClipboard(openIdConfigurationUrlRef),
+                },
+              ]}
+            />
+            <Input
+              readOnly
+              type="text"
+              size="sm"
               ref={authorizationUrlRef}
               name="authorizationUrl"
               value={issuerUrl + 'connect/authorize'}
@@ -179,23 +196,6 @@ export const BasicInfo = ({
                   label: formatMessage(m.copy),
                   type: 'outline',
                   onClick: () => copyToClipboard(endSessionUrlRef),
-                },
-              ]}
-            />
-            <Input
-              readOnly
-              type="text"
-              size="sm"
-              ref={openIdConfigurationUrlRef}
-              name="openIdConfigurationUrl"
-              value={issuerUrl + '.well-known/openid-configuration'}
-              label={formatMessage(m.openIdConfiguration)}
-              buttons={[
-                {
-                  name: 'copy',
-                  label: formatMessage(m.copy),
-                  type: 'outline',
-                  onClick: () => copyToClipboard(openIdConfigurationUrlRef),
                 },
               ]}
             />
