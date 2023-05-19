@@ -63,8 +63,9 @@ export const XROAD_DRIVING_LICENSE_PATH =
 export const XROAD_DRIVING_LICENSE_V2_PATH =
   'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
 
-export const XROAD_DRIVING_LICENSE_V5_PATH =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5'
+// At the time of implementation, the v5 path is case sensitive depending on the environment
+// and as such Okuskirteini and okuskirteini are considered paths
+export const XROAD_DRIVING_LICENSE_V5_PATH = /\/r1\/IS-DEV\/GOV\/10005\/Logreglan-Protected\/[Oo]kuskirteini-v5/
 
 const url = (path: string) => {
   return new URL(path, XROAD_BASE_PATH).toString()
@@ -262,7 +263,10 @@ export const requestHandlers = [
 
   // Ignore calls to this endpoint and mock response in get All Driving Licenses
   rest.get(
-    url(`${XROAD_DRIVING_LICENSE_V5_PATH}/api/drivinglicense/v5/deprivation`),
+    new RegExp(
+      XROAD_DRIVING_LICENSE_V5_PATH.source +
+        /\/api\/drivinglicense\/v5\/deprivation/.source,
+    ),
     (req, res, ctx) => {
       return res(
         ctx.status(200),
