@@ -21,10 +21,6 @@ export type ClientContextType = {
     fromEnvironment?: AuthAdminEnvironment | null
   }
   setPublishData: Dispatch<SetStateAction<PublishData>>
-  addedScopes: AuthAdminClientAllowedScope[]
-  setAddedScopes: Dispatch<SetStateAction<AuthAdminClientAllowedScope[]>>
-  removedScopes: AuthAdminClientAllowedScope[]
-  setRemovedScopes: Dispatch<SetStateAction<AuthAdminClientAllowedScope[]>>
 }
 export const ClientContext = createContext<ClientContextType>({
   client: {} as AuthAdminClient,
@@ -50,14 +46,6 @@ export const ClientContext = createContext<ClientContextType>({
     fromEnvironment: null,
   },
   setPublishData: () => {
-    return
-  },
-  addedScopes: [],
-  setAddedScopes: () => {
-    return
-  },
-  removedScopes: [],
-  setRemovedScopes: () => {
     return
   },
 })

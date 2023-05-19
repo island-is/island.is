@@ -52,12 +52,6 @@ const Client = () => {
   const client = useLoaderData() as AuthAdminClient
   const navigate = useNavigate()
   const params = useParams()
-  const [addedScopes, setAddedScopes] = useState<AuthAdminClientAllowedScope[]>(
-    [],
-  )
-  const [removedScopes, setRemovedScopes] = useState<
-    AuthAdminClientAllowedScope[]
-  >([])
 
   const { formatMessage } = useLocale()
   const [publishData, setPublishData] = useState<PublishData>({
@@ -161,10 +155,6 @@ const Client = () => {
         },
         publishData: publishData,
         setPublishData: setPublishData,
-        addedScopes,
-        setAddedScopes,
-        removedScopes,
-        setRemovedScopes,
       }}
     >
       <Stack space={3}>

@@ -13,56 +13,63 @@ import { ShadowBox } from '../../ShadowBox/ShadowBox'
 import { ClientContext } from '../../../shared/context/ClientContext'
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import { getTranslatedValue } from '@island.is/portals/core'
-import { useGetAvailableScopesQuery } from './AvailableScopes.generated'
+import {
+  GetAvailableScopesQuery,
+  useGetAvailableScopesQuery,
+} from './AvailableScopes.generated'
 import { useParams } from 'react-router-dom'
+import { isDefined } from '@island.is/shared/utils'
 
 interface AddPermissionsProps {
   isVisible: boolean
   onClose: () => void
   onAdd: (permissions: AuthAdminClientAllowedScope[]) => void
+  addedScopes: AuthAdminClientAllowedScope[]
+  removedScopes: AuthAdminClientAllowedScope[]
 }
 
-function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
+function AddPermissions({
+  isVisible,
+  onClose,
+  onAdd,
+  addedScopes,
+  removedScopes,
+}: AddPermissionsProps) {
   const { formatMessage, locale } = useLocale()
   const [selected, setSelected] = React.useState<
     Map<string, AuthAdminClientAllowedScope>
   >(new Map())
   const params = useParams()
-  const [availableScopes, setAvailableScopes] = React.useState<
-    AuthAdminClientAllowedScope[]
-  >([])
 
-  const {
-    selectedEnvironment,
-    setAddedScopes,
-    addedScopes,
-    removedScopes,
-    setRemovedScopes,
-  } = useContext(ClientContext)
+  const { selectedEnvironment } = useContext(ClientContext)
 
-  const { loading } = useGetAvailableScopesQuery({
+  const { data, loading } = useGetAvailableScopesQuery({
     fetchPolicy: 'network-only',
     variables: {
       input: {
         tenantId: params['tenant'] ?? '',
       },
     },
-    onCompleted: (data) => {
-      const scopes = data.authAdminScopes?.data
-        .map((item) => {
-          return (
-            item.environments.find(
-              (scope) => scope.environment === selectedEnvironment.environment,
-            ) ?? null
-          )
-        })
-        .filter((item) => item !== null)
-
-      setAvailableScopes(scopes as AuthAdminClientAllowedScope[])
-    },
   })
+
+  const getScopeForEnvironmentFromData = (
+    data: GetAvailableScopesQuery | undefined,
+  ): AuthAdminClientAllowedScope[] => {
+    if (!data?.authAdminScopes?.data) {
+      return []
+    }
+    return data.authAdminScopes?.data
+      .map((item) => {
+        return (
+          item.environments.find(
+            (scope) => scope.environment === selectedEnvironment.environment,
+          ) ?? null
+        )
+      })
+      .filter(isDefined) as AuthAdminClientAllowedScope[]
+  }
   // Get the available scopes for the selected environment including the scopes that have already been deleted
-  const available = availableScopes
+  const available = getScopeForEnvironmentFromData(data)
     ?.filter((item) => {
       return ![
         ...addedScopes,
@@ -73,22 +80,6 @@ function AddPermissions({ isVisible, onClose, onAdd }: AddPermissionsProps) {
 
   // Add the selected scopes to the addedScopes array for
   const handleAdd = () => {
-    // Combine the previously added scopes and the newly selected scopes
-    const newAddedScopes = [...addedScopes, ...selected.values()]
-
-    // Remove the scopes that were added that were also in the removedScopes array
-    setAddedScopes(
-      newAddedScopes.filter(
-        (item) => !removedScopes.some((rem) => rem.name === item.name),
-      ),
-    )
-    // Remove the scopes that were added from the removedScopes array
-    setRemovedScopes(
-      removedScopes.filter(
-        (item) => !newAddedScopes.find((added) => added.name === item.name),
-      ),
-    )
-
     // Add the new scopes to the permissions array
     onAdd([...selected.values()])
 

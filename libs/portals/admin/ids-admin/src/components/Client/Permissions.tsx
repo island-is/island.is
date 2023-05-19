@@ -1,15 +1,8 @@
 import ContentCard from '../../shared/components/ContentCard/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import {
-  Box,
-  Button,
-  Icon,
-  Table as T,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
+import React, { useEffect, useState } from 'react'
 import {
   ClientFormTypes,
   EditApplicationResult,
@@ -17,11 +10,9 @@ import {
 } from '../forms/EditApplication/EditApplication.action'
 import { ShadowBox } from '../ShadowBox/ShadowBox'
 import { useActionData, useParams } from 'react-router-dom'
-import { ClientContext } from '../../shared/context/ClientContext'
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import AddPermissions from '../forms/AddPermissions/AddPermissions'
 import { getTranslatedValue } from '@island.is/portals/core'
-import isEqual from 'lodash/isEqual'
 
 interface PermissionsProps {
   allowedScopes?: AuthAdminClientAllowedScope[]
@@ -34,32 +25,24 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   const [permissions, setPermissions] = useState<AuthAdminClientAllowedScope[]>(
     allowedScopes ?? [],
   )
+  const [addedScopes, setAddedScopes] = useState<AuthAdminClientAllowedScope[]>(
+    [],
+  )
+  const [removedScopes, setRemovedScopes] = useState<
+    AuthAdminClientAllowedScope[]
+  >([])
   const actionData = useActionData() as EditApplicationResult<
     typeof schema[typeof ClientFormTypes.permissions]
   >
 
-  const actionDataRef = useRef(actionData?.data)
-
   useEffect(() => {
     if (actionData?.intent === ClientFormTypes.permissions) {
-      if (!isEqual(actionData?.data, actionDataRef?.current)) {
-        if (actionData?.data) {
-          setAddedScopes([])
-          setRemovedScopes([])
-        }
-        if (actionData?.globalError) {
-          toast.error(formatMessage(m.globalErrorMessage))
-        }
+      if (actionData?.data) {
+        setAddedScopes([])
+        setRemovedScopes([])
       }
     }
   }, [actionData])
-
-  const {
-    addedScopes,
-    removedScopes,
-    setRemovedScopes,
-    setAddedScopes,
-  } = useContext(ClientContext)
 
   const tenant = params['tenant']
 
@@ -75,14 +58,12 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   const handleRemovedPermission = (
     removedPermission: AuthAdminClientAllowedScope,
   ) => {
-    const newPermissions = permissions.filter(
-      (item) => item.name !== removedPermission.name,
+    setAddedScopes((prevState) =>
+      prevState.filter((item) => item.name !== removedPermission.name),
     )
-    const newAddedScopes = addedScopes.filter(
-      (item) => item.name !== removedPermission.name,
+    setPermissions((prevState) =>
+      prevState.filter((item) => item.name !== removedPermission.name),
     )
-    setAddedScopes(newAddedScopes)
-    setPermissions(newPermissions)
 
     setRemovedScopes((prevState) => {
       if (
@@ -94,6 +75,27 @@ function Permissions({ allowedScopes }: PermissionsProps) {
       }
       return [...prevState, removedPermission]
     })
+  }
+
+  // Add the selected scopes to the addedScopes array for
+  const handleAdd = (selected: AuthAdminClientAllowedScope[]) => {
+    // Combine the previously added scopes and the newly selected scopes
+    const newAddedScopes = [...addedScopes, ...selected.values()]
+
+    // Remove the scopes that were added that were also in the removedScopes array
+    setAddedScopes(
+      newAddedScopes.filter(
+        (item) => !removedScopes.some((rem) => rem.name === item.name),
+      ),
+    )
+    // Remove the scopes that were added from the removedScopes array
+    setRemovedScopes(
+      removedScopes.filter(
+        (item) => !newAddedScopes.find((added) => added.name === item.name),
+      ),
+    )
+
+    setPermissions([...permissions, ...selected])
   }
 
   const hasData = permissions.length > 0
@@ -126,7 +128,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
               </T.Row>
             </T.Head>
             <T.Body>
-              {[...permissions].map((item) => (
+              {permissions.map((item) => (
                 <T.Row key={item.name}>
                   <T.Data>
                     <Box display="flex" columnGap={1} alignItems="center">
@@ -170,9 +172,11 @@ function Permissions({ allowedScopes }: PermissionsProps) {
         <input key={name} type="hidden" name="removedScopes" value={name} />
       ))}
       <AddPermissions
-        onAdd={(add) => setPermissions([...permissions, ...add])}
+        onAdd={handleAdd}
         onClose={handleModalClose}
         isVisible={isModalVisible}
+        addedScopes={addedScopes}
+        removedScopes={removedScopes}
       />
     </ContentCard>
   )
