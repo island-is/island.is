@@ -15,7 +15,6 @@ import { editApplicationAction } from './components/forms/EditApplication/EditAp
 import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
 import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
 import { createPermissionAction } from './components/forms/CreatePermission/CreatePermission.action'
-import { rotateSecretAction } from './components/forms/RotateSecret/RotateSecret.action'
 import { permissionsListLoader } from './components/PermissionsList/PermissionsList.loader'
 import { permissionLoader } from './screens/PermissionScreen/Permission.loader'
 import { updatePermissionAction } from './components/forms/EditPermission/EditPermission.action'
@@ -28,9 +27,6 @@ const CreateClient = lazy(() =>
 )
 const Clients = lazy(() => import('./components/Clients/Clients'))
 const ClientsScreen = lazy(() => import('./screens/ClientsScreen'))
-const RotateSecret = lazy(() =>
-  import('./components/forms/RotateSecret/RotateSecret'),
-)
 
 const PermissionsList = lazy(() =>
   import('./components/PermissionsList/PermissionsList'),
@@ -43,7 +39,10 @@ const CreatePermission = lazy(() =>
   import('./components/forms/CreatePermission/CreatePermission'),
 )
 
-const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
+const allowedScopes: string[] = [
+  AdminPortalScope.idsAdmin,
+  AdminPortalScope.idsAdminSuperUser,
+]
 
 export type IDSAdminRouteHandle = {
   backPath?: string
@@ -96,13 +95,6 @@ export const idsAdminModule: PortalModule = {
                     path: IDSAdminPaths.IDSAdminClientPublish,
                     action: publishEnvironmentAction(props),
                     element: <PublishEnvironment />,
-                  },
-                  {
-                    name: m.rotateSecret,
-                    navHide: true,
-                    path: IDSAdminPaths.IDSAdminClientRotateSecret,
-                    action: rotateSecretAction(props),
-                    element: <RotateSecret />,
                   },
                 ],
               },

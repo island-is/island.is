@@ -99,6 +99,7 @@ function getIntent(formData: FormData) {
 }
 
 type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
+  typeof schema[PermissionFormTypes.ACCESS_CONTROL] &
   typeof schema[PermissionFormTypes.NONE]
 
 type Result = ValidateFormDataResult<MergedFormDataSchema>

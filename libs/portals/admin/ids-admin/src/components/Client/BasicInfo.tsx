@@ -14,7 +14,7 @@ interface BasicInfoProps {
   issuerUrl: string
 }
 
-const BasicInfoContent = ({
+export const BasicInfo = ({
   clientId,
   clientSecrets = [],
   issuerUrl,
@@ -50,7 +50,7 @@ const BasicInfoContent = ({
           buttons={[
             {
               name: 'copy',
-              label: 'copy',
+              label: formatMessage(m.copy),
               type: 'outline',
               onClick: () => copyToClipboard(clientIdRef),
             },
@@ -68,17 +68,19 @@ const BasicInfoContent = ({
               label={formatMessage(m.clientSecret)}
               buttons={[
                 {
-                  name: 'copy',
-                  type: 'outline',
-                  onClick: () => copyToClipboard(clientSecretRef),
-                  label: 'Copy value',
-                  disabled: isLegacySecret,
-                },
-                {
                   name: showSecret ? 'eyeOff' : 'eye',
                   type: 'outline',
                   onClick: toggleSecret,
-                  label: showSecret ? 'Hide password' : 'Show password',
+                  label: showSecret
+                    ? formatMessage(m.hidePassword)
+                    : formatMessage(m.showPassword),
+                  disabled: isLegacySecret,
+                },
+                {
+                  name: 'copy',
+                  type: 'outline',
+                  onClick: () => copyToClipboard(clientSecretRef),
+                  label: formatMessage(m.copy),
                   disabled: isLegacySecret,
                 },
               ]}
@@ -101,7 +103,7 @@ const BasicInfoContent = ({
           buttons={[
             {
               name: 'copy',
-              label: 'copy',
+              label: formatMessage(m.copy),
               type: 'outline',
               onClick: () => copyToClipboard(issuerUrlRef),
             },
@@ -116,6 +118,23 @@ const BasicInfoContent = ({
               readOnly
               type="text"
               size="sm"
+              ref={openIdConfigurationUrlRef}
+              name="openIdConfigurationUrl"
+              value={issuerUrl + '.well-known/openid-configuration'}
+              label={formatMessage(m.openIdConfiguration)}
+              buttons={[
+                {
+                  name: 'copy',
+                  label: formatMessage(m.copy),
+                  type: 'outline',
+                  onClick: () => copyToClipboard(openIdConfigurationUrlRef),
+                },
+              ]}
+            />
+            <Input
+              readOnly
+              type="text"
+              size="sm"
               ref={authorizationUrlRef}
               name="authorizationUrl"
               value={issuerUrl + 'connect/authorize'}
@@ -123,7 +142,7 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
                   onClick: () => copyToClipboard(authorizationUrlRef),
                 },
@@ -140,7 +159,7 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
                   onClick: () => copyToClipboard(tokenUrlRef),
                 },
@@ -157,7 +176,7 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
                   onClick: () => copyToClipboard(userInfoUrlRef),
                 },
@@ -174,26 +193,9 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
                   onClick: () => copyToClipboard(endSessionUrlRef),
-                },
-              ]}
-            />
-            <Input
-              readOnly
-              type="text"
-              size="sm"
-              ref={openIdConfigurationUrlRef}
-              name="openIdConfigurationUrl"
-              value={issuerUrl + '.well-known/openid-configuration'}
-              label={formatMessage(m.openIdConfiguration)}
-              buttons={[
-                {
-                  name: 'copy',
-                  label: 'copy',
-                  type: 'outline',
-                  onClick: () => copyToClipboard(openIdConfigurationUrlRef),
                 },
               ]}
             />
@@ -208,7 +210,7 @@ const BasicInfoContent = ({
               buttons={[
                 {
                   name: 'copy',
-                  label: 'copy',
+                  label: formatMessage(m.copy),
                   type: 'outline',
                   onClick: () => copyToClipboard(jsonWebSetKeyUrlRef),
                 },
@@ -220,5 +222,3 @@ const BasicInfoContent = ({
     </ContentCard>
   )
 }
-
-export default BasicInfoContent

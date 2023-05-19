@@ -477,6 +477,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-claims',
     defaultMessage: 'Invalid claim format',
   },
+  hidePassword: {
+    id: 'ap.ids-admin:hide-password',
+    defaultMessage: 'Hide password',
+  },
+  showPassword: {
+    id: 'ap.ids-admin:show-password',
+    defaultMessage: 'Show password',
+  },
+  copy: {
+    id: 'ap.ids-admin:copy',
+    defaultMessage: 'Copy value',
+  },
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
@@ -647,6 +659,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:generate',
     defaultMessage: 'Generate',
   },
+  revoke: {
+    id: 'ap.ids-admin:revoke',
+    defaultMessage: 'Revoke',
+  },
   revokeExistingSecrets: {
     id: 'ap.ids-admin:revoke-existing-secrets',
     defaultMessage: 'Revoke existing secret(s) immediately.',
@@ -659,6 +675,27 @@ export const m = defineMessages({
     id: 'ap.ids-admin:rotated-secret-description',
     defaultMessage:
       'Please update the application configuration with the following secret.',
+  },
+  revokeSecrets: {
+    id: 'ap.ids-admin:revoke-secrets',
+    defaultMessage: 'Revoke old secret(s)',
+  },
+  revokeSecretsDescription: {
+    id: 'ap.ids-admin:revoke-secrets-description',
+    defaultMessage:
+      'This will revoke all secrets except the current active secret. Please make sure that they are not in use anymore.',
+  },
+  successRevokingSecrets: {
+    id: 'ap.ids-admin:success-revoking-secrets',
+    defaultMessage: 'Successfully revoked old secret(s)',
+  },
+  multipleSecrets: {
+    id: 'ap.ids-admin:multiple-secrets',
+    defaultMessage: 'Multiple secrets',
+  },
+  multipleSecretsDescription: {
+    id: 'ap.ids-admin:multiple-secrets-description',
+    defaultMessage: 'There are one or more old secrets which are still active.',
   },
   content: {
     id: 'ap.ids-admin:content',

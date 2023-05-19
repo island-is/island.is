@@ -22,7 +22,7 @@ type GivenWhenThen = (
   appealsCourtNumber?: string,
 ) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal statement notification', () => {
+describe('InternalNotificationController - Send appeal statement notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
