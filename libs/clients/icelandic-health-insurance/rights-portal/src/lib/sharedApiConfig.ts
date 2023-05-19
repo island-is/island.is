@@ -3,14 +3,16 @@ import {
   ConfigType,
   IdsClientConfig,
   LazyDuringDevScope,
+  XRoadConfig,
 } from '@island.is/nest/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { RightsPortalClientConfig } from './clients-rights-portal.config'
+import { RightsPortalClientConfig } from './rightsPortalClient.config'
 
-export const ApiConfig = {
+export const SharedApiConfig = {
   provide: 'RightsPortalApiProviderConfiguration',
   scope: LazyDuringDevScope,
   useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof RightsPortalClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
@@ -28,11 +30,11 @@ export const ApiConfig = {
             }
           : undefined,
       }),
-      basePath: 'https://midgardur-test.sjukra.is/minarsidur',
+      basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
+        'X-Road-Client': xroadConfig.xRoadClient,
         Accept: 'application/json',
-        'Content-Type': 'application/json',
       },
     }),
-  inject: [RightsPortalClientConfig.KEY, IdsClientConfig.KEY],
+  inject: [XRoadConfig.KEY, RightsPortalClientConfig.KEY, IdsClientConfig.KEY],
 }

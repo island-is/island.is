@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { ApiConfig } from './rightsPortalProvider'
 import { exportedApis } from './providers'
+import { SharedApiConfig } from './sharedApiConfig'
 
 @Module({
-  providers: [ApiConfig, ...exportedApis],
+  providers: [SharedApiConfig, ...exportedApis],
   exports: exportedApis,
 })
 export class RightsPortalClientModule {}
