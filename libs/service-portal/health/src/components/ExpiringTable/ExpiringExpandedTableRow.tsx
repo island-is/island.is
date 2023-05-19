@@ -1,15 +1,18 @@
-import { AidOrNutrition } from '@island.is/api/schema'
-import { ExpandRow, amountFormat } from '@island.is/service-portal/core'
-import { Table as T, Text } from '@island.is/island-ui/core'
+import { ExpandRow } from '@island.is/service-portal/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { FC } from 'react'
+import * as styles from './ExpiringExpandedTableRow.css'
 
 interface Props {
   expiring: boolean
   visibleValues: Array<string | number | React.ReactElement>
-  foldedValues: {
-    columns: Array<string>
-    values: Array<string>
-  }
+  foldedValues: Array<{ title: string; value?: string | number }>
 }
 
 export const ExpiringExpandedTableRow: FC<Props> = ({
@@ -25,6 +28,7 @@ export const ExpiringExpandedTableRow: FC<Props> = ({
         return { value: val }
       })}
     >
+      {/*
       <T.Table>
         <T.Head>
           <T.Row>
@@ -43,6 +47,7 @@ export const ExpiringExpandedTableRow: FC<Props> = ({
               <T.Data
                 key={idx}
                 box={{
+                  width: 'half',
                   background: expiring ? 'yellow300' : 'transparent',
                   paddingRight: 2,
                   paddingLeft: 2,
@@ -55,6 +60,27 @@ export const ExpiringExpandedTableRow: FC<Props> = ({
           </T.Row>
         </T.Body>
       </T.Table>
+              */}
+      <Box padding={2} background="blue100">
+        <GridContainer className={styles.grid}>
+          <GridRow>
+            {foldedValues.map((item, i) => (
+              <GridColumn key={i} className={styles.col} span="4/12">
+                <Box className={styles.innerCol}>
+                  <Text fontWeight="semiBold" variant="medium" as="span">
+                    {item.title}
+                  </Text>
+                </Box>
+                <Box className={styles.innerCol}>
+                  <Text variant="medium" as="span">
+                    {item.value}
+                  </Text>
+                </Box>
+              </GridColumn>
+            ))}
+          </GridRow>
+        </GridContainer>
+      </Box>
     </ExpandRow>
   )
 }

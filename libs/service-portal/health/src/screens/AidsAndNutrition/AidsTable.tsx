@@ -53,20 +53,23 @@ const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
             rowItem.available ?? '',
             rowItem.nextAllowedMonth ?? '',
           ]}
-          foldedValues={{
-            columns: [
-              formatMessage(messages.location),
-              formatMessage(messages.availableTo),
-              formatMessage(messages.availableEvery12Months),
-              formatMessage(messages.extraDetail),
-            ],
-            values: [
-              rowItem.location ?? '-',
-              formatDate(rowItem.validUntil),
-              '-',
-              rowItem.explanation ?? '-',
-            ],
-          }}
+          foldedValues={[
+            {
+              title: formatMessage(messages.location),
+              value: rowItem.location ?? '-',
+            },
+            {
+              title: formatMessage(messages.availableTo),
+              value: formatDate(rowItem.validUntil),
+            },
+            {
+              title: formatMessage(messages.availableEvery12Months),
+            },
+            {
+              title: formatMessage(messages.extraDetail),
+              value: rowItem.explanation ?? '-',
+            },
+          ]}
         />
       ))}
     </ExpiringTable>

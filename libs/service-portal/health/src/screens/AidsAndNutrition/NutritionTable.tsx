@@ -56,16 +56,16 @@ const NutritionTable: FC<Props> = ({ data, footnote, link, linkText }) => {
             rowItem.available ?? '-',
             rowItem.nextAllowedMonth ?? '-',
           ]}
-          foldedValues={{
-            columns: [
-              formatMessage(messages.availableTo),
-              formatMessage(messages.extraDetail),
-            ],
-            values: [
-              rowItem.validUntil ? formatDate(rowItem.validUntil) : '-',
-              rowItem.explanation ?? '-',
-            ],
-          }}
+          foldedValues={[
+            {
+              title: formatMessage(messages.availableTo),
+              value: rowItem.validUntil ? formatDate(rowItem.validUntil) : '-',
+            },
+            {
+              title: formatMessage(messages.extraDetail),
+              value: rowItem.explanation ?? '-',
+            },
+          ]}
         />
       ))}
     </ExpiringTable>
