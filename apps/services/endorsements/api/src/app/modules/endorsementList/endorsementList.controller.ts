@@ -85,7 +85,6 @@ export class EndorsementListController {
     @CurrentUser() user: User,
     @Query() query: FindTagPaginationComboDto,
   ): Promise<PaginatedEndorsementListDto> {
-    console.log('AAA')
     return await this.endorsementListService.findListsByTags(
       // query parameters of length one are not arrays, we normalize all tags input to arrays here
       !Array.isArray(query.tags) ? [query.tags] : query.tags,

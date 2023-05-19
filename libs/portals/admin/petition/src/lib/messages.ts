@@ -34,4 +34,41 @@ export const m = defineMessages({
     defaultMessage: 'Tímabil lista: ',
     description: '',
   },
+  listOwner: {
+    id: 'admin-portal.petition:listOwner',
+    defaultMessage: 'Ábyrgðarmaður:',
+    description: '',
+  },
+
+  // Petitions table
+  petitionsOverview: {
+    id: 'admin-portal.petition:petitionsOverview',
+    defaultMessage: 'Yfirlit undirskrifta',
+    description: '',
+  },
+  downloadPetitions: {
+    id: 'admin-portal.petition:downloadPetitions',
+    defaultMessage: 'Sækja lista',
+    description: '',
+  },
+  date: {
+    id: 'admin-portal.petition:date',
+    defaultMessage: 'Dagsetning',
+    description: '',
+  },
+  name: {
+    id: 'admin-portal.petition:name',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  noName: {
+    id: 'admin-portal.petition:noName',
+    defaultMessage: 'Nafn ekki skráð',
+    description: '',
+  },
+  noSignatures: {
+    id: 'admin-portal.petition:noSignatures',
+    defaultMessage: 'Engar undirskriftir',
+    description: '',
+  },
 })
