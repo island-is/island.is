@@ -44,6 +44,9 @@ export const ExpiringExpandedTableRow: FC<Props> = ({
                 key={idx}
                 box={{
                   background: expiring ? 'yellow300' : 'transparent',
+                  paddingRight: 2,
+                  paddingLeft: 2,
+                  position: 'relative',
                 }}
               >
                 <Text variant="medium">{val}</Text>

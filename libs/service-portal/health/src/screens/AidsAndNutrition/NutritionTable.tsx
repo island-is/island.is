@@ -44,20 +44,27 @@ const NutritionTable: FC<Props> = ({ data, footnote, link, linkText }) => {
           key={idx}
           expiring={rowItem.expiring}
           visibleValues={[
-            rowItem.name,
-            rowItem.available ?? '',
+            rowItem.name ?? '-',
+            rowItem.available ?? '-',
             rowItem.refund.type === 'amount'
-              ? amountFormat(rowItem.refund.value)
-              : `${rowItem.refund.value}%`,
-            rowItem.available ?? '',
-            rowItem.nextAllowedMonth ?? '',
+              ? rowItem.refund.value
+                ? amountFormat(rowItem.refund.value)
+                : '-'
+              : rowItem.refund.value
+              ? `${rowItem.refund.value}%`
+              : '-',
+            rowItem.available ?? '-',
+            rowItem.nextAllowedMonth ?? '-',
           ]}
           foldedValues={{
             columns: [
               formatMessage(messages.availableTo),
               formatMessage(messages.extraDetail),
             ],
-            values: [formatDate(rowItem.validUntil), rowItem.explanation ?? ''],
+            values: [
+              rowItem.validUntil ? formatDate(rowItem.validUntil) : '-',
+              rowItem.explanation ?? '-',
+            ],
           }}
         />
       ))}

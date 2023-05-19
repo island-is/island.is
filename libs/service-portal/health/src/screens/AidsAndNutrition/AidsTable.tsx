@@ -61,10 +61,10 @@ const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
               formatMessage(messages.extraDetail),
             ],
             values: [
-              rowItem.location ?? '',
+              rowItem.location ?? '-',
               formatDate(rowItem.validUntil),
-              '',
-              rowItem.explanation ?? '',
+              '-',
+              rowItem.explanation ?? '-',
             ],
           }}
         />
