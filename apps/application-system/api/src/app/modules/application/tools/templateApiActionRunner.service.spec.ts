@@ -43,7 +43,7 @@ beforeAll(async () => {
     ],
   }).compile()
 
-  templateApiRunnerService = moduleRef.get<TemplateApiActionRunner>(
+  templateApiRunnerService = await moduleRef.resolve<TemplateApiActionRunner>(
     TemplateApiActionRunner,
   )
 })
