@@ -56,7 +56,7 @@ const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
           foldedValues={[
             {
               title: formatMessage(messages.location),
-              value: rowItem.location ?? '-',
+              value: rowItem.location ?? '',
             },
             {
               title: formatMessage(messages.availableTo),
@@ -67,7 +67,7 @@ const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
             },
             {
               title: formatMessage(messages.extraDetail),
-              value: rowItem.explanation ?? '-',
+              value: rowItem.explanation ?? '',
             },
           ]}
         />
