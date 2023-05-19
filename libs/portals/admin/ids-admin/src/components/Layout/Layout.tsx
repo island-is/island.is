@@ -4,7 +4,6 @@ import {
   GridContainer,
   GridRow,
   Hidden,
-  Stack,
 } from '@island.is/island-ui/core'
 import { PortalNavigation, PortalNavigationItem } from '@island.is/portals/core'
 import React from 'react'
@@ -28,11 +27,11 @@ const Layout: React.FC<LayoutProps> = ({ children, navTitle, navItems }) => {
           span={['12/12', '12/12', '12/12', '4/12', '3/12']}
           order={[2, 2, 2, 0]}
         >
-          <Stack space={3}>
+          <Box position="sticky" top={4}>
             <Hidden below="lg">
               <PortalNavigation title={navTitle} navigation={navItems} />
             </Hidden>
-          </Stack>
+          </Box>
         </GridColumn>
         <GridColumn
           span={['12/12', '12/12', '12/12', '8/12', '9/12']}
