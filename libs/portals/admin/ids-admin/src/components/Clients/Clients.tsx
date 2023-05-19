@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import {
-  useNavigate,
-  useParams,
-  useLoaderData,
-  Outlet,
-  useOutletContext,
-  useRouteLoaderData,
-} from 'react-router-dom'
+import React, { useState } from 'react'
+import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
   Box,
@@ -26,22 +19,13 @@ import { IDSAdminPaths } from '../../lib/paths'
 import { AuthClients } from './Clients.loader'
 import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
 import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
-import { useTenantTitle } from '../../shared/hooks/useTenantTitle'
-import { tenantLoaderId } from '../../screens/Tenant/Tenant.loader'
-import { AuthAdminTenant } from '@island.is/api/schema'
 
 const Clients = () => {
   const originalClients = useLoaderData() as AuthClients
-  const tenantInfo = useRouteLoaderData(tenantLoaderId) as AuthAdminTenant
   const { tenant } = useParams()
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { locale } = useLocale()
-  const { setTitle } = useTenantTitle()
-
-  useEffect(() => {
-    setTitle(tenantInfo.defaultEnvironment.displayName[0].value)
-  }, [tenantInfo])
 
   const [inputSearchValue, setInputSearchValue] = useState<string>('')
   const [clients, filterClients] = useLooseSearch(
