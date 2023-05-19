@@ -1,4 +1,4 @@
-export * from './ChosenSubscriptionCard'
+export * from '../../screens/Subscriptions/components/SubscriptionCard/ChosenSubscriptionCard'
 export * from './SubscriptionActionBox'
 export * from './SubscriptionActionCard'
 export * from './Card'
