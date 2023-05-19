@@ -898,6 +898,10 @@ export const m = defineMessages({
     id: 'service.portal:health',
     defaultMessage: 'Heilsa',
   },
+  healthDescription: {
+    id: 'service.portal:health-description',
+    defaultMessage: 'Lorem ipsum blablabla',
+  },
   therapies: {
     id: 'service.portal:therapies',
     defaultMessage: 'Þjálfun',
