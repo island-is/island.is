@@ -92,7 +92,7 @@ const NavItemContent: FC<Props> = ({
               className={cn(styles.badge[badgeActive])}
             ></Box>
 
-            {!isDashboard && !isMobile ? (
+            {!isDashboard && !isMobile && !!animatedIcon ? (
               <Box
                 className={styles.animatedIcon}
                 display="flex"
