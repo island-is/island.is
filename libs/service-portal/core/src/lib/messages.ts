@@ -900,7 +900,7 @@ export const m = defineMessages({
   },
   healthDescription: {
     id: 'service.portal:health-description',
-    defaultMessage: 'Lorem ipsum blablabla',
+    defaultMessage: 'Hér eru heilsugögn um þig',
   },
   therapies: {
     id: 'service.portal:therapies',

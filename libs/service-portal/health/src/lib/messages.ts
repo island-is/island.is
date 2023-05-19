@@ -15,7 +15,7 @@ export const messages = defineMessages({
     defaultMessage: 'Hjálpartæki og næring',
   },
   aidsAndNutritionDescription: {
-    id: 'sp.health:aids-and-nutrition-title',
+    id: 'sp.health:aids-and-nutrition-description',
     defaultMessage:
       'Sjúkratryggingar annast afgreiðslu umsókna um styrki vegna hjálpartækja, heyrnartækja og næringar og sérfæðis. Veita einnig faglega ráðgjöf um val á hjálpartækjum og sinna viðgerðarþjónustu.',
   },
@@ -203,7 +203,7 @@ export const messages = defineMessages({
     defaultMessage: 'Nánari skýring',
   },
   nextAvailableRefund: {
-    id: 'sp.health:available-unit-refund',
+    id: 'sp.health:next-available-unit-refund',
     defaultMessage: 'Næst heimild til úttektar',
   },
   location: {
