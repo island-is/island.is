@@ -39,8 +39,9 @@ const NutritionTable: FC<Props> = ({ data, footnote, link, linkText }) => {
       link={link}
       linkText={linkText}
     >
-      {data.map((rowItem) => (
+      {data.map((rowItem, idx) => (
         <ExpiringExpandedTableRow
+          key={idx}
           expiring={rowItem.expiring}
           visibleValues={[
             rowItem.name,
