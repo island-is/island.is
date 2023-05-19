@@ -17,7 +17,8 @@ import { publishEnvironmentAction } from './components/forms/PublishEnvironment/
 import { createPermissionAction } from './components/forms/CreatePermission/CreatePermission.action'
 import { rotateSecretAction } from './components/forms/RotateSecret/RotateSecret.action'
 import { permissionsListLoader } from './components/PermissionsList/PermissionsList.loader'
-import { permissionLoader } from './components/Permission/Permission.loader'
+import { permissionLoader } from './screens/PermissionScreen/Permission.loader'
+import { updatePermissionAction } from './components/forms/EditPermission/EditPermission.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
@@ -34,9 +35,10 @@ const RotateSecret = lazy(() =>
 const PermissionsList = lazy(() =>
   import('./components/PermissionsList/PermissionsList'),
 )
-const PermissionsManagement = lazy(() =>
-  import('./components/Permission/Permission'),
+const PermissionsScreen = lazy(() =>
+  import('./screens/PermissionScreen/PermissionScreen'),
 )
+
 const CreatePermission = lazy(() =>
   import('./components/forms/CreatePermission/CreatePermission'),
 )
@@ -156,7 +158,8 @@ export const idsAdminModule: PortalModule = {
                 name: m.permissionsManagement,
                 navHide: true,
                 path: IDSAdminPaths.IDSAdminPermission,
-                element: <PermissionsManagement />,
+                element: <PermissionsScreen />,
+                action: updatePermissionAction(props),
                 loader: permissionLoader(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminPermissions,

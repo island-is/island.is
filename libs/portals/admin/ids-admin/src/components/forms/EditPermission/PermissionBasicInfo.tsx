@@ -1,9 +1,11 @@
-import { usePermission } from '../PermissionContext'
-import { FormCard } from '../../../shared/components/FormCard'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
-import { Input } from '@island.is/island-ui/core'
 import React, { useRef } from 'react'
+
+import { Input } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+
+import { usePermission } from '../../Permission/PermissionContext'
+import { FormCard } from '../../../shared/components/FormCard'
+import { m } from '../../../lib/messages'
 import { useCopyToClipboard } from '../../../shared/hooks/useCopyToClipboard'
 
 export const PermissionBasicInfo = () => {
