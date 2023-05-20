@@ -536,7 +536,7 @@ export const m = defineMessages({
   },
   notInSyncAcrossAllEnvironments: {
     id: 'ap.ids-admin:not-in-sync-across-all-environments',
-    defaultMessage: 'SyncSettings are different in some environments',
+    defaultMessage: 'Settings are different in some environments',
   },
   synced: {
     id: 'ap.ids-admin:synced',
@@ -545,6 +545,10 @@ export const m = defineMessages({
   outOfSync: {
     id: 'ap.ids-admin:out-of-sync',
     defaultMessage: 'Out of sync',
+  },
+  syncStatus: {
+    id: 'ap.ids-admin:sync-status',
+    defaultMessage: 'Sync status',
   },
   publishEnvironment: {
     id: 'ap.ids-admin:publish-environment',

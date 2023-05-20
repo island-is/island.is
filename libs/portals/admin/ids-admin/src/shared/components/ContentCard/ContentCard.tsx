@@ -30,7 +30,6 @@ interface ContentCardProps {
   title: string
   description?: string
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
-  inSync?: boolean
   intent?: ClientFormTypes
   /**
    * The children will be wrapped in an accordion when a label is provided to the component.
@@ -57,7 +56,6 @@ const ContentCard: FC<ContentCardProps> = ({
   accordionLabel = false,
 }) => {
   const { formatMessage } = useLocale()
-  const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
   const originalFormData = useRef<FormData>()
   const [dirty, setDirty] = useState<boolean>(false)
   const ref = useRef<HTMLFormElement>(null)
@@ -113,6 +111,7 @@ const ContentCard: FC<ContentCardProps> = ({
   const inSync = checkIfInSync(
     variablesToCheckSync?.[intent as keyof typeof ClientFormTypes] ?? [],
   )
+  const [allEnvironments, setAllEnvironments] = useState<boolean>(inSync)
 
   // On change, check if the form has changed, use custom validation if provided
   const onChange = () => {
@@ -167,6 +166,7 @@ const ContentCard: FC<ContentCardProps> = ({
                       ? formatMessage(m.synced)
                       : formatMessage(m.outOfSync)
                   }
+                  menuLabel={formatMessage(m.synced)}
                   icon="chevronDown"
                   menuClassName={styles.menu}
                   items={[
@@ -261,8 +261,10 @@ const ContentCard: FC<ContentCardProps> = ({
               >
                 <Checkbox
                   label={formatMessage(m.saveForAllEnvironments)}
-                  value={`${allEnvironments}`}
+                  checked={allEnvironments}
+                  value="true"
                   disabled={!dirty}
+                  id={`${intent}#allEnvironments`}
                   name="allEnvironments"
                   onChange={() => setAllEnvironments(!allEnvironments)}
                 />

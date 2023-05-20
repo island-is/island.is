@@ -8,9 +8,9 @@ import { AuthAdminClientTranslation } from './Client.loader'
 
 interface TranslationsProps {
   translations: AuthAdminClientTranslation[]
-  inSync?: boolean
 }
-const Translations = ({ translations, inSync = true }: TranslationsProps) => {
+
+const Translations = ({ translations }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
   const [copyTranslations, setCopyTranslations] = useState(
@@ -32,7 +32,6 @@ const Translations = ({ translations, inSync = true }: TranslationsProps) => {
     <ContentCard
       title={formatMessage(m.translations)}
       intent={ClientFormTypes.translations}
-      inSync={inSync}
     >
       <Stack space={3}>
         <Tabs
