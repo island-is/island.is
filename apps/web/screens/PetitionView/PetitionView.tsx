@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FC } from 'react'
-import { Breadcrumbs, Link, Stack, Text } from '@island.is/island-ui/core'
+import { Breadcrumbs, GridColumn, GridRow, Link, Stack, Text } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Box, Button, Table as T, Pagination } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
@@ -9,10 +9,8 @@ import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
 import {
   LinkType,
   linkResolver,
-  useLinkResolver,
   useNamespace,
 } from '@island.is/web/hooks'
-import Skeleton from './Skeleton'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -166,20 +164,24 @@ const PetitionView = (namespace) => {
             {list.description}
           </Text>
         </Stack>
-        <Box display={'flex'} marginBottom={2}>
-          <Box>
+        <GridRow>
+          <GridColumn span="4/12">
             <Text variant="h4" marginBottom={0}>
               {n('listIsOpenTil', 'Tímabil lista:')}
             </Text>
             <Text variant="default">{formatDate(list.closedDate)}</Text>
-          </Box>
-          <Box>
+          </GridColumn>
+          <GridColumn span="8/12">
             <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
             <Text variant="default">{list.ownerName}</Text>
-          </Box>
-        </Box>
-        <Text variant="h4">{n('signedPetitions', 'Fjöldi skráðir:')}</Text>
-        <Text variant="default">{listEndorsements.totalCount}</Text>
+          </GridColumn>
+        </GridRow>
+        <GridRow marginTop={2}>
+          <GridColumn span="6/12">
+            <Text variant="h4">{n('signedPetitions', 'Fjöldi skráðir:')}</Text>
+            <Text variant="default">{listEndorsements.totalCount}</Text>
+          </GridColumn>
+        </GridRow>
         <Box marginY={8}>
           <Button
             size="medium"
@@ -236,7 +238,7 @@ const PetitionView = (namespace) => {
               />
             </Box>
           ) : (
-            <Text>{n('noPetitions', 'Engin meðmæli komin')}</Text>
+            <Text marginTop={2}>{n('noPetitions', 'Engar undirskriftir komnar')}</Text>
           )
         ) : (
           <Text marginY={7} variant="h3">
