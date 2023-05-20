@@ -4,7 +4,7 @@ import { EditPermission } from '../../components/forms/EditPermission/EditPermis
 import { PermissionProvider } from '../../components/Permission/PermissionContext'
 import { PermissionHeader } from '../../components/Permission/PermissionHeader'
 
-const Permission = () => (
+const PermissionScreen = () => (
   <PermissionProvider>
     <Box display="flex" flexDirection="column" rowGap={6}>
       <PermissionHeader />
@@ -13,4 +13,4 @@ const Permission = () => (
   </PermissionProvider>
 )
 
-export default Permission
+export default PermissionScreen

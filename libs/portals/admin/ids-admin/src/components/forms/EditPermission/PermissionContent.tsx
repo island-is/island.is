@@ -18,7 +18,7 @@ export const PermissionContent = () => {
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
   const { selectedPermission, actionData, permission } = usePermission()
-  const [activeTab, setActiveTab] = useState<'is' | 'en'>('is')
+  const [activeTab, setActiveTab] = useState<Languages>(Languages.IS)
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -83,7 +83,9 @@ export const PermissionContent = () => {
         contentBackground="white"
         selected={activeTab}
         label={formatMessage(m.translations)}
-        onChange={() => setActiveTab(activeTab === 'is' ? 'en' : 'is')}
+        onChange={() =>
+          setActiveTab(activeTab === Languages.IS ? Languages.EN : Languages.IS)
+        }
         tabs={Object.values(Languages).map(renderTabs)}
       />
     </FormCard>

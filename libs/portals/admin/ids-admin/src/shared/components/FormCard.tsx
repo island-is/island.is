@@ -70,13 +70,7 @@ export const FormCard = <Intent,>({
   }
 
   return (
-    <Form
-      ref={formRef}
-      method="post"
-      name={intent as string}
-      id={intent as string}
-      onChange={onFormChange}
-    >
+    <Form ref={formRef} method="post" onChange={onFormChange}>
       <Box
         padding={4}
         borderRadius="large"
