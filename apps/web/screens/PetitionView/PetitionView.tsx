@@ -1,16 +1,19 @@
 import React, { useState, useEffect, FC } from 'react'
-import { Breadcrumbs, GridColumn, GridRow, Link, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Breadcrumbs,
+  GridColumn,
+  GridRow,
+  Link,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Box, Button, Table as T, Pagination } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
-import {
-  LinkType,
-  linkResolver,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { LinkType, linkResolver, useNamespace } from '@island.is/web/hooks'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { InstitutionPanel } from '@island.is/web/components'
@@ -165,13 +168,17 @@ const PetitionView = (namespace) => {
           </Text>
         </Stack>
         <GridRow>
-          <GridColumn span="4/12">
+          <GridColumn span="5/12">
             <Text variant="h4" marginBottom={0}>
               {n('listIsOpenTil', 'Tímabil lista:')}
             </Text>
-            <Text variant="default">{formatDate(list.closedDate)}</Text>
+            <Text variant="default">
+              {formatDate(list.openedDate) +
+                ' - ' +
+                formatDate(list.closedDate)}
+            </Text>
           </GridColumn>
-          <GridColumn span="8/12">
+          <GridColumn span="7/12">
             <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
             <Text variant="default">{list.ownerName}</Text>
           </GridColumn>
@@ -238,7 +245,9 @@ const PetitionView = (namespace) => {
               />
             </Box>
           ) : (
-            <Text marginTop={2}>{n('noPetitions', 'Engar undirskriftir komnar')}</Text>
+            <Text marginTop={2}>
+              {n('noPetitions', 'Engar undirskriftir komnar')}
+            </Text>
           )
         ) : (
           <Text marginY={7} variant="h3">

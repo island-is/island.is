@@ -18,6 +18,7 @@ const GetGeneralPetitionList = gql`
       title
       description
       closedDate
+      openedDate
       meta
       created
       ownerName
