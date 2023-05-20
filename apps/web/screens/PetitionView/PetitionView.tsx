@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import { Text } from '@island.is/island-ui/core'
+import React, { useState, useEffect, FC } from 'react'
+import { Breadcrumbs, Link, Stack, Text } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import {
-  Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
-  Button,
-  Table as T,
-  Pagination,
-} from '@island.is/island-ui/core'
+import { Box, Button, Table as T, Pagination } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
-import { useNamespace } from '@island.is/web/hooks'
+import {
+  LinkType,
+  linkResolver,
+  useLinkResolver,
+  useNamespace,
+} from '@island.is/web/hooks'
 import Skeleton from './Skeleton'
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
+import NextLink from 'next/link'
+import { InstitutionPanel } from '@island.is/web/components'
 
 const formatDate = (date: string) => {
   try {
@@ -68,128 +68,182 @@ const PetitionView = (namespace) => {
   }, [listEndorsements.data])
 
   return (
-    <Box marginTop={5} marginBottom={5}>
-      {loading ? (
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={'10/12'} offset="1/12">
-              <Skeleton />
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      ) : (
-        <GridContainer>
-          <GridRow>
-            {list.closedDate && new Date() <= new Date(list.closedDate) ? (
-              <GridColumn span="10/12" offset="1/12">
-                <GridRow>
-                  <GridColumn>
-                    <Text variant="h2" marginBottom={3}>
-                      {list.title}
-                    </Text>
-                    <Text variant="default" marginBottom={3}>
-                      {list.description}
-                    </Text>
-                  </GridColumn>
-                </GridRow>
-                <GridRow>
-                  <GridColumn span={['12/12', '4/12', '4/12']}>
-                    <Text variant="h4">
-                      {n('listIsOpenTil', 'Undirskriftalistinn er opinn til:')}
-                    </Text>
-                    <Text variant="default">{formatDate(list.closedDate)}</Text>
-                  </GridColumn>
-                  <GridColumn span={['12/12', '4/12', '4/12']}>
-                    <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
-                    <Text variant="default">{list.ownerName}</Text>
-                  </GridColumn>
-                  <GridColumn span={['12/12', '4/12', '4/12']}>
-                    <Text variant="h4">
-                      {n('signedPetitions', 'Fjöldi skráðir:')}
-                    </Text>
-                    <Text variant="default">{listEndorsements.totalCount}</Text>
-                  </GridColumn>
-                </GridRow>
-                <GridRow marginTop={5}>
-                  <GridColumn span={['12/12', '6/12', '6/12']}>
+    <Box>
+      <SidebarLayout
+        sidebarContent={
+          <Box marginBottom={10}>
+            <Stack space={3}>
+              <Stack space={1}>
+                <Box display={['none', 'none', 'block']} printHidden>
+                  <Link
+                    {...linkResolver('article', ['undirskriftalistar'])}
+                    skipTab
+                  >
                     <Button
-                      variant="primary"
-                      icon="arrowForward"
-                      onClick={() =>
-                        window?.open(
-                          `${getBaseUrl()}/undirskriftalisti/${
-                            list.meta.applicationId
-                          }`,
-                        )
-                      }
+                      preTextIcon="arrowBack"
+                      preTextIconType="filled"
+                      size="small"
+                      type="button"
+                      variant="text"
+                      truncate
                     >
-                      {n(
-                        'putMyNameOnThatList',
-                        'Setja nafn mitt á þennan lista',
-                      )}
+                      {'Til baka'}
                     </Button>
-                  </GridColumn>
-                </GridRow>
-                <GridRow marginTop={5} marginBottom={5}>
-                  <GridColumn span={'12/12'}>
-                    <T.Table>
-                      <T.Head>
-                        <T.Row>
-                          <T.HeadData>
-                            {n('signedDate', 'Dags skráð')}
-                          </T.HeadData>
-                          <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
-                        </T.Row>
-                      </T.Head>
-                      <T.Body>
-                        {pagePetitions?.map((petition) => {
-                          return (
-                            <T.Row key={petition.id}>
-                              <T.Data>{formatDate(list.created)}</T.Data>
-                              <T.Data>
-                                {petition.meta.fullName
-                                  ? petition.meta.fullName
-                                  : 'Nafn ótilgreint'}
-                              </T.Data>
-                            </T.Row>
-                          )
-                        })}
-                      </T.Body>
-                    </T.Table>
-                  </GridColumn>
-                </GridRow>
-                {pagePetitions && pagePetitions.length ? (
-                  <Box marginY={3}>
-                    <Pagination
-                      page={page}
-                      totalPages={totalPages}
-                      renderLink={(page, className, children) => (
-                        <Box
-                          cursor="pointer"
-                          className={className}
-                          onClick={() =>
-                            handlePagination(page, listEndorsements.data)
-                          }
-                        >
-                          {children}
-                        </Box>
-                      )}
-                    />
+                  </Link>
+                </Box>
+              </Stack>
+              <InstitutionPanel
+                img={
+                  'https://images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png'
+                }
+                institutionTitle={'Þjónustuaðili'}
+                institution={'Þjóðskrá'}
+                locale={'is'}
+                linkProps={{
+                  href: 'https://island.is',
+                }}
+                imgContainerDisplay={['block', 'block', 'none', 'block']}
+              />
+              <Box
+                background="purple100"
+                borderRadius="large"
+                padding={[3, 3, 4]}
+              >
+                <Stack space={[1, 1, 2]}>
+                  <Text variant="eyebrow" as="h2">
+                    {'Tengt efni'}
+                  </Text>
+                  <Link
+                    key={'undirskriftalistar-stofna-nyjan-lista'}
+                    href={'/undirskriftalistar-stofna-nyjan-lista'}
+                    underline="normal"
+                  >
+                    <Text
+                      key={'undirskriftalistar-stofna-nyjan-lista'}
+                      as="span"
+                    >
+                      {'Undirskriftalistar – stofna nýjan lista'}
+                    </Text>
+                  </Link>
+                </Stack>
+              </Box>
+            </Stack>
+          </Box>
+        }
+      >
+        <Box paddingBottom={[2, 2, 4]}>
+          <Breadcrumbs
+            tagVariant="blue"
+            items={[
+              {
+                title: 'Ísland.is',
+                typename: 'homepage',
+                href: '/',
+              },
+              {
+                title: 'Undirskriftalistar',
+                typename: 'undirskriftalistar',
+                href: '/undirskriftalistar',
+              },
+            ]}
+            renderLink={(link, { typename, slug }) => {
+              return (
+                <NextLink
+                  {...linkResolver(typename as LinkType, slug)}
+                  passHref
+                >
+                  {link}
+                </NextLink>
+              )
+            }}
+          />
+        </Box>
+        <Stack space={2}>
+          <Text variant="h1" as="h1">
+            {list.title}
+          </Text>
+          <Text variant="default" marginBottom={3}>
+            {list.description}
+          </Text>
+        </Stack>
+        <Box display={'flex'} marginBottom={2}>
+          <Box>
+            <Text variant="h4" marginBottom={0}>
+              {n('listIsOpenTil', 'Tímabil lista:')}
+            </Text>
+            <Text variant="default">{formatDate(list.closedDate)}</Text>
+          </Box>
+          <Box>
+            <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
+            <Text variant="default">{list.ownerName}</Text>
+          </Box>
+        </Box>
+        <Text variant="h4">{n('signedPetitions', 'Fjöldi skráðir:')}</Text>
+        <Text variant="default">{listEndorsements.totalCount}</Text>
+        <Box marginY={8}>
+          <Button
+            size="medium"
+            variant="primary"
+            icon="arrowForward"
+            onClick={() =>
+              window?.open(
+                `${getBaseUrl()}/undirskriftalisti/${list.meta.applicationId}`,
+              )
+            }
+          >
+            {n('putMyNameOnThatList', 'Setja nafn mitt á þennan lista')}
+          </Button>
+        </Box>
+        <T.Table>
+          <T.Head>
+            <T.Row>
+              <T.HeadData>{n('signedDate', 'Dags skráð')}</T.HeadData>
+              <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
+            </T.Row>
+          </T.Head>
+          <T.Body>
+            {pagePetitions?.map((petition) => {
+              return (
+                <T.Row key={petition.id}>
+                  <T.Data>{formatDate(list.created)}</T.Data>
+                  <T.Data>
+                    {petition.meta.fullName
+                      ? petition.meta.fullName
+                      : 'Nafn ótilgreint'}
+                  </T.Data>
+                </T.Row>
+              )
+            })}
+          </T.Body>
+        </T.Table>
+        {list.closedDate && new Date() <= new Date(list.closedDate) ? (
+          pagePetitions && pagePetitions.length ? (
+            <Box marginY={3}>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() =>
+                      handlePagination(page, listEndorsements.data)
+                    }
+                  >
+                    {children}
                   </Box>
-                ) : (
-                  <Text>{n('noPetitions', 'Engin meðmæli komin')}</Text>
                 )}
-              </GridColumn>
-            ) : (
-              <GridColumn span="10/12" offset="1/12">
-                <Text marginY={7} variant="h3">
-                  {n('listIsClosed', 'Undirskriftalistinn er lokaður')}
-                </Text>
-              </GridColumn>
-            )}
-          </GridRow>
-        </GridContainer>
-      )}
+              />
+            </Box>
+          ) : (
+            <Text>{n('noPetitions', 'Engin meðmæli komin')}</Text>
+          )
+        ) : (
+          <Text marginY={7} variant="h3">
+            {n('listIsClosed', 'Undirskriftalistinn er lokaður')}
+          </Text>
+        )}
+      </SidebarLayout>
     </Box>
   )
 }
