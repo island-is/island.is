@@ -116,6 +116,7 @@ const Client = () => {
           client: params['client'],
         },
       }),
+      { preventScrollReset: true },
     )
   }
 
