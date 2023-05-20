@@ -34,15 +34,11 @@ const Layout: React.FC<LayoutProps> = ({ children, navTitle, navItems }) => {
           </Box>
         </GridColumn>
         <GridColumn
-          span={['12/12', '12/12', '12/12', '8/12', '9/12']}
+          span={['12/12', '12/12', '12/12', '8/12']}
+          offset={['0', '0', '0', '0', '1/12']}
           order={[2, 2, 2, 0]}
         >
-          <Box
-            marginLeft={[0, 'smallGutter', 'gutter', 'containerGutter']}
-            marginRight={[0, 'smallGutter', 'gutter', 'gutter']}
-          >
-            {children}
-          </Box>
+          {children}
         </GridColumn>
       </GridRow>
     </GridContainer>

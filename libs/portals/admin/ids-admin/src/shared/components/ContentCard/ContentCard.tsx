@@ -138,8 +138,7 @@ const ContentCard: FC<ContentCardProps> = ({
     <Form ref={ref} onChange={onChange} method="post">
       <Box
         borderRadius="large"
-        paddingY={2}
-        paddingX={4}
+        padding={[3, 4]}
         display="flex"
         flexDirection="column"
         justifyContent="spaceBetween"
@@ -155,7 +154,6 @@ const ContentCard: FC<ContentCardProps> = ({
             rowGap={2}
             justifyContent="spaceBetween"
             alignItems={['flexStart', 'center']}
-            marginTop={2}
             marginBottom={4}
           >
             <Text ref={titleRef} variant="h3">
