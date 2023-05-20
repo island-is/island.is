@@ -99,13 +99,7 @@ export default function IdsAdminCard({
           rowGap={1}
         >
           {tags?.map(({ children, ...tagProps }, tagIndex) => (
-            <Tag
-              key={tagIndex}
-              variant="purple"
-              outlined
-              disabled
-              {...tagProps}
-            >
+            <Tag key={tagIndex} variant="purple" outlined {...tagProps}>
               {children}
             </Tag>
           ))}

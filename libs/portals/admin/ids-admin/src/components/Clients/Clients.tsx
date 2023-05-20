@@ -132,6 +132,7 @@ const Clients = () => {
               text={item.defaultEnvironment.clientId}
               tags={item.availableEnvironments.map((tag) => ({
                 children: tag,
+                onClick: () => navigate(href + `?env=${tag}`),
               }))}
               eyebrow={
                 <Tag variant="blue" outlined disabled>
