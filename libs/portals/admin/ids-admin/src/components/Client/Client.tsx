@@ -1,6 +1,12 @@
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
-import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import {
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
 
 import {
   AuthAdminEnvironment,
@@ -21,6 +27,7 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
 import { ClientContext } from '../../shared/context/ClientContext'
+import { useSyncedQueryStringValueWithoutNavigation } from '../../shared/hooks/useSyncedQueryStringValueWithoutNavigation'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { StickyLayout } from '../StickyLayout/StickyLayout'
 import { AdvancedSettings } from './AdvancedSettings'
@@ -60,20 +67,21 @@ const Client = () => {
     toEnvironment: null,
     fromEnvironment: null,
   })
-  const [selectedEnvironment, setSelectedEnvironment] = useState<
-    AuthAdminClient['environments'][0]
-  >(client.environments[0])
+  const [searchParams] = useSearchParams()
+  const [selectedEnvironmentName, setSelectedEnvironmentName] = useState(
+    searchParams.get('env') ?? '',
+  )
+  const selectedEnvironment =
+    client.environments.find(
+      (env) => env.environment === selectedEnvironmentName,
+    ) ?? client.environments[0]
+  useSyncedQueryStringValueWithoutNavigation(
+    'env',
+    selectedEnvironmentName,
+    true,
+  )
+
   const [isRevokeSecretsVisible, setRevokeSecretsVisibility] = useState(false)
-
-  useEffect(() => {
-    const newSelectedEnvironment = client.environments.find(
-      ({ environment }) => environment === selectedEnvironment.environment,
-    )
-
-    if (newSelectedEnvironment) {
-      setSelectedEnvironment(newSelectedEnvironment)
-    }
-  }, [client, setSelectedEnvironment])
 
   const checkIfInSync = (variables: string[]) => {
     for (const variable of variables) {
@@ -120,7 +128,6 @@ const Client = () => {
       value={{
         client,
         selectedEnvironment,
-        setSelectedEnvironment,
         availableEnvironments: client.environments.map(
           (env) => env.environment,
         ),
@@ -191,11 +198,7 @@ const Client = () => {
                 label={formatMessage(m.environment)}
                 onChange={(event: any) => {
                   if (environmentExists(event.value)) {
-                    setSelectedEnvironment(
-                      client.environments.find(
-                        (env) => env.environment === event.value,
-                      ) as AuthAdminClient['environments'][0],
-                    )
+                    setSelectedEnvironmentName(event.value)
                   } else {
                     openPublishModal(event.value)
                   }
