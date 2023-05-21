@@ -177,6 +177,10 @@ export const m = defineMessages({
     defaultMessage:
       'CLIs, daemons, or services running on your backend. E.g. APIs, CRON jobs or shell script.',
   },
+  spaClientsTitle: {
+    id: 'ap.ids-admin:spa-clients-title',
+    defaultMessage: 'Single page application',
+  },
   createClient: {
     id: 'ap.ids-admin:create-client',
     defaultMessage: 'Create application',

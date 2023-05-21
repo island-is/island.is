@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Outlet,
   useLoaderData,
@@ -18,7 +18,6 @@ import {
   Button,
   Select,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -26,6 +25,7 @@ import { replaceParams } from '@island.is/react-spa/shared'
 
 import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
+import { ClientType } from '../../shared/components/ClientType'
 import { ClientContext } from '../../shared/context/ClientContext'
 import { useSyncedQueryStringValueWithoutNavigation } from '../../shared/hooks/useSyncedQueryStringValueWithoutNavigation'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
@@ -184,7 +184,7 @@ const Client = () => {
                   isSticky && styles.tagHide,
                 )}
               >
-                <Tag outlined>{client.clientType}</Tag>
+                <ClientType client={client} />
               </div>
               <Text variant="h2">
                 {client.environments[0].displayName[0].value}

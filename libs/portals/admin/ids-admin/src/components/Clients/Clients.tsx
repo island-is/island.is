@@ -7,7 +7,6 @@ import {
   FilterInput,
   Inline,
   Stack,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -16,6 +15,7 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
 import { AuthClients } from './Clients.loader'
+import { ClientType } from '../../shared/components/ClientType'
 import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
 import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
 
@@ -134,11 +134,7 @@ const Clients = () => {
                 children: tag,
                 onClick: () => navigate(href + `?env=${tag}`),
               }))}
-              eyebrow={
-                <Tag variant="blue" outlined disabled>
-                  {item.clientType}
-                </Tag>
-              }
+              eyebrow={<ClientType client={item} />}
               cta={{
                 label: formatMessage(m.change),
                 to: href,
