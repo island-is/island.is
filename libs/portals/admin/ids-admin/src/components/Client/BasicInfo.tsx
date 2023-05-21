@@ -120,7 +120,7 @@ export const BasicInfo = ({
               size="sm"
               ref={openIdConfigurationUrlRef}
               name="openIdConfigurationUrl"
-              value={issuerUrl + '.well-known/openid-configuration'}
+              value={issuerUrl + '/.well-known/openid-configuration'}
               label={formatMessage(m.openIdConfiguration)}
               buttons={[
                 {
@@ -137,7 +137,7 @@ export const BasicInfo = ({
               size="sm"
               ref={authorizationUrlRef}
               name="authorizationUrl"
-              value={issuerUrl + 'connect/authorize'}
+              value={issuerUrl + '/connect/authorize'}
               label={formatMessage(m.oAuthAuthorizationUrl)}
               buttons={[
                 {
@@ -154,7 +154,7 @@ export const BasicInfo = ({
               size="sm"
               ref={tokenUrlRef}
               name="tokenUrl"
-              value={issuerUrl + 'connect/token'}
+              value={issuerUrl + '/connect/token'}
               label={formatMessage(m.oAuthTokenUrl)}
               buttons={[
                 {
@@ -171,7 +171,7 @@ export const BasicInfo = ({
               size="sm"
               ref={userInfoUrlRef}
               name="userInfoUrl"
-              value={issuerUrl + 'connect/userinfo'}
+              value={issuerUrl + '/connect/userinfo'}
               label={formatMessage(m.oAuthUserInfoUrl)}
               buttons={[
                 {
@@ -188,7 +188,7 @@ export const BasicInfo = ({
               size="sm"
               ref={endSessionUrlRef}
               name="endSessionUrl"
-              value={issuerUrl + 'connect/endsession'}
+              value={issuerUrl + '/connect/endsession'}
               label={formatMessage(m.endSessionUrl)}
               buttons={[
                 {
@@ -205,7 +205,7 @@ export const BasicInfo = ({
               size="sm"
               name="jsonWebSetKeyUrl"
               ref={jsonWebSetKeyUrlRef}
-              value={issuerUrl + '.well-known/openid-configuration/jwks'}
+              value={issuerUrl + '/.well-known/openid-configuration/jwks'}
               label={formatMessage(m.jsonWebKeySet)}
               buttons={[
                 {
