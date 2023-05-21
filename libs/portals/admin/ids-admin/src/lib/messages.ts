@@ -102,9 +102,13 @@ export const m = defineMessages({
     id: 'ap.ids-admin:display-name',
     defaultMessage: 'Name',
   },
+  displayNameDescription: {
+    id: 'ap.ids-admin:display-name',
+    defaultMessage: 'Users see this when they sign in, and manage consents.',
+  },
   clientId: {
     id: 'ap.ids-admin:clientId',
-    defaultMessage: 'Application ID',
+    defaultMessage: 'Client ID',
   },
   chooseEnvironment: {
     id: 'ap.ids-admin:choose-environment',
@@ -212,7 +216,7 @@ export const m = defineMessages({
   inactivityExpirationDescription: {
     id: 'ap.ids-admin:inactivity-expiration-description',
     defaultMessage:
-      'When enabled, a refresh token will expire based on a specified inactivity lifetime, after which the token can no longer be used.',
+      'When enabled, refresh tokens will expire after a specified inactivity lifetime. This can be used to end inactive sessions while allowing longer active sessions.',
   },
   inactivityLifetime: {
     id: 'ap.ids-admin:inactivity-lifetime',
@@ -221,7 +225,7 @@ export const m = defineMessages({
   inactivityLifetimeDescription: {
     id: 'ap.ids-admin:inactivity-lifetime-description',
     defaultMessage:
-      'Sets the absolute lifetime of a refresh token (in seconds).',
+      'Sets the inactivity lifetime of a refresh token (in seconds).',
   },
   saveSettings: {
     id: 'ap.ids-admin:save-settings',
@@ -233,49 +237,58 @@ export const m = defineMessages({
   },
   clientSecret: {
     id: 'ap.ids-admin:client-secret',
-    defaultMessage: 'Application secret',
-  },
-  clientSecretDescription: {
-    id: 'ap.ids-admin:client-secret-description',
-    defaultMessage: 'The application secret is not base64 encoded.',
+    defaultMessage: 'Client Secret',
   },
   clientSecretLegacy: {
     id: 'ap.ids-admin:client-secret-legacy',
+    defaultMessage: 'Client Secret (Legacy)',
+  },
+  clientSecretDescription: {
+    id: 'ap.ids-admin:client-secret-description',
+    defaultMessage: 'The client secret is not base64 encoded.',
+  },
+  clientSecretDescriptionLegacy: {
+    id: 'ap.ids-admin:client-secret-description-legacy',
     defaultMessage: 'This is a legacy secret which cannot be viewed.',
   },
   otherEndpoints: {
     id: 'ap.ids-admin:other-endpoints',
     defaultMessage: 'Other endpoints',
   },
+  otherEndpointsDescription: {
+    id: 'ap.ids-admin:other-endpoints-description',
+    defaultMessage:
+      'Some frameworks infer these using the Issuer above and its OpenID configuration. For other frameworks you may need to manually copy these.',
+  },
   idsUrl: {
     id: 'ap.ids-admin:ids-url',
-    defaultMessage: 'Issuer Url',
+    defaultMessage: 'Issuer',
   },
   callbackUrl: {
     id: 'ap.ids-admin:callback-url',
-    defaultMessage: 'Callback Url',
+    defaultMessage: 'Callback URL',
   },
   callBackUrlPlaceholder: {
     id: 'ap.ids-admin:callback-url-placeholder',
-    defaultMessage: 'List callback URLs, comma seperated',
+    defaultMessage: 'List callback URLs',
   },
   callBackUrlDescription: {
     id: 'ap.ids-admin:callback-url-description',
     defaultMessage:
-      'After the user authenticates we will only call back to any of these URLs. You can specify multiple valid URLs by comma-separating them (typically to handle different environments like QA or testing). Make sure to specify the protocol (https://) otherwise the callback may fail in some cases. With the exception of custom URI schemes for native clients, all callbacks should use protocol https://. You can use Organization URL parameters in these URLs.',
+      'After the user authenticates we will only call back to one of these URLs, which should receive and handle the authentication. You can specify multiple valid URLs in different lines. The URLs should include the protocol, i.e. "https://" for websites. You can use the star symbol as a wildcard for subdomains (*.island.is) on development and staging.',
   },
   logoutUrl: {
     id: 'ap.ids-admin:logout-url',
-    defaultMessage: 'Logout Url',
+    defaultMessage: 'Logout URL',
   },
   logoutUrlPlaceholder: {
     id: 'ap.ids-admin:logout-url-placeholder',
-    defaultMessage: 'List logout URLs, comma seperated',
+    defaultMessage: 'List logout URLs',
   },
   logoutUrlDescription: {
     id: 'ap.ids-admin:logout-url-description',
     defaultMessage:
-      'A set of URLs that are valid to redirect to after logout from ísland.is authentication service. After a user logs out from ísland.is you can redirect them with the post_logout_redirect_uri query parameter. The URL that you use in post_logout_redirect_uri must be listed here. You can specify multiple valid URLs by comma-separating them.',
+      'A set of URLs that are valid to redirect to after logging out. Specify one of these using the "post_logout_redirect_uri" query parameter and the user will be redirected to it. you can specify multiple URLs in different lines.',
   },
   cors: {
     id: 'ap.ids-admin:cors',
@@ -292,7 +305,7 @@ export const m = defineMessages({
   },
   translations: {
     id: 'ap.ids-admin:translations',
-    defaultMessage: 'Translations',
+    defaultMessage: 'Content',
   },
   environment: {
     id: 'ap.ids-admin:environment',
@@ -308,7 +321,7 @@ export const m = defineMessages({
   },
   lifetime: {
     id: 'ap.ids-admin:life-time',
-    defaultMessage: 'Refresh token life cycle',
+    defaultMessage: 'Refresh token lifecycle',
   },
   lifeTimeDescription: {
     id: 'ap.ids-admin:life-time-description',

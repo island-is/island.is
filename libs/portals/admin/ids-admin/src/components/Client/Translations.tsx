@@ -1,4 +1,4 @@
-import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
+import { Box, Input, Stack, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../lib/messages'
@@ -55,6 +55,9 @@ const Translations = ({ translations }: TranslationsProps) => {
                     value={language.value}
                     label={formatMessage(m.displayName)}
                   />
+                  <Text variant={'small'} marginTop={1}>
+                    {formatMessage(m.displayNameDescription)}
+                  </Text>
                 </Box>
               ),
             }

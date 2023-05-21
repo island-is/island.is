@@ -65,7 +65,9 @@ export const BasicInfo = ({
               size="sm"
               name="clientSecret"
               value={secret?.decryptedValue ?? '*'.repeat(16)}
-              label={formatMessage(m.clientSecret)}
+              label={formatMessage(
+                isLegacySecret ? m.clientSecretLegacy : m.clientSecret,
+              )}
               buttons={[
                 {
                   name: showSecret ? 'eyeOff' : 'eye',
@@ -87,7 +89,7 @@ export const BasicInfo = ({
             />
             <Text variant={'small'}>
               {isLegacySecret
-                ? formatMessage(m.clientSecretLegacy)
+                ? formatMessage(m.clientSecretDescriptionLegacy)
                 : formatMessage(m.clientSecretDescription)}
             </Text>
           </Stack>
@@ -114,6 +116,9 @@ export const BasicInfo = ({
           label={formatMessage(m.otherEndpoints)}
         >
           <Stack space={3}>
+            <Text variant="medium">
+              {formatMessage(m.otherEndpointsDescription)}
+            </Text>
             <Input
               readOnly
               type="text"
