@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useActionData } from 'react-router-dom'
 
 import { AuthAdminClientEnvironment } from '@island.is/api/schema'
@@ -7,6 +7,7 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
 import {
   ClientFormTypes,
@@ -45,7 +46,7 @@ export const AdvancedSettings = ({
       return `${claim.type}=${claim.value}`
     }) ?? []
   ).join('\n')
-  const [inputValues, setInputValues] = useState({
+  const [inputValues, setInputValues] = useEnvironmentState({
     requirePkce,
     allowOfflineAccess,
     requireConsent,

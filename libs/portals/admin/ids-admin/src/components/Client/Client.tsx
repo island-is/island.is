@@ -261,22 +261,16 @@ const Client = () => {
           )}
 
           <BasicInfo
-            key={`${selectedEnvironment.environment}-BasicInfo`}
             clientId={selectedEnvironment.clientId}
             issuerUrl={IssuerUrls[selectedEnvironment.environment]}
             clientSecrets={selectedEnvironment.secrets}
           />
-          <Translations
-            key={`${selectedEnvironment.environment}-Translations`}
-            translations={selectedEnvironment.displayName}
-          />
+          <Translations translations={selectedEnvironment.displayName} />
           <ClientsUrl
-            key={`${selectedEnvironment.environment}-ClientsUrl`}
             redirectUris={selectedEnvironment.redirectUris}
             postLogoutRedirectUris={selectedEnvironment.postLogoutRedirectUris}
           />
           <Lifetime
-            key={`${selectedEnvironment.environment}-Lifetime`}
             absoluteRefreshTokenLifetime={
               selectedEnvironment.absoluteRefreshTokenLifetime
             }
@@ -291,7 +285,6 @@ const Client = () => {
           <Permissions />
           {isSuperAdmin && (
             <Delegation
-              key={`${selectedEnvironment.environment}-Delegation`}
               supportsProcuringHolders={
                 selectedEnvironment.supportsProcuringHolders
               }
@@ -308,7 +301,6 @@ const Client = () => {
           )}
           {isSuperAdmin && (
             <AdvancedSettings
-              key={`${selectedEnvironment.environment}-AdvancedSettings`}
               requirePkce={selectedEnvironment.requirePkce}
               allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
               requireConsent={selectedEnvironment.requireConsent}

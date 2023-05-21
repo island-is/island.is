@@ -3,6 +3,7 @@ import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { AuthAdminClientTranslation } from './Client.loader'
 
@@ -13,7 +14,7 @@ interface TranslationsProps {
 const Translations = ({ translations }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
-  const [copyTranslations, setCopyTranslations] = useState(
+  const [copyTranslations, setCopyTranslations] = useEnvironmentState(
     ['is', 'en'].map((locale) => ({
       locale: locale,
       value: translations.find((t) => t.locale === locale)?.value || '',

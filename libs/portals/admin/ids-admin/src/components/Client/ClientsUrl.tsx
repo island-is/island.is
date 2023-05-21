@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent } from 'react'
 
 import { Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import {
   ClientFormTypes,
   EditApplicationResult,
@@ -26,7 +27,7 @@ const ClientsUrl = ({
   >
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
-  const [uris, setUris] = useState({
+  const [uris, setUris] = useEnvironmentState({
     redirectUris,
     postLogoutRedirectUris,
   })
