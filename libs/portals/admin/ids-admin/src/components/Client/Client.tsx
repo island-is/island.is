@@ -294,7 +294,9 @@ const Client = () => {
               supportsProcuringHolders={
                 selectedEnvironment.supportsProcuringHolders
               }
-              supportsLegalGuardians={selectedEnvironment.supportsLegalGuardians}
+              supportsLegalGuardians={
+                selectedEnvironment.supportsLegalGuardians
+              }
               promptDelegations={selectedEnvironment.promptDelegations}
               supportsPersonalRepresentatives={
                 selectedEnvironment.supportsPersonalRepresentatives
