@@ -27,7 +27,7 @@ export enum ClientFormTypes {
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
-  return s.split(/\s*,\s*|\s+|\n+/)
+  return s.split(/[\s\n,]+/).filter(Boolean)
 }
 
 const transformCustomClaims = (s: string): AuthAdminClientClaim[] => {

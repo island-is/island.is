@@ -28,8 +28,8 @@ const ClientsUrl = ({
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
   const [uris, setUris] = useEnvironmentState({
-    redirectUris,
-    postLogoutRedirectUris,
+    redirectUris: redirectUris.join('\n'),
+    postLogoutRedirectUris: postLogoutRedirectUris.join('\n'),
   })
 
   // Generic onChange handler, name in input will need to match object name to change
@@ -38,7 +38,7 @@ const ClientsUrl = ({
   ) => {
     setUris((prev) => ({
       ...prev,
-      [event.target.name]: event.target.value.split(', '),
+      [event.target.name]: event.target.value,
     }))
   }
 
@@ -58,7 +58,7 @@ const ClientsUrl = ({
             rows={4}
             onChange={onChangeURLS}
             backgroundColor="blue"
-            value={uris.redirectUris.join(', ')}
+            value={uris.redirectUris}
             placeholder={formatMessage(m.callBackUrlPlaceholder)}
             errorMessage={formatErrorMessage(
               (actionData?.errors?.redirectUris as unknown) as string,
@@ -76,7 +76,7 @@ const ClientsUrl = ({
             rows={4}
             onChange={onChangeURLS}
             backgroundColor="blue"
-            value={uris.postLogoutRedirectUris.join(', ')}
+            value={uris.postLogoutRedirectUris}
             placeholder={formatMessage(m.logoutUrlPlaceholder)}
             errorMessage={formatErrorMessage(
               (actionData?.errors?.postLogoutRedirectUris as unknown) as string,
