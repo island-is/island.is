@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom'
 
 import {
+  AuthAdminClientType,
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
@@ -63,6 +64,7 @@ const Client = () => {
   const params = useParams()
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
+  const isNativeApplication = client.clientType === AuthAdminClientType.native
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
     fromEnvironment: null,
@@ -266,10 +268,14 @@ const Client = () => {
             clientSecrets={selectedEnvironment.secrets}
           />
           <Translations translations={selectedEnvironment.displayName} />
-          <ClientsUrl
-            redirectUris={selectedEnvironment.redirectUris}
-            postLogoutRedirectUris={selectedEnvironment.postLogoutRedirectUris}
-          />
+          {!isNativeApplication && (
+            <ClientsUrl
+              redirectUris={selectedEnvironment.redirectUris}
+              postLogoutRedirectUris={
+                selectedEnvironment.postLogoutRedirectUris
+              }
+            />
+          )}
           <Lifetime
             absoluteRefreshTokenLifetime={
               selectedEnvironment.absoluteRefreshTokenLifetime
@@ -283,7 +289,7 @@ const Client = () => {
             }
           />
           <Permissions />
-          {isSuperAdmin && (
+          {isSuperAdmin && !isNativeApplication && (
             <Delegation
               supportsProcuringHolders={
                 selectedEnvironment.supportsProcuringHolders
