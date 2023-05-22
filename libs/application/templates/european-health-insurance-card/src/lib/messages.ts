@@ -173,7 +173,7 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       description: 'Applicants for European Health Insurance Card',
     },
     sectionDescription: {
-      id: 'ehic.application:temp.description',
+      id: 'ehic.application:temp.description#markdown',
       defaultMessage:
         'þá kemur stuttur texti um notkun á bráðabirgðakorti vs plastkorti og svo getur þú niðurhalað PDF skjali með bráðabirgðakorti og það sendist í stafrænt pósthólf. Plast er betra og þetta dugar ekki jafn vel. Vinsamlegast hakaðu við þá aðila sem vilja fá bráða',
       description: 'Section description',
