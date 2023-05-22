@@ -17,11 +17,13 @@ import { LinkType, linkResolver, useNamespace } from '@island.is/web/hooks'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { InstitutionPanel } from '@island.is/web/components'
-import { GetNamespaceQuery, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
 import {
-  GET_NAMESPACE_QUERY,
-} from '@island.is/web/screens/queries'
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { useI18n } from '@island.is/web/i18n'
 
 interface PetitionViewProps {
   namespace?: Record<string, string>
@@ -38,8 +40,10 @@ const formatDate = (date: string) => {
 const PetitionView = ({ namespace }: PetitionViewProps) => {
   const n = useNamespace(namespace)
   const router = useRouter()
+  const { activeLocale } = useI18n()
 
-  const { list } = useGetPetitionList(router.query.slug as string)
+  const { list, error } = useGetPetitionList(router.query.slug as string)
+
   const listEndorsements = useGetPetitionListEndorsements(
     router.query.slug as string,
   )
@@ -144,9 +148,15 @@ const PetitionView = ({ namespace }: PetitionViewProps) => {
                 href: '/',
               },
               {
-                title: 'Undirskriftalistar',
+                title:
+                  activeLocale === 'is'
+                    ? 'Undirskriftalistar'
+                    : 'Petition lists',
                 typename: 'undirskriftalistar',
-                href: '/undirskriftalistar',
+                href:
+                  activeLocale === 'is'
+                    ? '/undirskriftalistar'
+                    : '/en/petitions',
               },
             ]}
             renderLink={(link, { typename, slug }) => {
@@ -161,96 +171,106 @@ const PetitionView = ({ namespace }: PetitionViewProps) => {
             }}
           />
         </Box>
-        <Stack space={2}>
-          <Text variant="h1" as="h1">
-            {list.title}
-          </Text>
-          <Text variant="default" marginBottom={3}>
-            {list.description}
-          </Text>
-        </Stack>
-        <GridRow>
-          <GridColumn span="5/12">
-            <Text variant="h4" marginBottom={0}>
-              {n('listOpenFromTil', 'Tímabil lista:')}
-            </Text>
-            <Text variant="default">
-              {formatDate(list.openedDate) +
-                ' - ' +
-                formatDate(list.closedDate)}
-            </Text>
-          </GridColumn>
-          <GridColumn span="7/12">
-            <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
-            <Text variant="default">{list.ownerName}</Text>
-          </GridColumn>
-        </GridRow>
-        <GridRow marginTop={2}>
-          <GridColumn span="6/12">
-            <Text variant="h4">{n('signedPetitions', 'Fjöldi undirskrifta:')}</Text>
-            <Text variant="default">{listEndorsements.totalCount}</Text>
-          </GridColumn>
-        </GridRow>
-        <Box marginTop={6} marginBottom={8}>
-          <Button
-            variant="primary"
-            icon="arrowForward"
-            onClick={() =>
-              window?.open(`${getBaseUrl()}/${list.meta.applicationId}`)
-            }
-          >
-            {n('putMyNameOnTheList', 'Setja nafn mitt á þennan lista')}
-          </Button>
-        </Box>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{n('signedDate', 'Dagsetning')}</T.HeadData>
-              <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {pagePetitions?.map((petition) => {
-              return (
-                <T.Row key={petition.id}>
-                  <T.Data>{formatDate(list.created)}</T.Data>
-                  <T.Data>
-                    {petition.meta.fullName
-                      ? petition.meta.fullName
-                      : n('noName', 'Nafn ótilgreint')}
-                  </T.Data>
-                </T.Row>
-              )
-            })}
-          </T.Body>
-        </T.Table>
-        {list.closedDate && new Date() <= new Date(list.closedDate) ? (
-          pagePetitions && pagePetitions.length ? (
-            <Box marginY={3}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <Box
-                    cursor="pointer"
-                    className={className}
-                    onClick={() =>
-                      handlePagination(page, listEndorsements.data)
-                    }
-                  >
-                    {children}
-                  </Box>
-                )}
-              />
+        {!error ? (
+          <Box>
+            <Stack space={2}>
+              <Text variant="h1" as="h1">
+                {list.title}
+              </Text>
+              <Text variant="default" marginBottom={3}>
+                {list.description}
+              </Text>
+            </Stack>
+            <GridRow>
+              <GridColumn span="5/12">
+                <Text variant="h4" marginBottom={0}>
+                  {n('listOpenFromTil', 'Tímabil lista:')}
+                </Text>
+                <Text variant="default">
+                  {formatDate(list.openedDate) +
+                    ' - ' +
+                    formatDate(list.closedDate)}
+                </Text>
+              </GridColumn>
+              <GridColumn span="7/12">
+                <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
+                <Text variant="default">{list.ownerName}</Text>
+              </GridColumn>
+            </GridRow>
+            <GridRow marginTop={2}>
+              <GridColumn span="6/12">
+                <Text variant="h4">
+                  {n('signedPetitions', 'Fjöldi undirskrifta:')}
+                </Text>
+                <Text variant="default">{listEndorsements.totalCount}</Text>
+              </GridColumn>
+            </GridRow>
+            <Box marginTop={6} marginBottom={8}>
+              <Button
+                variant="primary"
+                icon="arrowForward"
+                onClick={() =>
+                  window?.open(`${getBaseUrl()}/${list.meta.applicationId}`)
+                }
+              >
+                {n('putMyNameOnTheList', 'Setja nafn mitt á þennan lista')}
+              </Button>
             </Box>
-          ) : (
-            <Text marginTop={2}>
-              {n('noPetitions', 'Engar undirskriftir komnar')}
-            </Text>
-          )
+            <T.Table>
+              <T.Head>
+                <T.Row>
+                  <T.HeadData>{n('signedDate', 'Dagsetning')}</T.HeadData>
+                  <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
+                </T.Row>
+              </T.Head>
+              <T.Body>
+                {pagePetitions?.map((petition) => {
+                  return (
+                    <T.Row key={petition.id}>
+                      <T.Data>{formatDate(list.created)}</T.Data>
+                      <T.Data>
+                        {petition.meta.fullName
+                          ? petition.meta.fullName
+                          : n('noName', 'Nafn ótilgreint')}
+                      </T.Data>
+                    </T.Row>
+                  )
+                })}
+              </T.Body>
+            </T.Table>
+            {list.closedDate && new Date() <= new Date(list.closedDate) ? (
+              pagePetitions && pagePetitions.length ? (
+                <Box marginY={3}>
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    renderLink={(page, className, children) => (
+                      <Box
+                        cursor="pointer"
+                        className={className}
+                        onClick={() =>
+                          handlePagination(page, listEndorsements.data)
+                        }
+                      >
+                        {children}
+                      </Box>
+                    )}
+                  />
+                </Box>
+              ) : (
+                <Text marginTop={2}>
+                  {n('noPetitions', 'Engar undirskriftir komnar')}
+                </Text>
+              )
+            ) : (
+              <Text marginY={7} variant="h3">
+                {n('listIsClosed', 'Undirskriftalistinn er lokaður')}
+              </Text>
+            )}
+          </Box>
         ) : (
           <Text marginY={7} variant="h3">
-            {n('listIsClosed', 'Undirskriftalistinn er lokaður')}
+            {n('listDoesntExist', 'Undirskriftalisti er ekki til')}
           </Text>
         )}
       </SidebarLayout>
@@ -263,21 +283,24 @@ interface InitialProps {
   locale: string
 }
 
-PetitionView.getInitialProps = async ({ apolloClient, locale }: InitialProps) => {
+PetitionView.getInitialProps = async ({
+  apolloClient,
+  locale,
+}: InitialProps) => {
   const [namespace] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'PetitionView',
+            namespace: 'PetitionViews',
             lang: locale,
           },
         },
       })
-      .then((variables) =>
-        JSON.parse(variables?.data?.getNamespace?.fields ?? '{}'),
-      ),
+      .then((variables) => {
+        return JSON.parse(variables?.data?.getNamespace?.fields || '{}')
+      }),
   ])
 
   return {

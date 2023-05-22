@@ -47,7 +47,7 @@ const GetGeneralPetitionListEndorsements = gql`
 export const useGetPetitionList = (listId: string) => {
   const {
     data: endorsementListsResponse,
-    loading,
+    error,
   } = useQuery<PetitionListResponse>(GetGeneralPetitionList, {
     variables: {
       input: {
@@ -58,7 +58,7 @@ export const useGetPetitionList = (listId: string) => {
 
   const list =
     endorsementListsResponse?.endorsementSystemGetGeneralPetitionList ?? []
-  return { list, loading }
+  return { list, error }
 }
 
 export const useGetPetitionListEndorsements = (listId: string) => {
