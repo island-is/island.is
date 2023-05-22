@@ -1,19 +1,24 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { Text, Box, Select, Tag, Option } from '@island.is/island-ui/core'
+import { Text, Box, Select, Option } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useRouteLoaderData } from 'react-router-dom'
 
 import { m } from '../../../lib/messages'
+import {
+  tenantLoaderId,
+  TenantLoaderResult,
+} from '../../../screens/Tenant/Tenant.loader'
 import { authAdminEnvironments } from '../../../shared/utils/environments'
 import * as styles from './EnvironmentHeader.css'
-import { ValueType } from 'react-select'
 
 interface EnvironmentHeaderProps {
   title: string
   selectedEnvironment: AuthAdminEnvironment
+  availableEnvironments: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
-  tag?: string
+  preHeader?: ReactNode
 }
 
 const formatOption = (
@@ -27,13 +32,17 @@ const formatOption = (
 export const EnvironmentHeader = ({
   title,
   selectedEnvironment,
+  availableEnvironments,
   onChange,
-  tag,
+  preHeader,
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
-  const options = authAdminEnvironments.map((env) =>
+  const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
+  console.log(tenant)
+
+  const options = tenant.availableEnvironments.map((env) =>
     formatOption(
-      env === selectedEnvironment
+      availableEnvironments.includes(env)
         ? env
         : formatMessage(m.publishEnvironment, {
             environment: env,
@@ -51,11 +60,7 @@ export const EnvironmentHeader = ({
       flexDirection={['column', 'row']}
     >
       <Box display="flex" flexDirection="column" rowGap={1}>
-        {tag && (
-          <div>
-            <Tag outlined>{tag}</Tag>
-          </div>
-        )}
+        {preHeader}
         <Text as="h1" variant="h2">
           {title}
         </Text>
