@@ -13,17 +13,16 @@ import {
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 
 import * as constants from '@island.is/judicial-system/consts'
+import { getAppealDecision } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 import { courtOfAppealResult as strings } from './Result.strings'
-import { courtOfAppealRuling as rulingStrings } from '../Ruling/Ruling.strings'
 
 import { useIntl } from 'react-intl'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
 import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealCase } from '../AppealCase/AppealCase.strings'
@@ -41,33 +40,6 @@ const CourtOfAppealResult: React.FC = () => {
 
   const { appealReceivedByCourtDate, appealRulingDecision } = workingCase
 
-  const getAppealDecision = () => {
-    if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
-      return formatMessage(rulingStrings.decisionAccept)
-    }
-    if (appealRulingDecision === CaseAppealRulingDecision.REPEAL) {
-      return formatMessage(rulingStrings.decisionRepeal)
-    }
-    if (appealRulingDecision === CaseAppealRulingDecision.CHANGED) {
-      return formatMessage(rulingStrings.decisionChanged)
-    }
-    if (
-      appealRulingDecision ===
-      CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
-    ) {
-      return formatMessage(rulingStrings.decisionDismissedFromCourtOfAppeal)
-    }
-    if (
-      appealRulingDecision === CaseAppealRulingDecision.DISMISSED_FROM_COURT
-    ) {
-      return formatMessage(rulingStrings.decisionDismissedFromCourt)
-    }
-    if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
-      return formatMessage(rulingStrings.decisionUnlabeling)
-    }
-    return undefined
-  }
-
   return (
     <>
       <AlertBanner
@@ -75,7 +47,7 @@ const CourtOfAppealResult: React.FC = () => {
         title={formatMessage(strings.title, {
           appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
         })}
-        description={getAppealDecision()}
+        description={getAppealDecision(appealRulingDecision, formatMessage)}
       />
 
       <PageLayout

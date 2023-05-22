@@ -1,7 +1,10 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import type { CaseFile } from '@island.is/judicial-system/types'
+import {
+  CaseAppealRulingDecision,
+  CaseFile,
+} from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
@@ -11,6 +14,8 @@ import * as constants from '@island.is/judicial-system/consts'
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { TUploadFile } from './hooks'
 import * as validations from './validate'
+import { IntlShape } from 'react-intl'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -360,3 +365,31 @@ export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   category: file.category,
   policeCaseNumber: file.policeCaseNumber,
 })
+
+export const getAppealDecision = (
+  formatMessage: IntlShape['formatMessage'],
+  appealRulingDecision?: CaseAppealRulingDecision,
+) => {
+  if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
+    return formatMessage(appealRuling.decisionAccept)
+  }
+  if (appealRulingDecision === CaseAppealRulingDecision.REPEAL) {
+    return formatMessage(appealRuling.decisionRepeal)
+  }
+  if (appealRulingDecision === CaseAppealRulingDecision.CHANGED) {
+    return formatMessage(appealRuling.decisionChanged)
+  }
+  if (
+    appealRulingDecision ===
+    CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
+  ) {
+    return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
+  }
+  if (appealRulingDecision === CaseAppealRulingDecision.DISMISSED_FROM_COURT) {
+    return formatMessage(appealRuling.decisionDismissedFromCourt)
+  }
+  if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
+    return formatMessage(appealRuling.decisionUnlabeling)
+  }
+  return undefined
+}
