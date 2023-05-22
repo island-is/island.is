@@ -106,6 +106,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:display-name',
     defaultMessage: 'Users see this when they sign in, and manage consents.',
   },
+  description: {
+    id: 'ap.ids-admin:description',
+    defaultMessage: 'Description',
+  },
+  descriptionInfo: {
+    id: 'ap.ids-admin:description-info',
+    defaultMessage:
+      'Users see this when they sign in, and manage consents. This should explain in concise and clear terms which resources or actions this permission gives access to.',
+  },
   clientId: {
     id: 'ap.ids-admin:clientId',
     defaultMessage: 'Client ID',
@@ -704,5 +713,69 @@ export const m = defineMessages({
   multipleSecretsDescription: {
     id: 'ap.ids-admin:multiple-secrets-description',
     defaultMessage: 'There are one or more old secrets which are still active.',
+  },
+  content: {
+    id: 'ap.ids-admin:content',
+    defaultMessage: 'Content',
+  },
+  icelandic: {
+    id: 'ap.ids-admin:icelandic',
+    defaultMessage: 'Icelandic',
+  },
+  english: {
+    id: 'ap.ids-admin:english',
+    defaultMessage: 'English',
+  },
+  isAccessControlled: {
+    id: 'ap.ids-admin:is-access-controlled',
+    defaultMessage: 'Specific national ids',
+  },
+  isAccessControlledDescription: {
+    id: 'ap.ids-admin:is-access-controlled-description',
+    defaultMessage: 'Only allow specific national ids',
+  },
+  grantToAuthenticatedUser: {
+    id: 'ap.ids-admin:grant-to-authenticated-user',
+    defaultMessage: 'Authenticated user',
+  },
+  grantToAuthenticatedUserDescription: {
+    id: 'ap.ids-admin:grant-to-authenticated-user-description',
+    defaultMessage: 'Should the authenticated user get this scope',
+  },
+  grantToProcuringHolders: {
+    id: 'ap.ids-admin:grant-to-procuring-holders',
+    defaultMessage: 'Companies',
+  },
+  grantToProcuringHoldersDescription: {
+    id: 'ap.ids-admin:grant-to-procuring-holders-description',
+    defaultMessage:
+      'Should procuring holders automatically get this scope for their organisations',
+  },
+  grantToLegalGuardians: {
+    id: 'ap.ids-admin:grant-to-legal-guardians',
+    defaultMessage: 'Legal guardians',
+  },
+  grantToLegalGuardiansDescription: {
+    id: 'ap.ids-admin:grant-to-legal-guardians-description',
+    defaultMessage:
+      'Should legal guardians automatically get this permission for their wards',
+  },
+  allowExplicitDelegationGrant: {
+    id: 'ap.ids-admin:allow-explicit-delegation-grant',
+    defaultMessage: 'Custom delegations',
+  },
+  allowExplicitDelegationGrantDescription: {
+    id: 'ap.ids-admin:allow-explicit-delegation-grant-description',
+    defaultMessage:
+      'Should users be able to grant other users custom delegation for this permission.',
+  },
+  grantToPersonalRepresentatives: {
+    id: 'ap.ids-admin:grant-to-personal-representatives',
+    defaultMessage: 'Personal representatives',
+  },
+  grantToPersonalRepresentativesDescription: {
+    id: 'ap.ids-admin:grant-to-personal-representatives-description',
+    defaultMessage:
+      'Should personal representatives automatically get this scope for their clients',
   },
 })

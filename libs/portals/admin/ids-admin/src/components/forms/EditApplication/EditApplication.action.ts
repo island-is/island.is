@@ -83,9 +83,7 @@ const checkIfStringIsPositiveNumber = (number: string) => {
 }
 
 const defaultSchema = z.object({
-  allEnvironments: z.optional(z.string()).transform((s) => {
-    return s === 'true'
-  }),
+  allEnvironments: z.optional(z.string()).transform((s) => s === 'true'),
   environment: z.nativeEnum(AuthAdminEnvironment),
   syncEnvironments: z.optional(z.string()).transform((s) => {
     return (s?.split(',') as AuthAdminEnvironment[]) ?? []

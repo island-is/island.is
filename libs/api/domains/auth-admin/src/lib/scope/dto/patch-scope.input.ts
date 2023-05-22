@@ -34,4 +34,7 @@ export class AdminPatchScopeInput {
 
   @Field(() => Boolean, { nullable: true })
   isAccessControlled?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  allowPermissionLevelOverrides?: boolean
 }

@@ -1,5 +1,5 @@
 import { m } from '../../lib/messages'
-import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
 import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'

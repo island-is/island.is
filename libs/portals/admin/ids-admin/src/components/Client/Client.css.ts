@@ -1,18 +1,5 @@
 import { style } from '@vanilla-extract/css'
-import { spacing, themeUtils } from '@island.is/island-ui/theme'
-
-export const select = style({
-  flexGrow: 1,
-
-  ...themeUtils.responsiveStyle({
-    sm: {
-      maxWidth: 230,
-      width: '100%',
-      display: 'grid',
-      alignItems: 'center',
-    },
-  }),
-})
+import { spacing } from '@island.is/island-ui/theme'
 
 export const tagWrapper = style({
   height: spacing['4'],

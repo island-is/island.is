@@ -13,16 +13,10 @@ import {
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  Select,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { replaceParams } from '@island.is/react-spa/shared'
+import { getTranslatedValue } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
@@ -41,9 +35,9 @@ import Lifetime from './Lifetime'
 import Permissions from './Permissions'
 import { RevokeSecrets } from './RevokeSecrets/RevokeSecrets'
 import Translations from './Translations'
-
-import * as styles from './Client.css'
 import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
+import { EnvironmentHeader } from '../forms/EnvironmentHeader/EnvironmentHeader'
+import * as styles from './Client.css'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -62,7 +56,7 @@ const Client = () => {
   const client = useLoaderData() as AuthAdminClient
   const navigate = useNavigate()
   const params = useParams()
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
   const isNativeApplication = client.clientType === AuthAdminClientType.native
   const [publishData, setPublishData] = useState<PublishData>({
@@ -115,7 +109,7 @@ const Client = () => {
         href: IDSAdminPaths.IDSAdminClientPublish,
         params: {
           tenant: params['tenant'],
-          client: params['client'],
+          client: selectedEnvironment.clientId,
         },
       }),
       { preventScrollReset: true },
@@ -171,15 +165,17 @@ const Client = () => {
     >
       <StickyLayout
         header={(isSticky) => (
-          <Box
-            display="flex"
-            columnGap={2}
-            rowGap={2}
-            justifyContent="spaceBetween"
-            alignItems="center"
-            flexDirection={['row']}
-          >
-            <Box flexGrow={1}>
+          <EnvironmentHeader
+            title={getTranslatedValue(selectedEnvironment.displayName, locale)}
+            selectedEnvironment={selectedEnvironment.environment}
+            onChange={(environment) => {
+              if (environmentExists(environment)) {
+                setSelectedEnvironmentName(environment)
+              } else {
+                openPublishModal(environment)
+              }
+            }}
+            preHeader={
               <div
                 className={classNames(
                   styles.tagWrapper,
@@ -188,50 +184,8 @@ const Client = () => {
               >
                 <ClientType client={client} />
               </div>
-              <Text variant="h2">
-                {client.environments[0].displayName[0].value}
-              </Text>
-            </Box>
-            <Box className={styles.select}>
-              <Select
-                name="env"
-                icon="chevronDown"
-                size="sm"
-                backgroundColor="blue"
-                label={formatMessage(m.environment)}
-                onChange={(event: any) => {
-                  if (environmentExists(event.value)) {
-                    setSelectedEnvironmentName(event.value)
-                  } else {
-                    openPublishModal(event.value)
-                  }
-                }}
-                value={{
-                  label: selectedEnvironment.environment,
-                  value: selectedEnvironment.environment,
-                }}
-                options={[
-                  AuthAdminEnvironment.Development,
-                  AuthAdminEnvironment.Staging,
-                  AuthAdminEnvironment.Production,
-                ].map((env) => {
-                  const selectedEnv = environmentExists(env)
-                  if (selectedEnv) {
-                    return {
-                      label: env,
-                      value: env,
-                    }
-                  }
-                  return {
-                    label: formatMessage(m.publishEnvironment, {
-                      environment: env,
-                    }),
-                    value: env,
-                  }
-                })}
-              />
-            </Box>
-          </Box>
+            }
+          />
         )}
       >
         <Stack space={3}>
