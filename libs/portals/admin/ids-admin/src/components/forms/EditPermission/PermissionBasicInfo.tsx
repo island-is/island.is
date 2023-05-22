@@ -27,7 +27,7 @@ export const PermissionBasicInfo = () => {
         buttons={[
           {
             name: 'copy',
-            label: 'copy',
+            label: formatMessages(m.copy),
             type: 'outline',
             onClick: () => copyToClipboard(permissionIdRef),
           },
