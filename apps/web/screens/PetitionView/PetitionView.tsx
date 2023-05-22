@@ -188,7 +188,6 @@ const PetitionView = ({ namespace }: PetitionViewProps) => {
         </GridRow>
         <Box marginTop={6} marginBottom={8}>
           <Button
-            size="medium"
             variant="primary"
             icon="arrowForward"
             onClick={() =>
