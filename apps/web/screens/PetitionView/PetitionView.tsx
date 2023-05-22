@@ -10,6 +10,7 @@ import {
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Box, Button, Table as T, Pagination } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
+import { Screen } from '../../types'
 import format from 'date-fns/format'
 import { useRouter } from 'next/router'
 import { useGetPetitionList, useGetPetitionListEndorsements } from './queries'
@@ -22,7 +23,6 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { useI18n } from '@island.is/web/i18n'
 
 interface PetitionViewProps {
@@ -37,7 +37,7 @@ const formatDate = (date: string) => {
   }
 }
 
-const PetitionView = ({ namespace }: PetitionViewProps) => {
+const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -278,15 +278,7 @@ const PetitionView = ({ namespace }: PetitionViewProps) => {
   )
 }
 
-interface InitialProps {
-  apolloClient: ApolloClient<NormalizedCacheObject>
-  locale: string
-}
-
-PetitionView.getInitialProps = async ({
-  apolloClient,
-  locale,
-}: InitialProps) => {
+PetitionView.getInitialProps = async ({ apolloClient, locale }) => {
   const [namespace] = await Promise.all([
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
