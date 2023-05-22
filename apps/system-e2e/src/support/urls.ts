@@ -27,6 +27,9 @@ export const getEnvironmentBaseUrl = (authority: string) => {
   return `https://${prefix}${authority}`
 }
 const localUrl = `http://${BaseAuthority.local}:${process.env.PORT ?? 4200}`
+// This set of query params is used to hide the onboarding modal as well as force locale to Icelandic.
+// Useful if you need to test something that is using icelandic labels for example.
+export const icelandicAndNoPopup = 'locale=is&hide_onboarding_modal=true'
 const envs: {
   [envName in TestEnvironment]: {
     authUrl: string
