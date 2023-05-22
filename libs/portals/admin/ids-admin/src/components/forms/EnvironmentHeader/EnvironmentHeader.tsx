@@ -66,9 +66,10 @@ export const EnvironmentHeader = ({
           size="sm"
           backgroundColor="blue"
           label={formatMessage(m.environment)}
-          onChange={(opt: any) => {
-            if (opt.value) {
-              onChange(opt.value as AuthAdminEnvironment)
+          onChange={(opt) => {
+            const { value } = opt as Option
+            if (value) {
+              onChange(value as AuthAdminEnvironment)
             }
           }}
           value={formatOption(selectedEnvironment, selectedEnvironment)}
