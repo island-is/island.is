@@ -5,9 +5,11 @@ import {
   GridRow,
   Stack,
   Inline,
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeroBanner.css'
+import { ArrowLink } from '@island.is/island-ui/core'
 
 import {
   HeroLogo,
@@ -19,15 +21,15 @@ import HeroTiles from './components/HeroTiles'
 import { ArrOfStatistics } from '../../../../types/interfaces'
 import Splash from '../../../../components/svg/Splash'
 import { useIsMobile } from '../../../../hooks'
-import IntroText from './components/IntroText'
-import ArrowLink from './components/ArrowLink'
-
+import localization from '../../Home.json'
 interface HeroBannerProps {
   statistics: ArrOfStatistics
 }
 
 export const HeroBanner = ({ statistics }: HeroBannerProps) => {
   const { isMobile } = useIsMobile()
+  const loc = localization['heroBanner']
+
   return (
     <Box
       style={{
@@ -43,9 +45,14 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
             <Stack space={2}>
               <HeroLogoMobile />
               <LESchoolMobile />
-              <IntroText />
-              <ArrowLink isReadMore />
-              <ArrowLink />
+              <Text>{loc.introText}</Text>
+
+              <ArrowLink href={loc.arrowLink.internalLink.href}>
+                {loc.arrowLink.internalLink.text}
+              </ArrowLink>
+              <ArrowLink href={loc.arrowLink.externalLink.href}>
+                {loc.arrowLink.externalLink.text}
+              </ArrowLink>
             </Stack>
           </Box>
         ) : (
@@ -54,10 +61,14 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               <Stack space={4}>
                 <HeroLogo />
                 <Stack space={3}>
-                  <IntroText />
+                  <Text>{loc.introText}</Text>
                   <Inline justifyContent="spaceBetween">
-                    <ArrowLink isReadMore />
-                    <ArrowLink />
+                    <ArrowLink href={loc.arrowLink.internalLink.href}>
+                      {loc.arrowLink.internalLink.text}
+                    </ArrowLink>
+                    <ArrowLink href={loc.arrowLink.externalLink.href}>
+                      {loc.arrowLink.externalLink.text}
+                    </ArrowLink>
                   </Inline>
                 </Stack>
               </Stack>
@@ -69,11 +80,11 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               <Box className={styles.alignTiles}>
                 <HeroTiles space={2} columns={[1]}>
                   <StatisticBox
-                    label="Til umsagnar"
+                    label={loc.statisticBoxLabel}
                     statistic={statistics?.casesInReview?.toLocaleString(
                       'de-DE',
                     )}
-                    text="mál"
+                    text={loc.statisticBoxText}
                   />
                 </HeroTiles>
               </Box>

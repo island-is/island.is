@@ -3,24 +3,27 @@ import { SimpleCardSkeleton } from '../../../../components/Card'
 import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { Box, LinkV2 } from '@island.is/island-ui/core'
 import env from '../../../../lib/environment'
+import localization from '../../Case.json'
 
 export const CaseStatusCard = ({
   summaryText,
   summaryLink,
   summaryDocumentId,
 }: Case) => {
+  const loc = localization['caseStatusCard']
+
   return (
     <SimpleCardSkeleton borderColor="blue600" borderWidth="large">
-      <StackedTitleAndDescription headingColor="blue400" title={'Niðurstöður'}>
+      <StackedTitleAndDescription headingColor="blue400" title={loc.title}>
         {summaryText}
       </StackedTitleAndDescription>
       {summaryLink && (
-        <LinkCard link={summaryLink} text="Skjal að loknu samráði" />
+        <LinkCard link={summaryLink} text={loc.summaryLinkText} />
       )}
       {summaryDocumentId && (
         <LinkCard
           link={`${env.backendDownloadUrl}${summaryDocumentId}`}
-          text="Nánar um niðurstöður"
+          text={loc.summaryDocumentIdText}
         />
       )}
     </SimpleCardSkeleton>

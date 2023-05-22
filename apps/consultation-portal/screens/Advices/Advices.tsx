@@ -20,30 +20,6 @@ import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSo
 import env from '../../lib/environment'
 import { CARDS_PER_PAGE, FILTERS_ADVICE_KEY } from '../../utils/consts/consts'
 
-const AdvicesLayout = ({ children }) => {
-  return (
-    <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
-      <BreadcrumbsWithMobileDivider
-        items={[
-          { title: 'Samráðsgátt', href: '/samradsgatt' },
-          { title: 'Mínar umsagnir' },
-        ]}
-      />
-      <GridContainer>
-        <Stack space={[3, 3, 3, 5, 5]}>
-          <Stack space={3}>
-            <Text variant="h1">Mínar umsagnir</Text>
-            <Text variant="default">
-              Hér geturðu skoðað allar umsagnir sem þú hefur sent inn.
-            </Text>
-          </Stack>
-          {children}
-        </Stack>
-      </GridContainer>
-    </Layout>
-  )
-}
-
 export const AdvicesScreen = () => {
   const LogIn = useLogIn()
   const { isAuthenticated, userLoading } = useUser()
@@ -62,18 +38,6 @@ export const AdvicesScreen = () => {
     filters,
     setFilters,
   } = useAdviceFilters({ isAuthenticated: isAuthenticated })
-
-  if (!userLoading && !isAuthenticated) {
-    return (
-      <AdvicesLayout>
-        <SubscriptionActionCard
-          heading="Mínar umsagnir"
-          text="Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir."
-          button={[{ label: 'Skrá mig inn', onClick: LogIn }]}
-        />
-      </AdvicesLayout>
-    )
-  }
 
   const renderCards = () => {
     if (userLoading || getAdvicesLoading) {
@@ -168,10 +132,33 @@ export const AdvicesScreen = () => {
   }
 
   return (
-    <AdvicesLayout>
-      <SearchAndSortPartialData filters={filters} setFilters={setFilters} />
-      {renderCards()}
-    </AdvicesLayout>
+    <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
+      <BreadcrumbsWithMobileDivider
+        items={[
+          { title: 'Samráðsgátt', href: '/samradsgatt' },
+          { title: 'Mínar umsagnir' },
+        ]}
+      />
+      <GridContainer>
+        <Stack space={[3, 3, 3, 5, 5]}>
+          <Stack space={3}>
+            <Text variant="h1">Mínar umsagnir</Text>
+            <Text variant="default">
+              Hér geturðu skoðað allar umsagnir sem þú hefur sent inn.
+            </Text>
+          </Stack>
+          {!userLoading && !isAuthenticated && (
+            <SubscriptionActionCard
+              heading="Mínar umsagnir"
+              text="Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir."
+              button={[{ label: 'Skrá mig inn', onClick: LogIn }]}
+            />
+          )}
+          <SearchAndSortPartialData filters={filters} setFilters={setFilters} />
+          {renderCards()}
+        </Stack>
+      </GridContainer>
+    </Layout>
   )
 }
 

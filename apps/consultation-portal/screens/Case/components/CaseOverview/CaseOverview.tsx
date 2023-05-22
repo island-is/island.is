@@ -7,6 +7,7 @@ import {
   hasDatePassed,
 } from '../../../../utils/helpers/dateFormatter'
 import { Case, UserAdvice } from '../../../../types/interfaces'
+import localization from '../../Case.json'
 
 interface CaseOverviewProps {
   chosenCase: Case
@@ -14,10 +15,12 @@ interface CaseOverviewProps {
 }
 
 export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
+  const loc = localization['caseOverview']
+
   const upperInstances = [
-    `Mál nr. S-${chosenCase?.caseNumber}`,
-    `Birt: ${getShortDate(chosenCase.created)}`,
-    `Fjöldi umsagna: ${chosenCase?.adviceCount}`,
+    `${loc.upperInstances.case} S-${chosenCase?.caseNumber}`,
+    `${loc.upperInstances.show}: ${getShortDate(chosenCase.created)}`,
+    `${loc.upperInstances.advicesCount}: ${chosenCase?.adviceCount}`,
   ]
 
   const lowerInstances = [
@@ -54,11 +57,11 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
         )}
       <Stack space={[3, 3, 3, 4, 4]}>
         <Box>
-          <Text variant="h4">Málsefni</Text>
+          <Text variant="h4">{loc.announcementTitle}</Text>
           <Text variant="default">{chosenCase?.announcementText}</Text>
         </Box>
         <Box>
-          <Text variant="h4">Nánari upplýsingar</Text>
+          <Text variant="h4">{loc.detailsedDescriptionTitle}</Text>
           <Text variant="default">{chosenCase.detailedDescription}</Text>
         </Box>
       </Stack>
