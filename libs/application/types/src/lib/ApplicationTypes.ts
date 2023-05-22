@@ -209,7 +209,7 @@ export const ApplicationConfigurations = {
     translation: 'ta.lpr.application',
   },
   [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: {
-    slug: 'panta-skraningarmerki',
+    slug: 'panta-numeraplotu',
     translation: 'ta.ovlp.application',
   },
   [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: {

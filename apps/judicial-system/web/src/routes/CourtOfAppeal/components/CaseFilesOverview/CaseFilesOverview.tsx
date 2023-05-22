@@ -5,11 +5,12 @@ import {
   FormContext,
   PdfButton,
   SignedDocument,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { Box, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { CaseFileCategory } from '@island.is/judicial-system/types'
+import { CaseFileCategory, UserRole } from '@island.is/judicial-system/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
@@ -23,6 +24,7 @@ const CaseFilesOverview: React.FC = () => {
   })
 
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
 
   const appealCaseFiles = workingCase.caseFiles?.filter(
     (caseFile) =>
@@ -53,9 +55,10 @@ const CaseFilesOverview: React.FC = () => {
       [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
   )
 
-  const allFiles = appealCaseFiles?.concat(
-    appealRulingFiles ? appealRulingFiles : [],
-  )
+  const allFiles =
+    user?.role === UserRole.STAFF
+      ? appealRulingFiles
+      : appealCaseFiles?.concat(appealRulingFiles ? appealRulingFiles : [])
 
   return (
     <>

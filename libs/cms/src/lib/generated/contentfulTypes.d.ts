@@ -2356,6 +2356,7 @@ export interface IOrganizationPageFields {
     | 'sak'
     | 'gev'
     | 'hve'
+    | 'shh'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined

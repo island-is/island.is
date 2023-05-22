@@ -6,7 +6,7 @@ import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
 
-import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 import { m } from '../../lib/messages'
 import AddPermissions from '../forms/AddPermissions/AddPermissions'
 import {

@@ -13,8 +13,7 @@ import {
   useFetchSubscriptions,
   usePostSubscription,
 } from '../../hooks'
-import SubscriptionsSkeleton from '../../components/SubscriptionsSkeleton/SubscriptionsSkeleton'
-import ChosenSubscriptions from '../../components/ChosenSubscriptions/ChosenSubscriptions'
+import { SubscriptionsSkeleton, ChosenSubscriptions } from './components'
 import { filterSubscriptions as F } from '../../utils/helpers/subscriptions'
 
 interface SubProps {
