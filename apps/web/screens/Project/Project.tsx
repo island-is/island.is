@@ -26,6 +26,7 @@ import {
   Form,
   TabSectionSlice,
   Webreader,
+  OneColumnTextSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -130,6 +131,9 @@ const ProjectPage: Screen<PageProps> = ({
           typename: 'projectpage',
         },
       ]
+
+  const bottomSlices =
+    (!subpage ? projectPage.bottomSlices : subpage.bottomSlices) ?? []
 
   return (
     <>
@@ -241,31 +245,40 @@ const ProjectPage: Screen<PageProps> = ({
           )}
       </ProjectWrapper>
 
-      {((!subpage ? projectPage.bottomSlices : subpage.bottomSlices) ?? []).map(
-        (slice) => {
+      {bottomSlices.map((slice, index) => {
+        if (
+          slice.__typename === 'OneColumnText' &&
+          index === bottomSlices.length - 1
+        ) {
           return (
-            <SliceMachine
-              key={slice.id}
-              slice={slice}
-              namespace={namespace}
-              slug={projectPage.slug}
-              fullWidth={true}
-              params={{
-                linkType: 'projectnews',
-                overview: 'projectnewsoverview',
-                containerPaddingBottom: 0,
-                containerPaddingTop: 0,
-                contentPaddingTop: 0,
-              }}
-              wrapWithGridContainer={
-                slice.__typename === 'ConnectedComponent' ||
-                slice.__typename === 'TabSection' ||
-                slice.__typename === 'PowerBiSlice'
-              }
-            />
+            <Box paddingBottom={6} paddingTop={2}>
+              <OneColumnTextSlice slice={slice} />
+            </Box>
           )
-        },
-      )}
+        }
+        return (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            namespace={namespace}
+            slug={projectPage.slug}
+            fullWidth={true}
+            params={{
+              linkType: 'projectnews',
+              overview: 'projectnewsoverview',
+              containerPaddingBottom: 0,
+              containerPaddingTop: 0,
+              contentPaddingTop: 0,
+              contentPaddingBottom: 0,
+            }}
+            wrapWithGridContainer={
+              slice.__typename === 'ConnectedComponent' ||
+              slice.__typename === 'TabSection' ||
+              slice.__typename === 'PowerBiSlice'
+            }
+          />
+        )
+      })}
       <ProjectFooter projectPage={projectPage} />
     </>
   )
