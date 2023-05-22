@@ -25,6 +25,7 @@ interface SliceProps {
   slice: TabSection
   contentColumnProps?: GridColumnProps
   contentPaddingTop?: ResponsiveSpace
+  contentPaddingBottom?: ResponsiveSpace
   containerPaddingTop?: ResponsiveSpace
   containerPaddingBottom?: ResponsiveSpace
 }
@@ -32,6 +33,7 @@ interface SliceProps {
 export const TabSectionSlice: React.FC<SliceProps> = ({
   slice,
   contentPaddingTop = [0, 4, 6],
+  contentPaddingBottom = [8, 0, 6],
   containerPaddingBottom = [0, 4, 4],
   containerPaddingTop = 2,
 }) => {
@@ -94,7 +96,10 @@ export const TabSectionSlice: React.FC<SliceProps> = ({
           tabs={tabSection.tabs?.map((tab) => ({
             label: tab?.tabTitle,
             content: (
-              <Box paddingTop={contentPaddingTop} paddingBottom={[8, 0, 6]}>
+              <Box
+                paddingTop={contentPaddingTop}
+                paddingBottom={contentPaddingBottom}
+              >
                 {tab?.image?.url && (
                   <img
                     src={tab.image.url}
