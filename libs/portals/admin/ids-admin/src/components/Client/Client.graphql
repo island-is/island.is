@@ -46,6 +46,7 @@ query GetClient($input: AuthAdminClientInput!) {
           locale
           value
         }
+        domainName
       }
     }
   }

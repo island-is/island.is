@@ -6,12 +6,13 @@ import ContentCard from '../../shared/components/ContentCard'
 import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { AuthAdminClientTranslation } from './Client.loader'
+import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
 
 interface TranslationsProps {
   translations: AuthAdminClientTranslation[]
+  inSync?: boolean
 }
-
-const Translations = ({ translations }: TranslationsProps) => {
+const Translations = ({ translations, inSync = true }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
   const [copyTranslations, setCopyTranslations] = useEnvironmentState(
@@ -20,6 +21,8 @@ const Translations = ({ translations }: TranslationsProps) => {
       value: translations.find((t) => t.locale === locale)?.value || '',
     })),
   )
+
+  const { shouldSupportMultiEnv } = useMultiEnvSupport()
 
   const onChangeTranslations = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -33,6 +36,8 @@ const Translations = ({ translations }: TranslationsProps) => {
     <ContentCard
       title={formatMessage(m.translations)}
       intent={ClientFormTypes.translations}
+      inSync={inSync}
+      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={3}>
         <Tabs

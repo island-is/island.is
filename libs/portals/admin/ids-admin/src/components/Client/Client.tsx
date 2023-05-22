@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom'
 
 import {
+  AuthAdminClientAllowedScope,
   AuthAdminClientType,
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
@@ -250,7 +251,9 @@ const Client = () => {
                 AuthAdminRefreshTokenExpiration.Sliding
               }
             />
-            <Permissions />
+            <Permissions
+              allowedScopes={selectedEnvironment?.allowedScopes ?? []}
+            />
             {isSuperAdmin && !isMachineApplication && (
               <Delegation
                 supportsProcuringHolders={

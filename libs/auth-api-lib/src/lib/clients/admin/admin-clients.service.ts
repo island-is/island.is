@@ -639,7 +639,10 @@ export class AdminClientsService {
     tenantId: string
     transaction: Transaction
   }): Promise<void> {
-    const mergedScopes = [...(addedScopes ?? []), ...(removedScopes ?? [])]
+    const mergedScopes = [
+      ...(addedScopes ?? []),
+      ...(removedScopes ?? []),
+    ].filter((scopeName) => scopeName !== '')
 
     if (mergedScopes.length > 0) {
       const verifiedScopes = await this.verifyScopeNames({
@@ -714,7 +717,6 @@ export class AdminClientsService {
           [Op.in]: scopeNames,
         },
         enabled: true,
-        domainName: tenantId,
       },
     })
 
