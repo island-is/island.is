@@ -27,7 +27,7 @@ import Exams from '../../components/DrivingLessonsTables/Exams'
 
 export const GET_STUDENT_BOOK = gql`
   query GetUserDrivingLessonsBook {
-    getStudent {
+    drivingLicenseBookStudent {
       book {
         licenseCategory
         createdOn
