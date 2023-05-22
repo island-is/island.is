@@ -230,10 +230,15 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       defaultMessage: 'Einstaklingar',
       description: 'Form label for persons name formfield',
     },
+    sectionPDFDeliveryTitle: {
+      id: 'ehic.application:review.sectionPDFDeliveryDescription',
+      defaultMessage: 'Afhending',
+      description: 'Form description for PDF delivery formfield',
+    },
     sectionPDFDeliveryDescription: {
       id: 'ehic.application:review.sectionPDFDeliveryDescription',
       defaultMessage: 'Bráðabirgðakort sendist í stafrænt pósthólf island.is',
-      description: 'Form description for delivery formfield',
+      description: 'Form description for PDF delivery formfield',
     },
     sectionDeliveryLabel: {
       id: 'ehic.application:review.sectionDeliveryLabel',

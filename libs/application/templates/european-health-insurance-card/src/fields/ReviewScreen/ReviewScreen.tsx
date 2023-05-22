@@ -62,6 +62,23 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
                 ))}
               </Box>
               <Divider />
+              <Box>
+                <Text variant="h5">
+                  {formatText(
+                    e.review.sectionPDFDeliveryTitle,
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
+                <Text>
+                  {formatText(
+                    e.review.sectionPDFDeliveryDescription,
+                    application,
+                    formatMessage,
+                  )}
+                </Text>
+              </Box>
+              <Divider />
             </>
           )}
           {plastic?.length > 0 && (
