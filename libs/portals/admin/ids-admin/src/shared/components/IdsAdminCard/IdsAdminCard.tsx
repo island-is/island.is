@@ -63,8 +63,7 @@ export default function IdsAdminCard({
       component="article"
       borderRadius="large"
       border="standard"
-      paddingX={[2, 4]}
-      paddingY={3}
+      padding={[3, 4]}
       display="flex"
       columnGap={2}
       flexGrow={1}
@@ -100,13 +99,7 @@ export default function IdsAdminCard({
           rowGap={1}
         >
           {tags?.map(({ children, ...tagProps }, tagIndex) => (
-            <Tag
-              key={tagIndex}
-              variant="purple"
-              outlined
-              disabled
-              {...tagProps}
-            >
+            <Tag key={tagIndex} variant="purple" outlined {...tagProps}>
               {children}
             </Tag>
           ))}

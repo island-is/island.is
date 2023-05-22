@@ -222,7 +222,9 @@ const Statement = () => {
       {visibleModal === 'STATEMENT_SENT' && (
         <Modal
           title={formatMessage(strings.statementSentModalTitle)}
-          text={formatMessage(strings.statementSentModalText)}
+          text={formatMessage(strings.statementSentModalText, {
+            isDefender: limitedAccess,
+          })}
           secondaryButtonText={formatMessage(core.closeModal)}
           onSecondaryButtonClick={() => router.push(previousUrl)}
         />

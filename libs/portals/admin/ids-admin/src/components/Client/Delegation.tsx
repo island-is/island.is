@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 
@@ -26,7 +26,7 @@ const Delegation = ({
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
 
-  const [inputValues, setInputValues] = useState({
+  const [inputValues, setInputValues] = useEnvironmentState({
     supportsCustomDelegation,
     supportsLegalGuardians,
     supportsPersonalRepresentatives,

@@ -26,7 +26,6 @@ const CreateClient = lazy(() =>
   import('./components/forms/CreateClient/CreateClient'),
 )
 const Clients = lazy(() => import('./components/Clients/Clients'))
-const ClientsScreen = lazy(() => import('./screens/ClientsScreen'))
 
 const PermissionsList = lazy(() =>
   import('./components/PermissionsList/PermissionsList'),
@@ -72,35 +71,6 @@ export const idsAdminModule: PortalModule = {
             },
           },
           {
-            name: m.clients,
-            path: '',
-            element: <ClientsScreen />,
-            handle: {
-              backPath: IDSAdminPaths.IDSAdmin,
-            },
-            children: [
-              {
-                name: m.settings,
-                path: IDSAdminPaths.IDSAdminClient,
-                element: <Client />,
-                loader: clientLoader(props),
-                action: editApplicationAction(props),
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdminClients,
-                },
-                children: [
-                  {
-                    name: m.publishEnvironment,
-                    navHide: true,
-                    path: IDSAdminPaths.IDSAdminClientPublish,
-                    action: publishEnvironmentAction(props),
-                    element: <PublishEnvironment />,
-                  },
-                ],
-              },
-            ],
-          },
-          {
             name: m.tenants,
             path: '',
             element: <Tenant />,
@@ -125,6 +95,25 @@ export const idsAdminModule: PortalModule = {
                     path: IDSAdminPaths.IDSAdminClientCreate,
                     element: <CreateClient />,
                     action: createClientAction(props),
+                  },
+                ],
+              },
+              {
+                name: m.settings,
+                path: IDSAdminPaths.IDSAdminClient,
+                element: <Client />,
+                loader: clientLoader(props),
+                action: editApplicationAction(props),
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminClients,
+                },
+                children: [
+                  {
+                    name: m.publishEnvironment,
+                    navHide: true,
+                    path: IDSAdminPaths.IDSAdminClientPublish,
+                    action: publishEnvironmentAction(props),
+                    element: <PublishEnvironment />,
                   },
                 ],
               },
