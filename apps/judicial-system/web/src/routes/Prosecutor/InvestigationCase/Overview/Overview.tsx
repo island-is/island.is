@@ -13,7 +13,6 @@ import {
   NotificationType,
   CaseState,
   CaseTransition,
-  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import {
   AccordionListItem,
