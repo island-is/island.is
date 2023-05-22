@@ -11,7 +11,7 @@ import {
 } from '../forms/EditApplication/EditApplication.action'
 import { useActionData } from 'react-router-dom'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
-import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 
 interface ClientsUrlProps {
   redirectUris: string[]

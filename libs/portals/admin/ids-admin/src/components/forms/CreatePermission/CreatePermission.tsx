@@ -20,7 +20,6 @@ import {
   InputError,
   Text,
 } from '@island.is/island-ui/core'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import { IDSAdminPaths } from '../../../lib/paths'
 import {
@@ -31,12 +30,9 @@ import { m } from '../../../lib/messages'
 import { parseID } from '../../../shared/utils/forms'
 import { useErrorFormatMessage } from '../../../shared/hooks/useFormatErrorMessage'
 import { CreateScopeResult } from './CreatePermission.action'
+import { authAdminEnvironments } from '../../../shared/utils/environments'
 
 type InputOnChange = ComponentPropsWithoutRef<typeof Input>['onChange']
-
-const environments = Object.values(AuthAdminEnvironment).map(
-  (env: AuthAdminEnvironment) => env,
-)
 
 export default function CreatePermission() {
   const { formatMessage } = useLocale()
@@ -145,7 +141,7 @@ export default function CreatePermission() {
             </GridColumn>
             <GridColumn span="12/12">
               <GridRow rowGap={3}>
-                {environments.map((env) => {
+                {authAdminEnvironments.map((env) => {
                   const envName = tenant.availableEnvironments.find(
                     (environment) => env === environment,
                   )

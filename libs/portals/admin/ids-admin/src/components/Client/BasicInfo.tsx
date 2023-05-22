@@ -4,7 +4,7 @@ import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 import { AuthAdminClientSecret } from './Client.loader'
 import { useCopyToClipboard } from '../../shared/hooks/useCopyToClipboard'
 
@@ -118,6 +118,23 @@ export const BasicInfo = ({
               readOnly
               type="text"
               size="sm"
+              ref={openIdConfigurationUrlRef}
+              name="openIdConfigurationUrl"
+              value={issuerUrl + '.well-known/openid-configuration'}
+              label={formatMessage(m.openIdConfiguration)}
+              buttons={[
+                {
+                  name: 'copy',
+                  label: formatMessage(m.copy),
+                  type: 'outline',
+                  onClick: () => copyToClipboard(openIdConfigurationUrlRef),
+                },
+              ]}
+            />
+            <Input
+              readOnly
+              type="text"
+              size="sm"
               ref={authorizationUrlRef}
               name="authorizationUrl"
               value={issuerUrl + 'connect/authorize'}
@@ -179,23 +196,6 @@ export const BasicInfo = ({
                   label: formatMessage(m.copy),
                   type: 'outline',
                   onClick: () => copyToClipboard(endSessionUrlRef),
-                },
-              ]}
-            />
-            <Input
-              readOnly
-              type="text"
-              size="sm"
-              ref={openIdConfigurationUrlRef}
-              name="openIdConfigurationUrl"
-              value={issuerUrl + '.well-known/openid-configuration'}
-              label={formatMessage(m.openIdConfiguration)}
-              buttons={[
-                {
-                  name: 'copy',
-                  label: formatMessage(m.copy),
-                  type: 'outline',
-                  onClick: () => copyToClipboard(openIdConfigurationUrlRef),
                 },
               ]}
             />

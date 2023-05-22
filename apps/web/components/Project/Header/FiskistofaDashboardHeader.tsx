@@ -54,11 +54,13 @@ export const FiskistofaDashboardHeader: React.FC<FiskistofaDashboardHeaderProps>
         />
       </Hidden>
       <Inline alignY="center" space={[1, 2, 3]} flexWrap="nowrap">
-        <Text variant="h2" as="h1">
-          <span className={styles.title}>
-            {n('fiskistofaDashboard', 'Mælaborð Fiskistofu')}
-          </span>
-        </Text>
+        <Box textAlign="center">
+          <Text variant="h2" as="h1">
+            <span className={styles.title}>
+              {n('fiskistofaDashboard', 'Mælaborð Fiskistofu')}
+            </span>
+          </Text>
+        </Box>
         <img
           className={styles.logo}
           src={n(

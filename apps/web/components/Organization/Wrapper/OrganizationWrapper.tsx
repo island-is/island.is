@@ -238,16 +238,20 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
 
 interface ExternalLinksProps {
   organizationPage: OrganizationPage
+  showOnMobile?: boolean
 }
 
 export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   organizationPage,
+  showOnMobile = true,
 }) => {
   if (organizationPage.externalLinks?.length) {
+    const mobileDisplay = showOnMobile ? 'flex' : 'none'
+    const mobileJustifyContent = showOnMobile ? 'center' : 'flexEnd'
     return (
       <Box
-        display={['none', 'none', 'flex', 'flex']}
-        justifyContent="flexEnd"
+        display={[mobileDisplay, mobileDisplay, 'flex', 'flex']}
+        justifyContent={[mobileJustifyContent, mobileJustifyContent, 'flexEnd']}
         marginBottom={4}
       >
         <Inline space={2}>
@@ -689,6 +693,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         >
           {isMobile && (
             <Box className={styles.menuStyle}>
+              {showExternalLinks && (
+                <OrganizationExternalLinks
+                  organizationPage={organizationPage}
+                  showOnMobile={true}
+                />
+              )}
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNavMobile"
@@ -735,6 +745,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 {showExternalLinks && (
                   <OrganizationExternalLinks
                     organizationPage={organizationPage}
+                    showOnMobile={false}
                   />
                 )}
                 {breadcrumbItems && (
