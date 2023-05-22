@@ -60,7 +60,7 @@ const Client = () => {
   const params = useParams()
   const { formatMessage, locale } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
-  const isNativeApplication = client.clientType === AuthAdminClientType.native
+  const isMachineApplication = client.clientType === AuthAdminClientType.machine
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
     fromEnvironment: null,
@@ -231,7 +231,7 @@ const Client = () => {
               clientSecrets={selectedEnvironment.secrets}
             />
             <Translations translations={selectedEnvironment.displayName} />
-            {!isNativeApplication && (
+            {!isMachineApplication && (
               <ClientsUrl
                 redirectUris={selectedEnvironment.redirectUris}
                 postLogoutRedirectUris={
@@ -254,7 +254,7 @@ const Client = () => {
             <Permissions
               allowedScopes={selectedEnvironment?.allowedScopes ?? []}
             />
-            {isSuperAdmin && !isNativeApplication && (
+            {isSuperAdmin && !isMachineApplication && (
               <Delegation
                 supportsProcuringHolders={
                   selectedEnvironment.supportsProcuringHolders
