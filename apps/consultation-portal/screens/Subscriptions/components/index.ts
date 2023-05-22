@@ -3,4 +3,4 @@ export { default as SubscriptionsSkeleton } from './SubscriptionsSkeleton/Subscr
 export { default as TabsList } from './Tabs/tabsList'
 export { default as ChosenSubscriptions } from './ChosenSubscriptions/ChosenSubscriptions'
 export { default as SubscriptionChoices } from './SubscriptionChoices/SubscriptionChoices'
-export { default as ChosenSubscriptionCard } from './SubscriptionCard/ChosenSubscriptionCard'
+export { default as SubscriptionCard } from './SubscriptionCard/SubscriptionCard'

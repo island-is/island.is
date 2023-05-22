@@ -10,7 +10,7 @@ import {
 import { SimpleCardSkeleton } from '../../../../components/Card/components/SimpleCardSkeleton'
 import { CardGridContainer } from '../../../../components/Card/components/CardGridContainer'
 
-export interface ChosenSubscriptionCardProps {
+interface Props {
   isGeneralSubscription?: boolean
   isCase?: boolean
   item: SubscriptionTableItem
@@ -23,7 +23,7 @@ export interface ChosenSubscriptionCardProps {
   toggleAble?: boolean
 }
 
-export const ChosenSubscriptionCard = ({
+export const SubscriptionCard = ({
   isGeneralSubscription,
   item,
   area,
@@ -33,7 +33,7 @@ export const ChosenSubscriptionCard = ({
   titleColumn,
   children,
   toggleAble = false,
-}: ChosenSubscriptionCardProps) => {
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const onCheckboxChange = () => {
     if (isGeneralSubscription) {
@@ -100,4 +100,4 @@ export const ChosenSubscriptionCard = ({
   )
 }
 
-export default ChosenSubscriptionCard
+export default SubscriptionCard
