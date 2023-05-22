@@ -3,9 +3,6 @@ import { createContext, FC } from 'react'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 interface EnvironmentContextValues {
-  /**
-   * Selected environment
-   */
   selectedEnvironment: AuthAdminEnvironment
 }
 
