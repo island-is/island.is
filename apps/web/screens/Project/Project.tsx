@@ -255,6 +255,7 @@ const ProjectPage: Screen<PageProps> = ({
                 overview: 'projectnewsoverview',
                 containerPaddingBottom: 0,
                 containerPaddingTop: 0,
+                contentPaddingTop: 0,
               }}
               wrapWithGridContainer={
                 slice.__typename === 'ConnectedComponent' ||
