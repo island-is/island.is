@@ -78,7 +78,7 @@ const accessControlSchema = z
     grantToProcuringHolders: booleanCheckbox,
     grantToLegalGuardians: booleanCheckbox,
     allowExplicitDelegationGrant: booleanCheckbox,
-    allowPermissionLevelOverrides: booleanCheckbox,
+    grantToPersonalRepresentatives: booleanCheckbox,
   })
   .merge(defaultSchema)
 
@@ -178,10 +178,10 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
       mutation: PatchAuthAdminScopeDocument,
       variables: {
         input: {
-          ...data,
           tenantId,
           scopeName,
           environments,
+          ...data,
         },
       },
     })

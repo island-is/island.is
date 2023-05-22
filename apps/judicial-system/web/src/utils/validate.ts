@@ -1,8 +1,5 @@
 // TODO: Add tests
-import {
-  CaseFileCategory,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   User,
   CaseType,
