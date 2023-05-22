@@ -2,10 +2,15 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { SimpleCardSkeleton } from '../../../components/Card'
 import StackedTitleAndDescription from '../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import Link from 'next/link'
-import { useLogIn } from '../../../utils/helpers'
+import { useLogIn } from '../../../hooks'
 import { useContext } from 'react'
 import { UserContext } from '../../../context'
 import { Case } from '../../../types/interfaces'
+import {
+  advicePublishTypeKey,
+  advicePublishTypeKeyHelper,
+  pastAdvicePublishTypeKey,
+} from '../../../types/enums'
 interface Props {
   chosenCase: Case
 }
@@ -17,13 +22,17 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
     <SimpleCardSkeleton>
       {chosenCase.statusName === 'Til umsagnar' ? (
         <>
-          <StackedTitleAndDescription
-            headingColor="blue400"
-            title="Viltu senda umsögn?"
-          >
+          <StackedTitleAndDescription title="Viltu senda umsögn?">
             <Text>
-              Öllum er frjálst að taka þátt í samráðinu.
-              {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
+              {`
+                 Málið er opið til umsagnar og öllum frjálst að taka þátt.
+                 ${
+                   advicePublishTypeKey[
+                     advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
+                   ]
+                 }
+                 ${!isAuthenticated && 'Skráðu þig inn og sendu umsögn.'}
+              `}
             </Text>
           </StackedTitleAndDescription>
           <Box paddingTop={2}>
@@ -41,20 +50,34 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
           </Box>
         </>
       ) : chosenCase.statusName === 'Niðurstöður í vinnslu' ? (
-        <StackedTitleAndDescription
-          headingColor="blue400"
-          title="Niðurstöður í vinnslu"
-        >
+        <StackedTitleAndDescription headingColor="blue400" title="Í vinnslu">
           <Text>
-            Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum og þær
-            bárust.
+            {`
+              Umsagnarfrestur er liðinn.
+            ${
+              pastAdvicePublishTypeKey[
+                advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
+              ]
+            }
+              Niðurstöður samráðsins eru væntanlegar.
+            `}
           </Text>
         </StackedTitleAndDescription>
       ) : (
-        <StackedTitleAndDescription headingColor="blue400" title="Lokið">
+        <StackedTitleAndDescription
+          headingColor="blue400"
+          title="Samráði lokið"
+        >
           <Text>
-            Umsagnarfrestur er liðinn. Umsagnir voru birtar jafnóðum og þær
-            bárust. Niðurstöður samráðsins hafa verið birtar og málinu lokið.
+            {` 
+              Umsagnarfrestur er liðinn.
+              ${
+                pastAdvicePublishTypeKey[
+                  advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
+                ]
+              } 
+              Niðurstöður hafa verið birtar og samráði lokið.
+            `}
           </Text>
         </StackedTitleAndDescription>
       )}

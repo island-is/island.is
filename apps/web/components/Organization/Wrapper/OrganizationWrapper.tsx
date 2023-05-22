@@ -73,7 +73,7 @@ import {
   TryggingastofnunHeader,
 } from './Themes/TryggingastofnunTheme'
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
-import { GevHeader } from './Themes/GevTheme'
+import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
 
 import * as styles from './OrganizationWrapper.css'
@@ -148,6 +148,8 @@ export const footerEnabled = [
 
   'tryggingastofnun',
   'insurance-administration',
+
+  'gev',
 ]
 
 export const getThemeConfig = (
@@ -236,16 +238,20 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
 
 interface ExternalLinksProps {
   organizationPage: OrganizationPage
+  showOnMobile?: boolean
 }
 
 export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   organizationPage,
+  showOnMobile = true,
 }) => {
   if (organizationPage.externalLinks?.length) {
+    const mobileDisplay = showOnMobile ? 'flex' : 'none'
+    const mobileJustifyContent = showOnMobile ? 'center' : 'flexEnd'
     return (
       <Box
-        display={['none', 'none', 'flex', 'flex']}
-        justifyContent="flexEnd"
+        display={[mobileDisplay, mobileDisplay, 'flex', 'flex']}
+        justifyContent={[mobileJustifyContent, mobileJustifyContent, 'flexEnd']}
         marginBottom={4}
       >
         <Inline space={2}>
@@ -328,6 +334,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <SjukratryggingarFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+          organizationSlug={organization.slug}
         />
       )
       break
@@ -438,6 +445,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         <TryggingastofnunFooter
           footerItems={organization.footerItems}
           namespace={namespace}
+        />
+      )
+      break
+    case 'gev':
+      OrganizationFooterComponent = (
+        <GevFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
         />
       )
       break
@@ -677,6 +693,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         >
           {isMobile && (
             <Box className={styles.menuStyle}>
+              {showExternalLinks && (
+                <OrganizationExternalLinks
+                  organizationPage={organizationPage}
+                  showOnMobile={true}
+                />
+              )}
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNavMobile"
@@ -723,6 +745,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 {showExternalLinks && (
                   <OrganizationExternalLinks
                     organizationPage={organizationPage}
+                    showOnMobile={false}
                   />
                 )}
                 {breadcrumbItems && (

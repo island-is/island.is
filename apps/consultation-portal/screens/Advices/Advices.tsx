@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import Layout from '../../components/Layout/Layout'
 import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
-import { useLogIn, useUser, useAdviceFilters } from '../../utils/helpers'
+import { useLogIn, useUser, useAdviceFilters } from '../../hooks'
 import { Card, SubscriptionActionCard } from '../../components/Card'
 import { useState } from 'react'
 import EmptyState from '../../components/EmptyState/EmptyState'
@@ -76,7 +76,7 @@ export const AdvicesScreen = () => {
   }
 
   const renderCards = () => {
-    if (getAdvicesLoading) {
+    if (userLoading || getAdvicesLoading) {
       return (
         <Box
           display="flex"

@@ -19,7 +19,7 @@ interface Then {
 
 type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal received by court notification', () => {
+describe('InternalNotificationController - Send appeal received by court notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()

@@ -1,5 +1,4 @@
 import {
-  Box,
   FocusableBox,
   Icon,
   Inline,
@@ -42,7 +41,7 @@ export const ReviewCard = ({ advice }) => {
           {scrollHeight > REVIEW_CARD_SCROLL_HEIGHT && (
             <FocusableBox onClick={() => setOpen(!open)}>
               <Icon
-                icon={open ? 'close' : 'add'}
+                icon={open ? 'remove' : 'add'}
                 type="outline"
                 size="small"
                 color="blue400"

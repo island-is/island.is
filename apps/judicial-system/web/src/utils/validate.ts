@@ -1,5 +1,8 @@
 // TODO: Add tests
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import {
   User,
   CaseType,
@@ -433,6 +436,16 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
       workingCase.appealJudge3 &&
       workingCase.appealAssistant &&
       validate([[workingCase.appealCaseNumber, ['empty']]]).isValid) ||
+    false
+  )
+}
+
+export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+  const { appealRulingDecision, appealConclusion } = workingCase
+
+  return (
+    (appealRulingDecision !== null &&
+      validate([[appealConclusion, ['empty']]]).isValid) ||
     false
   )
 }

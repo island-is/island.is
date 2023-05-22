@@ -20,13 +20,14 @@ import {
 } from '../../types/interfaces'
 import EmptyState from '../../components/EmptyState/EmptyState'
 import Filter from '../../components/Filter/Filter'
-import { useFrontPageFilters, useIsMobile } from '../../utils/helpers'
+import { useFrontPageFilters, useIsMobile } from '../../hooks'
 import Pagination from '../../components/Pagination/Pagination'
 import MobileFilter from '../../components/Filter/MobileFilter'
 import {
   CARDS_PER_PAGE,
   FILTERS_FRONT_PAGE_KEY,
 } from '../../utils/consts/consts'
+import { MapCaseStatuses } from '../../types/enums'
 
 interface HomeProps {
   types: ArrOfTypes
@@ -78,7 +79,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
               const card = {
                 id: item.id,
                 title: item.name,
-                tag: item.statusName,
+                tag: MapCaseStatuses[item.statusName],
                 published: item.created,
                 processEnds: item.processEnds,
                 processBegins: item.processBegins,

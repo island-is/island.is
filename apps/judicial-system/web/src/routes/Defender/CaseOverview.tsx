@@ -43,7 +43,10 @@ import { defenderCaseOverview as m } from './CaseOverview.strings'
 import { AlertBanner } from '../../components/AlertBanner'
 import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
 
-type availableModals = 'NoModal' | 'ConfirmAppealAfterDeadline'
+type availableModals =
+  | 'NoModal'
+  | 'ConfirmAppealAfterDeadline'
+  | 'ConfirmStatementAfterDeadline'
 
 export const CaseOverview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -52,8 +55,10 @@ export const CaseOverview: React.FC = () => {
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
-  const { title, description, child } = useAppealAlertBanner(workingCase, () =>
-    setModalVisible('ConfirmAppealAfterDeadline'),
+  const { title, description, child } = useAppealAlertBanner(
+    workingCase,
+    () => setModalVisible('ConfirmAppealAfterDeadline'),
+    () => setModalVisible('ConfirmStatementAfterDeadline'),
   )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
@@ -325,6 +330,24 @@ export const CaseOverview: React.FC = () => {
             )}
             secondaryButtonText={formatMessage(
               m.confirmAppealAfterDeadlineModalSecondaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
+        {modalVisible === 'ConfirmStatementAfterDeadline' && (
+          <Modal
+            title={formatMessage(m.confirmStatementAfterDeadlineModalTitle)}
+            text={formatMessage(m.confirmStatementAfterDeadlineModalText)}
+            primaryButtonText={formatMessage(
+              m.confirmStatementAfterDeadlineModalPrimaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              m.confirmStatementAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)

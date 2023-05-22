@@ -107,15 +107,17 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     return items
   }, [])
 
+  const socialImage = featuredImage ?? image
+
   return (
     <Box paddingBottom={[2, 2, 10]}>
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
-        imageUrl={featuredImage?.url}
-        imageContentType={featuredImage?.contentType}
-        imageWidth={featuredImage?.width?.toString()}
-        imageHeight={featuredImage?.height?.toString()}
+        imageUrl={socialImage?.url}
+        imageContentType={socialImage?.contentType}
+        imageWidth={socialImage?.width?.toString()}
+        imageHeight={socialImage?.height?.toString()}
       />
 
       <GridContainer id="main-content">

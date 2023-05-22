@@ -7,7 +7,9 @@ export type AuthAdminClientSecret = GetClientQuery['authAdminClient']['environme
 
 export const clientLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<AuthAdminClient> => {
-    if (!params['tenant']) {
+    const tenantId = params['tenant']
+
+    if (!tenantId) {
       throw new Error('Tenant not found')
     }
 
@@ -16,7 +18,7 @@ export const clientLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
       variables: {
         input: {
-          tenantId: params['tenant'],
+          tenantId,
           clientId: params['client'],
         },
       },
