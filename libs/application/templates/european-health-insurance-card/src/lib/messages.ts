@@ -231,9 +231,9 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       description: 'Form label for persons name formfield',
     },
     sectionPDFDeliveryTitle: {
-      id: 'ehic.application:review.sectionPDFDeliveryDescription',
+      id: 'ehic.application:review.sectionPDFDeliveryTitle',
       defaultMessage: 'Afhending',
-      description: 'Form description for PDF delivery formfield',
+      description: 'Form title for PDF delivery formfield',
     },
     sectionPDFDeliveryDescription: {
       id: 'ehic.application:review.sectionPDFDeliveryDescription',
