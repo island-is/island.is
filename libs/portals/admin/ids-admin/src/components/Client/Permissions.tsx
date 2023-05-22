@@ -1,18 +1,20 @@
-import ContentCard from '../../shared/components/ContentCard/ContentCard'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import React, { useEffect, useState } from 'react'
+import { useActionData, useParams } from 'react-router-dom'
+
+import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
+import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { getTranslatedValue } from '@island.is/portals/core'
+
+import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import { m } from '../../lib/messages'
+import AddPermissions from '../forms/AddPermissions/AddPermissions'
 import {
   ClientFormTypes,
   EditApplicationResult,
   schema,
 } from '../forms/EditApplication/EditApplication.action'
 import { ShadowBox } from '../ShadowBox/ShadowBox'
-import { useActionData, useParams } from 'react-router-dom'
-import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
-import AddPermissions from '../forms/AddPermissions/AddPermissions'
-import { getTranslatedValue } from '@island.is/portals/core'
 
 interface PermissionsProps {
   allowedScopes?: AuthAdminClientAllowedScope[]
@@ -36,11 +38,12 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   >
 
   useEffect(() => {
-    if (actionData?.intent === ClientFormTypes.permissions) {
-      if (actionData?.data) {
-        setAddedScopes([])
-        setRemovedScopes([])
-      }
+    if (
+      actionData?.intent === ClientFormTypes.permissions &&
+      actionData?.data
+    ) {
+      setAddedScopes([])
+      setRemovedScopes([])
     }
   }, [actionData])
 

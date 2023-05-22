@@ -1,4 +1,7 @@
+import isEqual from 'lodash/isEqual'
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
+import { Form, useActionData } from 'react-router-dom'
+
 import {
   Box,
   Button,
@@ -11,20 +14,19 @@ import {
   toast,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { Form, useActionData } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
+import { useSubmitting } from '@island.is/react-spa/shared'
+
 import {
   ClientFormTypes,
   EditApplicationResult,
   getIntentWithSyncCheck,
   schema,
 } from '../../../components/forms/EditApplication/EditApplication.action'
-import * as styles from './ContentCard.css'
+import { m } from '../../../lib/messages'
 import { ClientContext } from '../../context/ClientContext'
-import { useSubmitting } from '@island.is/react-spa/shared'
-import isEqual from 'lodash/isEqual'
 import { ConditionalWrapper } from '../ConditionalWrapper'
+import * as styles from './ContentCard.css'
 
 interface ContentCardProps {
   title: string

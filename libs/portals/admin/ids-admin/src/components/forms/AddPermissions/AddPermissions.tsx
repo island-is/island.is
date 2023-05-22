@@ -1,4 +1,7 @@
-import { Modal } from '@island.is/react/components'
+import React, { useContext, useState } from 'react'
+import { useParams } from 'react-router-dom'
+
+import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -6,19 +9,18 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { m } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import React, { useContext } from 'react'
-import { ShadowBox } from '../../ShadowBox/ShadowBox'
-import { ClientContext } from '../../../shared/context/ClientContext'
-import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
 import { getTranslatedValue } from '@island.is/portals/core'
+import { Modal } from '@island.is/react/components'
+import { isDefined } from '@island.is/shared/utils'
+
+import { m } from '../../../lib/messages'
+import { ClientContext } from '../../../shared/context/ClientContext'
+import { ShadowBox } from '../../ShadowBox/ShadowBox'
 import {
   GetAvailableScopesQuery,
   useGetAvailableScopesQuery,
 } from './AvailableScopes.generated'
-import { useParams } from 'react-router-dom'
-import { isDefined } from '@island.is/shared/utils'
 
 interface AddPermissionsProps {
   isVisible: boolean
@@ -36,7 +38,7 @@ function AddPermissions({
   removedScopes,
 }: AddPermissionsProps) {
   const { formatMessage, locale } = useLocale()
-  const [selected, setSelected] = React.useState<
+  const [selected, setSelected] = useState<
     Map<string, AuthAdminClientAllowedScope>
   >(new Map())
   const { tenant: tenantId } = useParams() as { tenant: string }
