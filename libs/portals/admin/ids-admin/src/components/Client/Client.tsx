@@ -168,6 +168,7 @@ const Client = () => {
           <EnvironmentHeader
             title={getTranslatedValue(selectedEnvironment.displayName, locale)}
             selectedEnvironment={selectedEnvironment.environment}
+            availableEnvironments={client.availableEnvironments}
             onChange={(environment) => {
               if (environmentExists(environment)) {
                 setSelectedEnvironmentName(environment)

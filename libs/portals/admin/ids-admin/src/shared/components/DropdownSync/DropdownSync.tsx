@@ -80,7 +80,7 @@ export const DropdownSync = ({
                         className={styles.syncButton}
                         type="submit"
                         value={`${intent}-sync`}
-                        name="intent-sync"
+                        name="intent"
                       >
                         <Text
                           variant="small"
