@@ -17,6 +17,11 @@ import { LinkType, linkResolver, useNamespace } from '@island.is/web/hooks'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { InstitutionPanel } from '@island.is/web/components'
+import { GetNamespaceQuery, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
+import {
+  GET_NAMESPACE_QUERY,
+} from '@island.is/web/screens/queries'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 interface PetitionViewProps {
   namespace?: Record<string, string>
@@ -182,7 +187,7 @@ const PetitionView = ({ namespace }: PetitionViewProps) => {
         </GridRow>
         <GridRow marginTop={2}>
           <GridColumn span="6/12">
-            <Text variant="h4">{n('signedPetitions', 'Fjöldi skráðir:')}</Text>
+            <Text variant="h4">{n('signedPetitions', 'Fjöldi undirskrifta:')}</Text>
             <Text variant="default">{listEndorsements.totalCount}</Text>
           </GridColumn>
         </GridRow>
@@ -251,6 +256,33 @@ const PetitionView = ({ namespace }: PetitionViewProps) => {
       </SidebarLayout>
     </Box>
   )
+}
+
+interface InitialProps {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+}
+
+PetitionView.getInitialProps = async ({ apolloClient, locale }: InitialProps) => {
+  const [namespace] = await Promise.all([
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'PetitionView',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) =>
+        JSON.parse(variables?.data?.getNamespace?.fields ?? '{}'),
+      ),
+  ])
+
+  return {
+    namespace,
+  }
 }
 
 export default withMainLayout(PetitionView)
