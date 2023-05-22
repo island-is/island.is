@@ -1,4 +1,3 @@
-import { FormatMessage } from '@island.is/cms-translations'
 import { useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 

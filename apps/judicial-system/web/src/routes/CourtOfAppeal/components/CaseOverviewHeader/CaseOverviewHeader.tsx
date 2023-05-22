@@ -9,8 +9,8 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   CaseDecision,
   CaseState,
@@ -19,8 +19,8 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
+import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 const CourtOfAppealCaseOverviewHeader: React.FC = () => {
   const { workingCase } = useContext(FormContext)
