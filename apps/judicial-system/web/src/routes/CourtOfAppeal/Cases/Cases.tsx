@@ -24,6 +24,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
   CaseDecision,
   CaseState,
 } from '@island.is/judicial-system/types'
@@ -42,6 +43,7 @@ export interface AppealedCasesQueryResponse {
   decision: CaseDecision
   state: CaseState
   appealState: CaseAppealState
+  appealRulingDecision: CaseAppealRulingDecision
   accusedAppealDecision: CaseAppealDecision
   prosecutorAppealDecision: CaseAppealDecision
   courtEndTime: string
@@ -144,6 +146,7 @@ const CourtOfAppealCases = () => {
           original: {
             state: CaseState
             appealState: CaseAppealState
+            appealRulingDecision: CaseAppealRulingDecision
           }
         }
       }) => {
@@ -157,6 +160,8 @@ const CourtOfAppealCases = () => {
             : thisRow.appealState === CaseAppealState.RECEIVED
             ? { color: 'darkerBlue', text: formatMessage(tables.receivedTag) }
             : { color: 'darkerBlue', text: formatMessage(tables.completedTag) }
+
+        console.log(thisRow, thisRow.appealRulingDecision)
 
         return (
           <Tag variant={tagVariant.color} outlined disabled>
