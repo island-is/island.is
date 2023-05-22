@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { Text, Box, Select, Option } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useRouteLoaderData } from 'react-router-dom'
 
 import { m } from '../../../lib/messages'
 import { authAdminEnvironments } from '../../../shared/utils/environments'
@@ -11,6 +12,7 @@ import * as styles from './EnvironmentHeader.css'
 interface EnvironmentHeaderProps {
   title: string
   selectedEnvironment: AuthAdminEnvironment
+  availableEnvironments: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
   preHeader?: ReactNode
 }
@@ -26,13 +28,15 @@ const formatOption = (
 export const EnvironmentHeader = ({
   title,
   selectedEnvironment,
+  availableEnvironments,
   onChange,
   preHeader,
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
+
   const options = authAdminEnvironments.map((env) =>
     formatOption(
-      env === selectedEnvironment
+      availableEnvironments.includes(env)
         ? env
         : formatMessage(m.publishEnvironment, {
             environment: env,

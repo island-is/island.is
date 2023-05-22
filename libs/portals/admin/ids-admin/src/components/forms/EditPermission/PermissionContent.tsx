@@ -47,7 +47,9 @@ export const PermissionContent = () => {
                 errors?.[`${langKey}_displayName`],
               )}
             />
-            <Text variant="small">{formatMessage(m.displayNameInfo)}</Text>
+            <Text variant="small">
+              {formatMessage(m.displayNameDescription)}
+            </Text>
           </Stack>
           <Stack space={1}>
             <Input
