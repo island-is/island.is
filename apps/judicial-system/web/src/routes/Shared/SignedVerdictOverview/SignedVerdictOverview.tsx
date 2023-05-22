@@ -63,7 +63,6 @@ import {
   InstitutionType,
   User,
   UserRole,
-  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { errors } from '@island.is/judicial-system-web/messages'
 
@@ -87,44 +86,12 @@ import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import CaseFilesOverview from '../../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
 import ShareCase from './Components/ShareCase/ShareCase'
 import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 interface ModalControls {
   open: boolean
   title: string
   text: ReactNode
-}
-
-export const titleForCase = (
-  formatMessage: IntlShape['formatMessage'],
-  theCase: Case,
-) => {
-  const isTravelBan =
-    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    theCase.type === CaseType.TRAVEL_BAN
-
-  if (theCase.state === CaseState.REJECTED) {
-    if (isInvestigationCase(theCase.type)) {
-      return 'Kröfu um rannsóknarheimild hafnað'
-    } else {
-      return 'Kröfu hafnað'
-    }
-  }
-
-  if (theCase.state === CaseState.DISMISSED) {
-    return formatMessage(m.dismissedTitle)
-  }
-
-  if (theCase.isValidToDateInThePast) {
-    return formatMessage(m.validToDateInThePast, {
-      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
-    })
-  }
-
-  return isInvestigationCase(theCase.type)
-    ? formatMessage(m.investigationAccepted)
-    : formatMessage(m.restrictionActive, {
-        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
-      })
 }
 
 export const shouldHideNextButton = (workingCase: Case, user?: User) => {
