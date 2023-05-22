@@ -5,8 +5,8 @@ import {
 } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
 import {
-  buildCustomField,
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
   buildSection,
@@ -30,14 +30,11 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
       title: e.introScreen.sectionLabel,
 
       children: [
-        buildCustomField(
+        buildDescriptionField(
           {
             id: 'introScreen',
             title: e.introScreen.sectionTitle,
-            component: 'IntroScreen',
-          },
-          {
-            subTitle: e.introScreen.sectionDescription,
+            description: e.introScreen.sectionDescription,
           },
         ),
       ],
