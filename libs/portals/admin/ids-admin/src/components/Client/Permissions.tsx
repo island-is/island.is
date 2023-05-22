@@ -101,7 +101,8 @@ function Permissions({ allowedScopes }: PermissionsProps) {
     setPermissions([...permissions, ...selected])
   }
 
-  const hasData = permissions.length > 0
+  const hasData =
+    permissions.length > 0 || addedScopes.length > 0 || removedScopes.length > 0
 
   return (
     <ContentCard
@@ -110,10 +111,14 @@ function Permissions({ allowedScopes }: PermissionsProps) {
         br: <br />,
       })}
       isDirty={addedScopes.length > 0 || removedScopes.length > 0}
-      intent={ClientFormTypes.permissions}
+      intent={hasData ? ClientFormTypes.permissions : ClientFormTypes.none}
       shouldSupportMultiEnvironment={false}
     >
-      <Box marginBottom={5}>
+      <Box
+        marginBottom={hasData ? 5 : 0}
+        display="flex"
+        justifyContent="flexEnd"
+      >
         <Button size="small" onClick={handleModalOpen}>
           {formatMessage(m.permissionsAdd)}
         </Button>
