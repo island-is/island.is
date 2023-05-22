@@ -247,14 +247,22 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
 }) => {
   if (organizationPage.externalLinks?.length) {
     const mobileDisplay = showOnMobile ? 'flex' : 'none'
-    const mobileJustifyContent = showOnMobile ? 'center' : 'flexEnd'
     return (
       <Box
         display={[mobileDisplay, mobileDisplay, 'flex', 'flex']}
-        justifyContent={[mobileJustifyContent, mobileJustifyContent, 'flexEnd']}
+        justifyContent={[
+          'center',
+          showOnMobile ? 'flexEnd' : 'center',
+          'flexEnd',
+        ]}
         marginBottom={4}
       >
-        <Inline space={2}>
+        <Inline
+          flexWrap={
+            organizationPage.externalLinks?.length === 2 ? 'nowrap' : 'wrap'
+          }
+          space={2}
+        >
           {organizationPage.externalLinks.map((link, index) => {
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
@@ -282,7 +290,7 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
                   iconType="outline"
                   size="medium"
                 >
-                  <Box paddingY={2} paddingLeft={2}>
+                  <Box paddingY={[0, 2]} paddingLeft={[0, 2]}>
                     {link.text}
                   </Box>
                 </Button>
