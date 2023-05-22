@@ -103,13 +103,15 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   return (
     <ContentCard
       title={formatMessage(m.permissions)}
-      description={formatMessage(m.permissionsDescription)}
+      description={formatMessage(m.permissionsDescription, {
+        br: <br />,
+      })}
       isDirty={addedScopes.length > 0 || removedScopes.length > 0}
       intent={ClientFormTypes.permissions}
       shouldSupportMultiEnvironment={false}
     >
       <Box marginBottom={5}>
-        <Button onClick={handleModalOpen}>
+        <Button size="small" onClick={handleModalOpen}>
           {formatMessage(m.permissionsAdd)}
         </Button>
       </Box>
@@ -150,14 +152,18 @@ function Permissions({ allowedScopes }: PermissionsProps) {
                     {getTranslatedValue(item.description ?? [], locale)}
                   </T.Data>
                   <T.Data>
-                    <Button
-                      onClick={() => handleRemovedPermission(item)}
-                      aria-label={formatMessage(m.permissionsButtonLabelRemove)}
-                      icon="trash"
-                      variant="ghost"
-                      iconType="outline"
-                      size="small"
-                    />
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Button
+                        onClick={() => handleRemovedPermission(item)}
+                        aria-label={formatMessage(
+                          m.permissionsButtonLabelRemove,
+                        )}
+                        icon="trash"
+                        variant="ghost"
+                        iconType="outline"
+                        size="small"
+                      />
+                    </Box>
                   </T.Data>
                 </T.Row>
               ))}

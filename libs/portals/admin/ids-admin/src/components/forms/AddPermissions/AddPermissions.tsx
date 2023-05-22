@@ -39,7 +39,7 @@ function AddPermissions({
   const [selected, setSelected] = React.useState<
     Map<string, AuthAdminClientAllowedScope>
   >(new Map())
-  const params = useParams()
+  const { tenant: tenantId } = useParams() as { tenant: string }
 
   const { selectedEnvironment } = useContext(ClientContext)
 
@@ -47,7 +47,7 @@ function AddPermissions({
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        tenantId: params['tenant'] ?? '',
+        tenantId,
       },
     },
   })
@@ -76,7 +76,7 @@ function AddPermissions({
         ...(selectedEnvironment?.allowedScopes ?? []),
       ].find((added) => added.name === item.name)
     })
-    .concat(removedScopes)
+    .concat(removedScopes.filter(({ domainName }) => domainName === tenantId))
 
   // Add the selected scopes to the addedScopes array for
   const handleAdd = () => {

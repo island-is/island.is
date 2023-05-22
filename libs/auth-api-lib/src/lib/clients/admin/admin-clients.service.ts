@@ -717,7 +717,6 @@ export class AdminClientsService {
           [Op.in]: scopeNames,
         },
         enabled: true,
-        domainName: tenantId,
       },
     })
 

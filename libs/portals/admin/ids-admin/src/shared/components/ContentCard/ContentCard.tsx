@@ -28,7 +28,7 @@ import { ConditionalWrapper } from '../ConditionalWrapper'
 
 interface ContentCardProps {
   title: string
-  description?: string
+  description?: string | React.ReactNode
   isDirty?:
     | ((currentValue: FormData, originalValue: FormData) => boolean)
     | boolean
@@ -288,6 +288,7 @@ const ContentCard: FC<ContentCardProps> = ({
                 )}
                 <Button
                   disabled={!dirty}
+                  size="small"
                   type="submit"
                   name="intent"
                   value={intent}
