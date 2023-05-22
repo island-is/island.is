@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  BlueBox,
   CaseDates,
   FormContentContainer,
   FormContext,
@@ -38,13 +37,13 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
+import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
-import { AlertBanner } from '../../components/AlertBanner'
-import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
 import Conclusion from '../../components/Conclusion/Conclusion'
 import CaseFilesOverview from '../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
-import AppealConclusion from '../../components/Conclusion/AppealConclusion'
 
 type availableModals =
   | 'NoModal'
