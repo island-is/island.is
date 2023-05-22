@@ -2,6 +2,13 @@ import { Box, Text, Stack, ActionCard } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useGetPetitionLists } from './useGetPetitionLists'
 import format from 'date-fns/format'
+import { FC } from 'react'
+import { ConnectedComponent } from '@island.is/api/schema'
+import { useLocalization } from '../../../utils'
+
+interface GeneralPetitionProps {
+  slice: ConnectedComponent
+}
 
 const formatDate = (date: string) => {
   try {
@@ -11,14 +18,15 @@ const formatDate = (date: string) => {
   }
 }
 
-export const GeneralPetitionLists = () => {
-  const petitionLists = useGetPetitionLists()
+export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
   const router = useRouter()
+  const petitionLists = useGetPetitionLists()
+  const t = useLocalization(slice.json)
 
   return (
     <>
       <Box marginBottom={3}>
-        <Text variant="h4">{'Virkir undirskriftalistar'}</Text>
+        <Text variant="h4">{t('title', 'Virkir undirskriftalistar')}</Text>
       </Box>
       <Stack space={4}>
         {petitionLists?.data?.map((petition: any) => {
@@ -28,20 +36,16 @@ export const GeneralPetitionLists = () => {
               backgroundColor="white"
               heading={petition.title}
               text={
-                'Tímabil lista:' +
+                t('openTil', 'Virkur til:') +
                 ' ' +
-                formatDate(petition.openedDate) +
-                ' - ' +
                 formatDate(petition.closedDate)
               }
               cta={{
-                label: 'Skoða lista',
+                label: t('openTil', 'Skoða lista'),
                 variant: 'text',
                 icon: 'arrowForward',
                 onClick: () => {
-                  router
-                    .push('/undirskriftalistar/' + petition.id)
-                    .then(() => window.scrollTo(0, 0))
+                  router.push('/undirskriftalistar/' + petition.id)
                 },
               }}
             />

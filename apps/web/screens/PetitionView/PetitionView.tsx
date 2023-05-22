@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Breadcrumbs,
   GridColumn,
@@ -18,6 +18,10 @@ import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import NextLink from 'next/link'
 import { InstitutionPanel } from '@island.is/web/components'
 
+interface PetitionViewProps {
+  namespace?: Record<string, string>
+}
+
 const formatDate = (date: string) => {
   try {
     return format(new Date(date), 'dd.MM.yyyy')
@@ -26,11 +30,11 @@ const formatDate = (date: string) => {
   }
 }
 
-const PetitionView = (namespace) => {
+const PetitionView = ({ namespace }: PetitionViewProps) => {
   const n = useNamespace(namespace)
   const router = useRouter()
 
-  const { list, loading } = useGetPetitionList(router.query.slug as string)
+  const { list } = useGetPetitionList(router.query.slug as string)
   const listEndorsements = useGetPetitionListEndorsements(
     router.query.slug as string,
   )
@@ -39,22 +43,15 @@ const PetitionView = (namespace) => {
   const [totalPages, setTotalPages] = useState(0)
   const [pagePetitions, setPetitions] = useState(listEndorsements.data ?? [])
 
+  const relatedContentKey = 'undirskriftalistar-stofna-nyjan-lista'
+
   const getBaseUrl = () => {
-    const isLocalhost = window?.location.origin.includes('localhost')
-    const isDev = window?.location.origin.includes('beta.dev01.devland.is')
-    const isStaging = window?.location.origin.includes(
-      'beta.staging01.devland.is',
-    )
+    const baseUrl =
+      window.location.origin === 'http://localhost:4200'
+        ? 'http://localhost:4242'
+        : window.location.origin
 
-    const baseUrlForm = isLocalhost
-      ? 'http://localhost:4242/umsoknir'
-      : isDev
-      ? 'https://beta.dev01.devland.is/umsoknir'
-      : isStaging
-      ? 'https://beta.staging01.devland.is/umsoknir'
-      : 'https://island.is/umsoknir'
-
-    return baseUrlForm
+    return `${baseUrl}/umsoknir/undirskriftalisti/`
   }
 
   const handlePagination = (page, petitions) => {
@@ -88,17 +85,17 @@ const PetitionView = (namespace) => {
                       variant="text"
                       truncate
                     >
-                      {'Til baka'}
+                      {n('goBack', 'Til baka')}
                     </Button>
                   </Link>
                 </Box>
               </Stack>
               <InstitutionPanel
                 img={
-                  'https://images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png'
+                  'https://images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png?h=250'
                 }
-                institutionTitle={'Þjónustuaðili'}
-                institution={'Þjóðskrá'}
+                institutionTitle={n('institutionTitle', 'Þjónustuaðili')}
+                institution={n('institution', 'Þjóðskrá')}
                 locale={'is'}
                 linkProps={{
                   href: 'https://island.is',
@@ -112,18 +109,18 @@ const PetitionView = (namespace) => {
               >
                 <Stack space={[1, 1, 2]}>
                   <Text variant="eyebrow" as="h2">
-                    {'Tengt efni'}
+                    {n('relatedContent', 'Tengt efni')}
                   </Text>
                   <Link
-                    key={'undirskriftalistar-stofna-nyjan-lista'}
-                    href={'/undirskriftalistar-stofna-nyjan-lista'}
+                    key={relatedContentKey}
+                    href={`/${relatedContentKey}`}
                     underline="normal"
                   >
-                    <Text
-                      key={'undirskriftalistar-stofna-nyjan-lista'}
-                      as="span"
-                    >
-                      {'Undirskriftalistar – stofna nýjan lista'}
+                    <Text key={relatedContentKey} as="span">
+                      {n(
+                        'relatedContentTitle',
+                        'Undirskriftalistar – stofna nýjan lista',
+                      )}
                     </Text>
                   </Link>
                 </Stack>
@@ -170,7 +167,7 @@ const PetitionView = (namespace) => {
         <GridRow>
           <GridColumn span="5/12">
             <Text variant="h4" marginBottom={0}>
-              {n('listIsOpenTil', 'Tímabil lista:')}
+              {n('listOpenFromTil', 'Tímabil lista:')}
             </Text>
             <Text variant="default">
               {formatDate(list.openedDate) +
@@ -189,24 +186,22 @@ const PetitionView = (namespace) => {
             <Text variant="default">{listEndorsements.totalCount}</Text>
           </GridColumn>
         </GridRow>
-        <Box marginY={8}>
+        <Box marginTop={6} marginBottom={8}>
           <Button
             size="medium"
             variant="primary"
             icon="arrowForward"
             onClick={() =>
-              window?.open(
-                `${getBaseUrl()}/undirskriftalisti/${list.meta.applicationId}`,
-              )
+              window?.open(`${getBaseUrl()}/${list.meta.applicationId}`)
             }
           >
-            {n('putMyNameOnThatList', 'Setja nafn mitt á þennan lista')}
+            {n('putMyNameOnTheList', 'Setja nafn mitt á þennan lista')}
           </Button>
         </Box>
         <T.Table>
           <T.Head>
             <T.Row>
-              <T.HeadData>{n('signedDate', 'Dags skráð')}</T.HeadData>
+              <T.HeadData>{n('signedDate', 'Dagsetning')}</T.HeadData>
               <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
             </T.Row>
           </T.Head>
@@ -218,7 +213,7 @@ const PetitionView = (namespace) => {
                   <T.Data>
                     {petition.meta.fullName
                       ? petition.meta.fullName
-                      : 'Nafn ótilgreint'}
+                      : n('noName', 'Nafn ótilgreint')}
                   </T.Data>
                 </T.Row>
               )
