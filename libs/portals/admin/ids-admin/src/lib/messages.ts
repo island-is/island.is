@@ -749,7 +749,8 @@ export const m = defineMessages({
   },
   allowExplicitDelegationGrantDescription: {
     id: 'ap.ids-admin:allow-explicit-delegation-grant-description',
-    defaultMessage: '??',
+    defaultMessage:
+      'Should users be able to grant other users custom delegation for this permission.',
   },
   grantToPersonalRepresentatives: {
     id: 'ap.ids-admin:grant-to-personal-representatives',

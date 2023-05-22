@@ -1,12 +1,13 @@
 import React from 'react'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { Text, Box, Select, Tag } from '@island.is/island-ui/core'
+import { Text, Box, Select, Tag, Option } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../lib/messages'
 import { authAdminEnvironments } from '../../../shared/utils/environments'
 import * as styles from './EnvironmentHeader.css'
+import { ValueType } from 'react-select'
 
 interface EnvironmentHeaderProps {
   title: string
@@ -68,6 +69,7 @@ export const EnvironmentHeader = ({
           label={formatMessage(m.environment)}
           onChange={(opt) => {
             const { value } = opt as Option
+
             if (value) {
               onChange(value as AuthAdminEnvironment)
             }

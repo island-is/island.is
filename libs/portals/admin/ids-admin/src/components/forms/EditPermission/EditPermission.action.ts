@@ -163,6 +163,13 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
     environments.push(environment)
   }
 
+  const globalErrorResponse = {
+    errors: null,
+    data: null,
+    globalError: true,
+    intent,
+  }
+
   try {
     const patchScopeResult = await client.mutate<
       PatchAuthAdminScopeMutation,
@@ -180,9 +187,7 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
     })
 
     if (patchScopeResult.errors?.length) {
-      throw new Error(
-        patchScopeResult.errors.map(({ message }) => message).join('\n'),
-      )
+      return globalErrorResponse
     }
 
     return {
@@ -190,11 +195,6 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
       intent,
     }
   } catch (e) {
-    return {
-      errors: null,
-      data: null,
-      globalError: true,
-      intent,
-    }
+    return globalErrorResponse
   }
 }
