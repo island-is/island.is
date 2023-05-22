@@ -51,9 +51,9 @@ export const sectionDataProviders = buildExternalDataProvider({
       subTitle: '',
     }),
     // TODO: Uncomment when payment is no longer being throttled for stress testing work
-    //buildDataProviderItem({
-    //  provider: SyslumadurPaymentCatalogApi,
-    //  title: '',
-    //}),
+    buildDataProviderItem({
+      provider: SyslumadurPaymentCatalogApi,
+      title: '',
+    }),
   ],
 })
