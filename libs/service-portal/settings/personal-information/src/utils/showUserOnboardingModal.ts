@@ -35,7 +35,16 @@ export const hideModalWithQueryParam = (): boolean => {
       urlSearchParams.get('hide_onboarding_modal') ?? '',
     )
 
-    return queryParam === 'true'
+    const shouldHideModal = queryParam === 'true'
+
+    if (shouldHideModal) {
+      sessionStorage.setItem(
+        onboardingModalStorage.key,
+        onboardingModalStorage.value,
+      )
+    }
+
+    return shouldHideModal
   } catch {
     return false
   }

@@ -1,19 +1,20 @@
-import { Box, Input, Stack, Tabs } from '@island.is/island-ui/core'
+import { Box, Input, Stack, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { useState } from 'react'
 import { m } from '../../lib/messages'
-import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { AuthAdminClientTranslation } from './Client.loader'
 
 interface TranslationsProps {
   translations: AuthAdminClientTranslation[]
-  inSync?: boolean
 }
-const Translations = ({ translations, inSync = true }: TranslationsProps) => {
+
+const Translations = ({ translations }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
-  const [copyTranslations, setCopyTranslations] = useState(
+  const [copyTranslations, setCopyTranslations] = useEnvironmentState(
     ['is', 'en'].map((locale) => ({
       locale: locale,
       value: translations.find((t) => t.locale === locale)?.value || '',
@@ -32,7 +33,6 @@ const Translations = ({ translations, inSync = true }: TranslationsProps) => {
     <ContentCard
       title={formatMessage(m.translations)}
       intent={ClientFormTypes.translations}
-      inSync={inSync}
     >
       <Stack space={3}>
         <Tabs
@@ -55,6 +55,9 @@ const Translations = ({ translations, inSync = true }: TranslationsProps) => {
                     value={language.value}
                     label={formatMessage(m.displayName)}
                   />
+                  <Text variant={'small'} marginTop={1}>
+                    {formatMessage(m.displayNameDescription)}
+                  </Text>
                 </Box>
               ),
             }

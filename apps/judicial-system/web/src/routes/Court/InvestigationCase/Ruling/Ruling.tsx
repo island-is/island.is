@@ -149,9 +149,6 @@ const Ruling = () => {
                   (workingCase.registrar !== null &&
                     workingCase.registrar?.id === user?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>

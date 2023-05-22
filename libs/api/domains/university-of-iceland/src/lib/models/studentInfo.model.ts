@@ -15,6 +15,9 @@ export class StudentDescription {
 
   @Field(() => String)
   footer!: string
+
+  @Field(() => String, { nullable: true })
+  unconfirmedData?: string
 }
 
 @ObjectType('UniversityOfIcelandStudent')

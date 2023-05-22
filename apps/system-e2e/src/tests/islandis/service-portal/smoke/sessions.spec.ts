@@ -1,11 +1,11 @@
 import { test, expect, BrowserContext } from '@playwright/test'
 import { format } from 'kennitala'
 
-import { env, urls } from '../../../../support/urls'
+import { env, icelandicAndNoPopup, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
-const sessionHistoryUrl = '/minarsidur/adgangsstyring/notkun'
+const sessionHistoryUrl = `/minarsidur/adgangsstyring/notkun?${icelandicAndNoPopup}`
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -65,7 +65,7 @@ test.describe('Service portal, in session history', () => {
     const testCompanyName =
       env === 'staging' ? 'Prófunarfélag GG og HEB' : 'ARTIC ehf.'
     const page = await context.newPage()
-    await page.goto(homeUrl)
+    await page.goto(`${homeUrl}?${icelandicAndNoPopup}`)
     await page
       .getByRole('button', { name: 'Útskráning og aðgangsstillingar' })
       .click()
