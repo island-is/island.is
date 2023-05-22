@@ -85,3 +85,9 @@ export enum CaseStatuses {
   inProgress = 'Niðurstöður í vinnslu',
   published = 'Niðurstöður birtar',
 }
+
+export enum SubscriptionTypes {
+  AllChanges = 'AllChanges',
+  StatusChanges = 'StatusChanges',
+  OnlyNew = 'OnlyNew',
+}

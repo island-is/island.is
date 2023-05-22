@@ -1,6 +1,6 @@
 import { toast } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
-import { Area, SubscriptionType } from '../../types/enums'
+import { Area, SubscriptionTypes } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
@@ -75,10 +75,10 @@ export const UserSubscriptions = ({ allcases, types }: SubProps) => {
         subscribedToAllType,
       } = userSubscriptions
       if (subscribedToAll) {
-        if (subscribedToAllType === SubscriptionType.OnlyNew) {
+        if (subscribedToAllType === SubscriptionTypes.OnlyNew) {
           setDontShowNew(false)
           setDontShowChanges(true)
-        } else if (subscribedToAllType === SubscriptionType.AllChanges) {
+        } else if (subscribedToAllType === SubscriptionTypes.AllChanges) {
           setDontShowChanges(false)
           setDontShowNew(true)
         }

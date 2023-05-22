@@ -1,6 +1,6 @@
 import { toast } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { Area, SubscriptionType } from '../../types/enums'
+import { Area, SubscriptionTypes } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
@@ -97,8 +97,8 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
         : preSubscribedToAll
     const _subscribedToAllType = _subscribedToAll
       ? subSubscribedToAllNewObj.checked
-        ? SubscriptionType.OnlyNew
-        : SubscriptionType.AllChanges
+        ? SubscriptionTypes.OnlyNew
+        : SubscriptionTypes.AllChanges
       : preSubscribedToAllType
 
     const objToSend = {
