@@ -4,8 +4,8 @@ import { Field, InputType } from '@nestjs/graphql'
 export class PatchConsentInput {
   @Field(() => String)
   clientId!: string
-  @Field(() => [String])
-  consentedScopes!: string[]
-  @Field(() => [String])
-  rejectedScopes!: string[]
+  @Field(() => String, { nullable: true })
+  consentedScope?: string
+  @Field(() => String, { nullable: true })
+  rejectedScope?: string
 }

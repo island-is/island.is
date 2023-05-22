@@ -17,6 +17,17 @@
         "passWithNoTests": true
       },
       "outputs": ["coverage/libs/clients/regulations-admin"]
+    },
+    "schemas/openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "outputPath": "libs/clients/regulations-admin/gen",
+        "commands": [
+          "nx run regulations-admin-backend:schemas/build-openapi $NX_OPTIONS",
+          "yarn openapi-generator -o libs/clients/regulations-admin/gen/fetch -i apps/services/regulations-admin-backend/src/openapi.yaml"
+        ],
+        "parallel": false
+      }
     }
   },
   "tags": ["lib:client", "scope:client"]
