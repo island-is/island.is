@@ -104,9 +104,9 @@ const NavItemContent: FC<Props> = ({
               </Box>
             ) : (
               <Icon
-                type={active ? 'filled' : 'outline'}
+                type={'outline'}
                 icon={icon.icon}
-                color={active ? 'blue400' : 'blue600'}
+                color={'blue600'}
                 size="medium"
                 className={styles.icon}
               />
