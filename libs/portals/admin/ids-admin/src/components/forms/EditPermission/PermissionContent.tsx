@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
 import { Box, Input, Stack, Tabs, Text } from '@island.is/island-ui/core'
+import { AuthAdminTranslatedValue } from '@island.is/api/schema'
 
 import { m } from '../../../lib/messages'
 import { FormCard } from '../../../shared/components/FormCard'
@@ -10,15 +11,43 @@ import { usePermission } from '../../Permission/PermissionContext'
 import { PermissionFormTypes } from './EditPermission.action'
 import { Languages } from '../../../shared/utils/languages'
 import { useErrorFormatMessage } from '../../../shared/hooks/useFormatErrorMessage'
+import { useEnvironmentState } from '../../../shared/hooks/useEnvironmentState'
 
 type Locales = Languages.IS | Languages.EN
 type ErrorKeys = `${Locales}_description` | `${Locales}_displayName`
+
+const languages = Object.values(Languages)
+
+/**
+ * Creates a languages state object for the translated values
+ *
+ * @example result
+ * {
+ *   is: 'Íslenska',
+ *   en: 'English'
+ * }
+ */
+function createLanguagesState(value: AuthAdminTranslatedValue[]) {
+  return languages.reduce((previousValue, currentValue) => {
+    if (previousValue) {
+      previousValue[currentValue] = getTranslatedValue(value, currentValue)
+    }
+
+    return previousValue
+  }, {} as { [Key in Languages]: string })
+}
 
 export const PermissionContent = () => {
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
   const { selectedPermission, actionData, permission } = usePermission()
   const [activeTab, setActiveTab] = useState<Languages>(Languages.IS)
+  const [displayNames, setDisplayNames] = useEnvironmentState(
+    createLanguagesState(selectedPermission.displayName),
+  )
+  const [descriptions, setDescriptions] = useEnvironmentState(
+    createLanguagesState(selectedPermission.description),
+  )
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -38,10 +67,13 @@ export const PermissionContent = () => {
               type="text"
               size="sm"
               name={`${langKey}_displayName`}
-              defaultValue={getTranslatedValue(
-                selectedPermission.displayName,
-                langKey,
-              )}
+              onChange={(e) => {
+                setDisplayNames({
+                  ...displayNames,
+                  [langKey]: e.target.value,
+                })
+              }}
+              value={displayNames[langKey]}
               label={formatMessage(m.displayName)}
               errorMessage={formatErrorMessage(
                 errors?.[`${langKey}_displayName`],
@@ -57,10 +89,13 @@ export const PermissionContent = () => {
               type="text"
               size="sm"
               name={`${langKey}_description`}
-              defaultValue={getTranslatedValue(
-                selectedPermission.description,
-                langKey,
-              )}
+              onChange={(e) => {
+                setDescriptions({
+                  ...descriptions,
+                  [langKey]: e.target.value,
+                })
+              }}
+              value={descriptions[langKey]}
               label={formatMessage(m.description)}
               errorMessage={formatErrorMessage(
                 errors?.[`${langKey}_description`],
@@ -88,7 +123,7 @@ export const PermissionContent = () => {
         onChange={() =>
           setActiveTab(activeTab === Languages.IS ? Languages.EN : Languages.IS)
         }
-        tabs={Object.values(Languages).map(renderTabs)}
+        tabs={languages.map(renderTabs)}
       />
     </FormCard>
   )

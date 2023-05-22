@@ -14,6 +14,10 @@ interface EnvironmentHeaderProps {
   availableEnvironments: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
   preHeader?: ReactNode
+  /**
+   * TODO - Remove this prop when publishing is enabled in permissions
+   */
+  allowPublishing?: boolean
 }
 
 const formatOption = (
@@ -30,12 +34,13 @@ export const EnvironmentHeader = ({
   availableEnvironments,
   onChange,
   preHeader,
+  allowPublishing = true,
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
 
   const options = authAdminEnvironments.map((env) =>
     formatOption(
-      availableEnvironments.includes(env)
+      availableEnvironments.includes(env) || !allowPublishing
         ? env
         : formatMessage(m.publishEnvironment, {
             environment: env,
