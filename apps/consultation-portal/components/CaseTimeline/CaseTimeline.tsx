@@ -7,13 +7,13 @@ import {
   FormStepperThemes,
   Stack,
 } from '@island.is/island-ui/core'
+import { MapCaseStatuses } from '../../types/enums'
 
 interface CaseTimelineProps {
   chosenCase: Case
 }
 
 const Sections = ['Til umsagnar', 'Niðurstöður í vinnslu', 'Niðurstöður birtar']
-const SectionsRenamed = ['Til umsagnar', 'Í vinnslu', 'Lokið']
 
 export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
   const sectionItems = Sections.map((item, index) => (
@@ -27,7 +27,7 @@ export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
           ? false
           : true
       }
-      section={SectionsRenamed[index]}
+      section={MapCaseStatuses[Sections[index]]}
       theme={FormStepperThemes.PURPLE}
       sectionIndex={index}
       subSections={[

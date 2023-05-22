@@ -86,6 +86,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:cancel',
     defaultMessage: 'Cancel',
   },
+  close: {
+    id: 'ap.ids-admin:close',
+    defaultMessage: 'Close',
+  },
   add: {
     id: 'ap.ids-admin:add',
     defaultMessage: 'Add',
@@ -98,9 +102,22 @@ export const m = defineMessages({
     id: 'ap.ids-admin:display-name',
     defaultMessage: 'Name',
   },
+  displayNameDescription: {
+    id: 'ap.ids-admin:display-name',
+    defaultMessage: 'Users see this when they sign in, and manage consents.',
+  },
+  description: {
+    id: 'ap.ids-admin:description',
+    defaultMessage: 'Description',
+  },
+  descriptionInfo: {
+    id: 'ap.ids-admin:description-info',
+    defaultMessage:
+      'Users see this when they sign in, and manage consents. This should explain in concise and clear terms which resources or actions this permission gives access to.',
+  },
   clientId: {
     id: 'ap.ids-admin:clientId',
-    defaultMessage: 'Application ID',
+    defaultMessage: 'Client ID',
   },
   chooseEnvironment: {
     id: 'ap.ids-admin:choose-environment',
@@ -114,12 +131,24 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-display-name',
     defaultMessage: 'Name is required.',
   },
+  errorDescription: {
+    id: 'ap.ids-admin:error-description',
+    defaultMessage: 'Description is required.',
+  },
   errorClientId: {
     id: 'ap.ids-admin:error-client-id',
     defaultMessage: 'Application ID is required.',
   },
   errorClientIdRegex: {
     id: 'ap.ids-admin:error-client-id-regex',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+  },
+  errorScopeId: {
+    id: 'ap.ids-admin:error-scope-id',
+    defaultMessage: 'Scope ID is required.',
+  },
+  errorScopeIdRegex: {
+    id: 'ap.ids-admin:error-scope-id-regex',
     defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
   },
   errorEnvironment: {
@@ -161,6 +190,10 @@ export const m = defineMessages({
     defaultMessage:
       'CLIs, daemons, or services running on your backend. E.g. APIs, CRON jobs or shell script.',
   },
+  spaClientsTitle: {
+    id: 'ap.ids-admin:spa-clients-title',
+    defaultMessage: 'Single page application',
+  },
   createClient: {
     id: 'ap.ids-admin:create-client',
     defaultMessage: 'Create application',
@@ -192,7 +225,7 @@ export const m = defineMessages({
   inactivityExpirationDescription: {
     id: 'ap.ids-admin:inactivity-expiration-description',
     defaultMessage:
-      'When enabled, a refresh token will expire based on a specified inactivity lifetime, after which the token can no longer be used.',
+      'When enabled, refresh tokens will expire after a specified inactivity lifetime. This can be used to end inactive sessions while allowing longer active sessions.',
   },
   inactivityLifetime: {
     id: 'ap.ids-admin:inactivity-lifetime',
@@ -201,7 +234,7 @@ export const m = defineMessages({
   inactivityLifetimeDescription: {
     id: 'ap.ids-admin:inactivity-lifetime-description',
     defaultMessage:
-      'Sets the absolute lifetime of a refresh token (in seconds).',
+      'Sets the inactivity lifetime of a refresh token (in seconds).',
   },
   saveSettings: {
     id: 'ap.ids-admin:save-settings',
@@ -213,49 +246,58 @@ export const m = defineMessages({
   },
   clientSecret: {
     id: 'ap.ids-admin:client-secret',
-    defaultMessage: 'Application secret',
-  },
-  clientSecretDescription: {
-    id: 'ap.ids-admin:client-secret-description',
-    defaultMessage: 'The application Secret is not base64 encoded.',
+    defaultMessage: 'Client Secret',
   },
   clientSecretLegacy: {
     id: 'ap.ids-admin:client-secret-legacy',
+    defaultMessage: 'Client Secret (Legacy)',
+  },
+  clientSecretDescription: {
+    id: 'ap.ids-admin:client-secret-description',
+    defaultMessage: 'The client secret is not base64 encoded.',
+  },
+  clientSecretDescriptionLegacy: {
+    id: 'ap.ids-admin:client-secret-description-legacy',
     defaultMessage: 'This is a legacy secret which cannot be viewed.',
   },
   otherEndpoints: {
     id: 'ap.ids-admin:other-endpoints',
     defaultMessage: 'Other endpoints',
   },
+  otherEndpointsDescription: {
+    id: 'ap.ids-admin:other-endpoints-description',
+    defaultMessage:
+      'Some frameworks infer these using the Issuer above and its OpenID configuration. For other frameworks you may need to manually copy these.',
+  },
   idsUrl: {
     id: 'ap.ids-admin:ids-url',
-    defaultMessage: 'Issuer Url',
+    defaultMessage: 'Issuer',
   },
   callbackUrl: {
     id: 'ap.ids-admin:callback-url',
-    defaultMessage: 'Callback Url',
+    defaultMessage: 'Callback URL',
   },
   callBackUrlPlaceholder: {
     id: 'ap.ids-admin:callback-url-placeholder',
-    defaultMessage: 'List callback URLs, comma seperated',
+    defaultMessage: 'List callback URLs',
   },
   callBackUrlDescription: {
     id: 'ap.ids-admin:callback-url-description',
     defaultMessage:
-      'After the user authenticates we will only call back to any of these URLs. You can specify multiple valid URLs by comma-separating them (typically to handle different environments like QA or testing). Make sure to specify the protocol (https://) otherwise the callback may fail in some cases. With the exception of custom URI schemes for native clients, all callbacks should use protocol https://. You can use Organization URL parameters in these URLs.',
+      'After the user authenticates we will only call back to one of these URLs, which should receive and handle the authentication. You can specify multiple valid URLs in different lines. The URLs should include the protocol, i.e. "https://" for websites. You can use the star symbol as a wildcard for subdomains (*.island.is) on development and staging.',
   },
   logoutUrl: {
     id: 'ap.ids-admin:logout-url',
-    defaultMessage: 'Logout Url',
+    defaultMessage: 'Logout URL',
   },
   logoutUrlPlaceholder: {
     id: 'ap.ids-admin:logout-url-placeholder',
-    defaultMessage: 'List logout URLs, comma seperated',
+    defaultMessage: 'List logout URLs',
   },
   logoutUrlDescription: {
     id: 'ap.ids-admin:logout-url-description',
     defaultMessage:
-      'A set of URLs that are valid to redirect to after logout from ísland.is authentication service. After a user logs out from ísland.is you can redirect them with the post_logout_redirect_uri query parameter. The URL that you use in post_logout_redirect_uri must be listed here. You can specify multiple valid URLs by comma-separating them.',
+      'A set of URLs that are valid to redirect to after logging out. Specify one of these using the "post_logout_redirect_uri" query parameter and the user will be redirected to it. you can specify multiple URLs in different lines.',
   },
   cors: {
     id: 'ap.ids-admin:cors',
@@ -272,7 +314,7 @@ export const m = defineMessages({
   },
   translations: {
     id: 'ap.ids-admin:translations',
-    defaultMessage: 'Translations',
+    defaultMessage: 'Content',
   },
   environment: {
     id: 'ap.ids-admin:environment',
@@ -288,7 +330,7 @@ export const m = defineMessages({
   },
   lifetime: {
     id: 'ap.ids-admin:life-time',
-    defaultMessage: 'Refresh token life cycle',
+    defaultMessage: 'Refresh token lifecycle',
   },
   lifeTimeDescription: {
     id: 'ap.ids-admin:life-time-description',
@@ -448,6 +490,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-claims',
     defaultMessage: 'Invalid claim format',
   },
+  hidePassword: {
+    id: 'ap.ids-admin:hide-password',
+    defaultMessage: 'Hide password',
+  },
+  showPassword: {
+    id: 'ap.ids-admin:show-password',
+    defaultMessage: 'Show password',
+  },
+  copy: {
+    id: 'ap.ids-admin:copy',
+    defaultMessage: 'Copy value',
+  },
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
@@ -508,7 +562,7 @@ export const m = defineMessages({
   },
   notInSyncAcrossAllEnvironments: {
     id: 'ap.ids-admin:not-in-sync-across-all-environments',
-    defaultMessage: 'SyncSettings are different in some environments',
+    defaultMessage: 'Settings are different in some environments',
   },
   synced: {
     id: 'ap.ids-admin:synced',
@@ -517,6 +571,10 @@ export const m = defineMessages({
   outOfSync: {
     id: 'ap.ids-admin:out-of-sync',
     defaultMessage: 'Out of sync',
+  },
+  syncStatus: {
+    id: 'ap.ids-admin:sync-status',
+    defaultMessage: 'Sync status',
   },
   publishEnvironment: {
     id: 'ap.ids-admin:publish-environment',
@@ -542,5 +600,182 @@ export const m = defineMessages({
   closeModal: {
     id: 'ap.ids-admin:close-modal',
     defaultMessage: 'Close dialog',
+  },
+  listOfPermissions: {
+    id: 'ap.ids-admin:list-of-permissions',
+    defaultMessage: 'List of permissions',
+  },
+  permissionsManagement: {
+    id: 'ap.ids-admin:permissions-management',
+    defaultMessage: 'Management',
+  },
+  createPermission: {
+    id: 'ap.ids-admin:create-permission',
+    defaultMessage: 'Create permission',
+  },
+  permissionId: {
+    id: 'ap.ids-admin:permission-id',
+    defaultMessage: 'Permission ID',
+  },
+  permissionDescription: {
+    id: 'ap.ids-admin:permission-description',
+    defaultMessage: 'Description',
+  },
+  permissionDescriptionInfo: {
+    id: 'ap.ids-admin:permission-description-info',
+    defaultMessage: 'Users see this when they sign in, and manage consents.',
+  },
+  permissionDisplayNameInfo: {
+    id: 'ap.ids-admin:permission-display-name-info',
+    defaultMessage: 'Displayed on the login screen of your app',
+  },
+  permissionEmptyHeading: {
+    id: 'ap.ids-admin:permission-empty-heading',
+    defaultMessage: 'No permission created',
+  },
+  permissionEmptyDescription: {
+    id: 'ap.ids-admin:permission-empty-description',
+    defaultMessage:
+      'You can create an permission by clicking on Create permission.',
+  },
+  permissionListDescription: {
+    id: 'ap.ids-admin:permission-list-description',
+    defaultMessage: 'Here you can view and create permissions.',
+  },
+  permissionsSearchPlaceholder: {
+    id: 'ap.ids-admin:permissions-search-placeholder',
+    defaultMessage: 'Search by name or ID',
+  },
+  dangerZone: {
+    id: 'ap.ids-admin:danger-zone',
+    defaultMessage: 'Danger zone',
+  },
+  rotateSecret: {
+    id: 'ap.ids-admin:rotate-secret',
+    defaultMessage: 'Rotate secret',
+  },
+  rotateSecretActionCardLabel: {
+    id: 'ap.ids-admin:rotate-secret-action-card-label',
+    defaultMessage:
+      'All authorized apps will need to be updated with the new client secret.',
+  },
+  rotateSecretDescription: {
+    id: 'ap.ids-admin:rotate-secret-description',
+    defaultMessage: `This will generate a new secret for your application. You should revoke existing secret(s) after you have deployed your application with the new secret.{br}{br}If your existing secret(s) have been compromised it is recommended to revoke them immediately.`,
+  },
+  rotateSecretInfoAlert: {
+    id: 'ap.ids-admin:rotate-secret-alert',
+    defaultMessage:
+      'Authentications will stop working for your application until you have deployed the new secret.',
+  },
+  rotate: {
+    id: 'ap.ids-admin:rotate',
+    defaultMessage: 'Rotate',
+  },
+  generate: {
+    id: 'ap.ids-admin:generate',
+    defaultMessage: 'Generate',
+  },
+  revoke: {
+    id: 'ap.ids-admin:revoke',
+    defaultMessage: 'Revoke',
+  },
+  revokeExistingSecrets: {
+    id: 'ap.ids-admin:revoke-existing-secrets',
+    defaultMessage: 'Revoke existing secret(s) immediately.',
+  },
+  newSecret: {
+    id: 'ap.ids-admin:new-secret',
+    defaultMessage: 'New secret',
+  },
+  rotatedSecretDescription: {
+    id: 'ap.ids-admin:rotated-secret-description',
+    defaultMessage:
+      'Please update the application configuration with the following secret.',
+  },
+  revokeSecrets: {
+    id: 'ap.ids-admin:revoke-secrets',
+    defaultMessage: 'Revoke old secret(s)',
+  },
+  revokeSecretsDescription: {
+    id: 'ap.ids-admin:revoke-secrets-description',
+    defaultMessage:
+      'This will revoke all secrets except the current active secret. Please make sure that they are not in use anymore.',
+  },
+  successRevokingSecrets: {
+    id: 'ap.ids-admin:success-revoking-secrets',
+    defaultMessage: 'Successfully revoked old secret(s)',
+  },
+  multipleSecrets: {
+    id: 'ap.ids-admin:multiple-secrets',
+    defaultMessage: 'Multiple secrets',
+  },
+  multipleSecretsDescription: {
+    id: 'ap.ids-admin:multiple-secrets-description',
+    defaultMessage: 'There are one or more old secrets which are still active.',
+  },
+  content: {
+    id: 'ap.ids-admin:content',
+    defaultMessage: 'Content',
+  },
+  icelandic: {
+    id: 'ap.ids-admin:icelandic',
+    defaultMessage: 'Icelandic',
+  },
+  english: {
+    id: 'ap.ids-admin:english',
+    defaultMessage: 'English',
+  },
+  isAccessControlled: {
+    id: 'ap.ids-admin:is-access-controlled',
+    defaultMessage: 'Specific national ids',
+  },
+  isAccessControlledDescription: {
+    id: 'ap.ids-admin:is-access-controlled-description',
+    defaultMessage: 'Only allow specific national ids',
+  },
+  grantToAuthenticatedUser: {
+    id: 'ap.ids-admin:grant-to-authenticated-user',
+    defaultMessage: 'Authenticated user',
+  },
+  grantToAuthenticatedUserDescription: {
+    id: 'ap.ids-admin:grant-to-authenticated-user-description',
+    defaultMessage: 'Should the authenticated user get this scope',
+  },
+  grantToProcuringHolders: {
+    id: 'ap.ids-admin:grant-to-procuring-holders',
+    defaultMessage: 'Companies',
+  },
+  grantToProcuringHoldersDescription: {
+    id: 'ap.ids-admin:grant-to-procuring-holders-description',
+    defaultMessage:
+      'Should procuring holders automatically get this scope for their organisations',
+  },
+  grantToLegalGuardians: {
+    id: 'ap.ids-admin:grant-to-legal-guardians',
+    defaultMessage: 'Legal guardians',
+  },
+  grantToLegalGuardiansDescription: {
+    id: 'ap.ids-admin:grant-to-legal-guardians-description',
+    defaultMessage:
+      'Should legal guardians automatically get this permission for their wards',
+  },
+  allowExplicitDelegationGrant: {
+    id: 'ap.ids-admin:allow-explicit-delegation-grant',
+    defaultMessage: 'Custom delegations',
+  },
+  allowExplicitDelegationGrantDescription: {
+    id: 'ap.ids-admin:allow-explicit-delegation-grant-description',
+    defaultMessage:
+      'Should users be able to grant other users custom delegation for this permission.',
+  },
+  grantToPersonalRepresentatives: {
+    id: 'ap.ids-admin:grant-to-personal-representatives',
+    defaultMessage: 'Personal representatives',
+  },
+  grantToPersonalRepresentativesDescription: {
+    id: 'ap.ids-admin:grant-to-personal-representatives-description',
+    defaultMessage:
+      'Should personal representatives automatically get this scope for their clients',
   },
 })

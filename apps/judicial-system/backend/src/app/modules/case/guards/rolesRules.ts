@@ -97,12 +97,6 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'appealRulingDecision',
 ]
 
-const staffFields: (keyof UpdateCaseDto)[] = [
-  'validToDate',
-  'isolationToDate',
-  'caseModifiedExplanation',
-]
-
 const limitedAccessFields: (keyof UpdateCaseDto)[] = ['defendantStatementDate']
 
 // Allows prosecutors to update a specific set of fields
@@ -138,15 +132,6 @@ export const assistantUpdateRule: RolesRule = {
   role: UserRole.ASSISTANT,
   type: RulesType.FIELD,
   dtoFields: courtFields,
-}
-
-// Allows staff to update a specific set of fields
-// In practice, only prison admins will be able to update these fields,
-// as write access is blocked for other staff roles
-export const staffUpdateRule: RolesRule = {
-  role: UserRole.STAFF,
-  type: RulesType.FIELD,
-  dtoFields: staffFields,
 }
 
 // Allows defenders to update a specific set of fields

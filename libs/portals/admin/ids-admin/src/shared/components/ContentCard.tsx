@@ -1,18 +1,18 @@
 import React, { FC, useContext, useEffect, useRef, useState } from 'react'
+import isEqual from 'lodash/isEqual'
+import { Form, useActionData } from 'react-router-dom'
+
 import {
   Box,
   Button,
   Checkbox,
-  Divider,
-  DropdownMenu,
-  Icon,
-  LoadingDots,
   Text,
   toast,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { Form, useActionData } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
+import { useSubmitting } from '@island.is/react-spa/shared'
+
 import { m } from '../../lib/messages'
 import {
   ClientFormTypes,
@@ -20,17 +20,14 @@ import {
   getIntentWithSyncCheck,
   schema,
 } from '../../components/forms/EditApplication/EditApplication.action'
-import * as styles from './ContentCard.css'
 import { ClientContext } from '../context/ClientContext'
-import { useSubmitting } from '@island.is/react-spa/shared'
-import isEqual from 'lodash/isEqual'
 import { ConditionalWrapper } from './ConditionalWrapper'
+import { DropdownSync } from './DropdownSync/DropdownSync'
 
 interface ContentCardProps {
   title: string
   description?: string
   isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
-  inSync?: boolean
   intent?: ClientFormTypes
   /**
    * The children will be wrapped in an accordion when a label is provided to the component.
@@ -57,9 +54,8 @@ const ContentCard: FC<ContentCardProps> = ({
   accordionLabel = false,
 }) => {
   const { formatMessage } = useLocale()
-  const [allEnvironments, setAllEnvironments] = useState<boolean>(false)
   const originalFormData = useRef<FormData>()
-  const [dirty, setDirty] = useState<boolean>(false)
+  const [dirty, setDirty] = useState(false)
   const ref = useRef<HTMLFormElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
 
@@ -72,19 +68,17 @@ const ContentCard: FC<ContentCardProps> = ({
   const actionDataRef = useRef(actionData?.data)
 
   useEffect(() => {
-    if (actionData?.intent === intent) {
-      if (!isEqual(actionData?.data, actionDataRef?.current)) {
-        if (actionData?.data) {
-          actionDataRef.current = actionData?.data
-          originalFormData.current = new FormData(
-            ref.current as HTMLFormElement,
-          )
-          onChange()
-          toast.success(formatMessage(m.successfullySaved))
-        }
-        if (actionData?.globalError) {
-          toast.error(formatMessage(m.globalErrorMessage))
-        }
+    if (
+      actionData?.intent === intent &&
+      !isEqual(actionData?.data, actionDataRef?.current)
+    ) {
+      if (actionData?.data) {
+        actionDataRef.current = actionData?.data
+        originalFormData.current = new FormData(ref.current as HTMLFormElement)
+        onChange()
+        toast.success(formatMessage(m.successfullySaved))
+      } else if (actionData?.globalError) {
+        toast.error(formatMessage(m.globalErrorMessage))
       }
     }
   }, [actionData, intent])
@@ -97,11 +91,7 @@ const ContentCard: FC<ContentCardProps> = ({
   } = useContext(ClientContext)
 
   const checkIfLoadingForIntent = () => {
-    if (intent === ClientFormTypes.none) {
-      return false
-    }
-
-    if (formData === undefined) {
+    if (intent === ClientFormTypes.none || !formData) {
       return false
     }
 
@@ -113,6 +103,7 @@ const ContentCard: FC<ContentCardProps> = ({
   const inSync = checkIfInSync(
     variablesToCheckSync?.[intent as keyof typeof ClientFormTypes] ?? [],
   )
+  const [allEnvironments, setAllEnvironments] = useState(inSync)
 
   // On change, check if the form has changed, use custom validation if provided
   const onChange = () => {
@@ -138,8 +129,7 @@ const ContentCard: FC<ContentCardProps> = ({
     <Form ref={ref} onChange={onChange} method="post">
       <Box
         borderRadius="large"
-        paddingY={2}
-        paddingX={4}
+        padding={[3, 4]}
         display="flex"
         flexDirection="column"
         justifyContent="spaceBetween"
@@ -155,7 +145,6 @@ const ContentCard: FC<ContentCardProps> = ({
             rowGap={2}
             justifyContent="spaceBetween"
             alignItems={['flexStart', 'center']}
-            marginTop={2}
             marginBottom={4}
           >
             <Text ref={titleRef} variant="h3">
@@ -163,79 +152,11 @@ const ContentCard: FC<ContentCardProps> = ({
             </Text>
             {intent !== 'none' && (
               <Box>
-                <DropdownMenu
-                  title={
-                    inSync
-                      ? formatMessage(m.synced)
-                      : formatMessage(m.outOfSync)
-                  }
-                  icon="chevronDown"
-                  menuClassName={styles.menu}
-                  items={[
-                    {
-                      title: '',
-                      render: () => (
-                        <div key={`${intent}-syncText`}>
-                          <Box
-                            justifyContent="center"
-                            alignItems="center"
-                            display="flex"
-                            columnGap={1}
-                            className={styles.menuItem}
-                          >
-                            <Icon
-                              icon={inSync ? 'checkmark' : 'warning'}
-                              color={inSync ? 'blue400' : 'red400'}
-                              size="small"
-                              type="outline"
-                            />
-                            <Text variant="small" color="blue400">
-                              {inSync
-                                ? formatMessage(m.syncedAcrossAllEnvironments)
-                                : formatMessage(
-                                    m.notInSyncAcrossAllEnvironments,
-                                  )}
-                            </Text>
-                          </Box>
-                          <Divider />
-                        </div>
-                      ),
-                    },
-                    ...(inSync || dirty
-                      ? []
-                      : [
-                          {
-                            title: '',
-                            render: () => (
-                              <Box
-                                key={`${intent}-syncButton`}
-                                display="flex"
-                                justifyContent="center"
-                                padding={2}
-                              >
-                                {isLoadingForIntent ? (
-                                  <LoadingDots large />
-                                ) : (
-                                  <button
-                                    className={styles.syncButton}
-                                    type="submit"
-                                    value={`${intent}-sync`}
-                                    name="intent"
-                                  >
-                                    <Text
-                                      variant="small"
-                                      fontWeight="semiBold"
-                                      color={'blue400'}
-                                    >
-                                      {formatMessage(m.syncSettings)}
-                                    </Text>
-                                  </button>
-                                )}
-                              </Box>
-                            ),
-                          },
-                        ]),
-                  ]}
+                <DropdownSync
+                  intent={intent}
+                  isInSync={inSync}
+                  isDirty={dirty}
+                  isLoading={isLoadingForIntent}
                 />
               </Box>
             )}
@@ -263,8 +184,10 @@ const ContentCard: FC<ContentCardProps> = ({
               >
                 <Checkbox
                   label={formatMessage(m.saveForAllEnvironments)}
-                  value={`${allEnvironments}`}
+                  checked={allEnvironments}
+                  value="true"
                   disabled={!dirty}
+                  id={`${intent}#allEnvironments`}
                   name="allEnvironments"
                   onChange={() => setAllEnvironments(!allEnvironments)}
                 />
