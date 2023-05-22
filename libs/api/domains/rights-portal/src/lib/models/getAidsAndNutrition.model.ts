@@ -38,6 +38,9 @@ export class AidOrNutrition {
   validUntil?: Date
 
   @Field({ nullable: true })
+  allowed12MonthPeriod?: number
+
+  @Field({ nullable: true })
   nextAllowedMonth?: string
 
   @Field()

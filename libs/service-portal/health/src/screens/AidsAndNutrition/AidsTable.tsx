@@ -64,6 +64,7 @@ const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
             },
             {
               title: formatMessage(messages.availableEvery12Months),
+              value: rowItem.allowed12MonthPeriod ?? '',
             },
             {
               title: formatMessage(messages.extraDetail),
