@@ -1,0 +1,89 @@
+import {
+  Box,
+  Button,
+  RadioButton,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
+import { Modal } from '@island.is/react/components'
+
+import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
+import { useLocale } from '@island.is/localization'
+import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
+import React, { useContext, useEffect } from 'react'
+import { AuthAdminEnvironment } from '@island.is/api/schema'
+import { PetitionPaths } from '../../../lib/paths'
+import { m } from '../../../lib/messages'
+import { LockListMutation } from '../../../shared/mutations/lockList.generated'
+import Skeleton from '../../Skeleton/skeleton'
+
+export default function LockList() {
+  console.log('HALLOOOOOO')
+  const navigate = useNavigate()
+  const { formatMessage } = useLocale()
+  const params = useParams()
+
+  const actionData = useActionData() as LockListMutation
+  const { isLoading, isSubmitting } = useSubmitting()
+
+  // useEffect(() => {
+  //   if (actionData?.globalError && !isLoading && !isSubmitting)
+  //     toast.error(formatMessage(m.todo))
+  // }, [actionData?.globalError, isSubmitting, isLoading])
+
+  useEffect(() => {
+    console.log(actionData)
+    if (actionData) {
+      toast.success(formatMessage(m.todo))
+      cancel()
+    }
+  }, [actionData])
+
+  const cancel = () => {
+    navigate(
+      replaceParams({
+        href: PetitionPaths.PetitionsSingle,
+        params: { listId: params['listId'] },
+      }),
+    )
+  }
+
+  console.log('asdfasd')
+
+  return (
+    //         <Box>
+    // <Skeleton/>
+    //             </Box>
+    <Modal
+      id="publish-client"
+      isVisible
+      title={formatMessage(m.todo)}
+      label={formatMessage(m.todo)}
+      onClose={cancel}
+      closeButtonLabel={formatMessage(m.todo)}
+    >
+      <Form method="post">
+        <Box paddingTop={3}>
+          <Text>{formatMessage(m.todo)}</Text>
+          <Text paddingTop={4} variant="h4">
+            {formatMessage(m.todo)}
+          </Text>
+
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            paddingTop={7}
+          >
+            <Button onClick={cancel} variant="ghost">
+              {formatMessage(m.todo)}
+            </Button>
+            <Button loading={isSubmitting || isLoading} type="submit">
+              {formatMessage(m.todo)}
+            </Button>
+          </Box>
+        </Box>
+      </Form>
+    </Modal>
+  )
+}

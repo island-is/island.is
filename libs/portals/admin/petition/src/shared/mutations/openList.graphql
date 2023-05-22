@@ -1,5 +1,0 @@
-mutation Mutants($input: OpenListInput!) {
-  endorsementSystemOpenEndorsementList(input: $input) {
-    id
-  }
-}

@@ -1,9 +1,0 @@
-mutation Mutants($input: FindEndorsementListInput!) {
-  endorsementSystemCloseEndorsementList(input: $input) {
-    id
-    title
-    modified
-    closedDate
-    openedDate
-  }
-}

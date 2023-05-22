@@ -71,4 +71,11 @@ export const m = defineMessages({
     defaultMessage: 'Engar undirskriftir',
     description: '',
   },
+
+  // TODO
+  todo: {
+    id: 'admin-portal.petition:todo',
+    defaultMessage: 'todo',
+    description: '',
+  },
 })

@@ -1,4 +1,4 @@
-mutation Mutants($input: UpdateEndorsementListInput!) {
+mutation UpdateList($input: UpdateEndorsementListInput!) {
   endorsementSystemUpdateEndorsementList(input: $input) {
     id
   }

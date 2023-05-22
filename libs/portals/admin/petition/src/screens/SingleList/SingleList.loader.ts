@@ -10,8 +10,7 @@ import {
 } from '../../shared/queries/getEndorsements.generated'
 
 export const singleListLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params }): Promise<EndorsementList> => {
-    console.log(params)
+  return async ({ params, request }): Promise<EndorsementList> => {
     if (!params.listId) {
       throw new Error('not found')
     }
@@ -48,8 +47,6 @@ export const singleListLoader: WrappedLoaderFn = ({ client }) => {
       throw endorsementsError
     }
 
-    console.log(listData)
-    console.log(endorsements)
     return {
       listId: params.listId,
       petition: listData.endorsementSystemGetSingleEndorsementList,

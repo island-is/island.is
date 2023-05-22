@@ -1,4 +1,4 @@
-mutation Mutants($input: FindEndorsementListInput!) {
+mutation LockList($input: FindEndorsementListInput!) {
   endorsementSystemLockEndorsementList(input: $input) {
     id
   }

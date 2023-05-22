@@ -241,7 +241,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.admin)
+  @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/lock')
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
@@ -263,7 +263,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.admin)
+  @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/unlock')
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
@@ -287,7 +287,7 @@ export class EndorsementListController {
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @ApiBody({ type: UpdateEndorsementListDto })
-  @Scopes(EndorsementsScope.admin)
+  @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/update')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
