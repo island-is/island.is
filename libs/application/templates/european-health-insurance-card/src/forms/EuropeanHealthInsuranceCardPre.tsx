@@ -30,13 +30,11 @@ export const EuropeanHealthInsuranceCardPre: Form = buildForm({
       title: e.introScreen.sectionLabel,
 
       children: [
-        buildDescriptionField(
-          {
-            id: 'introScreen',
-            title: e.introScreen.sectionTitle,
-            description: e.introScreen.sectionDescription,
-          },
-        ),
+        buildDescriptionField({
+          id: 'introScreen',
+          title: e.introScreen.sectionTitle,
+          description: e.introScreen.sectionDescription,
+        }),
       ],
     }),
 
