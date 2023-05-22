@@ -643,7 +643,7 @@ export const urls = defineMessages({
   },
   regNumber: {
     id: 'sp.vehicles:url-registration-number',
-    defaultMessage: 'https://island.is/umsoknir/panta-skraningarmerki',
+    defaultMessage: 'https://island.is/umsoknir/panta-numeraplotu',
   },
   renewPrivate: {
     id: 'sp.vehicles:url-renew-private',

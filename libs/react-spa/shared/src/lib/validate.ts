@@ -150,6 +150,7 @@ type ValidateFormDataArgs<Schema> = {
 }
 
 type ValidateFormDataReturnType<Schema extends z.ZodTypeAny> = {
+  // TODO fix errors to only infer errors as string but not other types
   errors: Partial<z.infer<Schema>> | null
   data: z.infer<Schema> | null
 }
