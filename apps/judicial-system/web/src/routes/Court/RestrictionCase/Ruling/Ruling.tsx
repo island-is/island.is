@@ -28,7 +28,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  completedCaseStates,
   Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
