@@ -56,6 +56,7 @@ const GetStudentInfoQuery = gql`
         body {
           description
           footer
+          unconfirmedData
         }
         downloadServiceURL
       }
@@ -146,6 +147,9 @@ export const EducationGraduationDetail = () => {
                   </Box>
                 )
               })}
+            {files?.length === 0 ? (
+              <Text>{text?.unconfirmedData || ''}</Text>
+            ) : undefined}
           </Box>
         </GridColumn>
       </GridRow>
