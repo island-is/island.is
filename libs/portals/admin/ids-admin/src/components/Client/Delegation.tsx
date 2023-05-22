@@ -4,8 +4,7 @@ import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -24,8 +23,8 @@ const Delegation = ({
   promptDelegations,
   requireApiScopes,
 }: DelegationProps) => {
-  const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
+  const { isSuperAdmin } = useSuperAdmin()
 
   const [inputValues, setInputValues] = useState({
     supportsCustomDelegation,
@@ -35,10 +34,6 @@ const Delegation = ({
     promptDelegations,
     requireApiScopes,
   })
-
-  const isSuperAdmin = userInfo?.scopes.includes(
-    AdminPortalScope.idsAdminSuperUser,
-  )
 
   return (
     <ContentCard

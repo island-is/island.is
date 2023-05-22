@@ -243,19 +243,31 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
 
 interface ExternalLinksProps {
   organizationPage: OrganizationPage
+  showOnMobile?: boolean
 }
 
 export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   organizationPage,
+  showOnMobile = true,
 }) => {
   if (organizationPage.externalLinks?.length) {
+    const mobileDisplay = showOnMobile ? 'flex' : 'none'
     return (
       <Box
-        display={['none', 'none', 'flex', 'flex']}
-        justifyContent="flexEnd"
+        display={[mobileDisplay, mobileDisplay, 'flex', 'flex']}
+        justifyContent={[
+          'center',
+          showOnMobile ? 'flexEnd' : 'center',
+          'flexEnd',
+        ]}
         marginBottom={4}
       >
-        <Inline space={2}>
+        <Inline
+          flexWrap={
+            organizationPage.externalLinks?.length === 2 ? 'nowrap' : 'wrap'
+          }
+          space={2}
+        >
           {organizationPage.externalLinks.map((link, index) => {
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
@@ -283,7 +295,7 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
                   iconType="outline"
                   size="medium"
                 >
-                  <Box paddingY={2} paddingLeft={2}>
+                  <Box paddingY={[0, 2]} paddingLeft={[0, 2]}>
                     {link.text}
                   </Box>
                 </Button>
@@ -705,6 +717,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         >
           {isMobile && (
             <Box className={styles.menuStyle}>
+              {showExternalLinks && (
+                <OrganizationExternalLinks
+                  organizationPage={organizationPage}
+                  showOnMobile={true}
+                />
+              )}
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNavMobile"
@@ -751,6 +769,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 {showExternalLinks && (
                   <OrganizationExternalLinks
                     organizationPage={organizationPage}
+                    showOnMobile={false}
                   />
                 )}
                 {breadcrumbItems && (

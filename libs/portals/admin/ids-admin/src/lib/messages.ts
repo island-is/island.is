@@ -102,6 +102,19 @@ export const m = defineMessages({
     id: 'ap.ids-admin:display-name',
     defaultMessage: 'Name',
   },
+  displayNameInfo: {
+    id: 'ap.ids-admin:display-name-info',
+    defaultMessage: 'Users see this when they sign in, and manage consents.',
+  },
+  description: {
+    id: 'ap.ids-admin:description',
+    defaultMessage: 'Description',
+  },
+  descriptionInfo: {
+    id: 'ap.ids-admin:description-info',
+    defaultMessage:
+      'Users see this when they sign in, and manage consents. This should explain in concise and clear terms which resources or actions this permission gives access to.',
+  },
   clientId: {
     id: 'ap.ids-admin:clientId',
     defaultMessage: 'Application ID',
@@ -118,12 +131,24 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-display-name',
     defaultMessage: 'Name is required.',
   },
+  errorDescription: {
+    id: 'ap.ids-admin:error-description',
+    defaultMessage: 'Description is required.',
+  },
   errorClientId: {
     id: 'ap.ids-admin:error-client-id',
     defaultMessage: 'Application ID is required.',
   },
   errorClientIdRegex: {
     id: 'ap.ids-admin:error-client-id-regex',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+  },
+  errorScopeId: {
+    id: 'ap.ids-admin:error-scope-id',
+    defaultMessage: 'Scope ID is required.',
+  },
+  errorScopeIdRegex: {
+    id: 'ap.ids-admin:error-scope-id-regex',
     defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
   },
   errorEnvironment: {
@@ -452,6 +477,18 @@ export const m = defineMessages({
     id: 'ap.ids-admin:error-invalid-claims',
     defaultMessage: 'Invalid claim format',
   },
+  hidePassword: {
+    id: 'ap.ids-admin:hide-password',
+    defaultMessage: 'Hide password',
+  },
+  showPassword: {
+    id: 'ap.ids-admin:show-password',
+    defaultMessage: 'Show password',
+  },
+  copy: {
+    id: 'ap.ids-admin:copy',
+    defaultMessage: 'Copy value',
+  },
   copySuccess: {
     id: 'ap.ids-admin:copy-success',
     defaultMessage: 'Copied to clipboard',
@@ -547,6 +584,51 @@ export const m = defineMessages({
     id: 'ap.ids-admin:close-modal',
     defaultMessage: 'Close dialog',
   },
+  listOfPermissions: {
+    id: 'ap.ids-admin:list-of-permissions',
+    defaultMessage: 'List of permissions',
+  },
+  permissionsManagement: {
+    id: 'ap.ids-admin:permissions-management',
+    defaultMessage: 'Management',
+  },
+  createPermission: {
+    id: 'ap.ids-admin:create-permission',
+    defaultMessage: 'Create permission',
+  },
+  permissionId: {
+    id: 'ap.ids-admin:permission-id',
+    defaultMessage: 'Permission ID',
+  },
+  permissionDescription: {
+    id: 'ap.ids-admin:permission-description',
+    defaultMessage: 'Description',
+  },
+  permissionDescriptionInfo: {
+    id: 'ap.ids-admin:permission-description-info',
+    defaultMessage: 'Users see this when they sign in, and manage consents.',
+  },
+  permissionDisplayNameInfo: {
+    id: 'ap.ids-admin:permission-display-name-info',
+    defaultMessage: 'Displayed on the login screen of your app',
+  },
+  permissionEmptyHeading: {
+    id: 'ap.ids-admin:permission-empty-heading',
+    defaultMessage: 'No permission created',
+  },
+  permissionEmptyDescription: {
+    id: 'ap.ids-admin:permission-empty-description',
+    defaultMessage:
+      'You can create an permission by clicking on Create permission.',
+  },
+  permissionListDescription: {
+    id: 'ap.ids-admin:permission-list-description',
+    defaultMessage: 'Here you can view and create permissions.',
+  },
+  permissionsSearchPlaceholder: {
+    id: 'ap.ids-admin:permissions-search-placeholder',
+    defaultMessage: 'Search by name or ID',
+  },
   dangerZone: {
     id: 'ap.ids-admin:danger-zone',
     defaultMessage: 'Danger zone',
@@ -577,6 +659,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:generate',
     defaultMessage: 'Generate',
   },
+  revoke: {
+    id: 'ap.ids-admin:revoke',
+    defaultMessage: 'Revoke',
+  },
   revokeExistingSecrets: {
     id: 'ap.ids-admin:revoke-existing-secrets',
     defaultMessage: 'Revoke existing secret(s) immediately.',
@@ -589,5 +675,90 @@ export const m = defineMessages({
     id: 'ap.ids-admin:rotated-secret-description',
     defaultMessage:
       'Please update the application configuration with the following secret.',
+  },
+  revokeSecrets: {
+    id: 'ap.ids-admin:revoke-secrets',
+    defaultMessage: 'Revoke old secret(s)',
+  },
+  revokeSecretsDescription: {
+    id: 'ap.ids-admin:revoke-secrets-description',
+    defaultMessage:
+      'This will revoke all secrets except the current active secret. Please make sure that they are not in use anymore.',
+  },
+  successRevokingSecrets: {
+    id: 'ap.ids-admin:success-revoking-secrets',
+    defaultMessage: 'Successfully revoked old secret(s)',
+  },
+  multipleSecrets: {
+    id: 'ap.ids-admin:multiple-secrets',
+    defaultMessage: 'Multiple secrets',
+  },
+  multipleSecretsDescription: {
+    id: 'ap.ids-admin:multiple-secrets-description',
+    defaultMessage: 'There are one or more old secrets which are still active.',
+  },
+  content: {
+    id: 'ap.ids-admin:content',
+    defaultMessage: 'Content',
+  },
+  icelandic: {
+    id: 'ap.ids-admin:icelandic',
+    defaultMessage: 'Icelandic',
+  },
+  english: {
+    id: 'ap.ids-admin:english',
+    defaultMessage: 'English',
+  },
+  isAccessControlled: {
+    id: 'ap.ids-admin:is-access-controlled',
+    defaultMessage: 'Specific national ids',
+  },
+  isAccessControlledDescription: {
+    id: 'ap.ids-admin:is-access-controlled-description',
+    defaultMessage: 'Only allow specific national ids',
+  },
+  grantToAuthenticatedUser: {
+    id: 'ap.ids-admin:grant-to-authenticated-user',
+    defaultMessage: 'Authenticated user',
+  },
+  grantToAuthenticatedUserDescription: {
+    id: 'ap.ids-admin:grant-to-authenticated-user-description',
+    defaultMessage: 'Should the authenticated user get this scope',
+  },
+  grantToProcuringHolders: {
+    id: 'ap.ids-admin:grant-to-procuring-holders',
+    defaultMessage: 'Companies',
+  },
+  grantToProcuringHoldersDescription: {
+    id: 'ap.ids-admin:grant-to-procuring-holders-description',
+    defaultMessage:
+      'Should procuring holders automatically get this scope for their organisations',
+  },
+  grantToLegalGuardians: {
+    id: 'ap.ids-admin:grant-to-legal-guardians',
+    defaultMessage: 'Legal guardians',
+  },
+  grantToLegalGuardiansDescription: {
+    id: 'ap.ids-admin:grant-to-legal-guardians-description',
+    defaultMessage:
+      'Should legal guardians automatically get this permission for their wards',
+  },
+  allowExplicitDelegationGrant: {
+    id: 'ap.ids-admin:allow-explicit-delegation-grant',
+    defaultMessage: 'Custom delegations',
+  },
+  allowExplicitDelegationGrantDescription: {
+    id: 'ap.ids-admin:allow-explicit-delegation-grant-description',
+    defaultMessage:
+      'Should users be able to grant other users custom delegation for this permission.',
+  },
+  grantToPersonalRepresentatives: {
+    id: 'ap.ids-admin:grant-to-personal-representatives',
+    defaultMessage: 'Personal representatives',
+  },
+  grantToPersonalRepresentativesDescription: {
+    id: 'ap.ids-admin:grant-to-personal-representatives-description',
+    defaultMessage:
+      'Should personal representatives automatically get this scope for their clients',
   },
 })
