@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
-import { ChosenSubscriptionCard } from '../../../../components/Card'
+import { ChosenSubscriptionCard } from '../SubscriptionCard/ChosenSubscriptionCard'
 import { Area, SubscriptionDescriptionKey } from '../../../../types/enums'
 import { SubscriptionArray } from '../../../../types/interfaces'
 import { useIsMobile } from '../../../../hooks'

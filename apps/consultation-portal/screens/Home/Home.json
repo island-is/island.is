@@ -8,8 +8,10 @@
     }
   },
   "heroBanner": {
-    "statisticBoxLabel": "Til umsagnar",
-    "statisticBoxText": "mál",
+    "statisticBox": {
+      "label": "Til umsagnar",
+      "text": "mál"
+    },
     "arrowLink": {
       "internalLink": {
         "text": "Lesa meira",

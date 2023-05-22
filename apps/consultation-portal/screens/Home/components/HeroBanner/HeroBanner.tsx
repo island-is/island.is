@@ -6,22 +6,21 @@ import {
   Stack,
   Inline,
   Text,
+  ArrowLink,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeroBanner.css'
-import { ArrowLink } from '@island.is/island-ui/core'
-
 import {
   HeroLogo,
   HeroLogoMobile,
   LESchoolMobile,
 } from '../../../../components/svg'
-import { StatisticBox } from '../../../../components'
-import HeroTiles from './components/HeroTiles'
+import { StatisticBox, HeroTiles } from './components'
 import { ArrOfStatistics } from '../../../../types/interfaces'
 import Splash from '../../../../components/svg/Splash'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Home.json'
+
 interface HeroBannerProps {
   statistics: ArrOfStatistics
 }
@@ -46,7 +45,6 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               <HeroLogoMobile />
               <LESchoolMobile />
               <Text>{loc.introText}</Text>
-
               <ArrowLink href={loc.arrowLink.internalLink.href}>
                 {loc.arrowLink.internalLink.text}
               </ArrowLink>
@@ -80,11 +78,9 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
               <Box className={styles.alignTiles}>
                 <HeroTiles space={2} columns={[1]}>
                   <StatisticBox
-                    label={loc.statisticBoxLabel}
                     statistic={statistics?.casesInReview?.toLocaleString(
                       'de-DE',
                     )}
-                    text={loc.statisticBoxText}
                   />
                 </HeroTiles>
               </Box>

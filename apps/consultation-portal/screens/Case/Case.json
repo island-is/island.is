@@ -75,12 +75,12 @@
     },
     "subbedCardSkeleton": {
       "initial": {
-        "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
+        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að breyta tegund áskriftar eða fjarlægja áskrift.",
         "buttonChange": "Breyta áskrift",
         "buttonRemove": "Fjarlægja áskrift"
       },
       "clickedChange": {
-        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að breyta tegund áskriftar eða fjarlægja áskrift.",
+        "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
         "button": "Staðfesta breytingu"
       }
     },

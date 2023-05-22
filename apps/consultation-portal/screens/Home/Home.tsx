@@ -8,7 +8,7 @@ import {
   Stack,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import { HeroBanner } from './components/HeroBanner/HeroBanner'
+import { HeroBanner } from './components/'
 import Card from '../../components/Card/Card'
 import Layout from '../../components/Layout/Layout'
 import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'

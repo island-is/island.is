@@ -261,7 +261,7 @@ export const AdviceForm = ({
       <Input
         textarea
         label={loc.input.label}
-        name="Test"
+        name="review_input"
         placeholder={loc.input.placeholder}
         rows={10}
         value={review}

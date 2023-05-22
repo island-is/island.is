@@ -5,6 +5,7 @@ import { useLogIn } from '../../../../hooks'
 import {
   advicePublishTypeKey,
   advicePublishTypeKeyHelper,
+  CaseStatuses,
   pastAdvicePublishTypeKey,
 } from '../../../../types/enums'
 import { Case } from '../../../../types/interfaces'
@@ -23,7 +24,7 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
 
   return (
     <SimpleCardSkeleton>
-      {chosenCase.statusName === 'Til umsagnar' ? (
+      {chosenCase.statusName === CaseStatuses.forReview ? (
         <>
           <StackedTitleAndDescription
             title={loc.forReview.StackedTitleAndDescription.title}
@@ -58,7 +59,7 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
             )}
           </Box>
         </>
-      ) : chosenCase.statusName === 'Niðurstöður í vinnslu' ? (
+      ) : chosenCase.statusName === CaseStatuses.inProgress ? (
         <StackedTitleAndDescription
           headingColor="blue400"
           title={loc.inProgress.StackedTitleAndDescription.title}
