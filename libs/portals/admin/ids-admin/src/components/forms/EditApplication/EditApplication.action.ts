@@ -266,7 +266,6 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
     formData,
     schema: schema[intent.name],
   })
-  console.log('form submit', Array.from(formData.entries()), result)
 
   const { data, errors } = result
 

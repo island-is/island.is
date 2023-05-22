@@ -41,27 +41,25 @@ const Translations = ({ translations }: TranslationsProps) => {
           selected={activeTab}
           onChange={setActiveTab}
           contentBackground="white"
-          tabs={copyTranslations.map((language) => {
-            return {
-              label: language.locale === 'is' ? 'Íslenska' : 'English',
-              content: (
-                <Box marginTop="gutter">
-                  <Input
-                    backgroundColor="blue"
-                    type="text"
-                    size="sm"
-                    onChange={(e) => onChangeTranslations(e)}
-                    name={language.locale + '_displayName'}
-                    value={language.value}
-                    label={formatMessage(m.displayName)}
-                  />
-                  <Text variant={'small'} marginTop={1}>
-                    {formatMessage(m.displayNameDescription)}
-                  </Text>
-                </Box>
-              ),
-            }
-          })}
+          tabs={copyTranslations.map((language) => ({
+            label: language.locale === 'is' ? 'Íslenska' : 'English',
+            content: (
+              <Box marginTop="gutter">
+                <Input
+                  backgroundColor="blue"
+                  type="text"
+                  size="sm"
+                  onChange={(e) => onChangeTranslations(e)}
+                  name={language.locale + '_displayName'}
+                  value={language.value}
+                  label={formatMessage(m.displayName)}
+                />
+                <Text variant={'small'} marginTop={1}>
+                  {formatMessage(m.displayNameDescription)}
+                </Text>
+              </Box>
+            ),
+          }))}
         />
       </Stack>
     </ContentCard>

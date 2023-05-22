@@ -309,6 +309,7 @@ interface PatchTestCase {
     grantToLegalGuardians?: boolean
     grantToProcuringHolders?: boolean
     allowExplicitDelegationGrant?: boolean
+    grantToPersonalRepresentatives?: boolean
     isAccessControlled?: boolean
   }
   expected: {
@@ -323,6 +324,7 @@ const mockedPatchApiScope = createMockedApiScopes(1, {
   grantToProcuringHolders: false,
   allowExplicitDelegationGrant: false,
   isAccessControlled: false,
+  grantToPersonalRepresentatives: false,
 })[0]
 
 const inputPatch = {

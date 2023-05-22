@@ -22,7 +22,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAcceptingCaseDecision,
-  completedCaseStates,
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
