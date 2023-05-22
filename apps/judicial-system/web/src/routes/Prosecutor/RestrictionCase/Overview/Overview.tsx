@@ -358,9 +358,6 @@ export const Overview: React.FC = () => {
                 <CaseFileList
                   caseId={workingCase.id}
                   files={workingCase.caseFiles ?? []}
-                  isCaseCompleted={completedCaseStates.includes(
-                    workingCase.state,
-                  )}
                 />
               </Box>
             </AccordionItem>

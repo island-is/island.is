@@ -27,7 +27,7 @@ export enum ClientFormTypes {
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
-  return s.split(/\s*,\s*|\s+|\n+/)
+  return s.split(/[\s\n,]+/).filter(Boolean)
 }
 
 const transformCustomClaims = (s: string): AuthAdminClientClaim[] => {
@@ -83,9 +83,7 @@ const checkIfStringIsPositiveNumber = (number: string) => {
 }
 
 const defaultSchema = z.object({
-  allEnvironments: z.optional(z.string()).transform((s) => {
-    return s === 'true'
-  }),
+  allEnvironments: z.optional(z.string()).transform((s) => s === 'true'),
   environment: z.nativeEnum(AuthAdminEnvironment),
   syncEnvironments: z.optional(z.string()).transform((s) => {
     return (s?.split(',') as AuthAdminEnvironment[]) ?? []
@@ -268,6 +266,7 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
     formData,
     schema: schema[intent.name],
   })
+  console.log('form submit', Array.from(formData.entries()), result)
 
   const { data, errors } = result
 

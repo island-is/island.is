@@ -242,9 +242,6 @@ export const Ruling: React.FC = () => {
                   (user.id === workingCase.judge?.id ||
                     user.id === workingCase.registrar?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>

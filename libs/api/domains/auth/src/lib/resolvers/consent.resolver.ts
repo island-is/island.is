@@ -12,7 +12,7 @@ import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { Loader } from '@island.is/nest/dataloader'
 
 import { ConsentsPaginated } from '../dto/consentsPaginated.response'
-import { PatchConsentInput } from '../dto/updateConsent.input'
+import { PatchConsentInput } from '../dto/patchConsent.input'
 import { ClientLoader } from '../loaders/client.loader'
 import { Client } from '../models/client.model'
 import { Consent } from '../models/consent.model'
@@ -60,12 +60,13 @@ export class ConsentResolver {
     )
   }
 
-  @Mutation(() => Consent, { name: 'patchAuthConsent' })
-  patchConsent(
+  @Mutation(() => Boolean, { name: 'patchAuthConsent' })
+  async patchConsent(
     @CurrentUser() user: User,
     @Args('input', { type: () => PatchConsentInput })
     input: PatchConsentInput,
-  ): Promise<Consent> {
-    return this.consentService.updateConsent(user, input)
+  ): Promise<boolean> {
+    await this.consentService.patchConsent(user, input)
+    return true
   }
 }
