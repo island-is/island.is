@@ -16,23 +16,23 @@ export const europeanHealthInsuranceCardApplicationMessages = {
 
   introScreen: defineMessages({
     formName: {
-      id: 'ehic.application:form.name',
+      id: 'ehic.application:introScreen.form.name',
       defaultMessage: 'Evrópska sjúkratryggingakortið',
       description: 'Display name for application',
     },
     sectionLabel: {
-      id: 'ehic.application:applicant.section.label',
+      id: 'ehic.application:introScreen.section.label',
       defaultMessage: 'Upplýsingar',
       description: 'Section label',
     },
     sectionTitle: {
-      id: 'ehic.application:applicant.section.title',
+      id: 'ehic.application:introScreen.section.title',
       defaultMessage: 'Upplýsingar um Evrópska sjúkratryggingakortið',
       description: 'Section title',
     },
 
     sectionDescription: {
-      id: 'ehic.application:applicant.section.description#markdown',
+      id: 'ehic.application:introScreen.section.description#markdown',
       defaultMessage:
         'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss. Korthafi greiðir þá sama gjald fyrir heilbrigðisþjónustuna og þeir sem eru tryggðir í almannatryggingakerfi viðkomandi lands. Kortið gildir aðeins hjá opinberum heilbrigðisþjónustuveitendum, ekki á einkastofum.\n\nKortið gildir almennt í þrjú ár í senn en fimm ár fyrir elli- og örorkulífeyrisþega. Sækja má um nýtt kort þegar 6 mánuðir eru eftir af gildistíma núgildandi korts.',
       description: 'Section description',
