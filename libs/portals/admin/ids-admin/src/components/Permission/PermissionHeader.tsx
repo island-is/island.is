@@ -6,12 +6,17 @@ import { EnvironmentHeader } from '../forms/EnvironmentHeader/EnvironmentHeader'
 
 export const PermissionHeader = () => {
   const { locale } = useLocale()
-  const { selectedPermission, onEnvironmentChange } = usePermission()
+  const {
+    selectedPermission,
+    onEnvironmentChange,
+    permission,
+  } = usePermission()
 
   return (
     <EnvironmentHeader
       title={getTranslatedValue(selectedPermission.displayName, locale)}
       selectedEnvironment={selectedPermission.environment}
+      availableEnvironments={permission.availableEnvironments}
       onChange={onEnvironmentChange}
     />
   )

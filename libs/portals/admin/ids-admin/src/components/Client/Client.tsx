@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import classNames from 'classnames'
+import React, { useState } from 'react'
+import {
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
 
 import {
+  AuthAdminClientType,
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
@@ -12,8 +20,11 @@ import { getTranslatedValue } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
+import { ClientType } from '../../shared/components/ClientType'
 import { ClientContext } from '../../shared/context/ClientContext'
+import { useSyncedQueryStringValueWithoutNavigation } from '../../shared/hooks/useSyncedQueryStringValueWithoutNavigation'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import { StickyLayout } from '../StickyLayout/StickyLayout'
 import { AdvancedSettings } from './AdvancedSettings'
 import { BasicInfo } from './BasicInfo'
 import { AuthAdminClient } from './Client.loader'
@@ -26,6 +37,7 @@ import { RevokeSecrets } from './RevokeSecrets/RevokeSecrets'
 import Translations from './Translations'
 import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 import { EnvironmentHeader } from '../forms/EnvironmentHeader/EnvironmentHeader'
+import * as styles from './Client.css'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -46,24 +58,26 @@ const Client = () => {
   const params = useParams()
   const { formatMessage, locale } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
+  const isNativeApplication = client.clientType === AuthAdminClientType.native
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
     fromEnvironment: null,
   })
-  const [selectedEnvironment, setSelectedEnvironment] = useState<
-    AuthAdminClient['environments'][0]
-  >(client.environments[0])
+  const [searchParams] = useSearchParams()
+  const [selectedEnvironmentName, setSelectedEnvironmentName] = useState(
+    searchParams.get('env') ?? '',
+  )
+  const selectedEnvironment =
+    client.environments.find(
+      (env) => env.environment === selectedEnvironmentName,
+    ) ?? client.environments[0]
+  useSyncedQueryStringValueWithoutNavigation(
+    'env',
+    selectedEnvironmentName,
+    true,
+  )
+
   const [isRevokeSecretsVisible, setRevokeSecretsVisibility] = useState(false)
-
-  useEffect(() => {
-    const newSelectedEnvironment = client.environments.find(
-      ({ environment }) => environment === selectedEnvironment.environment,
-    )
-
-    if (newSelectedEnvironment) {
-      setSelectedEnvironment(newSelectedEnvironment)
-    }
-  }, [client, setSelectedEnvironment])
 
   const checkIfInSync = (variables: string[]) => {
     for (const variable of variables) {
@@ -98,6 +112,7 @@ const Client = () => {
           client: selectedEnvironment.clientId,
         },
       }),
+      { preventScrollReset: true },
     )
   }
 
@@ -110,7 +125,6 @@ const Client = () => {
       value={{
         client,
         selectedEnvironment,
-        setSelectedEnvironment,
         availableEnvironments: client.environments.map(
           (env) => env.environment,
         ),
@@ -149,108 +163,118 @@ const Client = () => {
         setPublishData: setPublishData,
       }}
     >
-      <Stack space={3}>
-        <EnvironmentHeader
-          title={getTranslatedValue(selectedEnvironment.displayName, locale)}
-          selectedEnvironment={selectedEnvironment.environment}
-          onChange={(environment) => {
-            if (environmentExists(environment)) {
-              setSelectedEnvironment(
-                client.environments.find(
-                  (env) => env.environment === environment,
-                ) as AuthAdminClient['environments'][0],
-              )
-            } else {
-              openPublishModal(environment)
+      <StickyLayout
+        header={(isSticky) => (
+          <EnvironmentHeader
+            title={getTranslatedValue(selectedEnvironment.displayName, locale)}
+            selectedEnvironment={selectedEnvironment.environment}
+            availableEnvironments={client.availableEnvironments}
+            onChange={(environment) => {
+              if (environmentExists(environment)) {
+                setSelectedEnvironmentName(environment)
+              } else {
+                openPublishModal(environment)
+              }
+            }}
+            preHeader={
+              <div
+                className={classNames(
+                  styles.tagWrapper,
+                  isSticky && styles.tagHide,
+                )}
+              >
+                <ClientType client={client} />
+              </div>
             }
-          }}
-          tag={client.clientType}
-        />
-        {selectedEnvironment.secrets.length > 1 && (
-          <>
-            <AlertMessage
-              type="warning"
-              title={formatMessage(m.multipleSecrets)}
-              message={
-                <Stack space={1}>
-                  <Text variant="small">
-                    {formatMessage(m.multipleSecretsDescription)}
-                  </Text>
-                  <Button
-                    variant="text"
-                    size="small"
-                    onClick={() => setRevokeSecretsVisibility(true)}
-                  >
-                    {formatMessage(m.revokeSecrets)}
-                  </Button>
-                </Stack>
+          />
+        )}
+      >
+        <Stack space={3}>
+          {selectedEnvironment.secrets.length > 1 && (
+            <>
+              <AlertMessage
+                type="warning"
+                title={formatMessage(m.multipleSecrets)}
+                message={
+                  <Stack space={1}>
+                    <Text variant="small">
+                      {formatMessage(m.multipleSecretsDescription)}
+                    </Text>
+                    <Button
+                      variant="text"
+                      size="small"
+                      onClick={() => setRevokeSecretsVisibility(true)}
+                    >
+                      {formatMessage(m.revokeSecrets)}
+                    </Button>
+                  </Stack>
+                }
+              />
+              <RevokeSecrets
+                isVisible={isRevokeSecretsVisible}
+                onClose={() => setRevokeSecretsVisibility(false)}
+              />
+            </>
+          )}
+
+          <BasicInfo
+            clientId={selectedEnvironment.clientId}
+            issuerUrl={IssuerUrls[selectedEnvironment.environment]}
+            clientSecrets={selectedEnvironment.secrets}
+          />
+          <Translations translations={selectedEnvironment.displayName} />
+          {!isNativeApplication && (
+            <ClientsUrl
+              redirectUris={selectedEnvironment.redirectUris}
+              postLogoutRedirectUris={
+                selectedEnvironment.postLogoutRedirectUris
               }
             />
-            <RevokeSecrets
-              isVisible={isRevokeSecretsVisible}
-              onClose={() => setRevokeSecretsVisibility(false)}
+          )}
+          <Lifetime
+            absoluteRefreshTokenLifetime={
+              selectedEnvironment.absoluteRefreshTokenLifetime
+            }
+            slidingRefreshTokenLifetime={
+              selectedEnvironment.slidingRefreshTokenLifetime
+            }
+            refreshTokenExpiration={
+              selectedEnvironment.refreshTokenExpiration ===
+              AuthAdminRefreshTokenExpiration.Sliding
+            }
+          />
+          <Permissions />
+          {isSuperAdmin && !isNativeApplication && (
+            <Delegation
+              supportsProcuringHolders={
+                selectedEnvironment.supportsProcuringHolders
+              }
+              supportsLegalGuardians={
+                selectedEnvironment.supportsLegalGuardians
+              }
+              promptDelegations={selectedEnvironment.promptDelegations}
+              supportsPersonalRepresentatives={
+                selectedEnvironment.supportsPersonalRepresentatives
+              }
+              supportsCustomDelegation={
+                selectedEnvironment.supportsCustomDelegation
+              }
+              requireApiScopes={selectedEnvironment.requireApiScopes}
             />
-          </>
-        )}
-        <BasicInfo
-          key={`${selectedEnvironment.environment}-BasicInfo`}
-          clientId={selectedEnvironment.clientId}
-          issuerUrl={IssuerUrls[selectedEnvironment.environment]}
-          clientSecrets={selectedEnvironment.secrets}
-        />
-        <Translations
-          key={`${selectedEnvironment.environment}-Translations`}
-          translations={selectedEnvironment.displayName}
-        />
-        <ClientsUrl
-          key={`${selectedEnvironment.environment}-ClientsUrl`}
-          redirectUris={selectedEnvironment.redirectUris}
-          postLogoutRedirectUris={selectedEnvironment.postLogoutRedirectUris}
-        />
-        <Lifetime
-          key={`${selectedEnvironment.environment}-Lifetime`}
-          absoluteRefreshTokenLifetime={
-            selectedEnvironment.absoluteRefreshTokenLifetime
-          }
-          slidingRefreshTokenLifetime={
-            selectedEnvironment.slidingRefreshTokenLifetime
-          }
-          refreshTokenExpiration={
-            selectedEnvironment.refreshTokenExpiration ===
-            AuthAdminRefreshTokenExpiration.Sliding
-          }
-        />
-        <Permissions />
-        {isSuperAdmin && (
-          <Delegation
-            key={`${selectedEnvironment.environment}-Delegation`}
-            supportsProcuringHolders={
-              selectedEnvironment.supportsProcuringHolders
-            }
-            supportsLegalGuardians={selectedEnvironment.supportsLegalGuardians}
-            promptDelegations={selectedEnvironment.promptDelegations}
-            supportsPersonalRepresentatives={
-              selectedEnvironment.supportsPersonalRepresentatives
-            }
-            supportsCustomDelegation={
-              selectedEnvironment.supportsCustomDelegation
-            }
-            requireApiScopes={selectedEnvironment.requireApiScopes}
-          />
-        )}
-        {isSuperAdmin && (
-          <AdvancedSettings
-            key={`${selectedEnvironment.environment}-AdvancedSettings`}
-            requirePkce={selectedEnvironment.requirePkce}
-            allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
-            requireConsent={selectedEnvironment.requireConsent}
-            supportTokenExchange={selectedEnvironment.supportTokenExchange}
-            accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
-            customClaims={selectedEnvironment.customClaims}
-          />
-        )}
-        <DangerZone />
-      </Stack>
+          )}
+          {isSuperAdmin && (
+            <AdvancedSettings
+              requirePkce={selectedEnvironment.requirePkce}
+              allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
+              requireConsent={selectedEnvironment.requireConsent}
+              supportTokenExchange={selectedEnvironment.supportTokenExchange}
+              accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
+              customClaims={selectedEnvironment.customClaims}
+            />
+          )}
+          <DangerZone />
+        </Stack>
+      </StickyLayout>
       <Outlet />
     </ClientContext.Provider>
   )
