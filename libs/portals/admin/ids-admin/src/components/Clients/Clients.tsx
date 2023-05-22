@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate, useParams, useLoaderData, Outlet } from 'react-router-dom'
+import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
 
 import {
   Box,
