@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { nullable } from 'zod'
 
 @ObjectType('UniversityOfIcelandInstitution')
 export class Institution {
@@ -15,6 +16,9 @@ export class StudentDescription {
 
   @Field(() => String)
   footer!: string
+
+  @Field(() => String, { nullable: true })
+  unconfirmedData?: string
 }
 
 @ObjectType('UniversityOfIcelandStudent')
