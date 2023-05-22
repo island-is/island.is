@@ -75,6 +75,7 @@ import {
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
+import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -150,6 +151,8 @@ export const footerEnabled = [
   'insurance-administration',
 
   'gev',
+
+  'shh',
 ]
 
 export const getThemeConfig = (
@@ -231,6 +234,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <GevHeader organizationPage={organizationPage} />
     case 'hve':
       return <HveHeader organizationPage={organizationPage} />
+    case 'shh':
+      return <ShhHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -459,6 +464,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'gev':
       OrganizationFooterComponent = (
         <GevFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'shh':
+    case 'samskiptamidstoed-heyrnarlausra-og-heyrnarskertra':
+    case 'the-communication-center-for-the-deaf-and-hearing-impaired':
+      OrganizationFooterComponent = (
+        <ShhFooter
           title={organization.title}
           namespace={namespace}
           footerItems={organization.footerItems}
