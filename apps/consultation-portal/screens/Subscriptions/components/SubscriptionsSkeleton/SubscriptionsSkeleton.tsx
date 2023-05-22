@@ -8,7 +8,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import Layout from '../../../../components/Layout/Layout'
-import { BreadcrumbsWithMobileDivider } from '../../../../components/BreadcrumbsWithMobileDivider'
+import {
+  Breadcrumbs
+} from '../../../../components'
 import { ReactNode } from 'react'
 import EmailBox from '../EmailBox/EmailBox'
 import { Area } from '../../../../types/enums'
@@ -64,7 +66,7 @@ const SubscriptionsSkeleton = ({
     >
       <Divider />
       <Box background="blue100">
-        <BreadcrumbsWithMobileDivider
+        <Breadcrumbs
           items={isMySubscriptions ? MY_BREADCRUMBS_LIST : BREADCRUMBS_LIST}
         />
 

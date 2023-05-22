@@ -1,5 +1,5 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
-import EyebrowsWithSeperator from '../../../../components/EyebrowsWithSeperator/EyebrowsWithSeperator'
+import { Eyebrows } from '../../../../components'
 import * as styles from './CaseOverview.css'
 import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
 import {
@@ -32,7 +32,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
     <Stack space={[4, 4, 4, 6, 6]}>
       <Stack space={3}>
         <Box display={'flex'} justifyContent={'spaceBetween'}>
-          <EyebrowsWithSeperator
+          <Eyebrows
             instances={upperInstances}
             color="purple400"
             style={styles.upperSeperator}
@@ -40,7 +40,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
             truncate={false}
           />
         </Box>
-        <EyebrowsWithSeperator
+        <Eyebrows
           instances={lowerInstances}
           color="blue600"
           style={styles.lowerSeperator}

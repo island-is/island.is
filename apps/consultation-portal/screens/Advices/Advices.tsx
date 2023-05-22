@@ -9,7 +9,7 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import Layout from '../../components/Layout/Layout'
-import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
+import { Breadcrumbs } from '../../components'
 import { useLogIn, useUser, useAdviceFilters } from '../../hooks'
 import { Card, SubscriptionActionCard } from '../../components/Card'
 import { useState } from 'react'
@@ -133,7 +133,7 @@ export const AdvicesScreen = () => {
 
   return (
     <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
-      <BreadcrumbsWithMobileDivider
+      <Breadcrumbs
         items={[
           { title: 'Samráðsgátt', href: '/samradsgatt' },
           { title: 'Mínar umsagnir' },
