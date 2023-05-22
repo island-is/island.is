@@ -2,13 +2,11 @@ import React, { useState } from 'react'
 import { useActionData } from 'react-router-dom'
 
 import { AuthAdminClientEnvironment } from '@island.is/api/schema'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Checkbox, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
 import {
   ClientFormTypes,
@@ -16,6 +14,7 @@ import {
   schema,
 } from '../forms/EditApplication/EditApplication.action'
 import { useReadableSeconds } from './ReadableSeconds'
+import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 
 type AdvancedSettingsProps = Pick<
   AuthAdminClientEnvironment,
@@ -39,11 +38,7 @@ export const AdvancedSettings = ({
   const actionData = useActionData() as EditApplicationResult<
     typeof schema.advancedSettings
   >
-  const { userInfo } = useAuth()
-
-  const isSuperAdmin = userInfo?.scopes.includes(
-    AdminPortalScope.idsAdminSuperUser,
-  )
+  const { isSuperAdmin } = useSuperAdmin()
 
   const customClaimsString = (
     customClaims?.map((claim) => {
