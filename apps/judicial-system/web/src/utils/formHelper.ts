@@ -4,12 +4,17 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealRulingDecision,
   CaseFile,
+  CaseDecision,
+  CaseState,
+  CaseType,
+  isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { TUploadFile } from './hooks'
@@ -366,30 +371,35 @@ export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   policeCaseNumber: file.policeCaseNumber,
 })
 
-export const getAppealDecision = (
+export const titleForCase = (
   formatMessage: IntlShape['formatMessage'],
-  appealRulingDecision?: CaseAppealRulingDecision,
+  theCase: Case,
 ) => {
-  if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
-    return formatMessage(appealRuling.decisionAccept)
+  const isTravelBan =
+    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+    theCase.type === CaseType.TRAVEL_BAN
+
+  if (theCase.state === CaseState.REJECTED) {
+    if (isInvestigationCase(theCase.type)) {
+      return 'Kröfu um rannsóknarheimild hafnað'
+    } else {
+      return 'Kröfu hafnað'
+    }
   }
-  if (appealRulingDecision === CaseAppealRulingDecision.REPEAL) {
-    return formatMessage(appealRuling.decisionRepeal)
+
+  if (theCase.state === CaseState.DISMISSED) {
+    return formatMessage(m.dismissedTitle)
   }
-  if (appealRulingDecision === CaseAppealRulingDecision.CHANGED) {
-    return formatMessage(appealRuling.decisionChanged)
+
+  if (theCase.isValidToDateInThePast) {
+    return formatMessage(m.validToDateInThePast, {
+      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+    })
   }
-  if (
-    appealRulingDecision ===
-    CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
-  ) {
-    return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
-  }
-  if (appealRulingDecision === CaseAppealRulingDecision.DISMISSED_FROM_COURT) {
-    return formatMessage(appealRuling.decisionDismissedFromCourt)
-  }
-  if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
-    return formatMessage(appealRuling.decisionRemand)
-  }
-  return undefined
+
+  return isInvestigationCase(theCase.type)
+    ? formatMessage(m.investigationAccepted)
+    : formatMessage(m.restrictionActive, {
+        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+      })
 }

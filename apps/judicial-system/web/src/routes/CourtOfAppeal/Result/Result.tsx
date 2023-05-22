@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { useIntl } from 'react-intl'
 
 import {
   CaseFilesAccordionItem,
@@ -11,21 +12,22 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
-
+import { core } from '@island.is/judicial-system-web/messages'
 import * as constants from '@island.is/judicial-system/consts'
-import { getAppealDecision } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { capitalize } from '@island.is/judicial-system/formatters'
 
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
+
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
+import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
+
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
-import { courtOfAppealResult as strings } from './Result.strings'
-
 import { useIntl } from 'react-intl'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { titleForCase } from '../../Shared/SignedVerdictOverview/SignedVerdictOverview'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
-import { appealCase } from '../AppealCase/AppealCase.strings'
 
 const CourtOfAppealResult: React.FC = () => {
   const {
@@ -38,17 +40,11 @@ const CourtOfAppealResult: React.FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const { appealReceivedByCourtDate, appealRulingDecision } = workingCase
+  const { title, description } = useAppealAlertBanner(workingCase)
 
   return (
     <>
-      <AlertBanner
-        variant="warning"
-        title={formatMessage(strings.title, {
-          appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
-        })}
-        description={getAppealDecision(formatMessage, appealRulingDecision)}
-      />
+      <AlertBanner variant="warning" title={title} description={description} />
 
       <PageLayout
         workingCase={workingCase}
@@ -121,15 +117,15 @@ const CourtOfAppealResult: React.FC = () => {
               ]}
               courtOfAppealData={[
                 {
-                  title: formatMessage(appealCase.caseNumberHeading),
+                  title: formatMessage(core.appealCaseNumberHeading),
                   value: workingCase.appealCaseNumber,
                 },
                 {
-                  title: formatMessage(appealCase.assistantHeading),
+                  title: formatMessage(core.appealAssistantHeading),
                   value: workingCase.appealAssistant?.name,
                 },
                 {
-                  title: formatMessage(appealCase.judgesHeading),
+                  title: formatMessage(core.appealJudgesHeading),
                   value: (
                     <>
                       <Text>{workingCase.appealJudge1?.name}</Text>
@@ -154,14 +150,12 @@ const CourtOfAppealResult: React.FC = () => {
             <Conclusion
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
-              title={formatMessage(strings.conclusionTitle)}
             />
           </Box>
           <Box marginBottom={6}>
-            <Conclusion
+            <AppealConclusion
               conclusionText={workingCase.appealConclusion}
               judgeName={workingCase.appealJudge1?.name}
-              title={formatMessage(strings.conclusionCourtOfAppealTitle)}
             />
           </Box>
           <CaseFilesOverview />

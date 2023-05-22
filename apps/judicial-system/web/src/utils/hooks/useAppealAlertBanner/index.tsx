@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -13,6 +13,7 @@ import {
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  CaseAppealRulingDecision,
   isCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
@@ -24,6 +25,7 @@ import {
 
 import { strings } from './strings'
 import router from 'next/router'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
 const renderLinkButton = (text: string, href: string) => {
   return (
@@ -37,6 +39,34 @@ const renderLinkButton = (text: string, href: string) => {
       {text}
     </Button>
   )
+}
+
+const getAppealDecision = (
+  formatMessage: IntlShape['formatMessage'],
+  appealRulingDecision?: CaseAppealRulingDecision,
+) => {
+  if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
+    return formatMessage(appealRuling.decisionAccept)
+  }
+  if (appealRulingDecision === CaseAppealRulingDecision.REPEAL) {
+    return formatMessage(appealRuling.decisionRepeal)
+  }
+  if (appealRulingDecision === CaseAppealRulingDecision.CHANGED) {
+    return formatMessage(appealRuling.decisionChanged)
+  }
+  if (
+    appealRulingDecision ===
+    CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
+  ) {
+    return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
+  }
+  if (appealRulingDecision === CaseAppealRulingDecision.DISMISSED_FROM_COURT) {
+    return formatMessage(appealRuling.decisionDismissedFromCourt)
+  }
+  if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
+    return formatMessage(appealRuling.decisionRemand)
+  }
+  return undefined
 }
 
 const useAppealAlertBanner = (
@@ -67,6 +97,7 @@ const useAppealAlertBanner = (
     isAppealDeadlineExpired,
     appealReceivedByCourtDate,
     isStatementDeadlineExpired,
+    appealRulingDecision,
   } = workingCase
 
   const hasCurrentUserSentStatement =
@@ -75,11 +106,18 @@ const useAppealAlertBanner = (
 
   // HIGH COURT BANNER INFO IS HANDLED HERE
   if (user?.institution?.type === InstitutionType.HIGH_COURT) {
-    title = formatMessage(strings.statementTitle)
-    description = formatMessage(strings.statementDeadlineDescription, {
-      isStatementDeadlineExpired: isStatementDeadlineExpired || false,
-      statementDeadline: formatDate(statementDeadline, 'PPPp'),
-    })
+    if (appealState === CaseAppealState.COMPLETED) {
+      title = formatMessage(strings.appealCompletedTitle, {
+        appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
+      })
+      description = getAppealDecision(formatMessage, appealRulingDecision)
+    } else {
+      title = formatMessage(strings.statementTitle)
+      description = formatMessage(strings.statementDeadlineDescription, {
+        isStatementDeadlineExpired: isStatementDeadlineExpired || false,
+        statementDeadline: formatDate(statementDeadline, 'PPPp'),
+      })
+    }
   }
   // DEFENDER, PROSECUTOR AND COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
@@ -123,6 +161,11 @@ const useAppealAlertBanner = (
         )
       )
     }
+  } else if (appealState === CaseAppealState.COMPLETED) {
+    title = formatMessage(strings.appealCompletedTitle, {
+      appealedDate: formatDate(appealReceivedByCourtDate, 'PPP'),
+    })
+    description = getAppealDecision(formatMessage, appealRulingDecision)
   }
   // When case has been appealed by prosecuor or defender
   else if (hasBeenAppealed) {
