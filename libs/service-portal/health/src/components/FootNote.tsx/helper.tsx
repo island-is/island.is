@@ -20,6 +20,7 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str) => (
             <LinkButton
+              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
               text={str ?? ''}
             />
@@ -33,6 +34,7 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str) => (
             <LinkButton
+              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
               text={str ?? ''}
             />
@@ -45,6 +47,7 @@ export const getFootNoteByType = (
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str) => (
             <LinkButton
+              skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
               text={str ?? ''}
             />
@@ -61,6 +64,7 @@ export const getFootNoteByType = (
         first: formatMessage(messages['occupationalDisclaimer'], {
           link: (str) => (
             <LinkButton
+              skipIcon
               to={formatMessage(messages['occupationalDisclaimerLink'])}
               text={str ?? ''}
             />
