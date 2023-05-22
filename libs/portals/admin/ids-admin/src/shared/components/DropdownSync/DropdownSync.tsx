@@ -30,6 +30,7 @@ export const DropdownSync = ({
   return (
     <DropdownMenu
       title={isInSync ? formatMessage(m.synced) : formatMessage(m.outOfSync)}
+      menuLabel={formatMessage(m.synced)}
       icon="chevronDown"
       menuClassName={styles.menu}
       items={[
@@ -79,7 +80,7 @@ export const DropdownSync = ({
                         className={styles.syncButton}
                         type="submit"
                         value={`${intent}-sync`}
-                        name="intent-sync"
+                        name="intent"
                       >
                         <Text
                           variant="small"
