@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -73,10 +79,17 @@ const CourtOfAppealRuling: React.FC = () => {
     setAppealConclusionErrorMessage,
   ] = useState<string>('')
 
+  const allFilesUploaded = useMemo(() => {
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
+  }, [displayFiles])
   const isStepValid =
     displayFiles.some(
       (file) => file.category === CaseFileCategory.APPEAL_RULING,
-    ) && isCourtOfAppealRulingStepValid(workingCase)
+    ) &&
+    allFilesUploaded &&
+    isCourtOfAppealRulingStepValid(workingCase)
 
   const handleUIUpdate = useCallback(
     (displayFile: TUploadFile, newId?: string) => {

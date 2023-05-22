@@ -45,6 +45,7 @@ export default function PublishEnvironment() {
         href: IDSAdminPaths.IDSAdminClient,
         params: { tenant: params['tenant'], client: params['client'] },
       }),
+      { preventScrollReset: true },
     )
   }
 
