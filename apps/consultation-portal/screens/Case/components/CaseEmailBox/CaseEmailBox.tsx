@@ -19,7 +19,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import CaseEmailActionBox from './CaseEmailActionBox'
-import { CaseSubscriptionType, SubscriptionType } from '../../../../types/enums'
+import { CaseSubscriptionType, SubscriptionType, SubscriptionTypes } from '../../../../types/enums'
 import localization from '../../Case.json'
 
 interface CardSkeletonProps {
@@ -228,8 +228,8 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       <CardSkeleton
         text={
           userClickedChange
-            ? loc.subbedCardSkeleton.initial.text
-            : loc.subbedCardSkeleton.clickedChange.text
+            ? loc.subbedCardSkeleton.clickedChange.text
+            : loc.subbedCardSkeleton.initial.text
         }
       >
         {userClickedChange ? (
@@ -237,13 +237,13 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
             <CaseEmailActionBox
               selection={[
                 {
-                  label: CaseSubscriptionType['AllChanges'],
+                  label: CaseSubscriptionType[SubscriptionTypes.AllChanges],
                   checked: allChecked,
                   onChange: () => setAllChecked(true),
                   isDisabled: postCaseSubscriptionLoading,
                 },
                 {
-                  label: CaseSubscriptionType['StatusChanges'],
+                  label: CaseSubscriptionType[SubscriptionTypes.StatusChanges],
                   checked: !allChecked,
                   onChange: () => setAllChecked(false),
                   isDisabled: postCaseSubscriptionLoading,
