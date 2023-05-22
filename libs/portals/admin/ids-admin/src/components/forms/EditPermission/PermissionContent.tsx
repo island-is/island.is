@@ -27,11 +27,10 @@ const languages = Object.values(Languages)
  *   en: 'English'
  * }
  */
-function createLanguagesState(value: AuthAdminTranslatedValue[]) {
-  return Object.fromEntries(
+const createLanguagesState = (value: AuthAdminTranslatedValue[]) =>
+  Object.fromEntries(
     languages.map((langKey) => [langKey, getTranslatedValue(value, langKey)]),
   )
-}
 
 export const PermissionContent = () => {
   const { formatMessage } = useLocale()
