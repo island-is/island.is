@@ -87,7 +87,13 @@ const Therapies = () => {
     },
     occupationalTherapyData.length > 0 && {
       label: formatMessage(messages.occupationalTherapy),
-      content: <TherapiesTabContent data={occupationalTherapyData} />,
+      content: (
+        <TherapiesTabContent
+          data={occupationalTherapyData}
+          link="https://island.is/idjuthjalfun"
+          linkText={formatMessage(messages.occupationalLink)}
+        />
+      ),
     },
   ].filter((x) => x !== false) as TabType[]
 

@@ -117,6 +117,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Sé beiðni samþykkt fær einstaklingur 15 skipti í talþjálfun á hverju 12 mánaða tímabili. Hann á einnig rétt á nauðsynlegri viðbótarþjálfun hafi Sjúkratrygginga samþykkt slíka meðferð.',
   },
+  occupationalDisclaimer: {
+    id: 'sp.health:occupational-disclaimer',
+    defaultMessage:
+      'Greitt er fyrir iðjuþjálfun einstaklinga hjá Gigtarfélagi Íslands og Sjálfsbjörgu á Akureyri. Greitt er samkvæmt <link>greiðsluþátttökukerfi Sjúkratrygginga</link>. Skilyrði fyrir greiðsluþátttöku er að fyrir liggi beiðni með sjúkdómsgreiningu frá lækni. Beiðni fylgja 15 skipti á 365 dögum miðað við fyrstu meðferð. Ef þörf er á frekari meðferð þarf iðjuþjálfi að sækja um framhaldsskipti til Sjúkratrygginga.',
+  },
   physioLink: {
     id: 'sp.health:physio-therapy-link',
     defaultMessage: 'Nánar um sjúkraþjálfun',
@@ -124,6 +129,10 @@ export const messages = defineMessages({
   speechLink: {
     id: 'sp.health:speech-therapy-link',
     defaultMessage: 'Nánar um talþjálfun',
+  },
+  occupationalLink: {
+    id: 'sp.health:occupational-therapy-link',
+    defaultMessage: 'Nánar um iðjuþjálfun',
   },
   noValidTimePeriod: {
     id: 'sp.health:no-valid-time-period',

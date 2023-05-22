@@ -60,9 +60,12 @@ export const getFootNoteByType = (
     case OCCUPATIONAL_THERAPY:
       //TODO: Get correct disclaimer for different therapies
       return {
-        first: formatMessage(messages['physioDisclaimer1']),
-        second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+        first: formatMessage(messages['occupationalDisclaimer'], {
+          link: (str) =>
+            button(
+              str,
+              'https://island.is/greidsluthatttaka-vegna-heilbrigdisthjonustu',
+            ),
         }),
       }
       break
