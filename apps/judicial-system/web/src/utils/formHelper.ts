@@ -389,7 +389,7 @@ export const getAppealDecision = (
     return formatMessage(appealRuling.decisionDismissedFromCourt)
   }
   if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
-    return formatMessage(appealRuling.decisionUnlabeling)
+    return formatMessage(appealRuling.decisionRemand)
   }
   return undefined
 }

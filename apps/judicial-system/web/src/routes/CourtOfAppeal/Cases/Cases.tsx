@@ -35,6 +35,8 @@ import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mut
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType } from '../../Shared/Cases/utils'
 import { courtOfAppealCases as strings } from './Cases.strings'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import TagAppealRuling from '../components/TagAppealRuling/TagAppealRuling'
 
 export interface AppealedCasesQueryResponse {
   courtCaseNumber: string
@@ -161,12 +163,13 @@ const CourtOfAppealCases = () => {
             ? { color: 'darkerBlue', text: formatMessage(tables.receivedTag) }
             : { color: 'darkerBlue', text: formatMessage(tables.completedTag) }
 
-        console.log(thisRow, thisRow.appealRulingDecision)
-
         return (
-          <Tag variant={tagVariant.color} outlined disabled>
-            {tagVariant.text}
-          </Tag>
+          <>
+            <Tag variant={tagVariant.color} outlined disabled>
+              {tagVariant.text}
+            </Tag>
+            <TagAppealRuling />
+          </>
         )
       },
     },

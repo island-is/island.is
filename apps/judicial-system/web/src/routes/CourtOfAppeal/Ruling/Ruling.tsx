@@ -45,6 +45,7 @@ import {
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
 const CourtOfAppealRuling: React.FC = () => {
   const {
@@ -162,7 +163,7 @@ const CourtOfAppealRuling: React.FC = () => {
               <RadioButton
                 name="case-decision"
                 id="case-decision-accepting"
-                label={formatMessage(strings.decisionAccept)}
+                label={formatMessage(appealRuling.decisionAccept)}
                 checked={
                   workingCase.appealRulingDecision ===
                   CaseAppealRulingDecision.ACCEPTING
@@ -178,7 +179,7 @@ const CourtOfAppealRuling: React.FC = () => {
               <RadioButton
                 name="case-decision"
                 id="case-decision-repeal"
-                label={formatMessage(strings.decisionRepeal)}
+                label={formatMessage(appealRuling.decisionRepeal)}
                 checked={
                   workingCase.appealRulingDecision ===
                   CaseAppealRulingDecision.REPEAL
@@ -194,7 +195,7 @@ const CourtOfAppealRuling: React.FC = () => {
               <RadioButton
                 name="case-decision"
                 id="case-decision-changed"
-                label={formatMessage(strings.decisionChanged)}
+                label={formatMessage(appealRuling.decisionChanged)}
                 checked={
                   workingCase.appealRulingDecision ===
                   CaseAppealRulingDecision.CHANGED
@@ -211,7 +212,7 @@ const CourtOfAppealRuling: React.FC = () => {
                 name="case-decision"
                 id="case-decision-dismissed-from-court-of-appeal"
                 label={formatMessage(
-                  strings.decisionDismissedFromCourtOfAppeal,
+                  appealRuling.decisionDismissedFromCourtOfAppeal,
                 )}
                 checked={
                   workingCase.appealRulingDecision ===
@@ -230,7 +231,7 @@ const CourtOfAppealRuling: React.FC = () => {
               <RadioButton
                 name="case-decision"
                 id="case-decision-dismissed-from-court"
-                label={formatMessage(strings.decisionDismissedFromCourt)}
+                label={formatMessage(appealRuling.decisionDismissedFromCourt)}
                 checked={
                   workingCase.appealRulingDecision ===
                   CaseAppealRulingDecision.DISMISSED_FROM_COURT
@@ -248,7 +249,7 @@ const CourtOfAppealRuling: React.FC = () => {
               <RadioButton
                 name="case-decision"
                 id="case-decision-unlabeling"
-                label={formatMessage(strings.decisionUnlabeling)}
+                label={formatMessage(appealRuling.decisionRemand)}
                 checked={
                   workingCase.appealRulingDecision ===
                   CaseAppealRulingDecision.REMAND
