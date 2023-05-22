@@ -45,7 +45,6 @@ export class TemplateApiActionRunner {
   ): Promise<ApplicationWithAttachments> {
     const oldExternalData = application.externalData
 
-    // eslint-disable-next-line
     const newExternalData = { data: {} }
     this.formatMessage = formatMessage
 
