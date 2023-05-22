@@ -28,13 +28,9 @@ const languages = Object.values(Languages)
  * }
  */
 function createLanguagesState(value: AuthAdminTranslatedValue[]) {
-  return languages.reduce((previousValue, currentValue) => {
-    if (previousValue) {
-      previousValue[currentValue] = getTranslatedValue(value, currentValue)
-    }
-
-    return previousValue
-  }, {} as { [Key in Languages]: string })
+  return Object.fromEntries(
+    languages.map((langKey) => [langKey, getTranslatedValue(value, langKey)]),
+  )
 }
 
 export const PermissionContent = () => {
