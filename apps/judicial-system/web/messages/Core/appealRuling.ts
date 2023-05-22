@@ -55,7 +55,7 @@ export const appealRuling = defineMessages({
   },
   tagDecisionRemand: {
     id: 'judicial.system.core:appeal_ruling.tag_decision_remand',
-    defaultMessage: 'Frávísun',
+    defaultMessage: 'Heimvísun',
     description: 'Staða eftir úrskurð á máli ef málið er heimvísun',
   },
 })
