@@ -645,6 +645,10 @@ export const urls = defineMessages({
     id: 'sp.vehicles:url-registration-number',
     defaultMessage: 'https://island.is/umsoknir/panta-skraningarmerki',
   },
+  regCert: {
+    id: 'sp.vehicles:url-registration-cert',
+    defaultMessage: 'https://island.is/umsoknir/panta-skraningarskirteini',
+  },
   renewPrivate: {
     id: 'sp.vehicles:url-renew-private',
     defaultMessage: 'https://island.is/endurnyjun-a-einkamerki',
