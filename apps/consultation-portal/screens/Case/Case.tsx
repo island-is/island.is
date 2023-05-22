@@ -7,20 +7,7 @@ import {
   GridRow,
   Stack,
   Text,
-  Text,
 } from '@island.is/island-ui/core'
-import {
-  CaseOverview,
-  CaseTimeline,
-  Coordinator,
-  Stakeholders,
-  AdviceCTA,
-  CaseDocuments,
-  CaseEmailBox,
-  AdviceForm,
-  AdviceList,
-  AdviceSkeletonLoader,
-} from './components'
 import {
   CaseOverview,
   CaseTimeline,

@@ -12,7 +12,7 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
-import getTagVariants from '../../utils/helpers/getTagVariants'
+import { getTagVariants } from '../../utils/helpers'
 import { Eyebrows } from '../../components'
 
 import * as styles from './Card.css'
