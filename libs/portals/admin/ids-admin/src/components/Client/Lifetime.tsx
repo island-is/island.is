@@ -5,10 +5,10 @@ import {
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
+import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import ContentCard from '../../shared/components/ContentCard/ContentCard'
+import ContentCard from '../../shared/components/ContentCard'
 import { useActionData } from 'react-router-dom'
 import {
   ClientFormTypes,
@@ -17,6 +17,7 @@ import {
 } from '../forms/EditApplication/EditApplication.action'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
 import { useReadableSeconds } from './ReadableSeconds'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 
 interface LifetimeProps {
   absoluteRefreshTokenLifetime: number
@@ -30,7 +31,7 @@ const Lifetime = ({
   refreshTokenExpiration,
 }: LifetimeProps) => {
   const { formatMessage } = useLocale()
-  const [lifetime, setLifetime] = useState({
+  const [lifetime, setLifetime] = useEnvironmentState({
     absoluteRefreshTokenLifetime,
     refreshTokenExpiration,
     slidingRefreshTokenLifetime,

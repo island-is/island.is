@@ -39,9 +39,9 @@ export const statement = defineMessages({
       'Titill í Greinargerð hefur verið send Landsrétti héraðsdómstól modal',
   },
   statementSentModalText: {
-    id: 'judicial.system.core:statement_sent_text',
+    id: 'judicial.system.core:statement_sent_text_v2',
     defaultMessage:
-      'Tilkynning um greinargerð hefur verið send Landsrétti og sækjanda.',
+      'Tilkynning um greinargerð hefur verið send Landsrétti og {isDefender, select, true {sækjanda} other {verjanda}}.',
     description:
       'Texti í Greinargerð hefur verið send Landsrétti héraðsdómstól modal',
   },

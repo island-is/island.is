@@ -93,7 +93,12 @@ const TenantsList = () => {
                     >
                       {item.availableEnvironments.map((tag, index) => (
                         <Box margin={'smallGutter'} key={`tenant-${index}`}>
-                          <Tag key={`tenant-${tag}`} variant="purple" outlined>
+                          <Tag
+                            key={`tenant-${tag}`}
+                            variant="purple"
+                            outlined
+                            disabled
+                          >
                             {tag}
                           </Tag>
                         </Box>

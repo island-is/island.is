@@ -75,6 +75,7 @@ import {
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
+import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -150,6 +151,8 @@ export const footerEnabled = [
   'insurance-administration',
 
   'gev',
+
+  'shh',
 ]
 
 export const getThemeConfig = (
@@ -231,6 +234,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <GevHeader organizationPage={organizationPage} />
     case 'hve':
       return <HveHeader organizationPage={organizationPage} />
+    case 'shh':
+      return <ShhHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -238,19 +243,31 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
 
 interface ExternalLinksProps {
   organizationPage: OrganizationPage
+  showOnMobile?: boolean
 }
 
 export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   organizationPage,
+  showOnMobile = true,
 }) => {
   if (organizationPage.externalLinks?.length) {
+    const mobileDisplay = showOnMobile ? 'flex' : 'none'
     return (
       <Box
-        display={['none', 'none', 'flex', 'flex']}
-        justifyContent="flexEnd"
+        display={[mobileDisplay, mobileDisplay, 'flex', 'flex']}
+        justifyContent={[
+          'center',
+          showOnMobile ? 'flexEnd' : 'center',
+          'flexEnd',
+        ]}
         marginBottom={4}
       >
-        <Inline space={2}>
+        <Inline
+          flexWrap={
+            organizationPage.externalLinks?.length === 2 ? 'nowrap' : 'wrap'
+          }
+          space={2}
+        >
           {organizationPage.externalLinks.map((link, index) => {
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
@@ -278,7 +295,7 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
                   iconType="outline"
                   size="medium"
                 >
-                  <Box paddingY={2} paddingLeft={2}>
+                  <Box paddingY={[0, 2]} paddingLeft={[0, 2]}>
                     {link.text}
                   </Box>
                 </Button>
@@ -447,6 +464,17 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'gev':
       OrganizationFooterComponent = (
         <GevFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'shh':
+    case 'samskiptamidstoed-heyrnarlausra-og-heyrnarskertra':
+    case 'the-communication-center-for-the-deaf-and-hearing-impaired':
+      OrganizationFooterComponent = (
+        <ShhFooter
           title={organization.title}
           namespace={namespace}
           footerItems={organization.footerItems}
@@ -689,6 +717,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         >
           {isMobile && (
             <Box className={styles.menuStyle}>
+              {showExternalLinks && (
+                <OrganizationExternalLinks
+                  organizationPage={organizationPage}
+                  showOnMobile={true}
+                />
+              )}
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNavMobile"
@@ -735,6 +769,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 {showExternalLinks && (
                   <OrganizationExternalLinks
                     organizationPage={organizationPage}
+                    showOnMobile={false}
                   />
                 )}
                 {breadcrumbItems && (

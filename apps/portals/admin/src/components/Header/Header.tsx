@@ -16,7 +16,7 @@ import * as styles from './Header.css'
 
 export const Header = () => {
   return (
-    <div className={styles.placeholder}>
+    <>
       <PortalPageLoader />
       <header className={styles.header}>
         <GridContainer>
@@ -56,7 +56,7 @@ export const Header = () => {
           </Box>
         </GridContainer>
       </header>
-    </div>
+    </>
   )
 }
 
