@@ -27,7 +27,7 @@ export const renderConnectedComponent = (slice) => {
       }
       break
     case 'Undirskriftalistar/PetitionLists':
-      return <GeneralPetitionLists />
+      return <GeneralPetitionLists slice={slice} />
     case 'Skilavottord/CompanyListConnected':
       if (typeof data === 'object') {
         const { graphqlLink } = data
