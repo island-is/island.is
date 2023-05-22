@@ -27,6 +27,7 @@ import { CaseStatusFilterOptions } from '../../types/enums'
 import { useContext } from 'react'
 import UserContext from '../../context/UserContext'
 import localization from './Case.json'
+
 interface Props {
   chosenCase: Case
   caseId: number
