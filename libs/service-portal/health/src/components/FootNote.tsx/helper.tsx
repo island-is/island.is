@@ -1,4 +1,3 @@
-import { Button } from '@island.is/island-ui/core'
 import { FormatMessage } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import {
@@ -8,15 +7,7 @@ import {
   PHYSIO_THERAPY,
   SPEECH_THERAPY,
 } from '../../utils/constants'
-
-//TODO: Get correct paths from Sjúkratryggingar
-const button = (text: string[], to?: string) => (
-  <a href={to ?? ''} target="_blank" rel="noreferrer">
-    <Button size="small" variant="text">
-      {text}
-    </Button>
-  </a>
-)
+import LinkButton from '../LinkButton/LinkButton'
 
 export const getFootNoteByType = (
   type: string,
@@ -27,8 +18,12 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) =>
-            button(str, formatMessage(messages['physioDisclaimerLink'])),
+          link: (str) => (
+            <LinkButton
+              to={formatMessage(messages['physioDisclaimerLink'])}
+              text={str ?? ''}
+            />
+          ),
         }),
       }
       break
@@ -36,14 +31,24 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+          link: (str) => (
+            <LinkButton
+              to={formatMessage(messages['physioDisclaimerLink'])}
+              text={str ?? ''}
+            />
+          ),
         }),
       }
     case PHYSIO_HOME_THERAPY:
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+          link: (str) => (
+            <LinkButton
+              to={formatMessage(messages['physioDisclaimerLink'])}
+              text={str ?? ''}
+            />
+          ),
         }),
       }
     case SPEECH_THERAPY:
@@ -54,15 +59,19 @@ export const getFootNoteByType = (
     case OCCUPATIONAL_THERAPY:
       return {
         first: formatMessage(messages['occupationalDisclaimer'], {
-          link: (str) =>
-            button(str, formatMessage(messages['occupationalDisclaimerLink'])),
+          link: (str) => (
+            <LinkButton
+              to={formatMessage(messages['occupationalDisclaimerLink'])}
+              text={str ?? ''}
+            />
+          ),
         }),
       }
     default:
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+          link: (str) => <LinkButton to="" text={str ?? ''} />,
         }),
       }
   }

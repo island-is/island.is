@@ -23,6 +23,16 @@ export const messages = defineMessages({
     id: 'sp.health:nutrition-description-info-',
     defaultMessage: 'Nánar um næringu og sérfæði',
   },
+  nutritionDescriptionLink: {
+    id: 'sp.health:nutrition-description-link',
+    defaultMessage:
+      'https://island.is/greidsluthatttaka-vegna-naeringar-og-serfaedis',
+  },
+  aidsDescriptionLink: {
+    id: 'sp.health:aids-description-link',
+    defaultMessage:
+      'https://island.is/s/sjukratryggingar/hjalpartaeki-og-naering',
+  },
   aidsDescriptionInfo: {
     id: 'sp.health:aids-description-info',
     defaultMessage: 'Nánar um hjálpartæki',

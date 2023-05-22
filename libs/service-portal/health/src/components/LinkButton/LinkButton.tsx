@@ -3,7 +3,7 @@ import { FC } from 'react'
 
 interface Props {
   to: string
-  text: string
+  text: Array<string> | string
 }
 
 const LinkButton: FC<Props> = ({ to, text }) => (
