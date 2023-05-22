@@ -28,39 +28,6 @@ export const ExpiringExpandedTableRow: FC<Props> = ({
         return { value: val }
       })}
     >
-      {/*
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            {foldedValues.columns.map((col, idx) => (
-              <T.HeadData key={idx}>
-                <Text variant="medium" fontWeight="semiBold">
-                  {col}
-                </Text>
-              </T.HeadData>
-            ))}
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          <T.Row>
-            {foldedValues.values.map((val, idx) => (
-              <T.Data
-                key={idx}
-                box={{
-                  width: 'half',
-                  background: expiring ? 'yellow300' : 'transparent',
-                  paddingRight: 2,
-                  paddingLeft: 2,
-                  position: 'relative',
-                }}
-              >
-                <Text variant="medium">{val}</Text>
-              </T.Data>
-            ))}
-          </T.Row>
-        </T.Body>
-      </T.Table>
-              */}
       <Box padding={2} background="blue100">
         <GridContainer className={styles.grid}>
           <GridRow>
