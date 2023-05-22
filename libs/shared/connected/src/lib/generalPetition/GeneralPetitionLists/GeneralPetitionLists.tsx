@@ -41,7 +41,7 @@ export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
                 formatDate(petition.closedDate)
               }
               cta={{
-                label: t('openTil', 'Skoða lista'),
+                label: t('viewList', 'Skoða lista'),
                 variant: 'text',
                 icon: 'arrowForward',
                 onClick: () => {
