@@ -8,9 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import Layout from '../../../../components/Layout/Layout'
-import {
-  Breadcrumbs
-} from '../../../../components'
+import { Breadcrumbs } from '../../../../components'
 import { ReactNode } from 'react'
 import EmailBox from '../EmailBox/EmailBox'
 import { Area } from '../../../../types/enums'
