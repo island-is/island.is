@@ -1,12 +1,13 @@
+import { useIsMobile } from '../../hooks'
 import {
   Box,
   Breadcrumbs as IslandUIBreadcrumbs,
   Divider,
   GridContainer,
-  Hidden,
 } from '@island.is/island-ui/core'
 
 export const Breadcrumbs = ({ items }) => {
+  const { isMobile } = useIsMobile()
   return (
     <>
       <GridContainer>
@@ -14,11 +15,11 @@ export const Breadcrumbs = ({ items }) => {
           <IslandUIBreadcrumbs items={items} />
         </Box>
       </GridContainer>
-      <Hidden above="sm">
+      {isMobile && (
         <Box paddingBottom={[3, 3, 3, 5, 5]}>
           <Divider />
         </Box>
-      </Hidden>
+      )}
     </>
   )
 }
