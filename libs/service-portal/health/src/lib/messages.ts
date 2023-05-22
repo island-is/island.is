@@ -107,6 +107,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Sjúkratryggður getur einnig átt rétt á nauðsynlegri viðbótarþjálfun umfram 15 skipti, hafi Sjúkratryggingar samþykkt slíka meðferð. Skilyrði fyrir greiðsluþátttöku Sjúkratrygginga í slíkri viðbótarþjálfun er að Sjúkratryggingar hafi samþykkt umsókn um greiðsluþátttöku. Sjá frekari upplýsingar í <link>vinnureglum á heimasíðu.</link>',
   },
+  physioDisclaimerLink: {
+    id: 'sp.health:physio-therapy-disclaimer-link',
+    defaultMessage:
+      'https://assets.ctfassets.net/8k0h54kbe6bj/7DTXLMx7vNP3CIPlZgl1uE/a5c0fea1979db348a8377023f6e40044/Vinnureglur_vegna_grei__slu____ttt__ku_Sj__kratrygginga____sj__kra__j__lfun.pdf',
+  },
   speechDisclaimer1: {
     id: 'sp.health:speech-therapy-disclaimer-1',
     defaultMessage:
@@ -121,6 +126,11 @@ export const messages = defineMessages({
     id: 'sp.health:occupational-disclaimer',
     defaultMessage:
       'Greitt er fyrir iðjuþjálfun einstaklinga hjá Gigtarfélagi Íslands og Sjálfsbjörgu á Akureyri. Greitt er samkvæmt <link>greiðsluþátttökukerfi Sjúkratrygginga</link>. Skilyrði fyrir greiðsluþátttöku er að fyrir liggi beiðni með sjúkdómsgreiningu frá lækni. Beiðni fylgja 15 skipti á 365 dögum miðað við fyrstu meðferð. Ef þörf er á frekari meðferð þarf iðjuþjálfi að sækja um framhaldsskipti til Sjúkratrygginga.',
+  },
+  occupationalDisclaimerLink: {
+    id: 'sp.health:occupational-therapy-disclaimer-link',
+    defaultMessage:
+      'https://island.is/greidsluthatttaka-vegna-heilbrigdisthjonustu',
   },
   physioLink: {
     id: 'sp.health:physio-therapy-link',

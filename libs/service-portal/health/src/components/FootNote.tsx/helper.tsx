@@ -28,15 +28,11 @@ export const getFootNoteByType = (
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
           link: (str) =>
-            button(
-              str,
-              'https://assets.ctfassets.net/8k0h54kbe6bj/7DTXLMx7vNP3CIPlZgl1uE/a5c0fea1979db348a8377023f6e40044/Vinnureglur_vegna_grei__slu____ttt__ku_Sj__kratrygginga____sj__kra__j__lfun.pdf',
-            ),
+            button(str, formatMessage(messages['physioDisclaimerLink'])),
         }),
       }
       break
     case PHYSIO_ACCIDENT_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
@@ -44,8 +40,6 @@ export const getFootNoteByType = (
         }),
       }
     case PHYSIO_HOME_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
-
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
@@ -58,17 +52,12 @@ export const getFootNoteByType = (
         second: formatMessage(messages['speechDisclaimer2']),
       }
     case OCCUPATIONAL_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
       return {
         first: formatMessage(messages['occupationalDisclaimer'], {
           link: (str) =>
-            button(
-              str,
-              'https://island.is/greidsluthatttaka-vegna-heilbrigdisthjonustu',
-            ),
+            button(str, formatMessage(messages['occupationalDisclaimerLink'])),
         }),
       }
-      break
     default:
       return {
         first: formatMessage(messages['physioDisclaimer1']),
@@ -76,6 +65,5 @@ export const getFootNoteByType = (
           link: (str) => button(str),
         }),
       }
-      break
   }
 }
