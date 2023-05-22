@@ -27,7 +27,7 @@ export enum ClientFormTypes {
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
-  return s.split(/\s*,\s*|\s+|\n+/)
+  return s.split(/[\s\n,]+/).filter(Boolean)
 }
 
 const transformCustomClaims = (s: string): AuthAdminClientClaim[] => {
@@ -266,6 +266,7 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
     formData,
     schema: schema[intent.name],
   })
+  console.log('form submit', Array.from(formData.entries()), result)
 
   const { data, errors } = result
 
