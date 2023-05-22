@@ -41,7 +41,7 @@
       "advicesCount": "Fjöldi umsagna"
     },
     "announcementTitle": "Málsefni",
-    "detailsedDescriptionTitle": "Nánari upplýsingar"
+    "detailedDescriptionTitle": "Nánari upplýsingar"
   },
   "caseEmailBox": {
     "postEmailMutationToasts": {

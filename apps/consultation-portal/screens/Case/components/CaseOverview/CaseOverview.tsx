@@ -61,7 +61,7 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
           <Text variant="default">{chosenCase?.announcementText}</Text>
         </Box>
         <Box>
-          <Text variant="h4">{loc.detailsedDescriptionTitle}</Text>
+          <Text variant="h4">{loc.detailedDescriptionTitle}</Text>
           <Text variant="default">{chosenCase.detailedDescription}</Text>
         </Box>
       </Stack>
