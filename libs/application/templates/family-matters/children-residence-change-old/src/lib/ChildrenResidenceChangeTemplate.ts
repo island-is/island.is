@@ -41,7 +41,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE,
+  type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_OLD,
   name: application.name,
   dataSchema,
   stateMachineConfig: {
