@@ -33,6 +33,19 @@ export const messages = defineMessages({
     defaultMessage:
       'https://island.is/s/sjukratryggingar/hjalpartaeki-og-naering',
   },
+  physioDescriptionLink: {
+    id: 'sp.health:physio-description-link',
+    defaultMessage:
+      'https://island.is/greidsluthatttaka-vegna-sjukrathjalfunar',
+  },
+  speechDescriptionLink: {
+    id: 'sp.health:speech-description-link',
+    defaultMessage: 'https://island.is/greidsluthatttaka-vegna-talthjalfunar',
+  },
+  occupationalDescriptionLink: {
+    id: 'sp.health:occupational-description-link',
+    defaultMessage: 'https://island.is/idjuthjalfun',
+  },
   aidsDescriptionInfo: {
     id: 'sp.health:aids-description-info',
     defaultMessage: 'Nánar um hjálpartæki',

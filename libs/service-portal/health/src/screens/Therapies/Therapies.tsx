@@ -70,7 +70,7 @@ const Therapies = () => {
       content: (
         <TherapiesTabContent
           data={physioTherapyData}
-          link="https://island.is/greidsluthatttaka-vegna-sjukrathjalfunar"
+          link={formatMessage(messages.physioDescriptionLink)}
           linkText={formatMessage(messages.physioLink)}
         />
       ),
@@ -80,7 +80,7 @@ const Therapies = () => {
       content: (
         <TherapiesTabContent
           data={speechTherapyData}
-          link="https://island.is/greidsluthatttaka-vegna-talthjalfunar"
+          link={formatMessage(messages.speechDescriptionLink)}
           linkText={formatMessage(messages.speechLink)}
         />
       ),
@@ -90,7 +90,7 @@ const Therapies = () => {
       content: (
         <TherapiesTabContent
           data={occupationalTherapyData}
-          link="https://island.is/idjuthjalfun"
+          link={formatMessage(messages.occupationalDescriptionLink)}
           linkText={formatMessage(messages.occupationalLink)}
         />
       ),
