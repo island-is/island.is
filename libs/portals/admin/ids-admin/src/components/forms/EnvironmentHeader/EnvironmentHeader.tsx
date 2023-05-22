@@ -3,7 +3,6 @@ import React, { ReactNode } from 'react'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { Text, Box, Select, Option } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useRouteLoaderData } from 'react-router-dom'
 
 import { m } from '../../../lib/messages'
 import { authAdminEnvironments } from '../../../shared/utils/environments'
