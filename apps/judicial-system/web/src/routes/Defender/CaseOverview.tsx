@@ -42,7 +42,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import { defenderCaseOverview as m } from './CaseOverview.strings'
 import { AlertBanner } from '../../components/AlertBanner'
 import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
-import { appealCase } from '../CourtOfAppeal/AppealCase/AppealCase.strings'
 import Conclusion from '../../components/Conclusion/Conclusion'
 import CaseFilesOverview from '../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
 import AppealConclusion from '../../components/Conclusion/AppealConclusion'
@@ -262,15 +261,15 @@ export const CaseOverview: React.FC = () => {
                 workingCase.appealCaseNumber
                   ? [
                       {
-                        title: formatMessage(appealCase.caseNumberHeading),
+                        title: formatMessage(core.appealCaseNumberHeading),
                         value: workingCase.appealCaseNumber,
                       },
                       {
-                        title: formatMessage(appealCase.assistantHeading),
+                        title: formatMessage(core.appealAssistantHeading),
                         value: workingCase.appealAssistant?.name,
                       },
                       {
-                        title: formatMessage(appealCase.judgesHeading),
+                        title: formatMessage(core.appealJudgesHeading),
                         value: (
                           <>
                             <Text>{workingCase.appealJudge1?.name}</Text>

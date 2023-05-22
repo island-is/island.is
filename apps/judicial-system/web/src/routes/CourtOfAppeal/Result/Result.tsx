@@ -23,7 +23,6 @@ import AppealConclusion from '@island.is/judicial-system-web/src/components/Conc
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
-import { appealCase } from '../AppealCase/AppealCase.strings'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 const CourtOfAppealResult: React.FC = () => {
@@ -114,15 +113,15 @@ const CourtOfAppealResult: React.FC = () => {
               ]}
               courtOfAppealData={[
                 {
-                  title: formatMessage(appealCase.caseNumberHeading),
+                  title: formatMessage(core.appealCaseNumberHeading),
                   value: workingCase.appealCaseNumber,
                 },
                 {
-                  title: formatMessage(appealCase.assistantHeading),
+                  title: formatMessage(core.appealAssistantHeading),
                   value: workingCase.appealAssistant?.name,
                 },
                 {
-                  title: formatMessage(appealCase.judgesHeading),
+                  title: formatMessage(core.appealJudgesHeading),
                   value: (
                     <>
                       <Text>{workingCase.appealJudge1?.name}</Text>

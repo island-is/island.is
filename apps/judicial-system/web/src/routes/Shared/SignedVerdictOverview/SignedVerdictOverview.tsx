@@ -81,7 +81,6 @@ import {
   useRequestCourtRecordSignatureMutation,
 } from './CourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
-import { appealCase } from '../../CourtOfAppeal/AppealCase/AppealCase.strings'
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import CaseFilesOverview from '../../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
 import ShareCase from './Components/ShareCase/ShareCase'
@@ -656,15 +655,15 @@ export const SignedVerdictOverview: React.FC = () => {
                 workingCase.appealCaseNumber
                   ? [
                       {
-                        title: formatMessage(appealCase.caseNumberHeading),
+                        title: formatMessage(core.appealCaseNumberHeading),
                         value: workingCase.appealCaseNumber,
                       },
                       {
-                        title: formatMessage(appealCase.assistantHeading),
+                        title: formatMessage(core.appealAssistantHeading),
                         value: workingCase.appealAssistant?.name,
                       },
                       {
-                        title: formatMessage(appealCase.judgesHeading),
+                        title: formatMessage(core.appealJudgesHeading),
                         value: (
                           <>
                             <Text>{workingCase.appealJudge1?.name}</Text>
