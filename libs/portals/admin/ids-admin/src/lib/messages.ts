@@ -741,7 +741,7 @@ export const m = defineMessages({
   grantToLegalGuardiansDescription: {
     id: 'ap.ids-admin:grant-to-legal-guardians-description',
     defaultMessage:
-      'Should legal guardians automatically get this scope for their wards',
+      'Should legal guardians automatically get this permission for their wards',
   },
   allowExplicitDelegationGrant: {
     id: 'ap.ids-admin:allow-explicit-delegation-grant',
