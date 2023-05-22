@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { nullable } from 'zod'
 
 @ObjectType('UniversityOfIcelandInstitution')
 export class Institution {
