@@ -6,6 +6,10 @@ import { useLocale } from '@island.is/localization'
 import { useRouteLoaderData } from 'react-router-dom'
 
 import { m } from '../../../lib/messages'
+import {
+  tenantLoaderId,
+  TenantLoaderResult,
+} from '../../../screens/Tenant/Tenant.loader'
 import { authAdminEnvironments } from '../../../shared/utils/environments'
 import * as styles from './EnvironmentHeader.css'
 
@@ -33,8 +37,10 @@ export const EnvironmentHeader = ({
   preHeader,
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
+  const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
+  console.log(tenant)
 
-  const options = authAdminEnvironments.map((env) =>
+  const options = tenant.availableEnvironments.map((env) =>
     formatOption(
       availableEnvironments.includes(env)
         ? env
