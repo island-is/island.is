@@ -19,7 +19,11 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import CaseEmailActionBox from './CaseEmailActionBox'
-import { CaseSubscriptionType, SubscriptionType, SubscriptionTypes } from '../../../../types/enums'
+import {
+  CaseSubscriptionType,
+  SubscriptionType,
+  SubscriptionTypes,
+} from '../../../../types/enums'
 import localization from '../../Case.json'
 
 interface CardSkeletonProps {
