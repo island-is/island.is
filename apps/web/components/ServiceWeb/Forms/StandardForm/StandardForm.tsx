@@ -44,6 +44,7 @@ import { FormNamespace } from '../../types'
 import { useI18n } from '@island.is/web/i18n'
 import { CategoryId, SyslumennCategories } from './types'
 import { SjukratryggingarCategories } from '@island.is/web/screens/ServiceWeb/Forms/utils'
+import { getServiceWebSearchTagQuery } from '@island.is/web/screens/ServiceWeb/utils'
 
 type FormState = {
   message: string
@@ -233,9 +234,7 @@ export const StandardForm = ({
                 queryString,
                 size: 10,
                 types: [SearchableContentTypes['WebQna']],
-                [institutionSlugBelongsToMannaudstorg
-                  ? 'tags'
-                  : 'excludedTags']: mannaudstorgTag,
+                ...getServiceWebSearchTagQuery(institutionSlug),
               },
             },
           })

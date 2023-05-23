@@ -34,6 +34,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealCase as strings } from './AppealCase.strings'
+import { core } from '@island.is/judicial-system-web/messages'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type AssistantSelectOption = ReactSelectOption & { assistant: User }
@@ -97,7 +98,7 @@ const AppealCase = () => {
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
 
         <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(strings.caseNumberHeading)} />
+          <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <Input
             name="appealCaseNumber"
             label={formatMessage(strings.caseNumberLabel)}
@@ -129,7 +130,7 @@ const AppealCase = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(strings.assistantHeading)} />
+          <SectionHeading title={formatMessage(core.appealAssistantHeading)} />
           <Select
             name="assistant"
             label={formatMessage(strings.assistantLabel)}
@@ -154,7 +155,7 @@ const AppealCase = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <SectionHeading title={formatMessage(strings.judgesHeading)} />
+          <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
           <BlueBox>
             {defaultJudges.map((judge, index) => {
               return (

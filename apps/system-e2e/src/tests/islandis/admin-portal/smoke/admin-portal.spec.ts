@@ -24,18 +24,4 @@ test.describe('Admin portal', () => {
     await page.goto('/stjornbord')
     await expect(findByTestId('active-module-name')).toBeVisible()
   })
-
-  for (const { testCase } of [
-    { testCase: 'Vera sendur beint á Loftbrú þegar umboðshafi' },
-    { testCase: 'Eyða umboði fyrir Loftbrú admin' },
-    { testCase: 'Fara inn í Aðgangsstýringu með fellivali í haus' },
-    {
-      testCase: 'Sjá yfirlit með Loftbrú og Aðganggstýringu þegar prókúruhafi',
-    },
-    { testCase: 'Veita umboð fyrir Loftbrú admin' },
-  ]) {
-    test.skip(testCase, () => {
-      return
-    })
-  }
 })

@@ -41,7 +41,7 @@ const GevFooter = ({ title, namespace, footerItems }: GevFooterProps) => {
           <Text variant="h3">{title}</Text>
         </Box>
 
-        <Box marginBottom={3} borderTopWidth="standard" borderColor="dark400" />
+        <Box marginBottom={2} borderTopWidth="standard" borderColor="dark400" />
 
         <Hidden below="lg">
           <GridRow align="flexStart">
