@@ -81,6 +81,7 @@ export const attributes: (keyof Case)[] = [
   'appealJudge3Id',
   'appealConclusion',
   'appealRulingDecision',
+  'appealReceivedByCourtDate',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -135,6 +136,26 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
       ],
     },
+  },
+  {
+    model: User,
+    as: 'appealAssistant',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge1',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge2',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 
@@ -232,27 +253,6 @@ export class LimitedAccessCaseService {
     const updatedCase = await this.findById(theCase.id)
 
     if (updatedCase.defendantStatementDate !== theCase.defendantStatementDate) {
-      theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.key &&
-            caseFile.category &&
-            [
-              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-              CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-            ].includes(caseFile.category),
-        )
-        .forEach((caseFile) => {
-          const message = {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
-            user,
-            caseId: theCase.id,
-            caseFileId: caseFile.id,
-          }
-          messages.push(message)
-        })
-
       messages.push({
         type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
         user,

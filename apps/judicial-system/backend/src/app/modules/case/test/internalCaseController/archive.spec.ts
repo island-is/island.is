@@ -186,6 +186,7 @@ describe('InternalCaseController - Archive', () => {
           legalArguments: 'original_legal_arguments2',
         },
       ],
+      appealConclusion: 'original_appeal_conclusion',
       isArchived: false,
     }
     const archive = JSON.stringify({
@@ -220,6 +221,7 @@ describe('InternalCaseController - Archive', () => {
       caseModifiedExplanation: 'original_caseModifiedExplanation',
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
+      appealConclusion: 'original_appeal_conclusion',
       defendants: [
         {
           nationalId: 'original_nationalId1',
@@ -390,6 +392,7 @@ describe('InternalCaseController - Archive', () => {
           caseResentExplanation: '',
           crimeScenes: null,
           indictmentIntroduction: '',
+          appealConclusion: '',
           isArchived: true,
         },
         { where: { id: caseId }, transaction },

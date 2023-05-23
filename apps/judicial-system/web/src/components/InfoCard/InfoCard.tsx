@@ -20,6 +20,7 @@ interface UniqueDefendersProps {
 }
 
 interface Props {
+  courtOfAppealData?: Array<{ title: string; value?: React.ReactNode }>
   data: Array<{ title: string; value?: React.ReactNode }>
   defendants?: { title: string; items: Defendant[] }
   defenders?: Defender[]
@@ -36,7 +37,7 @@ const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
     <>
       <Text variant="h4">
         {defenders[0].sessionArrangement ===
-        SessionArrangements.AllPresentSpokesperson
+        SessionArrangements.ALL_PRESENT_SPOKESPERSON
           ? 'Talsmaður'
           : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
       </Text>
@@ -58,7 +59,7 @@ const UniqueDefenders: React.FC<UniqueDefendersProps> = (props) => {
 }
 
 const InfoCard: React.FC<Props> = (props) => {
-  const { data, defendants, defenders } = props
+  const { data, defendants, defenders, courtOfAppealData } = props
 
   return (
     <Box
@@ -118,6 +119,22 @@ const InfoCard: React.FC<Props> = (props) => {
           )
         })}
       </Box>
+      {courtOfAppealData && (
+        <Box className={styles.infoCardCourtOfAppealDataContainer}>
+          {courtOfAppealData.map((dataItem, index) => {
+            return (
+              <Box data-testid={`infoCardDataContainer${index}`} key={index}>
+                <Text variant="h4">{dataItem.title}</Text>
+                {typeof dataItem.value === 'string' ? (
+                  <Text>{dataItem.value}</Text>
+                ) : (
+                  dataItem.value
+                )}
+              </Box>
+            )
+          })}
+        </Box>
+      )}
     </Box>
   )
 }

@@ -1,104 +1,132 @@
-import ContentCard from '../../shared/components/ContentCard'
+import React, { useEffect, useState } from 'react'
+import { useActionData, useParams } from 'react-router-dom'
+
+import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
+import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { getTranslatedValue } from '@island.is/portals/core'
+
+import ContentCard from '../../shared/components/ContentCard'
 import { m } from '../../lib/messages'
-import { Box, Button, Table as T, Text, Icon } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
 import AddPermissions from '../forms/AddPermissions/AddPermissions'
-import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import {
+  ClientFormTypes,
+  EditApplicationResult,
+  schema,
+} from '../forms/EditApplication/EditApplication.action'
 import { ShadowBox } from '../ShadowBox/ShadowBox'
 
-type Permission = {
-  id: string
-  label: string
-  description: string
-  api: string
-  locked?: boolean
-}
-
 interface PermissionsProps {
-  data?: Permission[]
+  allowedScopes?: AuthAdminClientAllowedScope[]
 }
 
-const mockData: NonNullable<PermissionsProps['data']> = [
-  {
-    label: 'Staða og hreyfingar',
-    id: '@island.is/finance:overview',
-    description:
-      'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-    api: 'Island.is APIs',
-    locked: false,
-  },
-  {
-    label: 'Full Access',
-    id: '@island.is/auth/admin:full',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Island.is APIs',
-    locked: false,
-  },
-  {
-    label: 'Skattskýrslur',
-    id: '@skatturinn.is/skattskyrslur',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
-  },
-  {
-    label: 'Staða og hreyfingar',
-    id: '@island.is/finance:overview',
-    description:
-      'Skoða stöðu við ríkissjóð og stofnanir, hreyfingar, greiðsluseðla og greiðslukvittanir.',
-    api: 'Island.is APIs',
-    locked: false,
-  },
-  {
-    label: 'Full Access',
-    id: '@island.is/auth/admin:full',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Island.is APIs',
-    locked: false,
-  },
-  {
-    label: 'Skattskýrslur',
-    id: '@skatturinn.is/skattskyrslur',
-    description:
-      'Full access to authorization admin something description here',
-    api: 'Skatturinn',
-    locked: true,
-  },
-]
-
-function Permissions({ data = mockData }: PermissionsProps) {
-  const { formatMessage } = useLocale()
+function Permissions({ allowedScopes }: PermissionsProps) {
+  const { formatMessage, locale } = useLocale()
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const params = useParams()
+  const [permissions, setPermissions] = useState<AuthAdminClientAllowedScope[]>(
+    allowedScopes ?? [],
+  )
+  const [addedScopes, setAddedScopes] = useState<AuthAdminClientAllowedScope[]>(
+    [],
+  )
+  const [removedScopes, setRemovedScopes] = useState<
+    AuthAdminClientAllowedScope[]
+  >([])
+  const actionData = useActionData() as EditApplicationResult<
+    typeof schema[typeof ClientFormTypes.permissions]
+  >
 
-  const handleModalClose = () => {
-    setIsModalVisible(false)
-  }
+  useEffect(() => {
+    if (
+      actionData?.intent === ClientFormTypes.permissions &&
+      actionData?.data
+    ) {
+      setAddedScopes([])
+      setRemovedScopes([])
+    }
+  }, [actionData])
+
+  const tenant = params['tenant']
 
   const handleModalOpen = () => {
     setIsModalVisible(true)
   }
 
-  const hasData = Array.isArray(data) && data.length > 0
+  const handleModalClose = () => {
+    setIsModalVisible(false)
+  }
+
+  // If removing permissions, we want to remove it from both the permissions and addedPermissions array and add it to the removedPermissions array if it doesn't exist there
+  const handleRemovedPermission = (
+    removedPermission: AuthAdminClientAllowedScope,
+  ) => {
+    setAddedScopes((prevState) =>
+      prevState.filter((item) => item.name !== removedPermission.name),
+    )
+    setPermissions((prevState) =>
+      prevState.filter((item) => item.name !== removedPermission.name),
+    )
+
+    setRemovedScopes((prevState) => {
+      if (
+        [...addedScopes, ...prevState].find(
+          (item) => item.name === removedPermission.name,
+        )
+      ) {
+        return prevState
+      }
+      return [...prevState, removedPermission]
+    })
+  }
+
+  // Add the selected scopes to the addedScopes array for
+  const handleAdd = (selected: AuthAdminClientAllowedScope[]) => {
+    // Combine the previously added scopes and the newly selected scopes
+    const newAddedScopes = [...addedScopes, ...selected.values()]
+
+    // Remove the scopes that were added that were also in the removedScopes array
+    setAddedScopes(
+      newAddedScopes.filter(
+        (item) => !removedScopes.some((rem) => rem.name === item.name),
+      ),
+    )
+    // Remove the scopes that were added from the removedScopes array
+    setRemovedScopes(
+      removedScopes.filter(
+        (item) => !newAddedScopes.find((added) => added.name === item.name),
+      ),
+    )
+
+    setPermissions([...permissions, ...selected])
+  }
+
+  const hasData =
+    permissions.length > 0 || addedScopes.length > 0 || removedScopes.length > 0
 
   return (
     <ContentCard
       title={formatMessage(m.permissions)}
-      description={formatMessage(m.permissionsDescription)}
-      intent={ClientFormTypes.permissions}
+      description={formatMessage(m.permissionsDescription, {
+        br: <br />,
+      })}
+      isDirty={addedScopes.length > 0 || removedScopes.length > 0}
+      intent={hasData ? ClientFormTypes.permissions : ClientFormTypes.none}
+      shouldSupportMultiEnvironment={false}
     >
-      <Box marginBottom={5}>
-        <Button onClick={handleModalOpen}>
+      <Box
+        marginBottom={hasData ? 5 : 0}
+        display="flex"
+        justifyContent="flexEnd"
+      >
+        <Button size="small" onClick={handleModalOpen}>
           {formatMessage(m.permissionsAdd)}
         </Button>
       </Box>
       {hasData && (
         <ShadowBox style={{ maxHeight: 440 }}>
-          <T.Table>
-            <T.Head>
+          <T.Table box={{ overflow: 'initial' }}>
+            <T.Head sticky>
               <T.Row>
                 <T.HeadData>
                   {formatMessage(m.permissionsTableLabelName)}
@@ -106,18 +134,15 @@ function Permissions({ data = mockData }: PermissionsProps) {
                 <T.HeadData>
                   {formatMessage(m.permissionsTableLabelDescription)}
                 </T.HeadData>
-                <T.HeadData>
-                  {formatMessage(m.permissionsTableLabelAPI)}
-                </T.HeadData>
                 <T.HeadData>{/* For matching column count */}</T.HeadData>
               </T.Row>
             </T.Head>
             <T.Body>
-              {data.map((item) => (
-                <T.Row key={item.id}>
+              {permissions.map((item) => (
+                <T.Row key={item.name}>
                   <T.Data>
                     <Box display="flex" columnGap={1} alignItems="center">
-                      {item.locked && (
+                      {item.domainName !== tenant && (
                         <Icon
                           type="outline"
                           icon="lockClosed"
@@ -125,20 +150,28 @@ function Permissions({ data = mockData }: PermissionsProps) {
                           color="blue400"
                         />
                       )}
-                      <Text variant="eyebrow">{item.label}</Text>
+                      <Text variant="eyebrow">
+                        {getTranslatedValue(item.displayName, locale)}
+                      </Text>
                     </Box>
-                    {item.id}
+                    {item.name}
                   </T.Data>
-                  <T.Data>{item.description}</T.Data>
-                  <T.Data>{item.api}</T.Data>
                   <T.Data>
-                    <Button
-                      aria-label={formatMessage(m.permissionsButtonLabelRemove)}
-                      icon="trash"
-                      variant="ghost"
-                      iconType="outline"
-                      size="small"
-                    />
+                    {getTranslatedValue(item.description ?? [], locale)}
+                  </T.Data>
+                  <T.Data>
+                    <Box display="flex" justifyContent="flexEnd">
+                      <Button
+                        onClick={() => handleRemovedPermission(item)}
+                        aria-label={formatMessage(
+                          m.permissionsButtonLabelRemove,
+                        )}
+                        icon="trash"
+                        variant="ghost"
+                        iconType="outline"
+                        size="small"
+                      />
+                    </Box>
                   </T.Data>
                 </T.Row>
               ))}
@@ -146,7 +179,19 @@ function Permissions({ data = mockData }: PermissionsProps) {
           </T.Table>
         </ShadowBox>
       )}
-      <AddPermissions onClose={handleModalClose} isVisible={isModalVisible} />
+      {addedScopes.map(({ name }) => (
+        <input key={name} type="hidden" name="addedScopes" value={name} />
+      ))}
+      {removedScopes.map(({ name }) => (
+        <input key={name} type="hidden" name="removedScopes" value={name} />
+      ))}
+      <AddPermissions
+        onAdd={handleAdd}
+        onClose={handleModalClose}
+        isVisible={isModalVisible}
+        addedScopes={addedScopes}
+        removedScopes={removedScopes}
+      />
     </ContentCard>
   )
 }

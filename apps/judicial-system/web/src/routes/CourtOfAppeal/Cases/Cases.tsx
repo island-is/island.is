@@ -149,12 +149,14 @@ const CourtOfAppealCases = () => {
       }) => {
         const thisRow = row.row.original
         const tagVariant: { color: TagVariant; text: string } =
-          thisRow.appealState === CaseAppealState.Appealed
+          thisRow.appealState === CaseAppealState.APPEALED
             ? {
                 color: 'purple',
                 text: formatMessage(tables.newTag),
               }
-            : { color: 'darkerBlue', text: formatMessage(tables.receivedTag) }
+            : thisRow.appealState === CaseAppealState.RECEIVED
+            ? { color: 'darkerBlue', text: formatMessage(tables.receivedTag) }
+            : { color: 'darkerBlue', text: formatMessage(tables.completedTag) }
 
         return (
           <Tag variant={tagVariant.color} outlined disabled>
@@ -220,7 +222,7 @@ const CourtOfAppealCases = () => {
           columns={appealedCasesColumns}
           data={
             appealedCasesData?.filter(
-              (a) => a.appealState !== CaseAppealState.Completed,
+              (a) => a.appealState !== CaseAppealState.COMPLETED,
             ) || []
           }
         />
@@ -235,7 +237,7 @@ const CourtOfAppealCases = () => {
         columns={completedCasesColumns}
         data={
           appealedCasesData?.filter(
-            (a) => a.appealState === CaseAppealState.Completed,
+            (a) => a.appealState === CaseAppealState.COMPLETED,
           ) || []
         }
       />

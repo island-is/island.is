@@ -77,8 +77,8 @@ export class MeClientSecretsController {
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
     @Param('secretId') secretId: string,
-  ): Promise<number> {
-    return this.auditService.auditPromise(
+  ): Promise<void> {
+    await this.auditService.auditPromise(
       {
         auth: user,
         namespace,
