@@ -266,10 +266,11 @@ export class ClientsService extends MultiEnvironmentService {
     })
 
     return (
-      apiScopes?.map(({ name, displayName, description }) => ({
+      apiScopes?.map(({ name, displayName, description, domainName }) => ({
         name,
         displayName,
         description,
+        domainName,
       })) ?? []
     )
   }

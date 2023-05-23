@@ -9,10 +9,7 @@ import {
   UploadedFile,
   UploadFile,
 } from '@island.is/island-ui/core'
-import {
-  CaseFile as TCaseFile,
-  CaseFileState,
-} from '@island.is/judicial-system/types'
+import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import {
   caseFiles as m,
   core,
