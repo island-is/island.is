@@ -65,7 +65,7 @@ const Therapies = () => {
 
   // Construct tabs array and filter out empty arrays
   const tabs = [
-    physicalTherapyData.length > 0 && {
+    physioTherapyData.length > 0 && {
       label: formatMessage(messages.physicalTherapy),
       content: (
         <TherapiesTabContent
