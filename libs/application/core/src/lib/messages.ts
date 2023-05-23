@@ -673,4 +673,9 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn úthlutað yfirferðaraðila',
     description: 'History application assigned',
   },
+  attachmentsAdded: {
+    id: 'application.system:core.history.attachmentsAdded',
+    defaultMessage: 'Fylgigögnum bætt við',
+    description: 'History attachments added',
+  },
 })

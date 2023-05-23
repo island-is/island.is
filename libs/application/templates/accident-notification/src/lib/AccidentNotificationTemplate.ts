@@ -1,4 +1,5 @@
 import {
+  coreHistoryMessages,
   DefaultStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -60,6 +61,15 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
           status: 'draft',
+
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationSent,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -91,6 +101,22 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
+          },
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.ASSIGN,
+                logMessage: coreHistoryMessages.applicationAssigned,
+              },
+            ],
           },
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -146,6 +172,22 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
+          },
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.attachmentsAdded,
+              },
+            ],
           },
           onEntry: defineTemplateApi({
             action: ApiActions.addAttachment,
