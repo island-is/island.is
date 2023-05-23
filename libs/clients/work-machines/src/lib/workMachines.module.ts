@@ -6,4 +6,4 @@ import { MachinesApi } from '../../gen/fetch'
   providers: [WorkMachinesApiProvider],
   exports: [MachinesApi],
 })
-export class WorkMachinesModule {}
+export class WorkMachinesClientModule {}

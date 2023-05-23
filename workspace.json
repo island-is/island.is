@@ -302,6 +302,7 @@
     "service-portal-sessions": "libs/service-portal/sessions",
     "service-portal-settings-personal-information": "libs/service-portal/settings/personal-information",
     "service-portal-vehicles": "libs/service-portal/vehicles",
+    "service-portal-work-machines": "libs/service-portal/work-machines",
     "services-auth-admin-api": "apps/services/auth/admin-api",
     "services-auth-delegation-api": "apps/services/auth/delegation-api",
     "services-auth-ids-api": "apps/services/auth/ids-api",

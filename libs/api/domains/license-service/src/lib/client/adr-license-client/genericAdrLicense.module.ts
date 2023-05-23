@@ -7,11 +7,9 @@ import { Module } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { GenericAdrLicenseService } from './genericAdrLicense.service'
 import { GenericAdrLicenseConfig } from './genericAdrLicense.config'
-import { WorkMachinesModule } from '@island.is/clients/work-machines'
 
 @Module({
   imports: [
-    WorkMachinesModule,
     AdrAndMachineLicenseClientModule,
     SmartSolutionsApiClientModule.registerAsync({
       useFactory: (config: ConfigType<typeof GenericAdrLicenseConfig>) => {

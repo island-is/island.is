@@ -34,7 +34,6 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,
-    private machinesApi: MachinesApi,
     private smartApi: SmartSolutionsApi,
   ) {}
 
@@ -49,11 +48,6 @@ export class GenericAdrLicenseService implements GenericLicenseClient<AdrDto> {
     locale: Locale,
     labels: GenericLicenseLabels,
   ): Promise<GenericLicenseUserdataExternal | null> {
-    const data = await this.machinesApi
-      .withMiddleware(new AuthMiddleware(user as Auth))
-      .apiMachinesGet({})
-    this.logger.debug(JSON.stringify(data))
-
     const licenseData = await this.fetchLicense(user)
 
     if (!licenseData) {
