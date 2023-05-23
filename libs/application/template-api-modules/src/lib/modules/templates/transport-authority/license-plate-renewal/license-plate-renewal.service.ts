@@ -32,6 +32,17 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
       auth,
     )
 
+    // Validate that user has at least 1 plate ownership
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: error.plateOwnershipEmptyList,
+          summary: error.plateOwnershipEmptyList,
+        },
+        400,
+      )
+    }
+
     return await Promise.all(
       result.map(async (item: PlateOwnership) => {
         let validation: PlateOwnershipValidation | undefined

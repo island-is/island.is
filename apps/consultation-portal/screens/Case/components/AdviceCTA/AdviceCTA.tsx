@@ -5,34 +5,43 @@ import { useLogIn } from '../../../../hooks'
 import {
   advicePublishTypeKey,
   advicePublishTypeKeyHelper,
+  CaseStatuses,
   pastAdvicePublishTypeKey,
 } from '../../../../types/enums'
 import { Case } from '../../../../types/interfaces'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import Link from 'next/link'
 import { useContext } from 'react'
+import localization from '../../Case.json'
 
 interface Props {
   chosenCase: Case
 }
 export const AdviceCTACard = ({ chosenCase }: Props) => {
   const { isAuthenticated } = useContext(UserContext)
+  const loc = localization['adviceCTACard']
   const LogIn = useLogIn()
 
   return (
     <SimpleCardSkeleton>
-      {chosenCase.statusName === 'Til umsagnar' ? (
+      {chosenCase.statusName === CaseStatuses.forReview ? (
         <>
-          <StackedTitleAndDescription title="Viltu senda umsögn?">
+          <StackedTitleAndDescription
+            title={loc.forReview.StackedTitleAndDescription.title}
+          >
             <Text>
               {`
-                 Málið er opið til umsagnar og öllum frjálst að taka þátt.
+                 ${loc.forReview.StackedTitleAndDescription.text}
                  ${
                    advicePublishTypeKey[
                      advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
                    ]
                  }
-                 ${!isAuthenticated ? 'Skráðu þig inn og sendu umsögn.' : ''}
+                 ${
+                   !isAuthenticated
+                     ? loc.forReview.StackedTitleAndDescription.loginText
+                     : ''
+                 }
               `}
             </Text>
           </StackedTitleAndDescription>
@@ -40,44 +49,48 @@ export const AdviceCTACard = ({ chosenCase }: Props) => {
             {isAuthenticated ? (
               <Link href="#write-review" shallow>
                 <Button fluid iconType="outline" nowrap as="a">
-                  Senda umsögn
+                  {loc.forReview.buttons.sendAdvice}
                 </Button>
               </Link>
             ) : (
               <Button fluid iconType="outline" nowrap onClick={LogIn}>
-                Skrá mig inn
+                {loc.forReview.buttons.logIn}
               </Button>
             )}
           </Box>
         </>
-      ) : chosenCase.statusName === 'Niðurstöður í vinnslu' ? (
-        <StackedTitleAndDescription headingColor="blue400" title="Í vinnslu">
+      ) : chosenCase.statusName === CaseStatuses.inProgress ? (
+        <StackedTitleAndDescription
+          headingColor="blue400"
+          title={loc.inProgress.StackedTitleAndDescription.title}
+        >
           <Text>
             {`
-              Umsagnarfrestur er liðinn.
+              ${loc.inProgress.StackedTitleAndDescription.text}
             ${
               pastAdvicePublishTypeKey[
                 advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
               ]
             }
-              Niðurstöður samráðsins eru væntanlegar.
+            ${loc.inProgress.StackedTitleAndDescription.textCont}
             `}
           </Text>
         </StackedTitleAndDescription>
       ) : (
         <StackedTitleAndDescription
           headingColor="blue400"
-          title="Samráði lokið"
+          title={loc.published.titleAndDescription.title}
         >
           <Text>
             {` 
-              Umsagnarfrestur er liðinn.
+              ${loc.published.titleAndDescription.text}
               ${
                 pastAdvicePublishTypeKey[
                   advicePublishTypeKeyHelper[chosenCase.advicePublishTypeId]
                 ]
               } 
-              Niðurstöður hafa verið birtar og samráði lokið.
+              ${loc.published.titleAndDescription.textCont}
+
             `}
           </Text>
         </StackedTitleAndDescription>

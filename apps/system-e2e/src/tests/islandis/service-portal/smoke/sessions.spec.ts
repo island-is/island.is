@@ -1,11 +1,13 @@
 import { test, expect, BrowserContext } from '@playwright/test'
 import { format } from 'kennitala'
 
-import { env, icelandicAndNoPopup, urls } from '../../../../support/urls'
+import { env, icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
-const sessionHistoryUrl = `/minarsidur/adgangsstyring/notkun?${icelandicAndNoPopup}`
+const sessionHistoryUrl = icelandicAndNoPopupUrl(
+  '/minarsidur/adgangsstyring/notkun',
+)
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -46,7 +48,7 @@ test.describe('Service portal, in session history', () => {
       // eslint-disable-next-line local-rules/disallow-kennitalas
       env === 'staging' ? '6609170200' : '5005101370'
     const page = await context.newPage()
-    await page.goto(sessionHistoryUrl)
+    await page.goto(icelandicAndNoPopupUrl(sessionHistoryUrl))
 
     // Act
     await page
@@ -65,7 +67,7 @@ test.describe('Service portal, in session history', () => {
     const testCompanyName =
       env === 'staging' ? 'Prófunarfélag GG og HEB' : 'ARTIC ehf.'
     const page = await context.newPage()
-    await page.goto(`${homeUrl}?${icelandicAndNoPopup}`)
+    await page.goto(icelandicAndNoPopupUrl(homeUrl))
     await page
       .getByRole('button', { name: 'Útskráning og aðgangsstillingar' })
       .click()
@@ -73,7 +75,9 @@ test.describe('Service portal, in session history', () => {
     await page.getByRole('button', { name: testCompanyName }).click()
 
     // Act
-    await page.goto(sessionHistoryUrl, { waitUntil: 'networkidle' })
+    await page.goto(icelandicAndNoPopupUrl(sessionHistoryUrl), {
+      waitUntil: 'networkidle',
+    })
     const sessionsRows = page.getByRole('row')
 
     // Assert

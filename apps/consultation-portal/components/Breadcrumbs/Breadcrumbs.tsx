@@ -1,26 +1,27 @@
+import { useIsMobile } from '../../hooks'
 import {
   Box,
-  Breadcrumbs,
+  Breadcrumbs as IslandUIBreadcrumbs,
   Divider,
   GridContainer,
-  Hidden,
 } from '@island.is/island-ui/core'
 
-export const BreadcrumbsWithMobileDivider = ({ items }) => {
+export const Breadcrumbs = ({ items }) => {
+  const { isMobile } = useIsMobile()
   return (
     <>
       <GridContainer>
         <Box paddingY={[3, 3, 3, 5, 5]}>
-          <Breadcrumbs items={items} />
+          <IslandUIBreadcrumbs items={items} />
         </Box>
       </GridContainer>
-      <Hidden above="sm">
+      {isMobile && (
         <Box paddingBottom={[3, 3, 3, 5, 5]}>
           <Divider />
         </Box>
-      </Hidden>
+      )}
     </>
   )
 }
 
-export default BreadcrumbsWithMobileDivider
+export default Breadcrumbs
