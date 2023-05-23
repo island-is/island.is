@@ -1,6 +1,6 @@
 import { Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { AuthAdminClient } from '../../components/Client/Client.loader'
+import { AuthAdminClient } from '../../screens/Client/Client.loader'
 import { m } from '../../lib/messages'
 
 const typeMessages = {

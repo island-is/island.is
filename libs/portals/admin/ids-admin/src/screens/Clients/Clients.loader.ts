@@ -1,4 +1,5 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
+
 import { GetClientsDocument, GetClientsQuery } from './Clients.generated'
 
 export type AuthClients = GetClientsQuery['authAdminClients']['data']
