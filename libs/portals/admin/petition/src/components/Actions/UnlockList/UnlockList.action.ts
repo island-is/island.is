@@ -9,7 +9,6 @@ export const unlockListAction: WrappedActionFn = ({ client }) => async ({
   request,
   params,
 }) => {
-  console.log('HAHHSAHADHSHAFD')
   if (!params['listId']) {
     throw new Error('something went wrong')
   }
@@ -25,6 +24,5 @@ export const unlockListAction: WrappedActionFn = ({ client }) => async ({
       },
     },
   })
-  console.log(response)
   return { data: response }
 }

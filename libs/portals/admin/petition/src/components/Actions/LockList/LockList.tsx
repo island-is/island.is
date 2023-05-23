@@ -18,7 +18,6 @@ import { LockListMutation } from '../../../shared/mutations/lockList.generated'
 import Skeleton from '../../Skeleton/skeleton'
 
 export default function LockList() {
-  console.log('HALLOOOOOO')
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const params = useParams()
@@ -32,7 +31,6 @@ export default function LockList() {
   // }, [actionData?.globalError, isSubmitting, isLoading])
 
   useEffect(() => {
-    console.log(actionData)
     if (actionData) {
       toast.success(formatMessage(m.todo))
       cancel()
@@ -48,12 +46,7 @@ export default function LockList() {
     )
   }
 
-  console.log('asdfasd')
-
   return (
-    //         <Box>
-    // <Skeleton/>
-    //             </Box>
     <Modal
       id="publish-client"
       isVisible

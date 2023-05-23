@@ -1,5 +1,5 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
-import { EndorsementLists, FilteredPetitions } from '../../shared/utils/types'
+import { FilteredPetitions } from '../../shared/utils/types'
 import {
   EndorsementSystemFindEndorsementListsDocument,
   EndorsementSystemFindEndorsementListsQuery,

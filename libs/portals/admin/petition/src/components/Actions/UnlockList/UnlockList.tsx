@@ -10,15 +10,12 @@ import { Modal } from '@island.is/react/components'
 import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
-import React, { useContext, useEffect } from 'react'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import React, { useEffect } from 'react'
 import { PetitionPaths } from '../../../lib/paths'
 import { m } from '../../../lib/messages'
 import { LockListMutation } from '../../../shared/mutations/lockList.generated'
-import Skeleton from '../../Skeleton/skeleton'
 
 export default function UnlockList() {
-  console.log('HALLOOOOOO')
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const params = useParams()
@@ -48,12 +45,7 @@ export default function UnlockList() {
     )
   }
 
-  console.log('asdfasd')
-
   return (
-    //         <Box>
-    // <Skeleton/>
-    //             </Box>
     <Modal
       id="publish-client"
       isVisible
