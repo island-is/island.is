@@ -524,6 +524,13 @@ export const StandardForm = ({
 
   const isBusy = loadingSuggestions || isChangingSubject
 
+  const categoryOptions = supportCategories
+    .map((x) => ({
+      label: x.title?.trim(),
+      value: x.id,
+    }))
+    .sort(sortAlpha('label'))
+
   return (
     <>
       <GridContainer>
@@ -539,12 +546,7 @@ export const StandardForm = ({
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
-              options={supportCategories
-                .map((x) => ({
-                  label: x.title,
-                  value: x.id,
-                }))
-                .sort(sortAlpha('title'))}
+              options={categoryOptions}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
             />
