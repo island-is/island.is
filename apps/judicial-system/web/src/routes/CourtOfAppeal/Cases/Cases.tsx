@@ -69,10 +69,30 @@ const CourtOfAppealCases = () => {
       accessor: 'courtCaseNumber' as keyof AppealedCasesQueryResponse,
       Cell: (row: {
         row: {
-          original: { courtCaseNumber: string; policeCaseNumbers: string[] }
+          original: {
+            courtCaseNumber: string
+            policeCaseNumbers: string[]
+            appealCaseNumber?: string
+          }
         }
       }) => {
         const thisRow = row.row.original
+
+        if (thisRow.appealCaseNumber) {
+          return (
+            <Box display="flex" flexDirection="column">
+              <Text as="span" variant="small">
+                {thisRow.appealCaseNumber}
+              </Text>
+              <Text as="span" variant="small">
+                {thisRow.courtCaseNumber}
+              </Text>
+              <Text as="span" variant="small">
+                {displayFirstPlusRemaining(thisRow.policeCaseNumbers)}
+              </Text>
+            </Box>
+          )
+        }
 
         return (
           <BigTextSmallText

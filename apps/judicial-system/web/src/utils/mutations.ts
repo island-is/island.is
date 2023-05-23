@@ -57,6 +57,7 @@ export const AppealedCasesQuery = gql`
       defendants {
         name
       }
+      appealCaseNumber
       appealState
       appealedDate
       ...CoreCaseListFields

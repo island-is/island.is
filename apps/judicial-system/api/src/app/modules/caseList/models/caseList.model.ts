@@ -87,4 +87,7 @@ export class CaseListEntry {
 
   @Field(() => String, { nullable: true })
   readonly appealedDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealCaseNumber?: string
 }
