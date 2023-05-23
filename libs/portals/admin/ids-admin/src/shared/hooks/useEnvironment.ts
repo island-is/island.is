@@ -11,6 +11,12 @@ type EnvironmentResult<T> = {
   environment: AuthAdminEnvironment
 }
 
+/**
+ * This hook is used to get the current environment from the URL query string,
+ * or the first item in environments array if none query string is provided.
+ * It also provides a function to update the environment manually with an update function.
+ * @param environments
+ */
 export const useEnvironment = <T extends EnvironmentResult<T>>(
   environments: Array<T>,
 ) => {
@@ -18,19 +24,14 @@ export const useEnvironment = <T extends EnvironmentResult<T>>(
   const [environmentName, setEnvironmentName] = useState(
     searchParams.get('env') ?? '',
   )
-
-  const [environment, setEnvironment] = useState(
+  const [environmentResult, setEnvironmentResult] = useState(
     environments.find(({ environment }) => environment === environmentName) ??
       environments[0],
   )
 
-  const updateEnvironmentName = (env: AuthAdminEnvironment) => {
-    setEnvironmentName(env)
-  }
-
   useSyncedQueryStringValueWithoutNavigation(
     'env',
-    environment.environment,
+    environmentResult.environment,
     true,
   )
 
@@ -38,18 +39,18 @@ export const useEnvironment = <T extends EnvironmentResult<T>>(
     environments.find((env) => env.environment === environment)
 
   const updateEnvironment = (env: AuthAdminEnvironment) => {
-    const newSelectedPermission = getEnvironment(env)
+    const newEnvironmentResult = getEnvironment(env)
 
-    if (newSelectedPermission) {
-      setEnvironmentName(env)
-      setEnvironment(newSelectedPermission)
-    }
+    if (!newEnvironmentResult) return
+
+    setEnvironmentName(env)
+    setEnvironmentResult(newEnvironmentResult)
+
+    return newEnvironmentResult
   }
 
   return {
-    environmentName,
-    updateEnvironmentName,
-    environment,
+    environment: environmentResult,
     updateEnvironment,
   }
 }

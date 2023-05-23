@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import React, { useState } from 'react'
-import { Outlet, useNavigate, useParams } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 
 import {
   AuthAdminClientType,
@@ -9,11 +9,9 @@ import {
 } from '@island.is/api/schema'
 import { AlertMessage, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { replaceParams } from '@island.is/react-spa/shared'
 import { getTranslatedValue } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
-import { IDSAdminPaths } from '../../lib/paths'
 import { ClientType } from '../../shared/components/ClientType'
 import { StickyLayout } from '../StickyLayout/StickyLayout'
 import { AdvancedSettings } from './AdvancedSettings'
@@ -29,7 +27,6 @@ import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 import { EnvironmentHeader } from '../forms/EnvironmentHeader/EnvironmentHeader'
 import * as styles from './Client.css'
 import { EnvironmentProvider } from '../../shared/context/EnvironmentContext'
-import { useEnvironment } from '../../shared/hooks/useEnvironment'
 import { useClient } from './ClientContext'
 
 const IssuerUrls = {
@@ -41,38 +38,11 @@ const IssuerUrls = {
 }
 
 export const EditClient = () => {
-  const navigate = useNavigate()
-  const params = useParams()
   const { formatMessage, locale } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
-  const { setPublishData, client } = useClient()
-  const isMachineApplication = client.clientType === AuthAdminClientType.machine
-  const {
-    environment: selectedEnvironment,
-    updateEnvironment,
-  } = useEnvironment(client.environments)
+  const { onEnvironmentChange, client, selectedEnvironment } = useClient()
   const [isRevokeSecretsVisible, setRevokeSecretsVisibility] = useState(false)
-
-  const openPublishModal = (to: AuthAdminEnvironment) => {
-    setPublishData({
-      toEnvironment: to,
-      fromEnvironment: selectedEnvironment.environment,
-    })
-    navigate(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClientPublish,
-        params: {
-          tenant: params['tenant'],
-          client: selectedEnvironment.clientId,
-        },
-      }),
-      { preventScrollReset: true },
-    )
-  }
-
-  const environmentExists = (environment: AuthAdminEnvironment) => {
-    return client.environments.some((env) => env.environment === environment)
-  }
+  const isMachineApplication = client.clientType === AuthAdminClientType.machine
 
   return (
     <EnvironmentProvider selectedEnvironment={selectedEnvironment.environment}>
@@ -82,13 +52,7 @@ export const EditClient = () => {
             title={getTranslatedValue(selectedEnvironment.displayName, locale)}
             selectedEnvironment={selectedEnvironment.environment}
             availableEnvironments={client.availableEnvironments}
-            onChange={(environment) => {
-              if (environmentExists(environment)) {
-                updateEnvironment(environment)
-              } else {
-                openPublishModal(environment)
-              }
-            }}
+            onChange={onEnvironmentChange}
             preHeader={
               <div
                 className={classNames(
@@ -129,7 +93,6 @@ export const EditClient = () => {
               />
             </>
           )}
-
           <BasicInfo
             clientId={selectedEnvironment.clientId}
             issuerUrl={IssuerUrls[selectedEnvironment.environment]}

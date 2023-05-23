@@ -23,7 +23,6 @@ export default function PublishEnvironment() {
   const { formatMessage } = useLocale()
   const params = useParams()
   const { publishData, availableEnvironments, setPublishData } = useClient()
-
   const actionData = useActionData() as PublisEnvironmentResult
   const { isLoading, isSubmitting } = useSubmitting()
 

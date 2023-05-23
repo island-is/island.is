@@ -19,7 +19,6 @@ type PermissionContextProps = {
    * Selected environment
    */
   selectedPermission: PermissionLoaderResult['environments'][0]
-  onEnvironmentChange(environment: AuthAdminEnvironment): void
   /**
    * This is the result of the permission action
    */
@@ -28,6 +27,7 @@ type PermissionContextProps = {
    * This is the intent of the permission action, i.e. specific section of the form
    */
   intent: keyof typeof PermissionFormTypes
+  onEnvironmentChange(environment: AuthAdminEnvironment): void
 }
 
 const PermissionContext = createContext<PermissionContextProps | undefined>(
