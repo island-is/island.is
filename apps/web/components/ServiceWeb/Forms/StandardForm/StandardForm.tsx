@@ -37,13 +37,13 @@ import {
   SearchableTags,
   SupportQna,
 } from '@island.is/web/graphql/schema'
-import orderBy from 'lodash/orderBy'
 import { useNamespace } from '@island.is/web/hooks'
 import slugify from '@sindresorhus/slugify'
 import { FormNamespace } from '../../types'
 import { useI18n } from '@island.is/web/i18n'
 import { CategoryId, SyslumennCategories } from './types'
 import { SjukratryggingarCategories } from '@island.is/web/screens/ServiceWeb/Forms/utils'
+import { sortAlpha } from '@island.is/shared/utils'
 
 type FormState = {
   message: string
@@ -539,10 +539,12 @@ export const StandardForm = ({
                 setCategoryLabel(label as string)
                 setCategoryId(value as string)
               }}
-              options={orderBy(supportCategories, 'title', 'asc').map((x) => ({
-                label: x.title,
-                value: x.id,
-              }))}
+              options={supportCategories
+                .map((x) => ({
+                  label: x.title,
+                  value: x.id,
+                }))
+                .sort(sortAlpha('title'))}
               placeholder={fn('malaflokkur', 'placeholder', 'Veldu flokk')}
               size="md"
             />
