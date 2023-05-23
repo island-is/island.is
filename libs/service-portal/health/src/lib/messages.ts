@@ -256,6 +256,11 @@ export const messages = defineMessages({
     id: 'sp.health:insurance-ratio',
     defaultMessage: 'Hlutfall Sjúkratrygginga',
   },
+  insuranceRatioOrInitialApplicantPayment: {
+    id: 'sp.health:insurance-ratio-or-first-paid',
+    defaultMessage:
+      'Hlutfall Sjúkratrygginga % eða fyrst greitt af umsækjanda á mánuði',
+  },
   maxPaidByApplicant: {
     id: 'sp.health:max-paid-by-applicant',
     defaultMessage: 'Fyrst greitt af umsækjanda á mánuði',

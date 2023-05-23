@@ -29,7 +29,11 @@ const NutritionTable: FC<Props> = ({ data, footnote, link, linkText }) => {
             { value: '' },
             { value: formatMessage(messages.name) },
             { value: formatMessage(messages.maxAmountPerMonth) },
-            { value: formatMessage(messages.insuranceRatio) },
+            {
+              value: formatMessage(
+                messages.insuranceRatioOrInitialApplicantPayment,
+              ),
+            },
             { value: formatMessage(messages.availableRefund) },
             { value: formatMessage(messages.nextAvailableRefund) },
           ]}
