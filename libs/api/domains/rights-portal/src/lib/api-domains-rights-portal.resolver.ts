@@ -22,7 +22,7 @@ export class RightsPortalResolver {
   @Scopes(ApiScope.health)
   @Query(() => [Therapies], { nullable: true })
   @Audit()
-  gethealthTherapies(@CurrentUser() user: User) {
+  getRightsPortalTherapies(@CurrentUser() user: User) {
     return this.rightsPortalService.getTherapies(user)
   }
 
