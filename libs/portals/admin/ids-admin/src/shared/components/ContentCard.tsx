@@ -1,5 +1,5 @@
-import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import isEqual from 'lodash/isEqual'
+import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import { Form, useActionData } from 'react-router-dom'
 
 import {
@@ -13,26 +13,30 @@ import {
 import { useLocale } from '@island.is/localization'
 import { useSubmitting } from '@island.is/react-spa/shared'
 
-import { m } from '../../lib/messages'
 import {
   ClientFormTypes,
   EditApplicationResult,
   getIntentWithSyncCheck,
   schema,
 } from '../../components/forms/EditApplication/EditApplication.action'
+import { m } from '../../lib/messages'
 import { ClientContext } from '../context/ClientContext'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { DropdownSync } from './DropdownSync/DropdownSync'
 
 interface ContentCardProps {
   title: string
-  description?: string
-  isDirty?: (currentValue: FormData, originalValue: FormData) => boolean
+  description?: string | React.ReactNode
+  isDirty?:
+    | ((currentValue: FormData, originalValue: FormData) => boolean)
+    | boolean
+  inSync?: boolean
   intent?: ClientFormTypes
   /**
    * The children will be wrapped in an accordion when a label is provided to the component.
    */
   accordionLabel?: string
+  shouldSupportMultiEnvironment?: boolean
 }
 
 function defaultIsDirty(newFormData: FormData, originalFormData: FormData) {
@@ -52,6 +56,7 @@ const ContentCard: FC<ContentCardProps> = ({
   isDirty = defaultIsDirty,
   intent = ClientFormTypes.none,
   accordionLabel = false,
+  shouldSupportMultiEnvironment = true,
 }) => {
   const { formatMessage } = useLocale()
   const originalFormData = useRef<FormData>()
@@ -66,6 +71,12 @@ const ContentCard: FC<ContentCardProps> = ({
   >
 
   const actionDataRef = useRef(actionData?.data)
+
+  useEffect(() => {
+    if (typeof isDirty !== 'function') {
+      setDirty(isDirty)
+    }
+  }, [isDirty])
 
   useEffect(() => {
     if (
@@ -117,7 +128,11 @@ const ContentCard: FC<ContentCardProps> = ({
       return
     }
 
-    setDirty(isDirty(newFormData, originalFormData.current ?? new FormData()))
+    setDirty(
+      typeof isDirty === 'function'
+        ? isDirty(newFormData, originalFormData.current ?? new FormData())
+        : isDirty,
+    )
   }
 
   // On mount, set the original form data
@@ -150,7 +165,7 @@ const ContentCard: FC<ContentCardProps> = ({
             <Text ref={titleRef} variant="h3">
               {title}
             </Text>
-            {intent !== 'none' && (
+            {shouldSupportMultiEnvironment && intent !== 'none' && (
               <Box>
                 <DropdownSync
                   intent={intent}
@@ -178,21 +193,26 @@ const ContentCard: FC<ContentCardProps> = ({
                 alignItems={['flexStart', 'center']}
                 marginTop="containerGutter"
                 display="flex"
-                justifyContent="spaceBetween"
+                justifyContent={
+                  shouldSupportMultiEnvironment ? 'spaceBetween' : 'flexEnd'
+                }
                 rowGap={[2, 0]}
                 flexDirection={['column', 'row']}
               >
-                <Checkbox
-                  label={formatMessage(m.saveForAllEnvironments)}
-                  checked={allEnvironments}
-                  value="true"
-                  disabled={!dirty}
-                  id={`${intent}#allEnvironments`}
-                  name="allEnvironments"
-                  onChange={() => setAllEnvironments(!allEnvironments)}
-                />
+                {shouldSupportMultiEnvironment && (
+                  <Checkbox
+                    label={formatMessage(m.saveForAllEnvironments)}
+                    checked={allEnvironments}
+                    value="true"
+                    disabled={!dirty}
+                    id={`${intent}#allEnvironments`}
+                    name="allEnvironments"
+                    onChange={() => setAllEnvironments(!allEnvironments)}
+                  />
+                )}
                 <Button
                   disabled={!dirty}
+                  size="small"
                   type="submit"
                   name="intent"
                   value={intent}

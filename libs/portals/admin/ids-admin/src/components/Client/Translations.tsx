@@ -6,12 +6,13 @@ import ContentCard from '../../shared/components/ContentCard'
 import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
 import { AuthAdminClientTranslation } from './Client.loader'
+import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
 
 interface TranslationsProps {
   translations: AuthAdminClientTranslation[]
+  inSync?: boolean
 }
-
-const Translations = ({ translations }: TranslationsProps) => {
+const Translations = ({ translations, inSync = true }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState<string>('0')
   const [copyTranslations, setCopyTranslations] = useEnvironmentState(
@@ -20,6 +21,8 @@ const Translations = ({ translations }: TranslationsProps) => {
       value: translations.find((t) => t.locale === locale)?.value || '',
     })),
   )
+
+  const { shouldSupportMultiEnv } = useMultiEnvSupport()
 
   const onChangeTranslations = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -33,6 +36,8 @@ const Translations = ({ translations }: TranslationsProps) => {
     <ContentCard
       title={formatMessage(m.translations)}
       intent={ClientFormTypes.translations}
+      inSync={inSync}
+      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={3}>
         <Tabs
@@ -41,27 +46,25 @@ const Translations = ({ translations }: TranslationsProps) => {
           selected={activeTab}
           onChange={setActiveTab}
           contentBackground="white"
-          tabs={copyTranslations.map((language) => {
-            return {
-              label: language.locale === 'is' ? 'Íslenska' : 'English',
-              content: (
-                <Box marginTop="gutter">
-                  <Input
-                    backgroundColor="blue"
-                    type="text"
-                    size="sm"
-                    onChange={(e) => onChangeTranslations(e)}
-                    name={language.locale + '_displayName'}
-                    value={language.value}
-                    label={formatMessage(m.displayName)}
-                  />
-                  <Text variant={'small'} marginTop={1}>
-                    {formatMessage(m.displayNameDescription)}
-                  </Text>
-                </Box>
-              ),
-            }
-          })}
+          tabs={copyTranslations.map((language) => ({
+            label: language.locale === 'is' ? 'Íslenska' : 'English',
+            content: (
+              <Box marginTop="gutter">
+                <Input
+                  backgroundColor="blue"
+                  type="text"
+                  size="sm"
+                  onChange={(e) => onChangeTranslations(e)}
+                  name={language.locale + '_displayName'}
+                  value={language.value}
+                  label={formatMessage(m.displayName)}
+                />
+                <Text variant={'small'} marginTop={1}>
+                  {formatMessage(m.displayNameDescription)}
+                </Text>
+              </Box>
+            ),
+          }))}
         />
       </Stack>
     </ContentCard>

@@ -8,6 +8,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { MapCaseStatuses } from '../../../../types/enums'
+import localization from '../../Case.json'
 
 interface CaseTimelineProps {
   chosenCase: Case
@@ -16,6 +17,8 @@ interface CaseTimelineProps {
 const Sections = ['Til umsagnar', 'Niðurstöður í vinnslu', 'Niðurstöður birtar']
 
 export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
+  const loc = localization['timeline']
+
   const sectionItems = Sections.map((item, index) => (
     <Section
       key={index}
@@ -44,7 +47,7 @@ export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
   return (
     <Stack space={[2, 2, 2, 1, 1]}>
       <Text variant="h3" color="blue400">
-        Tímalína máls
+        {loc.title}
       </Text>
       <FormStepperV2 sections={sectionItems} />
     </Stack>

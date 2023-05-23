@@ -47,7 +47,7 @@ import {
   HeadWithSocialSharing,
   Webreader,
 } from '@island.is/web/components'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { CustomNextError } from '../units/errors'
@@ -84,10 +84,6 @@ const NewsListNew: Screen<NewsListProps> = ({
   selectedTagSlug,
   namespace,
 }) => {
-  const { value: isWebReaderEnabledForNews } = useFeatureFlag(
-    'isWebReaderEnabledForNews',
-    false,
-  )
   const Router = useRouter()
   const { linkResolver } = useLinkResolver()
   const { format, getMonthByIndex } = useDateUtils()
@@ -223,9 +219,9 @@ const NewsListNew: Screen<NewsListProps> = ({
       <Text variant="h1" as="h1" paddingTop={[3, 3, 3, 5]} paddingBottom={2}>
         {newsItem.title}
       </Text>
-      {isWebReaderEnabledForNews && (
-        <Webreader marginTop={0} readId={null} readClass="rs_read" />
-      )}
+
+      <Webreader marginTop={0} readId={null} readClass="rs_read" />
+
       <Text variant="intro" as="p" paddingBottom={2}>
         {newsItem.intro}
       </Text>
@@ -355,9 +351,7 @@ const NewsListNew: Screen<NewsListProps> = ({
             {n('newsListEmptyMonth', 'Engar fréttir fundust í þessum mánuði.')}
           </Text>
         )}
-        {!newsItemContent && isWebReaderEnabledForNews && (
-          <Webreader readId={null} readClass="rs_read" />
-        )}
+        {!newsItemContent && <Webreader readId={null} readClass="rs_read" />}
         {newsItemContent && (
           <Box className="rs_read" width="full">
             {newsItemContent}

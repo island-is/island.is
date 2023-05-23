@@ -1,5 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/finance/messages'
@@ -29,7 +29,9 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Application button is visible', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/greidsluaetlanir')
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'),
+      )
 
       // Act
       const applicationButton = page.locator(
@@ -42,7 +44,9 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Application opens', async () => {
       // Arrange
-      await page.goto('/minarsidur/fjarmal/greidsluaetlanir')
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'),
+      )
 
       // Act
       const applicationButton = page.locator(
@@ -70,7 +74,7 @@ test.describe('MS - Fjármál overview', () => {
 
     // await test.step('Table contains data', async () => {
     //   // Arrange
-    //   await page.goto('/minarsidur/fjarmal/greidsluaetlanir')
+    //   await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'))
     //
     //   // Assert
     //   await expect(page.locator('role=table')).toContainText(

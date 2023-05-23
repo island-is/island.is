@@ -1,12 +1,6 @@
 import { Inline, Text } from '@island.is/island-ui/core'
 
-export const EyebrowsWithSeperator = ({
-  instances,
-  color,
-  style,
-  wrap,
-  truncate,
-}) => {
+export const Eyebrows = ({ instances, color, style, wrap, truncate }) => {
   const mapInstances = instances.map((item, index) => {
     return (
       <>
@@ -25,4 +19,4 @@ export const EyebrowsWithSeperator = ({
   )
 }
 
-export default EyebrowsWithSeperator
+export default Eyebrows
