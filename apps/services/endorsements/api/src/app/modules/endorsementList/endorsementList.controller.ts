@@ -301,6 +301,7 @@ export class EndorsementListController {
     )
     endorsementList: EndorsementList,
   ): Promise<EndorsementList> {
+    console.log(newData)
     return await this.endorsementListService.updateEndorsementList(
       endorsementList,
       newData,

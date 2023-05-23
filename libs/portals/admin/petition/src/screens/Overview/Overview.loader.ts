@@ -25,6 +25,7 @@ export const overviewLoader: WrappedLoaderFn = ({ client }) => {
       throw error
     }
     const petitions = data?.endorsementSystemFindEndorsementLists.data ?? []
+
     return {
       active: petitions?.filter((list) => {
         return (

@@ -4,16 +4,11 @@ import {
   UpdateListMutation,
   UpdateListMutationVariables,
 } from '../../../shared/mutations/updateList.generated'
-import { isValidDate } from '@island.is/shared/utils'
 import parseDate from 'date-fns/parse'
 
-export const transformDate = (val: string) => {
-  if (isValidDate(new Date(val))) {
-    return val
-  }
+export const transformDate = (val: string) =>
+  parseDate(val, 'dd.MM.yyyy', new Date())
 
-  return parseDate(val, 'dd.MM.yyyy', new Date())
-}
 export const updateListAction: WrappedActionFn = ({ client }) => async ({
   request,
   params,
@@ -29,7 +24,6 @@ export const updateListAction: WrappedActionFn = ({ client }) => async ({
   if (!params['listId']) {
     throw new Error('something went wrong')
   }
-
   const response = await client.mutate<
     UpdateListMutation,
     UpdateListMutationVariables
@@ -47,6 +41,5 @@ export const updateListAction: WrappedActionFn = ({ client }) => async ({
       },
     },
   })
-  console.log(response)
   return { data: response }
 }

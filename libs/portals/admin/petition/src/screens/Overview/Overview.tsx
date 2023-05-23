@@ -26,49 +26,47 @@ const Overview = () => {
     label,
     content: (
       <Box>
-        {active && active.length > 0 && (
-          <Box marginTop={6}>
-            <Text variant="h4" marginBottom={2}>
-              {label}
-            </Text>
-            <Stack space={3}>
-              {lists.map((list: any) => {
-                return (
-                  <ActionCard
-                    key={list.id}
-                    backgroundColor="blue"
-                    heading={list.title}
-                    text={
-                      formatMessage(m.listPeriod) +
-                      ' ' +
-                      formatDate(list.openedDate) +
-                      ' - ' +
-                      formatDate(list.closedDate)
-                    }
-                    cta={{
-                      label: formatMessage(m.viewLists),
-                      variant: 'text',
-                      icon: 'arrowForward',
-                      onClick: () => {
-                        navigate(
-                          PetitionPaths.PetitionsSingle.replace(
-                            ':listId',
-                            list.id,
-                          ),
-                          {
-                            state: {
-                              list,
-                            },
+        <Box marginTop={6}>
+          <Text variant="h4" marginBottom={2}>
+            {label}
+          </Text>
+          <Stack space={3}>
+            {lists.map((list: any) => {
+              return (
+                <ActionCard
+                  key={list.id}
+                  backgroundColor="blue"
+                  heading={list.title}
+                  text={
+                    formatMessage(m.listPeriod) +
+                    ' ' +
+                    formatDate(list.openedDate) +
+                    ' - ' +
+                    formatDate(list.closedDate)
+                  }
+                  cta={{
+                    label: formatMessage(m.viewLists),
+                    variant: 'text',
+                    icon: 'arrowForward',
+                    onClick: () => {
+                      navigate(
+                        PetitionPaths.PetitionsSingle.replace(
+                          ':listId',
+                          list.id,
+                        ),
+                        {
+                          state: {
+                            list,
                           },
-                        )
-                      },
-                    }}
-                  />
-                )
-              })}
-            </Stack>
-          </Box>
-        )}
+                        },
+                      )
+                    },
+                  }}
+                />
+              )
+            })}
+          </Stack>
+        </Box>
       </Box>
     ),
   })
