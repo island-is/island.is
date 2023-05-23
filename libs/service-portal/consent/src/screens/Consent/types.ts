@@ -1,17 +1,18 @@
 import type {
-  AuthConsentScopeFragment,
+  AuthConsentScopeNodeFragment,
   GetConsentListQuery,
 } from './Consent.generated'
 import type { ReactNode } from 'react'
 
-type PermissionGroup = GetConsentListQuery['consentsList']['data'][0]['permissions'][0]
+type PermissionGroup = GetConsentListQuery['consentsList']['data'][0]['tenants'][0]
 
 export type ConsentSectionProps = {
+  clientId: string
   isLast?: boolean
 } & PermissionGroup
 
-export interface ConsentLineProps extends AuthConsentScopeFragment {
-  onChange: (newChecked: boolean) => void
+export interface ConsentLineProps extends AuthConsentScopeNodeFragment {
+  clientId: string
   isLast: boolean
 }
 

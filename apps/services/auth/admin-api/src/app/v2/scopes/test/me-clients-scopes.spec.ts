@@ -28,18 +28,27 @@ const superUser = createCurrentUser({
   scope: [AdminPortalScope.idsAdminSuperUser],
 })
 
-const mockedApiScopes = [
-  {
-    name: '@scope1',
-    displayName: 'Scope 1 display name',
-    description: 'Scope 1 description',
-  },
-  {
-    name: '@scope2',
-    displayName: 'Scope 2 display name',
-    description: 'Scope 2 description',
-  },
-]
+const createMockedApiScopes = (len: number) =>
+  Array.from({ length: len }).map(
+    (_, i) =>
+      ({
+        name: `${TENANT_ID}/scope${i + 1}`,
+        description: [
+          {
+            locale: 'is',
+            value: `Scope ${i + 1} description`,
+          },
+        ],
+        displayName: [
+          {
+            locale: 'is',
+            value: `Scope ${i + 1} display name`,
+          },
+        ],
+      } as AdminScopeDTO),
+  )
+
+const mockedApiScopes = createMockedApiScopes(2)
 
 const createTestData = async ({
   app,
@@ -58,7 +67,13 @@ const createTestData = async ({
   await fixtureFactory.createDomain({
     name: tenantId,
     nationalId: tenantOwnerNationalId || createNationalId('company'),
-    apiScopes: hasNoScopes ? undefined : mockedApiScopes,
+    apiScopes: hasNoScopes
+      ? undefined
+      : mockedApiScopes.map(({ name, description, displayName }) => ({
+          name,
+          description: description[0].value,
+          displayName: displayName[0].value,
+        })),
   })
   await fixtureFactory.createClient({
     ...(clientId && {
@@ -80,7 +95,9 @@ interface TestCase {
   hasNoScopes?: boolean
   expected: {
     status: number
-    body: AdminScopeDTO[] | Record<string, unknown>
+    body:
+      | Pick<AdminScopeDTO, 'name' | 'displayName' | 'description'>[]
+      | Record<string, unknown>
   }
 }
 

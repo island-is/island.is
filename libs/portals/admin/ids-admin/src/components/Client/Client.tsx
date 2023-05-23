@@ -1,27 +1,45 @@
+import classNames from 'classnames'
 import React, { useState } from 'react'
-import { Outlet, useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import {
+  Outlet,
+  useLoaderData,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom'
 
 import {
+  AuthAdminClientAllowedScope,
+  AuthAdminClientType,
   AuthAdminEnvironment,
   AuthAdminRefreshTokenExpiration,
 } from '@island.is/api/schema'
-import { Box, Select, Stack, Tag, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { getTranslatedValue } from '@island.is/portals/core'
 
 import { m } from '../../lib/messages'
-import BasicInfo from './BasicInfo'
+import { IDSAdminPaths } from '../../lib/paths'
+import { ClientType } from '../../shared/components/ClientType'
+import { ClientContext } from '../../shared/context/ClientContext'
+import { useSyncedQueryStringValueWithoutNavigation } from '../../shared/hooks/useSyncedQueryStringValueWithoutNavigation'
+import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import { StickyLayout } from '../StickyLayout/StickyLayout'
+import { AdvancedSettings } from './AdvancedSettings'
+import { BasicInfo } from './BasicInfo'
 import { AuthAdminClient } from './Client.loader'
 import ClientsUrl from './ClientsUrl'
-import Lifetime from './Lifetime'
-import Translations from './Translations'
+import { DangerZone } from './DangerZone'
 import Delegation from './Delegation'
+import Lifetime from './Lifetime'
 import Permissions from './Permissions'
-import AdvancedSettings from './AdvancedSettings'
-import { ClientContext } from '../../shared/context/ClientContext'
-import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import { RevokeSecrets } from './RevokeSecrets/RevokeSecrets'
+import Translations from './Translations'
+import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
+import { EnvironmentHeader } from '../forms/EnvironmentHeader/EnvironmentHeader'
 import * as styles from './Client.css'
-import { replaceParams } from '@island.is/react-spa/shared'
-import { IDSAdminPaths } from '../../lib/paths'
+import { EnvironmentProvider } from '../../shared/context/EnvironmentContext'
 
 const IssuerUrls = {
   [AuthAdminEnvironment.Development]:
@@ -40,15 +58,28 @@ const Client = () => {
   const client = useLoaderData() as AuthAdminClient
   const navigate = useNavigate()
   const params = useParams()
-
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
+  const { isSuperAdmin } = useSuperAdmin()
+  const isMachineApplication = client.clientType === AuthAdminClientType.machine
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
     fromEnvironment: null,
   })
-  const [selectedEnvironment, setSelectedEnvironment] = useState<
-    AuthAdminClient['environments'][0]
-  >(client.environments[0])
+  const [searchParams] = useSearchParams()
+  const [selectedEnvironmentName, setSelectedEnvironmentName] = useState(
+    searchParams.get('env') ?? '',
+  )
+  const selectedEnvironment =
+    client.environments.find(
+      (env) => env.environment === selectedEnvironmentName,
+    ) ?? client.environments[0]
+  useSyncedQueryStringValueWithoutNavigation(
+    'env',
+    selectedEnvironmentName,
+    true,
+  )
+
+  const [isRevokeSecretsVisible, setRevokeSecretsVisibility] = useState(false)
 
   const checkIfInSync = (variables: string[]) => {
     for (const variable of variables) {
@@ -83,6 +114,7 @@ const Client = () => {
           client: selectedEnvironment.clientId,
         },
       }),
+      { preventScrollReset: true },
     )
   }
 
@@ -95,7 +127,6 @@ const Client = () => {
       value={{
         client,
         selectedEnvironment,
-        setSelectedEnvironment,
         availableEnvironments: client.environments.map(
           (env) => env.environment,
         ),
@@ -134,119 +165,127 @@ const Client = () => {
         setPublishData: setPublishData,
       }}
     >
-      <Stack space={4}>
-        <Box
-          display="flex"
-          columnGap={2}
-          rowGap={2}
-          justifyContent="spaceBetween"
-          flexDirection={['column', 'row']}
-        >
-          <Box flexGrow={1}>
-            <Tag outlined>{client.clientType}</Tag>
-            <Text variant="h2">
-              {client.environments[0].displayName[0].value}
-            </Text>
-          </Box>
-          <Box className={styles.select}>
-            <Select
-              name="env"
-              icon="chevronDown"
-              size="sm"
-              backgroundColor="blue"
-              label={formatMessage(m.environment)}
-              onChange={(event: any) => {
-                if (environmentExists(event.value)) {
-                  setSelectedEnvironment(
-                    client.environments.find(
-                      (env) => env.environment === event.value,
-                    ) as AuthAdminClient['environments'][0],
-                  )
+      <EnvironmentProvider
+        selectedEnvironment={selectedEnvironment.environment}
+      >
+        <StickyLayout
+          header={(isSticky) => (
+            <EnvironmentHeader
+              title={getTranslatedValue(
+                selectedEnvironment.displayName,
+                locale,
+              )}
+              selectedEnvironment={selectedEnvironment.environment}
+              availableEnvironments={client.availableEnvironments}
+              onChange={(environment) => {
+                if (environmentExists(environment)) {
+                  setSelectedEnvironmentName(environment)
                 } else {
-                  openPublishModal(event.value)
+                  openPublishModal(environment)
                 }
               }}
-              value={{
-                label: selectedEnvironment.environment,
-                value: selectedEnvironment.environment,
-              }}
-              options={[
-                AuthAdminEnvironment.Development,
-                AuthAdminEnvironment.Staging,
-                AuthAdminEnvironment.Production,
-              ].map((env) => {
-                const selectedEnv = environmentExists(env)
-                if (selectedEnv) {
-                  return {
-                    label: env,
-                    value: env,
-                  }
-                }
-                return {
-                  label: formatMessage(m.publishEnvironment, {
-                    environment: env,
-                  }),
-                  value: env,
-                }
-              })}
+              preHeader={
+                <div
+                  className={classNames(
+                    styles.tagWrapper,
+                    isSticky && styles.tagHide,
+                  )}
+                >
+                  <ClientType client={client} />
+                </div>
+              }
             />
-          </Box>
-        </Box>
+          )}
+        >
+          <Stack space={3}>
+            {selectedEnvironment.secrets.length > 1 && (
+              <>
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(m.multipleSecrets)}
+                  message={
+                    <Stack space={1}>
+                      <Text variant="small">
+                        {formatMessage(m.multipleSecretsDescription)}
+                      </Text>
+                      <Button
+                        variant="text"
+                        size="small"
+                        onClick={() => setRevokeSecretsVisibility(true)}
+                      >
+                        {formatMessage(m.revokeSecrets)}
+                      </Button>
+                    </Stack>
+                  }
+                />
+                <RevokeSecrets
+                  isVisible={isRevokeSecretsVisible}
+                  onClose={() => setRevokeSecretsVisibility(false)}
+                />
+              </>
+            )}
 
-        <BasicInfo
-          key={`${selectedEnvironment.environment}-BasicInfo`}
-          clientId={selectedEnvironment.clientId}
-          issuerUrl={IssuerUrls[selectedEnvironment.environment]}
-          clientSecrets={selectedEnvironment.secrets}
-        />
-        <Translations
-          key={`${selectedEnvironment.environment}-Translations`}
-          translations={selectedEnvironment.displayName}
-        />
-        <ClientsUrl
-          key={`${selectedEnvironment.environment}-ClientsUrl`}
-          redirectUris={selectedEnvironment.redirectUris}
-          postLogoutRedirectUris={selectedEnvironment.postLogoutRedirectUris}
-        />
-        <Lifetime
-          key={`${selectedEnvironment.environment}-Lifetime`}
-          absoluteRefreshTokenLifetime={
-            selectedEnvironment.absoluteRefreshTokenLifetime
-          }
-          slidingRefreshTokenLifetime={
-            selectedEnvironment.slidingRefreshTokenLifetime
-          }
-          refreshTokenExpiration={
-            selectedEnvironment.refreshTokenExpiration ===
-            AuthAdminRefreshTokenExpiration.Sliding
-          }
-        />
-        <Permissions />
-        <Delegation
-          key={`${selectedEnvironment.environment}-Delegation`}
-          supportsProcuringHolders={
-            selectedEnvironment.supportsProcuringHolders
-          }
-          supportsLegalGuardians={selectedEnvironment.supportsLegalGuardians}
-          promptDelegations={selectedEnvironment.promptDelegations}
-          supportsPersonalRepresentatives={
-            selectedEnvironment.supportsPersonalRepresentatives
-          }
-          supportsCustomDelegation={
-            selectedEnvironment.supportsCustomDelegation
-          }
-          requireApiScopes={selectedEnvironment.requireApiScopes}
-        />
-        <AdvancedSettings
-          key={`${selectedEnvironment.environment}-AdvancedSettings`}
-          requirePkce={selectedEnvironment.requirePkce}
-          allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
-          requireConsent={selectedEnvironment.requireConsent}
-          supportTokenExchange={selectedEnvironment.supportTokenExchange}
-          accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
-          customClaims={selectedEnvironment.customClaims}
-        />
-      </Stack>
+            <BasicInfo
+              clientId={selectedEnvironment.clientId}
+              issuerUrl={IssuerUrls[selectedEnvironment.environment]}
+              clientSecrets={selectedEnvironment.secrets}
+            />
+            <Translations translations={selectedEnvironment.displayName} />
+            {!isMachineApplication && (
+              <ClientsUrl
+                redirectUris={selectedEnvironment.redirectUris}
+                postLogoutRedirectUris={
+                  selectedEnvironment.postLogoutRedirectUris
+                }
+              />
+            )}
+            <Lifetime
+              absoluteRefreshTokenLifetime={
+                selectedEnvironment.absoluteRefreshTokenLifetime
+              }
+              slidingRefreshTokenLifetime={
+                selectedEnvironment.slidingRefreshTokenLifetime
+              }
+              refreshTokenExpiration={
+                selectedEnvironment.refreshTokenExpiration ===
+                AuthAdminRefreshTokenExpiration.Sliding
+              }
+            />
+            <Permissions
+              allowedScopes={selectedEnvironment?.allowedScopes ?? []}
+            />
+            {isSuperAdmin && !isMachineApplication && (
+              <Delegation
+                supportsProcuringHolders={
+                  selectedEnvironment.supportsProcuringHolders
+                }
+                supportsLegalGuardians={
+                  selectedEnvironment.supportsLegalGuardians
+                }
+                promptDelegations={selectedEnvironment.promptDelegations}
+                supportsPersonalRepresentatives={
+                  selectedEnvironment.supportsPersonalRepresentatives
+                }
+                supportsCustomDelegation={
+                  selectedEnvironment.supportsCustomDelegation
+                }
+                requireApiScopes={selectedEnvironment.requireApiScopes}
+              />
+            )}
+            {isSuperAdmin && (
+              <AdvancedSettings
+                requirePkce={selectedEnvironment.requirePkce}
+                allowOfflineAccess={selectedEnvironment.allowOfflineAccess}
+                requireConsent={selectedEnvironment.requireConsent}
+                supportTokenExchange={selectedEnvironment.supportTokenExchange}
+                accessTokenLifetime={selectedEnvironment.accessTokenLifetime}
+                customClaims={selectedEnvironment.customClaims}
+              />
+            )}
+            <DangerZone />
+          </Stack>
+        </StickyLayout>
+      </EnvironmentProvider>
       <Outlet />
     </ClientContext.Provider>
   )

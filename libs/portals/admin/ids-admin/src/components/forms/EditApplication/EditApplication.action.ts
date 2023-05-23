@@ -15,6 +15,7 @@ import {
   AuthAdminRefreshTokenExpiration,
   AuthAdminClientClaim,
 } from '@island.is/api/schema'
+import { zfd } from 'zod-form-data'
 
 export enum ClientFormTypes {
   applicationUrls = 'applicationUrls',
@@ -27,7 +28,7 @@ export enum ClientFormTypes {
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
-  return s.split(/\s*,\s*|\s+|\n+/)
+  return s.split(/[\s\n,]+/).filter(Boolean)
 }
 
 const transformCustomClaims = (s: string): AuthAdminClientClaim[] => {
@@ -83,9 +84,7 @@ const checkIfStringIsPositiveNumber = (number: string) => {
 }
 
 const defaultSchema = z.object({
-  allEnvironments: z.optional(z.string()).transform((s) => {
-    return s === 'true'
-  }),
+  allEnvironments: z.optional(z.string()).transform((s) => s === 'true'),
   environment: z.nativeEnum(AuthAdminEnvironment),
   syncEnvironments: z.optional(z.string()).transform((s) => {
     return (s?.split(',') as AuthAdminEnvironment[]) ?? []
@@ -220,7 +219,12 @@ export const schema = {
         }),
     })
     .merge(defaultSchema),
-  [ClientFormTypes.permissions]: defaultSchema,
+  [ClientFormTypes.permissions]: z
+    .object({
+      addedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
+      removedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
+    })
+    .merge(defaultSchema),
   [ClientFormTypes.none]: defaultSchema,
 }
 

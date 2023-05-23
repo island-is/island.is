@@ -39,7 +39,7 @@ export const caseResult = (
       const isAlternativeTravelBan =
         workingCase.state === CaseState.ACCEPTED &&
         workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-      caseType = isAlternativeTravelBan ? CaseType.TravelBan : caseType
+      caseType = isAlternativeTravelBan ? CaseType.TRAVEL_BAN : caseType
       return workingCase.isValidToDateInThePast
         ? formatMessage(m.caseResults.restrictionOver, { caseType })
         : formatMessage(m.caseResults.restrictionActive, { caseType })

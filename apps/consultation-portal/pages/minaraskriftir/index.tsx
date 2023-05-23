@@ -4,19 +4,13 @@ import {
   CaseForSubscriptions,
 } from '../../types/interfaces'
 import { QueryConsultationPortalGetCasesArgs } from '@island.is/api/schema'
-import {
-  SUB_GET_CASES,
-  SUB_GET_TYPES,
-  SUB_GET_USERSUBS,
-} from '../../graphql/queries.graphql'
+import { SUB_GET_CASES, SUB_GET_TYPES } from '../../graphql/queries.graphql'
 import {
   SubGetCasesQuery,
   SubGetTypesQuery,
-  SubGetUsersubsQuery,
 } from '../../graphql/queries.graphql.generated'
-import UserSubscriptions from '../../screens/UserSubscriptions/UserSubscriptions'
-
-const STATUSES_TO_FETCH = [1, 2, 3]
+import UserSubscriptions from '../../screens/Subscriptions/UserSubscriptions'
+import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -39,7 +33,8 @@ export const getServerSideProps = async (ctx) => {
         query: SUB_GET_CASES,
         variables: {
           input: {
-            caseStatuses: STATUSES_TO_FETCH,
+            caseStatuses: SUB_STATUSES_TO_FETCH,
+            pageSize: SUB_PAGE_SIZE,
           },
         },
       }),

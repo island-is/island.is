@@ -81,7 +81,7 @@ export class ClientsService {
       where: {
         ...(clientIds && clientIds.length > 0 ? { clientId: clientIds } : {}),
       },
-      attributes: ['clientId', 'clientName'],
+      attributes: ['clientId', 'clientName', 'domainName'],
     })
 
     if (lang) {

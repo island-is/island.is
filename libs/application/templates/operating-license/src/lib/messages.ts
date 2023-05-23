@@ -311,6 +311,11 @@ export const m = defineMessages({
     defaultMessage: 'Fasteignanúmer',
     description: 'Some description',
   },
+  propertyNameNotFound: {
+    id: 'ol.application:propertyInfo.propertyNameNotFound',
+    defaultMessage: 'Heimilisfang fannst ekki',
+    description: 'Some description',
+  },
   space: {
     id: 'ol.application:propertyInfo.space',
     defaultMessage: 'Rými',

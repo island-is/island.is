@@ -75,6 +75,10 @@ const LifeEventPageListSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
 )
 
+const PowerBiSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.PowerBiSlice),
+)
+
 interface SliceMachineProps {
   slice: Slice
   namespace?: Record<string, string>
@@ -83,6 +87,7 @@ interface SliceMachineProps {
   marginBottom?: ResponsiveSpace
   params?: Record<string, any>
   paddingTop?: ResponsiveSpace
+  wrapWithGridContainer?: boolean
 }
 
 const fullWidthSlices = ['TimelineSlice', 'LogoListSlice', 'EmailSignup']
@@ -107,8 +112,9 @@ const renderSlice = (slice, namespace, slug, params) => {
       return <TimelineSlice slice={slice} namespace={namespace} />
     case 'LogoListSlice':
       return <LogoListSlice slice={slice} />
-    case 'TabSection':
-      return <TabSectionSlice slice={slice} />
+    case 'TabSection': {
+      return <TabSectionSlice slice={slice} {...params} />
+    }
     case 'BulletListSlice':
       return <BulletListSlice slice={slice} />
     case 'StorySlice':
@@ -133,6 +139,8 @@ const renderSlice = (slice, namespace, slug, params) => {
       return webRenderConnectedComponent(slice)
     case 'FeaturedSupportQNAs':
       return <FeaturedSupportQNAs slice={slice} />
+    case 'PowerBiSlice':
+      return <PowerBiSlice slice={slice} />
     default:
       return <RichText body={[slice]} />
   }
@@ -146,6 +154,7 @@ export const SliceMachine = ({
   marginBottom = 0,
   params,
   paddingTop = 6,
+  wrapWithGridContainer = false,
 }: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
@@ -167,7 +176,12 @@ export const SliceMachine = ({
     </GridContainer>
   ) : (
     <Box marginBottom={marginBottom}>
-      {renderSlice(slice, namespace, slug, params)}
+      {wrapWithGridContainer && (
+        <GridContainer>
+          {renderSlice(slice, namespace, slug, params)}
+        </GridContainer>
+      )}
+      {!wrapWithGridContainer && renderSlice(slice, namespace, slug, params)}
     </Box>
   )
 }

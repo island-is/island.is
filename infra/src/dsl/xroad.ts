@@ -118,7 +118,7 @@ export const DrivingLicense = new XroadConf({
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
     XROAD_DRIVING_LICENSE_V5_PATH: {
-      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5',
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5',
       staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
     },
@@ -504,10 +504,11 @@ export const TransportAuthority = new XroadConf({
         'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
     },
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: {
-      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
       staging:
-        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
-      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
+      prod:
+        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',

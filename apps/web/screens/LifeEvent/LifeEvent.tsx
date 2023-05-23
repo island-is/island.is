@@ -31,11 +31,7 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import {
-  useFeatureFlag,
-  useNamespace,
-  usePlausiblePageview,
-} from '@island.is/web/hooks'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
@@ -56,11 +52,6 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   namespace,
   locale,
 }) => {
-  const { value: isWebReaderEnabledForLifeEventPages } = useFeatureFlag(
-    'isWebReaderEnabledForLifeEventPages',
-    false,
-  )
-
   useContentfulId(id)
   useLocalLinkTypeResolver()
 
@@ -107,15 +98,17 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     return items
   }, [])
 
+  const socialImage = featuredImage ?? image
+
   return (
     <Box paddingBottom={[2, 2, 10]}>
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
-        imageUrl={featuredImage?.url}
-        imageContentType={featuredImage?.contentType}
-        imageWidth={featuredImage?.width?.toString()}
-        imageHeight={featuredImage?.height?.toString()}
+        imageUrl={socialImage?.url}
+        imageContentType={socialImage?.contentType}
+        imageWidth={socialImage?.width?.toString()}
+        imageHeight={socialImage?.height?.toString()}
       />
 
       <GridContainer id="main-content">
@@ -160,9 +153,9 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     {title}
                   </span>
                 </Text>
-                {isWebReaderEnabledForLifeEventPages && (
-                  <Webreader readId={null} readClass="rs_read" />
-                )}
+
+                <Webreader readId={null} readClass="rs_read" />
+
                 {intro && (
                   <Text variant="intro" as="p" paddingTop={2}>
                     <span className="rs_read" id={slugify(intro)}>

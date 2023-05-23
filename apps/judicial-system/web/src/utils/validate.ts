@@ -161,7 +161,7 @@ export const isDefendantStepValidRC = (
       ),
       [workingCase.defenderEmail, ['email-format']],
       [workingCase.defenderPhoneNumber, ['phonenumber']],
-      workingCase.type === CaseType.TravelBan
+      workingCase.type === CaseType.TRAVEL_BAN
         ? 'valid'
         : [workingCase.leadInvestigator, ['empty']],
     ]).isValid
@@ -216,7 +216,7 @@ export const isHearingArrangementsStepValidRC = (
       workingCase.court &&
       validate([
         [workingCase.requestedCourtDate, ['empty', 'date-format']],
-        workingCase.type !== CaseType.TravelBan && !workingCase.parentCase
+        workingCase.type !== CaseType.TRAVEL_BAN && !workingCase.parentCase
           ? [workingCase.arrestDate, ['empty', 'date-format']]
           : 'valid',
       ]).isValid) ||
@@ -433,6 +433,16 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
       workingCase.appealJudge3 &&
       workingCase.appealAssistant &&
       validate([[workingCase.appealCaseNumber, ['empty']]]).isValid) ||
+    false
+  )
+}
+
+export const isCourtOfAppealRulingStepValid = (workingCase: Case): boolean => {
+  const { appealRulingDecision, appealConclusion } = workingCase
+
+  return (
+    (appealRulingDecision !== null &&
+      validate([[appealConclusion, ['empty']]]).isValid) ||
     false
   )
 }
