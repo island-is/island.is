@@ -21,19 +21,19 @@ export const healthModule: PortalModule = {
     {
       name: 'Heilsa',
       path: HealthPaths.HealthRoot,
-      enabled: userInfo.scopes.includes(ApiScope.rightsPortal),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthOverview />,
     },
     {
       name: 'Þjálfun',
       path: HealthPaths.HealthTherapies,
-      enabled: userInfo.scopes.includes(ApiScope.rightsPortal),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Therapies />,
     },
     {
       name: 'Hjálpartæki og næring',
       path: HealthPaths.HealthAidsAndNutrition,
-      enabled: userInfo.scopes.includes(ApiScope.rightsPortal),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <AidsAndNutrition />,
     },
   ],
