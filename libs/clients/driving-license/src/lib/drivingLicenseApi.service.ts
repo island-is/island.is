@@ -25,6 +25,22 @@ export class DrivingLicenseApi {
     private readonly v2: v2.ApiV2,
     private readonly v5: v5.ApiV5,
   ) {}
+
+  public async getCurrentLicenseV5(input: {
+    nationalId: string
+    token?: string
+  }): Promise<v5.DriverLicenseDto | null> {
+    const skirteini = await this.v5.getCurrentLicenseV5({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: input.token ?? '',
+    })
+    if (!skirteini || !skirteini.id) {
+      return null
+    }
+    return skirteini
+  }
+
   public async getCurrentLicense(input: {
     nationalId: string
     token?: string
@@ -119,11 +135,6 @@ export class DrivingLicenseApi {
       name: skirteini.nafn ?? '',
       issued: skirteini.utgafuDagsetning,
       expires: skirteini.gildirTil,
-      location: skirteini.nafnUtgafustadur,
-      photo: {
-        noted: skirteini.mynd?.skrad,
-        image: skirteini.mynd?.mynd,
-      },
       categories:
         skirteini.rettindi?.map((rettindi: v2.Rettindi | v1.Rettindi) => ({
           id: rettindi.id ?? 0,

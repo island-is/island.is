@@ -6,7 +6,7 @@ import {
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { getLabel } from '../../utils/translations'
-import { DriversLicense } from '@island.is/clients/driving-license'
+import { DriverLicenseDto as DriversLicense } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
 import { info, format as formatSsn } from 'kennitala'
 
@@ -23,7 +23,9 @@ export const createPkPassDataInput = (
   return [
     {
       identifier: 'gildir',
-      value: license.expires ? format(license.expires, 'dd-MM-yyyy') : '',
+      value: license.dateValidTo
+        ? format(license.dateValidTo, 'dd-MM-yyyy')
+        : '',
     },
     {
       identifier: 'nafn',
@@ -39,21 +41,26 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'utgafudagur',
-      value: license.issued ? format(license.issued, 'dd-MM-yyyy') : '',
+      value: license.publishDate
+        ? format(license.publishDate, 'dd-MM-yyyy')
+        : '',
     },
     {
       identifier: 'numer',
-      value: license.id.toString() ?? '',
+      value: license.id?.toString() ?? '',
     },
     {
       identifier: 'rettindi',
       value: license.categories
-        ? license.categories?.reduce((acc, curr) => `${acc} ${curr.name}`, '')
+        ? license.categories?.reduce(
+            (acc, curr) => `${acc} ${curr.categoryName}`,
+            '',
+          )
         : '',
     },
     {
       identifier: 'athugasemdir',
-      value: license.healthRemarks ? license.healthRemarks.join(' ') : '',
+      value: license.comments ? license.comments.join(' ') : '',
     },
   ]
 }
@@ -67,8 +74,8 @@ export const parseDrivingLicensePayload = (
     return null
   }
 
-  const expired = license.expires
-    ? !isAfter(new Date(license.expires), new Date())
+  const expired = license.dateValidTo
+    ? !isAfter(new Date(license.dateValidTo), new Date())
     : null
 
   const label = labels?.labels
@@ -86,45 +93,51 @@ export const parseDrivingLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: getLabel('fullName', locale, label),
-      value: license.name,
+      value: license.name ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: getLabel('publisher', locale, label),
-      value: license.location ?? '',
+      value: license.publishPlaceName ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: getLabel('publishedDate', locale, label),
-      value: license.issued ? new Date(license.issued).toISOString() : '',
+      value: license.publishDate
+        ? new Date(license.publishDate).toISOString()
+        : '',
     },
     {
       type: GenericLicenseDataFieldType.Value,
       label: getLabel('validTo', locale, label),
-      value: license.expires ? new Date(license.expires).toISOString() : '',
+      value: license.dateValidTo
+        ? new Date(license.dateValidTo).toISOString()
+        : '',
     },
     {
       type: GenericLicenseDataFieldType.Group,
       label: getLabel('classesOfRights', locale, label),
       fields: (license.categories ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
-        name: (field.name ?? '').trim(),
+        name: (field.categoryName ?? '').trim(),
         label: '',
         fields: [
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('expiryDate', locale, label),
-            value: field.expires ? new Date(field.expires).toISOString() : '',
+            value: field.dateTo ? new Date(field.dateTo).toISOString() : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('publishedDate', locale, label),
-            value: field.issued ? new Date(field.issued).toISOString() : '',
+            value: field.publishDate
+              ? new Date(field.publishDate).toISOString()
+              : '',
           },
-          field.comments && {
+          field.comment && {
             type: GenericLicenseDataFieldType.Value,
             label: getLabel('comment', locale, label),
-            value: field.comments,
+            value: field.comment,
           },
         ].filter((Boolean as unknown) as ExcludesFalse),
       })),
@@ -137,7 +150,7 @@ export const parseDrivingLicensePayload = (
     metadata: {
       licenseNumber: license.id?.toString() ?? '',
       expired,
-      expireDate: license.expires?.toISOString() ?? undefined,
+      expireDate: license.dateValidTo?.toISOString() ?? undefined,
       links: [
         {
           label: getLabel('renewDrivingLicense', locale, label),

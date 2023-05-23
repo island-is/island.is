@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { format } from 'kennitala'
 import {
-  DriversLicense,
+  DriverLicenseDto as DriversLicense,
   DrivingLicenseApi,
 } from '@island.is/clients/driving-license'
 import {
@@ -62,7 +62,10 @@ export class GenericDrivingLicenseService
   }
 
   private fetchLicense = (user: User) =>
-    this.drivingApi.getCurrentLicense({ nationalId: user.nationalId })
+    this.drivingApi.getCurrentLicenseV5({
+      nationalId: user.nationalId,
+      token: user.authorization.replace(/^bearer /i, ''),
+    })
 
   async getLicense(
     user: User,
@@ -75,6 +78,7 @@ export class GenericDrivingLicenseService
     }
 
     const payload = parseDrivingLicensePayload(licenseData, locale, labels)
+    this.logger.debug(JSON.stringify(payload))
 
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
 
@@ -107,7 +111,9 @@ export class GenericDrivingLicenseService
       return null
     }
 
-    const inputValues = createPkPassDataInput(license)
+    const data = {} as DriversLicense
+
+    const inputValues = createPkPassDataInput(data)
 
     if (!inputValues) {
       this.logger.warn('PkPassDataInput creation failed', {
