@@ -27,7 +27,7 @@ Calls to the EHIC API uses token exchange with a scope named 'europeanHealthInsu
 ## Setup
 
 To start the application system, follow the instructions in the handbook [here](https://docs.devland.is/apps/application-system).
-The application will be accessible under the path https://{host}/umsoknir/sjukrakort
+The application will be accessible under the path https://{host}/umsoknir/evropska-sjukratryggingakortid
 
 ### Translations from Contentful
 

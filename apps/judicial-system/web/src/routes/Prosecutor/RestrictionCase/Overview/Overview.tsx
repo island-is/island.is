@@ -14,7 +14,6 @@ import {
   NotificationType,
   CaseState,
   CaseTransition,
-  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
 import {

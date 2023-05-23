@@ -16,8 +16,9 @@ import {
   schema,
 } from '../forms/EditApplication/EditApplication.action'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
-import { useReadableSeconds } from './ReadableSeconds'
 import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
+import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
+import { useReadableSeconds } from './ReadableSeconds'
 
 interface LifetimeProps {
   absoluteRefreshTokenLifetime: number
@@ -31,6 +32,7 @@ const Lifetime = ({
   refreshTokenExpiration,
 }: LifetimeProps) => {
   const { formatMessage } = useLocale()
+  const { shouldSupportMultiEnv } = useMultiEnvSupport()
   const [lifetime, setLifetime] = useEnvironmentState({
     absoluteRefreshTokenLifetime,
     refreshTokenExpiration,
@@ -88,6 +90,7 @@ const Lifetime = ({
       description={formatMessage(m.lifeTimeDescription)}
       isDirty={customChangedValidation}
       intent={ClientFormTypes.lifeTime}
+      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={3}>
         <Stack space={1}>

@@ -77,4 +77,11 @@ export class AdminPatchScopeDto {
     example: false,
   })
   isAccessControlled?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: false,
+  })
+  grantToPersonalRepresentatives?: boolean
 }

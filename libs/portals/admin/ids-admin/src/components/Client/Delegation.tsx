@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
 import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
+import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
 import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 
 interface DelegationProps {
@@ -24,6 +25,7 @@ const Delegation = ({
   requireApiScopes,
 }: DelegationProps) => {
   const { formatMessage } = useLocale()
+  const { shouldSupportMultiEnv } = useMultiEnvSupport()
   const { isSuperAdmin } = useSuperAdmin()
 
   const [inputValues, setInputValues] = useEnvironmentState({
@@ -41,6 +43,7 @@ const Delegation = ({
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
+      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={2}>
         <Checkbox

@@ -1,29 +1,30 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-import { usePrevious } from 'react-use'
-import { ClientContext } from '../context/ClientContext'
+import { Dispatch, SetStateAction, useContext, useState } from 'react'
+
+import { EnvironmentContext } from '../context/EnvironmentContext'
 
 /**
  * This hook is like useState but re-initializes each time the selected
- * environment changes. This is useful for storing mutatable form data for the
+ * environment changes. This is useful for storing mutable form data for the
  * selected environment. That way other component state (like tabs and
  * accordions) is not reset when the environment changes, only the form data.
  */
 export const useEnvironmentState = <S>(
   initialState: S,
 ): [S, Dispatch<SetStateAction<S>>] => {
-  const { selectedEnvironment } = useContext(ClientContext)
+  const context = useContext(EnvironmentContext)
+
+  if (!context) {
+    throw new Error(
+      'useEnvironmentState must be used within a EnvironmentProvider',
+    )
+  }
+
+  const { selectedEnvironment } = context
+
   const [state, setState] = useState(initialState)
   const [prevEnvironment, setPrevEnvironment] = useState(selectedEnvironment)
 
-  if (selectedEnvironment.environment !== prevEnvironment.environment) {
+  if (selectedEnvironment !== prevEnvironment) {
     setState(initialState)
     setPrevEnvironment(selectedEnvironment)
   }
