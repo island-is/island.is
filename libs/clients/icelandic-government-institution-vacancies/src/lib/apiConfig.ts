@@ -17,17 +17,17 @@ export const ApiConfig = {
     >,
   ) =>
     new Configuration({
+      username: config.username,
+      password: config.password,
       fetchApi: createEnhancedFetch({
         name: 'clients-icelandic-government-institution-vacancies',
         logErrorResponseBody: true,
         treat400ResponsesAsErrors: true,
-        // TODO: perhaps add a timeout
+        // TODO: perhaps add a timeout,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
         'X-Road-Client': xroadConfig.xRoadClient,
-        userName: `${config.username}`,
-        password: `${config.password}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
