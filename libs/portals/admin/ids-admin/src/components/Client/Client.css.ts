@@ -1,15 +1,12 @@
 import { style } from '@vanilla-extract/css'
-import { themeUtils } from '@island.is/island-ui/theme'
+import { spacing } from '@island.is/island-ui/theme'
 
-export const select = style({
-  flexGrow: 1,
+export const tagWrapper = style({
+  height: spacing['4'],
+  transition: 'all 0.3s',
+})
 
-  ...themeUtils.responsiveStyle({
-    sm: {
-      maxWidth: 230,
-      width: '100%',
-      display: 'grid',
-      alignItems: 'center',
-    },
-  }),
+export const tagHide = style({
+  opacity: 0,
+  height: 0,
 })

@@ -10,7 +10,7 @@ describe('CaseFileList', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          <CaseFileList caseId="test" files={[]} isCaseCompleted={false} />
+          <CaseFileList caseId="test" files={[]} />
         </LocaleProvider>
       </MockedProvider>,
     )

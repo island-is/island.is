@@ -55,7 +55,7 @@ export class AdminTranslationService {
     return [
       {
         locale: 'is',
-        value: defaultValueIS,
+        value: defaultValueIS ?? '',
       },
       ...Array.from(translations || []).map(([locale, translation]) => ({
         locale,
