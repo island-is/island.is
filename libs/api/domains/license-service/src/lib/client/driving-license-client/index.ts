@@ -1,2 +1,2 @@
-export { GenericDrivingLicenseApi } from './drivingLicenseService.api'
+export { GenericDrivingLicenseApi } from './genericDrivingLicense.service'
 export { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
