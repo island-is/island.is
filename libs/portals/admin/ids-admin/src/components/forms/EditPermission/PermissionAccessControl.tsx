@@ -51,7 +51,6 @@ export const PermissionAccessControl = () => {
           label={formatMessage(m.isAccessControlled)}
           subLabel={formatMessage(m.isAccessControlledDescription)}
           name="isAccessControlled"
-          defaultChecked={inputValues.isAccessControlled}
           checked={inputValues.isAccessControlled}
           onChange={(e) => {
             setInputValues({
@@ -65,7 +64,6 @@ export const PermissionAccessControl = () => {
           label={formatMessage(m.grantToAuthenticatedUser)}
           subLabel={formatMessage(m.grantToAuthenticatedUserDescription)}
           name="grantToAuthenticatedUser"
-          defaultChecked={inputValues.grantToAuthenticatedUser}
           checked={inputValues.grantToAuthenticatedUser}
           onChange={(e) => {
             setInputValues({
@@ -79,7 +77,6 @@ export const PermissionAccessControl = () => {
           label={formatMessage(m.grantToProcuringHolders)}
           subLabel={formatMessage(m.grantToProcuringHoldersDescription)}
           name="grantToProcuringHolders"
-          defaultChecked={inputValues.grantToProcuringHolders}
           checked={inputValues.grantToProcuringHolders}
           onChange={(e) => {
             setInputValues({
@@ -93,7 +90,6 @@ export const PermissionAccessControl = () => {
           label={formatMessage(m.grantToLegalGuardians)}
           subLabel={formatMessage(m.grantToLegalGuardiansDescription)}
           name="grantToLegalGuardians"
-          defaultChecked={inputValues.grantToLegalGuardians}
           checked={inputValues.grantToLegalGuardians}
           onChange={(e) => {
             setInputValues({
@@ -107,7 +103,6 @@ export const PermissionAccessControl = () => {
           label={formatMessage(m.allowExplicitDelegationGrant)}
           subLabel={formatMessage(m.allowExplicitDelegationGrantDescription)}
           name="allowExplicitDelegationGrant"
-          defaultChecked={inputValues.allowExplicitDelegationGrant}
           checked={inputValues.allowExplicitDelegationGrant}
           onChange={(e) => {
             setInputValues({
@@ -121,7 +116,6 @@ export const PermissionAccessControl = () => {
           label={formatMessage(m.grantToPersonalRepresentatives)}
           subLabel={formatMessage(m.grantToPersonalRepresentativesDescription)}
           name="grantToPersonalRepresentatives"
-          defaultChecked={inputValues.grantToPersonalRepresentatives}
           checked={inputValues.grantToPersonalRepresentatives}
           onChange={(e) => {
             setInputValues({

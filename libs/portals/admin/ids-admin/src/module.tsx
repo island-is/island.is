@@ -8,32 +8,34 @@ import { m } from './lib/messages'
 import { createClientAction } from './components/forms/CreateClient/CreateClient.action'
 import { tenantsListLoader } from './components/TenantsList/TenantsList.loader'
 import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
-import { clientsLoader } from './components/Clients/Clients.loader'
-import Client from './components/Client/Client'
-import { clientLoader } from './components/Client/Client.loader'
+import { clientsLoader } from './screens/Clients/Clients.loader'
+import { clientLoader } from './screens/Client/Client.loader'
 import { editApplicationAction } from './components/forms/EditApplication/EditApplication.action'
 import PublishEnvironment from './components/forms/PublishEnvironment/PublishEnvironment'
 import { publishEnvironmentAction } from './components/forms/PublishEnvironment/PublishEnvironment.action'
 import { createPermissionAction } from './components/forms/CreatePermission/CreatePermission.action'
 import { permissionsListLoader } from './components/PermissionsList/PermissionsList.loader'
-import { permissionLoader } from './screens/PermissionScreen/Permission.loader'
+import { permissionLoader } from './screens/Permission/Permission.loader'
 import { updatePermissionAction } from './components/forms/EditPermission/EditPermission.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
+
+// Tenant
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
 const TenantsList = lazy(() => import('./components/TenantsList/TenantsList'))
+
+// Client
+const ClientsScreen = lazy(() => import('./screens/Clients/Clients'))
+const ClientScreen = lazy(() => import('./screens/Client/Client'))
 const CreateClient = lazy(() =>
   import('./components/forms/CreateClient/CreateClient'),
 )
-const Clients = lazy(() => import('./components/Clients/Clients'))
 
+// Permissions
 const PermissionsList = lazy(() =>
   import('./components/PermissionsList/PermissionsList'),
 )
-const PermissionsScreen = lazy(() =>
-  import('./screens/PermissionScreen/PermissionScreen'),
-)
-
+const PermissionsScreen = lazy(() => import('./screens/Permission/Permission'))
 const CreatePermission = lazy(() =>
   import('./components/forms/CreatePermission/CreatePermission'),
 )
@@ -84,7 +86,7 @@ export const idsAdminModule: PortalModule = {
                 name: m.clients,
                 path: IDSAdminPaths.IDSAdminClients,
                 loader: clientsLoader(props),
-                element: <Clients />,
+                element: <ClientsScreen />,
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
                 },
@@ -101,7 +103,7 @@ export const idsAdminModule: PortalModule = {
               {
                 name: m.settings,
                 path: IDSAdminPaths.IDSAdminClient,
-                element: <Client />,
+                element: <ClientScreen />,
                 loader: clientLoader(props),
                 action: editApplicationAction(props),
                 handle: {

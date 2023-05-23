@@ -1,13 +1,14 @@
-import { createContext, FC, useContext, useState } from 'react'
+import { createContext, FC, useContext } from 'react'
 import { useActionData, useLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
-import { PermissionLoaderResult } from '../../screens/PermissionScreen/Permission.loader'
+import { PermissionLoaderResult } from '../../screens/Permission/Permission.loader'
 import {
   PermissionFormTypes,
   UpdatePermissionResult,
 } from '../forms/EditPermission/EditPermission.action'
+import { useEnvironment } from '../../shared/hooks/useEnvironment'
 
 type PermissionContextProps = {
   /**
@@ -36,29 +37,16 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
 export const PermissionProvider: FC = ({ children }) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
   const actionData = useActionData() as UpdatePermissionResult
-  const [selectedPermission, setSelectedPermission] = useState(
-    permissionResult.environments.find(
-      ({ environment }) =>
-        environment === permissionResult.defaultEnvironment.name,
-    ) ?? permissionResult.environments[0],
+  const { environment, updateEnvironment } = useEnvironment(
+    permissionResult.environments,
   )
-
-  const onEnvironmentChange = (env: AuthAdminEnvironment) => {
-    const newSelectedPermission = permissionResult.environments.find(
-      ({ environment }) => environment === env,
-    )
-
-    if (newSelectedPermission) {
-      setSelectedPermission(newSelectedPermission)
-    }
-  }
 
   return (
     <PermissionContext.Provider
       value={{
         permission: permissionResult,
-        selectedPermission,
-        onEnvironmentChange,
+        selectedPermission: environment,
+        onEnvironmentChange: updateEnvironment,
         actionData,
         intent: actionData?.intent ?? PermissionFormTypes.NONE,
       }}
