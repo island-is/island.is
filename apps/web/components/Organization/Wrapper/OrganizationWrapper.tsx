@@ -34,7 +34,7 @@ import {
   SearchBox,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag, usePlausiblePageview } from '@island.is/web/hooks'
+import { usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -611,11 +611,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
 
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
-
   useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
 
   const secondaryNavList: NavigationItem[] =
@@ -785,7 +780,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   />
                 )}
 
-                {showReadSpeaker && isWebReaderEnabledForOrganizationPages && (
+                {showReadSpeaker && (
                   <Webreader
                     marginTop={breadcrumbItems?.length ? 3 : 0}
                     marginBottom={breadcrumbItems?.length ? 0 : 3}
