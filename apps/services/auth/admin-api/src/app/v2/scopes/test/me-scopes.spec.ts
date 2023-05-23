@@ -63,6 +63,7 @@ const createMockedApiScopes = (
             value: `Scope ${i + 1} EN display name`,
           },
         ],
+        domainName: TENANT_ID,
         ...scope,
       } as AdminScopeDTO),
   )
