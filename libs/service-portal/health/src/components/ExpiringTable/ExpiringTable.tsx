@@ -29,7 +29,6 @@ const ExpiringTable: FC<Props> = ({
         <Text variant="small" paddingBottom={2}>
           {footnote}
         </Text>
-        {}
         <LinkButton to={link} text={linkText} />
       </Box>
     </Box>
