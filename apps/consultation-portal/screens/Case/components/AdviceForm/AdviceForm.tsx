@@ -33,6 +33,7 @@ import {
   advicePublishTypeKey,
   advicePublishTypeKeyHelper,
 } from '../../../../types/enums'
+import localization from '../../Case.json'
 
 type CardProps = {
   card: Case
@@ -66,6 +67,7 @@ export const AdviceForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showInputFileError, setShowInputFileError] = useState(false)
   const [inputFileErrorText, setInputFileErrorText] = useState('')
+  const loc = localization['adviceForm']
 
   const { createUploadUrl, postAdviceMutation } = usePostAdvice()
 
@@ -132,8 +134,8 @@ export const AdviceForm = ({
       })
       if (fileListCheck.length > 0) {
         setShowInputFileError(true)
-        setInputFileErrorText('Skráarnafn má í mesta lagi vera 100 stafbil.')
-        toast.error('Skráarnafn má í mesta lagi vera 100 stafbil.')
+        setInputFileErrorText(loc.inputFileErrorText)
+        toast.error(loc.inputFileErrorText)
       } else {
         setShowInputFileError(false)
         setInputFileErrorText('')
@@ -173,9 +175,9 @@ export const AdviceForm = ({
             setReview('')
             setFileList([])
             refetchAdvices()
-            toast.success('Umsögn send inn')
+            toast.success(loc.postAdviceMutationToasts.success)
           })
-          .catch(() => toast.error('Ekki tókst að senda inn umsögn'))
+          .catch(() => toast.error(loc.postAdviceMutationToasts.failure))
       }
     } else {
       setShowInputError(true)
@@ -215,7 +217,7 @@ export const AdviceForm = ({
       >
         <Inline alignY="center" collapseBelow="lg">
           <Text variant="eyebrow" color="purple400">
-            Mál nr. S-{card.caseNumber}
+            {`${loc.card.eyebrowText} S-${card.caseNumber}`}
           </Text>
           <Hidden below="lg">
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
@@ -224,35 +226,43 @@ export const AdviceForm = ({
           </Hidden>
           <Box>
             <Text variant="eyebrow" color="purple400">
-              Til umsagnar:{' '}
-              {getDateBeginDateEnd(card.processBegins, card.processEnds)}
+              {`${loc.card.forReviewText}: ${getDateBeginDateEnd(
+                card.processBegins,
+                card.processEnds,
+              )}`}
             </Text>
           </Box>
         </Inline>
         <Text variant="small">{date}</Text>
       </Inline>
       <Text variant="h3" marginTop={1}>
-        Skrifa umsögn
+        {loc.card.title}
       </Text>
 
       <Text marginBottom={2}>
-        Hér er hægt að senda inn umsögn.
+        {loc.card.description.textBefore}
         {` ${
           advicePublishTypeKey[
             advicePublishTypeKeyHelper[card.advicePublishTypeId]
           ]
-        } `}
-        Upplýsingalög gilda, sjá nánar í{' '}
-        <Link href="/um">um samráðsgáttina.</Link>
+        } 
+        ${loc.card.description.textAfter} 
+        `}
+
+        <Link href={loc.card.description.link.href}>
+          {loc.card.description.link.text}
+        </Link>
       </Text>
 
-      <Text marginBottom={2}>Umsagnaraðili: {username}</Text>
+      <Text marginBottom={2}>
+        {loc.card.description.user} {username}
+      </Text>
 
       <Input
         textarea
-        label="Umsögn"
-        name="Test"
-        placeholder="Hér skal skrifa umsögn"
+        label={loc.input.label}
+        name="review_input"
+        placeholder={loc.input.placeholder}
         rows={10}
         value={review}
         onChange={(e) => setReview(e.target.value)}
@@ -263,12 +273,12 @@ export const AdviceForm = ({
         }
         errorMessage={
           review.length < REVIEW_MINIMUM_LENGTH
-            ? `Texti þarf að vera að minnsta kosti 10 stafbil, texti er núna ${review.length.toLocaleString(
+            ? `${loc.input.minLenght} ${review.length.toLocaleString(
                 'de-DE',
-              )} stafbil.`
-            : `Texti má vera í mesta lagi 290.000 stafbil, texti er núna ${review.length.toLocaleString(
+              )} ${loc.input.lengthUnit}`
+            : `${loc.input.maxLength} ${review.length.toLocaleString(
                 'de-DE',
-              )} stafbil.`
+              )} ${loc.input.lengthUnit}`
         }
       />
       <Box paddingTop={3}>
@@ -278,9 +288,9 @@ export const AdviceForm = ({
               name="fileUpload"
               fileList={fileList}
               accept={Object.values(fileExtensionWhitelist)}
-              header="Dragðu skrár hingað til að hlaða upp"
-              description="Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn"
-              buttonLabel="Velja skrár til að hlaða upp"
+              header={loc.inputFileUpload.header}
+              description={loc.inputFileUpload.description}
+              buttonLabel={loc.inputFileUpload.buttonLabel}
               showFileSize
               onChange={onChange}
               onRemove={onRemove}
@@ -299,28 +309,27 @@ export const AdviceForm = ({
               variant="ghost"
               onClick={() => setShowUpload(true)}
             >
-              Hlaða upp viðhengi
+              {loc.showUploadButtonLabel}
             </Button>
           ) : (
             <div />
           )}
           <Button fluid size="small" onClick={onClick} loading={isSubmitting}>
-            Staðfesta umsögn
+            {loc.submitAdviceButtonLabel}
           </Button>
         </Inline>
       </Box>
       <Text marginTop={2} variant="small">
-        Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er
-        10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.
+        {loc.allowedFilesText}
       </Text>
       <AgencyText />
     </Box>
   ) : (
     <>
       <SubscriptionActionBox
-        heading="Viltu skrifa umsögn?"
-        text="Öllum er frjálst að taka þátt í samráðinu. Umsagnir verða birtar jafnóðum og þær berast. Þú þarft að vera skráð(ur) inn til að geta sent umsögn."
-        cta={{ label: 'Skrá mig inn', onClick: LogIn }}
+        heading={loc.loginActionBox.heading}
+        text={loc.loginActionBox.text}
+        cta={{ label: loc.loginActionBox.ctaLabel, onClick: LogIn }}
       />
       <AgencyText />
     </>
