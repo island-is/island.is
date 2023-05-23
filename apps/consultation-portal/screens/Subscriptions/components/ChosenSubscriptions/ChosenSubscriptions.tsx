@@ -1,8 +1,9 @@
 import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
-import { ChosenSubscriptionCard } from '../SubscriptionCard/ChosenSubscriptionCard'
+import { SubscriptionCard } from '../SubscriptionCard/SubscriptionCard'
 import { Area, SubscriptionDescriptionKey } from '../../../../types/enums'
 import { SubscriptionArray } from '../../../../types/interfaces'
 import { useIsMobile } from '../../../../hooks'
+import localization from '../../Subscriptions.json'
 
 interface Props {
   subscriptionArray: SubscriptionArray
@@ -23,6 +24,7 @@ const ChosenSubscriptions = ({
   submitSubsIsLoading,
   toggleAble = true,
 }: Props) => {
+  const loc = localization['chosenSubscriptions']
   const {
     cases,
     institutions,
@@ -50,10 +52,10 @@ const ChosenSubscriptions = ({
       ) && (
         <>
           <Text paddingBottom={1} variant="eyebrow" paddingTop={2}>
-            Valin mál
+            {loc.eyebrowText}
           </Text>
           {subscribeToAllChecked && (
-            <ChosenSubscriptionCard
+            <SubscriptionCard
               isGeneralSubscription
               idx={0}
               item={subscribeToAllChecked}
@@ -61,18 +63,18 @@ const ChosenSubscriptions = ({
               setSubscriptionArray={setSubscriptionArray}
               titleColumn={
                 <Text lineHeight="sm" variant="h5" color={'dark400'}>
-                  Öll mál
+                  {loc.cardTitle}
                 </Text>
               }
             >
               <Text variant="medium">&emsp;{subscribeToAllChecked.name}</Text>
-            </ChosenSubscriptionCard>
+            </SubscriptionCard>
           )}
 
           {chosenCases.length !== 0 &&
             chosenCases.map((item) => {
               return (
-                <ChosenSubscriptionCard
+                <SubscriptionCard
                   key={item.key}
                   item={item}
                   area={Area.case}
@@ -85,13 +87,13 @@ const ChosenSubscriptions = ({
                   }
                 >
                   <Text variant="medium">&emsp;{item.name}</Text>
-                </ChosenSubscriptionCard>
+                </SubscriptionCard>
               )
             })}
           {chosenInstitutions.length !== 0 &&
             chosenInstitutions.map((item) => {
               return (
-                <ChosenSubscriptionCard
+                <SubscriptionCard
                   key={item.key}
                   item={item}
                   area={Area.institution}
@@ -110,13 +112,13 @@ const ChosenSubscriptions = ({
                       {SubscriptionDescriptionKey[item.subscriptionType]}
                     </em>
                   </Text>
-                </ChosenSubscriptionCard>
+                </SubscriptionCard>
               )
             })}
           {chosenPolicyAreas.length !== 0 &&
             chosenPolicyAreas.map((item) => {
               return (
-                <ChosenSubscriptionCard
+                <SubscriptionCard
                   key={item.key}
                   item={item}
                   area={Area.policyArea}
@@ -135,7 +137,7 @@ const ChosenSubscriptions = ({
                       {SubscriptionDescriptionKey[item.subscriptionType]}
                     </em>
                   </Text>
-                </ChosenSubscriptionCard>
+                </SubscriptionCard>
               )
             })}
           <Box
@@ -152,7 +154,7 @@ const ChosenSubscriptions = ({
                 onClick={onClear}
                 loading={false}
               >
-                Hreinsa val
+                {loc.clearButton}
               </Button>
             </Box>
             <Button

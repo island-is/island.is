@@ -1,10 +1,12 @@
 import Head from 'next/head'
+import localization from './AppLayout.json'
 
 const AppLayout = ({ children }) => {
+  const loc = localization['appLayout']
   return (
     <div>
       <Head>
-        <title>Samradsgatt</title>
+        <title>{loc.title}</title>
         <link
           rel="apple-touch-icon"
           sizes="180x180"

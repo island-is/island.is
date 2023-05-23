@@ -12,8 +12,8 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
-import getTagVariants from '../../utils/helpers/getTagVariants'
-import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
+import { getTagVariants } from '../../utils/helpers'
+import { Eyebrows } from '../../components'
 
 import * as styles from './Card.css'
 
@@ -58,7 +58,7 @@ export const Card = ({
             Nr. S-{card.id}
           </Text>
         </Box>
-        <EyebrowsWithSeperator
+        <Eyebrows
           instances={[card.eyebrows[0], card.eyebrows[1]]}
           color="blue600"
           style={styles.seperator}
