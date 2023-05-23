@@ -193,7 +193,7 @@
   - [Finance](libs/clients/finance/README.md)
   - [Firearm License](libs/clients/firearm-license/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
-    - [Health Insurance](libs/clients/icelandic-health-insurance/health-insurance/README.md)
+  - [Health Insurance](libs/clients/icelandic-health-insurance/health-insurance/README.md)
   - [Identity](libs/clients/identity/README.md)
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
