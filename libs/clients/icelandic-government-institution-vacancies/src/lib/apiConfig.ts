@@ -15,10 +15,13 @@ export const ApiConfig = {
     config: ConfigType<
       typeof IcelandicGovernmentInstitutionVacanciesClientConfig
     >,
-  ) =>
-    new Configuration({
-      username: config.username,
-      password: config.password,
+  ) => {
+    const credentials = Buffer.from(
+      `${config.username}:${config.password}`,
+      'binary',
+    ).toString('base64')
+
+    return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-icelandic-government-institution-vacancies',
         logErrorResponseBody: true,
@@ -30,8 +33,10 @@ export const ApiConfig = {
         'X-Road-Client': xroadConfig.xRoadClient,
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        Authorization: `Basic ${credentials}`,
       },
-    }),
+    })
+  },
   inject: [
     XRoadConfig.KEY,
     IcelandicGovernmentInstitutionVacanciesClientConfig.KEY,
