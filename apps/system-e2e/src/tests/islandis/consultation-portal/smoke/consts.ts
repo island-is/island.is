@@ -54,20 +54,14 @@ export const FOOTER = {
   },
 }
 
-export const PAGES = ['subscriptions', 'advices', 'mySubscriptions']
-
 interface TextHref {
   text: string
-  href: string
-}
-
-interface Text {
-  text: string
+  href?: string
 }
 
 interface Button {
   label: string
-  href: string
+  href?: string
 }
 
 interface CTA {
@@ -89,7 +83,7 @@ interface Pages {
   text: string
   CTA?: CTA
   unsubscribe?: TextHref
-  tabs?: Array<Text>
+  tabs?: Array<{ text: string }>
 }
 
 const COMMON_STATES = {
@@ -120,7 +114,6 @@ const COMMON_STATES = {
       },
       {
         text: 'Mínar umsagnir',
-        href: '',
       },
     ],
     title: 'Mínar umsagnir',
@@ -136,7 +129,6 @@ export const LOGGED_IN_STATES = {
       text: 'Núverandi skráð netfang:',
       button: {
         label: 'Breyta netfangi',
-        href: '',
       },
       mySubsButton: {
         label: 'Sjá áskriftir',
@@ -190,16 +182,7 @@ export const LOGGED_OUT_STATES = {
         'Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.',
       button: {
         label: 'Skrá mig inn',
-        href: '',
       },
-      mySubsButton: {
-        label: '',
-        href: '',
-      },
-    },
-    unsubscribe: {
-      text: '',
-      href: '',
     },
   },
 
@@ -211,7 +194,6 @@ export const LOGGED_OUT_STATES = {
         'Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir.',
       button: {
         label: 'Skrá mig inn',
-        href: '',
       },
     },
   },

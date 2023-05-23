@@ -14,7 +14,6 @@ test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
-  const authLink = new RegExp(`^${urls.authUrl}`)
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
