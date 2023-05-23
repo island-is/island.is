@@ -91,7 +91,7 @@ export const parseDrivingLicensePayload = (
     {
       type: GenericLicenseDataFieldType.Value,
       label: getLabel('publisher', locale, label),
-      value: '',
+      value: license.location ?? '',
     },
     {
       type: GenericLicenseDataFieldType.Value,

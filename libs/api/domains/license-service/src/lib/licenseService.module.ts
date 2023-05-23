@@ -32,7 +32,7 @@ import {
 } from './client/machine-license-client'
 
 import {
-  GenericDrivingLicenseApi,
+  GenericDrivingLicenseService,
   GenericDrivingLicenseConfig,
 } from './client/driving-license-client'
 import {
@@ -40,6 +40,7 @@ import {
   GenericDisabilityLicenseConfig,
   GenericDisabilityLicenseService,
 } from './client/disability-license-client'
+import { GenericDrivingLicenseModule } from './client/driving-license-client/genericDrivingLicense.module'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -96,6 +97,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
 @Module({
   imports: [
     CacheModule.register(),
+    GenericDrivingLicenseModule,
     GenericFirearmLicenseModule,
     GenericAdrLicenseModule,
     GenericMachineLicenseModule,
@@ -116,12 +118,14 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         adrConfig: ConfigType<typeof GenericAdrLicenseConfig>,
         machineConfig: ConfigType<typeof GenericMachineLicenseConfig>,
         disabilityConfig: ConfigType<typeof GenericDisabilityLicenseConfig>,
+        drivingConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
       ) => {
         const ids: PassTemplateIds = {
           firearmLicense: firearmConfig.passTemplateId,
           adrLicense: adrConfig.passTemplateId,
           machineLicense: machineConfig.passTemplateId,
           disabilityLicense: disabilityConfig.passTemplateId,
+          drivingLicense: drivingConfig.passTemplateId,
         }
         return ids
       },
@@ -130,6 +134,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         GenericAdrLicenseConfig.KEY,
         GenericMachineLicenseConfig.KEY,
         GenericDisabilityLicenseConfig.KEY,
+        GenericDrivingLicenseConfig.KEY,
       ],
     },
     {
@@ -139,20 +144,13 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         genericAdrService: GenericAdrLicenseService,
         genericMachineService: GenericMachineLicenseService,
         genericDisabilityService: GenericDisabilityLicenseService,
-        drivingLicenseConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
-        xRoadConfig: ConfigType<typeof XRoadConfig>,
+        genericDrivingService: GenericDrivingLicenseService,
       ) => async (
         type: GenericLicenseType,
-        cacheManager: CacheManager,
       ): Promise<GenericLicenseClient<unknown> | null> => {
         switch (type) {
           case GenericLicenseType.DriversLicense:
-            return new GenericDrivingLicenseApi(
-              logger,
-              xRoadConfig,
-              drivingLicenseConfig,
-              cacheManager,
-            )
+            return genericDrivingService
           case GenericLicenseType.AdrLicense:
             return genericAdrService
           case GenericLicenseType.MachineLicense:
@@ -170,8 +168,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         GenericAdrLicenseService,
         GenericMachineLicenseService,
         GenericDisabilityLicenseService,
-        GenericDrivingLicenseConfig.KEY,
-        XRoadConfig.KEY,
+        GenericDrivingLicenseService,
       ],
     },
   ],

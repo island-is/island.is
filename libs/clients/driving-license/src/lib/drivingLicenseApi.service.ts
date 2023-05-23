@@ -119,6 +119,11 @@ export class DrivingLicenseApi {
       name: skirteini.nafn ?? '',
       issued: skirteini.utgafuDagsetning,
       expires: skirteini.gildirTil,
+      location: skirteini.nafnUtgafustadur,
+      photo: {
+        noted: skirteini.mynd?.skrad,
+        image: skirteini.mynd?.mynd,
+      },
       categories:
         skirteini.rettindi?.map((rettindi: v2.Rettindi | v1.Rettindi) => ({
           id: rettindi.id ?? 0,

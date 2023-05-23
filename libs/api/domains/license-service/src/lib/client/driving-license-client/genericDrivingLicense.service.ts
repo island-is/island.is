@@ -31,7 +31,7 @@ import { Locale } from '@island.is/shared/types'
 const LOG_CATEGORY = 'drivinglicense-service'
 
 @Injectable()
-export class DrivingLicenseClient
+export class GenericDrivingLicenseService
   implements GenericLicenseClient<DriversLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
