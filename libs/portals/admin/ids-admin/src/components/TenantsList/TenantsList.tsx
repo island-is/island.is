@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {
   Box,
-  Filter,
   FilterInput,
   GridContainer,
   GridRow,
@@ -18,33 +17,22 @@ import { IntroHeader } from '@island.is/portals/core'
 import type { AuthTenantsList } from './TenantsList.loader'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
+import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
 
 const TenantsList = () => {
   const originalTenantsList = useLoaderData() as AuthTenantsList
   const { formatMessage } = useLocale()
-  const [tenantList, setTenantList] = useState<AuthTenantsList>(
+
+  const [tenantList, filterTenantList] = useLooseSearch(
     originalTenantsList,
+    ['defaultEnvironment.displayName[0].value', 'defaultEnvironment.id'],
+    'id',
   )
   const [inputSearchValue, setInputSearchValue] = useState('')
 
   const handleSearch = (value: string) => {
     setInputSearchValue(value)
-
-    if (value.length > 0) {
-      const filteredList = originalTenantsList.filter((tenant) => {
-        return (
-          tenant.defaultEnvironment.displayName[0].value
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          tenant.defaultEnvironment.id
-            .toLowerCase()
-            .includes(value.toLowerCase())
-        )
-      })
-      setTenantList(filteredList)
-    } else {
-      setTenantList(originalTenantsList)
-    }
+    filterTenantList(value)
   }
 
   return (
@@ -70,7 +58,7 @@ const TenantsList = () => {
                 <Link
                   className={styles.fill}
                   to={replaceParams({
-                    href: IDSAdminPaths.IDSAdminTenants,
+                    href: IDSAdminPaths.IDSAdminClients,
                     params: {
                       tenant: item.id,
                     },
@@ -105,7 +93,12 @@ const TenantsList = () => {
                     >
                       {item.availableEnvironments.map((tag, index) => (
                         <Box margin={'smallGutter'} key={`tenant-${index}`}>
-                          <Tag key={`tenant-${tag}`} variant="purple" outlined>
+                          <Tag
+                            key={`tenant-${tag}`}
+                            variant="purple"
+                            outlined
+                            disabled
+                          >
                             {tag}
                           </Tag>
                         </Box>

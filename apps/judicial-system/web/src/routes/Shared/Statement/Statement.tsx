@@ -159,7 +159,6 @@ const Statement = () => {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                multiple={false}
                 onChange={(files) =>
                   handleChange(
                     files,
@@ -190,7 +189,6 @@ const Statement = () => {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                multiple={false}
                 onChange={(files) =>
                   handleChange(
                     files,
@@ -224,7 +222,9 @@ const Statement = () => {
       {visibleModal === 'STATEMENT_SENT' && (
         <Modal
           title={formatMessage(strings.statementSentModalTitle)}
-          text={formatMessage(strings.statementSentModalText)}
+          text={formatMessage(strings.statementSentModalText, {
+            isDefender: limitedAccess,
+          })}
           secondaryButtonText={formatMessage(core.closeModal)}
           onSecondaryButtonClick={() => router.push(previousUrl)}
         />

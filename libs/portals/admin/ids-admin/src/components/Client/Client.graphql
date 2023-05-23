@@ -1,5 +1,5 @@
 # Get Client by ClientId and TenantId
-query GetClient($input: ClientInput!) {
+query GetClient($input: AuthAdminClientInput!) {
   authAdminClient(input: $input) {
     clientId
     clientType
@@ -46,6 +46,7 @@ query GetClient($input: ClientInput!) {
           locale
           value
         }
+        domainName
       }
     }
   }

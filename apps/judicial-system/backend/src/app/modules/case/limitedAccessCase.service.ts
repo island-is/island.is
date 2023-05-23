@@ -81,6 +81,7 @@ export const attributes: (keyof Case)[] = [
   'appealJudge3Id',
   'appealConclusion',
   'appealRulingDecision',
+  'appealReceivedByCourtDate',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -135,6 +136,26 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
       ],
     },
+  },
+  {
+    model: User,
+    as: 'appealAssistant',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge1',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge2',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 

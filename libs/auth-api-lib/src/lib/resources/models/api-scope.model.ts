@@ -276,6 +276,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       required: this.required,
       emphasize: this.emphasize,
       domainName: this.domainName,
+      isAccessControlled: this.isAccessControlled ?? undefined,
     }
   }
 }

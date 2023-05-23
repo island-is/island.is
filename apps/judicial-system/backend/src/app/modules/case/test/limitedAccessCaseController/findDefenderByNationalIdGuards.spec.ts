@@ -27,7 +27,7 @@ describe('LimitedAccessCaseController - Find defender by national id guards', ()
       guard = new guards[0]()
     })
 
-    it('should have TokenGuard as quard 1', () => {
+    it('should have TokenGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(TokenGuard)
     })
   })
@@ -39,7 +39,7 @@ describe('LimitedAccessCaseController - Find defender by national id guards', ()
       guard = new guards[1]()
     })
 
-    it('should have LimitedAccessCaseExistsGuard as quard 2', () => {
+    it('should have LimitedAccessCaseExistsGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     })
   })

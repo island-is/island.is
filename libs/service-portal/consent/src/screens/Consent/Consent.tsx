@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+
 import {
   Accordion,
   AccordionCard,
@@ -12,17 +13,21 @@ import {
   toast,
   ToggleSwitchButton,
 } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
+import { IntroHeader } from '@island.is/portals/core'
+
 import { m } from '../../lib/messages'
+import * as styles from './Consent.css'
+import {
+  useGetConsentListQuery,
+  usePatchConsentMutation,
+} from './Consent.generated'
+
 import type {
   ConsentLineProps,
   ConsentSectionProps,
   ConsentGroupProps,
 } from './types'
-
-import { useGetConsentListQuery } from './Consent.generated'
-import * as styles from './Consent.css'
 
 function Consent() {
   const { formatMessage } = useLocale()
@@ -64,7 +69,7 @@ function Consent() {
               />
             </Box>
           ) : isData ? (
-            data?.consentsList?.data?.map(({ client, permissions }) => {
+            data?.consentsList?.data?.map(({ client, tenants }) => {
               const title = client?.clientName || client.clientId
               return (
                 <AccordionCard
@@ -110,12 +115,13 @@ function Consent() {
                       {formatMessage(m.consentExplanation)}
                     </Text>
                     <ul>
-                      {permissions
+                      {tenants
                         ?.filter(Boolean)
-                        ?.map((permission, permissionIndex, arr) => {
+                        ?.map((tenant, permissionIndex, arr) => {
                           return (
                             <ConsentSection
-                              {...permission}
+                              {...tenant}
+                              clientId={client.clientId}
                               key={permissionIndex}
                               isLast={permissionIndex + 1 === arr.length}
                             />
@@ -139,33 +145,30 @@ function Consent() {
 }
 
 function ConsentSection({
+  clientId,
+  tenant,
   scopes = [],
-  owner,
   isLast = false,
 }: ConsentSectionProps) {
-  if (!scopes?.length || !owner) {
+  if (!scopes?.length || !tenant) {
     return null
   }
 
   return (
     <Box marginBottom={2} component="li">
       <Box display="flex" columnGap={2} alignItems="center">
-        {owner?.organisationLogoUrl ? (
-          <img src={owner.organisationLogoUrl} alt={''} width={16} />
+        {tenant?.organisationLogoUrl ? (
+          <img src={tenant.organisationLogoUrl} alt={''} width={16} />
         ) : null}
         <Box flexGrow={1}>
           <Text as="h3" variant="h5">
-            {owner.displayName}
+            {tenant.displayName}
           </Text>
         </Box>
       </Box>
       <Box component="ul">
         {scopes.map((scope, index) => {
-          const handleChange = (newChecked: boolean) => {
-            console.log('change', newChecked)
-          }
-
-          if (scope?.__typename === 'AuthConsentScopeGroup') {
+          if (scope?.children?.length) {
             return (
               <ConsentGroup
                 description={scope.description}
@@ -176,8 +179,8 @@ function ConsentSection({
                   return (
                     <ConsentLine
                       {...cld}
-                      key={scope.name + cld.hasConsent}
-                      onChange={handleChange}
+                      key={scope.name}
+                      clientId={clientId}
                       isLast={list.length === index + 1}
                     />
                   )
@@ -186,14 +189,12 @@ function ConsentSection({
             )
           }
 
-          if (scope?.__typename === 'AuthConsentScope') {
+          if (scope?.children?.length === 0) {
             return (
               <ConsentLine
                 {...scope}
-                // To flush the component after a change
-                // TODO: Test this
-                key={scope.name + scope.hasConsent}
-                onChange={handleChange}
+                key={scope.name}
+                clientId={clientId}
                 isLast={scopes.length === index + 1}
               />
             )
@@ -235,26 +236,36 @@ function ConsentGroup({
 }
 
 function ConsentLine({
+  name,
   displayName,
   description,
   hasConsent,
-  onChange,
+  clientId,
   isLast,
 }: ConsentLineProps) {
   const { formatMessage } = useLocale()
+  const [patchConsent, { loading }] = usePatchConsentMutation({
+    onError: (_) => toast.error(formatMessage(m.consentUpdateError)),
+  })
 
   const [localConsent, setLocalConsent] = useState(hasConsent)
 
-  const handleChange = (newChecked: boolean) => {
-    try {
-      onChange(newChecked)
-      if (Math.random() < 0.3) {
-        throw new Error('error')
-      }
-      setLocalConsent(newChecked)
-    } catch (error) {
-      toast.error(formatMessage(m.consentUpdateError))
-      setLocalConsent(hasConsent)
+  const handleChange = async (isChecked: boolean) => {
+    if (loading) {
+      return
+    }
+
+    const { data } = await patchConsent({
+      variables: {
+        input: {
+          clientId,
+          ...(isChecked ? { consentedScope: name } : { rejectedScope: name }),
+        },
+      },
+    })
+
+    if (data?.patchAuthConsent) {
+      setLocalConsent(isChecked)
     }
   }
 
@@ -269,7 +280,8 @@ function ConsentLine({
           <ToggleSwitchButton
             label={formatMessage(m.consentToggleButton, { item: displayName })}
             hiddenLabel
-            checked={localConsent}
+            checked={localConsent ?? false}
+            disabled={loading}
             onChange={handleChange}
           />
         </span>

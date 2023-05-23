@@ -154,7 +154,9 @@ const CourtOfAppealCases = () => {
                 color: 'purple',
                 text: formatMessage(tables.newTag),
               }
-            : { color: 'darkerBlue', text: formatMessage(tables.receivedTag) }
+            : thisRow.appealState === CaseAppealState.RECEIVED
+            ? { color: 'darkerBlue', text: formatMessage(tables.receivedTag) }
+            : { color: 'darkerBlue', text: formatMessage(tables.completedTag) }
 
         return (
           <Tag variant={tagVariant.color} outlined disabled>

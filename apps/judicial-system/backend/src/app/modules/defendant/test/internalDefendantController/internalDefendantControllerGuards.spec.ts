@@ -29,7 +29,7 @@ describe('InternalDefendantController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have TokenGuard as quard 1', () => {
+    it('should have TokenGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(TokenGuard)
     })
   })
@@ -41,7 +41,7 @@ describe('InternalDefendantController - guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have CaseExistsGuard as quard 2', () => {
+    it('should have CaseExistsGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -53,7 +53,7 @@ describe('InternalDefendantController - guards', () => {
       guard = guards[2]
     })
 
-    it('should have CaseTypeGuard as quard 3', () => {
+    it('should have CaseTypeGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...restrictionCases, ...investigationCases],
@@ -68,7 +68,7 @@ describe('InternalDefendantController - guards', () => {
       guard = new guards[3]()
     })
 
-    it('should have DefendantExistsGuard as quard 4', () => {
+    it('should have DefendantExistsGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(DefendantExistsGuard)
     })
   })

@@ -55,7 +55,7 @@ export const MobileFilter = ({
     setSearchValue(value)
   }
 
-  const { caseStatuses, caseTypes, period, sorting } = filters
+  const { caseStatuses, caseTypes, sorting } = filters
 
   const sortingList = sorting?.items
     .filter((item) => item.checked)

@@ -33,4 +33,7 @@ export class AdminScopeDTO extends ApiScopeBaseDTO {
     ],
   })
   description!: TranslatedValueDto[]
+
+  @ApiProperty({ type: String, example: '@island.is' })
+  domainName!: string
 }

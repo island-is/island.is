@@ -22,7 +22,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   isAcceptingCaseDecision,
-  completedCaseStates,
   CaseDecision,
 } from '@island.is/judicial-system/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -149,9 +148,6 @@ const Ruling = () => {
                   (workingCase.registrar !== null &&
                     workingCase.registrar?.id === user?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>
