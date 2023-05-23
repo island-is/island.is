@@ -229,7 +229,7 @@ export const ApplicationConfigurations = {
     translation: 'atr.application',
   },
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
-    slug: 'sjukrakort',
+    slug: 'evropska-sjukratryggingakortid',
     translation: 'ehic.application',
   },
 }

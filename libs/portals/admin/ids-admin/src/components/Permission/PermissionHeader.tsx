@@ -18,6 +18,7 @@ export const PermissionHeader = () => {
       selectedEnvironment={selectedPermission.environment}
       availableEnvironments={permission.availableEnvironments}
       onChange={onEnvironmentChange}
+      allowPublishing={false}
     />
   )
 }

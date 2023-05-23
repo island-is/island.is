@@ -1,0 +1,20 @@
+# Get Client by ClientId and TenantId
+query GetAvailableScopes($input: ScopesInput!) {
+  authAdminScopes(input: $input) {
+    data {
+      environments {
+        name
+        environment
+        displayName {
+          locale
+          value
+        }
+        description {
+          locale
+          value
+        }
+        domainName
+      }
+    }
+  }
+}

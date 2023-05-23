@@ -1,4 +1,4 @@
-import { createContext, FC, useContext, useMemo } from 'react'
+import { createContext, FC, useContext, useState } from 'react'
 import { useActionData, useLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
@@ -36,18 +36,21 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
 export const PermissionProvider: FC = ({ children }) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
   const actionData = useActionData() as UpdatePermissionResult
-
-  const selectedPermission = useMemo(
-    () =>
-      permissionResult.environments.find(
-        ({ environment }) =>
-          environment === permissionResult.defaultEnvironment.name,
-      ) ?? permissionResult.environments[0],
-    [permissionResult.environments],
+  const [selectedPermission, setSelectedPermission] = useState(
+    permissionResult.environments.find(
+      ({ environment }) =>
+        environment === permissionResult.defaultEnvironment.name,
+    ) ?? permissionResult.environments[0],
   )
 
-  const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
-    console.log(`TDOO open modal`, environment)
+  const onEnvironmentChange = (env: AuthAdminEnvironment) => {
+    const newSelectedPermission = permissionResult.environments.find(
+      ({ environment }) => environment === env,
+    )
+
+    if (newSelectedPermission) {
+      setSelectedPermission(newSelectedPermission)
+    }
   }
 
   return (

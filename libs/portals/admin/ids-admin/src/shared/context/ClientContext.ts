@@ -1,6 +1,9 @@
 import { createContext, Dispatch, SetStateAction } from 'react'
 import { AuthAdminClient } from '../../components/Client/Client.loader'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import {
+  AuthAdminClientAllowedScope,
+  AuthAdminEnvironment,
+} from '@island.is/api/schema'
 import { ClientFormTypes } from '../../components/forms/EditApplication/EditApplication.action'
 import { PublishData } from '../../components/Client/Client'
 
