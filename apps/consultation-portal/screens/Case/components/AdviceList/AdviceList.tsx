@@ -9,6 +9,7 @@ import {
   advicePublishTypeKeyHelper,
 } from '../../../../types/enums'
 import { hasDatePassed } from '../../../../utils/helpers/dateFormatter'
+import localization from '../../Case.json'
 
 interface Props {
   advices: Array<UserAdvice>
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export const AdviceList = ({ advices, chosenCase }: Props) => {
+  const loc = localization['adviceList']
   const [showAll, setShowAll] = useState<boolean>(false)
   const { advicePublishTypeId, processEnds } = chosenCase
   if (advicePublishTypeId == 3) {
@@ -36,8 +38,7 @@ export const AdviceList = ({ advices, chosenCase }: Props) => {
     )
   }
 
-  if (advices.length === 0)
-    return <Text>Engar umsagnir fundust fyrir þetta mál.</Text>
+  if (advices.length === 0) return <Text>{loc.noAdvices}</Text>
 
   return (
     <Stack space={3}>
@@ -55,7 +56,7 @@ export const AdviceList = ({ advices, chosenCase }: Props) => {
           icon={showAll ? 'chevronUp' : 'chevronDown'}
         >
           {' '}
-          {showAll ? 'Fela umsagnir' : 'Sjá allar umsagnir'}
+          {showAll ? loc.buttonHide : loc.buttonShow}
         </Button>
       )}
     </Stack>
