@@ -79,3 +79,15 @@ export enum MapCaseStatuses {
   'Niðurstöður í vinnslu' = 'Í vinnslu',
   'Niðurstöður birtar' = 'Samráði lokið',
 }
+
+export enum CaseStatuses {
+  forReview = 'Til umsagnar',
+  inProgress = 'Niðurstöður í vinnslu',
+  published = 'Niðurstöður birtar',
+}
+
+export enum SubscriptionTypes {
+  AllChanges = 'AllChanges',
+  StatusChanges = 'StatusChanges',
+  OnlyNew = 'OnlyNew',
+}
