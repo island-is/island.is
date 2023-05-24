@@ -171,7 +171,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useNavigationComponentDidDisappear(() => {
     setVisible(false);
-    setLoaded(false);
+    if (hasPdf) {
+      setLoaded(false);
+    }
   });
 
   useEffect(() => {
@@ -227,23 +229,23 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           flex: 1,
         }}
       >
-        {visible && accessToken && (
-          <Animated.View
-            style={{
-              flex: 1,
-              opacity: fadeAnim,
-            }}
-          >
-            {isHtml ? (
-              <WebView
-                source={{html: Document.html ?? ''}}
-                scalesPageToFit
-                onLoadEnd={() => {
-                  setLoaded(true);
-                }}
-              />
-            ) : hasPdf ? (
-              <PdfWrapper>
+        <Animated.View
+          style={{
+            flex: 1,
+            opacity: fadeAnim,
+          }}
+        >
+          {isHtml ? (
+            <WebView
+              source={{html: Document.html ?? ''}}
+              scalesPageToFit
+              onLoadEnd={() => {
+                setLoaded(true);
+              }}
+            />
+          ) : hasPdf ? (
+            <PdfWrapper>
+              {visible && accessToken && (
                 <PdfViewer
                   url={Document.url ?? ''}
                   body={`documentId=${Document.id}&__accessToken=${accessToken}`}
@@ -252,17 +254,18 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                     setLoaded(true);
                   }}
                 />
-              </PdfWrapper>
-            ) : (
-              <WebView
-                source={{uri: Document.url!}}
-                onLoadEnd={() => {
-                  setLoaded(true);
-                }}
-              />
-            )}
-          </Animated.View>
-        )}
+              )}
+            </PdfWrapper>
+          ) : (
+            <WebView
+              source={{uri: Document.url!}}
+              onLoadEnd={() => {
+                setLoaded(true);
+              }}
+            />
+          )}
+        </Animated.View>
+
         {(!loaded || !accessToken) && (
           <View
             style={[
