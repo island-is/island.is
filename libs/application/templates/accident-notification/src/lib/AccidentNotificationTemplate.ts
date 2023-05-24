@@ -1,5 +1,6 @@
 import {
   coreHistoryMessages,
+  corePendingActionMessages,
   DefaultStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -14,6 +15,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   NationalRegistryUserApi,
+  PendingAction,
 } from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
@@ -22,7 +24,7 @@ import { States } from '../constants'
 import { ApiActions } from '../shared'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'
-import { application } from './messages'
+import { anPendingActionMessages, application } from './messages'
 import { Features } from '@island.is/feature-flags'
 
 // The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
@@ -38,6 +40,45 @@ type AccidentNotificationEvent =
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.ASSIGN }
+
+const assignStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.waitingForAssigneeTitle,
+      content: corePendingActionMessages.waitingForAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForAssigneeTitle,
+      content:
+        anPendingActionMessages.waitForReivewerAndAddAttachmentDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
+const reviewStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.waitingForAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.youNeedToReviewDescription,
+      displayStatus: 'info',
+    }
+  }
+}
 
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -61,7 +102,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
           status: 'draft',
-
           actionCard: {
             historyLogs: [
               {
@@ -103,6 +143,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBePruned: false,
           },
           actionCard: {
+            pendingAction: assignStatePendingAction,
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
@@ -174,6 +215,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
             shouldBePruned: false,
           },
           actionCard: {
+            pendingAction: reviewStatePendingAction,
             historyLogs: [
               {
                 onEvent: DefaultEvents.APPROVE,
