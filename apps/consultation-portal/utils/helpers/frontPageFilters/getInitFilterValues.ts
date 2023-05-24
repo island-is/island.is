@@ -1,4 +1,4 @@
-import { CaseSortOptions } from '../../../types/enums'
+import { CaseSortOptions, MapCaseStatuses } from '../../../types/enums'
 import { ArrOfTypes } from '../../../types/interfaces'
 import { TYPES_ORDER } from '../../consts/consts'
 
@@ -16,7 +16,7 @@ export const getInitFilterValues = ({ types }: Props) => {
     }))
     .map((item) => ({
       ...item,
-      label: item.label,
+      label: MapCaseStatuses[item.label],
       checked: false,
     }))
 

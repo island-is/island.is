@@ -8,6 +8,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import localization from '../../Case.json'
+import { MapCaseStatuses } from '../../../../types/enums'
 
 interface CaseTimelineProps {
   chosenCase: Case
@@ -29,7 +30,7 @@ export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
           ? false
           : true
       }
-      section={Sections[index]}
+      section={MapCaseStatuses[Sections[index]]}
       theme={FormStepperThemes.PURPLE}
       sectionIndex={index}
       subSections={[

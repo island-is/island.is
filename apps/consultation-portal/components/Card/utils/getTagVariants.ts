@@ -1,12 +1,12 @@
-import { CaseStatuses } from '../../../types/enums'
+import { CaseStatuses, MapCaseStatuses } from '../../../types/enums'
 
 const getTagVariants = (status: string) => {
   switch (status) {
-    case CaseStatuses.forReview:
+    case MapCaseStatuses[CaseStatuses.forReview]:
       return 'purple'
-    case CaseStatuses.inProgress:
+    case MapCaseStatuses[CaseStatuses.inProgress]:
       return 'darkerBlue'
-    case CaseStatuses.published:
+    case MapCaseStatuses[CaseStatuses.published]:
       return 'mint'
   }
 }
