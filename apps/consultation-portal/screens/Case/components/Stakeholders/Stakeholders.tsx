@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import * as styles from './Stakeholders.css'
-import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import StackedTitleAndDescription from '../Stacked/Stacked'
 import { CardSkeleton } from '../../../../components'
 import { Case } from '../../../../types/interfaces'
 import localization from '../../Case.json'

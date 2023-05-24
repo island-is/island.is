@@ -10,7 +10,6 @@ import {
 import { IsEmailValid } from '../../../../utils/helpers'
 import { ReactNode, useEffect, useState } from 'react'
 import { CardSkeleton as CardSkeletonComponent } from '../../../../components'
-import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import {
   Box,
   Text,
@@ -18,7 +17,7 @@ import {
   LoadingDots,
   toast,
 } from '@island.is/island-ui/core'
-import CaseEmailActionBox from './CaseEmailActionBox'
+import { Stacked, CaseEmailActionBox } from '../../components'
 import {
   CaseSubscriptionType,
   SubscriptionType,
@@ -34,9 +33,7 @@ interface CardSkeletonProps {
 const CardSkeleton = ({ text, children }: CardSkeletonProps) => {
   return (
     <CardSkeletonComponent>
-      <StackedTitleAndDescription title="Skrá áskrift">
-        {text && <Text>{text}</Text>}
-      </StackedTitleAndDescription>
+      <Stacked title="Skrá áskrift">{text && <Text>{text}</Text>}</Stacked>
       <Box paddingTop={2}>{children}</Box>
     </CardSkeletonComponent>
   )

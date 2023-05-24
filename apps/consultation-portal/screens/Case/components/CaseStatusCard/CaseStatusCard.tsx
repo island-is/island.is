@@ -1,6 +1,6 @@
 import { Case } from '../../../../types/interfaces'
 import { CardSkeleton } from '../../../../components'
-import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import StackedTitleAndDescription from '../Stacked/Stacked'
 import { Box, LinkV2 } from '@island.is/island-ui/core'
 import env from '../../../../lib/environment'
 import localization from '../../Case.json'

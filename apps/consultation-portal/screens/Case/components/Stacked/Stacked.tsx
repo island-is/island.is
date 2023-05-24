@@ -1,16 +1,13 @@
 import { Stack, Text } from '@island.is/island-ui/core'
+import { ReactNode } from 'react'
 
-export type StackedTitleAndDescriptionProps = {
+interface Props {
   headingColor?: 'blue400' | 'blue600' | 'dark400'
   title: string
-  children: any
+  children: ReactNode
 }
 
-export const StackedTitleAndDescription = ({
-  headingColor = 'blue400',
-  title,
-  children,
-}: StackedTitleAndDescriptionProps) => {
+const Stacked = ({ headingColor = 'blue400', title, children }: Props) => {
   return (
     <Stack space={1}>
       <Text variant="h4" color={headingColor}>
@@ -21,4 +18,4 @@ export const StackedTitleAndDescription = ({
   )
 }
 
-export default StackedTitleAndDescription
+export default Stacked
