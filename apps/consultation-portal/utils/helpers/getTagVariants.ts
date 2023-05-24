@@ -1,10 +1,12 @@
+import { MapCaseStatuses } from '../../types/enums'
+
 export function getTagVariants(status) {
   switch (status) {
-    case 'Til umsagnar':
+    case MapCaseStatuses['Til umsagnar']:
       return 'purple'
-    case 'Niðurstöður í vinnslu':
+    case MapCaseStatuses['Niðurstöður í vinnslu']:
       return 'darkerBlue'
-    case 'Niðurstöður birtar':
+    case MapCaseStatuses['Niðurstöður birtar']:
       return 'mint'
   }
 }

@@ -399,6 +399,11 @@ describe('CaseController - Transition', () => {
                   caseId,
                   caseFileId: appealRulingId,
                 },
+                {
+                  type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
+                },
               ])
             }
           })

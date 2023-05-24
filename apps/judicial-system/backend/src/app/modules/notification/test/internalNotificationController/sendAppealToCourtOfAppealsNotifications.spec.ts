@@ -21,7 +21,7 @@ type GivenWhenThen = (
   defenderNationalId?: string,
 ) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal to court of appeals notification', () => {
+describe('InternalNotificationController - Send appeal to court of appeals notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()

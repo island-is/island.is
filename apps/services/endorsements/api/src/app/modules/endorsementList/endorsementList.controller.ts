@@ -110,7 +110,6 @@ export class EndorsementListController {
   @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })
   @Get('general-petition-list/:listId')
-  @Audit()
   @UseInterceptors(EndorsementListInterceptor)
   @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionList(

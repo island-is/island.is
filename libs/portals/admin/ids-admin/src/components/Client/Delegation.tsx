@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
+import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -24,10 +24,11 @@ const Delegation = ({
   promptDelegations,
   requireApiScopes,
 }: DelegationProps) => {
-  const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
+  const { shouldSupportMultiEnv } = useMultiEnvSupport()
+  const { isSuperAdmin } = useSuperAdmin()
 
-  const [inputValues, setInputValues] = useState({
+  const [inputValues, setInputValues] = useEnvironmentState({
     supportsCustomDelegation,
     supportsLegalGuardians,
     supportsPersonalRepresentatives,
@@ -36,16 +37,13 @@ const Delegation = ({
     requireApiScopes,
   })
 
-  const isSuperAdmin = userInfo?.scopes.includes(
-    AdminPortalScope.idsAdminSuperUser,
-  )
-
   return (
     <ContentCard
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
+      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={2}>
         <Checkbox
@@ -55,7 +53,6 @@ const Delegation = ({
           name="supportsCustomDelegation"
           value="true"
           disabled={!isSuperAdmin}
-          defaultChecked={inputValues.supportsCustomDelegation}
           checked={inputValues.supportsCustomDelegation}
           onChange={() => {
             setInputValues((prev) => ({
@@ -73,7 +70,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           value="true"
           checked={inputValues.supportsLegalGuardians}
-          defaultChecked={inputValues.supportsLegalGuardians}
           onChange={() => {
             setInputValues((prev) => ({
               ...prev,
@@ -89,7 +85,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           name="supportsPersonalRepresentatives"
           value="true"
-          defaultChecked={inputValues.supportsPersonalRepresentatives}
           checked={inputValues.supportsPersonalRepresentatives}
           onChange={() => {
             setInputValues((prev) => ({
@@ -108,7 +103,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           name="supportsProcuringHolders"
           value="true"
-          defaultChecked={inputValues.supportsProcuringHolders}
           checked={inputValues.supportsProcuringHolders}
           onChange={() => {
             setInputValues((prev) => ({
@@ -127,7 +121,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           name="promptDelegations"
           value="true"
-          defaultChecked={inputValues.promptDelegations}
           checked={inputValues.promptDelegations}
           onChange={() => {
             setInputValues((prev) => ({
@@ -144,7 +137,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           name="requireApiScopes"
           value="true"
-          defaultChecked={inputValues.requireApiScopes}
           checked={inputValues.requireApiScopes}
           onChange={() => {
             setInputValues((prev) => ({

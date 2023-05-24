@@ -9,3 +9,13 @@ export const REVIEW_MINIMUM_LENGTH = 10
 export const REVIEW_MAXIMUM_LENGTH = 290000
 export const REVIEW_FILENAME_MAXIMUM_LENGTH = 100
 export const SHOW_INITIAL_REVIEWS_AMOUNT = 4
+export const ABOUT_HEADINGS = [
+  'Ábyrgð og umsjón',
+  'Markmið',
+  'Efni',
+  'Ritun umsagna',
+  'Birting umsagna',
+  'Reglur',
+  'Eftirfylgni',
+  'Forsaga',
+]
