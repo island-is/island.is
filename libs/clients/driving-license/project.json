@@ -38,6 +38,7 @@
         "commands": [
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v1 -i libs/clients/driving-license/src/v1/clientConfig.json",
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v2 -i libs/clients/driving-license/src/v2/clientConfig.json",
+          "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v4 -i libs/clients/driving-license/src/v4/clientConfig.json",
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v5 -i libs/clients/driving-license/src/v5/clientConfig.json"
         ]
       }

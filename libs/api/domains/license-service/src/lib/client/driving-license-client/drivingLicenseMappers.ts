@@ -75,7 +75,9 @@ export const createPkPassDataInput = (license?: DriversLicense | null) => {
     },
     {
       identifier: 'athugasemdir',
-      value: license.comments ? license.comments.join(' ') : '',
+      value: license.comments
+        ? license.comments.map((c) => c.comment).join(' ')
+        : '',
     },
   ]
 }
