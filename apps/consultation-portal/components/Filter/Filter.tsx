@@ -30,7 +30,7 @@ export const Filter = ({
   }
 
   return (
-    <Stack space={2}>
+    <Stack space={3}>
       <FilterBox
         title="Röðun"
         filters={filters}
