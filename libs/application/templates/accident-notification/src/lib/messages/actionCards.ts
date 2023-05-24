@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const anPendingActionMessages = defineMessages({
   waitForReivewerAndAddAttachmentDescription: {
     id: 'an.application:pendingAction.paymentPendingDescription',
-    defaultMessage: 'Þú getur bætti við aukagögnum eða fylgiskjölum á meðan',
+    defaultMessage: 'Þú getur bætt við aukagögnum eða fylgiskjölum á meðan',
     description: 'Pending action payment pending description',
   },
   waitingForReviewDescription: {
