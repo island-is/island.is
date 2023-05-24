@@ -12,7 +12,13 @@ import {
 } from '@ui';
 import React from 'react';
 import {useIntl} from 'react-intl';
-import {Platform, SafeAreaView, View, Image} from 'react-native';
+import {
+  Platform,
+  SafeAreaView,
+  View,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import styled from 'styled-components/native';
 import {client} from '../../graphql/client';
