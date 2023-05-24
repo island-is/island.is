@@ -91,8 +91,8 @@ export const ParentBForm: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.application.signature,
-                  type: 'sign',
+                  name: m.application.confirm,
+                  type: 'primary',
                 },
               ],
             }),

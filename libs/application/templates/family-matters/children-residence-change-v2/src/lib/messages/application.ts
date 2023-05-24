@@ -12,6 +12,11 @@ export const application = defineMessages({
     defaultMessage: 'Skrifa undir umsókn',
     description: 'Button text for signing application',
   },
+  confirm: {
+    id: 'crc.application:application.confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Button text for confirming application',
+  },
 })
 
 export const copyUrl = defineMessages({
