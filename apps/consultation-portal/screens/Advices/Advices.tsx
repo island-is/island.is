@@ -9,9 +9,8 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import Layout from '../../components/Layout/Layout'
-import { Breadcrumbs, ActionCard } from '../../components'
+import { Breadcrumbs, ActionCard, Card } from '../../components'
 import { useLogIn, useUser, useAdviceFilters } from '../../hooks'
-import { Card } from '../../components/Card'
 import { useState } from 'react'
 import EmptyState from '../../components/EmptyState/EmptyState'
 import { AdviceFilter, UserAdvice } from '../../types/interfaces'

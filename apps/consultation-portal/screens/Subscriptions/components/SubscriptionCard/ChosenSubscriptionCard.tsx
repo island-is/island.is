@@ -1,14 +1,13 @@
 import { Box, FocusableBox } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../../../utils/helpers'
 import { ReactNode, useState } from 'react'
-import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import { Area } from '../../../../types/enums'
 import {
   SubscriptionArray,
   SubscriptionTableItem,
 } from '../../../../types/interfaces'
 import { CardSkeleton } from '../../../../components/'
-import { CardGridContainer } from '../../../../components/Card/components/CardGridContainer'
+import { CardGridContainer, SubscriptionChoices } from '../../components'
 
 interface Props {
   isGeneralSubscription?: boolean

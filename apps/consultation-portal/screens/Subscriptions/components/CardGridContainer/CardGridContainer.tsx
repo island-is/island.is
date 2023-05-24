@@ -19,7 +19,7 @@ interface GridProps {
   isToggled?: boolean
 }
 
-export const CardGridContainer = ({
+const CardGridContainer = ({
   children,
   checked,
   onChecked,
@@ -55,3 +55,5 @@ export const CardGridContainer = ({
     </GridContainer>
   )
 }
+
+export default CardGridContainer
