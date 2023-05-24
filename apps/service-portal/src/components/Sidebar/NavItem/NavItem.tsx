@@ -103,13 +103,13 @@ const NavItemContent: FC<Props> = ({
                 {iconSvg}
               </Box>
             ) : (
-              <Icon
-                type={'outline'}
-                icon={icon.icon}
-                color={'blue600'}
-                size="medium"
-                className={styles.icon}
-              />
+              <Box
+                className={styles.animatedIcon}
+                display="flex"
+                justifyContent="center"
+              >
+                <Icon type={'outline'} icon={icon.icon} />
+              </Box>
             )}
           </Box>
         ) : null}
