@@ -1,4 +1,4 @@
-import React from 'react'
+import type { FC, ReactNode } from 'react'
 
 import {
   Box,
@@ -10,16 +10,12 @@ import {
 import { PortalNavigation, PortalNavigationItem } from '@island.is/portals/core'
 
 interface LayoutProps {
-  children: React.ReactNode
+  children: ReactNode
   navTitle: string
   navItems: PortalNavigationItem
 }
 
-export const Layout: React.FC<LayoutProps> = ({
-  children,
-  navTitle,
-  navItems,
-}) => {
+export const Layout: FC<LayoutProps> = ({ children, navTitle, navItems }) => {
   return (
     <GridContainer>
       <Hidden above="md">
