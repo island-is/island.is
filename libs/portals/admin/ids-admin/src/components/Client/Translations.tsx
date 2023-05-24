@@ -5,7 +5,7 @@ import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
-import { AuthAdminClientTranslation } from './Client.loader'
+import { AuthAdminClientTranslation } from '../../screens/Client/Client.loader'
 import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
 
 interface TranslationsProps {
