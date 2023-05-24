@@ -78,7 +78,6 @@ export class GenericDrivingLicenseService
     }
 
     const payload = parseDrivingLicensePayload(licenseData, locale, labels)
-    this.logger.debug(JSON.stringify(payload))
 
     let pkpassStatus = GenericUserLicensePkPassStatus.Unknown
 

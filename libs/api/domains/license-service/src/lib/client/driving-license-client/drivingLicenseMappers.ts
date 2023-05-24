@@ -119,7 +119,7 @@ export const parseDrivingLicensePayload = (
       label: getLabel('classesOfRights', locale, label),
       fields: (license.categories ?? []).map((field) => ({
         type: GenericLicenseDataFieldType.Category,
-        name: (field.categoryName ?? '').trim(),
+        name: (field.nr ?? '').trim(),
         label: '',
         fields: [
           {
