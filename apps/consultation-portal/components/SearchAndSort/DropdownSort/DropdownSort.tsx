@@ -4,7 +4,7 @@ import {
   useBoxStyles,
   Button,
 } from '@island.is/island-ui/core'
-import { SortOptions, SortOptionsAdvices } from '../../types/enums'
+import { SortOptions, SortOptionsAdvices } from '../../../types/enums'
 import cn from 'classnames'
 import { ReactElement } from 'react'
 import { useMenuState, Menu, MenuItem, MenuButton } from 'reakit/Menu'

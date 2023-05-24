@@ -35,7 +35,7 @@ type CardProps = {
   showPublished?: boolean
 }
 
-export const Card = ({
+const Card = ({
   card,
   showAttachment,
   dropdown,

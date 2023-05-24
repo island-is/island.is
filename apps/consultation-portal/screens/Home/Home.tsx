@@ -9,7 +9,6 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { HeroBanner } from './components/'
-import Card from '../../components/Card/Card'
 import Layout from '../../components/Layout/Layout'
 import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
 import localization from './Home.json'
@@ -19,7 +18,7 @@ import {
   Case,
   CaseFilter,
 } from '../../types/interfaces'
-import EmptyState from '../../components/EmptyState/EmptyState'
+import { Card, EmptyState } from '../../components'
 import Filter from '../../components/Filter/Filter'
 import { useFrontPageFilters, useIsMobile } from '../../hooks'
 import Pagination from '../../components/Pagination/Pagination'

@@ -1,7 +1,7 @@
 import { mapIsToEn, sorting } from '../../utils/helpers'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { Area, SortOptions } from '../../types/enums'
-import DropdownSort from '../DropdownSort/DropdownSort'
+import DropdownSort from './DropdownSort/DropdownSort'
 import { SubscriptionArray } from '../../types/interfaces'
 import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
 import cn from 'classnames'

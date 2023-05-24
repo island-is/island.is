@@ -1,7 +1,7 @@
 import { AdviceFilter } from '../../types/interfaces'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import DropdownSort from '../DropdownSort/DropdownSort'
+import DropdownSort from './DropdownSort/DropdownSort'
 import { SortOptionsAdvices } from '../../types/enums'
 import { useIsMobile } from '../../hooks'
 import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
