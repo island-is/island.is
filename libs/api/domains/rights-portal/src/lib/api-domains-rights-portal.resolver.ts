@@ -12,9 +12,15 @@ import type { User } from '@island.is/auth-nest-tools'
 import { RightsPortalService } from './api-domains-rights-portal.service'
 import { Therapies } from './models/getTherapies.model'
 import { AidsAndNutrition } from './models/getAidsAndNutrition.model'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.servicePortalHealthRightsModule)
 @Audit({ namespace: '@island.is/api/rights-portal' })
 export class RightsPortalResolver {
   constructor(private readonly rightsPortalService: RightsPortalService) {}
