@@ -68,7 +68,9 @@ export const createPkPassDataInput = (license?: DriversLicense | null) => {
                 curr.categoryName
               }\n - Gildir til ${
                 curr.dateTo ? format(curr.dateTo, 'dd-MM-yyy') : ''
-              } \n - Athugasemdir: ${curr.comment}\n\n`,
+              } \n${
+                curr.comment ? ' - Athugasemdir: ' + curr.comment + '\n' : ''
+              }\n`,
             '',
           )
         : '',
