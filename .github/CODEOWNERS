@@ -127,6 +127,7 @@
 /libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
 /libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
 /libs/api/domains/regulations-admin/                                                                     @island-is/hugsmidjan
+/libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
