@@ -342,6 +342,17 @@ export class DrivingLicenseService {
     })
   }
 
+  async drivingLicenseDuplicateSubmission(params: {
+    districtId: number,
+    ssn: string
+  }): Promise<number> {
+    const { districtId, ssn } = params
+    return await this.drivingLicenseApi.postApplicationNewCollaborative({
+      districtId,
+      ssn
+    })
+  }
+
   async newDrivingAssessment(
     nationalIdStudent: string,
     nationalIdTeacher: User['nationalId'],

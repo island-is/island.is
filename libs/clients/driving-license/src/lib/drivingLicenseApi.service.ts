@@ -396,6 +396,23 @@ export class DrivingLicenseApi {
     })
   }
 
+  async postApplicationNewCollaborative(params: {
+    ssn: string
+    districtId: number
+  }): Promise<number> {
+    const { districtId, ssn } = params
+    return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      postNewCollaborative: {
+        districtId,
+        ssn,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
+     
+  }
+
   async getHasQualityPhoto(params: { nationalId: string }): Promise<boolean> {
     const result = await this.v1.apiOkuskirteiniKennitalaHasqualityphotoGet({
       kennitala: params.nationalId,

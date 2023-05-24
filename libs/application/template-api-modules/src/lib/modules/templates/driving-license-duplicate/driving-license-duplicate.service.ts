@@ -3,7 +3,7 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { ApplicationTypes } from '@island.is/application/types'
+import { ApplicationTypes, InstitutionNationalIds } from '@island.is/application/types'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -27,15 +27,13 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
     // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
     const chargeItemCode = 'AY110'
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
-      SYSLUMADUR_NATIONAL_ID,
+      InstitutionNationalIds.SYSLUMENN,
       [chargeItemCode],
     )
 
@@ -67,11 +65,19 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       }
     }
 
-    // TODO: SUBMIT functionality once the police update their api
-
+    const orderId = await this.drivingLicenseService.drivingLicenseDuplicateSubmission({
+      districtId: parseInt(answers.district.toString(), 10),
+      ssn: nationalId,
+    }).catch((e) => {
+      console.log(JSON.stringify(e, null, 2))
+      return {
+        success: false,
+        orderId: "oof"
+      }
+    })
     return {
       success: true,
-      orderId: '1234',
+      orderId: `${orderId}`,
     }
   }
 }
