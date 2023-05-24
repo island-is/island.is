@@ -107,7 +107,6 @@ export class AdminClientsService {
       where: {
         clientId,
         domainName: tenantId,
-        enabled: true,
       },
       include: this.clientInclude(),
     })
@@ -135,6 +134,17 @@ export class AdminClientsService {
     })
     if (!tenant) {
       throw new NoContentException()
+    }
+
+    const existingClient = await this.clientModel.findOne({
+      where: {
+        clientId: clientDto.clientId,
+        domainName: tenantId,
+      },
+    })
+
+    if (existingClient) {
+      throw new BadRequestException('Client already exists')
     }
 
     if (

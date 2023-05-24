@@ -70,7 +70,10 @@ export const createClientAction: WrappedActionFn = ({ client }) => async ({
 
   const { data } = result
   try {
-    await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
+    const createdClient = await client.mutate<
+      CreateClientMutation,
+      CreateClientMutationVariables
+    >({
       mutation: CreateClientDocument,
       variables: {
         input: {
@@ -82,6 +85,14 @@ export const createClientAction: WrappedActionFn = ({ client }) => async ({
         },
       },
     })
+
+    if (createdClient.data?.createAuthAdminClient.length === 0) {
+      return {
+        errors: { clientId: 'clientIdAlreadyExists' },
+        data: null,
+        globalError: false,
+      }
+    }
 
     // TODO: Check for partial creation, and show a warning modal
 
