@@ -6,6 +6,8 @@ import {
 } from '../../../../types/interfaces'
 import { mapIsToEn } from '../../../../utils/helpers'
 import { Box, Checkbox, Inline } from '@island.is/island-ui/core'
+import localization from '../../Subscriptions.json'
+
 interface CProps {
   children: ReactNode
 }
@@ -38,6 +40,7 @@ const SubscriptionChoices = ({
   setSubscriptionArray,
   onChecked,
 }: Props) => {
+  const loc = localization['subscriptionChoices']
   const allKey = `${item.key}_all`
   const statusKey = `${item.key}_status`
 
@@ -58,7 +61,7 @@ const SubscriptionChoices = ({
         <CheckboxBox>
           <Checkbox
             id={statusKey}
-            label="Einungis ný mál"
+            label={loc.newLabel}
             checked={Boolean(
               item.subscriptionType === SubscriptionType.OnlyNew,
             )}
@@ -68,7 +71,7 @@ const SubscriptionChoices = ({
         <CheckboxBox>
           <Checkbox
             id={allKey}
-            label="Ný mál og breytingar"
+            label={loc.allLabel}
             checked={Boolean(
               item.subscriptionType === SubscriptionType.AllChanges,
             )}

@@ -10,7 +10,7 @@ import * as styleRefs from './HeroTiles.css'
 import {
   normaliseResponsiveProp,
   resolveResponsiveProp,
-} from '../../../../../utils/helpers/responsiveProp'
+} from '../../../../../../utils/helpers/responsiveProp'
 
 export type ReactNodeNoStrings = ReactNode | boolean | null | undefined
 export interface HeroTiles {

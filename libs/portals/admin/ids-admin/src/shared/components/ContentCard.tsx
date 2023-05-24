@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual'
-import React, { FC, useContext, useEffect, useRef, useState } from 'react'
+import React, { FC, useEffect, useRef, useState } from 'react'
 import { Form, useActionData } from 'react-router-dom'
 
 import {
@@ -20,9 +20,9 @@ import {
   schema,
 } from '../../components/forms/EditApplication/EditApplication.action'
 import { m } from '../../lib/messages'
-import { ClientContext } from '../context/ClientContext'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { DropdownSync } from './DropdownSync/DropdownSync'
+import { useClient } from '../../components/Client/ClientContext'
 
 interface ContentCardProps {
   title: string
@@ -99,7 +99,7 @@ const ContentCard: FC<ContentCardProps> = ({
     variablesToCheckSync,
     selectedEnvironment,
     availableEnvironments,
-  } = useContext(ClientContext)
+  } = useClient()
 
   const checkIfLoadingForIntent = () => {
     if (intent === ClientFormTypes.none || !formData) {

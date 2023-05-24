@@ -1,6 +1,6 @@
 import { toast } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { Area } from '../../types/enums'
+import { Area, SubscriptionTypes } from '../../types/enums'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
@@ -15,6 +15,7 @@ import {
 } from '../../hooks'
 import { SubscriptionsSkeleton, ChosenSubscriptions } from './components'
 import { filterSubscriptions as F } from '../../utils/helpers/subscriptions'
+import localization from './Subscriptions.json'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -22,6 +23,7 @@ interface SubProps {
 }
 
 const SubscriptionsScreen = ({ cases, types }: SubProps) => {
+  const loc = localization['subscriptions']
   const { isAuthenticated } = useUser()
   const [currentTab, setCurrentTab] = useState<Area>(Area.case)
   const {
@@ -95,8 +97,8 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
         : preSubscribedToAll
     const _subscribedToAllType = _subscribedToAll
       ? subSubscribedToAllNewObj.checked
-        ? 'OnlyNew'
-        : 'AllChanges'
+        ? SubscriptionTypes.OnlyNew
+        : SubscriptionTypes.AllChanges
       : preSubscribedToAllType
 
     const objToSend = {
@@ -115,12 +117,12 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
       .then(() => {
         onClear()
         setSubmitSubsIsLoading(false)
-        toast.success('Áskrift skráð')
+        toast.success(loc.postSubsMutationToasts.success)
       })
       .catch((e) => {
         setSubmitSubsIsLoading(false)
         console.error(e)
-        toast.error('Ekki tókst að skrá áskriftir')
+        toast.error(loc.postSubsMutationToasts.failure)
       })
     setSubmitSubsIsLoading(false)
   }
@@ -141,7 +143,7 @@ const SubscriptionsScreen = ({ cases, types }: SubProps) => {
         setSubscriptionArray={setSubscriptionArray}
         onSubmit={onSubmit}
         onClear={onClear}
-        buttonText="Skrá í áskrift"
+        buttonText={loc.chosenSubscriptions.buttonText}
         submitSubsIsLoading={submitSubsIsLoading}
       />
     </SubscriptionsSkeleton>
