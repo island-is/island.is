@@ -76,7 +76,7 @@ const SingleList = () => {
         <GridColumn span={['8/12']} offset={['2/12']}>
           <Box marginBottom={6}>
             <Link to={PetitionPaths.PetitionsRoot}>
-              <Button variant="text" preTextIcon='arrowBack' size='small'>
+              <Button variant="text" preTextIcon="arrowBack" size="small">
                 {'Til baka'}
               </Button>
             </Link>
