@@ -13,6 +13,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { requirementsMessages } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import {
   IdentityInput,
@@ -31,6 +32,28 @@ const fieldNames = {
   studentName: `${prefix}.studentName`,
   studentMentorability: `${prefix}.studentMentorability`,
   studentMentorabilityError: `${prefix}.studentMentorabilityError`,
+  errorCode: `${prefix}.errorCode`,
+}
+
+const getErrorMessageFromErrorCode = (errorCode: string): string => {
+  const errorMessages: Record<string, string> = {
+    INSTRUCTOR_NOT_FOUND_IN_NATIONAL_REGISTRY:
+      m.errorNationalIdNoName.defaultMessage,
+    INSTRUCTOR_DOES_NOT_MEET_AGE_LIMIT:
+      requirementsMessages.ageRequirementDescription.defaultMessage,
+    INSTRUCTOR_B_LICENSE_LESS_THAN_5_YEARS:
+      requirementsMessages.validForFiveYearsDescription.defaultMessage,
+    INSTRUCTOR_HAS_DEPRIVATION:
+      requirementsMessages.hasPointsOrDeprivation.defaultMessage,
+    INSTRUCTOR_HAS_DEPRIVATION_WITHIN_LAST_12_MONTHS:
+      requirementsMessages.hasPointsOrDeprivation.defaultMessage,
+    'No license book found': m.studentNoLicenseBookDescription.defaultMessage,
+    'Not allowed practive driving':
+      m.studentIsNotMentorableDescription.defaultMessage,
+  }
+
+  const errorMessage = errorMessages[errorCode]
+  return errorMessage ?? m.studentIsNotMentorableDescription.defaultMessage
 }
 
 export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
@@ -87,6 +110,7 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
           fieldNames.studentMentorability,
           eligible ? 'isMentorable' : 'isNotMentorable',
         )
+        setValue(fieldNames.errorCode, errorCode)
       }
     },
   })
@@ -100,6 +124,7 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
   const studentName: string = watch(fieldNames.studentName)
 
   const studentMentorability = getValues(fieldNames.studentMentorability)
+  const errorCode = getValues(fieldNames.errorCode)
 
   useEffect(() => {
     if (isPerson(studentNationalId)) {
@@ -207,7 +232,9 @@ export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
                 <AlertMessage
                   type="error"
                   title={formatMessage(m.studentIsNotMentorableHeader)}
-                  message={formatMessage(m.studentIsNotMentorableDescription)}
+                  message={formatMessage(
+                    getErrorMessageFromErrorCode(errorCode),
+                  )}
                 />
               )}
             </ContentBlock>
