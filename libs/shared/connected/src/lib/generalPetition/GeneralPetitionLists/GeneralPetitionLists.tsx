@@ -25,8 +25,22 @@ export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
 
   return (
     <>
+      <Box marginY={5}>
+        <ActionCard
+          heading={t('createList', 'Stofna undirskriftalista')}
+          backgroundColor="blue"
+          cta={{
+            label: t('logIn', 'Innskráning'),
+            variant: 'primary',
+            icon: 'open',
+            iconType: 'outline',
+            size: 'small',
+            onClick: () => window.open('/umsoknir/undirskriftalisti', '_blank'),
+          }}
+        />
+      </Box>
       <Box marginBottom={3}>
-        <Text variant="h4">{t('title', 'Virkir undirskriftalistar')}</Text>
+        <Text variant="h4">{t('title', 'Virkir listar')}</Text>
       </Box>
       <Stack space={4}>
         {petitionLists?.data?.map((petition: any) => {
