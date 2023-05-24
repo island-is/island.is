@@ -1,5 +1,5 @@
 import { Text } from '@island.is/island-ui/core'
-import localization from '../../../Case.json'
+import localization from '../../../../Case.json'
 
 export const AgencyText = () => {
   const loc = localization['agencyText']

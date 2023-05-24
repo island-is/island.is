@@ -20,14 +20,13 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 import { useLogIn, usePostAdvice } from '../../../../hooks'
-import { SubscriptionActionBox } from '../../../../components/Card'
 import { PresignedPost } from '@island.is/api/schema'
 import {
   REVIEW_FILENAME_MAXIMUM_LENGTH,
   REVIEW_MAXIMUM_LENGTH,
   REVIEW_MINIMUM_LENGTH,
 } from '../../../../utils/consts/consts'
-import { AgencyText } from './components/AgencyText'
+import { AgencyText, ActionBox } from './components/'
 import { createUUIDString } from '../../../../utils/helpers'
 import { advicePublishTypeKeyHelper } from '../../../../types/enums'
 import localization from '../../Case.json'
@@ -321,7 +320,7 @@ export const AdviceForm = ({
     </Box>
   ) : (
     <>
-      <SubscriptionActionBox
+      <ActionBox
         heading={loc.loginActionBox.heading}
         text={loc.loginActionBox.text}
         cta={{ label: loc.loginActionBox.ctaLabel, onClick: LogIn }}
