@@ -1,17 +1,17 @@
-import { Outlet, useRouteLoaderData } from 'react-router-dom'
+import { Outlet, useLoaderData } from 'react-router-dom'
 
 import { useLocale } from '@island.is/localization'
 
 import Layout from '../../components/Layout/Layout'
 import { m } from '../../lib/messages'
 import { idsAdminNav } from '../../lib/navigation'
-import { tenantLoaderId, TenantLoaderResult } from './Tenant.loader'
+import { TenantLoaderResult } from './Tenant.loader'
 
 const Tenant = () => {
   const { formatMessage, locale } = useLocale()
   const {
     defaultEnvironment: { displayName },
-  } = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
+  } = useLoaderData() as TenantLoaderResult
 
   const tenantTitle =
     displayName.find((d) => d.locale === locale)?.value ??
