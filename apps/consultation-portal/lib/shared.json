@@ -1,15 +1,15 @@
 {
   "publishingRules": {
     "publishNow": {
-      "present": "",
+      "present": "Umsagnir eru birtar jafnóðum og þær berast.",
       "past": ""
     },
     "publishAfter": {
-      "present": "",
+      "present": "Umsagnir eru birtar að loknum umsagnarfresti.",
       "past": ""
     },
     "publishNever": {
-      "present": "",
+      "present": "Umsagnir eru ekki birtar.",
       "past": ""
     },
     "publishLaw": {

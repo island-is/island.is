@@ -13,7 +13,7 @@ import {
   CaseTimeline,
   Coordinator,
   Stakeholders,
-  AdviceCTA,
+  CaseStatusBox,
   CaseDocuments,
   CaseEmailBox,
   AdviceForm,
@@ -135,7 +135,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              {!isMobile && <AdviceCTA chosenCase={chosenCase} />}
+              {!isMobile && <CaseStatusBox status={chosenCase.statusName} />}
               {chosenCase?.stakeholders?.length > 0 && (
                 <Stakeholders chosenCase={chosenCase} />
               )}

@@ -121,12 +121,7 @@
       "title": "Skrifa umsögn",
       "description": {
         "textBefore": "Hér er hægt að senda inn umsögn.",
-        "textAfter": "Upplýsingalög gilda, sjá nánar í",
-        "user": "Umsagnaraðili",
-        "link": {
-          "text": "um samráðsgáttina.",
-          "href": "/um"
-        }
+        "user": "Umsagnaraðili"
       }
     },
     "input": {
@@ -145,8 +140,8 @@
     "submitAdviceButtonLabel": "Staðfesta umsögn",
     "allowedFilesText": "Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er 10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.",
     "loginActionBox": {
-      "heading": "Viltu skrifa umsögn?",
-      "text": "Öllum er frjálst að taka þátt í samráðinu. Umsagnir verða birtar jafnóðum og þær berast. Þú þarft að vera skráð(ur) inn til að geta sent umsögn.",
+      "heading": "Skrifa umsögn",
+      "text": "Þú þarft að vera skráð(ur) inn til að geta sent umsögn.",
       "ctaLabel": "Skrá mig inn"
     }
   },
@@ -155,31 +150,25 @@
     "href": "https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf",
     "textAfter": "sjá nánar hér."
   },
-  "adviceCTACard": {
-    "forReview": {
-      "StackedTitleAndDescription": {
-        "title": "Viltu senda umsögn?",
-        "text": "Málið er opið til umsagnar og öllum frjálst að taka þátt.",
-        "loginText": "Skráðu þig inn og sendu umsögn."
-      },
+  "caseStatusBox": {
+    "Til umsagnar": {
+      "title": "Viltu skrifa umsögn?",
+      "text": "Málið er opið til umsagnar og öllum frjálst að taka þátt.",
+      "textCont": "",
+
       "buttons": {
-        "sendAdvice": "Senda umsögn",
-        "logIn": "Skrá mig inn"
+        "sendAdvice": "Skrifa umsögn"
       }
     },
-    "inProgress": {
-      "StackedTitleAndDescription": {
-        "title": "Í vinnslu",
-        "text": "Umsagnarfrestur er liðinn.",
-        "textCont": "Niðurstöður samráðsins eru væntanlegar."
-      }
+    "Niðurstöður í vinnslu": {
+      "title": "Í vinnslu",
+      "text": "Umsagnarfrestur er liðinn.",
+      "textCont": "Niðurstöður samráðsins eru væntanlegar."
     },
-    "published": {
-      "titleAndDescription": {
-        "title": "Samráði lokið",
-        "text": "Umsagnarfrestur er liðinn.",
-        "textCont": "Niðurstöður hafa verið birtar og samráði lokið."
-      }
+    "Niðurstöður birtar": {
+      "title": "Samráði lokið",
+      "text": "Umsagnarfrestur er liðinn.",
+      "textCont": "Niðurstöður hafa verið birtar og samráði lokið."
     }
   }
 }
