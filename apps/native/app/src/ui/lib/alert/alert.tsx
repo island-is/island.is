@@ -52,6 +52,9 @@ const darkBackgroundColor = (color: string, colors: any) => {
   if (color === colors.blue100) {
     return '#001333';
   }
+  if (color === colors.yellow200) {
+    return '#1b1700';
+  }
   return color;
 };
 
