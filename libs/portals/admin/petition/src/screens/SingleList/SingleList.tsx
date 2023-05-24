@@ -7,13 +7,13 @@ import {
   toast,
   AlertMessage,
   DatePicker,
-  Breadcrumbs,
   GridContainer,
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
 import {
   Form,
+  Link,
   useActionData,
   useLoaderData,
   useNavigate,
@@ -75,14 +75,11 @@ const SingleList = () => {
       <GridRow>
         <GridColumn span={['8/12']} offset={['2/12']}>
           <Box marginBottom={6}>
-            <Breadcrumbs
-              items={[
-                {
-                  title: formatMessage(m.title),
-                  href: '/stjornbord' + PetitionPaths.PetitionsRoot,
-                },
-              ]}
-            />
+            <Link to={PetitionPaths.PetitionsRoot}>
+              <Button variant="text" preTextIcon='arrowBack' size='small'>
+                {'Til baka'}
+              </Button>
+            </Link>
           </Box>
           {petition ? (
             <>
