@@ -53,7 +53,6 @@ const Delegation = ({
           name="supportsCustomDelegation"
           value="true"
           disabled={!isSuperAdmin}
-          defaultChecked={inputValues.supportsCustomDelegation}
           checked={inputValues.supportsCustomDelegation}
           onChange={() => {
             setInputValues((prev) => ({
@@ -71,7 +70,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           value="true"
           checked={inputValues.supportsLegalGuardians}
-          defaultChecked={inputValues.supportsLegalGuardians}
           onChange={() => {
             setInputValues((prev) => ({
               ...prev,
@@ -87,7 +85,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           name="supportsPersonalRepresentatives"
           value="true"
-          defaultChecked={inputValues.supportsPersonalRepresentatives}
           checked={inputValues.supportsPersonalRepresentatives}
           onChange={() => {
             setInputValues((prev) => ({
@@ -106,7 +103,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           name="supportsProcuringHolders"
           value="true"
-          defaultChecked={inputValues.supportsProcuringHolders}
           checked={inputValues.supportsProcuringHolders}
           onChange={() => {
             setInputValues((prev) => ({
@@ -125,7 +121,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           name="promptDelegations"
           value="true"
-          defaultChecked={inputValues.promptDelegations}
           checked={inputValues.promptDelegations}
           onChange={() => {
             setInputValues((prev) => ({
@@ -142,7 +137,6 @@ const Delegation = ({
           disabled={!isSuperAdmin}
           name="requireApiScopes"
           value="true"
-          defaultChecked={inputValues.requireApiScopes}
           checked={inputValues.requireApiScopes}
           onChange={() => {
             setInputValues((prev) => ({
