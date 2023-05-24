@@ -1,12 +1,17 @@
 import { useIsMobile } from '../../hooks'
 import {
   Box,
+  BreadCrumbItem,
   Breadcrumbs as IslandUIBreadcrumbs,
   Divider,
   GridContainer,
 } from '@island.is/island-ui/core'
 
-export const Breadcrumbs = ({ items }) => {
+interface Props {
+  items: Array<BreadCrumbItem>
+}
+
+export const Breadcrumbs = ({ items }: Props) => {
   const { isMobile } = useIsMobile()
   return (
     <>
