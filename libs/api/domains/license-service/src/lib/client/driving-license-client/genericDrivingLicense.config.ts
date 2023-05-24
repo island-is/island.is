@@ -50,7 +50,7 @@ export const GenericDrivingLicenseConfig = defineConfig<z.infer<typeof schema>>(
         'SMART_SOLUTIONS_API_URL',
         'https://smartpages-api-dev.smartsolutions.is/graphql',
       ),
-      passTemplateId: env.required('DRIVERS_LICENSE_PASS_TEMPLATE_ID', ''),
+      passTemplateId: env.required('DRIVING_LICENSE_PASS_TEMPLATE_ID', ''),
       fetch: {
         timeout: env.optionalJSON('DRIVING_LICENSE_FETCH_TIMEOUT') ?? 10000,
       },
