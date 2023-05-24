@@ -1,0 +1,23 @@
+{
+  "publishingRules": {
+    "publishNow": {
+      "present": "",
+      "past": ""
+    },
+    "publishAfter": {
+      "present": "",
+      "past": ""
+    },
+    "publishNever": {
+      "present": "",
+      "past": ""
+    },
+    "publishLaw": {
+      "text": "Upplýsingalög gilda, sjá nánar í",
+      "link": {
+        "label": "um samráðsgáttina.",
+        "href": "/um"
+      }
+    }
+  }
+}

@@ -21,11 +21,7 @@ export const AdviceList = ({ advices, chosenCase }: Props) => {
   const [showAll, setShowAll] = useState<boolean>(false)
   const { advicePublishTypeId, processEnds } = chosenCase
   if (advicePublishTypeId == 3) {
-    return (
-      <Text>
-        {advicePublishTypeKey[advicePublishTypeKeyHelper[advicePublishTypeId]]}
-      </Text>
-    )
+    return <Text>{loc.publishRule.notPublished.present}</Text>
   }
 
   if (advicePublishTypeId == 2 && !hasDatePassed(processEnds)) {

@@ -95,7 +95,19 @@
   "adviceList": {
     "buttonShow": "Sjá allar umsagnir",
     "buttonHide": "Fela umsagnir",
-    "noAdvices": "Engar umsagnir fundust fyrir þetta mál."
+    "noAdvices": "Engar umsagnir fundust fyrir þetta mál.",
+    "publishRule": {
+      "general": "",
+      "publishAfter": "",
+      "notPublished": {
+        "present": "",
+        "past": ""
+      }
+    },
+    "publishLaw": {
+      "title": "",
+      "href": ","
+    }
   },
   "adviceForm": {
     "inputFileErrorText": "Skráarnafn má í mesta lagi vera 100 stafbil.",

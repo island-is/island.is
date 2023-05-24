@@ -76,7 +76,7 @@ export const advicePublishTypeKeyHelper = {
 
 export enum MapCaseStatuses {
   'Til umsagnar' = 'Til umsagnar',
-  'Niðurstöður í vinnslu' = 'Í vinnslu',
+  'Niðurstöður í vinnslu' = 'Í vinnslu frá',
   'Niðurstöður birtar' = 'Samráði lokið',
 }
 
