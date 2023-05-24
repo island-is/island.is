@@ -71,14 +71,13 @@ export class MeClientSecretsController {
     description: 'Delete a client secret for the specified tenant and client.',
     response: { status: 204 },
   })
-  @Audit()
   async delete(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
     @Param('secretId') secretId: string,
-  ): Promise<number> {
-    return this.auditService.auditPromise(
+  ): Promise<void> {
+    await this.auditService.auditPromise(
       {
         auth: user,
         namespace,

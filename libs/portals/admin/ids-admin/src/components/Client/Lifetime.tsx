@@ -5,7 +5,7 @@ import {
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React, { useState } from 'react'
+import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
@@ -16,6 +16,8 @@ import {
   schema,
 } from '../forms/EditApplication/EditApplication.action'
 import { useErrorFormatMessage } from '../../shared/hooks/useFormatErrorMessage'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
+import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
 import { useReadableSeconds } from './ReadableSeconds'
 
 interface LifetimeProps {
@@ -30,7 +32,8 @@ const Lifetime = ({
   refreshTokenExpiration,
 }: LifetimeProps) => {
   const { formatMessage } = useLocale()
-  const [lifetime, setLifetime] = useState({
+  const { shouldSupportMultiEnv } = useMultiEnvSupport()
+  const [lifetime, setLifetime] = useEnvironmentState({
     absoluteRefreshTokenLifetime,
     refreshTokenExpiration,
     slidingRefreshTokenLifetime,
@@ -87,6 +90,7 @@ const Lifetime = ({
       description={formatMessage(m.lifeTimeDescription)}
       isDirty={customChangedValidation}
       intent={ClientFormTypes.lifeTime}
+      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={3}>
         <Stack space={1}>

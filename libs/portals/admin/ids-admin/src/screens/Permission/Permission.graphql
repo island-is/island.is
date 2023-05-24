@@ -1,0 +1,38 @@
+fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
+  environment
+  name
+  description {
+    value
+    locale
+  }
+  displayName {
+    value
+    locale
+  }
+  # Specific national ids
+  isAccessControlled
+  # Authenticated user
+  grantToAuthenticatedUser
+  # Companies
+  grantToProcuringHolders
+  # Legal guardians
+  grantToLegalGuardians
+  # Custom delegations
+  allowExplicitDelegationGrant
+  # Personal representatives
+  grantToPersonalRepresentatives
+}
+
+query AuthAdminScope($input: ScopeInput!) {
+  authAdminScope(input: $input) {
+    scopeName
+    environments {
+      ...AuthAdminScopeEnvironmentFragment
+    }
+    defaultEnvironment {
+      environment
+      name
+    }
+    availableEnvironments
+  }
+}

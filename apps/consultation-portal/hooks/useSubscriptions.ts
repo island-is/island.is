@@ -1,4 +1,4 @@
-import TabsList from '../screens/Subscriptions/tabsList'
+import { TabsList } from '../screens/Subscriptions/components'
 import { Area, SortOptions } from '../types/enums'
 import {
   ArrOfTypesForSubscriptions,

@@ -21,6 +21,7 @@ interface Props {
   nationalIdDefaultValue?: string
   nameDefaultValue?: string
   errorMessage?: string
+  disabled?: boolean
 }
 
 export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
@@ -34,6 +35,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   nationalIdDefaultValue,
   nameDefaultValue,
   errorMessage,
+  disabled,
 }) => {
   const { id } = field
   const usedId = customId.length > 0 ? customId : id
@@ -120,6 +122,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             })}
             loading={queryLoading}
             error={nationalIdFieldErrors}
+            disabled={disabled}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>

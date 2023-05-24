@@ -7,7 +7,7 @@ export const SEO = ({ title, image, url }: SEOProps) => {
       <title>{`Samráðsgátt | ${title}`}</title>
       <meta
         property="og:url"
-        content={`https://samradsgatt.island.is/${url}`}
+        content={`https://island.is/samradsgatt/${url}`}
         key="ogurl"
       />
       <meta property="og:image" content={image ?? image} key="ogimage" />
