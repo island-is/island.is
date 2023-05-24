@@ -88,11 +88,13 @@ const SingleList = () => {
             <>
               <Form method="post">
                 {petition.adminLock && (
-                  <AlertMessage
-                    type="error"
-                    title={'Listi er læstur'}
-                    message=""
-                  />
+                  <Box marginY={5}>
+                    <AlertMessage
+                      type="error"
+                      title={'Listi er læstur'}
+                      message=""
+                    />
+                  </Box>
                 )}
                 <Stack space={3}>
                   <Input
