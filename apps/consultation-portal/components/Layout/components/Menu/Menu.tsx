@@ -15,18 +15,20 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Menu.css'
 import React, { useContext } from 'react'
-import { MenuLogo, MenuLogoMobile } from '../svg'
-import { menuItems } from './MenuItems'
-import MenuModal from '../Modal/MenuModal'
-import { useIsMobile, useLogIn, useLogOut } from '../../hooks'
-import { checkActiveHeaderLink } from '../../utils/helpers'
+import { MenuLogo, MenuLogoMobile } from '../../../svg'
+import { menuItems, MenuModal } from './components'
+import { useIsMobile, useLogIn, useLogOut } from '../../../../hooks'
+import { checkActiveHeaderLink } from '../../../../utils/helpers'
 import { useRouter } from 'next/router'
-import { UserContext } from '../../context'
+import { UserContext } from '../../../../context'
+import localization from '../../Layout.json'
+
 type MenuProps = {
-  isFrontPage: boolean
+  isFrontPage?: boolean
 }
 
-export const Menu = ({ isFrontPage = false }: MenuProps) => {
+const Menu = ({ isFrontPage = false }: MenuProps) => {
+  const loc = localization.menu.menu
   const { isAuthenticated, user } = useContext(UserContext)
   const { isMobile } = useIsMobile()
 
@@ -81,9 +83,6 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                         baseId="menuModal"
                         modalLabel="Menu modal"
                         isLoggedIn={isAuthenticated}
-                        logIn={LogIn}
-                        logOut={LogOut}
-                        router={router}
                         isFrontPage={isFrontPage}
                       />
                     </Box>
@@ -130,7 +129,7 @@ export const Menu = ({ isFrontPage = false }: MenuProps) => {
                           />
                         ) : (
                           <Button size="small" onClick={LogIn}>
-                            Innskráning
+                            {loc.buttonLabel}
                           </Button>
                         )}
                       </Box>

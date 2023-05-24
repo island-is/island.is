@@ -9,12 +9,14 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { SGLogo } from '../svg/index'
-import FooterColumn from './components/FooterColumn'
+import { SGLogo } from '../../../svg/index'
+import { FooterColumn } from './components/FooterColumn'
+import localization from '../../Layout.json'
 
 import * as styles from './Footer.css'
 
 const Footer = () => {
+  const loc = localization.footer
   return (
     <footer className={styles.footer}>
       <Hidden print={true}>
@@ -38,12 +40,9 @@ const Footer = () => {
                   <FooterColumn isDivider />
                   <FooterColumn justifyContent="flexEnd">
                     <Stack space={1}>
-                      <Text variant="small">
-                        Viltu hjálpa okkur að bæta samráðsgáttina? Ábendingar
-                        eru vel þegnar.
-                      </Text>
+                      <Text variant="small">{loc.text}</Text>
                       <ArrowLink href="mailto:samradsgatt@stjornarradid.is">
-                        Senda ábendingu
+                        {loc.arrowLinkText}
                       </ArrowLink>
                     </Stack>
                   </FooterColumn>

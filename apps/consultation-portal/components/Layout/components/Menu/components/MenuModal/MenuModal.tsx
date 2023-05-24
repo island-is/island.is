@@ -11,22 +11,27 @@ import {
   useBoxStyles,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { menuItems } from '../Menu/MenuItems'
-import { checkActiveHeaderLink } from '../../utils/helpers'
-
+import { menuItems } from '../../components'
+import { checkActiveHeaderLink } from '../../../../../../utils/helpers'
 import * as styles from './MenuModal.css'
-import LogoMobile from '../svg/LogoMobile'
+import LogoMobile from '../../../../../svg/LogoMobile'
+import { useLogIn, useLogOut } from '../../../../../../hooks'
+import { useRouter } from 'next/router'
+import localization from '../../../../Layout.json'
 
-const MenuModal = ({
-  baseId,
-  modalLabel,
-  isLoggedIn,
-  logIn,
-  logOut,
-  router,
-  isFrontPage,
-}) => {
+interface Props {
+  baseId: string
+  modalLabel: string
+  isLoggedIn?: boolean
+  isFrontPage?: boolean
+}
+
+const MenuModal = ({ baseId, modalLabel, isLoggedIn, isFrontPage }: Props) => {
+  const loc = localization.menu.menuModal
   const [isVisible, setIsVisible] = useState(false)
+  const LogIn = useLogIn()
+  const LogOut = useLogOut()
+  const router = useRouter()
   const gridContainerStyles = useBoxStyles({
     component: 'div',
     background: 'blue100',
@@ -37,7 +42,7 @@ const MenuModal = ({
   return (
     <>
       <Button icon="menu" variant="utility" onClick={() => setIsVisible(true)}>
-        Valmynd
+        {loc.buttonLabel}
       </Button>
       <ModalBase
         baseId={baseId}
@@ -91,7 +96,7 @@ const MenuModal = ({
                           variant="utility"
                           onClick={closeModal}
                         >
-                          Loka
+                          {loc.closeButtonLabel}
                         </Button>
                       </Box>
                     </Box>
@@ -121,12 +126,12 @@ const MenuModal = ({
                         })}
                         <Box paddingY={2}>
                           {isLoggedIn ? (
-                            <Button size="small" fluid onClick={logOut}>
-                              Útskrá
+                            <Button size="small" fluid onClick={LogOut}>
+                              {loc.logoutButtonLabel}
                             </Button>
                           ) : (
-                            <Button size="small" fluid onClick={logIn}>
-                              Innskráning
+                            <Button size="small" fluid onClick={LogIn}>
+                              {loc.loginButtonLabel}
                             </Button>
                           )}
                         </Box>

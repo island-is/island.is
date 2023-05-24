@@ -1,4 +1,4 @@
-import { Box, Column, ResponsiveProp } from '@island.is/island-ui/core'
+import { Box, Column } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 import FooterDivider from './FooterDivider'
 
@@ -8,7 +8,11 @@ interface Props {
   children?: ReactNode
 }
 
-const FooterColumn = ({ justifyContent, isDivider, children }: Props) => {
+export const FooterColumn = ({
+  justifyContent,
+  isDivider,
+  children,
+}: Props) => {
   return (
     <Column width={isDivider ? 'content' : '1/4'}>
       <Box
