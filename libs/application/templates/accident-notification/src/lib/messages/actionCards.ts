@@ -9,7 +9,7 @@ export const anPendingActionMessages = defineMessages({
   waitingForReviewDescription: {
     id: 'an.application:pendingAction.waitingForReviewDescription',
     defaultMessage:
-      'Umsóknin þín er í yfirferð. Þú getur bætti við aukagögnum eða fylgiskjölum á meðan',
+      'Umsóknin þín er í yfirferð. Þú getur bætt við aukagögnum eða fylgiskjölum á meðan',
     description: 'Pending action waiting for review description',
   },
 })
