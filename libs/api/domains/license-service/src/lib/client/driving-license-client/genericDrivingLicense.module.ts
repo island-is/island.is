@@ -8,7 +8,8 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
 import { GenericDrivingLicenseService } from './genericDrivingLicense.service'
 import { PkPassClient } from './pkpass.client'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { Cache as CacheManager } from 'cache-manager'
 
 @Module({
@@ -38,11 +39,7 @@ import { Cache as CacheManager } from 'cache-manager'
       ) => {
         return new PkPassClient(config, logger, cacheManager)
       },
-      inject: [
-        GenericDrivingLicenseConfig.KEY,
-        LOGGER_PROVIDER,
-        CACHE_MANAGER
-      ]
+      inject: [GenericDrivingLicenseConfig.KEY, LOGGER_PROVIDER, CACHE_MANAGER],
     },
   ],
   exports: [GenericDrivingLicenseService],
