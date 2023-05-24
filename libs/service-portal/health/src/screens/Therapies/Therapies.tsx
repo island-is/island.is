@@ -1,4 +1,4 @@
-import { Therapies as TherapiesType } from '@island.is/api/schema'
+import { RightsPortalTherapies as TherapiesType } from '@island.is/api/schema'
 import { Box, Tabs, TabType } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -24,7 +24,7 @@ const Therapies = () => {
 
   const { loading, error, data } = useGetTherapiesQuery()
 
-  const therapiesData = data?.getRightsPortalTherapies ?? []
+  const therapiesData = data?.rightsPortalTherapies ?? []
 
   const physicalTherapyData = therapiesData.filter(
     (x: TherapiesType) => x.id === PHYSIO_THERAPY,

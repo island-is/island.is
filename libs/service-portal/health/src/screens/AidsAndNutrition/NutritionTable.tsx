@@ -1,4 +1,4 @@
-import { AidOrNutrition } from '@island.is/api/schema'
+import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { FC } from 'react'
 import {
@@ -11,7 +11,7 @@ import ExpiringTable from '../../components/ExpiringTable/ExpiringTable'
 import { ExpiringExpandedTableRow } from '../../components/ExpiringTable/ExpiringExpandedTableRow'
 
 interface Props {
-  data: Array<AidOrNutrition>
+  data: Array<RightsPortalAidOrNutrition>
   footnote: string
   link: string
   linkText: string

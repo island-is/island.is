@@ -20,14 +20,20 @@ export class RightsPortalResolver {
   constructor(private readonly rightsPortalService: RightsPortalService) {}
 
   @Scopes(ApiScope.health)
-  @Query(() => [Therapies], { nullable: true })
+  @Query(() => [Therapies], {
+    name: 'rightsPortalTherapies',
+    nullable: true,
+  })
   @Audit()
   getRightsPortalTherapies(@CurrentUser() user: User) {
     return this.rightsPortalService.getTherapies(user)
   }
 
   @Scopes(ApiScope.health)
-  @Query(() => AidsAndNutrition, { nullable: true })
+  @Query(() => AidsAndNutrition, {
+    name: 'rightsPortalAidsAndNutrition',
+    nullable: true,
+  })
   @Audit()
   getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
     return this.rightsPortalService.getAidsAndNutrition(user)

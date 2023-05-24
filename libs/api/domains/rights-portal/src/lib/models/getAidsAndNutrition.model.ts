@@ -1,14 +1,13 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('RightsPortalAidOrNutritionRefund')
 export class Refund {
   @Field()
   type!: string
   @Field(() => Int)
   value!: number
 }
-
-@ObjectType()
+@ObjectType('RightsPortalAidOrNutrition')
 export class AidOrNutrition {
   @Field(() => ID)
   id!: number
@@ -47,7 +46,7 @@ export class AidOrNutrition {
   expiring!: boolean
 }
 
-@ObjectType()
+@ObjectType('RightsPortalAidsAndNutrition')
 export class AidsAndNutrition {
   @Field(() => [AidOrNutrition], { nullable: true })
   aids?: AidOrNutrition[]

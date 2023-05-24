@@ -18,8 +18,8 @@ const AidsAndNutrition = () => {
   const { loading, error, data } = useGetAidsAndNutritionQuery()
 
   const supportData = {
-    aids: data?.getRightsPortalAidsAndNutrition?.aids ?? [],
-    nutrition: data?.getRightsPortalAidsAndNutrition?.nutrition ?? [],
+    aids: data?.rightsPortalAidsAndNutrition?.aids ?? [],
+    nutrition: data?.rightsPortalAidsAndNutrition?.nutrition ?? [],
   }
 
   const tabs = [
