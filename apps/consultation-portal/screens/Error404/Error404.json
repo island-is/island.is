@@ -1,5 +1,6 @@
 {
   "Error404": {
+    "title": "Afsakið hlé.",
     "notFoundText": "Síða eða skjal fannst ekki.",
     "text": "Eftirfarandi ástæður geta verið fyrir því að síða/skjal fannst ekki",
     "bulletOne": "Upplýsingar hafa verið fjarlægðar",

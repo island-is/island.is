@@ -4,15 +4,16 @@ import { Layout } from '../../components'
 import { ErrorScreen } from '../Error/Error'
 import localization from './Error404.json'
 
-export const Errorpage = () => {
+export const Error404 = () => {
   const loc = localization.Error404
   return (
     <Layout seo={{ title: '404' }}>
-      <ErrorScreen statusCode={404} title="Afsakið hlé.">
-        <Text variant="h5" paddingBottom={3}></Text>
-        {loc.notFoundText}
+      <ErrorScreen statusCode={404} title={loc.title}>
+        <Text variant="h5" paddingBottom={3}>
+          {loc.notFoundText}
+        </Text>
         <Text>
-          `${loc.text}:`
+          {`${loc.text}:`}
           <BulletList>
             <Bullet>{loc.bulletOne}</Bullet>
             <Bullet>{loc.bulletTwo}</Bullet>
@@ -31,4 +32,4 @@ export const Errorpage = () => {
     </Layout>
   )
 }
-export default Errorpage
+export default Error404

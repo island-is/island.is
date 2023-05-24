@@ -3,7 +3,7 @@ import { Layout } from '../../components'
 import { ErrorScreen } from '../../screens/Error/Error'
 import localization from './Error500.json'
 
-export const Errorpage = () => {
+export const Error500 = () => {
   const loc = localization.Error500
   return (
     <Layout seo={{ title: '500' }}>
@@ -13,4 +13,4 @@ export const Errorpage = () => {
     </Layout>
   )
 }
-export default Errorpage
+export default Error500
