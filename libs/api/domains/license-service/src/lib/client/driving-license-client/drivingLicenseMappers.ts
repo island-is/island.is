@@ -14,11 +14,8 @@ type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 export const formatNationalId = (nationalId: string) => formatSsn(nationalId)
 
-export const createPkPassDataInput = (
-  license?: DriversLicense | null,
-  nationalId?: string,
-) => {
-  if (!license || !nationalId) return null
+export const createPkPassDataInput = (license?: DriversLicense | null) => {
+  if (!license) return null
 
   return [
     {
@@ -33,11 +30,18 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'kennitala',
-      value: nationalId ? formatSsn(nationalId) : '',
+      value: license.socialSecurityNumber
+        ? formatSsn(license.socialSecurityNumber)
+        : '',
     },
     {
       identifier: 'faedingardagur',
-      value: format(info(nationalId ?? '').birthday, 'dd-MM-yyyy'),
+      value: license.socialSecurityNumber
+        ? format(
+            info(license.socialSecurityNumber ?? '').birthday,
+            'dd-MM-yyyy',
+          )
+        : '',
     },
     {
       identifier: 'utgafudagur',
@@ -50,10 +54,21 @@ export const createPkPassDataInput = (
       value: license.id?.toString() ?? '',
     },
     {
+      identifier: 'rettindaflokkar',
+      value: license.categories
+        ? license.categories?.reduce((acc, curr) => `${acc} ${curr.nr}`, '')
+        : '',
+    },
+    {
       identifier: 'rettindi',
       value: license.categories
         ? license.categories?.reduce(
-            (acc, curr) => `${acc} ${curr.categoryName}`,
+            (acc, curr) =>
+              `${acc} Réttindaflokkur ${curr.nr}, ${
+                curr.categoryName
+              }\n - Gildir til ${
+                curr.dateTo ? format(curr.dateTo, 'dd-MM-yyy') : ''
+              } \n - Athugasemdir: ${curr.comment}\n\n`,
             '',
           )
         : '',

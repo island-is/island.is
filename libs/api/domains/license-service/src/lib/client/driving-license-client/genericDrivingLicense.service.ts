@@ -54,7 +54,7 @@ export class GenericDrivingLicenseService
     }
     */
 
-    return GenericUserLicensePkPassStatus.Unknown
+    return GenericUserLicensePkPassStatus.Available
   }
 
   licenseIsValidForPkPass(payload: unknown): GenericUserLicensePkPassStatus {
@@ -110,9 +110,7 @@ export class GenericDrivingLicenseService
       return null
     }
 
-    const data = {} as DriversLicense
-
-    const inputValues = createPkPassDataInput(data)
+    const inputValues = createPkPassDataInput(license)
 
     if (!inputValues) {
       this.logger.warn('PkPassDataInput creation failed', {
@@ -143,6 +141,11 @@ export class GenericDrivingLicenseService
     if (pass.ok) {
       return pass.data
     }
+
+    this.logger.warn('PkPass creation failed', {
+      category: LOG_CATEGORY,
+      ...pass.error,
+    })
 
     return null
   }
