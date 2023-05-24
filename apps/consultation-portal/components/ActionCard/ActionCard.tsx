@@ -8,9 +8,10 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './SubscriptionActionCard.css'
+import { BaseSyntheticEvent } from 'react'
+import * as styles from './ActionCard.css'
 
-interface SubscriptionButton {
+interface ButtonProps {
   label: string
   onClick?: () => void
   disabled?: boolean
@@ -18,26 +19,21 @@ interface SubscriptionButton {
   icon?: IconMapIcon
 }
 
-export interface SubscriptionActionCardProps {
+interface Props {
   heading?: string
   text: string
-  button: Array<SubscriptionButton>
+  button: Array<ButtonProps>
   input?: {
     label: string
     placeholder: string
     name: string
     value?: string
     disabled?: boolean
-    onChange?: (e) => void
+    onChange?: (e: BaseSyntheticEvent) => void
   }
 }
 
-export const SubscriptionActionCard = ({
-  heading,
-  text,
-  button,
-  input,
-}: SubscriptionActionCardProps) => {
+const ActionCard = ({ heading, text, button, input }: Props) => {
   const noInput = typeof input !== 'undefined'
 
   return (
@@ -138,4 +134,4 @@ export const SubscriptionActionCard = ({
   )
 }
 
-export default SubscriptionActionCard
+export default ActionCard

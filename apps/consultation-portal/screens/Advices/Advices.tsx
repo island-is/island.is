@@ -9,9 +9,9 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import Layout from '../../components/Layout/Layout'
-import { Breadcrumbs } from '../../components'
+import { Breadcrumbs, ActionCard } from '../../components'
 import { useLogIn, useUser, useAdviceFilters } from '../../hooks'
-import { Card, SubscriptionActionCard } from '../../components/Card'
+import { Card } from '../../components/Card'
 import { useState } from 'react'
 import EmptyState from '../../components/EmptyState/EmptyState'
 import { AdviceFilter, UserAdvice } from '../../types/interfaces'
@@ -148,7 +148,7 @@ export const AdvicesScreen = () => {
             <Text variant="default">{loc.intro.text}</Text>
           </Stack>
           {!userLoading && !isAuthenticated && (
-            <SubscriptionActionCard
+            <ActionCard
               heading={loc.subscriptionActionCard.heading}
               text={loc.subscriptionActionCard.text}
               button={[
