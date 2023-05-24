@@ -94,10 +94,31 @@ const PastCases: React.FC<Props> = (props) => {
         accessor: 'courtCaseNumber' as keyof CaseListEntry,
         Cell: (row: {
           row: {
-            original: { courtCaseNumber: string; policeCaseNumbers: string[] }
+            original: {
+              courtCaseNumber: string
+              policeCaseNumbers: string[]
+              appealCaseNumber?: string
+            }
           }
         }) => {
           const theRow = row.row.original
+
+          if (theRow.appealCaseNumber) {
+            return (
+              <Box display="flex" flexDirection="column">
+                <Text as="span" variant="small">
+                  {theRow.appealCaseNumber}
+                </Text>
+                <Text as="span" variant="small">
+                  {theRow.courtCaseNumber}
+                </Text>
+                <Text as="span" variant="small">
+                  {displayFirstPlusRemaining(theRow.policeCaseNumbers)}
+                </Text>
+              </Box>
+            )
+          }
+
           return (
             <BigTextSmallText
               bigText={theRow.courtCaseNumber}
