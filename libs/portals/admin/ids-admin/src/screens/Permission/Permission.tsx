@@ -5,7 +5,7 @@ import { PermissionProvider } from '../../components/Permission/PermissionContex
 import { PermissionHeader } from '../../components/Permission/PermissionHeader'
 import { StickyLayout } from '../../components/StickyLayout/StickyLayout'
 
-const PermissionScreen = () => (
+const Permission = () => (
   <PermissionProvider>
     <Box display="flex" flexDirection="column" rowGap={6}>
       <StickyLayout header={() => <PermissionHeader />}>
@@ -15,4 +15,4 @@ const PermissionScreen = () => (
   </PermissionProvider>
 )
 
-export default PermissionScreen
+export default Permission
