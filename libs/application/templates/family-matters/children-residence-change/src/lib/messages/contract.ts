@@ -48,22 +48,15 @@ export const contract = {
   childBenefit: defineMessages({
     label: {
       id: 'crc.application:section.contract.overview.childBenefit.label',
-      defaultMessage: 'Framfærsla',
+      defaultMessage: 'Meðlag',
       description: 'Label for child benefit',
     },
     text: {
       id:
         'crc.application:section.contract.overview.childBenefit.text#markdown',
       defaultMessage:
-        '{currentResidenceParentName} greiðir einfalt meðlag með hverju barni til nýs lögheimilisforeldris.',
+        '{currentResidenceParentName} greiðir einfalt meðlag með hverju barni til nýs lögheimilisforeldris.\\nEf foreldrar greiða aukið meðlag þarf að semja að nýju og leita staðfestingar sýslumanns.',
       description: 'Text for child benefit',
-    },
-    agreementText: {
-      id:
-        'crc.application:section.contract.overview.childBenefit.agreementText#markdown',
-      defaultMessage:
-        'Samkomulag er um framfærslu, ekki verður af greiðslu hefðbundins meðlags.',
-      description: 'Text for child benefit agreement',
     },
   }),
   duration: defineMessages({

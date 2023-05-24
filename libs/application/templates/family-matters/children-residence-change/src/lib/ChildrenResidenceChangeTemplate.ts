@@ -8,41 +8,30 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
 import { CRCApplication } from '../types'
 import { Roles, ApplicationStates } from './constants'
-import {
-  application,
-  stateDescriptions,
-  stateLabels,
-  history,
-} from './messages'
+import { application, stateDescriptions, stateLabels } from './messages'
 import {
   ChildrenCustodyInformationApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
-import {
-  pruneAfterDays,
-  coreHistoryMessages,
-} from '@island.is/application/core'
-import set from 'lodash/set'
+import { pruneAfterDays } from '@island.is/application/core'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.SUBMIT }
   | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.APPROVE }
 
 enum TemplateApiActions {
   submitApplication = 'submitApplication',
   sendNotificationToCounterParty = 'sendNotificationToCounterParty',
-  rejectedByCounterParty = 'rejectedByCounterParty',
-  rejectedByOrganization = 'rejectedByOrganization',
-  approvedByOrganization = 'approvedByOrganization',
+  rejectApplication = 'rejectApplication',
+  approveApplication = 'approveApplication',
+  rejectedApplication = 'rejectedApplication',
 }
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
@@ -62,13 +51,8 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           status: 'draft',
           name: applicationName,
-          progress: 0,
           actionCard: {
             description: stateDescriptions.draft,
-            historyLogs: {
-              onEvent: DefaultEvents.SUBMIT,
-              logMessage: coreHistoryMessages.applicationSent,
-            },
           },
           lifecycle: pruneAfterDays(365),
           roles: [
@@ -95,7 +79,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                   'counterParty',
                   'selectDuration',
                   'selectedChildren',
-                  'selectChildSupportPayment',
                   'approveExternalData',
                   'residenceChangeReason',
                   'approveChildSupportTerms',
@@ -126,31 +109,8 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           status: 'inprogress',
           name: applicationName,
-          progress: 0.5,
           actionCard: {
             description: stateDescriptions.inReview,
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage: history.general.onCounterPartyApprove,
-              },
-              {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: history.general.onCounterPartyReject,
-              },
-            ],
-            pendingAction: (_, role) =>
-              role === Roles.ParentB
-                ? {
-                    displayStatus: 'warning',
-                    title: history.actions.waitingForUserActionTitle,
-                    content: history.actions.waitingForUserActionDescription,
-                  }
-                : {
-                    displayStatus: 'info',
-                    title: history.actions.waitingForUserActionTitle,
-                    content: history.actions.waitingForCounterpartyDescription,
-                  },
           },
           lifecycle: pruneAfterDays(28),
           onEntry: defineTemplateApi({
@@ -199,18 +159,51 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: {
-            target: ApplicationStates.WAITINGFORORGANIZATION,
+            target: ApplicationStates.SUBMITTED,
           },
           REJECT: {
             target: ApplicationStates.REJECTEDBYPARENTB,
           },
         },
       },
+      [ApplicationStates.SUBMITTED]: {
+        meta: {
+          name: applicationName,
+          status: 'inprogress',
+          actionCard: {
+            description: stateDescriptions.submitted,
+            tag: { label: stateLabels.submitted },
+          },
+          lifecycle: pruneAfterDays(365),
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.submitApplication,
+          }),
+          roles: [
+            {
+              id: Roles.ParentA,
+              formLoader: () =>
+                import('../forms/ApplicationConfirmation').then((module) =>
+                  Promise.resolve(module.ApplicationConfirmation),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ParentB,
+              formLoader: () =>
+                import(
+                  '../forms/ParentBApplicationConfirmation'
+                ).then((module) =>
+                  Promise.resolve(module.ParentBApplicationConfirmation),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
       [ApplicationStates.REJECTEDBYPARENTB]: {
         meta: {
           name: applicationName,
           status: 'rejected',
-          progress: 1,
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
             tag: {
@@ -220,7 +213,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           },
           lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
-            action: TemplateApiActions.rejectedByCounterParty,
+            action: TemplateApiActions.rejectApplication,
           }),
           roles: [
             {
@@ -241,94 +234,17 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           ],
         },
       },
-      [ApplicationStates.WAITINGFORORGANIZATION]: {
-        entry: 'assignToOrganization',
-        exit: 'clearAssignees',
-        meta: {
-          name: applicationName,
-          status: 'inprogress',
-          progress: 0.75,
-          onEntry: defineTemplateApi({
-            action: TemplateApiActions.submitApplication,
-            shouldPersistToExternalData: true,
-          }),
-          lifecycle: pruneAfterDays(365),
-          actionCard: {
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.APPROVE,
-                logMessage: history.general.onCommissionerApprove,
-              },
-              {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: history.general.onCommissionerReject,
-              },
-            ],
-            pendingAction: {
-              displayStatus: 'info',
-              title: history.actions.waitingForOrganizationTitle,
-              content: stateDescriptions.submitted,
-            },
-            tag: {
-              variant: 'blueberry',
-              label: stateLabels.submitted,
-            },
-          },
-          roles: [
-            {
-              id: Roles.ParentA,
-              formLoader: () =>
-                import('../forms/WaitingForOrganization').then((module) =>
-                  Promise.resolve(module.WaitingForOrganization),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.ParentB,
-              formLoader: () =>
-                import('../forms/WaitingForOrganization').then((module) =>
-                  Promise.resolve(module.WaitingForOrganization),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.Organization,
-              read: 'all',
-              write: 'all',
-              actions: [
-                {
-                  event: DefaultEvents.APPROVE,
-                  name: 'Samþykkja',
-                  type: 'primary',
-                },
-                {
-                  event: DefaultEvents.REJECT,
-                  name: 'Hafna',
-                  type: 'reject',
-                },
-              ],
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.APPROVE]: { target: ApplicationStates.COMPLETED },
-          [DefaultEvents.REJECT]: {
-            target: ApplicationStates.REJECTEDBYORGANIZATION,
-          },
-        },
-      },
-      [ApplicationStates.REJECTEDBYORGANIZATION]: {
+      [ApplicationStates.REJECTED]: {
         meta: {
           status: 'rejected',
           name: applicationName,
-          progress: 1,
           actionCard: {
             description: stateDescriptions.rejected,
             tag: { label: stateLabels.rejected, variant: 'red' },
           },
           lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
-            action: TemplateApiActions.rejectedByOrganization,
+            action: TemplateApiActions.rejectedApplication,
           }),
           roles: [
             {
@@ -354,14 +270,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
         meta: {
           name: applicationName,
           status: 'approved',
-          progress: 1,
           actionCard: {
             description: stateDescriptions.approved,
-            tag: { label: stateLabels.approved, variant: 'mint' },
+            tag: { label: stateLabels.approved, variant: 'blueberry' },
           },
           lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
-            action: TemplateApiActions.approvedByOrganization,
+            action: TemplateApiActions.approveApplication,
           }),
           roles: [
             {
@@ -408,25 +323,12 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           },
         }
       }),
-      assignToOrganization: assign((context) => {
-        const { application } = context
-
-        set(application, 'assignees', [InstitutionNationalIds.SYSLUMENN])
-
-        return context
-      }),
-      clearAssignees: assign((context) => {
-        const { application } = context
-
-        set(application, 'assignees', [])
-
-        return context
-      }),
     },
   },
 
   mapUserToRole(
     id: string,
+    // TODO: Somehow use CRCApplication here
     application: Application,
   ): ApplicationRole | undefined {
     if (
@@ -441,9 +343,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     }
     if (application.assignees.includes(id)) {
       return Roles.ParentB
-    }
-    if (id === InstitutionNationalIds.SYSLUMENN) {
-      return Roles.Organization
     }
     return undefined
   },

@@ -14,7 +14,7 @@ import { Roles } from '../../lib/constants'
 
 interface Props {
   application: CRCApplication
-  parentKey: Roles.ParentA | Roles.ParentB
+  parentKey: Roles
 }
 
 const ContractOverview = ({ application, parentKey }: Props) => {
@@ -60,11 +60,7 @@ const ContractOverview = ({ application, parentKey }: Props) => {
           {formatMessage(m.contract.childBenefit.label)}
         </Text>
         <DescriptionText
-          text={
-            answers.selectChildSupportPayment === 'agreement'
-              ? m.contract.childBenefit.agreementText
-              : m.contract.childBenefit.text
-          }
+          text={m.contract.childBenefit.text}
           textProps={{ marginBottom: 0 }}
           format={{
             currentResidenceParentName:

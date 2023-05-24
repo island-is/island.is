@@ -8,7 +8,7 @@ export enum ApplicationTypes {
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
-  CHILDREN_RESIDENCE_CHANGE_OLD = 'ChildrenResidenceChangeOld',
+  CHILDREN_RESIDENCE_CHANGE_V2 = 'ChildrenResidenceChangeV2',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
   INHERITANCE_REPORT = 'InheritanceReport',
@@ -82,11 +82,11 @@ export const ApplicationConfigurations = {
     translation: 'hi.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns-v2',
+    slug: 'breytt-logheimili-barns',
     translation: 'crc.application',
   },
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_OLD]: {
-    slug: 'breytt-logheimili-barns',
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
+    slug: 'breytt-logheimili-barns-v2',
     translation: 'crc.application',
   },
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {

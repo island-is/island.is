@@ -17,11 +17,11 @@ export const transferRequestedEmail: EmailTemplateGenerator = (props) => {
 
         <h1>${subject}</h1>
 
-        <p style="${fontStyles} margin: 0;">${application.externalData.nationalRegistry.data.fullName} hefur óskað eftir að þú undirritir samning um breytt lögheimili barns.
+        <p style="${fontStyles} margin: 0;">${application.externalData.nationalRegistry.data.fullName} hefur óskað eftir að þú undirritir samning um breytt lögheimili barns og meðlag.
 
         <p style="${fontStyles} margin: 0;">Samningurinn er tilbúinn til rafrænnar undirritunar á Island.is.
 
-        <a style="${fontStyles}" href=${applicationLink} target="_blank">Opna samning</a>.
+        <a style="${fontStyles}" href=${applicationLink} target="_blank">Opna umsókn</a>.
       `
 
   return {

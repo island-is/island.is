@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   SyslumennService,
@@ -13,9 +13,9 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils'
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
-  applicationRejectedByOrganizationEmail,
   generateApplicationSubmittedEmail,
   generateSyslumennNotificationEmail,
   transferRequestedEmail,
@@ -26,30 +26,38 @@ import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { isValidNumberForRegion } from 'libphonenumber-js'
-import { generateResidenceChangePdf } from './pdfGenerators'
 
-type Props = Override<
+export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
+
+type props = Override<
   TemplateApiModuleActionProps,
   { application: CRCApplication }
 >
 
 @Injectable()
 export class ChildrenResidenceChangeService extends BaseTemplateApiService {
+  s3: S3
+
   constructor(
     private readonly syslumennService: SyslumennService,
+    @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
     private nationalRegistryApi: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
+    this.s3 = new S3()
   }
 
-  async submitApplication({ application }: Props) {
+  async submitApplication({ application }: props) {
     const { answers, externalData } = application
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
-    const pdf = await generateResidenceChangePdf(application)
+    const s3FileName = `children-residence-change/${application.id}.pdf`
+    const file = await this.s3
+      .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
+      .promise()
+    const fileContent = file.Body as Buffer
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,
@@ -65,10 +73,14 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     )
     const currentAddress = childResidenceInfo?.current?.address
 
+    if (!fileContent) {
+      throw new Error('File content was undefined')
+    }
+
     const attachments: Attachment[] = [
       {
         name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
-        content: pdf.toString('base64'),
+        content: fileContent.toString('base64'),
       },
     ]
 
@@ -80,7 +92,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       homeAddress: applicant?.address?.streetAddress ?? '',
       postalCode: applicant?.address?.postalCode ?? '',
       city: applicant.address?.locality ?? '',
-      signed: false,
+      signed: true,
       type: PersonType.Plaintiff,
     }
 
@@ -96,7 +108,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       homeAddress: otherParent.address?.streetAddress || '',
       postalCode: otherParent.address?.postalCode || '',
       city: otherParent.address?.locality || '',
-      signed: false,
+      signed: true,
       type: PersonType.CounterParty,
     }
 
@@ -117,7 +129,6 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const durationType = answers.selectDuration?.type
     const durationDate = answers.selectDuration?.date
     const extraData = {
-      typeOfChildSupport: answers.selectChildSupportPayment, // TODO: is this correct?
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
         durationType === 'temporary' && durationDate
@@ -129,43 +140,52 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       throw new Error('Future residence postal code was not found')
     }
 
-    // Validate phone numbers of parents before sending to syslumenn
-    if (!isValidNumberForRegion(parentA.phoneNumber ?? '', 'IS')) {
-      throw new Error('Parent A phone number is not valid')
-    }
-
-    if (!isValidNumberForRegion(parentB.phoneNumber ?? '', 'IS')) {
-      throw new Error('Parent B phone number is not valid')
-    }
-
     const syslumennData = syslumennDataFromPostalCode(
       childResidenceInfo.future.address.postalCode,
     )
 
-    const uploadDataName = 'Samningur Forsjá Og Meðlag'
-    const uploadDataId = 'SamningurForsjaOgMedlag1.1'
+    const uploadDataName = 'Lögheimilisbreyting barns'
 
     const response = await this.syslumennService
-      .uploadData(
-        participants,
-        attachments,
-        extraData,
-        uploadDataName,
-        uploadDataId,
-      )
+      .uploadData(participants, attachments, extraData, uploadDataName)
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
           (application as unknown) as Application,
-          pdf.toString('binary'),
+          fileContent.toString('binary'),
           syslumennData.email,
         )
         return undefined
       })
+
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentA.email,
+          syslumennData.name,
+          response?.caseNumber,
+        ),
+      (application as unknown) as Application,
+    )
+
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateApplicationSubmittedEmail(
+          props,
+          fileContent.toString('binary'),
+          answers.parentB.email,
+          syslumennData.name,
+          response?.caseNumber,
+        ),
+      (application as unknown) as Application,
+    )
+
     return response
   }
 
-  async sendNotificationToCounterParty({ application }: Props) {
+  async sendNotificationToCounterParty({ application }: props) {
     const { answers } = application
     const { counterParty } = answers
 
@@ -179,68 +199,14 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     if (counterParty.phoneNumber) {
       await this.smsService.sendSms(
         counterParty.phoneNumber,
-        'Þér hafa borist drög að samningi um breytt lögheimili barns á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
+        'Þér hafa borist drög að samningi um breytt lögheimili barna og meðlag á Island.is. Samningurinn er aðgengilegur á island.is/minarsidur undir Umsóknir.',
       )
     }
   }
 
-  // Sends notification to both parties
-  async approvedByOrganization({ application }: Props) {
-    const { answers, externalData } = application
-    const { parentA, parentB } = answers
-    const { nationalRegistry } = externalData
-    const applicant = nationalRegistry.data
-    const childResidenceInfo = childrenResidenceInfo(
-      applicant,
-      externalData.childrenCustodyInformation.data,
-      answers.selectedChildren,
-    )
-    const caseNumber = externalData.submitApplication?.data?.caseNumber
-
-    if (!childResidenceInfo.future?.address?.postalCode) {
-      throw new Error('Future residence postal code was not found')
-    }
-
-    const pdf = await generateResidenceChangePdf(application)
-    const syslumennData = syslumennDataFromPostalCode(
-      childResidenceInfo.future.address.postalCode,
-    )
-
-    await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateApplicationSubmittedEmail(
-          props,
-          pdf.toString('binary'),
-          parentA.email,
-          syslumennData.name,
-          caseNumber,
-        ),
-      (application as unknown) as Application,
-    )
-
-    await this.sharedTemplateAPIService.sendEmail(
-      (props) =>
-        generateApplicationSubmittedEmail(
-          props,
-          pdf.toString('binary'),
-          parentB.email,
-          syslumennData.name,
-          caseNumber,
-        ),
-      (application as unknown) as Application,
-    )
-  }
-
-  async rejectedByCounterParty({ application }: Props) {
+  async rejectApplication({ application }: props) {
     await this.sharedTemplateAPIService.sendEmail(
       applicationRejectedEmail,
-      (application as unknown) as Application,
-    )
-  }
-
-  async rejectedByOrganization({ application }: Props) {
-    await this.sharedTemplateAPIService.sendEmail(
-      applicationRejectedByOrganizationEmail,
       (application as unknown) as Application,
     )
   }

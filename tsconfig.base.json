@@ -234,8 +234,8 @@
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
-      "@island.is/application/templates/children-residence-change-old": [
-        "libs/application/templates/family-matters/children-residence-change-old/src/index.ts"
+      "@island.is/application/templates/children-residence-change-v2": [
+        "libs/application/templates/family-matters/children-residence-change-v2/src/index.ts"
       ],
       "@island.is/application/templates/complaints-to-althingi-ombudsman": [
         "libs/application/templates/complaints-to-althingi-ombudsman/src/index.ts"

@@ -64,11 +64,6 @@ export const section = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'Application Received',
   },
-  waiting: {
-    id: 'crc.application:section.waiting',
-    defaultMessage: 'Beðið eftir sýslumanni',
-    description: 'Application waiting for organization',
-  },
   rejected: {
     id: 'crc.application:section.rejected',
     defaultMessage: 'Umsókn hafnað',
@@ -97,7 +92,7 @@ export const stateDescriptions = defineMessages({
   submitted: {
     id: 'crc.application:stateDescriptions.submitted',
     defaultMessage:
-      'Samningur ykkar um breytt lögheimili og meðlag er í afgreiðsluferli hjá sýslumanni. Ef sýslumaður telur þörf á frekari upplýsingum mun hann hafa samband. Afgreiðsla sýslumanns getur tekið allt að tvær vikur. ',
+      'Samningur ykkar um breytt lögheimili og meðlag er í afgreiðsluferli hjá sýslumanni. Ef sýslumaður telur þörf á frekari upplýsingum mun hann hafa samband. Afgreiðsla sýslumanns getur tekið allt að tvær vikur.',
     description: 'Submitted to the Commissioner',
   },
   rejectedByParentB: {
@@ -110,12 +105,6 @@ export const stateDescriptions = defineMessages({
     id: 'crc.application:stateDescriptions.rejected',
     defaultMessage:
       'Umsókn ykkar um breytt lögheimili og meðlag var hafnað af sýslumanni. Ástæður höfnunar koma fram í bréfi sem er að finna undir Rafræn skjöl á Island.is.',
-    description: 'Waiting for the Commissioner',
-  },
-  waiting: {
-    id: 'crc.application:stateDescriptions.waiting',
-    defaultMessage:
-      'Umsókn ykkar um breytt lögheimili barns er í vinnslu hjá sýslumanni.',
     description: 'Rejected by the Commissioner',
   },
   approved: {

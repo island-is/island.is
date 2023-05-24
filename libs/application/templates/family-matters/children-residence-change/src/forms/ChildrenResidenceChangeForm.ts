@@ -7,9 +7,6 @@ import {
   buildSubSection,
   buildMultiField,
   buildSubmitField,
-  buildRadioField,
-  buildDescriptionField,
-  buildAlertMessageField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
@@ -24,7 +21,6 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
-import { Answers } from '../types'
 
 const soleCustodyField = () => {
   return buildCustomField({
@@ -220,54 +216,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
               id: 'confirmResidenceChangeInfo',
               title: m.newResidence.general.pageTitle,
               component: 'ChangeInformation',
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'childSupportPayments',
-          title: m.childSupportPayments.general.sectionTitle,
-          children: [
-            buildMultiField({
-              id: 'childSupportPaymentsMultiField',
-              title: m.childSupportPayments.general.sectionTitle,
-              description: m.childSupportPayments.general.description,
-              children: [
-                buildRadioField({
-                  id: 'selectChildSupportPayment',
-                  title: '',
-                  backgroundColor: 'white',
-                  required: true,
-                  options: [
-                    {
-                      label: m.childSupportPayments.radioAgreement.title,
-                      value: 'agreement',
-                      subLabel:
-                        m.childSupportPayments.radioAgreement.description,
-                    },
-                    {
-                      label: m.childSupportPayments.radioChildSupport.title,
-                      value: 'childSupport',
-                      subLabel:
-                        m.childSupportPayments.radioChildSupport.description,
-                    },
-                  ],
-                }),
-                buildAlertMessageField({
-                  id: 'alert',
-                  title: '',
-                  message: m.childSupportPayments.general.alert,
-                  alertType: 'info',
-                  condition: (values) =>
-                    ((values as unknown) as Answers)
-                      .selectChildSupportPayment === 'agreement',
-                }),
-                buildDescriptionField({
-                  id: 'infoText',
-                  title: '',
-                  space: 2,
-                  description: m.childSupportPayments.general.infoText,
-                }),
-              ],
             }),
           ],
         }),
