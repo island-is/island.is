@@ -52,8 +52,6 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
   const [totalPages, setTotalPages] = useState(0)
   const [pagePetitions, setPetitions] = useState(listEndorsements.data ?? [])
 
-  const relatedContentKey = 'undirskriftalistar-stofna-nyjan-lista'
-
   const getBaseUrl = () => {
     const baseUrl =
       window.location.origin === 'http://localhost:4200'
@@ -111,29 +109,6 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 }}
                 imgContainerDisplay={['block', 'block', 'none', 'block']}
               />
-              <Box
-                background="purple100"
-                borderRadius="large"
-                padding={[3, 3, 4]}
-              >
-                <Stack space={[1, 1, 2]}>
-                  <Text variant="eyebrow" as="h2">
-                    {n('relatedContent', 'Tengt efni')}
-                  </Text>
-                  <Link
-                    key={relatedContentKey}
-                    href={`/${relatedContentKey}`}
-                    underline="normal"
-                  >
-                    <Text key={relatedContentKey} as="span">
-                      {n(
-                        'relatedContentTitle',
-                        'Undirskriftalistar – stofna nýjan lista',
-                      )}
-                    </Text>
-                  </Link>
-                </Stack>
-              </Box>
             </Stack>
           </Box>
         }
