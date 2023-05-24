@@ -11,7 +11,7 @@ import { useMenuState, Menu, MenuItem, MenuButton } from 'reakit/Menu'
 
 import * as styles from './DropdownSort.css'
 
-export interface DropdownMenuProps {
+interface DropdownMenuProps {
   menuAriaLabel?: string
   items: {
     title: SortOptions | SortOptionsAdvices
