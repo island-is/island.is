@@ -1,6 +1,6 @@
 import { Outlet, useRouteLoaderData } from 'react-router-dom'
 import { idsAdminNav } from '../../lib/navigation'
-import Layout from '../../components/Layout/Layout'
+import { Layout } from '../../components/Layout/Layout'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useEffect, useState } from 'react'
