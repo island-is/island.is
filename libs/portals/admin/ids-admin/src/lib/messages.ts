@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenants',
     defaultMessage: 'Tenants',
   },
+  tenant: {
+    id: 'ap.ids-admin:tenant',
+    defaultMessage: 'Tenant',
+  },
   errorLoadingData: {
     id: 'ap.ids-admin:error-loading-data',
     defaultMessage: 'Error loading data. Please try again later.',
