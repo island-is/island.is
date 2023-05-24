@@ -12,7 +12,7 @@ export const appealCase = defineMessages({
     description: 'Lýsitexti á málsnúmeri á skráningarsíðu Landsréttar',
   },
   caseNumberPlaceholder: {
-    id: 'judicial.system.core:appeal_case.case_number_placeholder_v3',
+    id: 'judicial.system.core:appeal_case.case_number_placeholder_v2',
     defaultMessage: 'XXXX/2023',
     description: 'Gildistexti á málsnúmeri á skráningarsíðu Landsréttar',
   },
