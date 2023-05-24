@@ -1,11 +1,14 @@
 import {useQuery} from '@apollo/client';
 import {
+  Accordion,
+  AccordionItem,
   Alert,
   dynamicColor,
+  font,
   Input,
   InputRow,
   LicenceCard,
-  Accordion,
+  LinkText,
 } from '@ui';
 import React from 'react';
 import {useIntl} from 'react-intl';
