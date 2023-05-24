@@ -8,6 +8,7 @@ import { getTranslatedValue } from '@island.is/portals/core'
 
 import ContentCard from '../../shared/components/ContentCard'
 import { m } from '../../lib/messages'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import AddPermissions from '../forms/AddPermissions/AddPermissions'
 import {
   ClientFormTypes,
@@ -24,9 +25,9 @@ function Permissions({ allowedScopes }: PermissionsProps) {
   const { formatMessage, locale } = useLocale()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const params = useParams()
-  const [permissions, setPermissions] = useState<AuthAdminClientAllowedScope[]>(
-    allowedScopes ?? [],
-  )
+  const [permissions, setPermissions] = useEnvironmentState<
+    AuthAdminClientAllowedScope[]
+  >(allowedScopes ?? [])
   const [addedScopes, setAddedScopes] = useState<AuthAdminClientAllowedScope[]>(
     [],
   )
