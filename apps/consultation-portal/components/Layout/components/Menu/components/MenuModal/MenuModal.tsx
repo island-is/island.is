@@ -14,7 +14,7 @@ import { useState } from 'react'
 import { menuItems } from '../../components'
 import { checkActiveHeaderLink } from '../../../../utils'
 import * as styles from './MenuModal.css'
-import LogoMobile from '../../../../../svg/LogoMobile'
+import { MenuLogoMobile } from '../../../../../svg'
 import { useLogIn, useLogOut } from '../../../../../../hooks'
 import { useRouter } from 'next/router'
 import localization from '../../../../Layout.json'
@@ -83,7 +83,7 @@ const MenuModal = ({ baseId, modalLabel, isLoggedIn, isFrontPage }: Props) => {
                         </FocusableBox>
                       ) : (
                         <FocusableBox href="/" alignItems="center">
-                          <LogoMobile />
+                          <MenuLogoMobile />
                         </FocusableBox>
                       )}
                       <Box

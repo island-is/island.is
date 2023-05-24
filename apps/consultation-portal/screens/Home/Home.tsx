@@ -27,7 +27,6 @@ import {
   CARDS_PER_PAGE,
   FILTERS_FRONT_PAGE_KEY,
 } from '../../utils/consts/consts'
-import { MapCaseStatuses } from '../../types/enums'
 
 interface HomeProps {
   types: ArrOfTypes
@@ -80,7 +79,7 @@ export const Index = ({ types, statistics }: HomeProps) => {
               const card = {
                 id: item.id,
                 title: item.name,
-                tag: MapCaseStatuses[item.statusName],
+                tag: item.statusName,
                 published: item.created,
                 processEnds: item.processEnds,
                 processBegins: item.processBegins,

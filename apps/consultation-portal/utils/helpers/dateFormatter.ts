@@ -1,5 +1,6 @@
 import { Case } from '../../types/interfaces'
 import format from 'date-fns/format'
+import { CaseStatuses } from '../../types/enums'
 
 export function removeZeroInDate(date: string) {
   let updatedDate = date.replace('.0', '.')
@@ -34,11 +35,11 @@ interface Props {
 
 export function getTimeLineDate({ Case }: Props) {
   switch (Case.statusName) {
-    case 'Til umsagnar':
+    case CaseStatuses.forReview:
       return getDateBeginDateEnd(Case.processBegins, Case.processEnds)
-    case 'Niðurstöður í vinnslu':
+    case CaseStatuses.inProgress:
       return `frá ${getShortDate(Case.processEnds)}`
-    case 'Niðurstöður birtar':
+    case CaseStatuses.published:
       return getShortDate(Case.summaryDate)
   }
 }
@@ -46,11 +47,13 @@ export function getStatusEndDate(status: string, Case: Case) {
   const date = new Date(Case.processEnds)
   date.setDate(date.getDate() + 1)
   switch (status) {
-    case 'Til umsagnar':
+    case CaseStatuses.forReview:
       return getDateBeginDateEnd(Case.processBegins, Case.processEnds)
-    case 'Niðurstöður í vinnslu':
-      return Case.statusName != 'Til umsagnar' ? `${getShortDate(date)}` : ''
-    case 'Niðurstöður birtar':
+    case CaseStatuses.inProgress:
+      return Case.statusName != CaseStatuses.forReview
+        ? `${getShortDate(date)}`
+        : ''
+    case CaseStatuses.published:
       return getShortDate(Case.summaryDate)
   }
 }

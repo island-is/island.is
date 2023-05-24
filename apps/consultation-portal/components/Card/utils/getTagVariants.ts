@@ -1,12 +1,12 @@
-import { MapCaseStatuses } from '../../../types/enums'
+import { CaseStatuses } from '../../../types/enums'
 
 const getTagVariants = (status: string) => {
   switch (status) {
-    case MapCaseStatuses['Til umsagnar']:
+    case CaseStatuses.forReview:
       return 'purple'
-    case MapCaseStatuses['Niðurstöður í vinnslu']:
+    case CaseStatuses.inProgress:
       return 'darkerBlue'
-    case MapCaseStatuses['Niðurstöður birtar']:
+    case CaseStatuses.published:
       return 'mint'
   }
 }

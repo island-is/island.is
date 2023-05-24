@@ -19,3 +19,11 @@ export const ABOUT_HEADINGS = [
   'Eftirfylgni',
   'Forsaga',
 ]
+export const TYPES_ORDER = [
+  'Áform um lagasetningu',
+  'Drög að frumvarpi til laga',
+  'Drög að reglugerð',
+  'Drög að stefnu',
+  'Stöðumat og valkostir',
+  'Annað',
+]

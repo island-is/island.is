@@ -22,7 +22,7 @@ import {
 } from './components'
 import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
-import { CaseStatusFilterOptions } from '../../types/enums'
+import { CaseStatuses } from '../../types/enums'
 import { useContext } from 'react'
 import UserContext from '../../context/UserContext'
 import localization from './Case.json'
@@ -91,8 +91,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                   documents={chosenCase?.additionalDocuments}
                 />
               )}
-              {chosenCase?.statusName !==
-                CaseStatusFilterOptions.resultsPublished && (
+              {chosenCase?.statusName !== CaseStatuses.published && (
                 <CaseEmailBox
                   caseId={caseId}
                   caseNumber={chosenCase?.caseNumber}
@@ -117,8 +116,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                 ) : (
                   <AdviceList advices={advices} chosenCase={chosenCase} />
                 )}
-                {chosenCase?.statusName ===
-                  CaseStatusFilterOptions.forReview && (
+                {chosenCase?.statusName === CaseStatuses.forReview && (
                   <AdviceForm
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}

@@ -1,6 +1,9 @@
 import { CaseForSubscriptions } from '../../../types/interfaces'
 import { createUUIDString } from '../createUUIDString'
-import { SubscriptionType } from '../../../types/enums'
+import {
+  SubscriptionDescriptionKey,
+  SubscriptionType,
+} from '../../../types/enums'
 
 interface ArrOfIdAndName {
   id: string
@@ -48,15 +51,14 @@ const initSubscriptions = ({
   const subscribedToAllNewObj = {
     key: createUUIDString(),
     checked: false,
-    name: 'Tilkynningar um ný mál',
+    name: SubscriptionDescriptionKey[SubscriptionType.OnlyNew],
     subscriptionType: SubscriptionType.OnlyNew,
   }
 
   const subscribedToAllChangesObj = {
     key: createUUIDString(),
     checked: false,
-    name:
-      'Tilkynningar um ný mál, breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna',
+    name: SubscriptionDescriptionKey[SubscriptionType.AllChanges],
     subscriptionType: SubscriptionType.AllChanges,
   }
 
