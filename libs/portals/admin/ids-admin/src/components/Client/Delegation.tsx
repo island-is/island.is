@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
+import { useEnvironmentState } from '../../shared/hooks/useEnvironmentState'
 import { ClientFormTypes } from '../forms/EditApplication/EditApplication.action'
-import { useAuth } from '@island.is/auth/react'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { useMultiEnvSupport } from '../../shared/hooks/useMultiEnvSupport'
+import { useSuperAdmin } from '../../shared/hooks/useSuperAdmin'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -24,10 +24,11 @@ const Delegation = ({
   promptDelegations,
   requireApiScopes,
 }: DelegationProps) => {
-  const { userInfo } = useAuth()
   const { formatMessage } = useLocale()
+  const { shouldSupportMultiEnv } = useMultiEnvSupport()
+  const { isSuperAdmin } = useSuperAdmin()
 
-  const [inputValues, setInputValues] = useState({
+  const [inputValues, setInputValues] = useEnvironmentState({
     supportsCustomDelegation,
     supportsLegalGuardians,
     supportsPersonalRepresentatives,
@@ -36,16 +37,13 @@ const Delegation = ({
     requireApiScopes,
   })
 
-  const isSuperAdmin = userInfo?.scopes.includes(
-    AdminPortalScope.idsAdminSuperUser,
-  )
-
   return (
     <ContentCard
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
+      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={2}>
         <Checkbox

@@ -39,43 +39,31 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   }, [loading, pathname])
 
   return (
-    <>
-      <GridRow marginBottom={marginBottom}>
-        <GridColumn span={isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'}>
-          <Text variant="h3" as="h1">
-            {formatMessage(props.title)}
+    <GridRow marginBottom={marginBottom}>
+      <GridColumn span={isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'}>
+        <Text variant="h3" as="h1">
+          {formatMessage(props.title)}
+        </Text>
+        {props.intro && (
+          <Text variant="default" paddingTop={1}>
+            {formatMessage(props.intro)}
           </Text>
-          {props.intro && (
-            <Text variant="default" paddingTop={1}>
-              {formatMessage(props.intro)}
-            </Text>
-          )}
-          {props.children}
-        </GridColumn>
-        {!isMobile && currentOrganization && (
-          <GridColumn span={'2/8'} offset={'1/8'}>
-            <InstitutionPanel
-              loading={loading}
-              linkHref={currentOrganization?.link ?? ''}
-              img={currentOrganization?.logo?.url ?? ''}
-              imgContainerDisplay="block"
-              tooltipText={props.serviceProviderTooltip}
-              backgroundColor="white"
-            />
-          </GridColumn>
         )}
-      </GridRow>
-      <GridRow>
-        <GridColumn
-          span={['12/12', '12/12', '6/8']}
-          order={3}
-          paddingTop={4}
-          paddingBottom={[2, 2, 2, 0]}
-        >
-          <ModuleAlertBannerSection />
+        {props.children}
+      </GridColumn>
+      {!isMobile && currentOrganization && (
+        <GridColumn span={'2/8'} offset={'1/8'}>
+          <InstitutionPanel
+            loading={loading}
+            linkHref={currentOrganization?.link ?? ''}
+            img={currentOrganization?.logo?.url ?? ''}
+            imgContainerDisplay="block"
+            tooltipText={props.serviceProviderTooltip}
+            backgroundColor="white"
+          />
         </GridColumn>
-      </GridRow>
-    </>
+      )}
+    </GridRow>
   )
 }
 

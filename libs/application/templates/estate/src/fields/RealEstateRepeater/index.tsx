@@ -105,7 +105,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                   disabled={!asset.enabled}
                   backgroundColor="blue"
                   placeholder="0 kr."
-                  defaultValue={(asset as any).marketValue}
+                  defaultValue={asset.marketValue}
                   error={fieldError?.marketValue}
                   currency
                   size="sm"

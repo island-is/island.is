@@ -12,6 +12,11 @@ export const strings = defineMessages({
     defaultMessage: 'Senda inn kæru',
     description: 'Texti í hlekk í viðvörunarglugga um kærufrest',
   },
+  appealCompletedTitle: {
+    id: 'judicial.system.core:court_of_appeal_result.appeal_completed_title',
+    defaultMessage: 'Niðurstaða Landsréttar {appealedDate}',
+    description: 'Titill á niðurstöðu landsréttar á niðurstöðuskjá',
+  },
   statementTitle: {
     id: 'judicial.system.core:appeal_alert_banner.statement_title',
     defaultMessage: 'Úrskurður kærður',
@@ -59,5 +64,42 @@ export const strings = defineMessages({
     defaultMessage: 'Tilkynning um móttöku send {appealReceivedDate}',
     description:
       'Texti í viðvörunarglugga sem birtir upplýsingar um hvenær tilkynning um móttöku kæru var send',
+  },
+  decisionAccept: {
+    id: 'judicial.system.core:appeal_alert_banner.decisionAccept',
+    defaultMessage: 'Staðfesting',
+    description:
+      'Staðfesting á "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
+  },
+  decisionRepeal: {
+    id: 'judicial.system.core:appeal_alert_banner.decisionRepeal',
+    defaultMessage: 'Fella úr gildi',
+    description:
+      'Fallið úr gildi í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
+  },
+  decisionChanged: {
+    id: 'judicial.system.core:appeal_alert_banner.decisionChanged',
+    defaultMessage: 'Niðurstöðu breytt',
+    description:
+      'Niðurstöðu breytt í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
+  },
+  decisionDismissedFromCourtOfAppeal: {
+    id:
+      'judicial.system.core:appeal_alert_banner.decisionDismissedFromCourtOfAppeal',
+    defaultMessage: 'Frávísun frá Landsrétti',
+    description:
+      'Frávísun frá Landsrétti í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
+  },
+  decisionDismissedFromCourt: {
+    id: 'judicial.system.core:appeal_alert_banner.decisionDismissedFromCourt',
+    defaultMessage: 'Frávísun frá héraðsdómi',
+    description:
+      'Frávísun frá héraðsdómi í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
+  },
+  decisionUnlabeling: {
+    id: 'judicial.system.core:appeal_alert_banner.decisionUnlabeling',
+    defaultMessage: 'Ómerking og heimvísun',
+    description:
+      'Ómerking og heimvísun í "Úrskurður" hlutanum á úrskurðar skrefi í Landsrétti.',
   },
 })

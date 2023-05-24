@@ -1,3 +1,6 @@
+import React, { useEffect } from 'react'
+import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
+
 import {
   Box,
   Button,
@@ -6,24 +9,20 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/react/components'
-import { m } from '../../../lib/messages'
-import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
-import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
-import { IDSAdminPaths } from '../../../lib/paths'
-import React, { useContext, useEffect } from 'react'
-import { ClientContext } from '../../../shared/context/ClientContext'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
+import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
+
+import { m } from '../../../lib/messages'
+import { IDSAdminPaths } from '../../../lib/paths'
 import { PublisEnvironmentResult } from './PublishEnvironment.action'
+import { useClient } from '../../Client/ClientContext'
 
 export default function PublishEnvironment() {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const params = useParams()
-  const { publishData, availableEnvironments, setPublishData } = useContext(
-    ClientContext,
-  )
-
+  const { publishData, availableEnvironments, setPublishData } = useClient()
   const actionData = useActionData() as PublisEnvironmentResult
   const { isLoading, isSubmitting } = useSubmitting()
 
@@ -45,6 +44,7 @@ export default function PublishEnvironment() {
         href: IDSAdminPaths.IDSAdminClient,
         params: { tenant: params['tenant'], client: params['client'] },
       }),
+      { preventScrollReset: true },
     )
   }
 

@@ -266,10 +266,11 @@ export class ClientsService extends MultiEnvironmentService {
     })
 
     return (
-      apiScopes?.map(({ name, displayName, description }) => ({
+      apiScopes?.map(({ name, displayName, description, domainName }) => ({
         name,
         displayName,
         description,
+        domainName,
       })) ?? []
     )
   }
@@ -308,5 +309,34 @@ export class ClientsService extends MultiEnvironmentService {
       tenantId: input.tenantId,
       clientId: input.clientId,
     })
+  }
+
+  async revokeSecret(user: User, input: RotateSecretInput) {
+    const adminApi = this.adminApiByEnvironmentWithAuth(input.environment, user)
+
+    if (!adminApi) {
+      throw new Error(`Environment ${input.environment} not configured`)
+    }
+
+    // We consider the first secret to be the active one and the rest as the old secrets to revoke
+    const [_, ...oldSecrets] = await adminApi.meClientSecretsControllerFindAll({
+      tenantId: input.tenantId,
+      clientId: input.clientId,
+    })
+
+    // We revoke the old secrets
+    if (oldSecrets && oldSecrets.length > 0) {
+      await Promise.all(
+        oldSecrets.map((secret) =>
+          adminApi.meClientSecretsControllerDelete({
+            tenantId: input.tenantId,
+            clientId: input.clientId,
+            secretId: secret.secretId,
+          }),
+        ),
+      )
+    }
+
+    return true
   }
 }

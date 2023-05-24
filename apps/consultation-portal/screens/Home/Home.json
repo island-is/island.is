@@ -1,0 +1,27 @@
+{
+  "home": {
+    "seo": {
+      "title": "Öll mál"
+    },
+    "card": {
+      "eyebrowText": "Umsagnir"
+    }
+  },
+  "heroBanner": {
+    "statisticBox": {
+      "label": "Til umsagnar",
+      "text": "mál"
+    },
+    "arrowLink": {
+      "internalLink": {
+        "text": "Lesa meira",
+        "href": "/um"
+      },
+      "externalLink": {
+        "text": "Skoða þingmálaskrá ríkisstjórnar",
+        "href": "https://www.stjornarradid.is/rikisstjorn/thingmalaskra/"
+      }
+    },
+    "introText": "Markmið Samráðsgáttarinnar er að auka gagnsæi og möguleika almennings og hagsmunaaðila á þátttöku í stefnumótun, reglusetningu og ákvarðanatöku opinberra aðila. Hér er á einum stað hægt að finna öll mál ráðuneyta sem birt hafa verið til samráðs við almenning. Öllum er frjálst að senda inn umsögn eða ábendingu."
+  }
+}

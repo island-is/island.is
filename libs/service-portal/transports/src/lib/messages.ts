@@ -648,7 +648,7 @@ export const messages = defineMessages({
     defaultMessage: 'Hver afsláttur nemur 40% af flugfargjaldi.',
   },
   discountTextSecond: {
-    id: 'sp.transports:discount-text',
+    id: 'sp.transports:discount-text-2',
     defaultMessage: 'Kóðinn virkjar afslátt í bókunarvél félagsins.',
   },
   attention: {
@@ -733,7 +733,11 @@ export const urls = defineMessages({
   },
   regNumber: {
     id: 'sp.vehicles:url-registration-number',
-    defaultMessage: 'https://island.is/umsoknir/panta-skraningarmerki',
+    defaultMessage: 'https://island.is/umsoknir/panta-numeraplotu',
+  },
+  regCert: {
+    id: 'sp.vehicles:url-registration-cert',
+    defaultMessage: 'https://island.is/umsoknir/panta-skraningarskirteini',
   },
   renewPrivate: {
     id: 'sp.vehicles:url-renew-private',

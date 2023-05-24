@@ -12,6 +12,7 @@ import {
   m,
   ServicePortalNavigationItem,
   useScrollTopOnUpdate,
+  ModuleAlertBannerSection,
 } from '@island.is/service-portal/core'
 import { useLocation, matchPath } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -157,12 +158,14 @@ export const Layout: FC = ({ children }) => {
                 />
               </Box>
             )}
+            <ModuleAlertBannerSection />
             {children}
           </Box>
         </SidebarLayout>
       )}
       {(isFullwidth || !activeParent) && (
         <FullWidthLayout activeParent={activeParent} height={height}>
+          <ModuleAlertBannerSection />
           {children}
         </FullWidthLayout>
       )}

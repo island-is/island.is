@@ -77,7 +77,7 @@ export const PowerBiSlice = ({ slice }: PowerBiSliceProps) => {
 
   const layoutShouldBeMobilePortrait =
     slice?.powerBiEmbedProps?.displayMobilePortraitLayoutOnSmallScreens &&
-    width < theme.breakpoints.md
+    width < theme.breakpoints.lg
 
   const namespaceResponse = useQuery<
     GetNamespaceQuery,

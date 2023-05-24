@@ -19,6 +19,12 @@
         "jestConfig": "libs/service-portal/transports/jest.config.js",
         "passWithNoTests": true
       }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/transports/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+      }
     }
   },
   "tags": ["lib:portals-mypages", "scope:portals-mypages"]

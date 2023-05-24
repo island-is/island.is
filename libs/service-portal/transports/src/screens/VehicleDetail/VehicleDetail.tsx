@@ -233,7 +233,7 @@ const VehicleDetail = () => {
     },
     {
       title: formatMessage(messages.orderRegistrationLicense),
-      href: formatMessage(urls.regNumber),
+      href: formatMessage(urls.regCert),
     },
     {
       title: formatMessage(messages.addCoOwner),
