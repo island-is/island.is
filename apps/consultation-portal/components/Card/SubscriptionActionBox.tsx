@@ -18,6 +18,7 @@ export const SubscriptionActionBox = ({
 }: SubscriptionActionBoxProps) => {
   return (
     <Box
+      id="write-review"
       display="flex"
       flexDirection={['column', 'column', 'row', 'row']}
       justifyContent={[

@@ -2,8 +2,9 @@ import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { GetClientQuery, GetClientDocument } from './Client.generated'
 
 export type AuthAdminClient = GetClientQuery['authAdminClient']
-export type AuthAdminClientTranslation = GetClientQuery['authAdminClient']['environments'][0]['displayName'][0]
-export type AuthAdminClientSecret = GetClientQuery['authAdminClient']['environments'][0]['secrets']
+export type AuthAdminClientEnvironment = AuthAdminClient['environments'][0]
+export type AuthAdminClientTranslation = AuthAdminClientEnvironment['displayName'][0]
+export type AuthAdminClientSecret = AuthAdminClientEnvironment['secrets']
 
 export const clientLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<AuthAdminClient> => {

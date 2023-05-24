@@ -38,16 +38,18 @@ export const EnvironmentHeader = ({
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
 
-  const options = authAdminEnvironments.map((env) =>
-    formatOption(
-      availableEnvironments.includes(env) || !allowPublishing
+  const options = authAdminEnvironments.map((env) => {
+    const isAvailable = availableEnvironments.includes(env)
+
+    return formatOption(
+      isAvailable || (!allowPublishing && isAvailable)
         ? env
         : formatMessage(m.publishEnvironment, {
             environment: env,
           }),
       env,
-    ),
-  )
+    )
+  })
 
   return (
     <Box

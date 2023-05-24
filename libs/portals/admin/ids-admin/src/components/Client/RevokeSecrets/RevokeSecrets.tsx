@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useParams, useRevalidator } from 'react-router-dom'
 
 import {
@@ -12,8 +11,8 @@ import { useLocale } from '@island.is/localization'
 import { Modal, ModalProps } from '@island.is/react/components'
 
 import { m } from '../../../lib/messages'
-import { ClientContext } from '../../../shared/context/ClientContext'
 import { useRevokeSecretsMutation } from './RevokeSecrets.generated'
+import { useClient } from '../ClientContext'
 
 export const RevokeSecrets = ({
   isVisible,
@@ -22,7 +21,7 @@ export const RevokeSecrets = ({
   const { formatMessage } = useLocale()
   const {
     selectedEnvironment: { environment },
-  } = useContext(ClientContext)
+  } = useClient()
   const { tenant: tenantId, client: clientId } = useParams() as {
     tenant: string
     client: string

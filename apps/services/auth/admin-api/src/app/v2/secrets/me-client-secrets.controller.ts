@@ -71,7 +71,6 @@ export class MeClientSecretsController {
     description: 'Delete a client secret for the specified tenant and client.',
     response: { status: 204 },
   })
-  @Audit()
   async delete(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
