@@ -282,4 +282,19 @@ export const core = defineMessages({
     defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
     description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
   },
+  appealCaseNumberHeading: {
+    id: 'judicial.system.core:appeal_case_number_heading',
+    defaultMessage: 'Málsnúmer Landsréttar',
+    description: 'Titill á málsnúmeri á skráningarsíðu Landsréttar',
+  },
+  appealAssistantHeading: {
+    id: 'judicial.system.core:appeal_assistant_heading',
+    defaultMessage: 'Aðstoðarmaður',
+    description: 'Titill á aðstoðrarmanni á skráningarsíðu Landsréttar',
+  },
+  appealJudgesHeading: {
+    id: 'judicial.system.core:appeal_judges_heading',
+    defaultMessage: 'Dómarar',
+    description: 'Titill dómara á skráningarsíðu Landsréttar',
+  },
 })

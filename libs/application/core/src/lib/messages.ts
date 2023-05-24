@@ -276,6 +276,13 @@ export const coreErrorMessages = defineMessages({
       'Núverandi hjúskaparstaða þín leyfir þér ekki að halda áfram með þessa umsókn. Vinsamlega hafðu samband við Sýslumanninn í Vestmannaeyjum fyrir nánari upplýsingar.',
     description: 'Oops! Something went wrong when fetching your data',
   },
+  errorDataProviderHealthInsuranceCantBeReached: {
+    id:
+      'application.system:core.error.dataProviderHealthInsuranceCantBeReached',
+    defaultMessage:
+      'Ekki tókst að sækja upplýsingar til Sjúkratrygginga. Vinsamlegast reynið aftur síðar.',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',

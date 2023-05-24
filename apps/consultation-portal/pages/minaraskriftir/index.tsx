@@ -9,7 +9,7 @@ import {
   SubGetCasesQuery,
   SubGetTypesQuery,
 } from '../../graphql/queries.graphql.generated'
-import UserSubscriptions from '../../screens/UserSubscriptions/UserSubscriptions'
+import UserSubscriptions from '../../screens/Subscriptions/UserSubscriptions'
 import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
 
 interface SubProps {

@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  BlueBox,
   CaseDates,
   FormContentContainer,
   FormContext,
@@ -38,10 +37,13 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
+import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
-import { AlertBanner } from '../../components/AlertBanner'
-import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
+import Conclusion from '../../components/Conclusion/Conclusion'
+import CaseFilesOverview from '../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
 
 type availableModals =
   | 'NoModal'
@@ -254,72 +256,98 @@ export const CaseOverview: React.FC = () => {
                   phoneNumber: workingCase.defenderPhoneNumber,
                 },
               ]}
+              courtOfAppealData={
+                workingCase.appealCaseNumber
+                  ? [
+                      {
+                        title: formatMessage(core.appealCaseNumberHeading),
+                        value: workingCase.appealCaseNumber,
+                      },
+                      {
+                        title: formatMessage(core.appealAssistantHeading),
+                        value: workingCase.appealAssistant?.name,
+                      },
+                      {
+                        title: formatMessage(core.appealJudgesHeading),
+                        value: (
+                          <>
+                            <Text>{workingCase.appealJudge1?.name}</Text>
+                            <Text>{workingCase.appealJudge2?.name}</Text>
+                            <Text>{workingCase.appealJudge3?.name}</Text>
+                          </>
+                        ),
+                      },
+                    ]
+                  : undefined
+              }
             />
           </Box>
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
-              <BlueBox>
-                <Box marginBottom={2} textAlign="center">
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.conclusionHeading)}
-                  </Text>
-                </Box>
-                <Box marginBottom={3}>
-                  <Box marginTop={1}>
-                    <Text variant="intro">{workingCase.conclusion}</Text>
-                  </Box>
-                </Box>
-                <Box marginBottom={1} textAlign="center">
-                  <Text variant="h4">{workingCase.judge?.name}</Text>
-                </Box>
-              </BlueBox>
+              <Conclusion
+                conclusionText={workingCase.conclusion}
+                judgeName={workingCase.judge?.name}
+              />
             </Box>
           )}
-          <Box marginBottom={10}>
-            <Text as="h3" variant="h3" marginBottom={3}>
-              {formatMessage(m.documentHeading)}
-            </Text>
-            <Box>
-              <PdfButton
-                renderAs="row"
-                caseId={workingCase.id}
-                title={formatMessage(core.pdfButtonRequest)}
-                pdfType={'limitedAccess/request'}
+          {workingCase.appealConclusion && (
+            <Box marginBottom={6}>
+              <AppealConclusion
+                conclusionText={workingCase.appealConclusion}
+                judgeName={workingCase.appealJudge1?.name}
               />
-              {completedCaseStates.includes(workingCase.state) && (
-                <>
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRulingShortVersion)}
-                    pdfType={'limitedAccess/courtRecord'}
-                  >
-                    {workingCase.courtRecordSignatory ? (
-                      <SignedDocument
-                        signatory={workingCase.courtRecordSignatory.name}
-                        signingDate={workingCase.courtRecordSignatureDate}
-                      />
-                    ) : null}
-                  </PdfButton>
-                  <PdfButton
-                    renderAs="row"
-                    caseId={workingCase.id}
-                    title={formatMessage(core.pdfButtonRuling)}
-                    pdfType={'limitedAccess/ruling'}
-                  >
-                    {workingCase.rulingDate ? (
-                      <SignedDocument
-                        signatory={workingCase.judge?.name}
-                        signingDate={workingCase.rulingDate}
-                      />
-                    ) : (
-                      <Text>{formatMessage(m.unsignedRuling)}</Text>
-                    )}
-                  </PdfButton>
-                </>
-              )}
             </Box>
-          </Box>
+          )}
+
+          {workingCase.appealState ? (
+            <CaseFilesOverview />
+          ) : (
+            <Box marginBottom={10}>
+              <Text as="h3" variant="h3" marginBottom={3}>
+                {formatMessage(m.documentHeading)}
+              </Text>
+              <Box>
+                <PdfButton
+                  renderAs="row"
+                  caseId={workingCase.id}
+                  title={formatMessage(core.pdfButtonRequest)}
+                  pdfType={'limitedAccess/request'}
+                />
+                {completedCaseStates.includes(workingCase.state) && (
+                  <>
+                    <PdfButton
+                      renderAs="row"
+                      caseId={workingCase.id}
+                      title={formatMessage(core.pdfButtonRulingShortVersion)}
+                      pdfType={'limitedAccess/courtRecord'}
+                    >
+                      {workingCase.courtRecordSignatory ? (
+                        <SignedDocument
+                          signatory={workingCase.courtRecordSignatory.name}
+                          signingDate={workingCase.courtRecordSignatureDate}
+                        />
+                      ) : null}
+                    </PdfButton>
+                    <PdfButton
+                      renderAs="row"
+                      caseId={workingCase.id}
+                      title={formatMessage(core.pdfButtonRuling)}
+                      pdfType={'limitedAccess/ruling'}
+                    >
+                      {workingCase.rulingDate ? (
+                        <SignedDocument
+                          signatory={workingCase.judge?.name}
+                          signingDate={workingCase.rulingDate}
+                        />
+                      ) : (
+                        <Text>{formatMessage(m.unsignedRuling)}</Text>
+                      )}
+                    </PdfButton>
+                  </>
+                )}
+              </Box>
+            </Box>
+          )}
         </FormContentContainer>
         {modalVisible === 'ConfirmAppealAfterDeadline' && (
           <Modal

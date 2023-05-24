@@ -10,5 +10,8 @@ export class ClientAllowedScope {
   displayName!: TranslatedValue[]
 
   @Field(() => [TranslatedValue], { nullable: true })
-  description!: TranslatedValue[]
+  description?: TranslatedValue[]
+
+  @Field(() => String, { nullable: true })
+  domainName?: string
 }

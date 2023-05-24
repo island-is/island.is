@@ -1,12 +1,19 @@
 import {
+  IAutoPollOptions,
+  DataGovernance,
+  IConfigCatClient,
+} from 'configcat-common'
+
+import {
   FeatureFlagClient,
   FeatureFlagUser,
   FeatureFlagClientProps,
+  SettingValue,
+  SettingTypeOf,
 } from './types'
-import { createClient, IJSAutoPollOptions, DataGovernance } from 'configcat-js'
 
 export class Client implements FeatureFlagClient {
-  private configcat: ReturnType<typeof createClient>
+  private configcat: IConfigCatClient
 
   constructor(config: FeatureFlagClientProps) {
     const resolvedSdkKey = config.sdkKey ?? process.env.CONFIGCAT_SDK_KEY
@@ -15,18 +22,20 @@ export class Client implements FeatureFlagClient {
         'Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable',
       )
     }
-    const ccConfig: IJSAutoPollOptions = {
+    const ccConfig: IAutoPollOptions = {
       dataGovernance: DataGovernance.EuOnly,
     }
     if (typeof window === 'undefined') {
-      this.configcat = eval('require')('configcat-node').createClient(
+      this.configcat = eval('require')('configcat-node').getClient(
         resolvedSdkKey,
+        null,
         ccConfig,
       )
     } else {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      this.configcat = require('configcat-js').createClient(
+      this.configcat = require('configcat-js').getClient(
         resolvedSdkKey,
+        null,
         ccConfig,
       )
     }
@@ -36,11 +45,11 @@ export class Client implements FeatureFlagClient {
     this.configcat.dispose()
   }
 
-  async getValue(
+  async getValue<T extends SettingValue>(
     key: string,
-    defaultValue: boolean | string,
+    defaultValue: T,
     user: FeatureFlagUser,
-  ) {
+  ): Promise<SettingTypeOf<T>> {
     return await this.configcat.getValueAsync(
       key,
       defaultValue,

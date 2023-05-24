@@ -1,5 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { messages } from '@island.is/service-portal/vehicles/messages'
@@ -32,7 +32,9 @@ test.describe('MS - Vehicles', () => {
 
     await test.step('should display data and filter overview', async () => {
       // Arrange
-      await page.goto('/minarsidur/okutaeki/min-okutaeki')
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/okutaeki/min-okutaeki'),
+      )
 
       // Act
       const ownersLicense = page
@@ -65,7 +67,9 @@ test.describe('MS - Vehicles', () => {
 
     await test.step('should display detail', async () => {
       // Arrange
-      await page.goto('/minarsidur/okutaeki/min-okutaeki')
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/okutaeki/min-okutaeki'),
+      )
       await page.waitForLoadState('networkidle')
 
       // Act
@@ -96,7 +100,7 @@ test.describe('MS - Vehicles', () => {
 
     await test.step('should allow lookup of cars', async () => {
       // Arrange
-      await page.goto('/minarsidur/okutaeki/leit')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/okutaeki/leit'))
 
       // Act
       const terms = page
@@ -128,7 +132,9 @@ test.describe('MS - Vehicles', () => {
 
     await test.step('should display and filter data', async () => {
       // Arrange
-      await page.goto('/minarsidur/okutaeki/okutaekjaferill')
+      await page.goto(
+        icelandicAndNoPopupUrl('/minarsidur/okutaeki/okutaekjaferill'),
+      )
 
       // Act
       const tabButton = page.getByRole('tab', {
