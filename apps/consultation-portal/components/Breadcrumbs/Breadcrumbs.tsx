@@ -15,7 +15,7 @@ interface Props {
 export const Breadcrumbs = ({ items }: Props) => {
   const { isMobile } = useIsMobile()
   const padding = [3, 3, 3, 5, 5] as ResponsiveSpace
-  
+
   return (
     <>
       <GridContainer>
