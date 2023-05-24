@@ -7,7 +7,6 @@ import {
   FormStepperThemes,
   Stack,
 } from '@island.is/island-ui/core'
-import { CaseStatuses } from '../../../../types/enums'
 import localization from '../../Case.json'
 
 interface CaseTimelineProps {
@@ -30,7 +29,7 @@ export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
           ? false
           : true
       }
-      section={CaseStatuses[Sections[index]]}
+      section={Sections[index]}
       theme={FormStepperThemes.PURPLE}
       sectionIndex={index}
       subSections={[
