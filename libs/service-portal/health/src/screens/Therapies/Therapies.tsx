@@ -1,5 +1,5 @@
 import { RightsPortalTherapies as TherapiesType } from '@island.is/api/schema'
-import { Box, Tabs, TabType } from '@island.is/island-ui/core'
+import { Box, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
@@ -62,7 +62,6 @@ const Therapies = () => {
       />
     )
   }
-
   // Construct tabs array and filter out empty arrays
   const tabs = [
     physioTherapyData.length > 0 && {
@@ -95,7 +94,7 @@ const Therapies = () => {
         />
       ),
     },
-  ].filter((x) => x !== false) as TabType[]
+  ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
   return (
     <Box marginBottom={[6, 6, 10]}>

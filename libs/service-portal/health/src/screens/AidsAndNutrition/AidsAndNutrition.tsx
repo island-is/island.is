@@ -1,4 +1,4 @@
-import { Box, SkeletonLoader, Tabs, TabType } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
@@ -45,7 +45,7 @@ const AidsAndNutrition = () => {
         />
       ),
     },
-  ].filter((x) => x !== false) as TabType[]
+  ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
   if (error && !loading) {
     return (
