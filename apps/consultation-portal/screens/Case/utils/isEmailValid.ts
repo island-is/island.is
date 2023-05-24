@@ -1,4 +1,4 @@
-export const IsEmailValid = (email: string) => {
+const IsEmailValid = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 

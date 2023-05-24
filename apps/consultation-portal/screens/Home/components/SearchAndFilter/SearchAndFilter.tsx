@@ -1,4 +1,4 @@
-import { ArrOfValueAndLabel, CaseFilter } from '../../../../types/interfaces'
+import { CaseFilter } from '../../../../types/interfaces'
 import {
   Box,
   GridColumn,
@@ -9,6 +9,11 @@ import {
 import { DebouncedSearch } from '../../../../components'
 import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
 import localization from '../../Home.json'
+
+interface ArrOfValueAndLabel {
+  value: string
+  label: string
+}
 
 interface SearchAndFilterProps {
   PolicyAreas: Array<ArrOfValueAndLabel>

@@ -2,9 +2,9 @@ import { Box } from '@island.is/island-ui/core'
 import { Area, SortOptions } from '../../../../types/enums'
 import { SubscriptionArray } from '../../../../types/interfaces'
 import { SearchAndSort } from '../../../../components'
-import SubscriptionTable from '../../../../components/Table/SubscriptionTable'
+import { SubscriptionTable } from '../../components'
 
-export interface TabContentProps {
+interface Props {
   currentTab: Area
   subscriptionArray: SubscriptionArray
   setSubscriptionArray: (_: SubscriptionArray) => void
@@ -28,7 +28,7 @@ export const TabContent = ({
   dontShowNew,
   dontShowChanges,
   isMySubscriptions,
-}: TabContentProps) => {
+}: Props) => {
   return (
     <Box paddingTop={[3, 3, 3, 5, 5]}>
       <SearchAndSort

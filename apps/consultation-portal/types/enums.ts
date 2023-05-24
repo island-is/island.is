@@ -21,14 +21,6 @@ export enum CaseStatusFilterOptions {
   resultsPublished = 'Niðurstöður birtar',
 }
 
-export enum CaseTypesFilterOptions {
-  draftBill = 'Drög að frumvarpi til laga',
-  draftRegulation = 'Drög að reglugerð',
-  draftPolicy = 'Drög að stefnu',
-  positionAndOptions = 'Stöðumat og valkostir',
-  other = 'Annað',
-}
-
 export enum CaseSortOptions {
   lastUpdated = 'Síðast uppfært',
   latestCases = 'Nýjast',

@@ -20,13 +20,13 @@ import {
   AdviceList,
   AdviceSkeletonLoader,
 } from './components'
-import Layout from '../../components/Layout/Layout'
 import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
 import { CaseStatusFilterOptions } from '../../types/enums'
 import { useContext } from 'react'
 import UserContext from '../../context/UserContext'
 import localization from './Case.json'
+import { Layout } from '../../components'
 
 interface Props {
   chosenCase: Case

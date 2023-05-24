@@ -13,7 +13,7 @@ import * as styles from './AdviceCard.css'
 import { getShortDate } from '../../../../utils/helpers/dateFormatter'
 import env from '../../../../lib/environment'
 import { REVIEW_CARD_SCROLL_HEIGHT } from '../../../../utils/consts/consts'
-import { renderDocFileName } from '../../../../utils/helpers'
+import { renderDocFileName } from '../../utils'
 
 export const AdviceCard = ({ advice }) => {
   const [open, setOpen] = useState(true)

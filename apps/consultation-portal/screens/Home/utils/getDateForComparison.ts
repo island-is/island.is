@@ -1,4 +1,4 @@
-export const getDateForComparison = (date: Date | string) => {
+const getDateForComparison = (date: Date | string) => {
   try {
     return new Date(date).getTime()
   } catch (e) {
@@ -6,3 +6,5 @@ export const getDateForComparison = (date: Date | string) => {
     return null
   }
 }
+
+export default getDateForComparison

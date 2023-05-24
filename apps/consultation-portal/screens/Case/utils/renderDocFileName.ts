@@ -1,6 +1,6 @@
-import { REVIEW_CARD_MAX_FILENAME_LENGTH } from '../consts/consts'
+import { REVIEW_CARD_MAX_FILENAME_LENGTH } from '../../../utils/consts/consts'
 
-export const renderDocFileName = (docFileName: string) => {
+const renderDocFileName = (docFileName: string) => {
   if (docFileName.length < REVIEW_CARD_MAX_FILENAME_LENGTH) {
     return docFileName
   } else {
@@ -16,3 +16,5 @@ export const renderDocFileName = (docFileName: string) => {
     return retFileName
   }
 }
+
+export default renderDocFileName

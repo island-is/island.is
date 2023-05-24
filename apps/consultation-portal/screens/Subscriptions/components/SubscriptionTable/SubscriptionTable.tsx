@@ -5,13 +5,13 @@ import {
   Text,
   useBreakpoint,
 } from '@island.is/island-ui/core'
-import { mapIsToEn } from '../../utils/helpers'
-import SubscriptionTableItem from './SubscriptionTableItem'
-import { SubscriptionArray } from '../../types/interfaces'
-import { Area } from '../../types/enums'
-import SubscriptionTableHeader from './components/SubscriptionTableHeader'
+import { mapIsToEn } from '../../../../utils/helpers'
+import { SubscriptionArray } from '../../../../types/interfaces'
+import { Area } from '../../../../types/enums'
+import { SubscriptionTableItem, SubscriptionTableHeader } from './components'
+import localization from '../../Subscriptions.json'
 
-export interface SubscriptionTableProps {
+interface Props {
   currentTab: Area
   subscriptionArray: SubscriptionArray
   setSubscriptionArray: (_: SubscriptionArray) => void
@@ -29,9 +29,10 @@ const SubscriptionTable = ({
   dontShowChanges,
   searchValue,
   isMySubscriptions,
-}: SubscriptionTableProps) => {
+}: Props) => {
   const { md: mdBreakpoint } = useBreakpoint()
   const { Table, Body } = T
+  const loc = localization.subscriptionTable
 
   const { subscribedToAllNewObj, subscribedToAllChangesObj } = subscriptionArray
   const thisData = subscriptionArray[mapIsToEn[currentTab]]
@@ -45,14 +46,14 @@ const SubscriptionTable = ({
       <Stack space={1}>
         <Text variant="medium">
           {isMySubscriptions
-            ? `Engar áskriftir fundust fyrir ${currentTab.toLocaleLowerCase()}`
-            : `Engin gögn fundust fyrir ${currentTab.toLocaleLowerCase()}`}
+            ? `${
+                loc.mySubscriptionNotFoundText
+              } ${currentTab.toLocaleLowerCase()}`
+            : `${
+                loc.subscriptionNotFoundText
+              } ${currentTab.toLocaleLowerCase()}`}
         </Text>
-        {searchValue && (
-          <Text variant="small">
-            Prófaðu að fjarlægja úr leit til að sjá fleiri mál.
-          </Text>
-        )}
+        {searchValue && <Text variant="small">{loc.clearSearchText}</Text>}
       </Stack>
     )
   }

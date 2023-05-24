@@ -1,7 +1,7 @@
 import React from 'react'
 import { Icon, Table as T, useBreakpoint } from '@island.is/island-ui/core'
-import * as styles from '../SubscriptionTable.css'
-import { Area } from '../../../types/enums'
+import * as styles from '../../SubscriptionTable.css'
+import { Area } from '../../../../../../types/enums'
 
 interface TableHeaderProps {
   currentTab: Area
@@ -11,7 +11,8 @@ const Headers = {
   Stofnanir: ['Stofnun'],
   Málefnasvið: ['Málefnasvið'],
 }
-export const SubscriptionTableHeader = ({ currentTab }: TableHeaderProps) => {
+
+const SubscriptionTableHeader = ({ currentTab }: TableHeaderProps) => {
   const { Head, Row, HeadData } = T
   const { md: mdBreakpoint } = useBreakpoint()
 

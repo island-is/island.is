@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { menuItems } from '../../components'
-import { checkActiveHeaderLink } from '../../../../../../utils/helpers'
+import { checkActiveHeaderLink } from '../../../../utils'
 import * as styles from './MenuModal.css'
 import LogoMobile from '../../../../../svg/LogoMobile'
 import { useLogIn, useLogOut } from '../../../../../../hooks'
@@ -107,10 +107,10 @@ const MenuModal = ({ baseId, modalLabel, isLoggedIn, isFrontPage }: Props) => {
                             <div
                               key={index}
                               style={{
-                                backgroundColor: checkActiveHeaderLink(
-                                  router,
-                                  item.href,
-                                )
+                                backgroundColor: checkActiveHeaderLink({
+                                  router: router,
+                                  link: item.href,
+                                })
                                   ? '#00E4CA'
                                   : 'transparent',
                                 borderRadius: '8px',

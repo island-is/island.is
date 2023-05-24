@@ -6,13 +6,15 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import { mapIsToEn, tableRowBackgroundColor } from '../../utils/helpers'
+import { mapIsToEn } from '../../../../../../utils/helpers'
 import * as styles from './SubscriptionTableItem.css'
-import { Area } from '../../types/enums'
+import { Area } from '../../../../../../types/enums'
 import {
   SubscriptionArray,
   SubscriptionTableItem,
-} from '../../types/interfaces'
+} from '../../../../../../types/interfaces'
+import localization from '../../../../Subscriptions.json'
+import { tableRowBackgroundColor } from '../../../../utils'
 
 interface Props {
   item: SubscriptionTableItem
@@ -34,6 +36,7 @@ const SubscriptionTableItem = ({
   setSubscriptionArray,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
+  const loc = localization.subscriptionTableItem
 
   const onClick = () => {
     setIsOpen(!isOpen)
@@ -107,7 +110,7 @@ const SubscriptionTableItem = ({
           isGeneralSubscription ? (
             <Data>
               <FocusableBox>
-                <Text variant="h5">Öll mál</Text>
+                <Text variant="h5">{loc.allCases}</Text>
               </FocusableBox>
               <FocusableBox>
                 <Text variant="medium" fontWeight="light">
@@ -127,7 +130,7 @@ const SubscriptionTableItem = ({
             <Data>
               <FocusableBox onClick={onClick}>
                 <Text variant="h5">
-                  {isGeneralSubscription ? 'Öll mál' : item.caseNumber}
+                  {isGeneralSubscription ? loc.allCases : item.caseNumber}
                 </Text>
               </FocusableBox>
             </Data>
@@ -145,7 +148,7 @@ const SubscriptionTableItem = ({
               <FocusableBox onClick={onClick}>
                 <Stack space={1}>
                   <Text variant="h5">
-                    {isGeneralSubscription ? 'Öll mál' : item.caseNumber}
+                    {isGeneralSubscription ? loc.allCases : item.caseNumber}
                   </Text>
                   <Text variant="medium" fontWeight="light">
                     {item.name}

@@ -5,3 +5,4 @@ export { default as ChosenSubscriptions } from './ChosenSubscriptions/ChosenSubs
 export { default as SubscriptionChoices } from './SubscriptionChoices/SubscriptionChoices'
 export { default as SubscriptionCard } from './SubscriptionCard/SubscriptionCard'
 export { default as CardGridContainer } from './CardGridContainer/CardGridContainer'
+export { default as SubscriptionTable } from './SubscriptionTable/SubscriptionTable'

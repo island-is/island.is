@@ -7,7 +7,7 @@ import {
   usePostCaseSubscription,
   useDeleteCaseSubscription,
 } from '../../../../hooks'
-import { IsEmailValid } from '../../../../utils/helpers'
+import { isEmailValid } from '../../utils'
 import { ReactNode, useEffect, useState } from 'react'
 import { CardSkeleton as CardSkeletonComponent } from '../../../../components'
 import {
@@ -25,6 +25,8 @@ import {
 } from '../../../../types/enums'
 import localization from '../../Case.json'
 
+const loc = localization['caseEmailBox']
+
 interface CardSkeletonProps {
   text?: string
   children?: ReactNode
@@ -33,7 +35,7 @@ interface CardSkeletonProps {
 const CardSkeleton = ({ text, children }: CardSkeletonProps) => {
   return (
     <CardSkeletonComponent>
-      <Stacked title="Skrá áskrift">{text && <Text>{text}</Text>}</Stacked>
+      <Stacked title={loc.buttonLabel}>{text && <Text>{text}</Text>}</Stacked>
       <Box paddingTop={2}>{children}</Box>
     </CardSkeletonComponent>
   )
@@ -45,7 +47,6 @@ interface Props {
 }
 
 export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
-  const loc = localization['caseEmailBox']
   const { isAuthenticated, userLoading } = useUser()
   const [isVerified, setIsVerified] = useState(false)
   const LogIn = useLogIn()
@@ -200,7 +201,7 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
             {
               label: loc.setEmailCardSkeleton.button,
               onClick: onSetEmail,
-              isDisabled: !IsEmailValid(inputValue),
+              isDisabled: !isEmailValid(inputValue),
               isLoading: postEmailLoading,
             },
           ]}
@@ -282,13 +283,13 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
           <CaseEmailActionBox
             selection={[
               {
-                label: CaseSubscriptionType['AllChanges'],
+                label: CaseSubscriptionType[SubscriptionTypes.AllChanges],
                 checked: allChecked,
                 onChange: () => setAllChecked(true),
                 isDisabled: caseSubscriptionLoading,
               },
               {
-                label: CaseSubscriptionType['StatusChanges'],
+                label: CaseSubscriptionType[SubscriptionTypes.StatusChanges],
                 checked: !allChecked,
                 onChange: () => setAllChecked(false),
                 isDisabled: caseSubscriptionLoading,

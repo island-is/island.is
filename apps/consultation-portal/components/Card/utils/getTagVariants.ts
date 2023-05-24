@@ -1,6 +1,6 @@
-import { MapCaseStatuses } from '../../types/enums'
+import { MapCaseStatuses } from '../../../types/enums'
 
-export function getTagVariants(status) {
+const getTagVariants = (status: string) => {
   switch (status) {
     case MapCaseStatuses['Til umsagnar']:
       return 'purple'

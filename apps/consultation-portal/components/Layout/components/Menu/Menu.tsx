@@ -18,7 +18,7 @@ import React, { useContext } from 'react'
 import { MenuLogo, MenuLogoMobile } from '../../../svg'
 import { menuItems, MenuModal } from './components'
 import { useIsMobile, useLogIn, useLogOut } from '../../../../hooks'
-import { checkActiveHeaderLink } from '../../../../utils/helpers'
+import { checkActiveHeaderLink } from '../../utils'
 import { useRouter } from 'next/router'
 import { UserContext } from '../../../../context'
 import localization from '../../Layout.json'
@@ -102,10 +102,10 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                           >
                             <div
                               style={{
-                                backgroundColor: checkActiveHeaderLink(
-                                  router,
-                                  item.href,
-                                )
+                                backgroundColor: checkActiveHeaderLink({
+                                  router: router,
+                                  link: item.href,
+                                })
                                   ? '#00E4CA'
                                   : 'transparent',
                                 borderRadius: '8px',
