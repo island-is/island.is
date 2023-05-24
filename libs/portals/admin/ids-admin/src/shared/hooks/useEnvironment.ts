@@ -26,14 +26,11 @@ export const useEnvironment = <T extends EnvironmentResult<T>>(
   const findEnvironment = (environment: string) =>
     environments.find((env) => env.environment === environment)
 
-  const [prevEnvironments, setPrevEnvironments] = useState(environments)
-  const [environmentResult, setEnvironmentResult] = useState(
-    findEnvironment(environmentName) ?? environments[0],
-  )
+  const environment = findEnvironment(environmentName) ?? environments[0]
 
   useSyncedQueryStringValueWithoutNavigation(
     'env',
-    environmentResult.environment,
+    environment.environment,
     true,
   )
 
@@ -47,19 +44,12 @@ export const useEnvironment = <T extends EnvironmentResult<T>>(
     if (!newEnvironmentResult) return
 
     setEnvironmentName(env)
-    setEnvironmentResult(newEnvironmentResult)
 
     return newEnvironmentResult
   }
 
-  if (prevEnvironments !== environments) {
-    // Make sure to update the environment result if the environments array changes.
-    setEnvironmentResult(findEnvironment(environmentName) ?? environments[0])
-    setPrevEnvironments(environments)
-  }
-
   return {
-    environment: environmentResult,
+    environment,
     updateEnvironment,
   }
 }

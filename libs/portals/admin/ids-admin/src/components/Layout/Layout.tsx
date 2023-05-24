@@ -1,3 +1,5 @@
+import React from 'react'
+
 import {
   Box,
   GridColumn,
@@ -6,7 +8,6 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { PortalNavigation, PortalNavigationItem } from '@island.is/portals/core'
-import React from 'react'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -14,7 +15,11 @@ interface LayoutProps {
   navItems: PortalNavigationItem
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, navTitle, navItems }) => {
+export const Layout: React.FC<LayoutProps> = ({
+  children,
+  navTitle,
+  navItems,
+}) => {
   return (
     <GridContainer>
       <Hidden above="md">
@@ -44,5 +49,3 @@ const Layout: React.FC<LayoutProps> = ({ children, navTitle, navItems }) => {
     </GridContainer>
   )
 }
-
-export default Layout
