@@ -1,8 +1,10 @@
-import { CaseFilter } from '../../types/interfaces'
+import { CaseFilter } from '../../../../types/interfaces'
 import { Box, Button, DatePicker, Stack } from '@island.is/island-ui/core'
-import FilterBox from '../Filterbox/Filterbox'
-import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
-import { getItem } from '../../utils/helpers/localStorage'
+import { FilterBox } from './components/Filterbox'
+import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
+import { getItem } from '../../../../utils/helpers/localStorage'
+import localization from '../../Home.json'
+import { FilterTypes } from '../../../../types/enums'
 
 interface FilterProps {
   filters: CaseFilter
@@ -17,9 +19,10 @@ export const Filter = ({
   initialValues,
   loading,
 }: FilterProps) => {
-  const onChange = (e, type: string) => {
+  const loc = localization.filter.filter
+  const onChange = (date: Date, type: string) => {
     const filtersCopy = { ...filters }
-    filtersCopy.period[type] = e
+    filtersCopy.period[type] = date
     filtersCopy.pageNumber = 0
     setFilters(filtersCopy)
   }
@@ -32,24 +35,24 @@ export const Filter = ({
   return (
     <Stack space={3}>
       <FilterBox
-        title="Röðun"
+        title={loc.sortBoxTitle}
         filters={filters}
         setFilters={setFilters}
-        type="sorting"
+        type={FilterTypes.sorting}
         loading={loading}
       />
       <FilterBox
-        title="Staða máls"
+        title={loc.statusBoxTitle}
         filters={filters}
         setFilters={setFilters}
-        type="caseStatuses"
+        type={FilterTypes.caseStatuses}
         loading={loading}
       />
       <FilterBox
-        title="Tegund máls"
+        title={loc.typeBoxTitle}
         filters={filters}
         setFilters={setFilters}
-        type="caseTypes"
+        type={FilterTypes.caseTypes}
         loading={loading}
       />
 
@@ -57,8 +60,8 @@ export const Filter = ({
         disabled={loading}
         size="sm"
         locale="is"
-        label="Frá"
-        placeholderText="Veldu dagsetningu"
+        label={loc.datePickerFromLabel}
+        placeholderText={loc.datePickerPlaceholder}
         selected={new Date(filters.period.from)}
         handleChange={(e) => onChange(e, 'from')}
       />
@@ -66,8 +69,8 @@ export const Filter = ({
         disabled={loading}
         size="sm"
         locale="is"
-        label="Til"
-        placeholderText="Veldu dagsetningu"
+        label={loc.datePickerToLabel}
+        placeholderText={loc.datePickerPlaceholder}
         selected={new Date(filters.period.to)}
         handleChange={(e) => onChange(e, 'to')}
       />
@@ -80,7 +83,7 @@ export const Filter = ({
           onClick={handleClear}
           loading={loading}
         >
-          Hreinsa allar síur
+          {loc.clearButtonLabel}
         </Button>
       </Box>
     </Stack>

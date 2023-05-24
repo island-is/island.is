@@ -80,3 +80,9 @@ export enum SubscriptionTypes {
   StatusChanges = 'StatusChanges',
   OnlyNew = 'OnlyNew',
 }
+
+export enum FilterTypes {
+  sorting = 'sorting',
+  caseStatuses = 'caseStatuses',
+  caseTypes = 'caseTypes',
+}

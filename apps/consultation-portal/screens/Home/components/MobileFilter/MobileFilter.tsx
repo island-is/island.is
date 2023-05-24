@@ -1,4 +1,4 @@
-import { CaseFilter } from '../../types/interfaces'
+import { CaseFilter } from '../../../../types/interfaces'
 import {
   Box,
   FilterInput,
@@ -10,12 +10,14 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
-import { getItem, setItem } from '../../utils/helpers/localStorage'
-import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
+import { getItem, setItem } from '../../../../utils/helpers/localStorage'
+import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
 import {
   getDateForComparison,
   getFilterItemWithCount,
-} from '../../utils/helpers'
+} from '../../../../utils/helpers'
+import localization from '../../Home.json'
+import { FilterTypes } from '../../../../types/enums'
 
 interface Props {
   filters: CaseFilter
@@ -37,6 +39,7 @@ export const MobileFilter = ({
   total,
   initialValues,
 }: Props) => {
+  const loc = localization.mobileFilter
   const [searchValue, setSearchValue] = useState(filters?.searchQuery)
 
   useEffect(() => {
@@ -74,20 +77,20 @@ export const MobileFilter = ({
 
   const categories = [
     {
-      id: 'sorting',
-      label: 'Röðun',
+      id: FilterTypes.sorting,
+      label: loc.categories.sortingLabel,
       selected: sortingList.map((item) => item.toString()),
       filters: sorting.items,
     },
     {
-      id: 'caseStatuses',
-      label: 'Staða máls',
+      id: FilterTypes.caseStatuses,
+      label: loc.categories.statusLabel,
       selected: caseStatusesList.map((item) => item.toString()),
       filters: caseStatusesWithCount,
     },
     {
-      id: 'caseTypes',
-      label: 'Tegund máls',
+      id: FilterTypes.caseTypes,
+      label: loc.categories.typeLabel,
       selected: caseTypesList.map((item) => item.toString()),
       filters: caseTypesWithCount,
     },
@@ -104,7 +107,7 @@ export const MobileFilter = ({
     const thisData = filtersCopy[categoryId]
 
     const changedItems = thisData?.items.map((item) => {
-      if (categoryId === 'sorting') {
+      if (categoryId === FilterTypes.sorting) {
         if (item.value === '0') {
           return {
             ...item,
@@ -128,7 +131,7 @@ export const MobileFilter = ({
     const filtersCopy = { ...filters }
     const thisData = filtersCopy[categoryId]
 
-    if (categoryId === 'sorting') {
+    if (categoryId === FilterTypes.sorting) {
       const lastChecked = sorting?.items
         .filter((item) => item.checked)
         .map((i) => i.value)
@@ -191,19 +194,19 @@ export const MobileFilter = ({
     <GridContainer>
       <Box paddingY="gutter">
         <Filter
-          labelClearAll="Hreinsa allar síur"
-          labelClear="Hreinsa síu"
-          labelOpen="Opna síu"
-          labelClose="Loka síu"
-          labelTitle="Sía"
-          labelResult="Sýna niðurstöður"
+          labelClearAll={loc.filter.labelClearAll}
+          labelClear={loc.filter.labelClear}
+          labelOpen={loc.filter.labelOpen}
+          labelClose={loc.filter.labelClose}
+          labelTitle={loc.filter.labelTitle}
+          labelResult={loc.filter.labelResult}
           onFilterClear={handleOnClear}
           variant="dialog"
           resultCount={total}
           filterInput={
             <FilterInput
               name="filter-input"
-              placeholder="Sía eftir leitarorði"
+              placeholder={loc.filter.inputPlaceholder}
               value={searchValue}
               onChange={(value) => onChangeSearch(value)}
             />
@@ -211,7 +214,7 @@ export const MobileFilter = ({
         >
           <>
             <FilterMultiChoice
-              labelClear="Hreinsa val"
+              labelClear={loc.filter.multiChoiceLabelClear}
               categories={categories}
               onChange={(event) => handleOnChange(event)}
               onClear={(categoryId) => handleOnCategoryClear(categoryId)}
@@ -220,8 +223,8 @@ export const MobileFilter = ({
               <DatePicker
                 size="sm"
                 locale="is"
-                label="Frá"
-                placeholderText="Veldu dagsetningu"
+                label={loc.filter.datePickerFromLabel}
+                placeholderText={loc.filter.datePickerPlaceholder}
                 selected={new Date(filters.period.from)}
                 handleChange={(e) => onChangeDate(e, 'from')}
                 appearInline
@@ -229,8 +232,8 @@ export const MobileFilter = ({
               <DatePicker
                 size="sm"
                 locale="is"
-                label="Til"
-                placeholderText="Veldu dagsetningu"
+                label={loc.filter.datePickerToLabel}
+                placeholderText={loc.filter.datePickerPlaceholder}
                 selected={new Date(filters.period.to)}
                 handleChange={(e) => onChangeDate(e, 'to')}
                 appearInline
@@ -244,7 +247,7 @@ export const MobileFilter = ({
                     variant="text"
                     onClick={onClearDate}
                   >
-                    Hreinsa val
+                    {loc.filter.clearDateButtonLabel}
                   </Button>
                 </Box>
               )}

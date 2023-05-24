@@ -1,5 +1,5 @@
-import { setItem } from '../../utils/helpers/localStorage'
-import { CaseFilter, FilterInputItem } from '../../types/interfaces'
+import { setItem } from '../../../../../utils/helpers/localStorage'
+import { CaseFilter, FilterInputItem } from '../../../../../types/interfaces'
 import {
   Box,
   Button,
@@ -8,7 +8,9 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
+import { FILTERS_FRONT_PAGE_KEY } from '../../../../../utils/consts/consts'
+import localization from '../../../Home.json'
+import { FilterTypes } from '../../../../../types/enums'
 
 interface FilterBoxProps {
   title: string
@@ -18,13 +20,14 @@ interface FilterBoxProps {
   loading?: boolean
 }
 
-const FilterBox = ({
+export const FilterBox = ({
   title,
   filters,
   setFilters,
   type,
   loading,
 }: FilterBoxProps) => {
+  const loc = localization.filter.filterBox
   const thisFilters = filters[type]
 
   const onChangeIsOpen = () => {
@@ -65,7 +68,7 @@ const FilterBox = ({
 
   const onClear = () => {
     const filtersCopy = { ...filters }
-    if (type === 'sorting') {
+    if (type === FilterTypes.sorting) {
       onChangeRadio('0')
     } else {
       filtersCopy[type].items.map((item: FilterInputItem) => {
@@ -87,7 +90,7 @@ const FilterBox = ({
   )
 
   const clearCategoryCheck = (thisFilters) => {
-    if (type === 'sorting') {
+    if (type === FilterTypes.sorting) {
       if (!thisFilters?.items[0].checked) {
         return true
       }
@@ -113,14 +116,14 @@ const FilterBox = ({
             colorScheme="light"
             circle
             icon={thisFilters?.isOpen ? 'remove' : 'add'}
-            title={thisFilters?.isOpen ? 'Loka' : 'Opna'}
+            title={thisFilters?.isOpen ? loc.buttonClose : loc.buttonOpen}
             onClick={onChangeIsOpen}
           />
         </Inline>
         {thisFilters?.isOpen && (
           <>
             {thisFilters?.items?.map((item: FilterInputItem, index: number) =>
-              type === 'sorting' ? (
+              type === FilterTypes.sorting ? (
                 <Checkbox
                   key={index}
                   checked={item.checked}
@@ -147,7 +150,7 @@ const FilterBox = ({
                   onClick={onClear}
                   loading={loading}
                 >
-                  Hreinsa síu
+                  {loc.clearCategoryButtonLabel}
                 </Button>
               </Box>
             )}
