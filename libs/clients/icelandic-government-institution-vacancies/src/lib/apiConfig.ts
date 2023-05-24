@@ -26,7 +26,7 @@ export const ApiConfig = {
         name: 'clients-icelandic-government-institution-vacancies',
         logErrorResponseBody: true,
         treat400ResponsesAsErrors: true,
-        // TODO: perhaps add a timeout,
+        timeout: 20000,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {

@@ -11,5 +11,5 @@ export class IcelandicGovernmentInstitutionVacanciesInput {
   language?: VacanciesGetLanguageEnum
 
   @Field({ nullable: true })
-  organization?: string
+  institution?: string
 }
