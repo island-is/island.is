@@ -4,6 +4,7 @@ import {
   Button,
   GridColumn,
   GridContainer,
+  GridRow,
   Stack,
   Tabs,
   Text,
@@ -35,7 +36,7 @@ const Overview = () => {
               return (
                 <ActionCard
                   key={list.id}
-                  backgroundColor="blue"
+                  backgroundColor="white"
                   heading={list.title}
                   text={
                     formatMessage(m.listPeriod) +
@@ -73,41 +74,26 @@ const Overview = () => {
 
   return (
     <GridContainer>
-      <IntroHeader
-        title={formatMessage(m.title)}
-        intro={formatMessage(m.overview)}
-      >
-        <GridColumn span={['8/8', '3/8']}>
-          <Box
-            display={'flex'}
-            justifyContent={['flexStart', 'flexEnd']}
-            paddingTop={[2]}
-          >
-            <Button
-              onClick={() =>
-                window.open(
-                  `${document.location.origin}/umsoknir/undirskriftalisti/`,
-                )
-              }
-              size="small"
-            >
-              {formatMessage(m.overview)}
-            </Button>
+      <GridRow>
+        <GridColumn span={['8/12']} offset={['2/12']}>
+          <IntroHeader
+            title={formatMessage(m.title)}
+            intro={formatMessage(m.overview)}
+          />
+          <Box marginTop={8}>
+            <Tabs
+              contentBackground="white"
+              label={formatMessage(m.title)}
+              selected="0"
+              tabs={[
+                tabOption(formatMessage(m.openLists), active),
+                tabOption(formatMessage(m.outdatedLists), closed),
+                tabOption(formatMessage(m.lockedLists), locked),
+              ]}
+            />
           </Box>
         </GridColumn>
-      </IntroHeader>
-      <Box>
-        <Tabs
-          contentBackground="white"
-          label={formatMessage(m.title)}
-          selected="0"
-          tabs={[
-            tabOption(formatMessage(m.openLists), active),
-            tabOption(formatMessage(m.outdatedLists), closed),
-            tabOption(formatMessage(m.lockedLists), locked),
-          ]}
-        />
-      </Box>
+      </GridRow>
     </GridContainer>
   )
 }

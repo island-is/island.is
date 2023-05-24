@@ -8,6 +8,9 @@ import {
   AlertMessage,
   DatePicker,
   Breadcrumbs,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import {
   Form,
@@ -68,116 +71,131 @@ const SingleList = () => {
   }, [actionData])
 
   return (
-    <Box>
-      <Breadcrumbs
-        items={[
-          {
-            title: formatMessage(m.title),
-            href: '/stjornbord' + PetitionPaths.PetitionsRoot,
-          },
-        ]}
-      />
-      {petition ? (
-        <Stack space={3}>
-          <Form method="post">
-            {petition.adminLock && (
-              <AlertMessage type="error" title={''} message="" />
-            )}
-            <Input
-              name="title"
-              value={title ?? ''}
-              onChange={(e) => {
-                setTitle(e.target.value)
-              }}
-              label={'Heiti lista'}
-              size="xs"
-            />
-            <Input
-              size="xs"
-              name="description"
-              value={description ?? ''}
-              onChange={(e) => {
-                setDescription(e.target.value)
-              }}
-              label={'Um lista'}
-              textarea
-              rows={10}
-            />
-            {closedDate && openedDate && (
-              <Box display={['block', 'flex']} justifyContent="spaceBetween">
-                <Box width="half" marginRight={[0, 2]}>
-                  <DatePicker
-                    name="openedDate"
-                    selected={new Date(openedDate)}
-                    handleChange={(date) => setOpenedDate(date)}
-                    label="Tímabil frá"
-                    locale="is"
-                    placeholderText="Veldu dagsetningu"
-                    size="xs"
-                  />
-                </Box>
-                <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
-                  <DatePicker
-                    name="closedDate"
-                    selected={new Date(closedDate)}
-                    handleChange={(date) => setClosedDate(date)}
-                    label="Tímabil til"
-                    locale="is"
-                    placeholderText="Veldu dagsetningu"
-                    size="xs"
-                  />
-                </Box>
-              </Box>
-            )}
-
-            <Input
-              size="xs"
-              backgroundColor="blue"
-              disabled
-              name={petition?.ownerName ?? ''}
-              value={petition?.ownerName ?? ''}
-              label={formatMessage(m.listOwner)}
-            />
-
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              marginTop={5}
-              marginBottom={7}
-            >
-              {!petition.adminLock ? (
-                <Button
-                  icon="lockClosed"
-                  iconType="outline"
-                  colorScheme="destructive"
-                  onClick={openLockListModal}
-                >
-                  {'Loka lista'}
-                </Button>
-              ) : (
-                <Button
-                  icon="reload"
-                  iconType="outline"
-                  onClick={openUnlockListModal}
-                >
-                  {'Opna lista'}
-                </Button>
-              )}
-              <Button loading={isSubmitting || isLoading} type="submit">
-                {'Uppfæra lista'}
-              </Button>
-            </Box>
-          </Form>
-          <PetitionsTable
-            petitions={endorsements}
-            listId={listId}
-            isViewTypeEdit={true}
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={['8/12']} offset={['2/12']}>
+          <Breadcrumbs
+            items={[
+              {
+                title: formatMessage(m.title),
+                href: '/stjornbord' + PetitionPaths.PetitionsRoot,
+              },
+            ]}
           />
-        </Stack>
-      ) : (
-        <Skeleton />
-      )}
-    </Box>
+          {petition ? (
+            <Box marginTop={6}>
+              <Form method="post">
+                {petition.adminLock && (
+                  <AlertMessage
+                    type="error"
+                    title={'Listi er læstur'}
+                    message=""
+                  />
+                )}
+                <Stack space={3}>
+                  <Input
+                    name="title"
+                    value={title ?? ''}
+                    onChange={(e) => {
+                      setTitle(e.target.value)
+                    }}
+                    label={'Heiti lista'}
+                  />
+                  <Input
+                    name="description"
+                    value={description ?? ''}
+                    onChange={(e) => {
+                      setDescription(e.target.value)
+                    }}
+                    label={'Um lista'}
+                    textarea
+                    rows={15}
+                  />
+                  {closedDate && openedDate && (
+                    <Box
+                      display={['block', 'flex']}
+                      justifyContent="spaceBetween"
+                    >
+                      <Box width="half" marginRight={[0, 2]}>
+                        <DatePicker
+                          name="openedDate"
+                          selected={new Date(openedDate)}
+                          handleChange={(date) => setOpenedDate(date)}
+                          label="Tímabil frá"
+                          locale="is"
+                          placeholderText="Veldu dagsetningu"
+                        />
+                      </Box>
+                      <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
+                        <DatePicker
+                          name="closedDate"
+                          selected={new Date(closedDate)}
+                          handleChange={(date) => setClosedDate(date)}
+                          label="Tímabil til"
+                          locale="is"
+                          placeholderText="Veldu dagsetningu"
+                        />
+                      </Box>
+                    </Box>
+                  )}
+
+                  <Input
+                    backgroundColor="blue"
+                    disabled
+                    name={petition?.ownerName ?? ''}
+                    value={petition?.ownerName ?? ''}
+                    label={formatMessage(m.listOwner)}
+                  />
+
+                  <Box
+                    display="flex"
+                    justifyContent="spaceBetween"
+                    marginTop={2}
+                    marginBottom={7}
+                  >
+                    {!petition.adminLock ? (
+                      <Button
+                        icon="lockClosed"
+                        iconType="outline"
+                        colorScheme="destructive"
+                        onClick={openLockListModal}
+                        size="small"
+                      >
+                        {'Loka lista'}
+                      </Button>
+                    ) : (
+                      <Button
+                        icon="reload"
+                        iconType="outline"
+                        onClick={openUnlockListModal}
+                        size="medium"
+                      >
+                        {'Opna lista'}
+                      </Button>
+                    )}
+                    <Button
+                      loading={isSubmitting || isLoading}
+                      type="submit"
+                      size="small"
+                      icon="reload"
+                    >
+                      {'Uppfæra lista'}
+                    </Button>
+                  </Box>
+                </Stack>
+              </Form>
+              <PetitionsTable
+                petitions={endorsements}
+                listId={listId}
+                isViewTypeEdit={true}
+              />
+            </Box>
+          ) : (
+            <Skeleton />
+          )}
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

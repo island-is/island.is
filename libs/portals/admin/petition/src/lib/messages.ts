@@ -7,7 +7,7 @@ export const m = defineMessages({
   },
   overview: {
     id: 'admin-portal.petition:overview',
-    defaultMessage: 'Yfirlit',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   },
   openLists: {
     id: 'admin-portal.petition:openLists',
