@@ -35,7 +35,7 @@ const PetitionsTable = (data: any) => {
   }, [data])
 
   return (
-    <Box>
+    <Box marginTop={12}>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         <DropdownExport

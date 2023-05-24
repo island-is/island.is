@@ -74,16 +74,18 @@ const SingleList = () => {
     <GridContainer>
       <GridRow>
         <GridColumn span={['8/12']} offset={['2/12']}>
-          <Breadcrumbs
-            items={[
-              {
-                title: formatMessage(m.title),
-                href: '/stjornbord' + PetitionPaths.PetitionsRoot,
-              },
-            ]}
-          />
+          <Box marginBottom={6}>
+            <Breadcrumbs
+              items={[
+                {
+                  title: formatMessage(m.title),
+                  href: '/stjornbord' + PetitionPaths.PetitionsRoot,
+                },
+              ]}
+            />
+          </Box>
           {petition ? (
-            <Box marginTop={6}>
+            <>
               <Form method="post">
                 {petition.adminLock && (
                   <AlertMessage
@@ -109,7 +111,7 @@ const SingleList = () => {
                     }}
                     label={'Um lista'}
                     textarea
-                    rows={15}
+                    rows={12}
                   />
                   {closedDate && openedDate && (
                     <Box
@@ -151,7 +153,6 @@ const SingleList = () => {
                     display="flex"
                     justifyContent="spaceBetween"
                     marginTop={2}
-                    marginBottom={7}
                   >
                     {!petition.adminLock ? (
                       <Button
@@ -159,7 +160,6 @@ const SingleList = () => {
                         iconType="outline"
                         colorScheme="destructive"
                         onClick={openLockListModal}
-                        size="small"
                       >
                         {'Loka lista'}
                       </Button>
@@ -168,7 +168,6 @@ const SingleList = () => {
                         icon="reload"
                         iconType="outline"
                         onClick={openUnlockListModal}
-                        size="medium"
                       >
                         {'Opna lista'}
                       </Button>
@@ -176,8 +175,8 @@ const SingleList = () => {
                     <Button
                       loading={isSubmitting || isLoading}
                       type="submit"
-                      size="small"
                       icon="reload"
+                      variant="ghost"
                     >
                       {'Uppfæra lista'}
                     </Button>
@@ -189,7 +188,7 @@ const SingleList = () => {
                 listId={listId}
                 isViewTypeEdit={true}
               />
-            </Box>
+            </>
           ) : (
             <Skeleton />
           )}
