@@ -1,4 +1,4 @@
-import { ArrOfValueAndLabel, CaseFilter } from '../../types/interfaces'
+import { ArrOfValueAndLabel, CaseFilter } from '../../../../types/interfaces'
 import {
   Box,
   GridColumn,
@@ -6,8 +6,9 @@ import {
   GridRow,
   Select,
 } from '@island.is/island-ui/core'
-import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
-import { FILTERS_FRONT_PAGE_KEY } from '../../utils/consts/consts'
+import { DebouncedSearch } from '../../../../components'
+import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
+import localization from '../../Home.json'
 
 interface SearchAndFilterProps {
   PolicyAreas: Array<ArrOfValueAndLabel>
@@ -28,6 +29,8 @@ const SearchAndFilter = ({
   setFilters,
   loading,
 }: SearchAndFilterProps) => {
+  const loc = localization.searchAndFilter
+
   const onChange = (e, isInstitutions: boolean) => {
     const filtersCopy = { ...filters }
     if (isInstitutions) {
@@ -57,13 +60,13 @@ const SearchAndFilter = ({
               disabled={loading}
               isSearchable
               size="xs"
-              label="Málefnasvið"
+              label={loc.policyAreaSelect.label}
               name="policyAreas"
-              noOptionsMessage="Ekkert málefnasvið"
+              noOptionsMessage={loc.policyAreaSelect.noOptions}
               options={[...PolicyAreas].sort((a, b) =>
                 a.label.localeCompare(b.label),
               )}
-              placeholder="Veldu málefnasvið"
+              placeholder={loc.policyAreaSelect.placeholder}
               onChange={(e) => onChange(e, false)}
               isClearable
               value={
@@ -79,13 +82,13 @@ const SearchAndFilter = ({
               disabled={loading}
               isSearchable
               size="xs"
-              label="Stofnun"
+              label={loc.institutionSelect.label}
               name="institutions"
-              noOptionsMessage="Enginn stofnun"
+              noOptionsMessage={loc.institutionSelect.noOptions}
               options={[...Institutions].sort((a, b) =>
                 a.label.localeCompare(b.label),
               )}
-              placeholder="Veldu stofnun"
+              placeholder={loc.institutionSelect.placeholder}
               onChange={(e) => onChange(e, true)}
               value={
                 filters?.institutions.length === 1 &&

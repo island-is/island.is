@@ -10,7 +10,7 @@ type LayoutProps = {
   justifyContent?: 'spaceBetween' | 'flexStart'
 }
 
-export const Layout: FC<LayoutProps> = ({
+const Layout: FC<LayoutProps> = ({
   children,
   isFrontPage,
   seo,

@@ -60,5 +60,17 @@
       "buttonOpen": "Opna",
       "buttonClose": "Loka"
     }
+  },
+  "searchAndFilter": {
+    "policyAreaSelect": {
+      "label": "Málefnasvið",
+      "noOptions": "Ekkert málefnasvið",
+      "placeholder": "Veldu málefnasvið"
+    },
+    "institutionSelect": {
+      "label": "Stofnun",
+      "noOptions": "Enginn stofnun",
+      "placeholder": "Veldu stofnun"
+    }
   }
 }
