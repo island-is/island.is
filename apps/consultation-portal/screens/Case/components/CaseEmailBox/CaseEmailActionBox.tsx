@@ -1,5 +1,6 @@
 import { Box, Button, Checkbox, Input, Stack } from '@island.is/island-ui/core'
 import { SyntheticEvent } from 'react'
+import localization from '../../Case.json'
 
 interface Button {
   label: string
@@ -29,6 +30,7 @@ interface Props {
 }
 
 const CaseEmailActionBox = ({ button, input, selection }: Props) => {
+  const loc = localization['caseEmailActionBox']
   return (
     <Box>
       <div>
@@ -66,7 +68,7 @@ const CaseEmailActionBox = ({ button, input, selection }: Props) => {
                     nowrap
                     colorScheme={index > 0 ? 'destructive' : 'default'}
                     variant={
-                      btn.label === 'Breyta áskrift' ? 'ghost' : 'primary'
+                      btn.label === loc.buttonLabel ? 'ghost' : 'primary'
                     }
                     size="small"
                     onClick={btn.onClick}

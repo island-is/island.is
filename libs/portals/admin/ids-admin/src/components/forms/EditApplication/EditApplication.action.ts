@@ -15,6 +15,7 @@ import {
   AuthAdminRefreshTokenExpiration,
   AuthAdminClientClaim,
 } from '@island.is/api/schema'
+import { zfd } from 'zod-form-data'
 
 export enum ClientFormTypes {
   applicationUrls = 'applicationUrls',
@@ -218,7 +219,12 @@ export const schema = {
         }),
     })
     .merge(defaultSchema),
-  [ClientFormTypes.permissions]: defaultSchema,
+  [ClientFormTypes.permissions]: z
+    .object({
+      addedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
+      removedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
+    })
+    .merge(defaultSchema),
   [ClientFormTypes.none]: defaultSchema,
 }
 
@@ -266,7 +272,6 @@ export const editApplicationAction: WrappedActionFn = ({ client }) => async ({
     formData,
     schema: schema[intent.name],
   })
-  console.log('form submit', Array.from(formData.entries()), result)
 
   const { data, errors } = result
 

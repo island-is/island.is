@@ -513,7 +513,7 @@ export const m = defineMessages({
   permissionsDescription: {
     id: 'ap.ids-admin:permissions-description',
     defaultMessage:
-      'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.\n\nHere you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
+      'List of permissions (scopes) the application can request during authentication. Applications can always request standard scopes like oidc, profile, email, phone and address.{br}{br}Here you can add permissions from the current tenant. For third party permissions, the owner must grant access to your application.',
   },
   permissionsAdd: {
     id: 'ap.ids-admin:permissions-add',

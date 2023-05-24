@@ -11,13 +11,15 @@ import * as styles from './Stakeholders.css'
 import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { SimpleCardSkeleton } from '../../../../components/Card'
 import { Case } from '../../../../types/interfaces'
-
+import localization from '../../Case.json'
 interface Props {
   chosenCase: Case
 }
 
 export const StakeholdersCard = ({ chosenCase }: Props) => {
   const [showStakeholders, setShowStakeholders] = useState<boolean>(false)
+  const loc = localization['stakeholders']
+
   return (
     <FocusableBox
       onClick={() => setShowStakeholders(!showStakeholders)}
@@ -25,7 +27,7 @@ export const StakeholdersCard = ({ chosenCase }: Props) => {
     >
       <SimpleCardSkeleton className={styles.relativeBox}>
         <StackedTitleAndDescription
-          title={`Boð um þátttöku (${chosenCase?.stakeholders?.length})`}
+          title={`${loc.title} (${chosenCase?.stakeholders?.length})`}
         >
           <FocusableBox
             component="button"
@@ -41,14 +43,8 @@ export const StakeholdersCard = ({ chosenCase }: Props) => {
           </FocusableBox>
           {showStakeholders && (
             <>
-              <Text>
-                Allir geta sent inn umsögn og verið áskrifendur að málum í
-                Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent
-                eftirtöldum:
-              </Text>
-              {chosenCase?.stakeholders.length < 1 && (
-                <Text>Enginn listi skráður.</Text>
-              )}
+              <Text>{loc.description}</Text>
+              {chosenCase?.stakeholders.length < 1 && <Text>{loc.noList}</Text>}
               <Box padding="smallGutter">
                 <BulletList type="ul">
                   {chosenCase?.stakeholders.map((stakeholder, index) => {

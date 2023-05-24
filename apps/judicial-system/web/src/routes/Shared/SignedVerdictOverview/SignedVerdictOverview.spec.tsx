@@ -8,11 +8,11 @@ import {
   UserRole,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import {
   getExtensionInfoText,
   shouldHideNextButton,
-  titleForCase,
 } from './SignedVerdictOverview'
 
 window.scrollTo = jest.fn()

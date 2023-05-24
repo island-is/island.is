@@ -3,13 +3,8 @@ import React, { ReactNode } from 'react'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { Text, Box, Select, Option } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useRouteLoaderData } from 'react-router-dom'
 
 import { m } from '../../../lib/messages'
-import {
-  tenantLoaderId,
-  TenantLoaderResult,
-} from '../../../screens/Tenant/Tenant.loader'
 import { authAdminEnvironments } from '../../../shared/utils/environments'
 import * as styles from './EnvironmentHeader.css'
 
@@ -19,6 +14,10 @@ interface EnvironmentHeaderProps {
   availableEnvironments: AuthAdminEnvironment[]
   onChange(value: AuthAdminEnvironment): void
   preHeader?: ReactNode
+  /**
+   * TODO - Remove this prop when publishing is enabled in permissions
+   */
+  allowPublishing?: boolean
 }
 
 const formatOption = (
@@ -35,21 +34,22 @@ export const EnvironmentHeader = ({
   availableEnvironments,
   onChange,
   preHeader,
+  allowPublishing = true,
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
-  const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
-  console.log(tenant)
 
-  const options = tenant.availableEnvironments.map((env) =>
-    formatOption(
-      availableEnvironments.includes(env)
+  const options = authAdminEnvironments.map((env) => {
+    const isAvailable = availableEnvironments.includes(env)
+
+    return formatOption(
+      isAvailable || (!allowPublishing && isAvailable)
         ? env
         : formatMessage(m.publishEnvironment, {
             environment: env,
           }),
       env,
-    ),
-  )
+    )
+  })
 
   return (
     <Box
