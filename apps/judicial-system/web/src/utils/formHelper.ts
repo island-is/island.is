@@ -2,7 +2,6 @@ import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealRulingDecision,
   CaseFile,
   CaseDecision,
   CaseState,
@@ -20,7 +19,6 @@ import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { TUploadFile } from './hooks'
 import * as validations from './validate'
 import { IntlShape } from 'react-intl'
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,

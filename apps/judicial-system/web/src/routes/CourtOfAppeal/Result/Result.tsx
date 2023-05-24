@@ -25,10 +25,6 @@ import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelpe
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
-import { useIntl } from 'react-intl'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
-
 const CourtOfAppealResult: React.FC = () => {
   const {
     workingCase,

@@ -43,9 +43,9 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
 const CourtOfAppealRuling: React.FC = () => {
   const {

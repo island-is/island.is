@@ -30,12 +30,12 @@ import {
 } from '@island.is/judicial-system/types'
 import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
+import TagAppealRuling from '@island.is/judicial-system-web/src/components/TagAppealRuling/TagAppealRuling'
 import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType } from '../../Shared/Cases/utils'
 import { courtOfAppealCases as strings } from './Cases.strings'
-import TagAppealRuling from '../components/TagAppealRuling/TagAppealRuling'
 
 export interface AppealedCasesQueryResponse {
   courtCaseNumber: string
@@ -169,10 +169,11 @@ const CourtOfAppealCases = () => {
                 {tagVariant.text}
               </Tag>
             </Box>
-
-            <TagAppealRuling
-              appealRulingDecision={thisRow.appealRulingDecision}
-            />
+            {thisRow.appealState === CaseAppealState.COMPLETED && (
+              <TagAppealRuling
+                appealRulingDecision={thisRow.appealRulingDecision}
+              />
+            )}
           </>
         )
       },
