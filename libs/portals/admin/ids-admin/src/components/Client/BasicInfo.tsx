@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
 import ContentCard from '../../shared/components/ContentCard'
-import { AuthAdminClientSecret } from './Client.loader'
+import { AuthAdminClientSecret } from '../../screens/Client/Client.loader'
 import { useCopyToClipboard } from '../../shared/hooks/useCopyToClipboard'
 
 interface BasicInfoProps {

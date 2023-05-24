@@ -1,4 +1,4 @@
-import { useCallback, useContext, useReducer, useRef, useState } from 'react'
+import { useCallback, useReducer, useRef, useState } from 'react'
 import { useParams, useRevalidator } from 'react-router-dom'
 
 import {
@@ -14,9 +14,9 @@ import { useLocale } from '@island.is/localization'
 import { Modal, ModalProps } from '@island.is/react/components'
 
 import { m } from '../../../lib/messages'
-import { ClientContext } from '../../../shared/context/ClientContext'
 import { useCopyToClipboard } from '../../../shared/hooks/useCopyToClipboard'
 import { useRotateSecretMutation } from './RotateSecret.generated'
+import { useClient } from '../ClientContext'
 
 export const RotateSecret = ({
   isVisible,
@@ -27,7 +27,7 @@ export const RotateSecret = ({
   const { revalidate } = useRevalidator()
   const {
     selectedEnvironment: { environment },
-  } = useContext(ClientContext)
+  } = useClient()
   const { client: clientId, tenant: tenantId } = useParams() as {
     tenant: string
     client: string
