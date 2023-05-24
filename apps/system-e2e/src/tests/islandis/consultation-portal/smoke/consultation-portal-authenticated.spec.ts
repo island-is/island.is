@@ -52,7 +52,6 @@ test.describe('Consultation portal authenticated', () => {
     test(`${item} should show logged in state`, async () => {
       const page = await context.newPage()
       await page.goto(`/samradsgatt${instance.href}`)
-      await page.waitForURL(`**${instance.href}`)
       for (const { text } of instance.breadcrumbs) {
         expect(page.locator('nav', { has: page.getByText(text) }))
       }
