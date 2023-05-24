@@ -1,8 +1,8 @@
 import { Box } from '@island.is/island-ui/core'
-import { Area, SortOptions } from '../../types/enums'
-import { SubscriptionArray } from '../../types/interfaces'
-import { SearchAndSort } from '../../components'
-import SubscriptionTable from '../Table/SubscriptionTable'
+import { Area, SortOptions } from '../../../../types/enums'
+import { SubscriptionArray } from '../../../../types/interfaces'
+import { SearchAndSort } from '../../../../components'
+import SubscriptionTable from '../../../../components/Table/SubscriptionTable'
 
 export interface TabContentProps {
   currentTab: Area
