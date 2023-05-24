@@ -9,18 +9,18 @@ import {
   GridColumn,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './TenantsList.css'
+import * as styles from './Tenants.css'
 import { Link, useLoaderData } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import type { AuthTenantsList } from './TenantsList.loader'
+import type { AuthTenants } from './Tenants.loader'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
 import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
 
-const TenantsList = () => {
-  const originalTenantsList = useLoaderData() as AuthTenantsList
+const Tenants = () => {
+  const originalTenantsList = useLoaderData() as AuthTenants
   const { formatMessage } = useLocale()
 
   const [tenantList, filterTenantList] = useLooseSearch(
@@ -115,4 +115,4 @@ const TenantsList = () => {
   )
 }
 
-export default TenantsList
+export default Tenants
