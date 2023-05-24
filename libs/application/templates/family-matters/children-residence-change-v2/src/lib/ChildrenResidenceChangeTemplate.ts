@@ -30,6 +30,7 @@ import {
   coreHistoryMessages,
 } from '@island.is/application/core'
 import set from 'lodash/set'
+import { Features } from '@island.is/feature-flags'
 
 type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -55,6 +56,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
   name: application.name,
   dataSchema,
+  featureFlag: Features.childrenResidenceChangeV2,
   stateMachineConfig: {
     initial: ApplicationStates.DRAFT,
     states: {
