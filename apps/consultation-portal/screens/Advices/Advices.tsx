@@ -159,8 +159,15 @@ export const AdvicesScreen = () => {
               ]}
             />
           )}
-          <SearchAndSortPartialData filters={filters} setFilters={setFilters} />
-          {renderCards()}
+          {!userLoading && isAuthenticated && (
+            <>
+              <SearchAndSortPartialData
+                filters={filters}
+                setFilters={setFilters}
+              />
+              {renderCards()}
+            </>
+          )}
         </Stack>
       </GridContainer>
     </Layout>

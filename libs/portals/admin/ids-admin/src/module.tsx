@@ -6,7 +6,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { IDSAdminPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { createClientAction } from './components/forms/CreateClient/CreateClient.action'
-import { tenantsListLoader } from './components/TenantsList/TenantsList.loader'
+import { tenantsLoader } from './screens/Tenants/Tenants.loader'
 import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { clientsLoader } from './screens/Clients/Clients.loader'
 import { clientLoader } from './screens/Client/Client.loader'
@@ -22,7 +22,7 @@ const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
 // Tenant
 const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
-const TenantsList = lazy(() => import('./components/TenantsList/TenantsList'))
+const Tenants = lazy(() => import('./screens/Tenants/Tenants'))
 
 // Client
 const ClientsScreen = lazy(() => import('./screens/Clients/Clients'))
@@ -65,8 +65,8 @@ export const idsAdminModule: PortalModule = {
           {
             name: m.idsAdmin,
             path: IDSAdminPaths.IDSAdmin,
-            element: <TenantsList />,
-            loader: tenantsListLoader(props),
+            element: <Tenants />,
+            loader: tenantsLoader(props),
             navHide: true,
             handle: {
               backPath: IDSAdminPaths.IDSAdmin,
