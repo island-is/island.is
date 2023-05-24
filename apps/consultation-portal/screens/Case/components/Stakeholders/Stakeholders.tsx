@@ -9,7 +9,7 @@ import {
 import { useState } from 'react'
 import * as styles from './Stakeholders.css'
 import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
-import { SimpleCardSkeleton } from '../../../../components/Card'
+import { CardSkeleton } from '../../../../components'
 import { Case } from '../../../../types/interfaces'
 import localization from '../../Case.json'
 interface Props {
@@ -25,7 +25,7 @@ export const StakeholdersCard = ({ chosenCase }: Props) => {
       onClick={() => setShowStakeholders(!showStakeholders)}
       display="block"
     >
-      <SimpleCardSkeleton className={styles.relativeBox}>
+      <CardSkeleton className={styles.relativeBox}>
         <StackedTitleAndDescription
           title={`${loc.title} (${chosenCase?.stakeholders?.length})`}
         >
@@ -55,7 +55,7 @@ export const StakeholdersCard = ({ chosenCase }: Props) => {
             </>
           )}
         </StackedTitleAndDescription>
-      </SimpleCardSkeleton>
+      </CardSkeleton>
     </FocusableBox>
   )
 }

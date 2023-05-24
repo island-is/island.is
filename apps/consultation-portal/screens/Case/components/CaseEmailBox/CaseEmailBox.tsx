@@ -9,7 +9,7 @@ import {
 } from '../../../../hooks'
 import { IsEmailValid } from '../../../../utils/helpers'
 import { ReactNode, useEffect, useState } from 'react'
-import { SimpleCardSkeleton } from '../../../../components/Card'
+import { CardSkeleton as CardSkeletonComponent } from '../../../../components'
 import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import {
   Box,
@@ -33,12 +33,12 @@ interface CardSkeletonProps {
 
 const CardSkeleton = ({ text, children }: CardSkeletonProps) => {
   return (
-    <SimpleCardSkeleton>
+    <CardSkeletonComponent>
       <StackedTitleAndDescription title="Skrá áskrift">
         {text && <Text>{text}</Text>}
       </StackedTitleAndDescription>
       <Box paddingTop={2}>{children}</Box>
-    </SimpleCardSkeleton>
+    </CardSkeletonComponent>
   )
 }
 

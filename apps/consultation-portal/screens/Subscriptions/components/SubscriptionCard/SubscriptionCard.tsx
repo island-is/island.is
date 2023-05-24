@@ -7,7 +7,7 @@ import {
   SubscriptionArray,
   SubscriptionTableItem,
 } from '../../../../types/interfaces'
-import { SimpleCardSkeleton } from '../../../../components/Card/components/SimpleCardSkeleton'
+import { CardSkeleton } from '../../../../components'
 import { CardGridContainer } from '../../../../components/Card/components/CardGridContainer'
 
 interface Props {
@@ -67,7 +67,7 @@ export const SubscriptionCard = ({
   }
 
   return (
-    <SimpleCardSkeleton
+    <CardSkeleton
       borderColor="blue400"
       borderRadius="large"
       background="white"
@@ -96,7 +96,7 @@ export const SubscriptionCard = ({
           />
         </Box>
       )}
-    </SimpleCardSkeleton>
+    </CardSkeleton>
   )
 }
 

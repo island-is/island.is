@@ -1,7 +1,7 @@
 import { Box, BoxProps } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
 
-export interface SimpleCardSkeletonProps extends BoxProps {
+interface Props extends BoxProps {
   borderColor?: 'blue300' | 'blue600' | 'blue200' | 'blue400'
   borderWidth?: 'large' | 'standard'
   borderRadius?: 'large' | 'standard'
@@ -9,14 +9,14 @@ export interface SimpleCardSkeletonProps extends BoxProps {
   className?: string
 }
 
-export const SimpleCardSkeleton = ({
+const CardSkeleton = ({
   borderColor,
   borderWidth,
   borderRadius,
   children,
   className,
   ...props
-}: SimpleCardSkeletonProps) => {
+}: Props) => {
   return (
     <Box
       borderColor={borderColor ? borderColor : 'blue300'}
@@ -32,4 +32,4 @@ export const SimpleCardSkeleton = ({
     </Box>
   )
 }
-export default SimpleCardSkeleton
+export default CardSkeleton

@@ -1,4 +1,4 @@
-import { SimpleCardSkeleton } from '../../../../components/Card'
+import { CardSkeleton } from '../../../../components'
 import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { Text } from '@island.is/island-ui/core'
 import localization from '../../Case.json'
@@ -12,7 +12,7 @@ export const Coordinator = ({ contactEmail, contactName }: Props) => {
   const loc = localization['coordinator']
 
   return (
-    <SimpleCardSkeleton>
+    <CardSkeleton>
       <StackedTitleAndDescription title={loc.title}>
         {contactName || contactEmail ? (
           <>
@@ -23,7 +23,7 @@ export const Coordinator = ({ contactEmail, contactName }: Props) => {
           <Text>{loc.noCoordinator}</Text>
         )}
       </StackedTitleAndDescription>
-    </SimpleCardSkeleton>
+    </CardSkeleton>
   )
 }
 export default Coordinator
