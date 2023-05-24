@@ -2,14 +2,18 @@ import {
   SmartSolutionsApiClientModule,
   SmartSolutionsConfig,
 } from '@island.is/clients/smartsolutions'
-import { Module } from '@nestjs/common'
+import { CACHE_MANAGER, CacheModule, Module } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
 import { GenericDrivingLicenseService } from './genericDrivingLicense.service'
+import { PkPassClient } from './pkpass.client'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Cache as CacheManager } from 'cache-manager'
 
 @Module({
   imports: [
+    CacheModule.register(),
     DrivingLicenseApiModule,
     SmartSolutionsApiClientModule.registerAsync({
       useFactory: (config: ConfigType<typeof GenericDrivingLicenseConfig>) => {
@@ -23,7 +27,24 @@ import { GenericDrivingLicenseService } from './genericDrivingLicense.service'
       inject: [GenericDrivingLicenseConfig.KEY],
     }),
   ],
-  providers: [GenericDrivingLicenseService],
+  providers: [
+    GenericDrivingLicenseService,
+    {
+      provide: PkPassClient,
+      useFactory: (
+        config: ConfigType<typeof GenericDrivingLicenseConfig>,
+        logger: Logger,
+        cacheManager: CacheManager,
+      ) => {
+        return new PkPassClient(config, logger, cacheManager)
+      },
+      inject: [
+        GenericDrivingLicenseConfig.KEY,
+        LOGGER_PROVIDER,
+        CACHE_MANAGER
+      ]
+    },
+  ],
   exports: [GenericDrivingLicenseService],
 })
 export class GenericDrivingLicenseModule {}
