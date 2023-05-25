@@ -1,0 +1,11 @@
+{
+  "card": {
+    "tagText": "Nr.",
+    "adviceDateText": "Umsagnarfrestur",
+    "arrowLink": {
+      "text": "Skoða mál",
+      "href": "/mal"
+    },
+    "publishedText": "Birt"
+  }
+}

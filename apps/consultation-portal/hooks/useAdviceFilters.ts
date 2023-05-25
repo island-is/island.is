@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AdviceFilter } from '../types/interfaces'
 import getDefaultFilters from '../utils/helpers/adviceFilters/getDefaultFilters'
 import { useFetchAdvices } from './api/useFetchAdvices'
@@ -16,16 +16,19 @@ export const useAdviceFilters = ({ isAuthenticated }: Props) => {
     pageNumber: 0,
   } as AdviceFilter
 
-  const defaultValues = getDefaultFilters(initialValues)
-
   const [filters, setFilters] = useState<AdviceFilter>({
-    ...defaultValues,
+    ...initialValues,
   })
 
   const { advices, total, getAdvicesLoading } = useFetchAdvices({
     input: filters,
     isAuthenticated: isAuthenticated,
   })
+
+  useEffect(() => {
+    const nextFilters = getDefaultFilters(filters)
+    setFilters(nextFilters)
+  }, [])
 
   return {
     advices,

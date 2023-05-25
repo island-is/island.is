@@ -2,7 +2,7 @@ import { Case } from '../../../../types/interfaces'
 import {
   getDateBeginDateEnd,
   getShortDate,
-} from '../../../../utils/helpers/dateFormatter'
+} from '../../../../utils/helpers/dateFunctions'
 import {
   Box,
   Input,
@@ -12,22 +12,20 @@ import {
   Inline,
   Divider,
   UploadFile,
-  Hidden,
   fileToObject,
   toast,
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { useLogIn, usePostAdvice } from '../../../../hooks'
-import { SubscriptionActionBox } from '../../../../components/Card'
+import { useIsMobile, useLogIn, usePostAdvice } from '../../../../hooks'
 import { PresignedPost } from '@island.is/api/schema'
 import {
   REVIEW_FILENAME_MAXIMUM_LENGTH,
   REVIEW_MAXIMUM_LENGTH,
   REVIEW_MINIMUM_LENGTH,
 } from '../../../../utils/consts/consts'
-import { AgencyText } from './components/AgencyText'
+import { AgencyText, ActionBox } from './components/'
 import { createUUIDString } from '../../../../utils/helpers'
 import { advicePublishTypeKeyHelper } from '../../../../types/enums'
 import localization from '../../Case.json'
@@ -57,6 +55,7 @@ export const AdviceForm = ({
   caseId,
   refetchAdvices,
 }: CardProps) => {
+  const { isMobile } = useIsMobile()
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
   const [showInputError, setShowInputError] = useState(false)
@@ -216,11 +215,11 @@ export const AdviceForm = ({
           <Text variant="eyebrow" color="purple400">
             {`${loc.card.eyebrowText} S-${card.caseNumber}`}
           </Text>
-          <Hidden below="lg">
+          {!isMobile && (
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
               <Divider weight="purple400" />
             </Box>
-          </Hidden>
+          )}
           <Box>
             <Text variant="eyebrow" color="purple400">
               {`${loc.card.forReviewText}: ${getDateBeginDateEnd(
@@ -321,7 +320,7 @@ export const AdviceForm = ({
     </Box>
   ) : (
     <>
-      <SubscriptionActionBox
+      <ActionBox
         heading={loc.loginActionBox.heading}
         text={loc.loginActionBox.text}
         cta={{ label: loc.loginActionBox.ctaLabel, onClick: LogIn }}
