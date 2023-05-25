@@ -27,6 +27,7 @@ export default function UnlockList() {
       actionData?.endorsementSystemUnlockEndorsementList
         ? toast.success(formatMessage(m.todo))
         : toast.error(formatMessage(m.todo))
+      cancel()
     }
   }, [actionData])
 

@@ -27,6 +27,7 @@ export default function LockList() {
       actionData?.endorsementSystemLockEndorsementList
         ? toast.success(formatMessage(m.todo))
         : toast.error(formatMessage(m.todo))
+      cancel()
     }
   }, [actionData])
 
