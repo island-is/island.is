@@ -10,7 +10,6 @@ import {
   Regulation,
   LawChapter,
   Appendix,
-  RegulationHistoryItem,
 } from './types'
 
 // ---------------------------------------------------------------------------

@@ -3,6 +3,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 
 import { NestDataLoader, GraphQLContext } from '@island.is/nest/dataloader'
 import { User } from '@island.is/auth-nest-tools'
+
 import { ClientsService } from './clients.service'
 import { ClientAllowedScopeInput } from './dto/client-allowed-scope.input'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'

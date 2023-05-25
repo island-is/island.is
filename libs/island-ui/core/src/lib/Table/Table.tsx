@@ -26,38 +26,43 @@ export const Table = ({
   children,
   box,
   ...props
-}: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => {
-  return (
-    <div
-      className={useBoxStyles({ component: 'div', overflow: 'auto', ...box })}
+}: Table & Omit<AllHTMLAttributes<HTMLTableElement>, 'className'>) => (
+  <div className={useBoxStyles({ component: 'div', overflow: 'auto', ...box })}>
+    <table
+      className={cn(
+        useBoxStyles({
+          component: 'table',
+          width: 'full',
+        }),
+        styles.table,
+      )}
+      {...props}
     >
-      <table
-        className={cn(
-          useBoxStyles({
-            component: 'table',
-            width: 'full',
-          }),
-          styles.table,
-        )}
-        {...props}
-      >
-        {children}
-      </table>
-    </div>
-  )
+      {children}
+    </table>
+  </div>
+)
+
+interface HeadProps {
+  sticky?: boolean
 }
-export const Head: FC = ({ children }) => {
-  return <thead>{children}</thead>
-}
-export const Body: FC = ({ children }) => {
-  return <tbody>{children}</tbody>
-}
-export const Foot: FC = ({ children }) => {
-  return <tfoot>{children}</tfoot>
-}
-export const Row: FC = ({ children }) => {
-  return <tr>{children}</tr>
-}
+
+export const Head: FC<HeadProps> = ({ children, sticky }) => (
+  <thead
+    {...(sticky && {
+      className: styles.stickyHead,
+    })}
+  >
+    {children}
+  </thead>
+)
+
+export const Body: FC = ({ children }) => <tbody>{children}</tbody>
+
+export const Foot: FC = ({ children }) => <tfoot>{children}</tfoot>
+
+export const Row: FC = ({ children }) => <tr>{children}</tr>
+
 export const Data = ({
   children,
   text = {},

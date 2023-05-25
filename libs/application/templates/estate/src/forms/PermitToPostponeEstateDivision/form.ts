@@ -3,18 +3,16 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
-import { JA, NEI, NO, YES } from '../../lib/constants'
+import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
   id: 'permitToPostponeEstateDivisionForm',
@@ -31,7 +29,7 @@ export const form: Form = buildForm({
       children: [
         buildSubSection({
           id: 'estateMembers',
-          title: m.estateMembersTitle,
+          title: m.estateMembers,
           children: [
             buildMultiField({
               id: 'estateMembersInfo',
@@ -54,76 +52,7 @@ export const form: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'testamentInfo',
-          title: m.willsAndAgreements,
-          children: [
-            buildMultiField({
-              id: 'testamentInfo',
-              title: m.estateMembersTitle,
-              description: m.estateMembersSubtitle,
-              children: [
-                buildDescriptionField({
-                  id: 'willsAndAgreementsTitle',
-                  title: m.willsAndAgreements,
-                  description: m.willsAndAgreementsDescription,
-                  titleVariant: 'h3',
-                  marginBottom: 2,
-                }),
-                buildRadioField({
-                  id: 'estate.testament.wills',
-                  title: m.doesWillExist,
-                  largeButtons: false,
-                  width: 'half',
-                  space: 2,
-                  options: [
-                    { value: YES, label: JA },
-                    { value: NO, label: NEI },
-                  ],
-                }),
-                buildRadioField({
-                  id: 'estate.testament.agreement',
-                  title: m.doesAgreementExist,
-                  largeButtons: false,
-                  width: 'half',
-                  space: 2,
-                  options: [
-                    { value: YES, label: JA },
-                    { value: NO, label: NEI },
-                  ],
-                }),
-                buildRadioField({
-                  id: 'estate.testament.dividedEstate',
-                  title: m.doesPermissionToPostponeExist,
-                  largeButtons: false,
-                  width: 'half',
-                  space: 2,
-                  options: [
-                    { value: YES, label: JA },
-                    { value: NO, label: NEI },
-                  ],
-                  condition: (answers) =>
-                    getValueViaPath<string>(
-                      answers,
-                      'estate.testament.wills',
-                    ) === YES,
-                }),
-                buildDescriptionField({
-                  id: 'space',
-                  title: '',
-                  marginBottom: 2,
-                }),
-                buildTextField({
-                  id: 'estate.testament.additionalInfo',
-                  title: m.additionalInfo,
-                  placeholder: m.additionalInfoPlaceholder,
-                  variant: 'textarea',
-                  rows: 7,
-                }),
-              ],
-            }),
-          ],
-        }),
+        testamentInfo,
       ],
     }),
     buildSection({
@@ -201,11 +130,22 @@ export const form: Form = buildForm({
                   description: m.vehiclesDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.vehicles',
-                  component: 'VehiclesRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.vehicles',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'vehicles',
+                    texts: {
+                      assetTitle: m.vehiclesTitle,
+                      assetNumber: m.vehicleNumberLabel,
+                      assetType: m.vehicleTypeLabel,
+                      addAsset: m.addVehicle,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -225,11 +165,22 @@ export const form: Form = buildForm({
                   description: m.gunsDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.guns',
-                  component: 'GunsRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.guns',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'guns',
+                    texts: {
+                      assetTitle: m.gunTitle,
+                      assetNumber: m.gunNumberLabel,
+                      assetType: m.gunTypeLabel,
+                      addAsset: m.addGun,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -363,7 +314,7 @@ export const form: Form = buildForm({
                       {
                         title: m.stocksValue.defaultMessage,
                         id: 'value',
-                        color: 'white',
+                        backgroundColor: 'white',
                         readOnly: true,
                       },
                     ],

@@ -54,7 +54,7 @@ export const UserProvider: React.FC<Props> = ({
     <UserContext.Provider
       value={{
         isAuthenticated,
-        limitedAccess: user?.role === UserRole.Defender,
+        limitedAccess: user?.role === UserRole.DEFENDER,
         user,
       }}
     >

@@ -5,6 +5,8 @@ export interface Case {
   caseNumber?: string
   name?: string
   adviceCount?: number
+  advicePublishTypeId?: number
+  advicePublishTypeName?: string
   shortDescription?: string
   detailedDescription?: string
   statusName?: string
@@ -19,9 +21,12 @@ export interface Case {
   changed?: string
   summaryDate?: string
   summaryText?: string
+  summaryLink?: string
+  summaryDocumentId?: string
   contactName?: string
   contactEmail?: string
   documents?: Array<Document>
+  additionalDocuments?: Array<Document>
   stakeholders?: Array<Stakeholder>
 }
 
@@ -63,28 +68,6 @@ export interface CaseForSubscriptions {
   policyAreaName: string
 }
 
-export interface ArrOfIdAndName {
-  id: string
-  name: string
-}
-
-export interface ArrOfValueAndLabel {
-  value: string
-  label: string
-}
-
-// export interface SubscriptionArray {
-//   caseIds: Array<SubscriptionItem>
-//   institutionIds: Array<SubscriptionItem>
-//   policyAreaIds: Array<SubscriptionItem>
-//   generalSubscription: string
-// }
-
-export interface SubscriptionItem {
-  id: number
-  subscriptionType: string
-}
-
 export interface SortTitle {
   Mál: SortOptions
   Stofnanir: SortOptions
@@ -116,14 +99,14 @@ export type FilterInputItem = {
   count?: number | unknown
 }
 
-export interface FilterInputItems {
-  items: Array<FilterInputItem>
-  isOpen?: boolean
-}
-
 export type PeriodInput = {
   from?: Date
   to?: Date
+}
+
+interface FilterInputItems {
+  items: Array<FilterInputItem>
+  isOpen?: boolean
 }
 
 export interface CaseFilter {
@@ -136,19 +119,6 @@ export interface CaseFilter {
   pageSize?: number
   policyAreas?: Array<number>
   searchQuery?: string
-}
-
-export interface FetchCasesInput {
-  caseStatuses: Array<number>
-  caseTypes: Array<number>
-  orderBy: string
-  searchQuery: string
-  policyAreas: Array<number>
-  institutions: Array<number>
-  dateFrom: Date
-  dateTo: Date
-  pageSize: number
-  pageNumber: number
 }
 
 export interface SEOProps {
@@ -164,44 +134,10 @@ export interface FilterGroups {
   Statuses?: { [key: string]: string }
 }
 
-export interface ValueCountPair {
-  value?: string
-  count?: string
-}
-
-export interface AdviceFileRequest {
-  filename?: string
-  base64Document?: string
-}
-
-export interface AdviceRequest {
-  content?: string
-  adviceFiles?: AdviceFileRequest
-}
-
-export interface PostAdviceForm {
-  caseId?: number
-  adviceRequest?: AdviceRequest
-}
-
-export interface FileObject {
-  name: string
-  originalFileObj: File
-  size?: number
-  type?: string
-}
-
 export interface User {
   name?: string
   email?: string
   image?: string
-}
-
-export interface TypeForSubscriptions {
-  id: string
-  type: string
-  name: string
-  nr: any
 }
 
 export interface AdviceFilter {
@@ -264,14 +200,6 @@ export interface SubscriptionArray {
   cases?: Array<CasesSubscriptionData>
   institutions?: Array<InstitutionsSubscriptionData>
   policyAreas?: Array<PolicyAreasSubscriptionData>
-  subscribedToAllNewObj?: GeneralSubscriptionData
-  subscribedToAllChangesObj?: GeneralSubscriptionData
-}
-
-export interface SubscriptionArrayForValue {
-  case?: CasesSubscriptionData
-  institution?: InstitutionsSubscriptionData
-  policyArea?: PolicyAreasSubscriptionData
   subscribedToAllNewObj?: GeneralSubscriptionData
   subscribedToAllChangesObj?: GeneralSubscriptionData
 }

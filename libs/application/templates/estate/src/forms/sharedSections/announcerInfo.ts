@@ -64,6 +64,7 @@ export const announcerInfo = buildSection({
           title: m.phone,
           width: 'half',
           format: '###-####',
+          required: true,
           defaultValue: (application: Application) => {
             const phone =
               (application.externalData.userProfile?.data as {
@@ -77,6 +78,7 @@ export const announcerInfo = buildSection({
           id: 'applicant.email',
           title: m.email,
           width: 'half',
+          required: true,
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile?.data as UserProfile
             return data?.email

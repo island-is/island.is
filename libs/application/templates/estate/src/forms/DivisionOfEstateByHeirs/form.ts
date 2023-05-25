@@ -4,18 +4,18 @@ import {
   buildDescriptionField,
   buildForm,
   buildMultiField,
-  buildRadioField,
   buildSection,
   buildSubmitField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { NO, YES, NEI, JA } from '../../lib/constants'
+import { YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
+import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
   id: 'divisionOfEstateByHeirsForm',
@@ -55,60 +55,7 @@ export const form: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'testamentInfo',
-          title: m.willsAndAgreements,
-          children: [
-            buildMultiField({
-              id: 'testamentInfo',
-              title: m.estateMembersTitle,
-              description: m.estateMembersSubtitle,
-              children: [
-                buildDescriptionField({
-                  id: 'willsAndAgreementsTitle',
-                  title: m.willsAndAgreements,
-                  description: m.willsAndAgreementsDescription,
-                  titleVariant: 'h3',
-                  marginBottom: 2,
-                }),
-                buildRadioField({
-                  id: 'estate.testament.wills',
-                  title: m.doesWillExist,
-                  largeButtons: false,
-                  width: 'half',
-                  space: 2,
-                  options: [
-                    { value: YES, label: JA },
-                    { value: NO, label: NEI },
-                  ],
-                }),
-                buildRadioField({
-                  id: 'estate.testament.agreement',
-                  title: m.doesAgreementExist,
-                  largeButtons: false,
-                  width: 'half',
-                  space: 2,
-                  options: [
-                    { value: YES, label: JA },
-                    { value: NO, label: NEI },
-                  ],
-                }),
-                buildDescriptionField({
-                  id: 'space',
-                  title: '',
-                  marginBottom: 2,
-                }),
-                buildTextField({
-                  id: 'estate.testament.additionalInfo',
-                  title: m.additionalInfo,
-                  placeholder: m.additionalInfoPlaceholder,
-                  variant: 'textarea',
-                  rows: 7,
-                }),
-              ],
-            }),
-          ],
-        }),
+        testamentInfo,
       ],
     }),
     buildSection({
@@ -186,11 +133,22 @@ export const form: Form = buildForm({
                   description: m.vehiclesDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.vehicles',
-                  component: 'VehiclesRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.vehicles',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'vehicles',
+                    texts: {
+                      assetTitle: m.vehiclesTitle,
+                      assetNumber: m.vehicleNumberLabel,
+                      assetType: m.vehicleTypeLabel,
+                      addAsset: m.addVehicle,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -210,11 +168,22 @@ export const form: Form = buildForm({
                   description: m.gunsDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.guns',
-                  component: 'GunsRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.guns',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'guns',
+                    texts: {
+                      assetTitle: m.gunTitle,
+                      assetNumber: m.gunNumberLabel,
+                      assetType: m.gunTypeLabel,
+                      addAsset: m.addGun,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -348,7 +317,7 @@ export const form: Form = buildForm({
                       {
                         title: m.stocksValue.defaultMessage,
                         id: 'value',
-                        color: 'white',
+                        backgroundColor: 'white',
                         readOnly: true,
                       },
                     ],
@@ -475,25 +444,24 @@ export const form: Form = buildForm({
           title: m.representativeTitle,
           description: m.representativeDescription,
           children: [
+            buildCustomField(
+              {
+                title: '',
+                id: 'representative',
+                component: 'LookupPerson',
+              },
+              {
+                requiredNationalId: false,
+              },
+            ),
             buildTextField({
-              id: 'representative.representativeNationalId',
-              title: m.nationalId,
-              width: 'half',
-              format: '######-####',
-            }),
-            buildTextField({
-              id: 'representative.representativeName',
-              title: m.name,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'representative.representativePhoneNumber',
+              id: 'representative.phone',
               title: m.phone,
               width: 'half',
               format: '###-####',
             }),
             buildTextField({
-              id: 'representative.representativeEmail',
+              id: 'representative.email',
               title: m.email,
               width: 'half',
             }),

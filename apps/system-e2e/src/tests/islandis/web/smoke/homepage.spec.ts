@@ -1,14 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import {
-  DefaultStub,
-  HttpMethod,
-  Imposter,
-  Mountebank,
-  Proxy,
-  ProxyMode,
-} from '@anev/ts-mountebank'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -54,7 +46,10 @@ test.describe('Front page', () => {
       )
       for (const url of lifeEventUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!, { waitUntil: 'networkidle' })
+        const result = await page.goto(url!)
+        await expect(
+          page.getByRole('link', { name: 'island.is logo' }),
+        ).toBeVisible()
         expect(result!.status()).toBe(200)
         await page.close()
       }
@@ -71,9 +66,10 @@ test.describe('Front page', () => {
       )
       for (const url of featuresLinksUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!, {
-          waitUntil: 'networkidle',
-        })
+        const result = await page.goto(url!)
+        await expect(
+          page.getByRole('link', { name: 'island.is logo' }),
+        ).toBeVisible()
         expect(result!.status()).toBe(200)
         await page.close()
       }

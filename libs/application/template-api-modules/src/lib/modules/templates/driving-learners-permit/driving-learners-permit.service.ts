@@ -7,6 +7,7 @@ import { DrivingLicenseApi } from '@island.is/clients/driving-license'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { getValueViaPath } from '@island.is/application/core'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class DrivingLearnersPermitService extends BaseTemplateApiService {
@@ -27,12 +28,30 @@ export class DrivingLearnersPermitService extends BaseTemplateApiService {
         'studentMentorability.studentNationalId',
         '',
       ) ?? ''
-    const practicePermitApplication = await this.drivingLicenseService.postPracticePermitApplication(
-      {
-        token: auth.authorization.split(' ')[1], // Used to remove the bearer part
+    const practicePermitApplication = await this.drivingLicenseService
+      .postPracticePermitApplication({
+        token: auth.authorization.split(' ')[1], // Removes the Bearer prefix
         studentSSN,
-      },
-    )
+      })
+      .catch(() => {
+        throw new TemplateApiError(
+          {
+            summary: 'Umsókn hafnað af ökuskírteinaskrá',
+            title: 'Villa í umsókn',
+          },
+          400,
+        )
+      })
+
+    if (!practicePermitApplication.isOk) {
+      throw new TemplateApiError(
+        {
+          summary: 'Umsókn hafnað af ökuskírteinaskrá',
+          title: 'Villa í umsókn',
+        },
+        400,
+      )
+    }
 
     return {
       practicePermitApplication,

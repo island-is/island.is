@@ -390,13 +390,13 @@ const Defendant: React.FC = () => {
                     setPoliceCase={handleSetPoliceCase}
                     deletePoliceCase={
                       workingCase.policeCaseNumbers.length > 1 &&
-                      !(workingCase.origin === CaseOrigin.Loke && index === 0)
+                      !(workingCase.origin === CaseOrigin.LOKE && index === 0)
                         ? handleDeletePoliceCase
                         : undefined
                     }
                     updatePoliceCases={handleUpdatePoliceCases}
                     policeCaseNumberImmutable={
-                      workingCase.origin === CaseOrigin.Loke && index === 0
+                      workingCase.origin === CaseOrigin.LOKE && index === 0
                     }
                   />
                 </Box>
@@ -438,14 +438,14 @@ const Defendant: React.FC = () => {
                     onDelete={
                       workingCase.defendants &&
                       workingCase.defendants.length > 1 &&
-                      !(workingCase.origin === CaseOrigin.Loke && index === 0)
+                      !(workingCase.origin === CaseOrigin.LOKE && index === 0)
                         ? handleDeleteDefendant
                         : undefined
                     }
                     onChange={handleUpdateDefendant}
                     updateDefendantState={updateDefendantState}
                     nationalIdImmutable={
-                      workingCase.origin === CaseOrigin.Loke && index === 0
+                      workingCase.origin === CaseOrigin.LOKE && index === 0
                     }
                   />
                 </Box>

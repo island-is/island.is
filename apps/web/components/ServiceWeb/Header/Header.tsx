@@ -56,7 +56,7 @@ export const Header = ({
       {({ institutionSlug }) => (
         <Hidden print={true}>
           <header>
-            <GridContainer>
+            <GridContainer className={styles.gridContainer}>
               <GridRow>
                 <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
                   <Columns alignY="center" space={2}>

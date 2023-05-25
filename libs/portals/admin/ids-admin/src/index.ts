@@ -1,2 +1,2 @@
 export { idsAdminModule } from './module'
-export { idsAdminNavigation, domainNav } from './lib/navigation'
+export { idsAdminNavigation, idsAdminNav } from './lib/navigation'

@@ -1,14 +1,15 @@
 import { AdviceFilter } from '../../types/interfaces'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useState } from 'react'
-import DropdownSort from '../DropdownSort/DropdownSort'
-import { Area, SortOptionsAdvices } from '../../types/enums'
-import { useIsMobile } from '../../utils/helpers'
-import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
+import DropdownSort from './components/DropdownSort'
+import { SortOptionsAdvices } from '../../types/enums'
+import { useIsMobile } from '../../hooks'
+import { DebouncedSearch } from '../../components'
 import cn from 'classnames'
 import * as styles from './SearchAndSort.css'
 import { setItem } from '../../utils/helpers/localStorage'
 import { FILTERS_ADVICE_KEY } from '../../utils/consts/consts'
+import localization from './SearchAndSort.json'
 
 interface Props {
   filters: AdviceFilter
@@ -17,6 +18,7 @@ interface Props {
 
 const SearchAndSortPartialData = ({ filters, setFilters }: Props) => {
   const { isMobile } = useIsMobile()
+  const loc = localization.searchAndSortPartialData
   const [sortTitle, setSortTitle] = useState(
     filters?.oldestFirst
       ? SortOptionsAdvices.oldest
@@ -49,7 +51,11 @@ const SearchAndSortPartialData = ({ filters, setFilters }: Props) => {
           setFilters={setFilters}
           name="my_advices_search"
           localStorageId={FILTERS_ADVICE_KEY}
-          label={isMobile ? 'Leit og röðun' : 'Leit'}
+          label={
+            isMobile
+              ? loc.debouncedSearchLabel.mobile
+              : loc.debouncedSearchLabel.notMobile
+          }
         />
       </GridColumn>
       {isMobile ? (
@@ -66,7 +72,7 @@ const SearchAndSortPartialData = ({ filters, setFilters }: Props) => {
         </GridColumn>
       ) : (
         <GridColumn span={['0', '0', '4/12', '3/12', '2/12']}>
-          <label className={cn(styles.label)}>Röðun</label>
+          <label className={cn(styles.label)}>{loc.label}</label>
           <div style={{ zIndex: 1, position: 'relative' }}>
             <DropdownSort
               menuAriaLabel="sort by"

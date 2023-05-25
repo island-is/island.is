@@ -9,6 +9,7 @@ WORKDIR /build
 
 # Adding and installing packages
 ADD package.json yarn.lock .yarnrc.yml ./
+ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
@@ -139,18 +140,12 @@ USER pwuser
 RUN yarn set version berry
 RUN yarn install
 
-ENV PLAYWRIGHT_BROWSER=webkit
+ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
 ENTRYPOINT ["./entrypoint.sh"]
-
-
-
-
-
-
 
 
 FROM playwright-base as output-local
@@ -166,3 +161,6 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
+
+FROM output-base as output-native
+RUN echo "not-implemented"
