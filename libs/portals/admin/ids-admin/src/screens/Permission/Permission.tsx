@@ -1,8 +1,8 @@
 import { Box } from '@island.is/island-ui/core'
 
-import { EditPermission } from '../../components/forms/EditPermission/EditPermission'
-import { PermissionProvider } from '../../components/Permission/PermissionContext'
-import { PermissionHeader } from '../../components/Permission/PermissionHeader'
+import { EditPermission } from './EditPermission'
+import { PermissionProvider } from './PermissionContext'
+import { PermissionHeader } from './components/PermissionHeader'
 import { StickyLayout } from '../../components/StickyLayout/StickyLayout'
 
 const Permission = () => (
