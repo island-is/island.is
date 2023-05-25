@@ -17,7 +17,7 @@ import {
 } from '../../../../components/svg'
 import { StatisticBox, HeroTiles } from './components'
 import { ArrOfStatistics } from '../../../../types/interfaces'
-import Splash from '../../../../components/svg/Splash'
+import { Splash } from '../../../../components/svg'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Home.json'
 
