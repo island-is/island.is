@@ -140,8 +140,8 @@
     "submitAdviceButtonLabel": "Staðfesta umsögn",
     "allowedFilesText": "Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er 10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.",
     "loginActionBox": {
-      "heading": "Skrifa umsögn",
-      "text": "Þú þarft að vera skráð(ur) inn til að geta skrifað umsögn.",
+      "heading": "Senda umsögn",
+      "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
       "ctaLabel": "Skrá mig inn"
     }
   },
@@ -152,12 +152,12 @@
   },
   "caseStatusBox": {
     "Til umsagnar": {
-      "title": "Viltu skrifa umsögn?",
+      "title": "Viltu senda inn umsögn?",
       "text": "Málið er opið til umsagnar og öllum frjálst að taka þátt.",
       "textCont": "",
 
       "buttons": {
-        "sendAdvice": "Skrifa umsögn"
+        "sendAdvice": "Senda umsögn"
       }
     },
     "Niðurstöður í vinnslu": {
