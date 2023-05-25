@@ -54,7 +54,6 @@ export const CaseOverview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
     FormContext,
   )
-  console.log(workingCase)
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
