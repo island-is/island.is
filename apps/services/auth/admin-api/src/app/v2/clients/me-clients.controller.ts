@@ -73,8 +73,13 @@ export class MeClientsController {
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
+    @Param('checkArchive') checkArchive?: boolean,
   ): Promise<AdminClientDto> {
-    return this.clientsService.findByTenantIdAndClientId(tenantId, clientId)
+    return this.clientsService.findByTenantIdAndClientId(
+      tenantId,
+      clientId,
+      checkArchive,
+    )
   }
 
   @Post()

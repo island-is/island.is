@@ -102,11 +102,14 @@ export class AdminClientsService {
   async findByTenantIdAndClientId(
     tenantId: string,
     clientId: string,
+    checkArchived = false,
   ): Promise<AdminClientDto> {
     const client = await this.clientModel.findOne({
       where: {
         clientId,
         domainName: tenantId,
+        enabled: true,
+        ...(checkArchived && { archived: null }),
       },
       include: this.clientInclude(),
     })

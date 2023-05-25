@@ -82,16 +82,29 @@ export class ClientsService extends MultiEnvironmentService {
     user: User,
     tenantId: string,
     clientId: string,
+    checkArchive = false,
   ): Promise<Client> {
     const clients = await Promise.all([
       this.adminDevApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
+        ?.meClientsControllerFindByTenantIdAndClientId({
+          tenantId,
+          clientId,
+          checkArchive,
+        })
         .catch((error) => this.handleError(error, Environment.Development)),
       this.adminStagingApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
+        ?.meClientsControllerFindByTenantIdAndClientId({
+          tenantId,
+          clientId,
+          checkArchive,
+        })
         .catch((error) => this.handleError(error, Environment.Staging)),
       this.adminProdApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
+        ?.meClientsControllerFindByTenantIdAndClientId({
+          tenantId,
+          clientId,
+          checkArchive,
+        })
         .catch((error) => this.handleError(error, Environment.Production)),
     ])
 
@@ -208,6 +221,7 @@ export class ClientsService extends MultiEnvironmentService {
       ?.meClientsControllerFindByTenantIdAndClientId({
         tenantId: input.tenantId,
         clientId: input.clientId,
+        checkArchive: false,
       })
       .catch((error) => this.handleError(error, input.sourceEnvironment))
 
