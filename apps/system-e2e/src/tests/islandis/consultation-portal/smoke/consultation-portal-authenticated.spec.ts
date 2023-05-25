@@ -38,7 +38,7 @@ test.describe('Consultation portal authenticated', () => {
       name: login.buttons.loggedOut,
     })
     const loggedIn = page.getByRole('button', { name: login.buttons.loggedIn })
-    
+
     if (await loggedOut.isVisible()) {
       await loggedOut.click()
       await page.waitForURL(authLink)
