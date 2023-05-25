@@ -10,7 +10,7 @@ import {
   getFilteredItemsOrAll,
   mapObjectToValueCountObject,
   getInitFilterValues,
-  getDefaultFilters,
+  getFiltersFromLocalStorage,
 } from '../utils/helpers/frontPageFilters'
 
 interface Props {
@@ -104,7 +104,7 @@ export const useFrontPageFilters = ({ types }: Props) => {
   }, [filterGroups])
 
   useEffect(() => {
-    const nextFilters = getDefaultFilters({ initialValues: filters })
+    const nextFilters = getFiltersFromLocalStorage({ filters: filters })
     setFilters(nextFilters)
   }, [])
 
