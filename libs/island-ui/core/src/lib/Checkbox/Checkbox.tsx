@@ -54,7 +54,7 @@ export const Checkbox = ({
   backgroundColor,
   dataTestId,
   filled = false,
-  rightContent
+  rightContent,
 }: CheckboxProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -152,11 +152,7 @@ export const Checkbox = ({
             </Text>
           )}
         </span>
-        {rightContent && large && (
-          <div>
-            {rightContent}
-          </div>
-        )}
+        {rightContent && large && <div>{rightContent}</div>}
         {tooltip && (
           <div
             className={cn(styles.tooltipContainer, {
