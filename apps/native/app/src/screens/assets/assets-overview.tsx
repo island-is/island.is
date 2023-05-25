@@ -177,7 +177,8 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
             image={
               <Image
                 source={illustrationSrc}
-                style={{width: 192, height: 145, resizeMode: 'contain'}}
+                style={{width: 145, height: 192}}
+                resizeMode="contain"
               />
             }
           />

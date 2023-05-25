@@ -301,7 +301,8 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
               image={
                 <Image
                   source={illustrationSrc}
-                  style={{width: 198, height: 146}}
+                  style={{width: 146, height: 198}}
+                  resizeMode="contain"
                 />
               }
             />

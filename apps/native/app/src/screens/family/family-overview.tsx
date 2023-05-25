@@ -149,7 +149,8 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
             image={
               <Image
                 source={illustrationSrc}
-                style={{width: 196, height: 261, resizeMode: 'contain'}}
+                style={{width: 270, height: 261}}
+                resizeMode="contain"
               />
             }
           />

@@ -139,7 +139,8 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
             image={
               <Image
                 source={illustrationSrc}
-                style={{width: 198, height: 146, resizeMode: 'contain'}}
+                style={{width: 198, height: 146}}
+                resizeMode="contain"
               />
             }
           />

@@ -95,7 +95,8 @@ export function Input({
               >
                 <Image
                   source={CopyIcon}
-                  style={{width: 24, height: 24, resizeMode: 'contain'}}
+                  style={{width: 24, height: 24}}
+                  resizeMode="contain"
                 />
               </TouchableOpacity>
             )}

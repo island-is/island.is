@@ -237,7 +237,8 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                               ? IconStatusNonVerified
                               : IconStatusVerified
                           }
-                          style={{width: 24, height: 24, resizeMode: 'contain'}}
+                          style={{width: 24, height: 24}}
+                          resizeMode="contain"
                         />
                       }
                     >
