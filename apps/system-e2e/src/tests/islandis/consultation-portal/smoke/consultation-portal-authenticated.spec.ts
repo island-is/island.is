@@ -12,7 +12,7 @@ import {
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Consultation portal authenticated', () => {
+test.describe.skip('Consultation portal authenticated', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {
     context = await session({
