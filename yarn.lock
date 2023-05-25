@@ -8598,13 +8598,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sinclair/typebox@npm:^0.25.16":
-  version: 0.25.24
-  resolution: "@sinclair/typebox@npm:0.25.24"
-  checksum: 10219c58f40b8414c50b483b0550445e9710d4fe7b2c4dccb9b66533dd90ba8e024acc776026cebe81e87f06fa24b07fdd7bc30dd277eb9cc386ec50151a3026
-  languageName: node
-  linkType: hard
-
 "@sindresorhus/is@npm:^4.0.0":
   version: 4.6.0
   resolution: "@sindresorhus/is@npm:4.6.0"
@@ -17708,16 +17701,6 @@ __metadata:
   dependencies:
     tslib: ^2.4.1
   checksum: b3030ac170f95160e2338455a3e72c2170b9e5a373e06d0854694887a90b5ec25eb6a5a7f18d57df1e1c45f9fbc25edce7076520f060f3e66465fa01211e5c51
-  languageName: node
-  linkType: hard
-
-"configcat-js@npm:7.0.0":
-  version: 7.0.0
-  resolution: "configcat-js@npm:7.0.0"
-  dependencies:
-    configcat-common: ^7.0.1
-    tslib: ^2.4.1
-  checksum: 62bf244c29e8907de7132946d17a8ef3064e040e7aabe4e7800bbc5a48e5106a7e6d6df2bb37810b47b74bb285de96e73c4ea0d4afb840622cbf722fb4003d1b
   languageName: node
   linkType: hard
 
@@ -37708,22 +37691,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@~1.7.1#~builtin<compat/resolve>":
-  version: 1.7.1
-  resolution: "resolve@patch:resolve@npm%3A1.7.1#~builtin<compat/resolve>::version=1.7.1&hash=07638b"
-  dependencies:
-    path-parse: ^1.0.5
-  checksum: c2a6f0e3856ac1ddc8297091c20ca6c36d99bf289ddea366c46bd2a7ed8b31075c7f9d01ff5d390ebed1fe41b9fabe57a79ae087992ba92e3592f0c3be07c1ac
-  languageName: node
-  linkType: hard
-
-"response-iterator@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "response-iterator@npm:0.2.6"
-  checksum: b0db3c0665a0d698d65512951de9623c086b9c84ce015a76076d4bd0bf733779601d0b41f0931d16ae38132fba29e1ce291c1f8e6550fc32daaa2dc3ab4f338d
-  languageName: node
-  linkType: hard
-
 "responselike@npm:^2.0.0":
   version: 2.0.0
   resolution: "responselike@npm:2.0.0"
@@ -41671,6 +41638,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tslib@npm:^2.4.1":
+  version: 2.5.2
+  resolution: "tslib@npm:2.5.2"
+  checksum: 4d3c1e238b94127ed0e88aa0380db3c2ddae581dc0f4bae5a982345e9f50ee5eda90835b8bfba99b02df10a5734470be197158c36f9129ac49fdc14a6a9da222
+  languageName: node
+  linkType: hard
+
 "tslib@npm:~2.0.1":
   version: 2.0.3
   resolution: "tslib@npm:2.0.3"
@@ -42548,16 +42522,6 @@ __metadata:
     file-loader:
       optional: true
   checksum: c1122a992c6cff70a7e56dfc2b7474534d48eb40b2cc75467cde0c6972e7597faf8e43acb4f45f93c2473645dfd803bcbc20960b57544dd1e4c96e77f72ba6fd
-  languageName: node
-  linkType: hard
-
-"url-parse@npm:1.5.2":
-  version: 1.5.2
-  resolution: "url-parse@npm:1.5.2"
-  dependencies:
-    querystringify: ^2.1.1
-    requires-port: ^1.0.0
-  checksum: b2ac1e8c5209da39d23c2211a7b8762a63ebb862a760d67772d37431b35da87f808ac54df1f0757fdb77325cf4fe942ad6f589189fcaf0bd072aa9c3cdd75f48
   languageName: node
   linkType: hard
 
