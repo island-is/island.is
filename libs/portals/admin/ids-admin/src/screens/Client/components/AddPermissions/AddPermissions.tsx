@@ -29,7 +29,7 @@ import {
 
 import * as styles from './AddPermissions.css'
 
-type AuthAdminScopes = GetAvailableScopesQuery['authAdminScopes']['data'][0]['environments']
+type AuthAdminScope = GetAvailableScopesQuery['authAdminScopes']['data'][0]['environments'][0]
 
 interface AddPermissionsProps {
   isVisible: boolean
@@ -60,14 +60,14 @@ export const AddPermissions = ({
   const fetcher = useFetcher()
   const [selectedTenant, setSelectedTenant] = useState<Option>()
   const [availableTenants, setAvailableTenants] = useState<AuthTenants>([])
-  const [availableScopes, setAvailableScopes] = useState<AuthAdminScopes>([])
+  const [availableScopes, setAvailableScopes] = useState<AuthAdminScope[]>([])
+  // Ignored scopes are scopes that the user has already added or the client has already been granted
+  const ignoredScopes = [...addedScopes, ...(allowedScopes ?? [])]
 
   const [
     getAvailableScopesQuery,
     { data: { authAdminScopes } = { authAdminScopes: undefined }, loading },
-  ] = useGetAvailableScopesLazyQuery({
-    fetchPolicy: 'network-only',
-  })
+  ] = useGetAvailableScopesLazyQuery()
 
   const [selected, setSelected] = useState<
     Map<string, AuthAdminClientAllowedScope>
@@ -108,24 +108,17 @@ export const AddPermissions = ({
 
   useEffect(() => {
     if (authAdminScopes?.data) {
-      // When scope data is queried we need to filter it for the selected environment
-      // and remove already added or allowed scopes.
+      // When scope data is queried we need to filter it for the selected environment and remove ignoredScopes
       setAvailableScopes(
         authAdminScopes.data
           .map((scope) =>
             scope.environments.find((e) => e.environment === environment),
           )
           .filter(isDefined)
-          .filter(
-            (scope) =>
-              scope &&
-              ![...addedScopes, ...(allowedScopes ?? [])].find(
-                (s) => s.name === scope.name,
-              ),
-          ),
+          .filter((scope) => !ignoredScopes.find((s) => s.name === scope.name)),
       )
     }
-  }, [authAdminScopes?.data])
+  }, [authAdminScopes?.data, ignoredScopes])
 
   // Add the selected scopes to the addedScopes array for
   const handleAdd = () => {
