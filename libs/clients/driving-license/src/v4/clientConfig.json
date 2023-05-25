@@ -2061,6 +2061,7 @@
           {
             "name": "SSN",
             "in": "path",
+            "description": "Person's social security number",
             "required": true,
             "schema": { "type": "string" }
           },
