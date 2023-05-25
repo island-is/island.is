@@ -403,6 +403,17 @@ export const m = defineMessages({
     description:
       'An application may take up to 2–6 weeks to process. Depending on how fast your former country of insurance responds to our request, it may take longer.',
   },
+  actionCardSuccessFullSubmissionTitle: {
+    id: 'hi.application:actionCard.successfulSubmission.title',
+    defaultMessage: 'Umsókn móttekin',
+    description: 'Application received',
+  },
+  actionCardSuccessFullSubmissionDescription: {
+    id: 'hi.application:actionCard.successfulSubmission.description',
+    defaultMessage:
+      'Tekið getur allt að 2-6 vikur að fara yfir umsókn. Lengd svartíma fer eftir því hversu fljótt fyrra tryggingarland þitt svarar fyrirspurn okkar og getur það tekið lengri tíma.',
+    description: 'A confirmation e-mail with your case number will be sent',
+  },
   missingInfoSection: {
     id: 'hi.application:missingInfo.section',
     defaultMessage: 'Vantar upplýsingar',
@@ -621,7 +632,7 @@ export const m = defineMessages({
     description: 'All data has been fetched and the application can be started',
   },
   externalDataSuccessSubmitFieldTitle: {
-    id: 'hi.application:externalDataSuccessTitle',
+    id: 'hi.application:externalDataSuccessSubmitFieldTitle',
     defaultMessage: 'Hefja umsókn',
     description: 'Start application',
   },
