@@ -36,10 +36,8 @@ export const useFrontPageFilters = ({ types }: Props) => {
     period: period,
   })
 
-  const defaultValues = getDefaultFilters({ initialValues: initialValues })
-
   const [filters, setFilters] = useState<CaseFilter>({
-    ...defaultValues,
+    ...initialValues,
   })
 
   const _caseStatuses = getFilteredItemsOrAll({
@@ -100,6 +98,11 @@ export const useFrontPageFilters = ({ types }: Props) => {
       setFilters(filtersCopy)
     }
   }, [filterGroups])
+
+  useEffect(() => {
+    const nextFilters = getDefaultFilters({ initialValues: filters })
+    setFilters(nextFilters)
+  }, [])
 
   return {
     cases: cases,
