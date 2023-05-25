@@ -5,7 +5,7 @@ import { SHOW_INITIAL_REVIEWS_AMOUNT } from '../../../../utils/consts/consts'
 
 import { useState } from 'react'
 import { advicePublishTypeKeyHelper } from '../../../../types/enums'
-import { hasDatePassed } from '../../../../utils/helpers/dateFormatter'
+import { hasDatePassed } from '../../../../utils/helpers/dateFunctions'
 import localization from '../../Case.json'
 import sharedLocalization from '../../../../lib/shared.json'
 
