@@ -1,5 +1,10 @@
-import { GridColumn, GridRow, Hidden, Text } from '@island.is/island-ui/core'
-import { ModuleAlertBannerSection } from '../AlertMessage/ModuleAlertMessageSection'
+import {
+  GridColumn,
+  GridRow,
+  Hidden,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 import React, { useEffect, useState } from 'react'
@@ -39,7 +44,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   }, [loading, pathname])
 
   return (
-    <GridRow marginBottom={marginBottom}>
+    <GridRow marginBottom={marginBottom ? marginBottom : 4}>
       <GridColumn span={isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'}>
         <Text variant="h3" as="h1">
           {formatMessage(props.title)}

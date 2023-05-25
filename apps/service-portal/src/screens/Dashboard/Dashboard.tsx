@@ -54,13 +54,14 @@ export const Dashboard: FC<{}> = () => {
             navRoot.path !== ServicePortalPath.MinarSidurRoot && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
-                span={['12/12', '12/12', '12/12', '3/12', '3/12']}
+                span={['12/12', '12/12', '6/12', '4/12', '3/12']}
                 paddingBottom={3}
               >
                 <Box
                   onMouseEnter={() => onHover(navRoot.icon?.icon ?? '')}
                   height="full"
                   flexGrow={1}
+                  className={styles.svgOutline}
                 >
                   {navRoot.path && (
                     <>

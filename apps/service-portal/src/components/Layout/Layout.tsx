@@ -115,6 +115,7 @@ export const Layout: FC = ({ children }) => {
                           link
                         )
                       }}
+                      asSpan
                       baseId={'service-portal-navigation'}
                       title={formatMessage(
                         activeParent.name ?? m.tableOfContents,
@@ -146,6 +147,7 @@ export const Layout: FC = ({ children }) => {
                       link
                     )
                   }}
+                  asSpan
                   baseId={'service-portal-mobile-navigation'}
                   title={
                     activeParent?.name

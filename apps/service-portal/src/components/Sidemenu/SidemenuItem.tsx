@@ -31,6 +31,7 @@ const SidemenuItem = ({
     itemText = itemText.slice(0, 16).padEnd(17, '.')
   }
 
+  console.log('item', item)
   return (
     <Box position="relative" className={styles.itemContainer}>
       <Box
@@ -41,7 +42,7 @@ const SidemenuItem = ({
         borderColor="blue200"
         borderRadius="standard"
         className={cn(styles.itemBlock, {
-          [`${styles.item}`]: itemTextHover,
+          [`${styles.item}`]: itemTextHover || item.active,
         })}
         background="white"
         onMouseEnter={(value) => toggleIsHovered(value)}
@@ -69,11 +70,12 @@ const SidemenuItem = ({
               </Box>
             )}
             <p className={styles.itemText}>
-              {isHovered && itemTextHover ? (
+              {/* {isHovered && itemTextHover ? (
                 <Hyphen>{formatMessage(item.name)}</Hyphen>
               ) : (
                 itemText
-              )}
+              )} */}
+              {itemText}
             </p>
           </Box>
         </Link>

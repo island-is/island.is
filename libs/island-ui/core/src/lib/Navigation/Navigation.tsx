@@ -68,6 +68,7 @@ interface MobileNavigationDialogProps {
   colorScheme: keyof typeof styles.colorScheme
   items: NavigationItem[]
   renderLink: NavigationTreeProps['renderLink']
+  asSpan?: NavigationTreeProps['asSpan']
   isVisible: boolean
   onClick: () => void
   menuState: MenuStateReturn
@@ -83,6 +84,7 @@ interface NavigationTreeProps {
   linkOnClick?: () => void
   id?: string
   labelId?: string
+  asSpan?: boolean
 }
 export interface NavigationProps {
   title: string
@@ -107,6 +109,10 @@ export interface NavigationProps {
    * Render function for all links, useful for wrapping framework specific routing links
    */
   renderLink?: NavigationTreeProps['renderLink']
+  /**
+   * Wrap the link in a <span> instead of a <a> for passing in framework specific routing links
+   */
+  asSpan?: NavigationTreeProps['asSpan']
   titleProps?: NavigationItem
 }
 
@@ -140,6 +146,7 @@ export const Navigation: FC<NavigationProps> = ({
   items,
   titleProps,
   baseId,
+  asSpan,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeAccordions, setActiveAccordions] = useState<Array<string>>([])
@@ -168,8 +175,8 @@ export const Navigation: FC<NavigationProps> = ({
   const Title: MobileNavigationDialogProps['Title'] = titleLinkProps ? (
     renderLink(
       <FocusableBox
-        component="a"
-        href={titleLink?.href}
+        component={asSpan ? 'span' : 'a'}
+        href={asSpan ? undefined : titleLink?.href}
         borderRadius="large"
         className={styles.link}
         {...basePadding}
@@ -284,6 +291,7 @@ export const Navigation: FC<NavigationProps> = ({
           <NavigationTree
             id="desktop"
             items={items}
+            asSpan={asSpan}
             colorScheme={colorScheme}
             renderLink={renderLink}
             menuState={menu}
@@ -302,6 +310,7 @@ const MobileNavigationDialog = ({
   renderLink,
   onClick,
   menuState,
+  asSpan,
 }: MobileNavigationDialogProps) => {
   return (
     <Box
@@ -341,6 +350,7 @@ const MobileNavigationDialog = ({
       <NavigationTree
         id="mobile"
         items={items}
+        asSpan={asSpan}
         colorScheme={colorScheme}
         renderLink={renderLink}
         menuState={menuState}
@@ -356,7 +366,6 @@ interface MobileButtonProps {
 }
 
 const MobileButton = ({ title, colorScheme, titleIcon }: MobileButtonProps) => {
-  console.log(titleIcon)
   return (
     <Box
       component="span"
@@ -424,6 +433,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
   linkOnClick,
   id = '',
   labelId = '',
+  asSpan,
 }: NavigationTreeProps) => {
   return (
     <NavigationContext.Consumer>
@@ -464,6 +474,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                 id="accordion"
                 items={items}
                 level={nextLevel}
+                asSpan={asSpan}
                 colorScheme={colorScheme}
                 expand={expand}
                 renderLink={renderLink}
@@ -476,8 +487,8 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
               <li key={index} className={styles.listItem}>
                 {renderLink(
                   <FocusableBox
-                    component="a"
-                    href={href}
+                    component={asSpan ? 'span' : 'a'}
+                    href={asSpan ? undefined : href}
                     borderRadius="large"
                     paddingLeft={isChildren ? 2 : 3}
                     paddingRight={2}

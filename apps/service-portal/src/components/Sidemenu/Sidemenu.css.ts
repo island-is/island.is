@@ -29,6 +29,8 @@ export const categories = style({
 })
 
 export const itemBlock = style({
+  height: 88,
+  maxHeight: 88,
   ':hover': {
     background: theme.color.blue100,
   },
@@ -162,8 +164,6 @@ export const itemLink = style({
 })
 
 export const itemContainer = style({
-  height: 88,
-  maxHeight: 88,
   transition: 'max-height 200ms ease-out',
   ':hover': {
     borderColor: theme.color.blue600,
@@ -183,13 +183,7 @@ export const itemContainer = style({
 })
 
 export const item = style({
-  ':hover': {
-    position: 'absolute',
-    height: 'auto',
-    maxHeight: 120,
-    transition: 'max-height 250ms ease-in',
-    zIndex: 2,
-  },
+  background: theme.color.blue100,
 })
 
 export const itemText = style({
@@ -202,6 +196,6 @@ export const overviewIcon = style({
   width: 40,
 })
 
-globalStyle(`${item}:hover a div div svg`, {
+globalStyle(`${item} svg, ${itemBlock}:hover svg`, {
   color: theme.color.blue600,
 })
