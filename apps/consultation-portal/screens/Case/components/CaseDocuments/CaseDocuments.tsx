@@ -1,8 +1,8 @@
-import { SimpleCardSkeleton } from '../../../../components/Card'
+import { CardSkeleton } from '../../../../components'
 import { Document } from '../../../../types/interfaces'
-import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
 import { LinkV2 } from '@island.is/island-ui/core'
 import env from '../../../../lib/environment'
+import { Stacked } from '../../components'
 
 interface Props {
   title: string
@@ -11,8 +11,8 @@ interface Props {
 
 export const CaseDocuments = ({ title, documents }: Props) => {
   return (
-    <SimpleCardSkeleton>
-      <StackedTitleAndDescription title={title}>
+    <CardSkeleton>
+      <Stacked title={title}>
         {documents.map((document, index) => {
           return (
             <LinkV2
@@ -26,8 +26,8 @@ export const CaseDocuments = ({ title, documents }: Props) => {
             </LinkV2>
           )
         })}
-      </StackedTitleAndDescription>
-    </SimpleCardSkeleton>
+      </Stacked>
+    </CardSkeleton>
   )
 }
 export default CaseDocuments

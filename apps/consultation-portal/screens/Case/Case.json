@@ -87,7 +87,8 @@
     "notSubbedCardSkeleton": {
       "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
       "button": "Skrá í áskrift"
-    }
+    },
+    "buttonLabel": "Skrá áskrift"
   },
   "caseEmailActionBox": {
     "buttonLabel": "Breyta áskrift"
