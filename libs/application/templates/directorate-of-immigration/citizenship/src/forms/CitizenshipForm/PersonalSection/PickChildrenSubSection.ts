@@ -2,8 +2,11 @@ import {
   buildMultiField,
   buildSubSection,
   buildDescriptionField,
+  buildCustomField,
+  buildAlertMessageField,
+  buildMessageWithLinkButtonField
 } from '@island.is/application/core'
-import { personal } from '../../../lib/messages'
+import { personal, selectChildren } from '../../../lib/messages'
 
 export const PickChildrenSubSection = buildSubSection({
   id: 'pickChildren',
@@ -14,11 +17,22 @@ export const PickChildrenSubSection = buildSubSection({
       title: personal.labels.pickChildren.pageTitle,
       description: personal.labels.pickChildren.description,
       children: [
-        buildDescriptionField({
-          id: 'pickChildren.title',
-          title: personal.labels.pickChildren.title,
-          titleVariant: 'h5',
+        buildAlertMessageField({
+          id: 'attentionAgeChildren',
+          title: selectChildren.warningAgeChildren.title,
+          message: selectChildren.warningAgeChildren.information,
+          alertType:"warning"
         }),
+        buildCustomField({
+          id: 'selectedChildren',
+          title: personal.labels.pickChildren.pageTitle,
+          component: 'SelectChildren',
+        }),
+        buildCustomField({
+          id: 'generalMessage',
+          title: 'Upplýsingar',
+          component: 'InformationBoxWithLink'
+        })
       ],
     }),
   ],

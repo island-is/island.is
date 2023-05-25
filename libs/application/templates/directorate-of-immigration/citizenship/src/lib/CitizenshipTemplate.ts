@@ -22,7 +22,9 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
-} from '../dataProviders'
+  NationalRegistryBirthplaceApi,
+  ChildrenCustodyInformationApi,
+} from '../dataProviders' 
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -68,8 +70,10 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 NationalRegistryUserApi,
-                UserProfileApi,
+                UserProfileApi, 
                 UtlendingastofnunPaymentCatalogApi,
+                NationalRegistryBirthplaceApi,
+                ChildrenCustodyInformationApi,
               ],
             },
           ],

@@ -5,7 +5,7 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { personal } from '../../../lib/messages'
-import { Application } from '@island.is/api/schema'
+import { Application, NationalRegistryUser } from '@island.is/api/schema'
 
 export const UserInformationSubSection = buildSubSection({
   id: 'userInformation',
@@ -80,6 +80,37 @@ export const UserInformationSubSection = buildSubSection({
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.phone,
+        }),
+        buildTextField({
+          id: 'userInformation.citizenship',
+          title: personal.labels.userInformation.citizenship,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            application.externalData?.nationalRegistry?.data?.citizenship?.name
+        }),
+        // buildTextField({
+        //   id: 'userInformation.dateHomeRegistration',
+        //   title: personal.labels.userInformation.dateHomeRegistration,
+        //   backgroundColor: 'white',
+        //   width: 'half',
+        //   readOnly: true,
+        //   defaultValue: (application: Application) =>
+        //     application.externalData?.nationalRegistry?.data?.citizenship?.date
+        // }),
+        buildTextField({
+          id: 'userInformation.birthCountry',
+          title: personal.labels.userInformation.birthCountry,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            console.log('application', application)
+            return application.externalData?.nationalRegistryBirthplace?.data
+            ?.location
+          }
+            
         }),
       ],
     }),

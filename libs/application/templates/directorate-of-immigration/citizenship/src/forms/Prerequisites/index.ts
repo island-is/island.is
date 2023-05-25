@@ -6,7 +6,7 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { ChildrenCustodyInformationApi, DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import {
   confirmation,
   externalData,
@@ -16,6 +16,7 @@ import {
   supportingDocuments,
 } from '../../lib/messages'
 import {
+  NationalRegistryBirthplaceApi,
   NationalRegistryUserApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
@@ -58,6 +59,14 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
+              provider: NationalRegistryBirthplaceApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: ChildrenCustodyInformationApi,
+              title: '',
+            }),
+            buildDataProviderItem({
               provider: UserProfileApi,
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
@@ -80,30 +89,30 @@ export const Prerequisites: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'personal',
-      title: personal.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'information',
-      title: information.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'supportingDocuments',
-      title: supportingDocuments.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'payment',
-      title: payment.general.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirmation',
-      title: confirmation.general.sectionTitle,
-      children: [],
-    }),
+    // buildSection({
+    //   id: 'personal',
+    //   title: personal.general.sectionTitle,
+    //   children: [],
+    // }),
+    // buildSection({
+    //   id: 'information',
+    //   title: information.general.sectionTitle,
+    //   children: [],
+    // }),
+    // buildSection({
+    //   id: 'supportingDocuments',
+    //   title: supportingDocuments.general.sectionTitle,
+    //   children: [],
+    // }),
+    // buildSection({
+    //   id: 'payment',
+    //   title: payment.general.sectionTitle,
+    //   children: [],
+    // }),
+    // buildSection({
+    //   id: 'confirmation',
+    //   title: confirmation.general.sectionTitle,
+    //   children: [],
+    // }),
   ],
 })

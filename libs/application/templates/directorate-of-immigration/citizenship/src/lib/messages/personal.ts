@@ -37,6 +37,21 @@ export const personal = {
         defaultMessage: 'Kennitala',
         description: 'User information national ID label',
       },
+      citizenship: {
+        id: 'doi.cs.application:personal.labels.userInformation.citizenship',
+        defaultMessage: 'Ríkisfang',
+        description: 'User information citizenship label',
+      },
+      birthCountry:{
+        id: 'doi.cs.application:personal.labels.userInformation.birthCountry',
+        defaultMessage: 'Fæðingarland',
+        description: 'User information birth country label',
+      },
+      dateHomeRegistration:{
+        id: 'doi.cs.application:personal.labels.userInformation.dateHomeRegistration',
+        defaultMessage: 'Dagsetning lögheimilisskráningar',
+        description: 'User information date of home registration label',
+      },
       name: {
         id: 'doi.cs.application:personal.labels.userInformation.name',
         defaultMessage: 'Nafn',
@@ -50,7 +65,7 @@ export const personal = {
       postalCodeAndCity: {
         id:
           'doi.cs.application:personal.labels.userInformation.postalCodeAndCity',
-        defaultMessage: 'Staður',
+        defaultMessage: 'Sveitarfélag',
         description: 'User information postal code and city label',
       },
       email: {
@@ -78,7 +93,7 @@ export const personal = {
       description: {
         id: 'doi.cs.application:personal.labels.pickChildren.description',
         defaultMessage:
-          'Interdum et malesuada fames ac ante ipsum primis in faucibus.',
+          'Eftirfarandi börn eru í þinni forsjá og eru skráð með lögheimili á Íslandi. Hakaðu við þau börn sem þú vilt að hljóti íslenskan ríkisborgararétt samhliða því að þú fáir veitingu.',
         description: 'Pick children description',
       },
       title: {
