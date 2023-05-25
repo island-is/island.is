@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { EditClient } from '../../components/Client/EditClient'
-import { ClientProvider } from '../../components/Client/ClientContext'
+import { EditClient } from './EditClient'
+import { ClientProvider } from './ClientContext'
 
 const Client = () => (
   <ClientProvider>

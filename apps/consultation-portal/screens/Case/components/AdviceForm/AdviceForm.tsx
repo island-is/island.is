@@ -29,11 +29,9 @@ import {
 } from '../../../../utils/consts/consts'
 import { AgencyText } from './components/AgencyText'
 import { createUUIDString } from '../../../../utils/helpers'
-import {
-  advicePublishTypeKey,
-  advicePublishTypeKeyHelper,
-} from '../../../../types/enums'
+import { advicePublishTypeKeyHelper } from '../../../../types/enums'
 import localization from '../../Case.json'
+import sharedLocalization from '../../../../lib/shared.json'
 
 type CardProps = {
   card: Case
@@ -68,7 +66,7 @@ export const AdviceForm = ({
   const [showInputFileError, setShowInputFileError] = useState(false)
   const [inputFileErrorText, setInputFileErrorText] = useState('')
   const loc = localization['adviceForm']
-
+  const sloc = sharedLocalization['publishingRules']
   const { createUploadUrl, postAdviceMutation } = usePostAdvice()
 
   const uploadFile = async (file: UploadFile, response: PresignedPost) => {
@@ -199,7 +197,6 @@ export const AdviceForm = ({
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
-
   return isLoggedIn ? (
     <Box
       paddingY={3}
@@ -242,20 +239,18 @@ export const AdviceForm = ({
       <Text marginBottom={2}>
         {loc.card.description.textBefore}
         {` ${
-          advicePublishTypeKey[
-            advicePublishTypeKeyHelper[card.advicePublishTypeId]
-          ]
+          sloc[advicePublishTypeKeyHelper[card.advicePublishTypeId]].present
         } 
-        ${loc.card.description.textAfter} 
+        ${sloc.publishLaw.text} 
         `}
 
-        <Link href={loc.card.description.link.href}>
-          {loc.card.description.link.text}
+        <Link href={sloc.publishLaw.link.href}>
+          {sloc.publishLaw.link.label}
         </Link>
       </Text>
 
       <Text marginBottom={2}>
-        {loc.card.description.user} {username}
+        {loc.card.description.user}: {username}
       </Text>
 
       <Input
