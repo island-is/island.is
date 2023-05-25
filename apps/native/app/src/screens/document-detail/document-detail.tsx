@@ -18,15 +18,13 @@ import {
   GetDocumentResponse,
   GET_DOCUMENT_QUERY,
 } from '../../graphql/queries/get-document.query';
-import {
-  ListDocumentsResponse,
-  LIST_DOCUMENTS_QUERY,
-} from '../../graphql/queries/list-documents.query';
+import {LIST_DOCUMENTS_QUERY} from '../../graphql/queries/list-documents.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {authStore} from '../../stores/auth-store';
 import {inboxStore} from '../../stores/inbox-store';
 import {useOrganizationsStore} from '../../stores/organizations-store';
 import {ButtonRegistry} from '../../utils/component-registry';
+import {Query} from 'src/graphql/types/schema';
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -126,7 +124,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const {getOrganizationLogoUrl} = useOrganizationsStore();
   const [accessToken, setAccessToken] = useState<string>();
 
-  const res = useQuery<ListDocumentsResponse>(LIST_DOCUMENTS_QUERY, {
+  const res = useQuery<Query>(LIST_DOCUMENTS_QUERY, {
     client,
   });
   const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
@@ -139,7 +137,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   });
   const Document = {
     ...(docRes.data?.getDocument || {}),
-    ...(res.data?.listDocuments?.find(d => d.id === docId) || {}),
+    ...(res.data?.listDocumentsV2?.data?.find(d => d.id === docId) || {}),
   };
 
   const [visible, setVisible] = useState(false);
