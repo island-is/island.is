@@ -3,17 +3,17 @@ import { FILTERS_FRONT_PAGE_KEY } from '../../consts/consts'
 import { getItem, setItem } from '../localStorage'
 
 interface Props {
-  initialValues: CaseFilter
+  filters: CaseFilter
 }
 
-export const getDefaultFilters = ({ initialValues }: Props) => {
+export const getFiltersFromLocalStorage = ({ filters }: Props) => {
   const filtersFromLS = getItem({ key: FILTERS_FRONT_PAGE_KEY })
   if (filtersFromLS) {
     return filtersFromLS
   }
 
-  setItem({ key: FILTERS_FRONT_PAGE_KEY, value: initialValues })
-  return initialValues
+  setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filters })
+  return filters
 }
 
-export default getDefaultFilters
+export default getFiltersFromLocalStorage
