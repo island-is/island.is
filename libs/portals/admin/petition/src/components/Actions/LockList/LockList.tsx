@@ -1,21 +1,13 @@
-import {
-  Box,
-  Button,
-  RadioButton,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/react/components'
 
 import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
-import React, { useContext, useEffect } from 'react'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import { useEffect } from 'react'
 import { PetitionPaths } from '../../../lib/paths'
 import { m } from '../../../lib/messages'
 import { LockListMutation } from '../../../shared/mutations/lockList.generated'
-import Skeleton from '../../Skeleton/skeleton'
 
 export default function LockList() {
   const navigate = useNavigate()
@@ -32,8 +24,9 @@ export default function LockList() {
 
   useEffect(() => {
     if (actionData) {
-      toast.success(formatMessage(m.todo))
-      cancel()
+      actionData?.endorsementSystemLockEndorsementList
+        ? toast.success(formatMessage(m.todo))
+        : toast.error(formatMessage(m.todo))
     }
   }, [actionData])
 

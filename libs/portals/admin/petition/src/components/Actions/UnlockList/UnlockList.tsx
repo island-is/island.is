@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  RadioButton,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/react/components'
 
 import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
@@ -13,14 +7,14 @@ import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 import React, { useEffect } from 'react'
 import { PetitionPaths } from '../../../lib/paths'
 import { m } from '../../../lib/messages'
-import { LockListMutation } from '../../../shared/mutations/lockList.generated'
+import { UnlockListMutation } from '../../../shared/mutations/unlockList.generated'
 
 export default function UnlockList() {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const params = useParams()
 
-  const actionData = useActionData() as LockListMutation
+  const actionData = useActionData() as UnlockListMutation
   const { isLoading, isSubmitting } = useSubmitting()
 
   // useEffect(() => {
@@ -30,8 +24,9 @@ export default function UnlockList() {
 
   useEffect(() => {
     if (actionData) {
-      toast.success(formatMessage(m.todo))
-      cancel()
+      actionData?.endorsementSystemUnlockEndorsementList
+        ? toast.success(formatMessage(m.todo))
+        : toast.error(formatMessage(m.todo))
     }
   }, [actionData])
 

@@ -6,23 +6,29 @@ import {
 } from '../../../shared/mutations/unlockList.generated'
 
 export const unlockListAction: WrappedActionFn = ({ client }) => async ({
-  request,
   params,
 }) => {
   if (!params['listId']) {
     throw new Error('something went wrong')
   }
 
-  const response = await client.mutate<
-    UnlockListMutation,
-    UnlockListMutationVariables
-  >({
-    mutation: UnlockListDocument,
-    variables: {
-      input: {
-        listId: params['listId'],
+  try {
+    const response = await client.mutate<
+      UnlockListMutation,
+      UnlockListMutationVariables
+    >({
+      mutation: UnlockListDocument,
+      variables: {
+        input: {
+          listId: params['listId'],
+        },
       },
-    },
-  })
-  return { data: response }
+    })
+    return {
+      endorsementSystemUnlockEndorsementList:
+        response.data?.endorsementSystemUnlockEndorsementList,
+    }
+  } catch (error) {
+    return error
+  }
 }

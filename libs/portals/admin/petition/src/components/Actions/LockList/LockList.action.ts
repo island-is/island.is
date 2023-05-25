@@ -13,16 +13,23 @@ export const lockListAction: WrappedActionFn = ({ client }) => async ({
     throw new Error('something went wrong')
   }
 
-  const response = await client.mutate<
-    LockListMutation,
-    LockListMutationVariables
-  >({
-    mutation: LockListDocument,
-    variables: {
-      input: {
-        listId: params['listId'],
+  try {
+    const response = await client.mutate<
+      LockListMutation,
+      LockListMutationVariables
+    >({
+      mutation: LockListDocument,
+      variables: {
+        input: {
+          listId: params['listId'],
+        },
       },
-    },
-  })
-  return { data: response }
+    })
+    return {
+      endorsementSystemLockEndorsementList:
+        response.data?.endorsementSystemLockEndorsementList,
+    }
+  } catch (error) {
+    return error
+  }
 }
