@@ -50,7 +50,6 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
   rightContent,
   onSelect = () => undefined,
 }) => {
-  console.log('rightContent', rightContent)
   const { clearErrors, setValue } = useFormContext()
 
   function handleSelect(option: Option, checkedValues: string[]) {
