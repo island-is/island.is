@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { AuthAdminClientAllowedScope } from '@island.is/api/schema'
@@ -15,12 +15,12 @@ import { Modal } from '@island.is/react/components'
 import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../../../lib/messages'
-import { ClientContext } from '../../../shared/context/ClientContext'
 import { ShadowBox } from '../../ShadowBox/ShadowBox'
 import {
   GetAvailableScopesQuery,
   useGetAvailableScopesQuery,
 } from './AvailableScopes.generated'
+import { useClient } from '../../../screens/Client/ClientContext'
 
 interface AddPermissionsProps {
   isVisible: boolean
@@ -30,20 +30,20 @@ interface AddPermissionsProps {
   removedScopes: AuthAdminClientAllowedScope[]
 }
 
-function AddPermissions({
+export const AddPermissions = ({
   isVisible,
   onClose,
   onAdd,
   addedScopes,
   removedScopes,
-}: AddPermissionsProps) {
+}: AddPermissionsProps) => {
   const { formatMessage, locale } = useLocale()
   const [selected, setSelected] = useState<
     Map<string, AuthAdminClientAllowedScope>
   >(new Map())
   const { tenant: tenantId } = useParams() as { tenant: string }
 
-  const { selectedEnvironment } = useContext(ClientContext)
+  const { selectedEnvironment } = useClient()
 
   const { data, loading } = useGetAvailableScopesQuery({
     fetchPolicy: 'network-only',
@@ -164,5 +164,3 @@ function AddPermissions({
     </Modal>
   )
 }
-
-export default AddPermissions

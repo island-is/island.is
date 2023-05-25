@@ -13,20 +13,20 @@ import {
   CaseTimeline,
   Coordinator,
   Stakeholders,
-  AdviceCTA,
+  CaseStatusBox,
   CaseDocuments,
   CaseEmailBox,
   AdviceForm,
   AdviceList,
   AdviceSkeletonLoader,
 } from './components'
-import Layout from '../../components/Layout/Layout'
 import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
-import { CaseStatusFilterOptions } from '../../types/enums'
+import { CaseStatuses } from '../../types/enums'
 import { useContext } from 'react'
 import UserContext from '../../context/UserContext'
 import localization from './Case.json'
+import { Layout } from '../../components'
 
 interface Props {
   chosenCase: Case
@@ -91,8 +91,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                   documents={chosenCase?.additionalDocuments}
                 />
               )}
-              {chosenCase?.statusName !==
-                CaseStatusFilterOptions.resultsPublished && (
+              {chosenCase?.statusName !== CaseStatuses.published && (
                 <CaseEmailBox
                   caseId={caseId}
                   caseNumber={chosenCase?.caseNumber}
@@ -117,8 +116,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                 ) : (
                   <AdviceList advices={advices} chosenCase={chosenCase} />
                 )}
-                {chosenCase?.statusName ===
-                  CaseStatusFilterOptions.forReview && (
+                {chosenCase?.statusName === CaseStatuses.forReview && (
                   <AdviceForm
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}
@@ -135,7 +133,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              {!isMobile && <AdviceCTA chosenCase={chosenCase} />}
+              {!isMobile && <CaseStatusBox status={chosenCase.statusName} />}
               {chosenCase?.stakeholders?.length > 0 && (
                 <Stakeholders chosenCase={chosenCase} />
               )}

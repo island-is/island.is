@@ -95,9 +95,6 @@ export class MeScopesController {
     description: 'Update a scope with partial set of properties.',
     response: { status: 200, type: AdminScopeDTO },
   })
-  @Audit<AdminScopeDTO>({
-    resources: (scope) => scope.name,
-  })
   update(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
