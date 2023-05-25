@@ -10,7 +10,7 @@ import {
 import { CardSkeleton } from '../../../../components/'
 import { useEffect, useRef, useState } from 'react'
 import * as styles from './AdviceCard.css'
-import { getShortDate } from '../../../../utils/helpers/dateFormatter'
+import { getShortDate } from '../../../../utils/helpers/dateFunctions'
 import env from '../../../../lib/environment'
 import { REVIEW_CARD_SCROLL_HEIGHT } from '../../../../utils/consts/consts'
 import { renderDocFileName } from '../../utils'

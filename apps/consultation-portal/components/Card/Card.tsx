@@ -1,7 +1,7 @@
 import {
   getDateBeginDateEnd,
   getShortDate,
-} from '../../utils/helpers/dateFormatter'
+} from '../../utils/helpers/dateFunctions'
 import {
   Tag,
   Box,

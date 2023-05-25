@@ -5,7 +5,7 @@ import CaseStatusCard from '../CaseStatusCard/CaseStatusCard'
 import {
   getShortDate,
   hasDatePassed,
-} from '../../../../utils/helpers/dateFormatter'
+} from '../../../../utils/helpers/dateFunctions'
 import { Case, UserAdvice } from '../../../../types/interfaces'
 import localization from '../../Case.json'
 

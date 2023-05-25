@@ -15,7 +15,7 @@ import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
 import { getFilterItemWithCount } from '../../utils'
 import localization from '../../Home.json'
 import { FilterTypes } from '../../../../types/enums'
-import { getDateForComparison } from '../../../../utils/helpers/dateFormatter'
+import { getDateForComparison } from '../../../../utils/helpers/dateFunctions'
 
 interface Props {
   filters: CaseFilter

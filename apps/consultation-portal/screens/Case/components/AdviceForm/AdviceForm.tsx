@@ -2,7 +2,7 @@ import { Case } from '../../../../types/interfaces'
 import {
   getDateBeginDateEnd,
   getShortDate,
-} from '../../../../utils/helpers/dateFormatter'
+} from '../../../../utils/helpers/dateFunctions'
 import {
   Box,
   Input,
