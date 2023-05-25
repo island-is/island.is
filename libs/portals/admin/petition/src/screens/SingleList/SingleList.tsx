@@ -63,7 +63,9 @@ const SingleList = () => {
 
   useEffect(() => {
     if (actionData) {
-      toast.success(formatMessage(m.todo))
+      actionData?.endorsementSystemUpdateEndorsementList
+        ? toast.success(formatMessage(m.todo))
+        : toast.error(formatMessage(m.todo))
     }
   }, [actionData])
 

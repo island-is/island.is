@@ -24,22 +24,31 @@ export const updateListAction: WrappedActionFn = ({ client }) => async ({
   if (!params['listId']) {
     throw new Error('something went wrong')
   }
-  const response = await client.mutate<
-    UpdateListMutation,
-    UpdateListMutationVariables
-  >({
-    mutation: UpdateListDocument,
-    variables: {
-      input: {
-        listId: params['listId'],
-        endorsementList: {
-          closedDate: transformDate(closedDate),
-          description: description,
-          openedDate: transformDate(openedDate),
-          title,
+
+  try {
+    const response = await client.mutate<
+      UpdateListMutation,
+      UpdateListMutationVariables
+    >({
+      mutation: UpdateListDocument,
+      variables: {
+        input: {
+          listId: params['listId'],
+          endorsementList: {
+            closedDate: transformDate(closedDate),
+            description: description,
+            openedDate: transformDate(openedDate),
+            title,
+          },
         },
       },
-    },
-  })
-  return { data: response }
+    })
+
+    return {
+      endorsementSystemUpdateEndorsementList:
+        response.data?.endorsementSystemUpdateEndorsementList,
+    }
+  } catch (error) {
+    return error
+  }
 }
