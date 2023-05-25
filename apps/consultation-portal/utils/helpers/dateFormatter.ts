@@ -62,3 +62,12 @@ export function hasDatePassed(date: string | Date) {
   const dateFormatted = new Date(date)
   return dateFormatted < new Date()
 }
+
+export function getDateForComparison(date: Date | string) {
+  try {
+    return new Date(date).getTime()
+  } catch (e) {
+    console.error(e)
+    return null
+  }
+}

@@ -12,9 +12,10 @@ import {
 import { useEffect, useState } from 'react'
 import { getItem, setItem } from '../../../../utils/helpers/localStorage'
 import { FILTERS_FRONT_PAGE_KEY } from '../../../../utils/consts/consts'
-import { getDateForComparison, getFilterItemWithCount } from '../../utils'
+import { getFilterItemWithCount } from '../../utils'
 import localization from '../../Home.json'
 import { FilterTypes } from '../../../../types/enums'
+import { getDateForComparison } from '../../../../utils/helpers/dateFormatter'
 
 interface Props {
   filters: CaseFilter
