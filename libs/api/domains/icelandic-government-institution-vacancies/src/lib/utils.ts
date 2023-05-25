@@ -55,12 +55,8 @@ export const mapIcelandicGovernmentInstitutionVacanciesResponse = (
     fieldOfWork: item.starfssvid,
     institutionName: item.stofnunHeiti,
     logoUrl: item.logoURL,
-    locations: item.stadsetningar?.stadsetning?.['@text']
-      ? {
-          postalCode: item.stadsetningar.stadsetning['@kodi'],
-          title: item.stadsetningar.stadsetning['@text'],
-        }
-      : undefined,
+    locationTitle: item.stadsetningar?.stadsetning?.['@text'],
+    locationPostalCode: item.stadsetningar?.stadsetning?.['@kodi'],
   }))
 }
 
@@ -78,12 +74,8 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = (
     fieldOfWork: item.starfssvid,
     institutionName: item.stofnunHeiti,
     logoUrl: item.logoURL,
-    locations: item.stadsetningar?.stadsetning?.['@text']
-      ? {
-          postalCode: item.stadsetningar.stadsetning['@kodi'],
-          title: item.stadsetningar.stadsetning['@text'],
-        }
-      : undefined,
+    locationTitle: item.stadsetningar?.stadsetning?.['@text'],
+    locationPostalCode: item.stadsetningar?.stadsetning?.['@kodi'],
     address: item.heimilisfang,
     contacts: item.tengilidir?.tengilidur?.nafn
       ? {

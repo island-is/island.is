@@ -1,15 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-class IcelandicGovernmentInstitutionVacancyLocation {
-  @Field({ nullable: true })
-  postalCode?: number
-
-  @Field({ nullable: true })
-  title?: string
-}
-
-@ObjectType()
 export class IcelandicGovernmentInstitutionVacancyListItem {
   @Field({ nullable: true })
   id?: number
@@ -32,10 +23,11 @@ export class IcelandicGovernmentInstitutionVacancyListItem {
   @Field({ nullable: true })
   institutionName?: string
 
-  @Field(() => IcelandicGovernmentInstitutionVacancyLocation, {
-    nullable: true,
-  })
-  locations?: IcelandicGovernmentInstitutionVacancyLocation
+  @Field({ nullable: true })
+  locationTitle?: string
+
+  @Field({ nullable: true })
+  locationPostalCode?: number
 
   @Field({ nullable: true })
   logoUrl?: string

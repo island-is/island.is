@@ -13,10 +13,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
         applicationDeadlineFrom
         applicationDeadlineTo
         institutionName
-        locations {
-          postalCode
-          title
-        }
+        locationTitle
+        locationPostalCode
         logoUrl
       }
     }
@@ -36,10 +34,8 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS = gql`
         applicationDeadlineFrom
         applicationDeadlineTo
         institutionName
-        locations {
-          postalCode
-          title
-        }
+        locationTitle
+        locationPostalCode
         logoUrl
         postalAddress
         address
