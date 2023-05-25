@@ -1,7 +1,7 @@
 import { setItem } from '../../utils/helpers/localStorage'
 import { useDebounce } from '../../hooks'
 import { Input } from '@island.is/island-ui/core'
-import { BaseSyntheticEvent, useState } from 'react'
+import { BaseSyntheticEvent, useEffect, useState } from 'react'
 import { AdviceFilter, CaseFilter } from '../../types/interfaces'
 import localization from './DebouncedSearch.json'
 
@@ -51,6 +51,10 @@ const DebouncedSearch = ({
     setValue(searchValue)
     debouncedHandleSearch()
   }
+
+  useEffect(() => {
+    setValue(filters?.searchQuery)
+  }, [filters])
 
   return (
     <Input

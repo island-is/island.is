@@ -1,6 +1,6 @@
 import { AdviceFilter } from '../../types/interfaces'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DropdownSort from './components/DropdownSort'
 import { SortOptionsAdvices } from '../../types/enums'
 import { useIsMobile } from '../../hooks'
@@ -42,6 +42,14 @@ const SearchAndSortPartialData = ({ filters, setFilters }: Props) => {
     setSortTitle(newTitle)
     setFilters(filtersCopy)
   }
+
+  useEffect(() => {
+    setSortTitle(
+      filters?.oldestFirst
+        ? SortOptionsAdvices.oldest
+        : SortOptionsAdvices.latest,
+    )
+  }, [filters])
 
   return (
     <GridRow>
