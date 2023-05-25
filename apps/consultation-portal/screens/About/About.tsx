@@ -1,7 +1,6 @@
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import React from 'react'
-import Layout from '../../components/Layout/Layout'
-import { Breadcrumbs } from '../../components'
+import { Breadcrumbs, Layout } from '../../components'
 import { AboutContent, TableOfContents } from './components'
 import localization from './About.json'
 
