@@ -13,19 +13,20 @@ import {
   CaseTimeline,
   Coordinator,
   Stakeholders,
-  AdviceCTA,
+  CaseStatusBox,
   CaseDocuments,
   CaseEmailBox,
   AdviceForm,
   AdviceList,
   AdviceSkeletonLoader,
 } from './components'
-import Layout from '../../components/Layout/Layout'
 import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
-import { CaseStatusFilterOptions } from '../../types/enums'
+import { CaseStatuses } from '../../types/enums'
 import { useContext } from 'react'
 import UserContext from '../../context/UserContext'
+import localization from './Case.json'
+import { Layout } from '../../components'
 
 interface Props {
   chosenCase: Case
@@ -36,7 +37,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const { contactEmail, contactName } = chosenCase
   const { isMobile } = useIsMobile()
   const { isAuthenticated, user } = useContext(UserContext)
-
+  const loc = localization['case']
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
   })
@@ -44,16 +45,21 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
   return (
     <Layout
       seo={{
-        title: `Mál: S-${chosenCase?.caseNumber}`,
-        url: `mal/${chosenCase?.id}`,
+        title: `${loc.seo.title}: S-${chosenCase?.caseNumber}`,
+        url: `${loc.seo.url}${chosenCase?.id}`,
       }}
     >
       <GridContainer>
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
             items={[
-              { title: 'Öll mál', href: '/samradsgatt' },
-              { title: `Mál nr. S-${chosenCase?.caseNumber}` },
+              {
+                title: loc.breadcrumbs.parent.title,
+                href: loc.breadcrumbs.parent.href,
+              },
+              {
+                title: `${loc.breadcrumbs.current.title} S-${chosenCase?.caseNumber}`,
+              },
             ]}
           />
         </Box>
@@ -75,18 +81,17 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <Divider />
               {chosenCase?.documents?.length > 0 && (
                 <CaseDocuments
-                  title="Skjöl til samráðs"
+                  title={loc.documentsBox.documents.title}
                   documents={chosenCase?.documents}
                 />
               )}
               {chosenCase?.additionalDocuments?.length > 0 && (
                 <CaseDocuments
-                  title="Fylgiskjöl"
+                  title={loc.documentsBox.additional.title}
                   documents={chosenCase?.additionalDocuments}
                 />
               )}
-              {chosenCase?.statusName !==
-                CaseStatusFilterOptions.resultsPublished && (
+              {chosenCase?.statusName !== CaseStatuses.published && (
                 <CaseEmailBox
                   caseId={caseId}
                   caseNumber={chosenCase?.caseNumber}
@@ -102,7 +107,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <CaseOverview chosenCase={chosenCase} />
               <Stack space={3}>
                 <Text variant="h1" color="blue400">
-                  {`Innsendar umsagnir (${
+                  {`${loc.advices.title} (${
                     chosenCase.adviceCount ? chosenCase.adviceCount : 0
                   })`}
                 </Text>
@@ -111,8 +116,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                 ) : (
                   <AdviceList advices={advices} chosenCase={chosenCase} />
                 )}
-                {chosenCase?.statusName ===
-                  CaseStatusFilterOptions.forReview && (
+                {chosenCase?.statusName === CaseStatuses.forReview && (
                   <AdviceForm
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}
@@ -129,7 +133,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              {!isMobile && <AdviceCTA chosenCase={chosenCase} />}
+              {!isMobile && <CaseStatusBox status={chosenCase.statusName} />}
               {chosenCase?.stakeholders?.length > 0 && (
                 <Stakeholders chosenCase={chosenCase} />
               )}

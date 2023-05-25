@@ -1,5 +1,5 @@
 import { Case } from '../../../../types/interfaces'
-import { getStatusEndDate } from '../../../../utils/helpers/dateFormatter'
+import { getStatusEndDate } from '../../../../utils/helpers/dateFunctions'
 import {
   FormStepperV2,
   Text,
@@ -7,6 +7,7 @@ import {
   FormStepperThemes,
   Stack,
 } from '@island.is/island-ui/core'
+import localization from '../../Case.json'
 import { MapCaseStatuses } from '../../../../types/enums'
 
 interface CaseTimelineProps {
@@ -16,6 +17,8 @@ interface CaseTimelineProps {
 const Sections = ['Til umsagnar', 'Niðurstöður í vinnslu', 'Niðurstöður birtar']
 
 export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
+  const loc = localization['timeline']
+
   const sectionItems = Sections.map((item, index) => (
     <Section
       key={index}
@@ -44,7 +47,7 @@ export const CaseTimeline = ({ chosenCase }: CaseTimelineProps) => {
   return (
     <Stack space={[2, 2, 2, 1, 1]}>
       <Text variant="h3" color="blue400">
-        Tímalína máls
+        {loc.title}
       </Text>
       <FormStepperV2 sections={sectionItems} />
     </Stack>

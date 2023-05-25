@@ -16,8 +16,12 @@ import { useLocale } from '@island.is/localization'
 
 import { getDefaultValue } from '../../getDefaultValue'
 
+interface CheckboxFieldPropsExtra extends CheckboxField {
+  rightContent?: React.ReactNode
+}
+
 interface Props extends FieldBaseProps {
-  field: CheckboxField
+  field: CheckboxFieldPropsExtra
 }
 
 export const CheckboxFormField: FC<Props> = ({
@@ -37,6 +41,7 @@ export const CheckboxFormField: FC<Props> = ({
     backgroundColor,
     width,
     required,
+    rightContent,
     onSelect,
   } = field
   const { formatMessage } = useLocale()
@@ -69,6 +74,7 @@ export const CheckboxFormField: FC<Props> = ({
           onSelect={onSelect}
           split={width === 'half' ? '1/2' : '1/1'}
           backgroundColor={backgroundColor}
+          rightContent={rightContent}
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
               getDefaultValue(field, application)) ||
