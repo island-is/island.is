@@ -1,5 +1,5 @@
 import { Case } from '../../../../types/interfaces'
-import { getStatusEndDate } from '../../../../utils/helpers/dateFormatter'
+import { getStatusEndDate } from '../../../../utils/helpers/dateFunctions'
 import {
   FormStepperV2,
   Text,
@@ -7,8 +7,8 @@ import {
   FormStepperThemes,
   Stack,
 } from '@island.is/island-ui/core'
-import { MapCaseStatuses } from '../../../../types/enums'
 import localization from '../../Case.json'
+import { MapCaseStatuses } from '../../../../types/enums'
 
 interface CaseTimelineProps {
   chosenCase: Case

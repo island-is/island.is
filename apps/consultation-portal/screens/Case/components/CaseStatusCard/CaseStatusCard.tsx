@@ -1,6 +1,6 @@
 import { Case } from '../../../../types/interfaces'
-import { SimpleCardSkeleton } from '../../../../components/Card'
-import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { CardSkeleton } from '../../../../components'
+import StackedTitleAndDescription from '../Stacked/Stacked'
 import { Box, LinkV2 } from '@island.is/island-ui/core'
 import env from '../../../../lib/environment'
 import localization from '../../Case.json'
@@ -13,7 +13,7 @@ export const CaseStatusCard = ({
   const loc = localization['caseStatusCard']
 
   return (
-    <SimpleCardSkeleton borderColor="blue600" borderWidth="large">
+    <CardSkeleton borderColor="blue600" borderWidth="large">
       <StackedTitleAndDescription headingColor="blue400" title={loc.title}>
         {summaryText}
       </StackedTitleAndDescription>
@@ -26,7 +26,7 @@ export const CaseStatusCard = ({
           text={loc.summaryDocumentIdText}
         />
       )}
-    </SimpleCardSkeleton>
+    </CardSkeleton>
   )
 }
 interface LinkProps {
