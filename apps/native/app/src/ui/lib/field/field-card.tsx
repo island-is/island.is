@@ -97,7 +97,7 @@ export function FieldCard(props: FieldCardProps) {
           <IconImage
             source={IconB}
             resizeMode="contain"
-            style={{width: 12, height: 24}}
+            style={{width: 24, height: 12}}
           />
         );
         break;
@@ -106,7 +106,7 @@ export function FieldCard(props: FieldCardProps) {
           <IconImage
             source={IconBE}
             resizeMode="contain"
-            style={{width: 15, height: 42}}
+            style={{width: 42, height: 15}}
           />
         );
         break;
@@ -124,7 +124,7 @@ export function FieldCard(props: FieldCardProps) {
           <IconImage
             source={IconCE}
             resizeMode="contain"
-            style={{width: 15, height: 40}}
+            style={{width: 40, height: 24}}
           />
         );
         break;
@@ -133,7 +133,7 @@ export function FieldCard(props: FieldCardProps) {
           <IconImage
             source={IconDE}
             resizeMode="contain"
-            style={{width: 15, height: 58}}
+            style={{width: 58, height: 24}}
           />
         );
         break;

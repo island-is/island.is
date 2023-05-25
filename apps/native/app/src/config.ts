@@ -8,7 +8,7 @@ export const environments = {
     label: 'Production',
     idsIssuer: 'https://innskra.island.is/',
     apiUrl: 'https://island.is/api',
-    configcat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
   staging: {
@@ -16,7 +16,7 @@ export const environments = {
     label: 'Staging',
     idsIssuer: 'https://identity-server.staging01.devland.is/',
     apiUrl: 'https://beta.staging01.devland.is/api',
-    configcat: 'YcfYCOwBTUeI04mWOWpPdA/7kWZdAnrz0acVfr_paEl5Q',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/7kWZdAnrz0acVfr_paEl5Q',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
   dev: {
@@ -24,13 +24,14 @@ export const environments = {
     label: 'Development',
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'https://beta.dev01.devland.is/api',
-    configcat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
 };
 
 const bundleId = DeviceInfo.getBundleId();
-const isTestingApp = true; // bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
+export const isTestingApp = false;
+//bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
 
 export const config = {
   bundleId,

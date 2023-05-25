@@ -55,7 +55,9 @@ export const config: Config = {
     }) || 'is.island.app',
   datadogClientToken: env.DATADOG_CLIENT_TOKEN,
   sentryDsn: env.SENTRY_DSN,
-  configCat: env.CONFIGCAT_CLIENT_TOKEN,
+  configCat:
+    env.CONFIGCAT_CLIENT_TOKEN ||
+    'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
   constants: ConstantsRest,
   env,
 };

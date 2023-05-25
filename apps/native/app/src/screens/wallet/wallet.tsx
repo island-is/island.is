@@ -7,9 +7,10 @@ import {
   Skeleton,
   TopLine,
 } from '@ui';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Animated,
+  FlatList,
   Image,
   ListRenderItemInfo,
   Platform,
@@ -40,6 +41,8 @@ import {LicenseStatus, LicenseType} from '../../types/license-type';
 import {ButtonRegistry} from '../../utils/component-registry';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
+import {useIntl} from 'react-intl';
+import {GET_IDENTITY_DOCUMENT_QUERY} from '../../graphql/queries/get-identity-document.query';
 
 type WalletItem =
   | (IGenericUserLicense & {type: undefined})
@@ -192,6 +195,18 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
       },
     },
   );
+
+  const {data: identityDocumentData} = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {
+    client,
+    fetchPolicy: 'network-only',
+  });
+  const [licenseItems, setLicenseItems] = useState<any>([]);
+  const flatListRef = useRef<FlatList>(null);
+  const [loading, setLoading] = useState(false);
+  const isSkeleton = res.loading && !res.data;
+  const loadingTimeout = useRef<number>();
+  const intl = useIntl();
+  const scrollY = useRef(new Animated.Value(0)).current;
 
   const passportData = showPassport
     ? identityDocumentData?.getIdentityDocument ?? []

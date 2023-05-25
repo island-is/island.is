@@ -73,8 +73,6 @@ function getChromeVersion(): Promise<number> {
   });
 }
 
-const isTestingApp = true;
-
 export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
   const authStore = useAuthStore();
   const {environment = environments.prod, cognito} = useEnvironmentStore();
@@ -219,12 +217,12 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
           }}
         >
           <Image
-            source={isTestingApp ? testinglogo : logo}
+            source={config.isTestingApp ? testinglogo : logo}
             resizeMode="contain"
             style={{width: 48, height: 48}}
           />
           <View style={{maxWidth: 300, minHeight: 170}}>
-            {isTestingApp ? (
+            {config.isTestingApp ? (
               <>
                 <Title>{environment?.label ?? 'N/A'}</Title>
                 <Text
@@ -253,7 +251,7 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
             </Text>
             <Text testID="auth_state">{authState?.state ?? 'noop3'}</Text>
           </View>
-          {isTestingApp ? (
+          {config.isTestingApp ? (
             <>
               <Button
                 isTransparent
@@ -288,7 +286,7 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
               <FormattedMessage id="login.languageButtonText" />
             </LightButtonText>
           </TouchableOpacity>
-          {isTestingApp ? (
+          {config.isTestingApp ? (
             <TouchableOpacity onPress={onEnvironmentPress}>
               <LightButtonText>Change Environment</LightButtonText>
             </TouchableOpacity>

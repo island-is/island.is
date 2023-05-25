@@ -1,5 +1,5 @@
 import {Button, NavigationBarSheet, TextField, Typography} from '@ui';
-import {useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {View, ScrollView, Alert} from 'react-native';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
@@ -9,7 +9,6 @@ import {navigateTo} from '../../lib/deep-linking';
 import {useUserProfile} from './profile-queries';
 import {client} from '../../graphql/client';
 import {CREATE_EMAIL_VERIFICATION} from '../../graphql/queries/create-email-verification.mutation';
-import React = require('react');
 
 const {
   getNavigationOptions,
