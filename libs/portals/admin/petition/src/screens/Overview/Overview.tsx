@@ -1,14 +1,4 @@
-import {
-  ActionCard,
-  Box,
-  Button,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Stack,
-  Tabs,
-  Text,
-} from '@island.is/island-ui/core'
+import { ActionCard, Box, Stack, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
@@ -26,75 +16,63 @@ const Overview = () => {
   const tabOption = (label: string, lists: EndorsementLists) => ({
     label,
     content: (
-      <Box>
-        <Box marginTop={6}>
-          <Text variant="h4" marginBottom={2}>
-            {label}
-          </Text>
-          <Stack space={3}>
-            {lists.map((list: any) => {
-              return (
-                <ActionCard
-                  key={list.id}
-                  backgroundColor="white"
-                  heading={list.title}
-                  text={
-                    formatMessage(m.listPeriod) +
-                    ' ' +
-                    formatDate(list.openedDate) +
-                    ' - ' +
-                    formatDate(list.closedDate)
-                  }
-                  cta={{
-                    label: formatMessage(m.viewLists),
-                    variant: 'text',
-                    icon: 'arrowForward',
-                    onClick: () => {
-                      navigate(
-                        PetitionPaths.PetitionsSingle.replace(
-                          ':listId',
-                          list.id,
-                        ),
-                        {
-                          state: {
-                            list,
-                          },
+      <Box marginTop={6}>
+        <Stack space={3}>
+          {lists.map((list: any) => {
+            return (
+              <ActionCard
+                key={list.id}
+                backgroundColor="white"
+                heading={list.title}
+                text={
+                  formatMessage(m.listPeriod) +
+                  ' ' +
+                  formatDate(list.openedDate) +
+                  ' - ' +
+                  formatDate(list.closedDate)
+                }
+                cta={{
+                  label: formatMessage(m.viewLists),
+                  variant: 'text',
+                  icon: 'arrowForward',
+                  onClick: () => {
+                    navigate(
+                      PetitionPaths.PetitionsSingle.replace(':listId', list.id),
+                      {
+                        state: {
+                          list,
                         },
-                      )
-                    },
-                  }}
-                />
-              )
-            })}
-          </Stack>
-        </Box>
+                      },
+                    )
+                  },
+                }}
+              />
+            )
+          })}
+        </Stack>
       </Box>
     ),
   })
 
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span={['8/12']} offset={['2/12']}>
-          <IntroHeader
-            title={formatMessage(m.title)}
-            intro={formatMessage(m.overview)}
-          />
-          <Box marginTop={8}>
-            <Tabs
-              contentBackground="white"
-              label={formatMessage(m.title)}
-              selected="0"
-              tabs={[
-                tabOption(formatMessage(m.openLists), active),
-                tabOption(formatMessage(m.outdatedLists), closed),
-                tabOption(formatMessage(m.lockedLists), locked),
-              ]}
-            />
-          </Box>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+    <>
+      <IntroHeader
+        title={formatMessage(m.title)}
+        intro={formatMessage(m.overview)}
+      />
+      <Box marginTop={8}>
+        <Tabs
+          contentBackground="white"
+          label={formatMessage(m.title)}
+          selected="0"
+          tabs={[
+            tabOption(formatMessage(m.openLists), active),
+            tabOption(formatMessage(m.outdatedLists), closed),
+            tabOption(formatMessage(m.lockedLists), locked),
+          ]}
+        />
+      </Box>
+    </>
   )
 }
 

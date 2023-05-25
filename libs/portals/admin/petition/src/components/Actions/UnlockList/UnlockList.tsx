@@ -29,7 +29,6 @@ export default function UnlockList() {
   // }, [actionData?.globalError, isSubmitting, isLoading])
 
   useEffect(() => {
-    console.log(actionData)
     if (actionData) {
       toast.success(formatMessage(m.todo))
       cancel()

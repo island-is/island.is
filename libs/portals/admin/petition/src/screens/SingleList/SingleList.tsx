@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Button,
@@ -7,9 +7,6 @@ import {
   toast,
   AlertMessage,
   DatePicker,
-  GridContainer,
-  GridRow,
-  GridColumn,
 } from '@island.is/island-ui/core'
 import {
   Form,
@@ -71,129 +68,118 @@ const SingleList = () => {
   }, [actionData])
 
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span={['8/12']} offset={['2/12']}>
-          <Box marginBottom={6}>
-            <Link to={PetitionPaths.PetitionsRoot}>
-              <Button variant="text" preTextIcon='arrowBack' size='small'>
-                {'Til baka'}
-              </Button>
-            </Link>
-          </Box>
-          {petition ? (
-            <>
-              <Form method="post">
-                {petition.adminLock && (
-                  <Box marginY={5}>
-                    <AlertMessage
-                      type="error"
-                      title={'Listi er læstur'}
-                      message=""
+    <>
+      <Box marginBottom={6}>
+        <Link to={PetitionPaths.PetitionsRoot}>
+          <Button variant="text" preTextIcon="arrowBack" size="small">
+            {'Til baka'}
+          </Button>
+        </Link>
+      </Box>
+      {petition ? (
+        <>
+          <Form method="post">
+            {petition.adminLock && (
+              <Box marginY={5}>
+                <AlertMessage
+                  type="error"
+                  title={'Listi er læstur'}
+                  message=""
+                />
+              </Box>
+            )}
+            <Stack space={3}>
+              <Input
+                name="title"
+                value={title ?? ''}
+                onChange={(e) => {
+                  setTitle(e.target.value)
+                }}
+                label={'Heiti lista'}
+              />
+              <Input
+                name="description"
+                value={description ?? ''}
+                onChange={(e) => {
+                  setDescription(e.target.value)
+                }}
+                label={'Um lista'}
+                textarea
+                rows={12}
+              />
+              {closedDate && openedDate && (
+                <Box display={['block', 'flex']} justifyContent="spaceBetween">
+                  <Box width="half" marginRight={[0, 2]}>
+                    <DatePicker
+                      name="openedDate"
+                      selected={new Date(openedDate)}
+                      handleChange={(date) => setOpenedDate(date)}
+                      label="Tímabil frá"
+                      locale="is"
+                      placeholderText="Veldu dagsetningu"
                     />
                   </Box>
-                )}
-                <Stack space={3}>
-                  <Input
-                    name="title"
-                    value={title ?? ''}
-                    onChange={(e) => {
-                      setTitle(e.target.value)
-                    }}
-                    label={'Heiti lista'}
-                  />
-                  <Input
-                    name="description"
-                    value={description ?? ''}
-                    onChange={(e) => {
-                      setDescription(e.target.value)
-                    }}
-                    label={'Um lista'}
-                    textarea
-                    rows={12}
-                  />
-                  {closedDate && openedDate && (
-                    <Box
-                      display={['block', 'flex']}
-                      justifyContent="spaceBetween"
-                    >
-                      <Box width="half" marginRight={[0, 2]}>
-                        <DatePicker
-                          name="openedDate"
-                          selected={new Date(openedDate)}
-                          handleChange={(date) => setOpenedDate(date)}
-                          label="Tímabil frá"
-                          locale="is"
-                          placeholderText="Veldu dagsetningu"
-                        />
-                      </Box>
-                      <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
-                        <DatePicker
-                          name="closedDate"
-                          selected={new Date(closedDate)}
-                          handleChange={(date) => setClosedDate(date)}
-                          label="Tímabil til"
-                          locale="is"
-                          placeholderText="Veldu dagsetningu"
-                        />
-                      </Box>
-                    </Box>
-                  )}
-
-                  <Input
-                    backgroundColor="blue"
-                    disabled
-                    name={petition?.ownerName ?? ''}
-                    value={petition?.ownerName ?? ''}
-                    label={formatMessage(m.listOwner)}
-                  />
-
-                  <Box
-                    display="flex"
-                    justifyContent="spaceBetween"
-                    marginTop={2}
-                  >
-                    {!petition.adminLock ? (
-                      <Button
-                        icon="lockClosed"
-                        iconType="outline"
-                        colorScheme="destructive"
-                        onClick={openLockListModal}
-                      >
-                        {'Loka lista'}
-                      </Button>
-                    ) : (
-                      <Button
-                        icon="reload"
-                        iconType="outline"
-                        onClick={openUnlockListModal}
-                      >
-                        {'Opna lista'}
-                      </Button>
-                    )}
-                    <Button
-                      loading={isSubmitting || isLoading}
-                      type="submit"
-                      icon="reload"
-                      variant="ghost"
-                    >
-                      {'Uppfæra lista'}
-                    </Button>
+                  <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
+                    <DatePicker
+                      name="closedDate"
+                      selected={new Date(closedDate)}
+                      handleChange={(date) => setClosedDate(date)}
+                      label="Tímabil til"
+                      locale="is"
+                      placeholderText="Veldu dagsetningu"
+                    />
                   </Box>
-                </Stack>
-              </Form>
-              <PetitionsTable
-                petitions={endorsements}
-                listId={listId}
-                isViewTypeEdit={true}
+                </Box>
+              )}
+
+              <Input
+                backgroundColor="blue"
+                disabled
+                name={petition?.ownerName ?? ''}
+                value={petition?.ownerName ?? ''}
+                label={formatMessage(m.listOwner)}
               />
-            </>
-          ) : (
-            <Skeleton />
-          )}
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+
+              <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
+                {!petition.adminLock ? (
+                  <Button
+                    icon="lockClosed"
+                    iconType="outline"
+                    colorScheme="destructive"
+                    onClick={openLockListModal}
+                  >
+                    {'Loka lista'}
+                  </Button>
+                ) : (
+                  <Button
+                    icon="reload"
+                    iconType="outline"
+                    onClick={openUnlockListModal}
+                  >
+                    {'Opna lista'}
+                  </Button>
+                )}
+                <Button
+                  loading={isSubmitting || isLoading}
+                  type="submit"
+                  icon="reload"
+                  variant="ghost"
+                >
+                  {'Uppfæra lista'}
+                </Button>
+              </Box>
+            </Stack>
+          </Form>
+          <PetitionsTable
+            petitions={endorsements}
+            listId={listId}
+            isViewTypeEdit={true}
+          />
+        </>
+      ) : (
+        <Skeleton />
+      )}
+    </>
   )
 }
 
