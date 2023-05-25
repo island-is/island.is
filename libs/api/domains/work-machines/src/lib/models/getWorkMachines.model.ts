@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('WorkMachinesEntity')
 export class WorkMachineEntity {
   @Field(() => [WorkMachine], { nullable: true })
   value?: Array<WorkMachine>
@@ -12,7 +12,7 @@ export class WorkMachineEntity {
   labels?: Array<Label>
 }
 
-@ObjectType()
+@ObjectType('WorkMachinesMachine')
 export class WorkMachine {
   @Field(() => String, { nullable: true })
   registrationNumber?: string
@@ -30,7 +30,7 @@ export class WorkMachine {
   dateLastInspection?: string
 }
 
-@ObjectType()
+@ObjectType('WorkMachinesLink')
 export class Link {
   @Field(() => String, { nullable: true })
   href?: string
@@ -45,7 +45,7 @@ export class Link {
   displayTitle?: string
 }
 
-@ObjectType()
+@ObjectType('WorkMachinesLabel')
 export class Label {
   @Field(() => String, { nullable: true })
   columnName?: string
