@@ -1,16 +1,12 @@
-import {
-  Box,
-  Hidden,
-  ResponsiveProp,
-  ResponsiveSpace,
-} from '@island.is/island-ui/core'
+import { Box, ResponsiveProp, ResponsiveSpace } from '@island.is/island-ui/core'
 import { ReactNode, Children } from 'react'
 import flattenChildren from 'react-keyed-flatten-children'
 import * as styleRefs from './HeroTiles.css'
 import {
   normaliseResponsiveProp,
   resolveResponsiveProp,
-} from '../../../../../../utils/helpers/responsiveProp'
+} from '../../../../utils'
+import { useIsMobile } from '../../../../../../hooks'
 
 export type ReactNodeNoStrings = ReactNode | boolean | null | undefined
 export interface HeroTiles {
@@ -26,6 +22,7 @@ export const HeroTiles = ({
 }: HeroTiles) => {
   const styles = { ...styleRefs }
   const responsiveSpace = normaliseResponsiveProp(space)
+  const { isMobile } = useIsMobile()
 
   return (
     <Box>
@@ -48,7 +45,11 @@ export const HeroTiles = ({
               styles.columnsXl,
             )}
           >
-            <Hidden below="lg">
+            {isMobile ? (
+              <Box height="full" paddingTop={responsiveSpace}>
+                {child}
+              </Box>
+            ) : (
               <Box
                 height="full"
                 paddingBottom={i === 2 ? responsiveSpace : 0}
@@ -56,12 +57,7 @@ export const HeroTiles = ({
               >
                 {child}
               </Box>
-            </Hidden>
-            <Hidden above="md">
-              <Box height="full" paddingTop={responsiveSpace}>
-                {child}
-              </Box>
-            </Hidden>
+            )}
           </Box>
         ))}
       </Box>

@@ -90,5 +90,13 @@
       "href": "/minaraskriftir"
     },
     "tabsLabel": "Veldu tegund áskrifta"
+  },
+  "subscriptionTable": {
+    "mySubscriptionNotFoundText": "Engar áskriftir fundust fyrir",
+    "subscriptionNotFoundText": "Engin gögn fundust fyrir",
+    "clearSearchText": "Prófaðu að fjarlægja úr leit til að sjá fleiri mál."
+  },
+  "subscriptionTableItem": {
+    "allCases": "Öll mál"
   }
 }
