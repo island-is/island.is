@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AdviceFilter } from '../types/interfaces'
-import getDefaultFilters from '../utils/helpers/adviceFilters/getDefaultFilters'
+import getFiltersFromLocalStorage from '../utils/helpers/adviceFilters/getFiltersFromLocalStorage'
 import { useFetchAdvices } from './api/useFetchAdvices'
 import { CARDS_PER_PAGE } from '../utils/consts/consts'
 
@@ -26,7 +26,7 @@ export const useAdviceFilters = ({ isAuthenticated }: Props) => {
   })
 
   useEffect(() => {
-    const nextFilters = getDefaultFilters(filters)
+    const nextFilters = getFiltersFromLocalStorage(filters)
     setFilters(nextFilters)
   }, [])
 
