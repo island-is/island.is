@@ -129,6 +129,7 @@ export class GenericDrivingLicenseService
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
+      expirationDate: license.dateValidTo?.toISOString(),
       /*thumbnail: image
         ? {
             imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
