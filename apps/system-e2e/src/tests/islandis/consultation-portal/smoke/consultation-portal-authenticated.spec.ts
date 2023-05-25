@@ -8,20 +8,22 @@ import {
   FOOTER as footer,
   LOGGED_IN_STATES as lis,
   PagesInterface,
+  LOGIN as login,
+  URL,
 } from './consts'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe.skip('Consultation portal authenticated', () => {
+test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
+  const authLink = new RegExp(`^${urls.authUrl}`)
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
-      idsLoginOn: {
-        nextAuth: { nextAuthRoot: `${urls.islandisBaseUrl}/samradsgatt` },
-      },
-      homeUrl: '/samradsgatt',
-      phoneNumber: '0102129',
+      storageState: 'consultation-auth.json',
+      idsLoginOn: false,
+      homeUrl: URL,
+      phoneNumber: login.phoneNumber,
     })
   })
   test.afterAll(async () => {
@@ -30,7 +32,26 @@ test.describe.skip('Consultation portal authenticated', () => {
 
   test('front page should have expected static content', async () => {
     const page = await context.newPage()
-    await page.goto('/samradsgatt')
+    await page.goto(URL)
+
+    const loggedOut = page.getByRole('button', {
+      name: login.buttons.loggedOut,
+    })
+    const loggedIn = page.getByRole('button', { name: login.buttons.loggedIn })
+    
+    if (await loggedOut.isVisible()) {
+      await loggedOut.click()
+      await page.waitForURL(authLink)
+      await page
+        .locator(login.locators.phoneUserIdentifier)
+        .fill(login.phoneNumber)
+      await page.locator(login.locators.submitPhoneUser).isEnabled()
+      await page.locator(login.locators.submitPhoneUser).click()
+      await page.waitForURL(`**${URL}`)
+    } else {
+      await loggedIn.isVisible()
+    }
+
     for (const { label } of nav) {
       await expect(page.getByRole('button', { name: label })).toBeVisible()
     }
@@ -51,7 +72,7 @@ test.describe.skip('Consultation portal authenticated', () => {
     const instance = lis[item as keyof PagesInterface]
     test(`${item} should show logged in state`, async () => {
       const page = await context.newPage()
-      await page.goto(`/samradsgatt${instance.href}`)
+      await page.goto(`${URL}${instance.href}`)
       for (const { text } of instance.breadcrumbs) {
         expect(page.locator('nav', { has: page.getByText(text) }))
       }

@@ -9,6 +9,7 @@ import {
   LOGGED_OUT_STATES as los,
   LOGIN_BUTTONS as lb,
   PagesInterface,
+  URL,
 } from './consts'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -19,8 +20,9 @@ test.describe('Consultation portal unathenticated', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
+      storageState: 'consultation-no-auth.json',
       idsLoginOn: false,
-      homeUrl: '/samradsgatt',
+      homeUrl: URL,
       phoneNumber: 'not appplicable',
     })
   })
@@ -30,7 +32,7 @@ test.describe('Consultation portal unathenticated', () => {
 
   test('front page should have expected static content', async () => {
     const page = await context.newPage()
-    await page.goto('/samradsgatt')
+    await page.goto(URL)
     for (const { label } of nav) {
       await expect(page.getByRole('button', { name: label })).toBeVisible()
     }
@@ -51,7 +53,7 @@ test.describe('Consultation portal unathenticated', () => {
     const instance = los[item as keyof PagesInterface]
     test(`${item} should show logged out state`, async () => {
       const page = await context.newPage()
-      await page.goto('/samradsgatt')
+      await page.goto(URL)
       await page.getByRole('button', { name: instance.label }).click()
       await page.waitForURL(`**${instance.href}`)
       for (const { text } of instance.breadcrumbs) {
@@ -72,7 +74,7 @@ test.describe('Consultation portal unathenticated', () => {
 
   test('minaraskriftir should redirect to island.is login', async () => {
     const page = await context.newPage()
-    await page.goto('/samradsgatt/minaraskriftir')
+    await page.goto(`${URL}/minaraskriftir`)
     await page.waitForURL(authLink)
   })
 
@@ -80,7 +82,7 @@ test.describe('Consultation portal unathenticated', () => {
     const instance = lb[item as keyof typeof lb]
     test(`login button on ${item} should redirect to island.is login`, async () => {
       const page = await context.newPage()
-      await page.goto(`/samradsgatt${instance.location}`)
+      await page.goto(`${URL}${instance.location}`)
       await page.getByRole('button', { name: instance.label }).click()
       await page.waitForURL(authLink)
     })
