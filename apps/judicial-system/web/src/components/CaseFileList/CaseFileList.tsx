@@ -10,15 +10,14 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
-import {
-  caseFiles as m,
-  core,
-  errors,
-} from '@island.is/judicial-system-web/messages'
+import { caseFiles as m } from '@island.is/judicial-system-web/messages'
 
-import { Modal } from '..'
-import { useFileList } from '../../utils/hooks'
-import { CaseFile, CaseFileStatus } from '../../utils/hooks/useCourtUpload'
+import { FileNotFoundModal } from '@island.is/judicial-system-web/src/components'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import type {
+  CaseFile,
+  CaseFileStatus,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   caseId: string
@@ -114,15 +113,7 @@ const CaseFileList: React.FC<Props> = (props) => {
         </Box>
       ))}
       <AnimatePresence>
-        {fileNotFound && (
-          <Modal
-            title={formatMessage(errors.fileNotFoundModalTitle)}
-            text={formatMessage(m.modal.fileNotFound.text)}
-            onClose={() => dismissFileNotFound()}
-            onPrimaryButtonClick={() => dismissFileNotFound()}
-            primaryButtonText={formatMessage(core.closeModal)}
-          />
-        )}
+        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
     </>
   )

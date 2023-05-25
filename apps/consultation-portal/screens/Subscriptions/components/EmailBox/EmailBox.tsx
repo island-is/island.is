@@ -1,4 +1,3 @@
-import SubscriptionActionCard from '../../../../components/Card/SubscriptionActionCard'
 import { useMutation } from '@apollo/client'
 import initApollo from '../../../../graphql/client'
 import { SUB_POST_EMAIL } from '../../../../graphql/queries.graphql'
@@ -8,6 +7,7 @@ import { useFetchEmail } from '../../../../hooks/api/useFetchEmail'
 import { LoadingDots, toast } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import localization from '../../Subscriptions.json'
+import { ActionCard } from '../../../../components'
 
 const emailIsValid = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
@@ -75,7 +75,7 @@ export const EmailBox = () => {
 
   if (!userLoading && !isAuthenticated) {
     return (
-      <SubscriptionActionCard
+      <ActionCard
         heading={loc.loginActionCard.heading}
         text={loc.loginActionCard.text}
         button={[
@@ -90,7 +90,7 @@ export const EmailBox = () => {
 
   if (!userLoading && isAuthenticated && !userEmail) {
     return (
-      <SubscriptionActionCard
+      <ActionCard
         heading={loc.setEmailActionCard.heading}
         text={loc.setEmailActionCard.text}
         input={{
@@ -113,7 +113,7 @@ export const EmailBox = () => {
   }
 
   return isVerified ? (
-    <SubscriptionActionCard
+    <ActionCard
       text={`${loc.verifiedActionCard.text}: ${userEmail}`}
       button={[
         {
@@ -128,7 +128,7 @@ export const EmailBox = () => {
       ]}
     />
   ) : (
-    <SubscriptionActionCard
+    <ActionCard
       text={`${loc.notVerifiedActionCard.text} ${userEmail}`}
       button={[
         {

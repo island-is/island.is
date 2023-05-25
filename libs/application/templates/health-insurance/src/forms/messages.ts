@@ -632,7 +632,7 @@ export const m = defineMessages({
     description: 'All data has been fetched and the application can be started',
   },
   externalDataSuccessSubmitFieldTitle: {
-    id: 'hi.application:externalDataSuccessTitle',
+    id: 'hi.application:externalDataSuccessSubmitFieldTitle',
     defaultMessage: 'Hefja umsókn',
     description: 'Start application',
   },
