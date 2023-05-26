@@ -37,11 +37,24 @@ const Table = <T extends object>(
     showMoreLabel = 'See all',
     showLessLabel = 'See less',
     className,
-    sortableColumnIds,
     testid,
   } = props
   const [isExpanded, setExpanded] = useState<boolean>(false)
-  const tableInstance = useTable<T>({ columns, data }, useSortBy)
+  const tableInstance = useTable<T>(
+    {
+      columns,
+      data,
+      initialState: {
+        sortBy: [
+          {
+            id: 'defendants',
+            desc: false,
+          },
+        ],
+      },
+    },
+    useSortBy,
+  )
   const {
     getTableProps,
     getTableBodyProps,
@@ -146,16 +159,18 @@ const Table = <T extends object>(
                     'Header',
                   )} `}</Text>
                   <span>
-                    {column.isSorted ? (
-                      column.isSortedDesc ? (
-                        <Icon icon="caretDown" size="small" />
+                    {props.sortableColumnIds?.includes(column.id) ? (
+                      column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <Icon icon="caretDown" size="small" />
+                        ) : (
+                          <Icon icon="caretUp" size="small" />
+                        )
                       ) : (
-                        <Icon icon="caretUp" size="small" />
+                        <Box opacity={0.5} component="span">
+                          <Icon icon="caretUp" size="small" />
+                        </Box>
                       )
-                    ) : sortableColumnIds?.includes(column.id) ? (
-                      <Box opacity={0.5} component="span">
-                        <Icon icon="caretUp" size="small" />
-                      </Box>
                     ) : null}
                   </span>
                 </th>
