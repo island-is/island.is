@@ -38,7 +38,7 @@ import {
 import {
   UploadState,
   useCourtUpload,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDate,
   caseTypes,

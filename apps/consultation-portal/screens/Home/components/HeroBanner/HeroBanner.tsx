@@ -44,6 +44,9 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
             <Stack space={2}>
               <HeroLogoMobile />
               <LESchoolMobile />
+              <StatisticBox
+                statistic={statistics?.casesInReview?.toLocaleString('de-DE')}
+              />
               <Text>{loc.introText}</Text>
               <ArrowLink href={loc.arrowLink.internalLink.href}>
                 {loc.arrowLink.internalLink.text}
