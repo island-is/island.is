@@ -15,7 +15,6 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
 import { ChangeOperatorOfVehicleSchema } from './dataSchema'
 import {
@@ -65,11 +64,8 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag:
-        Features.transportAuthorityChangeOperatorOfVehicleDelegations,
     },
   ],
-  featureFlag: Features.transportAuthorityChangeOperatorOfVehicle,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

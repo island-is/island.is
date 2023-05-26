@@ -127,7 +127,7 @@ const HeaderContainer: React.FC = () => {
                   window.open(constants.FEEDBACK_FORM_URL, '_blank')
                 }
               >
-                {formatMessage(header.headerFeedbackButtonLabel)}
+                {formatMessage(header.feedbackButtonLabel)}
               </Button>
             </Hidden>
             <UserMenu
@@ -186,11 +186,11 @@ const HeaderContainer: React.FC = () => {
                     <Box>
                       {user.role === UserRole.DEFENDER ? (
                         <Text>
-                          {formatMessage(header.headerTipDisclaimerDefenders)}
+                          {formatMessage(header.tipDisclaimerDefenders)}
                         </Text>
                       ) : (
                         <MarkdownWrapper
-                          markdown={formatMessage(header.headerTipDisclaimer, {
+                          markdown={formatMessage(header.tipDisclaimer, {
                             linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
                             linkEnd: '</a>',
                           })}
