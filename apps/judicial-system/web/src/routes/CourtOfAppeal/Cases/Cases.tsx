@@ -67,6 +67,7 @@ const CourtOfAppealCases = () => {
     {
       Header: formatMessage(tables.caseNumber),
       accessor: 'courtCaseNumber' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
           original: { courtCaseNumber: string; policeCaseNumbers: string[] }
@@ -111,6 +112,7 @@ const CourtOfAppealCases = () => {
     {
       Header: formatMessage(tables.type),
       accessor: 'type' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
           original: {
@@ -139,6 +141,7 @@ const CourtOfAppealCases = () => {
     {
       Header: formatMessage(tables.state),
       accessor: 'state' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
           original: {
@@ -225,7 +228,6 @@ const CourtOfAppealCases = () => {
               (a) => a.appealState !== CaseAppealState.COMPLETED,
             ) || []
           }
-          sortableColumnIds={['defendants', 'appealedDate']}
         />
       </Box>
       <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
@@ -241,7 +243,6 @@ const CourtOfAppealCases = () => {
             (a) => a.appealState === CaseAppealState.COMPLETED,
           ) || []
         }
-        sortableColumnIds={['defendants', 'duration']}
       />
     </SharedPageLayout>
   )
