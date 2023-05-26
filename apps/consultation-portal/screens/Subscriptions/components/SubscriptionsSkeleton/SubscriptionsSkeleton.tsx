@@ -7,8 +7,7 @@ import {
   Tabs,
   Text,
 } from '@island.is/island-ui/core'
-import Layout from '../../../../components/Layout/Layout'
-import { Breadcrumbs } from '../../../../components'
+import { Breadcrumbs, Layout } from '../../../../components'
 import { ReactNode } from 'react'
 import EmailBox from '../EmailBox/EmailBox'
 import { Area } from '../../../../types/enums'
@@ -86,7 +85,7 @@ const SubscriptionsSkeleton = ({
                       ? loc.mySubscriptions.text
                       : loc.subscriptions.text}
                   </Text>
-                  {!isMySubscriptions && isAuthenticated && (
+                  {!isMySubscriptions && (
                     <Link href={loc.unsubscribeLink.href}>
                       <a>{loc.unsubscribeLink.text}</a>
                     </Link>

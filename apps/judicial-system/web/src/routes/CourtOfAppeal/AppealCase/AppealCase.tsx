@@ -109,7 +109,7 @@ const AppealCase = () => {
               removeTabsValidateAndSet(
                 'appealCaseNumber',
                 event.target.value,
-                ['empty'],
+                ['empty', 'appeal-case-number-format'],
                 workingCase,
                 setWorkingCase,
                 appealCaseNumberErrorMessage,
@@ -120,7 +120,7 @@ const AppealCase = () => {
               validateAndSendToServer(
                 'appealCaseNumber',
                 event.target.value,
-                ['empty'],
+                ['empty', 'appeal-case-number-format'],
                 workingCase,
                 updateCase,
                 setAppealCaseNumberErrorMessage,
