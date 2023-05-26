@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import {
   HERO as hero,
@@ -32,7 +32,7 @@ test.describe('Consultation portal unathenticated', () => {
 
   test('front page should have expected static content', async () => {
     const page = await context.newPage()
-    await page.goto(URL)
+    await page.goto(icelandicAndNoPopupUrl(URL))
     for (const { label } of nav) {
       await expect(page.getByRole('button', { name: label })).toBeVisible()
     }
@@ -82,7 +82,7 @@ test.describe('Consultation portal unathenticated', () => {
     const instance = lb[item as keyof typeof lb]
     test(`login button on ${item} should redirect to island.is login`, async () => {
       const page = await context.newPage()
-      await page.goto(`${URL}${instance.location}`)
+      await page.goto(icelandicAndNoPopupUrl(`${URL}${instance.location}`))
       await page.getByRole('button', { name: instance.label }).click()
       await page.waitForURL(authLink)
     })

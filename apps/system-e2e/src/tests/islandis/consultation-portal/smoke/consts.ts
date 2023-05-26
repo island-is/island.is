@@ -1,4 +1,5 @@
 export const URL = '/samradsgatt'
+export const URL_WITH_QUERY = '/samradsgatt?locale=is&hide_onboarding_modal=true'
 
 const NAV_LINKS = [
   {

@@ -1,5 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import {
   HERO as hero,
@@ -10,6 +10,7 @@ import {
   PagesInterface,
   LOGIN as login,
   URL,
+  URL_WITH_QUERY,
 } from './consts'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -32,7 +33,7 @@ test.describe('Consultation portal authenticated', () => {
 
   test('front page should have expected static content', async () => {
     const page = await context.newPage()
-    await page.goto(URL)
+    await page.goto(icelandicAndNoPopupUrl(URL))
 
     const loggedOut = page.getByRole('button', {
       name: login.buttons.loggedOut,
@@ -47,7 +48,7 @@ test.describe('Consultation portal authenticated', () => {
         .fill(login.phoneNumber)
       await page.locator(login.locators.submitPhoneUser).isEnabled()
       await page.locator(login.locators.submitPhoneUser).click()
-      await page.waitForURL(`**${URL}`)
+      await page.waitForURL(`**${URL_WITH_QUERY}`)
     } else {
       await loggedIn.isVisible()
     }
@@ -72,7 +73,7 @@ test.describe('Consultation portal authenticated', () => {
     const instance = lis[item as keyof PagesInterface]
     test(`${item} should show logged in state`, async () => {
       const page = await context.newPage()
-      await page.goto(`${URL}${instance.href}`)
+      await page.goto(icelandicAndNoPopupUrl(`${URL}${instance.href}`))
       for (const { text } of instance.breadcrumbs) {
         expect(page.locator('nav', { has: page.getByText(text) }))
       }
