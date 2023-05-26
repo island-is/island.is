@@ -1176,17 +1176,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@octokit/action@npm:^4.0.8":
-  version: 4.0.8
-  resolution: "@octokit/action@npm:4.0.8"
+"@octokit/action@npm:^5.0.5":
+  version: 5.0.5
+  resolution: "@octokit/action@npm:5.0.5"
   dependencies:
     "@octokit/auth-action": ^2.0.0
     "@octokit/core": ^4.0.0
-    "@octokit/plugin-paginate-rest": ^4.0.0
-    "@octokit/plugin-rest-endpoint-methods": ^6.0.0
-    "@octokit/types": ^7.0.0
-    https-proxy-agent: ^5.0.1
-  checksum: d2f244300211c902e64067ac705c562e00ec1d3da4beb277af1e43eace0050995218cca1600007c82d138738377a32668935fc5c293b1683bb21c13589254f7c
+    "@octokit/plugin-paginate-rest": ^6.0.0
+    "@octokit/plugin-rest-endpoint-methods": ^7.0.0
+    "@octokit/types": ^9.0.0
+    https-proxy-agent: ^7.0.0
+  checksum: 9e87562ea87f0130fa7c8e0e4cb61d93dd5da60a9c5e21dd5fb01db679f6be0050d60d1edf5630f6a557e8ff792adf7bedcb7c202057085c04bb6e58fa7db5b3
   languageName: node
   linkType: hard
 
@@ -1306,6 +1306,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@octokit/openapi-types@npm:^17.2.0":
+  version: 17.2.0
+  resolution: "@octokit/openapi-types@npm:17.2.0"
+  checksum: 29995e34f98d9d64ba234d64a7ae9486c66d2bb6ac0d30d9a42decdbb4b03b13e811769b1e1505a1748ff20c22d35724985e6c128cd11a3f14f8322201520093
+  languageName: node
+  linkType: hard
+
 "@octokit/plugin-paginate-rest@npm:^4.0.0":
   version: 4.0.0
   resolution: "@octokit/plugin-paginate-rest@npm:4.0.0"
@@ -1314,6 +1321,18 @@ __metadata:
   peerDependencies:
     "@octokit/core": ">=4"
   checksum: a3fbc1d540cc919df8935dea88b36d59ae85f417713476d8679f1cf8b733cfb44b96d3020094bd7f8daa7b84e4ac9b8403c1cdad323289d586fdb2ed1dcae7c0
+  languageName: node
+  linkType: hard
+
+"@octokit/plugin-paginate-rest@npm:^6.0.0":
+  version: 6.1.2
+  resolution: "@octokit/plugin-paginate-rest@npm:6.1.2"
+  dependencies:
+    "@octokit/tsconfig": ^1.0.2
+    "@octokit/types": ^9.2.3
+  peerDependencies:
+    "@octokit/core": ">=4"
+  checksum: a7b3e686c7cbd27ec07871cde6e0b1dc96337afbcef426bbe3067152a17b535abd480db1861ca28c88d93db5f7bfdbcadd0919ead19818c28a69d0e194038065
   languageName: node
   linkType: hard
 
@@ -1335,6 +1354,18 @@ __metadata:
   peerDependencies:
     "@octokit/core": ">=3"
   checksum: 8fefbdcfc16fe39aa216c440cf52c2861f6c0c905f1fdfbd0e720fb59815c079100b877535bcd428cb782ef31a8d508470d69d4ecf307b8af4ccc34a5669c050
+  languageName: node
+  linkType: hard
+
+"@octokit/plugin-rest-endpoint-methods@npm:^7.0.0":
+  version: 7.1.2
+  resolution: "@octokit/plugin-rest-endpoint-methods@npm:7.1.2"
+  dependencies:
+    "@octokit/types": ^9.2.3
+    deprecation: ^2.3.1
+  peerDependencies:
+    "@octokit/core": ">=3"
+  checksum: 159d29bf28d7aecbe39f08c25cf376d39b6c90ce17e50a55eafb44f3e4b9e1053a300c1edd72f308ae386146a17cbad46c410c1cfd000b048adf9c21d6922a1a
   languageName: node
   linkType: hard
 
@@ -1414,6 +1445,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@octokit/tsconfig@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@octokit/tsconfig@npm:1.0.2"
+  checksum: 74d56f3e9f326a8dd63700e9a51a7c75487180629c7a68bbafee97c612fbf57af8347369bfa6610b9268a3e8b833c19c1e4beb03f26db9a9dce31f6f7a19b5b1
+  languageName: node
+  linkType: hard
+
 "@octokit/types@npm:^5.0.0":
   version: 5.0.1
   resolution: "@octokit/types@npm:5.0.1"
@@ -1438,6 +1476,15 @@ __metadata:
   dependencies:
     "@octokit/openapi-types": ^13.1.0
   checksum: d60b6b94b0fc851c2de99cabfd709810ff539ea5461ccff6bc8f4af69341fcabdee7ee983eb6a2054957696c0d59afcf71f7792cec8d1daee08b1845024c7125
+  languageName: node
+  linkType: hard
+
+"@octokit/types@npm:^9.0.0, @octokit/types@npm:^9.2.3":
+  version: 9.2.3
+  resolution: "@octokit/types@npm:9.2.3"
+  dependencies:
+    "@octokit/openapi-types": ^17.2.0
+  checksum: 6806413089f20a8302237ef85aa2e83bace7499e95fdc3db2d304f9e6dc6e87fb6766452f92e08ddf475046b69753e11beabaeff6733c38bdaf3e21dfd7d3341
   languageName: node
   linkType: hard
 
@@ -1701,7 +1748,7 @@ __metadata:
   resolution: "actions-tests@workspace:."
   dependencies:
     "@fluffy-spoon/substitute": ^1.208.0
-    "@octokit/action": ^4.0.8
+    "@octokit/action": ^5.0.5
     "@octokit/core": ^3.5.1
     "@octokit/rest": 19.0.4
     "@types/debug": 4.1.7
@@ -1724,6 +1771,15 @@ __metadata:
   dependencies:
     debug: 4
   checksum: f52b6872cc96fd5f622071b71ef200e01c7c4c454ee68bc9accca90c98cfb39f2810e3e9aa330435835eedc8c23f4f8a15267f67c6e245d2b33757575bdac49d
+  languageName: node
+  linkType: hard
+
+"agent-base@npm:^7.0.2":
+  version: 7.1.0
+  resolution: "agent-base@npm:7.1.0"
+  dependencies:
+    debug: ^4.3.4
+  checksum: f7828f991470a0cc22cb579c86a18cbae83d8a3cbed39992ab34fc7217c4d126017f1c74d0ab66be87f71455318a8ea3e757d6a37881b8d0f2a2c6aa55e5418f
   languageName: node
   linkType: hard
 
@@ -2355,7 +2411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:4.3.4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.3":
+"debug@npm:4, debug@npm:4.3.4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.3, debug@npm:^4.3.4":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
   dependencies:
@@ -3174,13 +3230,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:^5.0.0, https-proxy-agent@npm:^5.0.1":
+"https-proxy-agent@npm:^5.0.0":
   version: 5.0.1
   resolution: "https-proxy-agent@npm:5.0.1"
   dependencies:
     agent-base: 6
     debug: 4
   checksum: 571fccdf38184f05943e12d37d6ce38197becdd69e58d03f43637f7fa1269cf303a7d228aa27e5b27bbd3af8f09fd938e1c91dcfefff2df7ba77c20ed8dfc765
+  languageName: node
+  linkType: hard
+
+"https-proxy-agent@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "https-proxy-agent@npm:7.0.0"
+  dependencies:
+    agent-base: ^7.0.2
+    debug: 4
+  checksum: c1365f5202b6a9c5c5fb1e6718e941254c2782bc51e8c57b1a7cacdccf1017278224434c963dfcdbdd4a3147a29c97d782316fabeef4e099968a627049de3347
   languageName: node
   linkType: hard
 
