@@ -238,6 +238,7 @@ const CourtOfAppealCases = () => {
               (a) => a.appealState !== CaseAppealState.COMPLETED,
             ) || []
           }
+          sortableColumnIds={['defendants', 'appealedDate']}
         />
       </Box>
       <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
@@ -253,6 +254,7 @@ const CourtOfAppealCases = () => {
             (a) => a.appealState === CaseAppealState.COMPLETED,
           ) || []
         }
+        sortableColumnIds={['defendants', 'duration']}
       />
     </SharedPageLayout>
   )

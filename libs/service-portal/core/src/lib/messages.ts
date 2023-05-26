@@ -894,6 +894,22 @@ export const m = defineMessages({
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
   },
+  health: {
+    id: 'service.portal:health',
+    defaultMessage: 'Heilsa',
+  },
+  healthDescription: {
+    id: 'service.portal:health-description',
+    defaultMessage: 'Hér eru heilsugögn um þig',
+  },
+  therapies: {
+    id: 'service.portal:therapies',
+    defaultMessage: 'Þjálfun',
+  },
+  aidsAndNutrition: {
+    id: 'service.portal:aids-and-nutrition',
+    defaultMessage: 'Hjálpartæki og næring',
+  },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',
     defaultMessage: 'Sundurliðun',
