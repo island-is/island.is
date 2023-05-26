@@ -15,9 +15,9 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { m } from '../../lib/messages'
 import { IDSAdminPaths } from '../../lib/paths'
 import { AuthClients } from './Clients.loader'
-import { ClientType } from '../../shared/components/ClientType'
-import IdsAdminCard from '../../shared/components/IdsAdminCard/IdsAdminCard'
-import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
+import { ClientType } from '../../components/ClientType'
+import IdsAdminCard from '../../components/IdsAdminCard/IdsAdminCard'
+import { useLooseSearch } from '../../hooks/useLooseSearch'
 
 const Clients = () => {
   const originalClients = useLoaderData() as AuthClients

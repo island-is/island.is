@@ -20,8 +20,6 @@ class MyDocument extends Document<Props> {
   }
 
   render() {
-    const { lang } = this.props
-
     return (
       <Html lang="is">
         <Head>

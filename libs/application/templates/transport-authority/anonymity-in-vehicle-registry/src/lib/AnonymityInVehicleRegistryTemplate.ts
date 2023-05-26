@@ -14,7 +14,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { AnonymityInVehicleRegistrySchema } from './dataSchema'
 import { application } from './messages'
@@ -32,7 +31,6 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.AnonymityInVehicleRegistry.translation,
   ],
   dataSchema: AnonymityInVehicleRegistrySchema,
-  featureFlag: Features.transportAuthorityAnonymityInVehicleRegistry,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
