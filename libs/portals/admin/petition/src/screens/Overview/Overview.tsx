@@ -5,13 +5,19 @@ import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/portals/core'
 import { formatDate } from '../../shared/utils/utils'
 import { PetitionPaths } from '../../lib/paths'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 import { EndorsementLists, FilteredPetitions } from '../../shared/utils/types'
+import { useEffect } from 'react'
 
 const Overview = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { active, closed, locked } = useLoaderData() as FilteredPetitions
+  const { revalidate } = useRevalidator()
+
+  useEffect(() => {
+    revalidate()
+  }, [])
 
   const tabOption = (label: string, lists: EndorsementLists) => ({
     label,

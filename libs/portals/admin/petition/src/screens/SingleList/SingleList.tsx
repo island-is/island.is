@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   Button,
   Input,
   Stack,
-  toast,
   AlertMessage,
   DatePicker,
+  toast,
 } from '@island.is/island-ui/core'
 import {
   Form,
@@ -14,6 +14,8 @@ import {
   useActionData,
   useLoaderData,
   useNavigate,
+  useNavigation,
+  useRevalidator,
 } from 'react-router-dom'
 
 import { useLocale } from '@island.is/localization'
@@ -22,13 +24,17 @@ import Skeleton from '../../components/Skeleton/skeleton'
 import { EndorsementList } from '../../shared/utils/types'
 import PetitionsTable from '../../components/PetitionsTable'
 import { PetitionPaths } from '../../lib/paths'
-import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 import { UpdateListMutation } from '../../shared/mutations/updateList.generated'
+import { LockList } from '../../components/Actions/LockList'
+import { UnlockList } from '../../components/Actions/UnlockList'
+import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 
 const SingleList = () => {
   const { listId, petition, endorsements } = useLoaderData() as EndorsementList
   const { formatMessage } = useLocale()
+  const navigation = useNavigation()
   const navigate = useNavigate()
+  const revalidator = useRevalidator()
 
   const [title, setTitle] = useState(petition?.title)
   const [description, setDescription] = useState(petition?.description)
@@ -43,24 +49,10 @@ const SingleList = () => {
 
   const actionData = useActionData() as UpdateListMutation
 
-  const openLockListModal = () => {
-    navigate(
-      replaceParams({
-        href: PetitionPaths.PetitionLock,
-        params: { listId },
-      }),
-    )
-  }
-
-  const openUnlockListModal = () => {
-    navigate(
-      replaceParams({
-        href: PetitionPaths.PetitionUnlock,
-        params: { listId },
-      }),
-    )
-  }
-
+  const [isLockListModalVisible, setIsLockListModalVisible] = useState(false)
+  const [isUnlockListModalVisible, setIsUnlockListModalVisible] = useState(
+    false,
+  )
   useEffect(() => {
     if (actionData) {
       actionData?.endorsementSystemUpdateEndorsementList
@@ -72,13 +64,20 @@ const SingleList = () => {
   return (
     <>
       <Box marginBottom={6}>
-        <Link to={PetitionPaths.PetitionsRoot}>
-          <Button variant="text" preTextIcon="arrowBack" size="small">
-            {'Til baka'}
-          </Button>
-        </Link>
+        <Button
+          variant="text"
+          preTextIcon="arrowBack"
+          size="small"
+          onClick={() => {
+            navigate(-1)
+          }}
+        >
+          {'Til baka'}
+        </Button>
       </Box>
-      {petition ? (
+      {navigation.state !== 'loading' &&
+      revalidator.state !== 'loading' &&
+      petition ? (
         <>
           <Form method="post">
             {petition.adminLock && (
@@ -144,22 +143,34 @@ const SingleList = () => {
 
               <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
                 {!petition.adminLock ? (
-                  <Button
-                    icon="lockClosed"
-                    iconType="outline"
-                    colorScheme="destructive"
-                    onClick={openLockListModal}
-                  >
-                    {'Loka lista'}
-                  </Button>
+                  <>
+                    <Button
+                      icon="lockClosed"
+                      iconType="outline"
+                      colorScheme="destructive"
+                      onClick={() => setIsLockListModalVisible(true)}
+                    >
+                      {'Loka lista'}
+                    </Button>
+                    <LockList
+                      isVisible={isLockListModalVisible}
+                      onClose={() => setIsLockListModalVisible(false)}
+                    />
+                  </>
                 ) : (
-                  <Button
-                    icon="reload"
-                    iconType="outline"
-                    onClick={openUnlockListModal}
-                  >
-                    {'Opna lista'}
-                  </Button>
+                  <>
+                    <Button
+                      icon="reload"
+                      iconType="outline"
+                      onClick={() => setIsUnlockListModalVisible(true)}
+                    >
+                      {'Opna lista'}
+                    </Button>
+                    <UnlockList
+                      isVisible={isUnlockListModalVisible}
+                      onClose={() => setIsUnlockListModalVisible(false)}
+                    />
+                  </>
                 )}
                 <Button
                   loading={isSubmitting || isLoading}

@@ -5,10 +5,6 @@ import { PetitionPaths } from './lib/paths'
 import SingleList from './screens/SingleList/SingleList'
 import { overviewLoader } from './screens/Overview/Overview.loader'
 import { singleListLoader } from './screens/SingleList/SingleList.loader'
-import { lockListAction } from './components/Actions/LockList/LockList.action'
-import LockList from './components/Actions/LockList/LockList'
-import { unlockListAction } from './components/Actions/UnlockList/UnlockList.action'
-import UnlockList from './components/Actions/UnlockList/UnlockList'
 import { updateListAction } from './components/Actions/UpdateList/UpdateList.action'
 
 const OverviewScreen = lazy(() => import('./screens/Overview/Overview'))
@@ -30,21 +26,6 @@ export const petitionModule: PortalModule = {
       element: <SingleList />,
       loader: singleListLoader(props),
       action: updateListAction(props),
-      handle: {
-        backPath: PetitionPaths.PetitionsRoot,
-      },
-    },
-    {
-      name: m.lockedLists,
-      path: PetitionPaths.PetitionLock,
-      action: lockListAction(props),
-      element: <LockList />,
-    },
-    {
-      name: m.lockedLists,
-      path: PetitionPaths.PetitionUnlock,
-      action: unlockListAction(props),
-      element: <UnlockList />,
     },
   ],
 }

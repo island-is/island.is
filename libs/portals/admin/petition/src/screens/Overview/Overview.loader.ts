@@ -13,6 +13,7 @@ export const overviewLoader: WrappedLoaderFn = ({ client }) => {
       error,
     } = await client.query<EndorsementSystemFindEndorsementListsQuery>({
       query: EndorsementSystemFindEndorsementListsDocument,
+      fetchPolicy: 'network-only',
       variables: {
         input: {
           tags: [EndorsementListControllerFindByTagsTagsEnum.generalPetition],

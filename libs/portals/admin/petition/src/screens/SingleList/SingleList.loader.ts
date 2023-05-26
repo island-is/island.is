@@ -19,6 +19,7 @@ export const singleListLoader: WrappedLoaderFn = ({ client }) => {
       error: listError,
     } = await client.query<EndorsementSystemGetSingleEndorsementListQuery>({
       query: EndorsementSystemGetSingleEndorsementListDocument,
+      fetchPolicy: 'network-only',
       variables: {
         input: {
           listId: params.listId,
