@@ -152,36 +152,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@apollo/client@npm:3.1.3":
-  version: 3.1.3
-  resolution: "@apollo/client@npm:3.1.3"
-  dependencies:
-    "@types/zen-observable": ^0.8.0
-    "@wry/context": ^0.5.2
-    "@wry/equality": ^0.2.0
-    fast-json-stable-stringify: ^2.0.0
-    graphql-tag: ^2.11.0
-    hoist-non-react-statics: ^3.3.2
-    optimism: ^0.12.1
-    prop-types: ^15.7.2
-    symbol-observable: ^1.2.0
-    ts-invariant: ^0.4.4
-    tslib: ^1.10.0
-    zen-observable: ^0.8.14
-  peerDependencies:
-    graphql: ^14.0.0 || ^15.0.0
-    react: ^16.8.0
-    subscriptions-transport-ws: ^0.9.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-  checksum: 364620f4c31324c74670617e27901af232536fe12456b8f71aac8c07730d8a37f7d8abd72f95b28adb7a6023b450f7de38aa25fa0a54d1056b44e77862f407ff
-  languageName: node
-  linkType: hard
-
-"@apollo/client@npm:3.7.7":
-  version: 3.7.7
-  resolution: "@apollo/client@npm:3.7.7"
+"@apollo/client@npm:3.7.14":
+  version: 3.7.14
+  resolution: "@apollo/client@npm:3.7.14"
   dependencies:
     "@graphql-typed-document-node/core": ^3.1.1
     "@wry/context": ^0.7.0
@@ -189,7 +162,7 @@ __metadata:
     "@wry/trie": ^0.3.0
     graphql-tag: ^2.12.6
     hoist-non-react-statics: ^3.3.2
-    optimism: ^0.16.1
+    optimism: ^0.16.2
     prop-types: ^15.7.2
     response-iterator: ^0.2.6
     symbol-observable: ^4.0.0
@@ -211,7 +184,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 4f061c663505dbbabe0e5c00f914dbb3ac1cb2a79beb1de49a6bb1cc299c66536ea076d3c30f579c7f9558efe710105f385cc7f69b247f2d198427d5a8f38eb6
+  checksum: eaa8af74450fee4d4761d25fb8fe752788517b27ebb46a51b6496950c5b73f48b6ba3e4f3474b6e4a4f310916dc3fcf079306c35f16d4284b96c7fdbb8539fde
   languageName: node
   linkType: hard
 
@@ -7702,7 +7675,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@island.is/native-app@workspace:apps/native/app"
   dependencies:
-    "@apollo/client": 3.7.7
+    "@apollo/client": 3.7.14
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
@@ -15967,15 +15940,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wry/context@npm:^0.5.2":
-  version: 0.5.4
-  resolution: "@wry/context@npm:0.5.4"
-  dependencies:
-    tslib: ^1.14.1
-  checksum: 57a7b00e37a4cbba1b05beb3a3d6bafb6121e4c3ce267df1f6893c2662f398923a786cf3ec82168d06c592f1f16c21d75e0404e630937eb627a2c55eec8c307f
-  languageName: node
-  linkType: hard
-
 "@wry/context@npm:^0.7.0":
   version: 0.7.0
   resolution: "@wry/context@npm:0.7.0"
@@ -15991,15 +15955,6 @@ __metadata:
   dependencies:
     tslib: ^1.9.3
   checksum: 1a26a0fd11e3e3a6a197d9a54a5bec523caf693daa24ad2709f496e43dd3cd12290a0d17df81f8a783437795f6c64a1ca2717cdac6e79022bde4450c11e705c9
-  languageName: node
-  linkType: hard
-
-"@wry/equality@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@wry/equality@npm:0.2.0"
-  dependencies:
-    tslib: ^1.9.3
-  checksum: 5d4715ae70aef8fd912cfecc987f721164bb0940d875eb10cba35f2b51fe77948872ee176fda8ac92f986065b19c51aaed81f03058e826aeaca40e9394d50632
   languageName: node
   linkType: hard
 
@@ -30500,7 +30455,7 @@ __metadata:
     "@anatine/esbuild-decorators": 0.2.4
     "@anatine/esbuildnx": 0.2.0
     "@anev/ts-mountebank": ^1.6.0
-    "@apollo/client": 3.1.3
+    "@apollo/client": 3.7.14
     "@apollo/gateway": 2.1.1
     "@apollo/subgraph": 2.1.1
     "@aws-sdk/client-ses": 3.145.0
@@ -38046,16 +38001,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"optimism@npm:^0.12.1":
-  version: 0.12.2
-  resolution: "optimism@npm:0.12.2"
-  dependencies:
-    "@wry/context": ^0.5.2
-  checksum: cfe8f0a5199a6c146d36c39ca7f7df364a21ec175dc218b937485edcf03ab721bfcd91defe53b241fecbf690089ac1e460090b9fb3d9cea0ed6439d1161fefd3
-  languageName: node
-  linkType: hard
-
-"optimism@npm:^0.16.1":
+"optimism@npm:^0.16.2":
   version: 0.16.2
   resolution: "optimism@npm:0.16.2"
   dependencies:
@@ -46719,7 +46665,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"symbol-observable@npm:^1.0.2, symbol-observable@npm:^1.0.4, symbol-observable@npm:^1.1.0, symbol-observable@npm:^1.2.0":
+"symbol-observable@npm:^1.0.2, symbol-observable@npm:^1.0.4, symbol-observable@npm:^1.1.0":
   version: 1.2.0
   resolution: "symbol-observable@npm:1.2.0"
   checksum: 48ffbc22e3d75f9853b3ff2ae94a44d84f386415110aea5effc24d84c502e03a4a6b7a8f75ebaf7b585780bda34eb5d6da3121f826a6f93398429d30032971b6
@@ -47824,7 +47770,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:1.14.1, tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.13.0, tslib@npm:^1.14.1, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
+"tslib@npm:1.14.1, tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.13.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
@@ -50816,7 +50762,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.0, zen-observable@npm:^0.8.14":
+"zen-observable@npm:0.8.15, zen-observable@npm:^0.8.0":
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: b7289084bc1fc74a559b7259faa23d3214b14b538a8843d2b001a35e27147833f4107590b1b44bf5bc7f6dfe6f488660d3a3725f268e09b3925b3476153b7821
