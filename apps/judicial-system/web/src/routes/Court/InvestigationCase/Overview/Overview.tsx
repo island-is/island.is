@@ -6,6 +6,7 @@ import {
   AccordionListItem,
   CaseFilesAccordionItem,
   CommentsAccordionItem,
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -129,6 +130,8 @@ const Overview = () => {
             Yfirlit kröfu um rannsóknarheimild
           </Text>
         </Box>
+        <CourtCaseInfo workingCase={workingCase} />
+
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
