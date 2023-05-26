@@ -1,6 +1,11 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { format } from 'kennitala'
 import {
@@ -191,33 +196,43 @@ export class GenericDrivingLicenseService
         category: LOG_CATEGORY,
       })
 
-      return {
-        valid: false,
-        data: undefined,
-        error: {
-          status: result.error.code.toString(),
-          message: result.error.message ?? '',
-          data: result.error.data,
-        },
-      }
+      throw new BadRequestException(result.error.message)
     }
 
-    /*HERE we should compare fetch the firearm license using the national id of the
-      user being scanned, NOT the logged in user, but this is impossible as it stands!
-      TO_DO: Implement that!
-
-      const nationalIdFromPkPass = result.data.pass.inputFieldValues
-      .find((i) => i.passInputField.identifier === 'kt')
+    const nationalIdFromPkPass = result.data.pass?.inputFieldValues
+      .find((i) => i.passInputField.identifier === 'kennitala')
       ?.value?.replace('-', '')
 
-      if (nationalIdFromPkPass) {
-        const license await this.fetchLicenseData(nationalIdFromPkPass)
-        // and then compare to verify that the licenses sync up
-      }
-    */
+    if (!nationalIdFromPkPass) {
+      throw new BadRequestException('Invalid Pkpass, missing national id')
+    }
+
+    const license = await this.drivingApi.getCurrentLicenseV4({
+      nationalId: nationalIdFromPkPass,
+    })
+    // and then compare to verify that the licenses sync up if (!license) {
+
+    if (!license) {
+      this.logger.warn('No license found for pkpass national id', {
+        category: LOG_CATEGORY,
+      })
+      throw new BadRequestException('No license found for pkass national id')
+    }
+
+    const licenseNationalId = license?.socialSecurityNumber
+    const name = license?.name
+    const photo = license?.photo?.image ?? ''
+
+    const rawData = license ? JSON.stringify(license) : undefined
 
     return {
       valid: result.data.valid,
+      data: JSON.stringify({
+        nationalId: licenseNationalId,
+        name,
+        photo,
+        rawData,
+      }),
     }
   }
 
