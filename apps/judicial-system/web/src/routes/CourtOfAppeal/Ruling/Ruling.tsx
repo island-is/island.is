@@ -80,9 +80,7 @@ const CourtOfAppealRuling: React.FC = () => {
   ] = useState<string>('')
 
   const allFilesUploaded = useMemo(() => {
-    return displayFiles.every(
-      (file) => file.status === 'done' || file.status === 'error',
-    )
+    return displayFiles.every((file) => file.status === 'done')
   }, [displayFiles])
   const isStepValid =
     displayFiles.some(
