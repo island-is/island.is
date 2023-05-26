@@ -73,9 +73,7 @@ const Statement = () => {
   }/${id}`
 
   const allFilesUploaded = useMemo(() => {
-    return displayFiles.every(
-      (file) => file.status === 'done' || file.status === 'error',
-    )
+    return displayFiles.some((file) => file.status === 'done')
   }, [displayFiles])
 
   const isStepValid =
