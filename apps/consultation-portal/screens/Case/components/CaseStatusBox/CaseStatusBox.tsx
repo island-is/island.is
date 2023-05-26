@@ -1,5 +1,5 @@
-import { SimpleCardSkeleton } from '../../../../components/Card'
-import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { CardSkeleton } from '../../../../components'
+import StackedTitleAndDescription from '../Stacked/Stacked'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import Link from 'next/link'
 import localization from '../../Case.json'
@@ -11,7 +11,7 @@ export const CaseStatusBox = ({ status }: Props) => {
   const loc = localization['caseStatusBox']
 
   return (
-    <SimpleCardSkeleton>
+    <CardSkeleton>
       <StackedTitleAndDescription
         headingColor="blue400"
         title={loc[status].title}
@@ -27,7 +27,7 @@ export const CaseStatusBox = ({ status }: Props) => {
           </Link>
         </Box>
       )}
-    </SimpleCardSkeleton>
+    </CardSkeleton>
   )
 }
 export default CaseStatusBox

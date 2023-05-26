@@ -1,8 +1,9 @@
 import { setItem } from '../../utils/helpers/localStorage'
 import { useDebounce } from '../../hooks'
 import { Input } from '@island.is/island-ui/core'
-import { BaseSyntheticEvent, useState } from 'react'
+import { BaseSyntheticEvent, useEffect, useState } from 'react'
 import { AdviceFilter, CaseFilter } from '../../types/interfaces'
+import localization from './DebouncedSearch.json'
 
 interface Props {
   filters?: CaseFilter | AdviceFilter
@@ -16,14 +17,16 @@ interface Props {
   isDisabled?: boolean
 }
 
-export const DebouncedSearch = ({
+const loc = localization.debouncedSearch
+
+const DebouncedSearch = ({
   filters,
   setFilters,
   searchValue,
   setSearchValue,
   name,
   localStorageId,
-  label = 'Leit',
+  label = loc.label,
   isSubscriptions,
   isDisabled,
 }: Props) => {
@@ -49,15 +52,17 @@ export const DebouncedSearch = ({
     debouncedHandleSearch()
   }
 
+  useEffect(() => {
+    setValue(filters?.searchQuery)
+  }, [filters])
+
   return (
     <Input
       name={name}
       label={label}
       size="xs"
       placeholder={
-        isSubscriptions
-          ? 'Leitaðu að máli, stofnun eða málefnasviði'
-          : 'Að hverju ertu að leita?'
+        isSubscriptions ? loc.subscriptionsPlaceholder : loc.placeholder
       }
       value={value}
       onChange={onChange}

@@ -6,7 +6,7 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
-import Layout from '../../components/Layout/Layout'
+import { Layout } from '../../components'
 import localization from './EmailVerified.json'
 
 export const EmailVerified = () => {
