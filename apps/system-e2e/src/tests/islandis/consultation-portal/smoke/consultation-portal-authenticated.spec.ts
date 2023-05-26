@@ -10,7 +10,7 @@ import {
   PagesInterface,
   LOGIN as login,
   URL,
-  URL_WITH_QUERY,
+  URL_LOCALE,
 } from './consts'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -48,7 +48,7 @@ test.describe('Consultation portal authenticated', () => {
         .fill(login.phoneNumber)
       await page.locator(login.locators.submitPhoneUser).isEnabled()
       await page.locator(login.locators.submitPhoneUser).click()
-      await page.waitForURL(`**${URL_WITH_QUERY}`)
+      await page.waitForURL(`**${URL_LOCALE}`)
     } else {
       await loggedIn.isVisible()
     }
