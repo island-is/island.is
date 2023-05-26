@@ -6,7 +6,10 @@ import {
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { getLabel } from '../../utils/translations'
-import { DriverLicenseDto as DriversLicense } from '@island.is/clients/driving-license'
+import {
+  RemarkCode,
+  DriverLicenseDto as DriversLicense,
+} from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
 import { info, format as formatSsn } from 'kennitala'
 
@@ -14,8 +17,11 @@ type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 export const formatNationalId = (nationalId: string) => formatSsn(nationalId)
 
-export const createPkPassDataInput = (license?: DriversLicense | null) => {
-  if (!license) return null
+export const createPkPassDataInput = (
+  license?: DriversLicense | null,
+  remarks?: Array<RemarkCode> | null,
+) => {
+  if (!license || !remarks) return null
 
   return [
     {
@@ -69,7 +75,13 @@ export const createPkPassDataInput = (license?: DriversLicense | null) => {
               }\n - Gildir til ${
                 curr.dateTo ? format(curr.dateTo, 'dd-MM-yyy') : ''
               } \n${
-                curr.comment ? ' - Athugasemdir: ' + curr.comment + '\n' : ''
+                curr.comment
+                  ? ' - Athugasemdir: ' +
+                    (remarks.length
+                      ? remarks.find((r) => r.index === '78')?.name ?? ''
+                      : '') +
+                    '\n'
+                  : ''
               }\n`,
             '',
           )

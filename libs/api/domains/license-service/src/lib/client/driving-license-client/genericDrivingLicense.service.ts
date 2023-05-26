@@ -1,11 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { format } from 'kennitala'
 import {
@@ -75,6 +70,8 @@ export class GenericDrivingLicenseService
       token: user.authorization.replace(/^bearer /i, ''),
     })
 
+  private fetchCategories = () => this.drivingApi.getRemarksCodeTable()
+
   async getLicense(
     user: User,
     locale: Locale,
@@ -109,16 +106,19 @@ export class GenericDrivingLicenseService
   }
 
   async getPkPass(user: User): Promise<Pass | null> {
-    const license = await this.fetchLicense(user)
+    const licenseData = await Promise.all([
+      this.fetchLicense(user),
+      this.fetchCategories(),
+    ])
 
-    if (!license) {
-      this.logger.warn('Missing pkpass distribution url', {
+    if (!licenseData) {
+      this.logger.warn('License data fetch failed', {
         category: LOG_CATEGORY,
       })
       return null
     }
 
-    const inputValues = createPkPassDataInput(license)
+    const inputValues = createPkPassDataInput(licenseData[0], licenseData[1])
 
     if (!inputValues) {
       this.logger.warn('PkPassDataInput creation failed', {
@@ -134,7 +134,7 @@ export class GenericDrivingLicenseService
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
-      expirationDate: license.dateValidTo?.toISOString(),
+      expirationDate: licenseData[0]?.dateValidTo?.toISOString(),
       /*thumbnail: image
         ? {
             imageBase64String: image.substring(image.indexOf(',') + 1).trim(),

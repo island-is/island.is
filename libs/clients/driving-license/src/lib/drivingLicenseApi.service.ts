@@ -15,6 +15,7 @@ import {
   DriversLicense,
   QualitySignature,
   Teacher,
+  RemarkCode,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
 import { PracticePermitDto } from '../v5'
@@ -26,8 +27,20 @@ export class DrivingLicenseApi {
     private readonly v2: v2.ApiV2,
     private readonly v4: v4.ApiV4,
     private readonly v5: v5.ApiV5,
+    private readonly v5CodeTable: v5.CodeTableV5,
   ) {}
 
+  public async getRemarksCodeTable(): Promise<RemarkCode[] | null> {
+    const codeTable = await this.v5CodeTable.apiCodetablesRemarksGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+    })
+    if (!codeTable) return null
+    return codeTable.map((c) => ({
+      index: c.nr ?? '',
+      name: c.heiti ?? '',
+    }))
+  }
   public async getCurrentLicenseV5(input: {
     nationalId: string
     token?: string
