@@ -15,6 +15,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -298,16 +299,10 @@ const CourtOfAppealRuling: React.FC = () => {
           />
         </Box>
         <Box marginBottom={10}>
-          <Box marginBottom={3} display="flex">
-            <Text as="h3" variant="h3">
-              {formatMessage(strings.courtConclusionHeading)}
-            </Text>
-            <Box marginLeft="smallGutter">
-              <Text as="span" variant="h3" color="red400">
-                *
-              </Text>
-            </Box>
-          </Box>
+          <SectionHeading
+            title={formatMessage(strings.courtConclusionHeading)}
+            required={true}
+          />
 
           <InputFileUpload
             fileList={displayFiles.filter(
