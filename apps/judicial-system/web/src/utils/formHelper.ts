@@ -2,8 +2,8 @@ import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseDecision,
   CaseFile,
+  CaseDecision,
   CaseState,
   CaseType,
   isInvestigationCase,
