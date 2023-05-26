@@ -197,7 +197,10 @@ const openCase = (caseToOpen: Case, user: User) => {
       if (caseToOpen.appealState === CaseAppealState.COMPLETED) {
         routeTo = constants.COURT_OF_APPEAL_RESULT_ROUTE
       } else {
-        routeTo = constants.COURT_OF_APPEAL_OVERVIEW_ROUTE
+        routeTo = findFirstInvalidStep(
+          constants.courtOfAppealRoutes,
+          caseToOpen,
+        )
       }
     } else {
       routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
