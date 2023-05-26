@@ -301,7 +301,7 @@ const CourtOfAppealRuling: React.FC = () => {
         <Box marginBottom={10}>
           <SectionHeading
             title={formatMessage(strings.courtConclusionHeading)}
-            required={true}
+            required
           />
 
           <InputFileUpload
