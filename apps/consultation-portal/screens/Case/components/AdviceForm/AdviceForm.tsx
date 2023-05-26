@@ -2,7 +2,7 @@ import { Case } from '../../../../types/interfaces'
 import {
   getDateBeginDateEnd,
   getShortDate,
-} from '../../../../utils/helpers/dateFormatter'
+} from '../../../../utils/helpers/dateFunctions'
 import {
   Box,
   Input,
@@ -12,28 +12,24 @@ import {
   Inline,
   Divider,
   UploadFile,
-  Hidden,
   fileToObject,
   toast,
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { useLogIn, usePostAdvice } from '../../../../hooks'
-import { SubscriptionActionBox } from '../../../../components/Card'
+import { useIsMobile, useLogIn, usePostAdvice } from '../../../../hooks'
 import { PresignedPost } from '@island.is/api/schema'
 import {
   REVIEW_FILENAME_MAXIMUM_LENGTH,
   REVIEW_MAXIMUM_LENGTH,
   REVIEW_MINIMUM_LENGTH,
 } from '../../../../utils/consts/consts'
-import { AgencyText } from './components/AgencyText'
+import { AgencyText, ActionBox } from './components/'
 import { createUUIDString } from '../../../../utils/helpers'
-import {
-  advicePublishTypeKey,
-  advicePublishTypeKeyHelper,
-} from '../../../../types/enums'
+import { advicePublishTypeKeyHelper } from '../../../../types/enums'
 import localization from '../../Case.json'
+import sharedLocalization from '../../../../lib/shared.json'
 
 type CardProps = {
   card: Case
@@ -59,6 +55,7 @@ export const AdviceForm = ({
   caseId,
   refetchAdvices,
 }: CardProps) => {
+  const { isMobile } = useIsMobile()
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
   const [showInputError, setShowInputError] = useState(false)
@@ -68,7 +65,7 @@ export const AdviceForm = ({
   const [showInputFileError, setShowInputFileError] = useState(false)
   const [inputFileErrorText, setInputFileErrorText] = useState('')
   const loc = localization['adviceForm']
-
+  const sloc = sharedLocalization['publishingRules']
   const { createUploadUrl, postAdviceMutation } = usePostAdvice()
 
   const uploadFile = async (file: UploadFile, response: PresignedPost) => {
@@ -199,7 +196,6 @@ export const AdviceForm = ({
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
-
   return isLoggedIn ? (
     <Box
       paddingY={3}
@@ -219,11 +215,11 @@ export const AdviceForm = ({
           <Text variant="eyebrow" color="purple400">
             {`${loc.card.eyebrowText} S-${card.caseNumber}`}
           </Text>
-          <Hidden below="lg">
+          {!isMobile && (
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
               <Divider weight="purple400" />
             </Box>
-          </Hidden>
+          )}
           <Box>
             <Text variant="eyebrow" color="purple400">
               {`${loc.card.forReviewText}: ${getDateBeginDateEnd(
@@ -242,20 +238,18 @@ export const AdviceForm = ({
       <Text marginBottom={2}>
         {loc.card.description.textBefore}
         {` ${
-          advicePublishTypeKey[
-            advicePublishTypeKeyHelper[card.advicePublishTypeId]
-          ]
+          sloc[advicePublishTypeKeyHelper[card.advicePublishTypeId]].present
         } 
-        ${loc.card.description.textAfter} 
+        ${sloc.publishLaw.text} 
         `}
 
-        <Link href={loc.card.description.link.href}>
-          {loc.card.description.link.text}
+        <Link href={sloc.publishLaw.link.href}>
+          {sloc.publishLaw.link.label}
         </Link>
       </Text>
 
       <Text marginBottom={2}>
-        {loc.card.description.user} {username}
+        {loc.card.description.user}: {username}
       </Text>
 
       <Input
@@ -326,7 +320,7 @@ export const AdviceForm = ({
     </Box>
   ) : (
     <>
-      <SubscriptionActionBox
+      <ActionBox
         heading={loc.loginActionBox.heading}
         text={loc.loginActionBox.text}
         cta={{ label: loc.loginActionBox.ctaLabel, onClick: LogIn }}

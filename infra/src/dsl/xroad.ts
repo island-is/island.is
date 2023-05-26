@@ -145,6 +145,11 @@ export const HealthInsurance = new XroadConf({
       staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected',
       prod: 'IS/GOV/4804080550/SJUKRA-Protected',
     },
+    XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: {
+      dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur',
+      staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur',
+      prod: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur',
+    },
   },
   secrets: {
     XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER',
