@@ -30,6 +30,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      CONTENTFUL_ENVIRONMENT: {
+        dev: 'test',
+        staging: 'test',
+        prod: 'master',
+      },
       CLIENT_URL: {
         dev: ref((h) => `https://judicial-system.${h.env.domain}`),
         staging: ref((h) => `https://judicial-system.${h.env.domain}`),
