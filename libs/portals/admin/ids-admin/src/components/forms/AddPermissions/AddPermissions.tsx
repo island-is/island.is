@@ -20,7 +20,7 @@ import {
   GetAvailableScopesQuery,
   useGetAvailableScopesQuery,
 } from './AvailableScopes.generated'
-import { useClient } from '../../Client/ClientContext'
+import { useClient } from '../../../screens/Client/ClientContext'
 
 interface AddPermissionsProps {
   isVisible: boolean
@@ -30,13 +30,13 @@ interface AddPermissionsProps {
   removedScopes: AuthAdminClientAllowedScope[]
 }
 
-function AddPermissions({
+export const AddPermissions = ({
   isVisible,
   onClose,
   onAdd,
   addedScopes,
   removedScopes,
-}: AddPermissionsProps) {
+}: AddPermissionsProps) => {
   const { formatMessage, locale } = useLocale()
   const [selected, setSelected] = useState<
     Map<string, AuthAdminClientAllowedScope>
@@ -164,5 +164,3 @@ function AddPermissions({
     </Modal>
   )
 }
-
-export default AddPermissions
