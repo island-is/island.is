@@ -25,6 +25,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
+  CaseAppealDecision,
   CaseAppealState,
   CaseState,
   CaseTransition,
@@ -231,9 +232,27 @@ export class CaseController {
       update.courtRecordSignatureDate = null
     }
 
-    // The only roles that can appeal a case are prosecutor roles
+    // TODO: Consider changing the names of the postponed appeal date variables
+    // as they are now also used when the case is appealed in court
     if (states.appealState === CaseAppealState.APPEALED) {
+      // The only roles that can appeal a case here are prosecutor roles
       update.prosecutorPostponedAppealDate = nowFactory()
+    } else if (
+      // Handle appealed in court
+      !theCase.appealState &&
+      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
+        transition.transition,
+      ) &&
+      (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
+    ) {
+      if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+        update.prosecutorPostponedAppealDate = nowFactory()
+      } else {
+        update.accusedPostponedAppealDate = nowFactory()
+      }
+
+      update.appealState = CaseAppealState.APPEALED
     }
 
     if (states.appealState === CaseAppealState.RECEIVED) {
