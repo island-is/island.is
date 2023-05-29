@@ -57,4 +57,7 @@ export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentIn
     nullable: true,
   })
   contacts?: IcelandicGovernmentInstitutionVacancyContact
+
+  @Field({ nullable: true })
+  applicationHref?: string
 }

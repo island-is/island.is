@@ -85,5 +85,6 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = (
       : undefined,
     jobPercentage: item.starfshlutfall,
     postalAddress: item.postfang,
+    applicationHref: item.weblink?.url,
   }
 }

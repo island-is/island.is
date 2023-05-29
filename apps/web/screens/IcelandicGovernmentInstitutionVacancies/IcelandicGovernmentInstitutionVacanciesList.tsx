@@ -137,7 +137,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     [vacancies],
   )
 
-  const clearFilters = () => {
+  const clearSearch = () => {
+    setSearchTerm('')
     setSelectedOptions({
       fieldOfWork: null,
       institution: null,
@@ -254,14 +255,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 items={[
                   { title: 'Ísland.is', href: '/' },
                   {
-                    title: n('title', 'Starfatorg'),
+                    title: n('title', n('breadcrumbTitle', 'Starfatorg')),
                     isCurrentPage: true,
                     href: linkResolver('vacancies').href,
                   },
                 ]}
               />
 
-              <Text variant="h1">Starfatorg - laus störf hjá ríkinu</Text>
+              <Text variant="h1">
+                {n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')}
+              </Text>
 
               <Box
                 marginBottom={1}
@@ -272,6 +275,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                   value={searchTerm}
                   onChange={(ev) => {
                     setSearchTerm(ev.target.value)
+                    searchTermHasBeenInitialized.current = true
                     setSelectedPage(1)
                   }}
                   name="vacancies-search"
@@ -297,6 +301,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
           <GridRow rowGap={2}>
             <GridColumn span={['1/1', '1/1', '1/3']}>
               <Select
+                isSearchable={true}
                 label={n('fieldOfWorkDropdownLabel', 'Veldu starf')}
                 placeholder={n(
                   'fieldOfWorkDropwdownPlaceholder',
@@ -316,6 +321,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             </GridColumn>
             <GridColumn span={['1/1', '1/1', '1/3']}>
               <Select
+                isSearchable={true}
                 label={n('locationDropdownLabel', 'Veldu staðsetningu')}
                 placeholder={n(
                   'locationDropdownPlaceholder',
@@ -335,6 +341,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             </GridColumn>
             <GridColumn span={['1/1', '1/1', '1/3']}>
               <Select
+                isSearchable={true}
                 label={n('institutionDropdownLabel', 'Veldu stofnun/ráðuneyti')}
                 placeholder={n(
                   'institutionDropdownPlaceholder',
@@ -359,18 +366,19 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
               visibility:
                 selectedFieldOfWorkOption ||
                 selectedLocationOption ||
-                selectedInstitutionOption
+                selectedInstitutionOption ||
+                searchTerm
                   ? 'visible'
                   : 'hidden',
             }}
           >
             <Button
               size="small"
-              onClick={clearFilters}
+              onClick={clearSearch}
               icon="reload"
               variant="text"
             >
-              {n('clearFilters', 'Núllstila leit')}
+              {n('clearSearch', 'Núllstila leit')}
             </Button>
           </Box>
         </Stack>

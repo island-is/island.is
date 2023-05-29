@@ -40,6 +40,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS = gql`
         postalAddress
         address
         jobPercentage
+        applicationHref
         contacts {
           name
           email
