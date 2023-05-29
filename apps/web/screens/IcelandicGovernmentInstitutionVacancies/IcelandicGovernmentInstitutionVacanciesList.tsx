@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import {
   Text,
@@ -73,7 +73,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   vacancies,
   namespace,
 }) => {
-  const { query, push } = useRouter()
+  const { query, replace } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
@@ -90,6 +90,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     fieldOfWork: null,
     location: null,
   })
+  const searchTermHasBeenInitialized = useRef(false)
 
   const selectedFieldOfWorkOption = selectedOptions.fieldOfWork
   const selectedLocationOption = selectedOptions.location
@@ -194,7 +195,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   }, [institutionOptions, query.institution])
 
   useEffect(() => {
-    if (query?.q && !searchTerm) {
+    if (query?.q && !searchTerm && !searchTermHasBeenInitialized.current) {
+      searchTermHasBeenInitialized.current = true
       setSearchTerm(query.q as string)
     }
   }, [query?.q, searchTerm])
@@ -226,7 +228,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
       updatedQuery.location = String(selectedLocationOption.value)
     }
 
-    push(
+    replace(
       {
         pathname,
         query: updatedQuery,
@@ -295,7 +297,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
           <GridRow rowGap={2}>
             <GridColumn span={['1/1', '1/1', '1/3']}>
               <Select
-                label={n('fieldOfWorkDropdownLabel', 'Veldu störf')}
+                label={n('fieldOfWorkDropdownLabel', 'Veldu starf')}
                 placeholder={n(
                   'fieldOfWorkDropwdownPlaceholder',
                   'Veldu starf',
@@ -411,15 +413,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       <Text color="blue400" variant="h3">
                         {vacancy.title}
                       </Text>
-                      <Text as="div">
-                        <span
-                          dangerouslySetInnerHTML={{
-                            __html: shortenText(
-                              description,
-                              MAX_DESCRIPTION_LENGTH,
-                            ),
-                          }}
-                        />
+                      <Text>
+                        {shortenText(description, MAX_DESCRIPTION_LENGTH)}
                       </Text>
                     </FocusableBox>
                   </GridColumn>
