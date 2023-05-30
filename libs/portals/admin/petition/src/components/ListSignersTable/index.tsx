@@ -7,12 +7,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  formatDate,
-  pages,
-  PAGE_SIZE,
-  paginate,
-} from '../../shared/utils/utils'
+import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils/utils'
 import { m } from '../../lib/messages'
 import ExportList, { getCSV } from '../ExportList'
 

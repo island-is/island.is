@@ -1,9 +1,9 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
-import { FilteredPetitions } from '../../shared/utils/types'
+import { FilteredPetitions } from '../../lib/utils/types'
 import {
   EndorsementSystemFindEndorsementListsDocument,
   EndorsementSystemFindEndorsementListsQuery,
-} from '../../shared/queries/getAllEndorsementsLists.generated'
+} from './getAllEndorsementsLists.generated'
 import { EndorsementListControllerFindByTagsTagsEnum } from '@island.is/api/schema'
 
 export const overviewLoader: WrappedLoaderFn = ({ client }) => {

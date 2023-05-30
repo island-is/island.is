@@ -1,13 +1,13 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
-import { EndorsementList } from '../../shared/utils/types'
+import { EndorsementList } from '../../lib/utils/types'
 import {
   EndorsementSystemGetSingleEndorsementListDocument,
   EndorsementSystemGetSingleEndorsementListQuery,
-} from '../../shared/queries/getSinglePetitionList.generated'
+} from './getSinglePetitionList.generated'
 import {
   EndorsementSystemGetEndorsementsDocument,
   EndorsementSystemGetEndorsementsQuery,
-} from '../../shared/queries/getEndorsements.generated'
+} from './getEndorsements.generated'
 
 export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<EndorsementList> => {

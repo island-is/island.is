@@ -3,7 +3,7 @@ import {
   UpdateListDocument,
   UpdateListMutation,
   UpdateListMutationVariables,
-} from '../../../shared/mutations/updateList.generated'
+} from './updateList.generated'
 import parseDate from 'date-fns/parse'
 
 export const transformDate = (val: string) =>

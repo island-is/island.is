@@ -4,7 +4,7 @@ import { Modal, ModalProps } from '@island.is/react/components'
 import { Form, useParams, useRevalidator } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import { useLockListMutation } from '../../../shared/mutations/lockList.generated'
+import { useLockListMutation } from './lockList.generated'
 
 export const LockList = ({
   isVisible,

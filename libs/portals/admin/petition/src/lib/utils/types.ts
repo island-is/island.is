@@ -1,6 +1,6 @@
-import { EndorsementSystemFindEndorsementListsQuery } from '../../shared/queries/getAllEndorsementsLists.generated'
-import { EndorsementSystemGetEndorsementsQuery } from '../queries/getEndorsements.generated'
-import { EndorsementSystemGetSingleEndorsementListQuery } from '../queries/getSinglePetitionList.generated'
+import { EndorsementSystemFindEndorsementListsQuery } from '../../screens/Overview/getAllEndorsementsLists.generated'
+import { EndorsementSystemGetEndorsementsQuery } from '../../screens/PetitionList/getEndorsements.generated'
+import { EndorsementSystemGetSingleEndorsementListQuery } from '../../screens/PetitionList/getSinglePetitionList.generated'
 
 export type EndorsementLists = EndorsementSystemFindEndorsementListsQuery['endorsementSystemFindEndorsementLists']['data']
 
