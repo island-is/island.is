@@ -24,7 +24,7 @@
   },
   "relatedCases": {
     "title": "Tenging við önnur mál",
-    "description": "Mál sem eru tengd þessu mál, t.d. mál hefur verið í gáttinni á fyrra stigi eða málin eru skyld.",
+    "description": "Mál sem eru tengd þessu máli, t.d. mál hefur verið í gáttinni á fyrra stigi eða málin eru skyld.",
     "noList": "Engin tenging við önnur mál"
   },
   "coordinator": {
