@@ -66,7 +66,7 @@ const DropdownExport: FC<Props> = ({
         menuLabel={formatMessage(m.downloadPetitions)}
         items={[
           {
-            onClick: () => onGetPDF(),
+            onClick: () => onGetPDF && onGetPDF(),
             title: 'Sem PDF',
           },
           {
