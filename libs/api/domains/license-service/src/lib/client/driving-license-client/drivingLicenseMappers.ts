@@ -78,7 +78,8 @@ export const createPkPassDataInput = (
                 curr.comment
                   ? ' - Athugasemdir: ' +
                     (remarks.length
-                      ? remarks.find((r) => r.index === '78')?.name ?? ''
+                      ? remarks.find((r) => r.index === curr.comment)?.name ??
+                        ''
                       : '') +
                     '\n'
                   : ''
