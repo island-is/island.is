@@ -16,6 +16,8 @@ import {
 } from '../EditClient.action'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
+import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
+import { useClient } from '../ClientContext'
 
 type AdvancedSettingsProps = Pick<
   AuthAdminClientEnvironment,
@@ -40,6 +42,7 @@ export const AdvancedSettings = ({
     typeof schema.advancedSettings
   >
   const { isSuperAdmin } = useSuperAdmin()
+  const { client, selectedEnvironment } = useClient()
 
   const customClaimsString = (
     customClaims?.map((claim) => {
@@ -59,11 +62,25 @@ export const AdvancedSettings = ({
 
   const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
 
+  const inSync = checkEnvironmentSync({
+    environments: client.environments,
+    selectedEnvironment,
+    variables: [
+      'requirePkce',
+      'allowOfflineAccess',
+      'requireConsent',
+      'supportTokenExchange',
+      'slidingRefreshTokenLifetime',
+      'customClaims',
+    ],
+  })
+
   return (
     <ContentCard
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
       accordionLabel={formatMessage(m.settings)}
+      inSync={inSync}
     >
       <Stack space={3}>
         <Checkbox

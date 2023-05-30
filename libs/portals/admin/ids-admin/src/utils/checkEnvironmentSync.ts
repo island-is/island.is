@@ -17,7 +17,7 @@ type CheckEnvironmentSync<T> = {
  * It only checks the variables that are passed in the variables array.
  * @param environments
  * @param selectedEnvironment
- * @param variables
+ * @param variables - The developer is responsible to provide the correct subset of variables.
  */
 export const checkEnvironmentSync = <T extends EnvironmentItem<T>>({
   environments,

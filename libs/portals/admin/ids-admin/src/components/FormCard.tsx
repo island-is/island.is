@@ -9,6 +9,7 @@ import { m } from '../lib/messages'
 import { DropdownSync } from './DropdownSync/DropdownSync'
 import { useMultiEnvSupport } from '../hooks/useMultiEnvSupport'
 import { useEnvironment } from '../context/EnvironmentContext'
+import { useIntent } from '../hooks/useIntent'
 
 /**
  * Compares if two form data objects are equal
@@ -33,7 +34,7 @@ type FormCardProps<Intent> = {
   children: React.ReactNode
 }
 
-export const FormCard = <Intent,>({
+export const FormCard = <Intent extends string>({
   title,
   children,
   intent,
@@ -41,7 +42,7 @@ export const FormCard = <Intent,>({
   shouldSupportMultiEnvironment,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
-  const [allEnvironments, setAllEnvironments] = useState(false)
+  const [allEnvironments, setAllEnvironments] = useState(inSync)
   const formRef = useRef<HTMLFormElement | null>(null)
   const originalFormData = useRef<FormData | undefined>()
   const [dirty, setDirty] = useState(false)
@@ -50,7 +51,7 @@ export const FormCard = <Intent,>({
   )
   const { availableEnvironments, selectedEnvironment } = useEnvironment()
   const { isLoading, isSubmitting, formData } = useSubmitting()
-  const currentIntent = formData?.get('intent')
+  const { loading, currentIntent } = useIntent(intent)
 
   useEffect(() => {
     if (formRef.current) {
@@ -104,14 +105,12 @@ export const FormCard = <Intent,>({
           <Text as="h2" variant="h3">
             {title}
           </Text>
-          {shouldSupportMultiEnv && intent !== 'none' && (
+          {shouldSupportMultiEnv && intent && (
             <DropdownSync
               intent={intent}
               inSync={inSync}
               isDirty={dirty}
-              isLoading={
-                currentIntent === intent && (isLoading || isSubmitting)
-              }
+              isLoading={loading}
             />
           )}
         </Box>
@@ -127,6 +126,7 @@ export const FormCard = <Intent,>({
           >
             <Checkbox
               label={formatMessage(m.saveForAllEnvironments)}
+              checked={allEnvironments}
               value={allEnvironments.toString()}
               name={`${intent}_saveInAllEnvironments`}
               onChange={() => setAllEnvironments(!allEnvironments)}
@@ -136,7 +136,7 @@ export const FormCard = <Intent,>({
               name="intent"
               value={intent as string}
               disabled={!dirty}
-              loading={currentIntent === intent && (isLoading || isSubmitting)}
+              loading={loading}
             >
               {formatMessage(m.saveSettings)}
             </Button>

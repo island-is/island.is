@@ -16,6 +16,8 @@ import {
   AuthAdminClientClaim,
 } from '@island.is/api/schema'
 import { zfd } from 'zod-form-data'
+import { getIntent } from '../../utils/getIntent'
+import { authAdminEnvironments } from '../../utils/environments'
 
 export enum ClientFormTypes {
   applicationUrls = 'applicationUrls',
@@ -241,36 +243,22 @@ export type EditApplicationResult<T extends ZodType> =
     })
   | undefined
 
-export const getIntentWithSyncCheck = (
-  formData: FormData,
-): { name: ClientFormTypes; sync: boolean } => {
-  const getIntent = formData.get('intent') as string
-
-  if (!getIntent) {
-    return {
-      name: ClientFormTypes.none,
-      sync: false,
-    }
-  }
-
-  const intent = getIntent.split('-')
-
-  return {
-    name: ClientFormTypes[intent[0] as keyof typeof ClientFormTypes],
-    sync: !!intent[1],
-  }
-}
-
 export const editClientAction: WrappedActionFn = ({ client }) => async ({
   request,
   params,
 }) => {
+  const tenantId = params['tenant']
+  const clientId = params['client']
+
+  if (!tenantId) throw new Error('Tenant id not found')
+  if (!clientId) throw new Error('Client id not found')
+
   const formData = await request.formData()
-  const intent = getIntentWithSyncCheck(formData)
+  const { intent, sync } = getIntent(formData, ClientFormTypes)
 
   const result = await validateFormData({
     formData,
-    schema: schema[intent.name],
+    schema: schema[intent],
   })
 
   const { data, errors } = result
@@ -290,16 +278,12 @@ export const editClientAction: WrappedActionFn = ({ client }) => async ({
       variables: {
         input: {
           ...rest,
-          clientId: params['client'] as string,
-          tenantId: params['tenant'] as string,
-          environments: intent.sync
+          clientId,
+          tenantId,
+          environments: sync
             ? syncEnvironments
             : allEnvironments
-            ? [
-                AuthAdminEnvironment.Development,
-                AuthAdminEnvironment.Staging,
-                AuthAdminEnvironment.Production,
-              ]
+            ? authAdminEnvironments
             : [environment],
         },
       },
@@ -307,13 +291,13 @@ export const editClientAction: WrappedActionFn = ({ client }) => async ({
 
     return {
       data: response.data?.patchAuthAdminClient,
-      intent: intent.name,
+      intent,
     }
   } catch (error) {
     return {
       errors: null,
       data: null,
-      intent: intent.name,
+      intent,
       globalError: true,
     }
   }

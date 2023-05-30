@@ -6,14 +6,16 @@ import ContentCard from '../../../components/ContentCard'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.action'
 import { AuthAdminClientTranslation } from '../Client.loader'
+import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
+import { useClient } from '../ClientContext'
 
 interface TranslationsProps {
   translations: AuthAdminClientTranslation[]
-  inSync?: boolean
 }
-const Translations = ({ translations, inSync = true }: TranslationsProps) => {
+const Translations = ({ translations }: TranslationsProps) => {
   const { formatMessage } = useLocale()
-  const [activeTab, setActiveTab] = useState<string>('0')
+  const [activeTab, setActiveTab] = useState('0')
+  const { selectedEnvironment, client } = useClient()
   const [copyTranslations, setCopyTranslations] = useEnvironmentState(
     ['is', 'en'].map((locale) => ({
       locale: locale,
@@ -28,6 +30,12 @@ const Translations = ({ translations, inSync = true }: TranslationsProps) => {
     temp[+activeTab].value = event.target.value
     setCopyTranslations([...temp])
   }
+
+  const inSync = checkEnvironmentSync({
+    environments: client.environments,
+    selectedEnvironment,
+    variables: ['displayName'],
+  })
 
   return (
     <ContentCard

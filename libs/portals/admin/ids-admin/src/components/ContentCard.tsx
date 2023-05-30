@@ -11,19 +11,18 @@ import {
   AccordionItem,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useSubmitting } from '@island.is/react-spa/shared'
 
 import {
   ClientFormTypes,
   EditApplicationResult,
-  getIntentWithSyncCheck,
   schema,
 } from '../screens/Client/EditClient.action'
 import { m } from '../lib/messages'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { DropdownSync } from './DropdownSync/DropdownSync'
-import { useClient } from '../screens/Client/ClientContext'
 import { useMultiEnvSupport } from '../hooks/useMultiEnvSupport'
+import { useIntent } from '../hooks/useIntent'
+import { useEnvironment } from '../context/EnvironmentContext'
 
 interface ContentCardProps {
   title: string
@@ -58,18 +57,17 @@ const ContentCard: FC<ContentCardProps> = ({
   intent = ClientFormTypes.none,
   accordionLabel = false,
   shouldSupportMultiEnvironment,
+  inSync = false,
 }) => {
-  const shouldSupportMultiEnv = useMultiEnvSupport(
-    shouldSupportMultiEnvironment,
-  )
   const { formatMessage } = useLocale()
   const originalFormData = useRef<FormData>()
   const [dirty, setDirty] = useState(false)
   const ref = useRef<HTMLFormElement>(null)
-  const titleRef = useRef<HTMLHeadingElement>(null)
-
-  const { isLoading, isSubmitting, formData } = useSubmitting()
-
+  const shouldSupportMultiEnv = useMultiEnvSupport(
+    shouldSupportMultiEnvironment,
+  )
+  const { loading } = useIntent(intent)
+  const { availableEnvironments, selectedEnvironment } = useEnvironment()
   const actionData = useActionData() as EditApplicationResult<
     typeof schema[typeof intent]
   >
@@ -98,26 +96,6 @@ const ContentCard: FC<ContentCardProps> = ({
     }
   }, [actionData, intent])
 
-  const {
-    checkIfInSync,
-    variablesToCheckSync,
-    selectedEnvironment,
-    availableEnvironments,
-  } = useClient()
-
-  const checkIfLoadingForIntent = () => {
-    if (intent === ClientFormTypes.none || !formData) {
-      return false
-    }
-
-    const intentToCheck = getIntentWithSyncCheck(formData)
-    return (isSubmitting || isLoading) && intentToCheck.name === intent
-  }
-  const isLoadingForIntent = checkIfLoadingForIntent()
-
-  const inSync = checkIfInSync(
-    variablesToCheckSync?.[intent as keyof typeof ClientFormTypes] ?? [],
-  )
   const [allEnvironments, setAllEnvironments] = useState(inSync)
 
   // On change, check if the form has changed, use custom validation if provided
@@ -166,15 +144,13 @@ const ContentCard: FC<ContentCardProps> = ({
             alignItems={['flexStart', 'center']}
             marginBottom={4}
           >
-            <Text ref={titleRef} variant="h3">
-              {title}
-            </Text>
+            <Text variant="h3">{title}</Text>
             {shouldSupportMultiEnv && intent !== 'none' && (
               <DropdownSync
                 intent={intent}
                 inSync={inSync}
                 isDirty={dirty}
-                isLoading={isLoadingForIntent}
+                isLoading={loading}
               />
             )}
           </Box>
@@ -218,7 +194,7 @@ const ContentCard: FC<ContentCardProps> = ({
                   type="submit"
                   name="intent"
                   value={intent}
-                  loading={isLoadingForIntent}
+                  loading={loading}
                 >
                   {formatMessage(m.saveSettings)}
                 </Button>
@@ -226,13 +202,13 @@ const ContentCard: FC<ContentCardProps> = ({
                 <input
                   type="hidden"
                   name="environment"
-                  value={selectedEnvironment.environment}
+                  value={selectedEnvironment}
                 />
                 <input
                   type="hidden"
                   name="syncEnvironments"
                   value={`${availableEnvironments
-                    ?.filter((env) => env !== selectedEnvironment.environment)
+                    ?.filter((env) => env !== selectedEnvironment)
                     .join(',')}`}
                 />
               </Box>

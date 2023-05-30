@@ -12,61 +12,23 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { replaceParams } from '@island.is/react-spa/shared'
 
 import { AuthAdminClient, AuthAdminClientEnvironment } from './Client.loader'
-import { ClientFormTypes } from './EditClient.action'
 import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 import { IDSAdminPaths } from '../../lib/paths'
-import { checkEnvironmentSync } from '../../utils/checkEnvironmentSync'
 
 type PublishData = {
   toEnvironment: AuthAdminEnvironment | null
   fromEnvironment: AuthAdminEnvironment | null
 }
 
-type VariablesToCheckSync = {
-  [key in ClientFormTypes]: Array<keyof AuthAdminClientEnvironment>
-}
-
-const variablesToCheckSync: VariablesToCheckSync = {
-  [ClientFormTypes.applicationUrls]: ['postLogoutRedirectUris', 'redirectUris'],
-  [ClientFormTypes.lifeTime]: [
-    'absoluteRefreshTokenLifetime',
-    'slidingRefreshTokenLifetime',
-    'refreshTokenExpiration',
-  ],
-  [ClientFormTypes.translations]: ['displayName'],
-  [ClientFormTypes.delegations]: [
-    'supportsProcuringHolders',
-    'supportsLegalGuardians',
-    'promptDelegations',
-    'supportsPersonalRepresentatives',
-    'supportsCustomDelegation',
-    'requireApiScopes',
-  ],
-  [ClientFormTypes.advancedSettings]: [
-    'requirePkce',
-    'allowOfflineAccess',
-    'requireConsent',
-    'supportTokenExchange',
-    'slidingRefreshTokenLifetime',
-    'customClaims',
-  ],
-  [ClientFormTypes.permissions]: [],
-  [ClientFormTypes.none]: [],
-}
-
-type Variables = typeof variablesToCheckSync[keyof typeof variablesToCheckSync]
-
 export type ClientContextType = {
   client: AuthAdminClient
   selectedEnvironment: AuthAdminClientEnvironment
   availableEnvironments: AuthAdminEnvironment[] | null
-  variablesToCheckSync?: typeof variablesToCheckSync
   publishData: {
     toEnvironment?: AuthAdminEnvironment | null
     fromEnvironment?: AuthAdminEnvironment | null
   }
   setPublishData: Dispatch<SetStateAction<PublishData>>
-  checkIfInSync(variables: Variables): boolean
   onEnvironmentChange(environment: AuthAdminEnvironment): void
 }
 
@@ -102,15 +64,6 @@ export const ClientProvider: FC = ({ children }) => {
     )
   }
 
-  const checkIfClientEnvInSync = (
-    variables: typeof variablesToCheckSync[keyof typeof variablesToCheckSync],
-  ) =>
-    checkEnvironmentSync({
-      environments: client.environments,
-      selectedEnvironment,
-      variables,
-    })
-
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
     const newEnvironment = updateEnvironment(environment)
 
@@ -124,8 +77,6 @@ export const ClientProvider: FC = ({ children }) => {
       value={{
         client,
         selectedEnvironment,
-        checkIfInSync: checkIfClientEnvInSync,
-        variablesToCheckSync,
         publishData,
         setPublishData,
         onEnvironmentChange,

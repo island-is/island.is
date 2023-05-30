@@ -48,7 +48,7 @@ export const PermissionProvider: FC = ({ children }) => {
         selectedPermission: environment,
         onEnvironmentChange: updateEnvironment,
         actionData,
-        intent: actionData?.intent ?? PermissionFormTypes.NONE,
+        intent: actionData?.intent,
       }}
     >
       {children}

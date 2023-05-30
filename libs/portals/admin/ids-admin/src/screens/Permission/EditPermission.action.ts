@@ -15,11 +15,11 @@ import {
 } from './EditPermission.generated'
 import { Languages } from '../../utils/languages'
 import { authAdminEnvironments } from '../../utils/environments'
+import { getIntent } from '../../utils/getIntent'
 
 export enum PermissionFormTypes {
   CONTENT = 'CONTENT',
   ACCESS_CONTROL = 'ACCESS_CONTROL',
-  NONE = 'NONE',
 }
 
 const defaultSchema = z.object({
@@ -84,42 +84,11 @@ const accessControlSchema = z
 
 const schema = {
   [PermissionFormTypes.CONTENT]: contentSchema,
-  [PermissionFormTypes.NONE]: defaultSchema,
   [PermissionFormTypes.ACCESS_CONTROL]: accessControlSchema,
 }
 
-const SYNC_SUFFIX = '-sync'
-
-function getIntent(formData: FormData) {
-  let intent = formData.get('intent') as keyof typeof PermissionFormTypes | null
-
-  if (!intent) {
-    throw new Error('No intent found')
-  }
-
-  let sync = false
-
-  if (intent.endsWith(SYNC_SUFFIX)) {
-    intent = intent.substring(
-      0,
-      intent.lastIndexOf(SYNC_SUFFIX),
-    ) as keyof typeof PermissionFormTypes
-    sync = true
-  }
-
-  if (!Object.values(PermissionFormTypes).some((type) => type === intent)) {
-    throw new Error('wrong intent string')
-  }
-
-  return {
-    intent,
-    sync,
-  }
-}
-
 type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
-  typeof schema[PermissionFormTypes.ACCESS_CONTROL] &
-  typeof schema[PermissionFormTypes.NONE]
+  typeof schema[PermissionFormTypes.ACCESS_CONTROL]
 
 type Result = ValidateFormDataResult<MergedFormDataSchema>
 
@@ -147,7 +116,7 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
   if (!scopeName) throw new Error('Permission id not found')
 
   const formData = await request.formData()
-  const { intent, sync } = getIntent(formData)
+  const { intent, sync } = getIntent(formData, PermissionFormTypes)
   const saveInAllEnvironments =
     formData.get(`${intent}_saveInAllEnvironments`) ?? false
 

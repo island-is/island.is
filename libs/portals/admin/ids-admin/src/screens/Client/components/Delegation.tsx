@@ -6,6 +6,8 @@ import ContentCard from '../../../components/ContentCard'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.action'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
+import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
+import { useClient } from '../ClientContext'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -26,6 +28,7 @@ const Delegation = ({
 }: DelegationProps) => {
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
+  const { client, selectedEnvironment } = useClient()
 
   const [inputValues, setInputValues] = useEnvironmentState({
     supportsCustomDelegation,
@@ -36,12 +39,26 @@ const Delegation = ({
     requireApiScopes,
   })
 
+  const inSync = checkEnvironmentSync({
+    environments: client.environments,
+    selectedEnvironment,
+    variables: [
+      'supportsProcuringHolders',
+      'supportsLegalGuardians',
+      'promptDelegations',
+      'supportsPersonalRepresentatives',
+      'supportsCustomDelegation',
+      'requireApiScopes',
+    ],
+  })
+
   return (
     <ContentCard
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
+      inSync={inSync}
     >
       <Stack space={2}>
         <Checkbox
