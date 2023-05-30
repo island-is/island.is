@@ -1,0 +1,22 @@
+query GetWorkMachines {
+  workMachines {
+    value {
+      registrationNumber
+      type
+      owner
+      status
+      dateLastInspection
+    }
+    links {
+      href
+      ref
+      method
+      displayTitle
+    }
+    labels {
+      columnName
+      displayTitle
+      tooltip
+    }
+  }
+}
