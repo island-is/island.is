@@ -81,8 +81,9 @@ const Statement = () => {
   }, [displayFiles])
 
   const isStepValid =
-    displayFiles.some((file) => file.category === appealStatementType) &&
-    allFilesUploaded
+    displayFiles.some(
+      (file) => file.category === appealStatementType && file.status === 'done',
+    ) && allFilesUploaded
 
   const removeFileCB = useCallback((file: UploadFile) => {
     setDisplayFiles((previous) =>

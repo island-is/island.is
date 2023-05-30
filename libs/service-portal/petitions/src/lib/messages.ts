@@ -100,6 +100,21 @@ export const m = defineMessages({
     defaultMessage: 'Sækja lista',
     description: '',
   },
+  copyLinkToList: {
+    id: 'sp.petitions:copyLinkToList',
+    defaultMessage: 'Afrita hlekk á lista',
+    description: '',
+  },
+  copyLinkSuccess: {
+    id: 'sp.petitions:copyLinkSuccess',
+    defaultMessage: 'Hlekkur afritaður',
+    description: '',
+  },
+  copyLinkError: {
+    id: 'sp.petitions:copyLinkSuccess',
+    defaultMessage: 'Ekki tókst að afrita hlekk',
+    description: '',
+  },
   date: {
     id: 'sp.petitions:date',
     defaultMessage: 'Dagsetning',
