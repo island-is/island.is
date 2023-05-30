@@ -82,12 +82,16 @@ const CourtOfAppealRuling: React.FC = () => {
   ] = useState<string>('')
 
   const allFilesUploaded = useMemo(() => {
-    return displayFiles.every((file) => file.status === 'done')
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
   }, [displayFiles])
 
   const isStepValid =
     displayFiles.some(
-      (file) => file.category === CaseFileCategory.APPEAL_RULING,
+      (file) =>
+        file.category === CaseFileCategory.APPEAL_RULING &&
+        file.status === 'done',
     ) &&
     allFilesUploaded &&
     isCourtOfAppealRulingStepValid(workingCase)

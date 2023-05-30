@@ -73,12 +73,15 @@ const Statement = () => {
   }/${id}`
 
   const allFilesUploaded = useMemo(() => {
-    return displayFiles.some((file) => file.status === 'done')
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
   }, [displayFiles])
 
   const isStepValid =
-    displayFiles.some((file) => file.category === appealStatementType) &&
-    allFilesUploaded
+    displayFiles.some(
+      (file) => file.category === appealStatementType && file.status === 'done',
+    ) && allFilesUploaded
 
   const removeFileCB = useCallback((file: UploadFile) => {
     setDisplayFiles((previous) =>
