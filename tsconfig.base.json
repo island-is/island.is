@@ -479,14 +479,14 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/icelandic-government-institution-vacancies": [
+        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
+      ],
       "@island.is/clients/icelandic-health-insurance/health-insurance": [
         "libs/clients/icelandic-health-insurance/health-insurance/src/index.ts"
       ],
       "@island.is/clients/icelandic-health-insurance/rights-portal": [
         "libs/clients/icelandic-health-insurance/rights-portal/src/index.ts"
-      ],
-      "@island.is/clients/icelandic-government-institution-vacancies": [
-        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
