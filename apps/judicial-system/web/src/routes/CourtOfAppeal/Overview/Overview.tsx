@@ -129,12 +129,6 @@ const CourtOfAppealOverview: React.FC = () => {
               judgeName={workingCase.judge?.name}
             />
           </Box>
-          <Box marginBottom={6}>
-            <AppealConclusion
-              conclusionText={workingCase.appealConclusion}
-              judgeName={workingCase.appealJudge1?.name}
-            />
-          </Box>
           <CaseFilesOverview />
         </FormContentContainer>
         <FormContentContainer isFooter>
