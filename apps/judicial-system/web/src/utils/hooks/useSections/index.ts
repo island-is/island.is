@@ -888,9 +888,7 @@ const useSections = (
               : undefined,
         },
         {
-          name: formatMessage(
-            sections.indictmentsCourtSection.prosecutorAndDefender,
-          ),
+          name: formatMessage(sections.indictmentsCourtSection.defender),
           isActive: routeIndex === 3,
           href: `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
           onClick:

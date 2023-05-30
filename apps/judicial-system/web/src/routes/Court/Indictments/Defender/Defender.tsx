@@ -10,7 +10,6 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
-  ProsecutorSelection,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -20,39 +19,16 @@ import { NotificationType } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
+import { defender as m } from './Defender.strings'
 import SelectDefender from './SelectDefender'
 
 const HearingArrangements: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
-  const router = useRouter()
-  const {
-    setAndSendCaseToServer,
-    sendNotification,
-    isSendingNotification,
-  } = useCase()
-  const { formatMessage } = useIntl()
-  const handleProsecutorChange = useCallback(
-    (prosecutorId: string) => {
-      setAndSendCaseToServer(
-        [
-          {
-            prosecutorId: prosecutorId,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-      return true
-    },
-    [workingCase, setWorkingCase, setAndSendCaseToServer],
+  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
+    FormContext,
   )
+  const router = useRouter()
+  const { sendNotification, isSendingNotification } = useCase()
+  const { formatMessage } = useIntl()
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
@@ -73,9 +49,7 @@ const HearingArrangements: React.FC = () => {
       isValid={stepIsValid}
       onNavigationTo={handleNavigationTo}
     >
-      <PageHeader
-        title={formatMessage(titles.court.indictments.prosecutorAndDefender)}
-      />
+      <PageHeader title={formatMessage(titles.court.indictments.defender)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
@@ -84,10 +58,6 @@ const HearingArrangements: React.FC = () => {
             message={formatMessage(m.alertBannerText)}
             type="info"
           />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(m.selectProsecutorHeading)} />
-          <ProsecutorSelection onChange={handleProsecutorChange} />
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading
