@@ -252,7 +252,13 @@ export class CaseController {
         update.accusedPostponedAppealDate = nowFactory()
       }
 
-      update.appealState = CaseAppealState.APPEALED
+      const autoStates = transitionCase(
+        CaseTransition.APPEAL,
+        states.state ?? theCase.state,
+        states.appealState ?? theCase.appealState,
+      )
+      update.state = autoStates.state
+      update.appealState = autoStates.appealState
     }
 
     if (states.appealState === CaseAppealState.RECEIVED) {
