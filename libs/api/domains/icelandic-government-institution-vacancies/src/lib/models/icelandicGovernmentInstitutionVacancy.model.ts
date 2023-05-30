@@ -12,7 +12,7 @@ export class IcelandicGovernmentInstitutionVacancyListItem {
   title?: string
 
   @Field({ nullable: true })
-  description?: string
+  intro?: string
 
   @Field({ nullable: true })
   applicationDeadlineFrom?: string
@@ -40,6 +40,9 @@ class IcelandicGovernmentInstitutionVacancyContact {
 
   @Field({ nullable: true })
   email?: string
+
+  @Field({ nullable: true })
+  phone?: string
 }
 
 @ObjectType()
@@ -53,11 +56,23 @@ export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentIn
   @Field({ nullable: true })
   jobPercentage?: string
 
-  @Field(() => IcelandicGovernmentInstitutionVacancyContact, {
+  @Field(() => [IcelandicGovernmentInstitutionVacancyContact], {
     nullable: true,
   })
-  contacts?: IcelandicGovernmentInstitutionVacancyContact
+  contacts?: IcelandicGovernmentInstitutionVacancyContact[]
 
   @Field({ nullable: true })
   applicationHref?: string
+
+  @Field({ nullable: true })
+  qualificationRequirements?: string
+
+  @Field({ nullable: true })
+  tasksAndResponsibilities?: string
+
+  @Field({ nullable: true })
+  description?: string
+
+  @Field({ nullable: true })
+  salaryTerms?: string
 }

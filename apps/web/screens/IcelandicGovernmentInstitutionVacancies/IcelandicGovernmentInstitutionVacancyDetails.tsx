@@ -63,7 +63,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
           />
           <Box background="dark100" borderRadius="large" padding={[3, 3, 4]}>
             <Stack space={3}>
-              <Text variant="h4">
+              <Text variant="h3">
                 {n('informationAboutJob', 'Upplýsingar um starf')}
               </Text>
               <Box borderTopWidth="standard" borderColor="dark200" />
@@ -116,7 +116,92 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
           ]}
         />
         <Text variant="h1">{vacancy.title}</Text>
-        <Text as="div">{ReactHtmlParser(vacancy.description)}</Text>
+        <Text as="div">{ReactHtmlParser(vacancy.intro)}</Text>
+
+        <Text variant="h3" as="h2">
+          {n('assignmentsAndResponibility', 'Helstu verkefni og ábyrgð')}
+        </Text>
+
+        <Text as="div">
+          {ReactHtmlParser(vacancy.qualificationRequirements)}
+        </Text>
+
+        {vacancy.tasksAndResponsibilities && (
+          <Text variant="h3" as="h2">
+            {n('qualificationRequirements', 'Hæfniskröfur')}
+          </Text>
+        )}
+
+        {vacancy.tasksAndResponsibilities && (
+          <Text as="div">
+            {ReactHtmlParser(vacancy.tasksAndResponsibilities)}
+          </Text>
+        )}
+
+        {(vacancy.salaryTerms ||
+          vacancy.description ||
+          vacancy.jobPercentage ||
+          vacancy.applicationDeadlineFrom) && (
+          <Text variant="h3" as="h2">
+            {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
+          </Text>
+        )}
+
+        {vacancy.salaryTerms && (
+          <Text as="div">{ReactHtmlParser(vacancy.salaryTerms)}</Text>
+        )}
+
+        {vacancy.description && (
+          <Text as="div">{ReactHtmlParser(vacancy.description)}</Text>
+        )}
+
+        {vacancy.jobPercentage && (
+          <Text>
+            {n('jobPercentageIs', 'Starfshlutfall er')} {vacancy.jobPercentage}
+          </Text>
+        )}
+
+        {vacancy.applicationDeadlineFrom && (
+          <Text>
+            {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
+            {vacancy.applicationDeadlineFrom}
+          </Text>
+        )}
+
+        {vacancy.contacts?.length && (
+          <Text variant="h3" as="h2">
+            {n('contacts', 'Nánari upplýsingar veitir')}
+          </Text>
+        )}
+
+        {vacancy.contacts?.length && (
+          <Stack space={2}>
+            {vacancy.contacts.map((contact) => (
+              <Box>
+                <Text>
+                  {contact.name && contact.email
+                    ? `${contact.name}, `
+                    : contact.name}
+                  {contact.email && (
+                    <LinkV2
+                      underlineVisibility="always"
+                      underline="normal"
+                      color="blue400"
+                      href={`mailto:${contact.email}`}
+                    >
+                      {contact.email}
+                    </LinkV2>
+                  )}
+                </Text>
+                {contact.phone && (
+                  <Text>
+                    {n('telephone', 'Sími:')} {contact.phone}
+                  </Text>
+                )}
+              </Box>
+            ))}
+          </Stack>
+        )}
 
         {vacancy.applicationHref && (
           <Inline>

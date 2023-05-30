@@ -1,3 +1,10 @@
+interface DefaultApiVacancyContact {
+  '@nr'?: number
+  nafn?: string
+  netfang?: string
+  simi?: string
+}
+
 export interface DefaultApiVacanciesListItem {
   birt?: string
   fyrirsogn?: string
@@ -23,13 +30,11 @@ export interface DefaultApiVacanciesListItem {
   starfssvid?: string
   stettarfelagHeiti?: string
   stofnunHeiti?: string
-  tengilidir?: {
-    tengilidur?: {
-      '@nr'?: number
-      nafn?: string
-      netfang?: string
-    }
-  }
+  tengilidir?:
+    | {
+        tengilidur?: DefaultApiVacancyContact
+      }
+    | DefaultApiVacancyContact[]
   umsoknarfrestur_fra?: string
   umsoknarfrestur_til?: string
   undirtexti?: null
@@ -51,7 +56,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesResponse = (
     title: item.fyrirsogn,
     applicationDeadlineFrom: item.umsoknarfrestur_fra,
     applicationDeadlineTo: item.umsoknarfrestur_til,
-    description: item.inngangur,
+    intro: item.inngangur,
     fieldOfWork: item.starfssvid,
     institutionName: item.stofnunHeiti,
     logoUrl: item.logoURL,
@@ -65,26 +70,50 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = (
 ) => {
   const item = vacancy.starfsauglysing
 
+  const contacts = []
+
+  if ('tengilidur' in (item?.tengilidir ?? {})) {
+    const contact = (item.tengilidir as {
+      tengilidur?: DefaultApiVacancyContact
+    })['tengilidur']
+
+    if (contact) {
+      contacts.push({
+        email: contact?.netfang,
+        name: contact?.nafn,
+        phone: contact?.simi,
+      })
+    }
+  } else {
+    for (const contact of (item.tengilidir as DefaultApiVacancyContact[]) ??
+      []) {
+      if (contact) {
+        contacts.push({
+          email: contact?.netfang,
+          name: contact?.nafn,
+          phone: contact?.simi,
+        })
+      }
+    }
+  }
+
   return {
     id: item.id,
     title: item.fyrirsogn,
     applicationDeadlineFrom: item.umsoknarfrestur_fra,
     applicationDeadlineTo: item.umsoknarfrestur_til,
-    description: item.inngangur,
+    intro: item.inngangur,
     fieldOfWork: item.starfssvid,
     institutionName: item.stofnunHeiti,
     logoUrl: item.logoURL,
     locationTitle: item.stadsetningar?.stadsetning?.['@text'],
     locationPostalCode: item.stadsetningar?.stadsetning?.['@kodi'],
     address: item.heimilisfang,
-    contacts: item.tengilidir?.tengilidur?.nafn
-      ? {
-          email: item.tengilidir.tengilidur.netfang,
-          name: item.tengilidir.tengilidur.nafn,
-        }
-      : undefined,
+    contacts,
     jobPercentage: item.starfshlutfall,
     postalAddress: item.postfang,
     applicationHref: item.weblink?.url,
+    qualificationRequirements: item.haefnikrofur,
+    tasksAndResponsibilities: item.verkefni,
   }
 }

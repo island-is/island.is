@@ -400,7 +400,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 ITEMS_PER_PAGE * selectedPage,
               )
               .map((vacancy) => {
-                const description = convertHtmlToPlainText(vacancy.description)
+                const intro = convertHtmlToPlainText(vacancy.intro)
                 return (
                   <GridColumn key={vacancy.id} span={['1/1', '1/1', '1/2']}>
                     <FocusableBox
@@ -421,9 +421,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       <Text color="blue400" variant="h3">
                         {vacancy.title}
                       </Text>
-                      <Text>
-                        {shortenText(description, MAX_DESCRIPTION_LENGTH)}
-                      </Text>
+                      <Text>{shortenText(intro, MAX_DESCRIPTION_LENGTH)}</Text>
                     </FocusableBox>
                   </GridColumn>
                 )

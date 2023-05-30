@@ -9,7 +9,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES = gql`
         id
         fieldOfWork
         title
-        description
+        intro
         applicationDeadlineFrom
         applicationDeadlineTo
         institutionName
@@ -30,7 +30,9 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS = gql`
         id
         fieldOfWork
         title
+        intro
         description
+        salaryTerms
         applicationDeadlineFrom
         applicationDeadlineTo
         institutionName
@@ -41,6 +43,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS = gql`
         address
         jobPercentage
         applicationHref
+        qualificationRequirements
         contacts {
           name
           email
