@@ -12,7 +12,7 @@ import {
   CaseOverview,
   CaseTimeline,
   Coordinator,
-  Stakeholders,
+  BlowoutList,
   CaseStatusBox,
   CaseDocuments,
   CaseEmailBox,
@@ -133,9 +133,12 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              {!isMobile && <CaseStatusBox status={chosenCase.statusName} />}
+              <CaseStatusBox status={chosenCase.statusName} />
               {chosenCase?.stakeholders?.length > 0 && (
-                <Stakeholders chosenCase={chosenCase} />
+                <BlowoutList list={chosenCase.stakeholders} isStakeholder />
+              )}
+              {chosenCase?.relatedCases?.length > 0 && (
+                <BlowoutList list={chosenCase.relatedCases} />
               )}
               <Coordinator
                 contactEmail={contactEmail}

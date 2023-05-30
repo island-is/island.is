@@ -22,6 +22,11 @@
     "description": "Allir geta sent inn umsögn og verið áskrifendur að málum í Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent eftirtöldum:",
     "noList": "Enginn listi skráður."
   },
+  "relatedCases": {
+    "title": "Vantar titil",
+    "description": "Vantar",
+    "noList": "Engin sambærileg mál"
+  },
   "coordinator": {
     "title": "Umsjónaraðili",
     "noCoordinator": "Engin skráður umsjónaraðili."
@@ -171,5 +176,9 @@
       "text": "Umsagnarfrestur er liðinn.",
       "textCont": "Niðurstöður hafa verið birtar og samráði lokið."
     }
+  },
+  "adviceCard": {
+    "hiddenName": "Sendandi hefur valið að fela nafn sitt",
+    "hiddenContent": "Sjá samráðstjórnborð þegar það er komið upp aftur fyrir texta sem þarf að koma hérna"
   }
 }
