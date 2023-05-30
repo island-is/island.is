@@ -193,10 +193,10 @@ export class PaymentService {
       let user4 = ''
 
       if (paymentModel) {
-        const currentCharge = await this.chargeFjsV2ClientService.pgetChargeStatus(
+        const currentCharge = await this.chargeFjsV2ClientService.getChargeStatus(
           paymentModel.id,
         )
-
+        console.log('currentCharge', currentCharge)
         if (currentCharge.error.code === 404) {
           const chargeResult = await this.createNewCharge(
             paymentModel,
@@ -204,16 +204,19 @@ export class PaymentService {
             extraData,
           )
           user4 = chargeResult.user4
-        } else if (currentCharge.statusResult.status === 'inProgress') {
+        } else if (currentCharge.statusResult.status === 'In progress') {
           //handle this somehow better in the future
           //just log and throw for now and let the user try again
           this.logger.error('Charge in progress')
+          //Need to catch this in the frontend and display a friendly message
           throw new Error('Wait for charge to complete')
         } else if (
           currentCharge.statusResult.status === 'unpaid' &&
           currentCharge.statusResult.docNum
         ) {
-          this.setUser4(
+          //We aldready have a charge that is unpaid
+          //update payment with user4 from charge result
+          await this.setUser4(
             applicationId,
             paymentModel.id,
             currentCharge.statusResult.docNum,
@@ -242,7 +245,7 @@ export class PaymentService {
       }
 
       //5. Update payment with user4 from charge result
-      this.setUser4(applicationId, paymentModel.id, user4)
+      await this.setUser4(applicationId, paymentModel.id, user4)
       this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
       return this.buildChargeResult(paymentModel.id, user4)
@@ -313,7 +316,8 @@ export class PaymentService {
     } = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
       performingOrganizationID,
     )
-
+    console.log('allItems', allItems)
+    console.log('targetChargeItemCodes', targetChargeItemCodes)
     // get list of items with catalog info, but make sure to allow duplicates
     const items: CatalogItem[] = []
     for (let i = 0; i < targetChargeItemCodes.length; i++) {

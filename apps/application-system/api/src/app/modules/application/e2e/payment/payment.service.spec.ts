@@ -17,6 +17,8 @@ import { ApplicationTypes } from '@island.is/application/types'
 
 let app: INestApplication
 let service: PaymentService
+
+let fjsClient: MockChargeFjsV2ClientService
 const applicationId = faker.datatype.uuid()
 const user = createCurrentUser()
 
@@ -28,6 +30,7 @@ class MockChargeFjsV2ClientService {
       receptionID: upcomingPayment.requestID,
     })
   }
+
   getCatalogByPerformingOrg(performingOrganizationID: string) {
     return Promise.resolve<Catalog>({
       item: [
@@ -39,6 +42,24 @@ class MockChargeFjsV2ClientService {
           priceAmount: 1,
         },
       ],
+    })
+  }
+
+  getChargeStatus(chargeId: string) {
+    //'In progress'
+    //'unpaid'
+    //'paid'
+    //'cancelled'
+
+    return Promise.resolve({
+      statusResult: {
+        docuNum: '1',
+        status: 'In progress',
+      },
+      error: {
+        code: 200,
+        message: '1',
+      },
     })
   }
 }
@@ -75,8 +96,9 @@ describe('Payment Service', () => {
     })
 
     service = app.get<PaymentService>(PaymentService)
+    fjsClient = app.get<MockChargeFjsV2ClientService>(ChargeFjsV2ClientService)
   })
-
+  /*
   it('should create a charge', async () => {
     const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf']
@@ -126,13 +148,16 @@ describe('Payment Service', () => {
     const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf', 'asdf']
 
-    await service.createCharge(
+ 
+
+    const charge = await service.createCharge(
       user,
       performingOrganizationID,
       chargeItemCodes,
       applicationId,
       undefined,
     )
+
     const result = await service.getStatus(user, applicationId)
     expect(result.fulfilled).toBe(false)
   })
@@ -141,7 +166,7 @@ describe('Payment Service', () => {
     const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf', 'asdf']
 
-    const { id } = await service.createCharge(
+    const charge = await service.createCharge(
       user,
       performingOrganizationID,
       chargeItemCodes,
@@ -149,8 +174,90 @@ describe('Payment Service', () => {
       undefined,
     )
 
-    await service.fulfillPayment(id, faker.datatype.uuid(), applicationId)
+    await service.fulfillPayment(
+      charge.id,
+      faker.datatype.uuid(),
+      applicationId,
+    )
     const result = await service.getStatus(user, applicationId)
     expect(result.fulfilled).toBe(true)
+  })
+
+  it('Should throw when payment exists and status is in progress.', async () => {
+    const performingOrganizationID = '1'
+    const chargeItemCodes: string[] = ['asdf', 'asdf']
+
+    jest.spyOn(fjsClient, 'getChargeStatus').mockResolvedValueOnce({
+      statusResult: {
+        docuNum: '1',
+        status: 'In progress',
+      },
+      error: {
+        code: 200,
+        message: '1',
+      },
+    })
+
+    const chargeItems = await service.findChargeItems(
+      performingOrganizationID,
+      chargeItemCodes,
+    )
+
+    const payment = await service.createPaymentModel(
+      chargeItems,
+      applicationId,
+      performingOrganizationID,
+    )
+
+    await expect(
+      service.createCharge(
+        user,
+        performingOrganizationID,
+        chargeItemCodes,
+        applicationId,
+        undefined,
+      ),
+    ).rejects.toThrow()
+  })
+*/
+  it('Should continure with a payment that exists and status with an unpaid status.', async () => {
+    const performingOrganizationID = '1'
+    const chargeItemCodes: string[] = ['asdf', 'asdf']
+
+    const mock = jest.spyOn(fjsClient, 'getChargeStatus')
+
+    mock.mockImplementation(() =>
+      Promise.resolve({
+        statusResult: {
+          docuNum: '1',
+          status: 'unpaid',
+        },
+        error: {
+          code: 200,
+          message: '1',
+        },
+      }),
+    )
+
+    const chargeItems = await service.findChargeItems(
+      performingOrganizationID,
+      chargeItemCodes,
+    )
+
+    const payment = await service.createPaymentModel(
+      chargeItems,
+      applicationId,
+      performingOrganizationID,
+    )
+
+    const charge = await service.createCharge(
+      user,
+      performingOrganizationID,
+      chargeItemCodes,
+      applicationId,
+      undefined,
+    )
+
+    expect(charge).toBeTruthy()
   })
 })

@@ -9,9 +9,10 @@ import { Catalog, Charge, ChargeResponse } from './chargeFjsV2Client.types'
 export class ChargeFjsV2ClientService {
   constructor(private api: DefaultApi) {}
 
-  async pgetChargeStatus(
+  async getChargeStatus(
     chargeId: string,
   ): Promise<ChargeStatusByRequestIDrequestIDGETResponse> {
+    console.log('Get charge status!!')
     const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
       requestID: chargeId,
     })
@@ -19,18 +20,16 @@ export class ChargeFjsV2ClientService {
     return response
   }
 
-  async deleteCharge(chargeId: string): Promise<string> {
-    const response = await this.api.chargerequestIDDELETE2({
-      requestID: chargeId,
-    })
+  async deleteCharge(chargeId: string): Promise<string | undefined> {
+    const { statusResult, error } = await this.getChargeStatus(chargeId)
 
-    if (!response.receptionID) {
-      throw new Error(
-        `DELETE chargerequestIDDELETE2 was not successful, response was: ${response.error?.code}`,
-      )
+    // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
+    if (statusResult.status !== 'cancelled') {
+      const response = await this.api.chargerequestIDDELETE2({
+        requestID: chargeId,
+      })
+      return response.receptionID
     }
-
-    return response.receptionID
   }
 
   async createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {
