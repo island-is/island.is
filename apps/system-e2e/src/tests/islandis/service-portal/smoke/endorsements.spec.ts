@@ -21,25 +21,37 @@ test.describe('Endorsements', () => {
     await context.close()
   })
 
-  test('Go to endorsement lists ', async () => {
+  test('should be able to access and see UI elements in minar-sidur for endorsements', async () => {
     const page = await context.newPage()
     await disableI18n(page)
 
-    await test.step('Check Service Portal UI', async () => {
-      // Navigate to the specified page
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'))
+    // Navigate to the specified page
+    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'))
 
-      // Check for ui things
-      await page.waitForSelector('button:text("Stofna nýjan lista")')
-      await expect(
-        page.locator('button:text("Stofna nýjan lista")'),
-      ).toBeVisible()
+    // Check for ui things
+    await expect(page.locator('button:text("Stofna nýjan lista")')).toBeVisible()
 
-      await page.waitForSelector('button:text("Virkir listar")')
-      await expect(page.locator('button:text("Virkir listar")')).toBeVisible()
+    // await page.waitForSelector('button:text("Virkir listar")')
+    await expect(page.locator('button:text("Virkir listar")')).toBeVisible()
 
-      await page.waitForSelector('button:text("Liðnir listar")')
-      await expect(page.locator('button:text("Liðnir listar")')).toBeVisible()
-    })
+    // await page.waitForSelector('button:text("Liðnir listar")')
+    await expect(page.locator('button:text("Liðnir listar")')).toBeVisible()
   })
+
+  test('should be able to see lists, access a list and see button to sign an endorsement list', async () => {
+    const page = await context.newPage()
+    await disableI18n(page)
+
+    // Navigate to the specified page
+    await page.goto(icelandicAndNoPopupUrl('/undirskriftalistar'))
+
+    // Find a list made by some other user
+    await page.getByText('Skoða lista').last().click()
+
+
+    await expect(page.locator('button:text("Setja nafn mitt á þennan lista")')).toBeVisible()
+
+
+    })
+
 })

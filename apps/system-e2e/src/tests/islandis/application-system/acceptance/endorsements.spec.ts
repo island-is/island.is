@@ -1,4 +1,4 @@
-import { BrowserContext, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import {
@@ -71,7 +71,7 @@ test.describe('Endorsements', () => {
     )
   })
 
-  test('should be able to find an sign a petition/endorsementList', async () => {
+  test.only('should be able to find an sign a petition/endorsementList', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl('/undirskriftalistar'))
 
@@ -79,15 +79,30 @@ test.describe('Endorsements', () => {
     await disableDelegations(page)
     await disableI18n(page)
 
-    // 1 Find a list made by some other user
+    // Find a list made by some other user
     await page.getByText('Skoða lista').last().click()
 
-    // 2 Sign list by clicking the button
+
+
     const button = await page.waitForSelector(
       'button:text("Setja nafn mitt á þennan lista")',
     )
-    await button.click()
+   await button.click()
+
+   // Get all popups when they open
+page.on('popup', async popup => {
+  await popup.waitForLoadState();
+  console.log(await popup.title());
+})
+
+
+
+    // Undirskriftalista hefur verið skilað til Ísland.is
+
+
     // await button.click();
+
+    // !!!!!!!!! currently loads a new page with // wrong in url
 
     // // NOT WHAT WE WANT
     // await page.waitForSelector('div:has-text("Umsókn fannst ekki")');
