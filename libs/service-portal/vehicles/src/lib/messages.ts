@@ -626,6 +626,15 @@ export const messages = defineMessages({
     id: 'sp.vehicles:see-info',
     defaultMessage: 'Skoða nánar',
   },
+  workMachinesTitle: {
+    id: 'sp.vehicles:work-machines',
+    defaultMessage: 'Vinnuvélar',
+  },
+  workMachinesDescription: {
+    id: 'sp.vehicles:work-machines',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um þínar vinnuvélar úr skrá Vinnueftirlit ríkisins. Einnig er hægt að sjá yfirlit yfir eigendaskipti.',
+  },
 })
 
 export const urls = defineMessages({

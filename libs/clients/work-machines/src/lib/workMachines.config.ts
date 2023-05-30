@@ -19,11 +19,7 @@ export const WorkMachinesClientConfig = defineConfig<z.infer<typeof schema>>({
     ),
     fetch: {
       timeout: 10000,
-      scope: [
-        '@ver.is/umsyslavinnuvela',
-        '@ver.is/rettindaskra',
-        '@ver.is/umsyslaslysaskraning',
-      ],
+      scope: ['@ver.is/umsyslavinnuvela'],
     },
   }),
 })

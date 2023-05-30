@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'service.portal:more',
     defaultMessage: 'Meira',
   },
+  seeDetails: {
+    id: 'service.portal:see-details',
+    defaultMessage: 'Skoða nánar',
+  },
   cost: {
     id: 'service.portal:cost',
     defaultMessage: 'Kostnaður',
@@ -905,6 +909,10 @@ export const m = defineMessages({
   aidsAndNutrition: {
     id: 'service.portal:aids-and-nutrition',
     defaultMessage: 'Hjálpartæki og næring',
+  },
+  workMachines: {
+    id: 'service.portal.work-machines',
+    defaultMessage: 'Vinnuvélar',
   },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',
