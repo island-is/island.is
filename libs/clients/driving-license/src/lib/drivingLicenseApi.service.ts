@@ -30,6 +30,17 @@ export class DrivingLicenseApi {
     private readonly v5CodeTable: v5.CodeTableV5,
   ) {}
 
+  public notifyOnPkPassCreation(input: {
+    nationalId: string
+    token?: string
+  }): Promise<void> {
+    return this.v5.apiDrivinglicenseV5DigitallicensecreatedPost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: input.token ?? '',
+    })
+  }
+
   public async getRemarksCodeTable(): Promise<RemarkCode[] | null> {
     const codeTable = await this.v5CodeTable.apiCodetablesRemarksGet({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
