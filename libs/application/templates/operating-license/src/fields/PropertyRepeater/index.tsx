@@ -106,7 +106,7 @@ const PropertyItem = ({
   const spaceNumberField = `${fieldIndex}.spaceNumber`
   const customerCountField = `${fieldIndex}.customerCount`
 
-  const propertyNumberInput = useWatch({
+  const propertyNumberInput: string = useWatch({
     name: propertyNumberField,
     defaultValue: '',
   })
@@ -138,7 +138,7 @@ const PropertyItem = ({
     if (/^[Ff]?\d{7}$/.test(propertyNumberInput.trim())) {
       getProperty({
         variables: {
-          input: propertyNumberInput,
+          input: propertyNumberInput.toUpperCase(),
         },
       })
     } else {
