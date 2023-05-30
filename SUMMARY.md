@@ -139,7 +139,6 @@
 ## Libs
 
 - [API](libs/api/README.md)
-  - [API Domains Icelandic Government Institution Vacancies](libs/api/domains/icelandic-government-institution-vacancies/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
