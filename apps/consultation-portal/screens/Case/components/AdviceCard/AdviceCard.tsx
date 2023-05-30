@@ -7,13 +7,13 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { SimpleCardSkeleton } from '../../../../components/Card'
+import { CardSkeleton } from '../../../../components/'
 import { useEffect, useRef, useState } from 'react'
 import * as styles from './AdviceCard.css'
-import { getShortDate } from '../../../../utils/helpers/dateFormatter'
+import { getShortDate } from '../../../../utils/helpers/dateFunctions'
 import env from '../../../../lib/environment'
 import { REVIEW_CARD_SCROLL_HEIGHT } from '../../../../utils/consts/consts'
-import { renderDocFileName } from '../../../../utils/helpers'
+import { renderDocFileName } from '../../utils'
 
 export const AdviceCard = ({ advice }) => {
   const [open, setOpen] = useState(true)
@@ -32,7 +32,7 @@ export const AdviceCard = ({ advice }) => {
   }, [])
 
   return (
-    <SimpleCardSkeleton>
+    <CardSkeleton>
       <Stack space={1}>
         <Inline justifyContent="spaceBetween" flexWrap="nowrap" alignY="center">
           <Text variant="eyebrow" color="purple400">
@@ -89,7 +89,7 @@ export const AdviceCard = ({ advice }) => {
             )
           })}
       </Stack>
-    </SimpleCardSkeleton>
+    </CardSkeleton>
   )
 }
 
