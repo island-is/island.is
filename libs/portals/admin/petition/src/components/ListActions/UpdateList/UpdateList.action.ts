@@ -22,7 +22,7 @@ export const updateListAction: WrappedActionFn = ({ client }) => async ({
   const title = formData.get('title') as string
 
   if (!params['listId']) {
-    throw new Error('something went wrong')
+    throw new Error('Listid not provided or found in params')
   }
 
   try {

@@ -12,7 +12,7 @@ import {
 export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
   return async ({ params }): Promise<EndorsementList> => {
     if (!params.listId) {
-      throw new Error('not found')
+      throw new Error('Listid not provided in parameters')
     }
     const {
       data: listData,
@@ -30,7 +30,7 @@ export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
       throw listError
     }
     if (!listData) {
-      throw new Error('not found')
+      throw new Error(`No list data found for ${params.listId}`)
     }
 
     const {
