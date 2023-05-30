@@ -88,8 +88,6 @@ const PastCases: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  const sortableColumnIds = ['courtCaseNumber', 'accusedName', 'type']
-
   const pastCasesColumns = useMemo(() => {
     return [
       {
@@ -292,7 +290,6 @@ const PastCases: React.FC<Props> = (props) => {
       data={pastCasesData ?? []}
       handleRowClick={onRowClick}
       className={styles.table}
-      sortableColumnIds={sortableColumnIds}
     />
   )
 }
