@@ -10,12 +10,12 @@ const Overview = lazy(() => import('./screens/Overview'))
 const PetitionList = lazy(() => import('./screens/PetitionList'))
 
 export const petitionModule: PortalModule = {
-  name: m.title,
+  name: m.petitionsTitle,
   layout: 'default',
   enabled: ({ userInfo }) => true,
   routes: (props) => [
     {
-      name: m.petitionsOverview,
+      name: m.petitionListsOverview,
       path: PetitionPaths.PetitionsRoot,
       element: <Overview />,
       loader: overviewLoader(props),
