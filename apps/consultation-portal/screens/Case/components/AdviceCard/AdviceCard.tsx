@@ -53,7 +53,7 @@ export const AdviceCard = ({ advice }) => {
         </Inline>
         <Text variant="h3">
           {advice?.number} -{' '}
-          {advice?.isPrivateAdvice ? loc.hiddenName : advice?.participantName}
+          {!advice?.isPrivateAdvice && advice?.participantName}
         </Text>
         <Text variant="default" truncate={!open} ref={ref}>
           {advice?.isPrivateAdvice ? loc.hiddenContent : advice.content}
