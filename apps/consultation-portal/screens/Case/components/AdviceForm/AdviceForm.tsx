@@ -14,6 +14,8 @@ import {
   UploadFile,
   fileToObject,
   toast,
+  Checkbox,
+  Stack,
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
@@ -37,6 +39,7 @@ type CardProps = {
   username: string
   caseId: number
   refetchAdvices: any
+  canBePrivate?: boolean
 }
 
 const fileExtensionWhitelist = {
@@ -54,6 +57,7 @@ export const AdviceForm = ({
   username,
   caseId,
   refetchAdvices,
+  canBePrivate,
 }: CardProps) => {
   const { isMobile } = useIsMobile()
   const LogIn = useLogIn()
@@ -67,6 +71,9 @@ export const AdviceForm = ({
   const loc = localization['adviceForm']
   const sloc = sharedLocalization['publishingRules']
   const { createUploadUrl, postAdviceMutation } = usePostAdvice()
+  const [privateAdvice, setPrivateAdvice] = useState(false)
+
+  const handlePrivateChange = () => setPrivateAdvice(!privateAdvice)
 
   const uploadFile = async (file: UploadFile, response: PresignedPost) => {
     return new Promise((resolve, reject) => {
@@ -160,6 +167,7 @@ export const AdviceForm = ({
           caseAdviceCommand: {
             content: review,
             fileUrls: mappedFileList,
+            privateAdvice: privateAdvice,
           },
         }
 
@@ -276,8 +284,8 @@ export const AdviceForm = ({
         }
       />
       <Box paddingTop={3}>
-        {showUpload && (
-          <Box marginBottom={3}>
+        <Stack space={3}>
+          {showUpload && (
             <InputFileUpload
               name="fileUpload"
               fileList={fileList}
@@ -291,27 +299,34 @@ export const AdviceForm = ({
               maxSize={10000000}
               errorMessage={showInputFileError && inputFileErrorText}
             />
-          </Box>
-        )}
-        <Inline space={2} justifyContent="spaceBetween" collapseBelow="md">
-          {!showUpload ? (
-            <Button
-              fluid
-              size="small"
-              icon="documents"
-              iconType="outline"
-              variant="ghost"
-              onClick={() => setShowUpload(true)}
-            >
-              {loc.showUploadButtonLabel}
-            </Button>
-          ) : (
-            <div />
           )}
-          <Button fluid size="small" onClick={onClick} loading={isSubmitting}>
-            {loc.submitAdviceButtonLabel}
-          </Button>
-        </Inline>
+          {canBePrivate && (
+            <Checkbox
+              checked={privateAdvice}
+              onChange={() => handlePrivateChange()}
+              label={loc.privateLabel}
+            />
+          )}
+          <Inline space={2} justifyContent="spaceBetween" collapseBelow="md">
+            {!showUpload ? (
+              <Button
+                fluid
+                size="small"
+                icon="documents"
+                iconType="outline"
+                variant="ghost"
+                onClick={() => setShowUpload(true)}
+              >
+                {loc.showUploadButtonLabel}
+              </Button>
+            ) : (
+              <div />
+            )}
+            <Button fluid size="small" onClick={onClick} loading={isSubmitting}>
+              {loc.submitAdviceButtonLabel}
+            </Button>
+          </Inline>
+        </Stack>
       </Box>
       <Text marginTop={2} variant="small">
         {loc.allowedFilesText}

@@ -89,6 +89,7 @@ export class CasesService {
     const caseAdviceCommand: CaseAdviceCommand = {
       content: input.caseAdviceCommand?.content,
       fileUrls: uploadUrls,
+      privateAdvice: input.caseAdviceCommand?.privateAdvice,
     }
 
     const request: ApiCasesCaseIdAdvicesPostRequest = {
