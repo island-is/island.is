@@ -1,4 +1,4 @@
-# api-domains-icelandic-government-institution-vacancies
+# API Domains Icelandic Government Institution Vacancies
 
 This library was generated with [Nx](https://nx.dev).
 

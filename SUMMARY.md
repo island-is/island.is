@@ -139,6 +139,7 @@
 ## Libs
 
 - [API](libs/api/README.md)
+    - [API Domains Icelandic Government Institution Vacancies](libs/api/domains/icelandic-government-institution-vacancies/README.md)
   - [Mocks](libs/api/mocks/README.md)
 - [API Catalogue](libs/api-catalogue/README.md)
   - [Elastic](libs/api-catalogue/elastic/README.md)
@@ -193,6 +194,7 @@
   - [Finance](libs/clients/finance/README.md)
   - [Firearm License](libs/clients/firearm-license/README.md)
   - [Clients Fishing License](libs/clients/fishing-license/README.md)
+  - [Clients Icelandic Government Institution Vacancies](libs/clients/icelandic-government-institution-vacancies/README.md)
   - [Icelandic Health Insurance](libs/clients/icelandic-health-insurance/README.md)
     - [Health Insurance](libs/clients/icelandic-health-insurance/health-insurance/README.md)
     - [Rights Portal](libs/clients/icelandic-health-insurance/rights-portal/README.md)
