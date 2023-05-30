@@ -150,7 +150,7 @@
       "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
       "ctaLabel": "Skrá mig inn"
     },
-    "privateLabel": "Senda þessa umsögn nafnlaust fyrir þetta samráð"
+    "privateLabel": "Viltu að þessi umsögn verði falin almenningi?"
   },
   "agencyText": {
     "textBefore": "Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð þaðan,",
@@ -179,7 +179,7 @@
     }
   },
   "adviceCard": {
-    "hiddenName": "Sendandi hefur valið að fela nafn sitt",
-    "hiddenContent": "Sjá samráðstjórnborð þegar það er komið upp aftur fyrir texta sem þarf að koma hérna"
+    "hiddenName": "",
+    "hiddenContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína."
   }
 }
