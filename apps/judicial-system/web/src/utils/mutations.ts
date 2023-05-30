@@ -46,6 +46,8 @@ export const CasesQuery = gql`
         id
       }
       appealCaseNumber
+      appealState
+      appealRulingDecision
       ...CoreCaseListFields
     }
   }
@@ -61,6 +63,7 @@ export const AppealedCasesQuery = gql`
       appealCaseNumber
       appealState
       appealedDate
+      appealRulingDecision
       ...CoreCaseListFields
     }
   }

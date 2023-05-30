@@ -14,11 +14,14 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
+  CaseAppealState,
   CaseState,
   isExtendedCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+import TagAppealRuling from '@island.is/judicial-system-web/src/components/TagAppealRuling/TagAppealRuling'
+
 import {
   directionType,
   sortableTableColumn,
@@ -326,31 +329,39 @@ const ActiveCases: React.FC<Props> = (props) => {
                   </Box>
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Tag
-                    variant={
-                      mapCaseStateToTagVariant(
-                        formatMessage,
-                        c.state,
-                        isCourt,
-                        c.type,
-                        c.isValidToDateInThePast,
-                        c.courtDate,
-                      ).color
-                    }
-                    outlined
-                    disabled
-                  >
-                    {
-                      mapCaseStateToTagVariant(
-                        formatMessage,
-                        c.state,
-                        isCourt,
-                        c.type,
-                        c.isValidToDateInThePast,
-                        c.courtDate,
-                      ).text
-                    }
-                  </Tag>
+                  <Box marginRight={1} marginBottom={1}>
+                    <Tag
+                      variant={
+                        mapCaseStateToTagVariant(
+                          formatMessage,
+                          c.state,
+                          isCourt,
+                          c.type,
+                          c.isValidToDateInThePast,
+                          c.courtDate,
+                        ).color
+                      }
+                      outlined
+                      disabled
+                    >
+                      {
+                        mapCaseStateToTagVariant(
+                          formatMessage,
+                          c.state,
+                          isCourt,
+                          c.type,
+                          c.isValidToDateInThePast,
+                          c.courtDate,
+                        ).text
+                      }
+                    </Tag>
+                  </Box>
+
+                  {c.appealState === CaseAppealState.COMPLETED && (
+                    <TagAppealRuling
+                      appealRulingDecision={c.appealRulingDecision}
+                    />
+                  )}
                 </td>
                 <td className={styles.td}>
                   {c.courtDate ? (

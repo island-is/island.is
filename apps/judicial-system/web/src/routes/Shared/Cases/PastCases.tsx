@@ -5,6 +5,8 @@ import parseISO from 'date-fns/parseISO'
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag } from '@island.is/island-ui/core'
 import {
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   Defendant,
@@ -28,6 +30,7 @@ import {
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
+import TagAppealRuling from '@island.is/judicial-system-web/src/components/TagAppealRuling/TagAppealRuling'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
 import * as styles from './Cases.css'
@@ -190,6 +193,8 @@ const PastCases: React.FC<Props> = (props) => {
               state: CaseState
               isValidToDateInThePast: boolean
               type: CaseType
+              appealState?: CaseAppealState
+              appealRulingDecision?: CaseAppealRulingDecision
             }
           }
         }) => {
@@ -202,9 +207,18 @@ const PastCases: React.FC<Props> = (props) => {
           )
 
           return (
-            <Tag variant={tagVariant.color} outlined disabled>
-              {tagVariant.text}
-            </Tag>
+            <>
+              <Box marginRight={1} marginBottom={1}>
+                <Tag variant={tagVariant.color} outlined disabled>
+                  {tagVariant.text}
+                </Tag>
+              </Box>
+              {row.row.original.appealState === CaseAppealState.COMPLETED && (
+                <TagAppealRuling
+                  appealRulingDecision={row.row.original.appealRulingDecision}
+                />
+              )}
+            </>
           )
         },
       },

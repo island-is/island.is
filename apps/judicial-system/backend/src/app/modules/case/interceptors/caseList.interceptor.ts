@@ -45,6 +45,7 @@ export class CaseListInterceptor implements NestInterceptor {
             parentCaseId: theCase.parentCaseId,
             appealState: theCase.appealState,
             appealCaseNumber: theCase.appealCaseNumber,
+            appealRulingDecision: theCase.appealRulingDecision,
           }
         })
       }),

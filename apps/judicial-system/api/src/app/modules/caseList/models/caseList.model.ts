@@ -6,6 +6,7 @@ import {
   CaseState,
   CaseType,
   CaseAppealState,
+  CaseAppealRulingDecision,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
@@ -90,4 +91,7 @@ export class CaseListEntry {
 
   @Field(() => String, { nullable: true })
   readonly appealCaseNumber?: string
+
+  @Field(() => CaseAppealRulingDecision, { nullable: true })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }
