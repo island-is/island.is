@@ -123,6 +123,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                     username={user?.name}
                     caseId={chosenCase?.id}
                     refetchAdvices={refetchAdvices}
+                    canBePrivate={chosenCase?.allowUsersToSendPrivateAdvices}
                   />
                 )}
               </Stack>

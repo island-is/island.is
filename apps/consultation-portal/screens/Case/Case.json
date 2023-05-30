@@ -149,7 +149,8 @@
       "heading": "Senda umsögn",
       "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
       "ctaLabel": "Skrá mig inn"
-    }
+    },
+    "privateLabel": "Senda þessa umsögn nafnlaust fyrir þetta samráð"
   },
   "agencyText": {
     "textBefore": "Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð þaðan,",
