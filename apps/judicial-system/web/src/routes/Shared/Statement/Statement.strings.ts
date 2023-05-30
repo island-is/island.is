@@ -15,7 +15,7 @@ export const statement = defineMessages({
   appealActorInCourt: {
     id: 'judicial.system.core:appeal_actor_in_court',
     defaultMessage:
-      '{appealedByProsecutor, select, true {Sóknaraðili} other {Verjandi}} kærði í þinghaldi',
+      '{appealedByProsecutor, select, true {Sækjandi} other {Varnaraðili}} kærði í þinghaldi',
     description: 'Texti sem sýnir hver kærði í þinghaldi',
   },
   uploadStatementTitle: {

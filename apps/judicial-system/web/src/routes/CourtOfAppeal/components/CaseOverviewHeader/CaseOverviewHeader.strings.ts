@@ -12,7 +12,7 @@ export const courtOfAppealCaseOverviewHeader = defineMessages({
     id:
       'judicial.system.core:court_of_appeal.case_overview_header.appealed_by_in_court',
     defaultMessage:
-      '{appealedByProsecutor, select, true {Sóknaraðili} other {Varnaraðili}} kærði í þinghaldi',
+      '{appealedByProsecutor, select, true {Sækjandi} other {Varnaraðili}} kærði í þinghaldi',
     description:
       'Notaður sem texti fyrir "kærði í þinghaldi" á yfirlitsskjá mála hjá Landsrétti.',
   },

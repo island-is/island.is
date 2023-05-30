@@ -220,7 +220,7 @@ export class CaseController {
       theCase.appealState,
     )
 
-    const update: UpdateCase = states
+    let update: UpdateCase = states
 
     if (transition.transition === CaseTransition.DELETE) {
       update.parentCaseId = null
@@ -240,9 +240,11 @@ export class CaseController {
     } else if (
       // Handle appealed in court
       !theCase.appealState &&
-      [CaseTransition.ACCEPT, CaseTransition.REJECT].includes(
-        transition.transition,
-      ) &&
+      [
+        CaseTransition.ACCEPT,
+        CaseTransition.REJECT,
+        CaseTransition.DISMISS,
+      ].includes(transition.transition) &&
       (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
         theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
     ) {
@@ -252,13 +254,14 @@ export class CaseController {
         update.accusedPostponedAppealDate = nowFactory()
       }
 
-      const autoStates = transitionCase(
-        CaseTransition.APPEAL,
-        states.state ?? theCase.state,
-        states.appealState ?? theCase.appealState,
-      )
-      update.state = autoStates.state
-      update.appealState = autoStates.appealState
+      update = {
+        ...update,
+        ...transitionCase(
+          CaseTransition.APPEAL,
+          states.state ?? theCase.state,
+          states.appealState ?? theCase.appealState,
+        ),
+      }
     }
 
     if (states.appealState === CaseAppealState.RECEIVED) {
