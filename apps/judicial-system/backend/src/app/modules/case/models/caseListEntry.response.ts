@@ -98,5 +98,8 @@ export class CaseListEntry {
   appealState?: CaseAppealState
 
   @ApiPropertyOptional()
+  appealCaseNumber?: string
+
+  @ApiPropertyOptional()
   appealRulingDecision?: CaseAppealRulingDecision
 }
