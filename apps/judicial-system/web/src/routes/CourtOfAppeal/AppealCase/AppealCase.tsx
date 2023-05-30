@@ -60,7 +60,7 @@ const AppealCase = () => {
   const assistants = (userData?.users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.REGISTRAR &&
+        user.role === UserRole.ASSISTANT &&
         user.institution?.type === InstitutionType.HIGH_COURT,
     )
     .map((assistant: User) => {
