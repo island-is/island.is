@@ -149,7 +149,7 @@ const PetitionList = () => {
                       colorScheme="destructive"
                       onClick={() => setIsLockListModalVisible(true)}
                     >
-                      {formatMessage(m.lockList)}
+                      {formatMessage(m.openList)}
                     </Button>
                     <LockList
                       isVisible={isLockListModalVisible}
@@ -163,7 +163,7 @@ const PetitionList = () => {
                       iconType="outline"
                       onClick={() => setIsUnlockListModalVisible(true)}
                     >
-                      {formatMessage(m.unlockList)}
+                      {formatMessage(m.lockList)}
                     </Button>
                     <UnlockList
                       isVisible={isUnlockListModalVisible}
@@ -177,7 +177,7 @@ const PetitionList = () => {
                   icon="reload"
                   variant="ghost"
                 >
-                  {formatMessage(m.updateList)}
+                  {formatMessage(m.unlockList)}
                 </Button>
               </Box>
             </Stack>

@@ -35,7 +35,7 @@ const ListSignersTable = (data: any) => {
 
   return (
     <Box marginTop={12}>
-      <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+      <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         <ExportList
           onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}

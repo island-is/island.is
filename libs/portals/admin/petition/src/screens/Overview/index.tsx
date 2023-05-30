@@ -63,13 +63,13 @@ const Overview = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.petitionsTitle)}
+        title={formatMessage(m.title)}
         intro={formatMessage(m.intro)}
       />
       <Box marginTop={8}>
         <Tabs
           contentBackground="white"
-          label={formatMessage(m.petitionsTitle)}
+          label={formatMessage(m.title)}
           selected="0"
           tabs={[
             tabOption(formatMessage(m.openLists), active),

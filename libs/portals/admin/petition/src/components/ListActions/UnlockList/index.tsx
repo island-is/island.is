@@ -13,7 +13,10 @@ export const UnlockList = ({
   const { formatMessage } = useLocale()
   const params = useParams()
 
-  const [unlockListMutation, { loading }] = useUnlockListMutation()
+  const [
+    unlockListMutation,
+    { loading, error: mutationError },
+  ] = useUnlockListMutation()
   const { revalidate } = useRevalidator()
 
   const handleSubmit = async () => {
@@ -21,22 +24,18 @@ export const UnlockList = ({
       return
     }
 
-    try {
-      const res = await unlockListMutation({
-        variables: {
-          input: {
-            listId: params['listId'] || '',
-          },
+    const res = await unlockListMutation({
+      variables: {
+        input: {
+          listId: params['listId'] || '',
         },
-      })
+      },
+    })
 
-      if (res.data?.endorsementSystemUnlockEndorsementList) {
-        revalidate()
-        toast.success(m.toastUnlockSuccess.defaultMessage)
-        onClose?.()
-      }
-    } catch (e) {
-      toast.error(m.toastUnlockError.defaultMessage)
+    if (res.data?.endorsementSystemUnlockEndorsementList) {
+      revalidate()
+      toast.success('todo')
+      onClose?.()
     }
   }
 
@@ -45,15 +44,15 @@ export const UnlockList = ({
       id="unlock-list"
       isVisible={isVisible}
       title={formatMessage(m.unlockList)}
-      label={formatMessage(m.unlockList)}
+      label={formatMessage(m.todo)}
       onClose={onClose}
-      closeButtonLabel={formatMessage(m.modalCancel)}
+      closeButtonLabel={formatMessage(m.todo)}
     >
       <Form method="post">
         <Box paddingTop={3}>
-          <Text>{formatMessage(m.unlockListMessage)}</Text>
+          <Text>{formatMessage(m.todo)}</Text>
           <Text paddingTop={4} variant="h4">
-            {formatMessage(m.unlockListQuestion)}
+            {formatMessage(m.todo)}
           </Text>
 
           <Box
@@ -63,10 +62,10 @@ export const UnlockList = ({
             paddingTop={7}
           >
             <Button onClick={onClose} variant="ghost">
-              {formatMessage(m.modalCancel)}
+              {formatMessage(m.todo)}
             </Button>
             <Button loading={loading} onClick={handleSubmit}>
-              {formatMessage(m.unlockList)}
+              {formatMessage(m.todo)}
             </Button>
           </Box>
         </Box>

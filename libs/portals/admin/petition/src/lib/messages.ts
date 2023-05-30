@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
-  petitionListsOverview: {
-    id: 'admin-portal.petition:petitionListsOverview',
-    defaultMessage: 'Yfirlit undirskriftalista',
-    description: '',
-  },
   petitionsOverview: {
     id: 'admin-portal.petition:petitionsOverview',
     defaultMessage: 'Yfirlit undirskrifta',
@@ -18,14 +13,14 @@ export const m = defineMessages({
   },
 
   // Overview
-  petitionsTitle: {
-    id: 'admin-portal.petition:petitionsTitle',
+  title: {
+    id: 'admin-portal.petition:title',
     defaultMessage: 'Undirskriftalistar',
     description: '',
   },
   intro: {
     id: 'admin-portal.petition:overview',
-    defaultMessage: 'Lorem ipsum dolor sit amet.',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: '',
   },
   openLists: {
@@ -95,6 +90,21 @@ export const m = defineMessages({
     defaultMessage: 'Veldu dagsetningu',
     description: '',
   },
+  openList: {
+    id: 'admin-portal.petition:openList',
+    defaultMessage: 'Opna lista',
+    description: '',
+  },
+  lockList: {
+    id: 'admin-portal.petition:lockList',
+    defaultMessage: 'Læsa lista',
+    description: '',
+  },
+  unlockList: {
+    id: 'admin-portal.petition:unlockList',
+    defaultMessage: 'Aflæsa lista',
+    description: '',
+  },
   listIsLocked: {
     id: 'admin-portal.petition:listIsClosed',
     defaultMessage: 'Listi er læstur',
@@ -118,52 +128,6 @@ export const m = defineMessages({
   noSignatures: {
     id: 'admin-portal.petition:noSignatures',
     defaultMessage: 'Engar undirskriftir',
-    description: '',
-  },
-
-  // Lock list
-  lockList: {
-    id: 'admin-portal.petition:lockList',
-    defaultMessage: 'Læsa lista',
-    description: '',
-  },
-  lockListMessage: {
-    id: 'admin-portal.petition:lockListMessage',
-    defaultMessage:
-      'Pellentesque tempor eros ut erat lacinia, eget tincidunt nibh viverra. Aenean scelerisque nulla purus, in gravida ipsum gravida vel.',
-    description: '',
-  },
-  lockListQuestion: {
-    id: 'admin-portal.petition:lockListMessage',
-    defaultMessage: 'Ertu viss um að vilja læsa lista?',
-    description: '',
-  },
-
-  // Unlock list
-  unlockList: {
-    id: 'admin-portal.petition:unlockList',
-    defaultMessage: 'Aflæsa lista',
-    description: '',
-  },
-  unlockListMessage: {
-    id: 'admin-portal.petition:unlockListMessage',
-    defaultMessage:
-      'Pellentesque tempor eros ut erat lacinia, eget tincidunt nibh viverra. Aenean scelerisque nulla purus, in gravida ipsum gravida vel.',
-    description: '',
-  },
-  unlockListQuestion: {
-    id: 'admin-portal.petition:unlockListQuestion',
-    defaultMessage: 'Ertu viss um að vilja aflæsa lista?',
-    description: '',
-  },
-  updateList: {
-    id: 'admin-portal.petition:updateList',
-    defaultMessage: 'Uppfæra lista',
-    description: '',
-  },
-  modalCancel: {
-    id: 'admin-portal.petition:modalCancel',
-    defaultMessage: 'Hætta við',
     description: '',
   },
 
@@ -196,6 +160,12 @@ export const m = defineMessages({
   toastUnlockError: {
     id: 'admin-portal.petition:toastUnlockError',
     defaultMessage: 'Ekki tókst að aflæsa lista',
+    description: '',
+  },
+
+  todo: {
+    id: 'admin-portal.petition:todo',
+    defaultMessage: 'todo',
     description: '',
   },
 })

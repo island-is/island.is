@@ -3,15 +3,11 @@ import { PetitionPaths } from './paths'
 import { m } from './messages'
 
 export const petitionNavigation: PortalNavigationItem = {
-  name: m.petitionsTitle,
-  icon: {
-    icon: 'settings',
-  },
-  description: m.intro,
+  name: m.title,
   path: PetitionPaths.PetitionsRoot,
   children: [
     {
-      name: m.petitionListsOverview,
+      name: m.petitionsOverview,
       path: PetitionPaths.PetitionsRoot,
       activeIfExact: true,
     },
