@@ -1,6 +1,5 @@
+import isNumber from 'lodash/isNumber'
+
 export const formatNumberToString = (item?: number) => {
-  if (item === undefined) {
-    return ''
-  }
-  return item === 0 ? '0' : item.toString()
+  return isNumber(item) ? item.toString() : ''
 }

@@ -30,6 +30,7 @@ import {
   CaseTransition,
   CaseType,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   restrictionCases,
   UserRole,
@@ -60,7 +61,6 @@ import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
-  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -94,7 +94,8 @@ export class CaseController {
   private async validateAssignedUser(
     assignedUserId: string,
     assignedUserRole: UserRole[],
-    institutionId: string | undefined,
+    institutionType: InstitutionType,
+    institutionId?: string,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
@@ -104,7 +105,10 @@ export class CaseController {
       )
     }
 
-    if (institutionId && assignedUser.institutionId !== institutionId) {
+    if (
+      assignedUser.institution?.type !== institutionType ||
+      (institutionId && assignedUser.institutionId !== institutionId)
+    ) {
       throw new ForbiddenException(
         `User ${assignedUserId} belongs to the wrong institution`,
       )
@@ -135,7 +139,6 @@ export class CaseController {
     judgeUpdateRule,
     registrarUpdateRule,
     assistantUpdateRule,
-    staffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -154,6 +157,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.prosecutorId,
         [UserRole.PROSECUTOR],
+        InstitutionType.PROSECUTORS_OFFICE,
         theCase.creatingProsecutor?.institutionId,
       )
 
@@ -167,6 +171,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.judgeId,
         [UserRole.JUDGE, UserRole.ASSISTANT],
+        InstitutionType.COURT,
         theCase.courtId,
       )
     }
@@ -175,7 +180,40 @@ export class CaseController {
       await this.validateAssignedUser(
         update.registrarId,
         [UserRole.REGISTRAR],
+        InstitutionType.COURT,
         theCase.courtId,
+      )
+    }
+
+    if (update.appealAssistantId) {
+      await this.validateAssignedUser(
+        update.appealAssistantId,
+        [UserRole.ASSISTANT],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge1Id) {
+      await this.validateAssignedUser(
+        update.appealJudge1Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge2Id) {
+      await this.validateAssignedUser(
+        update.appealJudge2Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge3Id) {
+      await this.validateAssignedUser(
+        update.appealJudge3Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
       )
     }
 

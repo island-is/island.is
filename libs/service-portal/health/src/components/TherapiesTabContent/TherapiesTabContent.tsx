@@ -3,20 +3,23 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Text, Stack, Divider, Select } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { formatDate, UserInfoLine } from '@island.is/service-portal/core'
-import { Therapies } from '@island.is/api/schema'
+import { RightsPortalTherapies } from '@island.is/api/schema'
 import { FootNote } from '../FootNote.tsx/FootNote'
 import * as styles from './TherapiesTabContent.css'
 import { formatNumberToString } from '../../utils/format'
 import { TherapyStatus } from '../../utils/constants'
+import LinkButton from '../LinkButton/LinkButton'
 interface Props {
-  data: Therapies[]
+  data: RightsPortalTherapies[]
+  link?: string
+  linkText?: string
 }
 
 type OptionType = {
   label: string
   value: string
 }
-export const TherapiesTabContent: FC<Props> = ({ data }) => {
+export const TherapiesTabContent: FC<Props> = ({ data, link, linkText }) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [dropDownValue, setDropDownValue] = useState<OptionType>()
@@ -110,6 +113,7 @@ export const TherapiesTabContent: FC<Props> = ({ data }) => {
         <Divider />
       </Stack>
       <FootNote type={data[0].id.toString()} />
+      {link && linkText && <LinkButton to={link} text={linkText} />}
     </Box>
   )
 }

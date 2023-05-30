@@ -1,6 +1,5 @@
-export * from './lib/rightsPortalProvider'
-export { RightsPortalClientModule } from './lib/clients-rights-portal.module'
-export { RightsPortalClientConfig } from './lib/clients-rights-portal.config'
+export { RightsPortalClientModule } from './lib/rightsPortalModule'
+export { RightsPortalClientConfig } from './lib/rightsPortalClient.config'
 export {
   TherapyApi,
   TherapyDTO,

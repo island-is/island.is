@@ -29,7 +29,7 @@ describe('LimitedAccessCaseController - Get by id guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })
@@ -41,7 +41,7 @@ describe('LimitedAccessCaseController - Get by id guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -53,7 +53,7 @@ describe('LimitedAccessCaseController - Get by id guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have LimitedAccessCaseExistsGuard as quard 3', () => {
+    it('should have LimitedAccessCaseExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(LimitedAccessCaseExistsGuard)
     })
   })
@@ -65,7 +65,7 @@ describe('LimitedAccessCaseController - Get by id guards', () => {
       guard = new guards[3]()
     })
 
-    it('should have CaseScheduledGuard as quard 4', () => {
+    it('should have CaseScheduledGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseScheduledGuard)
     })
   })
@@ -77,7 +77,7 @@ describe('LimitedAccessCaseController - Get by id guards', () => {
       guard = new guards[4]()
     })
 
-    it('should have CaseDefenderGuard as quard 4', () => {
+    it('should have CaseDefenderGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseDefenderGuard)
     })
   })

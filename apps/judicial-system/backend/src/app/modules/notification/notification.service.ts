@@ -701,7 +701,11 @@ export class NotificationService {
       )
     }
 
-    if (await this.shouldSendNotificationToPrison(theCase)) {
+    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
+      theCase,
+    )
+
+    if (shouldSendNotificationToPrison) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 
@@ -891,7 +895,10 @@ export class NotificationService {
       )
     }
 
-    if (isRestrictionCase(theCase.type)) {
+    if (
+      isRestrictionCase(theCase.type) &&
+      theCase.state === CaseState.ACCEPTED
+    ) {
       promises.push(
         this.sendRulingEmailNotificationToPrisonAdministration(theCase),
       )
@@ -901,11 +908,11 @@ export class NotificationService {
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      const shouldSendCustodyNoticeToPrison = await this.shouldSendNotificationToPrison(
+      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
         theCase,
       )
 
-      if (shouldSendCustodyNoticeToPrison) {
+      if (shouldSendNotificationToPrison) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
       }
     } else if (
@@ -975,11 +982,11 @@ export class NotificationService {
       ),
     ]
 
-    const shouldSendCustodyNoticeToPrison = await this.shouldSendNotificationToPrison(
+    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
       theCase,
     )
 
-    if (shouldSendCustodyNoticeToPrison) {
+    if (shouldSendNotificationToPrison) {
       promises.push(
         this.sendEmail(
           subject,
@@ -1611,6 +1618,104 @@ export class NotificationService {
     )
   }
 
+  private async sendAppealCompletedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(
+      notifications.caseAppealCompleted.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        appealCaseNumber: theCase.appealCaseNumber,
+      },
+    )
+
+    const html = this.formatMessage(notifications.caseAppealCompleted.body, {
+      userHasAccessToRVG: true,
+      courtCaseNumber: theCase.courtCaseNumber,
+      appealCaseNumber: theCase.appealCaseNumber,
+      linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
+    const promises = [
+      this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
+      this.sendEmail(
+        subject,
+        html,
+        theCase.prosecutor?.name,
+        theCase.prosecutor?.email,
+      ),
+    ]
+
+    if (
+      isRestrictionCase(theCase.type) &&
+      theCase.state === CaseState.ACCEPTED
+    ) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          'Fangelsismálastofnun',
+          this.config.email.prisonAdminEmail,
+        ),
+      )
+    }
+
+    if (
+      theCase.decision === CaseDecision.ACCEPTING ||
+      theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+    ) {
+      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
+        theCase,
+      )
+
+      if (shouldSendNotificationToPrison) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            html,
+            'Gæsluvarðhaldsfangelsi',
+            this.config.email.prisonEmail,
+          ),
+        )
+      }
+    }
+
+    if (theCase.defenderEmail) {
+      const url =
+        theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
+      const defenderHtml = this.formatMessage(
+        notifications.caseAppealCompleted.body,
+        {
+          userHasAccessToRVG: Boolean(url),
+          court: theCase.court?.name.replace('dómur', 'dómi'),
+          courtCaseNumber: theCase.courtCaseNumber,
+          appealCaseNumber: theCase.appealCaseNumber,
+          linkStart: `<a href="${url}">`,
+          linkEnd: '</a>',
+        },
+      )
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          defenderHtml,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
+    }
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.APPEAL_COMPLETED,
+      recipients,
+    )
+  }
+
   /* Messages */
 
   private getNotificationMessage(
@@ -1687,6 +1792,8 @@ export class NotificationService {
         return this.sendAppealReceivedByCourtNotifications(theCase)
       case NotificationType.APPEAL_STATEMENT:
         return this.sendAppealStatementNotifications(theCase, user)
+      case NotificationType.APPEAL_COMPLETED:
+        return this.sendAppealCompletedNotifications(theCase)
     }
   }
 

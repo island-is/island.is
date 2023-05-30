@@ -1,5 +1,5 @@
-import { Therapies as TherapiesType } from '@island.is/api/schema'
-import { Box, Tabs, TabType } from '@island.is/island-ui/core'
+import { RightsPortalTherapies as TherapiesType } from '@island.is/api/schema'
+import { Box, Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
@@ -17,16 +17,14 @@ import {
   SPEECH_THERAPY,
 } from '../../utils/constants'
 import { useGetTherapiesQuery } from './Therapies.generated'
-import LinkButton from '../../components/LinkButton/LinkButton'
 
 const Therapies = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
   const { loading, error, data } = useGetTherapiesQuery()
-  console.log(data)
 
-  const therapiesData = data?.getRightsPortalTherapies ?? []
+  const therapiesData = data?.rightsPortalTherapies ?? []
 
   const physicalTherapyData = therapiesData.filter(
     (x: TherapiesType) => x.id === PHYSIO_THERAPY,
@@ -64,22 +62,39 @@ const Therapies = () => {
       />
     )
   }
-
   // Construct tabs array and filter out empty arrays
   const tabs = [
-    physicalTherapyData.length > 0 && {
+    physioTherapyData.length > 0 && {
       label: formatMessage(messages.physicalTherapy),
-      content: <TherapiesTabContent data={physioTherapyData} />,
+      content: (
+        <TherapiesTabContent
+          data={physioTherapyData}
+          link={formatMessage(messages.physioDescriptionLink)}
+          linkText={formatMessage(messages.physioLink)}
+        />
+      ),
     },
     speechTherapyData.length > 0 && {
       label: formatMessage(messages.speechTherapy),
-      content: <TherapiesTabContent data={speechTherapyData} />,
+      content: (
+        <TherapiesTabContent
+          data={speechTherapyData}
+          link={formatMessage(messages.speechDescriptionLink)}
+          linkText={formatMessage(messages.speechLink)}
+        />
+      ),
     },
     occupationalTherapyData.length > 0 && {
       label: formatMessage(messages.occupationalTherapy),
-      content: <TherapiesTabContent data={occupationalTherapyData} />,
+      content: (
+        <TherapiesTabContent
+          data={occupationalTherapyData}
+          link={formatMessage(messages.occupationalDescriptionLink)}
+          linkText={formatMessage(messages.occupationalLink)}
+        />
+      ),
     },
-  ].filter((x) => x !== false) as TabType[]
+  ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -101,11 +116,6 @@ const Therapies = () => {
             contentBackground="transparent"
             selected="0"
             size="xs"
-          />
-
-          <LinkButton
-            to="https://island.is/s/sjukratryggingar/thjalfun"
-            text={formatMessage(messages.physioLink)}
           />
         </Box>
       )}

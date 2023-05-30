@@ -185,6 +185,26 @@
       "get": {
         "tags": ["healthcenter"],
         "operationId": "healthcenters/history",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -294,6 +314,24 @@
             "type": "string",
             "nullable": true
           },
+          "explanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "allowed12MonthPeriod": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "nextAllowedMonth": {
+            "type": "string",
+            "nullable": true
+          },
           "expiring": {
             "type": "boolean",
             "nullable": true
@@ -340,8 +378,7 @@
         "type": "object",
         "properties": {
           "number": {
-            "type": "integer",
-            "format": "int32",
+            "type": "string",
             "nullable": true
           },
           "date": {
@@ -355,13 +392,13 @@
             "nullable": true
           },
           "amount": {
-            "type": "integer",
-            "format": "int32",
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "coveredAmount": {
-            "type": "integer",
-            "format": "int32",
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },

@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('RightsPortalTherapiesState')
 class State {
   @Field(() => String)
   display!: string
@@ -9,7 +9,7 @@ class State {
   code!: string
 }
 
-@ObjectType()
+@ObjectType('RightsPortalTherapiesSessions')
 class Sessions {
   @Field(() => Number)
   available!: number
@@ -18,7 +18,7 @@ class Sessions {
   used!: number
 }
 
-@ObjectType()
+@ObjectType('RightsPortalTherapiesPeriods')
 class Periods {
   @Field(() => Date, { nullable: true })
   from?: Date
@@ -30,7 +30,7 @@ class Periods {
   to?: Date
 }
 
-@ObjectType()
+@ObjectType('RightsPortalTherapies')
 export class Therapies {
   @Field(() => ID)
   id!: string

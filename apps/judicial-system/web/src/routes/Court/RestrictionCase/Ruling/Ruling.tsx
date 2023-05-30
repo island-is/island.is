@@ -28,7 +28,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  completedCaseStates,
   Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
@@ -242,9 +241,6 @@ export const Ruling: React.FC = () => {
                   (user.id === workingCase.judge?.id ||
                     user.id === workingCase.registrar?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>

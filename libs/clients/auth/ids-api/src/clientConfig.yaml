@@ -1,0 +1,119 @@
+openapi: 3.0.0
+info:
+  title: IAS API
+  description: IAS API
+  contact:
+    name: IAS API
+    url: https://island.is
+    email: island@island.is
+  version: v1
+paths:
+  /v1/actor/consents:
+    get:
+      tags:
+        - Consents
+      responses:
+        '200':
+          description: 'Success'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentsPaginatedResponse'
+        '401':
+          description: 'Unauthorized'
+  /v1/actor/consents/{clientId}:
+    patch:
+      tags:
+        - Consents
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentUpdate'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consent'
+        '204':
+          description: 'No Content'
+        '401':
+          description: 'Unauthorized'
+components:
+  schemas:
+    ConsentsPaginatedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Consent'
+        totalCount:
+          type: integer
+          format: int32
+        pageInfo:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - data
+        - totalCount
+        - pageInfo
+    Consent:
+      type: object
+      properties:
+        clientId:
+          type: string
+        consentedScopes:
+          type: array
+          items:
+            type: string
+        rejectedScopes:
+          type: array
+          items:
+            type: string
+      required:
+        - clientId
+        - consentedScopes
+        - rejectedScopes
+    PageInfo:
+      type: object
+      properties:
+        hasNextPage:
+          type: boolean
+        hasPreviousPage:
+          type: boolean
+        startCursor:
+          type: string
+        endCursor:
+          type: string
+      required:
+        - hasNextPage
+        - hasPreviousPage
+        - startCursor
+        - endCursor
+    ConsentUpdate:
+      type: object
+      properties:
+        consented:
+          type: array
+          items:
+            type: string
+        rejected:
+          type: array
+          items:
+            type: string
+      required:
+        - consented
+        - rejected
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -12,22 +12,34 @@ import type { User } from '@island.is/auth-nest-tools'
 import { RightsPortalService } from './api-domains-rights-portal.service'
 import { Therapies } from './models/getTherapies.model'
 import { AidsAndNutrition } from './models/getAidsAndNutrition.model'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.servicePortalHealthRightsModule)
 @Audit({ namespace: '@island.is/api/rights-portal' })
 export class RightsPortalResolver {
   constructor(private readonly rightsPortalService: RightsPortalService) {}
 
-  @Scopes(ApiScope.internal)
-  @Query(() => [Therapies], { nullable: true })
+  @Scopes(ApiScope.health)
+  @Query(() => [Therapies], {
+    name: 'rightsPortalTherapies',
+    nullable: true,
+  })
   @Audit()
   getRightsPortalTherapies(@CurrentUser() user: User) {
     return this.rightsPortalService.getTherapies(user)
   }
 
-  @Scopes(ApiScope.internal)
-  @Query(() => AidsAndNutrition, { nullable: true })
+  @Scopes(ApiScope.health)
+  @Query(() => AidsAndNutrition, {
+    name: 'rightsPortalAidsAndNutrition',
+    nullable: true,
+  })
   @Audit()
   getRightsPortalAidsAndNutrition(@CurrentUser() user: User) {
     return this.rightsPortalService.getAidsAndNutrition(user)

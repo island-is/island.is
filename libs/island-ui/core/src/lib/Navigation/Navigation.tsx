@@ -1,4 +1,11 @@
-import React, { FC, useState, useEffect, ReactNode, createContext } from 'react'
+import React, {
+  FC,
+  useState,
+  useEffect,
+  ReactNode,
+  createContext,
+  ReactElement,
+} from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
@@ -77,7 +84,7 @@ interface NavigationTreeProps {
   level?: Level
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
-  renderLink?: (link: ReactNode, item?: NavigationItem) => ReactNode
+  renderLink?: (link: ReactElement, item?: NavigationItem) => ReactNode
   menuState: MenuStateReturn
   linkOnClick?: () => void
   id?: string
@@ -437,6 +444,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
 
             return (
               <li key={index} className={styles.listItem}>
+                {/*Note: Need to review usage (e.g. PortalNavigation) if we change the rendered element to something other than FocusableBox.*/}
                 {renderLink(
                   <FocusableBox
                     component="a"

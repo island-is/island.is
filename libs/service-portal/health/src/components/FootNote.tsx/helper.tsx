@@ -1,4 +1,3 @@
-import { Button } from '@island.is/island-ui/core'
 import { FormatMessage } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import {
@@ -8,15 +7,7 @@ import {
   PHYSIO_THERAPY,
   SPEECH_THERAPY,
 } from '../../utils/constants'
-
-//TODO: Get correct paths from Sjúkratryggingar
-const button = (str: any) => (
-  <a href="" target="_blank" rel="noreferrer">
-    <Button size="small" variant="text">
-      {str}
-    </Button>
-  </a>
-)
+import LinkButton from '../LinkButton/LinkButton'
 
 export const getFootNoteByType = (
   type: string,
@@ -27,61 +18,65 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+          link: (str) => (
+            <LinkButton
+              skipIcon
+              to={formatMessage(messages['physioDisclaimerLink'])}
+              text={str ?? ''}
+            />
+          ),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
       break
     case PHYSIO_ACCIDENT_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+          link: (str) => (
+            <LinkButton
+              skipIcon
+              to={formatMessage(messages['physioDisclaimerLink'])}
+              text={str ?? ''}
+            />
+          ),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
-      break
     case PHYSIO_HOME_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
-
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+          link: (str) => (
+            <LinkButton
+              skipIcon
+              to={formatMessage(messages['physioDisclaimerLink'])}
+              text={str ?? ''}
+            />
+          ),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
-      break
     case SPEECH_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
-
       return {
-        first: formatMessage(messages['physioDisclaimer1']),
-        second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
-        }),
-        third: formatMessage(messages['physioDisclaimer3']),
+        first: formatMessage(messages['speechDisclaimer1']),
+        second: formatMessage(messages['speechDisclaimer2']),
       }
-      break
     case OCCUPATIONAL_THERAPY:
-      //TODO: Get correct disclaimer for different therapies
       return {
-        first: formatMessage(messages['physioDisclaimer1']),
-        second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+        first: formatMessage(messages['occupationalDisclaimer'], {
+          link: (str) => (
+            <LinkButton
+              skipIcon
+              to={formatMessage(messages['occupationalDisclaimerLink'])}
+              text={str ?? ''}
+            />
+          ),
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
-      break
     default:
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => button(str),
+          link: (str) => <LinkButton to="" text={str ?? ''} />,
         }),
-        third: formatMessage(messages['physioDisclaimer3']),
       }
-      break
   }
 }

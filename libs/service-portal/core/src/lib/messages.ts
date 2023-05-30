@@ -898,10 +898,7 @@ export const m = defineMessages({
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
   },
-  health: {
-    id: 'service.portal:health',
-    defaultMessage: 'Heilsa',
-  },
+
   therapies: {
     id: 'service.portal:therapies',
     defaultMessage: 'Þjálfun',
@@ -913,6 +910,14 @@ export const m = defineMessages({
   workMachines: {
     id: 'service.portal.work-machines',
     defaultMessage: 'Vinnuvélar',
+  },
+  health: {
+    id: 'service.portal:health',
+    defaultMessage: 'Heilsa',
+  },
+  healthDescription: {
+    id: 'service.portal:health-description',
+    defaultMessage: 'Hér eru heilsugögn um þig',
   },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',

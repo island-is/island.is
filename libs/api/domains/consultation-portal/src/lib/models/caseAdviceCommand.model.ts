@@ -6,6 +6,9 @@ export class CaseAdviceCommand {
   @Field(() => String, { nullable: true })
   content?: string | null
 
+  @Field(() => Boolean, { nullable: true })
+  privateAdvice?: boolean
+
   @Field(() => [String], { nullable: true })
   fileUrls?: Array<string> | null
 }

@@ -5,6 +5,9 @@ import { HealthPaths } from './paths'
 export const healthNavigation: PortalNavigationItem = {
   name: m.health,
   path: HealthPaths.HealthRoot,
+  icon: {
+    icon: 'heart',
+  },
   children: [
     {
       name: m.therapies,
@@ -15,8 +18,5 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthAidsAndNutrition,
     },
   ],
-  icon: {
-    icon: 'heart',
-  },
-  description: m.health,
+  description: m.healthDescription,
 }

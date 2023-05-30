@@ -13,11 +13,12 @@ import {
   InfoCard,
   FormContext,
   UserContext,
+  CourtCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
   UploadState,
   useCourtUpload,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
@@ -135,6 +136,7 @@ export const JudgeOverview: React.FC = () => {
             })}
           </Text>
         </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
