@@ -16,7 +16,7 @@ type EnvironmentResult<T> = {
  * or the first item in environments array if none query string is provided.
  * It also provides a function to update the environment manually with an update function.
  */
-export const useEnvironment = <T extends EnvironmentResult<T>>(
+export const useEnvironmentQuery = <T extends EnvironmentResult<T>>(
   environments: Array<T>,
 ) => {
   const [searchParams] = useSearchParams()

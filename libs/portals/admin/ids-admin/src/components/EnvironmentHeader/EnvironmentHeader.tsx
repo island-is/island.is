@@ -3,6 +3,7 @@ import React, { ReactNode } from 'react'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { Text, Box, Select, Option } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../../lib/messages'
 import { authAdminEnvironments } from '../../utils/environments'
@@ -38,18 +39,21 @@ export const EnvironmentHeader = ({
 }: EnvironmentHeaderProps) => {
   const { formatMessage } = useLocale()
 
-  const options = authAdminEnvironments.map((env) => {
-    const isAvailable = availableEnvironments.includes(env)
+  const options = authAdminEnvironments
+    .map((env) => {
+      const isAvailable = availableEnvironments.includes(env)
 
-    return formatOption(
-      isAvailable || (!allowPublishing && isAvailable)
+      if (!isAvailable && !allowPublishing) return undefined
+
+      const label = isAvailable
         ? env
         : formatMessage(m.publishEnvironment, {
             environment: env,
-          }),
-      env,
-    )
-  })
+          })
+
+      return formatOption(label, env)
+    })
+    .filter(isDefined)
 
   return (
     <Box

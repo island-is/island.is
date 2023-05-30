@@ -4,9 +4,11 @@ import { Form } from 'react-router-dom'
 import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useSubmitting } from '@island.is/react-spa/shared'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import { m } from '../lib/messages'
+import { DropdownSync } from './DropdownSync/DropdownSync'
+import { useMultiEnvSupport } from '../hooks/useMultiEnvSupport'
+import { useEnvironment } from '../context/EnvironmentContext'
 
 /**
  * Compares if two form data objects are equal
@@ -15,13 +17,19 @@ const isFormDataEqual = (a: FormData, b: FormData): boolean =>
   JSON.stringify([...a.entries()]) === JSON.stringify([...b.entries()])
 
 type FormCardProps<Intent> = {
+  title: string
   /**
    * Form intent, used to determine what form is currently being submitted
    */
   intent?: Intent
-  selectedEnvironment?: AuthAdminEnvironment
-  availableEnvironments?: AuthAdminEnvironment[]
-  title: string
+  /**
+   * If false the card will not render the sync dropdown
+   */
+  shouldSupportMultiEnvironment?: boolean
+  /**
+   * Determines if environment section contents is in sync with other environments
+   */
+  inSync?: boolean
   children: React.ReactNode
 }
 
@@ -29,14 +37,18 @@ export const FormCard = <Intent,>({
   title,
   children,
   intent,
-  selectedEnvironment,
-  availableEnvironments,
+  inSync = false,
+  shouldSupportMultiEnvironment,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
   const [allEnvironments, setAllEnvironments] = useState(false)
   const formRef = useRef<HTMLFormElement | null>(null)
   const originalFormData = useRef<FormData | undefined>()
   const [dirty, setDirty] = useState(false)
+  const shouldSupportMultiEnv = useMultiEnvSupport(
+    shouldSupportMultiEnvironment,
+  )
+  const { availableEnvironments, selectedEnvironment } = useEnvironment()
   const { isLoading, isSubmitting, formData } = useSubmitting()
   const currentIntent = formData?.get('intent')
 
@@ -81,10 +93,27 @@ export const FormCard = <Intent,>({
         width="full"
         border="standard"
       >
-        <Box>
+        <Box
+          display="flex"
+          flexDirection={['column', 'row']}
+          rowGap={2}
+          justifyContent="spaceBetween"
+          alignItems={['flexStart', 'center']}
+          marginBottom={4}
+        >
           <Text as="h2" variant="h3">
             {title}
           </Text>
+          {shouldSupportMultiEnv && intent !== 'none' && (
+            <DropdownSync
+              intent={intent}
+              inSync={inSync}
+              isDirty={dirty}
+              isLoading={
+                currentIntent === intent && (isLoading || isSubmitting)
+              }
+            />
+          )}
         </Box>
         <Box marginTop={5}>{children}</Box>
         {intent && (

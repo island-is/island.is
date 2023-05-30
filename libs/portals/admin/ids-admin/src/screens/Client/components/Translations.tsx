@@ -6,7 +6,6 @@ import ContentCard from '../../../components/ContentCard'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.action'
 import { AuthAdminClientTranslation } from '../Client.loader'
-import { useMultiEnvSupport } from '../../../hooks/useMultiEnvSupport'
 
 interface TranslationsProps {
   translations: AuthAdminClientTranslation[]
@@ -22,8 +21,6 @@ const Translations = ({ translations, inSync = true }: TranslationsProps) => {
     })),
   )
 
-  const { shouldSupportMultiEnv } = useMultiEnvSupport()
-
   const onChangeTranslations = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -37,7 +34,6 @@ const Translations = ({ translations, inSync = true }: TranslationsProps) => {
       title={formatMessage(m.translations)}
       intent={ClientFormTypes.translations}
       inSync={inSync}
-      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={3}>
         <Tabs

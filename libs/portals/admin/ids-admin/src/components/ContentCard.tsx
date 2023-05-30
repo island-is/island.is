@@ -23,6 +23,7 @@ import { m } from '../lib/messages'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { DropdownSync } from './DropdownSync/DropdownSync'
 import { useClient } from '../screens/Client/ClientContext'
+import { useMultiEnvSupport } from '../hooks/useMultiEnvSupport'
 
 interface ContentCardProps {
   title: string
@@ -56,8 +57,11 @@ const ContentCard: FC<ContentCardProps> = ({
   isDirty = defaultIsDirty,
   intent = ClientFormTypes.none,
   accordionLabel = false,
-  shouldSupportMultiEnvironment = true,
+  shouldSupportMultiEnvironment,
 }) => {
+  const shouldSupportMultiEnv = useMultiEnvSupport(
+    shouldSupportMultiEnvironment,
+  )
   const { formatMessage } = useLocale()
   const originalFormData = useRef<FormData>()
   const [dirty, setDirty] = useState(false)
@@ -165,15 +169,13 @@ const ContentCard: FC<ContentCardProps> = ({
             <Text ref={titleRef} variant="h3">
               {title}
             </Text>
-            {shouldSupportMultiEnvironment && intent !== 'none' && (
-              <Box>
-                <DropdownSync
-                  intent={intent}
-                  isInSync={inSync}
-                  isDirty={dirty}
-                  isLoading={isLoadingForIntent}
-                />
-              </Box>
+            {shouldSupportMultiEnv && intent !== 'none' && (
+              <DropdownSync
+                intent={intent}
+                inSync={inSync}
+                isDirty={dirty}
+                isLoading={isLoadingForIntent}
+              />
             )}
           </Box>
           {description && <Text marginBottom={4}>{description}</Text>}
@@ -194,12 +196,12 @@ const ContentCard: FC<ContentCardProps> = ({
                 marginTop="containerGutter"
                 display="flex"
                 justifyContent={
-                  shouldSupportMultiEnvironment ? 'spaceBetween' : 'flexEnd'
+                  shouldSupportMultiEnv ? 'spaceBetween' : 'flexEnd'
                 }
                 rowGap={[2, 0]}
                 flexDirection={['column', 'row']}
               >
-                {shouldSupportMultiEnvironment && (
+                {shouldSupportMultiEnv && (
                   <Checkbox
                     label={formatMessage(m.saveForAllEnvironments)}
                     checked={allEnvironments}

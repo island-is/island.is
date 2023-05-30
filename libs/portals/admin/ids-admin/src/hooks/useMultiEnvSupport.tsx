@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react'
-import { useClient } from '../screens/Client/ClientContext'
+import { useEnvironment } from '../context/EnvironmentContext'
 
-export const useMultiEnvSupport = () => {
-  const { client } = useClient()
-  const [shouldSupportMultiEnv, setShouldSupportMultiEnv] = useState(true)
+export const useMultiEnvSupport = (shouldSupportMultiEnvOverride = true) => {
+  const { availableEnvironments } = useEnvironment()
+  const [shouldSupportMultiEnv, setShouldSupportMultiEnv] = useState(
+    shouldSupportMultiEnvOverride,
+  )
 
   useEffect(() => {
-    setShouldSupportMultiEnv(client?.availableEnvironments?.length > 1)
-  }, [client])
+    // If the override is false, we don't need to check for multi env support
+    if (!shouldSupportMultiEnvOverride) return
 
-  return { shouldSupportMultiEnv }
+    setShouldSupportMultiEnv(availableEnvironments?.length > 1)
+  }, [availableEnvironments])
+
+  return shouldSupportMultiEnv
 }

@@ -1,10 +1,10 @@
-import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
+
+import { m } from '../../../lib/messages'
+import ContentCard from '../../../components/ContentCard'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.action'
-import { useMultiEnvSupport } from '../../../hooks/useMultiEnvSupport'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 
 interface DelegationProps {
@@ -25,7 +25,6 @@ const Delegation = ({
   requireApiScopes,
 }: DelegationProps) => {
   const { formatMessage } = useLocale()
-  const { shouldSupportMultiEnv } = useMultiEnvSupport()
   const { isSuperAdmin } = useSuperAdmin()
 
   const [inputValues, setInputValues] = useEnvironmentState({
@@ -43,7 +42,6 @@ const Delegation = ({
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
-      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={2}>
         <Checkbox

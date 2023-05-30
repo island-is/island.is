@@ -8,7 +8,7 @@ import {
   PermissionFormTypes,
   UpdatePermissionResult,
 } from './EditPermission.action'
-import { useEnvironment } from '../../hooks/useEnvironment'
+import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 
 type PermissionContextProps = {
   /**
@@ -37,7 +37,7 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
 export const PermissionProvider: FC = ({ children }) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
   const actionData = useActionData() as UpdatePermissionResult
-  const { environment, updateEnvironment } = useEnvironment(
+  const { environment, updateEnvironment } = useEnvironmentQuery(
     permissionResult.environments,
   )
 

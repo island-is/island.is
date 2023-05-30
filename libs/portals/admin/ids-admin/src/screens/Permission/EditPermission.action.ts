@@ -88,14 +88,33 @@ const schema = {
   [PermissionFormTypes.ACCESS_CONTROL]: accessControlSchema,
 }
 
+const SYNC_SUFFIX = '-sync'
+
 function getIntent(formData: FormData) {
-  const intent = formData.get('intent') as keyof typeof PermissionFormTypes
+  let intent = formData.get('intent') as keyof typeof PermissionFormTypes | null
+
+  if (!intent) {
+    throw new Error('No intent found')
+  }
+
+  let sync = false
+
+  if (intent.endsWith(SYNC_SUFFIX)) {
+    intent = intent.substring(
+      0,
+      intent.lastIndexOf(SYNC_SUFFIX),
+    ) as keyof typeof PermissionFormTypes
+    sync = true
+  }
 
   if (!Object.values(PermissionFormTypes).some((type) => type === intent)) {
     throw new Error('wrong intent string')
   }
 
-  return intent
+  return {
+    intent,
+    sync,
+  }
 }
 
 type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
@@ -128,10 +147,9 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
   if (!scopeName) throw new Error('Permission id not found')
 
   const formData = await request.formData()
-  const intent = getIntent(formData)
+  const { intent, sync } = getIntent(formData)
   const saveInAllEnvironments =
     formData.get(`${intent}_saveInAllEnvironments`) ?? false
-  const syncIntent = formData.get(`${intent}-sync`)
 
   const result = await validateFormData({
     formData,
@@ -153,7 +171,7 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
 
   // If sync settings from this environment was clicked for current form intent, i.e. form section
   // then update all environments with the same settings as the current environment intent
-  if (syncIntent && syncEnvironments && syncEnvironments.length > 0) {
+  if (sync && syncEnvironments && syncEnvironments.length > 0) {
     environments.push(...syncEnvironments)
     // If the save in all environments was enabled, then update all environments
   } else if (saveInAllEnvironments) {

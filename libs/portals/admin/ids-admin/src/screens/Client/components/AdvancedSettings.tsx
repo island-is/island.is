@@ -16,7 +16,6 @@ import {
 } from '../EditClient.action'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
-import { useMultiEnvSupport } from '../../../hooks/useMultiEnvSupport'
 
 type AdvancedSettingsProps = Pick<
   AuthAdminClientEnvironment,
@@ -37,7 +36,6 @@ export const AdvancedSettings = ({
   customClaims,
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
-  const { shouldSupportMultiEnv } = useMultiEnvSupport()
   const actionData = useActionData() as EditApplicationResult<
     typeof schema.advancedSettings
   >
@@ -66,7 +64,6 @@ export const AdvancedSettings = ({
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
       accordionLabel={formatMessage(m.settings)}
-      shouldSupportMultiEnvironment={shouldSupportMultiEnv}
     >
       <Stack space={3}>
         <Checkbox

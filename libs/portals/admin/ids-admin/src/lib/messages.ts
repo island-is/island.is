@@ -718,6 +718,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:content',
     defaultMessage: 'Content',
   },
+  accessControl: {
+    id: 'ap.ids-admin:access-control',
+    defaultMessage: 'Access control',
+  },
   icelandic: {
     id: 'ap.ids-admin:icelandic',
     defaultMessage: 'Icelandic',

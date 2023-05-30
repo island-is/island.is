@@ -13,8 +13,9 @@ import { replaceParams } from '@island.is/react-spa/shared'
 
 import { AuthAdminClient, AuthAdminClientEnvironment } from './Client.loader'
 import { ClientFormTypes } from './EditClient.action'
-import { useEnvironment } from '../../hooks/useEnvironment'
+import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 import { IDSAdminPaths } from '../../lib/paths'
+import { checkEnvironmentSync } from '../../utils/checkEnvironmentSync'
 
 type PublishData = {
   toEnvironment: AuthAdminEnvironment | null
@@ -22,24 +23,8 @@ type PublishData = {
 }
 
 type VariablesToCheckSync = {
-  [key in ClientFormTypes]: string[]
+  [key in ClientFormTypes]: Array<keyof AuthAdminClientEnvironment>
 }
-
-export type ClientContextType = {
-  client: AuthAdminClient
-  selectedEnvironment: AuthAdminClient['environments'][0]
-  availableEnvironments: AuthAdminEnvironment[] | null
-  variablesToCheckSync?: VariablesToCheckSync
-  publishData: {
-    toEnvironment?: AuthAdminEnvironment | null
-    fromEnvironment?: AuthAdminEnvironment | null
-  }
-  setPublishData: Dispatch<SetStateAction<PublishData>>
-  checkIfInSync(variables: string[]): boolean
-  onEnvironmentChange(environment: AuthAdminEnvironment): void
-}
-
-const ClientContext = createContext<ClientContextType | undefined>(undefined)
 
 const variablesToCheckSync: VariablesToCheckSync = {
   [ClientFormTypes.applicationUrls]: ['postLogoutRedirectUris', 'redirectUris'],
@@ -69,6 +54,24 @@ const variablesToCheckSync: VariablesToCheckSync = {
   [ClientFormTypes.none]: [],
 }
 
+type Variables = typeof variablesToCheckSync[keyof typeof variablesToCheckSync]
+
+export type ClientContextType = {
+  client: AuthAdminClient
+  selectedEnvironment: AuthAdminClientEnvironment
+  availableEnvironments: AuthAdminEnvironment[] | null
+  variablesToCheckSync?: typeof variablesToCheckSync
+  publishData: {
+    toEnvironment?: AuthAdminEnvironment | null
+    fromEnvironment?: AuthAdminEnvironment | null
+  }
+  setPublishData: Dispatch<SetStateAction<PublishData>>
+  checkIfInSync(variables: Variables): boolean
+  onEnvironmentChange(environment: AuthAdminEnvironment): void
+}
+
+const ClientContext = createContext<ClientContextType | undefined>(undefined)
+
 export const ClientProvider: FC = ({ children }) => {
   const navigate = useNavigate()
   const params = useParams()
@@ -80,7 +83,7 @@ export const ClientProvider: FC = ({ children }) => {
   const {
     environment: selectedEnvironment,
     updateEnvironment,
-  } = useEnvironment(client.environments)
+  } = useEnvironmentQuery(client.environments)
 
   const openPublishModal = (to: AuthAdminEnvironment) => {
     setPublishData({
@@ -99,22 +102,14 @@ export const ClientProvider: FC = ({ children }) => {
     )
   }
 
-  const checkIfInSync = (variables: string[]) => {
-    for (const v of variables) {
-      const variable = v as keyof AuthAdminClientEnvironment
-
-      for (const env of client.environments) {
-        if (
-          JSON.stringify(env[variable]) !==
-          JSON.stringify(selectedEnvironment[variable])
-        ) {
-          return false
-        }
-      }
-    }
-
-    return true
-  }
+  const checkIfClientEnvInSync = (
+    variables: typeof variablesToCheckSync[keyof typeof variablesToCheckSync],
+  ) =>
+    checkEnvironmentSync({
+      environments: client.environments,
+      selectedEnvironment,
+      variables,
+    })
 
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
     const newEnvironment = updateEnvironment(environment)
@@ -129,7 +124,7 @@ export const ClientProvider: FC = ({ children }) => {
       value={{
         client,
         selectedEnvironment,
-        checkIfInSync,
+        checkIfInSync: checkIfClientEnvInSync,
         variablesToCheckSync,
         publishData,
         setPublishData,
