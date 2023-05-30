@@ -44,7 +44,7 @@ export class EndorsementListService {
 
   async hasAdminScope(user: User): Promise<boolean> {
     for (const [_, value] of Object.entries(user.scope)) {
-      if (value == AdminPortalScope.petitionsAdmin) {
+      if (value === AdminPortalScope.petitionsAdmin) {
         return true
       }
     }
