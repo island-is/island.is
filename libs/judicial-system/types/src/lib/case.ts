@@ -310,6 +310,7 @@ export interface CaseListEntry
     | 'creatingProsecutor'
     | 'appealState'
     | 'appealedDate'
+    | 'appealCaseNumber'
   > {
   parentCaseId?: string
 }
