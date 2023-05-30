@@ -272,9 +272,10 @@ export interface TempCreateCase extends Omit<CreateCase, 'type'> {
 }
 
 export interface TempCaseListEntry
-  extends Omit<CaseListEntry, 'type' | 'appealState'> {
+  extends Omit<CaseListEntry, 'type' | 'appealState' | 'appealRulingDecision'> {
   type: CaseType
   appealState?: CaseAppealState
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface CourtDocument {
