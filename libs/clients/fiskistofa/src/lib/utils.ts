@@ -36,7 +36,7 @@ const mapCatchQuotaCategoryForTimePeriod = (
   nextYear: category?.aNaestaAr,
   excessCatch: category?.umframafli,
   unused: category?.onotad,
-  totalCatchQuota: category?.heildarAflaMark,
+  totalCatchQuota: category?.heildarAflamark,
   quotaShare: category?.hlutdeild,
   nextYearQuota: category?.aNaestaArKvoti,
   nextYearFromQuota: category?.afNaestaAriKvoti,
