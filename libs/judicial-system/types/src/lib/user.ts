@@ -93,7 +93,11 @@ export function isDistrictCourtUser(user: User): boolean {
   )
 }
 
-export const appealsCourtRoles: string[] = [UserRole.JUDGE, UserRole.REGISTRAR]
+export const appealsCourtRoles: string[] = [
+  UserRole.JUDGE,
+  UserRole.REGISTRAR,
+  UserRole.ASSISTANT,
+]
 
 function isAppealsCourtRole(role: string): boolean {
   return appealsCourtRoles.includes(role)
