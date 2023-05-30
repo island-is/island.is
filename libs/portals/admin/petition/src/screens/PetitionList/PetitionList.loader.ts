@@ -9,8 +9,8 @@ import {
   EndorsementSystemGetEndorsementsQuery,
 } from '../../shared/queries/getEndorsements.generated'
 
-export const singleListLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params, request }): Promise<EndorsementList> => {
+export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
+  return async ({ params }): Promise<EndorsementList> => {
     if (!params.listId) {
       throw new Error('not found')
     }

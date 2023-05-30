@@ -4,9 +4,9 @@ import { Modal, ModalProps } from '@island.is/react/components'
 import { Form, useParams, useRevalidator } from 'react-router-dom'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import { useUnlockListMutation } from '../../../shared/mutations/unlockList.generated'
+import { useLockListMutation } from '../../../shared/mutations/lockList.generated'
 
-export const UnlockList = ({
+export const LockList = ({
   isVisible,
   onClose,
 }: Pick<ModalProps, 'isVisible' | 'onClose'>) => {
@@ -14,9 +14,9 @@ export const UnlockList = ({
   const params = useParams()
 
   const [
-    unlockListMutation,
+    lockListMutation,
     { loading, error: mutationError },
-  ] = useUnlockListMutation()
+  ] = useLockListMutation()
   const { revalidate } = useRevalidator()
 
   const handleSubmit = async () => {
@@ -24,7 +24,7 @@ export const UnlockList = ({
       return
     }
 
-    const res = await unlockListMutation({
+    const res = await lockListMutation({
       variables: {
         input: {
           listId: params['listId'] || '',
@@ -32,7 +32,7 @@ export const UnlockList = ({
       },
     })
 
-    if (res.data?.endorsementSystemUnlockEndorsementList) {
+    if (res.data?.endorsementSystemLockEndorsementList) {
       revalidate()
       toast.success('todo')
       onClose?.()
@@ -41,9 +41,9 @@ export const UnlockList = ({
 
   return (
     <Modal
-      id="unlock-list"
+      id="lock-list"
       isVisible={isVisible}
-      title={'Afæsa lista'}
+      title={formatMessage(m.lockList)}
       label={formatMessage(m.todo)}
       onClose={onClose}
       closeButtonLabel={formatMessage(m.todo)}

@@ -7,7 +7,7 @@ export const petitionNavigation: PortalNavigationItem = {
   path: PetitionPaths.PetitionsRoot,
   children: [
     {
-      name: m.overview,
+      name: m.petitionsOverview,
       path: PetitionPaths.PetitionsRoot,
       activeIfExact: true,
     },

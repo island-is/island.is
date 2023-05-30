@@ -2,12 +2,12 @@ import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 import { m } from './lib/messages'
 import { PetitionPaths } from './lib/paths'
-import SingleList from './screens/SingleList/SingleList'
 import { overviewLoader } from './screens/Overview/Overview.loader'
-import { singleListLoader } from './screens/SingleList/SingleList.loader'
-import { updateListAction } from './components/Actions/UpdateList/UpdateList.action'
+import { petitionListLoader } from './screens/PetitionList/PetitionList.loader'
+import { updateListAction } from './components/ListActions/UpdateList/UpdateList.action'
 
-const OverviewScreen = lazy(() => import('./screens/Overview/Overview'))
+const Overview = lazy(() => import('./screens/Overview'))
+const PetitionList = lazy(() => import('./screens/PetitionList'))
 
 export const petitionModule: PortalModule = {
   name: m.title,
@@ -15,16 +15,16 @@ export const petitionModule: PortalModule = {
   enabled: ({ userInfo }) => true,
   routes: (props) => [
     {
-      name: m.overview,
+      name: m.petitionsOverview,
       path: PetitionPaths.PetitionsRoot,
-      element: <OverviewScreen />,
+      element: <Overview />,
       loader: overviewLoader(props),
     },
     {
-      name: m.overview,
-      path: PetitionPaths.PetitionsSingle,
-      element: <SingleList />,
-      loader: singleListLoader(props),
+      name: m.petitionList,
+      path: PetitionPaths.PetitionList,
+      element: <PetitionList />,
+      loader: petitionListLoader(props),
       action: updateListAction(props),
     },
   ],

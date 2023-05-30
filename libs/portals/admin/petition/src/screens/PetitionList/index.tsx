@@ -10,7 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import {
   Form,
-  Link,
   useActionData,
   useLoaderData,
   useNavigate,
@@ -20,16 +19,15 @@ import {
 
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import Skeleton from '../../components/Skeleton/skeleton'
+import Skeleton from '../../components/ListSkeleton'
 import { EndorsementList } from '../../shared/utils/types'
-import PetitionsTable from '../../components/PetitionsTable'
-import { PetitionPaths } from '../../lib/paths'
+import PetitionsTable from '../../components/ListSignersTable'
 import { UpdateListMutation } from '../../shared/mutations/updateList.generated'
-import { LockList } from '../../components/Actions/LockList'
-import { UnlockList } from '../../components/Actions/UnlockList'
-import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
+import { LockList } from '../../components/ListActions/LockList'
+import { UnlockList } from '../../components/ListActions/UnlockList'
+import { useSubmitting } from '@island.is/react-spa/shared'
 
-const SingleList = () => {
+const PetitionList = () => {
   const { listId, petition, endorsements } = useLoaderData() as EndorsementList
   const { formatMessage } = useLocale()
   const navigation = useNavigation()
@@ -53,11 +51,12 @@ const SingleList = () => {
   const [isUnlockListModalVisible, setIsUnlockListModalVisible] = useState(
     false,
   )
+
   useEffect(() => {
     if (actionData) {
       actionData?.endorsementSystemUpdateEndorsementList
-        ? toast.success(formatMessage(m.todo))
-        : toast.error(formatMessage(m.todo))
+        ? toast.success(formatMessage(m.toastUpdateSuccess))
+        : toast.error(formatMessage(m.toastUpdateError))
     }
   }, [actionData])
 
@@ -72,7 +71,7 @@ const SingleList = () => {
             navigate(-1)
           }}
         >
-          {'Til baka'}
+          {formatMessage(m.goBack)}
         </Button>
       </Box>
       {navigation.state !== 'loading' &&
@@ -84,7 +83,7 @@ const SingleList = () => {
               <Box marginY={5}>
                 <AlertMessage
                   type="error"
-                  title={'Listi er læstur'}
+                  title={formatMessage(m.listIsLocked)}
                   message=""
                 />
               </Box>
@@ -96,7 +95,7 @@ const SingleList = () => {
                 onChange={(e) => {
                   setTitle(e.target.value)
                 }}
-                label={'Heiti lista'}
+                label={formatMessage(m.listName)}
               />
               <Input
                 name="description"
@@ -104,7 +103,7 @@ const SingleList = () => {
                 onChange={(e) => {
                   setDescription(e.target.value)
                 }}
-                label={'Um lista'}
+                label={formatMessage(m.listDescription)}
                 textarea
                 rows={12}
               />
@@ -115,9 +114,9 @@ const SingleList = () => {
                       name="openedDate"
                       selected={new Date(openedDate)}
                       handleChange={(date) => setOpenedDate(date)}
-                      label="Tímabil frá"
+                      label={formatMessage(m.listOpenFrom)}
                       locale="is"
-                      placeholderText="Veldu dagsetningu"
+                      placeholderText={formatMessage(m.selectDate)}
                     />
                   </Box>
                   <Box width="half" marginLeft={[0, 2]} marginTop={[2, 0]}>
@@ -125,9 +124,9 @@ const SingleList = () => {
                       name="closedDate"
                       selected={new Date(closedDate)}
                       handleChange={(date) => setClosedDate(date)}
-                      label="Tímabil til"
+                      label={formatMessage(m.listOpenTil)}
                       locale="is"
-                      placeholderText="Veldu dagsetningu"
+                      placeholderText={formatMessage(m.selectDate)}
                     />
                   </Box>
                 </Box>
@@ -150,7 +149,7 @@ const SingleList = () => {
                       colorScheme="destructive"
                       onClick={() => setIsLockListModalVisible(true)}
                     >
-                      {'Loka lista'}
+                      {formatMessage(m.openList)}
                     </Button>
                     <LockList
                       isVisible={isLockListModalVisible}
@@ -164,7 +163,7 @@ const SingleList = () => {
                       iconType="outline"
                       onClick={() => setIsUnlockListModalVisible(true)}
                     >
-                      {'Opna lista'}
+                      {formatMessage(m.lockList)}
                     </Button>
                     <UnlockList
                       isVisible={isUnlockListModalVisible}
@@ -178,7 +177,7 @@ const SingleList = () => {
                   icon="reload"
                   variant="ghost"
                 >
-                  {'Uppfæra lista'}
+                  {formatMessage(m.unlockList)}
                 </Button>
               </Box>
             </Stack>
@@ -196,4 +195,4 @@ const SingleList = () => {
   )
 }
 
-export default SingleList
+export default PetitionList

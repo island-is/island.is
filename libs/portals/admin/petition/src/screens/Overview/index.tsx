@@ -38,12 +38,12 @@ const Overview = () => {
                   formatDate(list.closedDate)
                 }
                 cta={{
-                  label: formatMessage(m.viewLists),
+                  label: formatMessage(m.viewList),
                   variant: 'text',
                   icon: 'arrowForward',
                   onClick: () => {
                     navigate(
-                      PetitionPaths.PetitionsSingle.replace(':listId', list.id),
+                      PetitionPaths.PetitionList.replace(':listId', list.id),
                       {
                         state: {
                           list,
@@ -64,7 +64,7 @@ const Overview = () => {
     <>
       <IntroHeader
         title={formatMessage(m.title)}
-        intro={formatMessage(m.overview)}
+        intro={formatMessage(m.intro)}
       />
       <Box marginTop={8}>
         <Tabs
