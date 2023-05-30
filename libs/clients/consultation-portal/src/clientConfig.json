@@ -666,6 +666,9 @@
             "type": "string",
             "nullable": true
           },
+          "isPrivateAdvice": {
+            "type": "boolean"
+          },
           "created": {
             "type": "string",
             "format": "date-time"
@@ -720,6 +723,9 @@
           "content": {
             "type": "string",
             "nullable": true
+          },
+          "privateAdvice": {
+            "type": "boolean"
           },
           "fileUrls": {
             "type": "array",
@@ -870,6 +876,9 @@
             "type": "integer",
             "format": "int32"
           },
+          "allowUsersToSendPrivateAdvices": {
+            "type": "boolean"
+          },
           "advicePublishTypeName": {
             "type": "string",
             "nullable": true
@@ -904,6 +913,13 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DocumentInfoResult"
+            },
+            "nullable": true
+          },
+          "relatedCases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedCaseResult"
             },
             "nullable": true
           }
@@ -1017,6 +1033,24 @@
         "type": "object",
         "properties": {
           "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RelatedCaseResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "caseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
             "type": "string",
             "nullable": true
           }

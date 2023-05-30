@@ -2,7 +2,7 @@ import { Outlet, useLoaderData } from 'react-router-dom'
 
 import { useLocale } from '@island.is/localization'
 
-import Layout from '../../components/Layout/Layout'
+import { Layout } from '../../components/Layout/Layout'
 import { m } from '../../lib/messages'
 import { idsAdminNav } from '../../lib/navigation'
 import { TenantLoaderResult } from './Tenant.loader'

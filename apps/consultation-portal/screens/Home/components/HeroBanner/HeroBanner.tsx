@@ -17,7 +17,7 @@ import {
 } from '../../../../components/svg'
 import { StatisticBox, HeroTiles } from './components'
 import { ArrOfStatistics } from '../../../../types/interfaces'
-import Splash from '../../../../components/svg/Splash'
+import { Splash } from '../../../../components/svg'
 import { useIsMobile } from '../../../../hooks'
 import localization from '../../Home.json'
 
@@ -44,6 +44,9 @@ export const HeroBanner = ({ statistics }: HeroBannerProps) => {
             <Stack space={2}>
               <HeroLogoMobile />
               <LESchoolMobile />
+              <StatisticBox
+                statistic={statistics?.casesInReview?.toLocaleString('de-DE')}
+              />
               <Text>{loc.introText}</Text>
               <ArrowLink href={loc.arrowLink.internalLink.href}>
                 {loc.arrowLink.internalLink.text}
