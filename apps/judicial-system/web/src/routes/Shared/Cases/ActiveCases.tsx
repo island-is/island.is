@@ -254,7 +254,19 @@ const ActiveCases: React.FC<Props> = (props) => {
                 }}
               >
                 <td className={styles.td}>
-                  {c.courtCaseNumber ? (
+                  {c.appealCaseNumber ? (
+                    <Box display="flex" flexDirection="column">
+                      <Text as="span" variant="small">
+                        {c.appealCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {c.courtCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
+                      </Text>
+                    </Box>
+                  ) : c.courtCaseNumber ? (
                     <>
                       <Box component="span" className={styles.blockColumn}>
                         <Text as="span">{c.courtCaseNumber}</Text>
