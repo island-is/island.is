@@ -82,23 +82,18 @@ test.describe('Endorsements', () => {
     // Find a list made by some other user
     await page.getByText('Skoða lista').last().click()
 
-
-
     const button = await page.waitForSelector(
       'button:text("Setja nafn mitt á þennan lista")',
     )
-   await button.click()
+    await button.click()
 
-   // Get all popups when they open
-page.on('popup', async popup => {
-  await popup.waitForLoadState();
-  console.log(await popup.title());
-})
-
-
+    // Get all popups when they open
+    page.on('popup', async (popup) => {
+      await popup.waitForLoadState()
+      console.log(await popup.title())
+    })
 
     // Undirskriftalista hefur verið skilað til Ísland.is
-
 
     // await button.click();
 

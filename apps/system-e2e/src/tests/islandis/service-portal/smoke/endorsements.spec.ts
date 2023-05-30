@@ -29,7 +29,9 @@ test.describe('Endorsements', () => {
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'))
 
     // Check for ui things
-    await expect(page.locator('button:text("Stofna nýjan lista")')).toBeVisible()
+    await expect(
+      page.locator('button:text("Stofna nýjan lista")'),
+    ).toBeVisible()
 
     // await page.waitForSelector('button:text("Virkir listar")')
     await expect(page.locator('button:text("Virkir listar")')).toBeVisible()
@@ -48,10 +50,8 @@ test.describe('Endorsements', () => {
     // Find a list made by some other user
     await page.getByText('Skoða lista').last().click()
 
-
-    await expect(page.locator('button:text("Setja nafn mitt á þennan lista")')).toBeVisible()
-
-
-    })
-
+    await expect(
+      page.locator('button:text("Setja nafn mitt á þennan lista")'),
+    ).toBeVisible()
+  })
 })
