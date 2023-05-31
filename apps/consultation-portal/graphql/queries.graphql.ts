@@ -132,7 +132,12 @@ export const CASE_GET_CASE_BY_ID = gql`
       announcementText
       summaryDate
       summaryText
+      summaryLink
+      summaryDocumentId
       adviceCount
+      advicePublishTypeId
+      advicePublishTypeName
+      allowUsersToSendPrivateAdvices
       created
       changed
       oldInstitutionName
@@ -149,6 +154,11 @@ export const CASE_GET_CASE_BY_ID = gql`
         id
         fileName
       }
+      relatedCases {
+        id
+        caseNumber
+        name
+      }
     }
   }
 `
@@ -162,6 +172,7 @@ export const CASE_GET_ADVICES_BY_ID = gql`
       participantEmail
       content
       created
+      isPrivateAdvice
       adviceDocuments {
         id
         fileName

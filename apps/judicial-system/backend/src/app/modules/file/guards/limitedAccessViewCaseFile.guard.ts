@@ -56,6 +56,7 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
           CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
           CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
           CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.APPEAL_RULING,
         ].includes(caseFile.category)
       ) {
         return true

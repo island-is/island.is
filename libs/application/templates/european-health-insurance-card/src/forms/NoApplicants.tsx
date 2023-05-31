@@ -1,12 +1,17 @@
 import { Application } from '@island.is/application/types'
 import { Form, FormModes } from '@island.is/application/types'
-import { buildCheckboxField, buildForm } from '@island.is/application/core'
+import {
+  buildCheckboxField,
+  buildDescriptionField,
+  buildForm,
+} from '@island.is/application/core'
 
 import { europeanHealthInsuranceCardApplicationMessages as e } from '../lib/messages'
 import {
   getEhicResponse,
   getFullName,
   hasAPDF,
+  someAreNotInsured,
   someHavePDF,
 } from '../lib/helpers/applicantHelper'
 import { Option } from '@island.is/application/types'
@@ -26,6 +31,36 @@ export const NoApplicants: Form = buildForm({
         const applying: Array<Option> = []
         getEhicResponse(application).forEach((x) => {
           if (x.isInsured && hasAPDF(x)) {
+            applying.push({
+              value: x.applicantNationalId ?? '',
+              label: getFullName(application, x.applicantNationalId) ?? '',
+              disabled: true,
+            })
+          }
+        })
+        return applying
+      },
+    }),
+
+    buildDescriptionField({
+      id: 'break3',
+      title: '',
+      titleVariant: 'h3',
+      marginBottom: 'gutter',
+      space: 'gutter',
+      condition: (_, externalData) => someAreNotInsured(externalData),
+    }),
+
+    buildCheckboxField({
+      id: 'notApplicable',
+      backgroundColor: 'white',
+      title: e.no.sectionTitle,
+      description: e.no.sectionDescription,
+      condition: (_, externalData) => someAreNotInsured(externalData),
+      options: (application: Application) => {
+        const applying: Array<Option> = []
+        getEhicResponse(application).forEach((x) => {
+          if (!x.isInsured && !x.canApply) {
             applying.push({
               value: x.applicantNationalId ?? '',
               label: getFullName(application, x.applicantNationalId) ?? '',

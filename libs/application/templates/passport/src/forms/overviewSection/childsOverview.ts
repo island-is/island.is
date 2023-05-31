@@ -15,6 +15,7 @@ import {
 } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
+import { hasSecondGuardian } from '../../lib/utils'
 
 export const childsOverview = buildMultiField({
   id: 'overviewChildsInfo',
@@ -124,6 +125,8 @@ export const childsOverview = buildMultiField({
       description: '',
       space: 'gutter',
       marginBottom: 'gutter',
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
     }),
     buildKeyValueField({
       label: m.name,
@@ -133,10 +136,14 @@ export const childsOverview = buildMultiField({
           .guardian2 as {
           name?: string
         })?.name,
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
     }),
     buildKeyValueField({
       label: m.nationalId,
       width: 'half',
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
       value: (application: Application) => {
         const nationaId = ((application.answers
           .childsPersonalInfo as ChildsPersonalInfo).guardian2 as {
@@ -151,10 +158,14 @@ export const childsOverview = buildMultiField({
       title: '',
       description: '',
       space: 'gutter',
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
     }),
     buildKeyValueField({
       label: m.email,
       width: 'half',
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
       value: (application: Application) =>
         ((application.answers.childsPersonalInfo as ChildsPersonalInfo)
           .guardian2 as {
@@ -164,6 +175,8 @@ export const childsOverview = buildMultiField({
     buildKeyValueField({
       label: m.phoneNumber,
       width: 'half',
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
       value: (application: Application) => {
         const phone = ((application.answers
           .childsPersonalInfo as ChildsPersonalInfo).guardian2 as {
@@ -178,8 +191,13 @@ export const childsOverview = buildMultiField({
       title: '',
       description: '',
       space: 'gutter',
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
     }),
-    buildDividerField({}),
+    buildDividerField({
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
+    }),
     buildDescriptionField({
       id: 'overview.dropLocationTitle',
       title: m.serviceTypeTitle,

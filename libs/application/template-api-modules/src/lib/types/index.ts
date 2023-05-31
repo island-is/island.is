@@ -6,7 +6,7 @@ import { Config as CriminalRecordConfig } from '@island.is/api/domains/criminal-
 import { Message } from '@island.is/email-service'
 import { User } from '@island.is/auth-nest-tools'
 import { PaymentScheduleServiceOptions } from '@island.is/clients/payment-schedule'
-import { HealthInsuranceV2Options } from '@island.is/clients/health-insurance-v2'
+import { HealthInsuranceV2Options } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
 import { Injectable, Type } from '@nestjs/common'
 import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
