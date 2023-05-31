@@ -246,8 +246,6 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
         adviceDocuments {
           id
           fileName
-          fileType
-          size
         }
       }
     }
