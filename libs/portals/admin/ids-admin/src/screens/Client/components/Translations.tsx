@@ -7,7 +7,7 @@ import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.action'
 import { AuthAdminClientTranslation } from '../Client.loader'
-import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard'
 
@@ -17,7 +17,7 @@ interface TranslationsProps {
 const Translations = ({ translations }: TranslationsProps) => {
   const { formatMessage } = useLocale()
   const [activeTab, setActiveTab] = useState('0')
-  const { selectedEnvironment, client } = useClient()
+  const { client } = useClient()
   const [copyTranslations, setCopyTranslations] = useEnvironmentState(
     ['is', 'en'].map((locale) => ({
       locale: locale,
@@ -33,17 +33,11 @@ const Translations = ({ translations }: TranslationsProps) => {
     setCopyTranslations([...temp])
   }
 
-  const inSync = checkEnvironmentSync({
-    environments: client.environments,
-    selectedEnvironment,
-    variables: ['displayName'],
-  })
-
   return (
     <FormCard
       title={formatMessage(m.translations)}
       intent={ClientFormTypes.translations}
-      inSync={inSync}
+      inSync={checkEnvironmentsSync(client.environments, ['displayName'])}
     >
       <Stack space={3}>
         <Tabs

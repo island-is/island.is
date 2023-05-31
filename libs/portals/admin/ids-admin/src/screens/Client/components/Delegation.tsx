@@ -5,7 +5,7 @@ import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.action'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
-import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard'
 
@@ -28,7 +28,7 @@ const Delegation = ({
 }: DelegationProps) => {
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
-  const { client, selectedEnvironment } = useClient()
+  const { client } = useClient()
 
   const [inputValues, setInputValues] = useEnvironmentState({
     supportsCustomDelegation,
@@ -39,26 +39,20 @@ const Delegation = ({
     requireApiScopes,
   })
 
-  const inSync = checkEnvironmentSync({
-    environments: client.environments,
-    selectedEnvironment,
-    variables: [
-      'supportsProcuringHolders',
-      'supportsLegalGuardians',
-      'promptDelegations',
-      'supportsPersonalRepresentatives',
-      'supportsCustomDelegation',
-      'requireApiScopes',
-    ],
-  })
-
   return (
     <FormCard
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
       accordionLabel={formatMessage(m.settings)}
-      inSync={inSync}
+      inSync={checkEnvironmentsSync(client.environments, [
+        'supportsProcuringHolders',
+        'supportsLegalGuardians',
+        'promptDelegations',
+        'supportsPersonalRepresentatives',
+        'supportsCustomDelegation',
+        'requireApiScopes',
+      ])}
     >
       <Stack space={2}>
         <Checkbox

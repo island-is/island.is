@@ -12,7 +12,7 @@ import { PermissionFormTypes } from '../EditPermission.action'
 import { Languages } from '../../../utils/languages'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
-import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 
 type Locales = Languages.IS | Languages.EN
 type ErrorKeys = `${Locales}_description` | `${Locales}_displayName`
@@ -44,12 +44,6 @@ export const PermissionContent = () => {
   const [descriptions, setDescriptions] = useEnvironmentState(
     createLanguagesState(selectedPermission.description),
   )
-
-  const inSync = checkEnvironmentSync({
-    environments: permission.environments,
-    selectedEnvironment: selectedPermission,
-    variables: ['description', 'displayName'],
-  })
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -114,7 +108,10 @@ export const PermissionContent = () => {
     <FormCard
       title={formatMessage(m.content)}
       intent={PermissionFormTypes.CONTENT}
-      inSync={inSync}
+      inSync={checkEnvironmentsSync(permission.environments, [
+        'description',
+        'displayName',
+      ])}
     >
       <Tabs
         size="md"

@@ -10,7 +10,7 @@ import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { ClientFormTypes } from '../EditClient.action'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
-import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard'
 
@@ -34,7 +34,7 @@ export const AdvancedSettings = ({
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
   const { isSuperAdmin } = useSuperAdmin()
-  const { client, selectedEnvironment, actionData } = useClient()
+  const { client, actionData } = useClient()
 
   const customClaimsString = (
     customClaims?.map((claim) => {
@@ -49,30 +49,22 @@ export const AdvancedSettings = ({
     accessTokenLifetime,
     customClaims: customClaimsString,
   })
-
   const { formatErrorMessage } = useErrorFormatMessage()
-
   const readableAccessTokenLifetime = useReadableSeconds(accessTokenLifetime)
-
-  const inSync = checkEnvironmentSync({
-    environments: client.environments,
-    selectedEnvironment,
-    variables: [
-      'requirePkce',
-      'allowOfflineAccess',
-      'requireConsent',
-      'supportTokenExchange',
-      'slidingRefreshTokenLifetime',
-      'customClaims',
-    ],
-  })
 
   return (
     <FormCard
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
       accordionLabel={formatMessage(m.settings)}
-      inSync={inSync}
+      inSync={checkEnvironmentsSync(client.environments, [
+        'requirePkce',
+        'allowOfflineAccess',
+        'requireConsent',
+        'supportTokenExchange',
+        'slidingRefreshTokenLifetime',
+        'customClaims',
+      ])}
     >
       <Stack space={3}>
         <Checkbox

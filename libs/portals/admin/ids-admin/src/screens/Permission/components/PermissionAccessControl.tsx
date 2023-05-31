@@ -8,7 +8,7 @@ import { FormCard } from '../../../components/FormCard'
 import { m } from '../../../lib/messages'
 import { PermissionFormTypes } from '../EditPermission.action'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
-import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 
 const commonProps: Pick<
   CheckboxProps,
@@ -40,24 +40,18 @@ export const PermissionAccessControl = () => {
     grantToPersonalRepresentatives,
   })
 
-  const inSync = checkEnvironmentSync({
-    environments: permission.environments,
-    selectedEnvironment: selectedPermission,
-    variables: [
-      'isAccessControlled',
-      'grantToAuthenticatedUser',
-      'grantToProcuringHolders',
-      'grantToLegalGuardians',
-      'allowExplicitDelegationGrant',
-      'grantToPersonalRepresentatives',
-    ],
-  })
-
   return (
     <FormCard
       title={formatMessage(m.accessControl)}
       intent={PermissionFormTypes.ACCESS_CONTROL}
-      inSync={inSync}
+      inSync={checkEnvironmentsSync(permission.environments, [
+        'isAccessControlled',
+        'grantToAuthenticatedUser',
+        'grantToProcuringHolders',
+        'grantToLegalGuardians',
+        'allowExplicitDelegationGrant',
+        'grantToPersonalRepresentatives',
+      ])}
     >
       <Stack space={2}>
         <Checkbox
