@@ -3,7 +3,7 @@ import { Document } from '../../../../types/interfaces'
 import env from '../../../../lib/environment'
 import localization from '../../Case.json'
 import * as styles from './CaseDocumentsSkeleton.css'
-import { isDocumentLink } from '../../../../utils/helpers'
+import { isDocumentLink } from '../../utils'
 
 interface Props {
   document: Document

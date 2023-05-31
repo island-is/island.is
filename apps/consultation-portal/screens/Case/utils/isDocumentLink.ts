@@ -1,6 +1,4 @@
-// check if document is document or url
-
-import { Document } from '../../types/interfaces'
+import { Document } from '../../../types/interfaces'
 
 const isDocumentLink = (document: Document) => {
   if (document?.size === 0) {
