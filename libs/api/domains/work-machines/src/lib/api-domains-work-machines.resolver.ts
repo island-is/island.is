@@ -1,4 +1,6 @@
 import {
+  Auth,
+  AuthMiddleware,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -11,17 +13,26 @@ import { Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { WorkMachinesService } from './api-domains-work-machines.service'
 import { WorkMachineEntity } from './models/getWorkMachines.model'
+import { DisabilityLicenseService } from '@island.is/clients/disability-license'
+import { MachinesApi } from '@island.is/clients/work-machines'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/workMachines' })
 export class WorkMachinesResolver {
-  constructor(private readonly workMachinesService: WorkMachinesService) {}
+  constructor(
+    private readonly workMachinesService: MachinesApi,
+    private readonly testApi: DisabilityLicenseService,
+  ) {}
 
   @Scopes(ApiScope.internal)
   @Query(() => WorkMachineEntity, { name: 'workMachines', nullable: true })
   @Audit()
   async getWorkMachines(@CurrentUser() user: User) {
-    return this.workMachinesService.getWorkMachines(user)
+    //const a = this.testApi.getDisabilityLicense(user)
+    //console.log(a)
+    return this.workMachinesService
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .apiMachinesGet({})
   }
 }
