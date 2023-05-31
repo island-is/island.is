@@ -548,6 +548,10 @@ export const m = defineMessages({
     defaultMessage:
       'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
   },
+  permissionsModalNoScopes: {
+    id: 'ap.ids-admin:permission-modal-no-scopes',
+    defaultMessage: 'No scopes available',
+  },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
     defaultMessage: 'Successfully saved',

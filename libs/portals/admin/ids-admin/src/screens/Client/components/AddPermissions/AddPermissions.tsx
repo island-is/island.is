@@ -8,6 +8,7 @@ import {
   Checkbox,
   Option,
   Select,
+  SkeletonLoader,
   Table as T,
   Text,
   useBreakpoint,
@@ -33,23 +34,23 @@ type AuthAdminScope = GetAvailableScopesQuery['authAdminScopes']['data'][0]['env
 
 interface AddPermissionsProps {
   isVisible: boolean
-  onClose: () => void
-  onAdd: (permissions: AuthAdminClientAllowedScope[]) => void
+  onClose(): void
+  onAdd(permissions: AuthAdminClientAllowedScope[]): void
   addedScopes: AuthAdminClientAllowedScope[]
   removedScopes: AuthAdminClientAllowedScope[]
 }
 
-const formatOption = (tenant: AuthTenants[0], locale: string) =>
-  ({
-    label: getTranslatedValue(tenant.defaultEnvironment.displayName, locale),
-    value: tenant.id,
-  } as Option)
+const formatOption = (tenant: AuthTenants[0], locale: string): Option => ({
+  label: getTranslatedValue(tenant.defaultEnvironment.displayName, locale),
+  value: tenant.id,
+})
 
 export const AddPermissions = ({
   isVisible,
   onClose,
   onAdd,
   addedScopes,
+  removedScopes,
 }: AddPermissionsProps) => {
   const { formatMessage, locale } = useLocale()
   const { tenant } = useParams()
@@ -58,6 +59,7 @@ export const AddPermissions = ({
     selectedEnvironment: { environment, allowedScopes },
   } = useClient()
   const fetcher = useFetcher()
+  const tenants = fetcher.data
   const [selectedTenant, setSelectedTenant] = useState<Option>()
   const [availableTenants, setAvailableTenants] = useState<AuthTenants>([])
   const [availableScopes, setAvailableScopes] = useState<AuthAdminScope[]>([])
@@ -69,20 +71,40 @@ export const AddPermissions = ({
     { data: { authAdminScopes } = { authAdminScopes: undefined }, loading },
   ] = useGetAvailableScopesLazyQuery()
 
-  const [selected, setSelected] = useState<
+  const fetchAvailableScopes = (tenantId: string) => {
+    getAvailableScopesQuery({
+      variables: {
+        input: {
+          tenantId,
+        },
+      },
+    })
+  }
+
+  const setDefaultTenant = (availableTenants: AuthTenants) => {
+    // Find the selected tenant based on the tenant router param
+    const selectedTenant = availableTenants.find((t) => t.id === tenant)
+
+    if (selectedTenant) {
+      setSelectedTenant(formatOption(selectedTenant, locale))
+      fetchAvailableScopes(selectedTenant.id)
+    }
+  }
+
+  const [selectedScopes, setSelectedScopes] = useState<
     Map<string, AuthAdminClientAllowedScope>
   >(new Map())
 
   useEffect(() => {
-    if (fetcher.state === 'idle' && !fetcher.data) {
+    if (fetcher.state === 'idle' && !tenants) {
       fetcher.load(IDSAdminPaths.IDSAdmin)
     }
   }, [fetcher])
 
   useEffect(() => {
-    if (fetcher.data) {
+    if (tenants) {
       // When fetcher has loaded data we filter available tenants for the selected environment
-      const availableTenants = (fetcher.data as AuthTenants).filter((tenant) =>
+      const availableTenants = (tenants as AuthTenants).filter((tenant) =>
         tenant.availableEnvironments.find(
           (availableEnvironment) => availableEnvironment === environment,
         ),
@@ -90,21 +112,9 @@ export const AddPermissions = ({
       // Populate the available tenants state for dropdown values
       setAvailableTenants(availableTenants)
 
-      // Find the selected tenant based on the tenant router param
-      const selectedTenant = availableTenants.find((t) => t.id === tenant)
-
-      if (selectedTenant) {
-        setSelectedTenant(formatOption(selectedTenant, locale))
-        getAvailableScopesQuery({
-          variables: {
-            input: {
-              tenantId: selectedTenant.id,
-            },
-          },
-        })
-      }
+      setDefaultTenant(availableTenants)
     }
-  }, [fetcher.data, locale])
+  }, [tenants, locale])
 
   useEffect(() => {
     if (authAdminScopes?.data) {
@@ -115,43 +125,45 @@ export const AddPermissions = ({
             scope.environments.find((e) => e.environment === environment),
           )
           .filter(isDefined)
-          .filter((scope) => !ignoredScopes.find((s) => s.name === scope.name)),
+          .filter((scope) => !ignoredScopes.find((s) => s.name === scope.name))
+          .concat(
+            removedScopes.map((s) => ({ ...s, environment } as AuthAdminScope)),
+          ),
       )
     }
-  }, [authAdminScopes?.data, ignoredScopes])
+  }, [authAdminScopes?.data, addedScopes])
 
-  // Add the selected scopes to the addedScopes array for
-  const handleAdd = () => {
-    // Add the new scopes to the permissions array
-    onAdd([...selected.values()])
-
+  const handleClose = () => {
     // Reset the selected scopes
-    setSelected(new Map())
+    selectedScopes.clear()
+
+    // Restore the selected tenant to default
+    setDefaultTenant(availableTenants)
 
     // Close the modal
     onClose()
   }
 
-  // Handle checkbox change
-  const onChange = (value: AuthAdminClientAllowedScope) => {
-    if (selected.has(value.name)) {
-      selected.delete(value.name)
+  // Add the selected scopes to the addedScopes array for
+  const handleAdd = () => {
+    // Add the new scopes to the permissions array
+    onAdd([...selectedScopes.values()])
+
+    handleClose()
+  }
+
+  const onCheckboxChange = (value: AuthAdminClientAllowedScope) => {
+    if (selectedScopes.has(value.name)) {
+      selectedScopes.delete(value.name)
     } else {
-      selected.set(value.name, value)
+      selectedScopes.set(value.name, value)
     }
-    setSelected(new Map(selected))
+    setSelectedScopes(new Map(selectedScopes))
   }
 
   const handleTenantChange = (opt: Option) => {
     setSelectedTenant(opt)
-
-    getAvailableScopesQuery({
-      variables: {
-        input: {
-          tenantId: opt.value as string,
-        },
-      },
-    })
+    fetchAvailableScopes(opt.value as string)
   }
 
   return (
@@ -160,7 +172,7 @@ export const AddPermissions = ({
       title={formatMessage(m.permissionsModalTitle)}
       id="add-permissions"
       isVisible={isVisible}
-      onClose={onClose}
+      onClose={handleClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       scrollType="inside"
     >
@@ -186,47 +198,67 @@ export const AddPermissions = ({
       </Box>
 
       <ShadowBox flexShrink={1} overflow="auto">
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{/* For matching column count */}</T.HeadData>
-              <T.HeadData>
-                {formatMessage(m.permissionsTableLabelName)}
-              </T.HeadData>
-              <T.HeadData>
-                {formatMessage(m.permissionsTableLabelDescription)}
-              </T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {!loading &&
-              availableScopes.map((item) => (
-                <T.Row key={item.name}>
+        <Box display="flex" flexDirection="column" style={{ minHeight: 250 }}>
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                {/* For matching column count */}
+                <T.HeadData />
+                <T.HeadData>
+                  {formatMessage(m.permissionsTableLabelName)}
+                </T.HeadData>
+                <T.HeadData>
+                  {formatMessage(m.permissionsTableLabelDescription)}
+                </T.HeadData>
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {!loading &&
+                availableScopes.map((item) => (
+                  <T.Row key={item.name}>
+                    <T.Data>
+                      <Checkbox
+                        onChange={() =>
+                          onCheckboxChange(item as AuthAdminClientAllowedScope)
+                        }
+                        checked={selectedScopes.has(item.name)}
+                        value={item.name}
+                      />
+                    </T.Data>
+                    <T.Data>
+                      <Text variant="eyebrow">
+                        {getTranslatedValue(item.displayName, locale)}
+                      </Text>
+                      {item.name}
+                    </T.Data>
+                    <T.Data>
+                      {getTranslatedValue(item.description ?? [], locale)}
+                    </T.Data>
+                  </T.Row>
+                ))}
+              {loading && (
+                <T.Row>
+                  <T.Data />
                   <T.Data>
-                    <Checkbox
-                      onChange={() => {
-                        onChange(item as AuthAdminClientAllowedScope)
-                      }}
-                      value={item.name}
-                    />
+                    <SkeletonLoader height={25} />
                   </T.Data>
                   <T.Data>
-                    <Text variant="eyebrow">
-                      {getTranslatedValue(item.displayName, locale)}
-                    </Text>
-                    {item.name}
-                  </T.Data>
-                  <T.Data>
-                    {getTranslatedValue(item.description ?? [], locale)}
+                    <SkeletonLoader height={25} />
                   </T.Data>
                 </T.Row>
-              ))}
-          </T.Body>
-        </T.Table>
+              )}
+            </T.Body>
+          </T.Table>
+          {availableScopes.length === 0 && (
+            <Box margin="auto">
+              <Text>{formatMessage(m.permissionsModalNoScopes)}</Text>
+            </Box>
+          )}
+        </Box>
       </ShadowBox>
 
       <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
-        <Button onClick={onClose} variant="ghost">
+        <Button onClick={handleClose} variant="ghost">
           {formatMessage(m.cancel)}
         </Button>
         <Button onClick={handleAdd}>{formatMessage(m.add)}</Button>
