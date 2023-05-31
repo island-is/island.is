@@ -23,7 +23,7 @@ const TagAppealState: React.FC<Props> = ({
 
   if (!appealRulingDecision) return null
 
-  const getTagVariantForAppealRulingDecision = (
+  const getTagVariantForAppealState = (
     state?: CaseAppealState,
     ruling?: CaseAppealRulingDecision,
   ):
@@ -85,7 +85,7 @@ const TagAppealState: React.FC<Props> = ({
     return undefined
   }
 
-  const tagVariantRuling = getTagVariantForAppealRulingDecision(
+  const tagVariantRuling = getTagVariantForAppealState(
     appealState,
     appealRulingDecision,
   )
