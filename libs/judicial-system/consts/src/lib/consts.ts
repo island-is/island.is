@@ -158,8 +158,7 @@ export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
 export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
-export const INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE =
-  '/domur/akaera/malflytjendur'
+export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
 export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
 
@@ -222,7 +221,7 @@ export const courtIndictmentRoutes = [
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
   INDICTMENTS_SUBPOENA_ROUTE,
-  INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+  INDICTMENTS_DEFENDER_ROUTE,
   INDICTMENTS_COURT_RECORD_ROUTE,
 ]
 
