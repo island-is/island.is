@@ -90,9 +90,20 @@ export const FormCard = <Intent extends string>({
   const onFormChange = () => {
     if (formRef.current) {
       const newFormData = new FormData(formRef.current)
+      const newFormDataEntries = [...newFormData.entries()]
+      const originalFormDataEntries = [
+        ...(originalFormData.current?.entries() ?? []),
+      ]
+
+      // If a formData entry is removed or added, then the form is dirty
+      if (newFormDataEntries.length !== originalFormDataEntries.length) {
+        setDirty(true)
+        return
+      }
 
       if (
         originalFormData.current &&
+        // If a formData entry value is changed, then the form is dirty
         !isFormDataEqual(newFormData, originalFormData.current)
       ) {
         // If custom validation is provided, use that to determine if form is dirty
