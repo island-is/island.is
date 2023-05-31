@@ -148,11 +148,19 @@ export const CASE_GET_CASE_BY_ID = gql`
       }
       documents {
         id
+        description
+        link
         fileName
+        fileType
+        size
       }
       additionalDocuments {
         id
+        description
+        link
         fileName
+        fileType
+        size
       }
       relatedCases {
         id
@@ -175,7 +183,11 @@ export const CASE_GET_ADVICES_BY_ID = gql`
       isPrivateAdvice
       adviceDocuments {
         id
+        description
+        link
         fileName
+        fileType
+        size
       }
     }
   }
@@ -235,6 +247,8 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
         }
         adviceDocuments {
           id
+          description
+          link
           fileName
           fileType
           size
