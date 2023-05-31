@@ -12,6 +12,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  CaseAppealDecision,
   CaseDecision,
   CaseState,
   isRestrictionCase,
@@ -56,17 +57,21 @@ const CourtOfAppealCaseOverviewHeader: React.FC = () => {
           {workingCase.appealedDate && (
             <Box marginTop={1}>
               <Text as="h5" variant="h5">
-                {formatMessage(strings.appealedInfo, {
-                  appealedByProsecutor:
-                    workingCase.appealedByRole === UserRole.PROSECUTOR,
-                  appealedDate: `${formatDate(
-                    workingCase.appealedDate,
-                    'PPP',
-                  )} kl. ${formatDate(
-                    workingCase.appealedDate,
-                    constants.TIME_FORMAT,
-                  )}`,
-                })}
+                {workingCase.prosecutorAppealDecision ===
+                  CaseAppealDecision.APPEAL ||
+                workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+                  ? formatMessage(strings.appealedByInCourt, {
+                      appealedByProsecutor:
+                        workingCase.appealedByRole === UserRole.PROSECUTOR,
+                    })
+                  : formatMessage(strings.appealedBy, {
+                      appealedByProsecutor:
+                        workingCase.appealedByRole === UserRole.PROSECUTOR,
+                      appealedDate: `${formatDate(
+                        workingCase.appealedDate,
+                        'PPPp',
+                      )}`,
+                    })}
               </Text>
             </Box>
           )}

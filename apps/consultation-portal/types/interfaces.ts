@@ -28,6 +28,14 @@ export interface Case {
   documents?: Array<Document>
   additionalDocuments?: Array<Document>
   stakeholders?: Array<Stakeholder>
+  allowUsersToSendPrivateAdvices?: boolean
+  relatedCases?: Array<RelatedCase>
+}
+
+export interface RelatedCase {
+  id?: number
+  caseNumber?: string
+  name?: string
 }
 
 export interface Document {
@@ -58,6 +66,7 @@ export interface UserAdvice {
   created: string
   _case: Case
   adviceDocuments: Array<AdviceDocuments>
+  isPrivateAdvice?: boolean
 }
 
 export interface CaseForSubscriptions {
