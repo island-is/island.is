@@ -1,3 +1,4 @@
+import { themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const container = style({
@@ -9,12 +10,25 @@ export const mainColumn = style({
   paddingBottom: '24px',
 })
 
+export const gridRow = style({
+  paddingTop: '16px',
+})
+
 export const line = style({
   borderTop: '1px solid white',
-  marginTop: '16px',
-  paddingTop: '48px',
 })
 
 export const locationBox = style({
   minHeight: '100px',
+})
+
+export const offset = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      marginLeft: '48px',
+    },
+    sm: {
+      marginLeft: '86px',
+    },
+  }),
 })

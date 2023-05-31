@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import cn from 'classnames'
 import { BLOCKS } from '@contentful/rich-text-types'
 import {
   Box,
@@ -15,6 +16,8 @@ import { FooterItem } from '@island.is/web/graphql/schema'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { SpanType } from '@island.is/island-ui/core/types'
 import { useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeilbrigdisstofnunAusturlandsFooter.css'
 
 const ROWS_PER_COLUMN = 2
@@ -116,6 +119,7 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
     () => convertFooterItemsToFooterColumns(footerItems),
     [footerItems],
   )
+  const { width } = useWindowSize()
 
   return (
     <footer aria-labelledby="heilbrigdisstofnun-austurlands-footer">
@@ -123,7 +127,7 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
         <GridContainer>
           <GridColumn className={styles.mainColumn}>
             <GridRow>
-              <Inline alignY="center" space={[1, 1, 4]}>
+              <Inline alignY="center" space={[2, 2, 4]} flexWrap="nowrap">
                 <img
                   src={n(
                     'hsaFooterLogo',
@@ -139,7 +143,18 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
               </Inline>
             </GridRow>
 
-            <GridRow className={styles.line}>
+            <Box
+              borderColor="white"
+              borderTopWidth="standard"
+              marginBottom={3}
+              marginTop={3}
+            />
+
+            <GridRow
+              className={cn(styles.gridRow, {
+                [styles.offset]: width < theme.breakpoints.lg,
+              })}
+            >
               {footerColumns.map((columnProps, index) => (
                 <FooterColumn key={index} {...columnProps} />
               ))}
