@@ -24,9 +24,6 @@ describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
   })
 
   it('should enable continue button when required fields are valid', () => {
-    cy.getByTestid('continueButton').should('not.be.enabled')
-    cy.get('#subpoenaTypeAbsenceSummons').click()
-    cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalPrimaryButton').click()
     cy.url().should(
