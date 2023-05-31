@@ -183,8 +183,6 @@ export const CASE_GET_ADVICES_BY_ID = gql`
       isPrivateAdvice
       adviceDocuments {
         id
-        description
-        link
         fileName
         fileType
         size
@@ -247,8 +245,6 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
         }
         adviceDocuments {
           id
-          description
-          link
           fileName
           fileType
           size
