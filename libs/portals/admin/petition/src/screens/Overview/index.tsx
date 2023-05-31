@@ -7,12 +7,11 @@ import { formatDate } from '../../lib/utils/utils'
 import { PetitionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 import { EndorsementLists, FilteredPetitions } from '../../lib/utils/types'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 const Overview = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<string>('0')
   const { active, closed, locked } = useLoaderData() as FilteredPetitions
   const { revalidate } = useRevalidator()
 
@@ -71,8 +70,6 @@ const Overview = () => {
         <Tabs
           contentBackground="white"
           label={formatMessage(m.petitionsTitle)}
-          selected={activeTab}
-          onChange={setActiveTab}
           tabs={[
             tabOption(formatMessage(m.openLists), active),
             tabOption(formatMessage(m.outdatedLists), closed),

@@ -1,24 +1,23 @@
-import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 
 const Skeleton = () => {
   return (
-    <>
-      <SkeletonLoader height={70} width="80%" borderRadius="large" />
-      <Box marginY={2}>
-        <SkeletonLoader height={200} borderRadius="large" />
+    <Stack space={2}>
+      <SkeletonLoader height={70} width="100%" borderRadius="large" />
+      <SkeletonLoader height={350} borderRadius="large" />
+      <Box display="flex" justifyContent="spaceBetween">
+        <SkeletonLoader height={70} width="48%" borderRadius="large" />
+        <SkeletonLoader height={70} width="48%" borderRadius="large" />
       </Box>
-      <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
-        <SkeletonLoader height={70} width="30%" borderRadius="large" />
-        <SkeletonLoader height={70} width="30%" borderRadius="large" />
-        <SkeletonLoader height={70} width="30%" borderRadius="large" />
+      <SkeletonLoader height={70} width="100%" borderRadius="large" />
+      <Box display="flex" justifyContent="spaceBetween">
+        <SkeletonLoader height={70} width="25%" borderRadius="large" />
+        <SkeletonLoader height={70} width="25%" borderRadius="large" />
       </Box>
-      <Box marginTop={5}>
-        <SkeletonLoader height={70} width="40%" borderRadius="large" />
+      <Box marginTop={8}>
+        <SkeletonLoader height={250} borderRadius="large" />
       </Box>
-      <Box marginTop={2}>
-        <SkeletonLoader height={300} borderRadius="large" />
-      </Box>
-    </>
+    </Stack>
   )
 }
 
