@@ -31,7 +31,6 @@ const SidemenuItem = ({
     itemText = itemText.slice(0, 16).padEnd(17, '.')
   }
 
-  console.log('item', item)
   return (
     <Box position="relative" className={styles.itemContainer}>
       <Box
@@ -69,14 +68,7 @@ const SidemenuItem = ({
                 <Icon icon={item.icon.icon} type="outline" color="blue400" />
               </Box>
             )}
-            <p className={styles.itemText}>
-              {/* {isHovered && itemTextHover ? (
-                <Hyphen>{formatMessage(item.name)}</Hyphen>
-              ) : (
-                itemText
-              )} */}
-              {itemText}
-            </p>
+            <p className={styles.itemText}>{itemText}</p>
           </Box>
         </Link>
       </Box>

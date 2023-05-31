@@ -105,6 +105,7 @@ const FinanceTransactionsTable: FC<Props> = ({ recordsArray }) => {
                 cursor="pointer"
                 className={className}
                 onClick={() => setPage(page)}
+                component="button"
               >
                 {children}
               </Box>

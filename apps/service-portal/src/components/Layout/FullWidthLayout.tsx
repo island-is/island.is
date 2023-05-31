@@ -78,7 +78,12 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                 </GridRow>
               </GridContainer>
             </Box>
-            <Box paddingTop={0} paddingBottom={2} background="blue100">
+            <Box
+              marginBottom={4}
+              paddingTop={0}
+              paddingBottom={2}
+              background="blue100"
+            >
               <GridContainer position="none">
                 <GridRow>
                   <GridColumn span="12/12">
@@ -99,7 +104,6 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
               <GridRow>
                 <GridColumn span="12/12">
                   <Tabs
-                    onlyRenderSelectedTab
                     selected={location.pathname}
                     onChange={tabChangeHandler}
                     label={

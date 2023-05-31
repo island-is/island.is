@@ -92,6 +92,8 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                               size="small"
                               icon="mail"
                               iconType="outline"
+                              type="span"
+                              unfocusable
                             >
                               {!isMobile && formatMessage(m.documents)}
                             </Button>
