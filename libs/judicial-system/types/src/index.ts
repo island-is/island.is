@@ -71,7 +71,6 @@ export {
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  SubpoenaType,
   CaseAppealState,
   getAppealInfo,
   getStatementDeadline,
