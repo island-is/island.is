@@ -166,7 +166,7 @@ export class LimitedAccessCaseController {
   })
   findDefenderByNationalId(
     @Query('nationalId') nationalId: string,
-  ): Promise<TUser> {
+  ): Promise<User> {
     this.logger.debug(`Getting a defender by national id`)
 
     return this.limitedAccessCaseService.findDefenderByNationalId(nationalId)

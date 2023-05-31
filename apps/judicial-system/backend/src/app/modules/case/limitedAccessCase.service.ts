@@ -271,8 +271,8 @@ export class LimitedAccessCaseService {
     name?: string,
     mobileNumber?: string,
     email?: string,
-  ): TUser {
-    const now = nowFactory().toISOString()
+  ): User {
+    const now = nowFactory()
 
     return {
       id: uuidFactory(),
@@ -285,10 +285,10 @@ export class LimitedAccessCaseService {
       email: email ?? '',
       role: UserRole.DEFENDER,
       active: true,
-    }
+    } as User
   }
 
-  async findDefenderByNationalId(nationalId: string): Promise<TUser> {
+  async findDefenderByNationalId(nationalId: string): Promise<User> {
     return this.caseModel
       .findOne({
         where: {

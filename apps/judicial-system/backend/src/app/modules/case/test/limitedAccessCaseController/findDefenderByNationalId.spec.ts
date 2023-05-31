@@ -1,11 +1,13 @@
 import { uuid } from 'uuidv4'
+import { Op } from 'sequelize'
 
 import { NotFoundException } from '@nestjs/common'
 
-import { User, UserRole } from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { nowFactory, uuidFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { User } from '../../../user'
 import { DefendantService } from '../../../defendant'
 import { Case } from '../../models/case.model'
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -73,7 +75,11 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
 
     it('should look for defender', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        where: { defenderNationalId },
+        where: {
+          defenderNationalId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
         order: [['created', 'DESC']],
       })
       expect(
@@ -105,8 +111,8 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     it('should return the user', () => {
       expect(then.result).toEqual({
         id: defenderId,
-        created: date.toISOString(),
-        modified: date.toISOString(),
+        created: date,
+        modified: date,
         nationalId: defenderNationalId,
         name: defenderName,
         title: 'verjandi',
@@ -136,8 +142,8 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     it('should return the user', () => {
       expect(then.result).toEqual({
         id: defenderId,
-        created: date.toISOString(),
-        modified: date.toISOString(),
+        created: date,
+        modified: date,
         nationalId: defenderNationalId,
         name: defenderName,
         title: 'verjandi',
