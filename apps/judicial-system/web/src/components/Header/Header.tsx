@@ -21,7 +21,10 @@ import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { UserContext } from '../UserProvider/UserProvider'
@@ -75,6 +78,8 @@ const HeaderContainer: React.FC = () => {
       ? '#' // Defenders should never be able to navigate anywhere from the logo
       : user.role === UserRole.ADMIN
       ? constants.USERS_ROUTE
+      : user.institution?.type === InstitutionType.HIGH_COURT
+      ? constants.COURT_OF_APPEAL_CASES_ROUTE
       : constants.CASES_ROUTE
 
   const handleLogout = async () => {

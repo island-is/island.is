@@ -70,12 +70,33 @@ const CourtOfAppealCases = () => {
     {
       Header: formatMessage(tables.caseNumber),
       accessor: 'courtCaseNumber' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
-          original: { courtCaseNumber: string; policeCaseNumbers: string[] }
+          original: {
+            courtCaseNumber: string
+            policeCaseNumbers: string[]
+            appealCaseNumber?: string
+          }
         }
       }) => {
         const thisRow = row.row.original
+
+        if (thisRow.appealCaseNumber) {
+          return (
+            <Box display="flex" flexDirection="column">
+              <Text as="span" variant="small">
+                {thisRow.appealCaseNumber}
+              </Text>
+              <Text as="span" variant="small">
+                {thisRow.courtCaseNumber}
+              </Text>
+              <Text as="span" variant="small">
+                {displayFirstPlusRemaining(thisRow.policeCaseNumbers)}
+              </Text>
+            </Box>
+          )
+        }
 
         return (
           <BigTextSmallText
@@ -114,6 +135,7 @@ const CourtOfAppealCases = () => {
     {
       Header: formatMessage(tables.type),
       accessor: 'type' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
           original: {
@@ -142,6 +164,7 @@ const CourtOfAppealCases = () => {
     {
       Header: formatMessage(tables.state),
       accessor: 'state' as keyof AppealedCasesQueryResponse,
+      disableSortBy: true,
       Cell: (row: {
         row: {
           original: {
@@ -238,7 +261,6 @@ const CourtOfAppealCases = () => {
               (a) => a.appealState !== CaseAppealState.COMPLETED,
             ) || []
           }
-          sortableColumnIds={['defendants', 'appealedDate']}
         />
       </Box>
       <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
@@ -254,7 +276,6 @@ const CourtOfAppealCases = () => {
             (a) => a.appealState === CaseAppealState.COMPLETED,
           ) || []
         }
-        sortableColumnIds={['defendants', 'duration']}
       />
     </SharedPageLayout>
   )
