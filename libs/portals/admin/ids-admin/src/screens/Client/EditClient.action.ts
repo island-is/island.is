@@ -1,32 +1,34 @@
-import { z, ZodType } from 'zod'
-import { WrappedActionFn } from '@island.is/portals/core'
+import { z } from 'zod'
+import { zfd } from 'zod-form-data'
+
+import { RouterActionResponse, WrappedActionFn } from '@island.is/portals/core'
 import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import {
-  UpdateClientDocument,
-  UpdateClientMutation,
-  UpdateClientMutationVariables,
-} from './EditClient.generated'
 import {
   AuthAdminEnvironment,
   AuthAdminTranslatedValue,
   AuthAdminRefreshTokenExpiration,
   AuthAdminClientClaim,
 } from '@island.is/api/schema'
-import { zfd } from 'zod-form-data'
+
+import {
+  UpdateClientDocument,
+  UpdateClientMutation,
+  UpdateClientMutationVariables,
+} from './EditClient.generated'
 import { getIntent } from '../../utils/getIntent'
 import { authAdminEnvironments } from '../../utils/environments'
+import { booleanCheckbox } from '../../utils/forms'
 
 export enum ClientFormTypes {
-  applicationUrls = 'applicationUrls',
-  lifeTime = 'lifeTime',
-  translations = 'translations',
-  delegations = 'delegations',
   advancedSettings = 'advancedSettings',
+  applicationUrls = 'applicationUrls',
+  delegations = 'delegations',
+  lifeTime = 'lifeTime',
   permissions = 'permissions',
-  none = 'none',
+  translations = 'translations',
 }
 
 const splitStringOnCommaOrSpaceOrNewLine = (s: string) => {
@@ -86,14 +88,13 @@ const checkIfStringIsPositiveNumber = (number: string) => {
 }
 
 const defaultSchema = z.object({
-  allEnvironments: z.optional(z.string()).transform((s) => s === 'true'),
   environment: z.nativeEnum(AuthAdminEnvironment),
-  syncEnvironments: z.optional(z.string()).transform((s) => {
-    return (s?.split(',') as AuthAdminEnvironment[]) ?? []
-  }),
+  syncEnvironments: zfd.repeatable(
+    z.optional(z.array(z.nativeEnum(AuthAdminEnvironment))),
+  ),
 })
 
-export const schema = {
+const schema = {
   [ClientFormTypes.lifeTime]: z
     .object({
       absoluteRefreshTokenLifetime: z
@@ -169,40 +170,20 @@ export const schema = {
     }),
   [ClientFormTypes.delegations]: z
     .object({
-      supportsProcuringHolders: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
-      supportsLegalGuardians: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
-      promptDelegations: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
-      supportsPersonalRepresentatives: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
-      supportsCustomDelegation: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
-      requireApiScopes: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
+      supportsProcuringHolders: booleanCheckbox,
+      supportsLegalGuardians: booleanCheckbox,
+      promptDelegations: booleanCheckbox,
+      supportsPersonalRepresentatives: booleanCheckbox,
+      supportsCustomDelegation: booleanCheckbox,
+      requireApiScopes: booleanCheckbox,
     })
     .merge(defaultSchema),
   [ClientFormTypes.advancedSettings]: z
     .object({
-      requirePkce: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
-      allowOfflineAccess: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
-      supportTokenExchange: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
-      requireConsent: z.optional(z.string()).transform((s) => {
-        return s === 'true'
-      }),
+      requirePkce: booleanCheckbox,
+      allowOfflineAccess: booleanCheckbox,
+      supportTokenExchange: booleanCheckbox,
+      requireConsent: booleanCheckbox,
       accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {
@@ -227,26 +208,25 @@ export const schema = {
       removedScopes: zfd.repeatable(z.optional(z.array(z.string()))),
     })
     .merge(defaultSchema),
-  [ClientFormTypes.none]: defaultSchema,
 }
 
-export type EditApplicationResult<T extends ZodType> =
-  | (ValidateFormDataResult<T> & {
-      /**
-       * Global error message if the mutation fails
-       */
-      globalError?: boolean
-      /**
-       * Intent of the form
-       */
-      intent?: string
-    })
-  | undefined
+type MergedFormDataSchema = typeof schema[ClientFormTypes.advancedSettings] &
+  typeof schema[ClientFormTypes.applicationUrls] &
+  typeof schema[ClientFormTypes.delegations] &
+  typeof schema[ClientFormTypes.lifeTime] &
+  typeof schema[ClientFormTypes.permissions] &
+  typeof schema[ClientFormTypes.translations]
+
+export type EditClientResult = RouterActionResponse<
+  UpdateClientMutation['patchAuthAdminClient'],
+  ValidateFormDataResult<MergedFormDataSchema>['errors'],
+  keyof typeof ClientFormTypes
+>
 
 export const editClientAction: WrappedActionFn = ({ client }) => async ({
   request,
   params,
-}) => {
+}): Promise<EditClientResult> => {
   const tenantId = params['tenant']
   const clientId = params['client']
 
@@ -255,19 +235,45 @@ export const editClientAction: WrappedActionFn = ({ client }) => async ({
 
   const formData = await request.formData()
   const { intent, sync } = getIntent(formData, ClientFormTypes)
+  const saveInAllEnvironments =
+    formData.get(`${intent}_saveInAllEnvironments`) ?? false
 
-  const result = await validateFormData({
+  const { data, errors } = await validateFormData({
     formData,
     schema: schema[intent],
   })
 
-  const { data, errors } = result
-
   if (errors || !data) {
-    return result
+    return {
+      errors,
+      data: null,
+      globalError: false,
+      intent,
+    }
   }
 
-  const { syncEnvironments, allEnvironments, environment, ...rest } = data
+  const { syncEnvironments, environment, ...rest } = data
+
+  const environments: AuthAdminEnvironment[] = []
+
+  // If sync settings from this environment was clicked for current form intent, i.e. form section
+  // then update all environments with the same settings as the current environment intent
+  if (sync && syncEnvironments && syncEnvironments.length > 0) {
+    environments.push(...syncEnvironments)
+    // If the save in all environments was enabled, then update all environments
+  } else if (saveInAllEnvironments) {
+    environments.push(...authAdminEnvironments)
+  } else {
+    // Otherwise, just update the current environment
+    environments.push(environment)
+  }
+
+  const globalErrorResponse = {
+    errors: null,
+    data: null,
+    globalError: true,
+    intent,
+  }
 
   try {
     const response = await client.mutate<
@@ -280,25 +286,20 @@ export const editClientAction: WrappedActionFn = ({ client }) => async ({
           ...rest,
           clientId,
           tenantId,
-          environments: sync
-            ? syncEnvironments
-            : allEnvironments
-            ? authAdminEnvironments
-            : [environment],
+          environments,
         },
       },
     })
 
+    if (response.errors?.length) {
+      return globalErrorResponse
+    }
+
     return {
-      data: response.data?.patchAuthAdminClient,
+      data: response.data?.patchAuthAdminClient ?? null,
       intent,
     }
   } catch (error) {
-    return {
-      errors: null,
-      data: null,
-      intent,
-      globalError: true,
-    }
+    return globalErrorResponse
   }
 }

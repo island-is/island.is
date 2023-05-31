@@ -6,7 +6,12 @@ import React, {
   useContext,
   useState,
 } from 'react'
-import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
+import {
+  useActionData,
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { replaceParams } from '@island.is/react-spa/shared'
@@ -14,6 +19,7 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { AuthAdminClient, AuthAdminClientEnvironment } from './Client.loader'
 import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 import { IDSAdminPaths } from '../../lib/paths'
+import { EditClientResult } from './EditClient.action'
 
 type PublishData = {
   toEnvironment: AuthAdminEnvironment | null
@@ -30,6 +36,10 @@ export type ClientContextType = {
   }
   setPublishData: Dispatch<SetStateAction<PublishData>>
   onEnvironmentChange(environment: AuthAdminEnvironment): void
+  /**
+   * This is the result of the client action
+   */
+  actionData: EditClientResult | undefined
 }
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined)
@@ -38,6 +48,7 @@ export const ClientProvider: FC = ({ children }) => {
   const navigate = useNavigate()
   const params = useParams()
   const client = useLoaderData() as AuthAdminClient
+  const actionData = useActionData() as EditClientResult
   const [publishData, setPublishData] = useState<PublishData>({
     toEnvironment: null,
     fromEnvironment: null,
@@ -83,6 +94,7 @@ export const ClientProvider: FC = ({ children }) => {
         availableEnvironments: client.environments.map(
           (env) => env.environment,
         ),
+        actionData,
       }}
     >
       {children}

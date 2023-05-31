@@ -1,23 +1,18 @@
 import React from 'react'
-import { useActionData } from 'react-router-dom'
 
 import { AuthAdminClientEnvironment } from '@island.is/api/schema'
 import { Checkbox, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
-import {
-  ClientFormTypes,
-  EditApplicationResult,
-  schema,
-} from '../EditClient.action'
+import { ClientFormTypes } from '../EditClient.action'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
 import { useClient } from '../ClientContext'
+import { FormCard } from '../../../components/FormCard'
 
 type AdvancedSettingsProps = Pick<
   AuthAdminClientEnvironment,
@@ -38,11 +33,8 @@ export const AdvancedSettings = ({
   customClaims,
 }: AdvancedSettingsProps) => {
   const { formatMessage } = useLocale()
-  const actionData = useActionData() as EditApplicationResult<
-    typeof schema.advancedSettings
-  >
   const { isSuperAdmin } = useSuperAdmin()
-  const { client, selectedEnvironment } = useClient()
+  const { client, selectedEnvironment, actionData } = useClient()
 
   const customClaimsString = (
     customClaims?.map((claim) => {
@@ -76,7 +68,7 @@ export const AdvancedSettings = ({
   })
 
   return (
-    <ContentCard
+    <FormCard
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
       accordionLabel={formatMessage(m.settings)}
@@ -201,6 +193,6 @@ export const AdvancedSettings = ({
           <Text variant="small">{formatMessage(m.callBackUrlDescription)}</Text>
         </Stack>
       </Stack>
-    </ContentCard>
+    </FormCard>
   )
 }

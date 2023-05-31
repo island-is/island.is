@@ -6,7 +6,7 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { PermissionLoaderResult } from './Permission.loader'
 import {
   PermissionFormTypes,
-  UpdatePermissionResult,
+  EditPermissionResult,
 } from './EditPermission.action'
 import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 
@@ -22,7 +22,7 @@ type PermissionContextProps = {
   /**
    * This is the result of the permission action
    */
-  actionData: UpdatePermissionResult | undefined
+  actionData: EditPermissionResult | undefined
   /**
    * This is the intent of the permission action, i.e. specific section of the form
    */
@@ -36,7 +36,7 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
 
 export const PermissionProvider: FC = ({ children }) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
-  const actionData = useActionData() as UpdatePermissionResult
+  const actionData = useActionData() as EditPermissionResult
   const { environment, updateEnvironment } = useEnvironmentQuery(
     permissionResult.environments,
   )

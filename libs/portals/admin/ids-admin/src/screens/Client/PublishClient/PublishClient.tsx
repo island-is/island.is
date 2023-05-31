@@ -33,7 +33,6 @@ export default function PublishClient() {
 
   useEffect(() => {
     if (actionData?.data) {
-      toast.success(formatMessage(m.successfullySaved))
       cancel()
     }
   }, [actionData])

@@ -5,19 +5,30 @@ import {
   Text,
   ToggleSwitchCheckbox,
 } from '@island.is/island-ui/core'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
-import { useActionData } from 'react-router-dom'
-import {
-  ClientFormTypes,
-  EditApplicationResult,
-  schema,
-} from '../EditClient.action'
+import { ClientFormTypes } from '../EditClient.action'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
+import { FormCard } from '../../../components/FormCard'
+import { useClient } from '../ClientContext'
+
+interface CompareArgs {
+  currVal: FormData
+  orgVal: FormData
+  key: string
+}
+
+/**
+ * Compares the current form key value with the original form key value
+ * @param currVal - Current form data
+ * @param orgVal - Original form data
+ * @param key - Form key to compare
+ */
+const compare = ({ currVal, orgVal, key }: CompareArgs) =>
+  currVal.get(key) !== orgVal.get(key)
 
 interface LifetimeProps {
   absoluteRefreshTokenLifetime: number
@@ -37,9 +48,7 @@ const Lifetime = ({
     slidingRefreshTokenLifetime,
   })
   const { formatErrorMessage } = useErrorFormatMessage()
-  const actionData = useActionData() as EditApplicationResult<
-    typeof schema.lifeTime
-  >
+  const { actionData } = useClient()
 
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -50,30 +59,25 @@ const Lifetime = ({
     }))
   }
 
-  const customChangedValidation = (
-    currentValue: FormData,
-    originalValue: FormData,
-  ): boolean => {
-    if (
-      currentValue.get('refreshTokenExpiration') !==
-      originalValue.get('refreshTokenExpiration')
-    ) {
-      return true
-    }
-    if (currentValue.get('refreshTokenExpiration')) {
-      return (
-        currentValue.get('absoluteRefreshTokenLifetime') !==
-          originalValue.get('absoluteRefreshTokenLifetime') ||
-        currentValue.get('slidingRefreshTokenLifetime') !==
-          originalValue.get('slidingRefreshTokenLifetime')
-      )
-    } else {
-      return (
-        currentValue.get('absoluteRefreshTokenLifetime') !==
-        originalValue.get('absoluteRefreshTokenLifetime')
-      )
-    }
-  }
+  /**
+   * Custom validation for the lifetime form
+   */
+  const customFormValidation = useCallback(
+    (currVal: FormData, orgVal: FormData) => {
+      if (compare({ currVal, orgVal, key: 'refreshTokenExpiration' }))
+        return true
+
+      if (currVal.get('refreshTokenExpiration')) {
+        return (
+          compare({ currVal, orgVal, key: 'absoluteRefreshTokenLifetime' }) ||
+          compare({ currVal, orgVal, key: 'slidingRefreshTokenLifetime' })
+        )
+      }
+
+      return compare({ currVal, orgVal, key: 'absoluteRefreshTokenLifetime' })
+    },
+    [],
+  )
 
   const readableAbsoluteLifetime = useReadableSeconds(
     lifetime.absoluteRefreshTokenLifetime,
@@ -83,10 +87,10 @@ const Lifetime = ({
   )
 
   return (
-    <ContentCard
+    <FormCard
       title={formatMessage(m.lifetime)}
       description={formatMessage(m.lifeTimeDescription)}
-      isDirty={customChangedValidation}
+      customValidation={customFormValidation}
       intent={ClientFormTypes.lifeTime}
     >
       <Stack space={3}>
@@ -150,7 +154,7 @@ const Lifetime = ({
           </Stack>
         </Box>
       </Stack>
-    </ContentCard>
+    </FormCard>
   )
 }
 

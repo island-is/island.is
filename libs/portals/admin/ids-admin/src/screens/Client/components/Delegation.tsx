@@ -2,12 +2,12 @@ import { useLocale } from '@island.is/localization'
 import { Checkbox, Stack } from '@island.is/island-ui/core'
 
 import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.action'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
 import { useClient } from '../ClientContext'
+import { FormCard } from '../../../components/FormCard'
 
 interface DelegationProps {
   supportsProcuringHolders: boolean
@@ -53,7 +53,7 @@ const Delegation = ({
   })
 
   return (
-    <ContentCard
+    <FormCard
       title={formatMessage(m.delegations)}
       description={formatMessage(m.delegationsDescription)}
       intent={ClientFormTypes.delegations}
@@ -162,7 +162,7 @@ const Delegation = ({
           subLabel={formatMessage(m.requirePermissionsDescription)}
         />
       </Stack>
-    </ContentCard>
+    </FormCard>
   )
 }
 

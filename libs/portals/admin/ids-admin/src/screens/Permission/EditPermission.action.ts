@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { zfd } from 'zod-form-data'
 
-import { WrappedActionFn } from '@island.is/portals/core'
+import { RouterActionResponse, WrappedActionFn } from '@island.is/portals/core'
 import {
   validateFormData,
   ValidateFormDataResult,
@@ -16,6 +16,7 @@ import {
 import { Languages } from '../../utils/languages'
 import { authAdminEnvironments } from '../../utils/environments'
 import { getIntent } from '../../utils/getIntent'
+import { booleanCheckbox } from '../../utils/forms'
 
 export enum PermissionFormTypes {
   CONTENT = 'CONTENT',
@@ -69,8 +70,6 @@ const contentSchema = z
     }),
   )
 
-const booleanCheckbox = z.preprocess((value) => value === 'true', z.boolean())
-
 const accessControlSchema = z
   .object({
     isAccessControlled: booleanCheckbox,
@@ -90,25 +89,16 @@ const schema = {
 type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
   typeof schema[PermissionFormTypes.ACCESS_CONTROL]
 
-type Result = ValidateFormDataResult<MergedFormDataSchema>
+export type EditPermissionResult = RouterActionResponse<
+  PatchAuthAdminScopeMutation['patchAuthAdminScope'],
+  ValidateFormDataResult<MergedFormDataSchema>['errors'],
+  keyof typeof PermissionFormTypes
+>
 
-export type UpdatePermissionResult = {
-  data: PatchAuthAdminScopeMutation['patchAuthAdminScope'] | null
-  errors?: Result['errors'] | null
-  /**
-   * Global error message if the mutation fails
-   */
-  globalError?: boolean
-  /**
-   * Intent of the form
-   */
-  intent: keyof typeof PermissionFormTypes
-}
-
-export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
+export const editPermissionAction: WrappedActionFn = ({ client }) => async ({
   request,
   params,
-}): Promise<UpdatePermissionResult> => {
+}): Promise<EditPermissionResult> => {
   const tenantId = params['tenant']
   const scopeName = params['permission']
 
@@ -165,10 +155,10 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
       mutation: PatchAuthAdminScopeDocument,
       variables: {
         input: {
+          ...data,
           tenantId,
           scopeName,
           environments,
-          ...data,
         },
       },
     })

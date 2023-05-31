@@ -1,13 +1,15 @@
+import React, { useState } from 'react'
+
 import { Box, Input, Stack, Tabs, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { useState } from 'react'
+
 import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { ClientFormTypes } from '../EditClient.action'
 import { AuthAdminClientTranslation } from '../Client.loader'
 import { checkEnvironmentSync } from '../../../utils/checkEnvironmentSync'
 import { useClient } from '../ClientContext'
+import { FormCard } from '../../../components/FormCard'
 
 interface TranslationsProps {
   translations: AuthAdminClientTranslation[]
@@ -38,7 +40,7 @@ const Translations = ({ translations }: TranslationsProps) => {
   })
 
   return (
-    <ContentCard
+    <FormCard
       title={formatMessage(m.translations)}
       intent={ClientFormTypes.translations}
       inSync={inSync}
@@ -71,7 +73,7 @@ const Translations = ({ translations }: TranslationsProps) => {
           }))}
         />
       </Stack>
-    </ContentCard>
+    </FormCard>
   )
 }
 
