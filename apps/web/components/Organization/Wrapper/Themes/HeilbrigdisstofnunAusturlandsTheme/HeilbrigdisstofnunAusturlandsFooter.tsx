@@ -176,7 +176,7 @@ const HeilbrigdisstofnunAusturlandsFooter = ({
                     width={44}
                     height={69}
                     src={n(
-                      'tryggingastofnunJafnvaegisvogLogo',
+                      'hsaJafnvaegisvogLogo',
                       'https://images.ctfassets.net/8k0h54kbe6bj/3xbTRkA5kja6EnrUTisK8F/332ab7f983bf2f802c4d1b05ec639f4a/vidurkenning_merki_2022_gull-hsu_1.svg',
                     )}
                     alt="international-accreditation-healthcare"
