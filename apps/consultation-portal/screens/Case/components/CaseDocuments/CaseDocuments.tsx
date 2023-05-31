@@ -13,7 +13,7 @@ export const CaseDocuments = ({ title, documents }: Props) => {
     <CardSkeleton>
       <Stacked title={title}>
         {documents.map((document, index) => {
-          return <CaseDocumentsSkeleton document={document} index={index} />
+          return <CaseDocumentsSkeleton document={document} key={index} />
         })}
       </Stacked>
     </CardSkeleton>

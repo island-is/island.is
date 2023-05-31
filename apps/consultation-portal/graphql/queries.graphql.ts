@@ -184,8 +184,6 @@ export const CASE_GET_ADVICES_BY_ID = gql`
       adviceDocuments {
         id
         fileName
-        fileType
-        size
       }
     }
   }

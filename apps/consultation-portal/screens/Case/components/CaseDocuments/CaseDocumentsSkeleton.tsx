@@ -3,14 +3,13 @@ import { Document } from '../../../../types/interfaces'
 import env from '../../../../lib/environment'
 import localization from '../../Case.json'
 import * as styles from './CaseDocumentsSkeleton.css'
-import { isDocumentLink } from '@island.is/consultation-portal/utils/helpers'
+import { isDocumentLink } from '../../../../utils/helpers'
 
 interface Props {
   document: Document
-  index: number
 }
 
-const CaseDocumentsSkeleton = ({ document, index }: Props) => {
+const CaseDocumentsSkeleton = ({ document }: Props) => {
   const isLink = isDocumentLink(document)
   const loc = localization['caseDocuments']
   const icon = isLink ? 'link' : 'document'
@@ -34,7 +33,6 @@ const CaseDocumentsSkeleton = ({ document, index }: Props) => {
         color="blue400"
         underline="normal"
         underlineVisibility="always"
-        key={index}
       >
         {linkDesc}
       </LinkV2>
