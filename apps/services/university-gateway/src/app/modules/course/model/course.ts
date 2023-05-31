@@ -4,84 +4,51 @@ import { Season } from '../../major/types'
 import { PageInfo } from '../../major/model/pageInfo'
 
 export class Course {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-  })
   @ApiProperty({
-    description: 'Column description for id',
-    example: 'Example value for id',
+    description: 'Course ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
   id!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
   @ApiProperty({
-    description: 'Column description for external id',
-    example: 'Example value for external id',
+    description: 'External ID for the course (from University)',
+    example: 'ABC12345',
   })
   externalId!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
   @ApiProperty({
-    description: 'Column description for name is',
-    example: 'Example value for name is',
+    description: 'Course name (Icelandic)',
+    example: 'Tölvunarfræði I',
   })
   nameIs!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
   @ApiProperty({
-    description: 'Column description for name en',
-    example: 'Example value for name en',
+    description: 'Course name (English)',
+    example: 'Computer science I',
   })
   nameEn!: string
 
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
   @ApiProperty({
-    description: 'Column description for universityId',
-    example: 'Example value for universityId',
+    description: 'University ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
   universityId!: string
 
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
   @ApiProperty({
-    description: 'Column description for majorId',
-    example: 'Example value for majorId',
+    description: 'Major ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
   majorId!: string
 
-  @Column({
-    type: DataType.NUMBER,
-    allowNull: false,
-  })
   @ApiProperty({
-    description: 'Column description for credits',
-    example: 'Example value for credits',
+    description: 'Number of course credits (in ECTS)',
+    example: 8,
   })
   credits!: number
 
-  @Column({
-    type: DataType.NUMBER,
-    allowNull: false,
-  })
   @ApiProperty({
-    description: 'Column description for semester year',
-    example: 'Example value for semester year',
+    description: 'Which year this course is taught on',
+    example: 2023,
   })
   semesterYear!: number
 
@@ -91,7 +58,7 @@ export class Course {
     values: Object.values(Season),
   })
   @ApiProperty({
-    description: 'Column description for semester season',
+    description: 'Which season this course is taught on',
     example: Season.FALL,
     enum: Season,
   })
@@ -106,7 +73,7 @@ export class CourseResponse {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for data',
+    description: 'Course data',
     type: Course,
     isArray: true,
   })
@@ -117,7 +84,7 @@ export class CourseResponse {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for page info',
+    description: 'Page information (for pagination)',
     type: PageInfo,
   })
   pageInfo!: PageInfo
@@ -127,7 +94,7 @@ export class CourseResponse {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for total count',
+    description: 'Total number of items in result (for pagination)',
     example: 25,
   })
   totalCount!: number
@@ -139,7 +106,7 @@ export class CourseDetailsResponse {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for data',
+    description: 'Course data',
     type: CourseDetails,
   })
   data!: CourseDetails

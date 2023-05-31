@@ -7,7 +7,8 @@ export class PageInfo {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for has previous page',
+    description:
+      'Boolean flag to indicate if there exists more items before the current set of data received',
     example: true,
   })
   hasPreviousPage!: boolean
@@ -17,7 +18,8 @@ export class PageInfo {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for has next page',
+    description:
+      'Boolean flag to indicate if there exists more items after the current set of data received',
     example: true,
   })
   hasNextPage!: boolean
@@ -27,7 +29,8 @@ export class PageInfo {
     allowNull: true,
   })
   @ApiProperty({
-    description: 'Column description for start cursor',
+    description:
+      'Base64 encoded strings. The client uses these values in following request to get the previous page',
     example: 'aWQ6MTAwMQ==',
   })
   @ApiPropertyOptional()
@@ -38,7 +41,8 @@ export class PageInfo {
     allowNull: true,
   })
   @ApiProperty({
-    description: 'Column description for end cursor',
+    description:
+      'Base64 encoded strings. The client uses these values in following request to get the next page',
     example: 'aWQ6MTAwMw==',
   })
   endCursor?: string

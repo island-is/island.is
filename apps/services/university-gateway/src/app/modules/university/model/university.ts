@@ -8,8 +8,8 @@ export class University {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for id',
-    example: 'Example value for id',
+    description: 'University ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
   id!: string
 
@@ -18,8 +18,8 @@ export class University {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for national id',
-    example: 'Example value for national id',
+    description: 'University national ID',
+    example: '123456-7890',
   })
   nationalId!: string
 }
@@ -30,7 +30,7 @@ export class UniversityResponse {
     allowNull: false,
   })
   @ApiProperty({
-    description: 'Column description for data',
+    description: 'University data',
     type: University,
     isArray: true,
   })

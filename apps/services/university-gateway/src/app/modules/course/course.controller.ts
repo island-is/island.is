@@ -48,19 +48,19 @@ export class CourseController {
   @ApiQuery({
     name: 'majorId',
     required: false,
-    description: 'Param description for majorId',
+    description: 'Major ID',
   })
   @ApiQuery({
     name: 'universityId',
     required: false,
-    description: 'Param description for universityId',
+    description: 'University ID',
   })
   @ApiOkResponse({
     type: CourseResponse,
-    description: 'Response description for 200',
+    description: 'Returns all courses for the selected filtering',
   })
   @ApiOperation({
-    summary: 'Endpoint description for get courses',
+    summary: 'Get all courses',
   })
   async getCourses(
     @Query('limit') limit: number,
@@ -81,29 +81,31 @@ export class CourseController {
     name: 'id',
     required: true,
     allowEmptyValue: false,
-    description: 'Param description for id',
+    description: 'Course ID',
   })
   @ApiOkResponse({
     type: CourseDetailsResponse,
-    description: 'Response description for 200',
+    description: 'Returns the course by ID',
   })
   @ApiOperation({
-    summary: 'Endpoint description for get course by id',
+    summary: 'Get course by ID',
   })
-  async getCourse(@Param('id') id: string): Promise<CourseDetailsResponse> {
-    return this.courseService.getCourse(id)
+  async getCourseDetails(
+    @Param('id') id: string,
+  ): Promise<CourseDetailsResponse> {
+    return this.courseService.getCourseDetails(id)
   }
 
   @Post('courses')
   @ApiBody({
     type: CreateCourseDto,
   })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     type: CourseDetails,
-    description: 'Response description for 200',
+    description: 'Returns the course that was created',
   })
   @ApiOperation({
-    summary: 'Endpoint description for post course',
+    summary: 'Create course',
   })
   async createCourse(
     @Body() courseDto: CreateCourseDto,
@@ -116,17 +118,17 @@ export class CourseController {
     name: 'id',
     required: true,
     allowEmptyValue: false,
-    description: 'Param description for id',
+    description: 'Course ID',
   })
   @ApiBody({
     type: UpdateCourseDto,
   })
   @ApiOkResponse({
     type: CourseDetails,
-    description: 'Response description for 200',
+    description: 'Returns the updated course',
   })
   @ApiOperation({
-    summary: 'Endpoint description for put course',
+    summary: 'Update course',
   })
   async updateCourse(
     @Param('id') id: string,
@@ -140,14 +142,14 @@ export class CourseController {
     name: 'id',
     required: true,
     allowEmptyValue: false,
-    description: 'Param description for id',
+    description: 'Course ID',
   })
   @ApiOkResponse({
     type: Number,
-    description: 'Response description for 200',
+    description: 'Returns the number of courses that was deleted',
   })
   @ApiOperation({
-    summary: 'Endpoint description for delete course',
+    summary: 'Delete course',
   })
   async deleteCourse(@Param('id') id: string): Promise<number> {
     return this.courseService.deleteCourse(id)

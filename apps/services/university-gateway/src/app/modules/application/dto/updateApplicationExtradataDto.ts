@@ -5,8 +5,8 @@ export class UpdateApplicationExtradataDto {
   @IsString()
   @IsOptional()
   @ApiProperty({
-    description: 'Column description for extra data',
-    example: 'Example value for extra data',
+    description: 'Extra data that should follow application',
+    example: 'TBD',
   })
   @ApiPropertyOptional()
   extraData?: string

@@ -25,14 +25,14 @@ export class ApplicationController {
     name: 'id',
     required: true,
     allowEmptyValue: false,
-    description: 'Param description for id',
+    description: 'Application ID',
   })
   @ApiOkResponse({
     type: ApplicationResponse,
-    description: 'Response description for 200',
+    description: 'Returns the application by ID',
   })
   @ApiOperation({
-    summary: 'Endpoint description for get application by id',
+    summary: 'Get application by ID',
   })
   async getApplication(@Param('id') id: string): Promise<ApplicationResponse> {
     return this.applicationService.getApplication(id)
@@ -44,10 +44,10 @@ export class ApplicationController {
   })
   @ApiCreatedResponse({
     type: Application,
-    description: 'Response description for 201',
+    description: 'Returns the application that was created',
   })
   @ApiOperation({
-    summary: 'Endpoint description for post application',
+    summary: 'Create application',
   })
   async createApplication(
     @Body() applicationDto: CreateApplicationDto,
@@ -60,17 +60,17 @@ export class ApplicationController {
     name: 'id',
     required: true,
     allowEmptyValue: false,
-    description: 'Param description for id',
+    description: 'Application ID',
   })
   @ApiBody({
     type: UpdateApplicationStatusDto,
   })
   @ApiOkResponse({
     type: Application,
-    description: 'Response description for 200',
+    description: 'Returns the updated application',
   })
   @ApiOperation({
-    summary: 'Endpoint description for patch application status',
+    summary: 'Update application status (used by universities)',
   })
   async updateApplicationStatus(
     @Param('id') id: string,
@@ -84,17 +84,17 @@ export class ApplicationController {
     name: 'id',
     required: true,
     allowEmptyValue: false,
-    description: 'Param description for id',
+    description: 'Application ID',
   })
   @ApiBody({
     type: UpdateApplicationExtradataDto,
   })
   @ApiOkResponse({
     type: Application,
-    description: 'Response description for 200',
+    description: 'Returns the updated application',
   })
   @ApiOperation({
-    summary: 'Endpoint description for put application extradata',
+    summary: 'Update application extradata (used by application system)',
   })
   async updateApplicationExtradata(
     @Param('id') id: string,

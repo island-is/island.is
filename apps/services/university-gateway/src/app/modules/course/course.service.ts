@@ -13,82 +13,25 @@ export class CourseService {
     majorId: string,
     universityId: string,
   ): Promise<CourseResponse> {
-    return {
-      data: [
-        {
-          id: uuid(),
-          externalId: 'AB123',
-          nameIs: 'Tölvunarfræði I',
-          nameEn: 'Computer science I',
-          universityId: universityId,
-          majorId: majorId,
-          credits: 8,
-          semesterYear: 2024,
-          semesterSeason: Season.FALL,
-        },
-      ],
-      pageInfo: {
-        hasPreviousPage: false,
-        hasNextPage: true,
-        startCursor: '',
-        endCursor: '',
-      },
-      totalCount: 100,
-    }
+    throw Error('Not ready')
   }
 
-  async getCourse(id: string): Promise<CourseDetailsResponse> {
-    return {
-      data: {
-        id: uuid(),
-        externalId: 'AB123',
-        nameIs: 'Tölvunarfræði I',
-        nameEn: 'Computer science I',
-        universityId: uuid(),
-        majorId: uuid(),
-        credits: 8,
-        semesterYear: 2024,
-        semesterSeason: Season.FALL,
-      },
-    }
+  async getCourseDetails(id: string): Promise<CourseDetailsResponse> {
+    throw Error('Not ready')
   }
 
   async createCourse(courseDto: CreateCourseDto): Promise<CourseDetails> {
-    const updatedCourse = {
-      id: uuid(),
-      externalId: 'AB123',
-      nameIs: 'Tölvunarfræði I',
-      nameEn: 'Computer science I',
-      universityId: uuid(),
-      majorId: uuid(),
-      credits: 8,
-      semesterYear: 2024,
-      semesterSeason: Season.FALL,
-    }
-
-    return updatedCourse
+    throw Error('Not ready')
   }
 
   async updateCourse(
     id: string,
     courseDto: UpdateCourseDto,
   ): Promise<CourseDetails> {
-    const updatedCourse = {
-      id: id,
-      externalId: 'AB123',
-      nameIs: 'Tölvunarfræði I',
-      nameEn: 'Computer science I',
-      universityId: uuid(),
-      majorId: uuid(),
-      credits: 8,
-      semesterYear: 2024,
-      semesterSeason: Season.FALL,
-    }
-
-    return updatedCourse
+    throw Error('Not ready')
   }
 
   async deleteCourse(id: string): Promise<number> {
-    return 1
+    throw Error('Not ready')
   }
 }

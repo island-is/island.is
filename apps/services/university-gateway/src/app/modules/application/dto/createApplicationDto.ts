@@ -5,21 +5,21 @@ import { StudyType } from '../types'
 export class CreateApplicationDto {
   @IsUUID()
   @ApiProperty({
-    description: 'Column description for university id',
-    example: 'Example value for university id',
+    description: 'University ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
   universityId!: string
 
   @IsUUID()
   @ApiProperty({
-    description: 'Column description for major id',
-    example: 'Example value for major id',
+    description: 'Major ID',
+    example: '00000000-0000-0000-0000-000000000000',
   })
   majorId!: string
 
   @IsEnum(StudyType)
   @ApiProperty({
-    description: 'Column description for study type',
+    description: 'What kind of study type was selected in the application',
     example: StudyType.ON_SITE,
     enum: StudyType,
   })
@@ -28,8 +28,8 @@ export class CreateApplicationDto {
   @IsString()
   @IsOptional()
   @ApiProperty({
-    description: 'Column description for extra data',
-    example: 'Example value for extra data',
+    description: 'Extra data that should follow application',
+    example: 'TBD',
   })
   @ApiPropertyOptional()
   extraData?: string

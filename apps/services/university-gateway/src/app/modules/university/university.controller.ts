@@ -11,10 +11,10 @@ export class UniversityController {
   @Get('universities')
   @ApiOkResponse({
     type: UniversityResponse,
-    description: 'Response description for 200',
+    description: 'Returns all universities',
   })
   @ApiOperation({
-    summary: 'Endpoint description for get universities',
+    summary: 'Get all universities',
   })
   async getUniversities(): Promise<UniversityResponse> {
     return this.universityService.getUniversities()

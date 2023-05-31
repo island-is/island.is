@@ -1,14 +1,26 @@
-import { Controller, Get, Param, Query } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common'
 import { MajorService } from './major.service'
 import {
+  ApiBody,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { MajorDetails, MajorResponse } from './model'
+import { MajorDetails, MajorDetailsResponse, MajorResponse } from './model'
 import { DegreeType, Season } from './types'
+import { CreateMajorDto, UpdateMajorDto } from './dto'
 
 @ApiTags('Major')
 @Controller()
@@ -37,31 +49,31 @@ export class MajorController {
   @ApiQuery({
     name: 'year',
     required: false,
-    description: 'Param description for year',
+    description: 'Starting semester year',
   })
   @ApiQuery({
     name: 'season',
     required: false,
-    description: 'Param description for season',
+    description: 'Starting semester season',
     enum: Season,
   })
   @ApiQuery({
     name: 'universityId',
     required: false,
-    description: 'Param description for universityId',
+    description: 'University ID',
   })
   @ApiQuery({
     name: 'degreeType',
     required: false,
-    description: 'Param description for degreeType',
+    description: 'Degree type',
     enum: DegreeType,
   })
   @ApiOkResponse({
     type: MajorResponse,
-    description: 'Response description for 200',
+    description: 'Returns all majors for the selected filtering',
   })
   @ApiOperation({
-    summary: 'Endpoint description for get majors',
+    summary: 'Get all majors',
   })
   async getMajors(
     @Query('limit') limit: number,
@@ -86,22 +98,75 @@ export class MajorController {
     name: 'id',
     required: true,
     allowEmptyValue: false,
-    description: 'Param description for id',
+    description: 'Major ID',
   })
   @ApiOkResponse({
-    type: MajorDetails,
-    description: 'Response description for 200',
+    type: MajorDetailsResponse,
+    description: 'Returns the major by ID',
   })
   @ApiOperation({
-    summary: 'Endpoint description for get major by id',
+    summary: 'Get major (and courses) by ID',
   })
-  async getMajorDetails(@Param('id') id: string): Promise<MajorDetails> {
+  async getMajorDetails(
+    @Param('id') id: string,
+  ): Promise<MajorDetailsResponse> {
     return this.majorService.getMajorDetails(id)
   }
 
-  // TODOx POST MAJOR (single) with courses
+  @Post('majors')
+  @ApiBody({
+    type: CreateMajorDto,
+  })
+  @ApiCreatedResponse({
+    type: MajorDetails,
+    description: 'Returns the major that was created',
+  })
+  @ApiOperation({
+    summary: 'Create major (and courses)',
+  })
+  async createMajor(@Body() majorDto: CreateMajorDto): Promise<MajorDetails> {
+    return this.majorService.createMajor(majorDto)
+  }
 
-  // TODOx PUT MAJOR (single) with courses
+  @Put('majors/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    allowEmptyValue: false,
+    description: 'Major ID',
+  })
+  @ApiBody({
+    type: UpdateMajorDto,
+  })
+  @ApiOkResponse({
+    type: MajorDetails,
+    description: 'Returns the updated major',
+  })
+  @ApiOperation({
+    summary: 'Update major (and courses)',
+  })
+  async updateMajor(
+    @Param('id') id: string,
+    @Body() majorDto: UpdateMajorDto,
+  ): Promise<MajorDetails> {
+    return this.majorService.updateMajor(id, majorDto)
+  }
 
-  // TODOx DELETE MAJOR (single)
+  @Delete('majors/:id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    allowEmptyValue: false,
+    description: 'Major ID',
+  })
+  @ApiOkResponse({
+    type: Number,
+    description: 'Returns the number of majors that was deleted',
+  })
+  @ApiOperation({
+    summary: 'Delete major (and courses)',
+  })
+  async deleteMajor(@Param('id') id: string): Promise<number> {
+    return this.majorService.deleteMajor(id)
+  }
 }

@@ -12,17 +12,6 @@ export class UniversityService {
   ) {}
 
   async getUniversities(): Promise<UniversityResponse> {
-    return {
-      data: [
-        {
-          id: uuid(),
-          nationalId: '0000001111',
-        },
-        {
-          id: uuid(),
-          nationalId: '1111112222',
-        },
-      ],
-    }
+    throw Error('Not ready')
   }
 }
