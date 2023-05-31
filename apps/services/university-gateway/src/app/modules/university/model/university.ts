@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Column, DataType } from 'sequelize-typescript'
 
 export class University {
   @ApiProperty({
@@ -18,8 +17,7 @@ export class University {
 export class UniversityResponse {
   @ApiProperty({
     description: 'University data',
-    type: University,
-    isArray: true,
+    type: [University],
   })
   data!: University[]
 }

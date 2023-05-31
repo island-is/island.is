@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, DataType } from 'sequelize-typescript'
 
 export class PageInfo {
   @ApiProperty({

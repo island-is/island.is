@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Column, DataType } from 'sequelize-typescript'
 import { StudyType, ApplicationStatus } from '../types'
 
 export class Application {

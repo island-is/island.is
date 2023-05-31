@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, DataType, HasMany } from 'sequelize-typescript'
 import { DegreeType, InterestTag, Season } from '../types'
 import { StudyType } from '../../application/types'
 import { PageInfo } from './pageInfo'
+import { CourseDetails } from '../../course/model'
 
 export class Major {
   @ApiProperty({
@@ -113,11 +113,11 @@ export class Major {
   durationInYears?: number
 
   @ApiProperty({
-    description: 'Price for major (per year)',
+    description: 'Cost for major (per year)',
     example: 75000,
   })
   @ApiPropertyOptional()
-  pricePerYear?: number
+  costPerYear?: number
 
   @ApiProperty({
     description: 'ISCED code for major',
@@ -126,14 +126,16 @@ export class Major {
   iscedCode!: string
 
   @ApiProperty({
-    description: 'External url for university web page (Icelandic)',
-    example: 'https://www.ru.is/grunnnam/tolvunarfraedi/',
+    description:
+      'External url  for the major from the university web page (Icelandic)',
+    example: 'https://www.ru.is/grunnnam/tolvunarfraedi',
   })
   @ApiPropertyOptional()
   externalUrlIs?: string
 
   @ApiProperty({
-    description: 'External url for university web page (English)',
+    description:
+      'External url  for the major from the university web page (English)',
     example: 'https://en.ru.is/st/dcs/undergraduate-study/bsc-computer-science',
   })
   @ApiPropertyOptional()
@@ -157,13 +159,60 @@ export class Major {
   interestTags?: [InterestTag]
 }
 
-export class MajorDetails extends Major {}
+export class MajorDetails extends Major {
+  @ApiProperty({
+    description: 'Admission requirements for major (Icelandic)',
+    example: 'Nemandinn verður að hafa klárað stúdentspróf',
+  })
+  @ApiPropertyOptional()
+  admissionRequirementsIs?: string
+
+  @ApiProperty({
+    description: 'Admission requirements for major (English)',
+    example: 'The student needs to have finished the matriculation exam',
+  })
+  @ApiPropertyOptional()
+  admissionRequirementsEn?: string
+
+  @ApiProperty({
+    description: 'Study requirements for major (Icelandic)',
+    example: 'Nemandinn verður að vera með lágmarkseinkunn 6 í öllum áföngum',
+  })
+  @ApiPropertyOptional()
+  studyRequirementsIs?: string
+
+  @ApiProperty({
+    description: 'Study requirements for major (English)',
+    example: 'The student must have a minimum grade of 6 in all courses',
+  })
+  @ApiPropertyOptional()
+  studyRequirementsEn?: string
+
+  @ApiProperty({
+    description: 'Cost information for major (Icelandic)',
+    example: 'Það verður að borga 10.000 kr staðfestingargjald fyrir 1. ágúst',
+  })
+  @ApiPropertyOptional()
+  costInformationIs?: string
+
+  @ApiProperty({
+    description: 'Cost information for major (English)',
+    example: 'A confirmation fee of ISK 10.000 must be paid before August 1',
+  })
+  @ApiPropertyOptional()
+  costInformationEn?: string
+
+  @ApiProperty({
+    description: 'Column description for data',
+    type: [CourseDetails],
+  })
+  courses!: CourseDetails[]
+}
 
 export class MajorResponse {
   @ApiProperty({
-    description: 'Column description for data',
-    type: Major,
-    isArray: true,
+    description: 'Major data',
+    type: [Major],
   })
   data!: Major[]
 
@@ -182,7 +231,7 @@ export class MajorResponse {
 
 export class MajorDetailsResponse {
   @ApiProperty({
-    description: 'Column description for data',
+    description: 'Major data',
     type: MajorDetails,
   })
   data!: MajorDetails

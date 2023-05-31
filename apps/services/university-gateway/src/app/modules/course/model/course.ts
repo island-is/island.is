@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Column, DataType } from 'sequelize-typescript'
 import { Season } from '../../major/types'
 import { PageInfo } from '../../major/model/pageInfo'
 
@@ -58,6 +57,37 @@ export class Course {
     enum: Season,
   })
   semesterSeason!: Season
+
+  @ApiProperty({
+    description: 'Course description (Icelandic)',
+    example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  })
+  @ApiPropertyOptional()
+  courseDescriptionIs?: string
+
+  @ApiProperty({
+    description: 'Course description (English)',
+    example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
+  })
+  @ApiPropertyOptional()
+  courseDescriptionEn?: string
+
+  @ApiProperty({
+    description:
+      'External url  for the course from the university web page (Icelandic)',
+    example: 'https://www.hi.is/grunnnam/tolvunarfraedi/staerdfraedigreining-i',
+  })
+  @ApiPropertyOptional()
+  externalUrlIs?: string
+
+  @ApiProperty({
+    description:
+      'External url  for the course from the university web page (English)',
+    example:
+      'https://www.en.hi.is/undergraduate-study/computer-science/mathematical-analysis-i',
+  })
+  @ApiPropertyOptional()
+  externalUrlEn?: string
 }
 
 export class CourseDetails extends Course {}
@@ -65,8 +95,7 @@ export class CourseDetails extends Course {}
 export class CourseResponse {
   @ApiProperty({
     description: 'Course data',
-    type: Course,
-    isArray: true,
+    type: [Course],
   })
   data!: Course[]
 

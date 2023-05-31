@@ -9,6 +9,7 @@ import {
   IsUUID,
 } from 'class-validator'
 import { DegreeType, InterestTag, Season, StudyType } from '../types'
+import { CreateCourseDto } from '../../course/dto'
 
 export class CreateMajorDto {
   @IsString()
@@ -134,11 +135,11 @@ export class CreateMajorDto {
   @IsNumber()
   @IsOptional()
   @ApiProperty({
-    description: 'Price for major (per year)',
+    description: 'Cost for major (per year)',
     example: 75000,
   })
   @ApiPropertyOptional()
-  pricePerYear?: number
+  costPerYear?: number
 
   @IsString()
   @ApiProperty({
@@ -150,7 +151,8 @@ export class CreateMajorDto {
   @IsString()
   @IsOptional()
   @ApiProperty({
-    description: 'External url for university web page (Icelandic)',
+    description:
+      'External url  for the major from the university web page (Icelandic)',
     example: 'https://www.ru.is/grunnnam/tolvunarfraedi',
   })
   @ApiPropertyOptional()
@@ -159,7 +161,8 @@ export class CreateMajorDto {
   @IsString()
   @IsOptional()
   @ApiProperty({
-    description: 'External url for university web page (English)',
+    description:
+      'External url  for the major from the university web page (English)',
     example: 'https://en.ru.is/st/dcs/undergraduate-study/bsc-computer-science',
   })
   @ApiPropertyOptional()
@@ -185,4 +188,65 @@ export class CreateMajorDto {
     isArray: true,
   })
   interestTags?: [InterestTag]
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Admission requirements for major (Icelandic)',
+    example: 'Nemandinn verður að hafa klárað stúdentspróf',
+  })
+  @ApiPropertyOptional()
+  admissionRequirementsIs?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Admission requirements for major (English)',
+    example: 'The student needs to have finished the matriculation exam',
+  })
+  @ApiPropertyOptional()
+  admissionRequirementsEn?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Study requirements for major (Icelandic)',
+    example: 'Nemandinn verður að vera með lágmarkseinkunn 6 í öllum áföngum',
+  })
+  @ApiPropertyOptional()
+  studyRequirementsIs?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Study requirements for major (English)',
+    example: 'The student must have a minimum grade of 6 in all courses',
+  })
+  @ApiPropertyOptional()
+  studyRequirementsEn?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Cost information for major (Icelandic)',
+    example: 'Það verður að borga 10.000 kr staðfestingargjald fyrir 1. ágúst',
+  })
+  @ApiPropertyOptional()
+  costInformationIs?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Cost information for major (English)',
+    example: 'A confirmation fee of ISK 10.000 must be paid before August 1',
+  })
+  @ApiPropertyOptional()
+  costInformationEn?: string
+
+  @IsArray()
+  @ApiProperty({
+    description: 'Column description for data',
+    type: [CreateCourseDto],
+  })
+  courses!: CreateCourseDto[]
 }

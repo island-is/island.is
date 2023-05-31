@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsEnum, IsNumber, IsString, IsUUID } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator'
 import { Season } from '../../major/types'
 
 export class CreateCourseDto {
@@ -59,4 +59,43 @@ export class CreateCourseDto {
     enum: Season,
   })
   semesterSeason!: Season
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Course description (Icelandic)',
+    example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  })
+  @ApiPropertyOptional()
+  courseDescriptionIs?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description: 'Course description (English)',
+    example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
+  })
+  @ApiPropertyOptional()
+  courseDescriptionEn?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description:
+      'External url  for the course from the university web page (Icelandic)',
+    example: 'https://www.hi.is/grunnnam/tolvunarfraedi/staerdfraedigreining-i',
+  })
+  @ApiPropertyOptional()
+  externalUrlIs?: string
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty({
+    description:
+      'External url  for the course from the university web page (English)',
+    example:
+      'https://www.en.hi.is/undergraduate-study/computer-science/mathematical-analysis-i',
+  })
+  @ApiPropertyOptional()
+  externalUrlEn?: string
 }

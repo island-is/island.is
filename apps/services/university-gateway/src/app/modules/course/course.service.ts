@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CourseDetails, CourseDetailsResponse, CourseResponse } from './model'
-import { uuid } from 'uuidv4'
-import { PaginateInput, Season } from '../major/types'
+import { PaginateInput } from '../major/types'
 import { CreateCourseDto, UpdateCourseDto } from './dto'
 
 //TODOx connect with new university DB

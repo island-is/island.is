@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Application, ApplicationResponse } from './model'
-import { uuid } from 'uuidv4'
 import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
-import { ApplicationStatus, StudyType } from './types'
 import {
   CreateApplicationDto,
   UpdateApplicationStatusDto,

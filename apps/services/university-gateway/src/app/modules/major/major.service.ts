@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { MajorDetails, MajorDetailsResponse, MajorResponse } from './model'
-import { uuid } from 'uuidv4'
 import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
-import { DegreeType, InterestTag, PaginateInput, Season } from './types'
-import { StudyType } from '../application/types'
+import { DegreeType, PaginateInput, Season } from './types'
 import { CreateMajorDto, UpdateMajorDto } from './dto'
 
 //TODOx connect with new university DB
