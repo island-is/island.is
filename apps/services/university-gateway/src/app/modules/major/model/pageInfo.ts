@@ -2,10 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Column, DataType } from 'sequelize-typescript'
 
 export class PageInfo {
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
   @ApiProperty({
     description:
       'Boolean flag to indicate if there exists more items before the current set of data received',
@@ -13,10 +9,6 @@ export class PageInfo {
   })
   hasPreviousPage!: boolean
 
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
   @ApiProperty({
     description:
       'Boolean flag to indicate if there exists more items after the current set of data received',
@@ -24,10 +16,6 @@ export class PageInfo {
   })
   hasNextPage!: boolean
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
   @ApiProperty({
     description:
       'Base64 encoded strings. The client uses these values in following request to get the previous page',
@@ -36,10 +24,6 @@ export class PageInfo {
   @ApiPropertyOptional()
   startCursor?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
   @ApiProperty({
     description:
       'Base64 encoded strings. The client uses these values in following request to get the next page',

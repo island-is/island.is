@@ -52,11 +52,6 @@ export class Course {
   })
   semesterYear!: number
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(Season),
-  })
   @ApiProperty({
     description: 'Which season this course is taught on',
     example: Season.FALL,
@@ -68,10 +63,6 @@ export class Course {
 export class CourseDetails extends Course {}
 
 export class CourseResponse {
-  @Column({
-    type: DataType.JSONB,
-    allowNull: false,
-  })
   @ApiProperty({
     description: 'Course data',
     type: Course,
@@ -79,20 +70,12 @@ export class CourseResponse {
   })
   data!: Course[]
 
-  @Column({
-    type: DataType.JSONB,
-    allowNull: false,
-  })
   @ApiProperty({
     description: 'Page information (for pagination)',
     type: PageInfo,
   })
   pageInfo!: PageInfo
 
-  @Column({
-    type: DataType.NUMBER,
-    allowNull: false,
-  })
   @ApiProperty({
     description: 'Total number of items in result (for pagination)',
     example: 25,
@@ -101,10 +84,6 @@ export class CourseResponse {
 }
 
 export class CourseDetailsResponse {
-  @Column({
-    type: DataType.JSONB,
-    allowNull: false,
-  })
   @ApiProperty({
     description: 'Course data',
     type: CourseDetails,
