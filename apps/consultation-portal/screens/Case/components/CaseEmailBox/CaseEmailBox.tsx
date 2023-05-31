@@ -101,9 +101,7 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
 
   const onPostCaseSubscription = async () => {
     const postCaseSubscriptionCommand = {
-      subscriptionType: allChecked
-        ? SubscriptionType.AllChanges
-        : SubscriptionType.StatusChanges,
+      subscriptionType: SubscriptionType.AllChanges,
     }
     await postCaseSubscriptionMutation({
       variables: {
@@ -228,29 +226,11 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
   {
     return caseSubscription?.type ? (
       <CardSkeleton
-        text={
-          userClickedChange
-            ? loc.subbedCardSkeleton.clickedChange.text
-            : loc.subbedCardSkeleton.initial.text
-        }
+        text={userClickedChange ? '' : loc.subbedCardSkeleton.initial.text}
       >
         {userClickedChange ? (
           <Box paddingTop={1}>
             <CaseEmailActionBox
-              selection={[
-                {
-                  label: CaseSubscriptionType[SubscriptionTypes.AllChanges],
-                  checked: allChecked,
-                  onChange: () => setAllChecked(true),
-                  isDisabled: postCaseSubscriptionLoading,
-                },
-                {
-                  label: CaseSubscriptionType[SubscriptionTypes.StatusChanges],
-                  checked: !allChecked,
-                  onChange: () => setAllChecked(false),
-                  isDisabled: postCaseSubscriptionLoading,
-                },
-              ]}
               button={[
                 {
                   label: loc.subbedCardSkeleton.clickedChange.button,
@@ -264,11 +244,6 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
           <CaseEmailActionBox
             button={[
               {
-                label: loc.subbedCardSkeleton.initial.buttonChange,
-                onClick: () => handleUserClickedChange(),
-                isDisabled: deleteCaseSubscriptionLoading,
-              },
-              {
                 label: loc.subbedCardSkeleton.initial.buttonRemove,
                 onClick: () => onDeleteCaseSubscription(),
                 isLoading: deleteCaseSubscriptionLoading,
@@ -281,20 +256,6 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
       <CardSkeleton text={loc.notSubbedCardSkeleton.text}>
         <Box paddingTop={1}>
           <CaseEmailActionBox
-            selection={[
-              {
-                label: CaseSubscriptionType[SubscriptionTypes.AllChanges],
-                checked: allChecked,
-                onChange: () => setAllChecked(true),
-                isDisabled: caseSubscriptionLoading,
-              },
-              {
-                label: CaseSubscriptionType[SubscriptionTypes.StatusChanges],
-                checked: !allChecked,
-                onChange: () => setAllChecked(false),
-                isDisabled: caseSubscriptionLoading,
-              },
-            ]}
             button={[
               {
                 label: loc.notSubbedCardSkeleton.button,
