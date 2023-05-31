@@ -98,7 +98,7 @@ describe('Payment Service', () => {
     service = app.get<PaymentService>(PaymentService)
     fjsClient = app.get<MockChargeFjsV2ClientService>(ChargeFjsV2ClientService)
   })
-  /*
+
   it('should create a charge', async () => {
     const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf']
@@ -147,8 +147,6 @@ describe('Payment Service', () => {
   it('should get a payment status', async () => {
     const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf', 'asdf']
-
- 
 
     const charge = await service.createCharge(
       user,
@@ -219,8 +217,8 @@ describe('Payment Service', () => {
       ),
     ).rejects.toThrow()
   })
-*/
-  it('Should continure with a payment that exists and status with an unpaid status.', async () => {
+
+  it('Should continue with a payment that exists and status with an unpaid status.', async () => {
     const performingOrganizationID = '1'
     const chargeItemCodes: string[] = ['asdf', 'asdf']
 
@@ -259,5 +257,50 @@ describe('Payment Service', () => {
     )
 
     expect(charge).toBeTruthy()
+  })
+
+  it('Should not create a new charge and a payment when payment exists', async () => {
+    const performingOrganizationID = '1'
+    const chargeItemCodes: string[] = ['asdf', 'asdf']
+
+    const mock = jest.spyOn(fjsClient, 'getChargeStatus')
+    const createChargeSpy = jest.spyOn(fjsClient, 'createCharge')
+
+    mock.mockImplementation(() =>
+      Promise.resolve({
+        statusResult: {
+          docuNum: '1',
+          status: 'unpaid',
+        },
+        error: {
+          code: 200,
+          message: '1',
+        },
+      }),
+    )
+
+    const chargeItems = await service.findChargeItems(
+      performingOrganizationID,
+      chargeItemCodes,
+    )
+
+    const payment = await service.createPaymentModel(
+      chargeItems,
+      applicationId,
+      performingOrganizationID,
+    )
+
+    const charge = await service.createCharge(
+      user,
+      performingOrganizationID,
+      chargeItemCodes,
+      applicationId,
+      undefined,
+    )
+
+    //Create charge exists so dont call it again.
+    expect(createChargeSpy).not.toHaveBeenCalled()
+    // Create charge uses the same payment model as we created above and does not creata a new one.
+    expect(charge.id).toBe(payment.id)
   })
 })

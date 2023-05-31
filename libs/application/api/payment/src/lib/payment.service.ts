@@ -138,7 +138,7 @@ export class PaymentService {
     )
   }
 
-  private async createPaymentModel(
+  async createPaymentModel(
     chargeItems: CatalogItem[],
     applicationId: string,
     performingOrganizationID: string,
@@ -196,7 +196,7 @@ export class PaymentService {
         const currentCharge = await this.chargeFjsV2ClientService.getChargeStatus(
           paymentModel.id,
         )
-        console.log('currentCharge', currentCharge)
+
         if (currentCharge.error.code === 404) {
           const chargeResult = await this.createNewCharge(
             paymentModel,
@@ -316,8 +316,7 @@ export class PaymentService {
     } = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
       performingOrganizationID,
     )
-    console.log('allItems', allItems)
-    console.log('targetChargeItemCodes', targetChargeItemCodes)
+
     // get list of items with catalog info, but make sure to allow duplicates
     const items: CatalogItem[] = []
     for (let i = 0; i < targetChargeItemCodes.length; i++) {
