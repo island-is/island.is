@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
-import { RegistrationController } from './registration.controller'
-import { RegistrationService } from './registration.service'
+import { ApplicationController } from './application.controller'
+import { ApplicationService } from './application.service'
 import {
   UgReykjavikUniversityClientModule,
   UgReykjavikUniversityClientConfig,
@@ -15,7 +15,7 @@ import { ConfigModule } from '@nestjs/config'
       load: [UgReykjavikUniversityClientConfig],
     }),
   ],
-  controllers: [RegistrationController],
-  providers: [RegistrationService],
+  controllers: [ApplicationController],
+  providers: [ApplicationService],
 })
-export class RegistrationModule {}
+export class ApplicationModule {}

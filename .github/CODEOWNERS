@@ -260,6 +260,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor/ @island-is/origo
 
 /apps/services/university-gateway/                                                                       @island-is/origo
+/libs/clients/university-gateway/                                                                        @island-is/origo
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa
