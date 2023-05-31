@@ -65,6 +65,7 @@ export const Overview: React.FC = () => {
   const router = useRouter()
   const {
     transitionCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,
@@ -400,6 +401,7 @@ export const Overview: React.FC = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -407,7 +409,8 @@ export const Overview: React.FC = () => {
               : 'Endursenda kröfu á héraðsdóm'
           }
           nextIsLoading={
-            workingCase.state !== CaseState.RECEIVED && isSendingNotification
+            workingCase.state !== CaseState.RECEIVED &&
+            (isTransitioningCase || isSendingNotification)
           }
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
@@ -424,7 +427,7 @@ export const Overview: React.FC = () => {
             workingCase={workingCase}
             isLoading={isSendingNotification}
             onClose={() => setModal('noModal')}
-            onContinue={(explaination) => handleNextButtonClick(explaination)}
+            onContinue={(explanation) => handleNextButtonClick(explanation)}
           />
         )}
       </AnimatePresence>

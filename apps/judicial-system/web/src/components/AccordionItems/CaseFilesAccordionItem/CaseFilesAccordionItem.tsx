@@ -3,8 +3,10 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, AccordionItem, Button, Text } from '@island.is/island-ui/core'
-import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseState,
   completedCaseStates,

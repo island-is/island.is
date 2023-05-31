@@ -1,0 +1,23 @@
+{
+  "publishingRules": {
+    "publishNow": {
+      "present": "Umsagnir eru birtar jafnóðum og þær berast.",
+      "past": ""
+    },
+    "publishAfter": {
+      "present": "Umsagnir eru birtar að loknum umsagnarfresti.",
+      "past": ""
+    },
+    "publishNever": {
+      "present": "Umsagnir eru ekki birtar.",
+      "past": ""
+    },
+    "publishLaw": {
+      "text": "Upplýsingalög gilda, sjá nánar í",
+      "link": {
+        "label": "um samráðsgáttina.",
+        "href": "/um"
+      }
+    }
+  }
+}

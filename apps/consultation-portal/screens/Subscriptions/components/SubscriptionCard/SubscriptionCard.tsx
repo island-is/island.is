@@ -1,14 +1,13 @@
 import { Box, FocusableBox } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../../../utils/helpers'
 import { ReactNode, useState } from 'react'
-import SubscriptionChoices from '../SubscriptionChoices/SubscriptionChoices'
 import { Area } from '../../../../types/enums'
 import {
   SubscriptionArray,
   SubscriptionTableItem,
 } from '../../../../types/interfaces'
-import { SimpleCardSkeleton } from '../../../../components/Card/components/SimpleCardSkeleton'
-import { CardGridContainer } from '../../../../components/Card/components/CardGridContainer'
+import { CardSkeleton } from '../../../../components'
+import { CardGridContainer, SubscriptionChoices } from '../../components'
 
 interface Props {
   isGeneralSubscription?: boolean
@@ -67,7 +66,7 @@ export const SubscriptionCard = ({
   }
 
   return (
-    <SimpleCardSkeleton
+    <CardSkeleton
       borderColor="blue400"
       borderRadius="large"
       background="white"
@@ -96,7 +95,7 @@ export const SubscriptionCard = ({
           />
         </Box>
       )}
-    </SimpleCardSkeleton>
+    </CardSkeleton>
   )
 }
 

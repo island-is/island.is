@@ -12,21 +12,21 @@ import {
   CaseOverview,
   CaseTimeline,
   Coordinator,
-  Stakeholders,
-  AdviceCTA,
+  BlowoutList,
+  CaseStatusBox,
   CaseDocuments,
   CaseEmailBox,
   AdviceForm,
   AdviceList,
   AdviceSkeletonLoader,
 } from './components'
-import Layout from '../../components/Layout/Layout'
 import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
-import { CaseStatusFilterOptions } from '../../types/enums'
+import { CaseStatuses } from '../../types/enums'
 import { useContext } from 'react'
 import UserContext from '../../context/UserContext'
 import localization from './Case.json'
+import { Layout } from '../../components'
 
 interface Props {
   chosenCase: Case
@@ -41,6 +41,16 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
   })
+
+  const isStakeholdersNotEmpty = chosenCase?.stakeholders?.length > 0
+  const isRelatedCasesNotEmpty = chosenCase?.relatedCases?.length > 0
+  const isDocumentsNotEmpty = chosenCase?.documents?.length > 0
+  const isAdditionalDocumentsNotEmpty =
+    chosenCase?.additionalDocuments?.length > 0
+  const statusNameIsNotPublished =
+    chosenCase?.statusName !== CaseStatuses.published
+  const statusNameIsForReview =
+    chosenCase?.statusName === CaseStatuses.forReview
 
   return (
     <Layout
@@ -79,20 +89,19 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              {chosenCase?.documents?.length > 0 && (
+              {isDocumentsNotEmpty && (
                 <CaseDocuments
                   title={loc.documentsBox.documents.title}
                   documents={chosenCase?.documents}
                 />
               )}
-              {chosenCase?.additionalDocuments?.length > 0 && (
+              {isAdditionalDocumentsNotEmpty && (
                 <CaseDocuments
                   title={loc.documentsBox.additional.title}
                   documents={chosenCase?.additionalDocuments}
                 />
               )}
-              {chosenCase?.statusName !==
-                CaseStatusFilterOptions.resultsPublished && (
+              {statusNameIsNotPublished && (
                 <CaseEmailBox
                   caseId={caseId}
                   caseNumber={chosenCase?.caseNumber}
@@ -117,14 +126,14 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
                 ) : (
                   <AdviceList advices={advices} chosenCase={chosenCase} />
                 )}
-                {chosenCase?.statusName ===
-                  CaseStatusFilterOptions.forReview && (
+                {statusNameIsForReview && (
                   <AdviceForm
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}
                     username={user?.name}
                     caseId={chosenCase?.id}
                     refetchAdvices={refetchAdvices}
+                    canBePrivate={chosenCase?.allowUsersToSendPrivateAdvices}
                   />
                 )}
               </Stack>
@@ -135,9 +144,12 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              {!isMobile && <AdviceCTA chosenCase={chosenCase} />}
-              {chosenCase?.stakeholders?.length > 0 && (
-                <Stakeholders chosenCase={chosenCase} />
+              <CaseStatusBox status={chosenCase.statusName} />
+              {isStakeholdersNotEmpty && (
+                <BlowoutList list={chosenCase.stakeholders} isStakeholder />
+              )}
+              {isRelatedCasesNotEmpty && (
+                <BlowoutList list={chosenCase.relatedCases} />
               )}
               <Coordinator
                 contactEmail={contactEmail}
