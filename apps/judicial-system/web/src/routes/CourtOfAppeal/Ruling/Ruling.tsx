@@ -15,6 +15,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Box,
@@ -85,9 +86,12 @@ const CourtOfAppealRuling: React.FC = () => {
       (file) => file.status === 'done' || file.status === 'error',
     )
   }, [displayFiles])
+
   const isStepValid =
     displayFiles.some(
-      (file) => file.category === CaseFileCategory.APPEAL_RULING,
+      (file) =>
+        file.category === CaseFileCategory.APPEAL_RULING &&
+        file.status === 'done',
     ) &&
     allFilesUploaded &&
     isCourtOfAppealRulingStepValid(workingCase)
@@ -301,16 +305,10 @@ const CourtOfAppealRuling: React.FC = () => {
           />
         </Box>
         <Box marginBottom={10}>
-          <Box marginBottom={3} display="flex">
-            <Text as="h3" variant="h3">
-              {formatMessage(strings.courtConclusionHeading)}
-            </Text>
-            <Box marginLeft="smallGutter">
-              <Text as="span" variant="h3" color="red400">
-                *
-              </Text>
-            </Box>
-          </Box>
+          <SectionHeading
+            title={formatMessage(strings.courtConclusionHeading)}
+            required
+          />
 
           <InputFileUpload
             fileList={displayFiles.filter(
