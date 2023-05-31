@@ -299,7 +299,6 @@ export class LimitedAccessCaseService {
         order: [['created', 'DESC']],
       })
       .then((theCase) => {
-        console.log('theCase', theCase)
         if (theCase) {
           return this.constructDefender(
             nationalId,
