@@ -14,6 +14,7 @@ import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { FormCard } from '../../../components/FormCard'
 import { useClient } from '../ClientContext'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 
 interface CompareArgs {
   currVal: FormData
@@ -48,7 +49,7 @@ const Lifetime = ({
     slidingRefreshTokenLifetime,
   })
   const { formatErrorMessage } = useErrorFormatMessage()
-  const { actionData } = useClient()
+  const { actionData, client } = useClient()
 
   const setLifeTimeLength = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -92,6 +93,11 @@ const Lifetime = ({
       description={formatMessage(m.lifeTimeDescription)}
       customValidation={customFormValidation}
       intent={ClientFormTypes.lifeTime}
+      inSync={checkEnvironmentsSync(client.environments, [
+        'absoluteRefreshTokenLifetime',
+        'slidingRefreshTokenLifetime',
+        'refreshTokenExpiration',
+      ])}
     >
       <Stack space={3}>
         <Stack space={1}>

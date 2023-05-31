@@ -211,7 +211,8 @@ export const FormCard = <Intent extends string>({
                   <Checkbox
                     label={formatMessage(m.saveForAllEnvironments)}
                     checked={allEnvironments}
-                    value={allEnvironments.toString()}
+                    value="true"
+                    disabled={!dirty}
                     name={`${intent}_saveInAllEnvironments`}
                     onChange={() => setAllEnvironments(!allEnvironments)}
                   />
