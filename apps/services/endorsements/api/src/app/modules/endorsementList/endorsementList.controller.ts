@@ -2,11 +2,15 @@ import {
   Body,
   Controller,
   Get,
+  Header,
+  HttpStatus,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
@@ -19,6 +23,7 @@ import {
   ApiExtraModels,
   ApiOperation,
   IntersectionType,
+  ApiResponse,
 } from '@nestjs/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { EndorsementList } from './endorsementList.model'
@@ -48,6 +53,15 @@ import { EndorsementListInterceptor } from './interceptors/endorsementList.inter
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
+
+import PDFDocument from 'pdfkit'
+import { Response } from 'express'
+import { StreamableFile } from '@nestjs/common'
+import { createReadStream } from 'fs'
+
+//import fs
+import fs from 'fs'
+import getStream from 'get-stream'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -366,5 +380,22 @@ export class EndorsementListController {
       endorsementList.id,
       query.emailAddress,
     )
+  }
+
+  @ApiOperation({
+    summary: 'Download a PDF link with list endorsements data',
+  })
+  @Scopes(EndorsementsScope.main)
+  @HasAccessGroup(AccessGroup.Owner)
+  @ApiParam({ name: 'listId', type: String })
+  // @Header('Content-type', 'application/pdf')
+  @Audit()
+  @Get(':listId/presigned-url')
+  async downloadPdf(@Param('listId') listId: string): Promise<{ url: string }> {
+    // check if you own this list (or are admin) ............ @HasAccessGroup(AccessGroup.Owner)
+    const presignedUrl = await this.endorsementListService.getDownloadLink(
+      listId,
+    )
+    return { url: presignedUrl }
   }
 }

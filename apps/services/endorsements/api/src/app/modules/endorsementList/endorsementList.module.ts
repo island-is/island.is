@@ -10,13 +10,14 @@ import {
 } from '@island.is/clients/national-registry-v1'
 import { environment } from '../../../environments'
 import { EmailModule } from '@island.is/email-service'
-
+import { AwsModule } from '@island.is/nest/aws'
 export interface Config {
   nationalRegistry: NationalRegistryConfig
 }
 
 @Module({
   imports: [
+    AwsModule,
     SequelizeModule.forFeature([EndorsementList, Endorsement]),
     EmailModule.register(environment.emailOptions),
   ],

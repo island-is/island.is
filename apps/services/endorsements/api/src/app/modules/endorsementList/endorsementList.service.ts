@@ -21,8 +21,9 @@ import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
 import { EndorsementsScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
-import PDFDocument from 'pdfkit'
+import PDFDocument, { end } from 'pdfkit'
 import getStream from 'get-stream'
+import { AwsService } from '@island.is/nest/aws'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -40,6 +41,7 @@ export class EndorsementListService {
     private logger: Logger,
     @Inject(EmailService)
     private emailService: EmailService,
+    private readonly awsService: AwsService,
   ) {}
 
   async hasAdminScope(user: User): Promise<boolean> {
@@ -436,5 +438,46 @@ export class EndorsementListService {
       this.logger.error('Failed to send email', error)
       return { success: false }
     }
+  }
+
+  async getDownloadLink(listId: string): Promise<any> {
+    const bucket = 'island-is-dev-upload-api'
+    const date = new Date()
+    const fileName = 'Meðmælendalisti-' + listId + date.toISOString() + '.pdf'
+
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: { id: listId },
+      include: [
+        {
+          model: Endorsement,
+        },
+      ],
+    })
+    console.log(endorsementList)
+    if (!endorsementList) {
+      this.logger.warn('This endorsement list does not exist.')
+      throw new NotFoundException(['This endorsement list does not exist.'])
+    }
+    const ownerName = await this.getOwnerInfo(
+      endorsementList?.id,
+      endorsementList.owner,
+    )
+
+    const fileBuffer = await this.createDocumentBuffer(
+      endorsementList,
+      ownerName,
+    )
+
+    const upload = await this.awsService.uploadFile(
+      fileBuffer,
+      bucket,
+      fileName,
+    )
+
+    console.log(upload)
+
+    const res = await this.awsService.getPresignedUrl(bucket, fileName)
+    console.log(res)
+    return res
   }
 }

@@ -11,6 +11,7 @@ import {
   NationalRegistryConfig,
 } from '@island.is/clients/national-registry-v1'
 import { EmailModule } from '@island.is/email-service'
+import { AwsModule } from '@island.is/nest/aws'
 
 export interface Config {
   nationalRegistry: NationalRegistryConfig
@@ -18,6 +19,7 @@ export interface Config {
 
 @Module({
   imports: [
+    AwsModule,
     SequelizeModule.forFeature([Endorsement, EndorsementList]),
     EmailModule.register(environment.emailOptions),
   ],

@@ -255,4 +255,16 @@ export class EndorsementSystemResolver {
       user,
     )
   }
+
+  //  // GET /endorsement-list/{listId}/endorsement
+  //  @Query(() => PaginatedEndorsementResponse, { nullable: true })
+  //  async endorsementSystemGetEndorsements(
+  //    @Args('input') input: PaginatedEndorsementInput,
+  //    @CurrentUser() user: User,
+  //  ): Promise<PaginatedEndorsementResponse> {
+  //    return await this.endorsementSystemService.endorsementControllerFindAll(
+  //      input,
+  //      user,
+  //    )
+  //  }
 }
