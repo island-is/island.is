@@ -171,6 +171,7 @@ export class AuthController {
     requestedRedirectRoute: string,
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
+
     if (user && this.authService.validateUser(user)) {
       return {
         userId: user.id,
@@ -183,11 +184,8 @@ export class AuthController {
           ? COURT_OF_APPEAL_CASES_ROUTE
           : CASES_ROUTE,
       }
-    } else if (requestedRedirectRoute?.startsWith(`${DEFENDER_ROUTE}/`)) {
-      const defender = await this.authService.findDefender(
-        requestedRedirectRoute.split('/').pop() || '',
-        authUser.nationalId,
-      )
+    } else {
+      const defender = await this.authService.findDefender(authUser.nationalId)
 
       if (defender && this.authService.validateUser(defender)) {
         return {

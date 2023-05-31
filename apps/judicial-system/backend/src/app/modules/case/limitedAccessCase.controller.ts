@@ -52,7 +52,7 @@ import {
 } from './limitedAccessCase.service'
 import { CaseEvent, EventService } from '../event'
 
-@Controller('api/case/:caseId/limitedAccess')
+@Controller('api')
 @ApiTags('limited access cases')
 export class LimitedAccessCaseController {
   constructor(
@@ -71,7 +71,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get()
+  @Get('case/:caseId/limitedAccess')
   @ApiOkResponse({
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
@@ -91,7 +91,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderUpdateRule)
-  @Patch()
+  @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   update(
     @Param('caseId') caseId: string,
@@ -119,7 +119,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderTransitionRule)
-  @Patch('state')
+  @Patch('case/:caseId/limitedAccess/state')
   @ApiOkResponse({
     type: Case,
     description: 'Updates the state of a case',
@@ -158,23 +158,18 @@ export class LimitedAccessCaseController {
     return updatedCase
   }
 
-  @UseGuards(TokenGuard, LimitedAccessCaseExistsGuard)
-  @Get('defender')
+  @UseGuards(TokenGuard)
+  @Get('cases/limitedAccess/defender')
   @ApiOkResponse({
     type: User,
-    description: 'Gets a case defender by national id',
+    description: 'Gets a defender by national id',
   })
   findDefenderByNationalId(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
     @Query('nationalId') nationalId: string,
-  ): User {
-    this.logger.debug(`Getting a defender by national id from case ${caseId}`)
+  ): Promise<TUser> {
+    this.logger.debug(`Getting a defender by national id`)
 
-    return this.limitedAccessCaseService.findDefenderNationalId(
-      theCase,
-      nationalId,
-    )
+    return this.limitedAccessCaseService.findDefenderByNationalId(nationalId)
   }
 
   @UseGuards(
@@ -186,7 +181,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('request')
+  @Get('case/:caseId/limitedAccess/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -215,7 +210,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('courtRecord')
+  @Get('case/:caseId/limitedAccess/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
@@ -245,7 +240,7 @@ export class LimitedAccessCaseController {
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
-  @Get('ruling')
+  @Get('case/:caseId/limitedAccess/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
