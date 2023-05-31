@@ -2,7 +2,7 @@ import { UserContext } from '../../context'
 import useUser from '../../hooks/useUser'
 import { ReactNode } from 'react'
 
-export interface UserProps {
+interface UserProps {
   children: ReactNode
 }
 

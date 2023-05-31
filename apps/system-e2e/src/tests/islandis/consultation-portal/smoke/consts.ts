@@ -1,3 +1,6 @@
+export const URL = '/samradsgatt'
+export const URL_LOCALE = '/samradsgatt?locale=is&hide_onboarding_modal=true'
+
 const NAV_LINKS = [
   {
     label: 'Öll mál',
@@ -19,7 +22,7 @@ export const NOT_LOGGED_IN_NAV = [
 ]
 export const LOGGED_IN_NAV = [
   ...NAV_LINKS,
-  { label: 'Gervimaður Noregur', href: '/' },
+  { label: 'Gervimaður Afríka', href: '/' },
 ]
 
 export const HERO = {
@@ -212,4 +215,16 @@ export const LOGIN_BUTTONS = {
     location: '/umsagnir',
     label: 'Skrá mig inn',
   },
+}
+
+export const LOGIN = {
+  buttons: {
+    loggedOut: 'Innskráning',
+    loggedIn: 'Gervimaður Afríka',
+  },
+  locators: {
+    phoneUserIdentifier: '#phoneUserIdentifier',
+    submitPhoneUser: '#submitPhoneNumber',
+  },
+  phoneNumber: '0103019',
 }
