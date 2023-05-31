@@ -18,6 +18,7 @@ import {
   Breadcrumbs,
   Button,
   Inline,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -27,6 +28,61 @@ import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '../queries'
 
 type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
+
+interface InformationPanelProps {
+  vacancy: Vacancy
+  namespace: Record<string, string>
+}
+
+const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
+  const { activeLocale } = useI18n()
+  const n = useNamespace(namespace)
+  return (
+    <Stack space={3}>
+      <InstitutionPanel
+        img={vacancy.logoUrl}
+        institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
+        institution={vacancy.institutionName}
+        locale={activeLocale}
+        imgContainerDisplay={['block', 'block', 'none', 'block']}
+      />
+      <Box background="dark100" borderRadius="large" padding={[3, 3, 4]}>
+        <Stack space={3}>
+          <Text variant="h3">
+            {n('informationAboutJob', 'Upplýsingar um starf')}
+          </Text>
+          <Box borderTopWidth="standard" borderColor="dark200" />
+          <Box>
+            <Text fontWeight="semiBold">{n('fieldOfWork', 'Starf')}</Text>
+            <Text variant="small">{vacancy.title}</Text>
+          </Box>
+          <Box>
+            <Text fontWeight="semiBold">{n('location', 'Staðsetning')}</Text>
+            <Text variant="small">{vacancy.locationTitle}</Text>
+          </Box>
+          <Box>
+            <Text fontWeight="semiBold">
+              {n('jobPercentage', 'Starfshlutfall')}
+            </Text>
+            <Text variant="small">{vacancy.jobPercentage}</Text>
+          </Box>
+          <Box>
+            <Text fontWeight="semiBold">
+              {n('applicationDeadlineFrom', 'Starf skráð')}
+            </Text>
+            <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
+          </Box>
+          <Box>
+            <Text fontWeight="semiBold">
+              {n('applicationDeadlineTo', 'Umsóknarfrestur')}
+            </Text>
+            <Text variant="small">{vacancy.applicationDeadlineTo}</Text>
+          </Box>
+        </Stack>
+      </Box>
+    </Stack>
+  )
+}
 
 interface IcelandicGovernmentInstitutionVacancyDetailsProps {
   vacancy: Vacancy
@@ -38,7 +94,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
   namespace,
 }) => {
   const { linkResolver } = useLinkResolver()
-  const { activeLocale } = useI18n()
+
   const n = useNamespace(namespace)
 
   return (
@@ -54,49 +110,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
             <Icon size="small" icon="arrowBack" />
             {n('goBack', 'Til baka')}
           </LinkV2>
-          <InstitutionPanel
-            img={vacancy.logoUrl}
-            institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
-            institution={vacancy.institutionName}
-            locale={activeLocale}
-            imgContainerDisplay={['block', 'block', 'none', 'block']}
-          />
-          <Box background="dark100" borderRadius="large" padding={[3, 3, 4]}>
-            <Stack space={3}>
-              <Text variant="h3">
-                {n('informationAboutJob', 'Upplýsingar um starf')}
-              </Text>
-              <Box borderTopWidth="standard" borderColor="dark200" />
-              <Box>
-                <Text fontWeight="semiBold">{n('fieldOfWork', 'Starf')}</Text>
-                <Text variant="small">{vacancy.title}</Text>
-              </Box>
-              <Box>
-                <Text fontWeight="semiBold">
-                  {n('location', 'Staðsetning')}
-                </Text>
-                <Text variant="small">{vacancy.locationTitle}</Text>
-              </Box>
-              <Box>
-                <Text fontWeight="semiBold">
-                  {n('jobPercentage', 'Starfshlutfall')}
-                </Text>
-                <Text variant="small">{vacancy.jobPercentage}</Text>
-              </Box>
-              <Box>
-                <Text fontWeight="semiBold">
-                  {n('applicationDeadlineFrom', 'Starf skráð')}
-                </Text>
-                <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
-              </Box>
-              <Box>
-                <Text fontWeight="semiBold">
-                  {n('applicationDeadlineTo', 'Umsóknarfrestur')}
-                </Text>
-                <Text variant="small">{vacancy.applicationDeadlineTo}</Text>
-              </Box>
-            </Stack>
-          </Box>
+          <InformationPanel namespace={namespace} vacancy={vacancy} />
         </Stack>
       }
     >
@@ -115,6 +129,17 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
             },
           ]}
         />
+        <Hidden above="sm">
+          <LinkV2
+            href={linkResolver('vacancies').href}
+            underlineVisibility="always"
+            underline="normal"
+            color="blue400"
+          >
+            <Icon size="small" icon="arrowBack" />
+            {n('goBack', 'Til baka')}
+          </LinkV2>
+        </Hidden>
         <Text variant="h1">{vacancy.title}</Text>
         <Text as="div">{ReactHtmlParser(vacancy.intro)}</Text>
 
@@ -212,6 +237,12 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
             </LinkV2>
           </Inline>
         )}
+
+        <Hidden above="sm">
+          <Box marginTop={2}>
+            <InformationPanel namespace={namespace} vacancy={vacancy} />
+          </Box>
+        </Hidden>
       </Stack>
     </SidebarLayout>
   )
