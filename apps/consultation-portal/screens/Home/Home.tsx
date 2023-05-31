@@ -8,33 +8,35 @@ import {
   Stack,
   LoadingDots,
 } from '@island.is/island-ui/core'
-import { HeroBanner } from '../../components'
-import Card from '../../components/Card/Card'
-import Layout from '../../components/Layout/Layout'
-import SearchAndFilter from '../../components/SearchAndFilter/SearchAndFilter'
+import {
+  HeroBanner,
+  MobileFilter,
+  Filter,
+  SearchAndFilter,
+} from './components/'
+import localization from './Home.json'
 import {
   ArrOfStatistics,
   ArrOfTypes,
   Case,
   CaseFilter,
 } from '../../types/interfaces'
-import EmptyState from '../../components/EmptyState/EmptyState'
-import Filter from '../../components/Filter/Filter'
+import { Card, EmptyState, Pagination, Layout } from '../../components'
 import { useFrontPageFilters, useIsMobile } from '../../hooks'
-import Pagination from '../../components/Pagination/Pagination'
-import MobileFilter from '../../components/Filter/MobileFilter'
 import {
   CARDS_PER_PAGE,
   FILTERS_FRONT_PAGE_KEY,
 } from '../../utils/consts/consts'
+import { MapCaseStatuses } from '../../types/enums'
 
 interface HomeProps {
   types: ArrOfTypes
   statistics: ArrOfStatistics
 }
 
-export const Home = ({ types, statistics }: HomeProps) => {
+export const Index = ({ types, statistics }: HomeProps) => {
   const { isMobile } = useIsMobile()
+  const loc = localization['home']
 
   const {
     cases,
@@ -78,7 +80,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
               const card = {
                 id: item.id,
                 title: item.name,
-                tag: item.statusName,
+                tag: MapCaseStatuses[item.statusName],
                 published: item.created,
                 processEnds: item.processEnds,
                 processBegins: item.processBegins,
@@ -88,7 +90,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
                 <Card key={index} card={card} frontPage showPublished>
                   <Stack space={2}>
                     <Text variant="eyebrow" color="purple400">
-                      {`Umsagnir: ${item.adviceCount}`}
+                      {`${loc.card.eyebrowText}: ${item.adviceCount}`}
                     </Text>
                     <Box
                       style={{
@@ -118,7 +120,7 @@ export const Home = ({ types, statistics }: HomeProps) => {
   }
 
   return (
-    <Layout isFrontPage seo={{ title: 'Öll mál' }}>
+    <Layout isFrontPage seo={{ title: loc.seo.title }}>
       <HeroBanner statistics={statistics} />
       {isMobile ? (
         <MobileFilter
@@ -160,4 +162,4 @@ export const Home = ({ types, statistics }: HomeProps) => {
   )
 }
 
-export default Home
+export default Index

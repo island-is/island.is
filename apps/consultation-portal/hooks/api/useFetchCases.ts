@@ -1,7 +1,19 @@
 import { useQuery } from '@apollo/client'
 import initApollo from '../../graphql/client'
 import { HOME_GET_CASES } from '../../graphql/queries.graphql'
-import { FetchCasesInput } from '../../types/interfaces'
+
+interface FetchCasesInput {
+  caseStatuses: Array<number>
+  caseTypes: Array<number>
+  orderBy: string
+  searchQuery: string
+  policyAreas: Array<number>
+  institutions: Array<number>
+  dateFrom: Date
+  dateTo: Date
+  pageSize: number
+  pageNumber: number
+}
 
 interface Props {
   input: FetchCasesInput

@@ -126,7 +126,6 @@ export interface UpdateCase
     | 'registrarId'
     | 'caseModifiedExplanation'
     | 'caseResentExplanation'
-    | 'subpoenaType'
     | 'crimeScenes'
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
@@ -666,13 +665,23 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages = [
       {
         type: MessageType.SEND_MODIFIED_NOTIFICATION,
         user,
         caseId: theCase.id,
       },
-    ])
+    ]
+
+    if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
+      messages.push({
+        type: MessageType.DELIVER_CASE_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForDeletedCaseToQueue(
@@ -765,6 +774,11 @@ export class CaseService {
           caseId: theCase.id,
           caseFileId: caseFile.id,
         })) ?? []
+    messages.push({
+      type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+    })
 
     return this.messageService.sendMessagesToQueue(messages)
   }

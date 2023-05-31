@@ -213,6 +213,14 @@ export class MessageHandlerService implements OnModuleDestroy {
           { type: NotificationType.APPEAL_STATEMENT },
         )
         break
+      case MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.APPEAL_COMPLETED },
+        )
+        break
       default:
         this.logger.error('Unknown message type', { msg: message })
     }

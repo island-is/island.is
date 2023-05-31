@@ -10,6 +10,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import {
   getCourtRecordPdfAsString,
+  getCustodyNoticePdfAsString,
   getRequestPdfAsString,
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
@@ -20,6 +21,7 @@ import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../formatters/requestPdf')
 jest.mock('../../../../formatters/courtRecordPdf')
+jest.mock('../../../../formatters/custodyNoticePdf')
 
 interface Then {
   result: DeliverResponse
@@ -50,6 +52,8 @@ describe('InternalCaseController - Deliver case to police', () => {
     mockGetRequest.mockRejectedValue(new Error('Some error'))
     const mockGetCourtRecord = getCourtRecordPdfAsString as jest.Mock
     mockGetCourtRecord.mockRejectedValue(new Error('Some error'))
+    const mockGetCustodyNotice = getCustodyNoticePdfAsString as jest.Mock
+    mockGetCustodyNotice.mockRejectedValue(new Error('Some error'))
     const mockGetObject = awsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
@@ -88,6 +92,7 @@ describe('InternalCaseController - Deliver case to police', () => {
     const requestPdf = 'test request'
     const courtRecordPdf = 'test court record'
     const rulingPdf = 'test ruling'
+    const custodyNoticePdf = 'test custody notice'
 
     let then: Then
 
@@ -96,6 +101,8 @@ describe('InternalCaseController - Deliver case to police', () => {
       mockGetRequest.mockResolvedValueOnce(requestPdf)
       const mockGetCourtRecord = getCourtRecordPdfAsString as jest.Mock
       mockGetCourtRecord.mockResolvedValueOnce(courtRecordPdf)
+      const mockGetCustodyNotice = getCustodyNoticePdfAsString as jest.Mock
+      mockGetCustodyNotice.mockResolvedValueOnce(custodyNoticePdf)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(rulingPdf)
       const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
@@ -130,6 +137,7 @@ describe('InternalCaseController - Deliver case to police', () => {
         requestPdf,
         courtRecordPdf,
         rulingPdf,
+        custodyNoticePdf,
       )
     })
 

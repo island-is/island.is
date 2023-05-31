@@ -22,6 +22,7 @@ import { CreateClientResponse } from './dto/create-client.response'
 import { CreateClientInput } from './dto/create-client.input'
 import { PatchClientInput } from './dto/patch-client.input'
 import { PublishClientInput } from './dto/publish-client.input'
+import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 import { RotateSecretInput } from './dto/rotate-secret.input'
 import { ClientSecret } from './models/client-secret.model'
 
@@ -88,6 +89,15 @@ export class ClientsResolver {
     @Args('input', { type: () => RotateSecretInput }) input: RotateSecretInput,
   ): Promise<ClientSecret> {
     return this.clientsService.rotateSecret(user, input)
+  }
+
+  @Mutation(() => Boolean, { name: 'revokeAuthAdminClientSecrets' })
+  revokeSecret(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => RevokeSecretsInput })
+    input: RevokeSecretsInput,
+  ): Promise<boolean> {
+    return this.clientsService.revokeSecret(user, input)
   }
 
   @ResolveField('defaultEnvironment', () => ClientEnvironment)

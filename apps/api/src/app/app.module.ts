@@ -57,6 +57,7 @@ import { ApiDomainsPaymentModule } from '@island.is/api/domains/payment'
 import { PaymentScheduleModule } from '@island.is/api/domains/payment-schedule'
 import { RegulationsModule } from '@island.is/api/domains/regulations'
 import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin'
+import { RightsPortalModule } from '@island.is/api/domains/rights-portal'
 import { SessionsModule } from '@island.is/api/domains/sessions'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
@@ -93,6 +94,7 @@ import { PassportsClientConfig } from '@island.is/clients/passports'
 import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule'
 import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
+import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
@@ -259,6 +261,7 @@ const autoSchemaFile = environment.production
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
+    RightsPortalModule,
     AssetsModule,
     PassportModule,
     AirDiscountSchemeModule,
@@ -295,6 +298,7 @@ const autoSchemaFile = environment.production
         GenericDrivingLicenseConfig,
         GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
+        RightsPortalClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,

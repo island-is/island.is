@@ -1,5 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { messages } from '@island.is/service-portal/documents/messages'
@@ -32,7 +32,7 @@ test.describe('MS - Pósthólf overview', () => {
 
     await test.step('Filter by searchbox', async () => {
       // Arrange
-      await page.goto('/minarsidur/postholf')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
       // Act
       const inputField = page.getByRole('textbox', {
@@ -40,7 +40,7 @@ test.describe('MS - Pósthólf overview', () => {
       })
       await inputField.click()
       await inputField.type('greiðslukvittun', { delay: 100 })
-      await page.keyboard.press('Enter')
+      await inputField.press('Enter')
 
       const btnClearFilter = page.getByRole('button', {
         name: label(messages.clearFilters),
@@ -53,7 +53,7 @@ test.describe('MS - Pósthólf overview', () => {
 
     await test.step('Filter by filter-button', async () => {
       // Arrange
-      await page.goto('/minarsidur/postholf')
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
       // Act
       await page

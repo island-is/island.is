@@ -2,6 +2,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  CaseAppealState,
   CaseState,
   completedCaseStates,
   Gender,
@@ -1122,16 +1123,19 @@ const useSections = (
        */
       (route) => route === router.pathname.slice(0, -5),
     )
-
     return [
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
-        isActive: user?.institution?.type !== InstitutionType.HIGH_COURT,
+        isActive:
+          user?.institution?.type !== InstitutionType.HIGH_COURT &&
+          workingCase.appealState === CaseAppealState.RECEIVED,
         children: [],
       },
       {
         name: formatMessage(sections.courtOfAppealSection.result),
-        isActive: user?.institution?.type === InstitutionType.HIGH_COURT,
+        isActive:
+          user?.institution?.type === InstitutionType.HIGH_COURT &&
+          routeIndex !== 3,
         children: [
           {
             name: formatMessage(sections.courtOfAppealSection.overview),
@@ -1161,7 +1165,9 @@ const useSections = (
       },
       {
         name: formatMessage(sections.caseResults.result),
-        isActive: false,
+        isActive:
+          routeIndex === 3 ||
+          workingCase.appealState === CaseAppealState.COMPLETED,
         children: [],
       },
     ]
@@ -1208,10 +1214,13 @@ const useSections = (
         isActive:
           completedCaseStates.includes(workingCase.state) &&
           !workingCase.prosecutorPostponedAppealDate &&
-          !workingCase.accusedPostponedAppealDate,
+          !workingCase.accusedPostponedAppealDate &&
+          workingCase.appealState !== CaseAppealState.COMPLETED,
         children: [],
       },
       ...(isRestrictionCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
+        : isInvestigationCase(workingCase.type) && workingCase.appealState
         ? getCourtOfAppealSections(workingCase, user)
         : []),
       ...(workingCase.parentCase
