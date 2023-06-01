@@ -6,13 +6,12 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
+import { useLocale } from '@island.is/localization'
+import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils/utils'
 import { m } from '../../lib/messages'
-import DropdownExport, { getCSV } from './ExportPetition'
+import ExportList, { getCSV } from '../ExportList'
 
-const PetitionsTable = (data: any) => {
-  useNamespaces('sp.petitions')
+const ListSignersTable = (data: any) => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -30,15 +29,12 @@ const PetitionsTable = (data: any) => {
   }, [data])
 
   return (
-    <Box>
-      <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
+    <Box marginTop={12}>
+      <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
-        {data.canEdit && (
-          <DropdownExport
-            petitionId={data.listId}
-            onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
-          />
-        )}
+        <ExportList
+          onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
+        />
       </Box>
       <Stack space={3}>
         <T.Table>
@@ -94,4 +90,4 @@ const PetitionsTable = (data: any) => {
   )
 }
 
-export default PetitionsTable
+export default ListSignersTable
