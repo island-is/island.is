@@ -26,7 +26,7 @@ const CaseEmailActionBox = ({ button, input }: Props) => {
   return (
     <Box>
       <div>
-        <Stack space={1}>
+        <Stack space={2}>
           {input && (
             <Input
               name={input.name}
