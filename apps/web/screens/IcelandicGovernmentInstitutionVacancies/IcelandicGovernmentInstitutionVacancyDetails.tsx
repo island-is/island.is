@@ -122,11 +122,6 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
               title: n('breadcrumbTitle', 'Starfatorg'),
               href: linkResolver('vacancies').href,
             },
-            {
-              title: vacancy.institutionName,
-              href: linkResolver('vacancydetails', [vacancy.id.toString()])
-                .href,
-            },
           ]}
         />
         <Hidden above="sm">

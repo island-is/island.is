@@ -5,3 +5,7 @@ export const filterTagRow = style({
   marginBottom: '18px',
   marginTop: '24px',
 })
+
+export const filterInput = style({
+  width: '480px',
+})

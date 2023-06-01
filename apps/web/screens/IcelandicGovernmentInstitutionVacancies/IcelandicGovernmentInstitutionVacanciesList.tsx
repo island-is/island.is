@@ -273,32 +273,27 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
     <Box paddingTop={[0, 0, 8]}>
       <GridContainer>
         <Box>
-          <Inline space={6}>
-            <Box>
-              <Breadcrumbs
-                items={[
-                  { title: 'Ísland.is', href: '/' },
-                  {
-                    title: n('title', n('breadcrumbTitle', 'Starfatorg')),
-                    isCurrentPage: true,
-                    href: linkResolver('vacancies').href,
-                  },
-                ]}
-              />
+          <GridRow marginBottom={[5, 5, 5, 0]}>
+            <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
+              <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
               <Text marginTop={2} variant="h1">
                 {n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')}
               </Text>
-            </Box>
-            <Hidden below="lg">
-              <img
-                src={n(
-                  'starfatorgIcon',
-                  'https://images.ctfassets.net/8k0h54kbe6bj/1SY4juL47FNJT7kBNIsdqv/5e51b2319665a832549e6d0813dcd984/LE_-_Jobs_-_S3__1_.svg',
-                )}
-                alt=""
-              />
-            </Hidden>
-          </Inline>
+            </GridColumn>
+            <GridColumn span="1/2">
+              <Hidden below="lg">
+                <Box display="flex" justifyContent="center" width="full">
+                  <img
+                    src={n(
+                      'starfatorgIcon',
+                      'https://images.ctfassets.net/8k0h54kbe6bj/1SY4juL47FNJT7kBNIsdqv/5e51b2319665a832549e6d0813dcd984/LE_-_Jobs_-_S3__1_.svg',
+                    )}
+                    alt=""
+                  />
+                </Box>
+              </Hidden>
+            </GridColumn>
+          </GridRow>
 
           <Filter
             resultCount={filteredVacancies?.length ?? 0}
@@ -311,18 +306,20 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             labelTitle={n('filterMenuTitle', 'Sía störf')}
             onFilterClear={clearSearch}
             filterInput={
-              <FilterInput
-                placeholder={n(
-                  'filterSearchPlaceholder',
-                  'Leita í Starfatorgi',
-                )}
-                name="filterInput"
-                value={searchTerm}
-                onChange={(value) => {
-                  setSearchTerm(value)
-                  searchTermHasBeenInitialized.current = true
-                }}
-              />
+              <Box className={styles.filterInput}>
+                <FilterInput
+                  placeholder={n(
+                    'filterSearchPlaceholder',
+                    'Leita í Starfatorgi',
+                  )}
+                  name="filterInput"
+                  value={searchTerm}
+                  onChange={(value) => {
+                    setSearchTerm(value)
+                    searchTermHasBeenInitialized.current = true
+                  }}
+                />
+              </Box>
             }
           >
             <FilterMultiChoice
@@ -432,14 +429,18 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                         </Text>
                         <Inline space={1}>
                           {vacancy.institutionName && (
-                            <Tag>{vacancy.institutionName}</Tag>
+                            <Tag outlined={true} disabled={true}>
+                              {vacancy.institutionName}
+                            </Tag>
                           )}
                           {vacancy.locationTitle && (
-                            <Tag>{vacancy.locationTitle}</Tag>
+                            <Tag outlined={true} disabled>
+                              {vacancy.locationTitle}
+                            </Tag>
                           )}
                         </Inline>
                         {vacancy.applicationDeadlineTo && (
-                          <Tag variant="purple">
+                          <Tag outlined={true} disabled variant="purple">
                             {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
                             {vacancy.applicationDeadlineTo}
                           </Tag>
