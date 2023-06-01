@@ -22,6 +22,11 @@
     "description": "Allir geta sent inn umsögn og verið áskrifendur að málum í Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent eftirtöldum:",
     "noList": "Enginn listi skráður."
   },
+  "relatedCases": {
+    "title": "Tenging við önnur mál",
+    "description": "Mál sem eru tengd þessu máli, t.d. mál hefur verið í gáttinni á fyrra stigi eða málin eru skyld.",
+    "noList": "Engin tenging við önnur mál"
+  },
   "coordinator": {
     "title": "Umsjónaraðili",
     "noCoordinator": "Engin skráður umsjónaraðili."
@@ -87,7 +92,8 @@
     "notSubbedCardSkeleton": {
       "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
       "button": "Skrá í áskrift"
-    }
+    },
+    "buttonLabel": "Skrá áskrift"
   },
   "caseEmailActionBox": {
     "buttonLabel": "Breyta áskrift"
@@ -140,10 +146,11 @@
     "submitAdviceButtonLabel": "Staðfesta umsögn",
     "allowedFilesText": "Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er 10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.",
     "loginActionBox": {
-      "heading": "Skrifa umsögn",
-      "text": "Þú þarft að vera skráð(ur) inn til að geta skrifað umsögn.",
+      "heading": "Senda umsögn",
+      "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
       "ctaLabel": "Skrá mig inn"
-    }
+    },
+    "privateLabel": "Viltu að þessi umsögn verði falin almenningi?"
   },
   "agencyText": {
     "textBefore": "Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð þaðan,",
@@ -152,12 +159,12 @@
   },
   "caseStatusBox": {
     "Til umsagnar": {
-      "title": "Viltu skrifa umsögn?",
+      "title": "Viltu senda inn umsögn?",
       "text": "Málið er opið til umsagnar og öllum frjálst að taka þátt.",
       "textCont": "",
 
       "buttons": {
-        "sendAdvice": "Skrifa umsögn"
+        "sendAdvice": "Senda umsögn"
       }
     },
     "Niðurstöður í vinnslu": {
@@ -170,5 +177,12 @@
       "text": "Umsagnarfrestur er liðinn.",
       "textCont": "Niðurstöður hafa verið birtar og samráði lokið."
     }
+  },
+  "adviceCard": {
+    "hiddenContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína."
+  },
+  "caseDocuments": {
+    "linkTitle": "Hlekkur",
+    "documentTitle": "Skjal"
   }
 }

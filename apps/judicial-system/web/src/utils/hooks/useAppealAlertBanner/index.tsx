@@ -1,9 +1,9 @@
 import { useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
+import router from 'next/router'
 
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { Button, Text } from '@island.is/island-ui/core'
 import {
@@ -13,6 +13,7 @@ import {
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  CaseAppealDecision,
   CaseAppealRulingDecision,
   isCourtRole,
   isProsecutionRole,
@@ -22,9 +23,9 @@ import {
   UserRole,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 
 import { strings } from './strings'
-import router from 'next/router'
 
 const renderLinkButton = (text: string, href: string) => {
   return (
@@ -45,25 +46,25 @@ const getAppealDecision = (
   appealRulingDecision?: CaseAppealRulingDecision,
 ) => {
   if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
-    return formatMessage(strings.decisionAccept)
+    return formatMessage(appealRuling.decisionAccept)
   }
   if (appealRulingDecision === CaseAppealRulingDecision.REPEAL) {
-    return formatMessage(strings.decisionRepeal)
+    return formatMessage(appealRuling.decisionRepeal)
   }
   if (appealRulingDecision === CaseAppealRulingDecision.CHANGED) {
-    return formatMessage(strings.decisionChanged)
+    return formatMessage(appealRuling.decisionChanged)
   }
   if (
     appealRulingDecision ===
     CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
   ) {
-    return formatMessage(strings.decisionDismissedFromCourtOfAppeal)
+    return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
   }
   if (appealRulingDecision === CaseAppealRulingDecision.DISMISSED_FROM_COURT) {
-    return formatMessage(strings.decisionDismissedFromCourt)
+    return formatMessage(appealRuling.decisionDismissedFromCourt)
   }
   if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
-    return formatMessage(strings.decisionUnlabeling)
+    return formatMessage(appealRuling.decisionRemand)
   }
   return undefined
 }
@@ -169,13 +170,16 @@ const useAppealAlertBanner = (
   // When case has been appealed by prosecuor or defender
   else if (hasBeenAppealed) {
     title = formatMessage(strings.statementTitle)
-    description = formatMessage(strings.statementDescription, {
-      actor:
-        appealedByRole === UserRole.PROSECUTOR
-          ? formatMessage(core.prosecutor)
-          : formatMessage(core.defender),
-      appealDate: formatDate(appealedDate, 'PPPp'),
-    })
+    description =
+      workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+        ? formatMessage(strings.appealedInCourtStatementDescription, {
+            appealedByProsecutor: appealedByRole === UserRole.PROSECUTOR,
+          })
+        : formatMessage(strings.statementDescription, {
+            appealedByProsecutor: appealedByRole === UserRole.PROSECUTOR,
+            appealDate: formatDate(appealedDate, 'PPPp'),
+          })
     if (isProsecutionRoleUser || isDefenderRoleUser) {
       child = hasCurrentUserSentStatement
         ? (child = (

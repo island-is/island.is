@@ -17,7 +17,7 @@ import { IntroHeader } from '@island.is/portals/core'
 import type { AuthTenants } from './Tenants.loader'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../lib/paths'
-import { useLooseSearch } from '../../shared/hooks/useLooseSearch'
+import { useLooseSearch } from '../../hooks/useLooseSearch'
 
 const Tenants = () => {
   const originalTenantsList = useLoaderData() as AuthTenants

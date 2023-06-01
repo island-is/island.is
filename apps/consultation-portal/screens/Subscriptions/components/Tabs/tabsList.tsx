@@ -1,5 +1,5 @@
 import { SortTitle, SubscriptionArray } from '../../../../types/interfaces'
-import { TabContent } from '../../../../components/Tab'
+import { TabContent } from './TabContent'
 import { Area, SortOptions } from '../../../../types/enums'
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
   isMySubscriptions?: boolean
 }
 
-export const TabsList = ({
+const TabsList = ({
   subscriptionArray,
   setSubscriptionArray,
   searchValue,
