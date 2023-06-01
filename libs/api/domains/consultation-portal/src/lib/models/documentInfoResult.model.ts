@@ -6,6 +6,12 @@ export class DocumentInfoResult {
   id?: string
 
   @Field(() => String, { nullable: true })
+  description?: string | null
+
+  @Field(() => String, { nullable: true })
+  link?: string | null
+
+  @Field(() => String, { nullable: true })
   fileName?: string | null
 
   @Field(() => String, { nullable: true })
