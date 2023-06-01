@@ -36,7 +36,7 @@ export const WorkMachinesApiProvider: Provider<MachinesApi> = {
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
           'X-Road-Client': xroadConfig.xRoadClient,
-          Accept: 'application/vnd.ver.machines.hateaos.v1+json',
+          Accept: 'application/vnd.ver.hateoas.v1+json',
         },
       }),
     ),

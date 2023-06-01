@@ -50,7 +50,12 @@
           "200": {
             "description": "Success",
             "content": {
-              "application/vnd.ver.machines.hateaos.v1+json": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachinesFriendlyHateaosDto"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": {
                   "$ref": "#/components/schemas/MachinesFriendlyHateaosDto"
                 }
@@ -65,7 +70,12 @@
           "400": {
             "description": "Bad Request",
             "content": {
-              "application/vnd.ver.machines.hateaos.v1+json": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidationProblemDetails"
                 }
@@ -80,7 +90,10 @@
           "401": {
             "description": "Unauthorized",
             "content": {
-              "application/vnd.ver.machines.hateaos.v1+json": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -91,7 +104,10 @@
           "403": {
             "description": "Forbidden",
             "content": {
-              "application/vnd.ver.machines.hateaos.v1+json": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -102,7 +118,10 @@
           "404": {
             "description": "Not Found",
             "content": {
-              "application/vnd.ver.machines.hateaos.v1+json": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -113,7 +132,10 @@
           "422": {
             "description": "Client Error",
             "content": {
-              "application/vnd.ver.machines.hateaos.v1+json": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -124,7 +146,10 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "application/vnd.ver.machines.hateaos.v1+json": {
+              "application/vnd.ver.machines.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -156,7 +181,10 @@
           "200": {
             "description": "Success",
             "content": {
-              "application/vnd.ver.machine.hateos.v1+json": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/MachineHateoasDto" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/MachineHateoasDto" }
               },
               "application/json": {
@@ -167,7 +195,12 @@
           "400": {
             "description": "Bad Request",
             "content": {
-              "application/vnd.ver.machine.hateos.v1+json": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": {
                   "$ref": "#/components/schemas/ValidationProblemDetails"
                 }
@@ -182,7 +215,10 @@
           "401": {
             "description": "Unauthorized",
             "content": {
-              "application/vnd.ver.machine.hateos.v1+json": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -193,7 +229,10 @@
           "403": {
             "description": "Forbidden",
             "content": {
-              "application/vnd.ver.machine.hateos.v1+json": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -204,7 +243,10 @@
           "404": {
             "description": "Not Found",
             "content": {
-              "application/vnd.ver.machine.hateos.v1+json": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -215,7 +257,10 @@
           "422": {
             "description": "Client Error",
             "content": {
-              "application/vnd.ver.machine.hateos.v1+json": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -226,7 +271,10 @@
           "500": {
             "description": "Server Error",
             "content": {
-              "application/vnd.ver.machine.hateos.v1+json": {
+              "application/vnd.ver.machine.hateoas.v1+json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/vnd.ver.hateoas.v1+json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
@@ -268,6 +316,7 @@
       "MachineFriendlyDto": {
         "type": "object",
         "properties": {
+          "id": { "type": "string", "format": "uuid" },
           "registrationNumber": { "type": "string", "nullable": true },
           "type": { "type": "string", "nullable": true },
           "owner": { "type": "string", "nullable": true },
@@ -280,6 +329,7 @@
       "MachineHateoasDto": {
         "type": "object",
         "properties": {
+          "id": { "type": "string", "format": "uuid" },
           "registrationNumber": { "type": "string", "nullable": true },
           "type": { "type": "string", "nullable": true },
           "status": { "type": "string", "nullable": true },
