@@ -8,14 +8,15 @@ import {
   Box,
   GridRow,
   Breadcrumbs,
-  Input,
-  Select,
   Stack,
-  Option,
-  Button,
   Pagination,
   LinkV2,
   Hidden,
+  Filter,
+  FilterMultiChoice,
+  FilterInput,
+  Inline,
+  Tag,
 } from '@island.is/island-ui/core'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -29,6 +30,10 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
 import { GET_NAMESPACE_QUERY } from '../queries'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
+import { FilterTag } from '@island.is/web/components'
+import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
 
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
@@ -73,28 +78,29 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   vacancies,
   namespace,
 }) => {
-  const { query, replace } = useRouter()
+  const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const pathname = linkResolver('vacancies').href
 
   const [selectedPage, setSelectedPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedOptions, setSelectedOptions] = useState<{
-    institution: Option | null
-    fieldOfWork: Option | null
-    location: Option | null
-  }>({
-    institution: null,
-    fieldOfWork: null,
-    location: null,
-  })
-  const searchTermHasBeenInitialized = useRef(false)
 
-  const selectedFieldOfWorkOption = selectedOptions.fieldOfWork
-  const selectedLocationOption = selectedOptions.location
-  const selectedInstitutionOption = selectedOptions.institution
+  const [parameters, setParameters] = useState<{
+    fieldOfWork: string[]
+    location: string[]
+    institution: string[]
+  }>({
+    fieldOfWork: [],
+    location: [],
+    institution: [],
+  })
+
+  const searchTermHasBeenInitialized = useRef(false)
 
   const filteredVacancies = vacancies.filter((vacancy) => {
     const searchTermMatches = vacancy.title
@@ -103,20 +109,20 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
 
     let shouldBeShown = searchTermMatches
 
-    if (selectedFieldOfWorkOption) {
+    if (parameters.fieldOfWork.length > 0) {
       shouldBeShown =
-        shouldBeShown && selectedFieldOfWorkOption.value === vacancy.fieldOfWork
+        shouldBeShown && parameters.fieldOfWork.includes(vacancy.fieldOfWork)
     }
 
-    if (selectedLocationOption) {
+    if (parameters.location.length > 0) {
       shouldBeShown =
-        shouldBeShown && selectedLocationOption.value === vacancy.locationTitle
+        shouldBeShown && parameters.location.includes(vacancy.locationTitle)
     }
 
-    if (selectedInstitutionOption) {
+    if (parameters.institution.length > 0) {
       shouldBeShown =
         shouldBeShown &&
-        selectedInstitutionOption.value === vacancy.institutionName
+        parameters.institution.includes(vacancy.institutionName)
     }
 
     return shouldBeShown
@@ -138,70 +144,70 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   )
 
   const clearSearch = () => {
-    setSearchTerm('')
-    setSelectedOptions({
-      fieldOfWork: null,
-      institution: null,
-      location: null,
+    setParameters({
+      fieldOfWork: [],
+      location: [],
+      institution: [],
     })
+    setSearchTerm('')
   }
 
   const totalPages = Math.ceil(filteredVacancies.length / ITEMS_PER_PAGE)
 
+  // Initial page load
   useEffect(() => {
-    let queriedPage = Number(query.page)
-    if (!isNaN(queriedPage) && queriedPage > 0) {
-      if (queriedPage > totalPages) {
-        queriedPage = totalPages
-      }
-      setSelectedPage(queriedPage)
-    }
-  }, [query.page, totalPages])
+    if (!isReady) return
 
-  useEffect(() => {
+    // Page number initialization
+    if (query.page) {
+      let queriedPage = Number(query.page)
+      if (!isNaN(queriedPage) && queriedPage > 0) {
+        if (queriedPage > totalPages) {
+          queriedPage = totalPages
+        }
+        setSelectedPage(queriedPage)
+      }
+    }
+
+    // Filter initialization
+    const updatedParameters = {}
+
     if (query.location) {
-      const location = locationOptions.find((o) => o.value === query.location)
-      if (location) {
-        setSelectedOptions((options) => ({ ...options, location }))
-      }
+      updatedParameters['location'] =
+        typeof query.location === 'string' ? [query.location] : query.location
     }
-  }, [locationOptions, query?.location])
 
-  useEffect(() => {
     if (query.fieldOfWork) {
-      const fieldOfWork = fieldOfWorkOptions.find(
-        (o) => o.value === query.fieldOfWork,
-      )
-      if (fieldOfWork) {
-        setSelectedOptions((options) => ({
-          ...options,
-          fieldOfWork,
-        }))
-      }
+      updatedParameters['fieldOfWork'] =
+        typeof query.fieldOfWork === 'string'
+          ? [query.fieldOfWork]
+          : query.fieldOfWork
     }
-  }, [fieldOfWorkOptions, query?.fieldOfWork])
 
-  useEffect(() => {
     if (query.institution) {
-      const institution = institutionOptions.find(
-        (o) => o.value === query.institution,
-      )
-      if (institution) {
-        setSelectedOptions((options) => ({
-          ...options,
-          institution,
-        }))
-      }
+      updatedParameters['institution'] =
+        typeof query.institution === 'string'
+          ? [query.institution]
+          : query.institution
     }
-  }, [institutionOptions, query.institution])
 
-  useEffect(() => {
-    if (query?.q && !searchTerm && !searchTermHasBeenInitialized.current) {
+    if (Object.keys(updatedParameters).length > 0) {
+      setParameters((params) => ({
+        ...params,
+        ...updatedParameters,
+      }))
+    }
+
+    // Search term initialization
+    if (query.q && !searchTerm && !searchTermHasBeenInitialized.current) {
       searchTermHasBeenInitialized.current = true
       setSearchTerm(query.q as string)
     }
-  }, [query?.q, searchTerm])
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady])
+
+  // Append search params to url when they change
   useEffect(() => {
     const updatedQuery = { ...query }
 
@@ -211,22 +217,22 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
       updatedQuery.q = searchTerm
     }
 
-    if (!selectedFieldOfWorkOption?.value) {
+    if (!parameters.fieldOfWork) {
       if ('fieldOfWork' in updatedQuery) delete updatedQuery['fieldOfWork']
     } else {
-      updatedQuery.fieldOfWork = String(selectedFieldOfWorkOption.value)
+      updatedQuery.fieldOfWork = parameters.fieldOfWork
     }
 
-    if (!selectedInstitutionOption?.value) {
+    if (!parameters.institution) {
       if ('institution' in updatedQuery) delete updatedQuery['institution']
     } else {
-      updatedQuery.institution = String(selectedInstitutionOption.value)
+      updatedQuery.institution = parameters.institution
     }
 
-    if (!selectedLocationOption?.value) {
+    if (!parameters.location) {
       if ('location' in updatedQuery) delete updatedQuery['location']
     } else {
-      updatedQuery.location = String(selectedLocationOption.value)
+      updatedQuery.location = parameters.location
     }
 
     replace(
@@ -238,19 +244,37 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
       { shallow: true },
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    searchTerm,
-    selectedFieldOfWorkOption?.value,
-    selectedInstitutionOption?.value,
-    selectedLocationOption?.value,
-  ])
+  }, [parameters, searchTerm])
+
+  const filterCategories = [
+    {
+      id: 'fieldOfWork',
+      label: n('fieldOfWork', 'Starf') as string,
+      selected: parameters.fieldOfWork,
+      filters: fieldOfWorkOptions,
+    },
+    {
+      id: 'location',
+      label: n('location', 'Staðsetning') as string,
+      selected: parameters.location,
+      filters: locationOptions,
+    },
+    {
+      id: 'institution',
+      label: n('institution', 'Stofnun/ráðuneyti') as string,
+      selected: parameters.institution,
+      filters: institutionOptions,
+    },
+  ]
+
+  const selectedFilters = extractFilterTags(filterCategories)
 
   return (
     <Box paddingTop={[0, 0, 8]}>
       <GridContainer>
-        <Stack space={2}>
-          <Box display="flex" justifyContent="spaceBetween">
-            <Stack space={2}>
+        <Box>
+          <Inline space={6}>
+            <Box>
               <Breadcrumbs
                 items={[
                   { title: 'Ísland.is', href: '/' },
@@ -261,32 +285,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                   },
                 ]}
               />
-
-              <Text variant="h1">
+              <Text marginTop={2} variant="h1">
                 {n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')}
               </Text>
-
-              <Box
-                marginBottom={1}
-                marginTop={5}
-                className={styles.searchTermInput}
-              >
-                <Input
-                  value={searchTerm}
-                  onChange={(ev) => {
-                    setSearchTerm(ev.target.value)
-                    searchTermHasBeenInitialized.current = true
-                    setSelectedPage(1)
-                  }}
-                  name="vacancies-search"
-                  placeholder={n(
-                    'searchTermPlaceholder',
-                    'Leita í Starfatorgi',
-                  )}
-                  icon={{ name: 'search', type: 'outline' }}
-                />
-              </Box>
-            </Stack>
+            </Box>
             <Hidden below="lg">
               <img
                 src={n(
@@ -296,77 +298,80 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 alt=""
               />
             </Hidden>
-          </Box>
+          </Inline>
 
-          <GridRow rowGap={2}>
-            <GridColumn span={['1/1', '1/1', '1/3']}>
-              <Select
-                isSearchable={true}
-                label={n('fieldOfWorkDropdownLabel', 'Veldu starf')}
+          <Filter
+            resultCount={filteredVacancies?.length ?? 0}
+            variant={isMobile ? 'dialog' : 'popover'}
+            labelClear={n('clearFilter', 'Hreinsa síu')}
+            labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
+            labelOpen={n('openFilter', 'Opna síu')}
+            labelClose={n('closeFilter', 'Loka síu')}
+            labelResult={n('viewResults', 'Skoða niðurstöður')}
+            labelTitle={n('filterMenuTitle', 'Sía störf')}
+            onFilterClear={clearSearch}
+            filterInput={
+              <FilterInput
                 placeholder={n(
-                  'fieldOfWorkDropwdownPlaceholder',
-                  'Veldu starf',
+                  'filterSearchPlaceholder',
+                  'Leita í Starfatorgi',
                 )}
-                size="sm"
-                name="field-of-work-picker"
-                options={fieldOfWorkOptions}
-                onChange={(option) =>
-                  setSelectedOptions((options) => ({
-                    ...options,
-                    fieldOfWork: option as Option,
-                  }))
-                }
-                value={selectedFieldOfWorkOption}
+                name="filterInput"
+                value={searchTerm}
+                onChange={(value) => {
+                  setSearchTerm(value)
+                  searchTermHasBeenInitialized.current = true
+                }}
               />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/1', '1/3']}>
-              <Select
-                isSearchable={true}
-                label={n('locationDropdownLabel', 'Veldu staðsetningu')}
-                placeholder={n(
-                  'locationDropdownPlaceholder',
-                  'Veldu staðsetningu',
-                )}
-                size="sm"
-                name="location-picker"
-                options={locationOptions}
-                onChange={(option) =>
-                  setSelectedOptions((options) => ({
-                    ...options,
-                    location: option as Option,
-                  }))
-                }
-                value={selectedLocationOption}
-              />
-            </GridColumn>
-            <GridColumn span={['1/1', '1/1', '1/3']}>
-              <Select
-                isSearchable={true}
-                label={n('institutionDropdownLabel', 'Veldu stofnun/ráðuneyti')}
-                placeholder={n(
-                  'institutionDropdownPlaceholder',
-                  'Veldu stofnun/ráðuneyti',
-                )}
-                size="sm"
-                name="institution-picker"
-                options={institutionOptions}
-                onChange={(option) =>
-                  setSelectedOptions((options) => ({
-                    ...options,
-                    institution: option as Option,
-                  }))
-                }
-                value={selectedInstitutionOption}
-              />
+            }
+          >
+            <FilterMultiChoice
+              labelClear={n('clearSelection', 'Hreinsa val')}
+              onChange={({ categoryId, selected }) => {
+                setParameters((prevParameters) => ({
+                  ...prevParameters,
+                  [categoryId]: selected,
+                }))
+              }}
+              onClear={(categoryId) => {
+                setParameters((prevParameters) => ({
+                  ...prevParameters,
+                  [categoryId]: [],
+                }))
+              }}
+              categories={filterCategories}
+            ></FilterMultiChoice>
+          </Filter>
+
+          <GridRow className={styles.filterTagRow} alignItems="center">
+            <GridColumn span="8/12">
+              <Inline space={1}>
+                {selectedFilters.map(({ label, value, category }) => (
+                  <FilterTag
+                    key={value}
+                    onClick={() => {
+                      setParameters((prevParameters) => ({
+                        ...prevParameters,
+                        [category]: (prevParameters[category] ?? []).filter(
+                          (prevValue) => prevValue !== value,
+                        ),
+                      }))
+                    }}
+                  >
+                    {label}
+                  </FilterTag>
+                ))}
+              </Inline>
             </GridColumn>
           </GridRow>
-          <Box
+
+          {/* <Box
             marginBottom={3}
             style={{
               visibility:
-                selectedFieldOfWorkOption ||
-                selectedLocationOption ||
-                selectedInstitutionOption ||
+                parameters.fieldOfWork.length > 0 ||
+                parameters.location.length > 0 ||
+                parameters.institution.length > 0 ||
                 searchTerm
                   ? 'visible'
                   : 'hidden',
@@ -380,8 +385,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             >
               {n('clearSearch', 'Núllstila leit')}
             </Button>
-          </Box>
-        </Stack>
+          </Box> */}
+        </Box>
       </GridContainer>
       <Box paddingTop={3} paddingBottom={6} background="blue100">
         <GridContainer>
@@ -417,11 +422,29 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       borderColor="blue200"
                       borderWidth="standard"
                     >
-                      <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
-                      <Text color="blue400" variant="h3">
-                        {vacancy.title}
-                      </Text>
-                      <Text>{shortenText(intro, MAX_DESCRIPTION_LENGTH)}</Text>
+                      <Stack space={2}>
+                        <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
+                        <Text color="blue400" variant="h3">
+                          {vacancy.title}
+                        </Text>
+                        <Text>
+                          {shortenText(intro, MAX_DESCRIPTION_LENGTH)}
+                        </Text>
+                        <Inline space={1}>
+                          {vacancy.institutionName && (
+                            <Tag>{vacancy.institutionName}</Tag>
+                          )}
+                          {vacancy.locationTitle && (
+                            <Tag>{vacancy.locationTitle}</Tag>
+                          )}
+                        </Inline>
+                        {vacancy.applicationDeadlineTo && (
+                          <Tag variant="purple">
+                            {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
+                            {vacancy.applicationDeadlineTo}
+                          </Tag>
+                        )}
+                      </Stack>
                     </FocusableBox>
                   </GridColumn>
                 )
