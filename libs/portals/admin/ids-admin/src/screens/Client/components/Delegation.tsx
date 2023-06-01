@@ -3,7 +3,7 @@ import { Checkbox, Stack } from '@island.is/island-ui/core'
 
 import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
-import { ClientFormTypes } from '../EditClient.action'
+import { ClientFormTypes } from '../EditClient.schema'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'

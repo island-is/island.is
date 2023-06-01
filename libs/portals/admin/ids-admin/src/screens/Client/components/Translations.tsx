@@ -5,7 +5,7 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
-import { ClientFormTypes } from '../EditClient.action'
+import { ClientFormTypes } from '../EditClient.schema'
 import { AuthAdminClientTranslation } from '../Client.loader'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'

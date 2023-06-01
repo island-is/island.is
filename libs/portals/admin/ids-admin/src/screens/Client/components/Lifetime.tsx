@@ -8,7 +8,7 @@ import {
 import React, { useCallback } from 'react'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
-import { ClientFormTypes } from '../EditClient.action'
+import { ClientFormTypes } from '../EditClient.schema'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'

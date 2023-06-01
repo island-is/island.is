@@ -7,7 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
 
 import { m } from '../../../lib/messages'
-import { ClientFormTypes } from '../EditClient.action'
+import { ClientFormTypes } from '../EditClient.schema'
 import { ShadowBox } from '../../../components/ShadowBox/ShadowBox'
 import { AddPermissions } from '../../../components/forms/AddPermissions/AddPermissions'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'

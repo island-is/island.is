@@ -11,10 +11,6 @@ export const EnvironmentContext = createContext<
   EnvironmentContextValues | undefined
 >(undefined)
 
-export function createEnvironmentContext() {
-  return createContext<EnvironmentContextValues | undefined>(undefined)
-}
-
 export const EnvironmentProvider: FC<EnvironmentContextValues> = ({
   availableEnvironments,
   selectedEnvironment,

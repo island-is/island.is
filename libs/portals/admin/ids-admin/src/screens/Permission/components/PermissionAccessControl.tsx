@@ -6,7 +6,7 @@ import { Checkbox, CheckboxProps, Stack } from '@island.is/island-ui/core'
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard'
 import { m } from '../../../lib/messages'
-import { PermissionFormTypes } from '../EditPermission.action'
+import { PermissionFormTypes } from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 

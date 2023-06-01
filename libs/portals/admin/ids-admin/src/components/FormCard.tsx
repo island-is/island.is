@@ -51,6 +51,8 @@ type FormCardProps<Intent> = {
    * Custom validation function that will be called on form change to determine if form is dirty
    * and when data arrives from mutation.
    * If true is returned then the form is considered dirty.
+   *
+   * Note: This function should be memoized to prevent unnecessary re-renders.
    */
   customValidation?(currentValue: FormData, originalValue: FormData): boolean
 }

@@ -7,12 +7,12 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
-import { ClientFormTypes } from '../EditClient.action'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard'
+import { ClientFormTypes } from '../EditClient.schema'
 
 type AdvancedSettingsProps = Pick<
   AuthAdminClientEnvironment,

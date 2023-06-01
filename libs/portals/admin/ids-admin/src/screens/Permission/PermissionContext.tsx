@@ -3,12 +3,10 @@ import { useActionData, useLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
-import { PermissionLoaderResult } from './Permission.loader'
-import {
-  PermissionFormTypes,
-  EditPermissionResult,
-} from './EditPermission.action'
 import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
+import { PermissionLoaderResult } from './Permission.loader'
+import { EditPermissionResult } from './EditPermission.action'
+import { PermissionFormTypes } from './EditPermission.schema'
 
 type PermissionContextProps = {
   /**

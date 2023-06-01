@@ -1,6 +1,3 @@
-import { z } from 'zod'
-import { zfd } from 'zod-form-data'
-
 import { RouterActionResponse, WrappedActionFn } from '@island.is/portals/core'
 import {
   validateFormData,
@@ -13,81 +10,13 @@ import {
   PatchAuthAdminScopeMutation,
   PatchAuthAdminScopeMutationVariables,
 } from './EditPermission.generated'
-import { Languages } from '../../utils/languages'
 import { authAdminEnvironments } from '../../utils/environments'
 import { getIntent } from '../../utils/getIntent'
-import { booleanCheckbox } from '../../utils/forms'
-
-export enum PermissionFormTypes {
-  CONTENT = 'CONTENT',
-  ACCESS_CONTROL = 'ACCESS_CONTROL',
-}
-
-const defaultSchema = z.object({
-  environment: z.nativeEnum(AuthAdminEnvironment),
-  syncEnvironments: zfd.repeatable(
-    z.optional(z.array(z.nativeEnum(AuthAdminEnvironment))),
-  ),
-})
-
-const contentSchema = z
-  .object({
-    is_displayName: z.string().nonempty('errorDisplayName'),
-    is_description: z.string().nonempty('errorDescription'),
-    en_displayName: z.optional(z.string()),
-    en_description: z.optional(z.string()),
-  })
-  .merge(defaultSchema)
-  .transform(
-    ({
-      is_description: isDescription,
-      en_description: enDescription,
-      is_displayName: isDisplayName,
-      en_displayName: enDisplayName,
-      ...rest
-    }) => ({
-      ...rest,
-      displayName: [
-        {
-          locale: Languages.IS,
-          value: isDisplayName,
-        },
-        {
-          locale: Languages.EN,
-          value: enDisplayName ?? '',
-        },
-      ],
-      description: [
-        {
-          locale: Languages.IS,
-          value: isDescription,
-        },
-        {
-          locale: Languages.EN,
-          value: enDescription ?? '',
-        },
-      ],
-    }),
-  )
-
-const accessControlSchema = z
-  .object({
-    isAccessControlled: booleanCheckbox,
-    grantToAuthenticatedUser: booleanCheckbox,
-    grantToProcuringHolders: booleanCheckbox,
-    grantToLegalGuardians: booleanCheckbox,
-    allowExplicitDelegationGrant: booleanCheckbox,
-    grantToPersonalRepresentatives: booleanCheckbox,
-  })
-  .merge(defaultSchema)
-
-const schema = {
-  [PermissionFormTypes.CONTENT]: contentSchema,
-  [PermissionFormTypes.ACCESS_CONTROL]: accessControlSchema,
-}
-
-type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
-  typeof schema[PermissionFormTypes.ACCESS_CONTROL]
+import {
+  MergedFormDataSchema,
+  PermissionFormTypes,
+  schema,
+} from './EditPermission.schema'
 
 export type EditPermissionResult = RouterActionResponse<
   PatchAuthAdminScopeMutation['patchAuthAdminScope'],

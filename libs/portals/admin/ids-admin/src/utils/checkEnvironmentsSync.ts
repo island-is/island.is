@@ -1,17 +1,11 @@
-import { AuthAdminEnvironment } from '@island.is/api/schema'
-
-type EnvironmentItem<T> = {
-  [K in keyof T]: T[K]
-} & {
-  environment: AuthAdminEnvironment
-}
+import { DynamicEnvironmentResult } from '../types/dynamicEnvironmentResult'
 
 /**
  * Checks if the given variables are in sync across the given environments.
  * @param environments
  * @param variables - The developer is responsible to provide the correct subset of variables.
  */
-export const checkEnvironmentsSync = <T extends EnvironmentItem<T>>(
+export const checkEnvironmentsSync = <T extends DynamicEnvironmentResult<T>>(
   environments: T[],
   variables: Array<keyof T>,
 ) => {

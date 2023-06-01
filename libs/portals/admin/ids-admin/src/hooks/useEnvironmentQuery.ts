@@ -4,19 +4,14 @@ import { useSearchParams } from 'react-router-dom'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import { useSyncedQueryStringValueWithoutNavigation } from './useSyncedQueryStringValueWithoutNavigation'
-
-type EnvironmentResult<T> = {
-  [K in keyof T]: T[K]
-} & {
-  environment: AuthAdminEnvironment
-}
+import { DynamicEnvironmentResult } from '../types/dynamicEnvironmentResult'
 
 /**
  * This hook is used to get the current environment from the URL query string,
  * or the first item in environments array if none query string is provided.
  * It also provides a function to update the environment manually with an update function.
  */
-export const useEnvironmentQuery = <T extends EnvironmentResult<T>>(
+export const useEnvironmentQuery = <T extends DynamicEnvironmentResult<T>>(
   environments: Array<T>,
 ) => {
   const [searchParams] = useSearchParams()
