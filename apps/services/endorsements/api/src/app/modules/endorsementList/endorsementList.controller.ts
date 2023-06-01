@@ -391,7 +391,9 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: String })
   @Audit()
   @Get(':listId/presigned-url')
-  async downloadPdf(@Param('listId') listId: string): Promise<GetSignedUrlResponse> {
+  async downloadPdf(
+    @Param('listId') listId: string,
+  ): Promise<GetSignedUrlResponse> {
     const presignedUrl = await this.endorsementListService.getPresignedUrl(
       listId,
     )

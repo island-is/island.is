@@ -442,10 +442,10 @@ export class EndorsementListService {
   }
 
   async getPresignedUrl(listId: string): Promise<any> {
-
     // s3 config
     const bucket = 'island-is-dev-upload-api'
-    const fileName = 'Meðmælendalisti-' + listId + new Date().toISOString() + '.pdf'
+    const fileName =
+      'Meðmælendalisti-' + listId + new Date().toISOString() + '.pdf'
 
     // get list and create pdf
     const endorsementList = await this.endorsementListModel.findOne({
@@ -471,20 +471,12 @@ export class EndorsementListService {
     )
 
     try {
-      await this.awsService.uploadFile(
-        fileBuffer,
-        bucket,
-        fileName,
-      )
+      await this.awsService.uploadFile(fileBuffer, bucket, fileName)
       return await this.awsService.getPresignedUrl(bucket, fileName)
     } catch (error) {
       console.log(error)
       this.logger.warn('.....................')
       throw new Exception('...', error)
     }
-    
-
-
-    
   }
 }
