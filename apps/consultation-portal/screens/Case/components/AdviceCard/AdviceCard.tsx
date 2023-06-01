@@ -49,7 +49,7 @@ const RenderAdvice = ({ advice, loc }: RenderAdviceProps) => {
     return loc['privateContent']
   }
   if (advice?.isHidden) {
-    let retComp = []
+    const retComp = []
     retComp.push(loc['hiddenContent'])
     retComp.push(' ')
     retComp.push(<Link loc={loc}>{loc['hiddenContentLink']}</Link>)
