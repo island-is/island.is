@@ -8,4 +8,5 @@ export enum AdminPortalScope {
   applicationSystem = '@admin.island.is/application-system',
   idsAdmin = '@admin.island.is/auth',
   idsAdminSuperUser = '@admin.island.is/auth:admin',
+  petitionsAdmin = '@admin.island.is/petitions',
 }
