@@ -124,7 +124,6 @@ const PressableListItem = React.memo(({item}: {item: Document}) => {
         title={item.senderName}
         subtitle={item.subject}
         date={new Date(item.date)}
-        swipable
         unread={!item.opened}
         icon={
           <Image
