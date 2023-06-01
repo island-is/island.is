@@ -55,12 +55,9 @@ export const notificationCategories = [
       {
         identifier: 'ACTION_OPEN_DOCUMENT',
         buttonTitle: 'Opna',
-        onPress: ({ id, data }: Notification, componentId?: string) => {
-          return navigateToNotification(
-            { id, link: data.url },
-            componentId,
-          );
-        }
+        onPress: ({id, data}: Notification, componentId?: string) => {
+          return navigateToNotification({id, link: data.url}, componentId);
+        },
       },
       {
         identifier: 'ACTION_MARK_AS_READ',
