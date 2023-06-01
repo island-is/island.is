@@ -86,6 +86,8 @@ export enum ServicePortalPath {
 
   // Heilsa
   HealthRoot = '/heilsa',
+  HealthTherapies = '/heilsa/thjalfun',
+  HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
 
   // Transports
   TransportRoot = '/samgongur',

@@ -13,6 +13,7 @@ import { licenseNavigation } from '@island.is/service-portal/licenses'
 import { educationLicenseNavigation } from '@island.is/service-portal/education-license'
 import { transportsNavigation } from '@island.is/service-portal/transports'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
+import { healthNavigation } from '@island.is/service-portal/health'
 import {
   delegationsNavigation,
   delegationsNavigationChildren,
@@ -51,5 +52,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     educationNavigation,
     licenseNavigation,
     educationLicenseNavigation,
+    healthNavigation,
   ],
 }

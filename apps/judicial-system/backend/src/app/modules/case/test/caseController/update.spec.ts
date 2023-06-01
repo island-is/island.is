@@ -8,6 +8,7 @@ import {
   CaseOrigin,
   CaseState,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   restrictionCases,
   User,
@@ -289,6 +290,7 @@ describe('CaseController - Update', () => {
       mockFindById.mockResolvedValueOnce({
         id: prosecutorId,
         role: UserRole.PROSECUTOR,
+        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
       })
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)

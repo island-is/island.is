@@ -180,6 +180,15 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         },
         description: m.educationDescription,
       },
+      // Heilsa
+      {
+        name: m.health,
+        path: ServicePortalPath.HealthRoot,
+        icon: {
+          icon: 'heart',
+        },
+        description: m.healthDescription,
+      },
 
       // Fasteignir
       {

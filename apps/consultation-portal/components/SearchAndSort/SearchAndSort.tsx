@@ -1,12 +1,13 @@
 import { mapIsToEn, sorting } from '../../utils/helpers'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { Area, SortOptions } from '../../types/enums'
-import DropdownSort from '../DropdownSort/DropdownSort'
+import DropdownSort from './components/DropdownSort'
 import { SubscriptionArray } from '../../types/interfaces'
-import DebouncedSearch from '../DebouncedSearch/DebouncedSearch'
+import { DebouncedSearch } from '../../components'
 import cn from 'classnames'
 import * as styles from './SearchAndSort.css'
 import { useIsMobile } from '../../hooks'
+import localization from './SearchAndSort.json'
 
 interface Props {
   subscriptionArray: SubscriptionArray
@@ -28,6 +29,7 @@ const SearchAndSort = ({
   currentTab,
 }: Props) => {
   const { isMobile } = useIsMobile()
+  const loc = localization.searchAndSort
   const sortOpts = [
     {
       title: SortOptions.latest,
@@ -72,7 +74,11 @@ const SearchAndSort = ({
           setSearchValue={setSearchValue}
           name="subscriptions_search"
           isSubscriptions
-          label={isMobile ? 'Leit og röðun' : 'Leit'}
+          label={
+            isMobile
+              ? loc.debouncedSearchLabel.mobile
+              : loc.debouncedSearchLabel.notMobile
+          }
         />
       </GridColumn>
       {isMobile ? (
@@ -89,7 +95,7 @@ const SearchAndSort = ({
         </GridColumn>
       ) : (
         <GridColumn span={['0', '0', '4/12', '3/12', '2/12']}>
-          <label className={cn(styles.label)}>Röðun</label>
+          <label className={cn(styles.label)}>{loc.label}</label>
           <div style={{ zIndex: 1, position: 'relative' }}>
             <DropdownSort
               menuAriaLabel="sort by"

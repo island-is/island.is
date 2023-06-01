@@ -126,7 +126,6 @@ export interface UpdateCase
     | 'registrarId'
     | 'caseModifiedExplanation'
     | 'caseResentExplanation'
-    | 'subpoenaType'
     | 'crimeScenes'
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'

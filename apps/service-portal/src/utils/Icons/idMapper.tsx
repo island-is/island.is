@@ -141,7 +141,7 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
       return <Airplane />
       break
     default:
-      return <Reader />
+      return undefined
       break
   }
 }

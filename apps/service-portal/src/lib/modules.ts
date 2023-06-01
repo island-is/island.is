@@ -14,6 +14,7 @@ import { licensesModule } from '@island.is/service-portal/licenses'
 import { personalInformationModule } from '@island.is/service-portal/settings/personal-information'
 import { transportsModule } from '@island.is/service-portal/transports'
 import { delegationsModule } from '@island.is/portals/shared-modules/delegations'
+import { healthModule } from '@island.is/service-portal/health'
 import { indexModule } from '../screens/Dashboard/module'
 import { consentModule } from '@island.is/service-portal/consent'
 /**
@@ -38,6 +39,7 @@ export const modules: PortalModule[] = [
   transportsModule,
   licensesModule,
   sessionsModule,
+  healthModule,
   indexModule,
   consentModule,
 ]
