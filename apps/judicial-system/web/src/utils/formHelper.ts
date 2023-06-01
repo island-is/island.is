@@ -19,6 +19,8 @@ import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { TUploadFile } from './hooks'
 import * as validations from './validate'
 import { IntlShape } from 'react-intl'
+import { courtOfAppealRoutes } from '@island.is/judicial-system/consts'
+import { isCourtOfAppealCaseStepValid } from './validate'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -355,6 +357,24 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     []
 
   return key
+}
+
+export const findFirstInvalidStepInCourtOfAppeal = (theCase: Case) => {
+  console.log('kemuru hér?', theCase.appealState)
+  if (theCase.appealState === 'APPEALED') {
+    return courtOfAppealRoutes[0]
+  }
+  if (theCase.appealState === 'RECEIVED') {
+    if (!isCourtOfAppealCaseStepValid(theCase)) {
+      return courtOfAppealRoutes[1]
+    } else {
+      return courtOfAppealRoutes[2]
+    }
+  }
+  if (theCase.appealState === 'COMPLETED') {
+    return courtOfAppealRoutes[3]
+  }
+  return courtOfAppealRoutes[0]
 }
 
 export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
