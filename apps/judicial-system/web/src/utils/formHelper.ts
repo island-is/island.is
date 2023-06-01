@@ -340,13 +340,8 @@ export const stepValidations = (): stepValidationsType => {
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealCaseStepValid(theCase),
     [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
-      theCase.caseFiles
-        ? theCase.caseFiles.some(
-            (file) => file.category === CaseFileCategory.APPEAL_RULING,
-          ) &&
-          validations.isCourtOfAppealRulingStepValid(theCase) &&
-          theCase.appealState === 'COMPLETED'
-        : false,
+      validations.isCourtOfAppealRulingStepValid(theCase) &&
+      theCase.appealState === 'COMPLETED',
     [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
   }
 }
