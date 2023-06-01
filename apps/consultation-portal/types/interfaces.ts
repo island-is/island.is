@@ -40,6 +40,8 @@ export interface RelatedCase {
 
 export interface Document {
   id?: string
+  description?: string
+  link?: string
   fileName?: string
   fileType?: string
   size?: number
@@ -50,13 +52,6 @@ export interface Stakeholder {
   email?: string
 }
 
-export interface AdviceDocuments {
-  id?: string
-  fileName?: string
-  fileType?: string
-  size?: number
-}
-
 export interface UserAdvice {
   id: string
   caseId: number
@@ -65,7 +60,7 @@ export interface UserAdvice {
   content: string
   created: string
   _case: Case
-  adviceDocuments: Array<AdviceDocuments>
+  adviceDocuments: Array<Document>
   isPrivateAdvice?: boolean
 }
 
