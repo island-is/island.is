@@ -1,4 +1,5 @@
 export * from './degreeType'
+export * from './fieldType'
 export * from './interestTag'
 export * from './paginateInput'
 export * from './season'

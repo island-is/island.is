@@ -31,13 +31,13 @@ export class MajorService {
   }
 
   async updateMajor(
-    id: string,
+    externalId: string,
     majorDto: UpdateMajorDto,
   ): Promise<MajorDetails> {
     throw Error('Not ready')
   }
 
-  async deleteMajor(id: string): Promise<number> {
+  async deleteMajor(externalId: string): Promise<number> {
     throw Error('Not ready')
   }
 }

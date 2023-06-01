@@ -24,13 +24,13 @@ export class CourseService {
   }
 
   async updateCourse(
-    id: string,
+    externalId: string,
     courseDto: UpdateCourseDto,
   ): Promise<CourseDetails> {
     throw Error('Not ready')
   }
 
-  async deleteCourse(id: string): Promise<number> {
+  async deleteCourse(externalId: string): Promise<number> {
     throw Error('Not ready')
   }
 }

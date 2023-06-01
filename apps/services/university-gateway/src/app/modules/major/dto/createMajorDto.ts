@@ -10,6 +10,7 @@ import {
 } from 'class-validator'
 import { DegreeType, InterestTag, Season, StudyType } from '../types'
 import { CreateCourseDto } from '../../course/dto'
+import { MajorOtherFieldDto } from './majorOtherFieldDto'
 
 export class CreateMajorDto {
   @IsString()
@@ -249,4 +250,12 @@ export class CreateMajorDto {
     type: [CreateCourseDto],
   })
   courses!: CreateCourseDto[]
+
+  @IsArray()
+  @ApiProperty({
+    description:
+      'Other fields that should be displayed in the application for the major',
+    type: [MajorOtherFieldDto],
+  })
+  otherFields?: MajorOtherFieldDto[]
 }

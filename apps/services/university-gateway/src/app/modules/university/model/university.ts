@@ -12,6 +12,13 @@ export class University {
     example: '123456-7890',
   })
   nationalId!: string
+
+  @ApiProperty({
+    description:
+      'University name (Note: this should not be used, only returned here for convenience)',
+    example: 'Háskóli Íslands',
+  })
+  name!: string
 }
 
 export class UniversityResponse {

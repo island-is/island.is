@@ -60,7 +60,7 @@ export class CourseController {
     description: 'Returns all courses for the selected filtering',
   })
   @ApiOperation({
-    summary: 'Get all courses',
+    summary: 'Get all courses (used by application system)',
   })
   async getCourses(
     @Query('limit') limit: number,
@@ -88,7 +88,7 @@ export class CourseController {
     description: 'Returns the course by ID',
   })
   @ApiOperation({
-    summary: 'Get course by ID',
+    summary: 'Get course by ID (used by application system)',
   })
   async getCourseDetails(
     @Param('id') id: string,
@@ -105,7 +105,7 @@ export class CourseController {
     description: 'Returns the course that was created',
   })
   @ApiOperation({
-    summary: 'Create course',
+    summary: 'Create course (used by universities)',
   })
   async createCourse(
     @Body() courseDto: CreateCourseDto,
@@ -113,12 +113,12 @@ export class CourseController {
     return this.courseService.createCourse(courseDto)
   }
 
-  @Put('courses/:id')
+  @Put('courses/external/:externalId')
   @ApiParam({
-    name: 'id',
+    name: 'externalId',
     required: true,
     allowEmptyValue: false,
-    description: 'Course ID',
+    description: 'Course external ID',
   })
   @ApiBody({
     type: UpdateCourseDto,
@@ -128,30 +128,30 @@ export class CourseController {
     description: 'Returns the updated course',
   })
   @ApiOperation({
-    summary: 'Update course',
+    summary: 'Update course (used by universities)',
   })
   async updateCourse(
-    @Param('id') id: string,
+    @Param('externalId') externalId: string,
     @Body() courseDto: UpdateCourseDto,
   ): Promise<CourseDetails> {
-    return this.courseService.updateCourse(id, courseDto)
+    return this.courseService.updateCourse(externalId, courseDto)
   }
 
-  @Delete('courses/:id')
+  @Delete('courses/external/:externalId')
   @ApiParam({
-    name: 'id',
+    name: 'externalId',
     required: true,
     allowEmptyValue: false,
-    description: 'Course ID',
+    description: 'Course external ID',
   })
   @ApiOkResponse({
     type: Number,
     description: 'Returns the number of courses that was deleted',
   })
   @ApiOperation({
-    summary: 'Delete course',
+    summary: 'Delete course (used by universities)',
   })
-  async deleteCourse(@Param('id') id: string): Promise<number> {
-    return this.courseService.deleteCourse(id)
+  async deleteCourse(@Param('externalId') externalId: string): Promise<number> {
+    return this.courseService.deleteCourse(externalId)
   }
 }

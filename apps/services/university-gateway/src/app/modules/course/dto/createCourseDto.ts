@@ -67,7 +67,7 @@ export class CreateCourseDto {
     example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   })
   @ApiPropertyOptional()
-  courseDescriptionIs?: string
+  descriptionIs?: string
 
   @IsString()
   @IsOptional()
@@ -76,7 +76,7 @@ export class CreateCourseDto {
     example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
   })
   @ApiPropertyOptional()
-  courseDescriptionEn?: string
+  descriptionEn?: string
 
   @IsString()
   @IsOptional()

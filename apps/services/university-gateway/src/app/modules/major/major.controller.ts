@@ -73,7 +73,7 @@ export class MajorController {
     description: 'Returns all majors for the selected filtering',
   })
   @ApiOperation({
-    summary: 'Get all majors',
+    summary: 'Get all majors (used by application system)',
   })
   async getMajors(
     @Query('limit') limit: number,
@@ -105,7 +105,7 @@ export class MajorController {
     description: 'Returns the major by ID',
   })
   @ApiOperation({
-    summary: 'Get major (and courses) by ID',
+    summary: 'Get major (and courses) by ID (used by application system)',
   })
   async getMajorDetails(
     @Param('id') id: string,
@@ -122,18 +122,18 @@ export class MajorController {
     description: 'Returns the major that was created',
   })
   @ApiOperation({
-    summary: 'Create major (and courses)',
+    summary: 'Create major (and courses) (used by universities)',
   })
   async createMajor(@Body() majorDto: CreateMajorDto): Promise<MajorDetails> {
     return this.majorService.createMajor(majorDto)
   }
 
-  @Put('majors/:id')
+  @Put('majors/external/:externalId')
   @ApiParam({
-    name: 'id',
+    name: 'externalId',
     required: true,
     allowEmptyValue: false,
-    description: 'Major ID',
+    description: 'Major external ID',
   })
   @ApiBody({
     type: UpdateMajorDto,
@@ -143,30 +143,30 @@ export class MajorController {
     description: 'Returns the updated major',
   })
   @ApiOperation({
-    summary: 'Update major (and courses)',
+    summary: 'Update major (and courses) (used by universities)',
   })
   async updateMajor(
-    @Param('id') id: string,
+    @Param('externalId') externalId: string,
     @Body() majorDto: UpdateMajorDto,
   ): Promise<MajorDetails> {
-    return this.majorService.updateMajor(id, majorDto)
+    return this.majorService.updateMajor(externalId, majorDto)
   }
 
-  @Delete('majors/:id')
+  @Delete('majors/external/:externalId')
   @ApiParam({
-    name: 'id',
+    name: 'externalId',
     required: true,
     allowEmptyValue: false,
-    description: 'Major ID',
+    description: 'Major External ID',
   })
   @ApiOkResponse({
     type: Number,
     description: 'Returns the number of majors that was deleted',
   })
   @ApiOperation({
-    summary: 'Delete major (and courses)',
+    summary: 'Delete major (and courses) (used by universities)',
   })
-  async deleteMajor(@Param('id') id: string): Promise<number> {
-    return this.majorService.deleteMajor(id)
+  async deleteMajor(@Param('externalId') externalId: string): Promise<number> {
+    return this.majorService.deleteMajor(externalId)
   }
 }

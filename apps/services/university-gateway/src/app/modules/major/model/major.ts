@@ -3,6 +3,7 @@ import { DegreeType, InterestTag, Season } from '../types'
 import { StudyType } from '../../application/types'
 import { PageInfo } from './pageInfo'
 import { CourseDetails } from '../../course/model'
+import { MajorOtherField } from './majorOtherField'
 
 export class Major {
   @ApiProperty({
@@ -207,6 +208,13 @@ export class MajorDetails extends Major {
     type: [CourseDetails],
   })
   courses!: CourseDetails[]
+
+  @ApiProperty({
+    description:
+      'Other fields that should be displayed in the application for the major',
+    type: [MajorOtherField],
+  })
+  otherFields?: [MajorOtherField]
 }
 
 export class MajorResponse {

@@ -32,7 +32,7 @@ export class ApplicationController {
     description: 'Returns the application by ID',
   })
   @ApiOperation({
-    summary: 'Get application by ID',
+    summary: 'Get application by ID (used by application system)',
   })
   async getApplication(@Param('id') id: string): Promise<ApplicationResponse> {
     return this.applicationService.getApplication(id)
@@ -47,7 +47,7 @@ export class ApplicationController {
     description: 'Returns the application that was created',
   })
   @ApiOperation({
-    summary: 'Create application',
+    summary: 'Create application (used by application system)',
   })
   async createApplication(
     @Body() applicationDto: CreateApplicationDto,
@@ -70,7 +70,8 @@ export class ApplicationController {
     description: 'Returns the updated application',
   })
   @ApiOperation({
-    summary: 'Update application status (used by universities)',
+    summary:
+      'Update application status (used by application system and universities)',
   })
   async updateApplicationStatus(
     @Param('id') id: string,
@@ -94,7 +95,8 @@ export class ApplicationController {
     description: 'Returns the updated application',
   })
   @ApiOperation({
-    summary: 'Update application extradata (used by application system)',
+    summary:
+      'Update application extradata and change status back to "In review" (used by application system)',
   })
   async updateApplicationExtradata(
     @Param('id') id: string,

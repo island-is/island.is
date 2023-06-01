@@ -63,14 +63,14 @@ export class Course {
     example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   })
   @ApiPropertyOptional()
-  courseDescriptionIs?: string
+  descriptionIs?: string
 
   @ApiProperty({
     description: 'Course description (English)',
     example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
   })
   @ApiPropertyOptional()
-  courseDescriptionEn?: string
+  descriptionEn?: string
 
   @ApiProperty({
     description:
