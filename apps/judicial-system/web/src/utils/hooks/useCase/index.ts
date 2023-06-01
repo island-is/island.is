@@ -16,7 +16,6 @@ import {
   isExtendedCourtRole,
   isRestrictionCase,
   isInvestigationCase,
-  CaseAppealState,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -34,10 +33,7 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 
 import { isTrafficViolationCase } from '../../stepHelper'
-import {
-  findFirstInvalidStep,
-  findFirstInvalidStepInCourtOfAppeal,
-} from '../../formHelper'
+import { findFirstInvalidStep } from '../../formHelper'
 import {
   CreateCaseMutation,
   CreateCourtCaseMutation,
