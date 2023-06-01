@@ -1005,6 +1005,14 @@
             "type": "string",
             "format": "uuid"
           },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          },
           "fileName": {
             "type": "string",
             "nullable": true
