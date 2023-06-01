@@ -267,6 +267,7 @@
     "portals-admin-document-provider": "libs/portals/admin/document-provider",
     "portals-admin-icelandic-names-registry": "libs/portals/admin/icelandic-names-registry",
     "portals-admin-ids-admin": "libs/portals/admin/ids-admin",
+    "portals-admin-petition": "libs/portals/admin/petition",
     "portals-admin-regulations-admin": "libs/portals/admin/regulations-admin",
     "portals-core": "libs/portals/core",
     "portals-shared-modules-delegations": "libs/portals/shared-modules/delegations",
