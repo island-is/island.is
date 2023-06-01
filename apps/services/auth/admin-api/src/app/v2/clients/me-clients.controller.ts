@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Delete,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -120,5 +121,18 @@ export class MeClientsController {
       },
       this.clientsService.update(user, tenantId, clientId, input),
     )
+  }
+
+  @Delete(':clientId')
+  @Documentation({
+    description: 'Delete a client.',
+    response: { status: 200 },
+  })
+  async delete(
+    @CurrentUser() user: User,
+    @Param('clientId') clientId: string,
+    @Param('tenantId') tenantId: string,
+  ): Promise<void> {
+    await this.clientsService.delete(clientId, tenantId)
   }
 }

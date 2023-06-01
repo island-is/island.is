@@ -21,6 +21,7 @@ import { ClientSecret } from './models/client-secret.model'
 import { Client } from './models/client.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import { environments } from '../shared/constants/environments'
+import { DeleteClientInput } from './dto/delete-client.input'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -309,6 +310,23 @@ export class ClientsService extends MultiEnvironmentService {
       tenantId: input.tenantId,
       clientId: input.clientId,
     })
+  }
+
+  async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
+    try {
+      await this.adminApiByEnvironmentWithAuth(
+        input.environment,
+        user,
+      )?.meClientsControllerDelete({
+        tenantId: input.tenantId,
+        clientId: input.clientId,
+      })
+    } catch (error) {
+      this.handleError(error, input.environment)
+      return false
+    }
+
+    return true
   }
 
   async revokeSecret(user: User, input: RotateSecretInput) {

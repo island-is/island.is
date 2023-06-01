@@ -778,4 +778,24 @@ export const m = defineMessages({
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
   },
+  successDeletingClient: {
+    id: 'ap.ids-admin:success-deleting-client',
+    defaultMessage: 'Successfully deleted client',
+  },
+  deleteClient: {
+    id: 'ap.ids-admin:delete-client',
+    defaultMessage: 'Delete client in {environment} environment',
+  },
+  delete: {
+    id: 'ap.ids-admin:delete',
+    defaultMessage: 'Delete',
+  },
+  closeDeleteModal: {
+    id: 'ap.ids-admin:close-delete-modal',
+    defaultMessage: 'Close',
+  },
+  deleteClientDescription: {
+    id: 'ap.ids-admin:delete-client-action-card-label',
+    defaultMessage: 'All your apps using this client will stop working.',
+  },
 })

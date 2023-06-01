@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Includeable, Op, Transaction } from 'sequelize'
@@ -201,6 +202,37 @@ export class AdminClientsService {
     )
 
     return this.findByTenantIdAndClientId(tenantId, clientId)
+  }
+
+  async delete(clientId: string, tenantId: string) {
+    const client = await this.clientModel.findOne({
+      where: {
+        clientId,
+        domainName: tenantId,
+      },
+    })
+
+    if (!client || client.archived) {
+      throw new NotFoundException()
+    }
+
+    const removedClient = await this.clientModel.update(
+      {
+        archived: Date.now(),
+      },
+      {
+        where: {
+          clientId,
+          domainName: tenantId,
+        },
+      },
+    )
+
+    if (!removedClient) {
+      throw new NotFoundException()
+    }
+
+    return true
   }
 
   async update(
