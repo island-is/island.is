@@ -21,6 +21,7 @@
     "deploy": "nx deploy",
     "test": "nx test",
     "lint": "nx workspace-lint && nx lint",
+    "clean": "./scripts/clean-generated-files.sh && rm -rf .cache",
     "dev-services": "nx dev-services",
     "dev": "nx dev",
     "dev-init": "nx dev-init",
