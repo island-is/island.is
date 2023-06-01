@@ -32,6 +32,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
+  errors,
   icOverview as m,
   requestCourtDate,
   titles,
@@ -59,8 +60,10 @@ export const Overview: React.FC = () => {
   } = useContext(FormContext)
   const {
     transitionCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     updateCase,
   } = useCase()
   const { formatMessage } = useIntl()
@@ -356,6 +359,7 @@ export const Overview: React.FC = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -364,7 +368,7 @@ export const Overview: React.FC = () => {
           }
           nextIsLoading={
             workingCase.state !== CaseState.RECEIVED &&
-            (isLoadingWorkingCase || isSendingNotification)
+            (isTransitioningCase || isSendingNotification)
           }
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
@@ -381,7 +385,7 @@ export const Overview: React.FC = () => {
             workingCase={workingCase}
             isLoading={isSendingNotification}
             onClose={() => setModal('noModal')}
-            onContinue={(explaination) => handleNextButtonClick(explaination)}
+            onContinue={(explanation) => handleNextButtonClick(explanation)}
           />
         )}
       </AnimatePresence>
@@ -394,6 +398,11 @@ export const Overview: React.FC = () => {
             onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
+            errorMessage={
+              sendNotificationError
+                ? formatMessage(errors.sendNotification)
+                : undefined
+            }
             secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}

@@ -22,6 +22,11 @@
     "description": "Allir geta sent inn umsögn og verið áskrifendur að málum í Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent eftirtöldum:",
     "noList": "Enginn listi skráður."
   },
+  "relatedCases": {
+    "title": "Tenging við önnur mál",
+    "description": "Mál sem eru tengd þessu máli, t.d. mál hefur verið í gáttinni á fyrra stigi eða málin eru skyld.",
+    "noList": "Engin tenging við önnur mál"
+  },
   "coordinator": {
     "title": "Umsjónaraðili",
     "noCoordinator": "Engin skráður umsjónaraðili."
@@ -144,7 +149,8 @@
       "heading": "Senda umsögn",
       "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
       "ctaLabel": "Skrá mig inn"
-    }
+    },
+    "privateLabel": "Viltu að þessi umsögn verði falin almenningi?"
   },
   "agencyText": {
     "textBefore": "Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð þaðan,",
@@ -171,5 +177,12 @@
       "text": "Umsagnarfrestur er liðinn.",
       "textCont": "Niðurstöður hafa verið birtar og samráði lokið."
     }
+  },
+  "adviceCard": {
+    "hiddenContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína."
+  },
+  "caseDocuments": {
+    "linkTitle": "Hlekkur",
+    "documentTitle": "Skjal"
   }
 }

@@ -18,5 +18,5 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthAidsAndNutrition,
     },
   ],
-  description: m.health,
+  description: m.healthDescription,
 }

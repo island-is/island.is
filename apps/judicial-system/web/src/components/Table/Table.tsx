@@ -159,7 +159,7 @@ const Table = <T extends object>(
                     'Header',
                   )} `}</Text>
                   <span>
-                    {props.sortableColumnIds?.includes(column.id) ? (
+                    {!column.disableSortBy ? (
                       column.isSorted ? (
                         column.isSortedDesc ? (
                           <Icon icon="caretDown" size="small" />

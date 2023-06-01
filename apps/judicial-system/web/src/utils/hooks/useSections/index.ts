@@ -1220,6 +1220,8 @@ const useSections = (
       },
       ...(isRestrictionCase(workingCase.type) && workingCase.appealState
         ? getCourtOfAppealSections(workingCase, user)
+        : isInvestigationCase(workingCase.type) && workingCase.appealState
+        ? getCourtOfAppealSections(workingCase, user)
         : []),
       ...(workingCase.parentCase
         ? [
