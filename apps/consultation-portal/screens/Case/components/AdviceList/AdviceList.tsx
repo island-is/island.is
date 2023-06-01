@@ -1,16 +1,16 @@
-import { Case, UserAdvice } from '../../../../types/interfaces'
+import { AdviceResult, Case, UserAdvice } from '../../../../types/interfaces'
 import { Stack, Text, Button, Link } from '@island.is/island-ui/core'
 import AdviceCard from '../AdviceCard/AdviceCard'
 import { SHOW_INITIAL_REVIEWS_AMOUNT } from '../../../../utils/consts/consts'
 
 import { useState } from 'react'
 import { advicePublishTypeKeyHelper } from '../../../../types/enums'
-import { hasDatePassed } from '../../../../utils/helpers/dateFormatter'
+import { hasDatePassed } from '../../../../utils/helpers/dateFunctions'
 import localization from '../../Case.json'
 import sharedLocalization from '../../../../lib/shared.json'
 
 interface Props {
-  advices: Array<UserAdvice>
+  advices: Array<AdviceResult>
   chosenCase: Case
 }
 function renderAdvices(publishTypeId, processEnds) {
@@ -38,7 +38,7 @@ export const AdviceList = ({ advices, chosenCase }: Props) => {
       {/* {advices.length == 0 && <Text>{loc.noAdvices}</Text>} */}
       {renderAdvices(advicePublishTypeId, processEnds) && (
         <Stack space={3}>
-          {advices?.map((advice: UserAdvice, index) => {
+          {advices?.map((advice: AdviceResult, index) => {
             if (!showAll && index < SHOW_INITIAL_REVIEWS_AMOUNT)
               return <AdviceCard advice={advice} key={advice.id} />
             else if (showAll) {

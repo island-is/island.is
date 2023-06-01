@@ -1,6 +1,7 @@
 import { FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
+import { isLastReviewer } from './isLastReviewer'
 
 export const hasReviewerApproved = (
   reviewerNationalId: string,
@@ -17,17 +18,14 @@ export const hasReviewerApproved = (
   }
 
   // Check if reviewer is buyers coowner or operator and has not approved
-  const buyerCoOwnersAndOperators = getValueViaPath(
+  const filteredBuyerCoOwnersAndOperators = (getValueViaPath(
     answers,
     'buyerCoOwnerAndOperator',
     [],
-  ) as CoOwnerAndOperator[]
-  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators
-    .filter(({ wasRemoved }) => wasRemoved !== 'true')
-    .find(
-      (coOwnerOrOperator) =>
-        coOwnerOrOperator.nationalId === reviewerNationalId,
-    )
+  ) as CoOwnerAndOperator[]).filter(({ wasRemoved }) => wasRemoved !== 'true')
+  const buyerCoOwnerAndOperator = filteredBuyerCoOwnersAndOperators.find(
+    (coOwnerOrOperator) => coOwnerOrOperator.nationalId === reviewerNationalId,
+  )
   if (buyerCoOwnerAndOperator) {
     const hasApproved = buyerCoOwnerAndOperator?.approved || false
     if (!hasApproved) return false
@@ -45,6 +43,19 @@ export const hasReviewerApproved = (
   if (sellerCoOwner) {
     const hasApproved = sellerCoOwner?.approved || false
     if (!hasApproved) return false
+  }
+
+  // Check if reviewer is seller and everyone else has approved
+  if (
+    (getValueViaPath(answers, 'seller.nationalId', '') as string) ===
+      reviewerNationalId &&
+    isLastReviewer(
+      reviewerNationalId,
+      answers,
+      filteredBuyerCoOwnersAndOperators,
+    )
+  ) {
+    return false
   }
 
   return true
