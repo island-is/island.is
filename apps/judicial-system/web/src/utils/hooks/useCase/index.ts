@@ -196,10 +196,7 @@ const openCase = (caseToOpen: Case, user: User) => {
     if (isIndictmentCase(caseToOpen.type)) {
       routeTo = constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE
     } else if (user?.institution?.type === InstitutionType.HIGH_COURT) {
-      routeTo = findFirstInvalidStepInCourtOfAppeal(
-        constants.courtOfAppealRoutes,
-        caseToOpen,
-      )
+      routeTo = findFirstInvalidStep(constants.courtOfAppealRoutes, caseToOpen)
     } else {
       routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
     }

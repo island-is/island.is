@@ -7,6 +7,7 @@ import {
   CaseState,
   CaseType,
   isInvestigationCase,
+  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -250,6 +251,8 @@ export type stepValidationsType = {
   [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
+  [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
+  [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
 }
 
 export const stepValidations = (): stepValidationsType => {
@@ -336,6 +339,15 @@ export const stepValidations = (): stepValidationsType => {
     [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealCaseStepValid(theCase),
+    [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
+      theCase.caseFiles
+        ? theCase.caseFiles.some(
+            (file) => file.category === CaseFileCategory.APPEAL_RULING,
+          ) &&
+          validations.isCourtOfAppealRulingStepValid(theCase) &&
+          theCase.appealState === 'COMPLETED'
+        : false,
+    [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
   }
 }
 
@@ -357,24 +369,6 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     []
 
   return key
-}
-
-export const findFirstInvalidStepInCourtOfAppeal = (theCase: Case) => {
-  console.log('kemuru hér?', theCase.appealState)
-  if (theCase.appealState === 'APPEALED') {
-    return courtOfAppealRoutes[0]
-  }
-  if (theCase.appealState === 'RECEIVED') {
-    if (!isCourtOfAppealCaseStepValid(theCase)) {
-      return courtOfAppealRoutes[1]
-    } else {
-      return courtOfAppealRoutes[2]
-    }
-  }
-  if (theCase.appealState === 'COMPLETED') {
-    return courtOfAppealRoutes[3]
-  }
-  return courtOfAppealRoutes[0]
 }
 
 export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
