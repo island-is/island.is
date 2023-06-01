@@ -180,5 +180,9 @@
   },
   "adviceCard": {
     "hiddenContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína."
+  },
+  "caseDocuments": {
+    "linkTitle": "Hlekkur",
+    "documentTitle": "Skjal"
   }
 }
