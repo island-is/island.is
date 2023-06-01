@@ -1,27 +1,29 @@
 import {useQuery} from '@apollo/client';
-import {Alert, TableViewAccessory, TableViewCell, TableViewGroup} from '@ui';
 import messaging from '@react-native-firebase/messaging';
+import {Alert, TableViewAccessory, TableViewCell, TableViewGroup} from '@ui';
 import {authenticateAsync} from 'expo-local-authentication';
 import gql from 'graphql-tag';
 import React, {useEffect, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {
-  Alert as RNAlert,
+  Image,
   Linking,
   Platform,
   Pressable,
+  Alert as RNAlert,
   ScrollView,
   Switch,
   TouchableOpacity,
   View,
-  Text,
-  Image,
 } from 'react-native';
+import CodePush, {LocalPackage} from 'react-native-code-push';
 import {Navigation} from 'react-native-navigation';
 import {useTheme} from 'styled-components/native';
-import CodePush, {LocalPackage} from 'react-native-code-push';
+import editIcon from '../../assets/icons/edit.png';
 import {PressableHighlight} from '../../components/pressable-highlight/pressable-highlight';
 import {client} from '../../graphql/client';
+import {USER_PROFILE_QUERY} from '../../graphql/queries/user-profile.query';
+import {navigateTo} from '../../lib/deep-linking';
 import {showPicker} from '../../lib/show-picker';
 import {authStore} from '../../stores/auth-store';
 import {
@@ -31,13 +33,10 @@ import {
 } from '../../stores/preferences-store';
 import {useUiStore} from '../../stores/ui-store';
 import {ComponentRegistry} from '../../utils/component-registry';
-import {config} from '../../utils/config';
 import {getAppRoot} from '../../utils/lifecycle/get-app-root';
 import {testIDs} from '../../utils/test-ids';
 import {useBiometricType} from '../onboarding/onboarding-biometrics';
-import {navigateTo} from '../../lib/deep-linking';
-import editIcon from '../../assets/icons/edit.png';
-import {USER_PROFILE_QUERY} from '../../graphql/queries/user-profile.query';
+import DeviceInfo from 'react-native-device-info';
 
 const PreferencesSwitch = React.memo(
   ({name}: {name: keyof PreferencesStore}) => {
@@ -159,7 +158,6 @@ export function TabSettings() {
         },
       })
       .catch(err => {
-        console.log(JSON.stringify(err));
         RNAlert.alert('Villa', err.message);
       });
   }
@@ -519,9 +517,7 @@ export function TabSettings() {
       >
         <TableViewCell
           title={intl.formatMessage({id: 'settings.about.versionLabel'})}
-          subtitle={`${config.constants.nativeAppVersion} build ${
-            config.constants.nativeBuildVersion
-          } ${config.constants.debugMode ? '(debug)' : ''}`}
+          subtitle={`${DeviceInfo.getVersion()} build ${DeviceInfo.getBuildNumber()}`}
         />
         <TableViewCell
           title={intl.formatMessage({id: 'settings.about.codePushLabel'})}
@@ -533,13 +529,6 @@ export function TabSettings() {
               : `${localPackage?.label}`
           }
         />
-        {/* <PressableHighlight
-          onPress={() => {
-            console.log(pushToken)
-          }}
-        >
-          <TableViewCell title="Push Token" subtitle={pushToken} />
-        </PressableHighlight> */}
         <PressableHighlight
           onPress={onLogoutPress}
           testID={testIDs.USER_SETTINGS_LOGOUT_BUTTON}

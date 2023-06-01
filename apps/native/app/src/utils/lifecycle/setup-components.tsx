@@ -36,6 +36,8 @@ import {EditBankInfoScreen} from '../../screens/profile/edit-bank-info';
 import {EditConfirmScreen} from '../../screens/profile/edit-confirm';
 import {WalletPassportScreen} from '../../screens/wallet-passport/wallet-passport';
 import {CognitoAuthScreen} from '../../screens/cognito-auth/cognito-auth';
+import {isTestingApp} from '../../config';
+import {TestingLoginScreen} from '../../screens/login/testing-login';
 
 export function registerAllComponents() {
   // dev only
@@ -45,7 +47,10 @@ export function registerAllComponents() {
   }
 
   // screens
-  registerComponent(CR.LoginScreen, LoginScreen);
+  registerComponent(
+    CR.LoginScreen,
+    isTestingApp ? TestingLoginScreen : LoginScreen,
+  );
   registerComponent(CR.OnboardingPinCodeScreen, OnboardingPinCodeScreen);
   registerComponent(CR.OnboardingBiometricsScreen, OnboardingBiometricsScreen);
   registerComponent(

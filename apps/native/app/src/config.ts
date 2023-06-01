@@ -1,5 +1,6 @@
 import DeviceInfo from 'react-native-device-info';
 import {Platform} from 'react-native';
+import { environmentStore, useEnvironmentStore } from './stores/environment-store';
 
 // Initial environment
 export const environments = {
@@ -29,9 +30,10 @@ export const environments = {
   },
 };
 
-const bundleId = DeviceInfo.getBundleId();
-export const isTestingApp = false;
-//bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
+export const bundleId = DeviceInfo.getBundleId();
+
+export const isTestingApp =
+  bundleId.endsWith('.staging') || bundleId.endsWith('.dev');
 
 export const config = {
   bundleId,
@@ -58,5 +60,19 @@ export const config = {
     ios: '8And8KYL9BWRsUAhEBFFUxbVfVTdSM4QBQsr6',
     android: '4sXtRa8Q7CWLTrTxKjvcH7g8WJYIDMCENhvYz',
   }),
-  ...(isTestingApp ? environments.dev : environments.prod),
 };
+
+export function useConfig() {
+  const { environment } = useEnvironmentStore();
+  return {
+    ...config,
+    ...environment,
+  };
+}
+
+export function getConfig() {
+  return {
+    ...config,
+    ...environmentStore.getState().environment,
+  };
+}

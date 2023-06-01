@@ -1,4 +1,4 @@
-import {Button, dynamicColor, font, Illustration} from '@ui';
+import {Button, dynamicColor, font} from '@ui';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
@@ -11,16 +11,24 @@ import {
   Text,
   TouchableOpacity,
   View,
+  AlertButton,
 } from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import styled from 'styled-components/native';
 import logo from '../../assets/logo/logo-64w.png';
+import testinglogo from '../../assets/logo/testing-logo-64w.png';
 import {FormattedMessage, useIntl} from 'react-intl';
 import {openBrowser} from '../../lib/rn-island';
 import {useAuthStore} from '../../stores/auth-store';
 import {preferencesStore} from '../../stores/preferences-store';
 import {nextOnboardingStep} from '../../utils/onboarding';
 import {testIDs} from '../../utils/test-ids';
+import {environments,isTestingApp, useConfig} from '../../config';
+import {showPicker} from '../../lib/show-picker';
+import {
+  environmentStore,
+  useEnvironmentStore,
+} from '../../stores/environment-store';
 
 const Host = styled.View`
   flex: 1;
@@ -66,8 +74,11 @@ function getChromeVersion(): Promise<number> {
   });
 }
 
-export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
+export const TestingLoginScreen: NavigationFunctionComponent = ({
+  componentId,
+}) => {
   const authStore = useAuthStore();
+  const {environment = environments.prod, cognito} = useEnvironmentStore();
   const intl = useIntl();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [authState, setAuthState] = useState<{
@@ -93,6 +104,15 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
   }, []);
 
   const onLoginPress = async () => {
+    const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > Date.now();
+    if (
+      environment.idsIssuer !== 'https://innskra.island.is/' &&
+      !isCognitoAuth
+    ) {
+      Alert.alert('Cognito required', 'Please authenticate with cognito before logging in.');
+      return;
+    }
+
     if (Platform.OS === 'android') {
       const chromeVersion = await getChromeVersion();
       if (chromeVersion < 55) {
@@ -171,7 +191,7 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
           }}
         >
           <Image
-            source={logo}
+            source={isTestingApp ? testinglogo : logo}
             resizeMode="contain"
             style={{width: 48, height: 48}}
           />
@@ -207,12 +227,180 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
           </TouchableOpacity>
         </BottomRow>
       </SafeAreaView>
-      <Illustration isBottomAligned />
+      <DebugInfo componentId={componentId} />
     </Host>
   );
 };
 
-LoginScreen.options = {
+const DebugHost = styled.SafeAreaView`
+  background-color: ${dynamicColor(props => ({
+    light: props.theme.color.blue100,
+    dark: props.theme.shades.dark.background,
+  }))};
+  height: 360px;
+  max-height: 40%;
+  align-items: center;
+  justify-content: center;
+`;
+
+function DebugRow({title, actions, value}: any) {
+  const textStyle = {
+    lineHeight: 22,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo-Regular' : 'monospace',
+  };
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        paddingHorizontal: 32,
+        minHeight: 28,
+      }}
+    >
+      <Text
+        style={{
+          ...textStyle,
+          fontWeight: 'bold',
+          paddingRight: 8,
+          minWidth: 64,
+        }}
+      >
+        {title}
+        {value ? ':' : ''}
+      </Text>
+      <Text selectable style={{...textStyle, flex: 1}}>
+        {value}
+      </Text>
+      {actions?.map((action: any, index: number) => (
+        <Button
+          key={index}
+          isTransparent
+          {...action}
+          style={{
+            paddingTop: 0,
+            paddingLeft: 10,
+            paddingRight: 10,
+            paddingBottom: 1,
+            minWidth: 0,
+          }}
+          textStyle={{
+            ...textStyle,
+            fontWeight: 'bold',
+            fontSize: 15,
+          }}
+        />
+      ))}
+    </View>
+  );
+}
+
+function DebugInfo({componentId}: {componentId: string}) {
+  const {
+    environment = environments.prod,
+    cognito,
+    actions,
+    loading,
+  } = useEnvironmentStore();
+  const config = useConfig();
+
+  const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > Date.now();
+  const cognitoMinutes = Math.floor(
+    (cognito?.expiresAt ? cognito.expiresAt - Date.now() : 0) / 1000 / 60,
+  );
+
+  const onEnvironmentPress = () => {
+    if (loading) {
+      return;
+    }
+    if (!isCognitoAuth) {
+      return Alert.alert(
+        'Cognito Required',
+        'You can use production without cognito login, but you need it for other environments.',
+        [
+          environment.id !== 'prod' && {
+            text: 'Switch to Production',
+            onPress: () => {
+              actions.setEnvironment(environments.prod);
+            },
+          },
+          {
+            text: 'Login with cognito',
+            onPress: () => {
+              onCognitoLoginPress();
+            },
+          },
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+        ].filter(Boolean) as AlertButton[],
+      );
+    }
+    environmentStore
+      .getState()
+      .actions.loadEnvironments()
+      .then(res => {
+        showPicker({
+          type: 'radio',
+          title: 'Select environment',
+          items: res,
+          selectedId: environmentStore.getState().environment?.id,
+          cancel: true,
+        })
+          .then(({selectedItem}: any) => {
+            environmentStore.getState().actions.setEnvironment(selectedItem);
+          })
+          .catch(err => {
+            // noop
+          });
+      });
+  };
+
+  const onCognitoLoginPress = () => {
+    const params = {
+      approval_prompt: 'prompt',
+      client_id: config.cognitoClientId,
+      redirect_uri: `${config.bundleId}://cognito`,
+      response_type: 'token',
+      scope: 'openid',
+      state: 'state',
+    };
+    const url = `${config.cognitoUrl}?${new URLSearchParams(params)}`;
+    return openBrowser(url, componentId);
+  };
+
+  return (
+    <DebugHost>
+      <DebugRow
+        title="Label"
+        value={environment?.label ?? 'N/A'}
+        actions={[
+          {
+            title: '(Switch)',
+            disabled: loading,
+            onPress: onEnvironmentPress,
+          },
+        ]}
+      />
+      <DebugRow title="Bundle" value={config.bundleId} />
+      <DebugRow title="IDS" value={environment?.idsIssuer ?? 'N/A'} />
+      <DebugRow title="API" value={environment?.apiUrl ?? 'N/A'} />
+      <DebugRow
+        title="Cognito"
+        value={isCognitoAuth ? `Yes (exp ${cognitoMinutes}m)` : 'No'}
+        actions={[
+          {
+            title: '(Login)',
+            onPress: onCognitoLoginPress,
+          },
+        ]}
+      />
+    </DebugHost>
+  );
+}
+
+TestingLoginScreen.options = {
   popGesture: false,
   topBar: {
     visible: false,
