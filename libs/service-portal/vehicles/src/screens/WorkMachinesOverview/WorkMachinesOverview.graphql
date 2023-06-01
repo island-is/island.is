@@ -1,22 +1,11 @@
 query GetWorkMachines {
   workMachines {
     value {
+      id
       registrationNumber
       type
       owner
       status
-      dateLastInspection
-    }
-    links {
-      href
-      ref
-      method
-      displayTitle
-    }
-    labels {
-      columnName
-      displayTitle
-      tooltip
     }
   }
 }

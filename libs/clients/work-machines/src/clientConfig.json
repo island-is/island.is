@@ -35,6 +35,11 @@
           },
           { "name": "OrderBy", "in": "query", "schema": { "type": "string" } },
           {
+            "name": "ShowDeregisteredMachines",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
             "name": "locale",
             "in": "query",
             "description": "",
@@ -266,6 +271,7 @@
           "registrationNumber": { "type": "string", "nullable": true },
           "type": { "type": "string", "nullable": true },
           "owner": { "type": "string", "nullable": true },
+          "supervisor": { "type": "string", "nullable": true },
           "status": { "type": "string", "nullable": true },
           "dateLastInspection": { "type": "string", "nullable": true }
         },

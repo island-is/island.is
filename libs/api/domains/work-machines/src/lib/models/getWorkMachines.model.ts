@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('WorkMachinesEntity')
 export class WorkMachineEntity {
@@ -14,6 +14,9 @@ export class WorkMachineEntity {
 
 @ObjectType('WorkMachinesMachine')
 export class WorkMachine {
+  @Field(() => ID, { nullable: true })
+  id?: string
+
   @Field(() => String, { nullable: true })
   registrationNumber?: string
 
@@ -28,6 +31,12 @@ export class WorkMachine {
 
   @Field(() => String, { nullable: true })
   dateLastInspection?: string
+
+  @Field(() => [Link], { nullable: true })
+  links?: Array<Link>
+
+  @Field(() => [Label], { nullable: true })
+  labels?: Array<Label>
 }
 
 @ObjectType('WorkMachinesLink')

@@ -1,10 +1,7 @@
 import { Module } from '@nestjs/common'
 import { WorkMachinesResolver } from './api-domains-work-machines.resolver'
 import { WorkMachinesService } from './api-domains-work-machines.service'
-import {
-  WorkMachinesApiProvider,
-  WorkMachinesClientModule,
-} from '@island.is/clients/work-machines'
+import { WorkMachinesClientModule } from '@island.is/clients/work-machines'
 import { DisabilityLicenseClientModule } from '@island.is/clients/disability-license'
 
 @Module({

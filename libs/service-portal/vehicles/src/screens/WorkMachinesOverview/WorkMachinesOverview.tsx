@@ -6,9 +6,11 @@ import {
   ErrorScreen,
   EmptyState,
   CardLoader,
+  ServicePortalPath,
+  ActionCard,
 } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
-import { ActionCard, Box } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 
 const WorkMachinesOverview = () => {
@@ -16,8 +18,6 @@ const WorkMachinesOverview = () => {
   const { formatMessage } = useLocale()
 
   const { loading, error, data } = useGetWorkMachinesQuery()
-
-  console.log(error)
 
   if (error && !loading) {
     return (
@@ -45,7 +45,7 @@ const WorkMachinesOverview = () => {
         </Box>
       )}
 
-      {!loading && !data?.workMachines && (
+      {!loading && !data?.workMachines?.value && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -60,13 +60,23 @@ const WorkMachinesOverview = () => {
           return (
             <Box marginBottom={3} key={index}>
               <ActionCard
-                text={'A.B.G. Puma'}
-                heading={'Tæki Tæki Tæki'}
+                text={wm.registrationNumber ?? ''}
+                heading={wm.type ?? ''}
                 cta={{
                   label: formatMessage(m.seeDetails),
                   variant: 'text',
+                  url: wm.id
+                    ? ServicePortalPath.AssetsWorkMachinesDetail.replace(
+                        ':id',
+                        wm.id,
+                      )
+                    : undefined,
                 }}
-                tag={{ label: 'í notkun' }}
+                tag={{
+                  variant: 'blue',
+                  outlined: false,
+                  label: wm.status ?? '',
+                }}
               />
             </Box>
           )

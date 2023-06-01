@@ -11,7 +11,6 @@ import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
-import { WorkMachinesService } from './api-domains-work-machines.service'
 import { WorkMachineEntity } from './models/getWorkMachines.model'
 import { DisabilityLicenseService } from '@island.is/clients/disability-license'
 import { MachinesApi } from '@island.is/clients/work-machines'
@@ -29,8 +28,6 @@ export class WorkMachinesResolver {
   @Query(() => WorkMachineEntity, { name: 'workMachines', nullable: true })
   @Audit()
   async getWorkMachines(@CurrentUser() user: User) {
-    //const a = this.testApi.getDisabilityLicense(user)
-    //console.log(a)
     return this.workMachinesService
       .withMiddleware(new AuthMiddleware(user as Auth))
       .apiMachinesGet({})
