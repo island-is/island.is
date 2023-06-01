@@ -7,7 +7,6 @@ import {
   CaseState,
   CaseType,
   isInvestigationCase,
-  CaseFileCategory,
 } from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
@@ -20,8 +19,6 @@ import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { TUploadFile } from './hooks'
 import * as validations from './validate'
 import { IntlShape } from 'react-intl'
-import { courtOfAppealRoutes } from '@island.is/judicial-system/consts'
-import { isCourtOfAppealCaseStepValid } from './validate'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
