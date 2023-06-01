@@ -55,6 +55,7 @@ export interface Option extends TestSupport {
   tooltip?: FormText
   excludeOthers?: boolean
   illustration?: React.FC
+  rightContent?: React.FC
   disabled?: boolean
   rightContent?: React.FC
   tag?: {

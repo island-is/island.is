@@ -85,7 +85,14 @@ export const Dashboard: FC<{}> = () => {
                                 color="blue400"
                               />
                             ) : (
-                              iconTypeToSVG(navRoot.icon?.icon ?? '', '')
+                              iconTypeToSVG(navRoot.icon?.icon ?? '', '') ??
+                              (navRoot.icon ? (
+                                <Icon
+                                  icon={navRoot.icon.icon}
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ) : undefined)
                             )
                           }
                           heading={formatMessage(navRoot.name)}

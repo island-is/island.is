@@ -85,7 +85,7 @@ const SubscriptionsSkeleton = ({
                       ? loc.mySubscriptions.text
                       : loc.subscriptions.text}
                   </Text>
-                  {!isMySubscriptions && isAuthenticated && (
+                  {!isMySubscriptions && (
                     <Link href={loc.unsubscribeLink.href}>
                       <a>{loc.unsubscribeLink.text}</a>
                     </Link>

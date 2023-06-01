@@ -17,6 +17,7 @@ interface Option {
   tooltip?: React.ReactNode
   disabled?: boolean
   excludeOthers?: boolean
+  rightContent: React.ReactNode
 }
 interface CheckboxControllerProps {
   defaultValue?: string[]
@@ -32,7 +33,6 @@ interface CheckboxControllerProps {
   split?: '1/1' | '1/2' | '1/3' | '1/4'
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string[]) => void
-  rightContent?: React.ReactNode
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
   defaultValue = [],
@@ -47,7 +47,6 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
   options = [],
   split = '1/1',
   backgroundColor,
-  rightContent,
   onSelect = () => undefined,
 }) => {
   const { clearErrors, setValue } = useFormContext()
@@ -93,7 +92,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
                   setValue(id, newChoices)
                   onSelect(newChoices)
                 }}
-                rightContent={rightContent}
+                rightContent={option.rightContent}
                 checked={value && value.includes(option.value)}
                 name={name}
                 id={`${id}[${index}]`}
