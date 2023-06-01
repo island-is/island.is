@@ -2,7 +2,7 @@ import { Case } from '../../../../types/interfaces'
 import {
   getDateBeginDateEnd,
   getShortDate,
-} from '../../../../utils/helpers/dateFormatter'
+} from '../../../../utils/helpers/dateFunctions'
 import {
   Box,
   Input,
@@ -12,27 +12,26 @@ import {
   Inline,
   Divider,
   UploadFile,
-  Hidden,
   fileToObject,
   toast,
+  Checkbox,
+  Stack,
 } from '@island.is/island-ui/core'
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { useLogIn, usePostAdvice } from '../../../../hooks'
-import { SubscriptionActionBox } from '../../../../components/Card'
+import { useIsMobile, useLogIn, usePostAdvice } from '../../../../hooks'
 import { PresignedPost } from '@island.is/api/schema'
 import {
   REVIEW_FILENAME_MAXIMUM_LENGTH,
   REVIEW_MAXIMUM_LENGTH,
   REVIEW_MINIMUM_LENGTH,
 } from '../../../../utils/consts/consts'
-import { AgencyText } from './components/AgencyText'
+import { AgencyText, ActionBox } from './components/'
 import { createUUIDString } from '../../../../utils/helpers'
-import {
-  advicePublishTypeKey,
-  advicePublishTypeKeyHelper,
-} from '../../../../types/enums'
+import { advicePublishTypeKeyHelper } from '../../../../types/enums'
+import localization from '../../Case.json'
+import sharedLocalization from '../../../../lib/shared.json'
 
 type CardProps = {
   card: Case
@@ -40,6 +39,7 @@ type CardProps = {
   username: string
   caseId: number
   refetchAdvices: any
+  canBePrivate?: boolean
 }
 
 const fileExtensionWhitelist = {
@@ -57,7 +57,9 @@ export const AdviceForm = ({
   username,
   caseId,
   refetchAdvices,
+  canBePrivate,
 }: CardProps) => {
+  const { isMobile } = useIsMobile()
   const LogIn = useLogIn()
   const [review, setReview] = useState('')
   const [showInputError, setShowInputError] = useState(false)
@@ -66,8 +68,12 @@ export const AdviceForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showInputFileError, setShowInputFileError] = useState(false)
   const [inputFileErrorText, setInputFileErrorText] = useState('')
-
+  const loc = localization['adviceForm']
+  const sloc = sharedLocalization['publishingRules']
   const { createUploadUrl, postAdviceMutation } = usePostAdvice()
+  const [privateAdvice, setPrivateAdvice] = useState(false)
+
+  const handlePrivateChange = () => setPrivateAdvice(!privateAdvice)
 
   const uploadFile = async (file: UploadFile, response: PresignedPost) => {
     return new Promise((resolve, reject) => {
@@ -132,8 +138,8 @@ export const AdviceForm = ({
       })
       if (fileListCheck.length > 0) {
         setShowInputFileError(true)
-        setInputFileErrorText('Skráarnafn má í mesta lagi vera 100 stafbil.')
-        toast.error('Skráarnafn má í mesta lagi vera 100 stafbil.')
+        setInputFileErrorText(loc.inputFileErrorText)
+        toast.error(loc.inputFileErrorText)
       } else {
         setShowInputFileError(false)
         setInputFileErrorText('')
@@ -161,6 +167,7 @@ export const AdviceForm = ({
           caseAdviceCommand: {
             content: review,
             fileUrls: mappedFileList,
+            privateAdvice: privateAdvice,
           },
         }
 
@@ -173,9 +180,9 @@ export const AdviceForm = ({
             setReview('')
             setFileList([])
             refetchAdvices()
-            toast.success('Umsögn send inn')
+            toast.success(loc.postAdviceMutationToasts.success)
           })
-          .catch(() => toast.error('Ekki tókst að senda inn umsögn'))
+          .catch(() => toast.error(loc.postAdviceMutationToasts.failure))
       }
     } else {
       setShowInputError(true)
@@ -197,7 +204,6 @@ export const AdviceForm = ({
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
-
   return isLoggedIn ? (
     <Box
       paddingY={3}
@@ -215,44 +221,50 @@ export const AdviceForm = ({
       >
         <Inline alignY="center" collapseBelow="lg">
           <Text variant="eyebrow" color="purple400">
-            Mál nr. S-{card.caseNumber}
+            {`${loc.card.eyebrowText} S-${card.caseNumber}`}
           </Text>
-          <Hidden below="lg">
+          {!isMobile && (
             <Box style={{ transform: 'rotate(90deg)', width: 16 }}>
               <Divider weight="purple400" />
             </Box>
-          </Hidden>
+          )}
           <Box>
             <Text variant="eyebrow" color="purple400">
-              Til umsagnar:{' '}
-              {getDateBeginDateEnd(card.processBegins, card.processEnds)}
+              {`${loc.card.forReviewText}: ${getDateBeginDateEnd(
+                card.processBegins,
+                card.processEnds,
+              )}`}
             </Text>
           </Box>
         </Inline>
         <Text variant="small">{date}</Text>
       </Inline>
       <Text variant="h3" marginTop={1}>
-        Skrifa umsögn
+        {loc.card.title}
       </Text>
 
       <Text marginBottom={2}>
-        Hér er hægt að senda inn umsögn.
+        {loc.card.description.textBefore}
         {` ${
-          advicePublishTypeKey[
-            advicePublishTypeKeyHelper[card.advicePublishTypeId]
-          ]
-        } `}
-        Upplýsingalög gilda, sjá nánar í{' '}
-        <Link href="/um">um samráðsgáttina.</Link>
+          sloc[advicePublishTypeKeyHelper[card.advicePublishTypeId]].present
+        } 
+        ${sloc.publishLaw.text} 
+        `}
+
+        <Link href={sloc.publishLaw.link.href}>
+          {sloc.publishLaw.link.label}
+        </Link>
       </Text>
 
-      <Text marginBottom={2}>Umsagnaraðili: {username}</Text>
+      <Text marginBottom={2}>
+        {loc.card.description.user}: {username}
+      </Text>
 
       <Input
         textarea
-        label="Umsögn"
-        name="Test"
-        placeholder="Hér skal skrifa umsögn"
+        label={loc.input.label}
+        name="review_input"
+        placeholder={loc.input.placeholder}
         rows={10}
         value={review}
         onChange={(e) => setReview(e.target.value)}
@@ -263,64 +275,70 @@ export const AdviceForm = ({
         }
         errorMessage={
           review.length < REVIEW_MINIMUM_LENGTH
-            ? `Texti þarf að vera að minnsta kosti 10 stafbil, texti er núna ${review.length.toLocaleString(
+            ? `${loc.input.minLenght} ${review.length.toLocaleString(
                 'de-DE',
-              )} stafbil.`
-            : `Texti má vera í mesta lagi 290.000 stafbil, texti er núna ${review.length.toLocaleString(
+              )} ${loc.input.lengthUnit}`
+            : `${loc.input.maxLength} ${review.length.toLocaleString(
                 'de-DE',
-              )} stafbil.`
+              )} ${loc.input.lengthUnit}`
         }
       />
       <Box paddingTop={3}>
-        {showUpload && (
-          <Box marginBottom={3}>
+        <Stack space={3}>
+          {showUpload && (
             <InputFileUpload
               name="fileUpload"
               fileList={fileList}
               accept={Object.values(fileExtensionWhitelist)}
-              header="Dragðu skrár hingað til að hlaða upp"
-              description="Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn"
-              buttonLabel="Velja skrár til að hlaða upp"
+              header={loc.inputFileUpload.header}
+              description={loc.inputFileUpload.description}
+              buttonLabel={loc.inputFileUpload.buttonLabel}
               showFileSize
               onChange={onChange}
               onRemove={onRemove}
               maxSize={10000000}
               errorMessage={showInputFileError && inputFileErrorText}
             />
-          </Box>
-        )}
-        <Inline space={2} justifyContent="spaceBetween" collapseBelow="md">
-          {!showUpload ? (
-            <Button
-              fluid
-              size="small"
-              icon="documents"
-              iconType="outline"
-              variant="ghost"
-              onClick={() => setShowUpload(true)}
-            >
-              Hlaða upp viðhengi
-            </Button>
-          ) : (
-            <div />
           )}
-          <Button fluid size="small" onClick={onClick} loading={isSubmitting}>
-            Staðfesta umsögn
-          </Button>
-        </Inline>
+          {canBePrivate && (
+            <Checkbox
+              checked={privateAdvice}
+              onChange={() => handlePrivateChange()}
+              label={loc.privateLabel}
+            />
+          )}
+          <Inline space={2} justifyContent="spaceBetween" collapseBelow="md">
+            {!showUpload ? (
+              <Button
+                fluid
+                size="small"
+                icon="documents"
+                iconType="outline"
+                variant="ghost"
+                onClick={() => setShowUpload(true)}
+              >
+                {loc.showUploadButtonLabel}
+              </Button>
+            ) : (
+              <div />
+            )}
+            <Button fluid size="small" onClick={onClick} loading={isSubmitting}>
+              {loc.submitAdviceButtonLabel}
+            </Button>
+          </Inline>
+        </Stack>
       </Box>
       <Text marginTop={2} variant="small">
-        Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er
-        10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.
+        {loc.allowedFilesText}
       </Text>
       <AgencyText />
     </Box>
   ) : (
     <>
-      <SubscriptionActionBox
-        heading="Viltu skrifa umsögn?"
-        text="Öllum er frjálst að taka þátt í samráðinu. Umsagnir verða birtar jafnóðum og þær berast. Þú þarft að vera skráð(ur) inn til að geta sent umsögn."
-        cta={{ label: 'Skrá mig inn', onClick: LogIn }}
+      <ActionBox
+        heading={loc.loginActionBox.heading}
+        text={loc.loginActionBox.text}
+        cta={{ label: loc.loginActionBox.ctaLabel, onClick: LogIn }}
       />
       <AgencyText />
     </>

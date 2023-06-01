@@ -1,6 +1,7 @@
 import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
 
 import { Inject, UseGuards } from '@nestjs/common'
+import { Audit } from '@island.is/nest/audit'
 
 import {
   CurrentUser,
@@ -27,6 +28,7 @@ import {
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver(() => StudentInfo)
+@Audit({ namespace: '@island.is/api/university-of-iceland' })
 export class UniversityOfIcelandResolver {
   constructor(
     private universityOfIcelandApi: UniversityOfIcelandService,
@@ -37,6 +39,7 @@ export class UniversityOfIcelandResolver {
   ) {}
 
   @Query(() => StudentInfo, { name: 'universityOfIcelandStudentInfo' })
+  @Audit()
   async studentInfo(
     @CurrentUser() user: User,
     @Args('input') input: StudentInfoInput,
@@ -51,6 +54,7 @@ export class UniversityOfIcelandResolver {
   }
 
   @ResolveField('track', () => StudentTrackModel)
+  @Audit()
   async resolveTrack(
     @Args('input') input: StudentInfoInput,
     @CurrentUser() user: User,
