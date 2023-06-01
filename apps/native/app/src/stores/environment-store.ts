@@ -87,7 +87,7 @@ export const environmentStore = create<EnvironmentStore>(
                 apiUrl: `https://${branch.host}${branch.path}`,
               })),
             ];
-            set({loading: false, fetchedAt: Date.now(), result });
+            set({loading: false, fetchedAt: Date.now(), result});
             return result;
           } catch (err) {
             // noop

@@ -4,7 +4,7 @@ import create, {State} from 'zustand/vanilla';
 import {notificationsStore} from '../stores/notifications-store';
 import {ComponentRegistry, MainBottomTabs} from '../utils/component-registry';
 import {openBrowser} from './rn-island';
-import { bundleId } from '../config';
+import {bundleId} from '../config';
 
 export type RouteCallbackArgs =
   | boolean

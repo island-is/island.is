@@ -152,7 +152,7 @@ export function StatusCard({
       <Content>
         <Title>{title}</Title>
         {!!description && <Description>{description}</Description>}
-        <View style={{ flex: 1 }} />
+        <View style={{flex: 1}} />
         <Bar>
           <Progress width={progress} />
         </Bar>

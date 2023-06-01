@@ -10,7 +10,7 @@ import React, {
 import {useAuthStore} from '../stores/auth-store';
 import * as configcat from 'configcat-js';
 import AsyncStorage from '@react-native-community/async-storage';
-import { getConfig } from '../config';
+import {getConfig} from '../config';
 
 interface FeatureFlagUser {
   identifier: string;

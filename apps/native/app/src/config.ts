@@ -1,6 +1,9 @@
 import DeviceInfo from 'react-native-device-info';
 import {Platform} from 'react-native';
-import { environmentStore, useEnvironmentStore } from './stores/environment-store';
+import {
+  environmentStore,
+  useEnvironmentStore,
+} from './stores/environment-store';
 
 // Initial environment
 export const environments = {
@@ -63,7 +66,7 @@ export const config = {
 };
 
 export function useConfig() {
-  const { environment } = useEnvironmentStore();
+  const {environment} = useEnvironmentStore();
   return {
     ...config,
     ...environment,

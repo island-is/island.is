@@ -23,7 +23,7 @@ import {useAuthStore} from '../../stores/auth-store';
 import {preferencesStore} from '../../stores/preferences-store';
 import {nextOnboardingStep} from '../../utils/onboarding';
 import {testIDs} from '../../utils/test-ids';
-import {environments,isTestingApp, useConfig} from '../../config';
+import {environments, isTestingApp, useConfig} from '../../config';
 import {showPicker} from '../../lib/show-picker';
 import {
   environmentStore,
@@ -104,12 +104,16 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
   }, []);
 
   const onLoginPress = async () => {
-    const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > Date.now();
+    const isCognitoAuth =
+      cognito?.accessToken && cognito?.expiresAt > Date.now();
     if (
       environment.idsIssuer !== 'https://innskra.island.is/' &&
       !isCognitoAuth
     ) {
-      Alert.alert('Cognito required', 'Please authenticate with cognito before logging in.');
+      Alert.alert(
+        'Cognito required',
+        'Please authenticate with cognito before logging in.',
+      );
       return;
     }
 
