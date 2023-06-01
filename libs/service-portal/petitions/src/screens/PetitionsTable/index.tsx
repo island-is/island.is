@@ -35,6 +35,7 @@ const PetitionsTable = (data: any) => {
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         {data.canEdit && (
           <DropdownExport
+            petitionId={data.listId}
             onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
           />
         )}

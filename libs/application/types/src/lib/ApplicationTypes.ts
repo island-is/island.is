@@ -45,6 +45,7 @@ export enum ApplicationTypes {
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   OLD_AGE_PENSION = 'OldAgePension',
+  EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
 }
 
 export const ApplicationConfigurations = {
@@ -57,7 +58,7 @@ export const ApplicationConfigurations = {
     translation: 'pa.application',
   },
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
-    slug: 'aefingarakstur',
+    slug: 'aefingaakstur',
     translation: 'dlp.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
@@ -209,7 +210,7 @@ export const ApplicationConfigurations = {
     translation: 'ta.lpr.application',
   },
   [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: {
-    slug: 'panta-skraningarmerki',
+    slug: 'panta-numeraplotu',
     translation: 'ta.ovlp.application',
   },
   [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: {
@@ -231,5 +232,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
     translation: 'oap.application',
+  },
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
+    slug: 'evropska-sjukratryggingakortid',
+    translation: 'ehic.application',
   },
 }

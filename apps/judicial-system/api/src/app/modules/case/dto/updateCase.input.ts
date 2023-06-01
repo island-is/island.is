@@ -11,10 +11,10 @@ import type {
   UpdateCase,
   SessionArrangements,
   CourtDocument,
-  SubpoenaType,
   CaseType,
   IndictmentSubtypeMap,
   CrimeSceneMap,
+  CaseAppealRulingDecision,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -276,10 +276,6 @@ export class UpdateCaseInput implements UpdateCase {
   readonly caseResentExplanation?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
-  readonly subpoenaType?: SubpoenaType
-
-  @Allow()
   @Field({ nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
 
@@ -294,6 +290,14 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly requestDriversLicenseSuspension?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly prosecutorStatementDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defendantStatementDate?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -314,4 +318,12 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly appealJudge3Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealConclusion?: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }

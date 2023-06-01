@@ -27,7 +27,7 @@ import { ClientClaimDTO } from './dto/client-claim.dto'
 import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirect-uri.dto'
 import { ClientSecretDTO } from './dto/client-secret.dto'
 import { ClientsTranslationService } from './clients-translation.service'
-import { BulkCreateOptions, DestroyOptions, Transaction } from 'sequelize'
+import { BulkCreateOptions, DestroyOptions } from 'sequelize'
 
 @Injectable()
 export class ClientsService {
@@ -81,7 +81,7 @@ export class ClientsService {
       where: {
         ...(clientIds && clientIds.length > 0 ? { clientId: clientIds } : {}),
       },
-      attributes: ['clientId', 'clientName'],
+      attributes: ['clientId', 'clientName', 'domainName'],
     })
 
     if (lang) {

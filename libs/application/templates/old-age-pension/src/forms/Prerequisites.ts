@@ -34,6 +34,12 @@ export const PrerequisitesForm: Form = buildForm({
       title: oldAgePensionFormMessage.shared.prerequisitesSection,
       children: [
         buildSubSection({
+          id: 'information',
+          title: 'Til upplýsinga',
+          children: [
+          ],
+        }),
+        buildSubSection({
           id: 'externalData',
           title: oldAgePensionFormMessage.shared.externalDataSubSection,
           children: [
@@ -84,6 +90,14 @@ export const PrerequisitesForm: Form = buildForm({
                     { value: NO, label: oldAgePensionFormMessage.shared.no },
                   ],
                   width: 'half',
+                }),
+                buildCustomField({
+                  id: '......',
+                  title: 'Hvert sækir TR upplýsingarnar sínar',
+                  component: 'FieldAccordionCard',
+                  description:
+                    oldAgePensionFormMessage.shared.pensionFundAlertDescription,
+                  doesNotRequireAnswer: true,
                 }),
                 buildCustomField({
                   id: 'question.pensionFundAlert',

@@ -1,7 +1,12 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
-import { NotificationType, User } from '@island.is/judicial-system/types'
+import {
+  getStatementDeadline,
+  NotificationType,
+  User,
+} from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
@@ -12,9 +17,9 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = () => Promise<Then>
+type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal received by court notification', () => {
+describe('InternalNotificationController - Send appeal received by court notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
@@ -36,7 +41,7 @@ describe('InternalNotificationController - Send appeal received by court notific
 
     mockEmailService = emailService
 
-    givenWhenThen = async () => {
+    givenWhenThen = async (defenderNationalId?: string) => {
       const then = {} as Then
 
       await internalNotificationController
@@ -45,6 +50,8 @@ describe('InternalNotificationController - Send appeal received by court notific
           {
             id: caseId,
             prosecutor: { name: prosecutorName, email: prosecutorEmail },
+            court: { name: 'Héraðsdómur Reykjavíkur' },
+            defenderNationalId,
             defenderName: defenderName,
             defenderEmail: defenderEmail,
             courtCaseNumber,
@@ -65,24 +72,60 @@ describe('InternalNotificationController - Send appeal received by court notific
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen()
+      then = await givenWhenThen(uuid())
     })
 
-    it('should send notification to prosecutor', () => {
+    it('should send notification to prosecutor and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: prosecutorName, address: prosecutorEmail }],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
+            getStatementDeadline(receivedDate),
+            'PPPp',
+          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
       )
-      expect(then.result).toEqual({ delivered: true })
-    })
-
-    it('should send notification to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
+            getStatementDeadline(receivedDate),
+            'PPPp',
+          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        }),
+      )
+      expect(then.result).toEqual({ delivered: true })
+    })
+  })
+
+  describe('notification sent with missing defender national id', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen()
+    })
+
+    it('should send notification to prosecutor and defender', () => {
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: prosecutorName, address: prosecutorEmail }],
+          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
+            getStatementDeadline(receivedDate),
+            'PPPp',
+          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/krafa/yfirlit/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [{ name: defenderName, address: defenderEmail }],
+          subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
+            getStatementDeadline(receivedDate),
+            'PPPp',
+          )}. Hægt er að skila greinargerð og nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

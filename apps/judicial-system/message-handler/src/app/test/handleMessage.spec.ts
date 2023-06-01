@@ -310,6 +310,35 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('archive case files record to court', () => {
+    const policeCaseNumber = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.ARCHIVE_CASE_FILES_RECORD,
+        user,
+        caseId,
+        policeCaseNumber,
+      } as PoliceCaseMessage)
+    })
+
+    it('should archive case files record to court', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/archiveCaseFilesRecord/${policeCaseNumber}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('send heads up notification', () => {
     let then: Then
 
@@ -623,6 +652,66 @@ describe('MessageHandlerService - Handle message', () => {
           },
           body: JSON.stringify({
             type: NotificationType.APPEAL_RECEIVED_BY_COURT,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send appeal statement notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send appeal statement notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.APPEAL_STATEMENT,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send appeal completed notification', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send appeal completed notification', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.APPEAL_COMPLETED,
             user,
           }),
         },

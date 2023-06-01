@@ -1,10 +1,17 @@
 import Head from 'next/head'
+import { ReactNode } from 'react'
+import localization from './AppLayout.json'
 
-const AppLayout = ({ children }) => {
+interface Props {
+  children: ReactNode
+}
+
+const AppLayout = ({ children }: Props) => {
+  const loc = localization['appLayout']
   return (
     <div>
       <Head>
-        <title>Samradsgatt</title>
+        <title>{loc.title}</title>
         <link
           rel="apple-touch-icon"
           sizes="180x180"

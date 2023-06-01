@@ -2,6 +2,17 @@ import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
   /* PREREQUISITES SECTION */
+  introTitle: {
+    id: 'dlp.application:introTitle',
+    defaultMessage: 'Inngangur',
+    description: 'Title for the introduction section',
+  },
+  introBody: {
+    id: 'dlp.application:introBody#markdown',
+    defaultMessage:
+      '#Leyfi fyrir leiðbeinendur\n\nÁður en æfingaakstur með leiðbeinanda má hefjast, þarf ökukennari að hafa staðfest að lágmarki 10 verklega ökutíma í stafræna ökunámsbók og ökunemi þarf einnig að hafa lokið Ökuskóla 1.\n\nEftirfarandi skilyrði þarf að uppfylla til að geta sótt um að vera leiðbeinandi.\n* Hafa náð 24 ára aldri\n* Hafa gild ökuréttindi\n* 5 ára reynslu af akstri frá fyrsta ökuprófi í B flokki\n* Hafa ekki verið sviptur ökuréttindum eða refsað fyrir vítaverðan akstur síðustu 12 mánuði',
+    description: 'Body for the introduction section',
+  },
   externalDataSectionTitle: {
     id: 'dlp.application:externalDataSectionTitle',
     defaultMessage: 'Gagnaöflun',
@@ -31,6 +42,32 @@ export const m = defineMessages({
       'Tókst ekki að sækja upplýsingar um núgildandi ökuskírteini',
     description:
       "Message to display when user's Driver License Data cannot be retrieved",
+  },
+
+  /* National Registry Provider */
+  titleNationalRegistryProvider: {
+    id: 'dlp.application:titleNationalRegistryProvider',
+    defaultMessage: 'Persónuupplýsingar úr Þjóðskrá',
+    description: 'National Registry Provider Title',
+  },
+  descriptionNationalRegistryProvider: {
+    id: 'dlp.application:descriptionNationalRegistryProvider',
+    defaultMessage:
+      'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út í umsóknina.',
+    description: 'National Registry Provider Description',
+  },
+
+  /* Personal Info Provider */
+  titlePersonalInfoProvider: {
+    id: 'dlp.application:titlePersonalInfoProvider',
+    defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
+    description: 'Personal Info Provider Title',
+  },
+  descriptionPersonalInfoProvider: {
+    id: 'dlp.application:descriptionPersonalInfoProvider',
+    defaultMessage:
+      'Til þess að geta sent þér mikilvæg skilaboð um umsóknir þínar er mikilvægt að hafa fyllt út netfang og símanúmer á Mínum síðum.',
+    description: 'Personal Info Provider Description',
   },
 
   /* Requirements Subsection */
@@ -108,8 +145,8 @@ export const m = defineMessages({
   studentIsNotMentorableDescription: {
     id: 'dlp.application:studentIsNotMentorableDescription',
     defaultMessage:
-      'Nemandi uppfyllir ekki þær kröfur sem gerðar eru til þess að mega byrja æfingaakstur',
-    description: 'Description text for a student who is not mentorable',
+      'Kröfur sem gerðar eru til þess að mega byrja æfingaakstur ekki uppfylltar',
+    description: 'Description text for a who is not mentorable',
   },
   studentIsMentorableLoadingHeader: {
     id: 'dlp.application:studentIsMentorableLoadingHeader',
@@ -120,6 +157,11 @@ export const m = defineMessages({
     id: 'dlp.application:studentIsMentorableLoadingDescription',
     defaultMessage: 'Vinsamlegast bíðið á meðan upplýsingar eru sóttar...',
     description: 'Informing user that we are loading data',
+  },
+  studentNoLicenseBookDescription: {
+    id: 'dlp.application:studentNoLicenseBookDescription',
+    defaultMessage: 'Ökubók finnst ekki fyrir nemanda',
+    description: 'Informing user that no license book was found for student',
   },
 
   /* Overview Section */
@@ -167,16 +209,22 @@ export const m = defineMessages({
       'Umsókn þín um að gerast leiðbeinandi nemanda hefur verið móttekin.',
     description: 'Info displayed to applicant upon application completion',
   },
+  doneDescriptionBody: {
+    id: 'dlp.application:doneDescriptionBody#markdown',
+    defaultMessage:
+      '## Leyfisbréf leiðbeinanda verður sent í pósthólf þitt á Ísland.is\nAlltaf skal hafa leyfið meðferðis við æfingaakstur. Óheimilt er að taka endurgjald fyrir að leiðbeina ökunema. Fylgi leiðbeinandi ekki reglum um æfingaakstur eða fullnægi ekki lengur skilyrðum getur sýslumaður afturkallað leyfið.\n\nSamgöngustofa gefur út leiðbeiningar um æfingaakstur og skal ökukennari veita leiðbeinanda aðstoð við skipulagningu akstursins og gefa leiðbeinanda kost á að fylgjast með a.m.k. einni klukkustund í akstri. Auðkenna skal bifreið sem nota á til æfingaaksturs samkvæmt reglum Samgöngustofu.',
+    description: 'Description of what happens next',
+  },
 
   /* OTHER */
   name: {
     id: 'dlp.application:name',
-    defaultMessage: 'Umsókn um leiðbeinendaréttindi æfingaraksturs',
+    defaultMessage: 'Umsókn um að gerast leiðbeinandi í æfingaakstri B-flokk',
     description: 'Name of application',
   },
   institutionName: {
     id: 'dlp.application:institutionName',
-    defaultMessage: 'Ökubók',
+    defaultMessage: 'Ökunámsbók',
     description: 'Name of institution for the application',
   },
 })
@@ -188,10 +236,15 @@ export const requirementsMessages = defineMessages({
     description: 'Learner age requirement title',
   },
   ageRequirementDescription: {
-    id: 'dlp.application:requirementunmet.ageRequirementTitle',
+    id: 'dlp.application:requirementunmet.ageRequirementDescription',
     defaultMessage:
       'Leiðbeinandi þarf að hafa náð 24 ára aldri a.m.k til að gerast leiðbeinandi',
     description: 'Learner age requirement description',
+  },
+  notFulfilled: {
+    id: 'dlp.application:requirementunmet.notFulfilled',
+    defaultMessage: 'Kröfur ekki uppfylltar',
+    description: 'Requirements not fulfilled',
   },
   rlsAcceptedDescription: {
     id: 'dlp.application:requirementunmet.accepted',
@@ -270,7 +323,7 @@ export const requirementsMessages = defineMessages({
   validForFiveYearsDescription: {
     id: 'dlp.application:requirementunmet.validForFiveYearsDescription',
     defaultMessage:
-      'Leiðbeinandi þarf að hafa haft gild ökuréttindi fyrir bifreiðar, ekki bifhjól, í að minnsta kosti 5 ár',
+      'Leiðbeinandi þarf að hafa haft gild ökuréttindi fyrir B-flokk í að minnsta kosti 5 ár',
     description:
       'requirement unmet valid license for five years or more description',
   },

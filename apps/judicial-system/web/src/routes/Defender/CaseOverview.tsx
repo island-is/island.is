@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  BlueBox,
   CaseDates,
   FormContentContainer,
   FormContext,
@@ -29,13 +28,7 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  AlertMessage,
-  Box,
-  Divider,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
   capitalize,
@@ -44,12 +37,18 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import * as constants from '@island.is/judicial-system/consts'
+import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
+import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
+import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
-import { AlertBanner } from '../../components/AlertBanner'
-import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
+import Conclusion from '../../components/Conclusion/Conclusion'
+import CaseFilesOverview from '../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
 
-type availableModals = 'NoModal' | 'ConfirmAppealAfterDeadline'
+type availableModals =
+  | 'NoModal'
+  | 'ConfirmAppealAfterDeadline'
+  | 'ConfirmStatementAfterDeadline'
 
 export const CaseOverview: React.FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
@@ -58,8 +57,10 @@ export const CaseOverview: React.FC = () => {
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)
-  const { title, description, child } = useAppealAlertBanner(workingCase, () =>
-    setModalVisible('ConfirmAppealAfterDeadline'),
+  const { title, description, child } = useAppealAlertBanner(
+    workingCase,
+    () => setModalVisible('ConfirmAppealAfterDeadline'),
+    () => setModalVisible('ConfirmStatementAfterDeadline'),
   )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
@@ -255,33 +256,57 @@ export const CaseOverview: React.FC = () => {
                   phoneNumber: workingCase.defenderPhoneNumber,
                 },
               ]}
+              courtOfAppealData={
+                workingCase.appealCaseNumber
+                  ? [
+                      {
+                        title: formatMessage(core.appealCaseNumberHeading),
+                        value: workingCase.appealCaseNumber,
+                      },
+                      {
+                        title: formatMessage(core.appealAssistantHeading),
+                        value: workingCase.appealAssistant?.name,
+                      },
+                      {
+                        title: formatMessage(core.appealJudgesHeading),
+                        value: (
+                          <>
+                            <Text>{workingCase.appealJudge1?.name}</Text>
+                            <Text>{workingCase.appealJudge2?.name}</Text>
+                            <Text>{workingCase.appealJudge3?.name}</Text>
+                          </>
+                        ),
+                      },
+                    ]
+                  : undefined
+              }
             />
           </Box>
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
-              <BlueBox>
-                <Box marginBottom={2} textAlign="center">
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.conclusionHeading)}
-                  </Text>
-                </Box>
-                <Box marginBottom={3}>
-                  <Box marginTop={1}>
-                    <Text variant="intro">{workingCase.conclusion}</Text>
-                  </Box>
-                </Box>
-                <Box marginBottom={1} textAlign="center">
-                  <Text variant="h4">{workingCase.judge?.name}</Text>
-                </Box>
-              </BlueBox>
+              <Conclusion
+                conclusionText={workingCase.conclusion}
+                judgeName={workingCase.judge?.name}
+              />
             </Box>
           )}
-          <Box marginBottom={10}>
-            <Text as="h3" variant="h3" marginBottom={3}>
-              {formatMessage(m.documentHeading)}
-            </Text>
-            <Box marginBottom={2}>
-              <Stack space={2} dividers>
+          {workingCase.appealConclusion && (
+            <Box marginBottom={6}>
+              <AppealConclusion
+                conclusionText={workingCase.appealConclusion}
+                judgeName={workingCase.appealJudge1?.name}
+              />
+            </Box>
+          )}
+
+          {workingCase.appealState ? (
+            <CaseFilesOverview />
+          ) : (
+            <Box marginBottom={10}>
+              <Text as="h3" variant="h3" marginBottom={3}>
+                {formatMessage(m.documentHeading)}
+              </Text>
+              <Box>
                 <PdfButton
                   renderAs="row"
                   caseId={workingCase.id}
@@ -320,10 +345,9 @@ export const CaseOverview: React.FC = () => {
                     </PdfButton>
                   </>
                 )}
-              </Stack>
+              </Box>
             </Box>
-            <Divider />
-          </Box>
+          )}
         </FormContentContainer>
         {modalVisible === 'ConfirmAppealAfterDeadline' && (
           <Modal
@@ -334,6 +358,24 @@ export const CaseOverview: React.FC = () => {
             )}
             secondaryButtonText={formatMessage(
               m.confirmAppealAfterDeadlineModalSecondaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
+        {modalVisible === 'ConfirmStatementAfterDeadline' && (
+          <Modal
+            title={formatMessage(m.confirmStatementAfterDeadlineModalTitle)}
+            text={formatMessage(m.confirmStatementAfterDeadlineModalText)}
+            primaryButtonText={formatMessage(
+              m.confirmStatementAfterDeadlineModalPrimaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              m.confirmStatementAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)

@@ -16,9 +16,9 @@ import {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
   SessionArrangements,
   CourtDocument,
-  SubpoenaType,
   CaseType,
 } from '@island.is/judicial-system/types'
 import type {
@@ -345,11 +345,6 @@ export class UpdateCaseDto {
   readonly caseResentExplanation?: string
 
   @IsOptional()
-  @IsEnum(SubpoenaType)
-  @ApiPropertyOptional({ enum: SubpoenaType })
-  readonly subpoenaType?: SubpoenaType
-
-  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
   readonly defendantWaivesRightToCounsel?: boolean
@@ -368,6 +363,16 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly requestDriversLicenseSuspension?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly prosecutorStatementDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defendantStatementDate?: Date
 
   @IsOptional()
   @IsString()
@@ -393,4 +398,14 @@ export class UpdateCaseDto {
   @IsUUID()
   @ApiPropertyOptional()
   readonly appealJudge3Id?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealConclusion?: string
+
+  @IsOptional()
+  @IsEnum(CaseAppealRulingDecision)
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }

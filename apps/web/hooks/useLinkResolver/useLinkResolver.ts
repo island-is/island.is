@@ -198,6 +198,10 @@ export const routesTemplate = {
     is: '/',
     en: '/en',
   },
+  undirskriftalistar: {
+    is: '/undirskriftalistar',
+    en: '/en/petitions',
+  },
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name
@@ -230,7 +234,11 @@ export const extractSlugsByRouteTemplate = (
 }
 
 /** Check if path is of link type */
-export const pathIsRoute = (path: string, linkType: LinkType) => {
+export const pathIsRoute = (
+  path: string,
+  linkType: LinkType,
+  locale?: Locale,
+) => {
   const segments = path.split('/').filter((x) => x)
 
   const localeSegment = isLocale(segments[0]) ? segments[0] : ''
@@ -240,7 +248,7 @@ export const pathIsRoute = (path: string, linkType: LinkType) => {
     localeSegment ? localeSegment + '/' : ''
   }${firstSegment}`.replace(/\/$/, '')
 
-  return current === linkResolver(linkType).href
+  return current === linkResolver(linkType, [], locale).href
 }
 
 /*

@@ -30,7 +30,7 @@ describe('LimitedAccessFileController - Create presigned post guards', () => {
       guard = guards[0]
     })
 
-    it('should have CaseTypeGuard as quard 1', () => {
+    it('should have CaseTypeGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...restrictionCases, ...investigationCases],

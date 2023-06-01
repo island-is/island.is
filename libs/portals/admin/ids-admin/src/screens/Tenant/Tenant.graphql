@@ -1,5 +1,13 @@
 query GetTenant($id: String!) {
   authAdminTenant(id: $id) {
-    ...TenantFragment
+    id
+    availableEnvironments
+    defaultEnvironment {
+      id
+      displayName {
+        locale
+        value
+      }
+    }
   }
 }

@@ -5,9 +5,9 @@ import React, { createContext, useEffect, useState } from 'react'
 import { CSRF_COOKIE_NAME } from '@island.is/judicial-system/consts'
 
 import {
-  CurrentUserQueryDocument,
-  CurrentUserQueryQuery,
-  CurrentUserQueryQueryVariables,
+  CurrentUserDocument,
+  CurrentUserQuery,
+  CurrentUserQueryVariables,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -34,13 +34,13 @@ export const UserProvider: React.FC<Props> = ({
   const isAuthenticated =
     authenticated || Boolean(Cookies.get(CSRF_COOKIE_NAME))
 
-  const { data } = useQuery<
-    CurrentUserQueryQuery,
-    CurrentUserQueryQueryVariables
-  >(CurrentUserQueryDocument, {
-    fetchPolicy: 'no-cache',
-    skip: !isAuthenticated || Boolean(user),
-  })
+  const { data } = useQuery<CurrentUserQuery, CurrentUserQueryVariables>(
+    CurrentUserDocument,
+    {
+      fetchPolicy: 'no-cache',
+      skip: !isAuthenticated || Boolean(user),
+    },
+  )
 
   const loggedInUser = data?.currentUser
 
@@ -54,7 +54,7 @@ export const UserProvider: React.FC<Props> = ({
     <UserContext.Provider
       value={{
         isAuthenticated,
-        limitedAccess: user?.role === UserRole.Defender,
+        limitedAccess: user?.role === UserRole.DEFENDER,
         user,
       }}
     >

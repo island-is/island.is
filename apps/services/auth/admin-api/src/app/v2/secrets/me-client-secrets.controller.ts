@@ -41,12 +41,12 @@ export class MeClientSecretsController {
   @Audit<ClientSecretDto[]>({
     resources: (secrets) => secrets.map((secret) => secret.secretId),
   })
-  find(
+  findAll(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
   ): Promise<ClientSecretDto[]> {
-    return this.clientSecretsService.find(tenantId, clientId)
+    return this.clientSecretsService.findAll(tenantId, clientId)
   }
 
   @Post()
@@ -71,14 +71,13 @@ export class MeClientSecretsController {
     description: 'Delete a client secret for the specified tenant and client.',
     response: { status: 204 },
   })
-  @Audit()
   async delete(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
     @Param('secretId') secretId: string,
-  ): Promise<number> {
-    return this.auditService.auditPromise(
+  ): Promise<void> {
+    await this.auditService.auditPromise(
       {
         auth: user,
         namespace,

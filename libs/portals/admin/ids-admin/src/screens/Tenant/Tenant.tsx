@@ -1,13 +1,24 @@
-import { Outlet } from 'react-router-dom'
-import { domainNav } from '../../lib/navigation'
-import Layout from '../../components/Layout/Layout'
+import { Outlet, useLoaderData } from 'react-router-dom'
+
 import { useLocale } from '@island.is/localization'
+
+import { Layout } from '../../components/Layout/Layout'
 import { m } from '../../lib/messages'
+import { idsAdminNav } from '../../lib/navigation'
+import { TenantLoaderResult } from './Tenant.loader'
 
 const Tenant = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
+  const {
+    defaultEnvironment: { displayName },
+  } = useLoaderData() as TenantLoaderResult
+
+  const tenantTitle =
+    displayName.find((d) => d.locale === locale)?.value ??
+    formatMessage(m.idsAdmin)
+
   return (
-    <Layout navTitle={formatMessage(m.idsAdmin)} navItems={domainNav}>
+    <Layout navTitle={tenantTitle} navItems={idsAdminNav}>
       <Outlet />
     </Layout>
   )

@@ -32,6 +32,7 @@ export const SUB_GET_EMAIL = gql`
     }
   }
 `
+
 export const SUB_POST_SUBS = gql`
   mutation SUB_POST_SUBS(
     $input: ConsultationPortalUserSubscriptionsCommandInput!
@@ -39,12 +40,13 @@ export const SUB_POST_SUBS = gql`
     consultationPortalPostSubscriptions(input: $input)
   }
 `
+
 // screens/UserSubscriptions
 export const SUB_GET_USERSUBS = gql`
   query SUB_GET_USERSUBS {
     consultationPortalUserSubscriptions {
       subscribedToAll
-      subscribedToAllNew
+      subscribedToAllType
       cases {
         id
         subscriptionType
@@ -130,7 +132,12 @@ export const CASE_GET_CASE_BY_ID = gql`
       announcementText
       summaryDate
       summaryText
+      summaryLink
+      summaryDocumentId
       adviceCount
+      advicePublishTypeId
+      advicePublishTypeName
+      allowUsersToSendPrivateAdvices
       created
       changed
       oldInstitutionName
@@ -141,7 +148,24 @@ export const CASE_GET_CASE_BY_ID = gql`
       }
       documents {
         id
+        description
+        link
         fileName
+        fileType
+        size
+      }
+      additionalDocuments {
+        id
+        description
+        link
+        fileName
+        fileType
+        size
+      }
+      relatedCases {
+        id
+        caseNumber
+        name
       }
     }
   }
@@ -156,6 +180,7 @@ export const CASE_GET_ADVICES_BY_ID = gql`
       participantEmail
       content
       created
+      isPrivateAdvice
       adviceDocuments {
         id
         fileName
@@ -219,8 +244,6 @@ export const ADVICES_GET_ALL_USER_ADVICES = gql`
         adviceDocuments {
           id
           fileName
-          fileType
-          size
         }
       }
     }

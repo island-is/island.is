@@ -4,7 +4,7 @@ import { HealthInsuranceService } from './healthInsurance.service'
 import {
   HealthInsuranceV2Client,
   HealthInsuranceV2Options,
-} from '@island.is/clients/health-insurance-v2'
+} from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 describe('apiDomainsHealthInsurance', () => {

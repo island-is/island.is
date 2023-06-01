@@ -27,7 +27,6 @@ import {
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
 
 const MortgageCertificateSchema = z.object({
@@ -55,7 +54,6 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.mortgageCertificateDelegations,
     },
   ],
   stateMachineConfig: {

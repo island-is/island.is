@@ -622,6 +622,10 @@ export const messages = defineMessages({
     id: 'sp.vehicles:signup-to-driving-school',
     defaultMessage: 'Skrá mig í ökunám',
   },
+  seeInfo: {
+    id: 'sp.vehicles:see-info',
+    defaultMessage: 'Skoða nánar',
+  },
 })
 
 export const urls = defineMessages({
@@ -639,7 +643,11 @@ export const urls = defineMessages({
   },
   regNumber: {
     id: 'sp.vehicles:url-registration-number',
-    defaultMessage: 'https://island.is/umsoknir/panta-skraningarmerki',
+    defaultMessage: 'https://island.is/umsoknir/panta-numeraplotu',
+  },
+  regCert: {
+    id: 'sp.vehicles:url-registration-cert',
+    defaultMessage: 'https://island.is/umsoknir/panta-skraningarskirteini',
   },
   renewPrivate: {
     id: 'sp.vehicles:url-renew-private',

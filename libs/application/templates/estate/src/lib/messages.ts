@@ -175,7 +175,7 @@ export const m = defineMessages({
   // Estate members, assets, vehicles
   estateMembersTitle: {
     id: 'es.application:estateMembersTitle',
-    defaultMessage: 'Erfingjar',
+    defaultMessage: 'Erfingjar og erfðaskrá',
     description: '',
   },
   estateMembersSubtitle: {
@@ -215,9 +215,45 @@ export const m = defineMessages({
     defaultMessage: 'Erfðaskrá í vörslu sýslumanns',
     description: '',
   },
+  willsAndAgreements: {
+    id: 'es.application:willsAndAgreements',
+    defaultMessage: 'Erfðaskrá og kaupmáli',
+    description: '',
+  },
+  willsAndAgreementsDescription: {
+    id: 'es.application:willsAndAgreementsDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  doesWillExist: {
+    id: 'es.application:doesWillExist',
+    defaultMessage: 'Er til erfðaskrá?',
+    description: '',
+  },
+  doesAgreementExist: {
+    id: 'es.application:doesAgreementExist',
+    defaultMessage: 'Er til kaupmáli?',
+    description: '',
+  },
+  doesPermissionToPostponeExist: {
+    id: 'es.application:doesPermissionToPostponeExist',
+    defaultMessage: 'Er til leyfi til setu í óskiptu búi?',
+    description: '',
+  },
   agreements: {
     id: 'es.application:agreements',
     defaultMessage: 'Kaupmáli',
+    description: '',
+  },
+  additionalInfo: {
+    id: 'es.application:additionalInfo',
+    defaultMessage: 'Athugasemdir',
+    description: '',
+  },
+  additionalInfoPlaceholder: {
+    id: 'es.application:additionalInfoPlaceholder',
+    defaultMessage: 'Skráðu athugasemdir ef einhverjar eru',
     description: '',
   },
   otherWills: {
@@ -636,6 +672,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
     description: '',
   },
+  errorNationalIdIncorrect: {
+    id: 'es.application:error.nationalIdIncorrect',
+    defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
+    description: 'National id is invalid',
+  },
 
   // Assets
   errorNumberEmpty: {
@@ -659,6 +700,11 @@ export const m = defineMessages({
     id: 'es.application:inheritanceEnableMember',
     defaultMessage: 'Virkja',
     description: 'Inheritance step enable member of estate',
+  },
+  inheritanceDeleteMember: {
+    id: 'es.application:inheritanceDeleteMember',
+    defaultMessage: 'Eyða',
+    description: 'Inheritance step delete member of estate',
   },
   inheritanceKtLabel: {
     id: 'es.application:inheritanceKtLabel',

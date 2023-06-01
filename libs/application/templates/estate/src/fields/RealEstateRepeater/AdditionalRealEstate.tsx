@@ -39,11 +39,10 @@ export const AdditionalRealEstate = ({
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
-  const dummyField = `${fieldIndex}.dummy`
   const shareField = `${fieldIndex}.share`
   const marketValueField = `${fieldIndex}.marketValue`
 
-  const { control, setValue } = useFormContext()
+  const { control, setValue, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
   const [
@@ -53,6 +52,7 @@ export const AdditionalRealEstate = ({
     SEARCH_FOR_PROPERTY_QUERY,
     {
       onCompleted: (data) => {
+        clearErrors(addressField)
         setValue(
           addressField,
           data.searchForProperty?.defaultAddress?.display ?? '',
@@ -93,12 +93,6 @@ export const AdditionalRealEstate = ({
         render={() => <input type="hidden" />}
       />
       <Controller
-        name={dummyField}
-        control={control}
-        defaultValue={field.dummy || false}
-        render={() => <input type="hidden" />}
-      />
-      <Controller
         name={shareField}
         control={control}
         defaultValue={field.share || ''}
@@ -122,7 +116,8 @@ export const AdditionalRealEstate = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.assetNumber}
-            error={error?.assetNumber ?? undefined}
+            error={error?.assetNumber}
+            required
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
@@ -133,6 +128,7 @@ export const AdditionalRealEstate = ({
             loading={queryLoading}
             readOnly
             defaultValue={field.description}
+            error={error?.description}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
@@ -140,10 +136,12 @@ export const AdditionalRealEstate = ({
             id={marketValueField}
             name={marketValueField}
             label={formatMessage(m.marketValueTitle)}
-            defaultValue={(field as any).marketValue}
+            defaultValue={field.marketValue}
             placeholder={'0 kr.'}
+            error={error?.marketValue}
             currency
             size="sm"
+            required
           />
         </GridColumn>
       </GridRow>

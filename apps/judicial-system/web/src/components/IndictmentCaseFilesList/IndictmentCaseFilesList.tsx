@@ -10,19 +10,20 @@ import {
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { Box, Text } from '@island.is/island-ui/core'
-import { core, errors } from '@island.is/judicial-system-web/messages'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isTrafficViolationCase } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import {
+  FileNotFoundModal,
+  PdfButton,
+  SectionHeading,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import PdfButton from '../PdfButton/PdfButton'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
-import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.strings'
-import { useFileList } from '../../utils/hooks'
-import { UserContext } from '../UserProvider/UserProvider'
-import SectionHeading from '../SectionHeading/SectionHeading'
-import * as styles from './IndictmentCaseFilesList.css'
 import { courtRecord } from '../../routes/Court/Indictments/CourtRecord/CourtRecord.strings'
-import Modal from '../Modal/Modal'
+import { indictmentCaseFilesList as strings } from './IndictmentCaseFilesList.strings'
+import * as styles from './IndictmentCaseFilesList.css'
 
 interface Props {
   workingCase: Case
@@ -64,10 +65,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
     caseId: workingCase.id,
   })
 
-  const showTrafficViolationCaseFiles = isTrafficViolationCase(
-    workingCase,
-    user,
-  )
+  const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
 
   const cf = workingCase.caseFiles
 
@@ -122,7 +120,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        {user?.role !== UserRole.Defender && showTrafficViolationCaseFiles && (
+        {user?.role !== UserRole.DEFENDER && showTrafficViolationCaseFiles && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(caseFiles.indictmentSection)}
@@ -177,7 +175,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
             />
           </Box>
         )}
-        {user?.role !== UserRole.Defender && (
+        {user?.role !== UserRole.DEFENDER && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
               {formatMessage(strings.caseFileTitle)}
@@ -193,7 +191,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
                   title={formatMessage(strings.caseFileButtonText, {
                     policeCaseNumber,
                   })}
-                  pdfType="caseFiles"
+                  pdfType="caseFilesRecord"
                   policeCaseNumber={policeCaseNumber}
                   renderAs="row"
                 />
@@ -232,14 +230,7 @@ const IndictmentCaseFilesList: React.FC<Props> = (props) => {
         ) : null}
       </Box>
       <AnimatePresence>
-        {fileNotFound && (
-          <Modal
-            title={formatMessage(errors.fileNotFoundModalTitle)}
-            onClose={() => dismissFileNotFound()}
-            onPrimaryButtonClick={() => dismissFileNotFound()}
-            primaryButtonText={formatMessage(core.closeModal)}
-          />
-        )}
+        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
     </>
   )

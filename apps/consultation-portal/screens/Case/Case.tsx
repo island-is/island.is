@@ -1,34 +1,32 @@
 import {
   Box,
   Breadcrumbs,
-  Bullet,
-  BulletList,
-  Button,
   Divider,
-  FocusableBox,
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
-  Icon,
-  Inline,
-  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
-import Layout from '../../components/Layout/Layout'
-import { SimpleCardSkeleton } from '../../components/Card'
-import StackedTitleAndDescription from '../../components/StackedTitleAndDescription/StackedTitleAndDescription'
-import { getTimeLineDate } from '../../utils/helpers/dateFormatter'
-import Link from 'next/link'
-import { useFetchAdvicesById, useLogIn } from '../../utils/helpers'
-import { useContext, useState } from 'react'
-import { UserContext } from '../../context'
-import Advices from '../../components/Advices/Advices'
+import {
+  CaseOverview,
+  CaseTimeline,
+  Coordinator,
+  BlowoutList,
+  CaseStatusBox,
+  CaseDocuments,
+  CaseEmailBox,
+  AdviceForm,
+  AdviceList,
+  AdviceSkeletonLoader,
+} from './components'
+import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
-import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
-import env from '../../lib/environment'
+import { CaseStatuses } from '../../types/enums'
+import { useContext } from 'react'
+import UserContext from '../../context/UserContext'
+import localization from './Case.json'
+import { Layout } from '../../components'
 
 interface Props {
   chosenCase: Case
@@ -37,61 +35,78 @@ interface Props {
 
 const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const { contactEmail, contactName } = chosenCase
+  const { isMobile } = useIsMobile()
   const { isAuthenticated, user } = useContext(UserContext)
-  const [showStakeholders, setShowStakeholders] = useState(false)
-  const LogIn = useLogIn()
-
+  const loc = localization['case']
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
   })
 
+  const isStakeholdersNotEmpty = chosenCase?.stakeholders?.length > 0
+  const isRelatedCasesNotEmpty = chosenCase?.relatedCases?.length > 0
+  const isDocumentsNotEmpty = chosenCase?.documents?.length > 0
+  const isAdditionalDocumentsNotEmpty =
+    chosenCase?.additionalDocuments?.length > 0
+  const statusNameIsNotPublished =
+    chosenCase?.statusName !== CaseStatuses.published
+  const statusNameIsForReview =
+    chosenCase?.statusName === CaseStatuses.forReview
+
   return (
     <Layout
       seo={{
-        title: `Mál: S-${chosenCase?.caseNumber}`,
-        url: `mal/${chosenCase?.id}`,
+        title: `${loc.seo.title}: S-${chosenCase?.caseNumber}`,
+        url: `${loc.seo.url}${chosenCase?.id}`,
       }}
     >
       <GridContainer>
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
             items={[
-              { title: 'Öll mál', href: '/' },
-              { title: `Mál nr. S-${chosenCase?.caseNumber}` },
+              {
+                title: loc.breadcrumbs.parent.title,
+                href: loc.breadcrumbs.parent.href,
+              },
+              {
+                title: `${loc.breadcrumbs.current.title} S-${chosenCase?.caseNumber}`,
+              },
             ]}
           />
         </Box>
       </GridContainer>
-      <Hidden above={'md'}>
+      {isMobile && (
         <Box paddingBottom={3}>
           <Divider />
         </Box>
-      </Hidden>
+      )}
       <GridContainer>
         <GridRow rowGap={3}>
           <GridColumn
             span={['12/12', '12/12', '12/12', '3/12', '3/12']}
             order={[3, 3, 3, 1, 1]}
           >
-            <Stack space={2}>
+            <Stack space={3}>
               <Divider />
-              <CaseTimeline
-                status={chosenCase.statusName}
-                updatedDate={getTimeLineDate(chosenCase)}
-              />
+              <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <Box paddingLeft={1}>
-                <Text variant="h3" color="purple400">
-                  {`Fjöldi umsagna: ${chosenCase.adviceCount}`}
-                </Text>
-              </Box>
-              <Divider />
-              <Box paddingTop={1}>
+              {isDocumentsNotEmpty && (
+                <CaseDocuments
+                  title={loc.documentsBox.documents.title}
+                  documents={chosenCase?.documents}
+                />
+              )}
+              {isAdditionalDocumentsNotEmpty && (
+                <CaseDocuments
+                  title={loc.documentsBox.additional.title}
+                  documents={chosenCase?.additionalDocuments}
+                />
+              )}
+              {statusNameIsNotPublished && (
                 <CaseEmailBox
                   caseId={caseId}
                   caseNumber={chosenCase?.caseNumber}
                 />
-              </Box>
+              )}
             </Stack>
           </GridColumn>
           <GridColumn
@@ -100,21 +115,28 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           >
             <Stack space={[3, 3, 3, 9, 9]}>
               <CaseOverview chosenCase={chosenCase} />
-              <Box>
-                <Stack space={3}>
-                  <Text variant="h1" color="blue400">
-                    Innsendar umsagnir
-                  </Text>
-                  <Advices advices={advices} advicesLoading={advicesLoading} />
-                  <WriteReviewCard
+              <Stack space={3}>
+                <Text variant="h1" color="blue400">
+                  {`${loc.advices.title} (${
+                    chosenCase.adviceCount ? chosenCase.adviceCount : 0
+                  })`}
+                </Text>
+                {advicesLoading ? (
+                  <AdviceSkeletonLoader />
+                ) : (
+                  <AdviceList advices={advices} chosenCase={chosenCase} />
+                )}
+                {statusNameIsForReview && (
+                  <AdviceForm
                     card={chosenCase}
                     isLoggedIn={isAuthenticated}
                     username={user?.name}
-                    caseId={chosenCase.id}
+                    caseId={chosenCase?.id}
                     refetchAdvices={refetchAdvices}
+                    canBePrivate={chosenCase?.allowUsersToSendPrivateAdvices}
                   />
-                </Stack>
-              </Box>
+                )}
+              </Stack>
             </Stack>
           </GridColumn>
           <GridColumn
@@ -122,110 +144,17 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Skjöl til samráðs"
-                >
-                  {chosenCase.documents.length > 0 ? (
-                    chosenCase.documents.map((doc, index) => {
-                      return (
-                        <LinkV2
-                          href={`${env.backendDownloadUrl}${doc.id}`}
-                          color="blue400"
-                          underline="normal"
-                          underlineVisibility="always"
-                          newTab
-                          key={index}
-                        >
-                          {doc.fileName}
-                        </LinkV2>
-                      )
-                    })
-                  ) : (
-                    <Text>Engin skjöl fundust.</Text>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Viltu senda umsögn?"
-                >
-                  <Text>
-                    Öllum er frjálst að taka þátt í samráðinu.
-                    {!isAuthenticated && ' Skráðu þig inn og sendu umsögn.'}
-                  </Text>
-                </StackedTitleAndDescription>
-                <Box paddingTop={2}>
-                  {isAuthenticated ? (
-                    <Link href="#write-review" shallow>
-                      <Button fluid iconType="outline" nowrap as="a">
-                        Senda umsögn
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button fluid iconType="outline" nowrap onClick={LogIn}>
-                      Skrá mig inn
-                    </Button>
-                  )}
-                </Box>
-              </SimpleCardSkeleton>
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Aðilar sem hafa fengið boð um samráð á máli."
-                >
-                  {chosenCase?.stakeholders.length < 1 ? (
-                    <Text>Engir aðilar hafa fengið boð.</Text>
-                  ) : (
-                    <Inline justifyContent="spaceBetween" alignY="center">
-                      <Text>
-                        Samtals: {chosenCase?.stakeholders?.length}{' '}
-                        {chosenCase?.stakeholders?.length === 1
-                          ? 'aðili'
-                          : 'aðilar'}
-                      </Text>
-                      <FocusableBox
-                        component="button"
-                        onClick={() => setShowStakeholders(!showStakeholders)}
-                      >
-                        <Icon
-                          icon={showStakeholders ? 'close' : 'open'}
-                          type="outline"
-                          size="small"
-                          color="blue400"
-                        />
-                      </FocusableBox>
-                    </Inline>
-                  )}
-                  {showStakeholders && (
-                    <Box padding="smallGutter">
-                      <BulletList type="ul">
-                        {chosenCase?.stakeholders.map((stakeholder, index) => {
-                          return <Bullet key={index}>{stakeholder.name}</Bullet>
-                        })}
-                      </BulletList>
-                    </Box>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
-
-              <SimpleCardSkeleton>
-                <StackedTitleAndDescription
-                  headingColor="blue400"
-                  title="Umsjónaraðili"
-                >
-                  {contactName || contactEmail ? (
-                    <>
-                      {contactName && <Text>{contactName}</Text>}
-                      {contactEmail && <Text>{contactEmail}</Text>}
-                    </>
-                  ) : (
-                    <Text>Engin skráður umsjónaraðili.</Text>
-                  )}
-                </StackedTitleAndDescription>
-              </SimpleCardSkeleton>
+              <CaseStatusBox status={chosenCase.statusName} />
+              {isStakeholdersNotEmpty && (
+                <BlowoutList list={chosenCase.stakeholders} isStakeholder />
+              )}
+              {isRelatedCasesNotEmpty && (
+                <BlowoutList list={chosenCase.relatedCases} />
+              )}
+              <Coordinator
+                contactEmail={contactEmail}
+                contactName={contactName}
+              />
             </Stack>
           </GridColumn>
         </GridRow>

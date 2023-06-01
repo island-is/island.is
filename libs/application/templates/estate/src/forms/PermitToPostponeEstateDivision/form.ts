@@ -12,6 +12,7 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
+import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
   id: 'permitToPostponeEstateDivisionForm',
@@ -23,27 +24,35 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'estateMembersInfo',
+      id: 'estateMembersAndWillsInfo',
       title: m.estateMembersTitle,
       children: [
-        buildMultiField({
-          id: 'estateMembersInfo',
-          title: m.estateMembersTitle,
-          description: m.estateMembersSubtitle,
+        buildSubSection({
+          id: 'estateMembers',
+          title: m.estateMembers,
           children: [
-            buildDescriptionField({
-              id: 'membersOfEstateTitle',
-              title: m.estateMembers,
-              description: m.estateMembersHeaderDescription,
-              titleVariant: 'h3',
-            }),
-            buildCustomField({
-              title: '',
-              id: 'estate.estateMembers',
-              component: 'EstateMembersRepeater',
+            buildMultiField({
+              id: 'estateMembersInfo',
+              title: m.estateMembersTitle,
+              description: m.estateMembersSubtitle,
+              children: [
+                buildDescriptionField({
+                  id: 'membersOfEstateTitle',
+                  title: m.estateMembers,
+                  description: m.estateMembersHeaderDescription,
+                  titleVariant: 'h3',
+                  marginBottom: 5,
+                }),
+                buildCustomField({
+                  title: '',
+                  id: 'estate.estateMembers',
+                  component: 'EstateMembersRepeater',
+                }),
+              ],
             }),
           ],
         }),
+        testamentInfo,
       ],
     }),
     buildSection({
@@ -121,11 +130,22 @@ export const form: Form = buildForm({
                   description: m.vehiclesDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.vehicles',
-                  component: 'VehiclesRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.vehicles',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'vehicles',
+                    texts: {
+                      assetTitle: m.vehiclesTitle,
+                      assetNumber: m.vehicleNumberLabel,
+                      assetType: m.vehicleTypeLabel,
+                      addAsset: m.addVehicle,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -145,11 +165,22 @@ export const form: Form = buildForm({
                   description: m.gunsDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.guns',
-                  component: 'GunsRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.guns',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'guns',
+                    texts: {
+                      assetTitle: m.gunTitle,
+                      assetNumber: m.gunNumberLabel,
+                      assetType: m.gunTypeLabel,
+                      addAsset: m.addGun,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -283,7 +314,7 @@ export const form: Form = buildForm({
                       {
                         title: m.stocksValue.defaultMessage,
                         id: 'value',
-                        color: 'white',
+                        backgroundColor: 'white',
                         readOnly: true,
                       },
                     ],

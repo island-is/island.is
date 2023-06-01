@@ -1,16 +1,24 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
-import type { CaseFile } from '@island.is/judicial-system/types'
+import {
+  CaseFile,
+  CaseDecision,
+  CaseState,
+  CaseType,
+  isInvestigationCase,
+} from '@island.is/judicial-system/types'
 import {
   TempCase as Case,
   TempUpdateCase as UpdateCase,
 } from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
 import { TUploadFile } from './hooks'
 import * as validations from './validate'
+import { IntlShape } from 'react-intl'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -238,6 +246,8 @@ export type stepValidationsType = {
   ) => boolean
   [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => boolean
   [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => boolean
+  [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
+  [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
 }
 
 export const stepValidations = (): stepValidationsType => {
@@ -321,6 +331,9 @@ export const stepValidations = (): stepValidationsType => {
       validations.isProsecutorAndDefenderStepValid(theCase),
     [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => true,
     [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => true,
+    [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
+    [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
+      validations.isCourtOfAppealCaseStepValid(theCase),
   }
 }
 
@@ -355,3 +368,36 @@ export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   category: file.category,
   policeCaseNumber: file.policeCaseNumber,
 })
+
+export const titleForCase = (
+  formatMessage: IntlShape['formatMessage'],
+  theCase: Case,
+) => {
+  const isTravelBan =
+    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+    theCase.type === CaseType.TRAVEL_BAN
+
+  if (theCase.state === CaseState.REJECTED) {
+    if (isInvestigationCase(theCase.type)) {
+      return 'Kröfu um rannsóknarheimild hafnað'
+    } else {
+      return 'Kröfu hafnað'
+    }
+  }
+
+  if (theCase.state === CaseState.DISMISSED) {
+    return formatMessage(m.dismissedTitle)
+  }
+
+  if (theCase.isValidToDateInThePast) {
+    return formatMessage(m.validToDateInThePast, {
+      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+    })
+  }
+
+  return isInvestigationCase(theCase.type)
+    ? formatMessage(m.investigationAccepted)
+    : formatMessage(m.restrictionActive, {
+        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+      })
+}

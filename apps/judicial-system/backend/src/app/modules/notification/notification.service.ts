@@ -21,6 +21,7 @@ import {
 } from '@island.is/judicial-system/message'
 import {
   CLOSED_INDICTMENT_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE,
   RESTRICTION_CASE_OVERVIEW_ROUTE,
@@ -700,7 +701,11 @@ export class NotificationService {
       )
     }
 
-    if (await this.shouldSendNotificationToPrison(theCase)) {
+    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
+      theCase,
+    )
+
+    if (shouldSendNotificationToPrison) {
       promises.push(this.sendCourtDateEmailNotificationToPrison(theCase))
     }
 
@@ -890,7 +895,10 @@ export class NotificationService {
       )
     }
 
-    if (isRestrictionCase(theCase.type)) {
+    if (
+      isRestrictionCase(theCase.type) &&
+      theCase.state === CaseState.ACCEPTED
+    ) {
       promises.push(
         this.sendRulingEmailNotificationToPrisonAdministration(theCase),
       )
@@ -900,11 +908,11 @@ export class NotificationService {
       theCase.decision === CaseDecision.ACCEPTING ||
       theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
     ) {
-      const shouldSendCustodyNoticeToPrison = await this.shouldSendNotificationToPrison(
+      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
         theCase,
       )
 
-      if (shouldSendCustodyNoticeToPrison) {
+      if (shouldSendNotificationToPrison) {
         promises.push(this.sendRulingEmailNotificationToPrison(theCase))
       }
     } else if (
@@ -974,11 +982,11 @@ export class NotificationService {
       ),
     ]
 
-    const shouldSendCustodyNoticeToPrison = await this.shouldSendNotificationToPrison(
+    const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
       theCase,
     )
 
-    if (shouldSendCustodyNoticeToPrison) {
+    if (shouldSendNotificationToPrison) {
       promises.push(
         this.sendEmail(
           subject,
@@ -1371,6 +1379,7 @@ export class NotificationService {
     const html = this.formatMessage(
       notifications.caseAppealedToCourtOfAppeals.body,
       {
+        userHasAccessToRVG: true,
         courtCaseNumber: theCase.courtCaseNumber,
         linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -1381,22 +1390,36 @@ export class NotificationService {
       this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
     ]
 
-    if (user.role === UserRole.DEFENDER && theCase.prosecutor?.email) {
+    if (user.role === UserRole.DEFENDER) {
       promises.push(
         this.sendEmail(
           subject,
           html,
-          theCase.prosecutor.name,
-          theCase.prosecutor.email,
+          theCase.prosecutor?.name,
+          theCase.prosecutor?.email,
         ),
       )
     }
 
     if (user.role === UserRole.PROSECUTOR && theCase.defenderEmail) {
+      const url =
+        theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
+      const defenderHtml = this.formatMessage(
+        notifications.caseAppealedToCourtOfAppeals.body,
+        {
+          userHasAccessToRVG: Boolean(url),
+          court: theCase.court?.name.replace('dómur', 'dómi'),
+          courtCaseNumber: theCase.courtCaseNumber,
+          linkStart: `<a href="${url}">`,
+          linkEnd: '</a>',
+        },
+      )
+
       promises.push(
         this.sendEmail(
           subject,
-          html,
+          defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
         ),
@@ -1429,6 +1452,7 @@ export class NotificationService {
     const html = this.formatMessage(
       notifications.caseAppealReceivedByCourt.body,
       {
+        userHasAccessToRVG: true,
         courtCaseNumber: theCase.courtCaseNumber,
         statementDeadline: formatDate(statementDeadline, 'PPPp'),
         linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
@@ -1446,10 +1470,25 @@ export class NotificationService {
     ]
 
     if (theCase.defenderEmail) {
+      const url =
+        theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
+      const defenderHtml = this.formatMessage(
+        notifications.caseAppealReceivedByCourt.body,
+        {
+          userHasAccessToRVG: Boolean(url),
+          court: theCase.court?.name.replace('dómur', 'dómi'),
+          courtCaseNumber: theCase.courtCaseNumber,
+          statementDeadline: formatDate(statementDeadline, 'PPPp'),
+          linkStart: `<a href="${url}">`,
+          linkEnd: '</a>',
+        },
+      )
+
       promises.push(
         this.sendEmail(
           subject,
-          html,
+          defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
         ),
@@ -1461,6 +1500,218 @@ export class NotificationService {
     return this.recordNotification(
       theCase.id,
       NotificationType.APPEAL_RECEIVED_BY_COURT,
+      recipients,
+    )
+  }
+
+  private async sendAppealStatementNotifications(
+    theCase: Case,
+    user: User,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(
+      notifications.caseAppealStatement.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        appealCaseNumber: theCase.appealCaseNumber ?? 'NONE',
+      },
+    )
+
+    const html = this.formatMessage(notifications.caseAppealStatement.body, {
+      userHasAccessToRVG: true,
+      courtCaseNumber: theCase.courtCaseNumber,
+      appealCaseNumber: theCase.appealCaseNumber,
+      linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
+    const promises = []
+
+    if (theCase.appealCaseNumber) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.appealAssistant?.name,
+          theCase.appealAssistant?.email,
+        ),
+      )
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.appealJudge1?.name,
+          theCase.appealJudge1?.email,
+        ),
+      )
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.appealJudge2?.name,
+          theCase.appealJudge2?.email,
+        ),
+      )
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.appealJudge3?.name,
+          theCase.appealJudge3?.email,
+        ),
+      )
+    }
+
+    if (user.role === UserRole.DEFENDER) {
+      const prosecutorHtml = this.formatMessage(
+        notifications.caseAppealStatement.body,
+        {
+          userHasAccessToRVG: true,
+          courtCaseNumber: theCase.courtCaseNumber,
+          appealCaseNumber: theCase.appealCaseNumber ?? 'NONE',
+          linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkEnd: '</a>',
+        },
+      )
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          prosecutorHtml,
+          theCase.prosecutor?.name,
+          theCase.prosecutor?.email,
+        ),
+      )
+    }
+
+    if (user.role === UserRole.PROSECUTOR && theCase.defenderEmail) {
+      const url =
+        theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
+      const defenderHtml = this.formatMessage(
+        notifications.caseAppealStatement.body,
+        {
+          userHasAccessToRVG: Boolean(url),
+          court: theCase.court?.name.replace('dómur', 'dómi'),
+          courtCaseNumber: theCase.courtCaseNumber,
+          appealCaseNumber: theCase.appealCaseNumber ?? 'NONE',
+          linkStart: `<a href="${url}">`,
+          linkEnd: '</a>',
+        },
+      )
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          defenderHtml,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
+    }
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.APPEAL_STATEMENT,
+      recipients,
+    )
+  }
+
+  private async sendAppealCompletedNotifications(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const subject = this.formatMessage(
+      notifications.caseAppealCompleted.subject,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        appealCaseNumber: theCase.appealCaseNumber,
+      },
+    )
+
+    const html = this.formatMessage(notifications.caseAppealCompleted.body, {
+      userHasAccessToRVG: true,
+      courtCaseNumber: theCase.courtCaseNumber,
+      appealCaseNumber: theCase.appealCaseNumber,
+      linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+      linkEnd: '</a>',
+    })
+
+    const promises = [
+      this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
+      this.sendEmail(
+        subject,
+        html,
+        theCase.prosecutor?.name,
+        theCase.prosecutor?.email,
+      ),
+    ]
+
+    if (
+      isRestrictionCase(theCase.type) &&
+      theCase.state === CaseState.ACCEPTED
+    ) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          'Fangelsismálastofnun',
+          this.config.email.prisonAdminEmail,
+        ),
+      )
+    }
+
+    if (
+      theCase.decision === CaseDecision.ACCEPTING ||
+      theCase.decision === CaseDecision.ACCEPTING_PARTIALLY
+    ) {
+      const shouldSendNotificationToPrison = await this.shouldSendNotificationToPrison(
+        theCase,
+      )
+
+      if (shouldSendNotificationToPrison) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            html,
+            'Gæsluvarðhaldsfangelsi',
+            this.config.email.prisonEmail,
+          ),
+        )
+      }
+    }
+
+    if (theCase.defenderEmail) {
+      const url =
+        theCase.defenderNationalId &&
+        formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id)
+      const defenderHtml = this.formatMessage(
+        notifications.caseAppealCompleted.body,
+        {
+          userHasAccessToRVG: Boolean(url),
+          court: theCase.court?.name.replace('dómur', 'dómi'),
+          courtCaseNumber: theCase.courtCaseNumber,
+          appealCaseNumber: theCase.appealCaseNumber,
+          linkStart: `<a href="${url}">`,
+          linkEnd: '</a>',
+        },
+      )
+
+      promises.push(
+        this.sendEmail(
+          subject,
+          defenderHtml,
+          theCase.defenderName,
+          theCase.defenderEmail,
+        ),
+      )
+    }
+
+    const recipients = await Promise.all(promises)
+
+    return this.recordNotification(
+      theCase.id,
+      NotificationType.APPEAL_COMPLETED,
       recipients,
     )
   }
@@ -1539,6 +1790,10 @@ export class NotificationService {
         return this.sendAppealToCourtOfAppealsNotifications(theCase, user)
       case NotificationType.APPEAL_RECEIVED_BY_COURT:
         return this.sendAppealReceivedByCourtNotifications(theCase)
+      case NotificationType.APPEAL_STATEMENT:
+        return this.sendAppealStatementNotifications(theCase, user)
+      case NotificationType.APPEAL_COMPLETED:
+        return this.sendAppealCompletedNotifications(theCase)
     }
   }
 
