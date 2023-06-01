@@ -3,7 +3,10 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { ApplicationTypes, InstitutionNationalIds } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -65,16 +68,18 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       }
     }
 
-    const orderId = await this.drivingLicenseService.drivingLicenseDuplicateSubmission({
-      districtId: parseInt(answers.district.toString(), 10),
-      ssn: nationalId,
-    }).catch((e) => {
-      console.log(JSON.stringify(e, null, 2))
-      return {
-        success: false,
-        orderId: "oof"
-      }
-    })
+    const orderId = await this.drivingLicenseService
+      .drivingLicenseDuplicateSubmission({
+        districtId: parseInt(answers.district.toString(), 10),
+        ssn: nationalId,
+      })
+      .catch((e) => {
+        console.log(JSON.stringify(e, null, 2))
+        return {
+          success: false,
+          orderId: 'oof',
+        }
+      })
     return {
       success: true,
       orderId: `${orderId}`,

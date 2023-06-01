@@ -9,7 +9,11 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
-import { DistrictCommissionerAgencies, DrivingLicense, NationalRegistryUser } from '@island.is/api/schema'
+import {
+  DistrictCommissionerAgencies,
+  DrivingLicense,
+  NationalRegistryUser,
+} from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { allowFakeCondition } from '../../lib/utils'
@@ -104,10 +108,13 @@ export const sectionOverview = buildSection({
         buildKeyValueField({
           label: m.deliveryMethodTitle,
           value: ({ answers: { district }, externalData }) => {
-            const districts = getValueViaPath(externalData, 'districtCommissioners.data') as DistrictCommissionerAgencies[]
+            const districts = getValueViaPath(
+              externalData,
+              'districtCommissioners.data',
+            ) as DistrictCommissionerAgencies[]
             const selectedDistrict = districts.find((d) => d.id === district)
             const districtName = selectedDistrict?.name ?? ''
-            const districtPlace  = selectedDistrict?.place ?? ''
+            const districtPlace = selectedDistrict?.place ?? ''
             return `${districtName}, ${districtPlace}`
           },
         }),

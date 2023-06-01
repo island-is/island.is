@@ -92,7 +92,7 @@ export const m = defineMessages({
   informationSubtitle: {
     id: 'dld.application:information.sectionSubtitle',
     defaultMessage:
-      'Hér fyrir neðan eru  upplýsingar um þig og þín ökuréttindi, sem koma fram á ökuskírteini þínu.',
+      'Hér fyrir neðan eru upplýsingar um þig og þín ökuréttindi, sem koma fram á ökuskírteini þínu.',
     description: 'Information section title',
   },
   informationTitle: {
@@ -113,7 +113,7 @@ export const m = defineMessages({
   signatureAndImageAlert: {
     id: 'dld.application:information.signatureAndImageAlert',
     defaultMessage:
-      'Ef þú þarft að uppfæra mynd eða undirskrift að þá þarft þú að fara til Sýslumanns til þess að gera það.',
+      'Ef þú þarft að uppfæra mynd eða undirskrift, þá þarft þú að fara til Sýslumanns til þess að gera það.',
     description: 'Some description',
   },
   signatureAndImage: {
@@ -336,7 +336,7 @@ export const m = defineMessages({
   congratulationsNextStepsDescription: {
     id: 'dld.application:congratulations.nextSteps.description#markdown',
     defaultMessage:
-      '* Þú færð senda tilkynningu á Mínar síður þegar samrit ökuskírteinis er tilbúið og hvenær hægt verður að sækja það á þann afhendingarstað sem þú valdir. \\n\\n * Mundu að hafa meðferðis löggild skilríki með mynd við afhendingu.',
+      '* Þú færð senda tilkynningu á Mínar síður þegar samrit ökuskírteinis er tilbúið og hvenær hægt verður að sækja það á þann afhendingarstað sem þú valdir. \n\n * Mundu að hafa meðferðis löggild skilríki með mynd við afhendingu.',
     description: 'Congratulations Next steps title',
   },
   errorDataProvider: {
