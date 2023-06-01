@@ -62,6 +62,7 @@ import { createReadStream } from 'fs'
 //import fs
 import fs from 'fs'
 import getStream from 'get-stream'
+import { GetSignedUrlResponse } from './dto/preSignedUrl.response'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -388,12 +389,10 @@ export class EndorsementListController {
   @Scopes(EndorsementsScope.main)
   @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
-  // @Header('Content-type', 'application/pdf')
   @Audit()
   @Get(':listId/presigned-url')
-  async downloadPdf(@Param('listId') listId: string): Promise<{ url: string }> {
-    // check if you own this list (or are admin) ............ @HasAccessGroup(AccessGroup.Owner)
-    const presignedUrl = await this.endorsementListService.getDownloadLink(
+  async downloadPdf(@Param('listId') listId: string): Promise<GetSignedUrlResponse> {
+    const presignedUrl = await this.endorsementListService.getPresignedUrl(
       listId,
     )
     return { url: presignedUrl }

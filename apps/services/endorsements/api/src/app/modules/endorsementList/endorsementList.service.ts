@@ -24,6 +24,7 @@ import { EmailService } from '@island.is/email-service'
 import PDFDocument, { end } from 'pdfkit'
 import getStream from 'get-stream'
 import { AwsService } from '@island.is/nest/aws'
+import { Exception } from 'handlebars'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -440,11 +441,13 @@ export class EndorsementListService {
     }
   }
 
-  async getDownloadLink(listId: string): Promise<any> {
-    const bucket = 'island-is-dev-upload-api'
-    const date = new Date()
-    const fileName = 'Meðmælendalisti-' + listId + date.toISOString() + '.pdf'
+  async getPresignedUrl(listId: string): Promise<any> {
 
+    // s3 config
+    const bucket = 'island-is-dev-upload-api'
+    const fileName = 'Meðmælendalisti-' + listId + new Date().toISOString() + '.pdf'
+
+    // get list and create pdf
     const endorsementList = await this.endorsementListModel.findOne({
       where: { id: listId },
       include: [
@@ -453,7 +456,6 @@ export class EndorsementListService {
         },
       ],
     })
-    console.log(endorsementList)
     if (!endorsementList) {
       this.logger.warn('This endorsement list does not exist.')
       throw new NotFoundException(['This endorsement list does not exist.'])
@@ -468,16 +470,21 @@ export class EndorsementListService {
       ownerName,
     )
 
-    const upload = await this.awsService.uploadFile(
-      fileBuffer,
-      bucket,
-      fileName,
-    )
+    try {
+      await this.awsService.uploadFile(
+        fileBuffer,
+        bucket,
+        fileName,
+      )
+      return await this.awsService.getPresignedUrl(bucket, fileName)
+    } catch (error) {
+      console.log(error)
+      this.logger.warn('.....................')
+      throw new Exception('...', error)
+    }
+    
 
-    console.log(upload)
 
-    const res = await this.awsService.getPresignedUrl(bucket, fileName)
-    console.log(res)
-    return res
+    
   }
 }
