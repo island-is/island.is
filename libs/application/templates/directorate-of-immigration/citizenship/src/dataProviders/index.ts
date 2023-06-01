@@ -2,12 +2,15 @@ import {
   InstitutionNationalIds,
   PaymentCatalogApi,
   defineTemplateApi,
+  NationalRegistrySpouseApi
 } from '@island.is/application/types'
+import { ApiActions } from '../shared'
 
 export {
-  NationalRegistryUserApi,
+  // NationalRegistryUserApi,
   UserProfileApi,
   ChildrenCustodyInformationApi,
+  NationalRegistrySpouseApi
 } from '@island.is/application/types'
 
 export const UtlendingastofnunPaymentCatalogApi = PaymentCatalogApi.configure({
@@ -22,3 +25,20 @@ export const NationalRegistryBirthplaceApi = defineTemplateApi({
   externalDataId: 'nationalRegistryBirthplace',
   namespace: 'NationalRegistry',
 })
+
+export const NationalRegistryParentsApi = defineTemplateApi({
+  action: 'getParents',
+  externalDataId: 'nationalRegistryParents',
+  namespace: 'NationalRegistry',
+})
+
+export const CitizenshipIndividualApi = defineTemplateApi({
+  action: ApiActions.getCitizenshipIndividual,
+  externalDataId: 'individual',
+})
+
+export const CitizenshipIndividualResidencyApi = defineTemplateApi({
+  action: 'getResidency',
+  externalDataId: 'individualResidency',
+})
+

@@ -1,3 +1,4 @@
+import { Address } from './address'
 import { NationalRegistryIndividual } from './individual'
 
 export interface ApplicantChildCustodyInformation {
@@ -7,4 +8,9 @@ export interface ApplicantChildCustodyInformation {
   livesWithApplicant: boolean
   livesWithBothParents: boolean
   otherParent?: NationalRegistryIndividual | null
+  citizenship: {
+    code: string | null
+    name: string | null
+  } | null
+  domicileInIceland: boolean
 }

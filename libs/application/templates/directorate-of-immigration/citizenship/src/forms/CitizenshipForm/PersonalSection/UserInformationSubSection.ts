@@ -28,8 +28,10 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
-          defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.nationalId,
+          defaultValue: (application: Application) => {
+          console.log('application', application)
+            //application.externalData?.Individual?.data?.nationalId,
+            return '0101704359'}
         }),
         buildTextField({
           id: 'userInformation.name',
@@ -38,7 +40,7 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+            application.externalData?.individual?.data?.fullName,
         }),
         buildTextField({
           id: 'userInformation.address',
@@ -47,7 +49,7 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.address
+            application.externalData?.individual?.data?.address
               ?.streetAddress,
         }),
         buildTextField({
@@ -57,10 +59,10 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.address
+            application.externalData?.individual?.data?.address
               ?.postalCode +
             ' ' +
-            application.externalData?.nationalRegistry?.data?.address?.city,
+            application.externalData?.individual?.data?.address?.city,
         }),
         buildTextField({
           id: 'userInformation.email',
@@ -88,17 +90,17 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.citizenship?.name
+            application.externalData?.individual?.data?.citizenship?.name
         }),
-        // buildTextField({
-        //   id: 'userInformation.dateHomeRegistration',
-        //   title: personal.labels.userInformation.dateHomeRegistration,
-        //   backgroundColor: 'white',
-        //   width: 'half',
-        //   readOnly: true,
-        //   defaultValue: (application: Application) =>
-        //     application.externalData?.nationalRegistry?.data?.citizenship?.date
-        // }),
+        buildTextField({
+          id: 'userInformation.dateHomeRegistration',
+          title: personal.labels.userInformation.dateHomeRegistration,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            '1.Apríl 2020'
+        }),
         buildTextField({
           id: 'userInformation.birthCountry',
           title: personal.labels.userInformation.birthCountry,
@@ -106,7 +108,6 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            console.log('application', application)
             return application.externalData?.nationalRegistryBirthplace?.data
             ?.location
           }

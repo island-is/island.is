@@ -16,8 +16,11 @@ import {
   supportingDocuments,
 } from '../../lib/messages'
 import {
+  CitizenshipIndividualApi,
+  CitizenshipIndividualResidencyApi,
   NationalRegistryBirthplaceApi,
-  NationalRegistryUserApi,
+  NationalRegistryParentsApi,
+  // NationalRegistryUserApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
 } from '../../dataProviders'
@@ -53,11 +56,11 @@ export const Prerequisites: Form = buildForm({
             ],
           }),
           dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: externalData.nationalRegistry.title,
-              subTitle: externalData.nationalRegistry.subTitle,
-            }),
+            // buildDataProviderItem({
+            //   provider: NationalRegistryUserApi,
+            //   title: externalData.nationalRegistry.title,
+            //   subTitle: externalData.nationalRegistry.subTitle,
+            // }),
             buildDataProviderItem({
               provider: NationalRegistryBirthplaceApi,
               title: '',
@@ -67,12 +70,24 @@ export const Prerequisites: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
+              provider: NationalRegistryParentsApi,
+              title: '',
+            }),
+            buildDataProviderItem({
               provider: UserProfileApi,
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
               provider: UtlendingastofnunPaymentCatalogApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: CitizenshipIndividualApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: CitizenshipIndividualResidencyApi,
               title: '',
             }),
             buildDataProviderItem({
@@ -89,30 +104,30 @@ export const Prerequisites: Form = buildForm({
         }),
       ],
     }),
-    // buildSection({
-    //   id: 'personal',
-    //   title: personal.general.sectionTitle,
-    //   children: [],
-    // }),
-    // buildSection({
-    //   id: 'information',
-    //   title: information.general.sectionTitle,
-    //   children: [],
-    // }),
-    // buildSection({
-    //   id: 'supportingDocuments',
-    //   title: supportingDocuments.general.sectionTitle,
-    //   children: [],
-    // }),
-    // buildSection({
-    //   id: 'payment',
-    //   title: payment.general.sectionTitle,
-    //   children: [],
-    // }),
-    // buildSection({
-    //   id: 'confirmation',
-    //   title: confirmation.general.sectionTitle,
-    //   children: [],
-    // }),
+    buildSection({
+      id: 'personal',
+      title: personal.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'information',
+      title: information.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'supportingDocuments',
+      title: supportingDocuments.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'payment',
+      title: payment.general.sectionTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirmation',
+      title: confirmation.general.sectionTitle,
+      children: [],
+    }),
   ],
 })

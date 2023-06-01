@@ -56,6 +56,15 @@ export class NationalRegistryClientService {
     return response || []
   }
 
+  async getLegalParents(parentUser: User): Promise<string[]> {
+    const response = await this.handleLegacyMissingData(
+      this.individualApi
+        .withMiddleware(new AuthMiddleware(parentUser))
+        .einstaklingarGetLogforeldrarRaw({ id: parentUser.nationalId }),
+    )
+    return response || []
+  }
+
   async getChildResidenceParent(
     parentUser: User,
     childId: string,

@@ -6,6 +6,8 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
+import { Answer } from '@island.is/application/types'
+import { Citizenship } from '../../../lib/dataSchema'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: 'maritalStatus',
@@ -14,7 +16,13 @@ export const MaritalStatusSubSection = buildSubSection({
     buildMultiField({
       id: 'maritalStatusMultiField',
       title: information.labels.maritalStatus.pageTitle,
-      description: information.labels.maritalStatus.description,
+      condition: (answer: Answer) => {
+        const answers = answer as Citizenship
+        if(answers.residenceCondition?.radio === 'marriedToIcelander'){
+          return true
+        }
+        return false
+      },
       children: [
         buildDescriptionField({
           id: 'maritalStatus.title',
@@ -30,7 +38,7 @@ export const MaritalStatusSubSection = buildSubSection({
           defaultValue: (application: Application) => 'Giftur',
         }),
         buildDescriptionField({
-          id: 'maritalStatus.title',
+          id: 'maritalStatus.titleSpouse',
           title: information.labels.maritalStatus.titleSpouse,
           titleVariant: 'h5',
           space: 3,

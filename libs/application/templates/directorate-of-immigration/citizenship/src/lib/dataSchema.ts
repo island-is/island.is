@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { string, z } from 'zod'
 import * as kennitala from 'kennitala'
 
 const UserSchemaBase = z.object({
@@ -18,7 +18,7 @@ const UserSchemaBase = z.object({
   email: z.string().min(1),
   phone: z.string().min(1),
   citizenship: z.string().min(1),
-  // dateHomeRegistration: z.string().min(1),
+  dateHomeRegistration: z.string().min(1),
   birthCountry: z.string().min(1),
 })
 
@@ -29,9 +29,17 @@ export const UserInformationSchema = z.intersection(
   }),
 )
 
+const ResidenceConditionSchema = z.object({
+  radio: z.string().min(1)
+})
+
 export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
+  selectedChildren: z.array(z.string()).optional(),
+  residenceCondition: ResidenceConditionSchema,
+  parents: z.array(z.string()).optional(),
+  spouse: z.string().min(1)
 })
 
 export type Citizenship = z.TypeOf<typeof CitizenshipSchema>

@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { CitizenshipService } from './citizenship.service'
+import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+
 import {
   CitizenshipClientModule,
   CitizenshipClientConfig,
@@ -15,6 +17,7 @@ export class CitizenshipModule {
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         CitizenshipClientModule,
+        NationalRegistryClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [CitizenshipClientConfig],

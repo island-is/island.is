@@ -56,6 +56,7 @@ export interface Option extends TestSupport {
   excludeOthers?: boolean
   illustration?: React.FC
   disabled?: boolean
+  rightContent?: React.FC
   tag?: {
     label: string
     variant?: TagVariant

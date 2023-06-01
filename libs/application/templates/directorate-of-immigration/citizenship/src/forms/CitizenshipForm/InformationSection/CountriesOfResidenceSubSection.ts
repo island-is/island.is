@@ -2,6 +2,9 @@ import {
   buildMultiField,
   buildSubSection,
   buildDescriptionField,
+  buildRadioField,
+  buildSelectField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 
@@ -12,13 +15,28 @@ export const CountriesOfResidenceSubSection = buildSubSection({
     buildMultiField({
       id: 'countriesOfResidenceMultiField',
       title: information.labels.countriesOfResidence.pageTitle,
-      description: information.labels.countriesOfResidence.description,
       children: [
-        buildDescriptionField({
-          id: 'countriesOfResidence.title',
-          title: information.labels.countriesOfResidence.title,
-          titleVariant: 'h5',
+        buildRadioField({
+          id: 'countriesOfResidence.radio',
+          title: information.labels.countriesOfResidence.questionTitle,
+          description: '',
+          width:'half',
+          options: [
+            {
+              value: 'YES',
+              label: 'Já'
+            },
+            {
+              value: 'NO',
+              label: 'Nei'
+            },
+          ]
         }),
+        buildCustomField({
+          id: 'countriesOfResidence.select',
+          title: '',
+          component: 'CountrySelect'
+        })
       ],
     }),
   ],

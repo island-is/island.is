@@ -8,6 +8,7 @@ import {
   NationalRegistrySpouse,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
+  NationalRegistryParent,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -100,6 +101,36 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
   }
 
+  async getParents({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<
+  NationalRegistryParent[] | null
+  > {
+    const parentUser = auth
+    const parentNationalIds = await this.nationalRegistryApi.getLegalParents(
+      parentUser,
+    )
+
+    const parents = parentNationalIds.map(i => { return { nationalId: i}})
+
+    const parentOneDetails = parents.length > 0 && await this.nationalRegistryApi.getIndividual(parents[0].nationalId)
+    const parentTwoDetails = parents.length > 1 && await this.nationalRegistryApi.getIndividual(parents[1].nationalId)
+
+    const parentOne: NationalRegistryParent | null = parentOneDetails ? { nationalId: parentOneDetails.nationalId, name: parentOneDetails.name} : null
+    const parentTwo: NationalRegistryParent | null = parentTwoDetails ? { nationalId: parentTwoDetails.nationalId, name: parentTwoDetails.name} : null
+
+    const parentsWithDetails = []
+
+    if(parentOne){
+      parentsWithDetails.push(parentOne)
+    }
+    if(parentTwo){
+      parentsWithDetails.push(parentTwo)
+    }
+
+    return parentsWithDetails
+  }
+
   async childrenCustodyInformation({
     auth,
   }: TemplateApiModuleActionProps): Promise<
@@ -122,6 +153,14 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const children: Array<ApplicantChildCustodyInformation | null> = await Promise.all(
       childrenNationalIds.map(async (childNationalId) => {
         const child = await this.getIndividual(childNationalId)
+
+        
+        let domicileInIceland = true
+        const domicileCode = child?.address?.municipalityCode
+        if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+          domicileInIceland = false
+        }
+        
 
         if (!child) {
           return null
@@ -155,6 +194,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
           livesWithApplicant,
           livesWithBothParents: livesWithParentB ?? livesWithApplicant,
           otherParent: parentB,
+          citizenship: child.citizenship,
+          domicileInIceland
         }
       }),
     )
