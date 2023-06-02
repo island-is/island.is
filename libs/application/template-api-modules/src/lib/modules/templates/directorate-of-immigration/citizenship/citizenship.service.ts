@@ -22,7 +22,6 @@ export class CitizenshipService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly citizenshipClient: CitizenshipClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
-
   ) {
     super(ApplicationTypes.CITIZENSHIP)
   }
@@ -44,7 +43,6 @@ export class CitizenshipService extends BaseTemplateApiService {
       return { id: '', paymentUrl: '' }
     }
   }
-
 
   async submitApplication({
     application,
@@ -78,15 +76,44 @@ export class CitizenshipService extends BaseTemplateApiService {
     await this.citizenshipClient.applyForCitizenship(auth)
   }
 
-  async getCitizenshipIndividual({ application, auth}: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
+  async getCitizenshipIndividual({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
     const { nationalId } = auth
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
     const citizenship = await this.nationalRegistryApi.getCitizenship(
       nationalId,
     )
-    const residence = await this.nationalRegistryApi.getResidenceHistory(
+    const residenceHistory = await this.nationalRegistryApi.getResidenceHistory(
       nationalId,
     )
+
+    // sort residence history so newest items are first, and if two items have the same date,
+    // then the Iceland item will be first
+    const countryIceland = 'IS'
+    const sortedResidenceHistory = residenceHistory
+      .filter((x) => x.dateOfChange)
+      .sort((a, b) =>
+        a.dateOfChange !== b.dateOfChange
+          ? a.dateOfChange! > b.dateOfChange!
+            ? -1
+            : 1
+          : a.country === countryIceland
+          ? -1
+          : 1,
+      )
+
+    // get the oldest change date for Iceland, where user did not move to another
+    // country in between
+    let lastChangeDate: Date | null = null
+    for (let i = 0; i < sortedResidenceHistory.length; i++) {
+      if (sortedResidenceHistory[i].country === countryIceland) {
+        lastChangeDate = sortedResidenceHistory[i].dateOfChange
+      } else {
+        break
+      }
+    }
 
     return (
       person && {
@@ -104,13 +131,17 @@ export class CitizenshipService extends BaseTemplateApiService {
           city: person.legalDomicile.locality,
           municipalityCode: person.legalDomicile.municipalityNumber,
         },
-        residenceLastChangeDate: new Date('1.1.1111'),
+        residenceInIcelandLastChangeDate: lastChangeDate,
         genderCode: person.genderCode,
       }
     )
   }
 
-  async getResidency({application, auth}: TemplateApiModuleActionProps): Promise<any> {
+  //TODOx fjarlægja?
+  async getResidency({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<any> {
     const { nationalId } = auth
     const residence = await this.nationalRegistryApi.getResidenceHistory(
       nationalId,

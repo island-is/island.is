@@ -42,15 +42,17 @@ export const personal = {
         defaultMessage: 'Ríkisfang',
         description: 'User information citizenship label',
       },
-      birthCountry:{
+      birthCountry: {
         id: 'doi.cs.application:personal.labels.userInformation.birthCountry',
         defaultMessage: 'Fæðingarland',
         description: 'User information birth country label',
       },
-      dateHomeRegistration:{
-        id: 'doi.cs.application:personal.labels.userInformation.dateHomeRegistration',
+      residenceInIcelandLastChangeDate: {
+        id:
+          'doi.cs.application:personal.labels.userInformation.residenceInIcelandLastChangeDate',
         defaultMessage: 'Dagsetning lögheimilisskráningar',
-        description: 'User information date of home registration label',
+        description:
+          'User information residence in Iceland last change date label',
       },
       name: {
         id: 'doi.cs.application:personal.labels.userInformation.name',

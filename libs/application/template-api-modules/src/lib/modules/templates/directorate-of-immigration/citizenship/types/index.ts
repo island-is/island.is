@@ -1,5 +1,5 @@
-import { NationalRegistryIndividual } from "@island.is/application/types";
+import { NationalRegistryIndividual } from '@island.is/application/types'
 
-export interface CitizenIndividual extends NationalRegistryIndividual{
-    residenceLastChangeDate?: Date | null
+export interface CitizenIndividual extends NationalRegistryIndividual {
+  residenceInIcelandLastChangeDate?: Date | null
 }
