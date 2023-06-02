@@ -19,15 +19,12 @@ import CaseResentExplanation from '@island.is/judicial-system-web/src/components
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CaseAppealDecision,
-  CaseDecision,
   CaseState,
-  CaseType,
   completedCaseStates,
   Feature,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
@@ -40,6 +37,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
 import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
+import { titleForCase } from '../../utils/formHelper'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
 import Conclusion from '../../components/Conclusion/Conclusion'
@@ -64,44 +62,6 @@ export const CaseOverview: React.FC = () => {
   )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
-
-  const titleForCase = (theCase: Case) => {
-    if (theCase.state === CaseState.REJECTED) {
-      return isInvestigationCase(theCase.type)
-        ? formatMessage(m.investigationCaseRejectedTitle)
-        : formatMessage(m.restrictionCaseRejectedTitle)
-    }
-
-    if (theCase.state === CaseState.DISMISSED) {
-      return formatMessage(m.caseDismissedTitle)
-    }
-
-    if (theCase.state === CaseState.ACCEPTED) {
-      if (isInvestigationCase(theCase.type)) {
-        return formatMessage(m.investigationCaseAcceptedTitle)
-      }
-
-      const caseType =
-        theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-          ? CaseType.TRAVEL_BAN
-          : theCase.type
-
-      if (theCase.isValidToDateInThePast) {
-        return formatMessage(m.restrictionCaseExpiredTitle, { caseType })
-      }
-
-      return formatMessage(m.restrictionCaseActiveTitle, {
-        caseType,
-      })
-    }
-
-    return isInvestigationCase(theCase.type)
-      ? ''
-      : formatMessage(m.restrictionCaseScheduledTitle, {
-          caseType: theCase.type,
-          isExtended: Boolean(theCase.parentCase),
-        })
-  }
 
   const shouldDisplayAlertBanner =
     workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
@@ -139,7 +99,7 @@ export const CaseOverview: React.FC = () => {
               <Box>
                 <Box marginBottom={1} data-testid="caseTitle">
                   <Text as="h1" variant="h1">
-                    {titleForCase(workingCase)}
+                    {titleForCase(formatMessage, workingCase)}
                   </Text>
                 </Box>
                 {completedCaseStates.includes(workingCase.state) && (
