@@ -13,7 +13,7 @@ export const ConsultationPortalClientConfig = defineConfig({
   load(env) {
     return {
       basePath: env.required(
-        'CONSULTATION_PORTAL_CLIENT_BASE_PATH',
+        'https://samradapi.island.is',
         'https://samradapi-test.devland.is',
       ),
       tokenExchangeScope: env.optionalJSON('CONSULTATION_PORTAL_SCOPE') ?? [
