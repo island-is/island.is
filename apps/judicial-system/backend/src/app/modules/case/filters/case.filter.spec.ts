@@ -32,6 +32,7 @@ describe('canUserAccessCase', () => {
         ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+        ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.NEW}       | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
@@ -40,24 +41,28 @@ describe('canUserAccessCase', () => {
         ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+        ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.DRAFT}     | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+        ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.SUBMITTED} | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.SUBMITTED} | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+        ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.RECEIVED}  | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
         ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
         ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.RECEIVED}  | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+        ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
         ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
         ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
         ${CaseState.REJECTED}  | ${UserRole.REPRESENTATIVE} | ${InstitutionType.PROSECUTORS_OFFICE}
@@ -102,6 +107,7 @@ describe('canUserAccessCase', () => {
       ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
       ${CaseState.DELETED}   | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.DELETED}   | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+      ${CaseState.DELETED}   | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.DELETED}   | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
@@ -109,6 +115,7 @@ describe('canUserAccessCase', () => {
       ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
       ${CaseState.NEW}       | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.NEW}       | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+      ${CaseState.NEW}       | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.NEW}       | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.COURT}
@@ -116,14 +123,17 @@ describe('canUserAccessCase', () => {
       ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.COURT}
       ${CaseState.DRAFT}     | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.DRAFT}     | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+      ${CaseState.DRAFT}     | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.DRAFT}     | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.SUBMITTED} | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.SUBMITTED} | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+      ${CaseState.SUBMITTED} | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.SUBMITTED} | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.RECEIVED}  | ${UserRole.REGISTRAR}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.RECEIVED}  | ${UserRole.JUDGE}          | ${InstitutionType.HIGH_COURT}
+      ${CaseState.RECEIVED}  | ${UserRole.ASSISTANT}      | ${InstitutionType.HIGH_COURT}
       ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
       ${CaseState.RECEIVED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON_ADMIN}
       ${CaseState.REJECTED}  | ${UserRole.STAFF}          | ${InstitutionType.PRISON}
@@ -422,10 +432,13 @@ describe('canUserAccessCase', () => {
         state                  | role
         ${CaseState.ACCEPTED}  | ${UserRole.REGISTRAR}
         ${CaseState.ACCEPTED}  | ${UserRole.JUDGE}
+        ${CaseState.ACCEPTED}  | ${UserRole.ASSISTANT}
         ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}
         ${CaseState.REJECTED}  | ${UserRole.JUDGE}
+        ${CaseState.REJECTED}  | ${UserRole.ASSISTANT}
         ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}
         ${CaseState.DISMISSED} | ${UserRole.JUDGE}
+        ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}
       `.describe(
         'given a $state case and $role at high court',
         ({ state, role }) => {
@@ -770,14 +783,17 @@ describe('canUserAccessCase', () => {
         state                  | role
         ${CaseState.ACCEPTED}  | ${UserRole.REGISTRAR}
         ${CaseState.ACCEPTED}  | ${UserRole.JUDGE}
+        ${CaseState.ACCEPTED}  | ${UserRole.ASSISTANT}
         ${CaseState.REJECTED}  | ${UserRole.REGISTRAR}
+        ${CaseState.REJECTED}  | ${UserRole.ASSISTANT}
         ${CaseState.REJECTED}  | ${UserRole.JUDGE}
         ${CaseState.DISMISSED} | ${UserRole.REGISTRAR}
         ${CaseState.DISMISSED} | ${UserRole.JUDGE}
+        ${CaseState.DISMISSED} | ${UserRole.ASSISTANT}
       `.describe(
       'given a $state case and $role at high court',
       ({ state, role }) => {
-        it('should read block the case if the accused appealed in court', () => {
+        it('should block the case if the accused appealed in court', () => {
           // Arrange
           const theCase = {
             state,

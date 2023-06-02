@@ -35,6 +35,7 @@ const PetitionsTable = (data: any) => {
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         {data.canEdit && (
           <DropdownExport
+            petitionId={data.listId}
             onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
           />
         )}
@@ -54,8 +55,10 @@ const PetitionsTable = (data: any) => {
             {listOfPetitions?.map((petition: any) => {
               return (
                 <T.Row key={petition.id}>
-                  <T.Data>{formatDate(petition.created)}</T.Data>
-                  <T.Data colSpan={4}>
+                  <T.Data text={{ variant: 'medium' }}>
+                    {formatDate(petition.created)}
+                  </T.Data>
+                  <T.Data text={{ variant: 'medium' }} colSpan={4}>
                     {petition.meta.fullName
                       ? petition.meta.fullName
                       : formatMessage(m.noName)}

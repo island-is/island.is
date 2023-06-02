@@ -1,0 +1,528 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Minarsidur",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "/minarsidur"
+    }
+  ],
+  "paths": {
+    "/v1/aidsandnutrition": {
+      "get": {
+        "tags": ["aidsandnutrition"],
+        "operationId": "aidsandnutrition",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AidsAndNutritionDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/dentists/current": {
+      "get": {
+        "tags": ["dentist"],
+        "operationId": "dentists/current",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DentistDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/dentists/bills": {
+      "get": {
+        "tags": ["dentist"],
+        "operationId": "dentists/bills",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DentistBillDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/healthcenters/current": {
+      "get": {
+        "tags": ["healthcenter"],
+        "operationId": "healthcenters/current",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCenterDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/healthcenters/history": {
+      "get": {
+        "tags": ["healthcenter"],
+        "operationId": "healthcenters/history",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HealthCenterHistoryEntryDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/v1/therapies": {
+      "get": {
+        "tags": ["therapy"],
+        "operationId": "therapies",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TherapyDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AidOrNutritionDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "iso": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxUnitRefund": {
+            "type": "string",
+            "nullable": true
+          },
+          "refund": {
+            "$ref": "#/components/schemas/AidOrNutritionRefundDTO"
+          },
+          "available": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "explanation": {
+            "type": "string",
+            "nullable": true
+          },
+          "allowed12MonthPeriod": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "nextAllowedMonth": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiring": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AidOrNutritionRefundDTO": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AidsAndNutritionDTO": {
+        "type": "object",
+        "properties": {
+          "aids": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AidOrNutritionDTO"
+            },
+            "nullable": true
+          },
+          "nutrition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AidOrNutritionDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DentistBillDTO": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "refundDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "coveredAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DentistDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthCenterDTO": {
+        "type": "object",
+        "properties": {
+          "healthCenter": {
+            "type": "string",
+            "nullable": true
+          },
+          "doctor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HealthCenterHistoryEntryDTO": {
+        "type": "object",
+        "properties": {
+          "dateFrom": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "dateTo": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "healthCenter": {
+            "$ref": "#/components/schemas/HealthCenterDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TherapyDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "state": {
+            "$ref": "#/components/schemas/TherapyStateDTO"
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TherapyPeriodDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TherapyPeriodDTO": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "to": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "sessions": {
+            "$ref": "#/components/schemas/TherapySessionsDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TherapySessionsDTO": {
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "used": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TherapyStateDTO": {
+        "type": "object",
+        "properties": {
+          "display": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

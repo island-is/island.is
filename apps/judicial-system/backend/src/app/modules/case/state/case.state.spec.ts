@@ -45,6 +45,9 @@ describe('Transition Case', () => {
   ${CaseTransition.APPEAL}          | ${CaseState.REJECTED}      | ${undefined}               | ${CaseAppealState.APPEALED}
   ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.REJECTED}      | ${CaseAppealState.APPEALED}| ${CaseAppealState.RECEIVED}
   ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.REJECTED}      | ${CaseAppealState.RECEIVED}| ${CaseAppealState.COMPLETED}
+  ${CaseTransition.APPEAL}          | ${CaseState.DISMISSED}      | ${undefined}               | ${CaseAppealState.APPEALED}
+  ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DISMISSED}      | ${CaseAppealState.APPEALED}| ${CaseAppealState.RECEIVED}
+  ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.DISMISSED}      | ${CaseAppealState.RECEIVED}| ${CaseAppealState.COMPLETED}
 `.it(
     'should $transition $oldState case with $currentAppealState appeal state resulting in case with $newState appeal state',
     ({ transition, oldState, currentAppealState, newAppealState }) => {
@@ -112,7 +115,6 @@ describe('Transition Case', () => {
       ${CaseTransition.APPEAL}          | ${CaseState.DRAFT}       
       ${CaseTransition.APPEAL}          | ${CaseState.SUBMITTED}   
       ${CaseTransition.APPEAL}          | ${CaseState.RECEIVED}    
-      ${CaseTransition.APPEAL}          | ${CaseState.DISMISSED}   
       ${CaseTransition.APPEAL}          | ${CaseState.DELETED}     
       ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.NEW}         
       ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.DRAFT}       

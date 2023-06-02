@@ -7,10 +7,9 @@ import {
   usePostCaseSubscription,
   useDeleteCaseSubscription,
 } from '../../../../hooks'
-import { IsEmailValid } from '../../../../utils/helpers'
+import { isEmailValid } from '../../utils'
 import { ReactNode, useEffect, useState } from 'react'
-import { SimpleCardSkeleton } from '../../../../components/Card'
-import StackedTitleAndDescription from '../../../../components/StackedTitleAndDescription/StackedTitleAndDescription'
+import { CardSkeleton as CardSkeletonComponent } from '../../../../components'
 import {
   Box,
   Text,
@@ -18,13 +17,15 @@ import {
   LoadingDots,
   toast,
 } from '@island.is/island-ui/core'
-import CaseEmailActionBox from './CaseEmailActionBox'
+import { Stacked, CaseEmailActionBox } from '../../components'
 import {
   CaseSubscriptionType,
   SubscriptionType,
   SubscriptionTypes,
 } from '../../../../types/enums'
 import localization from '../../Case.json'
+
+const loc = localization['caseEmailBox']
 
 interface CardSkeletonProps {
   text?: string
@@ -33,12 +34,10 @@ interface CardSkeletonProps {
 
 const CardSkeleton = ({ text, children }: CardSkeletonProps) => {
   return (
-    <SimpleCardSkeleton>
-      <StackedTitleAndDescription title="Skrá áskrift">
-        {text && <Text>{text}</Text>}
-      </StackedTitleAndDescription>
+    <CardSkeletonComponent>
+      <Stacked title={loc.buttonLabel}>{text && <Text>{text}</Text>}</Stacked>
       <Box paddingTop={2}>{children}</Box>
-    </SimpleCardSkeleton>
+    </CardSkeletonComponent>
   )
 }
 
@@ -48,7 +47,6 @@ interface Props {
 }
 
 export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
-  const loc = localization['caseEmailBox']
   const { isAuthenticated, userLoading } = useUser()
   const [isVerified, setIsVerified] = useState(false)
   const LogIn = useLogIn()
@@ -203,7 +201,7 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
             {
               label: loc.setEmailCardSkeleton.button,
               onClick: onSetEmail,
-              isDisabled: !IsEmailValid(inputValue),
+              isDisabled: !isEmailValid(inputValue),
               isLoading: postEmailLoading,
             },
           ]}
@@ -285,13 +283,13 @@ export const CaseEmailBox = ({ caseId, caseNumber }: Props) => {
           <CaseEmailActionBox
             selection={[
               {
-                label: CaseSubscriptionType['AllChanges'],
+                label: CaseSubscriptionType[SubscriptionTypes.AllChanges],
                 checked: allChecked,
                 onChange: () => setAllChecked(true),
                 isDisabled: caseSubscriptionLoading,
               },
               {
-                label: CaseSubscriptionType['StatusChanges'],
+                label: CaseSubscriptionType[SubscriptionTypes.StatusChanges],
                 checked: !allChecked,
                 onChange: () => setAllChecked(false),
                 isDisabled: caseSubscriptionLoading,

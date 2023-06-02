@@ -7,15 +7,60 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { SimpleCardSkeleton } from '../../../../components/Card'
-import { useEffect, useRef, useState } from 'react'
+import { CardSkeleton } from '../../../../components/'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import * as styles from './AdviceCard.css'
-import { getShortDate } from '../../../../utils/helpers/dateFormatter'
+import { getShortDate } from '../../../../utils/helpers/dateFunctions'
 import env from '../../../../lib/environment'
 import { REVIEW_CARD_SCROLL_HEIGHT } from '../../../../utils/consts/consts'
-import { renderDocFileName } from '../../../../utils/helpers'
+import { renderDocFileName } from '../../utils'
+import localization from '../../Case.json'
+import { AdviceResult } from '../../../../types/interfaces'
 
-export const AdviceCard = ({ advice }) => {
+interface Props {
+  advice: AdviceResult
+}
+
+interface LocProps {
+  loc: typeof localization['adviceCard']
+}
+
+interface RenderAdviceProps extends Props, LocProps {}
+
+interface LinkProps extends LocProps {
+  children: ReactNode
+}
+
+const Link = ({ loc, children }: LinkProps) => {
+  return (
+    <LinkV2
+      href={loc['hiddenContentHref']}
+      color="blue400"
+      underline="normal"
+      underlineVisibility="always"
+    >
+      {children}
+    </LinkV2>
+  )
+}
+
+const RenderAdvice = ({ advice, loc }: RenderAdviceProps) => {
+  if (advice?.isPrivate) {
+    return loc['privateContent']
+  }
+  if (advice?.isHidden) {
+    const retComp = []
+    retComp.push(loc['hiddenContent'])
+    retComp.push(' ')
+    retComp.push(<Link loc={loc}>{loc['hiddenContentLink']}</Link>)
+    retComp.push('.')
+    return retComp
+  }
+  return advice?.content
+}
+
+export const AdviceCard = ({ advice }: Props) => {
+  const loc = localization['adviceCard']
   const [open, setOpen] = useState(true)
   const [scrollHeight, setScrollHeight] = useState(null)
 
@@ -32,7 +77,7 @@ export const AdviceCard = ({ advice }) => {
   }, [])
 
   return (
-    <SimpleCardSkeleton>
+    <CardSkeleton>
       <Stack space={1}>
         <Inline justifyContent="spaceBetween" flexWrap="nowrap" alignY="center">
           <Text variant="eyebrow" color="purple400">
@@ -50,12 +95,15 @@ export const AdviceCard = ({ advice }) => {
           )}
         </Inline>
         <Text variant="h3">
-          {advice?.number} - {advice?.participantName}
+          {advice?.number} -{' '}
+          {!advice?.isPrivate && !advice?.isHidden && advice?.participantName}
         </Text>
         <Text variant="default" truncate={!open} ref={ref}>
-          {advice.content}
+          {RenderAdvice({ advice: advice, loc: loc })}
         </Text>
-        {advice?.adviceDocuments &&
+        {!advice?.isPrivate &&
+          !advice?.isHidden &&
+          advice?.adviceDocuments &&
           advice?.adviceDocuments.length > 0 &&
           advice?.adviceDocuments.map((doc, index) => {
             return (
@@ -89,7 +137,7 @@ export const AdviceCard = ({ advice }) => {
             )
           })}
       </Stack>
-    </SimpleCardSkeleton>
+    </CardSkeleton>
   )
 }
 
