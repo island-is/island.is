@@ -5,23 +5,28 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { CaseOverview, CaseTimeline, WriteReviewCard } from '../../components'
-import Layout from '../../components/Layout/Layout'
-import { useFetchAdvicesById, useIsMobile } from '../../utils/helpers'
-import { useContext } from 'react'
-import { UserContext } from '../../context'
-import Advices from '../../components/Advices/Advices'
+import {
+  CaseOverview,
+  CaseTimeline,
+  Coordinator,
+  BlowoutList,
+  CaseStatusBox,
+  CaseDocuments,
+  CaseEmailBox,
+  AdviceForm,
+  AdviceList,
+  AdviceSkeletonLoader,
+} from './components'
+import { useFetchAdvicesById, useIsMobile } from '../../hooks'
 import { Case } from '../../types/interfaces'
-import CaseEmailBox from '../../components/CaseEmailBox/CaseEmailBox'
-import StakeholdersCard from './components/Stakeholders'
-import { AdviceCTACard } from './components/AdviceCTA'
-import { CaseStatusFilterOptions } from '../../types/enums'
-import { RenderDocumentsBox } from './components/RenderDocumentsBox'
-import { CoOrdinator } from './components/CoOrdinator'
+import { CaseStatuses } from '../../types/enums'
+import { useContext } from 'react'
+import UserContext from '../../context/UserContext'
+import localization from './Case.json'
+import { Layout } from '../../components'
 
 interface Props {
   chosenCase: Case
@@ -29,27 +34,42 @@ interface Props {
 }
 
 const CaseScreen = ({ chosenCase, caseId }: Props) => {
+  const loc = localization['case']
   const { contactEmail, contactName } = chosenCase
-  const { isAuthenticated, user } = useContext(UserContext)
   const { isMobile } = useIsMobile()
-
+  const { isAuthenticated, user } = useContext(UserContext)
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
   })
 
+  const isStakeholdersNotEmpty = chosenCase?.stakeholders?.length > 0
+  const isRelatedCasesNotEmpty = chosenCase?.relatedCases?.length > 0
+  const isDocumentsNotEmpty = chosenCase?.documents?.length > 0
+  const isAdditionalDocumentsNotEmpty =
+    chosenCase?.additionalDocuments?.length > 0
+  const statusNameIsNotPublished =
+    chosenCase?.statusName !== CaseStatuses.published
+  const statusNameIsForReview =
+    chosenCase?.statusName === CaseStatuses.forReview
+
   return (
     <Layout
       seo={{
-        title: `Mál: S-${chosenCase?.caseNumber}`,
-        url: `mal/${chosenCase?.id}`,
+        title: `${loc.seo.title}: S-${chosenCase?.caseNumber}`,
+        url: `${loc.seo.url}${chosenCase?.id}`,
       }}
     >
       <GridContainer>
         <Box paddingY={[3, 3, 3, 5, 5]}>
           <Breadcrumbs
             items={[
-              { title: 'Öll mál', href: '/samradsgatt' },
-              { title: `Mál nr. S-${chosenCase?.caseNumber}` },
+              {
+                title: loc.breadcrumbs.parent.title,
+                href: loc.breadcrumbs.parent.href,
+              },
+              {
+                title: `${loc.breadcrumbs.current.title} S-${chosenCase?.caseNumber}`,
+              },
             ]}
           />
         </Box>
@@ -69,16 +89,19 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
               <Divider />
               <CaseTimeline chosenCase={chosenCase} />
               <Divider />
-              <RenderDocumentsBox
-                title="Skjöl til samráðs"
-                documents={chosenCase?.documents}
-              />
-              <RenderDocumentsBox
-                title="Fylgiskjöl"
-                documents={chosenCase?.additionalDocuments}
-              />
-              {chosenCase?.statusName !==
-                CaseStatusFilterOptions.resultsPublished && (
+              {isDocumentsNotEmpty && (
+                <CaseDocuments
+                  title={loc.documentsBox.documents.title}
+                  documents={chosenCase?.documents}
+                />
+              )}
+              {isAdditionalDocumentsNotEmpty && (
+                <CaseDocuments
+                  title={loc.documentsBox.additional.title}
+                  documents={chosenCase?.additionalDocuments}
+                />
+              )}
+              {statusNameIsNotPublished && (
                 <CaseEmailBox
                   caseId={caseId}
                   caseNumber={chosenCase?.caseNumber}
@@ -92,32 +115,28 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
           >
             <Stack space={[3, 3, 3, 9, 9]}>
               <CaseOverview chosenCase={chosenCase} />
-              <Box>
-                <Stack space={3}>
-                  {advices.length !== 0 && (
-                    <>
-                      <Text variant="h1" color="blue400">
-                        Innsendar umsagnir ({chosenCase.adviceCount})
-                      </Text>
-
-                      <Advices
-                        advices={advices}
-                        advicesLoading={advicesLoading}
-                      />
-                    </>
-                  )}
-                  {chosenCase.statusName ===
-                    CaseStatusFilterOptions.forReview && (
-                    <WriteReviewCard
-                      card={chosenCase}
-                      isLoggedIn={isAuthenticated}
-                      username={user?.name}
-                      caseId={chosenCase.id}
-                      refetchAdvices={refetchAdvices}
-                    />
-                  )}
-                </Stack>
-              </Box>
+              <Stack space={3}>
+                <Text variant="h1" color="blue400">
+                  {`${loc.advices.title} (${
+                    chosenCase.adviceCount ? chosenCase.adviceCount : 0
+                  })`}
+                </Text>
+                {advicesLoading ? (
+                  <AdviceSkeletonLoader />
+                ) : (
+                  <AdviceList advices={advices} chosenCase={chosenCase} />
+                )}
+                {statusNameIsForReview && (
+                  <AdviceForm
+                    card={chosenCase}
+                    isLoggedIn={isAuthenticated}
+                    username={user?.name}
+                    caseId={chosenCase?.id}
+                    refetchAdvices={refetchAdvices}
+                    canBePrivate={chosenCase?.allowUsersToSendPrivateAdvices}
+                  />
+                )}
+              </Stack>
             </Stack>
           </GridColumn>
           <GridColumn
@@ -125,9 +144,14 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
             order={[2, 2, 2, 3, 3]}
           >
             <Stack space={3}>
-              {!isMobile && <AdviceCTACard chosenCase={chosenCase} />}
-              <StakeholdersCard chosenCase={chosenCase} />
-              <CoOrdinator
+              <CaseStatusBox status={chosenCase.statusName} />
+              {isStakeholdersNotEmpty && (
+                <BlowoutList list={chosenCase.stakeholders} isStakeholder />
+              )}
+              {isRelatedCasesNotEmpty && (
+                <BlowoutList list={chosenCase.relatedCases} />
+              )}
+              <Coordinator
                 contactEmail={contactEmail}
                 contactName={contactName}
               />

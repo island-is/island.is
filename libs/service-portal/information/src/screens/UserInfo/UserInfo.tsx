@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
@@ -17,10 +17,6 @@ import {
   formatNameBreaks,
   formatResidenceString,
 } from '../../helpers/formatting'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 import { useNationalRegistryUserV3Query } from './UserInfo.generated'
 
 const dataNotFoundMessage = defineMessage({
@@ -32,29 +28,12 @@ const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const [showTooltip, setShowTooltip] = useState(false)
-
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const isDelegation = userInfo && checkDelegation(userInfo)
 
   const { data, loading, error } = useNationalRegistryUserV3Query()
   const { nationalRegistryUserV3: nationalRegistryUser } = data || {}
 
   const isUserAdult = info(userInfo.profile.nationalId).age >= 18
-
-  /* Should show name breakdown tooltip? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalNameBreakdownEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setShowTooltip(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   return (
     <>
@@ -64,16 +43,12 @@ const SubjectInfo = () => {
           title={formatMessage(m.myRegistration)}
           label={m.fullName}
           loading={loading}
-          content={nationalRegistryUser?.fullName ?? ''}
-          tooltip={
-            showTooltip
-              ? formatNameBreaks(nationalRegistryUser ?? undefined, {
-                  givenName: formatMessage(spmm.givenName),
-                  middleName: formatMessage(spmm.middleName),
-                  lastName: formatMessage(spmm.lastName),
-                })
-              : undefined
-          }
+          content={nationalRegistryUser?.fullName}
+          tooltip={formatNameBreaks(nationalRegistryUser ?? undefined, {
+            givenName: formatMessage(spmm.givenName),
+            middleName: formatMessage(spmm.middleName),
+            lastName: formatMessage(spmm.lastName),
+          })}
           editLink={{
             external: true,
             title: spmm.changeInNationalReg,

@@ -19,17 +19,11 @@ interface CaseStates {
 export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.OPEN,
-    {
-      from: [{ state: CaseState.NEW }],
-      to: { state: CaseState.DRAFT },
-    },
+    { from: [{ state: CaseState.NEW }], to: { state: CaseState.DRAFT } },
   ],
   [
     CaseTransition.SUBMIT,
-    {
-      from: [{ state: CaseState.DRAFT }],
-      to: { state: CaseState.SUBMITTED },
-    },
+    { from: [{ state: CaseState.DRAFT }], to: { state: CaseState.SUBMITTED } },
   ],
   [
     CaseTransition.RECEIVE,
@@ -41,21 +35,30 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.ACCEPT,
     {
-      from: [{ state: CaseState.RECEIVED }],
+      from: [
+        { state: CaseState.RECEIVED },
+        { state: CaseState.RECEIVED, appealState: CaseAppealState.APPEALED },
+      ],
       to: { state: CaseState.ACCEPTED },
     },
   ],
   [
     CaseTransition.REJECT,
     {
-      from: [{ state: CaseState.RECEIVED }],
+      from: [
+        { state: CaseState.RECEIVED },
+        { state: CaseState.RECEIVED, appealState: CaseAppealState.APPEALED },
+      ],
       to: { state: CaseState.REJECTED },
     },
   ],
   [
     CaseTransition.DISMISS,
     {
-      from: [{ state: CaseState.RECEIVED }],
+      from: [
+        { state: CaseState.RECEIVED },
+        { state: CaseState.RECEIVED, appealState: CaseAppealState.APPEALED },
+      ],
       to: { state: CaseState.DISMISSED },
     },
   ],
@@ -87,7 +90,11 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
   [
     CaseTransition.APPEAL,
     {
-      from: [{ state: CaseState.ACCEPTED }, { state: CaseState.REJECTED }],
+      from: [
+        { state: CaseState.ACCEPTED },
+        { state: CaseState.REJECTED },
+        { state: CaseState.DISMISSED },
+      ],
       to: { appealState: CaseAppealState.APPEALED },
     },
   ],
@@ -95,14 +102,9 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     CaseTransition.RECEIVE_APPEAL,
     {
       from: [
-        {
-          state: CaseState.ACCEPTED,
-          appealState: CaseAppealState.APPEALED,
-        },
-        {
-          state: CaseState.REJECTED,
-          appealState: CaseAppealState.APPEALED,
-        },
+        { state: CaseState.ACCEPTED, appealState: CaseAppealState.APPEALED },
+        { state: CaseState.REJECTED, appealState: CaseAppealState.APPEALED },
+        { state: CaseState.DISMISSED, appealState: CaseAppealState.APPEALED },
       ],
       to: { appealState: CaseAppealState.RECEIVED },
     },
@@ -111,14 +113,9 @@ export const caseStateMachine: Map<CaseTransition, Rule> = new Map([
     CaseTransition.COMPLETE_APPEAL,
     {
       from: [
-        {
-          state: CaseState.ACCEPTED,
-          appealState: CaseAppealState.RECEIVED,
-        },
-        {
-          state: CaseState.REJECTED,
-          appealState: CaseAppealState.RECEIVED,
-        },
+        { state: CaseState.ACCEPTED, appealState: CaseAppealState.RECEIVED },
+        { state: CaseState.REJECTED, appealState: CaseAppealState.RECEIVED },
+        { state: CaseState.DISMISSED, appealState: CaseAppealState.RECEIVED },
       ],
       to: { appealState: CaseAppealState.COMPLETED },
     },
@@ -145,8 +142,15 @@ export const transitionCase = function (
     )
   }
 
-  return {
-    state: rule.to?.state,
-    appealState: rule.to?.appealState,
-  } as CaseStates
+  const states: CaseStates = {}
+
+  if (rule.to?.state) {
+    states.state = rule.to.state
+  }
+
+  if (rule.to?.appealState) {
+    states.appealState = rule.to.appealState
+  }
+
+  return states
 }

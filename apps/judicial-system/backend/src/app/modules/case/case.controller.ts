@@ -25,11 +25,13 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
+  CaseAppealDecision,
   CaseAppealState,
   CaseState,
   CaseTransition,
   CaseType,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   restrictionCases,
   UserRole,
@@ -60,7 +62,6 @@ import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
-  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -94,7 +95,8 @@ export class CaseController {
   private async validateAssignedUser(
     assignedUserId: string,
     assignedUserRole: UserRole[],
-    institutionId: string | undefined,
+    institutionType: InstitutionType,
+    institutionId?: string,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
@@ -104,7 +106,10 @@ export class CaseController {
       )
     }
 
-    if (institutionId && assignedUser.institutionId !== institutionId) {
+    if (
+      assignedUser.institution?.type !== institutionType ||
+      (institutionId && assignedUser.institutionId !== institutionId)
+    ) {
       throw new ForbiddenException(
         `User ${assignedUserId} belongs to the wrong institution`,
       )
@@ -135,7 +140,6 @@ export class CaseController {
     judgeUpdateRule,
     registrarUpdateRule,
     assistantUpdateRule,
-    staffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -154,6 +158,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.prosecutorId,
         [UserRole.PROSECUTOR],
+        InstitutionType.PROSECUTORS_OFFICE,
         theCase.creatingProsecutor?.institutionId,
       )
 
@@ -167,6 +172,7 @@ export class CaseController {
       await this.validateAssignedUser(
         update.judgeId,
         [UserRole.JUDGE, UserRole.ASSISTANT],
+        InstitutionType.COURT,
         theCase.courtId,
       )
     }
@@ -175,7 +181,40 @@ export class CaseController {
       await this.validateAssignedUser(
         update.registrarId,
         [UserRole.REGISTRAR],
+        InstitutionType.COURT,
         theCase.courtId,
+      )
+    }
+
+    if (update.appealAssistantId) {
+      await this.validateAssignedUser(
+        update.appealAssistantId,
+        [UserRole.ASSISTANT],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge1Id) {
+      await this.validateAssignedUser(
+        update.appealJudge1Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge2Id) {
+      await this.validateAssignedUser(
+        update.appealJudge2Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge3Id) {
+      await this.validateAssignedUser(
+        update.appealJudge3Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
       )
     }
 
@@ -221,7 +260,7 @@ export class CaseController {
       theCase.appealState,
     )
 
-    const update: UpdateCase = states
+    let update: UpdateCase = states
 
     if (transition.transition === CaseTransition.DELETE) {
       update.parentCaseId = null
@@ -233,9 +272,36 @@ export class CaseController {
       update.courtRecordSignatureDate = null
     }
 
-    // The only roles that can appeal a case are prosecutor roles
+    // TODO: Consider changing the names of the postponed appeal date variables
+    // as they are now also used when the case is appealed in court
     if (states.appealState === CaseAppealState.APPEALED) {
+      // The only roles that can appeal a case here are prosecutor roles
       update.prosecutorPostponedAppealDate = nowFactory()
+    } else if (
+      // Handle appealed in court
+      !theCase.appealState &&
+      [
+        CaseTransition.ACCEPT,
+        CaseTransition.REJECT,
+        CaseTransition.DISMISS,
+      ].includes(transition.transition) &&
+      (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
+    ) {
+      if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+        update.prosecutorPostponedAppealDate = nowFactory()
+      } else {
+        update.accusedPostponedAppealDate = nowFactory()
+      }
+
+      update = {
+        ...update,
+        ...transitionCase(
+          CaseTransition.APPEAL,
+          states.state ?? theCase.state,
+          states.appealState ?? theCase.appealState,
+        ),
+      }
     }
 
     if (states.appealState === CaseAppealState.RECEIVED) {

@@ -4,7 +4,7 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { PlateRenewalApi, Configuration } from '../../gen/fetch'
+import { PlateOwnershipApi, Configuration } from '../../gen/fetch'
 import { VehiclePlateRenewalClientConfig } from './vehiclePlateRenewalClient.config'
 
 const configFactory = (
@@ -35,13 +35,13 @@ const configFactory = (
 
 export const exportedApis = [
   {
-    provide: PlateRenewalApi,
+    provide: PlateOwnershipApi,
     useFactory: (
       xRoadConfig: ConfigType<typeof XRoadConfig>,
       config: ConfigType<typeof VehiclePlateRenewalClientConfig>,
       idsClientConfig: ConfigType<typeof IdsClientConfig>,
     ) => {
-      return new PlateRenewalApi(
+      return new PlateOwnershipApi(
         new Configuration(
           configFactory(
             xRoadConfig,

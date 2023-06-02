@@ -14,9 +14,9 @@ const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A
 export const isValidEmail = (value: string) => emailRegex.test(value)
 
 const checkIfFilledOut = (arr: Array<string | undefined>) => {
-  if (arr.every((v) => v === '')) {
+  if (arr.every((v) => v === '' || v === undefined)) {
     return true
-  } else if (arr.every((v) => v !== '')) {
+  } else if (arr.every((v) => v !== '' && v !== undefined)) {
     return true
   } else {
     return false
@@ -25,20 +25,19 @@ const checkIfFilledOut = (arr: Array<string | undefined>) => {
 
 const asset = z
   .object({
-    assetNumber: z.string().optional(),
-    description: z.string().optional(),
+    assetNumber: z.string(),
+    description: z.string(),
     marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
     share: z.number().optional(),
   })
   .refine(
-    ({ assetNumber, description }) => {
-      return checkIfFilledOut([assetNumber, description])
+    ({ enabled, marketValue }) => {
+      return enabled ? marketValue !== '' : true
     },
     {
-      params: m.fillOutRates,
-      path: ['assetNumber'],
+      path: ['marketValue'],
     },
   )
   .array()
@@ -71,13 +70,10 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
-        nationalId: z
-          .string()
-          .refine((v) => (v ? v.length === 10 : true))
-          .optional(),
+        nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
-        dateOfBirth: z.string().min(1).optional(),
+        dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
         phone: z
@@ -183,6 +179,17 @@ export const estateSchema = z.object({
         path: ['value'],
       },
     )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId === ''
+          ? true
+          : nationalId && kennitala.isValid(nationalId)
+      },
+      {
+        params: m.errorNationalIdIncorrect,
+        path: ['nationalId'],
+      },
+    )
     .array()
     .optional(),
 
@@ -236,6 +243,17 @@ export const estateSchema = z.object({
         path: ['balance'],
       },
     )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId === ''
+          ? true
+          : nationalId && kennitala.isValid(nationalId)
+      },
+      {
+        params: m.errorNationalIdIncorrect,
+        path: ['nationalId'],
+      },
+    )
     .array()
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
@@ -243,15 +261,15 @@ export const estateSchema = z.object({
   // is: Umboðsmaður
   representative: z
     .object({
-      name: z.string(),
-      nationalId: z.string(),
+      name: z.string().or(z.undefined()),
+      nationalId: z.string().or(z.undefined()),
       phone: z.string(),
       email: z.string(),
     })
     .refine(
       ({ name, nationalId, phone, email }) => {
-        const allEmpty = checkIfFilledOut([name, nationalId, phone, email])
-        return allEmpty ? true : name.length > 1
+        const isAllEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return isAllEmpty ? true : name && name.length > 1
       },
       {
         path: ['name'],
@@ -259,8 +277,8 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ name, nationalId, phone, email }) => {
-        const allEmpty = checkIfFilledOut([name, nationalId, phone, email])
-        return allEmpty ? true : kennitala.isPerson(nationalId)
+        const isAllEmpty = checkIfFilledOut([name, nationalId, phone, email])
+        return isAllEmpty ? true : nationalId && kennitala.isPerson(nationalId)
       },
       {
         path: ['nationalId'],

@@ -16,7 +16,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
@@ -54,11 +53,8 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag:
-        Features.transportAuthorityOrderVehicleLicensePlateDelegations,
     },
   ],
-  featureFlag: Features.transportAuthorityOrderVehicleLicensePlate,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

@@ -1,11 +1,11 @@
-import { ApiScopesDTO } from '@island.is/auth-api-lib'
+import { ApiScopeDTO } from '@island.is/auth-api-lib'
 import * as faker from 'faker'
 
 /**
  * Private helper to create ApiScope with random values.
  * @returns
  */
-const createRandomApiScope = (): ApiScopesDTO => {
+const createRandomApiScope = (): ApiScopeDTO => {
   return {
     enabled: true,
     name: faker.random.word(),
@@ -33,8 +33,8 @@ const createRandomApiScope = (): ApiScopesDTO => {
  * @returns
  */
 export const createApiScope = (
-  apiScope?: Partial<ApiScopesDTO>,
-): ApiScopesDTO => {
+  apiScope?: Partial<ApiScopeDTO>,
+): ApiScopeDTO => {
   const fallback = createRandomApiScope()
 
   return {

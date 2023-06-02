@@ -11,6 +11,18 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
+const guardian = z.object({
+  name: z.string().min(1),
+  nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
+  email: z
+    .string()
+    .refine((v) => isValidEmail(v), { params: error.invalidValue }),
+  phoneNumber: z
+    .string()
+    .min(7)
+    .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   passport: z
@@ -41,32 +53,8 @@ export const dataSchema = z.object({
   childsPersonalInfo: z.object({
     name: z.string().min(1),
     nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-    guardian1: z.object({
-      name: z.string().min(1),
-      nationalId: z
-        .string()
-        .refine((x) => (x ? nationalIdRegex.test(x) : false)),
-      email: z
-        .string()
-        .refine((v) => isValidEmail(v), { params: error.invalidValue }),
-      phoneNumber: z
-        .string()
-        .min(7)
-        .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
-    }),
-    guardian2: z.object({
-      name: z.string().min(1),
-      nationalId: z
-        .string()
-        .refine((x) => (x ? nationalIdRegex.test(x) : false)),
-      email: z
-        .string()
-        .refine((v) => isValidEmail(v), { params: error.invalidValue }),
-      phoneNumber: z
-        .string()
-        .min(7)
-        .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
-    }),
+    guardian1: guardian,
+    guardian2: guardian.optional(),
   }),
   service: z.object({
     type: z.enum([Services.REGULAR, Services.EXPRESS]),

@@ -18,8 +18,9 @@ import {
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
-import { YES } from '@island.is/application/core'
+import { YES, coreErrorMessages } from '@island.is/application/core'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
@@ -66,6 +67,17 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       showCoowned: false,
       showOperated: false,
     })
+
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwner,
+        },
+        400,
+      )
+    }
 
     return await Promise.all(
       result?.map(async (vehicle) => {

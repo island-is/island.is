@@ -99,6 +99,7 @@ judicial-system-backend:
   env:
     BLOCKED_API_INTEGRATION: 'COURT_LITIGANT'
     CLIENT_URL: 'https://rettarvorslugatt.island.is'
+    CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
