@@ -98,7 +98,7 @@ const UniversityStudiesHeader: React.FC<HeaderProps> = ({
           )}
           <Hidden above="md">
             <Box
-              marginTop={[2, 2, 22]}
+              marginTop={[2, 2, 15]}
               textAlign={['center', 'center', 'left']}
             >
               <Link

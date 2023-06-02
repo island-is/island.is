@@ -10,6 +10,7 @@ export const headerBg = style({
     md: {
       marginTop: -120,
       paddingTop: 120,
+      height: 444,
     },
   }),
 })
@@ -29,7 +30,7 @@ export const iconCircle = style({
       marginTop: 32,
     },
     md: {
-      marginTop: 234,
+      marginTop: 168,
       position: 'relative',
     },
   }),
@@ -73,6 +74,6 @@ export const navigation = style({
 
 export const largeTitle = style({
   position: 'absolute',
-  left: '40%',
-  bottom: '400px',
+  left: '33%',
+  bottom: '500px',
 })
