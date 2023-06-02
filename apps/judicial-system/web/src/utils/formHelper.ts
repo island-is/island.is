@@ -326,7 +326,7 @@ export const stepValidations = (): stepValidationsType => {
     [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) =>
       validations.isSubpoenaStepValid(theCase),
     [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
-      validations.isProsecutorAndDefenderStepValid(theCase),
+      validations.isDefenderStepValid(theCase),
     [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => true,
     [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,

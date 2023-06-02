@@ -14,7 +14,7 @@ import {
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import { isProsecutorAndDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import { NotificationType } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
@@ -38,8 +38,7 @@ const HearingArrangements: React.FC = () => {
     [workingCase.id, sendNotification, router],
   )
 
-  const stepIsValid =
-    !isSendingNotification && isProsecutorAndDefenderStepValid(workingCase)
+  const stepIsValid = !isSendingNotification && isDefenderStepValid(workingCase)
 
   return (
     <PageLayout
