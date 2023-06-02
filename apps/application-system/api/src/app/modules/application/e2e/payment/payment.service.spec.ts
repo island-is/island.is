@@ -4,6 +4,7 @@ import {
   Charge,
   ChargeResponse,
   Catalog,
+  ChargeStatusResultStatusEnum,
 } from '@island.is/clients/charge-fjs-v2'
 
 import { PaymentService } from '@island.is/application/api/payment'
@@ -46,15 +47,10 @@ class MockChargeFjsV2ClientService {
   }
 
   getChargeStatus(chargeId: string) {
-    //'In progress'
-    //'unpaid'
-    //'paid'
-    //'cancelled'
-
     return Promise.resolve({
       statusResult: {
         docuNum: '1',
-        status: 'In progress',
+        status: ChargeStatusResultStatusEnum.InProgress,
       },
       error: {
         code: 200,
@@ -188,7 +184,7 @@ describe('Payment Service', () => {
     jest.spyOn(fjsClient, 'getChargeStatus').mockResolvedValueOnce({
       statusResult: {
         docuNum: '1',
-        status: 'In progress',
+        status: ChargeStatusResultStatusEnum.InProgress,
       },
       error: {
         code: 200,
@@ -228,7 +224,7 @@ describe('Payment Service', () => {
       Promise.resolve({
         statusResult: {
           docuNum: '1',
-          status: 'unpaid',
+          status: ChargeStatusResultStatusEnum.Unpaid,
         },
         error: {
           code: 200,
@@ -270,7 +266,7 @@ describe('Payment Service', () => {
       Promise.resolve({
         statusResult: {
           docuNum: '1',
-          status: 'unpaid',
+          status: ChargeStatusResultStatusEnum.Unpaid,
         },
         error: {
           code: 200,
