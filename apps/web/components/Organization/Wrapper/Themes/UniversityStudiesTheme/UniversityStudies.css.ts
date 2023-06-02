@@ -75,5 +75,5 @@ export const navigation = style({
 export const largeTitle = style({
   position: 'absolute',
   left: '33%',
-  bottom: '500px',
+  bottom: '550px',
 })
