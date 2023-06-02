@@ -13,7 +13,7 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { Defendant, UpdateDefendant } from '@island.is/judicial-system/types'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
 
-import { prosecutorAndDefender as m } from './ProsecutorAndDefender.strings'
+import { defender as m } from './Defender.strings'
 
 interface Props {
   defendant: Defendant
