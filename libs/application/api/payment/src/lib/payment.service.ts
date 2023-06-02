@@ -273,7 +273,6 @@ export class PaymentService {
     user: User,
     extraData: ExtraData[] | undefined,
   ): Promise<ChargeResponse> {
-    // throw new Error('Method not implemented.')
     return await this.chargeFjsV2ClientService.createCharge(
       formatCharge(
         paymentModel,
