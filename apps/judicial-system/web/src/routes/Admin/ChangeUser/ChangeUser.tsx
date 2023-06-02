@@ -42,7 +42,6 @@ export const ChangeUser: React.FC = () => {
   )
 
   const {
-    courts,
     allCourts,
     prosecutorsOffices,
     prisonInstitutions,
@@ -90,7 +89,6 @@ export const ChangeUser: React.FC = () => {
         <PageHeader title={formatMessage(titles.admin.changeUser)} />
         <UserForm
           user={userData?.user}
-          courts={courts}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           prisonInstitutions={prisonInstitutions}

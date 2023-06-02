@@ -21,6 +21,32 @@ paths:
                 $ref: '#/components/schemas/ConsentsPaginatedResponse'
         '401':
           description: 'Unauthorized'
+  /v1/actor/consents/{clientId}:
+    patch:
+      tags:
+        - Consents
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentUpdate'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Consent'
+        '204':
+          description: 'No Content'
+        '401':
+          description: 'Unauthorized'
 components:
   schemas:
     ConsentsPaginatedResponse:
@@ -72,6 +98,20 @@ components:
         - hasPreviousPage
         - startCursor
         - endCursor
+    ConsentUpdate:
+      type: object
+      properties:
+        consented:
+          type: array
+          items:
+            type: string
+        rejected:
+          type: array
+          items:
+            type: string
+      required:
+        - consented
+        - rejected
   securitySchemes:
     Bearer:
       type: http

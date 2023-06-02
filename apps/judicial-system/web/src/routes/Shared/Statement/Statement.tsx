@@ -28,8 +28,10 @@ import {
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
 import {
+  CaseAppealDecision,
   CaseFileCategory,
   isProsecutionRole,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   TUploadFile,
@@ -79,8 +81,9 @@ const Statement = () => {
   }, [displayFiles])
 
   const isStepValid =
-    displayFiles.some((file) => file.category === appealStatementType) &&
-    allFilesUploaded
+    displayFiles.some(
+      (file) => file.category === appealStatementType && file.status === 'done',
+    ) && allFilesUploaded
 
   const removeFileCB = useCallback((file: UploadFile) => {
     setDisplayFiles((previous) =>
@@ -128,16 +131,18 @@ const Statement = () => {
           {(workingCase.prosecutorPostponedAppealDate ||
             workingCase.accusedPostponedAppealDate) && (
             <Text variant="h5" as="h5">
-              {formatMessage(strings.appealActorAndDate, {
-                actor: workingCase.prosecutorPostponedAppealDate
-                  ? 'sækjanda'
-                  : 'varnaraðila',
-                date: formatDate(
-                  workingCase.prosecutorPostponedAppealDate ??
-                    workingCase.accusedPostponedAppealDate,
-                  'PPPp',
-                ),
-              })}
+              {workingCase.prosecutorAppealDecision ===
+                CaseAppealDecision.APPEAL ||
+              workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+                ? formatMessage(strings.appealActorInCourt, {
+                    appealedByProsecutor:
+                      workingCase.appealedByRole === UserRole.PROSECUTOR,
+                  })
+                : formatMessage(strings.appealActorAndDate, {
+                    appealedByProsecutor:
+                      workingCase.appealedByRole === UserRole.PROSECUTOR,
+                    date: formatDate(workingCase.appealedDate, 'PPPp'),
+                  })}
             </Text>
           )}
         </Box>
@@ -222,7 +227,9 @@ const Statement = () => {
       {visibleModal === 'STATEMENT_SENT' && (
         <Modal
           title={formatMessage(strings.statementSentModalTitle)}
-          text={formatMessage(strings.statementSentModalText)}
+          text={formatMessage(strings.statementSentModalText, {
+            isDefender: limitedAccess,
+          })}
           secondaryButtonText={formatMessage(core.closeModal)}
           onSecondaryButtonClick={() => router.push(previousUrl)}
         />

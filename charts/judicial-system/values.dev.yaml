@@ -97,8 +97,9 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
-    BLOCKED_API_INTEGRATION: 'POLICE_CASE_V2'
+    BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://judicial-system.dev01.devland.is'
+    CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
