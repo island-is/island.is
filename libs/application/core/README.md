@@ -323,7 +323,9 @@ You can pass a function that uses the application answers and the user's role to
 
 ### Application History
 
-You can display a history log for each action that can be triggered within each state. The logs will be ordered below the current [Pending Action](###-Pending-Action) (if present) with the most recent entries at the top.
+You can display a history log for each event that can be triggered within each state. The logs will be ordered below the current [Pending Action](###-Pending-Action) (if present) with the most recent entries at the top.
+
+The events are stored and recorded in db seperately so the log messages can be added later or updated.
 
 ```ts
 [States.inReview]: {
@@ -342,7 +344,7 @@ You can display a history log for each action that can be triggered within each 
     },
 ```
 
-An display example of a history log (with no [Pending Action](###-Pending-Action) present)
+An example of a history log (with no [Pending Action](###-Pending-Action) present)
 ![image](../../../handbook/misc/assets/application-history.jpeg)
 
 ### Delete Application
@@ -405,9 +407,7 @@ export interface NewField extends BaseField {
 4. Create a new function in `libs/application/core/src/lib/fieldBuilders.ts`. This function accepts a parameter of the new type we created, `NewField`, but we have to omit `type`, `component` and `children`. Then add the props as follows.
 
 ```typescript
-export function buildNewField(
-  data: Omit<NewField, 'type' | 'component' | 'children'>,
-): NewField {
+export function buildNewField(data: Omit<NewField, 'type' | 'component' | 'children'>): NewField {
   const { myProp, myOtherProp } = data
   return {
     ...extractCommonFields(data),
@@ -515,11 +515,7 @@ You need to define the function so that it accepts the application object and re
 
 ```ts
 const determineMessageFromApplicationAnswers = (application: Application) => {
-  const careerHistory = getValueViaPath(
-    application.answers,
-    'careerHistory',
-    undefined,
-  ) as string | undefined
+  const careerHistory = getValueViaPath(application.answers, 'careerHistory', undefined) as string | undefined
   if (careerHistory === 'no') {
     return m.nameApplicationNeverWorkedBefore
   }
