@@ -38,7 +38,7 @@ export class NationalRegistryV3Service {
         nationalId: data.kennitala,
         fullName: data.nafn,
         gender: data.kyn?.kynTexti,
-        familyRegistrationCode: data.itarupplysingar?.logheimilistengsl,
+        familyRegistrationCode: data.logheimilistengsl?.logheimilistengsl,
         banMarking: data.bannmerking === 'true',
         fate: data.afdrif,
       }
@@ -116,17 +116,17 @@ export class NationalRegistryV3Service {
             if (!custodian.forsjaAdiliKennitala || !custodian.forsjaAdiliNafn) {
               return null
             }
-            const personData = await this.fetchData(
+            const custodianData = await this.fetchData(
               custodian.forsjaAdiliKennitala,
             )
             return {
-              ...this.extractPerson(personData),
+              ...this.extractPerson(custodianData),
               nationalId: custodian.forsjaAdiliKennitala,
               fullName: custodian.forsjaAdiliNafn,
               custodyText: custodian.forsjaTexti,
-              livesWithChild:
-                personData.itarupplysingar?.logheimilistengsl ===
-                data.itarupplysingar?.logheimilistengsl,
+              livesWithChild: custodianData.logheimilistengsl?.logheimilismedlimir
+                ?.map((l) => l.kennitala)
+                .includes(data.kennitala),
             }
           })
           .filter((Boolean as unknown) as ExcludesFalse),
@@ -236,9 +236,9 @@ export class NationalRegistryV3Service {
         const parents = (await this.getParents(child.barnKennitala)) ?? []
         const custodians = (await this.getCustodians(child.barnKennitala)) ?? []
 
-        const livesWithApplicant =
-          childDetails.itarupplysingar?.logheimilistengsl ==
-          parentData.itarupplysingar?.logheimilistengsl
+        const livesWithApplicant = childDetails.logheimilistengsl?.logheimilismedlimir
+          ?.map((l) => l.kennitala)
+          .includes(parentData.kennitala)
 
         return {
           ...this.extractPerson(childDetails),
@@ -246,19 +246,18 @@ export class NationalRegistryV3Service {
           fullName: child.barnNafn,
           parents,
           custodians,
-          /*livesWithApplicant,
+          livesWithApplicant,
           livesWithBothParents:
             livesWithApplicant &&
             otherParentsDetails.every(
               (o) =>
-                o?.itarupplysingar?.logheimilistengsl ===
-                childDetails.itarupplysingar?.logheimilistengsl,
+                o?.logheimilistengsl?.logheimilistengsl ===
+                childDetails.logheimilistengsl?.logheimilistengsl,
             ),
           otherParent:
             otherParentsDetails.length && otherParentsDetails[0]
               ? this.extractPerson(otherParentsDetails[0])
               : null,
-              */
         }
       }),
     )

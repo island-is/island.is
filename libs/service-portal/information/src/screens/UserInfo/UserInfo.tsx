@@ -43,7 +43,7 @@ const SubjectInfo = () => {
           title={formatMessage(m.myRegistration)}
           label={m.fullName}
           loading={loading}
-          content={nationalRegistryUser?.fullName}
+          content={nationalRegistryUser?.fullName ?? ''}
           tooltip={formatNameBreaks(nationalRegistryUser ?? undefined, {
             givenName: formatMessage(spmm.givenName),
             middleName: formatMessage(spmm.middleName),
