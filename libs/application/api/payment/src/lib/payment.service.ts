@@ -202,6 +202,8 @@ export class PaymentService {
         paymentModel.id,
       )
 
+      const status = chargeStatus?.statusResult?.status
+
       if (chargeStatus === null) {
         //No charge present in FJS - we need to create a new one
         const chargeResult = await this.createNewCharge(
@@ -210,10 +212,7 @@ export class PaymentService {
           extraData,
         )
         user4 = chargeResult.user4
-      } else if (
-        chargeStatus.statusResult.status ===
-        ChargeStatusResultStatusEnum.InProgress
-      ) {
+      } else if (status === ChargeStatusResultStatusEnum.InProgress) {
         //Payment is still in progress - we need to wait for it to finish before we can continue.
         throw new ProblemError({
           type: ProblemType.TEMPLATE_API_ERROR,
@@ -226,8 +225,7 @@ export class PaymentService {
           },
         })
       } else if (
-        chargeStatus.statusResult.status ===
-          ChargeStatusResultStatusEnum.Unpaid &&
+        status === ChargeStatusResultStatusEnum.Unpaid &&
         chargeStatus.statusResult.docNum
       ) {
         //We aldready have a charge that is unpaid so we can proceed like normal
