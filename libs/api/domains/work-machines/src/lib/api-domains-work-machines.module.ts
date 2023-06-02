@@ -5,7 +5,7 @@ import { WorkMachinesClientModule } from '@island.is/clients/work-machines'
 import { DisabilityLicenseClientModule } from '@island.is/clients/disability-license'
 
 @Module({
-  imports: [WorkMachinesClientModule, DisabilityLicenseClientModule],
   providers: [WorkMachinesResolver, WorkMachinesService],
+  imports: [WorkMachinesClientModule, DisabilityLicenseClientModule],
 })
 export class WorkMachinesModule {}

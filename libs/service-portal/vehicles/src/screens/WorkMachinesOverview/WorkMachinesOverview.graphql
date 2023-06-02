@@ -1,10 +1,9 @@
 query GetWorkMachines {
-  workMachines {
+  workMachinesWorkMachineEntity {
     value {
       id
       registrationNumber
       type
-      owner
       status
     }
   }

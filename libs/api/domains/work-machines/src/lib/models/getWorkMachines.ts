@@ -12,7 +12,7 @@ export class WorkMachineEntity {
   labels?: Array<Label>
 }
 
-@ObjectType('WorkMachinesMachine')
+@ObjectType('WorkMachinesWorkMachine')
 export class WorkMachine {
   @Field(() => ID, { nullable: true })
   id?: string
@@ -24,13 +24,28 @@ export class WorkMachine {
   type?: string
 
   @Field(() => String, { nullable: true })
-  owner?: string
-
-  @Field(() => String, { nullable: true })
   status?: string
 
   @Field(() => String, { nullable: true })
-  dateLastInspection?: string
+  ownerName?: string
+
+  @Field(() => String, { nullable: true })
+  ownerNumber?: string
+
+  @Field(() => String, { nullable: true })
+  productionNumber?: string
+
+  @Field(() => String, { nullable: true })
+  productionCountry?: string
+
+  @Field(() => String, { nullable: true })
+  productionYear?: string
+
+  @Field(() => String, { nullable: true })
+  licensePlateNumber?: string
+
+  @Field(() => String, { nullable: true })
+  supervisorName?: string
 
   @Field(() => [Link], { nullable: true })
   links?: Array<Link>
