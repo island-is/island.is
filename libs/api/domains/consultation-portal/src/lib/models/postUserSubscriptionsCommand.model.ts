@@ -3,8 +3,8 @@ import { CaseSubscriptionCommand } from './caseSubscriptionCommand.model'
 import { SubscriptionCommand } from './subscriptionCommand.model'
 import { SubscriptionType } from '@island.is/clients/consultation-portal'
 
-@ObjectType('ConsultationPortalUserSubscriptionsCommand')
-export class UserSubscriptionsCommand {
+@ObjectType('ConsultationPortalPostUserSubscriptionsCommand')
+export class PostUserSubscriptionsCommand {
   @Field({ nullable: true })
   subscribeToAll?: boolean
 
