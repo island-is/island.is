@@ -26,7 +26,8 @@ export const useEnvironment = <T extends EnvironmentResult<T>>(
   const findEnvironment = (environment: string) =>
     environments.find((env) => env.environment === environment)
 
-  const environment = findEnvironment(environmentName) ?? environments[0]
+  const environment =
+    findEnvironment(environmentName) ?? environments[environments.length - 1]
 
   useSyncedQueryStringValueWithoutNavigation(
     'env',
