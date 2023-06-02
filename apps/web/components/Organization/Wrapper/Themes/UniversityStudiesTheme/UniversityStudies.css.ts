@@ -8,8 +8,8 @@ export const headerBg = style({
       paddingTop: 100,
     },
     md: {
-      marginTop: -120,
-      paddingTop: 120,
+      marginTop: -110,
+      paddingTop: 110,
       height: 444,
     },
   }),
