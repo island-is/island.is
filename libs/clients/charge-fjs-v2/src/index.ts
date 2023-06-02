@@ -6,3 +6,5 @@ export { DefaultApi } from '../gen/fetch'
 
 export * from './lib/chargeFjsV2Client.types'
 export * from './lib/chargeFjsV2Client.utils'
+export { ChargeStatusResultStatusEnum } from '../gen/fetch'
+0

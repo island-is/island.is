@@ -479,6 +479,18 @@ export const coreErrorMessages = defineMessages({
       'Ekki tókst að sækja gögn úr Þjóðskrá fyrir þessa kennitölu.',
     description: 'Not able to fetch data from national registry description',
   },
+  paymentCreateChargeFailedStillInProgressTitle: {
+    id:
+      'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressTitle',
+    defaultMessage: 'Greiðsla ennþá í vinnslu',
+    description: 'Not able to create payment title',
+  },
+  paymentCreateChargeFailedStillInProgressSummary: {
+    id:
+      'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressSummary',
+    defaultMessage: 'Greiðsla er enn í vinnslu. Vinsamlega reynið aftur síðar.',
+    description: 'Not able to create payment description',
+  },
 })
 export const coreDelegationsMessages = defineMessages({
   delegationPersons: {

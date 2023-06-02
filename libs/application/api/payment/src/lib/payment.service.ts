@@ -11,6 +11,7 @@ import {
   CatalogItem,
   ChargeFjsV2ClientService,
   ChargeResponse,
+  ChargeStatusResultStatusEnum,
   ExtraData,
 } from '@island.is/clients/charge-fjs-v2'
 import { User } from '@island.is/auth-nest-tools'
@@ -29,6 +30,9 @@ import { AuditService } from '@island.is/nest/audit'
 import { PaymentStatus } from './types/paymentStatus'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ProblemError } from '@island.is/nest/problem'
+import { ProblemType } from '@island.is/shared/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class PaymentService {
@@ -181,78 +185,87 @@ export class PaymentService {
     applicationId: string,
     extraData: ExtraData[] | undefined,
   ): Promise<CreateChargeResult> {
-    try {
-      //1. Retrieve charge items from FJS
-      const chargeItems = await this.findChargeItems(
-        performingOrganizationID,
-        chargeItemCodes,
+    //1. Retrieve charge items from FJS
+    const chargeItems = await this.findChargeItems(
+      performingOrganizationID,
+      chargeItemCodes,
+    )
+
+    //2. Fetch existing payment if any
+    let paymentModel = await this.findPaymentByApplicationId(applicationId)
+    let user4 = ''
+
+    if (paymentModel) {
+      //payment Model already exists something has previously gone wrong.
+
+      const chargeStatus = await this.chargeFjsV2ClientService.getChargeStatus(
+        paymentModel.id,
       )
 
-      //2. Fetch existing payment if any
-      let paymentModel = await this.findPaymentByApplicationId(applicationId)
-      let user4 = ''
-
-      if (paymentModel) {
-        const currentCharge = await this.chargeFjsV2ClientService.getChargeStatus(
-          paymentModel.id,
-        )
-
-        if (currentCharge.error.code === 404) {
-          const chargeResult = await this.createNewCharge(
-            paymentModel,
-            user,
-            extraData,
-          )
-          user4 = chargeResult.user4
-        } else if (currentCharge.statusResult.status === 'In progress') {
-          //handle this somehow better in the future
-          //just log and throw for now and let the user try again
-          this.logger.error('Charge in progress')
-          //Need to catch this in the frontend and display a friendly message
-          throw new Error('Wait for charge to complete')
-        } else if (
-          currentCharge.statusResult.status === 'unpaid' &&
-          currentCharge.statusResult.docNum
-        ) {
-          //We aldready have a charge that is unpaid
-          //update payment with user4 from charge result
-          await this.setUser4(
-            applicationId,
-            paymentModel.id,
-            currentCharge.statusResult.docNum,
-          )
-          return this.buildChargeResult(
-            paymentModel.id,
-            currentCharge.statusResult.docNum,
-          )
-        }
-        // update charge with new data if needed
-      } else {
-        //3. Create new payment entry
-        paymentModel = await this.createPaymentModel(
-          chargeItems,
-          applicationId,
-          performingOrganizationID,
-        )
-
-        //4. Create new charge
+      if (chargeStatus === null) {
+        //No charge present in FJS - we need to create a new one
         const chargeResult = await this.createNewCharge(
           paymentModel,
           user,
           extraData,
         )
         user4 = chargeResult.user4
+      } else if (
+        chargeStatus.statusResult.status ===
+        ChargeStatusResultStatusEnum.InProgress
+      ) {
+        //Payment is still in progress - we need to wait for it to finish before we can continue.
+        throw new ProblemError({
+          type: ProblemType.TEMPLATE_API_ERROR,
+          title: 'CreateCharge Payment still in progress.',
+          errorReason: {
+            title:
+              coreErrorMessages.paymentCreateChargeFailedStillInProgressTitle,
+            summary:
+              coreErrorMessages.paymentCreateChargeFailedStillInProgressSummary,
+          },
+        })
+      } else if (
+        chargeStatus.statusResult.status ===
+          ChargeStatusResultStatusEnum.Unpaid &&
+        chargeStatus.statusResult.docNum
+      ) {
+        //We aldready have a charge that is unpaid so we can proceed like normal
+        //and update payment with user4 from charge result
+        await this.setUser4(
+          applicationId,
+          paymentModel.id,
+          chargeStatus.statusResult.docNum,
+        )
+        this.auditPaymentCreation(user, applicationId, paymentModel.id)
+        return this.buildChargeResult(
+          paymentModel.id,
+          chargeStatus.statusResult.docNum,
+        )
       }
+      // update charge with new data if needed
+    } else {
+      //3. Create new payment entry
+      paymentModel = await this.createPaymentModel(
+        chargeItems,
+        applicationId,
+        performingOrganizationID,
+      )
 
-      //5. Update payment with user4 from charge result
-      await this.setUser4(applicationId, paymentModel.id, user4)
-      this.auditPaymentCreation(user, applicationId, paymentModel.id)
-
-      return this.buildChargeResult(paymentModel.id, user4)
-    } catch (e) {
-      this.logger.error('Error creating charge', e)
-      throw new InternalServerErrorException('Error creating charge')
+      //4. Create new charge
+      const chargeResult = await this.createNewCharge(
+        paymentModel,
+        user,
+        extraData,
+      )
+      user4 = chargeResult.user4
     }
+
+    //5. Update payment with user4 from charge result
+    await this.setUser4(applicationId, paymentModel.id, user4)
+    this.auditPaymentCreation(user, applicationId, paymentModel.id)
+
+    return this.buildChargeResult(paymentModel.id, user4)
   }
 
   async createNewCharge(
@@ -260,6 +273,7 @@ export class PaymentService {
     user: User,
     extraData: ExtraData[] | undefined,
   ): Promise<ChargeResponse> {
+    // throw new Error('Method not implemented.')
     return await this.chargeFjsV2ClientService.createCharge(
       formatCharge(
         paymentModel,

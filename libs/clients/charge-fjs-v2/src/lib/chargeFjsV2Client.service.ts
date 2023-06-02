@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import {
   ChargeStatusByRequestIDrequestIDGETResponse,
   DefaultApi,
+  ChargeStatusResultStatusEnum,
 } from '../../gen/fetch'
 import { Catalog, Charge, ChargeResponse } from './chargeFjsV2Client.types'
 
@@ -11,20 +12,32 @@ export class ChargeFjsV2ClientService {
 
   async getChargeStatus(
     chargeId: string,
-  ): Promise<ChargeStatusByRequestIDrequestIDGETResponse> {
-    console.log('Get charge status!!')
-    const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
-      requestID: chargeId,
-    })
+  ): Promise<ChargeStatusByRequestIDrequestIDGETResponse | null> {
+    try {
+      const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
+        requestID: chargeId,
+      })
 
-    return response
+      return response
+    } catch (e) {
+      if (e.status === 404) {
+        return null
+      }
+      throw e
+    }
   }
 
   async deleteCharge(chargeId: string): Promise<string | undefined> {
-    const { statusResult, error } = await this.getChargeStatus(chargeId)
+    const response = await this.getChargeStatus(chargeId)
+
+    if (!response) {
+      return undefined
+    }
 
     // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
-    if (statusResult.status !== 'cancelled') {
+    if (
+      response.statusResult.status !== ChargeStatusResultStatusEnum.Cancelled
+    ) {
       const response = await this.api.chargerequestIDDELETE2({
         requestID: chargeId,
       })
