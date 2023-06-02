@@ -78,7 +78,7 @@ export interface UploadData {
     | 'Yes'
     | 'No'
     | InfoValueField
-  //caseNumber: string
+  caseNumber: string
   notifier: Notifier
   estateMembers: EstateMember[]
   assets: AssetFrame[]

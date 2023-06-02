@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
 import {
+  Attachment,
   DataUploadResponse,
   EstateInfo,
   Person,
@@ -11,7 +12,11 @@ import {
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
-import { estateTransformer, filterAndRemoveRepeaterMetadata } from './utils'
+import {
+  estateTransformer,
+  filterAndRemoveRepeaterMetadata,
+  transformUploadDataToPDFStream,
+} from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -237,10 +242,23 @@ export class EstateTemplateService extends BaseTemplateApiService {
         : {}),
     }
 
+    const pdfBuffer = await transformUploadDataToPDFStream(
+      uploadData,
+      application.id,
+    )
+    const pdfAttachment: Attachment = {
+      name: `${uploadData.caseNumber}.pdf`,
+      content: pdfBuffer.toString('base64'),
+    }
+
+    console.log(JSON.stringify(pdfAttachment))
+
+    throw new Error('TODO, remove me!!!')
+
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
         [person],
-        undefined,
+        [pdfAttachment],
         this.stringifyObject(uploadData),
         uploadDataName,
         uploadDataId,
