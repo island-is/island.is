@@ -15,7 +15,6 @@ import {
   CreateClientDocument,
   CreateClientMutation,
   CreateClientMutationVariables,
-  GetClientAvailabilityDocument,
 } from './CreateClient.generated'
 import { redirect } from 'react-router-dom'
 import { IDSAdminPaths } from '../../../lib/paths'
@@ -70,35 +69,6 @@ export const createClientAction: WrappedActionFn = ({ client }) => async ({
   }
 
   const { data } = result
-
-  let idAvailableOnAllEnvs = false
-  let clientAvailability
-  try {
-    clientAvailability = await client.query({
-      query: GetClientAvailabilityDocument,
-      variables: {
-        input: {
-          tenantId: data.tenant,
-          clientId: data.clientId,
-          checkArchived: true,
-        },
-      },
-    })
-  } catch {
-    idAvailableOnAllEnvs = true
-  }
-
-  const existsInOtherEnvs = clientAvailability?.data?.authAdminClient.availableEnvironments.some(
-    (item: AuthAdminEnvironment) => data.environments.includes(item),
-  )
-
-  if (!idAvailableOnAllEnvs && existsInOtherEnvs) {
-    return {
-      errors: { clientId: 'clientIdAlreadyExists' },
-      data: null,
-      globalError: false,
-    }
-  }
 
   try {
     await client.mutate<CreateClientMutation, CreateClientMutationVariables>({

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Form,
   useActionData,
@@ -28,6 +28,8 @@ import { IDSAdminPaths } from '../../../lib/paths'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { parseID } from '../../../utils/forms'
 import { authAdminEnvironments } from '../../../utils/environments'
+import { useGetClientAvailabilityLazyQuery } from './CreateClient.generated'
+import { useDelayedFetch } from '../../../hooks/useDelayedFetch'
 
 const clientTypes = [
   AuthAdminClientType.web,
@@ -46,8 +48,10 @@ type InputState = {
 export default function CreateClient() {
   const navigate = useNavigate()
   const { isLoading, isSubmitting } = useSubmitting()
+  const { fetchData, setTempData } = useDelayedFetch()
 
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
+
   const actionData = useActionData() as CreateClientResult
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
@@ -57,12 +61,21 @@ export default function CreateClient() {
     dirty: false,
   }
 
+  const [idValidated, setIdValidated] = useState<boolean>(false)
+  const [idAvailable, setIdAvailable] = useState<boolean>(false)
+
   const [clientType, setClientState] = useState<AuthAdminClientType>(
     AuthAdminClientType.web,
   )
   const [clientIdState, setClientIdState] = useState<InputState>(
     initialClientIdState,
   )
+
+  useEffect(() => {
+    if (idValidated && fetchData !== null && fetchData !== '') {
+      validateUniqueClientId()
+    }
+  }, [fetchData])
 
   const onNameChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -76,6 +89,7 @@ export default function CreateClient() {
         prefix,
       }),
     })
+    setTempData(e.target.value)
   }
 
   const onClientIdChange = (
@@ -90,6 +104,7 @@ export default function CreateClient() {
       }),
       dirty: true,
     })
+    setTempData(val)
   }
 
   const getRadioLabels = (clientType: AuthAdminClientType) => {
@@ -123,6 +138,38 @@ export default function CreateClient() {
     )
   }
 
+  const [
+    getClientAvailabilityQuery,
+    { error, data },
+  ] = useGetClientAvailabilityLazyQuery()
+
+  const validateUniqueClientId = async () => {
+    const clientId = clientIdState.value
+    if (!clientId) return
+
+    await getClientAvailabilityQuery({
+      variables: {
+        input: {
+          clientId,
+          tenantId: tenant.id,
+          includeArchived: true,
+        },
+      },
+    })
+    setTempData(null)
+  }
+
+  useEffect(() => {
+    if (!data && !error) return
+
+    setIdValidated(true)
+    if (!data) {
+      setIdAvailable(true)
+    } else {
+      setIdAvailable(false)
+    }
+  }, [data, error])
+
   return (
     <Modal
       id="create-client"
@@ -152,6 +199,7 @@ export default function CreateClient() {
               label={formatMessage(m.displayName)}
               size="sm"
               onChange={onNameChange}
+              onBlur={validateUniqueClientId}
               errorMessage={formatErrorMessage(actionData?.errors?.displayName)}
             />
           </Box>
@@ -163,8 +211,10 @@ export default function CreateClient() {
               name="clientId"
               label={formatMessage(m.clientId)}
               size="sm"
+              hasError={idValidated && !idAvailable}
               value={clientIdState.value}
               onChange={onClientIdChange}
+              onBlur={validateUniqueClientId}
               errorMessage={formatErrorMessage(actionData?.errors?.clientId)}
             />
           </Box>
@@ -239,7 +289,11 @@ export default function CreateClient() {
           <Button onClick={onCancel} variant="ghost">
             {formatMessage(m.cancel)}
           </Button>
-          <Button type="submit" loading={isLoading || isSubmitting}>
+          <Button
+            disabled={!idAvailable}
+            type="submit"
+            loading={isLoading || isSubmitting}
+          >
             {formatMessage(m.create)}
           </Button>
         </Box>

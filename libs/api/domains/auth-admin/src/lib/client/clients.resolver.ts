@@ -48,7 +48,7 @@ export class ClientsResolver {
       user,
       input.tenantId,
       input.clientId,
-      input.checkArchived,
+      input.includeArchived,
     )
   }
 

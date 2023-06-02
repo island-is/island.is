@@ -9,5 +9,5 @@ export class ClientInput {
   clientId!: string
 
   @Field(() => Boolean, { nullable: true })
-  checkArchived?: boolean
+  includeArchived?: boolean
 }

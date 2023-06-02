@@ -780,6 +780,6 @@ export const m = defineMessages({
   },
   clientIdAlreadyExists: {
     id: 'ap.ids-admin:client-id-already-exists',
-    defaultMessage: 'ClientId already exists',
+    defaultMessage: 'Client ID already exists',
   },
 })

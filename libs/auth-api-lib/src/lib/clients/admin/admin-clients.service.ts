@@ -84,7 +84,7 @@ export class AdminClientsService {
     const clients = await this.clientModel.findAll({
       where: {
         domainName: tenantId,
-        enabled: true,
+        archived: null,
       },
       include: this.clientInclude(),
     })
@@ -102,14 +102,14 @@ export class AdminClientsService {
   async findByTenantIdAndClientId(
     tenantId: string,
     clientId: string,
-    checkArchived = false,
+    includeArchived = false,
   ): Promise<AdminClientDto> {
     const client = await this.clientModel.findOne({
       where: {
         clientId,
         domainName: tenantId,
         enabled: true,
-        ...(checkArchived && { archived: null }),
+        ...(!includeArchived && { archived: null }),
       },
       include: this.clientInclude(),
     })
