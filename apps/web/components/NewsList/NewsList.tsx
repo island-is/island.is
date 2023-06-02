@@ -9,12 +9,7 @@ import {
   Box,
   Link,
 } from '@island.is/island-ui/core'
-import {
-  LinkType,
-  useFeatureFlag,
-  useLinkResolver,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { NewsCard, Webreader } from '@island.is/web/components'
 import { useRouter } from 'next/router'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
@@ -53,10 +48,6 @@ export const NewsList = ({
   newsPerPage = 10,
   monthOptions,
 }: NewsListProps) => {
-  const { value: isWebReaderEnabledForNews } = useFeatureFlag(
-    'isWebReaderEnabledForNews',
-    false,
-  )
   const router = useRouter()
   const n = useNamespace(namespace)
 
@@ -68,21 +59,17 @@ export const NewsList = ({
 
   return (
     <Stack space={[3, 3, 4]}>
-      <Text
-        variant="h1"
-        as="h1"
-        marginBottom={isWebReaderEnabledForNews ? 0 : 2}
-      >
+      <Text variant="h1" as="h1" marginBottom={0}>
         {title}
       </Text>
-      {isWebReaderEnabledForNews && (
-        <Webreader
-          marginTop={0}
-          marginBottom={0}
-          readId={null}
-          readClass="rs_read"
-        />
-      )}
+
+      <Webreader
+        marginTop={0}
+        marginBottom={0}
+        readId={null}
+        readClass="rs_read"
+      />
+
       {selectedYear && (
         <Hidden below="lg">
           <Text variant="h2" as="h2">

@@ -168,6 +168,8 @@ export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
 export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
 export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
 export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
+export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
+
 /* COURT OF APPEAL ROUTES END */
 
 export const prosecutorRestrictionCasesRoutes = [
@@ -228,6 +230,7 @@ export const courtOfAppealRoutes = [
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_CASE_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
+  COURT_OF_APPEAL_RESULT_ROUTE,
 ]
 
 // Feedback

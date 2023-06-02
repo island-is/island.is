@@ -34,6 +34,7 @@ import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealCase as strings } from './AppealCase.strings'
+import { core } from '@island.is/judicial-system-web/messages'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
 type AssistantSelectOption = ReactSelectOption & { assistant: User }
@@ -59,7 +60,7 @@ const AppealCase = () => {
   const assistants = (userData?.users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.REGISTRAR &&
+        user.role === UserRole.ASSISTANT &&
         user.institution?.type === InstitutionType.HIGH_COURT,
     )
     .map((assistant: User) => {
@@ -70,7 +71,10 @@ const AppealCase = () => {
     .filter(
       (user: User) =>
         user.role === UserRole.JUDGE &&
-        user.institution?.type === InstitutionType.HIGH_COURT,
+        user.institution?.type === InstitutionType.HIGH_COURT &&
+        workingCase.appealJudge1?.id !== user.id &&
+        workingCase.appealJudge2?.id !== user.id &&
+        workingCase.appealJudge3?.id !== user.id,
     )
     .map((judge: User) => {
       return { label: judge.name, value: judge.id, judge }
@@ -97,7 +101,7 @@ const AppealCase = () => {
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
 
         <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(strings.caseNumberHeading)} />
+          <SectionHeading title={formatMessage(core.appealCaseNumberHeading)} />
           <Input
             name="appealCaseNumber"
             label={formatMessage(strings.caseNumberLabel)}
@@ -108,7 +112,7 @@ const AppealCase = () => {
               removeTabsValidateAndSet(
                 'appealCaseNumber',
                 event.target.value,
-                ['empty'],
+                ['empty', 'appeal-case-number-format'],
                 workingCase,
                 setWorkingCase,
                 appealCaseNumberErrorMessage,
@@ -119,7 +123,7 @@ const AppealCase = () => {
               validateAndSendToServer(
                 'appealCaseNumber',
                 event.target.value,
-                ['empty'],
+                ['empty', 'appeal-case-number-format'],
                 workingCase,
                 updateCase,
                 setAppealCaseNumberErrorMessage,
@@ -129,7 +133,7 @@ const AppealCase = () => {
           />
         </Box>
         <Box component="section" marginBottom={5}>
-          <SectionHeading title={formatMessage(strings.assistantHeading)} />
+          <SectionHeading title={formatMessage(core.appealAssistantHeading)} />
           <Select
             name="assistant"
             label={formatMessage(strings.assistantLabel)}
@@ -154,7 +158,7 @@ const AppealCase = () => {
           />
         </Box>
         <Box component="section" marginBottom={8}>
-          <SectionHeading title={formatMessage(strings.judgesHeading)} />
+          <SectionHeading title={formatMessage(core.appealJudgesHeading)} />
           <BlueBox>
             {defaultJudges.map((judge, index) => {
               return (

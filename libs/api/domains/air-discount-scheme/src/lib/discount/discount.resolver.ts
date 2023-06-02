@@ -20,6 +20,7 @@ export class DiscountResolver {
   constructor(private discountService: DiscountService) {}
 
   @Query(() => [Discount], { name: 'airDiscountSchemeDiscounts' })
+  @Audit()
   async getDiscount(@CurrentUser() user: User): Promise<Discount[]> {
     return this.discountService.getCurrentDiscounts(user)
   }

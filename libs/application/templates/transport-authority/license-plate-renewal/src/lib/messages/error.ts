@@ -11,4 +11,9 @@ export const error = defineMessages({
     defaultMessage: 'Það kom upp villa',
     description: 'Application check validation alert title',
   },
+  plateOwnershipEmptyList: {
+    id: 'ta.lpr.application:error.plateOwnershipEmptyList',
+    defaultMessage: 'Þú átt engin einkamerki',
+    description: 'You do not own any private license plates',
+  },
 })

@@ -334,9 +334,17 @@ describe('CaseController - Transition', () => {
 
           it('should transition the case', () => {
             expect(mockCaseModel.update).toHaveBeenCalledWith(
-              expect.objectContaining({
+              {
                 appealState: newAppealState,
-              }),
+                prosecutorPostponedAppealDate:
+                  newAppealState === CaseAppealState.APPEALED
+                    ? date
+                    : undefined,
+                appealReceivedByCourtDate:
+                  newAppealState === CaseAppealState.RECEIVED
+                    ? date
+                    : undefined,
+              },
               { where: { id: caseId }, transaction },
             )
           })
@@ -398,6 +406,11 @@ describe('CaseController - Transition', () => {
                   user: defaultUser,
                   caseId,
                   caseFileId: appealRulingId,
+                },
+                {
+                  type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+                  user: defaultUser,
+                  caseId,
                 },
               ])
             }

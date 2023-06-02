@@ -34,7 +34,7 @@ import {
   SearchBox,
 } from '@island.is/web/components'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useFeatureFlag, usePlausiblePageview } from '@island.is/web/hooks'
+import { usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { WatsonChatPanel } from '@island.is/web/components'
 
@@ -75,6 +75,11 @@ import {
 import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
+import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
+import {
+  HeilbrigdisstofnunAusturlandsFooter,
+  HeilbrigdisstofnunAusturlandsHeader,
+} from './Themes/HeilbrigdisstofnunAusturlandsTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -112,6 +117,7 @@ export const lightThemes = [
   'landing_page',
   'tryggingastofnun',
   'hve',
+  'hsa',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -150,6 +156,10 @@ export const footerEnabled = [
   'insurance-administration',
 
   'gev',
+
+  'shh',
+
+  'hsa',
 ]
 
 export const getThemeConfig = (
@@ -231,6 +241,14 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <GevHeader organizationPage={organizationPage} />
     case 'hve':
       return <HveHeader organizationPage={organizationPage} />
+    case 'shh':
+      return <ShhHeader organizationPage={organizationPage} />
+    case 'hsa':
+      return (
+        <HeilbrigdisstofnunAusturlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -238,19 +256,31 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
 
 interface ExternalLinksProps {
   organizationPage: OrganizationPage
+  showOnMobile?: boolean
 }
 
 export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
   organizationPage,
+  showOnMobile = true,
 }) => {
   if (organizationPage.externalLinks?.length) {
+    const mobileDisplay = showOnMobile ? 'flex' : 'none'
     return (
       <Box
-        display={['none', 'none', 'flex', 'flex']}
-        justifyContent="flexEnd"
+        display={[mobileDisplay, mobileDisplay, 'flex', 'flex']}
+        justifyContent={[
+          'center',
+          showOnMobile ? 'flexEnd' : 'center',
+          'flexEnd',
+        ]}
         marginBottom={4}
       >
-        <Inline space={2}>
+        <Inline
+          flexWrap={
+            organizationPage.externalLinks?.length === 2 ? 'nowrap' : 'wrap'
+          }
+          space={2}
+        >
           {organizationPage.externalLinks.map((link, index) => {
             // Sjukratryggingar's external links have custom styled buttons
             const isSjukratryggingar =
@@ -278,7 +308,7 @@ export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
                   iconType="outline"
                   size="medium"
                 >
-                  <Box paddingY={2} paddingLeft={2}>
+                  <Box paddingY={[0, 2]} paddingLeft={[0, 2]}>
                     {link.text}
                   </Box>
                 </Button>
@@ -453,6 +483,26 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
         />
       )
       break
+    case 'shh':
+    case 'samskiptamidstoed-heyrnarlausra-og-heyrnarskertra':
+    case 'the-communication-center-for-the-deaf-and-hearing-impaired':
+      OrganizationFooterComponent = (
+        <ShhFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'hsa':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunAusturlandsFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
   }
 
   return OrganizationFooterComponent
@@ -583,11 +633,6 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
 
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
 
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
-
   useEffect(() => setIsMobile(width < theme.breakpoints.md), [width])
 
   const secondaryNavList: NavigationItem[] =
@@ -689,6 +734,12 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
         >
           {isMobile && (
             <Box className={styles.menuStyle}>
+              {showExternalLinks && (
+                <OrganizationExternalLinks
+                  organizationPage={organizationPage}
+                  showOnMobile={true}
+                />
+              )}
               <Box marginY={2}>
                 <Navigation
                   baseId="pageNavMobile"
@@ -735,6 +786,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                 {showExternalLinks && (
                   <OrganizationExternalLinks
                     organizationPage={organizationPage}
+                    showOnMobile={false}
                   />
                 )}
                 {breadcrumbItems && (
@@ -750,7 +802,7 @@ export const OrganizationWrapper: React.FC<WrapperProps> = ({
                   />
                 )}
 
-                {showReadSpeaker && isWebReaderEnabledForOrganizationPages && (
+                {showReadSpeaker && (
                   <Webreader
                     marginTop={breadcrumbItems?.length ? 3 : 0}
                     marginBottom={breadcrumbItems?.length ? 0 : 3}

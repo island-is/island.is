@@ -72,24 +72,6 @@ export const getForm = ({ allowFakeData = false }): Form => {
         ],
       }),
       buildSection({
-        id: 'instructorRequirements',
-        title: m.applicationEligibilityTitle,
-        children: [
-          buildMultiField({
-            id: 'info',
-            title: m.applicationEligibilityTitle,
-            description: m.applicationEligibilityRequirementDescription,
-            children: [
-              buildCustomField({
-                title: m.applicationEligibilityTitle,
-                component: 'EligibilitySummary',
-                id: 'eligsummary',
-              }),
-            ],
-          }),
-        ],
-      }),
-      buildSection({
         id: 'studentMentorability',
         title: m.applicationStudentRequirementsTitle,
         children: [

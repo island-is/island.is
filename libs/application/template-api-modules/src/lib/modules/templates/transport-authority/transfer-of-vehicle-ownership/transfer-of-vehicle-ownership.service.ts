@@ -45,6 +45,7 @@ import { applicationCheck } from '@island.is/application/templates/transport-aut
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
@@ -77,6 +78,17 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       showCoowned: false,
       showOperated: false,
     })
+
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwner,
+        },
+        400,
+      )
+    }
 
     return await Promise.all(
       result?.map(async (vehicle) => {
