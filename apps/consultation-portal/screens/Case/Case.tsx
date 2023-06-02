@@ -34,10 +34,10 @@ interface Props {
 }
 
 const CaseScreen = ({ chosenCase, caseId }: Props) => {
+  const loc = localization['case']
   const { contactEmail, contactName } = chosenCase
   const { isMobile } = useIsMobile()
   const { isAuthenticated, user } = useContext(UserContext)
-  const loc = localization['case']
   const { advices, advicesLoading, refetchAdvices } = useFetchAdvicesById({
     caseId: caseId,
   })
