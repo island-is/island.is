@@ -3,6 +3,7 @@ import capitalize from 'lodash/capitalize'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
+import { useContentfulInspectorMode } from '@contentful/live-preview/react'
 import { Screen } from '../types'
 import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -55,6 +56,7 @@ import useContentfulId from '../hooks/useContentfulId'
 import { webRichText } from '../utils/richText'
 
 import * as styles from './News.css'
+import { useI18n } from '../i18n'
 
 const PERPAGE = 10
 
@@ -89,6 +91,9 @@ const NewsListNew: Screen<NewsListProps> = ({
   const { format, getMonthByIndex } = useDateUtils()
   const n = useNamespace(namespace)
   useContentfulId(newsItem?.id)
+  const { activeLocale } = useI18n()
+
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   const years = Object.keys(datesMap)
     .map((x) => parseInt(x, 10))
@@ -213,23 +218,49 @@ const NewsListNew: Screen<NewsListProps> = ({
         display={['block', 'block', 'block', 'none']}
         paddingTop={5}
         width="full"
+        {...inspectorProps({
+          entryId: newsItem.id,
+          fieldId: 'date',
+          locale: activeLocale,
+        })}
       >
         <Text variant="eyebrow">{newsItemDate}</Text>
       </Box>
-      <Text variant="h1" as="h1" paddingTop={[3, 3, 3, 5]} paddingBottom={2}>
-        {newsItem.title}
-      </Text>
+      <Box
+        {...inspectorProps({
+          entryId: newsItem.id,
+          fieldId: 'title',
+          locale: activeLocale,
+        })}
+      >
+        <Text variant="h1" as="h1" paddingTop={[3, 3, 3, 5]} paddingBottom={2}>
+          {newsItem.title}
+        </Text>
+      </Box>
 
       <Webreader marginTop={0} readId={null} readClass="rs_read" />
 
-      <Text variant="intro" as="p" paddingBottom={2}>
-        {newsItem.intro}
-      </Text>
+      <Box
+        {...inspectorProps({
+          entryId: newsItem.id,
+          fieldId: 'intro',
+          locale: activeLocale,
+        })}
+      >
+        <Text variant="intro" as="p" paddingBottom={2}>
+          {newsItem.intro}
+        </Text>
+      </Box>
       {Boolean(newsItem.image) && (
         <Box
           paddingY={2}
           className={cn({
             [styles.floatedImage]: newsItem.fullWidthImageInContent === false,
+          })}
+          {...inspectorProps({
+            entryId: newsItem.id,
+            fieldId: 'image',
+            locale: activeLocale,
           })}
         >
           <Image
@@ -239,7 +270,15 @@ const NewsListNew: Screen<NewsListProps> = ({
           />
         </Box>
       )}
-      <Box paddingBottom={4} width="full">
+      <Box
+        paddingBottom={4}
+        width="full"
+        {...inspectorProps({
+          entryId: newsItem.id,
+          fieldId: 'content',
+          locale: activeLocale,
+        })}
+      >
         {webRichText(newsItem.content as SliceType[], {
           renderComponent: {
             // Make sure that images in the content are full width
@@ -304,7 +343,14 @@ const NewsListNew: Screen<NewsListProps> = ({
             }}
           />
           {!!newsItemDate && (
-            <Box display={['none', 'none', 'none', 'block']}>
+            <Box
+              display={['none', 'none', 'none', 'block']}
+              {...inspectorProps({
+                entryId: newsItem.id,
+                fieldId: 'date',
+                locale: activeLocale,
+              })}
+            >
               <Text variant="eyebrow">{newsItemDate}</Text>
             </Box>
           )}
