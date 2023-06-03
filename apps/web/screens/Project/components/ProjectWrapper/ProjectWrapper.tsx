@@ -1,4 +1,5 @@
 import React, { ReactElement, useMemo } from 'react'
+import { useContentfulInspectorMode } from '@contentful/live-preview/react'
 import {
   Box,
   BreadCrumbItem,
@@ -18,6 +19,7 @@ import { getSidebarNavigationComponent } from '../../utils'
 import { useRouter } from 'next/router'
 
 import * as styles from './ProjectWrapper.css'
+import { useI18n } from '@island.is/web/i18n'
 
 interface ProjectWrapperProps {
   withSidebar?: boolean
@@ -36,6 +38,8 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
   children,
 }) => {
   const router = useRouter()
+  const { activeLocale } = useI18n()
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
   const projectPageSidebarNavigationComponent = useMemo(
@@ -90,7 +94,14 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
           sidebarContent={
             <>
               {showBackLink && (
-                <Box marginBottom={3}>
+                <Box
+                  marginBottom={3}
+                  {...inspectorProps({
+                    entryId: projectPage.id,
+                    fieldId: 'backLink',
+                    locale: activeLocale,
+                  })}
+                >
                   <Link
                     href={projectPage.backLink.url}
                     underlineVisibility="always"
@@ -102,8 +113,17 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
                   </Link>
                 </Box>
               )}
-              {projectPage.sidebarLinks?.length > 0 &&
-                projectPageSidebarNavigationComponent()}
+              {projectPage.sidebarLinks?.length > 0 && (
+                <Box
+                  {...inspectorProps({
+                    entryId: projectPage.id,
+                    fieldId: 'projectSubpages',
+                    locale: activeLocale,
+                  })}
+                >
+                  {projectPageSidebarNavigationComponent()}
+                </Box>
+              )}
               {sidebarContent}
             </>
           }
@@ -115,22 +135,37 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
         <Box className={styles.fullWidthContainer}>
           {showBackLink && (
             <Hidden below="md">
-              <Link
-                href={projectPage.backLink.url}
-                underlineVisibility="always"
-                underline="normal"
-                color="blue400"
-                className={styles.linkContainer}
+              <Box
+                {...inspectorProps({
+                  entryId: projectPage.id,
+                  fieldId: 'backLink',
+                  locale: activeLocale,
+                })}
               >
-                <Icon size="small" icon="arrowBack" />
-                {projectPage.backLink.text}
-              </Link>
+                <Link
+                  href={projectPage.backLink.url}
+                  underlineVisibility="always"
+                  underline="normal"
+                  color="blue400"
+                  className={styles.linkContainer}
+                >
+                  <Icon size="small" icon="arrowBack" />
+                  {projectPage.backLink.text}
+                </Link>
+              </Box>
             </Hidden>
           )}
           <GridContainer>
             {showBackLink && (
               <Hidden above="sm">
-                <Box marginTop={4}>
+                <Box
+                  marginTop={4}
+                  {...inspectorProps({
+                    entryId: projectPage.id,
+                    fieldId: 'backLink',
+                    locale: activeLocale,
+                  })}
+                >
                   <Link
                     href={projectPage.backLink.url}
                     underlineVisibility="always"
@@ -160,7 +195,6 @@ export const ProjectWrapper: React.FC<ProjectWrapperProps> = ({
                 ]}
               >
                 {aboveChildren}
-
                 {children}
               </GridColumn>
             </GridRow>

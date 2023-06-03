@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import { useContentfulInspectorMode } from '@contentful/live-preview/react'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
@@ -42,6 +43,7 @@ import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
 import { ProjectFooter } from './components/ProjectFooter'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useI18n } from '@island.is/web/i18n'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -67,6 +69,7 @@ const ProjectPage: Screen<PageProps> = ({
   )
   const n = useNamespace(namespace)
   const p = useNamespace(projectNamespace)
+  const { activeLocale } = useI18n()
 
   const router = useRouter()
 
@@ -79,6 +82,8 @@ const ProjectPage: Screen<PageProps> = ({
   )
 
   useContentfulId(projectPage.id, subpage?.id)
+
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
@@ -156,22 +161,48 @@ const ProjectPage: Screen<PageProps> = ({
         )}
         {!!subpage && (
           <Box marginBottom={1}>
-            <Text as="h1" variant="h1">
-              {subpage.title}
-            </Text>
+            <Box
+              {...inspectorProps({
+                entryId: subpage.id,
+                fieldId: 'title',
+                locale: activeLocale,
+              })}
+            >
+              <Text as="h1" variant="h1">
+                {subpage.title}
+              </Text>
+            </Box>
             {isWebReaderEnabledForProjectPages && (
               <Webreader readId={null} readClass="rs_read" />
             )}
-            {subpage.content &&
-              webRichText(subpage.content as SliceType[], {
-                renderComponent: {
-                  Form: (slice) => <Form form={slice} namespace={namespace} />,
-                },
-              })}
+            {subpage.content && (
+              <Box
+                {...inspectorProps({
+                  entryId: subpage.id,
+                  fieldId: 'content',
+                  locale: activeLocale,
+                })}
+              >
+                {webRichText(subpage.content as SliceType[], {
+                  renderComponent: {
+                    Form: (slice) => (
+                      <Form form={slice} namespace={namespace} />
+                    ),
+                  },
+                })}
+              </Box>
+            )}
           </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
-          <Box marginBottom={2}>
+          <Box
+            marginBottom={2}
+            {...inspectorProps({
+              entryId: subpage.id,
+              fieldId: 'slices',
+              locale: activeLocale,
+            })}
+          >
             <TableOfContents
               tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
               headings={subpage.slices.map((slice) => ({
@@ -198,21 +229,37 @@ const ProjectPage: Screen<PageProps> = ({
             {selectedSliceTab.title}
           </Text>
         )}
-        {content &&
-          webRichText(content, {
-            renderComponent: {
-              Form: (slice) => <Form form={slice} namespace={namespace} />,
-              TabSection: (slice) => (
-                <TabSectionSlice
-                  slice={slice}
-                  contentColumnProps={{ span: '1/1' }}
-                  contentPaddingTop={0}
-                />
-              ),
-            },
-          })}
+        {content && (
+          <Box
+            {...inspectorProps({
+              entryId: (subpage ?? projectPage).id,
+              fieldId: 'content',
+              locale: activeLocale,
+            })}
+          >
+            {webRichText(content, {
+              renderComponent: {
+                Form: (slice) => <Form form={slice} namespace={namespace} />,
+                TabSection: (slice) => (
+                  <TabSectionSlice
+                    slice={slice}
+                    contentColumnProps={{ span: '1/1' }}
+                    contentPaddingTop={0}
+                  />
+                ),
+              },
+            })}
+          </Box>
+        )}
         {!subpage && projectPage.stepper && (
-          <Box marginTop={6}>
+          <Box
+            marginTop={6}
+            {...inspectorProps({
+              entryId: projectPage.id,
+              fieldId: 'stepper',
+              locale: activeLocale,
+            })}
+          >
             <Stepper
               scrollUpWhenNextStepAppears={false}
               stepper={projectPage.stepper}
@@ -221,10 +268,26 @@ const ProjectPage: Screen<PageProps> = ({
             />
           </Box>
         )}
-        {!renderSlicesAsTabs &&
-          (subpage ?? projectPage).slices.map((slice) =>
-            slice.__typename === 'OneColumnText' ? (
-              <Box marginTop={6}>
+        {!renderSlicesAsTabs && (
+          <Box
+            {...inspectorProps({
+              entryId: (subpage ?? projectPage).id,
+              fieldId: 'slices',
+              locale: activeLocale,
+            })}
+          >
+            {(subpage ?? projectPage).slices.map((slice) =>
+              slice.__typename === 'OneColumnText' ? (
+                <Box marginTop={6}>
+                  <SliceMachine
+                    key={slice.id}
+                    slice={slice}
+                    namespace={namespace}
+                    fullWidth={true}
+                    slug={projectPage.slug}
+                  />
+                </Box>
+              ) : (
                 <SliceMachine
                   key={slice.id}
                   slice={slice}
@@ -232,53 +295,54 @@ const ProjectPage: Screen<PageProps> = ({
                   fullWidth={true}
                   slug={projectPage.slug}
                 />
-              </Box>
-            ) : (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                namespace={namespace}
-                fullWidth={true}
-                slug={projectPage.slug}
-              />
-            ),
-          )}
+              ),
+            )}
+          </Box>
+        )}
       </ProjectWrapper>
 
-      {bottomSlices.map((slice, index) => {
-        if (
-          slice.__typename === 'OneColumnText' &&
-          index === bottomSlices.length - 1
-        ) {
+      <Box
+        {...inspectorProps({
+          entryId: (subpage ?? projectPage).id,
+          fieldId: 'bottomSlices',
+          locale: activeLocale,
+        })}
+      >
+        {bottomSlices.map((slice, index) => {
+          if (
+            slice.__typename === 'OneColumnText' &&
+            index === bottomSlices.length - 1
+          ) {
+            return (
+              <Box paddingBottom={6} paddingTop={2}>
+                <OneColumnTextSlice slice={slice} />
+              </Box>
+            )
+          }
           return (
-            <Box paddingBottom={6} paddingTop={2}>
-              <OneColumnTextSlice slice={slice} />
-            </Box>
+            <SliceMachine
+              key={slice.id}
+              slice={slice}
+              namespace={namespace}
+              slug={projectPage.slug}
+              fullWidth={true}
+              params={{
+                linkType: 'projectnews',
+                overview: 'projectnewsoverview',
+                containerPaddingBottom: 0,
+                containerPaddingTop: 0,
+                contentPaddingTop: 0,
+                contentPaddingBottom: 0,
+              }}
+              wrapWithGridContainer={
+                slice.__typename === 'ConnectedComponent' ||
+                slice.__typename === 'TabSection' ||
+                slice.__typename === 'PowerBiSlice'
+              }
+            />
           )
-        }
-        return (
-          <SliceMachine
-            key={slice.id}
-            slice={slice}
-            namespace={namespace}
-            slug={projectPage.slug}
-            fullWidth={true}
-            params={{
-              linkType: 'projectnews',
-              overview: 'projectnewsoverview',
-              containerPaddingBottom: 0,
-              containerPaddingTop: 0,
-              contentPaddingTop: 0,
-              contentPaddingBottom: 0,
-            }}
-            wrapWithGridContainer={
-              slice.__typename === 'ConnectedComponent' ||
-              slice.__typename === 'TabSection' ||
-              slice.__typename === 'PowerBiSlice'
-            }
-          />
-        )
-      })}
+        })}
+      </Box>
       <ProjectFooter projectPage={projectPage} />
     </>
   )

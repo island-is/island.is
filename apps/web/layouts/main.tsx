@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
+import { ContentfulLivePreviewProvider } from '@contentful/live-preview/react'
 import {
   Page,
   Box,
@@ -60,6 +61,8 @@ import {
 } from '../hooks/useLinkResolver'
 import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
+
+import '@contentful/live-preview/style.css'
 import * as styles from './main.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
@@ -219,223 +222,236 @@ const Layout: NextComponentType<
   const isServiceWeb = pathIsRoute(asPath, 'serviceweb', activeLocale)
 
   return (
-    <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
-      <Page component="div">
-        <Head>
-          {preloadedFonts.map((href, index) => {
-            return (
-              <link
-                key={index}
-                rel="preload"
-                href={href}
-                as="font"
-                type="font/woff2"
-                crossOrigin="anonymous"
-              />
-            )
-          })}
-          <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="/apple-touch-icon.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/favicon-32x32.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/favicon-16x16.png"
-          />
-          <link rel="manifest" href="/site.webmanifest" />
-          <meta name="msapplication-TileColor" content="#da532c" />
-          <meta name="theme-color" content="#ffffff" />
-          <title>{n('title')}</title>
-          <meta name="title" content={n('title')} key="title" />
-          <meta
-            name="description"
-            content={n('description')}
-            key="description"
-          />
-          <meta property="og:title" content={n('title')} key="ogTitle" />
-          <meta
-            property="og:description"
-            content={n('description')}
-            key="ogDescription"
-          />
-          <meta property="og:type" content="website" key="ogWebsite" />
-          <meta property="og:url" content={fullUrl} key="ogUrl" />
-          <meta
-            property="og:image"
-            content="https://island.is/island-fb-1200x630.png"
-            key="ogImage"
-          />
-          <meta property="og:image:width" content="1200" key="ogImageWidth" />
-          <meta property="og:image:height" content="630" key="ogImageHeight" />
-          <meta
-            property="twitter:card"
-            content="summary_large_image"
-            key="twitterCard"
-          />
-          <meta property="twitter:url" content={fullUrl} key="twitterUrl" />
-          <meta
-            property="twitter:title"
-            content={n('title')}
-            key="twitterTitle"
-          />
-          <meta
-            property="twitter:description"
-            content={n('description')}
-            key="twitterDescription"
-          />
-          <meta
-            property="twitter:image"
-            content="https://island.is/island-fb-1200x630.png"
-            key="twitterImage"
-          />
-        </Head>
-        <SkipToMainContent
-          title={n('skipToMainContent', 'Fara beint í efnið')}
-        />
-        {alertBanners.map((banner) => (
-          <AlertBanner
-            key={banner.bannerId}
-            title={banner.title}
-            description={banner.description}
-            link={{
-              ...(!!banner.link &&
-                !!banner.linkTitle && {
-                  href: linkResolver(banner.link.type as LinkType, [
-                    banner.link.slug,
-                  ]).href,
-                  title: banner.linkTitle,
-                }),
-            }}
-            variant={banner.bannerVariant as AlertBannerVariants}
-            dismissable={banner.isDismissable}
-            onDismiss={() => {
-              if (banner.dismissedForDays !== 0) {
-                Cookies.set(banner.bannerId, 'hide', {
-                  expires: banner.dismissedForDays,
-                })
-              }
-            }}
-          />
-        ))}
-        <Hidden above="sm">
-          <MobileAppBanner namespace={namespace} />
-        </Hidden>
-        <PageLoader />
-        <MenuTabsContext.Provider
-          value={{
-            menuTabs,
-          }}
-        >
-          {showHeader && (
-            <ColorSchemeContext.Provider
-              value={{ colorScheme: headerColorScheme }}
-            >
-              <Header
-                buttonColorScheme={headerButtonColorScheme}
-                showSearchInHeader={showSearchInHeader}
-                megaMenuData={megaMenuData}
-                languageToggleQueryParams={languageToggleQueryParams}
-              />
-            </ColorSchemeContext.Provider>
-          )}
-          <Main>
-            {wrapContent ? <Box width="full">{children}</Box> : children}
-          </Main>
-        </MenuTabsContext.Provider>
-        {showFooter && (
-          <Hidden print={true}>
-            {footerVersion === 'default' && (
-              <>
-                {showFooterIllustration && (
-                  <Illustration className={styles.illustration} />
-                )}
-                <Footer
-                  topLinks={footerUpperInfo}
-                  topLinksContact={footerUpperContact}
-                  bottomLinks={footerLowerMenu}
-                  middleLinks={footerMiddleMenu}
-                  bottomLinksTitle={t.siteExternalTitle}
-                  middleLinksTitle={String(namespace.footerMiddleLabel)}
-                  languageSwitchLink={{
-                    title: activeLocale === 'en' ? 'Íslenska' : 'English',
-                    href: activeLocale === 'en' ? '/' : '/en',
-                  }}
-                  privacyPolicyLink={{
-                    title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
-                    href: n(
-                      'privacyPolicyHref',
-                      '/personuverndarstefna-stafraent-islands',
-                    ),
-                  }}
-                  termsLink={{
-                    title: n('termsTitle', 'Skilmálar'),
-                    href: n('termsHref', '/skilmalar-island-is'),
-                  }}
-                  showMiddleLinks
+    <ContentfulLivePreviewProvider
+      locale={activeLocale}
+      enableInspectorMode={true}
+      enableLiveUpdates={false}
+    >
+      <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
+        <Page component="div">
+          <Head>
+            {preloadedFonts.map((href, index) => {
+              return (
+                <link
+                  key={index}
+                  rel="preload"
+                  href={href}
+                  as="font"
+                  type="font/woff2"
+                  crossOrigin="anonymous"
                 />
-              </>
-            )}
-            {footerVersion === 'organization' && <OrganizationIslandFooter />}
+              )
+            })}
+            <link
+              rel="apple-touch-icon"
+              sizes="180x180"
+              href="/apple-touch-icon.png"
+            />
+            <link
+              rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="/favicon-32x32.png"
+            />
+            <link
+              rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="/favicon-16x16.png"
+            />
+            <link rel="manifest" href="/site.webmanifest" />
+            <meta name="msapplication-TileColor" content="#da532c" />
+            <meta name="theme-color" content="#ffffff" />
+            <title>{n('title')}</title>
+            <meta name="title" content={n('title')} key="title" />
+            <meta
+              name="description"
+              content={n('description')}
+              key="description"
+            />
+            <meta property="og:title" content={n('title')} key="ogTitle" />
+            <meta
+              property="og:description"
+              content={n('description')}
+              key="ogDescription"
+            />
+            <meta property="og:type" content="website" key="ogWebsite" />
+            <meta property="og:url" content={fullUrl} key="ogUrl" />
+            <meta
+              property="og:image"
+              content="https://island.is/island-fb-1200x630.png"
+              key="ogImage"
+            />
+            <meta property="og:image:width" content="1200" key="ogImageWidth" />
+            <meta
+              property="og:image:height"
+              content="630"
+              key="ogImageHeight"
+            />
+            <meta
+              property="twitter:card"
+              content="summary_large_image"
+              key="twitterCard"
+            />
+            <meta property="twitter:url" content={fullUrl} key="twitterUrl" />
+            <meta
+              property="twitter:title"
+              content={n('title')}
+              key="twitterTitle"
+            />
+            <meta
+              property="twitter:description"
+              content={n('description')}
+              key="twitterDescription"
+            />
+            <meta
+              property="twitter:image"
+              content="https://island.is/island-fb-1200x630.png"
+              key="twitterImage"
+            />
+          </Head>
+          <SkipToMainContent
+            title={n('skipToMainContent', 'Fara beint í efnið')}
+          />
+          {alertBanners.map((banner) => (
+            <AlertBanner
+              key={banner.bannerId}
+              title={banner.title}
+              description={banner.description}
+              link={{
+                ...(!!banner.link &&
+                  !!banner.linkTitle && {
+                    href: linkResolver(banner.link.type as LinkType, [
+                      banner.link.slug,
+                    ]).href,
+                    title: banner.linkTitle,
+                  }),
+              }}
+              variant={banner.bannerVariant as AlertBannerVariants}
+              dismissable={banner.isDismissable}
+              onDismiss={() => {
+                if (banner.dismissedForDays !== 0) {
+                  Cookies.set(banner.bannerId, 'hide', {
+                    expires: banner.dismissedForDays,
+                  })
+                }
+              }}
+            />
+          ))}
+          <Hidden above="sm">
+            <MobileAppBanner namespace={namespace} />
           </Hidden>
-        )}
-        <style jsx global>{`
-          @font-face {
-            font-family: 'IBM Plex Sans';
-            font-style: normal;
-            font-weight: 300;
-            font-display: swap;
-            src: local('IBM Plex Sans Light'), local('IBMPlexSans-Light'),
-              url('/fonts/ibm-plex-sans-v7-latin-300.woff2') format('woff2'),
-              url('/fonts/ibm-plex-sans-v7-latin-300.woff') format('woff');
-          }
-          @font-face {
-            font-family: 'IBM Plex Sans';
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: local('IBM Plex Sans'), local('IBMPlexSans'),
-              url('/fonts/ibm-plex-sans-v7-latin-regular.woff2') format('woff2'),
-              url('/fonts/ibm-plex-sans-v7-latin-regular.woff') format('woff');
-          }
-          @font-face {
-            font-family: 'IBM Plex Sans';
-            font-style: italic;
-            font-weight: 400;
-            font-display: swap;
-            src: local('IBM Plex Sans Italic'), local('IBMPlexSans-Italic'),
-              url('/fonts/ibm-plex-sans-v7-latin-italic.woff2') format('woff2'),
-              url('/fonts/ibm-plex-sans-v7-latin-italic.woff') format('woff');
-          }
-          @font-face {
-            font-family: 'IBM Plex Sans';
-            font-style: normal;
-            font-weight: 500;
-            font-display: swap;
-            src: local('IBM Plex Sans Medium'), local('IBMPlexSans-Medium'),
-              url('/fonts/ibm-plex-sans-v7-latin-500.woff2') format('woff2'),
-              url('/fonts/ibm-plex-sans-v7-latin-500.woff') format('woff');
-          }
-          @font-face {
-            font-family: 'IBM Plex Sans';
-            font-style: normal;
-            font-weight: 600;
-            font-display: swap;
-            src: local('IBM Plex Sans SemiBold'), local('IBMPlexSans-SemiBold'),
-              url('/fonts/ibm-plex-sans-v7-latin-600.woff2') format('woff2'),
-              url('/fonts/ibm-plex-sans-v7-latin-600.woff') format('woff');
-          }
-        `}</style>
-      </Page>
-    </GlobalContextProvider>
+          <PageLoader />
+          <MenuTabsContext.Provider
+            value={{
+              menuTabs,
+            }}
+          >
+            {showHeader && (
+              <ColorSchemeContext.Provider
+                value={{ colorScheme: headerColorScheme }}
+              >
+                <Header
+                  buttonColorScheme={headerButtonColorScheme}
+                  showSearchInHeader={showSearchInHeader}
+                  megaMenuData={megaMenuData}
+                  languageToggleQueryParams={languageToggleQueryParams}
+                />
+              </ColorSchemeContext.Provider>
+            )}
+            <Main>
+              {wrapContent ? <Box width="full">{children}</Box> : children}
+            </Main>
+          </MenuTabsContext.Provider>
+          {showFooter && (
+            <Hidden print={true}>
+              {footerVersion === 'default' && (
+                <>
+                  {showFooterIllustration && (
+                    <Illustration className={styles.illustration} />
+                  )}
+                  <Footer
+                    topLinks={footerUpperInfo}
+                    topLinksContact={footerUpperContact}
+                    bottomLinks={footerLowerMenu}
+                    middleLinks={footerMiddleMenu}
+                    bottomLinksTitle={t.siteExternalTitle}
+                    middleLinksTitle={String(namespace.footerMiddleLabel)}
+                    languageSwitchLink={{
+                      title: activeLocale === 'en' ? 'Íslenska' : 'English',
+                      href: activeLocale === 'en' ? '/' : '/en',
+                    }}
+                    privacyPolicyLink={{
+                      title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
+                      href: n(
+                        'privacyPolicyHref',
+                        '/personuverndarstefna-stafraent-islands',
+                      ),
+                    }}
+                    termsLink={{
+                      title: n('termsTitle', 'Skilmálar'),
+                      href: n('termsHref', '/skilmalar-island-is'),
+                    }}
+                    showMiddleLinks
+                  />
+                </>
+              )}
+              {footerVersion === 'organization' && <OrganizationIslandFooter />}
+            </Hidden>
+          )}
+          <style jsx global>{`
+            @font-face {
+              font-family: 'IBM Plex Sans';
+              font-style: normal;
+              font-weight: 300;
+              font-display: swap;
+              src: local('IBM Plex Sans Light'), local('IBMPlexSans-Light'),
+                url('/fonts/ibm-plex-sans-v7-latin-300.woff2') format('woff2'),
+                url('/fonts/ibm-plex-sans-v7-latin-300.woff') format('woff');
+            }
+            @font-face {
+              font-family: 'IBM Plex Sans';
+              font-style: normal;
+              font-weight: 400;
+              font-display: swap;
+              src: local('IBM Plex Sans'), local('IBMPlexSans'),
+                url('/fonts/ibm-plex-sans-v7-latin-regular.woff2')
+                  format('woff2'),
+                url('/fonts/ibm-plex-sans-v7-latin-regular.woff') format('woff');
+            }
+            @font-face {
+              font-family: 'IBM Plex Sans';
+              font-style: italic;
+              font-weight: 400;
+              font-display: swap;
+              src: local('IBM Plex Sans Italic'), local('IBMPlexSans-Italic'),
+                url('/fonts/ibm-plex-sans-v7-latin-italic.woff2')
+                  format('woff2'),
+                url('/fonts/ibm-plex-sans-v7-latin-italic.woff') format('woff');
+            }
+            @font-face {
+              font-family: 'IBM Plex Sans';
+              font-style: normal;
+              font-weight: 500;
+              font-display: swap;
+              src: local('IBM Plex Sans Medium'), local('IBMPlexSans-Medium'),
+                url('/fonts/ibm-plex-sans-v7-latin-500.woff2') format('woff2'),
+                url('/fonts/ibm-plex-sans-v7-latin-500.woff') format('woff');
+            }
+            @font-face {
+              font-family: 'IBM Plex Sans';
+              font-style: normal;
+              font-weight: 600;
+              font-display: swap;
+              src: local('IBM Plex Sans SemiBold'),
+                local('IBMPlexSans-SemiBold'),
+                url('/fonts/ibm-plex-sans-v7-latin-600.woff2') format('woff2'),
+                url('/fonts/ibm-plex-sans-v7-latin-600.woff') format('woff');
+            }
+          `}</style>
+        </Page>
+      </GlobalContextProvider>
+    </ContentfulLivePreviewProvider>
   )
 }
 

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+import { useContentfulInspectorMode } from '@contentful/live-preview/react'
 import {
   Slice as SliceType,
   ProcessEntry,
@@ -253,11 +254,20 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   return (
     <Stack space={3}>
       {!!article.category?.slug && (
-        <Box display={['none', 'none', 'block']} printHidden>
+        <Box
+          display={['none', 'none', 'block']}
+          printHidden
+          {...inspectorProps({
+            entryId: article.id,
+            locale: activeLocale,
+            fieldId: 'category',
+          })}
+        >
           <Link
             {...linkResolver('articlecategory', [article.category.slug])}
             skipTab
@@ -276,25 +286,49 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
         </Box>
       )}
       {article.organization.length > 0 && (
-        <InstitutionPanel
-          img={article.organization[0].logo?.url}
-          institutionTitle={n('organization')}
-          institution={article.organization[0].title}
-          locale={activeLocale}
-          linkProps={{
-            href: getOrganizationLink(article.organization[0], activeLocale),
-          }}
-          imgContainerDisplay={['block', 'block', 'none', 'block']}
-        />
+        <Box
+          {...inspectorProps({
+            entryId: article.id,
+            locale: activeLocale,
+            fieldId: 'organization',
+          })}
+        >
+          <InstitutionPanel
+            img={article.organization[0].logo?.url}
+            institutionTitle={n('organization')}
+            institution={article.organization[0].title}
+            locale={activeLocale}
+            linkProps={{
+              href: getOrganizationLink(article.organization[0], activeLocale),
+            }}
+            imgContainerDisplay={['block', 'block', 'none', 'block']}
+          />
+        </Box>
       )}
       {article.subArticles.length > 0 && (
-        <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+        <Box
+          {...inspectorProps({
+            entryId: article.id,
+            locale: activeLocale,
+            fieldId: 'subArticles',
+          })}
+        >
+          <ArticleNavigation article={article} activeSlug={activeSlug} n={n} />
+        </Box>
       )}
-      <RelatedContent
-        title={n('relatedMaterial')}
-        articles={article.relatedArticles}
-        otherContent={article.relatedContent}
-      />
+      <Box
+        {...inspectorProps({
+          entryId: article.id,
+          locale: activeLocale,
+          fieldId: 'relatedArticles',
+        })}
+      >
+        <RelatedContent
+          title={n('relatedMaterial')}
+          articles={article.relatedArticles}
+          otherContent={article.relatedContent}
+        />
+      </Box>
     </Stack>
   )
 }
@@ -330,6 +364,8 @@ const ArticleScreen: Screen<ArticleProps> = ({
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug.split('/').pop() === query.subSlug
   })
+
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   useContentfulId(article.id, subArticle?.id)
 
@@ -425,6 +461,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
     [article.category, article.group, inStepperView],
   )
 
+  const shouldShowRelatedContent =
+    article.relatedArticles.length > 0 || article.relatedContent.length > 0
+
   return (
     <>
       <HeadWithSocialSharing
@@ -453,7 +492,15 @@ const ArticleScreen: Screen<ArticleProps> = ({
         >
           {inStepperView && (
             <Text color="blueberry600" variant="eyebrow" as="h2">
-              <span id={slugify(article.title)} className="rs_read">
+              <span
+                id={slugify(article.title)}
+                className="rs_read"
+                {...inspectorProps({
+                  entryId: article.id,
+                  fieldId: 'title',
+                  locale: activeLocale,
+                })}
+              >
                 {article.title}
               </span>
             </Text>
@@ -483,7 +530,16 @@ const ArticleScreen: Screen<ArticleProps> = ({
           printHidden
         >
           {!!article.category?.title && (
-            <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
+            <Box
+              flexGrow={1}
+              marginRight={6}
+              overflow={'hidden'}
+              {...inspectorProps({
+                entryId: article.id,
+                fieldId: 'category',
+                locale: activeLocale,
+              })}
+            >
               <Link href={categoryHref} skipTab>
                 <Button
                   preTextIcon="arrowBack"
@@ -499,7 +555,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
             </Box>
           )}
           {article.organization.length > 0 && (
-            <Box minWidth={0}>
+            <Box
+              minWidth={0}
+              {...inspectorProps({
+                entryId: article.id,
+                fieldId: 'organization',
+                locale: activeLocale,
+              })}
+            >
               {article.organization[0].link ? (
                 <Link href={article.organization[0].link} skipTab>
                   <Tag variant="purple" truncate>
@@ -516,8 +579,16 @@ const ArticleScreen: Screen<ArticleProps> = ({
         </Box>
         <Box>
           {!inStepperView && (
-            <Text variant="h1" as="h1">
-              <span id={slugify(article.title)} className="rs_read">
+            <Text variant="h1">
+              <span
+                id={slugify(article.title)}
+                className="rs_read"
+                {...inspectorProps({
+                  entryId: article.id,
+                  fieldId: 'title',
+                  locale: activeLocale,
+                })}
+              >
                 {article.title}
               </span>
             </Text>
@@ -547,6 +618,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
               display={['none', 'none', 'block']}
               printHidden
               className="rs_read"
+              {...inspectorProps({
+                entryId: article.id,
+                fieldId: 'processEntry',
+                locale: activeLocale,
+              })}
             >
               <ProcessEntry {...processEntry} />
             </Box>
@@ -556,16 +632,32 @@ const ArticleScreen: Screen<ArticleProps> = ({
             : article.showTableOfContents) && (
             <GridRow>
               <GridColumn span={[null, '4/7', '5/7', '4/7', '3/7']}>
-                <TOC
-                  title={n('tableOfContentTitle')}
-                  body={subArticle ? subArticle.body : article.body}
-                />
+                <Box
+                  {...inspectorProps({
+                    entryId: (subArticle ?? article).id,
+                    fieldId: 'showTableOfContents',
+                    locale: activeLocale,
+                  })}
+                >
+                  <TOC
+                    title={n('tableOfContentTitle')}
+                    body={subArticle ? subArticle.body : article.body}
+                  />
+                </Box>
               </GridColumn>
             </GridRow>
           )}
           {subArticle && (
-            <Text variant="h2" as="h2" paddingTop={7}>
-              <span id={slugify(subArticle.title)} className="rs_read">
+            <Text variant="h2" paddingTop={7}>
+              <span
+                id={slugify(subArticle.title)}
+                className="rs_read"
+                {...inspectorProps({
+                  entryId: subArticle.id,
+                  fieldId: 'title',
+                  locale: activeLocale,
+                })}
+              >
                 {subArticle.title}
               </span>
             </Text>
@@ -573,7 +665,14 @@ const ArticleScreen: Screen<ArticleProps> = ({
         </Box>
         <Box paddingTop={subArticle ? 2 : 4}>
           {!inStepperView && (
-            <Box className="rs_read">
+            <Box
+              className="rs_read"
+              {...inspectorProps({
+                entryId: (subArticle ?? article).id,
+                fieldId: 'content',
+                locale: activeLocale,
+              })}
+            >
               {webRichText(
                 (subArticle ?? article).body as SliceType[],
                 {
@@ -607,6 +706,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
             display={['block', 'block', 'none']}
             marginTop={7}
             printHidden
+            {...inspectorProps({
+              entryId: article.id,
+              fieldId: 'processEntry',
+              locale: activeLocale,
+            })}
           >
             {processEntry?.processLink && <ProcessEntry {...processEntry} />}
           </Box>
@@ -615,6 +719,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
               marginTop={[3, 3, 3, 10, 20]}
               marginBottom={[3, 3, 3, 10, 20]}
               printHidden
+              {...inspectorProps({
+                entryId: article.id,
+                fieldId: 'organization',
+                locale: activeLocale,
+              })}
             >
               <InstitutionsPanel
                 img={article.organization[0].logo?.url ?? ''}
@@ -648,9 +757,17 @@ const ArticleScreen: Screen<ArticleProps> = ({
               />
             </Box>
           )}
-          <Box display={['block', 'block', 'none']} printHidden>
-            {(article.relatedArticles.length > 0 ||
-              article.relatedContent.length > 0) && (
+          <Box
+            display={['block', 'block', 'none']}
+            printHidden
+            {...(shouldShowRelatedContent &&
+              inspectorProps({
+                entryId: article.id,
+                fieldId: 'relatedArticles',
+                locale: activeLocale,
+              }))}
+          >
+            {shouldShowRelatedContent && (
               <RelatedContent
                 title={n('relatedMaterial')}
                 articles={article.relatedArticles}
@@ -663,7 +780,16 @@ const ArticleScreen: Screen<ArticleProps> = ({
           mounted &&
           isVisible &&
           createPortal(
-            <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
+            <Box
+              marginTop={5}
+              display={['block', 'block', 'none']}
+              printHidden
+              {...inspectorProps({
+                entryId: article.id,
+                fieldId: 'processEntry',
+                locale: activeLocale,
+              })}
+            >
               <ProcessEntry fixed {...processEntry} />
             </Box>,
             portalRef.current,
