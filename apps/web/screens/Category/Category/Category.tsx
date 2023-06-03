@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import intersection from 'lodash/intersection'
 import NextLink from 'next/link'
+import { useContentfulInspectorMode } from '@contentful/live-preview/react'
 import {
   Text,
   Stack,
@@ -45,6 +46,7 @@ import {
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
+import { useI18n } from '@island.is/web/i18n'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -108,10 +110,12 @@ const Category: Screen<CategoryProps> = ({
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hashArray, setHashArray] = useState<string[]>([])
+  const { activeLocale } = useI18n()
 
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   const getCurrentCategory = () => categories.find((x) => x.slug === slug)
 
@@ -504,12 +508,28 @@ const Category: Screen<CategoryProps> = ({
           />
         </Box>
         <Box paddingBottom={[5, 5, 10]}>
-          <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
-            {category.title}
-          </Text>
-          <Text variant="intro" as="p">
-            {category.description}
-          </Text>
+          <Box
+            {...inspectorProps({
+              entryId: category.id,
+              fieldId: 'title',
+              locale: activeLocale,
+            })}
+          >
+            <Text variant="h1" as="h1" paddingTop={[4, 4, 0]} paddingBottom={2}>
+              {category.title}
+            </Text>
+          </Box>
+          <Box
+            {...inspectorProps({
+              entryId: category.id,
+              fieldId: 'description',
+              locale: activeLocale,
+            })}
+          >
+            <Text variant="intro" as="p">
+              {category.description}
+            </Text>
+          </Box>
         </Box>
         <Stack space={2}>
           {sortedGroups.map(({ groupSlug }, index) => (
