@@ -19,6 +19,9 @@ const previewLinkHandler = {
   organizationPage: (entry: EntryProps<KeyValueMap>) => {
     return `https://beta.dev01.devland.is/s/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
+  projectPage: (entry: EntryProps<KeyValueMap>) => {
+    return `https://beta.dev01.devland.is/v/${entry.fields.slug[DEFAULT_LOCALE]}`
+  },
   organizationSubpage: async (
     entry: EntryProps<KeyValueMap>,
     cma: CMAClient,
@@ -30,7 +33,6 @@ const previewLinkHandler = {
       environmentId: CONTENTFUL_ENVIRONMENT,
       spaceId: CONTENTFUL_SPACE,
     })
-
     return `https://beta.dev01.devland.is/s/${organizationPage?.fields?.slug?.[DEFAULT_LOCALE]}/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
   lifeEventPage: (entry: EntryProps<KeyValueMap>) => {
