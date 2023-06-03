@@ -3,6 +3,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
 import NextLink from 'next/link'
+import { useContentfulInspectorMode } from '@contentful/live-preview/react'
 import { Slice as SliceType } from '@island.is/island-ui/contentful'
 import {
   GridRow,
@@ -40,6 +41,7 @@ import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeR
 import { webRichText } from '@island.is/web/utils/richText'
 import { Webreader } from '@island.is/web/components'
 import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
+import { useI18n } from '@island.is/web/i18n'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -54,12 +56,14 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 }) => {
   useContentfulId(id)
   useLocalLinkTypeResolver()
+  const { activeLocale } = useI18n()
 
   usePlausiblePageview(DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN)
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
+  const inspectorProps = useContentfulInspectorMode<null>()
 
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
@@ -118,6 +122,11 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             display="inlineBlock"
             width="full"
             printHidden
+            {...inspectorProps({
+              entryId: id,
+              fieldId: 'image',
+              locale: activeLocale,
+            })}
           >
             {image && (
               <BackgroundImage
@@ -149,7 +158,15 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                   />
                 </Box>
                 <Text variant="h1" as="h1">
-                  <span className="rs_read" id={slugify(title)}>
+                  <span
+                    className="rs_read"
+                    id={slugify(title)}
+                    {...inspectorProps({
+                      entryId: id,
+                      fieldId: 'title',
+                      locale: activeLocale,
+                    })}
+                  >
                     {title}
                   </span>
                 </Text>
@@ -158,7 +175,15 @@ export const LifeEvent: Screen<LifeEventProps> = ({
 
                 {intro && (
                   <Text variant="intro" as="p" paddingTop={2}>
-                    <span className="rs_read" id={slugify(intro)}>
+                    <span
+                      className="rs_read"
+                      id={slugify(intro)}
+                      {...inspectorProps({
+                        entryId: id,
+                        fieldId: 'intro',
+                        locale: activeLocale,
+                      })}
+                    >
                       {intro}
                     </span>
                   </Text>
@@ -175,7 +200,15 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     position="right"
                   />
                 </Box>
-                <Box className="rs_read" paddingTop={[3, 3, 4]}>
+                <Box
+                  className="rs_read"
+                  paddingTop={[3, 3, 4]}
+                  {...inspectorProps({
+                    entryId: id,
+                    fieldId: 'content',
+                    locale: activeLocale,
+                  })}
+                >
                   {webRichText(content as SliceType[])}
                 </Box>
               </GridColumn>

@@ -54,9 +54,9 @@ import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { CustomNextError } from '../units/errors'
 import useContentfulId from '../hooks/useContentfulId'
 import { webRichText } from '../utils/richText'
+import { useI18n } from '../i18n'
 
 import * as styles from './News.css'
-import { useI18n } from '../i18n'
 
 const PERPAGE = 10
 
