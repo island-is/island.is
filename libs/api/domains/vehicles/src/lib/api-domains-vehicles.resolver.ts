@@ -1,7 +1,7 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Inject, UseGuards } from '@nestjs/common'
-import type { User } from '@island.is/auth-nest-tools'
+import { BypassAuth, User } from '@island.is/auth-nest-tools'
 import { VehiclesService } from './api-domains-vehicles.service'
 import { VehiclesHistory, VehiclesList } from '../models/usersVehicles.model'
 import { Audit } from '@island.is/nest/audit'
@@ -17,6 +17,8 @@ import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
+import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
+import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -89,5 +91,14 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     return await this.vehiclesService.getVehiclesSearch(user, input.search)
+  }
+
+  // TODO: Perhaps look into rate limiting this endpoint somehow
+  @BypassAuth()
+  @Query(() => VehiclesPublicVehicleSearch, { nullable: true })
+  async getPublicVehicleSearch(
+    @Args('input') input: GetPublicVehicleSearchInput,
+  ) {
+    return await this.vehiclesService.getPublicVehicleSearch(input.search)
   }
 }
