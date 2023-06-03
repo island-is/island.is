@@ -5,6 +5,15 @@ import graphqlTypeJson from 'graphql-type-json'
 type Html = { __typename: string; document: Document }
 
 @ObjectType()
+class IcelandicGovernmentInstitutionVacancyLocation {
+  @Field({ nullable: true })
+  title?: string
+
+  @Field({ nullable: true })
+  postalCode?: number
+}
+
+@ObjectType()
 class IcelandicGovernmentInstitutionVacancyListItemBase {
   @Field({ nullable: true })
   id?: number
@@ -24,11 +33,10 @@ class IcelandicGovernmentInstitutionVacancyListItemBase {
   @Field({ nullable: true })
   institutionName?: string
 
-  @Field({ nullable: true })
-  locationTitle?: string
-
-  @Field({ nullable: true })
-  locationPostalCode?: number
+  @Field(() => [IcelandicGovernmentInstitutionVacancyLocation], {
+    nullable: true,
+  })
+  locations?: IcelandicGovernmentInstitutionVacancyLocation[]
 
   @Field({ nullable: true })
   logoUrl?: string

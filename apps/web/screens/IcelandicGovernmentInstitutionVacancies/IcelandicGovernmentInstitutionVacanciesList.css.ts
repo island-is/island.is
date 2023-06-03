@@ -9,3 +9,7 @@ export const filterTagRow = style({
 export const filterInput = style({
   width: '480px',
 })
+
+export const logo = style({
+  objectFit: 'contain',
+})

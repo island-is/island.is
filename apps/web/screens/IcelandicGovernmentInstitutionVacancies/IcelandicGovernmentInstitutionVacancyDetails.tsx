@@ -57,10 +57,20 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
             <Text fontWeight="semiBold">{n('fieldOfWork', 'Starf')}</Text>
             <Text variant="small">{vacancy.title}</Text>
           </Box>
-          <Box>
-            <Text fontWeight="semiBold">{n('location', 'Staðsetning')}</Text>
-            <Text variant="small">{vacancy.locationTitle}</Text>
-          </Box>
+          {vacancy.locations && (
+            <Box>
+              <Text fontWeight="semiBold">
+                {vacancy.locations.length === 1
+                  ? n('location', 'Staðsetning')
+                  : n('locations', 'Staðsetningar')}
+              </Text>
+              {vacancy.locations.map((location, index) => (
+                <Text key={index} variant="small">
+                  {location.title}
+                </Text>
+              ))}
+            </Box>
+          )}
           <Box>
             <Text fontWeight="semiBold">
               {n('jobPercentage', 'Starfshlutfall')}

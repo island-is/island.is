@@ -44,7 +44,15 @@ const ITEMS_PER_PAGE = 8
 const mapVacanciesField = (vacancies: Vacancy[], fieldName: keyof Vacancy) => {
   const fieldSet = new Set<string | number>()
   for (const vacancy of vacancies) {
-    if (vacancy[fieldName]) fieldSet.add(vacancy[fieldName])
+    const field = vacancy[fieldName]
+    if (!field) continue
+    if (Array.isArray(field)) {
+      for (const item of field) {
+        if (item?.title) fieldSet.add(item.title)
+      }
+    } else {
+      fieldSet.add(field)
+    }
   }
   return Array.from(fieldSet).map((field) => ({
     label: String(field),
@@ -99,7 +107,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
 
     if (parameters.location.length > 0) {
       shouldBeShown =
-        shouldBeShown && parameters.location.includes(vacancy.locationTitle)
+        shouldBeShown &&
+        vacancy.locations.some((location) =>
+          parameters.location.includes(location?.title),
+        )
     }
 
     if (parameters.institution.length > 0) {
@@ -117,7 +128,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   )
 
   const locationOptions = useMemo(
-    () => mapVacanciesField(vacancies, 'locationTitle'),
+    () => mapVacanciesField(vacancies, 'locations'),
     [vacancies],
   )
 
@@ -344,28 +355,6 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
               </Inline>
             </GridColumn>
           </GridRow>
-
-          {/* <Box
-            marginBottom={3}
-            style={{
-              visibility:
-                parameters.fieldOfWork.length > 0 ||
-                parameters.location.length > 0 ||
-                parameters.institution.length > 0 ||
-                searchTerm
-                  ? 'visible'
-                  : 'hidden',
-            }}
-          >
-            <Button
-              size="small"
-              onClick={clearSearch}
-              icon="reload"
-              variant="text"
-            >
-              {n('clearSearch', 'Núllstila leit')}
-            </Button>
-          </Box> */}
         </Box>
       </GridContainer>
       <Box paddingTop={3} paddingBottom={6} background="blue100">
@@ -393,8 +382,6 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                         .href
                     }`}
                     padding={[3, 3, 'containerGutter']}
-                    display="flex"
-                    flexDirection="column"
                     background="white"
                     borderRadius="large"
                     borderColor="blue200"
@@ -412,11 +399,14 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                             {vacancy.institutionName}
                           </Tag>
                         )}
-                        {vacancy.locationTitle && (
-                          <Tag outlined={true} disabled>
-                            {vacancy.locationTitle}
-                          </Tag>
-                        )}
+                        {vacancy.locations &&
+                          vacancy.locations
+                            .filter((location) => location.title)
+                            .map((location, index) => (
+                              <Tag key={index} outlined={true} disabled>
+                                {location.title}
+                              </Tag>
+                            ))}
                       </Inline>
                       {vacancy.applicationDeadlineTo && (
                         <Tag outlined={true} disabled variant="purple">
