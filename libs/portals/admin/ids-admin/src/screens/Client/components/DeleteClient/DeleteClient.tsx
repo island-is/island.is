@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { Modal, ModalProps } from '@island.is/react/components'
 import {
   AlertMessage,
@@ -13,11 +14,19 @@ import { useDeleteClientMutation } from './DeleteClient.generated'
 import { useClient } from '../../ClientContext'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../../../lib/paths'
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 
-export const DeleteClient = ({
+interface Props {
+  isVisible: boolean
+  onClose: () => void
+  deleteOnAllEnvironments?: boolean
+}
+
+export const DeleteClient: FC<Props> = ({
   isVisible,
   onClose,
-}: Pick<ModalProps, 'isVisible' | 'onClose'>) => {
+  deleteOnAllEnvironments = false,
+}) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -45,12 +54,15 @@ export const DeleteClient = ({
         input: {
           tenantId,
           clientId,
-          environment,
+          environments: deleteOnAllEnvironments
+            ? Object.values(AuthAdminEnvironment)
+            : [environment],
         },
       },
     })
 
-    if (res.data?.deleteAuthAdminClient) {
+    // If there is at least one success, we consider it a success
+    if (res.data?.deleteAuthAdminClient.find((envResp) => envResp.success)) {
       toast.success(formatMessage(m.successDeletingClient))
       navigate(
         replaceParams({
@@ -69,8 +81,14 @@ export const DeleteClient = ({
     <Modal
       isVisible={isVisible}
       id="delete-client-modal"
-      label={formatMessage(m.deleteClient, { environment: environment })}
-      title={formatMessage(m.deleteClient, { environment: environment })}
+      label={formatMessage(
+        deleteOnAllEnvironments ? m.deleteClientAllEnv : m.deleteClient,
+        { environment: environment },
+      )}
+      title={formatMessage(
+        deleteOnAllEnvironments ? m.deleteClientAllEnv : m.deleteClient,
+        { environment: environment },
+      )}
       closeButtonLabel={formatMessage(m.closeDeleteModal)}
       onClose={onClose}
     >

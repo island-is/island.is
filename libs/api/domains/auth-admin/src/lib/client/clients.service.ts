@@ -22,6 +22,7 @@ import { Client } from './models/client.model'
 import { ClientAllowedScope } from './models/client-allowed-scope.model'
 import { environments } from '../shared/constants/environments'
 import { DeleteClientInput } from './dto/delete-client.input'
+import { DeleteClientResponse } from './dto/delete-client.response'
 
 @Injectable()
 export class ClientsService extends MultiEnvironmentService {
@@ -312,21 +313,30 @@ export class ClientsService extends MultiEnvironmentService {
     })
   }
 
-  async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
-    try {
-      await this.adminApiByEnvironmentWithAuth(
-        input.environment,
-        user,
-      )?.meClientsControllerDelete({
-        tenantId: input.tenantId,
-        clientId: input.clientId,
-      })
-    } catch (error) {
-      this.handleError(error, input.environment)
-      return false
-    }
+  async deleteClient(
+    user: User,
+    input: DeleteClientInput,
+  ): Promise<DeleteClientResponse[]> {
+    const response = input.environments.map((environment) => ({
+      environment,
+      success: true,
+    }))
 
-    return true
+    await Promise.allSettled(
+      response.map((resp, index) =>
+        this.adminApiByEnvironmentWithAuth(resp.environment, user)
+          ?.meClientsControllerDelete({
+            tenantId: input.tenantId,
+            clientId: input.clientId,
+          })
+          .catch((error) => {
+            response[index].success = false
+            this.handleError(error, resp.environment)
+          }),
+      ),
+    )
+
+    return response
   }
 
   async revokeSecret(user: User, input: RotateSecretInput) {

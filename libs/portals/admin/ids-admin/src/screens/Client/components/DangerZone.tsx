@@ -12,9 +12,15 @@ export const DangerZone = () => {
   const { formatMessage } = useLocale()
   const [isRotateSecretVisible, setRotateSecretVisibility] = useState(false)
   const [isDeleteClientVisible, setDeleteClientVisibility] = useState(false)
+  const [deleteOnAllEnvironments, setDeleteOnAllEnvironments] = useState(false)
   const {
     selectedEnvironment: { environment },
   } = useClient()
+
+  const openDeleteModal = (allEnvironments: boolean) => {
+    setDeleteOnAllEnvironments(allEnvironments)
+    setDeleteClientVisibility(true)
+  }
 
   return (
     <>
@@ -24,7 +30,7 @@ export const DangerZone = () => {
         labelColor="red600"
         colorVariant="red"
       >
-        <Stack space={2}>
+        <Stack space={3}>
           <ActionCard
             heading={formatMessage(m.deleteClient, {
               environment: environment,
@@ -39,7 +45,24 @@ export const DangerZone = () => {
                 colorScheme: 'destructive',
               },
               icon: undefined,
-              onClick: () => setDeleteClientVisibility(true),
+              onClick: () => openDeleteModal(false),
+            }}
+          />
+          <ActionCard
+            heading={formatMessage(m.deleteClientAllEnv, {
+              environment: environment,
+            })}
+            headingVariant="h4"
+            text={formatMessage(m.deleteClientDescription)}
+            backgroundColor="red"
+            cta={{
+              label: formatMessage(m.delete),
+              buttonType: {
+                variant: 'primary',
+                colorScheme: 'destructive',
+              },
+              icon: undefined,
+              onClick: () => openDeleteModal(true),
             }}
           />
           <ActionCard
@@ -66,6 +89,7 @@ export const DangerZone = () => {
       <DeleteClient
         isVisible={isDeleteClientVisible}
         onClose={() => setDeleteClientVisibility(false)}
+        deleteOnAllEnvironments={deleteOnAllEnvironments}
       />
     </>
   )

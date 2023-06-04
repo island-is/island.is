@@ -798,4 +798,8 @@ export const m = defineMessages({
     id: 'ap.ids-admin:delete-client-action-card-label',
     defaultMessage: 'All your apps using this client will stop working.',
   },
+  deleteClientAllEnv: {
+    id: 'ap.ids-admin:delete-client-all-env',
+    defaultMessage: 'Delete client in all environments',
+  },
 })

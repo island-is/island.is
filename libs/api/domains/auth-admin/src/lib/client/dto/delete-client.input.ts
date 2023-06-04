@@ -9,6 +9,6 @@ export class DeleteClientInput {
   @Field(() => String, { nullable: false })
   clientId!: string
 
-  @Field(() => Environment, { nullable: false })
-  environment!: Environment
+  @Field(() => [Environment], { nullable: false })
+  environments!: Environment[]
 }

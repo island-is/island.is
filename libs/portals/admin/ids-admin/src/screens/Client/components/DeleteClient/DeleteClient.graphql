@@ -1,3 +1,6 @@
 mutation DeleteClient($input: AuthAdminDeleteClientInput!) {
-  deleteAuthAdminClient(input: $input)
+  deleteAuthAdminClient(input: $input) {
+    environment
+    success
+  }
 }
