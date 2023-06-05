@@ -12,10 +12,16 @@ type CurrentRightsMessages = {
 
 export const getApplicationInfo = (rights: string): CurrentRightsMessages => {
   switch (rights) {
+    case 'A':
+      return applicationForMessages.A_TEMP
     case 'B':
       return applicationForMessages.B_TEMP
     case 'B-full':
       return applicationForMessages.B_FULL
+    case 'C':
+      return applicationForMessages.C_TEMP
+    case 'D':
+      return applicationForMessages.D_TEMP
     default:
       return applicationForMessages.B_FULL
   }
