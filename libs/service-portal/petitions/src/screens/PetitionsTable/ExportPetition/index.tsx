@@ -8,12 +8,15 @@ import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
 import { PDFDownloadLink } from '@react-pdf/renderer'
 import { menuItem } from './styles.css'
-import { Endorsement, EndorsementList } from '../../../types/schema'
 import MyPdfDocument from './DownloadPdf'
+import {
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
 interface Props {
-  petition: EndorsementList
-  petitionSigners: Array<Endorsement>
+  petition?: EndorsementList
+  petitionSigners: PaginatedEndorsementResponse
   petitionId: string
   onGetCSV: () => void
   dropdownItems?: {
@@ -79,7 +82,6 @@ const DropdownExport: FC<Props> = ({
                 style={{ display: 'flex', justifyContent: 'center' }}
                 document={
                   <MyPdfDocument
-                    locale={formatMessage}
                     petition={petition}
                     petitionSigners={petitionSigners}
                   />

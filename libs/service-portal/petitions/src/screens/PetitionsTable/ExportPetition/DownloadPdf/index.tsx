@@ -8,8 +8,17 @@ import {
   StyleSheet,
 } from '@react-pdf/renderer'
 import { formatDate } from '../../../../lib/utils'
+import {
+  Endorsement,
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
-const MyPdfDocument = (data: any) => {
+const MyPdfDocument = (data: {
+  petition?: EndorsementList
+  petitionSigners: PaginatedEndorsementResponse
+}) => {
+  const { petition, petitionSigners } = data
   return (
     <Document>
       <Page style={pdfStyles.body}>
@@ -27,21 +36,21 @@ const MyPdfDocument = (data: any) => {
         <View>
           <Text style={pdfStyles.title}>Upplýsingar um undirskriftalista</Text>
           <Text style={pdfStyles.header}>Heiti undirskriftalista</Text>
-          <Text>{data.petition?.title}</Text>
+          <Text>{petition?.title}</Text>
           <Text style={pdfStyles.header}>Um undirskriftalista</Text>
-          <Text>{data.petition?.description}</Text>
+          <Text>{petition?.description}</Text>
           <View style={pdfStyles.row}>
             <View>
               <Text style={pdfStyles.header}>Ábyrgðarmaður: </Text>
-              <Text>{data.petition?.ownerName}</Text>
+              <Text>{petition?.ownerName}</Text>
             </View>
             <View>
               <Text style={pdfStyles.header}>Opinn til: </Text>
-              <Text>{formatDate(data.petition?.closedDate)}</Text>
+              <Text>{formatDate(petition?.closedDate)}</Text>
             </View>
             <View>
               <Text style={pdfStyles.header}>Fjöldi undirskrifta: </Text>
-              <Text>{data.petitionSigners?.totalCount}</Text>
+              <Text>{petitionSigners?.totalCount}</Text>
             </View>
           </View>
         </View>
@@ -51,7 +60,7 @@ const MyPdfDocument = (data: any) => {
             <Text style={pdfStyles.tableHeader}>Nafn</Text>
           </View>
           <View>
-            {data.petitionSigners?.data?.map((sign: any) => {
+            {petitionSigners?.data?.map((sign: Endorsement) => {
               return (
                 <View key={sign.id} style={pdfStyles.tableRow}>
                   <Text style={{ width: '20%' }}>

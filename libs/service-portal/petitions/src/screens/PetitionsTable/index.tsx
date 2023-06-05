@@ -10,8 +10,18 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import DropdownExport, { getCSV } from './ExportPetition'
+import {
+  Endorsement,
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
-const PetitionsTable = (data: any) => {
+const PetitionsTable = (data: {
+  canEdit: boolean
+  listId: string
+  petition?: EndorsementList
+  petitionSigners: PaginatedEndorsementResponse
+}) => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
@@ -20,10 +30,10 @@ const PetitionsTable = (data: any) => {
     data.petitionSigners?.data ?? [],
   )
 
-  const handlePagination = (page: number, petitions: any) => {
+  const handlePagination = (page: number, petitionSigners: Endorsement[]) => {
     setPage(page)
-    setTotalPages(pages(petitions?.length))
-    setPetitionSigners(paginate(petitions, PAGE_SIZE, page))
+    setTotalPages(pages(petitionSigners?.length))
+    setPetitionSigners(paginate(petitionSigners, PAGE_SIZE, page))
   }
 
   useEffect(() => {
@@ -56,7 +66,7 @@ const PetitionsTable = (data: any) => {
             </T.Row>
           </T.Head>
           <T.Body>
-            {petitionSigners?.map((petition: any) => {
+            {petitionSigners?.map((petition: Endorsement) => {
               return (
                 <T.Row key={petition.id}>
                   <T.Data text={{ variant: 'medium' }}>
