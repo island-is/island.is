@@ -21,8 +21,6 @@ const TagAppealState: React.FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
 
-  if (!appealRulingDecision) return null
-
   const getTagVariantForAppealState = (
     state?: CaseAppealState,
     ruling?: CaseAppealRulingDecision,
