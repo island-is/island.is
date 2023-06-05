@@ -14,9 +14,6 @@ export const menuItem = style({
     '&:hover, &:focus': {
       textDecoration: 'none',
       color: theme.color.blue400,
-      outline: 'none',
-      border: 'none',
-      boxShadow: 'none',
     },
   },
 })

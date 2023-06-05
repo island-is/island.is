@@ -75,7 +75,7 @@ const DropdownExport: FC<Props> = ({
         menuLabel={formatMessage(m.downloadPetitions)}
         items={[
           {
-            title: 'Sem PDF',
+            title: formatMessage(m.asPdf),
             render: () => (
               <PDFDownloadLink
                 key={petitionId}
@@ -90,7 +90,7 @@ const DropdownExport: FC<Props> = ({
               >
                 {() => (
                   <Box marginTop={2} className={menuItem}>
-                    Sem PDF
+                    {formatMessage(m.asPdf)}
                   </Box>
                 )}
               </PDFDownloadLink>
@@ -98,7 +98,7 @@ const DropdownExport: FC<Props> = ({
           },
           {
             onClick: () => onGetCSV(),
-            title: 'Sem CSV',
+            title: formatMessage(m.asCsv),
           },
           ...dropdownItems,
         ]}

@@ -6,11 +6,6 @@ export const m = defineMessages({
     defaultMessage: 'Undirskriftalistar',
     description: '',
   },
-  pdfTitle: {
-    id: 'sp.petitions:pdfTitle',
-    defaultMessage: 'Upplýsingar um undirskriftalista',
-    description: '',
-  },
   createList: {
     id: 'sp.petitions:createList',
     defaultMessage: 'Stofna nýjan lista',
@@ -103,6 +98,16 @@ export const m = defineMessages({
   downloadPetitions: {
     id: 'sp.petitions:downloadPetitions',
     defaultMessage: 'Sækja lista',
+    description: '',
+  },
+  asPdf: {
+    id: 'sp.petitions:asPdf',
+    defaultMessage: 'Sem PDF',
+    description: '',
+  },
+  asCsv: {
+    id: 'sp.petitions:asCsv',
+    defaultMessage: 'Sem CSV',
     description: '',
   },
   copyLinkToList: {
