@@ -4,10 +4,10 @@ import {
   NationalRegistryParent,
   PaymentCatalogItem,
 } from '@island.is/application/types'
-import {
-  CitizenIndividual,
-  SpouseIndividual,
-} from '@island.is/application/template-api-modules/directory-of-immigration/types'
+// import {
+//   CitizenIndividual,
+//   SpouseIndividual,
+// } from '@island.is/application/template-api-modules/directory-of-immigration/types'
 
 interface UserProfile {
   bankInfo: string
@@ -17,7 +17,7 @@ interface UserProfile {
 
 export interface ExternalData {
   individual: {
-    data: CitizenIndividual
+    data: any
     date: string
   }
   childrenCustodyInformation: {
@@ -41,7 +41,7 @@ export interface ExternalData {
     date: string
   }
   spouseDetails: {
-    data: SpouseIndividual
+    data: any
     date: string
   }
 }

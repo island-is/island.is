@@ -5,10 +5,12 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   ApplicationTypes,
   InstitutionNationalIds,
+  NationalRegistryBirthplace,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
+import { TemplateApiError } from '@island.is/nest/problem'
 import {
   getChargeItemCodes,
   CitizenshipAnswers,
@@ -16,6 +18,7 @@ import {
 import { CitizenshipClient } from '@island.is/clients/directorate-of-immigration/citizenship'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { CitizenIndividual, SpouseIndividual } from './types'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -85,6 +88,30 @@ export class CitizenshipService extends BaseTemplateApiService {
     return individual
   }
 
+  private async getBirthplace(nationalId: string): Promise<NationalRegistryBirthplace | null> {
+    const birthplace = await this.nationalRegistryApi.getBirthplace(
+      nationalId,
+    )
+
+    if (!birthplace?.locality) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryBirthplaceMissing,
+          summary: coreErrorMessages.nationalRegistryBirthplaceMissing,
+        },
+        404,
+      )
+    }
+
+    return (
+      birthplace && {
+        dateOfBirth: birthplace.birthdate,
+        location: birthplace.locality,
+        municipalityCode: birthplace.municipalityNumber,
+      }
+    )
+  }
+
   async getSpouseWithDetails({
     application,
     auth,
@@ -93,6 +120,8 @@ export class CitizenshipService extends BaseTemplateApiService {
     const spouse = await this.nationalRegistryApi.getCohabitationInfo(
       nationalId,
     )
+
+    const spouseBirthplace = await this.getBirthplace(nationalId)
 
     const applicant = await this.getIndividualDetails(nationalId)
     const spouseDetails =
@@ -115,6 +144,7 @@ export class CitizenshipService extends BaseTemplateApiService {
           code: genderCodeValue?.code,
           description: genderCodeValue?.description,
         },
+        spouseBirthplace: spouseBirthplace,
         spouse: spouseDetails,
       }
     )

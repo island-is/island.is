@@ -121,6 +121,31 @@ export const MaritalStatusSubSection = buildSubSection({
             return myAddressCombination !== mySpouseAddressCombination
           },
         }),
+         buildDescriptionField({
+          id: 'maritalStatus.explanationTitle',
+          title: information.labels.maritalStatus.explanationTitle,
+          titleVariant:'h5',
+          space: 'gutter',
+          condition: (_, externalData: any) => {
+            const externalCustomData = externalData as ExternalData
+            const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`
+            const mySpouseAddressCombination = `${externalCustomData.spouseDetails?.data?.spouse?.address?.streetAddress}, ${externalCustomData.spouseDetails?.data?.spouse?.address?.postalCode} ${externalCustomData.spouseDetails?.data?.spouse?.address?.city}`
+            return myAddressCombination !== mySpouseAddressCombination
+          },
+        }),
+        buildTextField({
+          id: 'maritalStatus.explanation',
+          title: information.labels.maritalStatus.explanation,
+          backgroundColor: 'blue',
+          width: 'full',
+          variant:"textarea",
+          condition: (_, externalData: any) => {
+            const externalCustomData = externalData as ExternalData
+            const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`
+            const mySpouseAddressCombination = `${externalCustomData.spouseDetails?.data?.spouse?.address?.streetAddress}, ${externalCustomData.spouseDetails?.data?.spouse?.address?.postalCode} ${externalCustomData.spouseDetails?.data?.spouse?.address?.city}`
+            return myAddressCombination !== mySpouseAddressCombination
+          },
+        }),
       ],
     }),
   ],

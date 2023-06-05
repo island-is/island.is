@@ -120,6 +120,16 @@ export const size = styleVariants({
       },
     }),
   },
+  textMedium: {
+    fontSize: 16,
+    lineHeight: 1.6,
+    ...themeUtils.responsiveStyle({
+      md: {
+        fontSize: 18,
+        lineHeight: 1.56,
+      },
+    }),
+  },
   medium: {
     fontSize: 14,
     lineHeight: 1.25,

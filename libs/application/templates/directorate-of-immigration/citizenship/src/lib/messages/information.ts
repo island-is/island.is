@@ -194,6 +194,16 @@ export const information = {
         defaultMessage: 'Heimilisfang maka',
         description: 'Applicant spouse address label',
       },
+      explanationTitle: {
+        id: 'doi.cs.application:information.labels.maritalStatus.explanationTitle',
+        defaultMessage: 'Heimilisfang þitt og maka þíns er ekki sameiginlegt, vinsamlegast tilgreinið ástæðu þess.',
+        description: 'Title of explanation field',
+      },
+      explanation: {
+        id: 'doi.cs.application:information.labels.maritalStatus.explanation',
+        defaultMessage: 'Skýring',
+        description: 'Explanation label',
+      },
     }),
     countriesOfResidence: defineMessages({
       subSectionTitle: {

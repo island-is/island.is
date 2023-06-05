@@ -39,7 +39,7 @@ type UtilityButtonType = {
 
 export type ButtonSizes = Exclude<
   keyof typeof styles.size,
-  'utility' | 'textSmall'
+  'utility' | 'textSmall' | 'textMedium'
 >
 
 export type ButtonTypes =
@@ -56,6 +56,8 @@ export interface ButtonProps {
   children?: ReactNode
   size?: ButtonSizes
   disabled?: boolean
+  fullWidth?: boolean
+  textSize?: 'sm' | 'md'
   unfocusable?: boolean
   fluid?: boolean
   icon?: IconType
@@ -97,6 +99,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       unfocusable,
       value,
       name,
+      fullWidth,
+      textSize,
       ...buttonProps
     },
     ref,
@@ -121,7 +125,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.fluid]: fluid,
             [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',
-            [styles.size.textSmall]: variant === 'text' && size === 'small',
+            [styles.size.textSmall]: variant === 'text' && size === 'small' || textSize === 'sm',
+            [styles.size.textMedium]: textSize === 'md',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
             [styles.padding[size]]:
@@ -130,8 +135,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.padding.utility]: variant === 'utility',
             [styles.isEmpty]: !children,
             [styles.loading]: loading,
-          },
+          }
         )}
+        style={fullWidth ? { width: '100%', justifyContent: 'center'}: {}}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}
         {...(unfocusable && { tabIndex: -1 })}

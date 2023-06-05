@@ -86,8 +86,6 @@ export const Parents = ({ field, application, error }: any) => {
                 label={
                   personal.labels.userInformation.nationalId.defaultMessage
                 }
-                // required
-                // disabled
                 readOnly
                 format="######-####"
                 backgroundColor="blue"
