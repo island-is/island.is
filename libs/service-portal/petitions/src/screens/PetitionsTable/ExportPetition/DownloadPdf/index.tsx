@@ -11,67 +11,69 @@ import { formatDate } from '../../../../lib/utils'
 
 const MyPdfDocument = (data: any) => {
   return (
-  <Document>
-    <Page style={pdfStyles.body}>
-      {/* Header */}
-      <View style={pdfStyles.pageHeader} fixed>
-        <Image src={require('./assets/top.png')} style={pdfStyles.topImage} />
-      </View>
-      <Image
-        src={require('./assets/skraLogo.png')}
-        style={pdfStyles.image}
-        fixed
-      />
+    <Document>
+      <Page style={pdfStyles.body}>
+        {/* Header */}
+        <View style={pdfStyles.pageHeader} fixed>
+          <Image src={require('./assets/top.png')} style={pdfStyles.topImage} />
+        </View>
+        <Image
+          src={require('./assets/skraLogo.png')}
+          style={pdfStyles.image}
+          fixed
+        />
 
-      {/* Body */}
-      <View>
-        <Text style={pdfStyles.title}>Upplýsingar um undirskriftalista</Text>
-        <Text style={pdfStyles.header}>Heiti undirskriftalista</Text>
-        <Text>{data.petition?.title}</Text>
-        <Text style={pdfStyles.header}>Um undirskriftalista</Text>
-        <Text>{data.petition?.description}</Text>
-        <View style={pdfStyles.row}>
-          <View>
-            <Text style={pdfStyles.header}>Ábyrgðarmaður: </Text>
-            <Text>{data.petition?.ownerName}</Text>
-          </View>
-          <View>
-            <Text style={pdfStyles.header}>Opinn til: </Text>
-            <Text>{formatDate(data.petition?.closedDate)}</Text>
-          </View>
-          <View>
-            <Text style={pdfStyles.header}>Fjöldi undirskrifta: </Text>
-            <Text>{data.petitionSigners?.totalCount}</Text>
-          </View>
-        </View>
-      </View>
-      <View style={pdfStyles.tableView}>
-        <View style={pdfStyles.tableRow}>
-          <Text style={pdfStyles.tableHeader}>Dags. skráð</Text>
-          <Text style={pdfStyles.tableHeader}>Nafn</Text>
-        </View>
+        {/* Body */}
         <View>
-          {data.petitionSigners?.data?.map((sign: any) => {
-            return (
-              <View key={sign.id} style={pdfStyles.tableRow}>
-                <Text style={{ width: '20%' }}>{formatDate(sign.created)}</Text>
-                <Text>
-                  {sign.meta.fullName ? sign.meta.fullName : 'no name'}
-                </Text>
-              </View>
-            )
-          })}
+          <Text style={pdfStyles.title}>Upplýsingar um undirskriftalista</Text>
+          <Text style={pdfStyles.header}>Heiti undirskriftalista</Text>
+          <Text>{data.petition?.title}</Text>
+          <Text style={pdfStyles.header}>Um undirskriftalista</Text>
+          <Text>{data.petition?.description}</Text>
+          <View style={pdfStyles.row}>
+            <View>
+              <Text style={pdfStyles.header}>Ábyrgðarmaður: </Text>
+              <Text>{data.petition?.ownerName}</Text>
+            </View>
+            <View>
+              <Text style={pdfStyles.header}>Opinn til: </Text>
+              <Text>{formatDate(data.petition?.closedDate)}</Text>
+            </View>
+            <View>
+              <Text style={pdfStyles.header}>Fjöldi undirskrifta: </Text>
+              <Text>{data.petitionSigners?.totalCount}</Text>
+            </View>
+          </View>
         </View>
-      </View>
+        <View style={pdfStyles.tableView}>
+          <View style={pdfStyles.tableRow}>
+            <Text style={pdfStyles.tableHeader}>Dags. skráð</Text>
+            <Text style={pdfStyles.tableHeader}>Nafn</Text>
+          </View>
+          <View>
+            {data.petitionSigners?.data?.map((sign: any) => {
+              return (
+                <View key={sign.id} style={pdfStyles.tableRow}>
+                  <Text style={{ width: '20%' }}>
+                    {formatDate(sign.created)}
+                  </Text>
+                  <Text>
+                    {sign.meta.fullName ? sign.meta.fullName : 'no name'}
+                  </Text>
+                </View>
+              )
+            })}
+          </View>
+        </View>
 
-      {/* Footer */}
-      <Image
-        src={require('./assets/footerbanner.png')}
-        style={pdfStyles.footerBanner}
-        fixed
-      />
-    </Page>
-  </Document>
+        {/* Footer */}
+        <Image
+          src={require('./assets/footerbanner.png')}
+          style={pdfStyles.footerBanner}
+          fixed
+        />
+      </Page>
+    </Document>
   )
 }
 
