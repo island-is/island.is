@@ -80,6 +80,7 @@ import {
   HeilbrigdisstofnunAusturlandsFooter,
   HeilbrigdisstofnunAusturlandsHeader,
 } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
+import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -118,6 +119,7 @@ export const lightThemes = [
   'tryggingastofnun',
   'hve',
   'hsa',
+  'haskolanam',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -249,6 +251,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
           organizationPage={organizationPage}
         />
       )
+    case 'haskolanam':
+      return <UniversityStudiesHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
