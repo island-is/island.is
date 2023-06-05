@@ -31,9 +31,6 @@ test.describe('Admin portal tenant applications', () => {
     await granterPage.goto(homeUrl)
 
     await test.step('See tenant applications overview', async () => {
-      // Arrange
-      await granterPage.getByRole('heading', { name: 'Applications' }).waitFor()
-
       // Assert
       await expect(
         granterPage.getByRole('heading', { name: 'Applications' }),

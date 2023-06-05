@@ -29,10 +29,6 @@ test.describe('Admin portal tenants', () => {
     await granterPage.goto(homeUrl)
 
     await test.step('See tenants overview', async () => {
-      // Assert
-      await granterPage
-        .getByRole('heading', { name: 'Innskráningarkerfi' })
-        .waitFor()
       await expect(
         granterPage.getByRole('heading', { name: 'Innskráningarkerfi' }),
       ).toBeVisible()
