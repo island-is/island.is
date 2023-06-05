@@ -13,6 +13,7 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { dark200 } from '@island.is/island-ui/theme'
 
 const MyPdfDocument = (data: {
   petition?: EndorsementList
@@ -23,17 +24,14 @@ const MyPdfDocument = (data: {
     <Document>
       <Page style={pdfStyles.body}>
         {/* Header */}
-        <View style={pdfStyles.pageHeader} fixed>
-          <Image src={require('./assets/top.png')} style={pdfStyles.topImage} />
-        </View>
         <Image
-          src={require('./assets/skraLogo.png')}
+          src={require('./assets/thjodskra.png')}
           style={pdfStyles.image}
           fixed
         />
 
         {/* Body */}
-        <View>
+        <View style={pdfStyles.listInfo}>
           <Text style={pdfStyles.title}>Upplýsingar um undirskriftalista</Text>
           <Text style={pdfStyles.header}>Heiti undirskriftalista</Text>
           <Text>{petition?.title}</Text>
@@ -77,8 +75,8 @@ const MyPdfDocument = (data: {
 
         {/* Footer */}
         <Image
-          src={require('./assets/footerbanner.png')}
-          style={pdfStyles.footerBanner}
+          src={require('./assets/island.png')}
+          style={pdfStyles.footerImage}
           fixed
         />
       </Page>
@@ -88,8 +86,7 @@ const MyPdfDocument = (data: {
 
 export const pdfStyles = StyleSheet.create({
   body: {
-    paddingTop: 55,
-    paddingBottom: 140,
+    paddingVertical: 50,
     paddingHorizontal: 60,
     fontFamily: 'Open Sans',
     fontSize: 10,
@@ -112,69 +109,26 @@ export const pdfStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  listInfo: {
+    paddingBottom: 30,
+  },
   tableView: {
-    marginTop: 50,
+    paddingTop: 35,
+    borderTop: `1px solid ${dark200}`
   },
   tableRow: {
     flexDirection: 'row',
     marginVertical: 5,
   },
-  listDetailSection: {
-    paddingHorizontal: 50,
-  },
-  documentHeader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 25,
-  },
-  documentFooter: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#00003C',
-    height: 100,
-  },
-  subtitle: {
-    fontSize: 18,
-    margin: 12,
-  },
-  text: {
-    margin: 12,
-    fontSize: 14,
-    textAlign: 'justify',
-  },
   image: {
     width: 120,
     marginBottom: 30,
   },
-  topImage: {
-    right: 0,
+  footerImage: {
     position: 'absolute',
-    height: 35,
-    width: 370,
-  },
-  bottomImageLeft: {
-    left: 0,
-    position: 'absolute',
+    left: 60,
+    bottom: 50,
     width: 120,
-    bottom: 0,
-    margin: 15,
-  },
-  footerBanner: {
-    right: 0,
-    left: 0,
-    bottom: 0,
-    position: 'absolute',
-  },
-  pageHeader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 60,
   },
 })
 
