@@ -123,3 +123,13 @@ export function isPrisonSystemUser(user: User): boolean {
     ) && isPrisonSystemRole(user.role)
   )
 }
+
+const defenceRoles: string[] = [UserRole.DEFENDER]
+
+function isDefenceRole(role: string): boolean {
+  return defenceRoles.includes(role)
+}
+
+export function isDefenceUser(user: User): boolean {
+  return isDefenceRole(user.role)
+}

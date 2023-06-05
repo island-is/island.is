@@ -27,6 +27,7 @@ import {
   CaseAppealRulingDecision,
   CaseDecision,
   CaseState,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
@@ -226,10 +227,18 @@ const CourtOfAppealCases = () => {
       accessor: 'duration' as keyof AppealedCasesQueryResponse,
       Cell: (row: {
         row: {
-          original: { courtEndTime: string; validToDate: string }
+          original: {
+            courtEndTime: string
+            validToDate: string
+            type: CaseType
+          }
         }
       }) => {
         const thisRow = row.row.original
+
+        if (isRestrictionCase(thisRow.type)) {
+          return null
+        }
 
         return `${formatDate(thisRow.courtEndTime, 'd.M.y')} - ${formatDate(
           thisRow.validToDate,
