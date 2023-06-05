@@ -22,7 +22,7 @@ import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks
 
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { titleForCase } from '@island.is/judicial-system-web/src/components/OverviewHeader/OverviewHeader'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {

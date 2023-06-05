@@ -14,6 +14,7 @@ import {
   SignedDocument,
   PageHeader,
   Modal,
+  OverviewHeader,
 } from '@island.is/judicial-system-web/src/components'
 import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -97,11 +98,7 @@ export const CaseOverview: React.FC = () => {
           <Box marginBottom={5}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
-                <Box marginBottom={1} data-testid="caseTitle">
-                  <Text as="h1" variant="h1">
-                    {titleForCase(formatMessage, workingCase)}
-                  </Text>
-                </Box>
+                <OverviewHeader />
                 {completedCaseStates.includes(workingCase.state) && (
                   <Box>
                     <Text variant="h5">

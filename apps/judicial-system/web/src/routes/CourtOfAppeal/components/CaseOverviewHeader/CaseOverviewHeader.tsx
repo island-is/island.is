@@ -5,6 +5,7 @@ import {
   CaseDates,
   FormContext,
   MarkdownWrapper,
+  OverviewHeader,
   RestrictionTags,
 } from '@island.is/judicial-system-web/src/components'
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
@@ -44,11 +45,8 @@ const CourtOfAppealCaseOverviewHeader: React.FC = () => {
       </Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
         <Box>
-          <Box marginBottom={1}>
-            <Text as="h1" variant="h1">
-              {titleForCase(formatMessage, workingCase)}
-            </Text>
-          </Box>
+          <OverviewHeader />
+
           {workingCase.courtEndTime && (
             <Box>
               <RulingDateLabel courtEndTime={workingCase.courtEndTime} />

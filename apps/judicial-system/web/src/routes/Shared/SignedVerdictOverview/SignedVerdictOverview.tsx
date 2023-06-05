@@ -37,6 +37,7 @@ import {
   useRequestRulingSignature,
   SigningModal,
   UserContext,
+  OverviewHeader,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -519,11 +520,7 @@ export const SignedVerdictOverview: React.FC = () => {
             </Box>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
-                <Box marginBottom={1}>
-                  <Text as="h1" variant="h1">
-                    {titleForCase(formatMessage, workingCase)}
-                  </Text>
-                </Box>
+                <OverviewHeader />
                 {workingCase.courtEndTime && (
                   <Box>
                     <RulingDateLabel courtEndTime={workingCase.courtEndTime} />

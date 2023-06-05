@@ -20,10 +20,10 @@ import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion
 
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { titleForCase } from '@island.is/judicial-system-web/src/components/OverviewHeader/OverviewHeader'
 
 const CourtOfAppealResult: React.FC = () => {
   const {
