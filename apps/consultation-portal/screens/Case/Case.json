@@ -80,23 +80,15 @@
     },
     "subbedCardSkeleton": {
       "initial": {
-        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að breyta tegund áskriftar eða fjarlægja áskrift.",
-        "buttonChange": "Breyta áskrift",
+        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að fjarlægja áskrift.",
         "buttonRemove": "Fjarlægja áskrift"
-      },
-      "clickedChange": {
-        "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
-        "button": "Staðfesta breytingu"
       }
     },
     "notSubbedCardSkeleton": {
-      "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
+      "text": "Tilkyningar um breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna verða sendar á skráð netfang.",
       "button": "Skrá í áskrift"
     },
     "buttonLabel": "Skrá áskrift"
-  },
-  "caseEmailActionBox": {
-    "buttonLabel": "Breyta áskrift"
   },
   "adviceList": {
     "buttonShow": "Sjá allar umsagnir",
