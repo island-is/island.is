@@ -7,12 +7,13 @@ import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
-import { Modal, ModalProps } from '../Modal/Modal'
+import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from './AccessList/AccessListContainer/AccessListContainer'
 import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
 import { AuthCustomDelegationOutgoing } from '../../types/customDelegation'
 import { m } from '../../lib/messages'
+import { useDynamicShadow } from '../../hooks/useDynamicShadow'
 
 type AccessConfirmModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation: AuthCustomDelegationOutgoing
@@ -40,13 +41,18 @@ export const AccessConfirmModal = ({
   const { md } = useBreakpoint()
   const [error, setError] = useState(formError ?? false)
 
+  const { showShadow, pxProps } = useDynamicShadow({
+    rootMargin: md ? '-128px' : '-104px',
+    isDisabled: !rest.isVisible,
+  })
+
   const onConfirmHandler = async () => {
     if (!delegation.id || !scopes) {
       setError(true)
       return
     }
 
-    onConfirm()
+    await onConfirm()
   }
 
   if (isDefined(formError) && formError !== error) {
@@ -60,12 +66,15 @@ export const AccessConfirmModal = ({
 
   return (
     <Modal
-      id={`access-confirm-modal`}
-      label={formatMessage(m.accessControl)}
+      id="access-confirm-modal"
+      label={formatMessage(m.accessConfirmModalTitle)}
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessConfirmModalTitle)}
       {...rest}
       onClose={onClose}
       noPaddingBottom
+      scrollType="inside"
+      closeButtonLabel={formatMessage(m.closeModal)}
     >
       <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
         {error && (
@@ -115,10 +124,12 @@ export const AccessConfirmModal = ({
         validityPeriod={validityPeriod}
         listMarginBottom={[0, 0, 10]}
       />
+      <div {...pxProps} />
+
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md}
+          showShadow={showShadow}
           onCancel={onClose}
           onConfirm={onConfirmHandler}
           confirmLabel={formatMessage(coreMessages.codeConfirmation)}

@@ -6,7 +6,6 @@ import formatISO from 'date-fns/formatISO'
 import {
   Accordion,
   AccordionItem,
-  AlertMessage,
   Box,
   Checkbox,
   Input,
@@ -25,22 +24,15 @@ import {
   RulingInput,
   PdfButton,
   FormContext,
-  useRequestRulingSignature,
-  SigningModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
-  completedCaseStates,
   Defendant,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -109,7 +101,7 @@ export function getConclusionAutofill(
           decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         caseType:
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TravelBan
+            ? CaseType.TRAVEL_BAN
             : workingCase.type,
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
@@ -121,8 +113,6 @@ export function getConclusionAutofill(
           ?.replace(' kl.', ', kl.'),
       })
 }
-
-type availableModals = 'NoModal' | 'SigningModal'
 
 export const Ruling: React.FC = () => {
   const {
@@ -152,11 +142,6 @@ export const Ruling: React.FC = () => {
 
   const router = useRouter()
 
-  const isModifyingRuling = router.pathname.includes(
-    constants.RESTRICTION_CASE_MODIFY_RULING_ROUTE,
-  )
-  const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
-
   const { user } = useContext(UserContext)
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
@@ -167,14 +152,6 @@ export const Ruling: React.FC = () => {
     'courtLegalArguments',
     'conclusion',
   ])
-
-  const {
-    requestRulingSignature,
-    requestRulingSignatureResponse,
-    isRequestingRulingSignature,
-  } = useRequestRulingSignature(workingCase.id, () =>
-    setModalVisible('SigningModal'),
-  )
 
   const initialize = useCallback(() => {
     setAndSendCaseToServer(
@@ -226,23 +203,15 @@ export const Ruling: React.FC = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (isModifyingRuling) {
-        requestRulingSignature()
-      } else {
-        router.push(`${destination}/${workingCase.id}`)
-      }
+      router.push(`${destination}/${workingCase.id}`)
     },
-    [isModifyingRuling, requestRulingSignature, router, workingCase.id],
+    [router, workingCase.id],
   )
   const stepIsValid = isRulingValidRC(workingCase)
 
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.RULING}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -250,16 +219,6 @@ export const Ruling: React.FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
-        {isModifyingRuling && (
-          <Box marginBottom={3}>
-            <AlertMessage
-              type="warning"
-              title={formatMessage(m.sections.alertMessage.title)}
-              message={formatMessage(m.sections.alertMessage.message)}
-              testid="alertMessageModifyingRuling"
-            />
-          </Box>
-        )}
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.title)}
@@ -282,9 +241,6 @@ export const Ruling: React.FC = () => {
                   (user.id === workingCase.judge?.id ||
                     user.id === workingCase.registrar?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>
@@ -566,7 +522,6 @@ export const Ruling: React.FC = () => {
                   setWorkingCase,
                 )
               }}
-              disabled={isModifyingRuling}
             />
           </Box>
         </Box>
@@ -587,7 +542,7 @@ export const Ruling: React.FC = () => {
                         caseType:
                           workingCase.decision ===
                           CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TravelBan
+                            ? CaseType.TRAVEL_BAN
                             : workingCase.type,
                       },
                     ),
@@ -606,7 +561,7 @@ export const Ruling: React.FC = () => {
                           caseType:
                             workingCase.decision ===
                             CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                              ? CaseType.TravelBan
+                              ? CaseType.TRAVEL_BAN
                               : workingCase.type,
                         },
                       ),
@@ -660,13 +615,12 @@ export const Ruling: React.FC = () => {
                     setWorkingCase,
                   )
                 }}
-                disabled={isModifyingRuling}
                 required
               />
             </Box>
           )}
-        {(workingCase.type === CaseType.Custody ||
-          workingCase.type === CaseType.AdmissionToFacility) &&
+        {(workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={2}>
@@ -682,7 +636,6 @@ export const Ruling: React.FC = () => {
                       m.sections.custodyRestrictions.isolation,
                     )}
                     checked={workingCase.isCustodyIsolation}
-                    disabled={isModifyingRuling}
                     onChange={() => {
                       let conclusion = undefined
 
@@ -724,9 +677,7 @@ export const Ruling: React.FC = () => {
                 <DateTime
                   name="isolationToDate"
                   datepickerLabel="Einangrun til"
-                  disabled={
-                    isModifyingRuling || !workingCase.isCustodyIsolation
-                  }
+                  disabled={!workingCase.isCustodyIsolation}
                   selectedDate={workingCase.isolationToDate}
                   // Isolation can never be set in the past.
                   minDate={new Date()}
@@ -822,7 +773,6 @@ export const Ruling: React.FC = () => {
             textarea
             rows={7}
             autoExpand={{ on: true, maxHeight: 300 }}
-            disabled={isModifyingRuling}
           />
         </Box>
         <Box marginBottom={10}>
@@ -830,39 +780,19 @@ export const Ruling: React.FC = () => {
             caseId={workingCase.id}
             title={formatMessage(core.pdfButtonRuling)}
             pdfType="ruling"
-            useSigned={!isModifyingRuling}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={
-            isModifyingRuling
-              ? `${constants.SIGNED_VERDICT_OVERVIEW_ROUTE}/${workingCase.id}`
-              : `${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`
-          }
-          nextIsLoading={
-            isModifyingRuling ? isRequestingRulingSignature : false
-          }
+          nextButtonIcon="arrowForward"
+          previousUrl={`${constants.RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_COURT_RECORD_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
-          nextButtonText={
-            isModifyingRuling
-              ? formatMessage(m.sections.formFooter.modifyRulingButtonLabel)
-              : undefined
-          }
         />
       </FormContentContainer>
-      {modalVisible === 'SigningModal' && (
-        <SigningModal
-          workingCase={workingCase}
-          requestRulingSignature={requestRulingSignature}
-          requestRulingSignatureResponse={requestRulingSignatureResponse}
-          onClose={() => setModalVisible('NoModal')}
-        />
-      )}
     </PageLayout>
   )
 }

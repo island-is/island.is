@@ -27,6 +27,8 @@ import {
 import { TwoColumnUserInfoLine } from '../TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistrationModal'
 import * as styles from './ChildView.css'
+import { formatNameBreaks } from '../../helpers/formatting'
+import { spmm, urls } from '../../lib/messages'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -159,14 +161,18 @@ const ChildView: FC<Props> = ({
             title={formatMessage(m.myRegistration)}
             label={formatMessage(m.fullName)}
             content={person?.fullName || '...'}
+            tooltip={formatNameBreaks(person ?? undefined, {
+              givenName: formatMessage(spmm.givenName),
+              middleName: formatMessage(spmm.middleName),
+              lastName: formatMessage(spmm.lastName),
+            })}
             loading={loading}
             editLink={
               !isChild
                 ? {
                     title: editLink,
                     external: true,
-                    url:
-                      'https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=703760ac-686f-11e6-943e-005056851dd2',
+                    url: formatMessage(urls.editChild),
                   }
                 : undefined
             }
@@ -194,7 +200,7 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url: 'https://skra.is/folk/flutningur/flutningur-barna/',
+                    url: formatMessage(urls.editResidenceChild),
                   }
                 : undefined
             }
@@ -234,8 +240,7 @@ const ChildView: FC<Props> = ({
                 ? {
                     title: editLink,
                     external: true,
-                    url:
-                      'https://www.skra.is/umsoknir/rafraen-skil/tru-eda-lifsskodunarfelag-barna-15-ara-og-yngri/',
+                    url: formatMessage(urls.editChildReligion),
                   }
                 : undefined
             }

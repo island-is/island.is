@@ -136,7 +136,8 @@
         "cwd": "apps/services/endorsements/api"
       }
     },
-    "docker-express": {}
+    "docker-express": {},
+    "service-endorsement-system-api": {}
   },
   "tags": ["scope:nest"]
 }

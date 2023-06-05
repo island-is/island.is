@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 
-import { PageLayout } from '@island.is/judicial-system-web/src/components'
+import { Skeleton } from '@island.is/judicial-system-web/src/components'
 import {
   User,
   UserRole,
@@ -12,8 +12,10 @@ import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mut
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
+import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
+import * as styles from '../Users/Users.css'
 import UserForm from '../UserForm/UserForm'
 
 const user: User = {
@@ -25,7 +27,7 @@ const user: User = {
   title: '',
   mobileNumber: '',
   email: '',
-  role: UserRole.Prosecutor,
+  role: UserRole.PROSECUTOR,
   institution: undefined,
   active: true,
 }
@@ -34,7 +36,6 @@ export const NewUser: React.FC = () => {
   const router = useRouter()
 
   const {
-    courts,
     allCourts,
     prosecutorsOffices,
     prisonInstitutions,
@@ -68,26 +69,23 @@ export const NewUser: React.FC = () => {
     router.push(constants.USERS_ROUTE)
   }
 
-  return (
-    <PageLayout
-      showSidepanel={false}
-      isLoading={institutionLoading}
-      notFound={false}
-    >
-      <PageHeader title={formatMessage(titles.admin.newUser)} />
-      {institutionLoaded && (
+  return institutionLoading ? (
+    <Skeleton />
+  ) : institutionLoaded ? (
+    <Box background="purple100">
+      <div className={styles.userManagementContainer}>
+        <PageHeader title={formatMessage(titles.admin.newUser)} />
         <UserForm
           user={user}
-          courts={courts}
           allCourts={allCourts}
           prosecutorsOffices={prosecutorsOffices}
           prisonInstitutions={prisonInstitutions}
           onSave={createUser}
           loading={createLoading}
         />
-      )}
-    </PageLayout>
-  )
+      </div>
+    </Box>
+  ) : null
 }
 
 export default NewUser

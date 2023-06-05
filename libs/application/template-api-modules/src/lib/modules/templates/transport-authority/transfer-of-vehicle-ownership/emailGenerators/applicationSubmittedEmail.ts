@@ -67,7 +67,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
           component: 'Button',
           context: {
             copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.DigitalTachographDriversCard.slug}/${application.id}`,
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.TransferOfVehicleOwnership.slug}/${application.id}`,
           },
         },
       ],

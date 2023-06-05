@@ -2,7 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { EmailRecipient, EmailRole } from './types'
 import {
   getAllRoles,
@@ -11,7 +14,7 @@ import {
 } from './change-operator-of-vehicle.utils'
 import {
   ChargeFjsV2ClientService,
-  getChargeId,
+  getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import {
   ChangeOperatorOfVehicleAnswers,
@@ -42,6 +45,7 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
@@ -70,6 +74,17 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       showCoowned: false,
       showOperated: false,
     })
+
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwner,
+        },
+        400,
+      )
+    }
 
     return await Promise.all(
       result?.map(async (vehicle) => {
@@ -113,16 +128,24 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
     const permno = answers?.pickVehicle?.plate
 
-    const operators = answers?.operators
-      .filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .map((operator) => ({
-        ssn: operator.nationalId,
-        isMainOperator:
-          answers.operators.filter(({ wasRemoved }) => wasRemoved !== 'true')
-            .length > 1
-            ? operator.nationalId === answers?.mainOperator?.nationalId
-            : true,
-      }))
+    const filteredOldOperators = answers?.oldOperators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewOperators = answers?.operators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredOperators = [
+      ...(filteredOldOperators ? filteredOldOperators : []),
+      ...(filteredNewOperators ? filteredNewOperators : []),
+    ]
+
+    const operators = filteredOperators.map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        filteredOperators.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
 
     const result = await this.vehicleOperatorsClient.validateAllForOperatorChange(
       auth,
@@ -146,8 +169,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as ChangeOperatorOfVehicleAnswers
 
       const chargeItemCodes = getChargeItemCodes(answers)
@@ -159,7 +180,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )
@@ -246,16 +267,9 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getChargeId(application)
+    const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      const status = await this.chargeFjsV2ClientService.getChargeStatus(
-        chargeId,
-      )
-
-      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
-      if (status !== 'cancelled') {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-      }
+      this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn
@@ -357,16 +371,24 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    const operators = answers?.operators
-      .filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .map((operator) => ({
-        ssn: operator.nationalId,
-        isMainOperator:
-          answers.operators.filter(({ wasRemoved }) => wasRemoved !== 'true')
-            .length > 1
-            ? operator.nationalId === answers?.mainOperator?.nationalId
-            : true,
-      }))
+    const filteredOldOperators = answers?.oldOperators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredNewOperators = answers?.operators.filter(
+      ({ wasRemoved }) => wasRemoved !== 'true',
+    )
+    const filteredOperators = [
+      ...(filteredOldOperators ? filteredOldOperators : []),
+      ...(filteredNewOperators ? filteredNewOperators : []),
+    ]
+
+    const operators = filteredOperators.map((operator) => ({
+      ssn: operator.nationalId,
+      isMainOperator:
+        filteredOperators.length > 1
+          ? operator.nationalId === answers?.mainOperator?.nationalId
+          : true,
+    }))
 
     await this.vehicleOperatorsClient.saveOperators(auth, permno, operators)
 

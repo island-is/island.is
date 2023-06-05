@@ -73,18 +73,30 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async drivingSchoolForEmployee({
     auth,
   }: TemplateApiModuleActionProps): Promise<DrivingLicenseBookSchool> {
-    const school = await this.hasTeachingRights(auth.nationalId)
-    if (school) {
-      return this.drivingLicenseBookService.getSchoolForSchoolStaff(auth)
-    } else {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
-          summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
-        },
-        400,
-      )
-    }
+    return this.drivingLicenseBookService
+      .isSchoolStaff(auth)
+      .then((isEmployee) => {
+        if (isEmployee) {
+          return this.drivingLicenseBookService.getSchoolForSchoolStaff(auth)
+        } else {
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
+              summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
+            },
+            400,
+          )
+        }
+      })
+      .catch(() => {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
+            summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
+          },
+          400,
+        )
+      })
   }
 
   async teachers(): Promise<Teacher[]> {
@@ -123,6 +135,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
       nationalId: auth.nationalId,
+      token: auth.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
     })
 
     const categoryB = (drivingLicense?.categories ?? []).find(

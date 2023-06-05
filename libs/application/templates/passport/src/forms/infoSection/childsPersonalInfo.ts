@@ -1,15 +1,15 @@
 import {
   buildDescriptionField,
-  buildKeyValueField,
   buildMultiField,
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import { Application, DefaultEvents } from '@island.is/application/types'
+import { Application, DefaultEvents, Field } from '@island.is/application/types'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { format as formatKennitala } from 'kennitala'
-import { IdentityDocumentData, Passport } from '../../lib/constants'
+import { Passport } from '../../lib/constants'
 import { m } from '../../lib/messages'
+import { getChildPassport, hasSecondGuardian } from '../../lib/utils'
 
 export const childsPersonalInfo = buildMultiField({
   id: 'childsPersonalInfo',
@@ -23,14 +23,8 @@ export const childsPersonalInfo = buildMultiField({
       backgroundColor: 'white',
       width: 'half',
       readOnly: true,
-      defaultValue: (application: Application) => {
-        const child = (application.externalData.identityDocument
-          ?.data as IdentityDocumentData).childPassports.find((child) => {
-          return (
-            child.childNationalId ===
-            (application.answers.passport as Passport)?.childPassport
-          )
-        })
+      defaultValue: ({ answers, externalData }: Application) => {
+        const child = getChildPassport(answers, externalData)
         return child?.childName ?? ''
       },
     }),
@@ -41,14 +35,8 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       format: '######-####',
-      defaultValue: (application: Application) => {
-        const child = (application.externalData.identityDocument
-          ?.data as IdentityDocumentData).childPassports.find((child) => {
-          return (
-            child.childNationalId ===
-            (application.answers.passport as Passport)?.childPassport
-          )
-        })
+      defaultValue: ({ answers, externalData }: Application) => {
+        const child = getChildPassport(answers, externalData)
         return child?.childNationalId ?? ''
       },
     }),
@@ -83,6 +71,7 @@ export const childsPersonalInfo = buildMultiField({
       id: 'childsPersonalInfo.guardian1.email',
       title: m.email,
       width: 'half',
+      required: true,
       defaultValue: (application: Application) =>
         (application.externalData.userProfile?.data as {
           email?: string
@@ -94,6 +83,7 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       variant: 'tel',
       format: '###-####',
+      required: true,
       defaultValue: (application: Application) => {
         const phone =
           (application.externalData.userProfile?.data as {
@@ -109,20 +99,18 @@ export const childsPersonalInfo = buildMultiField({
       titleVariant: 'h3',
       space: 'containerGutter',
       marginBottom: 'smallGutter',
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.name',
       title: m.name,
       backgroundColor: 'white',
       width: 'half',
-      defaultValue: (application: Application) => {
-        const child = (application.externalData.identityDocument
-          ?.data as IdentityDocumentData).childPassports.find((child) => {
-          return (
-            child.childNationalId ===
-            (application.answers.passport as Passport)?.childPassport
-          )
-        })
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
+      defaultValue: ({ answers, externalData }: Application) => {
+        const child = getChildPassport(answers, externalData)
         return child?.secondParentName ?? ''
       },
     }),
@@ -133,14 +121,10 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       format: '######-####',
-      defaultValue: (application: Application) => {
-        const child = (application.externalData.identityDocument
-          ?.data as IdentityDocumentData).childPassports.find((child) => {
-          return (
-            child.childNationalId ===
-            (application.answers.passport as Passport)?.childPassport
-          )
-        })
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
+      defaultValue: ({ answers, externalData }: Application) => {
+        const child = getChildPassport(answers, externalData)
         return child?.secondParent ?? ''
       },
     }),
@@ -150,6 +134,9 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       defaultValue: '',
       backgroundColor: 'blue',
+      required: true,
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian2.phoneNumber',
@@ -159,6 +146,9 @@ export const childsPersonalInfo = buildMultiField({
       format: '###-####',
       backgroundColor: 'blue',
       defaultValue: '',
+      required: true,
+      condition: (answers, externalData) =>
+        hasSecondGuardian(answers, externalData),
     }),
     buildSubmitField({
       id: 'approveCheckForDisability',

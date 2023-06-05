@@ -12,10 +12,7 @@ import {
   SelectCourtOfficials,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  IndictmentsCourtSubsections,
   ReactSelectOption,
-  RestrictionCaseCourtSubsections,
-  Sections,
   UserData,
 } from '@island.is/judicial-system-web/src/types'
 import {
@@ -109,13 +106,6 @@ const ReceptionAndAssignment = () => {
       : constants.INDICTMENTS_SUBPOENA_ROUTE
   }
 
-  const getActiveSubSection = () => {
-    return isIndictmentCase(workingCase.type)
-      ? IndictmentsCourtSubsections.RECEPTION_AND_ASSIGNMENT
-      : // Restriction cases and investigation cases have the same subsections
-        RestrictionCaseCourtSubsections.RECEPTION_AND_ASSIGNMENT
-  }
-
   const stepIsValid = isReceptionAndAssignmentStepValid(workingCase)
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -125,8 +115,6 @@ const ReceptionAndAssignment = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
-      activeSubSection={getActiveSubSection()}
       isLoading={isLoadingWorkingCase || userLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -175,7 +163,12 @@ const ReceptionAndAssignment = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`}
+          nextButtonIcon="arrowForward"
+          previousUrl={
+            isIndictmentCase(workingCase.type)
+              ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
+              : constants.CASES_ROUTE
+          }
           onNextButtonClick={() => handleNavigationTo(getNextRoute())}
           nextIsDisabled={!stepIsValid}
         />

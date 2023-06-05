@@ -1,26 +1,47 @@
 import { lazy } from 'react'
 
 import { PortalModule } from '@island.is/portals/core'
-import { IDSAdminPaths } from './lib/paths'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+
+import { IDSAdminPaths } from './lib/paths'
 import { m } from './lib/messages'
-import { createApplicationAction } from './components/forms/CreateApplication/CreateApplication.action'
-import { tenantsListLoader } from './components/TenantsList/TenantsList.loader'
+import { createClientAction } from './screens/Client/CreateClient/CreateClient.action'
+import { tenantsLoader } from './screens/Tenants/Tenants.loader'
 import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
-import { applicationsLoader } from './components/Applications/Applications.loader'
+import { clientsLoader } from './screens/Clients/Clients.loader'
+import { clientLoader } from './screens/Client/Client.loader'
+import { editClientAction } from './screens/Client/EditClient.action'
+import PublishClient from './screens/Client/PublishClient/PublishClient'
+import { publishClientAction } from './screens/Client/PublishClient/PublishClient.action'
+import { createPermissionAction } from './screens/Permission/CreatePermission/CreatePermission.action'
+import { permissionsLoader } from './screens/Permissions/Permissions.loader'
+import { permissionLoader } from './screens/Permission/Permission.loader'
+import { updatePermissionAction } from './screens/Permission/EditPermission.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
-const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
-const TenantsList = lazy(() => import('./components/TenantsList/TenantsList'))
-const CreateApplication = lazy(() =>
-  import('./components/forms/CreateApplication/CreateApplication'),
-)
-const Applications = lazy(() =>
-  import('./components/Applications/Applications'),
-)
-const ApplicationsScreen = lazy(() => import('./screens/ApplicationsScreen'))
 
-const allowedScopes: string[] = [AdminPortalScope.idsAdmin]
+// Tenant
+const Tenant = lazy(() => import('./screens/Tenant/Tenant'))
+const Tenants = lazy(() => import('./screens/Tenants/Tenants'))
+
+// Client
+const ClientsScreen = lazy(() => import('./screens/Clients/Clients'))
+const ClientScreen = lazy(() => import('./screens/Client/Client'))
+const CreateClient = lazy(() =>
+  import('./screens/Client/CreateClient/CreateClient'),
+)
+
+// Permissions
+const Permissions = lazy(() => import('./screens/Permissions/Permissions'))
+const Permission = lazy(() => import('./screens/Permission/Permission'))
+const CreatePermission = lazy(() =>
+  import('./screens/Permission/CreatePermission/CreatePermission'),
+)
+
+const allowedScopes: string[] = [
+  AdminPortalScope.idsAdmin,
+  AdminPortalScope.idsAdminSuperUser,
+]
 
 export type IDSAdminRouteHandle = {
   backPath?: string
@@ -42,46 +63,12 @@ export const idsAdminModule: PortalModule = {
           {
             name: m.idsAdmin,
             path: IDSAdminPaths.IDSAdmin,
-            element: <TenantsList />,
-            loader: tenantsListLoader(props),
+            element: <Tenants />,
+            loader: tenantsLoader(props),
             navHide: true,
             handle: {
               backPath: IDSAdminPaths.IDSAdmin,
             },
-          },
-          {
-            name: m.applications,
-            path: '',
-            element: <ApplicationsScreen />,
-            handle: {
-              backPath: IDSAdminPaths.IDSAdmin,
-            },
-            children: [
-              {
-                name: m.settings,
-                path: IDSAdminPaths.IDSAdminApplication,
-                element: <div>Settings</div>,
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdminTenants,
-                },
-              },
-              {
-                name: m.authentication,
-                path: IDSAdminPaths.IDSAdminApplicationAuthentication,
-                element: <div>Authentication</div>,
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdminTenants,
-                },
-              },
-              {
-                name: m.advancedSettings,
-                path: IDSAdminPaths.IDSAdminApplicationAdvancedSettings,
-                element: <div>AdvancedSettings</div>,
-                handle: {
-                  backPath: IDSAdminPaths.IDSAdminTenants,
-                },
-              },
-            ],
           },
           {
             name: m.tenants,
@@ -94,10 +81,10 @@ export const idsAdminModule: PortalModule = {
             },
             children: [
               {
-                name: m.applications,
-                path: IDSAdminPaths.IDSAdminTenants,
-                loader: applicationsLoader(props),
-                element: <Applications />,
+                name: m.clients,
+                path: IDSAdminPaths.IDSAdminClients,
+                loader: clientsLoader(props),
+                element: <ClientsScreen />,
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
                 },
@@ -105,18 +92,58 @@ export const idsAdminModule: PortalModule = {
                   {
                     name: m.applicationCreate,
                     navHide: true,
-                    path: IDSAdminPaths.IDSAdminApplicationCreate,
-                    element: <CreateApplication />,
-                    action: createApplicationAction(props),
+                    path: IDSAdminPaths.IDSAdminClientCreate,
+                    element: <CreateClient />,
+                    action: createClientAction(props),
                   },
                 ],
               },
               {
-                name: m.apis,
-                path: IDSAdminPaths.IDSAdminDomainsAPIS,
-                element: <div>APIs</div>,
+                name: m.settings,
+                path: IDSAdminPaths.IDSAdminClient,
+                element: <ClientScreen />,
+                loader: clientLoader(props),
+                action: editClientAction(props),
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminClients,
+                },
+                children: [
+                  {
+                    name: m.publishEnvironment,
+                    navHide: true,
+                    path: IDSAdminPaths.IDSAdminClientPublish,
+                    action: publishClientAction(props),
+                    element: <PublishClient />,
+                  },
+                ],
+              },
+              {
+                name: m.permissions,
+                path: IDSAdminPaths.IDSAdminPermissions,
+                element: <Permissions />,
+                loader: permissionsLoader(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdmin,
+                },
+                children: [
+                  {
+                    name: m.createPermission,
+                    navHide: true,
+                    path: IDSAdminPaths.IDSAdminPermissionsCreate,
+                    element: <CreatePermission />,
+                    action: createPermissionAction(props),
+                  },
+                ],
+              },
+              {
+                name: m.permissionsManagement,
+                navHide: true,
+                path: IDSAdminPaths.IDSAdminPermission,
+                element: <Permission />,
+                action: updatePermissionAction(props),
+                loader: permissionLoader(props),
+                handle: {
+                  backPath: IDSAdminPaths.IDSAdminPermissions,
                 },
               },
             ],

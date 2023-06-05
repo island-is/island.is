@@ -42,12 +42,8 @@ export class GenericMachineLicenseService
   private machineApiWithAuth = (user: User) =>
     this.machineApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async fetchLicense(user: User) {
-    const license = await this.machineApiWithAuth(user)
-      .getVinnuvela()
-      .catch(handle404)
-    return license
-  }
+  fetchLicense = (user: User) =>
+    this.machineApiWithAuth(user).getVinnuvela().catch(handle404)
 
   async getLicense(
     user: User,
@@ -111,6 +107,9 @@ export class GenericMachineLicenseService
     const payload = await this.createPkPassPayload(user, locale ?? 'is')
 
     if (!payload) {
+      this.logger.warn('Pkpass payload creation failed', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -119,12 +118,24 @@ export class GenericMachineLicenseService
       format(user.nationalId),
     )
     if (pass.ok) {
+      if (!pass.data.distributionUrl) {
+        this.logger.warn('Missing pkpass distribution url', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
       return pass.data.distributionUrl
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
      * For now we return null, just to keep existing behavior unchanged
      */
+    if (pass.error) {
+      this.logger.warn('Pkpass url generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
     return null
   }
   async getPkPassQRCode(
@@ -143,12 +154,25 @@ export class GenericMachineLicenseService
       format(user.nationalId),
     )
     if (pass.ok) {
+      if (!pass.data.distributionQRCode) {
+        this.logger.warn('Missing pkpass distribution qr code', {
+          category: LOG_CATEGORY,
+        })
+        return null
+      }
+
       return pass.data.distributionQRCode
     }
     /**
      * TODO: Leverage the extra error data SmartApi now returns in a future branch!
      * For now we return null, just to keep existing behavior unchanged
      */
+    if (pass.error) {
+      this.logger.warn('Pkpass qr code generation failed', {
+        ...pass.error,
+        category: LOG_CATEGORY,
+      })
+    }
     return null
   }
   async verifyPkPass(data: string): Promise<PkPassVerification | null> {
@@ -163,6 +187,10 @@ export class GenericMachineLicenseService
     }
 
     if (!result.ok) {
+      this.logger.warn('Pkpass verification failed', {
+        ...result.error,
+        category: LOG_CATEGORY,
+      })
       return {
         valid: false,
         data: undefined,

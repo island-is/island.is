@@ -66,7 +66,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
         {!props.hideNextButton && (
           <Button
             data-testid="continueButton"
-            icon={props.nextButtonIcon ?? 'arrowForward'}
+            icon={props.nextButtonIcon}
             disabled={props.nextIsDisabled}
             colorScheme={props.nextButtonColorScheme ?? 'default'}
             loading={props.nextIsLoading}

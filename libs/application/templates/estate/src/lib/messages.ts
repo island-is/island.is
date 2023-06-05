@@ -175,7 +175,7 @@ export const m = defineMessages({
   // Estate members, assets, vehicles
   estateMembersTitle: {
     id: 'es.application:estateMembersTitle',
-    defaultMessage: 'Erfingjar',
+    defaultMessage: 'Erfingjar og erfðaskrá',
     description: '',
   },
   estateMembersSubtitle: {
@@ -215,9 +215,45 @@ export const m = defineMessages({
     defaultMessage: 'Erfðaskrá í vörslu sýslumanns',
     description: '',
   },
+  willsAndAgreements: {
+    id: 'es.application:willsAndAgreements',
+    defaultMessage: 'Erfðaskrá og kaupmáli',
+    description: '',
+  },
+  willsAndAgreementsDescription: {
+    id: 'es.application:willsAndAgreementsDescription',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  doesWillExist: {
+    id: 'es.application:doesWillExist',
+    defaultMessage: 'Er til erfðaskrá?',
+    description: '',
+  },
+  doesAgreementExist: {
+    id: 'es.application:doesAgreementExist',
+    defaultMessage: 'Er til kaupmáli?',
+    description: '',
+  },
+  doesPermissionToPostponeExist: {
+    id: 'es.application:doesPermissionToPostponeExist',
+    defaultMessage: 'Er til leyfi til setu í óskiptu búi?',
+    description: '',
+  },
   agreements: {
     id: 'es.application:agreements',
     defaultMessage: 'Kaupmáli',
+    description: '',
+  },
+  additionalInfo: {
+    id: 'es.application:additionalInfo',
+    defaultMessage: 'Athugasemdir',
+    description: '',
+  },
+  additionalInfoPlaceholder: {
+    id: 'es.application:additionalInfoPlaceholder',
+    defaultMessage: 'Skráðu athugasemdir ef einhverjar eru',
     description: '',
   },
   otherWills: {
@@ -288,6 +324,16 @@ export const m = defineMessages({
   vehiclesDescription: {
     id: 'es.application:vehiclesDescription',
     defaultMessage: 'Til dæmis ökutæki, flugvélar og skip.',
+    description: '',
+  },
+  guns: {
+    id: 'es.application:guns',
+    defaultMessage: 'Skotvopn',
+    description: '',
+  },
+  gunsDescription: {
+    id: 'es.application:gunsDescription',
+    defaultMessage: 'Til dæmis haglabyssa, riffill og skammbyssa',
     description: '',
   },
 
@@ -367,8 +413,8 @@ export const m = defineMessages({
     defaultMessage: 'Útgefandi',
     description: '',
   },
-  stocksSsn: {
-    id: 'es.application:stocksSsn',
+  stocksNationalId: {
+    id: 'es.application:stocksNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -474,8 +520,8 @@ export const m = defineMessages({
     defaultMessage: 'Nafn kröfuhafa',
     description: '',
   },
-  debtsSsn: {
-    id: 'es.application:debtsSsn',
+  debtsNationalId: {
+    id: 'es.application:debtsNationalId',
     defaultMessage: 'Kennitala',
     description: '',
   },
@@ -518,6 +564,22 @@ export const m = defineMessages({
       'Þú hefur valið að lýsa því yfir að þú óskir eftir að ofangreint dánarbú verði tekið til opinberra skipta. Nánari upplýsingar um skilyrði opinberra skipta má finna á eftirfarandi vefslóð á Ísland.is',
     description: '',
   },
+  divisionOfEstateTerms: {
+    id: 'es.application:divisionOfEstateTerms',
+    defaultMessage: 'Skilmálar',
+    description: '',
+  },
+  divisionOfEstateTermsText: {
+    id: 'es.application:divisionOfEstateTermsText#markdown',
+    defaultMessage:
+      'Sýslumaður hefur móttekið beiðni þína um einkaskipti. Hún verður nú tekin til afgreiðslu og upplýsingar um afgreiðslu beiðninnar sendar í pósthólf þitt á Ísland.is.',
+    description: '',
+  },
+  divisionOfEstateSubmissionCheckbox: {
+    id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
+    defaultMessage: 'Ég hef lesið skilmálana',
+    description: '',
+  },
   overviewSubtitlePermitToPostpone: {
     id: 'es.application:overviewSubtitlePermitToPostpone#markdown',
     defaultMessage:
@@ -527,6 +589,11 @@ export const m = defineMessages({
   overviewSubtitleDivisionOfEstateByHeirs: {
     id: 'es.application:overviewSubtitleDivisionOfEstateByHeirs#markdown',
     defaultMessage: 'Þú hefur nú útfyllt beiðni um einkaskipti.',
+    description: '',
+  },
+  overviewMarketValue: {
+    id: 'es.application:overviewMarketValue',
+    defaultMessage: 'Markaðsvirði',
     description: '',
   },
   divisionOfEstateByHeirsTerms: {
@@ -600,6 +667,16 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
   },
+  fillOutRates: {
+    id: 'es.application:error.fillOutRates',
+    defaultMessage: 'Vinsamlegast fylltu út í alla reiti',
+    description: '',
+  },
+  errorNationalIdIncorrect: {
+    id: 'es.application:error.nationalIdIncorrect',
+    defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
+    description: 'National id is invalid',
+  },
 
   // Assets
   errorNumberEmpty: {
@@ -623,6 +700,11 @@ export const m = defineMessages({
     id: 'es.application:inheritanceEnableMember',
     defaultMessage: 'Virkja',
     description: 'Inheritance step enable member of estate',
+  },
+  inheritanceDeleteMember: {
+    id: 'es.application:inheritanceDeleteMember',
+    defaultMessage: 'Eyða',
+    description: 'Inheritance step delete member of estate',
   },
   inheritanceKtLabel: {
     id: 'es.application:inheritanceKtLabel',
@@ -652,7 +734,7 @@ export const m = defineMessages({
   inheritanceForeignCitizenshipLabel: {
     id: 'es.application:inheritanceForeignCitizenshipLabel',
     defaultMessage: 'Aðili án íslenskrar kennitölu',
-    description: 'No icelandic ssn label',
+    description: '',
   },
   inheritanceDayOfBirthLabel: {
     id: 'es.application:inheritanceDayOfBirthLabel',
@@ -670,6 +752,11 @@ export const m = defineMessages({
     id: 'es.application:realEstatesDescription',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: 'Real estates and lands description',
+  },
+  gunTitle: {
+    id: 'es.application:gunTitle',
+    defaultMessage: 'Skotvopn',
+    description: 'Vehicles title',
   },
   vehiclesTitle: {
     id: 'es.application:vehiclesTitle',
@@ -740,5 +827,25 @@ export const m = defineMessages({
     id: 'es.application:vehicleTypeLabel',
     defaultMessage: 'Tegund faratækis',
     description: 'Vehicle type label',
+  },
+  addGun: {
+    id: 'es.application:addGun',
+    defaultMessage: 'Bæta við skotvopni',
+    description: '',
+  },
+  gunNumberLabel: {
+    id: 'es.application:gunNumberLabel',
+    defaultMessage: 'Raðnúmer skotvopns',
+    description: 'Gun number label',
+  },
+  gunTypeLabel: {
+    id: 'es.application:gunTypeLabel',
+    defaultMessage: 'Tegund skotvopns',
+    description: 'Gun type label',
+  },
+  marketValueTitle: {
+    id: 'es.application:marketValueTitle',
+    defaultMessage: 'Markaðsvirði á dánardegi',
+    description: 'Placeholder for vehicles type',
   },
 })

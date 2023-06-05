@@ -135,6 +135,7 @@ export const heirs = buildSection({
                   {
                     title: m.heirsPhone.defaultMessage,
                     id: 'phone',
+                    format: '###-####',
                   },
                   {
                     title: m.heirsRelation.defaultMessage,
@@ -179,7 +180,7 @@ export const heirs = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'heirsAddintionalInfo',
+      id: 'heirsAdditionalInfo',
       title: m.heirAdditionalInfo,
       children: [
         buildMultiField({

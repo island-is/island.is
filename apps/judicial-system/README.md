@@ -112,8 +112,6 @@ You can serve this service locally by running:
 yarn start judicial-system-api
 ```
 
-You can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
-
 To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
 
 ### Graphql playground
@@ -271,12 +269,6 @@ export enum Feature {
   NONE = 'NONE', // must be at least one
   SECRET_FEATURE = 'SECRET_FEATURE',
 }
-```
-
-Then add the featre in `availableFeatures` in `apps/judicial-system/web/src/components/FeatureProvider/FeatureProvider.tsx`
-
-```
-const availableFeatures: Feature[] = [Feature.SECRET_FEATURE]
 ```
 
 Then you need to update the Helm charts. Add `SECRET_FEATURE` to `HIDDEN_FEATURES` in `./apps/judicial-system/api/infra/judicial-system-api.ts`.

@@ -21,6 +21,7 @@ interface Props {
   nationalIdDefaultValue?: string
   nameDefaultValue?: string
   errorMessage?: string
+  disabled?: boolean
 }
 
 export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
@@ -34,11 +35,15 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   nationalIdDefaultValue,
   nameDefaultValue,
   errorMessage,
+  disabled,
 }) => {
   const { id } = field
   const usedId = customId.length > 0 ? customId : id
   const { formatMessage } = useLocale()
-  const { setValue, errors } = useFormContext()
+  const {
+    setValue,
+    formState: { errors },
+  } = useFormContext()
   const [nationalIdInput, setNationalIdInput] = useState('')
   const nameField = `${usedId}.name`
   const nationaIdField = `${usedId}.nationalId`
@@ -117,6 +122,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             })}
             loading={queryLoading}
             error={nationalIdFieldErrors}
+            disabled={disabled}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>

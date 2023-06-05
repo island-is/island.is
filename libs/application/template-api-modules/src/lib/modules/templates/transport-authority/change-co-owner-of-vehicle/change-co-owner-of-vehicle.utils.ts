@@ -64,16 +64,14 @@ export const getRecipients = (
   const currentCoOwners = answers.ownerCoOwners
   if (roles.includes(EmailRole.currentCoOwner) && currentCoOwners) {
     for (let i = 0; i < currentCoOwners.length; i++) {
-      if (currentCoOwners[i].wasRemoved !== 'true') {
-        recipientList.push({
-          ssn: currentCoOwners[i].nationalId,
-          name: currentCoOwners[i].name,
-          email: currentCoOwners[i].email,
-          phone: currentCoOwners[i].phone,
-          role: EmailRole.currentCoOwner,
-          approved: currentCoOwners[i].approved,
-        })
-      }
+      recipientList.push({
+        ssn: currentCoOwners[i].nationalId!,
+        name: currentCoOwners[i].name!,
+        email: currentCoOwners[i].email,
+        phone: currentCoOwners[i].phone,
+        role: EmailRole.currentCoOwner,
+        approved: currentCoOwners[i].approved,
+      })
     }
   }
 
@@ -84,8 +82,8 @@ export const getRecipients = (
   if (roles.includes(EmailRole.addedCoOwner) && addedCoOwners) {
     for (let i = 0; i < addedCoOwners.length; i++) {
       recipientList.push({
-        ssn: addedCoOwners[i].nationalId,
-        name: addedCoOwners[i].name,
+        ssn: addedCoOwners[i].nationalId!,
+        name: addedCoOwners[i].name!,
         email: addedCoOwners[i].email,
         phone: addedCoOwners[i].phone,
         role: EmailRole.addedCoOwner,
@@ -119,8 +117,8 @@ export const getRecipientBySsn = (
     for (let i = 0; i < currentCoOwners.length; i++) {
       if (currentCoOwners[i].nationalId === ssn) {
         return {
-          ssn: currentCoOwners[i].nationalId,
-          name: currentCoOwners[i].name,
+          ssn: currentCoOwners[i].nationalId!,
+          name: currentCoOwners[i].name!,
           email: currentCoOwners[i].email,
           phone: currentCoOwners[i].phone,
           role: EmailRole.currentCoOwner,
@@ -138,8 +136,8 @@ export const getRecipientBySsn = (
     for (let i = 0; i < addedCoOwners.length; i++) {
       if (addedCoOwners[i].nationalId === ssn) {
         return {
-          ssn: addedCoOwners[i].nationalId,
-          name: addedCoOwners[i].name,
+          ssn: addedCoOwners[i].nationalId!,
+          name: addedCoOwners[i].name!,
           email: addedCoOwners[i].email,
           phone: addedCoOwners[i].phone,
           role: EmailRole.addedCoOwner,

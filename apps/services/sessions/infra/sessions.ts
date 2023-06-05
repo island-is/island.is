@@ -16,6 +16,7 @@ const workerPostgresInfo = {
   username: 'services_sessions',
   name: dbName,
   passwordSecret: '/k8s/services-sessions/DB_PASSWORD',
+  extensions: ['uuid-ossp'],
 }
 
 export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
@@ -41,12 +42,12 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
     })
     .resources({
       limits: {
-        cpu: '400m',
+        cpu: '250m',
         memory: '512Mi',
       },
       requests: {
-        cpu: '100m',
-        memory: '256Mi',
+        cpu: '25m',
+        memory: '300Mi',
       },
     })
     .ingress({

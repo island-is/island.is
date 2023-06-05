@@ -58,7 +58,6 @@ import {
   getApplicationTemplateByTypeId,
   getApplicationTranslationNamespaces,
 } from '@island.is/application/template-loader'
-import { TemplateAPIService } from '@island.is/application/template-api-modules'
 import { IntlService } from '@island.is/cms-translations'
 import { Audit, AuditService } from '@island.is/nest/audit'
 
@@ -191,6 +190,7 @@ export class ApplicationController {
     @Query('status') status?: string,
   ): Promise<ApplicationResponseDto[]> {
     if (nationalId !== user.nationalId) {
+      this.logger.debug('User is not authorized to get applications')
       throw new UnauthorizedException()
     }
 
@@ -216,47 +216,56 @@ export class ApplicationController {
     const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
     const filteredApplications: Application[] = []
     for (const application of applications) {
+      const typeId = application.typeId
+      const isTemplateTypeReady = templateTypeToIsReady[typeId]
       // We've already checked an application with this type and it is ready
       // now we just need to check if it should be displayed for the user
       if (
-        templateTypeToIsReady[application.typeId] &&
-        templates[application.typeId] !== undefined &&
+        isTemplateTypeReady &&
+        templates[typeId] !== undefined &&
         (await this.applicationAccessService.shouldShowApplicationOnOverview(
           application as BaseApplication,
           user,
-          templates[application.typeId],
+          templates[typeId],
         ))
       ) {
         filteredApplications.push(application)
         continue
-      } else if (templateTypeToIsReady[application.typeId] === false) {
+      } else if (isTemplateTypeReady === false) {
         // We've already checked an application with this type
         // and it is NOT ready so we will skip it
         continue
       }
 
-      const applicationTemplate = await getApplicationTemplateByTypeId(
-        application.typeId,
-      )
+      try {
+        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
+        // Add template to avoid fetching it again for the same types
+        templates[typeId] = applicationTemplate
 
-      // Add template to avoid fetching it again for the same types
-      templates[application.typeId] = applicationTemplate
-
-      if (
-        await this.validationService.isTemplateReady(user, applicationTemplate)
-      ) {
-        templateTypeToIsReady[application.typeId] = true
         if (
-          await this.applicationAccessService.shouldShowApplicationOnOverview(
-            application as BaseApplication,
-            user,
+          await this.validationService.isTemplateReady(
             applicationTemplate,
+            user,
           )
         ) {
-          filteredApplications.push(application)
+          templateTypeToIsReady[typeId] = true
+          if (
+            await this.applicationAccessService.shouldShowApplicationOnOverview(
+              application as BaseApplication,
+              user,
+              applicationTemplate,
+            )
+          ) {
+            filteredApplications.push(application)
+          }
+        } else {
+          templateTypeToIsReady[typeId] = false
         }
-      } else {
-        templateTypeToIsReady[application.typeId] = false
+      } catch (e) {
+        this.logger.error(
+          `Could not get application template for type ${typeId}`,
+          e,
+        )
       }
     }
 
@@ -446,7 +455,7 @@ export class ApplicationController {
       )
     }
 
-    await this.validationService.validateThatTemplateIsReady(user, template)
+    await this.validationService.validateThatTemplateIsReady(template, user)
 
     const assignees = [user.nationalId]
 
@@ -902,7 +911,11 @@ export class ApplicationController {
       )
 
       updatedApplication = update.updatedApplication as BaseApplication
-      await this.historyService.saveStateTransition(application.id, newState)
+      await this.historyService.saveStateTransition(
+        application.id,
+        newState,
+        event,
+      )
     } catch (e) {
       this.logger.error(e)
       return {

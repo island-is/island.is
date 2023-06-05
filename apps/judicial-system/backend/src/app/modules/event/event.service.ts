@@ -47,6 +47,10 @@ const caseEvent = {
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
+  REOPEN: ':construction: Opnað aftur',
+  APPEAL: ':judge: Kæra',
+  RECEIVE_APPEAL: ':eyes: Kæra móttekin',
+  COMPLETE_APPEAL: ':white_check_mark: Kæra lokin',
 }
 
 export enum CaseEvent {
@@ -64,6 +68,10 @@ export enum CaseEvent {
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
   DISMISS = 'DISMISS',
   ARCHIVE = 'ARCHIVE',
+  REOPEN = 'REOPEN',
+  APPEAL = 'APPEAL',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
 }
 
 @Injectable()

@@ -1,6 +1,9 @@
 import { FC, useState, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
@@ -28,6 +31,17 @@ type RepeaterProps = {
       fromExternalData?: string
     }
   }
+}
+
+function setIfValueIsNotNan(
+  setValue: (id: string, value: string | number) => void,
+  fieldId: string,
+  value: string | number,
+) {
+  if (typeof value === 'number' && isNaN(value)) {
+    return
+  }
+  setValue(fieldId, value)
 }
 
 export const ReportFieldsRepeater: FC<
@@ -83,7 +97,19 @@ export const ReportFieldsRepeater: FC<
     answersValues?.length ? answersValuesTotal : 0,
   )
 
+  const relations =
+    (externalData.syslumennOnEntry?.data as any).relationOptions?.map(
+      (relation: any) => ({
+        value: relation,
+        label: relation,
+      }),
+    ) || []
+
   const handleAddRepeaterFields = () => {
+    //reset stocks
+    setRateOfExchange(0)
+    setFaceValue(0)
+
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
@@ -102,28 +128,50 @@ export const ReportFieldsRepeater: FC<
     setValue(addTotal, total)
   }, [id, total, setValue])
 
-  /* ------ Set stocks value ------ */
+  /* ------ Set stocks value and total ------ */
   useEffect(() => {
-    setValue(`${index}.value`, String(faceValue * rateOfExchange))
+    if (rateOfExchange > 0 && faceValue > 0) {
+      setValue(`${index}.value`, String(faceValue * rateOfExchange))
+
+      const i = index.match(/\d+/)
+      calculateTotal(
+        currencyStringToNumber(String(Number(rateOfExchange * faceValue))),
+        Number((i as any)[0]),
+      )
+    }
   }, [faceValue, index, rateOfExchange, setValue])
 
   /* ------ Set heirs calculations ------ */
   useEffect(() => {
-    setTaxFreeInheritance(taxFreeLimit * percentage)
+    setTaxFreeInheritance(Math.round(taxFreeLimit * percentage))
     setInheritance(
-      (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-        Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-        Number(getValueViaPath(answers, 'business.businessTotal')) -
-        Number(getValueViaPath(answers, 'totalDeduction'))) *
-        percentage,
+      Math.round(
+        (Number(getValueViaPath(answers, 'assets.assetsTotal')) -
+          Number(getValueViaPath(answers, 'debts.debtsTotal')) +
+          Number(getValueViaPath(answers, 'business.businessTotal')) -
+          Number(getValueViaPath(answers, 'totalDeduction'))) *
+          percentage,
+      ),
     )
-    setTaxableInheritance(inheritance - taxFreeInheritance)
-    setInheritanceTax(Math.round(taxableInheritance * 0.01))
+    setTaxableInheritance(Math.round(inheritance - taxFreeInheritance))
+    setInheritanceTax(Math.round(taxableInheritance * 0.1))
 
-    setValue(`${index}.taxFreeInheritance`, taxFreeInheritance)
-    setValue(`${index}.inheritance`, inheritance)
-    setValue(`${index}.inheritanceTax`, Math.round(taxableInheritance * 0.01))
-    setValue(`${index}.taxableInheritance`, taxableInheritance)
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.taxFreeInheritance`,
+      taxFreeInheritance,
+    )
+    setIfValueIsNotNan(setValue, `${index}.inheritance`, inheritance)
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.inheritanceTax`,
+      Math.round(taxableInheritance * 0.01),
+    )
+    setIfValueIsNotNan(
+      setValue,
+      `${index}.taxableInheritance`,
+      taxableInheritance,
+    )
   }, [
     index,
     percentage,
@@ -137,12 +185,12 @@ export const ReportFieldsRepeater: FC<
 
   /* ------ Set fields from external data (realEstate, vehicles) ------ */
   useEffect(() => {
-    if (props.fromExternalData && fields.length === 0) {
-      append(
-        (externalData.syslumennOnEntry?.data as any).estate[
-          props.fromExternalData
-        ],
-      )
+    const extData = (externalData.syslumennOnEntry?.data as any).estate[
+      props.fromExternalData ? props.fromExternalData : ''
+    ]
+
+    if (props.fromExternalData && fields.length === 0 && extData.length) {
+      append(extData)
     }
   }, [props, fields, append])
 
@@ -164,15 +212,27 @@ export const ReportFieldsRepeater: FC<
     )
   }
 
+  const getDefaults = (fieldId: string) => {
+    return fieldId === 'taxFreeInheritance'
+      ? taxFreeInheritance
+      : fieldId === 'inheritance'
+      ? inheritance
+      : fieldId === 'taxableInheritance'
+      ? taxableInheritance
+      : fieldId === 'inheritanceTax'
+      ? inheritanceTax
+      : ''
+  }
+
   return (
     <Box>
-      {fields.map((repeaterField, index) => {
+      {fields.map((repeaterField: any, index) => {
         const fieldIndex = `${id}[${index}]`
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
             <Box>
               <Text variant="h4" marginBottom={2}>
-                {props.repeaterHeaderText + ' ' + (index + 1)}
+                {props.repeaterHeaderText}
               </Text>
               <Box position="absolute" className={styles.removeFieldButton}>
                 <Button
@@ -204,60 +264,62 @@ export const ReportFieldsRepeater: FC<
                     paddingBottom={2}
                     key={field.id}
                   >
-                    <InputController
-                      id={`${fieldIndex}.${field.id}`}
-                      name={`${fieldIndex}.${field.id}`}
-                      defaultValue={
-                        repeaterField[field.id]
-                          ? repeaterField[field.id]
-                          : field.id === 'taxFreeInheritance'
-                          ? taxFreeInheritance
-                          : field.id === 'inheritance'
-                          ? inheritance
-                          : field.id === 'taxableInheritance'
-                          ? taxableInheritance
-                          : field.id === 'inheritanceTax'
-                          ? inheritanceTax
-                          : ''
-                      }
-                      format={field.format}
-                      label={field.title}
-                      placeholder={field.placeholder}
-                      backgroundColor={field.color ? field.color : 'blue'}
-                      currency={field.currency}
-                      readOnly={field.readOnly}
-                      type={field.type}
-                      textarea={field.variant}
-                      rows={field.rows}
-                      required={field.required}
-                      error={
-                        error && error[index]
-                          ? error[index][field.id]
-                          : undefined
-                      }
-                      onChange={(elem) => {
-                        // heirs
-                        if (field.id === 'heirsPercentage') {
-                          setPercentage(Number(elem.target.value) / 100)
+                    {field.id === 'relation' ? (
+                      <SelectController
+                        id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        label={field.title}
+                        placeholder={field.placeholder}
+                        options={relations}
+                      />
+                    ) : (
+                      <InputController
+                        id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        defaultValue={
+                          repeaterField[field.id]
+                            ? repeaterField[field.id]
+                            : getDefaults(field.id)
                         }
+                        format={field.format}
+                        label={field.title}
+                        placeholder={field.placeholder}
+                        backgroundColor={field.color ? field.color : 'blue'}
+                        currency={field.currency}
+                        readOnly={field.readOnly}
+                        type={field.type}
+                        textarea={field.variant}
+                        rows={field.rows}
+                        required={field.required}
+                        error={
+                          error && error[index]
+                            ? error[index][field.id]
+                            : undefined
+                        }
+                        onChange={(elem) => {
+                          const value = elem.target.value.replace(/\D/g, '')
 
-                        // stocks
-                        if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(Number(elem.target.value))
-                        } else if (field.id === 'faceValue') {
-                          setFaceValue(Number(elem.target.value))
-                        }
+                          // heirs
+                          if (field.id === 'heirsPercentage') {
+                            setPercentage(Number(value) / 100)
+                          }
 
-                        // total
-                        if (props.sumField === field.id) {
-                          calculateTotal(
-                            currencyStringToNumber(elem.target.value),
-                            index,
-                          )
-                        }
-                        setIndex(fieldIndex)
-                      }}
-                    />
+                          // stocks
+                          if (field.id === 'rateOfExchange') {
+                            setRateOfExchange(Number(value))
+                          } else if (field.id === 'faceValue') {
+                            setFaceValue(Number(value))
+                          }
+
+                          // total
+                          if (props.sumField === field.id) {
+                            calculateTotal(currencyStringToNumber(value), index)
+                          }
+
+                          setIndex(fieldIndex)
+                        }}
+                      />
+                    )}
                   </GridColumn>
                 )
               })}

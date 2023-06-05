@@ -10,19 +10,18 @@ interface Props {
   title: string
   pdfType?:
     | 'ruling'
-    | 'caseFiles'
+    | 'caseFilesRecord'
     | 'courtRecord'
     | 'request'
     | 'custodyNotice'
-    | 'ruling/limitedAccess'
-    | 'courtRecord/limitedAccess'
-    | 'request/limitedAccess'
+    | 'limitedAccess/ruling'
+    | 'limitedAccess/courtRecord'
+    | 'limitedAccess/request'
     | 'indictment'
   disabled?: boolean
-  useSigned?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType is caseFiles
+  policeCaseNumber?: string // Only used if pdfType is caseFilesRecord
 }
 
 const PdfButton: React.FC<Props> = ({
@@ -30,7 +29,6 @@ const PdfButton: React.FC<Props> = ({
   title,
   pdfType,
   disabled,
-  useSigned = true,
   renderAs = 'button',
   children,
   handleClick, // Overwrites the default onClick handler
@@ -38,11 +36,8 @@ const PdfButton: React.FC<Props> = ({
 }) => {
   const handlePdfClick = async () => {
     const newPdfType =
-      pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
-    const url =
-      pdfType === 'ruling'
-        ? `${api.apiUrl}/api/case/${caseId}/${newPdfType}?useSigned=${useSigned}`
-        : `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
+      pdfType === 'caseFilesRecord' ? `${pdfType}/${policeCaseNumber}` : pdfType
+    const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
 
     window.open(url, '_blank')
   }

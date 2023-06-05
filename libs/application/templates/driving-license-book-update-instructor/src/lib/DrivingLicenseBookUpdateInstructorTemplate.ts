@@ -14,7 +14,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { DrivingLicenseBookUpdateInstructorSchema } from './dataSchema'
 import { application } from './messages'
@@ -37,7 +36,6 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.DrivingLicenseBookUpdateInstructor.translation,
   ],
   dataSchema: DrivingLicenseBookUpdateInstructorSchema,
-  featureFlag: Features.drivingLicenseBookUpdateInstructor,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

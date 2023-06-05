@@ -9,7 +9,7 @@ import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
 import { useEffect, useState } from 'react'
 import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
-import { Modal, ModalProps } from '../../Modal/Modal'
+import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
@@ -19,6 +19,7 @@ import {
   AuthCustomDelegationOutgoing,
 } from '../../../types/customDelegation'
 import { m } from '../../../lib/messages'
+import { useDynamicShadow } from '../../../hooks/useDynamicShadow'
 
 type AccessDeleteModalProps = Pick<ModalProps, 'onClose' | 'isVisible'> & {
   delegation?: AuthCustomDelegation
@@ -87,13 +88,21 @@ export const AccessDeleteModal = ({
   const fromName = userInfo?.profile.name
   const fromNationalId = userInfo?.profile.nationalId
 
+  const { showShadow, pxProps } = useDynamicShadow({
+    rootMargin: md ? '-128px' : '-104px',
+    isDisabled: !rest.isVisible,
+  })
+
   return (
     <Modal
-      id={`access-delete-modal`}
-      label={formatMessage(m.accessControl)}
+      id="access-delete-modal"
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessRemoveModalTitle)}
+      label={formatMessage(m.accessRemoveModalTitle)}
       onClose={onClose}
       noPaddingBottom
+      scrollType="inside"
+      closeButtonLabel={formatMessage(m.closeModal)}
       {...rest}
     >
       <Box
@@ -145,15 +154,16 @@ export const AccessDeleteModal = ({
           loading={scopeTreeLoading}
           listMarginBottom={[0, 0, 10]}
         />
+        <div {...pxProps} />
       </Box>
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md}
+          showShadow={showShadow}
           confirmButtonColorScheme="destructive"
           onCancel={onClose}
           onConfirm={onDeleteHandler}
-          containerPaddingBottom={[3, 3, 6]}
+          containerPaddingBottom={[3, 3, 4]}
           confirmLabel={formatMessage(m.deleteAccess)}
         />
       </Box>

@@ -27,7 +27,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'INDICTMENTS, INDICTMENT_ROUTE'
+    HIDDEN_FEATURES: 'APPEAL_TO_COURT_OF_APPEALS'
     NODE_OPTIONS: '--max-old-space-size=208'
     SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=judicial-system.staging'
     SERVERSIDE_FEATURES_ON: ''
@@ -47,10 +47,10 @@ judicial-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
   ingress:
@@ -71,9 +71,9 @@ judicial-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -97,8 +97,9 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
-    BLOCKED_API_INTEGRATION: 'COURT,COURT_LITIGANT,POLICE_CASE'
+    BLOCKED_API_INTEGRATION: 'COURT,COURT_LITIGANT,POLICE_CASE,POLICE_CASE_V2'
     CLIENT_URL: 'https://judicial-system.staging01.devland.is'
+    CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
@@ -106,7 +107,7 @@ judicial-system-backend:
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://developers.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=976'
     NO_UPDATE_NOTIFIER: 'true'
     S3_BUCKET: 'island-is-staging-upload-judicial-system'
     S3_REGION: 'eu-west-1'
@@ -141,10 +142,10 @@ judicial-system-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 10
-        min: 4
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
   initContainer:
@@ -159,7 +160,7 @@ judicial-system-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -175,16 +176,16 @@ judicial-system-backend:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 4
+    default: 2
     max: 10
-    min: 4
+    min: 2
   resources:
     limits:
       cpu: '400m'
-      memory: '512Mi'
+      memory: '1024Mi'
     requests:
       cpu: '100m'
-      memory: '256Mi'
+      memory: '512Mi'
   secrets:
     ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS'
     ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY'
@@ -249,10 +250,10 @@ judicial-system-message-handler:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
   namespace: 'judicial-system'
@@ -260,9 +261,9 @@ judicial-system-message-handler:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -309,7 +310,7 @@ judicial-system-scheduler:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 1
         min: 1
@@ -358,10 +359,10 @@ judicial-system-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
   ingress:
@@ -377,15 +378,15 @@ judicial-system-web:
   namespace: 'judicial-system'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '15m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -420,10 +421,10 @@ judicial-system-xrd-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
   ingress:
@@ -439,9 +440,9 @@ judicial-system-xrd-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'

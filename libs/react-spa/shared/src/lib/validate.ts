@@ -145,22 +145,22 @@ const formatErrors = (errors: Record<string, { _errors?: string[] }>) => {
 }
 
 type ValidateFormDataArgs<Schema> = {
-  request: Request
+  formData: FormData
   schema: Schema
 }
 
 type ValidateFormDataReturnType<Schema extends z.ZodTypeAny> = {
+  // TODO fix errors to only infer errors as string but not other types
   errors: Partial<z.infer<Schema>> | null
   data: z.infer<Schema> | null
 }
 
 export async function validateFormData<Schema extends z.ZodTypeAny>({
-  request,
+  formData,
   schema,
 }: ValidateFormDataArgs<Schema>): Promise<ValidateFormDataReturnType<Schema>> {
   type InferredSchema = z.infer<typeof schema>
 
-  const formData = await request.formData()
   const values = getValuesFromFormData(formData)
   const nestedObject = dotNotationToNestedObject(values) as InferredSchema
   const result = schema.safeParse(nestedObject) as InferredSchema

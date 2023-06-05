@@ -276,6 +276,13 @@ export const coreErrorMessages = defineMessages({
       'Núverandi hjúskaparstaða þín leyfir þér ekki að halda áfram með þessa umsókn. Vinsamlega hafðu samband við Sýslumanninn í Vestmannaeyjum fyrir nánari upplýsingar.',
     description: 'Oops! Something went wrong when fetching your data',
   },
+  errorDataProviderHealthInsuranceCantBeReached: {
+    id:
+      'application.system:core.error.dataProviderHealthInsuranceCantBeReached',
+    defaultMessage:
+      'Ekki tókst að sækja upplýsingar til Sjúkratrygginga. Vinsamlegast reynið aftur síðar.',
+    description: 'Oops! Something went wrong when fetching your data',
+  },
   fileUpload: {
     id: 'application.system:core.error.file.upload',
     defaultMessage: 'Villa kom upp við að hlaða inn einni eða fleiri skrám.',
@@ -479,8 +486,50 @@ export const coreErrorMessages = defineMessages({
       'Ekki tókst að sækja gögn úr Þjóðskrá fyrir þessa kennitölu.',
     description: 'Not able to fetch data from national registry description',
   },
+  paymentCreateChargeFailedStillInProgressTitle: {
+    id:
+      'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressTitle',
+    defaultMessage: 'Greiðsla ennþá í vinnslu',
+    description: 'Not able to create payment title',
+  },
+  paymentCreateChargeFailedStillInProgressSummary: {
+    id:
+      'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressSummary',
+    defaultMessage: 'Greiðsla er enn í vinnslu. Vinsamlega reynið aftur síðar.',
+    description: 'Not able to create payment description',
+  },
 })
 export const coreDelegationsMessages = defineMessages({
+  delegationPersons: {
+    id: 'application.system:core.delegations.delegationPersons',
+    defaultMessage: 'Einstaklingar',
+    description: 'Delegations person in choose user',
+  },
+  delegationCompanies: {
+    id: 'application.system:core.delegations.delegationCompanies',
+    defaultMessage: 'Fyrirtæki',
+    description: 'Delegations company in choose user',
+  },
+  procurationHolder: {
+    id: 'application.system:core.delegations.procurationHolder',
+    defaultMessage: 'Prókúra',
+    description: 'Delegations procurationHolder',
+  },
+  personalRepresentative: {
+    id: 'application.system:core.delegations.personalRepresentative',
+    defaultMessage: 'Umboð',
+    description: 'Delegations personalRepresentative',
+  },
+  legalGuardian: {
+    id: 'application.system:core.delegations.legalGuardian',
+    defaultMessage: 'Forsjá',
+    description: 'Delegations legalGuardian',
+  },
+  custom: {
+    id: 'application.system:core.delegations.custom',
+    defaultMessage: 'Annað umboð',
+    description: 'Delegations custom',
+  },
   delegationScreenTitle: {
     id: 'application.system:core.delegations.delegationScreenTitle',
     defaultMessage: 'Umsóknaraðili',
@@ -619,5 +668,112 @@ export const coreErrorScreenMessages = defineMessages({
     id: 'application.system:core.errorScreen.application',
     defaultMessage: 'Umsókn',
     description: 'Error screen application',
+  },
+})
+
+export const coreHistoryMessages = defineMessages({
+  applicationApproved: {
+    id: 'application.system:core.history.applicationApproved',
+    defaultMessage: 'Umsókn samþykkt',
+    description: 'History application accepted',
+  },
+  applicationRejected: {
+    id: 'application.system:core.history.applicationRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'History application rejected',
+  },
+  applicationSent: {
+    id: 'application.system:core.history.applicationSent',
+    defaultMessage: 'Umsókn send',
+    description: 'History application sent',
+  },
+  applicationAssigned: {
+    id: 'application.system:core.history.applicationAssigned',
+    defaultMessage: 'Umsókn úthlutað yfirferðaraðila',
+    description: 'History application assigned',
+  },
+  attachmentsAdded: {
+    id: 'application.system:core.history.attachmentsAdded',
+    defaultMessage: 'Fylgigögnum bætt við',
+    description: 'History attachments added',
+  },
+  paymentStarted: {
+    id: 'application.system:core.history.paymentStarted',
+    defaultMessage: 'Greiðsluferli hafið',
+    description: 'History payment started',
+  },
+  paymentCancelled: {
+    id: 'application.system:core.history.paymentCancelled',
+    defaultMessage: 'Hætt við greiðslu',
+    description: 'History payment cancelled',
+  },
+  paymentAccepted: {
+    id: 'application.system:core.history.paymentAccepted',
+    defaultMessage: 'Greiðsla móttekin',
+    description: 'History payment accepted',
+  },
+  applicationStarted: {
+    id: 'application.system:core.history.applicationStarted',
+    defaultMessage: 'Umsókn hafin',
+    description: 'History application started',
+  },
+  applicationAborted: {
+    id: 'application.system:core.history.applicationAborted',
+    defaultMessage: 'Hætt var við umsókn',
+    description: 'History application aborted',
+  },
+  applicationReceived: {
+    id: 'application.system:core.history.applicationReceived',
+    defaultMessage: 'Umsókn móttekin',
+    description: 'History application received',
+  },
+})
+
+export const corePendingActionMessages = defineMessages({
+  paymentPendingTitle: {
+    id: 'application.system:core.pendingAction.paymentPending',
+    defaultMessage: 'Bíður Greiðslu',
+    description: 'Pending action payment pending',
+  },
+  paymentPendingDescription: {
+    id: 'application.system:core.pendingAction.paymentPendingDescription',
+    defaultMessage:
+      'Nauðsynlegt er að klára greiðsluferlið til þess að halda áfram',
+    description: 'Pending action payment pending description',
+  },
+  applicationReceivedTitle: {
+    id: 'application.system:core.pendingAction.applicationReceived',
+    defaultMessage: 'Umsókn móttekin',
+    description: 'Pending action application received',
+  },
+  applicationReceivedDescription: {
+    id: 'application.system:core.pendingAction.applicationReceivedDescription',
+    defaultMessage: 'Umsókn þín hefur verið móttekin',
+    description: 'Pending action application received description',
+  },
+  waitingForAssigneeTitle: {
+    id: 'application.system:core.pendingAction.waitingForAssigniee',
+    defaultMessage: 'Skráning yfirferðaraðila',
+    description: 'Pending action waiting for assigniee',
+  },
+  waitingForAssigneeDescription: {
+    id: 'application.system:core.pendingAction.waitingForAssignieeDescription',
+    defaultMessage: 'Umsóknin þín er í bið eftir úthlutun á yfirferðaraðila',
+    description: 'Pending action waiting for assigniee description',
+  },
+  waitingForReviewTitle: {
+    id: 'application.system:core.pendingAction.waitingForReview',
+    defaultMessage: 'Bíður eftir yfirferð',
+    description: 'Pending action waiting for review',
+  },
+  waitingForReviewDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewDescription',
+    defaultMessage: 'Umsóknin þín er í bið eftir yfirferð',
+    description: 'Pending action waiting for review description',
+  },
+  youNeedToReviewDescription: {
+    id: 'application.system:core.pendingAction.youNeedToReviewDescription',
+    defaultMessage: 'Beðið er eftir þínu samþykki á þessa umsókn',
+    description: 'Pending action you need to review description',
   },
 })

@@ -45,6 +45,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators = [],
+  mainOperator = '',
   ...props
 }) => {
   const { application, refetch, insurance = undefined } = props
@@ -67,7 +68,29 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
 
-  const [validateVehicle, { data, loading }] = useLazyQuery<
+  const doSubmitApplication = async () => {
+    const res = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: isLastReviewer(
+            reviewerNationalId,
+            application.answers,
+            coOwnersAndOperators,
+          )
+            ? DefaultEvents.SUBMIT
+            : DefaultEvents.APPROVE,
+          answers: getApproveAnswers(reviewerNationalId, application.answers),
+        },
+      },
+    })
+
+    if (res?.data) {
+      setStep && setStep('conclusion')
+    }
+  }
+
+  const [validateVehicleThenSubmit, { data, loading }] = useLazyQuery<
     any,
     { answers: OwnerChangeAnswers }
   >(
@@ -77,28 +100,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     {
       onCompleted: async (data) => {
         if (!data?.vehicleOwnerChangeValidation?.hasError) {
-          const res = await submitApplication({
-            variables: {
-              input: {
-                id: application.id,
-                event: isLastReviewer(
-                  reviewerNationalId,
-                  application.answers,
-                  coOwnersAndOperators,
-                )
-                  ? DefaultEvents.SUBMIT
-                  : DefaultEvents.APPROVE,
-                answers: getApproveAnswers(
-                  reviewerNationalId,
-                  application.answers,
-                ),
-              },
-            },
-          })
-
-          if (res?.data) {
-            setStep && setStep('conclusion')
-          }
+          await doSubmitApplication()
         }
       },
     },
@@ -118,7 +120,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     } else {
       setNoInsuranceError(false)
       if (isBuyer) {
-        validateVehicle({
+        validateVehicleThenSubmit({
           variables: {
             answers: {
               pickVehicle: {
@@ -136,13 +138,14 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
                 email: answers?.buyer?.email,
                 nationalId: answers?.buyer?.nationalId,
               },
-              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator
-                ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
-                .map((x) => ({
-                  email: x.email,
-                  nationalId: x.nationalId,
+              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
+                (x) => ({
+                  nationalId: x.nationalId!,
+                  email: x.email!,
                   type: x.type,
-                })),
+                  wasRemoved: x.wasRemoved,
+                }),
+              ),
               buyerMainOperator: answers?.buyerMainOperator
                 ? {
                     nationalId: answers.buyerMainOperator.nationalId,
@@ -153,28 +156,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
           },
         })
       } else {
-        const res = await submitApplication({
-          variables: {
-            input: {
-              id: application.id,
-              event: isLastReviewer(
-                reviewerNationalId,
-                application.answers,
-                coOwnersAndOperators,
-              )
-                ? DefaultEvents.SUBMIT
-                : DefaultEvents.APPROVE,
-              answers: getApproveAnswers(
-                reviewerNationalId,
-                application.answers,
-              ),
-            },
-          },
-        })
-
-        if (res?.data) {
-          setStep && setStep('conclusion')
-        }
+        await doSubmitApplication()
       }
     }
   }
@@ -203,6 +185,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
+          mainOperator={mainOperator}
           {...props}
         />
         <InsuranceSection

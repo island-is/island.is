@@ -6,6 +6,7 @@ import {
   AccordionListItem,
   CaseFilesAccordionItem,
   CommentsAccordionItem,
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -14,10 +15,6 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   useCase,
@@ -42,7 +39,7 @@ import {
 import {
   UploadState,
   useCourtUpload,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   formatDate,
   caseTypes,
@@ -95,10 +92,6 @@ const Overview = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.JUDGE_OVERVIEW}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={true}
@@ -137,6 +130,8 @@ const Overview = () => {
             Yfirlit kröfu um rannsóknarheimild
           </Text>
         </Box>
+        <CourtCaseInfo workingCase={workingCase} />
+
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
@@ -291,6 +286,7 @@ const Overview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>

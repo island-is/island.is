@@ -21,6 +21,10 @@ const PublishDateField = () => {
     })
   }, [sdk.entry, sdk.field])
 
+  useEffect(() => {
+    sdk.window.startAutoResizer()
+  }, [sdk.window])
+
   return <Box>{value ? new Date(value).toLocaleDateString('is-IS') : null}</Box>
 }
 

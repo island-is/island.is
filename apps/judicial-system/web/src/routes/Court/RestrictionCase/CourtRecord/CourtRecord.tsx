@@ -28,10 +28,6 @@ import {
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
   validateAndSendToServer,
   removeTabsValidateAndSet,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -145,8 +141,8 @@ export const CourtRecord: React.FC = () => {
     )
 
     if (
-      workingCase.type === CaseType.Custody ||
-      workingCase.type === CaseType.AdmissionToFacility
+      workingCase.type === CaseType.CUSTODY ||
+      workingCase.type === CaseType.ADMISSION_TO_FACILITY
     ) {
       autofillSessionBookings.push(
         `\n\n${formatMessage(
@@ -176,12 +172,12 @@ export const CourtRecord: React.FC = () => {
             caseType:
               workingCase.decision ===
               CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                ? CaseType.TravelBan
+                ? CaseType.TRAVEL_BAN
                 : workingCase.type,
           }),
         )
       }
-    } else if (workingCase.type === CaseType.TravelBan) {
+    } else if (workingCase.type === CaseType.TRAVEL_BAN) {
       autofillSessionBookings.push(
         `\n\n${formatMessage(
           m.sections.sessionBookings.autofillPresentationsTravelBan,
@@ -244,10 +240,6 @@ export const CourtRecord: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -535,6 +527,7 @@ export const CourtRecord: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_RULING_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.RESTRICTION_CASE_CONFIRMATION_ROUTE)

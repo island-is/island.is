@@ -17,13 +17,14 @@ import {
   ApplicationAttachments,
   AttachmentPaths,
   CriminalRecord,
+  DebtLessCertificateResult,
 } from './types/attachments'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
   YES,
 } from '@island.is/application/types'
-import { Info } from './types/application'
+import { Info, BankruptcyHistoryResult } from './types/application'
 import { getExtraData } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
@@ -33,7 +34,8 @@ import { OperatingLicenseFakeData } from '@island.is/application/templates/opera
 import { JudicialAdministrationService } from '@island.is/clients/judicial-administration'
 import { BANNED_BANKRUPTCY_STATUSES } from './constants'
 import { error } from '@island.is/application/templates/operating-license'
-
+import { isPerson } from 'kennitala'
+import { User } from '@island.is/auth-nest-tools'
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
   s3: S3
@@ -99,10 +101,38 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     }
   }
 
+  async getDebtLessCertificate(auth: User): Promise<DebtLessCertificateResult> {
+    const response = await this.financeService.getDebtLessCertificate(
+      auth.nationalId,
+      'IS',
+      auth,
+    )
+    if (!response?.debtLessCertificateResult) {
+      throw new TemplateApiError(
+        {
+          title: error.missingCertificateTitle,
+          summary: error.missingCertificateSummary,
+        },
+        400,
+      )
+    }
+
+    if (response?.error) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: response.error.message,
+        },
+        response.error.code,
+      )
+    }
+
+    return response.debtLessCertificateResult
+  }
+
   async debtLessCertificate({
     application,
     auth,
-    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     const fakeData = getValueViaPath<OperatingLicenseFakeData>(
       application.answers,
@@ -122,47 +152,18 @@ export class OperatingLicenseService extends BaseTemplateApiService {
             statusCode: 404,
           })
     }
-    const financeServiceLangMap = {
-      is: 'IS',
-      en: 'EN',
-    }
 
-    const response = await this.financeService.getDebtLessCertificate(
-      auth.nationalId,
-      financeServiceLangMap[currentUserLocale] ?? 'is',
-      auth,
-    )
-
-    if (response?.error) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.errorDataProvider,
-          summary: response.error.message,
-        },
-        response.error.code,
-      )
-    }
-
-    if (
-      response?.debtLessCertificateResult &&
-      !response.debtLessCertificateResult.debtLess
-    ) {
-      throw new TemplateApiError(
-        {
-          title: error.missingCertificateTitle,
-          summary: error.missingCertificateSummary,
-        },
-        400,
-      )
-    }
+    await this.getDebtLessCertificate(auth)
+    // User can owe under a million and should still pass so the status is checked with a pdf manualy by Sýslumenn
 
     return { success: true }
   }
 
   async courtBankruptcyCert({
     auth,
-  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+  }: TemplateApiModuleActionProps): Promise<BankruptcyHistoryResult> {
     const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
+
     for (const [_, value] of Object.entries(cert)) {
       if (
         value.bankruptcyStatus &&
@@ -177,7 +178,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         )
       }
     }
-    return { success: true }
+
+    return cert[0]
   }
 
   async createCharge({
@@ -253,7 +255,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
       const persons: Person[] = [applicant, ...actors]
 
-      const attachments = await this.getAttachments(application)
+      const attachments = await this.getAttachments(application, auth)
       const extraData = getExtraData(application)
       const result: DataUploadResponse = await this.syslumennService
         .uploadData(
@@ -264,20 +266,13 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataId,
         )
         .catch((e) => {
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
+          throw new Error(`Application submission failed ${e}`)
         })
       return {
         success: result.success,
-        orderId: '',
       }
     } catch (e) {
-      return {
-        success: false,
-        orderId: '',
-      }
+      throw new Error(`Application submission failed ${e}`)
     }
   }
 
@@ -304,17 +299,41 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
   private async getAttachments(
     application: ApplicationWithAttachments,
+    auth: User,
   ): Promise<Attachment[]> {
     const attachments: Attachment[] = []
 
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
 
-    const criminalRecord = await this.getCriminalRecord(application.applicant)
+    let criminalRecordSSN = application.applicant
 
-    attachments.push({
-      name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
-      content: criminalRecord.contentBase64,
-    })
+    if (!isPerson(application.applicant)) {
+      // Go through actors until a person is found
+      // if no person then an error is thrown in the next step
+      application.applicantActors.every((actor) => {
+        if (isPerson(actor)) {
+          criminalRecordSSN = actor
+          return false
+        }
+        return true
+      })
+    }
+
+    const criminalRecord = await this.getCriminalRecord(criminalRecordSSN)
+    if (criminalRecord.contentBase64) {
+      attachments.push({
+        name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
+        content: criminalRecord.contentBase64,
+      })
+    }
+
+    const debtLess = await this.getDebtLessCertificate(auth)
+    if (debtLess.certificate?.document) {
+      attachments.push({
+        name: `skuldleysisvottord_${application.applicant}_${dateStr}.pdf`,
+        content: debtLess.certificate?.document,
+      })
+    }
 
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]

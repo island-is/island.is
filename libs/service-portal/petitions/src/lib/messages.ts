@@ -100,6 +100,21 @@ export const m = defineMessages({
     defaultMessage: 'Sækja lista',
     description: '',
   },
+  copyLinkToList: {
+    id: 'sp.petitions:copyLinkToList',
+    defaultMessage: 'Afrita hlekk á lista',
+    description: '',
+  },
+  copyLinkSuccess: {
+    id: 'sp.petitions:copyLinkSuccess',
+    defaultMessage: 'Hlekkur afritaður',
+    description: '',
+  },
+  copyLinkError: {
+    id: 'sp.petitions:copyLinkSuccess',
+    defaultMessage: 'Ekki tókst að afrita hlekk',
+    description: '',
+  },
   date: {
     id: 'sp.petitions:date',
     defaultMessage: 'Dagsetning',
@@ -132,9 +147,14 @@ export const m = defineMessages({
     defaultMessage: 'Setja nafn mitt á þennan lista',
     description: '',
   },
-  modalButtonYes: {
-    id: 'sp.petitions:modalButtonYes',
-    defaultMessage: 'Já',
+  modalButtonCloseListYes: {
+    id: 'sp.petitions:modalButtonCloseListYes',
+    defaultMessage: 'Ljúka lista',
+    description: '',
+  },
+  modalButtonOpenListYes: {
+    id: 'sp.petitions:modalButtonOpenListYes',
+    defaultMessage: 'Opna lista',
     description: '',
   },
   modalButtonNo: {

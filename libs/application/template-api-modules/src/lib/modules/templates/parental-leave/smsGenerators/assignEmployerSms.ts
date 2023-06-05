@@ -1,5 +1,4 @@
 import {
-  getApplicationAnswers,
   getApplicationExternalData,
   getUnApprovedEmployers,
 } from '@island.is/application/templates/parental-leave'

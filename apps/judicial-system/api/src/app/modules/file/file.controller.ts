@@ -6,8 +6,6 @@ import {
   Header,
   Inject,
   Param,
-  ParseBoolPipe,
-  Query,
   Req,
   Res,
   UseGuards,
@@ -53,9 +51,9 @@ export class FileController {
     )
   }
 
-  @Get('caseFiles/:policeCaseNumber')
+  @Get('caseFilesRecord/:policeCaseNumber')
   @Header('Content-Type', 'application/pdf')
-  async getCaseFilesPdf(
+  async getCaseFilesRecordPdf(
     @Param('id') id: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentHttpUser() user: User,
@@ -68,7 +66,7 @@ export class FileController {
       user.id,
       AuditedAction.GET_REQUEST_PDF,
       id,
-      `caseFiles/${policeCaseNumber}`,
+      `caseFilesRecord/${policeCaseNumber}`,
       req,
       res,
     )
@@ -100,7 +98,6 @@ export class FileController {
   @Header('Content-Type', 'application/pdf')
   async getRulingPdf(
     @Param('id') id: string,
-    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
     @CurrentHttpUser() user: User,
     @Req() req: Request,
     @Res() res: Response,
@@ -114,7 +111,6 @@ export class FileController {
       'ruling',
       req,
       res,
-      useSigned,
     )
   }
 

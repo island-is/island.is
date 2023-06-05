@@ -215,7 +215,7 @@ function remainingJudgeCaseData() {
     validToDate: '2021-09-28T12:00:00.000Z',
     isolationToDate: '2021-09-10T12:00:00.000Z',
     conclusion: 'Addition to Conclusion',
-    accusedAppealDecision: CaseAppealDecision.APPEAL,
+    accusedAppealDecision: CaseAppealDecision.ACCEPT,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
     prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
@@ -721,6 +721,7 @@ describe('Case', () => {
       ...getCaseData(),
       origin: CaseOrigin.RVG,
       state: CaseState.DRAFT,
+      courtId: judge.institution?.id,
     })
       .then((value) => {
         dbCase = caseToCCase(value)
@@ -742,6 +743,7 @@ describe('Case', () => {
           ...judgeCaseData,
           judge,
           registrar,
+          court,
         } as CCase)
 
         // Check the data in the database

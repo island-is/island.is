@@ -23,7 +23,9 @@ test.describe('Search feature', () => {
     const testPhrase = 'umsókn'
     const page = await context.newPage()
     await page.goto('/')
-    await page.type('role=textbox[name="Leitaðu á Ísland.is"]', testPhrase)
+    await page
+      .getByRole('textbox', { name: 'Leitaðu á Ísland.is' })
+      .type(testPhrase, { delay: 100 })
     await page.keyboard.press('Enter')
     const testResults = page.locator('[data-testid="search-result"]')
     await expect(testResults).toHaveCountGreaterThan(9)
@@ -44,5 +46,9 @@ test.describe('Search feature', () => {
     await page.waitForLoadState('networkidle')
     const testResults = page.locator('[data-testid="search-result"]')
     await expect(testResults).toHaveCount(0)
+  })
+
+  test.skip('should search in Enlish', async () => {
+    return
   })
 })

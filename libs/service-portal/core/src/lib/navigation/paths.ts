@@ -74,6 +74,8 @@ export enum ServicePortalPath {
 
   // Heilsa
   HealthRoot = '/heilsa',
+  HealthTherapies = '/heilsa/thjalfun',
+  HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
 
   // Education
   EducationRoot = '/menntun',
@@ -81,6 +83,8 @@ export enum ServicePortalPath {
   EducationCareer = '/menntun/namsferill',
   EducationStudentAssessment = '/menntun/namsferill/:familyIndex/samraemd-prof',
   EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
+  EducationHaskoliGraduation = '/menntun/haskoli/brautskraning',
+  EducationHaskoliGraduationDetail = '/menntun/haskoli/brautskraning/:id',
 
   // Education License
   EducationLicense = '/leyfisbref',

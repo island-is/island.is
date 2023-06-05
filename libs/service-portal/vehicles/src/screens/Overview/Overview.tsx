@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
 import { gql, useQuery } from '@apollo/client'
 import { Query, VehiclesVehicle } from '@island.is/api/schema'
@@ -24,12 +24,9 @@ import {
 import { useUserInfo } from '@island.is/auth/react'
 
 import { VehicleCard } from '../../components/VehicleCard'
-import { messages } from '../../lib/messages'
+import { messages, urls } from '../../lib/messages'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { VEHICLE_HIDE_NAME } from '../../utils/constants'
 
 export const GET_USERS_VEHICLES = gql`
   query GetUsersVehicles {
@@ -139,23 +136,6 @@ const VehiclesOverview = () => {
     setFilterValue({ ...defaultFilterValues })
   }, [])
 
-  /**
-   * The PDF functionality module is feature flagged
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [modalFlagEnabled, setModalFlagEnabled] = useState<boolean>(false)
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalVehiclesPdfEnabled`,
-        false,
-      )
-      setModalFlagEnabled(ffEnabled as boolean)
-    }
-    isFlagEnabled()
-  }, [])
-
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -181,7 +161,7 @@ const VehiclesOverview = () => {
 
       {!loading && !error && filteredVehicles.length > 0 && (
         <Box marginBottom={3} display="flex" flexWrap="wrap">
-          {modalFlagEnabled && !loading && ownershipPdf && (
+          {!loading && ownershipPdf && (
             <Box marginRight={2} marginBottom={[1, 1, 1, 0]}>
               <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
@@ -214,7 +194,7 @@ const VehiclesOverview = () => {
           </Box>
           <Box marginBottom={[1, 1, 1, 0]}>
             <a
-              href={VEHICLE_HIDE_NAME}
+              href={formatMessage(urls.hideName)}
               target="_blank"
               rel="noopener noreferrer"
             >

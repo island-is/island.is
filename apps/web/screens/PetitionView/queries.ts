@@ -18,6 +18,7 @@ const GetGeneralPetitionList = gql`
       title
       description
       closedDate
+      openedDate
       meta
       created
       ownerName
@@ -47,6 +48,7 @@ export const useGetPetitionList = (listId: string) => {
   const {
     data: endorsementListsResponse,
     loading,
+    error,
   } = useQuery<PetitionListResponse>(GetGeneralPetitionList, {
     variables: {
       input: {
@@ -57,7 +59,7 @@ export const useGetPetitionList = (listId: string) => {
 
   const list =
     endorsementListsResponse?.endorsementSystemGetGeneralPetitionList ?? []
-  return { list, loading }
+  return { list, loading, error }
 }
 
 export const useGetPetitionListEndorsements = (listId: string) => {

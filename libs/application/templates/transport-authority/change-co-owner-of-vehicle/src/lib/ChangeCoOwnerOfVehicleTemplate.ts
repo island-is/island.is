@@ -15,7 +15,6 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { Features } from '@island.is/feature-flags'
 import {
   ApiActions,
   OwnerCoOwnersInformation,
@@ -68,10 +67,8 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.transportAuthorityChangeCoOwnerOfVehicleDelegations,
     },
   ],
-  featureFlag: Features.transportAuthorityChangeCoOwnerOfVehicle,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -334,7 +331,7 @@ const getNationalIdListOfReviewers = (application: Application) => {
     coOwners
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId)
+        reviewerNationalIdList.push(nationalId!)
         return nationalId
       })
     return reviewerNationalIdList

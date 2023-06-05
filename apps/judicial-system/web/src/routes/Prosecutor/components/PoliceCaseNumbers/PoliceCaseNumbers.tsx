@@ -10,6 +10,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { policeCaseNumber as m } from './PoliceCaseNumbers.strings'
 
@@ -44,6 +45,7 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
   const { user } = useContext(UserContext)
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
+  const isLOKECase = workingCase.origin === CaseOrigin.LOKE
 
   const [hasError, setHasError] = useState(false)
   const updatePoliceNumbers = useCallback(
@@ -134,13 +136,14 @@ export const PoliceCaseNumbers: React.FC<Props> = (props) => {
                 <Tag
                   variant="darkerBlue"
                   onClick={onRemove(policeCaseNumber)}
-                  aria-label={formatMessage(m.removeNumber, {
-                    policeCaseNumber,
-                  })}
+                  aria-label={`Eyða númeri ${policeCaseNumber}`}
+                  disabled={isLOKECase && index === 0}
                 >
                   <Box display="flex" alignItems="center">
                     <Box paddingRight={'smallGutter'}>{policeCaseNumber}</Box>
-                    <Icon icon="close" size="small" />
+                    {isLOKECase && index > 0 ? null : (
+                      <Icon icon="close" size="small" />
+                    )}
                   </Box>
                 </Tag>
               </Box>

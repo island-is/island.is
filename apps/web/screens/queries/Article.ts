@@ -58,6 +58,7 @@ export const GET_ARTICLE_QUERY = gql`
         slug
         link
         hasALandingPage
+        trackingDomain
         logo {
           url
           width
@@ -142,6 +143,7 @@ export const GET_CONTENT_SLUG = gql`
   query GetContentSlug($input: GetContentSlugInput!) {
     getContentSlug(input: $input) {
       id
+      activeTranslations
       title {
         en
         is

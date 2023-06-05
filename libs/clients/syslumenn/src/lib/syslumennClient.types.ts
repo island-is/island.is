@@ -24,6 +24,11 @@ export interface Lawyer {
   licenceType: string
 }
 
+export interface Broker {
+  name: string
+  nationalId: string
+}
+
 export interface DataUploadResponse {
   success: boolean
   message?: string
@@ -71,6 +76,34 @@ export interface OperatingLicense {
 
 export interface OperatingLicensesCSV {
   value: string
+}
+
+export interface AlcoholLicence {
+  licenceType?: string
+  licenceSubType?: string
+  licenseNumber?: string
+  issuedBy?: string
+  year?: number
+  validFrom?: Date
+  validTo?: Date
+  licenseHolder?: string
+  licenseResponsible?: string
+  office?: string
+  location?: string
+}
+
+export interface TemporaryEventLicence {
+  licenceType?: string
+  licenceSubType?: string
+  licenseNumber?: string
+  issuedBy?: string
+  year?: number
+  validFrom?: Date
+  validTo?: Date
+  licenseHolder?: string
+  licenseResponsible?: string
+  maximumNumberOfGuests?: number
+  estimatedNumberOfGuests?: number
 }
 
 /**
@@ -172,6 +205,9 @@ export type EstateMember = {
   nationalId: string
   relation: string
   dateOfBirth?: string
+  enabled?: boolean
+  phone?: string
+  email?: string
 }
 
 export type EstateAsset = {
@@ -179,6 +215,7 @@ export type EstateAsset = {
   assetNumber: string
   share: number
   enabled?: boolean
+  marketValue?: string
 }
 
 export interface EstateRegistrant extends EstateCommon {
@@ -201,6 +238,7 @@ interface EstateCommon {
   ships: EstateAsset[]
   flyers: EstateAsset[]
   cash: EstateAsset[]
+  guns: EstateAsset[]
   estateMembers: EstateMember[]
   caseNumber: string
   districtCommissionerHasWill: boolean

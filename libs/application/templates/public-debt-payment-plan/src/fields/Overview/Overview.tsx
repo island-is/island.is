@@ -90,9 +90,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     const distributions = Object.entries(paymentPlans)
       .map(([key, value]) => {
         if (value === undefined) return []
-        const distribution = JSON.parse(
-          value.distribution || '',
-        ) as Array<PaymentSchedulePayment>
+        const distribution = value.distribution as Array<PaymentSchedulePayment>
         if (value.id === 'Wagedection') {
           setWageDeduction({ paymentPlan: key, distribution })
           setWageDeductionTotalAmount(parseInt(value.totalAmount, 10))
