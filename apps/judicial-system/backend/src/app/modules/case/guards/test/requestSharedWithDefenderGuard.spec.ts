@@ -64,7 +64,7 @@ describe('Request Shared With Defender Guard', () => {
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toBe(
-        'Forbidden when request is not shared with defender˝',
+        'Forbidden when request is not shared with defender',
       )
     })
   })
