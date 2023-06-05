@@ -1,5 +1,3 @@
-import each from 'jest-each'
-
 import {
   ExecutionContext,
   ForbiddenException,
@@ -14,7 +12,7 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseReceivedForDefenderGuard } from '../caseReceivedForDefender.guard'
+import { LimitedAccessCaseReceivedGuard } from '../limitedAccessCaseReceived.guard'
 
 interface Then {
   result: boolean
@@ -23,13 +21,13 @@ interface Then {
 
 type GivenWhenThen = () => Then
 
-describe('Case Received For Defender Guard', () => {
+describe('Limited Access Case Received Guard', () => {
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {
     givenWhenThen = (): Then => {
-      const guard = new CaseReceivedForDefenderGuard()
+      const guard = new LimitedAccessCaseReceivedGuard()
       const then = {} as Then
 
       try {
@@ -70,7 +68,6 @@ describe('Case Received For Defender Guard', () => {
               type,
               state: CaseState.RECEIVED,
               courtDate: new Date(),
-              sendRequestToDefender: true,
             },
           }))
 
@@ -90,7 +87,6 @@ describe('Case Received For Defender Guard', () => {
             case: {
               type,
               state: CaseState.RECEIVED,
-              sendRequestToDefender: true,
             },
           }))
 
@@ -100,31 +96,7 @@ describe('Case Received For Defender Guard', () => {
         it('should throw ForbiddenException', () => {
           expect(then.error).toBeInstanceOf(ForbiddenException)
           expect(then.error.message).toBe(
-            'Forbidden for cases not received for defender',
-          )
-        })
-      })
-
-      describe('without defender access', () => {
-        let then: Then
-
-        beforeEach(() => {
-          mockRequest.mockImplementationOnce(() => ({
-            case: {
-              type,
-              state: CaseState.RECEIVED,
-              courtDate: new Date(),
-              sendRequestToDefender: false,
-            },
-          }))
-
-          then = givenWhenThen()
-        })
-
-        it('should throw ForbiddenException', () => {
-          expect(then.error).toBeInstanceOf(ForbiddenException)
-          expect(then.error.message).toBe(
-            'Forbidden for cases not received for defender',
+            'Forbidden for unreceived limited access case',
           )
         })
       })
@@ -166,7 +138,7 @@ describe('Case Received For Defender Guard', () => {
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toBe(
-        'Forbidden for cases not received for defender',
+        'Forbidden for unreceived limited access case',
       )
     })
   })

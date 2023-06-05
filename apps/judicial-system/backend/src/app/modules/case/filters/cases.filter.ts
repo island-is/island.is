@@ -183,7 +183,6 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
                   [Op.and]: [
                     { state: CaseState.RECEIVED },
                     { court_date: { [Op.not]: null } },
-                    { send_request_to_defender: true },
                   ],
                 },
                 { state: completedCaseStates },

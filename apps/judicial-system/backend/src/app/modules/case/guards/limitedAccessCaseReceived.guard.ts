@@ -13,7 +13,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 @Injectable()
-export class CaseReceivedForDefenderGuard implements CanActivate {
+export class LimitedAccessCaseReceivedGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
@@ -26,13 +26,12 @@ export class CaseReceivedForDefenderGuard implements CanActivate {
     if (
       !(
         theCase.state === CaseState.RECEIVED &&
-        (isIndictmentCase(theCase.type) ||
-          (theCase.courtDate && theCase.sendRequestToDefender))
+        (isIndictmentCase(theCase.type) || theCase.courtDate)
       ) &&
       !completedCaseStates.includes(theCase.state)
     ) {
       throw new ForbiddenException(
-        'Forbidden for cases not received for defender',
+        'Forbidden for unreceived limited access case',
       )
     }
 
