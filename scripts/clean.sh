@@ -70,7 +70,7 @@ clean_generated() {
     -o -path "*/gen/graphql.ts" \
     -o -name "possibleTypes.json" \
     -o -name "fragmentTypes.json" \
-    \) $(dry && echo -print || -delete)
+    \) $(dry && echo -print || echo -delete)
 
   find . -type d \( -path "*/gen/fetch" \
     \) -exec $(dry && echo 'echo') rm -rf '{}' +
