@@ -23,7 +23,7 @@ class MyDocument extends Document<Props> {
     return (
       <Html lang="is">
         <Head>
-          <link rel="manifest" href="/site.webmanifest"></link>
+          <link rel="manifest" href="/site.webmanifest" />
           <link rel="shortcut icon" href="/favicon.ico" />
           <script
             defer
