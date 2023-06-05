@@ -326,7 +326,11 @@ export class SyslumennService {
   }
 
   async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
-    return await this.getAsset(realEstateId, AssetType.RealEstate, mapAssetName)
+    return await this.getAsset(
+      realEstateId.toUpperCase(),
+      AssetType.RealEstate,
+      mapAssetName,
+    )
   }
 
   async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
