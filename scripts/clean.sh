@@ -13,6 +13,8 @@ log() {
   echo "$@" >&2
 }
 
+# Allow never being passed arguments
+# shellcheck disable=SC2120
 dry() {
   [[ $# -gt 0 ]] && log "$*"
   if [[ "$CLEAN_DRY" == "true" ]]; then
@@ -70,14 +72,14 @@ clean_generated() {
     -o -path "*/gen/graphql.ts" \
     -o -name "possibleTypes.json" \
     -o -name "fragmentTypes.json" \
-    \) $(dry && echo -print || echo -delete)
+    \) "$(dry && echo -print || echo -delete)"
 
   find . -type d \( -path "*/gen/fetch" \
-    \) -exec $(dry && echo 'echo') rm -rf '{}' +
+    \) -exec "$(dry && echo 'echo')" rm -rf '{}' +
 }
 
 clean_caches() {
-  dry "Removing: ${CLEAN_CACHES_LIST[*]}" || rm -rf "${CLEAN_CACHES_LIST[@]}"
+  dry || rm -rf "${CLEAN_CACHES_LIST[@]}"
 }
 
 clean_yarn() {
@@ -85,15 +87,14 @@ clean_yarn() {
     log "No .yarn folder"
     return
   fi
-  if [[ .yarn/* == '.yarn/*' ]]; then
-    log "Nothing in .yarn folder"
-    return
-  fi
   for f in ./.yarn/*; do
+    if [[ "$f" == '.yarn/*' ]]; then
+      log "Nothing in .yarn folder"
+      return
+    fi
     fname="${f##*.yarn/}"
-    log " \"${CLEAN_YARN_IGNORES_LIST[*]}\" =~ $fname "
-    if ! [[ "${CLEAN_YARN_IGNORES_LIST[*]}" =~ "${fname}" ]]; then
-      dry "Removing $f" || rm -rf "$f"
+    if ! [[ "${CLEAN_YARN_IGNORES_LIST[*]}" =~ ${fname} ]]; then
+      dry || rm -rf "$f"
     fi
   done
 }
