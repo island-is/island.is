@@ -76,7 +76,9 @@ export const createPkPassDataInput = (
                 curr.dateTo ? format(curr.dateTo, 'dd-MM-yyy') : ''
               } \n${
                 curr.comment
-                  ? ' - Athugasemdir: ' +
+                  ? ' - Tákntölur: ' +
+                    curr.comment +
+                    ' : ' +
                     (remarks.length
                       ? remarks.find((r) => r.index === curr.comment)?.name ??
                         ''
@@ -89,7 +91,7 @@ export const createPkPassDataInput = (
         : '',
     },
     {
-      identifier: 'athugasemdir',
+      identifier: 'takntolur',
       value: license.comments
         ? license.comments.map((c) => c.comment).join(' ')
         : '',
