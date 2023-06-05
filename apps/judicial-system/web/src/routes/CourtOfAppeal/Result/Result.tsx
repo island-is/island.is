@@ -17,13 +17,12 @@ import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 
 import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion'
-
+import { titleForCase } from '@island.is/judicial-system-web/src/components/OverviewHeader/OverviewHeader'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
 import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
-import { titleForCase } from '@island.is/judicial-system-web/src/components/OverviewHeader/OverviewHeader'
 
 const CourtOfAppealResult: React.FC = () => {
   const {

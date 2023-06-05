@@ -11,7 +11,6 @@ import {
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { core } from '@island.is/judicial-system-web/messages'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   CaseAppealDecision,
   CaseDecision,

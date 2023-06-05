@@ -19,10 +19,10 @@ import Conclusion from '@island.is/judicial-system-web/src/components/Conclusion
 import * as constants from '@island.is/judicial-system/consts'
 import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
+import { titleForCase } from '@island.is/judicial-system-web/src/components/OverviewHeader/OverviewHeader'
 
 import { core } from '@island.is/judicial-system-web/messages'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { titleForCase } from '@island.is/judicial-system-web/src/components/OverviewHeader/OverviewHeader'
 
 const CourtOfAppealOverview: React.FC = () => {
   const {
