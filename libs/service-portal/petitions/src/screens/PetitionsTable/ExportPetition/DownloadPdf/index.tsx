@@ -114,7 +114,7 @@ export const pdfStyles = StyleSheet.create({
   },
   tableView: {
     paddingTop: 35,
-    borderTop: `1px solid ${dark200}`
+    borderTop: `1px solid ${dark200}`,
   },
   tableRow: {
     flexDirection: 'row',
