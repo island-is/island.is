@@ -83,42 +83,34 @@ export class ClientsService extends MultiEnvironmentService {
     tenantId: string,
     clientId: string,
     includeArchived = false,
-  ): Promise<Client> {
-    const clients = await Promise.all([
-      this.adminDevApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({
+  ): Promise<Client | null> {
+    const settledClientsPromises = await Promise.allSettled(
+      environments.map(async (environment) =>
+        this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meClientsControllerFindByTenantIdAndClientId({
           tenantId,
           clientId,
           includeArchived,
-        })
-        .catch((error) => this.handleError(error, Environment.Development)),
-      this.adminStagingApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({
-          tenantId,
-          clientId,
-          includeArchived,
-        })
-        .catch((error) => this.handleError(error, Environment.Staging)),
-      this.adminProdApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({
-          tenantId,
-          clientId,
-          includeArchived,
-        })
-        .catch((error) => this.handleError(error, Environment.Production)),
-    ])
+        }),
+      ),
+    )
 
-    const clientEnvs: ClientEnvironment[] = []
-    for (const [index, env] of environments.entries()) {
-      const client = clients[index]
-      if (client) {
-        clientEnvs.push({
+    const clientEnvs: ClientEnvironment[] = this.handleSettledPromises(
+      settledClientsPromises,
+      {
+        mapper: (client, index) => ({
           ...client,
-          id: this.formatClientId(clientId, env),
-          environment: env,
-        })
-      }
-    }
+          id: this.formatClientId(clientId, environments[index]),
+          environment: environments[index],
+        }),
+        prefixErrorMessage: `Failed to find application ${clientId}`,
+      },
+    )
+
+    // If all no client is found for all environments then we return null
+    if (clientEnvs.length === 0) return null
 
     return {
       clientId,

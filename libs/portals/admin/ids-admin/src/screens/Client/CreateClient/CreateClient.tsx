@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Form,
   useActionData,
@@ -20,6 +20,7 @@ import { AuthAdminClientType } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
+import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../../../lib/messages'
 import { CreateClientResult } from './CreateClient.action'
@@ -29,7 +30,6 @@ import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { parseID } from '../../../utils/forms'
 import { authAdminEnvironments } from '../../../utils/environments'
 import { useGetClientAvailabilityLazyQuery } from './CreateClient.generated'
-import { useDelayedFetch } from '../../../hooks/useDelayedFetch'
 
 const clientTypes = [
   AuthAdminClientType.web,
@@ -48,10 +48,7 @@ type InputState = {
 export default function CreateClient() {
   const navigate = useNavigate()
   const { isLoading, isSubmitting } = useSubmitting()
-  const { fetchData, setTempData } = useDelayedFetch()
-
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
-
   const actionData = useActionData() as CreateClientResult
   const { formatMessage } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
@@ -61,9 +58,6 @@ export default function CreateClient() {
     dirty: false,
   }
 
-  const [idValidated, setIdValidated] = useState<boolean>(false)
-  const [idAvailable, setIdAvailable] = useState<boolean>(false)
-
   const [clientType, setClientState] = useState<AuthAdminClientType>(
     AuthAdminClientType.web,
   )
@@ -71,11 +65,26 @@ export default function CreateClient() {
     initialClientIdState,
   )
 
-  useEffect(() => {
-    if (idValidated && fetchData !== null && fetchData !== '') {
-      validateUniqueClientId()
-    }
-  }, [fetchData])
+  const [
+    getClientAvailabilityQuery,
+    { data: availabilityData },
+  ] = useGetClientAvailabilityLazyQuery()
+  const clientIdAlreadyExists = isDefined(availabilityData?.authAdminClient)
+
+  const validateUniqueClientId = async () => {
+    const clientId = clientIdState.value
+    if (!clientIdState.value) return
+
+    await getClientAvailabilityQuery({
+      variables: {
+        input: {
+          clientId,
+          tenantId: tenant.id,
+          includeArchived: true,
+        },
+      },
+    })
+  }
 
   const onNameChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -89,7 +98,6 @@ export default function CreateClient() {
         prefix,
       }),
     })
-    setTempData(e.target.value)
   }
 
   const onClientIdChange = (
@@ -104,7 +112,6 @@ export default function CreateClient() {
       }),
       dirty: true,
     })
-    setTempData(val)
   }
 
   const getRadioLabels = (clientType: AuthAdminClientType) => {
@@ -137,38 +144,6 @@ export default function CreateClient() {
       }),
     )
   }
-
-  const [
-    getClientAvailabilityQuery,
-    { error, data },
-  ] = useGetClientAvailabilityLazyQuery()
-
-  const validateUniqueClientId = async () => {
-    const clientId = clientIdState.value
-    if (!clientId) return
-
-    await getClientAvailabilityQuery({
-      variables: {
-        input: {
-          clientId,
-          tenantId: tenant.id,
-          includeArchived: true,
-        },
-      },
-    })
-    setTempData(null)
-  }
-
-  useEffect(() => {
-    if (!data && !error) return
-
-    setIdValidated(true)
-    if (!data) {
-      setIdAvailable(true)
-    } else {
-      setIdAvailable(false)
-    }
-  }, [data, error])
 
   return (
     <Modal
@@ -211,11 +186,15 @@ export default function CreateClient() {
               name="clientId"
               label={formatMessage(m.clientId)}
               size="sm"
-              hasError={idValidated && !idAvailable}
+              hasError={clientIdAlreadyExists}
               value={clientIdState.value}
               onChange={onClientIdChange}
               onBlur={validateUniqueClientId}
-              errorMessage={formatErrorMessage(actionData?.errors?.clientId)}
+              errorMessage={
+                clientIdAlreadyExists
+                  ? formatMessage(m.clientIdAlreadyExists)
+                  : formatErrorMessage(actionData?.errors?.clientId)
+              }
             />
           </Box>
         </Box>
@@ -290,7 +269,7 @@ export default function CreateClient() {
             {formatMessage(m.cancel)}
           </Button>
           <Button
-            disabled={!idAvailable}
+            disabled={clientIdAlreadyExists || availabilityData === undefined}
             type="submit"
             loading={isLoading || isSubmitting}
           >

@@ -39,11 +39,11 @@ export class ClientsResolver {
     return this.clientsService.getClients(user, input.tenantId)
   }
 
-  @Query(() => Client, { name: 'authAdminClient' })
+  @Query(() => Client, { name: 'authAdminClient', nullable: true })
   getClientById(
     @CurrentUser() user: User,
     @Args('input') input: ClientInput,
-  ): Promise<Client> {
+  ): Promise<Client | null> {
     return this.clientsService.getClientById(
       user,
       input.tenantId,
