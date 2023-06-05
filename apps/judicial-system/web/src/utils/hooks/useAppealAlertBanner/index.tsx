@@ -4,7 +4,6 @@ import router from 'next/router'
 
 import { TempCase } from '@island.is/judicial-system-web/src/types'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import { Button, Text } from '@island.is/island-ui/core'
 import {
@@ -14,6 +13,7 @@ import {
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
+  CaseAppealDecision,
   CaseAppealRulingDecision,
   isCourtRole,
   isProsecutionRole,
@@ -170,13 +170,16 @@ const useAppealAlertBanner = (
   // When case has been appealed by prosecuor or defender
   else if (hasBeenAppealed) {
     title = formatMessage(strings.statementTitle)
-    description = formatMessage(strings.statementDescription, {
-      actor:
-        appealedByRole === UserRole.PROSECUTOR
-          ? formatMessage(core.prosecutor)
-          : formatMessage(core.defender),
-      appealDate: formatDate(appealedDate, 'PPPp'),
-    })
+    description =
+      workingCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+      workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
+        ? formatMessage(strings.appealedInCourtStatementDescription, {
+            appealedByProsecutor: appealedByRole === UserRole.PROSECUTOR,
+          })
+        : formatMessage(strings.statementDescription, {
+            appealedByProsecutor: appealedByRole === UserRole.PROSECUTOR,
+            appealDate: formatDate(appealedDate, 'PPPp'),
+          })
     if (isProsecutionRoleUser || isDefenderRoleUser) {
       child = hasCurrentUserSentStatement
         ? (child = (
