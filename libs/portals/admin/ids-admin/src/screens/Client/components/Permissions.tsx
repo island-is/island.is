@@ -9,7 +9,7 @@ import { getTranslatedValue } from '@island.is/portals/core'
 import { m } from '../../../lib/messages'
 import { ClientFormTypes } from '../EditClient.schema'
 import { ShadowBox } from '../../../components/ShadowBox/ShadowBox'
-import { AddPermissions } from '../../../components/forms/AddPermissions/AddPermissions'
+import { AddPermissions } from './AddPermissions/AddPermissions'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard'
@@ -20,8 +20,8 @@ interface PermissionsProps {
 
 function Permissions({ allowedScopes }: PermissionsProps) {
   const { formatMessage, locale } = useLocale()
+  const { tenant } = useParams()
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const params = useParams()
   const [permissions, setPermissions] = useEnvironmentState<
     AuthAdminClientAllowedScope[]
   >(allowedScopes ?? [])
@@ -42,8 +42,6 @@ function Permissions({ allowedScopes }: PermissionsProps) {
       setRemovedScopes([])
     }
   }, [actionData])
-
-  const tenant = params['tenant']
 
   const handleModalOpen = () => {
     setIsModalVisible(true)

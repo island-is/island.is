@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:tenants',
     defaultMessage: 'Tenants',
   },
+  tenant: {
+    id: 'ap.ids-admin:tenant',
+    defaultMessage: 'Tenant',
+  },
   errorLoadingData: {
     id: 'ap.ids-admin:error-loading-data',
     defaultMessage: 'Error loading data. Please try again later.',
@@ -543,6 +547,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permissions-modal-description',
     defaultMessage:
       'Here you can add permissions from your own tenant. Permissions from other tenants can be granted to the application from the other tenant.',
+  },
+  permissionsModalNoScopes: {
+    id: 'ap.ids-admin:permission-modal-no-scopes',
+    defaultMessage: 'No scopes available',
   },
   successfullySaved: {
     id: 'ap.ids-admin:successfully-saved',
