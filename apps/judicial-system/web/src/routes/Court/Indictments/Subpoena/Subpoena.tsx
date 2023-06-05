@@ -111,9 +111,7 @@ const Subpoena: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
-            handleNavigationTo(
-              constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
-            )
+            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!stepIsValid}
