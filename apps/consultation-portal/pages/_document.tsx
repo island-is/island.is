@@ -25,6 +25,11 @@ class MyDocument extends Document<Props> {
         <Head>
           <link rel="manifest" href="/site.webmanifest"></link>
           <link rel="shortcut icon" href="/favicon.ico" />
+          <script
+            defer
+            data-domain="island.is/samradsgatt"
+            src="https://plausible.io/js/script.js"
+          />
         </Head>
         <body>
           <Main />
