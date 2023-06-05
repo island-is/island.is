@@ -21,6 +21,7 @@ type Notifier = {
 type EstateMember = {
   name: string
   ssn?: string
+  nationalId?: string
   relation?: string
   dateOfBirth?: string
   foreignCitizenShip?: 'yes' | 'no'
@@ -38,6 +39,7 @@ type Representative = {
 type AssetFrame = {
   assetNumber?: string
   description?: string
+  marketValue?: string | number
 }
 
 type BankAccount = {
@@ -64,24 +66,27 @@ type InfoValueField = {
   value?: string
 }
 
-export interface UploadData {
-  [key: string]:
-    | string
-    | Notifier
-    | EstateMember[]
-    | AssetFrame[]
-    | number
-    | BankAccount[]
-    | Stock[]
-    | Debt[]
-    | Representative
-    | 'Yes'
-    | 'No'
-    | InfoValueField
+type Claim = {
+  publisher?: string
+  value?: string | number
+}
+
+type Deceased = {
+  name: string
+  ssn: string
+  dateOfDeath: string
+  address: string
+}
+
+export type UploadData = {
+  applicationType: string
+  deceased: Deceased
+  claims: Claim[]
   caseNumber: string
   notifier: Notifier
   estateMembers: EstateMember[]
   assets: AssetFrame[]
+  guns: AssetFrame[]
   vehicles: AssetFrame[]
   inventory: InfoValueField
   bankAccounts: BankAccount[]
@@ -89,4 +94,9 @@ export interface UploadData {
   moneyAndDeposit: InfoValueField
   otherAssets: InfoValueField
   debts: Debt[]
+  representative?: Representative
+  districtCommissionerHasWill: string
+  settlement: string
+  remarksOnTestament: string
+  dividedEstate: string
 }

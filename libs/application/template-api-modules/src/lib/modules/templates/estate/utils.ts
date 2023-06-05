@@ -60,6 +60,12 @@ export const filterAndRemoveRepeaterMetadata = <T>(
   return elements
 }
 
+const moveDownBy = (n: number, doc: PDFKit.PDFDocument) => {
+  for (let i = 0; i < n; i++) {
+    doc.moveDown()
+  }
+}
+
 export const transformUploadDataToPDFStream = async (
   data: UploadData,
   applicationId: string,
@@ -70,6 +76,17 @@ export const transformUploadDataToPDFStream = async (
     subtitle: 16,
     text: 8,
   }
+
+  doc.fontSize(fontSizes.title).text(data.applicationType, { align: 'center' })
+  moveDownBy(3, doc)
+
+  doc.fontSize(fontSizes.subtitle).text('Hinn látni')
+  doc.fontSize(fontSizes.text)
+  doc.text(`Nafn: ${data.deceased.name}`)
+  doc.text(`Kennitala: ${data.deceased.ssn}`)
+  doc.text(`Dánardagur: ${data.deceased.dateOfDeath}`)
+  doc.text(`Heimilisfang: ${data.deceased.address}`)
+  moveDownBy(2, doc)
 
   doc.fontSize(fontSizes.title).text('Tilkynnandi')
   doc.fontSize(fontSizes.text)
@@ -82,14 +99,41 @@ export const transformUploadDataToPDFStream = async (
     data.notifier.phoneNumber ?? 'Símanúmer vantar',
   )
   fieldWithValue(doc, 'Netfang', data.notifier.email ?? 'Netfang vantar')
-  doc.moveDown()
-  doc.moveDown()
+  moveDownBy(2, doc)
+
+  if (data.representative) {
+    doc.fontSize(fontSizes.title).text('Fulltrúi')
+    doc.fontSize(fontSizes.text)
+
+    fieldWithValue(doc, 'Nafn', data.representative.name ?? 'Nafn vantar')
+    fieldWithValue(
+      doc,
+      'Kennitala',
+      data.representative.ssn ?? 'Kennitala vantar',
+    )
+    fieldWithValue(
+      doc,
+      'Símanúmer',
+      data.representative.phoneNumber ?? 'Símanúmer vantar',
+    )
+    fieldWithValue(
+      doc,
+      'Netfang',
+      data.representative.email ?? 'Netfang vantar',
+    )
+    moveDownBy(2, doc)
+  }
 
   data.assets.forEach((asset, index) => {
     doc.fontSize(fontSizes.subtitle).text(`Eign ${index + 1}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(doc, 'Númer', asset.assetNumber ?? 'Eignanúmer vantar')
     fieldWithValue(doc, 'Lýsing', asset.description ?? 'Lýsingu vantar')
+    fieldWithValue(
+      doc,
+      'Markaðsvirði',
+      asset.marketValue?.toString() ?? 'Markaðsvirði vantar',
+    )
     doc.moveDown()
   })
   doc.moveDown()
@@ -109,7 +153,7 @@ export const transformUploadDataToPDFStream = async (
     )
     doc.moveDown()
   })
-  doc.moveDown()
+  moveDownBy(2, doc)
 
   data.debts.forEach((debt, index) => {
     doc.fontSize(fontSizes.subtitle).text(`Skuld ${index + 1}`)
@@ -131,13 +175,17 @@ export const transformUploadDataToPDFStream = async (
     )
     doc.moveDown()
   })
-  doc.moveDown()
+  moveDownBy(2, doc)
 
   data.estateMembers.forEach((estateMember, index) => {
     doc.fontSize(fontSizes.subtitle).text(`Erfingi ${index + 1}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(doc, 'Nafn', estateMember.name ?? 'Nafn vantar')
-    fieldWithValue(doc, 'Kennitala', estateMember.ssn ?? 'Kennitölu vantar')
+    fieldWithValue(
+      doc,
+      'Kennitala',
+      estateMember.nationalId ?? 'Kennitölu vantar',
+    )
     fieldWithValue(
       doc,
       'Netfang',
@@ -151,47 +199,69 @@ export const transformUploadDataToPDFStream = async (
     fieldWithValue(doc, 'Tengsl', estateMember.relation ?? 'Tengsl vantar')
     doc.moveDown()
   })
-  doc.moveDown()
+  moveDownBy(2, doc)
 
-  doc.fontSize(fontSizes.subtitle).text('Innbú')
-  fieldWithValue(
-    doc,
-    'Upplýsingar',
-    data.inventory.info ?? 'Upplýsingar vantar',
-  )
-  fieldWithValue(
-    doc,
-    'Verðgildi',
-    data.inventory.value?.toString() ?? 'Verðgildi vantar',
-  )
-  doc.moveDown()
-  doc.moveDown()
+  data.guns.forEach((gun, index) => {
+    doc.fontSize(fontSizes.subtitle).text(`Vopn ${index + 1}`)
+    doc.fontSize(fontSizes.text)
+    fieldWithValue(doc, 'Númer', gun.assetNumber ?? 'Númer vantar')
+    fieldWithValue(doc, 'Lýsing', gun.description ?? 'Lýsingu vantar')
+    fieldWithValue(
+      doc,
+      'Markaðsvirði',
+      gun.marketValue?.toString() ?? 'Markaðsvirði vantar',
+    )
+    doc.moveDown()
+  })
+  moveDownBy(2, doc)
 
-  doc.fontSize(fontSizes.subtitle).text('Peningar eða bankahólf')
-  fieldWithValue(
-    doc,
-    'Upplýsingar',
-    data.moneyAndDeposit.info ?? 'Upplýsingar vantar',
-  )
-  fieldWithValue(
-    doc,
-    'Verðgildi',
-    data.moneyAndDeposit.value?.toString() ?? 'Verðgildi vantar',
-  )
-  doc.moveDown()
-  doc.moveDown()
+  if (data.inventory.info) {
+    doc.fontSize(fontSizes.subtitle).text('Innbú')
+    doc.fontSize(fontSizes.text)
+    fieldWithValue(
+      doc,
+      'Upplýsingar',
+      data.inventory.info ?? 'Upplýsingar vantar',
+    )
+    fieldWithValue(
+      doc,
+      'Verðgildi',
+      data.inventory.value?.toString() ?? 'Verðgildi vantar',
+    )
+    moveDownBy(2, doc)
+  }
 
-  doc.fontSize(fontSizes.subtitle).text('Aðrar eignir')
-  fieldWithValue(
-    doc,
-    'Upplýsingar',
-    data.otherAssets.info ?? 'Upplýsingar vantar',
-  )
-  fieldWithValue(
-    doc,
-    'Verðgildi',
-    data.otherAssets.value?.toString() ?? 'Verðgildi vantar',
-  )
+  if (data.moneyAndDeposit.info) {
+    doc.fontSize(fontSizes.subtitle).text('Peningar eða bankahólf')
+    doc.fontSize(fontSizes.text)
+    fieldWithValue(
+      doc,
+      'Upplýsingar',
+      data.moneyAndDeposit.info ?? 'Upplýsingar vantar',
+    )
+    fieldWithValue(
+      doc,
+      'Verðgildi',
+      data.moneyAndDeposit.value?.toString() ?? 'Verðgildi vantar',
+    )
+    moveDownBy(2, doc)
+  }
+
+  if (data.otherAssets.info) {
+    doc.fontSize(fontSizes.subtitle).text('Aðrar eignir')
+    doc.fontSize(fontSizes.text)
+    fieldWithValue(
+      doc,
+      'Upplýsingar',
+      data.otherAssets.info ?? 'Upplýsingar vantar',
+    )
+    fieldWithValue(
+      doc,
+      'Verðgildi',
+      data.otherAssets.value?.toString() ?? 'Verðgildi vantar',
+    )
+    moveDownBy(2, doc)
+  }
 
   data.stocks.forEach((stock, index) => {
     doc.fontSize(fontSizes.subtitle).text(`Verðbréf ${index + 1}`)
@@ -211,27 +281,50 @@ export const transformUploadDataToPDFStream = async (
     fieldWithValue(doc, 'Virði', stock.value?.toString() ?? 'Virði vantar')
     doc.moveDown()
   })
-  doc.moveDown()
+  moveDownBy(2, doc)
 
   data.vehicles.forEach((vehicle, index) => {
     doc.fontSize(fontSizes.subtitle).text(`Farartæki ${index + 1}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(doc, 'Lýsing', vehicle.description ?? 'Lýsingu vantar')
     fieldWithValue(doc, 'Númer', vehicle.assetNumber ?? 'Númer vantar')
+    fieldWithValue(
+      doc,
+      'Markaðsvirði',
+      vehicle.marketValue?.toString() ?? 'Markaðsvirði vantar',
+    )
     doc.moveDown()
   })
-  doc.moveDown()
-  doc.moveDown()
+  moveDownBy(2, doc)
+
+  doc.fontSize(fontSizes.subtitle).text('Annað')
+  doc.fontSize(fontSizes.text)
+  if (data.districtCommissionerHasWill) {
+    fieldWithValue(
+      doc,
+      'Erfðaskrá hjá sýslumanni',
+      data.districtCommissionerHasWill,
+    )
+  }
+  if (data.settlement) {
+    fieldWithValue(doc, 'Kaupmáli', data.settlement)
+  }
+  if (data.remarksOnTestament) {
+    fieldWithValue(doc, 'Athugasemdir fyrir erfðaskrá', data.remarksOnTestament)
+  }
+  moveDownBy(2, doc)
 
   doc
-    .fontSize(fontSizes.text)
     .text(
       'Þetta skjal var framkallað með sjálfvirkum hætti á island.is þann:' +
         new Date().toLocaleDateString('is-IS'),
     )
 
     .moveDown()
-    .text(`Kenninúmer umsóknar: ${applicationId}`)
+    .text(`Kenninúmer umsóknar hjá island.is: ${applicationId}`)
+
+    .moveDown()
+    .text(`Kenninúmer umsóknar hjá sýslumanni: ${data.caseNumber}`)
 
   doc.end()
 
