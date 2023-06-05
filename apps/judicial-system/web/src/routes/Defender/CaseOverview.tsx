@@ -38,7 +38,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
 import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
 import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
-import { titleForCase } from '../../utils/formHelper'
 
 import { defenderCaseOverview as m } from './CaseOverview.strings'
 import Conclusion from '../../components/Conclusion/Conclusion'
