@@ -1,8 +1,22 @@
+import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const buttonWrapper = style({
   zIndex: 1,
-  position: 'absolute',
-  right: 12,
-  bottom: 125,
+})
+
+export const menuItem = style({
+  textDecoration: 'none',
+  transition: 'color .2s',
+  fontSize: 14,
+  fontWeight: 600,
+  selectors: {
+    '&:hover, &:focus': {
+      textDecoration: 'none',
+      color: theme.color.blue400,
+      outline: 'none',
+      border: 'none',
+      boxShadow: 'none',
+    },
+  },
 })

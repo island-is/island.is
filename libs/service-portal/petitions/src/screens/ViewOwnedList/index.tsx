@@ -285,7 +285,8 @@ const ViewOwnedList = () => {
           </Box>
 
           <PetitionsTable
-            petitions={petitionEndorsements}
+            petition={petition}
+            petitionSigners={petitionEndorsements}
             listId={listId}
             canEdit={true}
           />

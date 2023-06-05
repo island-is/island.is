@@ -16,17 +16,19 @@ const PetitionsTable = (data: any) => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [listOfPetitions, setPetitions] = useState(data.petitions?.data ?? [])
+  const [petitionSigners, setPetitionSigners] = useState(
+    data.petitionSigners?.data ?? [],
+  )
 
   const handlePagination = (page: number, petitions: any) => {
     setPage(page)
     setTotalPages(pages(petitions?.length))
-    setPetitions(paginate(petitions, PAGE_SIZE, page))
+    setPetitionSigners(paginate(petitions, PAGE_SIZE, page))
   }
 
   useEffect(() => {
-    setPetitions(data.petitions?.data ?? [])
-    handlePagination(1, data.petitions?.data ?? [])
+    setPetitionSigners(data.petitionSigners?.data ?? [])
+    handlePagination(1, data.petitionSigners?.data ?? [])
   }, [data])
 
   return (
@@ -35,8 +37,10 @@ const PetitionsTable = (data: any) => {
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         {data.canEdit && (
           <DropdownExport
+            petition={data.petition}
+            petitionSigners={data.petitionSigners}
             petitionId={data.listId}
-            onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
+            onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
           />
         )}
       </Box>
@@ -52,7 +56,7 @@ const PetitionsTable = (data: any) => {
             </T.Row>
           </T.Head>
           <T.Body>
-            {listOfPetitions?.map((petition: any) => {
+            {petitionSigners?.map((petition: any) => {
               return (
                 <T.Row key={petition.id}>
                   <T.Data>{formatDate(petition.created)}</T.Data>
@@ -70,7 +74,7 @@ const PetitionsTable = (data: any) => {
           </T.Body>
         </T.Table>
 
-        {listOfPetitions && !!listOfPetitions.length ? (
+        {petitionSigners && !!petitionSigners.length ? (
           <Pagination
             page={page}
             totalPages={totalPages}
@@ -78,7 +82,9 @@ const PetitionsTable = (data: any) => {
               <Box
                 cursor="pointer"
                 className={className}
-                onClick={() => handlePagination(page, data.petitions?.data)}
+                onClick={() =>
+                  handlePagination(page, data.petitionSigners?.data)
+                }
               >
                 {children}
               </Box>

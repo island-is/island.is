@@ -6,10 +6,15 @@ import { m } from '../../../lib/messages'
 import { downloadCSV } from './downloadCSV'
 import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import { menuItem } from './styles.css'
+import { Endorsement, EndorsementList } from '../../../types/schema'
+import MyPdfDocument from './DownloadPdf'
 
 interface Props {
+  petition: EndorsementList
+  petitionSigners: Array<Endorsement>
   petitionId: string
-  onGetPDF?: () => void
   onGetCSV: () => void
   dropdownItems?: {
     href?: string
@@ -36,8 +41,9 @@ export const getCSV = async (data: any[], fileName: string) => {
 const baseUrl = `${document.location.origin}/undirskriftalistar/`
 
 const DropdownExport: FC<Props> = ({
+  petition,
+  petitionSigners,
   petitionId,
-  onGetPDF,
   onGetCSV,
   dropdownItems = [],
 }) => {
@@ -66,8 +72,27 @@ const DropdownExport: FC<Props> = ({
         menuLabel={formatMessage(m.downloadPetitions)}
         items={[
           {
-            onClick: () => onGetPDF && onGetPDF(),
             title: 'Sem PDF',
+            render: () => (
+              <PDFDownloadLink
+                key={petitionId}
+                style={{ display: 'flex', justifyContent: 'center' }}
+                document={
+                  <MyPdfDocument
+                    locale={formatMessage}
+                    petition={petition}
+                    petitionSigners={petitionSigners}
+                  />
+                }
+                fileName="Undirskriftalisti.pdf"
+              >
+                {() => (
+                  <Box marginTop={2} className={menuItem}>
+                    Sem PDF
+                  </Box>
+                )}
+              </PDFDownloadLink>
+            ),
           },
           {
             onClick: () => onGetCSV(),
