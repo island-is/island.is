@@ -50,7 +50,7 @@ export const BasicInfo = ({
           buttons={[
             {
               name: 'copy',
-              label: formatMessage(m.copy),
+              label: `${formatMessage(m.copy)} ${formatMessage(m.clientId)}`,
               type: 'outline',
               onClick: () => copyToClipboard(clientIdRef),
             },
@@ -82,7 +82,9 @@ export const BasicInfo = ({
                   name: 'copy',
                   type: 'outline',
                   onClick: () => copyToClipboard(clientSecretRef),
-                  label: formatMessage(m.copy),
+                  label: `${formatMessage(m.copy)} ${formatMessage(
+                    m.clientSecret,
+                  )}`,
                   disabled: isLegacySecret,
                 },
               ]}
@@ -105,7 +107,7 @@ export const BasicInfo = ({
           buttons={[
             {
               name: 'copy',
-              label: formatMessage(m.copy),
+              label: `${formatMessage(m.copy)} ${formatMessage(m.idsUrl)}`,
               type: 'outline',
               onClick: () => copyToClipboard(issuerUrlRef),
             },

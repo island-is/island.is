@@ -30,9 +30,9 @@ test.describe('Admin portal tenant application', () => {
 
   test('can manage tenant application', async () => {
     // Arrange
-    const granterPage = await contextGranter.newPage()
+    const page = await contextGranter.newPage()
     // Act
-    await granterPage.goto(homeUrl)
+    await page.goto(homeUrl)
 
     /**
      * Header
@@ -44,13 +44,9 @@ test.describe('Admin portal tenant application', () => {
       const env = 'Development'
 
       // Assert
-      await expect(
-        granterPage.getByRole('heading', { name: heading }),
-      ).toBeVisible()
-      await expect(
-        granterPage.getByTestId('select-env').getByText(env),
-      ).toBeVisible()
-      await expect(granterPage.getByText(tag)).toBeVisible()
+      await expect(page.getByRole('heading', { name: heading })).toBeVisible()
+      await expect(page.getByTestId('select-env').getByText(env)).toBeVisible()
+      await expect(page.getByText(tag)).toBeVisible()
     })
 
     /**
@@ -63,13 +59,39 @@ test.describe('Admin portal tenant application', () => {
       const env = 'Development'
 
       // Assert
-      await expect(
-        granterPage.getByRole('heading', { name: heading }),
-      ).toBeVisible()
-      await expect(
-        granterPage.getByTestId('select-env').getByText(env),
-      ).toBeVisible()
-      await expect(granterPage.getByText(tag)).toBeVisible()
+      await expect(page.getByRole('heading', { name: heading })).toBeVisible()
+      await expect(page.getByTestId('select-env').getByText(env)).toBeVisible()
+      await expect(page.getByText(tag)).toBeVisible()
+    })
+
+    /**
+     * Basic info interact with inputs
+     */
+    await test.step('Interact with basic info inputs', async () => {
+      const readTextEvaluate = 'navigator.clipboard.readText()'
+      // Client ID
+      await page.getByRole('button', { name: 'Copy value Client ID' }).click()
+      const clientId = await page.evaluate(readTextEvaluate)
+      expect(clientId).toBe(applicationId)
+
+      // Client Secret
+      const clientSecretInput = await page.getByRole('button', {
+        name: 'Copy value Client Secret',
+      })
+
+      if (clientSecretInput) {
+        await clientSecretInput.click()
+        const clientSecret = await page.evaluate(readTextEvaluate)
+        expect(clientSecret).toBeDefined()
+      }
+
+      // Issuer
+      await page.getByRole('button', { name: 'Copy value Issuer' }).click()
+      const issuer = await page.evaluate(readTextEvaluate)
+      expect(issuer).toBe('https://identity-server.dev01.devland.is')
+
+      // Act
+      await page.getByRole('button', { name: 'Other endpoints' }).click()
     })
   })
 })
