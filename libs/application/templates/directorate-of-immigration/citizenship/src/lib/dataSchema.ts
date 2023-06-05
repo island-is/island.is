@@ -33,6 +33,20 @@ const ResidenceConditionSchema = z.object({
   radio: z.string().min(1)
 })
 
+export const ParentInformationSchema = z.object({
+  nationalId: z
+  .string()
+  .refine(
+    (nationalId) =>
+      nationalId &&
+      nationalId.length !== 0 &&
+      kennitala.isValid(nationalId) &&
+      (kennitala.isCompany(nationalId) ||
+        kennitala.info(nationalId).age >= 18),
+  ),
+  name: z.string().min(1),
+})
+
 export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,

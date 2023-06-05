@@ -18,7 +18,7 @@ export const MaritalStatusSubSection = buildSubSection({
       title: information.labels.maritalStatus.pageTitle,
       condition: (answer: Answer) => {
         const answers = answer as Citizenship
-        if(answers.residenceCondition?.radio === 'marriedToIcelander'){
+        if(answers.residenceCondition?.radio === 'marriedToIcelander' || answers.residenceCondition?.radio === 'cohabitWithIcelander'){
           return true
         }
         return false
@@ -35,7 +35,7 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => 'Giftur',
+          defaultValue: (application: Application) => application.externalData?.nationalRegistrySpouse?.data?.maritalTitle?.description,
         }),
         buildDescriptionField({
           id: 'maritalStatus.titleSpouse',
@@ -50,7 +50,7 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
-          defaultValue: (application: Application) => '0123456789',
+          defaultValue: (application: Application) => application.externalData?.nationalRegistrySpouse?.data?.nationalId,
         }),
         buildTextField({
           id: 'maritalStatus.name',
@@ -58,7 +58,7 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => 'Jane Smith',
+          defaultValue: (application: Application) => application.externalData?.nationalRegistrySpouse?.data?.name,
         }),
       ],
     }),

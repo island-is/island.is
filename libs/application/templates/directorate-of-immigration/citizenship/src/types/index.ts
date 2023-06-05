@@ -1,4 +1,4 @@
-import { ApplicantChildCustodyInformation, NationalRegistryBirthplace, NationalRegistryIndividual, PaymentCatalogItem } from "@island.is/application/types"
+import { ApplicantChildCustodyInformation, NationalRegistryBirthplace, NationalRegistryIndividual, NationalRegistryParent, PaymentCatalogItem } from "@island.is/application/types"
 
 interface UserProfile {
     bankInfo:string
@@ -25,6 +25,10 @@ export interface ExternalData {
     },
     userProfile: {
         data: UserProfile
+        date: string
+    },
+    NationalRegistryParent: {
+        data: NationalRegistryParent[]
         date: string
     }
 }

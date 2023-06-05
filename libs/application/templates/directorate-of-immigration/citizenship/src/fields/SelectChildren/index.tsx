@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Tag } from '@island.is/island-ui/core'
 import { CheckboxFormField } from '@island.is/application/ui-fields'
 import { selectChildren } from '../../lib/messages'
-import { FieldComponents, FieldTypes } from '@island.is/application/types'
+import { ApplicantChildCustodyInformation, FieldComponents, FieldTypes } from '@island.is/application/types'
 
 export const SelectChildren = ({
   field,
@@ -14,13 +14,21 @@ export const SelectChildren = ({
     answers,
   } = application
   console.log('application', application)
-  const children = childrenCustodyInformation.data
-  const childrenCheckboxes = children.map((x: any) => {
+  const children = childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+  const childrenCheckboxes = children.map((child: ApplicantChildCustodyInformation) => {
+
+    const showForeignDomicileTag = !child.domicileInIceland
+    const isCheckable = child.domicileInIceland && child.citizenship?.code !== 'IS'
+
     return {
-      value: x.nationalId,
-      label:  x.fullName,
-      subLabel: `${selectChildren.checkboxes.subLabel.defaultMessage} ${x.otherParent.fullName}`,
-      rightContent: <Tag outlined>{`Ríkisfang: ${x.citizenship.name}`}</Tag>
+      value: child.nationalId,
+      label:  child.fullName,
+      subLabel: `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}`,
+      rightContent: <div style={{display:'flex'}}>
+        {showForeignDomicileTag && <div style={{paddingRight:15}}><Tag disabled variant="red">Lögheimili utan Íslands</Tag></div>}
+        <Tag outlined={child.citizenship?.code === 'IS' ? false : true} disabled variant={child.citizenship?.code === 'IS' ? 'red' : 'blue'}>{`Ríkisfang: ${child.citizenship?.name}`}</Tag>
+      </div>,
+      disabled: !isCheckable
     }
   })
 

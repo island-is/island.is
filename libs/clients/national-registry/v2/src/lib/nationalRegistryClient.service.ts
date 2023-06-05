@@ -7,7 +7,9 @@ import { ApiResponse, EinstaklingarApi, LyklarApi } from '../../gen/fetch'
 import { formatIndividualDto, IndividualDto } from './types/individual.dto'
 import {
   CohabitationDto,
+  CohabitionCodesDto,
   formatCohabitationDto,
+  formatCohabitionCodesDto,
 } from './types/cohabitation.dto'
 import {
   formatResidenceHistoryEntryDto,
@@ -152,6 +154,11 @@ export class NationalRegistryClientService {
   async getReligionCodes(): Promise<ReligionDto[] | null> {
     const codes = await this.keysApi.lyklarGetTrufelog()
     return formatReligionDto(codes)
+  }
+
+  async getCohabitionCodeValue(id: string, gender: string): Promise<CohabitionCodesDto | null> {
+    const codes = await this.keysApi.lyklarGetHjuskapar({ id: id, kyn: gender})
+    return formatCohabitionCodesDto(codes)
   }
 
   private async handleLegacyMissingData<T>(

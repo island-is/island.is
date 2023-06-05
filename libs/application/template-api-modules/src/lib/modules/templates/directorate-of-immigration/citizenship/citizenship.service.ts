@@ -6,6 +6,7 @@ import {
   ApplicationTypes,
   InstitutionNationalIds,
   NationalRegistryIndividual,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import {
@@ -14,7 +15,7 @@ import {
 } from '@island.is/application/templates/directorate-of-immigration/citizenship'
 import { CitizenshipClient } from '@island.is/clients/directorate-of-immigration/citizenship'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { CitizenIndividual } from './types'
+import { CitizenIndividual, SpouseIndividual } from './types'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
@@ -76,11 +77,43 @@ export class CitizenshipService extends BaseTemplateApiService {
     await this.citizenshipClient.applyForCitizenship(auth)
   }
 
-  async getCitizenshipIndividual({
+  async getCitizenshipIndividual({ application, auth}: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
+    const individual = await this.getIndividualDetails(auth.nationalId)
+    return individual
+  }
+
+  async getSpouseWithDetails({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
+  }: TemplateApiModuleActionProps): Promise<SpouseIndividual | null> {
     const { nationalId } = auth
+    const spouse = await this.nationalRegistryApi.getCohabitationInfo(
+      nationalId,
+    )
+
+    const applicant = await this.getIndividualDetails(nationalId)
+    const spouseDetails = spouse && await this.getIndividualDetails(spouse?.spouseNationalId)
+
+    const genderCodeValue = spouse && applicant ? await this.nationalRegistryApi.getCohabitionCodeValue(spouse?.cohabitationCode, applicant?.genderCode) : null
+
+    return (
+      spouse && {
+        nationalId: spouse.spouseNationalId,
+        name: spouse.spouseName,
+        maritalStatus: spouse.cohabitationCode,
+        maritalTitle: {
+          code: genderCodeValue?.code,
+          description: genderCodeValue?.description
+        },
+        spouse: spouseDetails
+      }
+    )
+  }
+
+
+
+  private async getIndividualDetails (nationalId: string) {
+  
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
     const citizenship = await this.nationalRegistryApi.getCitizenship(
       nationalId,
@@ -135,18 +168,5 @@ export class CitizenshipService extends BaseTemplateApiService {
         genderCode: person.genderCode,
       }
     )
-  }
-
-  //TODOx fjarlægja?
-  async getResidency({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps): Promise<any> {
-    const { nationalId } = auth
-    const residence = await this.nationalRegistryApi.getResidenceHistory(
-      nationalId,
-    )
-
-    return residence
   }
 }

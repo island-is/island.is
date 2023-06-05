@@ -17,7 +17,7 @@ interface Option {
   tooltip?: React.ReactNode
   disabled?: boolean
   excludeOthers?: boolean
-  rightContent: React.ReactNode
+  rightContent?: React.ReactNode
 }
 interface CheckboxControllerProps {
   defaultValue?: string[]

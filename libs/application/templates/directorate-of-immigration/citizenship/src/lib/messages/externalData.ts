@@ -46,6 +46,18 @@ export const externalData = {
       description: 'National Registry sub title',
     },
   }),
+  nationalRegistrySpuse: defineMessages({
+    title: {
+      id: 'doi.cs.application:externalData.nationalRegistrySpouse.title',
+      defaultMessage: 'Upplýsingar úr Þjóðskrá maka',
+      description: 'National Registry title',
+    },
+    subTitle: {
+      id: 'doi.cs.application:externalData.nationalRegistrySpouse.subTitle',
+      defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang maka',
+      description: 'National Registry sub title',
+    },
+  }),
   userProfile: defineMessages({
     title: {
       id: 'doi.cs.application:externalData.userProfile.title',
