@@ -6,7 +6,9 @@ export const buttonWrapper = style({
 })
 
 export const menuItem = style({
-  textDecoration: 'none',
+  paddingTop: '16px',
+  display: 'flex',
+  justifyContent: 'center',
   transition: 'color .2s',
   fontSize: 14,
   fontWeight: 600,

@@ -78,8 +78,8 @@ const DropdownExport: FC<Props> = ({
             title: formatMessage(m.asPdf),
             render: () => (
               <PDFDownloadLink
+                className={menuItem}
                 key={petitionId}
-                style={{ display: 'flex', justifyContent: 'center' }}
                 document={
                   <MyPdfDocument
                     petition={petition}
@@ -88,11 +88,7 @@ const DropdownExport: FC<Props> = ({
                 }
                 fileName="Undirskriftalisti.pdf"
               >
-                {() => (
-                  <Box marginTop={2} className={menuItem}>
-                    {formatMessage(m.asPdf)}
-                  </Box>
-                )}
+                {() => <Box>{formatMessage(m.asPdf)}</Box>}
               </PDFDownloadLink>
             ),
           },
