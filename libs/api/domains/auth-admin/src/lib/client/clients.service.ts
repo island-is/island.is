@@ -109,7 +109,7 @@ export class ClientsService extends MultiEnvironmentService {
       },
     )
 
-    // If all no client is found for all environments then we return null
+    // If no client is found for all environments then we return null
     if (clientEnvs.length === 0) return null
 
     return {
