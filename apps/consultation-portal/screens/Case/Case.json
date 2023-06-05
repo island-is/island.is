@@ -179,6 +179,13 @@
     }
   },
   "adviceCard": {
-    "hiddenContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína."
+    "privateContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína.",
+    "hiddenContent": "Umsögn barst en birtist ekki í gáttinni samkvæmt ákvörðun umsjónaraðila samráðsmáls. Upplýsingalög gilda, sjá nánar í",
+    "hiddenContentLink": "um samráðsgáttina",
+    "hiddenContentHref": "/um"
+  },
+  "caseDocuments": {
+    "linkTitle": "Hlekkur",
+    "documentTitle": "Skjal"
   }
 }

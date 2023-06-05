@@ -52,6 +52,7 @@ import {
   representativeRule,
   staffRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import { nowFactory } from '../../factories'
 import { UserService } from '../user'
@@ -332,6 +333,7 @@ export class CaseController {
     registrarRule,
     assistantRule,
     staffRule,
+    defenderRule,
   )
   @Get('cases')
   @ApiOkResponse({
