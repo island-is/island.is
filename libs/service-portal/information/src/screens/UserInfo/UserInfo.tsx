@@ -44,7 +44,7 @@ const SubjectInfo = () => {
           label={m.fullName}
           loading={loading}
           content={nationalRegistryUser?.fullName ?? ''}
-          tooltip={formatNameBreaks(nationalRegistryUser ?? undefined, {
+          tooltip={formatNameBreaks(nationalRegistryUser?.name ?? undefined, {
             givenName: formatMessage(spmm.givenName),
             middleName: formatMessage(spmm.middleName),
             lastName: formatMessage(spmm.lastName),
@@ -192,7 +192,7 @@ const SubjectInfo = () => {
             />
           </>
         ) : null}
-        {/*!isDelegation && (
+        {!isDelegation && (
           <>
             <Divider />
             <Box marginY={3} />
@@ -200,23 +200,25 @@ const SubjectInfo = () => {
               title={formatMessage(spmm.userFamilyMembersOnNumber)}
               label={userInfo.profile.name}
               content={formatNationalId(userInfo.profile.nationalId)}
-              loading={loading || familyLoading}
+              loading={loading}
             />
             <Divider />
-            {nationalRegistryFamily && nationalRegistryFamily.length > 0
-              ? nationalRegistryFamily?.map((item) => (
-                  <React.Fragment key={item.nationalId}>
-                    <UserInfoLine
-                      label={item.fullName}
-                      content={formatNationalId(item.nationalId)}
-                      loading={loading}
-                    />
-                    <Divider />
-                  </React.Fragment>
-                ))
+            {nationalRegistryUser?.legalDomicilePopulace
+              ? nationalRegistryUser?.legalDomicilePopulace?.populace?.map(
+                  (item, index) => (
+                    <React.Fragment key={index}>
+                      <UserInfoLine
+                        label={item.fullName ?? ''}
+                        content={formatNationalId(item.nationalId)}
+                        loading={loading}
+                      />
+                      <Divider />
+                    </React.Fragment>
+                  ),
+                )
               : null}
           </>
-              )*/}
+        )}
       </Stack>
     </>
   )

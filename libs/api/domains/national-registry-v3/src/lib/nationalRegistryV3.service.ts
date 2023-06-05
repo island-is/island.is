@@ -4,17 +4,18 @@ import {
 } from '@island.is/clients/national-registry-v3'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { NationalRegistryV3Person } from './graphql/models/nationalRegistryPerson.model'
+import { Person } from './graphql/models/nationalRegistryPerson.model'
 import { User } from '@island.is/auth-nest-tools'
 import { ChildGuardianship } from './graphql/models/nationalRegistryChildGuardianship.model'
-import { NationalRegistryV3Spouse } from './graphql/models/nationalRegistrySpouse.model'
+import { Spouse } from './graphql/models/nationalRegistrySpouse.model'
 import { Inject } from '@nestjs/common'
-import { NationalRegistryV3Address } from './graphql/models/nationalRegistryAddress.model'
-import { NationalRegistryV3Birthplace } from './graphql/models/nationalRegistryBirthplace.model'
-import { NationalRegistryV3Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
-import { NationalRegistryV3Name } from './graphql/models/nationalRegistryName.model'
-import { NationalRegistryV3Religion } from './graphql/models/nationalRegistryReligion.model'
-import { NationalRegistryV3Custodian } from './graphql/models/nationalRegistryCustodian.model'
+import { Address } from './graphql/models/nationalRegistryAddress.model'
+import { Birthplace } from './graphql/models/nationalRegistryBirthplace.model'
+import { Citizenship } from './graphql/models/nationalRegistryCitizenship.model'
+import { Name } from './graphql/models/nationalRegistryName.model'
+import { Religion } from './graphql/models/nationalRegistryReligion.model'
+import { Custodian } from './graphql/models/nationalRegistryCustodian.model'
+import { DomicilePopulace } from './graphql/models/nationalRegistryDomicilePopulace.model'
 
 type ExcludesFalse = <T>(x: T | null | undefined | '') => x is T
 
@@ -45,17 +46,13 @@ export class NationalRegistryV3Service {
     )
   }
 
-  async getNationalRegistryPerson(
-    nationalId: string,
-  ): Promise<NationalRegistryV3Person | null> {
+  async getNationalRegistryPerson(nationalId: string): Promise<Person | null> {
     const person = await this.fetchData(nationalId)
 
     return this.extractPerson(person)
   }
 
-  async getAddress(
-    nationalId: string,
-  ): Promise<NationalRegistryV3Address | null> {
+  async getAddress(nationalId: string): Promise<Address | null> {
     const data = await this.fetchData(nationalId)
 
     return (
@@ -69,16 +66,14 @@ export class NationalRegistryV3Service {
     )
   }
 
-  async getParents(
-    nationalId: string,
-  ): Promise<Array<NationalRegistryV3Person> | null> {
+  async getParents(nationalId: string): Promise<Array<Person> | null> {
     const data = await this.fetchData(nationalId)
 
     if (!data.logforeldrar?.logForeldrar) {
       return null
     }
 
-    const parentData: Array<NationalRegistryV3Person | null> =
+    const parentData: Array<Person | null> =
       (await Promise.all(
         data.logforeldrar?.logForeldrar
           .map(async (parent) => {
@@ -95,21 +90,17 @@ export class NationalRegistryV3Service {
           .filter((Boolean as unknown) as ExcludesFalse),
       )) ?? []
 
-    return parentData.filter(
-      (parent): parent is NationalRegistryV3Person => parent != null,
-    )
+    return parentData.filter((parent): parent is Person => parent != null)
   }
 
-  async getCustodians(
-    nationalId: string,
-  ): Promise<Array<NationalRegistryV3Custodian> | null> {
+  async getCustodians(nationalId: string): Promise<Array<Custodian> | null> {
     const data = await this.fetchData(nationalId)
 
     if (!data.forsja || !data.forsja.forsjaradilar) {
       return null
     }
 
-    const custodianData: Array<NationalRegistryV3Custodian | null> =
+    const custodianData: Array<Custodian | null> =
       (await Promise.all(
         data.forsja.forsjaradilar
           .map(async (custodian) => {
@@ -133,8 +124,7 @@ export class NationalRegistryV3Service {
       )) ?? []
 
     return custodianData.filter(
-      (custodian): custodian is NationalRegistryV3Custodian =>
-        custodian != null,
+      (custodian): custodian is Custodian => custodian != null,
     )
   }
 
@@ -172,9 +162,7 @@ export class NationalRegistryV3Service {
     }
   }
 
-  async getSpouse(
-    nationalId: string,
-  ): Promise<NationalRegistryV3Spouse | null> {
+  async getSpouse(nationalId: string): Promise<Spouse | null> {
     const data = await this.fetchData(nationalId)
 
     return (
@@ -188,9 +176,27 @@ export class NationalRegistryV3Service {
     )
   }
 
-  async getCitizenship(
+  async getDomicilePopulace(
     nationalId: string,
-  ): Promise<NationalRegistryV3Citizenship | null> {
+  ): Promise<DomicilePopulace | null> {
+    const data = await this.fetchData(nationalId)
+
+    return (
+      (data.logheimilistengsl &&
+        ({
+          legalDomicileId: data.logheimilistengsl.logheimilistengsl,
+          populace: data.logheimilistengsl.logheimilismedlimir?.map(
+            (person) => ({
+              nationalId: person.kennitala,
+              name: person.nafn,
+            }),
+          ),
+        } as DomicilePopulace)) ??
+      null
+    )
+  }
+
+  async getCitizenship(nationalId: string): Promise<Citizenship | null> {
     const data = await this.fetchData(nationalId)
 
     return (
@@ -202,16 +208,14 @@ export class NationalRegistryV3Service {
     )
   }
 
-  async getChildren(
-    nationalId: string,
-  ): Promise<Array<NationalRegistryV3Person> | null> {
+  async getChildren(nationalId: string): Promise<Array<Person> | null> {
     const parentData = await this.fetchData(nationalId)
 
     const children = parentData.forsja?.born?.length
       ? parentData.forsja.born
       : []
 
-    const childDetails: Array<NationalRegistryV3Person | null> = await Promise.all(
+    const childDetails: Array<Person | null> = await Promise.all(
       children.map(async (child) => {
         if (!child.barnKennitala || !child.barnNafn) {
           return null
@@ -262,15 +266,13 @@ export class NationalRegistryV3Service {
       }),
     )
 
-    return childDetails.filter(
-      (child): child is NationalRegistryV3Person => child != null,
-    )
+    return childDetails.filter((child): child is Person => child != null)
   }
 
-  async getBirthplace(
-    nationalId: string,
-  ): Promise<NationalRegistryV3Birthplace | null> {
+  async getBirthplace(nationalId: string): Promise<Birthplace | null> {
     const data = await this.fetchData(nationalId)
+
+    console.log(data)
 
     return (
       (data.faedingarstadur && {
@@ -284,7 +286,7 @@ export class NationalRegistryV3Service {
     )
   }
 
-  async getName(nationalId: string): Promise<NationalRegistryV3Name | null> {
+  async getName(nationalId: string): Promise<Name | null> {
     const data = await this.fetchData(nationalId)
 
     return (
@@ -297,9 +299,7 @@ export class NationalRegistryV3Service {
     )
   }
 
-  async getReligion(
-    nationalId: string,
-  ): Promise<NationalRegistryV3Religion | null> {
+  async getReligion(nationalId: string): Promise<Religion | null> {
     const data = await this.fetchData(nationalId)
 
     return (

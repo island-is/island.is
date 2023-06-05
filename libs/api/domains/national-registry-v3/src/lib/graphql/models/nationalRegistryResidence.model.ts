@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { NationalRegistryV3Address } from './nationalRegistryAddress.model'
+import { Address } from './nationalRegistryAddress.model'
 
-@ObjectType()
-export class NationalRegistryV3Residence {
-  @Field(() => NationalRegistryV3Address)
-  address!: NationalRegistryV3Address
+@ObjectType('Residence')
+export class Residence {
+  @Field(() => Address)
+  address!: Address
 
   @Field(() => String, { nullable: true })
   houseIdentificationCode?: string | null

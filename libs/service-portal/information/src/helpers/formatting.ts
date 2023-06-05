@@ -1,16 +1,16 @@
 import {
   NationalRegistryV3Address,
-  NationalRegistryV3Person,
+  NationalRegistryV3Name,
 } from '@island.is/api/schema'
 import { ExcludesFalse } from '@island.is/service-portal/core'
 
 export const formatNameBreaks = (
-  user: NationalRegistryV3Person | undefined,
+  names?: NationalRegistryV3Name,
   labels?: { givenName?: string; middleName?: string; lastName?: string },
 ): string | undefined => {
-  if (!user?.name) return undefined
+  if (!names) return undefined
 
-  const { givenName, middleName, lastName } = user.name
+  const { givenName, middleName, lastName } = names
 
   const first = givenName
     ? `${labels?.givenName || 'Eiginnafn'}: ${givenName}`

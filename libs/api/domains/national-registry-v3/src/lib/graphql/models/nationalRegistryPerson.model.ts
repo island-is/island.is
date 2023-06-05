@@ -1,23 +1,24 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import { NationalRegistryV3Address } from './nationalRegistryAddress.model'
-import { NationalRegistryV3Birthplace } from './nationalRegistryBirthplace.model'
-import { NationalRegistryV3Residence } from './nationalRegistryResidence.model'
-import { NationalRegistryV3Spouse } from './nationalRegistrySpouse.model'
-import { NationalRegistryV3Citizenship } from './nationalRegistryCitizenship.model'
-import { NationalRegistryV3Name } from './nationalRegistryName.model'
-import { NationalRegistryV3Religion } from './nationalRegistryReligion.model'
-import { NationalRegistryV3Custodian } from './nationalRegistryCustodian.model'
+import { Address } from './nationalRegistryAddress.model'
+import { Birthplace } from './nationalRegistryBirthplace.model'
+import { Residence } from './nationalRegistryResidence.model'
+import { Spouse } from './nationalRegistrySpouse.model'
+import { Citizenship } from './nationalRegistryCitizenship.model'
+import { Name } from './nationalRegistryName.model'
+import { Religion } from './nationalRegistryReligion.model'
+import { Custodian } from './nationalRegistryCustodian.model'
+import { DomicilePopulace } from './nationalRegistryDomicilePopulace.model'
 
-@ObjectType()
-export class NationalRegistryV3Person {
+@ObjectType('NationalRegistryV3Person')
+export class Person {
   @Field(() => ID)
   nationalId!: string
 
   @Field(() => String, { nullable: true })
   fullName?: string | null
 
-  @Field(() => NationalRegistryV3Name, { nullable: true })
-  name?: NationalRegistryV3Name | null
+  @Field(() => Name, { nullable: true })
+  name?: Name | null
 
   @Field(() => String, { nullable: true })
   gender?: string | null
@@ -28,8 +29,8 @@ export class NationalRegistryV3Person {
   @Field(() => String)
   familyRegistrationCode?: string | null
 
-  @Field(() => NationalRegistryV3Address, { nullable: true })
-  address?: NationalRegistryV3Address | null
+  @Field(() => Address, { nullable: true })
+  address?: Address | null
 
   @Field(() => Boolean, { nullable: true })
   livesWithApplicant?: boolean
@@ -40,30 +41,33 @@ export class NationalRegistryV3Person {
   @Field(() => String, { nullable: true })
   fate?: string | null
 
-  @Field(() => [NationalRegistryV3Person], { nullable: true })
-  parents?: NationalRegistryV3Person[]
+  @Field(() => [Person], { nullable: true })
+  parents?: Person[]
 
-  @Field(() => [NationalRegistryV3Custodian], { nullable: true })
-  custodians?: NationalRegistryV3Custodian[]
+  @Field(() => [Custodian], { nullable: true })
+  custodians?: Custodian[]
 
-  @Field(() => [NationalRegistryV3Person], { nullable: true })
-  children?: NationalRegistryV3Person[]
+  @Field(() => [Person], { nullable: true })
+  children?: Person[]
 
-  @Field(() => NationalRegistryV3Person, { nullable: true })
-  otherParent?: NationalRegistryV3Person | null
+  @Field(() => Person, { nullable: true })
+  otherParent?: Person | null
 
-  @Field(() => [NationalRegistryV3Residence], { nullable: true })
-  residenceHistory?: NationalRegistryV3Residence[]
+  @Field(() => DomicilePopulace, { nullable: true })
+  legalDomicilePopulace?: DomicilePopulace
 
-  @Field(() => NationalRegistryV3Spouse, { nullable: true })
-  spouse?: NationalRegistryV3Spouse | null
+  @Field(() => [Residence], { nullable: true })
+  residenceHistory?: Residence[]
 
-  @Field(() => NationalRegistryV3Birthplace, { nullable: true })
-  birthplace?: NationalRegistryV3Birthplace | null
+  @Field(() => Spouse, { nullable: true })
+  spouse?: Spouse | null
 
-  @Field(() => NationalRegistryV3Citizenship, { nullable: true })
-  citizenship?: NationalRegistryV3Citizenship | null
+  @Field(() => Birthplace, { nullable: true })
+  birthplace?: Birthplace | null
 
-  @Field(() => NationalRegistryV3Religion, { nullable: true })
-  religion?: NationalRegistryV3Religion | null
+  @Field(() => Citizenship, { nullable: true })
+  citizenship?: Citizenship | null
+
+  @Field(() => Religion, { nullable: true })
+  religion?: Religion | null
 }

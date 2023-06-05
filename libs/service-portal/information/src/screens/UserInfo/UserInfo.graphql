@@ -27,5 +27,12 @@ query NationalRegistryUserV3 {
     religion {
       name
     }
+    legalDomicilePopulace {
+      legalDomicileId
+      populace {
+        nationalId
+        fullName
+      }
+    }
   }
 }
