@@ -155,6 +155,7 @@
     "clients-fiskistofa": "libs/clients/fiskistofa",
     "clients-health-insurance": "libs/clients/icelandic-health-insurance/health-insurance",
     "clients-identity": "libs/clients/identity",
+    "clients-inna": "libs/clients/inna",
     "clients-islykill": "libs/clients/islykill",
     "clients-judicial-administration": "libs/clients/judicial-administration",
     "clients-middlewares": "libs/clients/middlewares",

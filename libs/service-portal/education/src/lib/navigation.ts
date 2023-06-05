@@ -15,6 +15,17 @@ export const educationNavigation: PortalNavigationItem = {
       path: EducationPaths.EducationAssessment,
     },
     {
+      name: m.educationFramhskoli,
+      path: EducationPaths.EducationFramhskoliCareer,
+      children: [
+        {
+          name: m.educationFramhskoliCareer,
+          navHide: true,
+          path: EducationPaths.EducationFramhskoliCareer,
+        },
+      ],
+    },
+    {
       name: m.educationGraduation,
       path: EducationPaths.EducationHaskoliGraduation,
       children: [

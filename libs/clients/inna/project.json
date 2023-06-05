@@ -1,0 +1,22 @@
+{
+  "root": "libs/clients/inna",
+  "sourceRoot": "libs/clients/inna/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/inna/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/inna"],
+      "options": {
+        "jestConfig": "libs/clients/inna/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
