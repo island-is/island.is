@@ -7,7 +7,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { CaseScheduledGuard } from '../../guards/caseScheduled.guard'
+import { CaseReceivedForDefenderGuard } from '../../guards/caseReceivedForDefender.guard'
 import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
@@ -78,15 +78,15 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     })
   })
 
-  describe('CaseScheduledGuard', () => {
+  describe('CaseReceivedForDefenderGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[4]()
     })
 
-    it('should have CaseScheduledGuard as guard 5', () => {
-      expect(guard).toBeInstanceOf(CaseScheduledGuard)
+    it('should have CaseReceivedForDefenderGuard as guard 5', () => {
+      expect(guard).toBeInstanceOf(CaseReceivedForDefenderGuard)
     })
   })
 

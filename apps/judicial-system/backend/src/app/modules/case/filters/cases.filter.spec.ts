@@ -322,26 +322,33 @@ describe('getCasesQueryFilter', () => {
       [Op.and]: [
         { isArchived: false },
         {
-          type: [
-            ...restrictionCases,
-            ...investigationCases,
-            ...indictmentCases,
-          ],
-        },
-        {
           [Op.or]: [
             {
               [Op.and]: [
-                { state: CaseState.RECEIVED },
-                { court_date: { [Op.not]: null } },
+                { type: [...restrictionCases, ...investigationCases] },
+                {
+                  [Op.or]: [
+                    {
+                      [Op.and]: [
+                        { state: CaseState.RECEIVED },
+                        { court_date: { [Op.not]: null } },
+                        { send_request_to_defender: true },
+                      ],
+                    },
+                    { state: completedCaseStates },
+                  ],
+                },
+                { defender_national_id: user.nationalId },
               ],
             },
-            { state: completedCaseStates },
-          ],
-          [Op.or]: [
-            { defender_national_id: 'Defender National Id' },
             {
-              '$defendants.defender_national_id$': 'Defender National Id',
+              [Op.and]: [
+                { type: [...indictmentCases] },
+                { state: [CaseState.RECEIVED, ...completedCaseStates] },
+                {
+                  '$defendants.defender_national_id$': user.nationalId,
+                },
+              ],
             },
           ],
         },

@@ -172,21 +172,34 @@ function getStaffUserCasesQueryFilter(user: User): WhereOptions {
 function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
     { isArchived: false },
-    { type: [...restrictionCases, ...investigationCases, ...indictmentCases] },
     {
       [Op.or]: [
         {
           [Op.and]: [
-            { state: CaseState.RECEIVED },
-            { court_date: { [Op.not]: null } },
+            { type: [...restrictionCases, ...investigationCases] },
+            {
+              [Op.or]: [
+                {
+                  [Op.and]: [
+                    { state: CaseState.RECEIVED },
+                    { court_date: { [Op.not]: null } },
+                    { send_request_to_defender: true },
+                  ],
+                },
+                { state: completedCaseStates },
+              ],
+            },
+            { defender_national_id: user.nationalId },
           ],
         },
-        { state: completedCaseStates },
-      ],
-      [Op.or]: [
-        { defender_national_id: user.nationalId },
         {
-          '$defendants.defender_national_id$': user.nationalId,
+          [Op.and]: [
+            { type: [...indictmentCases] },
+            { state: [CaseState.RECEIVED, ...completedCaseStates] },
+            {
+              '$defendants.defender_national_id$': user.nationalId,
+            },
+          ],
         },
       ],
     },
