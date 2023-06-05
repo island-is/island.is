@@ -21,14 +21,14 @@ export const StaysAbroadSubSection = buildSubSection({
           options: [
             {
               value: 'YES',
-              label: 'Já'
+              label: 'Já',
             },
             {
               value: 'NO',
-              label: 'Nei'
+              label: 'Nei',
             },
-          ]
-        })
+          ],
+        }),
       ],
     }),
   ],

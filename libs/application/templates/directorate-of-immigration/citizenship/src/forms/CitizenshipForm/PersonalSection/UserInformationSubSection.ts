@@ -96,11 +96,15 @@ export const UserInformationSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            formatDate(
-              application.externalData?.individual?.data
-                ?.residenceInIcelandLastChangeDate,
-            ),
+          defaultValue: (application: Application) => {
+            console.log('application', application)
+            return formatDate(
+              new Date('01.01.2022'),
+            ) /*formatDate(
+                application.externalData?.individual?.data
+                  ?.residenceInIcelandLastChangeDate,
+              )*/
+          },
         }),
         buildTextField({
           id: 'userInformation.birthCountry',

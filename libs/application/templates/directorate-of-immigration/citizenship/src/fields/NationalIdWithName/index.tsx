@@ -107,9 +107,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
           <InputController
             id={nationaIdField}
             label={
-              customNationalIdLabel.length > 0
-                ? customNationalIdLabel
-                : '1' //formatMessage(information.labels.buyer.nationalId)
+              customNationalIdLabel.length > 0 ? customNationalIdLabel : '1' //formatMessage(information.labels.buyer.nationalId)
             }
             defaultValue={defaultNationalId}
             format="######-####"
@@ -130,9 +128,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             id={nameField}
             defaultValue={defaultName}
             label={
-              customNameLabel.length > 0
-                ? customNameLabel
-                : '2' //formatMessage(information.labels.buyer.name)
+              customNameLabel.length > 0 ? customNameLabel : '2' //formatMessage(information.labels.buyer.name)
             }
             error={
               queryError || data?.identity === null

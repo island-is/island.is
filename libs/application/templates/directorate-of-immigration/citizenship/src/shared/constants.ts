@@ -3,7 +3,7 @@ export enum ApiActions {
   submitApplication = 'submitApplication',
   getCitizenshipIndividual = 'getCitizenshipIndividual',
   getResidency = 'getResidency',
-  getSpouse = 'getSpouseWithDetails'
+  getSpouse = 'getSpouseWithDetails',
 }
 
 export const MAX_CNT_APPLICANTS = 10

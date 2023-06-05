@@ -18,7 +18,7 @@ export const ParentsSubSection = buildSubSection({
       title: information.labels.parents.pageTitle,
       condition: (answer: Answer) => {
         const answers = answer as Citizenship
-        if(answers.residenceCondition?.radio === 'childOfIcelander'){
+        if (answers.residenceCondition?.radio === 'childOfIcelander') {
           return true
         }
         return false
@@ -27,10 +27,9 @@ export const ParentsSubSection = buildSubSection({
         buildCustomField({
           id: 'parents',
           title: 'blablabla2',
-          description:'blabla',
-          component: 'Parents'
+          description: 'blabla',
+          component: 'Parents',
         }),
-
       ],
     }),
   ],

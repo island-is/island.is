@@ -1,5 +1,4 @@
 export interface NationalRegistryParent {
-    nationalId: string
-    name: string
-  }
-  
+  nationalId: string
+  name: string
+}

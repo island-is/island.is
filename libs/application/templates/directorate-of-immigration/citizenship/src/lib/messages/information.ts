@@ -39,55 +39,70 @@ export const information = {
       married: {
         id:
           'doi.cs.application:information.labels.residenceTypes.married.title',
-        defaultMessage: 'Er í hjúskap með íslenskum ríkisborgara og hef átt lögheimili á Íslandi í 4 ár frá giftingu',
+        defaultMessage:
+          'Er í hjúskap með íslenskum ríkisborgara og hef átt lögheimili á Íslandi í 4 ár frá giftingu',
         description: 'Residency type radio button title',
       },
       marriedSubLabel: {
         id:
           'doi.cs.application:information.labels.residenceTypes.married.subLabel',
-        defaultMessage: 'ATH sá sem þú ert í hjúskap með þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
+        defaultMessage:
+          'ATH sá sem þú ert í hjúskap með þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
         description: 'Residency type radio button sublabel',
       },
       coHabit: {
         id:
           'doi.cs.application:information.labels.residenceTypes.coHabit.title',
-        defaultMessage: 'Er í skráðri sambúð með íslenskum ríkisborgara og hef átt lögheimili á Íslandi í 5 ár frá skráningu sambúðar ',
+        defaultMessage:
+          'Er í skráðri sambúð með íslenskum ríkisborgara og hef átt lögheimili á Íslandi í 5 ár frá skráningu sambúðar ',
         description: 'Residency type radio button title',
       },
       coHabitSubLabel: {
         id:
           'doi.cs.application:information.labels.residenceTypes.coHabit.subLabel',
-        defaultMessage: 'ATH sá sem þú ert í sambúð með þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
+        defaultMessage:
+          'ATH sá sem þú ert í sambúð með þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
         description: 'Residency type radio button sublabel',
       },
       childOfResident: {
-        id: 'doi.cs.application:information.labels.residenceTypes.childOfResident.title',
-        defaultMessage: 'Ég er barn íslensks ríkisborgara og hef átt lögheimili á Íslandi í 2 ár',
+        id:
+          'doi.cs.application:information.labels.residenceTypes.childOfResident.title',
+        defaultMessage:
+          'Ég er barn íslensks ríkisborgara og hef átt lögheimili á Íslandi í 2 ár',
         description: 'Residency type radio button title',
       },
       childOfResidentSubLabel: {
-        id: 'doi.cs.application:information.labels.residenceTypes.childOfResident.subLabel',
-        defaultMessage: 'ATH foreldri þitt þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
+        id:
+          'doi.cs.application:information.labels.residenceTypes.childOfResident.subLabel',
+        defaultMessage:
+          'ATH foreldri þitt þarf að hafa verið íslenskur ríkisborgari í að lágmarki 5 ár',
         description: 'Residency type radio button sublabel',
       },
       nordicResident: {
-        id: 'doi.cs.application:information.labels.residenceTypes.nordicResident.title',
-        defaultMessage: 'Ég er ríkisborgari Norðurlanda og hef átt lögheimili á Íslandi í 4 ár',
+        id:
+          'doi.cs.application:information.labels.residenceTypes.nordicResident.title',
+        defaultMessage:
+          'Ég er ríkisborgari Norðurlanda og hef átt lögheimili á Íslandi í 4 ár',
         description: 'Residency type radio button title',
       },
       refugee: {
-        id: 'doi.cs.application:information.labels.residenceTypes.refugee.title',
-        defaultMessage: 'Ég er flóttamaður eða með dvalarleyfi af mannúðarástæðum og hef átt lögheimili á Íslandi í 5 ár eftir að hafa fengið stöðu sem flóttamaður eða dvalarleyfi af mannúðarástæðum',
+        id:
+          'doi.cs.application:information.labels.residenceTypes.refugee.title',
+        defaultMessage:
+          'Ég er flóttamaður eða með dvalarleyfi af mannúðarástæðum og hef átt lögheimili á Íslandi í 5 ár eftir að hafa fengið stöðu sem flóttamaður eða dvalarleyfi af mannúðarástæðum',
         description: 'Residency type radio button title',
       },
       noResidency: {
-        id: 'doi.cs.application:information.labels.residenceTypes.noResidency.title',
-        defaultMessage: 'Ég er ríkisfangslaus einstaklingur samkvæmt ákvæðum laga um útlendinga og hef átt lögheimili á Íslandi í 5 ár',
+        id:
+          'doi.cs.application:information.labels.residenceTypes.noResidency.title',
+        defaultMessage:
+          'Ég er ríkisfangslaus einstaklingur samkvæmt ákvæðum laga um útlendinga og hef átt lögheimili á Íslandi í 5 ár',
         description: 'Residency type radio button title',
       },
       former: {
         id: 'doi.cs.application:information.labels.residenceTypes.former.title',
-        defaultMessage: 'Ég er fyrrum íslenskur ríkisborgari og hef átt lögheimili á Íslandi í 1 ár. Ég missti íslenskt ríkisfang vegna umsóknar og veitingar erlends ríkisfangs',
+        defaultMessage:
+          'Ég er fyrrum íslenskur ríkisborgari og hef átt lögheimili á Íslandi í 1 ár. Ég missti íslenskt ríkisfang vegna umsóknar og veitingar erlends ríkisfangs',
         description: 'Residency type radio button title',
       },
     }),
@@ -135,6 +150,12 @@ export const information = {
         defaultMessage: 'Maki þinn',
         description: 'Marital status title spouse',
       },
+      marritalStatusDate: {
+        id:
+          'doi.cs.application:information.labels.maritalStatus.marritalStatusDate',
+        defaultMessage: 'Dagsetning hjúskapar',
+        description: 'Marital status change date spouse',
+      },
       status: {
         id: 'doi.cs.application:information.labels.maritalStatus.status',
         defaultMessage: 'Hjúskaparstaða',
@@ -149,6 +170,29 @@ export const information = {
         id: 'doi.cs.application:information.labels.maritalStatus.name',
         defaultMessage: 'Nafn maka',
         description: 'Marital status name label',
+      },
+      spouseBirthCountry: {
+        id:
+          'doi.cs.application:information.labels.maritalStatus.spouseBirthCountry',
+        defaultMessage: 'Fæðingarland maka',
+        description: 'Spouse birth country label',
+      },
+      spouseCitizenship: {
+        id:
+          'doi.cs.application:information.labels.maritalStatus.spouseCitizenship',
+        defaultMessage: 'Ríkisfang maka',
+        description: 'Spouse citizenship label',
+      },
+      applicantAddress: {
+        id:
+          'doi.cs.application:information.labels.maritalStatus.applicantAddress',
+        defaultMessage: 'Heimilisfang þitt',
+        description: 'Applicant address label',
+      },
+      spouseAddress: {
+        id: 'doi.cs.application:information.labels.maritalStatus.spouseAddress',
+        defaultMessage: 'Heimilisfang maka',
+        description: 'Applicant spouse address label',
       },
     }),
     countriesOfResidence: defineMessages({
@@ -165,17 +209,18 @@ export const information = {
         description: 'Countries of residence page title',
       },
       questionTitle: {
-        id: 'doi.cs.application:information.labels.countriesOfResidence.questionTitle',
+        id:
+          'doi.cs.application:information.labels.countriesOfResidence.questionTitle',
         defaultMessage:
           'Hefur þú búið í öðru landi en Íslandi eftir 15 ára aldur?',
         description: 'Countries of residence question title',
       },
       countryListTitle: {
-        id: 'doi.cs.application:information.labels.countriesOfResidence.countryListTitle',
-        defaultMessage:
-          'Vinsamlegast tilgreindu þau lönd sem við á',
+        id:
+          'doi.cs.application:information.labels.countriesOfResidence.countryListTitle',
+        defaultMessage: 'Vinsamlegast tilgreindu þau lönd sem við á',
         description: 'Countries of residence list countries title',
-      }
+      },
     }),
     staysAbroad: defineMessages({
       subSectionTitle: {

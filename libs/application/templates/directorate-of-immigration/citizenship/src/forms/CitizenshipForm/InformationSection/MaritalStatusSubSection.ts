@@ -8,6 +8,7 @@ import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { Answer } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
+import { ExternalData } from '../../../types'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: 'maritalStatus',
@@ -18,7 +19,10 @@ export const MaritalStatusSubSection = buildSubSection({
       title: information.labels.maritalStatus.pageTitle,
       condition: (answer: Answer) => {
         const answers = answer as Citizenship
-        if(answers.residenceCondition?.radio === 'marriedToIcelander' || answers.residenceCondition?.radio === 'cohabitWithIcelander'){
+        if (
+          answers.residenceCondition?.radio === 'marriedToIcelander' ||
+          answers.residenceCondition?.radio === 'cohabitWithIcelander'
+        ) {
           return true
         }
         return false
@@ -35,13 +39,17 @@ export const MaritalStatusSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => application.externalData?.nationalRegistrySpouse?.data?.maritalTitle?.description,
+          defaultValue: (application: Application) =>
+            application.externalData?.spouseDetails?.data?.maritalTitle
+              ?.description,
         }),
-        buildDescriptionField({
-          id: 'maritalStatus.titleSpouse',
-          title: information.labels.maritalStatus.titleSpouse,
-          titleVariant: 'h5',
-          space: 3,
+        buildTextField({
+          id: 'maritalStatus.dateOfMarritalStatus',
+          title: information.labels.maritalStatus.marritalStatusDate,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => 'date here',
         }),
         buildTextField({
           id: 'maritalStatus.nationalId',
@@ -50,15 +58,68 @@ export const MaritalStatusSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           format: '######-####',
-          defaultValue: (application: Application) => application.externalData?.nationalRegistrySpouse?.data?.nationalId,
+          defaultValue: (application: Application) =>
+            application.externalData?.spouseDetails?.data?.nationalId,
         }),
         buildTextField({
-          id: 'maritalStatus.name',
+          id: 'maritalStatus.spouseName',
           title: information.labels.maritalStatus.name,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => application.externalData?.nationalRegistrySpouse?.data?.name,
+          defaultValue: (application: Application) =>
+            application.externalData?.spouseDetails?.data?.name,
+        }),
+        buildTextField({
+          id: 'maritalStatus.spouseBirthCountry',
+          title: information.labels.maritalStatus.spouseBirthCountry,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            'Spouse Birth country here',
+        }),
+        buildTextField({
+          id: 'maritalStatus.spouseCitizenship',
+          title: information.labels.maritalStatus.spouseCitizenship,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            console.log('application', application)
+            return application.externalData?.spouseDetails?.data?.spouse
+              ?.citizenship?.name
+          },
+        }),
+        buildTextField({
+          id: 'maritalStatus.applicantAddress',
+          title: information.labels.maritalStatus.applicantAddress,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            `${application.externalData?.individual?.data?.address?.streetAddress}, ${application.externalData?.individual?.data?.address?.postalCode} ${application.externalData?.individual?.data?.address?.city}`,
+          condition: (_, externalData: any) => {
+            const externalCustomData = externalData as ExternalData
+            const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`
+            const mySpouseAddressCombination = `${externalCustomData.spouseDetails?.data?.spouse?.address?.streetAddress}, ${externalCustomData.spouseDetails?.data?.spouse?.address?.postalCode} ${externalCustomData.spouseDetails?.data?.spouse?.address?.city}`
+            return myAddressCombination !== mySpouseAddressCombination
+          },
+        }),
+        buildTextField({
+          id: 'maritalStatus.spouseAddress',
+          title: information.labels.maritalStatus.spouseAddress,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            `${application.externalData?.spouseDetails?.data?.spouse?.address?.streetAddress}, ${application.externalData?.spouseDetails?.data?.spouse?.address?.postalCode} ${application.externalData?.spouseDetails?.data?.spouse?.address?.city}`,
+          condition: (_, externalData: any) => {
+            const externalCustomData = externalData as ExternalData
+            const myAddressCombination = `${externalCustomData.individual?.data?.address?.streetAddress}, ${externalCustomData.individual?.data?.address?.postalCode} ${externalCustomData.individual?.data?.address?.city}`
+            const mySpouseAddressCombination = `${externalCustomData.spouseDetails?.data?.spouse?.address?.streetAddress}, ${externalCustomData.spouseDetails?.data?.spouse?.address?.postalCode} ${externalCustomData.spouseDetails?.data?.spouse?.address?.city}`
+            return myAddressCombination !== mySpouseAddressCombination
+          },
         }),
       ],
     }),

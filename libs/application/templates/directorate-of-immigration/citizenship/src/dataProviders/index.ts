@@ -36,11 +36,6 @@ export const CitizenshipIndividualApi = defineTemplateApi({
   externalDataId: 'individual',
 })
 
-export const CitizenshipIndividualResidencyApi = defineTemplateApi({
-  action: ApiActions.getResidency,
-  externalDataId: 'individualResidency',
-})
-
 export const CitizenGetSpouseApi = defineTemplateApi({
   action: 'getSpouseWithDetails',
   externalDataId: 'spouseDetails',

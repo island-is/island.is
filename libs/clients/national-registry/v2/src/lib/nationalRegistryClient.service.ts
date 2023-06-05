@@ -156,8 +156,11 @@ export class NationalRegistryClientService {
     return formatReligionDto(codes)
   }
 
-  async getCohabitionCodeValue(id: string, gender: string): Promise<CohabitionCodesDto | null> {
-    const codes = await this.keysApi.lyklarGetHjuskapar({ id: id, kyn: gender})
+  async getCohabitionCodeValue(
+    id: string,
+    gender: string,
+  ): Promise<CohabitionCodesDto | null> {
+    const codes = await this.keysApi.lyklarGetHjuskapar({ id: id, kyn: gender })
     return formatCohabitionCodesDto(codes)
   }
 

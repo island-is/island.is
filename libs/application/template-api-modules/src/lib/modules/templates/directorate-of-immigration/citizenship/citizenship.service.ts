@@ -77,7 +77,10 @@ export class CitizenshipService extends BaseTemplateApiService {
     await this.citizenshipClient.applyForCitizenship(auth)
   }
 
-  async getCitizenshipIndividual({ application, auth}: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
+  async getCitizenshipIndividual({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
     const individual = await this.getIndividualDetails(auth.nationalId)
     return individual
   }
@@ -92,9 +95,16 @@ export class CitizenshipService extends BaseTemplateApiService {
     )
 
     const applicant = await this.getIndividualDetails(nationalId)
-    const spouseDetails = spouse && await this.getIndividualDetails(spouse?.spouseNationalId)
+    const spouseDetails =
+      spouse && (await this.getIndividualDetails(spouse?.spouseNationalId))
 
-    const genderCodeValue = spouse && applicant ? await this.nationalRegistryApi.getCohabitionCodeValue(spouse?.cohabitationCode, applicant?.genderCode) : null
+    const genderCodeValue =
+      spouse && applicant
+        ? await this.nationalRegistryApi.getCohabitionCodeValue(
+            spouse?.cohabitationCode,
+            applicant?.genderCode,
+          )
+        : null
 
     return (
       spouse && {
@@ -103,17 +113,14 @@ export class CitizenshipService extends BaseTemplateApiService {
         maritalStatus: spouse.cohabitationCode,
         maritalTitle: {
           code: genderCodeValue?.code,
-          description: genderCodeValue?.description
+          description: genderCodeValue?.description,
         },
-        spouse: spouseDetails
+        spouse: spouseDetails,
       }
     )
   }
 
-
-
-  private async getIndividualDetails (nationalId: string) {
-  
+  private async getIndividualDetails(nationalId: string) {
     const person = await this.nationalRegistryApi.getIndividual(nationalId)
     const citizenship = await this.nationalRegistryApi.getCitizenship(
       nationalId,

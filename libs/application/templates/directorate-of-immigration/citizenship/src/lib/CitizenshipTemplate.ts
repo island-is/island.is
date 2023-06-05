@@ -26,10 +26,9 @@ import {
   ChildrenCustodyInformationApi,
   NationalRegistryParentsApi,
   CitizenshipIndividualApi,
-  CitizenshipIndividualResidencyApi,
   IdentityApi,
-  CitizenGetSpouseApi
-} from '../dataProviders' 
+  CitizenGetSpouseApi,
+} from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -75,14 +74,13 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 IdentityApi,
-                UserProfileApi, 
+                UserProfileApi,
                 UtlendingastofnunPaymentCatalogApi,
                 NationalRegistryBirthplaceApi,
                 ChildrenCustodyInformationApi,
                 NationalRegistryParentsApi,
                 CitizenshipIndividualApi,
-                CitizenshipIndividualResidencyApi,
-                CitizenGetSpouseApi
+                CitizenGetSpouseApi,
               ],
             },
           ],

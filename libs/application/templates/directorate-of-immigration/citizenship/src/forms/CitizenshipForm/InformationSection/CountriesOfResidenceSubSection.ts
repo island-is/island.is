@@ -20,23 +20,23 @@ export const CountriesOfResidenceSubSection = buildSubSection({
           id: 'countriesOfResidence.radio',
           title: information.labels.countriesOfResidence.questionTitle,
           description: '',
-          width:'half',
+          width: 'half',
           options: [
             {
               value: 'YES',
-              label: 'Já'
+              label: 'Já',
             },
             {
               value: 'NO',
-              label: 'Nei'
+              label: 'Nei',
             },
-          ]
+          ],
         }),
         buildCustomField({
           id: 'countriesOfResidence.select',
           title: '',
-          component: 'CountrySelect'
-        })
+          component: 'CountrySelect',
+        }),
       ],
     }),
   ],

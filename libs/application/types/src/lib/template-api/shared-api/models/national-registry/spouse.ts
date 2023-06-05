@@ -3,7 +3,7 @@ export interface NationalRegistrySpouse {
   nationalId: string
   maritalStatus: string
   maritalTitle?: {
-    code?: string | null,
+    code?: string | null
     description?: string | null
   } | null
 }

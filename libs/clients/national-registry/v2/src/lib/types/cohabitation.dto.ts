@@ -45,18 +45,15 @@ export interface CohabitionCodesDto {
 }
 
 export function formatCohabitionCodesDto(
-  cohabitionCode: Kodar | null
+  cohabitionCode: Kodar | null,
 ): CohabitionCodesDto | null {
   if (cohabitionCode == null) {
     return null
   }
-  const {
-    kodi: code, 
-    lysing: description
-  } = cohabitionCode
+  const { kodi: code, lysing: description } = cohabitionCode
 
   return {
     code,
-    description
+    description,
   }
 }

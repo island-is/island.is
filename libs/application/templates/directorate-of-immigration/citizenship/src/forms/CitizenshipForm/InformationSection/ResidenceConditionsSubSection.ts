@@ -47,7 +47,8 @@ export const ResidenceConditionsSubSection = buildSubSection({
             {
               value: ResidenceTypes.CHILDOFRESIDENT,
               label: information.labels.residenceTypes.childOfResident,
-              subLabel: information.labels.residenceTypes.childOfResidentSubLabel,
+              subLabel:
+                information.labels.residenceTypes.childOfResidentSubLabel,
             },
             {
               value: ResidenceTypes.NORDICRESIDENT,
@@ -65,8 +66,8 @@ export const ResidenceConditionsSubSection = buildSubSection({
               value: ResidenceTypes.FORMER,
               label: information.labels.residenceTypes.former,
             },
-          ]
-        })
+          ],
+        }),
       ],
     }),
   ],

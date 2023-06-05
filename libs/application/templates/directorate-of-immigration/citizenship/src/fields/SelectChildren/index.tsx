@@ -2,35 +2,49 @@ import React from 'react'
 import { Box, Tag } from '@island.is/island-ui/core'
 import { CheckboxFormField } from '@island.is/application/ui-fields'
 import { selectChildren } from '../../lib/messages'
-import { ApplicantChildCustodyInformation, FieldComponents, FieldTypes } from '@island.is/application/types'
+import {
+  ApplicantChildCustodyInformation,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 
-export const SelectChildren = ({
-  field,
-  application,
-  error,
-}: any) => {
+export const SelectChildren = ({ field, application, error }: any) => {
   const {
     externalData: { childrenCustodyInformation },
     answers,
   } = application
   console.log('application', application)
   const children = childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
-  const childrenCheckboxes = children.map((child: ApplicantChildCustodyInformation) => {
+  const childrenCheckboxes = children.map(
+    (child: ApplicantChildCustodyInformation) => {
+      const showForeignDomicileTag = !child.domicileInIceland
+      const isCheckable =
+        child.domicileInIceland && child.citizenship?.code !== 'IS'
 
-    const showForeignDomicileTag = !child.domicileInIceland
-    const isCheckable = child.domicileInIceland && child.citizenship?.code !== 'IS'
-
-    return {
-      value: child.nationalId,
-      label:  child.fullName,
-      subLabel: `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}`,
-      rightContent: <div style={{display:'flex'}}>
-        {showForeignDomicileTag && <div style={{paddingRight:15}}><Tag disabled variant="red">Lögheimili utan Íslands</Tag></div>}
-        <Tag outlined={child.citizenship?.code === 'IS' ? false : true} disabled variant={child.citizenship?.code === 'IS' ? 'red' : 'blue'}>{`Ríkisfang: ${child.citizenship?.name}`}</Tag>
-      </div>,
-      disabled: !isCheckable
-    }
-  })
+      return {
+        value: child.nationalId,
+        label: child.fullName,
+        subLabel: `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}`,
+        rightContent: (
+          <div style={{ display: 'flex' }}>
+            {showForeignDomicileTag && (
+              <div style={{ paddingRight: 15 }}>
+                <Tag disabled variant="red">
+                  Lögheimili utan Íslands
+                </Tag>
+              </div>
+            )}
+            <Tag
+              outlined={child.citizenship?.code === 'IS' ? false : true}
+              disabled
+              variant={child.citizenship?.code === 'IS' ? 'red' : 'blue'}
+            >{`Ríkisfang: ${child.citizenship?.name}`}</Tag>
+          </div>
+        ),
+        disabled: !isCheckable,
+      }
+    },
+  )
 
   return (
     <Box>
@@ -47,7 +61,9 @@ export const SelectChildren = ({
             component: FieldComponents.CHECKBOX,
             children: undefined,
             options: childrenCheckboxes,
-            onSelect: (newAnswer) => {return { ...answers, selectedChildren: newAnswer}}
+            onSelect: (newAnswer) => {
+              return { ...answers, selectedChildren: newAnswer }
+            },
           }}
         />
       </Box>

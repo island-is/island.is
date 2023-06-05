@@ -103,28 +103,36 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getParents({
     auth,
-  }: TemplateApiModuleActionProps): Promise<
-  NationalRegistryParent[] | null
-  > {
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryParent[] | null> {
     const parentUser = auth
     const parentNationalIds = await this.nationalRegistryApi.getLegalParents(
       parentUser,
     )
 
-    const parents = parentNationalIds.map(i => { return { nationalId: i}})
+    const parents = parentNationalIds.map((i) => {
+      return { nationalId: i }
+    })
 
-    const parentOneDetails = parents.length > 0 && await this.nationalRegistryApi.getIndividual(parents[0].nationalId)
-    const parentTwoDetails = parents.length > 1 && await this.nationalRegistryApi.getIndividual(parents[1].nationalId)
+    const parentOneDetails =
+      parents.length > 0 &&
+      (await this.nationalRegistryApi.getIndividual(parents[0].nationalId))
+    const parentTwoDetails =
+      parents.length > 1 &&
+      (await this.nationalRegistryApi.getIndividual(parents[1].nationalId))
 
-    const parentOne: NationalRegistryParent | null = parentOneDetails ? { nationalId: parentOneDetails.nationalId, name: parentOneDetails.name} : null
-    const parentTwo: NationalRegistryParent | null = parentTwoDetails ? { nationalId: parentTwoDetails.nationalId, name: parentTwoDetails.name} : null
+    const parentOne: NationalRegistryParent | null = parentOneDetails
+      ? { nationalId: parentOneDetails.nationalId, name: parentOneDetails.name }
+      : null
+    const parentTwo: NationalRegistryParent | null = parentTwoDetails
+      ? { nationalId: parentTwoDetails.nationalId, name: parentTwoDetails.name }
+      : null
 
     const parentsWithDetails = []
 
-    if(parentOne){
+    if (parentOne) {
       parentsWithDetails.push(parentOne)
     }
-    if(parentTwo){
+    if (parentTwo) {
       parentsWithDetails.push(parentTwo)
     }
 
@@ -154,13 +162,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
       childrenNationalIds.map(async (childNationalId) => {
         const child = await this.getIndividual(childNationalId)
 
-        
         let domicileInIceland = true
         const domicileCode = child?.address?.municipalityCode
         if (!domicileCode || domicileCode.substring(0, 2) === '99') {
           domicileInIceland = false
         }
-        
 
         if (!child) {
           return null
@@ -195,7 +201,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           livesWithBothParents: livesWithParentB ?? livesWithApplicant,
           otherParent: parentB,
           citizenship: child.citizenship,
-          domicileInIceland
+          domicileInIceland,
         }
       }),
     )

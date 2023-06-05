@@ -18,7 +18,7 @@ const UserSchemaBase = z.object({
   email: z.string().min(1),
   phone: z.string().min(1),
   citizenship: z.string().min(1),
-  dateHomeRegistration: z.string().min(1),
+  residenceInIcelandLastChangeDate: z.string().min(1),
   birthCountry: z.string().min(1),
 })
 
@@ -30,20 +30,20 @@ export const UserInformationSchema = z.intersection(
 )
 
 const ResidenceConditionSchema = z.object({
-  radio: z.string().min(1)
+  radio: z.string().min(1),
 })
 
 export const ParentInformationSchema = z.object({
   nationalId: z
-  .string()
-  .refine(
-    (nationalId) =>
-      nationalId &&
-      nationalId.length !== 0 &&
-      kennitala.isValid(nationalId) &&
-      (kennitala.isCompany(nationalId) ||
-        kennitala.info(nationalId).age >= 18),
-  ),
+    .string()
+    .refine(
+      (nationalId) =>
+        nationalId &&
+        nationalId.length !== 0 &&
+        kennitala.isValid(nationalId) &&
+        (kennitala.isCompany(nationalId) ||
+          kennitala.info(nationalId).age >= 18),
+    ),
   name: z.string().min(1),
 })
 
@@ -53,7 +53,7 @@ export const CitizenshipSchema = z.object({
   selectedChildren: z.array(z.string()).optional(),
   residenceCondition: ResidenceConditionSchema,
   parents: z.array(z.string()).optional(),
-  spouse: z.string().min(1)
+  spouse: z.string().min(1),
 })
 
 export type Citizenship = z.TypeOf<typeof CitizenshipSchema>

@@ -6,7 +6,13 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { ChildrenCustodyInformationApi, DefaultEvents, Form, FormModes, IdentityApi } from '@island.is/application/types'
+import {
+  ChildrenCustodyInformationApi,
+  DefaultEvents,
+  Form,
+  FormModes,
+  IdentityApi,
+} from '@island.is/application/types'
 import {
   confirmation,
   externalData,
@@ -18,7 +24,6 @@ import {
 import {
   CitizenGetSpouseApi,
   CitizenshipIndividualApi,
-  CitizenshipIndividualResidencyApi,
   NationalRegistryBirthplaceApi,
   NationalRegistryParentsApi,
   // NationalRegistryUserApi,
@@ -70,7 +75,7 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               provider: CitizenGetSpouseApi,
               title: '',
-              subTitle: ''
+              subTitle: '',
             }),
             buildDataProviderItem({
               provider: NationalRegistryBirthplaceApi,
@@ -95,10 +100,6 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CitizenshipIndividualApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: CitizenshipIndividualResidencyApi,
               title: '',
             }),
             buildDataProviderItem({
