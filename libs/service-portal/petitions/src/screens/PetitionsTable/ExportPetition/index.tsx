@@ -9,6 +9,7 @@ import { toast } from 'react-toastify'
 
 interface Props {
   petitionId: string
+  onGetPDF?: () => void
   onGetCSV: () => void
   dropdownItems?: {
     href?: string
@@ -36,6 +37,7 @@ const baseUrl = `${document.location.origin}/undirskriftalistar/`
 
 const DropdownExport: FC<Props> = ({
   petitionId,
+  onGetPDF,
   onGetCSV,
   dropdownItems = [],
 }) => {
@@ -60,8 +62,13 @@ const DropdownExport: FC<Props> = ({
       </Box>
       <DropdownMenu
         icon="download"
+        iconType="outline"
         menuLabel={formatMessage(m.downloadPetitions)}
         items={[
+          {
+            onClick: () => onGetPDF && onGetPDF(),
+            title: 'Sem PDF',
+          },
           {
             onClick: () => onGetCSV(),
             title: 'Sem CSV',
