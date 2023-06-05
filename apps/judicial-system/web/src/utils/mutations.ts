@@ -45,6 +45,7 @@ export const CasesQuery = gql`
       creatingProsecutor {
         id
       }
+      appealCaseNumber
       appealState
       appealRulingDecision
       ...CoreCaseListFields
@@ -59,6 +60,7 @@ export const AppealedCasesQuery = gql`
       defendants {
         name
       }
+      appealCaseNumber
       appealState
       appealedDate
       appealRulingDecision

@@ -6,6 +6,7 @@ import { icelandicNamesRegistryModule } from '@island.is/portals/admin/icelandic
 import { documentProviderModule } from '@island.is/portals/admin/document-provider'
 import { applicationSystemAdminModule } from '@island.is/portals/admin/application-system'
 import { idsAdminModule } from '@island.is/portals/admin/ids-admin'
+import { petitionModule } from '@island.is/portals/admin/petition'
 
 /**
  * NOTE:
@@ -22,4 +23,5 @@ export const modules: PortalModule[] = [
   documentProviderModule,
   applicationSystemAdminModule,
   idsAdminModule,
+  petitionModule,
 ]

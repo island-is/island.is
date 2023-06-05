@@ -226,7 +226,6 @@ export const UpdateCaseMutation = gql`
       caseResentExplanation
       origin
       seenByDefender
-      subpoenaType
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction

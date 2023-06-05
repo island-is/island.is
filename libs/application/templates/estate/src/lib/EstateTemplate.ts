@@ -37,7 +37,6 @@ const EstateTemplate: ApplicationTemplate<
       : m.prerequisitesTitle.defaultMessage,
   institution: m.institution,
   dataSchema: estateSchema,
-  featureFlag: Features.estateApplication,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.prerequisites,
