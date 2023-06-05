@@ -103,9 +103,9 @@ export const CaseOverview: React.FC = () => {
   }
 
   const shouldDisplayAlertBanner =
-    (completedCaseStates.includes(workingCase.state) &&
-      workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE) ||
-    workingCase.hasBeenAppealed
+    completedCaseStates.includes(workingCase.state) &&
+    (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+      workingCase.hasBeenAppealed)
 
   return (
     <>
