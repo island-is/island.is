@@ -175,7 +175,7 @@ export const serviceSetup = (services: {
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
-        prod: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi.island.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
