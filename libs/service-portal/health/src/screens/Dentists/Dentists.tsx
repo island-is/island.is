@@ -18,7 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
-import { DentistBill } from '@island.is/api/schema'
+import { DentistBill } from '@island.is/service-portal/graphql'
 
 const Dentists = () => {
   useNamespaces('sp.health')
@@ -26,7 +26,7 @@ const Dentists = () => {
 
   const { loading, error, data } = useGetDentistsQuery()
 
-  const dentistData = data?.getRightsPortalDentists
+  const dentistData = data?.rightsPortalDentists
 
   if (!error && !loading) {
     return (
@@ -137,7 +137,7 @@ const Dentists = () => {
               </T.Head>
               <T.Body>
                 {dentistData.billHistory?.map((rowItem) =>
-                  generateRow(rowItem),
+                  generateRow(rowItem as DentistBill),
                 )}
               </T.Body>
             </T.Table>

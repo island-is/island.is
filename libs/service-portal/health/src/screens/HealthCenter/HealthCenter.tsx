@@ -8,9 +8,7 @@ import {
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
 import {
   Box,
-  DatePicker,
   Divider,
-  Inline,
   SkeletonLoader,
   Stack,
   Table as T,
@@ -18,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
-import { HealthCenterHistoryEntry } from '@island.is/api/schema'
+import { HealthCenterHistoryEntry } from '@island.is/service-portal/graphql'
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
@@ -26,7 +24,7 @@ const HealthCenter = () => {
 
   const { loading, error, data } = useGetHealthCenterQuery()
 
-  const healthCenterData = data?.getRightsPortalHealthCenterHistory
+  const healthCenterData = data?.rightsPortalHealthCenterHistory
 
   if (!error && !loading) {
     return (
@@ -52,7 +50,9 @@ const HealthCenter = () => {
           <Text variant="medium">{rowItem.dateTo ?? '-'}</Text>
         </T.Data>
         <T.Data>
-          <Text variant="medium">{rowItem.healthCenter?.name ?? '-'}</Text>
+          <Text variant="medium">
+            {rowItem.healthCenter?.healthCenter ?? '-'}
+          </Text>
         </T.Data>
         <T.Data>
           <Text variant="medium">{rowItem.healthCenter?.doctor ?? '-'}</Text>
@@ -124,7 +124,7 @@ const HealthCenter = () => {
               </T.Head>
               <T.Body>
                 {healthCenterData.history?.map((rowItem) =>
-                  generateRow(rowItem),
+                  generateRow(rowItem as HealthCenterHistoryEntry),
                 )}
               </T.Body>
             </T.Table>
