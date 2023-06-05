@@ -334,9 +334,17 @@ describe('CaseController - Transition', () => {
 
           it('should transition the case', () => {
             expect(mockCaseModel.update).toHaveBeenCalledWith(
-              expect.objectContaining({
+              {
                 appealState: newAppealState,
-              }),
+                prosecutorPostponedAppealDate:
+                  newAppealState === CaseAppealState.APPEALED
+                    ? date
+                    : undefined,
+                appealReceivedByCourtDate:
+                  newAppealState === CaseAppealState.RECEIVED
+                    ? date
+                    : undefined,
+              },
               { where: { id: caseId }, transaction },
             )
           })

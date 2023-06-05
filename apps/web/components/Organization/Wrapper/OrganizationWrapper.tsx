@@ -76,6 +76,10 @@ import { SAkFooter, SAkHeader } from './Themes/SAkTheme'
 import { GevFooter, GevHeader } from './Themes/GevTheme'
 import { HveHeader, HveFooter } from './Themes/HveTheme'
 import { ShhFooter, ShhHeader } from './Themes/SHHTheme'
+import {
+  HeilbrigdisstofnunAusturlandsFooter,
+  HeilbrigdisstofnunAusturlandsHeader,
+} from './Themes/HeilbrigdisstofnunAusturlandsTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -113,6 +117,7 @@ export const lightThemes = [
   'landing_page',
   'tryggingastofnun',
   'hve',
+  'hsa',
 ]
 export const footerEnabled = [
   'syslumenn',
@@ -153,6 +158,8 @@ export const footerEnabled = [
   'gev',
 
   'shh',
+
+  'hsa',
 ]
 
 export const getThemeConfig = (
@@ -236,6 +243,12 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
       return <HveHeader organizationPage={organizationPage} />
     case 'shh':
       return <ShhHeader organizationPage={organizationPage} />
+    case 'hsa':
+      return (
+        <HeilbrigdisstofnunAusturlandsHeader
+          organizationPage={organizationPage}
+        />
+      )
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
@@ -475,6 +488,15 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
     case 'the-communication-center-for-the-deaf-and-hearing-impaired':
       OrganizationFooterComponent = (
         <ShhFooter
+          title={organization.title}
+          namespace={namespace}
+          footerItems={organization.footerItems}
+        />
+      )
+      break
+    case 'hsa':
+      OrganizationFooterComponent = (
+        <HeilbrigdisstofnunAusturlandsFooter
           title={organization.title}
           namespace={namespace}
           footerItems={organization.footerItems}

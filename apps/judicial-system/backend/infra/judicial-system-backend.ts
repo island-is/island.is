@@ -30,6 +30,11 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
+      CONTENTFUL_ENVIRONMENT: {
+        dev: 'test',
+        staging: 'test',
+        prod: 'master',
+      },
       CLIENT_URL: {
         dev: ref((h) => `https://judicial-system.${h.env.domain}`),
         staging: ref((h) => `https://judicial-system.${h.env.domain}`),
@@ -41,7 +46,7 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       BLOCKED_API_INTEGRATION: {
         dev: '',
         staging: 'COURT,COURT_LITIGANT,POLICE_CASE,POLICE_CASE_V2',
-        prod: 'COURT_LITIGANT,POLICE_CASE_V2',
+        prod: 'COURT_LITIGANT',
       },
       NO_UPDATE_NOTIFIER: 'true',
     })

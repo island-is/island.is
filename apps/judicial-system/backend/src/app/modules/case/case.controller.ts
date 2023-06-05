@@ -25,6 +25,7 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
+  CaseAppealDecision,
   CaseAppealState,
   CaseState,
   CaseTransition,
@@ -51,6 +52,7 @@ import {
   representativeRule,
   staffRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import { nowFactory } from '../../factories'
 import { UserService } from '../user'
@@ -259,7 +261,7 @@ export class CaseController {
       theCase.appealState,
     )
 
-    const update: UpdateCase = states
+    let update: UpdateCase = states
 
     if (transition.transition === CaseTransition.DELETE) {
       update.parentCaseId = null
@@ -271,9 +273,36 @@ export class CaseController {
       update.courtRecordSignatureDate = null
     }
 
-    // The only roles that can appeal a case are prosecutor roles
+    // TODO: Consider changing the names of the postponed appeal date variables
+    // as they are now also used when the case is appealed in court
     if (states.appealState === CaseAppealState.APPEALED) {
+      // The only roles that can appeal a case here are prosecutor roles
       update.prosecutorPostponedAppealDate = nowFactory()
+    } else if (
+      // Handle appealed in court
+      !theCase.appealState &&
+      [
+        CaseTransition.ACCEPT,
+        CaseTransition.REJECT,
+        CaseTransition.DISMISS,
+      ].includes(transition.transition) &&
+      (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
+    ) {
+      if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+        update.prosecutorPostponedAppealDate = nowFactory()
+      } else {
+        update.accusedPostponedAppealDate = nowFactory()
+      }
+
+      update = {
+        ...update,
+        ...transitionCase(
+          CaseTransition.APPEAL,
+          states.state ?? theCase.state,
+          states.appealState ?? theCase.appealState,
+        ),
+      }
     }
 
     if (states.appealState === CaseAppealState.RECEIVED) {
@@ -304,6 +333,7 @@ export class CaseController {
     registrarRule,
     assistantRule,
     staffRule,
+    defenderRule,
   )
   @Get('cases')
   @ApiOkResponse({

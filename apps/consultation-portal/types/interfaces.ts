@@ -28,10 +28,20 @@ export interface Case {
   documents?: Array<Document>
   additionalDocuments?: Array<Document>
   stakeholders?: Array<Stakeholder>
+  allowUsersToSendPrivateAdvices?: boolean
+  relatedCases?: Array<RelatedCase>
+}
+
+export interface RelatedCase {
+  id?: number
+  caseNumber?: string
+  name?: string
 }
 
 export interface Document {
   id?: string
+  description?: string
+  link?: string
   fileName?: string
   fileType?: string
   size?: number
@@ -42,13 +52,6 @@ export interface Stakeholder {
   email?: string
 }
 
-export interface AdviceDocuments {
-  id?: string
-  fileName?: string
-  fileType?: string
-  size?: number
-}
-
 export interface UserAdvice {
   id: string
   caseId: number
@@ -57,7 +60,21 @@ export interface UserAdvice {
   content: string
   created: string
   _case: Case
-  adviceDocuments: Array<AdviceDocuments>
+  adviceDocuments: Array<Document>
+  isPrivate?: boolean
+  isHidden?: boolean
+}
+
+export interface AdviceResult {
+  id: string
+  number: number
+  participantName?: string
+  participantEmail?: string
+  content?: string
+  isPrivate?: boolean
+  isHidden?: boolean
+  created?: Date
+  adviceDocuments?: Array<Document>
 }
 
 export interface CaseForSubscriptions {
