@@ -30,7 +30,7 @@ import {
 } from '../../../utils/validate'
 import * as styles from './UserForm.css'
 import {
-  isCourtRole,
+  isExtendedCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 
@@ -38,7 +38,6 @@ type ExtendedOption = ReactSelectOption & { institution: Institution }
 
 interface Props {
   user: User
-  courts: Institution[]
   allCourts: Institution[]
   prosecutorsOffices: Institution[]
   prisonInstitutions: Institution[]
@@ -60,10 +59,8 @@ export const UserForm: React.FC<Props> = (props) => {
 
   const selectInstitutions = (isProsecutionRole(user.role)
     ? props.prosecutorsOffices
-    : isCourtRole(user.role)
+    : isExtendedCourtRole(user.role)
     ? props.allCourts
-    : user.role === UserRole.ASSISTANT
-    ? props.courts
     : user.role === UserRole.STAFF
     ? props.prisonInstitutions
     : []
@@ -85,11 +82,9 @@ export const UserForm: React.FC<Props> = (props) => {
 
     return isProsecutionRole(user.role)
       ? user.institution?.type === InstitutionType.PROSECUTORS_OFFICE
-      : isCourtRole(user.role)
+      : isExtendedCourtRole(user.role)
       ? user.institution?.type === InstitutionType.COURT ||
         user.institution?.type === InstitutionType.HIGH_COURT
-      : user.role === UserRole.ASSISTANT
-      ? user.institution?.type === InstitutionType.COURT
       : user.role === UserRole.STAFF
       ? user.institution?.type === InstitutionType.PRISON ||
         user.institution?.type === InstitutionType.PRISON_ADMIN
