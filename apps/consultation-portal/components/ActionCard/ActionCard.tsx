@@ -58,8 +58,8 @@ const ActionCard = ({ heading, text, button, input }: Props) => {
       rowGap={2}
     >
       <Box display="flex" flexDirection="column">
-        {heading && <Text variant="h3">{heading}</Text>}
-        {text && <Text paddingTop={1}>{text}</Text>}
+        {!!heading && <Text variant="h3">{heading}</Text>}
+        {!!text && <Text paddingTop={1}>{text}</Text>}
       </Box>
       {noInput ? (
         <GridContainer>
