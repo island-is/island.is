@@ -33,6 +33,7 @@ import { GET_NAMESPACE_QUERY } from '../queries'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
 import { FilterTag } from '@island.is/web/components'
+import { sortAlpha } from '@island.is/shared/utils'
 import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
 
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
@@ -54,10 +55,14 @@ const mapVacanciesField = (vacancies: Vacancy[], fieldName: keyof Vacancy) => {
       fieldSet.add(field)
     }
   }
-  return Array.from(fieldSet).map((field) => ({
+  const vacanciesFieldArray = Array.from(fieldSet).map((field) => ({
     label: String(field),
     value: String(field),
   }))
+
+  vacanciesFieldArray.sort(sortAlpha('label'))
+
+  return vacanciesFieldArray
 }
 
 interface IcelandicGovernmentInstitutionVacanciesListProps {
@@ -242,16 +247,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
 
   const filterCategories = [
     {
-      id: 'fieldOfWork',
-      label: n('fieldOfWork', 'Starf') as string,
-      selected: parameters.fieldOfWork,
-      filters: fieldOfWorkOptions,
-    },
-    {
       id: 'location',
       label: n('location', 'Staðsetning') as string,
       selected: parameters.location,
       filters: locationOptions,
+    },
+    {
+      id: 'fieldOfWork',
+      label: n('fieldOfWork', 'Störf') as string,
+      selected: parameters.fieldOfWork,
+      filters: fieldOfWorkOptions,
     },
     {
       id: 'institution',
@@ -294,10 +299,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             variant={isMobile ? 'dialog' : 'popover'}
             labelClear={n('clearFilter', 'Hreinsa síu')}
             labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
-            labelOpen={n('openFilter', 'Opna síu')}
+            labelOpen={n('openFilter', 'Sía niðurstöður')}
             labelClose={n('closeFilter', 'Loka síu')}
             labelResult={n('viewResults', 'Skoða niðurstöður')}
-            labelTitle={n('filterMenuTitle', 'Sía störf')}
+            labelTitle={n('filterMenuTitle', 'Sía niðurstöður')}
             onFilterClear={clearSearch}
             filterInput={
               <Box className={styles.filterInput}>
