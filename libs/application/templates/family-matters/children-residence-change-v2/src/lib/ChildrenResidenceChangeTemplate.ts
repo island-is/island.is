@@ -112,13 +112,13 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
                 ],
               },
               api: [
-                ChildrenCustodyInformationApi,
-                NationalRegistryUserApi.configure({
+                ChildrenCustodyInformationApi.configure({
                   params: {
                     validateHasChildren: true,
                     validateHasJointCustody: true,
                   },
                 }),
+                NationalRegistryUserApi,
                 UserProfileApi,
               ],
             },
