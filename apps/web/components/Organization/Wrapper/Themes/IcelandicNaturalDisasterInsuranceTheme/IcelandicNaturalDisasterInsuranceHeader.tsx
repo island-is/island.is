@@ -1,0 +1,118 @@
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import React, { useMemo } from 'react'
+import { Box, Hidden, Hyphen, Link, Text } from '@island.is/island-ui/core'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
+import { theme } from '@island.is/island-ui/theme'
+import * as styles from './IcelandicNaturalDisasterInsuranceHeader.css'
+
+const getDefaultStyle = (width: number) => {
+  if (width > theme.breakpoints.lg)
+    return {
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: '100% 340px, cover',
+      backgroundPosition: 'bottom',
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/2urQfUGjA4HrUVAqIqJPp/ff94bb07a9922141d9f2dd96ae5be370/Vefsi____a_mynd_1440x385pix__1_.png'), linear-gradient(#25afb9, #25afb9)",
+    }
+  if (width > theme.breakpoints.md)
+    return {
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      backgroundImage:
+        "url('https://images.ctfassets.net/8k0h54kbe6bj/2urQfUGjA4HrUVAqIqJPp/ff94bb07a9922141d9f2dd96ae5be370/Vefsi____a_mynd_1440x385pix__1_.png')",
+    }
+  return {
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundImage: 'linear-gradient(#6bcacf, #25afb9)',
+  }
+}
+
+interface HeaderProps {
+  organizationPage: OrganizationPage
+}
+
+const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
+  organizationPage,
+}) => {
+  const { linkResolver } = useLinkResolver()
+  const namespace = useMemo(
+    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
+    [organizationPage.organization.namespace?.fields],
+  )
+  const n = useNamespace(namespace)
+  const { width } = useWindowSize()
+
+  const screenWidth = getScreenWidthString(width)
+
+  return (
+    <div
+      style={n(`ntiHeader-${screenWidth}`, getDefaultStyle(width))}
+      className={styles.headerBg}
+    >
+      <div className={styles.headerWrapper}>
+        <SidebarLayout
+          sidebarContent={
+            !!organizationPage.organization.logo && (
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+                className={styles.iconCircle}
+              >
+                <img
+                  src={organizationPage.organization.logo.url}
+                  className={styles.headerLogo}
+                  alt="nti-logo"
+                />
+              </Link>
+            )
+          }
+        >
+          {!!organizationPage.organization.logo && (
+            <Hidden above="sm">
+              <Link
+                href={
+                  linkResolver('organizationpage', [organizationPage.slug]).href
+                }
+                className={styles.iconCircle}
+              >
+                <img
+                  src={organizationPage.organization.logo.url}
+                  className={styles.headerLogo}
+                  alt=""
+                />
+              </Link>
+            </Hidden>
+          )}
+          <Box
+            className={styles.title}
+            marginTop={[2, 2, 6]}
+            textAlign={['center', 'center', 'left']}
+          >
+            <Link
+              href={
+                linkResolver('organizationpage', [organizationPage.slug]).href
+              }
+            >
+              <Text
+                variant={width > theme.breakpoints.sm ? 'h1' : 'h3'}
+                as="h1"
+                color="blueberry600"
+                fontWeight="semiBold"
+              >
+                <Hyphen>{organizationPage.title}</Hyphen>
+              </Text>
+            </Link>
+          </Box>
+        </SidebarLayout>
+      </div>
+    </div>
+  )
+}
+
+export default IcelandicNaturalDisasterInsuranceHeader
