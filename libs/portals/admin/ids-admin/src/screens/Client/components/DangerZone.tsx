@@ -49,9 +49,7 @@ export const DangerZone = () => {
             }}
           />
           <ActionCard
-            heading={formatMessage(m.deleteClientAllEnv, {
-              environment: environment,
-            })}
+            heading={formatMessage(m.deleteClientAllEnv)}
             headingVariant="h4"
             text={formatMessage(m.deleteClientDescription)}
             backgroundColor="red"

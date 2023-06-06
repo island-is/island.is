@@ -216,9 +216,10 @@ export class AdminClientsService {
       throw new NotFoundException()
     }
 
-    const removedClient = await this.clientModel.update(
+    await this.clientModel.update(
       {
         archived: Date.now(),
+        enabled: false,
       },
       {
         where: {
@@ -228,11 +229,7 @@ export class AdminClientsService {
       },
     )
 
-    if (!removedClient) {
-      throw new NotFoundException()
-    }
-
-    return true
+    return
   }
 
   async update(

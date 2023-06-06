@@ -3,10 +3,10 @@ import { Environment } from '@island.is/shared/types'
 
 @InputType('AuthAdminDeleteClientInput')
 export class DeleteClientInput {
-  @Field(() => String, { nullable: false })
+  @Field(() => String)
   tenantId!: string
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String)
   clientId!: string
 
   @Field(() => [Environment], { nullable: false })

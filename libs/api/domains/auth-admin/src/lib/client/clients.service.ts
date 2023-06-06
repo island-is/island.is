@@ -322,7 +322,7 @@ export class ClientsService extends MultiEnvironmentService {
       success: true,
     }))
 
-    await Promise.allSettled(
+    await Promise.all(
       response.map((resp, index) =>
         this.adminApiByEnvironmentWithAuth(resp.environment, user)
           ?.meClientsControllerDelete({

@@ -126,13 +126,22 @@ export class MeClientsController {
   @Delete(':clientId')
   @Documentation({
     description: 'Delete a client.',
-    response: { status: 200 },
+    response: { status: 204 },
   })
   async delete(
     @CurrentUser() user: User,
     @Param('clientId') clientId: string,
     @Param('tenantId') tenantId: string,
-  ): Promise<void> {
-    await this.clientsService.delete(clientId, tenantId)
+  ): Promise<boolean> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'delete',
+        resources: clientId,
+        meta: { tenantId },
+      },
+      this.clientsService.delete(clientId, tenantId),
+    )
   }
 }

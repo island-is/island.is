@@ -780,11 +780,11 @@ export const m = defineMessages({
   },
   successDeletingClient: {
     id: 'ap.ids-admin:success-deleting-client',
-    defaultMessage: 'Successfully deleted client',
+    defaultMessage: 'Successfully deleted application',
   },
   deleteClient: {
     id: 'ap.ids-admin:delete-client',
-    defaultMessage: 'Delete client in {environment} environment',
+    defaultMessage: 'Delete application in {environment} environment',
   },
   delete: {
     id: 'ap.ids-admin:delete',
