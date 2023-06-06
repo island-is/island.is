@@ -18,6 +18,15 @@ const formatDate = (date: string) => {
   }
 }
 
+const getBaseUrl = () => {
+  const baseUrl =
+    window.location.origin === 'http://localhost:4200'
+      ? 'http://localhost:4242'
+      : window.location.origin
+
+  return `${baseUrl}/umsoknir/undirskriftalisti`
+}
+
 export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
   const router = useRouter()
   const petitionLists = useGetPetitionLists()
@@ -35,7 +44,7 @@ export const GeneralPetitionLists: FC<GeneralPetitionProps> = ({ slice }) => {
             icon: 'open',
             iconType: 'outline',
             size: 'small',
-            onClick: () => window.open('/umsoknir/undirskriftalisti', '_blank'),
+            onClick: () => window.open(getBaseUrl(), '_blank'),
           }}
         />
       </Box>
