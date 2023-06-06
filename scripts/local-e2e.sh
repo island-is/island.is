@@ -6,62 +6,40 @@
 
 set -euo pipefail
 
-
-RESET=$(echo -en '\033[0m')
-RED=$(echo -en '\033[00;31m')
-GREEN=$(echo -en '\033[00;32m')
-YELLOW=$(echo -en '\033[00;33m')
-LBLUE=$(echo -en '\033[01;34m')
-
+. ./scripts/utils.sh
 
 export \
   APP="system-e2e" \
   TEST_ENVIRONMENT="local"
 
+PROG_NAME=$(basename "${0}")
 PROJECT_DIR=$(git rev-parse --show-toplevel)
-APP_HOME=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_DIR"/workspace.json)
-APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_DIR"/"$APP_HOME"/project.json)
-CYPRESS_BIN="$PROJECT_DIR/node_modules/.bin/cypress"
-ENV_FILE="$PROJECT_DIR/.env.secret"
+APP_HOME=$(jq ".projects[\"${APP}\"]" -r <"${PROJECT_DIR}"/workspace.json)
+APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r <"${PROJECT_DIR}"/"${APP_HOME}"/project.json)
+ENV_FILE="${PROJECT_DIR}/.env.secret"
 
-# shellcheck disable=SC1091,SC1090
-source "$ENV_FILE"
+LE2E_ACTION="run"
+LE2E_ARGS=()
+LE2E_ENVIRONMENT="local"
+LE2E_TEST_TYPE="smoke"
+LE2E_HEADEDEDNESS="headless"
+LE2E_BROWSER="chrome"
+LE2E_RUN_MODE="container"
 
 DOCKERFILE="${PROJECT_DIR}/scripts/ci/Dockerfile"
 DOCKER_TAG="$(git rev-parse --short HEAD)"
 DOCKER_IMAGE="localhost/${APP}":"${DOCKER_TAG}"
-DOCKER_TARGET="output-local"
+DOCKER_TARGET="playwright-local"
 DOCKER_BUILD_ARGS="--build-arg APP=${APP} --build-arg APP_HOME=${APP_HOME} --build-arg APP_DIST_HOME=${APP_DIST_HOME} --build-arg GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg GIT_SHA=${DOCKER_TAG}"
 
-function info() {
-  local msg
-  msg="$1"
-  echo "${LBLUE}[info]: ${msg}${RESET}"
-}
-
-function success() {
-  local msg
-  msg="$1"
-  echo "${GREEN}[success]: ${msg}${RESET}"
-}
-
-function error() {
-  local msg
-  msg="$1"
-  echo "${RED}[error]: ${msg}${RESET}"
-}
-
-function warning() {
-  local msg
-  msg="$1"
-  echo "${YELLOW}[warn]: ${msg}${RESET}"
-}
+# shellcheck disable=SC1091,SC1090
+. "${ENV_FILE}"
 
 function _get_builder_name() {
   if command -v podman >/dev/null; then
     echo "podman"
   else
-      echo "docker"
+    echo "docker"
   fi
 }
 
@@ -69,12 +47,12 @@ function builder() {
   if command -v podman >/dev/null; then
     podman "$@"
   else
-      docker "$@"
+    docker "$@"
   fi
 }
 
 function _image_exists() {
-  image=$(builder images -q "${DOCKER_IMAGE}" 2> /dev/null)
+  image=$(builder images -q "${DOCKER_IMAGE}" 2>/dev/null)
 
   if [ -z "${image}" ]; then
     warning "${DOCKER_IMAGE} has not been built yet, starting build now ..."
@@ -83,151 +61,122 @@ function _image_exists() {
 }
 
 function _get_source_path() {
-  [ "${CODE_SOURCE}" = "source" ] && echo "${APP_HOME}"
-  [ "${CODE_SOURCE}" = "dist" ] && echo "${APP_DIST_HOME}"
+  [ "${LE2E_CODE_SOURCE}" = "source" ] && echo "${APP_HOME}"
+  [ "${LE2E_CODE_SOURCE}" = "dist" ] && echo "${APP_DIST_HOME}"
 }
 
 function _build_app() {
   nx run ${APP}:build
 }
 
-function open_menu() {
-  "${CYPRESS_BIN}" open -P "$@"
-}
-
 function run_container() {
-  TMP_DIR="${PROJECT_DIR}/tmp"
-  SECRETS_FILE="${PROJECT_DIR}/.env.secret"
-  SECRETS_ENV_FILE="${SECRETS_FILE}.docker"
+  local tmp_dir="${PROJECT_DIR}/tmp"
+  local secrets_file="${PROJECT_DIR}/.env.secret"
+  local secrets_env_file="${secrets_file}.docker"
 
-  mkdir -p "${TMP_DIR}"
+  mkdir -p "${tmp_dir}"
 
-  cp "${SECRETS_FILE}" "${SECRETS_ENV_FILE}"
+  cp "${secrets_file}" "${secrets_env_file}"
 
   # transform .env secrets file to actual .env file
-  grep -v '^#' "${SECRETS_FILE}" | cut -d ' ' -f 2- > "${SECRETS_ENV_FILE}"
+  grep -v '^#' "${secrets_file}" | cut -d ' ' -f 2- >"${secrets_env_file}"
 
   _build_app
   _image_exists
   runner \
-    -v "${TMP_DIR}":/out:Z \
+    -v "${tmp_dir}":/out:Z \
     -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":Z \
     -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":Z \
-    --env-file "${SECRETS_ENV_FILE}" \
+    --env-file "${secrets_env_file}" \
     "${DOCKER_IMAGE}" "$@"
-  exit 0
 }
 
 # shellcheck disable=SC2086
 function build_image() {
-  builder build \
-    -f "${DOCKERFILE}" \
-    --target="${DOCKER_TARGET}" \
-    "${PUBLISH_TO_REGISTRY[@]}" \
-    ${DOCKER_BUILD_ARGS:-} \
-    ${EXTRA_DOCKER_BUILD_ARGS:-} \
-    -t "${DOCKER_IMAGE}" \
-    "$PROJECT_DIR"
+  DOCKER_TAG=local-e2e exec ./scripts/ci/_podman.sh Dockerfile playwright-local
+  return
 }
 
 function runner() {
   if command -v podman >/dev/null; then
     podman run --stop-signal SIGKILL --userns=keep-id "$@"
   else
-      docker run "$@"
+    docker run "$@"
   fi
 }
 
 usage() {
-  echo
-  echo "Usage: $(basename "$0") <build|menu|run>" 2>&1
-  echo
-  echo "menu          opens up Cypress interactive spec dashboard " 2>&1
-  echo "build         [-a app-name: default system-e2e]" 2>&1
-  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-l, default: headless] [-d, extremely verbose cypress debugging]" 2>&1
-  echo
-  echo "examples " 2>&1
-  echo "         $(basename "$0") run -i air-discount-scheme -t acceptance -c source -l" 2>&1
-  echo "         $(basename "$0") run -i skilavottord -t acceptance -c container -b electron" 2>&1
-  echo "         $(basename "$0") run -i web -t smoke -c dist -b firefox -l" 2>&1
+  cat <<EOF
+Usage: ${PROG_NAME} <build|run>
+
+build     [-a app-name: default system-e2e]
+run       -i LE2E_integration -t smoke|acceptance -c <source|dist|container>
+          [-e <local|dev|staging|prod>, default: local]
+          [-b LE2E_browser, default: chrome] [-l, default: headless]
+          [-d, extremely verbose cypress debugging]
+
+examples
+         ${PROG_NAME} run -i air-discount-scheme -t acceptance -c source -l
+         ${PROG_NAME} run -i skilavottord -t acceptance -c container -b electron
+         ${PROG_NAME} run -i web -t smoke -c dist -b firefox -l
+EOF
   exit 1
 }
 
-CODE_SOURCE=""
-INTEGRATION=""
-TEST_TYPE=""
-HEAD="--headless"
-BROWSER="chrome"
+function le2e_test() {
+  info "Running ${LE2E_TEST_TYPE} tests..."
+  podman run --rm -it --name local-e2e -e TEST_ENVIRONMENT="${LE2E_ENVIRONMENT}" --userns=keep-id --entrypoint bash localhost/system-e2e:local-e2e
+  # yarn playwright test -c apps/system-e2e/src "${LE2E_TEST_TYPE}" "${LE2E_ARGS[@]}"
+  #playwright test -c apps/system-e2e/src "--${LE2E_HEADEDEDNESS}" "${LE2E_TARGET}" "${LE2E_ARGS[@]}"
+}
 
-if [ ! 0 == $# ]; then
-  case "$1" in
-    build)
-      shift
-      while getopts ":a:" opt; do
-        case "${opt}" in
-          a)
-            export APP=${OPTARG}
-            ;;
-          :)
-            error "-${OPTARG} requires an argument."
-            ;;
-          \?)
-            usage
-            ;;
-        esac
-      done
-      build_image && exit 0
-      ;;
-    menu)
-      shift
-      open_menu "${APP_HOME}" && exit 0
-      ;;
-    run)
-      shift
-      while getopts ":i:c:t:b:e:ld" opt; do
-        case "${opt}" in
-          i)
-            INTEGRATION=${OPTARG}
-            ;;
-          c)
-            [ "${OPTARG}" != "dist" ] && [ "${OPTARG}" != "source" ] && [ "${OPTARG}" != "container" ] && usage
-            CODE_SOURCE=${OPTARG}
-            ;;
-          t)
-            TEST_TYPE=${OPTARG}
-            ;;
-          b)
-            BROWSER=${OPTARG}
-            ;;
-          d)
-            export DEBUG="cypress:*"
-            ;;
-          l)
-            HEAD="--headed"
-            ;;
-          e)
-            [ "${OPTARG}" != "local" ] && [ "${OPTARG}" != "dev" ] && [ "${OPTARG}" != "staging" ] && [ "${OPTARG}" != "prod" ] && usage
-            export TEST_ENVIRONMENT=${OPTARG}
-            ;;
-          :)
-            error "-${OPTARG} requires an argument."
-            ;;
-          \?)
-            usage
-            ;;
-        esac
-      done
-      ;;
-    *)
-      usage
-      ;;
+function cli() {
+  # Parse command/action
+  local cmd="${1:-help}"
+  case "${cmd}" in
+  build | test | run) LE2E_ACTION="${cmd}" ;;
+  --help | -h | help) usage ;;
+  *) LE2E_ACTION="passthrough" ;;
   esac
-else
-  usage
-fi
+  shift
 
-# run dist in container
-[ "$CODE_SOURCE" = "container" ] && run_container -s "**/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --headless
+  # Parse options
+  while [[ $# -gt 0 ]]; do
+    local opt="${1:-}"
+    local arg="${2:-}"
+    local n_args=1
+    case "${opt}" in
+    --smoke) LE2E_TEST_TYPE="smoke" ;;
+    --acceptance) LE2E_TEST_TYPE="acceptance" ;;
+    --container) LE2E_RUN_MODE="container" ;;
+    --host) LE2E_RUN_MODE="host" ;;
+    --environment | -e) LE2E_ENVIRONMENT="${arg}" n_args=2 ;;
+    --) LE2E_ARGS=("${@:2}") n_args=$# ;;
+    *) LE2E_TARGET="${opt}" LE2E_ARGS=("${@:1}") n_args=$# ;;
+    esac
+    shift ${n_args}
+  done
 
-# run either from source or dist
-"${CYPRESS_BIN}" run -P "$(_get_source_path "${CODE_SOURCE}")" -s "**/integration/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --browser "${BROWSER}" ${HEAD} && exit 0
+  echo "ENV:"
+  log debug "$(set | grep "^LE2E_*")"
+
+  return
+}
+
+function main() {
+  cli "$@"
+  debug "Running action: ${LE2E_ACTION}"
+  debug "     with args: ${LE2E_ARGS[*]}"
+
+  case "${LE2E_ACTION}" in
+  build) build_image ;;
+  test) le2e_test ;;
+  run) run_container "${LE2E_ARGS[@]}" ;;
+  *) usage ;;
+  esac
+}
+
+log info "START main"
+main "$@"
+log info "DONE"
+exit $?
