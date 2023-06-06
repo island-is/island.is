@@ -26,13 +26,13 @@ import {
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Table,
+  TagAppealState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
-import TagAppealRuling from '@island.is/judicial-system-web/src/components/TagAppealRuling/TagAppealRuling'
 
 import { displayCaseType } from './utils'
 import * as styles from './Cases.css'
@@ -223,8 +223,9 @@ const PastCases: React.FC<Props> = (props) => {
                   }
                 />
               </Box>
-              {row.row.original.appealState === CaseAppealState.COMPLETED && (
-                <TagAppealRuling
+              {row.row.original.appealState && (
+                <TagAppealState
+                  appealState={row.row.original.appealState}
                   appealRulingDecision={row.row.original.appealRulingDecision}
                 />
               )}

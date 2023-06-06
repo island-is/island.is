@@ -14,13 +14,14 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Icon, Button } from '@island.is/island-ui/core'
 import {
-  CaseAppealState,
   CaseState,
   isExtendedCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
-import TagAppealRuling from '@island.is/judicial-system-web/src/components/TagAppealRuling/TagAppealRuling'
+import {
+  TagAppealState,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 
 import {
   directionType,
@@ -340,8 +341,9 @@ const ActiveCases: React.FC<Props> = (props) => {
                     />
                   </Box>
 
-                  {c.appealState === CaseAppealState.COMPLETED && (
-                    <TagAppealRuling
+                  {c.appealState && (
+                    <TagAppealState
+                      appealState={c.appealState}
                       appealRulingDecision={c.appealRulingDecision}
                     />
                   )}
