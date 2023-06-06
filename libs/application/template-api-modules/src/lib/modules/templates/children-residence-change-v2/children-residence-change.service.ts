@@ -244,11 +244,4 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
       (application as unknown) as Application,
     )
   }
-
-  async hasChildren({ auth }: TemplateApiModuleActionProps) {
-    const children = await this.nationalRegistryApi.getCustodyChildren(auth)
-    if (!children || children.length === 0) {
-      throw new TemplateApiError('Nope', 404)
-    }
-  }
 }
