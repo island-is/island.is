@@ -28,7 +28,6 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isValidNumberForRegion } from 'libphonenumber-js'
 import { generateResidenceChangePdf } from './pdfGenerators'
-import { TemplateApiError } from '@island.is/nest/problem'
 
 type Props = Override<
   TemplateApiModuleActionProps,
