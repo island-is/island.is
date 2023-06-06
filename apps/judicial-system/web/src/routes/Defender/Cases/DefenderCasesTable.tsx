@@ -18,7 +18,6 @@ import { core, tables } from '@island.is/judicial-system-web/messages'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 
-import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
 import TagAppealState from '@island.is/judicial-system-web/src/components/TagAppealState/TagAppealState'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import DefendantInfo from '@island.is/judicial-system-web/src/components/Table/DefendantInfo/DefendantInfo'
