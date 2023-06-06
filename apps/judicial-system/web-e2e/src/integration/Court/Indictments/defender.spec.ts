@@ -1,4 +1,4 @@
-import { INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
 import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import {
@@ -12,7 +12,7 @@ import {
   makeDefendant,
 } from '../../../utils'
 
-describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
+describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
   const caseData = mockCase(CaseType.INDICTMENT)
   const defendant1 = makeDefendant(caseData.id)
   const defendant2 = makeDefendant(caseData.id)
@@ -27,26 +27,13 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
       defendants: [defendant1, defendant2],
     }
 
-    cy.intercept('POST', '**/api/graphql', (req) => {
-      if (req.body.query.includes('ProsecutorSelectionUsers')) {
-        req.alias = 'gqlProsecutorSelectionUsersQuery'
-        req.reply({
-          fixture: 'prosecutorUsers',
-        })
-      }
-    })
-
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.login(UserRole.JUDGE)
-    cy.visit(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/test_id`)
+    cy.visit(`${INDICTMENTS_DEFENDER_ROUTE}/test_id`)
   })
 
   it('should validate the form', () => {
-    cy.wait('@gqlProsecutorSelectionUsersQuery')
-    // should set the default prosecutor as the user who created the case
-    cy.getByTestid('select-prosecutor').contains('Áki Ákærandi')
-
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid(`creatable-select-defenderName-${defendant1.id}`)
       .click()
@@ -99,8 +86,6 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
   })
 
   it('should list all defendants and have fields to update defender for each defendant', () => {
-    cy.wait('@gqlProsecutorSelectionUsersQuery')
-    cy.getByTestid('select-prosecutor').contains('Áki Ákærandi')
     cy.get(
       `[data-testid="creatable-select-defenderName-${defendant1.id}"]`,
     ).should('exist')
@@ -110,9 +95,6 @@ describe(`${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/:id`, () => {
   })
 
   it('should send notification to defender', () => {
-    cy.wait('@gqlProsecutorSelectionUsersQuery')
-    cy.getByTestid('select-prosecutor').contains('Áki Ákærandi')
-
     cy.getByTestid(`creatable-select-defenderName-${defendant1.id}`)
       .click()
       .find('input')
