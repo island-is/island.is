@@ -13,7 +13,7 @@ const previewLinkHandler = {
   article: (entry: EntryProps<KeyValueMap>) => {
     return `https://beta.dev01.devland.is/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
-  subarticle: (entry: EntryProps<KeyValueMap>) => {
+  subArticle: (entry: EntryProps<KeyValueMap>) => {
     return `https://beta.dev01.devland.is/${entry.fields.url[DEFAULT_LOCALE]}`
   },
   organizationPage: (entry: EntryProps<KeyValueMap>) => {
