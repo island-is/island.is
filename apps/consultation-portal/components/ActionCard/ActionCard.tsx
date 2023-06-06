@@ -21,7 +21,7 @@ interface ButtonProps {
 
 interface Props {
   heading?: string
-  text: string
+  text?: string
   button: Array<ButtonProps>
   input?: {
     label: string
@@ -59,7 +59,7 @@ const ActionCard = ({ heading, text, button, input }: Props) => {
     >
       <Box display="flex" flexDirection="column">
         {heading && <Text variant="h3">{heading}</Text>}
-        <Text paddingTop={1}>{text}</Text>
+        {text && <Text paddingTop={1}>{text}</Text>}
       </Box>
       {noInput ? (
         <GridContainer>
