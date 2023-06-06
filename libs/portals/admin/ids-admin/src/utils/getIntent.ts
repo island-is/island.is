@@ -4,7 +4,7 @@ export const getIntentSync = <Intent extends string>(intent: Intent) => {
   let sync = false
 
   if (intent.endsWith(SYNC_SUFFIX)) {
-    intent = intent.substring(0, intent.lastIndexOf(SYNC_SUFFIX)) as Intent
+    intent = intent.substring(0, intent.indexOf(SYNC_SUFFIX)) as Intent
     sync = true
   }
 
