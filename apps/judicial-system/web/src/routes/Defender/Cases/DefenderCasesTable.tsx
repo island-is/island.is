@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import router from 'next/router'
@@ -8,12 +8,7 @@ import localeIS from 'date-fns/locale/is'
 
 import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
 
-import {
-  directionType,
-  sortableTableColumn,
-  SortConfig,
-  TempCaseListEntry as CaseListEntry,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
@@ -25,6 +20,7 @@ import CourtCaseNumber from '@island.is/judicial-system-web/src/components/Table
 import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
+import { useSortCases } from './useSortCases'
 import * as styles from './DefenderCasesTable.css'
 
 interface Props {
@@ -35,6 +31,11 @@ interface Props {
 export const DefenderCasesTable: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { cases, showingCompletedCases } = props
+  const { sortedData, requestSort, getClassNamesFor } = useSortCases(
+    'createdAt',
+    'descending',
+    cases,
+  )
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
@@ -50,66 +51,20 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
 
   const getFilteredCases = useCallback(() => {
     if (showIndictmentCases && showInvestigationCases) {
-      return cases
+      return sortedData
     } else if (showIndictmentCases) {
-      return cases.filter((theCase) => isIndictmentCase(theCase.type))
+      return sortedData.filter((theCase) => isIndictmentCase(theCase.type))
     } else if (showInvestigationCases) {
-      return cases.filter((theCase) => !isIndictmentCase(theCase.type))
+      return sortedData.filter((theCase) => !isIndictmentCase(theCase.type))
     } else {
       return []
     }
-  }, [cases, showIndictmentCases, showInvestigationCases])
+  }, [showIndictmentCases, showInvestigationCases, sortedData])
 
   useEffect(() => {
     const filteredCases = getFilteredCases()
     setFilteredCases(filteredCases)
   }, [cases, getFilteredCases])
-
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'createdAt',
-    direction: 'descending',
-  })
-
-  const requestSort = (column: sortableTableColumn) => {
-    let d: directionType = 'ascending'
-
-    if (
-      sortConfig &&
-      sortConfig.column === column &&
-      sortConfig.direction === 'ascending'
-    ) {
-      d = 'descending'
-    }
-    setSortConfig({ column, direction: d })
-  }
-
-  const getClassNamesFor = (name: sortableTableColumn) => {
-    if (!sortConfig) {
-      return
-    }
-    return sortConfig.column === name ? sortConfig.direction : undefined
-  }
-
-  useMemo(() => {
-    cases.sort((a: CaseListEntry, b: CaseListEntry) => {
-      const getColumnValue = (entry: CaseListEntry) => {
-        if (
-          sortConfig.column === 'defendant' &&
-          entry.defendants &&
-          entry.defendants.length > 0
-        ) {
-          return entry.defendants[0].name ?? ''
-        }
-        return entry['created']
-      }
-
-      const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))
-
-      return sortConfig.direction === 'ascending'
-        ? compareResult
-        : -compareResult
-    })
-  }, [cases, sortConfig])
 
   return (
     <Box marginBottom={7}>
