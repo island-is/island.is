@@ -68,6 +68,8 @@ const LimitedAccessCaseQuery = gql`
       isCustodyIsolation
       isolationToDate
       conclusion
+      accusedPostponedAppealDate
+      prosecutorPostponedAppealDate
       rulingDate
       registrar {
         id

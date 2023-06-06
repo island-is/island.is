@@ -15,6 +15,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 
@@ -31,29 +32,32 @@ const AppealCaseFilesOverview: React.FC = () => {
   const appealCaseFiles = workingCase.caseFiles?.filter(
     (caseFile) =>
       caseFile.category &&
-      /* 
-      Please do not change the order of the following lines as they
-      are rendered in the same order as they are listed here
-      */
-      [
-        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-        CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
-        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-        CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
-        CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-        CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-        CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-      ].includes(caseFile.category),
+      ((workingCase.prosecutorPostponedAppealDate &&
+        [
+          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
+        ].includes(caseFile.category)) ||
+        (workingCase.prosecutorStatementDate &&
+          [
+            CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+            CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+          ].includes(caseFile.category)) ||
+        (workingCase.accusedPostponedAppealDate &&
+          [
+            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+          ].includes(caseFile.category)) ||
+        (workingCase.defendantStatementDate &&
+          [
+            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+          ].includes(caseFile.category))),
   )
 
   const appealRulingFiles = workingCase.caseFiles?.filter(
     (caseFile) =>
+      workingCase.appealState === CaseAppealState.COMPLETED &&
       caseFile.category &&
-      /* 
-      Please do not change the order of the following lines as they
-      are rendered in the same order as they are listed here
-      */
       [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
   )
 
