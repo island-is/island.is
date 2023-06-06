@@ -153,6 +153,10 @@ export const m = defineMessages({
     id: 'service.portal:more-options',
     defaultMessage: 'Fleiri möguleikar',
   },
+  get: {
+    id: 'service.portal:get',
+    defaultMessage: 'Sækja',
+  },
   getAsCsv: {
     id: 'service.portal:get-as-csv',
     defaultMessage: 'Sækja CSV',
@@ -848,6 +852,10 @@ export const m = defineMessages({
   closeFilter: {
     id: 'service.portal:close-filter',
     defaultMessage: 'Loka síu',
+  },
+  filterBy: {
+    id: 'service.portal:filter-by',
+    defaultMessage: 'Sía eftir',
   },
   clearSelected: {
     id: 'service.portal:clear-selected',
