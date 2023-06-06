@@ -30,11 +30,12 @@ import * as styles from './DefenderCasesTable.css'
 
 interface Props {
   cases: CaseListEntry[]
+  showingCompletedCases?: boolean
 }
 
 export const DefenderCasesTable: React.FC<Props> = (props) => {
   const { formatMessage } = useIntl()
-  const { cases } = props
+  const { cases, showingCompletedCases } = props
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
@@ -43,32 +44,32 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
   }
 
   const [filteredCases, setFilteredCases] = useState<CaseListEntry[]>(cases)
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    column: 'createdAt',
-    direction: 'descending',
-  })
-
-  const [indictmentCheckbox, setIndictmentCheckbox] = useState<boolean>(true)
-  const [investigationCheckbox, setInvestigationCheckbox] = useState<boolean>(
+  const [showIndictmentCases, setShowIndictmentCases] = useState<boolean>(true)
+  const [showInvestigationCases, setShowInvestigationCases] = useState<boolean>(
     true,
   )
 
   const getFilteredCases = useCallback(() => {
-    if (indictmentCheckbox && investigationCheckbox) {
+    if (showIndictmentCases && showInvestigationCases) {
       return cases
-    } else if (indictmentCheckbox) {
+    } else if (showIndictmentCases) {
       return cases.filter((theCase) => isIndictmentCase(theCase.type))
-    } else if (investigationCheckbox) {
+    } else if (showInvestigationCases) {
       return cases.filter((theCase) => !isIndictmentCase(theCase.type))
     } else {
       return []
     }
-  }, [cases, indictmentCheckbox, investigationCheckbox])
+  }, [cases, showIndictmentCases, showInvestigationCases])
 
   useEffect(() => {
     const filteredCases = getFilteredCases()
     setFilteredCases(filteredCases)
   }, [cases, getFilteredCases])
+
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    column: 'createdAt',
+    direction: 'descending',
+  })
 
   const requestSort = (column: sortableTableColumn) => {
     let d: directionType = 'ascending'
@@ -91,49 +92,38 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
   }
 
   useMemo(() => {
-    if (cases && sortConfig) {
-      cases.sort((a: CaseListEntry, b: CaseListEntry) => {
-        return sortConfig.direction === 'ascending'
-          ? (sortConfig.column === 'defendant' &&
-            a.defendants &&
-            a.defendants.length > 0
-              ? a.defendants[0].name ?? ''
-              : b['courtDate'] + a['created']
-            ).localeCompare(
-              sortConfig.column === 'defendant' &&
-                b.defendants &&
-                b.defendants.length > 0
-                ? b.defendants[0].name ?? ''
-                : a['courtDate'] + b['created'],
-            )
-          : (sortConfig.column === 'defendant' &&
-            b.defendants &&
-            b.defendants.length > 0
-              ? b.defendants[0].name ?? ''
-              : a['courtDate'] + b['created']
-            ).localeCompare(
-              sortConfig.column === 'defendant' &&
-                a.defendants &&
-                a.defendants.length > 0
-                ? a.defendants[0].name ?? ''
-                : b['courtDate'] + a['created'],
-            )
-      })
-    }
+    cases.sort((a: CaseListEntry, b: CaseListEntry) => {
+      const getColumnValue = (entry: CaseListEntry) => {
+        if (
+          sortConfig.column === 'defendant' &&
+          entry.defendants &&
+          entry.defendants.length > 0
+        ) {
+          return entry.defendants[0].name ?? ''
+        }
+        return entry['created']
+      }
+
+      const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))
+
+      return sortConfig.direction === 'ascending'
+        ? compareResult
+        : -compareResult
+    })
   }, [cases, sortConfig])
 
   return (
     <Box marginBottom={7}>
       <Box marginTop={2} className={styles.gridRow}>
         <Checkbox
-          label={formatMessage(tables.filterIndicmentCaseLabel)}
-          checked={indictmentCheckbox}
-          onChange={() => setIndictmentCheckbox(!indictmentCheckbox)}
+          label={formatMessage(tables.filterIndictmentCaseLabel)}
+          checked={showIndictmentCases}
+          onChange={() => setShowIndictmentCases(!showIndictmentCases)}
         ></Checkbox>
         <Checkbox
           label={formatMessage(tables.filterInvestigationCaseLabel)}
-          checked={investigationCheckbox}
-          onChange={() => setInvestigationCheckbox(!investigationCheckbox)}
+          checked={showInvestigationCases}
+          onChange={() => setShowInvestigationCases(!showInvestigationCases)}
         ></Checkbox>
       </Box>
 
@@ -210,33 +200,19 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                 {formatMessage(tables.state)}
               </Text>
             </th>
-            <th>
-              <Box
-                component="button"
-                display="flex"
-                alignItems="center"
-                className={styles.thButton}
-                onClick={() => requestSort('duration')}
-              >
+            {showingCompletedCases ? (
+              <th>
                 <Text fontWeight="regular">
                   {formatMessage(tables.duration)}
                 </Text>
-                <Box
-                  className={cn(styles.sortIcon, {
-                    [styles.sortDurationAsc]:
-                      getClassNamesFor('duration') === 'ascending',
-                    [styles.sortDurationDes]:
-                      getClassNamesFor('duration') === 'descending',
-                  })}
-                  marginLeft={1}
-                  component="span"
-                  display="flex"
-                  alignItems="center"
-                >
-                  <Icon icon="caretDown" size="small" />
-                </Box>
-              </Box>
-            </th>
+              </th>
+            ) : (
+              <th>
+                <Text fontWeight="regular">
+                  {formatMessage(tables.hearingArrangementDate)}
+                </Text>
+              </th>
+            )}
           </tr>
         </thead>
 
@@ -284,16 +260,37 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                   />
                 )}
               </td>
-              <td className={styles.td}>
-                <Text>
-                  {c.validToDate &&
-                    c.courtEndTime &&
-                    `${formatDate(c.courtEndTime, 'd.M.y')} - ${formatDate(
-                      c.validToDate,
-                      'd.M.y',
-                    )}`}
-                </Text>
-              </td>
+              {showingCompletedCases ? (
+                <td className={styles.td}>
+                  <Text>
+                    {c.validToDate &&
+                      c.courtEndTime &&
+                      `${formatDate(c.courtEndTime, 'd.M.y')} - ${formatDate(
+                        c.validToDate,
+                        'd.M.y',
+                      )}`}
+                  </Text>
+                </td>
+              ) : (
+                <td className={styles.td}>
+                  {c.courtDate && (
+                    <>
+                      <Text>
+                        <Box component="span" className={styles.blockColumn}>
+                          {capitalize(
+                            format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
+                              locale: localeIS,
+                            }),
+                          ).replace('dagur', 'd.')}
+                        </Box>
+                      </Text>
+                      <Text as="span" variant="small">
+                        kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                      </Text>
+                    </>
+                  )}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

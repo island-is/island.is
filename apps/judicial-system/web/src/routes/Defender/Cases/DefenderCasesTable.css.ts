@@ -9,6 +9,12 @@ export const gridRow = style({
   marginTop: theme.spacing[4],
 })
 
+export const blockColumn = style({
+  display: 'block',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+})
+
 export const table = style({
   borderSpacing: 0,
   borderCollapse: 'collapse',
@@ -89,14 +95,4 @@ export const sortAccusedNameAsc = style({
 export const sortAccusedNameDes = style({
   opacity: 1,
   transform: 'rotate(180deg)',
-})
-
-export const sortDurationAsc = style({
-  opacity: 1,
-  transform: 'rotate(180deg)',
-})
-
-export const sortDurationDes = style({
-  opacity: 1,
-  transform: 'rotate(0deg)',
 })

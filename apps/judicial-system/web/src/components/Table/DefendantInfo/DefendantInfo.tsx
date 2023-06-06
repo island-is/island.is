@@ -4,7 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { formatDOB } from '@island.is/judicial-system/formatters'
 import { Defendant } from '@island.is/judicial-system/types'
 
-import * as styles from '@island.is/judicial-system-web/src/routes/Shared/Cases/Cases.css'
+import * as styles from './DefendantInfo.css'
 
 interface Props {
   defendants?: Defendant[]

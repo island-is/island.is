@@ -47,7 +47,7 @@ export const Cases: React.FC = () => {
   })
   const cases = data?.cases
 
-  const [activeCases, pastCases]: [
+  const [activeCases, completedCases]: [
     CaseListEntry[],
     CaseListEntry[],
   ] = useMemo(() => {
@@ -106,7 +106,12 @@ export const Cases: React.FC = () => {
           {
             id: 'completed',
             label: formatMessage(m.completedCasesTabLabel),
-            content: <DefenderCasesTable cases={pastCases} />,
+            content: (
+              <DefenderCasesTable
+                cases={completedCases}
+                showingCompletedCases={true}
+              />
+            ),
           },
         ]}
       />

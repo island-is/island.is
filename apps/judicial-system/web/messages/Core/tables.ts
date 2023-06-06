@@ -57,8 +57,13 @@ export const tables = defineMessages({
     defaultMessage: 'Stofnað',
     description: 'Notaður sem titill fyrir stofnað dálk í lista yfir mál.',
   },
-  filterIndicmentCaseLabel: {
-    id: 'judicial.system.core:tables.filter_indicment_case_label',
+  hearingArrangementDate: {
+    id: 'judicial.system.core:tables.hearing_arrangement_date',
+    defaultMessage: 'Fyrirtaka',
+    description: 'Notaður sem titill fyrir fyrirtöku dálk í lista yfir mál.',
+  },
+  filterIndictmentCaseLabel: {
+    id: 'judicial.system.core:tables.filter_indictment_case_label',
     defaultMessage: 'Sakamál',
     description: 'Notaður sem titill fyrir Sakamál í síun.',
   },
