@@ -6,6 +6,7 @@ import {
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   courtRoles,
   indictmentCases,
   InstitutionType,
@@ -299,6 +300,49 @@ describe('getCasesQueryFilter', () => {
             CaseType.ADMISSION_TO_FACILITY,
             CaseType.CUSTODY,
             CaseType.TRAVEL_BAN,
+          ],
+        },
+      ],
+    })
+  })
+
+  it('should get defender filter', () => {
+    // Arrange
+    const user = {
+      id: 'Defender Id',
+      nationalId: 'Defender National Id',
+      role: UserRole.DEFENDER,
+    }
+
+    // Act
+    const res = getCasesQueryFilter(user as User)
+
+    // Assert
+    expect(res).toStrictEqual({
+      [Op.and]: [
+        { isArchived: false },
+        {
+          type: [
+            ...restrictionCases,
+            ...investigationCases,
+            ...indictmentCases,
+          ],
+        },
+        {
+          [Op.or]: [
+            {
+              [Op.and]: [
+                { state: CaseState.RECEIVED },
+                { court_date: { [Op.not]: null } },
+              ],
+            },
+            { state: completedCaseStates },
+          ],
+          [Op.or]: [
+            { defender_national_id: 'Defender National Id' },
+            {
+              '$defendants.defender_national_id$': 'Defender National Id',
+            },
           ],
         },
       ],

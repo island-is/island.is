@@ -6,7 +6,6 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
-  announcementOfDeath = 'isAnnouncementOfDeathEnabled',
   drivingLearnersPermit = 'isDrivingLearnersPermitEnabled',
   drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
   drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
@@ -17,7 +16,6 @@ export enum Features {
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   operatingLicense = 'isApplicationOperatingLicenseEnabled',
   marriageConditions = 'isMarriageConditionsApplicationEnabled',
-  estateApplication = 'isEstateApplicationEnabled',
   drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
   transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
@@ -32,7 +30,6 @@ export enum Features {
 
   // Service portal modules
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
-  servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
   servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
   servicePortalEducationGraduation = 'isServicePortalEducationGratuationModuleEnabled',
   sessionHistory = 'sessionHistory',

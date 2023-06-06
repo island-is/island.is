@@ -394,16 +394,10 @@ export const isSubpoenaStepValid = (
 ): boolean => {
   const date = courtDate || workingCase.courtDate
 
-  return (
-    (workingCase.subpoenaType &&
-      validate([[date, ['empty', 'date-format']]]).isValid) ||
-    false
-  )
+  return validate([[date, ['empty', 'date-format']]]).isValid || false
 }
 
-export const isProsecutorAndDefenderStepValid = (
-  workingCase: Case,
-): boolean => {
+export const isDefenderStepValid = (workingCase: Case): boolean => {
   const defendantsAreValid = () =>
     workingCase.defendants?.every((defendant) => {
       return (
