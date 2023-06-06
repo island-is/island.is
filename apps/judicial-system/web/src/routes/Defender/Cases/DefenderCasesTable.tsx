@@ -19,7 +19,7 @@ import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Share
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 
 import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
-import TagAppealRuling from '@island.is/judicial-system-web/src/components/TagAppealRuling/TagAppealRuling'
+import TagAppealState from '@island.is/judicial-system-web/src/components/TagAppealState/TagAppealState'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import DefendantInfo from '@island.is/judicial-system-web/src/components/Table/DefendantInfo/DefendantInfo'
 import CourtCaseNumber from '@island.is/judicial-system-web/src/components/Table/CourtCaseNumber/CourtCaseNumber'
@@ -253,9 +253,9 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                     courtDate={c.courtDate}
                   />
                 </Box>
-
-                {c.appealState === CaseAppealState.COMPLETED && (
-                  <TagAppealRuling
+                {c.appealState && (
+                  <TagAppealState
+                    appealState={c.appealState}
                     appealRulingDecision={c.appealRulingDecision}
                   />
                 )}
