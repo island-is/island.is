@@ -73,8 +73,8 @@ export const Cases: React.FC = () => {
           data-testid="custody-requests-error"
         >
           <AlertMessage
-            title={formatMessage(errors.failedToFetchCaseListTitle)}
-            message={formatMessage(errors.failedToFetchCaseListMessage)}
+            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
+            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
             type="error"
           />
         </div>

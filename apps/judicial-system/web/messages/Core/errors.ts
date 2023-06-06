@@ -115,14 +115,14 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar mistekst að opna mál úr málalista',
   },
-  failedToFetchCaseListTitle: {
-    id: 'judicial.system.core:errors.failed_to_fetch_case_list_title',
+  failedToFetchDataFromDbTitle: {
+    id: 'judicial.system.core:errors.failed_to_fetch_data_from_db_title',
     defaultMessage: 'Ekki tókst að sækja gögn úr gagnagrunni',
     description:
       'Notaður sem titill þegar ekki tókst að sækja gögn úr gagnagrunni',
   },
-  failedToFetchCaseListMessage: {
-    id: 'judicial.system.core:errors.failed_to_fetch_case_list_message',
+  failedToFetchDataFromDbMessage: {
+    id: 'judicial.system.core:errors.failed_to_fetch_data_from_db_message',
     defaultMessage:
       'Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar.',
     description:
