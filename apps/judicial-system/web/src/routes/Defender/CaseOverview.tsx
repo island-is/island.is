@@ -97,7 +97,7 @@ export const CaseOverview: React.FC = () => {
           <Box marginBottom={5}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
-                <OverviewHeader />
+                <OverviewHeader dataTestid="caseTitle" />
                 {completedCaseStates.includes(workingCase.state) && (
                   <Box>
                     <Text variant="h5">
