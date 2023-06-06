@@ -52,4 +52,19 @@ export const tables = defineMessages({
     description:
       'Notaður sem texti sem segir til um hvort mál sé framlenging í málalista.',
   },
+  created: {
+    id: 'judicial.system.core:tables.created',
+    defaultMessage: 'Stofnað',
+    description: 'Notaður sem titill fyrir stofnað dálk í lista yfir mál.',
+  },
+  filterIndicmentCaseLabel: {
+    id: 'judicial.system.core:tables.filter_indicment_case_label',
+    defaultMessage: 'Sakamál',
+    description: 'Notaður sem titill fyrir Sakamál í síun.',
+  },
+  filterInvestigationCaseLabel: {
+    id: 'judicial.system.core:tables.filter_investigation_case_label',
+    defaultMessage: 'Rannsóknarmál',
+    description: 'Notaður sem titill fyrir Rannsóknarmál í síun.',
+  },
 })
