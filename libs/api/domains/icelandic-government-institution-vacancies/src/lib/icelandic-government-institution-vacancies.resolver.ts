@@ -49,7 +49,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     })) as DefaultApiVacancyDetails
 
     return {
-      vacancy: mapIcelandicGovernmentInstitutionVacancyByIdResponse(item),
+      vacancy: await mapIcelandicGovernmentInstitutionVacancyByIdResponse(item),
     }
   }
 }

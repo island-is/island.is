@@ -40,23 +40,6 @@ import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 type Vacancy = IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
 const ITEMS_PER_PAGE = 8
-const MAX_DESCRIPTION_LENGTH = 80
-
-const convertHtmlToPlainText = (html: string) => {
-  if (!html) return ''
-  return html.replace(/<[^>]+>/g, ' ')
-}
-
-const shortenText = (text: string, maxLength: number) => {
-  if (!text) return ''
-  if (text.length > maxLength) {
-    if (text[text.length - 1] === ' ') {
-      maxLength -= 1
-    }
-    return text.slice(0, maxLength).concat('...')
-  }
-  return text
-}
 
 const mapVacanciesField = (vacancies: Vacancy[], fieldName: keyof Vacancy) => {
   const fieldSet = new Set<string | number>()
@@ -401,55 +384,50 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                 ITEMS_PER_PAGE * (selectedPage - 1),
                 ITEMS_PER_PAGE * selectedPage,
               )
-              .map((vacancy) => {
-                const intro = convertHtmlToPlainText(vacancy.intro)
-                return (
-                  <GridColumn key={vacancy.id} span={['1/1', '1/1', '1/2']}>
-                    <FocusableBox
-                      height="full"
-                      href={`${
-                        linkResolver('vacancydetails', [vacancy.id?.toString()])
-                          .href
-                      }`}
-                      padding={[3, 3, 'containerGutter']}
-                      display="flex"
-                      flexDirection="column"
-                      background="white"
-                      borderRadius="large"
-                      borderColor="blue200"
-                      borderWidth="standard"
-                    >
-                      <Stack space={2}>
-                        <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
-                        <Text color="blue400" variant="h3">
-                          {vacancy.title}
-                        </Text>
-                        <Text>
-                          {shortenText(intro, MAX_DESCRIPTION_LENGTH)}
-                        </Text>
-                        <Inline space={1}>
-                          {vacancy.institutionName && (
-                            <Tag outlined={true} disabled={true}>
-                              {vacancy.institutionName}
-                            </Tag>
-                          )}
-                          {vacancy.locationTitle && (
-                            <Tag outlined={true} disabled>
-                              {vacancy.locationTitle}
-                            </Tag>
-                          )}
-                        </Inline>
-                        {vacancy.applicationDeadlineTo && (
-                          <Tag outlined={true} disabled variant="purple">
-                            {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
-                            {vacancy.applicationDeadlineTo}
+              .map((vacancy) => (
+                <GridColumn key={vacancy.id} span={['1/1', '1/1', '1/2']}>
+                  <FocusableBox
+                    height="full"
+                    href={`${
+                      linkResolver('vacancydetails', [vacancy.id?.toString()])
+                        .href
+                    }`}
+                    padding={[3, 3, 'containerGutter']}
+                    display="flex"
+                    flexDirection="column"
+                    background="white"
+                    borderRadius="large"
+                    borderColor="blue200"
+                    borderWidth="standard"
+                  >
+                    <Stack space={2}>
+                      <Text variant="eyebrow">{vacancy.fieldOfWork}</Text>
+                      <Text color="blue400" variant="h3">
+                        {vacancy.title}
+                      </Text>
+                      <Text>{vacancy.intro}</Text>
+                      <Inline space={1}>
+                        {vacancy.institutionName && (
+                          <Tag outlined={true} disabled={true}>
+                            {vacancy.institutionName}
                           </Tag>
                         )}
-                      </Stack>
-                    </FocusableBox>
-                  </GridColumn>
-                )
-              })}
+                        {vacancy.locationTitle && (
+                          <Tag outlined={true} disabled>
+                            {vacancy.locationTitle}
+                          </Tag>
+                        )}
+                      </Inline>
+                      {vacancy.applicationDeadlineTo && (
+                        <Tag outlined={true} disabled variant="purple">
+                          {n('applicationDeadlineTo', 'Umsóknarfrestur')}{' '}
+                          {vacancy.applicationDeadlineTo}
+                        </Tag>
+                      )}
+                    </Stack>
+                  </FocusableBox>
+                </GridColumn>
+              ))}
           </GridRow>
           {filteredVacancies.length > 0 && (
             <Box paddingTop={8}>

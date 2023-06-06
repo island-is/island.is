@@ -1,4 +1,3 @@
-import ReactHtmlParser from 'react-html-parser'
 import { Screen } from '@island.is/web/types'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -26,6 +25,8 @@ import SidebarLayout from '../Layouts/SidebarLayout'
 import { InstitutionPanel } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '../queries'
+import { webRichText } from '@island.is/web/utils/richText'
+import { SliceType } from '@island.is/island-ui/contentful'
 
 type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
 
@@ -96,7 +97,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
   const { linkResolver } = useLinkResolver()
 
   const n = useNamespace(namespace)
-
+  console.log(vacancy)
   return (
     <SidebarLayout
       sidebarContent={
@@ -136,14 +137,14 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
           </LinkV2>
         </Hidden>
         <Text variant="h1">{vacancy.title}</Text>
-        <Text as="div">{ReactHtmlParser(vacancy.intro)}</Text>
+        <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
 
         <Text variant="h3" as="h2">
           {n('assignmentsAndResponibility', 'Helstu verkefni og ábyrgð')}
         </Text>
 
         <Text as="div">
-          {ReactHtmlParser(vacancy.qualificationRequirements)}
+          {webRichText([vacancy.qualificationRequirements] as SliceType[])}
         </Text>
 
         {vacancy.tasksAndResponsibilities && (
@@ -154,7 +155,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
 
         {vacancy.tasksAndResponsibilities && (
           <Text as="div">
-            {ReactHtmlParser(vacancy.tasksAndResponsibilities)}
+            {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
           </Text>
         )}
 
@@ -167,13 +168,11 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
           </Text>
         )}
 
-        {vacancy.salaryTerms && (
-          <Text as="div">{ReactHtmlParser(vacancy.salaryTerms)}</Text>
-        )}
+        {vacancy.salaryTerms &&
+          webRichText([vacancy.salaryTerms] as SliceType[])}
 
-        {vacancy.description && (
-          <Text as="div">{ReactHtmlParser(vacancy.description)}</Text>
-        )}
+        {vacancy.description &&
+          webRichText([vacancy.description] as SliceType[])}
 
         {vacancy.jobPercentage && (
           <Text>
@@ -196,8 +195,8 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
 
         {vacancy.contacts?.length && (
           <Stack space={2}>
-            {vacancy.contacts.map((contact) => (
-              <Box>
+            {vacancy.contacts.map((contact, index) => (
+              <Box key={index}>
                 <Text>
                   {contact.name && contact.email
                     ? `${contact.name}, `

@@ -1,7 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { Document } from '@contentful/rich-text-types'
+import graphqlTypeJson from 'graphql-type-json'
+
+type Html = { __typename: string; document: Document }
 
 @ObjectType()
-export class IcelandicGovernmentInstitutionVacancyListItem {
+class IcelandicGovernmentInstitutionVacancyListItemBase {
   @Field({ nullable: true })
   id?: number
 
@@ -10,9 +14,6 @@ export class IcelandicGovernmentInstitutionVacancyListItem {
 
   @Field({ nullable: true })
   title?: string
-
-  @Field({ nullable: true })
-  intro?: string
 
   @Field({ nullable: true })
   applicationDeadlineFrom?: string
@@ -34,6 +35,12 @@ export class IcelandicGovernmentInstitutionVacancyListItem {
 }
 
 @ObjectType()
+export class IcelandicGovernmentInstitutionVacancyListItem extends IcelandicGovernmentInstitutionVacancyListItemBase {
+  @Field({ nullable: true })
+  intro?: string
+}
+
+@ObjectType()
 class IcelandicGovernmentInstitutionVacancyContact {
   @Field({ nullable: true })
   name?: string
@@ -46,7 +53,7 @@ class IcelandicGovernmentInstitutionVacancyContact {
 }
 
 @ObjectType()
-export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentInstitutionVacancyListItem {
+export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentInstitutionVacancyListItemBase {
   @Field({ nullable: true })
   postalAddress?: string
 
@@ -64,15 +71,18 @@ export class IcelandicGovernmentInstitutionVacancy extends IcelandicGovernmentIn
   @Field({ nullable: true })
   applicationHref?: string
 
-  @Field({ nullable: true })
-  qualificationRequirements?: string
+  @Field(() => graphqlTypeJson, { nullable: true })
+  intro?: Html
 
-  @Field({ nullable: true })
-  tasksAndResponsibilities?: string
+  @Field(() => graphqlTypeJson, { nullable: true })
+  qualificationRequirements?: Html
 
-  @Field({ nullable: true })
-  description?: string
+  @Field(() => graphqlTypeJson, { nullable: true })
+  tasksAndResponsibilities?: Html
 
-  @Field({ nullable: true })
-  salaryTerms?: string
+  @Field(() => graphqlTypeJson, { nullable: true })
+  description?: Html
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  salaryTerms?: Html
 }
