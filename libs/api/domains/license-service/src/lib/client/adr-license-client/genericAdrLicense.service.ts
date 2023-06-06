@@ -16,7 +16,6 @@ import {
   parseAdrLicensePayload,
 } from './adrLicenseMapper'
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
-import { MachinesApi } from '@island.is/clients/work-machines'
 import {
   PassDataInput,
   SmartSolutionsApi,

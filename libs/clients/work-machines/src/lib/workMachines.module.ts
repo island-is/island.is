@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { WorkMachinesApiProvider } from './workMachinesApiProvider'
-import { MachinesApi } from '../../gen/fetch'
+import { WorkMachinesApiProvider } from './workMachines.provider'
+import { WorkMachinesClientService } from './workMachines.service'
 
 @Module({
-  providers: [WorkMachinesApiProvider],
-  exports: [MachinesApi],
+  providers: [WorkMachinesClientService, WorkMachinesApiProvider],
+  exports: [WorkMachinesClientService],
 })
 export class WorkMachinesClientModule {}

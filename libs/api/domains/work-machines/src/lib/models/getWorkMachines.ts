@@ -3,13 +3,13 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 @ObjectType('WorkMachinesEntity')
 export class WorkMachineEntity {
   @Field(() => [WorkMachine], { nullable: true })
-  value?: Array<WorkMachine>
+  value?: Array<WorkMachine> | null
 
   @Field(() => [Link], { nullable: true })
-  links?: Array<Link>
+  links?: Array<Link> | null
 
   @Field(() => [Label], { nullable: true })
-  labels?: Array<Label>
+  labels?: Array<Label> | null
 }
 
 @ObjectType('WorkMachinesWorkMachine')
@@ -18,65 +18,101 @@ export class WorkMachine {
   id?: string
 
   @Field(() => String, { nullable: true })
-  registrationNumber?: string
+  type?: string | null
 
   @Field(() => String, { nullable: true })
-  type?: string
+  status?: string | null
 
   @Field(() => String, { nullable: true })
-  status?: string
+  category?: string | null
 
   @Field(() => String, { nullable: true })
-  ownerName?: string
+  subCategory?: string | null
 
   @Field(() => String, { nullable: true })
-  ownerNumber?: string
+  dateLastInspection?: string | null
 
   @Field(() => String, { nullable: true })
-  productionNumber?: string
+  registrationNumber?: string | null
 
   @Field(() => String, { nullable: true })
-  productionCountry?: string
+  registrationDate?: string | null
 
   @Field(() => String, { nullable: true })
-  productionYear?: string
+  productionNumber?: string | null
 
   @Field(() => String, { nullable: true })
-  licensePlateNumber?: string
+  productionCountry?: string | null
+
+  @Field(() => Number, { nullable: true })
+  productionYear?: number | null
 
   @Field(() => String, { nullable: true })
-  supervisorName?: string
+  licensePlateNumber?: string | null
+
+  @Field(() => String, { nullable: true })
+  ownerName?: string | null
+
+  @Field(() => String, { nullable: true })
+  ownerNumber?: string | null
+
+  @Field(() => String, { nullable: true })
+  ownerNationalId?: string | null
+
+  @Field(() => String, { nullable: true })
+  ownerAddress?: string | null
+
+  @Field(() => String, { nullable: true })
+  ownerPostcode?: string | null
+
+  @Field(() => String, { nullable: true })
+  supervisorName?: string | null
+
+  @Field(() => String, { nullable: true })
+  supervisorNationalId?: string | null
+
+  @Field(() => String, { nullable: true })
+  supervisorAddress?: string | null
+
+  @Field(() => String, { nullable: true })
+  supervisorPostcode?: string | null
+
+  @Field(() => String, { nullable: true })
+  importer?: string | null
+
+  @Field(() => String, { nullable: true })
+  insurer?: string | null
 
   @Field(() => [Link], { nullable: true })
-  links?: Array<Link>
+  links?: Array<Link> | null
 
   @Field(() => [Label], { nullable: true })
-  labels?: Array<Label>
+  labels?: Array<Label> | null
 }
 
 @ObjectType('WorkMachinesLink')
 export class Link {
   @Field(() => String, { nullable: true })
-  href?: string
+  href?: string | null
 
   @Field(() => String, { nullable: true })
-  ref?: string
+  ref?: string | null
 
   @Field(() => String, { nullable: true })
-  method?: string
+  method?: string | null
 
   @Field(() => String, { nullable: true })
-  displayTitle?: string
+  displayTitle?: string | null
 }
 
 @ObjectType('WorkMachinesLabel')
 export class Label {
   @Field(() => String, { nullable: true })
-  columnName?: string
+  columnName?: string | null
 
   @Field(() => String, { nullable: true })
-  displayTitle?: string
+  displayTitle?: string | null
 
   @Field(() => String, { nullable: true })
-  tooltip?: string
+  tooltip?: string | null
 }

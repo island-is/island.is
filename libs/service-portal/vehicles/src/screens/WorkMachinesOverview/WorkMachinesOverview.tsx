@@ -45,7 +45,7 @@ const WorkMachinesOverview = () => {
         </Box>
       )}
 
-      {!loading && !data?.workMachines?.value && (
+      {!loading && !data?.workMachinesWorkMachineEntity?.value && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -55,8 +55,8 @@ const WorkMachinesOverview = () => {
 
       {!loading &&
         !error &&
-        data?.workMachines?.value &&
-        data.workMachines.value.map((wm, index) => {
+        data?.workMachinesWorkMachineEntity?.value &&
+        data.workMachinesWorkMachineEntity.value.map((wm, index) => {
           return (
             <Box marginBottom={3} key={index}>
               <ActionCard

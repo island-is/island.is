@@ -1,3 +1,4 @@
+import { Provider } from '@nestjs/common'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
@@ -7,7 +8,6 @@ import {
 } from '@island.is/nest/config'
 import { Configuration, MachinesApi } from '../../gen/fetch'
 import { WorkMachinesClientConfig } from './workMachines.config'
-import { Provider } from '@nestjs/common'
 
 export const WorkMachinesApiProvider: Provider<MachinesApi> = {
   provide: MachinesApi,

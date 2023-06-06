@@ -19,6 +19,9 @@ const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
 const WorkMachinesOverview = lazy(() =>
   import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
 )
+const WorkMachinesDetail = lazy(() =>
+  import('./screens/WorkMachinesDetail/WorkMachinesDetail'),
+)
 
 export const vehiclesModule: PortalModule = {
   name: 'Ökutæki',
@@ -70,6 +73,12 @@ export const vehiclesModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.internal),
       loader: translationLoader({ userInfo, client }),
       element: <WorkMachinesOverview />,
+    },
+    {
+      name: m.workMachines,
+      path: VehiclePaths.AssetsWorkMachinesDetail,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <WorkMachinesDetail />,
     },
   ],
 }
