@@ -3,6 +3,8 @@ import { defineTemplateApi } from '../../TemplateApi'
 export interface NationalRegistryParameters {
   ageToValidate?: number
   legalDomicileIceland?: boolean
+  validateHasChildren?: boolean
+  validateHasJointCustody?: boolean
 }
 export const NationalRegistryUserApi = defineTemplateApi<NationalRegistryParameters>(
   {

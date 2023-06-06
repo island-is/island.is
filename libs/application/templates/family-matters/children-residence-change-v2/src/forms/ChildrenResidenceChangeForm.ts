@@ -17,38 +17,12 @@ import { selectDurationInputs } from '../fields/Duration'
 import { confirmContractIds } from '../fields/Overview'
 import { contactInfoIds } from '../fields/ContactInfo'
 import * as m from '../lib/messages'
-import { ExternalData } from '@island.is/application/templates/family-matters-core/types'
-import { hasChildren } from '../lib/utils'
 import {
   ChildrenCustodyInformationApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '../dataProviders'
 import { Answers } from '../types'
-
-const soleCustodyField = () => {
-  return buildCustomField({
-    id: 'errorModal',
-    component: 'SoleCustodyModal',
-    title: '',
-    condition: (_, externalData) => {
-      return ((externalData as unknown) as ExternalData)?.childrenCustodyInformation?.data?.every(
-        (child) => !child.otherParent,
-      )
-    },
-  })
-}
-
-const noChildrenFoundField = () => {
-  return buildCustomField({
-    id: 'errorModal',
-    component: 'NoChildrenErrorModal',
-    title: '',
-    condition: (_, externalData) => {
-      return !hasChildren((externalData as unknown) as ExternalData)
-    },
-  })
-}
 
 // TODO: Added by Kolibri - 2021-07-05 - Revisit mockdata implementation to prevent
 // Continue and Back button from being displayed on production
@@ -168,8 +142,6 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
                 }),
               ],
             }),
-            noChildrenFoundField(),
-            soleCustodyField(),
           ],
         }),
         buildSubSection({

@@ -67,6 +67,12 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 0,
           actionCard: {
             description: stateDescriptions.draft,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.ASSIGN,
+                logMessage: coreHistoryMessages.applicationAssigned,
+              },
+            ],
           },
           lifecycle: pruneAfterDays(365),
           roles: [
@@ -107,7 +113,12 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               },
               api: [
                 ChildrenCustodyInformationApi,
-                NationalRegistryUserApi,
+                NationalRegistryUserApi.configure({
+                  params: {
+                    validateHasChildren: true,
+                    validateHasJointCustody: true,
+                  },
+                }),
                 UserProfileApi,
               ],
             },
@@ -211,10 +222,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 1,
           actionCard: {
             description: stateDescriptions.rejectedByParentB,
-            tag: {
-              variant: 'red',
-              label: stateLabels.rejected,
-            },
           },
           lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
@@ -267,10 +274,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
               title: history.actions.waitingForOrganizationTitle,
               content: stateDescriptions.submitted,
             },
-            tag: {
-              variant: 'blueberry',
-              label: stateLabels.submitted,
-            },
           },
           roles: [
             {
@@ -322,7 +325,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 1,
           actionCard: {
             description: stateDescriptions.rejected,
-            tag: { label: stateLabels.rejected, variant: 'red' },
           },
           lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({
@@ -355,7 +357,6 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
           progress: 1,
           actionCard: {
             description: stateDescriptions.approved,
-            tag: { label: stateLabels.approved, variant: 'mint' },
           },
           lifecycle: pruneAfterDays(365),
           onEntry: defineTemplateApi({

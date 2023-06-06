@@ -398,6 +398,35 @@ export const coreErrorMessages = defineMessages({
     description:
       'Error message when age restriciton from national registry is not met',
   },
+  nationalRegistryHasNoChildrenTitle: {
+    id: 'application.system:core.fetch.data.nationalRegistryHasNoChildrenTitle',
+    defaultMessage: 'Engin börn í þinni forsjá',
+    description:
+      'Error message title when a user has no children in their custody',
+  },
+  nationalRegistryHasNoChildrenSummary: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryHasNoChildrenSummary',
+    defaultMessage:
+      'Samkvæmt gögnum úr Þjóðskrá Ísland eru engin börn skráð í þinni forsjá. Þessi umsókn er aðeins fyrir foreldra með sameiginlega forsjá. Við bendum á að hægt er að senda beiðni um breytt lögheimili barna til Sýslumanna.',
+    description:
+      'Error message summary when a user has no children in their custody',
+  },
+  nationalRegistryHasNoJointCustodyTitle: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryHasNoJointCustodyTitle',
+    defaultMessage: 'Þú átt engin börn í sameiginlegri forsjá',
+    description:
+      'Error message title when a user has no children in joint custody',
+  },
+  nationalRegistryHasNoJointCustodySummary: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryHasNoJointCustodySummary',
+    defaultMessage:
+      'Uppfletting í gögnum hjá Þjóðskrá Íslands skilaði eingöngu börnum sem eru alfarið í þinni forsjá.\n\nÞessi umsókn er ætluð foreldrum sem fara sameiginlega með forsjá barna sinna.',
+    description:
+      'Error message summary when a user has no children in joint custody',
+  },
   drivingLicenseNoTeachingRightsTitle: {
     id:
       'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',

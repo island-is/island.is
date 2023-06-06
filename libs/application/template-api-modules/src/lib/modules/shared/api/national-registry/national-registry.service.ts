@@ -27,6 +27,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
   async nationalRegistry({
     auth,
     params,
+    ...rest
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const result = await this.getIndividual(auth.nationalId)
 
@@ -38,6 +39,35 @@ export class NationalRegistryService extends BaseTemplateApiService {
           {
             title: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
             summary: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
+          },
+          400,
+        )
+      }
+    }
+
+    if (params?.validateHasChildren) {
+      const children = await this.childrenCustodyInformation({ auth, ...rest })
+
+      if (!children || children.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryHasNoChildrenTitle,
+            summary: coreErrorMessages.nationalRegistryHasNoChildrenSummary,
+          },
+          400,
+        )
+      }
+    }
+
+    if (params?.validateHasJointCustody) {
+      const children = await this.childrenCustodyInformation({ auth, ...rest })
+      const hasNoJointCustody = children.every((child) => !child.otherParent)
+
+      if (hasNoJointCustody) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryHasNoJointCustodyTitle,
+            summary: coreErrorMessages.nationalRegistryHasNoJointCustodySummary,
           },
           400,
         )

@@ -28,6 +28,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isValidNumberForRegion } from 'libphonenumber-js'
 import { generateResidenceChangePdf } from './pdfGenerators'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 type Props = Override<
   TemplateApiModuleActionProps,
@@ -242,5 +243,12 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
       applicationRejectedByOrganizationEmail,
       (application as unknown) as Application,
     )
+  }
+
+  async hasChildren({ auth }: TemplateApiModuleActionProps) {
+    const children = await this.nationalRegistryApi.getCustodyChildren(auth)
+    if (!children || children.length === 0) {
+      throw new TemplateApiError('Nope', 404)
+    }
   }
 }
