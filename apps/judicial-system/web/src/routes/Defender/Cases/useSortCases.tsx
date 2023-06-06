@@ -1,5 +1,5 @@
-import { CaseListEntry } from '@island.is/judicial-system/types'
 import { useState, useMemo } from 'react'
+import { CaseListEntry } from '@island.is/judicial-system/types'
 
 export function useSortCases(
   defaultColumn: string,
