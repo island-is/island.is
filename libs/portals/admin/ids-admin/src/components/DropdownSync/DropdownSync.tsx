@@ -10,6 +10,7 @@ import { useLocale } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
 import * as styles from './DropdownSync.css'
+import { SYNC_SUFFIX } from '../../utils/getIntent'
 
 type DropdownSyncProps<Intent> = {
   inSync: boolean
@@ -78,7 +79,7 @@ export const DropdownSync = <Intent,>({
                       <button
                         className={styles.syncButton}
                         type="submit"
-                        value={`${intent}-sync`}
+                        value={`${intent}${SYNC_SUFFIX}`}
                         name="intent"
                       >
                         <Text

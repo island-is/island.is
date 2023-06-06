@@ -1,6 +1,5 @@
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import { Form, useActionData } from 'react-router-dom'
-import isEqual from 'lodash/isEqual'
 
 import {
   AccordionItem,
@@ -68,22 +67,22 @@ export const FormCard = <Intent extends string>({
   customValidation,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
-  const [allEnvironments, setAllEnvironments] = useState(inSync)
+  const [allEnvironmentsCheck, setAllEnvironmentsCheck] = useState(inSync)
   const formRef = useRef<HTMLFormElement | null>(null)
-  const originalFormData = useRef<FormData | undefined>()
+  const prevFormData = useRef<FormData | undefined>()
   const [dirty, setDirty] = useState(false)
   const shouldSupportMultiEnv = useMultiEnvSupport(
     shouldSupportMultiEnvironment,
   )
+
   const { availableEnvironments, selectedEnvironment } = useEnvironment()
   const { isLoading, isSubmitting, formData } = useSubmitting()
-  const { loading, currentIntent } = useIntent(intent)
+  const { loading } = useIntent(intent)
   const actionData = useActionData() as RouterActionResponse<
     unknown, // We don't know the type of the data or the error since it can be permission or client.
     unknown,
     Intent
   >
-  const actionDataRef = useRef(actionData?.data)
 
   /**
    * On form change check if form is dirty and set dirty state accordingly.
@@ -93,40 +92,42 @@ export const FormCard = <Intent extends string>({
     if (formRef.current) {
       const newFormData = new FormData(formRef.current)
       const newFormDataEntries = [...newFormData.entries()]
-      const originalFormDataEntries = [
-        ...(originalFormData.current?.entries() ?? []),
-      ]
+      const prevFormDataEntries = [...(prevFormData.current?.entries() ?? [])]
 
       // If a formData entry is removed or added, then the form is dirty
-      if (newFormDataEntries.length !== originalFormDataEntries.length) {
+      if (newFormDataEntries.length !== prevFormDataEntries.length) {
         setDirty(true)
         return
       }
 
       if (
-        originalFormData.current &&
+        prevFormData.current &&
         // If a formData entry value is changed, then the form is dirty
-        !isFormDataEqual(newFormData, originalFormData.current)
+        !isFormDataEqual(newFormData, prevFormData.current)
       ) {
         // If custom validation is provided, use that to determine if form is dirty
         setDirty(
           customValidation
-            ? customValidation(newFormData, originalFormData.current)
+            ? customValidation(newFormData, prevFormData.current)
             : true,
         )
-
-        originalFormData.current = newFormData
       }
     }
   }
 
   useEffect(() => {
-    if (
-      actionData?.intent === intent &&
-      !isEqual(actionData?.data, actionDataRef?.current)
-    ) {
+    if (inSync !== allEnvironmentsCheck) {
+      // Update state check if inSync updates
+      setAllEnvironmentsCheck(inSync)
+    }
+  }, [inSync])
+
+  useEffect(() => {
+    if (actionData?.intent === intent) {
       if (actionData?.data) {
-        actionDataRef.current = actionData?.data
+        if (formRef.current) {
+          prevFormData.current = new FormData(formRef.current)
+        }
 
         onFormChange()
         toast.success(formatMessage(m.successfullySaved))
@@ -136,31 +137,30 @@ export const FormCard = <Intent extends string>({
     }
   }, [actionData, intent])
 
+  // On mount, set the original form data
   useEffect(() => {
     if (formRef.current) {
-      originalFormData.current = new FormData(formRef.current)
+      prevFormData.current = new FormData(formRef.current)
     }
   }, [formRef])
 
   useEffect(() => {
-    // Reset dirty state if form is not submitting, intent is the same as current intent and form is already dirty
-    if (!isSubmitting && intent === currentIntent && dirty) {
+    // Reset dirty state if form is not submitting, prev and current form data are the same and if form is already dirty
+    if (
+      !isSubmitting &&
+      dirty &&
+      formRef.current &&
+      prevFormData.current &&
+      isFormDataEqual(new FormData(formRef.current), prevFormData.current)
+    ) {
       setDirty(false)
     }
-  }, [isLoading, isSubmitting, formData, intent, currentIntent, dirty])
+  }, [isLoading, isSubmitting, formData, intent, dirty])
 
   useEffect(() => {
-    if (
-      customValidation &&
-      formRef.current &&
-      originalFormData.current &&
-      !dirty
-    ) {
+    if (customValidation && formRef.current && prevFormData.current && !dirty) {
       setDirty(
-        customValidation(
-          new FormData(formRef.current),
-          originalFormData.current,
-        ),
+        customValidation(new FormData(formRef.current), prevFormData.current),
       )
     }
   }, [formData, customValidation])
@@ -177,7 +177,7 @@ export const FormCard = <Intent extends string>({
         width="full"
         border="standard"
       >
-        <Box display="flex" rowGap={2} flexDirection="column">
+        <Box display="flex" rowGap={2} flexDirection="column" marginBottom={4}>
           <Box
             display="flex"
             flexDirection={['column', 'row']}
@@ -197,7 +197,7 @@ export const FormCard = <Intent extends string>({
               />
             )}
           </Box>
-          {description && <Text marginBottom={4}>{description}</Text>}
+          {description && <Text>{description}</Text>}
         </Box>
         <ConditionalWrapper
           condition={Boolean(accordionLabel)}
@@ -223,11 +223,13 @@ export const FormCard = <Intent extends string>({
                 {shouldSupportMultiEnv && (
                   <Checkbox
                     label={formatMessage(m.saveForAllEnvironments)}
-                    checked={allEnvironments}
+                    checked={allEnvironmentsCheck}
                     value="true"
                     disabled={!dirty}
                     name={`${intent}_saveInAllEnvironments`}
-                    onChange={() => setAllEnvironments(!allEnvironments)}
+                    onChange={() =>
+                      setAllEnvironmentsCheck(!allEnvironmentsCheck)
+                    }
                   />
                 )}
                 <Button

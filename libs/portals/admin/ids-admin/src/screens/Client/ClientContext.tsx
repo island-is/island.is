@@ -11,6 +11,7 @@ import {
   useLoaderData,
   useNavigate,
   useParams,
+  useSearchParams,
 } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
@@ -20,6 +21,7 @@ import { AuthAdminClient, AuthAdminClientEnvironment } from './Client.loader'
 import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 import { IDSAdminPaths } from '../../lib/paths'
 import { EditClientResult } from './EditClient.action'
+import { useSearchParam } from 'react-use'
 
 type PublishData = {
   toEnvironment: AuthAdminEnvironment | null
@@ -47,6 +49,7 @@ const ClientContext = createContext<ClientContextType | undefined>(undefined)
 export const ClientProvider: FC = ({ children }) => {
   const navigate = useNavigate()
   const params = useParams()
+  const [searchParams] = useSearchParams()
   const client = useLoaderData() as AuthAdminClient
   const actionData = useActionData() as EditClientResult
   const [publishData, setPublishData] = useState<PublishData>({
@@ -63,16 +66,17 @@ export const ClientProvider: FC = ({ children }) => {
       toEnvironment: to,
       fromEnvironment: selectedEnvironment.environment,
     })
-    navigate(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClientPublish,
-        params: {
-          tenant: params['tenant'],
-          client: selectedEnvironment.clientId,
-        },
-      }),
-      { preventScrollReset: true },
-    )
+
+    const env = searchParams.get('env')
+    const href = replaceParams({
+      href: IDSAdminPaths.IDSAdminClientPublish,
+      params: {
+        tenant: params['tenant'],
+        client: selectedEnvironment.clientId,
+      },
+    })
+
+    navigate(env ? `${href}?env=${env}` : href, { preventScrollReset: true })
   }
 
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {

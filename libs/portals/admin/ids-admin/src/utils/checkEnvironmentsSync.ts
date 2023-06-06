@@ -1,3 +1,5 @@
+import isEqual from 'lodash/isEqual'
+
 import { DynamicEnvironmentResult } from '../types/dynamicEnvironmentResult'
 
 /**
@@ -18,7 +20,7 @@ export const checkEnvironmentsSync = <T extends DynamicEnvironmentResult<T>>(
       const currentEnvironment = environments[i]
       const currentValue = currentEnvironment[variableName]
 
-      if (JSON.stringify(currentValue) !== JSON.stringify(referenceValue)) {
+      if (!isEqual(currentValue, referenceValue)) {
         return false
       }
     }

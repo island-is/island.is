@@ -69,12 +69,14 @@ export const publishClientAction: WrappedActionFn = ({ client }) => async ({
       }
     }
 
-    return redirect(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClient,
-        params: { tenant: tenantId, client: clientId },
-      }),
-    )
+    const searchParams = new URLSearchParams(window.location.search)
+    const env = searchParams.get('env')
+    const href = replaceParams({
+      href: IDSAdminPaths.IDSAdminClient,
+      params: { tenant: tenantId, client: clientId },
+    })
+
+    return redirect(env ? `${href}?env=${env}` : href)
   } catch (e) {
     return {
       errors: null,

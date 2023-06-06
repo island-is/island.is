@@ -1,4 +1,4 @@
-const SYNC_SUFFIX = '-sync'
+export const SYNC_SUFFIX = '-sync'
 
 export const getIntentSync = <Intent extends string>(intent: Intent) => {
   let sync = false
