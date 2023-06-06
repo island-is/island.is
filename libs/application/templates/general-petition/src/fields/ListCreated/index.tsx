@@ -13,7 +13,7 @@ const ListCreated = ({ application }: { application: Application }) => {
     document.location.origin === 'http://localhost:4242'
       ? 'http://localhost:4200'
       : document.location.origin
-  const baseUrlForm = `${baseUrl}/undirskriftalisti/`
+  const baseUrlForm = `${baseUrl}/undirskriftalistar/`
 
   return (
     <Stack space={3}>
