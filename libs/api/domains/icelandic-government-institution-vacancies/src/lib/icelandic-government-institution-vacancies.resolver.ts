@@ -39,6 +39,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   }
 
   @Query(() => IcelandicGovernmentInstitutionVacancyByIdResponse)
+  @Directive(cacheControlDirective())
   async icelandicGovernmentInstitutionVacancyById(
     @Args('input') input: IcelandicGovernmentInstitutionVacancyByIdInput,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse> {
