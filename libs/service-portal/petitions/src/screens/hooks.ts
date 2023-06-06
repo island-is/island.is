@@ -10,9 +10,9 @@ import {
 import {
   EndorsementList,
   ExistsEndorsementResponse,
-  PaginatedEndorsementResponse,
   PaginatedEndorsementListResponse,
-} from '../types/schema'
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
 interface UserSignedLists {
   endorsementSystemUserEndorsements: PaginatedEndorsementResponse

@@ -55,6 +55,7 @@ export { default as SelectCourtOfficials } from './SelectCourtOfficials/SelectCo
 export { default as ServiceInterruptionBanner } from './ServiceInterruptionBanner/ServiceInterruptionBanner'
 export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
+export { default as TagAppealState } from './TagAppealState/TagAppealState'
 
 export {
   SigningModal,
