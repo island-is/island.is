@@ -71,7 +71,7 @@ test.describe('Endorsements', () => {
     )
   })
 
-  test.only('should be able to find an sign a petition/endorsementList', async () => {
+  test('should be able to find an sign a petition/endorsementList', async () => {
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl('/undirskriftalistar'))
 
