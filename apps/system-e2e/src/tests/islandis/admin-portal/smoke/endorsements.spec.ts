@@ -2,8 +2,6 @@ import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-
-
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord/`
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -24,8 +22,9 @@ test.describe('Admin portal access control', () => {
     await contextGranter.close()
   })
 
-
-  test('access undirskriftalsitar, access and edit a list', async ({ browser }) => {
+  test('access undirskriftalsitar, access and edit a list', async ({
+    browser,
+  }) => {
     // Arrange
     const granterPage = await contextGranter.newPage()
 
@@ -59,17 +58,30 @@ test.describe('Admin portal access control', () => {
     })
     await test.step('access and edit a list', async () => {
       // Assert
-      await expect(granterPage.locator('button:text("Liðnir listar")')).toBeVisible()
+      await expect(
+        granterPage.locator('button:text("Liðnir listar")'),
+      ).toBeVisible()
 
       //Act
       await granterPage.click('button:text("Liðnir listar")')
-      await granterPage.getByRole('button', { name: 'Skoða lista' }).first().click()
-      const currentDate = new Date(Date.now()).toLocaleDateString('de-DE') // today dd.mm.yyyy
-      await granterPage.getByLabel('Tímabil til').last().fill(currentDate) 
+      await granterPage
+        .getByRole('button', { name: 'Skoða lista' })
+        .first()
+        .click()
+      const exampleDateInThePast = '13.05.2023'
+      await granterPage
+        .getByLabel('Tímabil til')
+        .last()
+        .fill(exampleDateInThePast)
       await granterPage.getByLabel('Um lista').click() // closes datepicker
-      await granterPage.locator('button:text("Uppfæra lista")').click()
-    })
+      await granterPage.click('button:text("Uppfæra lista")')
 
-   
+      // Assert
+      const dateValue = await granterPage
+        .getByLabel('Tímabil til')
+        .last()
+        .inputValue()
+      await expect(dateValue).toBe(exampleDateInThePast)
+    })
   })
 })
