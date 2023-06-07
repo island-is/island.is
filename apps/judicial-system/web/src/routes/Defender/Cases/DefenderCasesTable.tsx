@@ -38,13 +38,10 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
     cases,
   )
 
-  const {
-    filteredCases,
-    indictmentCaseFilter,
-    investigationCaseFilter,
-    toggleIndictmentCases,
-    toggleInvestigationCases,
-  } = useFilterCases(cases, sortedData)
+  const { filteredCases, filters, toggleFilter } = useFilterCases(
+    cases,
+    sortedData,
+  )
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
@@ -57,13 +54,13 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
       <Box marginTop={2} className={styles.gridRow}>
         <Checkbox
           label={formatMessage(tables.filterIndictmentCaseLabel)}
-          checked={indictmentCaseFilter}
-          onChange={toggleIndictmentCases}
+          checked={filters.indictmentCaseFilter}
+          onChange={() => toggleFilter('indictmentCaseFilter')}
         ></Checkbox>
         <Checkbox
           label={formatMessage(tables.filterInvestigationCaseLabel)}
-          checked={investigationCaseFilter}
-          onChange={toggleInvestigationCases}
+          checked={filters.investigationCaseFilter}
+          onChange={() => toggleFilter('investigationCaseFilter')}
         ></Checkbox>
       </Box>
 

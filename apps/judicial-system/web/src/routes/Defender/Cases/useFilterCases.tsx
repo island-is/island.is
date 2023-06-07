@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
-
+import { useState, useEffect, useMemo } from 'react'
 import {
   CaseListEntry,
   isIndictmentCase,
@@ -9,40 +8,44 @@ export function useFilterCases(
   cases: CaseListEntry[],
   sortedData: CaseListEntry[],
 ) {
-  const [filteredCases, setFilteredCases] = useState<CaseListEntry[]>(
-    sortedData,
-  )
-  const [indictmentCaseFilter, setIndictmentCaseFilter] = useState<boolean>(
-    true,
-  )
-  const [
-    investigationCaseFilter,
-    setInvestigationCaseFilter,
-  ] = useState<boolean>(true)
+  const [filters, setFilters] = useState({
+    indictmentCaseFilter: true,
+    investigationCaseFilter: true,
+  })
 
-  const getFilteredCases = useCallback(() => {
+  const filteredCases = useMemo(() => {
+    const { indictmentCaseFilter, investigationCaseFilter } = filters
+
     if (indictmentCaseFilter && investigationCaseFilter) {
       return sortedData
-    } else if (indictmentCaseFilter) {
-      return sortedData.filter((theCase) => isIndictmentCase(theCase.type))
-    } else if (investigationCaseFilter) {
-      return sortedData.filter((theCase) => !isIndictmentCase(theCase.type))
-    } else {
-      return []
     }
-  }, [indictmentCaseFilter, investigationCaseFilter, sortedData])
+
+    return sortedData.filter((theCase) => {
+      if (indictmentCaseFilter) {
+        return isIndictmentCase(theCase.type)
+      } else if (investigationCaseFilter) {
+        return !isIndictmentCase(theCase.type)
+      }
+      return false
+    })
+  }, [filters, sortedData])
 
   useEffect(() => {
-    const filteredCases = getFilteredCases()
-    setFilteredCases(filteredCases)
-  }, [cases, getFilteredCases])
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+    }))
+  }, [cases])
+
+  const toggleFilter = (filter: keyof typeof filters) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [filter]: !prevFilters[filter] as boolean,
+    }))
+  }
 
   return {
     filteredCases,
-    indictmentCaseFilter,
-    investigationCaseFilter,
-    toggleIndictmentCases: () => setIndictmentCaseFilter(!indictmentCaseFilter),
-    toggleInvestigationCases: () =>
-      setInvestigationCaseFilter(!investigationCaseFilter),
+    filters,
+    toggleFilter,
   }
 }
