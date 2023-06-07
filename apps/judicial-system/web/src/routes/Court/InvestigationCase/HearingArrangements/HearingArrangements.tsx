@@ -240,11 +240,42 @@ const HearingArrangements = () => {
                     backgroundColor="white"
                   />
                 </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    name="session-arrangements-prosecutor-present"
+                    id="session-arrangements-prosecutor-present"
+                    label={formatMessage(
+                      m.sections.sessionArrangements.options.prosecutorPresent,
+                    )}
+                    checked={
+                      checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.PROSECUTOR_PRESENT)
+                    }
+                    onChange={() => {
+                      setCheckedRadio(SessionArrangements.PROSECUTOR_PRESENT)
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            sessionArrangements:
+                              SessionArrangements.PROSECUTOR_PRESENT,
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }}
+                    large
+                    backgroundColor="white"
+                  />
+                </Box>
                 <RadioButton
-                  name="session-arrangements-prosecutor-present"
-                  id="session-arrangements-prosecutor-present"
+                  name="session-arrangements-nonePresent"
+                  id="session-arrangements-nonePresent"
                   label={formatMessage(
-                    m.sections.sessionArrangements.options.prosecutorPresent,
+                    m.sections.sessionArrangements.options.nonePresent,
                   )}
                   checked={
                     checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||

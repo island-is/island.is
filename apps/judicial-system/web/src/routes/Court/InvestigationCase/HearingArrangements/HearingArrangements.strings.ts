@@ -55,6 +55,13 @@ export const icHearingArrangements = {
           description:
             'Notaður sem texti fyrir valmöguleikann "Fulltrúi ákæruvalds mætir" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
         }),
+        nonePresent: defineMessage({
+          id:
+            'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.options.none_present',
+          defaultMessage: 'Krafa tekin fyrir án boðunar í þinghald',
+          description:
+            'Notaður sem texti fyrir valmöguleikann "Krafa tekin fyrir án boðunar í þinghald" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+        }),
       },
     },
     requestedCourtDate: defineMessages({
