@@ -14930,6 +14930,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/showdown@npm:2.0.1":
+  version: 2.0.1
+  resolution: "@types/showdown@npm:2.0.1"
+  checksum: 75078b292d645bb6adbda7d440415fa06f37433225ba097d8f56391fc6f1234beaeb7339baf01c4093b5f1be51fa285f81b32d11055892758294bb63de92fb01
+  languageName: node
+  linkType: hard
+
 "@types/sinonjs__fake-timers@npm:8.1.1":
   version: 8.1.1
   resolution: "@types/sinonjs__fake-timers@npm:8.1.1"
@@ -15086,13 +15093,6 @@ __metadata:
   version: 2.0.2
   resolution: "@types/trusted-types@npm:2.0.2"
   checksum: 3371eef5f1c50e1c3c07a127c1207b262ba65b83dd167a1c460fc1b135a3fb0c97b9f508efebd383f239cc5dd5b7169093686a692a501fde9c3f7208657d9b0d
-  languageName: node
-  linkType: hard
-
-"@types/turndown@npm:5.0.1":
-  version: 5.0.1
-  resolution: "@types/turndown@npm:5.0.1"
-  checksum: 137c02fb863f96a2f032292fbfaf958fb784b62d97acb6a4968c012d365fa092997443584bd50205f89ad9128c729119efdf5db67cdda586f1cdd43049b26d6b
   languageName: node
   linkType: hard
 
@@ -20954,7 +20954,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^9.4.1":
+"commander@npm:^9.0.0, commander@npm:^9.4.1":
   version: 9.5.0
   resolution: "commander@npm:9.5.0"
   checksum: c7a3e27aa59e913b54a1bafd366b88650bc41d6651f0cbe258d4ff09d43d6a7394232a4dadd0bf518b3e696fdf595db1028a0d82c785b88bd61f8a440cecfade
@@ -23773,13 +23773,6 @@ __metadata:
   dependencies:
     domelementtype: ^2.3.0
   checksum: 0f58f4a6af63e6f3a4320aa446d28b5790a009018707bce2859dcb1d21144c7876482b5188395a188dfa974238c019e0a1e610d2fc269a12b2c192ea2b0b131c
-  languageName: node
-  linkType: hard
-
-"domino@npm:^2.1.6":
-  version: 2.1.6
-  resolution: "domino@npm:2.1.6"
-  checksum: 9b1b6d2661efd8bf942b70d5e11ac0de6a63f17e49b7eb227d9a612fa7b7c12b7775520d64f498988a8ee334ea9c59a463c84ea510b0af17dd3e13fdce120410
   languageName: node
   linkType: hard
 
@@ -30970,11 +30963,11 @@ __metadata:
     "@types/react-table": 7.0.24
     "@types/request": 2.48.5
     "@types/sanitize-html": 2.9.0
+    "@types/showdown": 2.0.1
     "@types/smoothscroll-polyfill": 0.3.1
     "@types/stream-buffers": 3.0.3
     "@types/supertest": 2.0.11
     "@types/triple-beam": 1.3.2
-    "@types/turndown": 5.0.1
     "@types/ua-parser-js": 0.7.36
     "@types/validator": 13.7.2
     "@types/xml2js": 0.4.9
@@ -31178,6 +31171,7 @@ __metadata:
     sequelize-replace-enum-postgres: 1.5.0
     sequelize-typescript: 2.1.3
     shorthash: 0.0.2
+    showdown: 2.1.0
     slate: 0.70.0
     slate-history: 0.66.0
     slate-hyperscript: 0.67.0
@@ -31202,7 +31196,6 @@ __metadata:
     ts-morph: 16.0.0
     ts-node: 10.9.1
     tslib: 1.14.1
-    turndown: 7.1.2
     type-fest: 1.1.3
     typescript: 4.9.5
     ua-parser-js: 1.0.33
@@ -45339,6 +45332,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"showdown@npm:2.1.0":
+  version: 2.1.0
+  resolution: "showdown@npm:2.1.0"
+  dependencies:
+    commander: ^9.0.0
+  bin:
+    showdown: bin/showdown.js
+  checksum: 9e33607612c4465f9ef39de356e2cee512e248eb71d4725e1d4353cf3ab4bbe89a94601ce6bfbd8245000633693c8b90e7d85a9613dfeba7704a7422cee78282
+  languageName: node
+  linkType: hard
+
 "side-channel@npm:^1.0.3, side-channel@npm:^1.0.4":
   version: 1.0.4
   resolution: "side-channel@npm:1.0.4"
@@ -48496,15 +48500,6 @@ __metadata:
   version: 0.0.6
   resolution: "tunnel@npm:0.0.6"
   checksum: c362948df9ad34b649b5585e54ce2838fa583aa3037091aaed66793c65b423a264e5229f0d7e9a95513a795ac2bd4cb72cda7e89a74313f182c1e9ae0b0994fa
-  languageName: node
-  linkType: hard
-
-"turndown@npm:7.1.2":
-  version: 7.1.2
-  resolution: "turndown@npm:7.1.2"
-  dependencies:
-    domino: ^2.1.6
-  checksum: 4779580c3439d0385e7dd71144bf0f72884cf7fb492bd2f5600ff256fa7c9ae9663ef284507021de90d54d62885fc027d740d578a3e11a1ae83e84a107eedd38
   languageName: node
   linkType: hard
 
