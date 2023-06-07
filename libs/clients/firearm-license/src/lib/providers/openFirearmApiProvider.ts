@@ -20,7 +20,6 @@ export const OpenFirearmApiProvider: Provider<FirearmApplicationApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-firearm-license',
-          logErrorResponseBody: true,
         }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
