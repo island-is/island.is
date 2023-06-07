@@ -20,6 +20,7 @@ ENV_FILE="${PROJECT_DIR}/.env.secret"
 
 LE2E_ACTION="run"
 LE2E_ARGS=()
+LE2E_SECRETS=()
 LE2E_ENVIRONMENT="local"
 LE2E_TEST_TYPE="smoke"
 LE2E_HEADEDEDNESS="headless"
@@ -109,23 +110,16 @@ usage() {
   cat <<EOF
 Usage: ${PROG_NAME} <build|run>
 
-build     [-a app-name: default system-e2e]
-run       -i LE2E_integration -t smoke|acceptance -c <source|dist|container>
-          [-e <local|dev|staging|prod>, default: local]
-          [-b LE2E_browser, default: chrome] [-l, default: headless]
-          [-d, extremely verbose cypress debugging]
+build     APP_NAME
+run       [--container|--host] [--environment (local, dev, staging)]
 
-examples
-         ${PROG_NAME} run -i air-discount-scheme -t acceptance -c source -l
-         ${PROG_NAME} run -i skilavottord -t acceptance -c container -b electron
-         ${PROG_NAME} run -i web -t smoke -c dist -b firefox -l
 EOF
   exit 1
 }
 
 function le2e_test() {
   info "Running ${LE2E_TEST_TYPE} tests..."
-  podman run --rm -it --name local-e2e -e TEST_ENVIRONMENT="${LE2E_ENVIRONMENT}" --userns=keep-id --entrypoint bash localhost/system-e2e:local-e2e
+  podman run --env-file .env.secret --env-file ~/.env.secret --rm -it --name local-e2e -e TEST_ENVIRONMENT="${LE2E_ENVIRONMENT}" --userns=keep-id localhost/system-e2e:local-e2e
   # yarn playwright test -c apps/system-e2e/src "${LE2E_TEST_TYPE}" "${LE2E_ARGS[@]}"
   #playwright test -c apps/system-e2e/src "--${LE2E_HEADEDEDNESS}" "${LE2E_TARGET}" "${LE2E_ARGS[@]}"
 }
@@ -151,6 +145,7 @@ function cli() {
     --container) LE2E_RUN_MODE="container" ;;
     --host) LE2E_RUN_MODE="host" ;;
     --environment | -e) LE2E_ENVIRONMENT="${arg}" n_args=2 ;;
+    --secrets-file) LE2E_SECRETS+=("${arg}") n_args=2 ;;
     --) LE2E_ARGS=("${@:2}") n_args=$# ;;
     *) LE2E_TARGET="${opt}" LE2E_ARGS=("${@:1}") n_args=$# ;;
     esac
