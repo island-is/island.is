@@ -21,8 +21,8 @@ import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './DefenderCasesTable.css'
-import { useSortCases } from './useSortCases'
-import { useFilterCases } from './useFilterCases'
+import useSortCases from './useSortCases'
+import useFilterCases from './useFilterCases'
 
 interface Props {
   cases: CaseListEntry[]

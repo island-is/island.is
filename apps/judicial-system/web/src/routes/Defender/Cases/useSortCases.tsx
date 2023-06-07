@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react'
 import { CaseListEntry } from '@island.is/judicial-system/types'
 
-export function useSortCases(
+const useSortCases = (
   defaultColumn: string,
   defaultDirection: 'ascending' | 'descending',
   data: CaseListEntry[],
-) {
+) => {
   const [sortConfig, setSortConfig] = useState({
     column: defaultColumn,
     direction: defaultDirection,
@@ -54,3 +54,5 @@ export function useSortCases(
 
   return { sortedData, requestSort, getClassNamesFor }
 }
+
+export default useSortCases

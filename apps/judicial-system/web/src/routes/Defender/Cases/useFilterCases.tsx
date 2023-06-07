@@ -4,10 +4,10 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-export function useFilterCases(
+const useFilterCases = (
   cases: CaseListEntry[],
   sortedData: CaseListEntry[],
-) {
+) => {
   const [filters, setFilters] = useState({
     indictmentCaseFilter: true,
     investigationCaseFilter: true,
@@ -49,3 +49,5 @@ export function useFilterCases(
     toggleFilter,
   }
 }
+
+export default useFilterCases
