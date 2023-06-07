@@ -150,7 +150,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
       return resp
     } catch (error) {
-      this.logger.error('EHIC.API errro getCardResponse', error)
+      this.logger.error('EHIC.API error getCardResponse', error)
       throw error
     }
   }
