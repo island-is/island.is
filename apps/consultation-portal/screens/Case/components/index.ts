@@ -3,7 +3,7 @@ export { default as CaseEmailActionBox } from './CaseEmailBox/CaseEmailActionBox
 export { default as CaseOverview } from './CaseOverview/CaseOverview'
 export { default as CaseTimeline } from './CaseTimeline/CaseTimeline'
 export { default as Coordinator } from './Coordinator/Coordinator'
-export { default as Stakeholders } from './Stakeholders/Stakeholders'
+export { default as BlowoutList } from './BlowoutList/BlowoutList'
 export { default as CaseStatusBox } from './CaseStatusBox/CaseStatusBox'
 export { default as AdviceForm } from './AdviceForm/AdviceForm'
 export { default as CaseDocuments } from './CaseDocuments/CaseDocuments'

@@ -100,6 +100,31 @@ export const m = defineMessages({
     defaultMessage: 'Sækja lista',
     description: '',
   },
+  asPdf: {
+    id: 'sp.petitions:asPdf',
+    defaultMessage: 'Sem PDF',
+    description: '',
+  },
+  asCsv: {
+    id: 'sp.petitions:asCsv',
+    defaultMessage: 'Sem CSV',
+    description: '',
+  },
+  copyLinkToList: {
+    id: 'sp.petitions:copyLinkToList',
+    defaultMessage: 'Afrita hlekk á lista',
+    description: '',
+  },
+  copyLinkSuccess: {
+    id: 'sp.petitions:copyLinkSuccess',
+    defaultMessage: 'Hlekkur afritaður',
+    description: '',
+  },
+  copyLinkError: {
+    id: 'sp.petitions:copyLinkSuccess',
+    defaultMessage: 'Ekki tókst að afrita hlekk',
+    description: '',
+  },
   date: {
     id: 'sp.petitions:date',
     defaultMessage: 'Dagsetning',

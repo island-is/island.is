@@ -14,13 +14,14 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text, Tag, Icon, Button } from '@island.is/island-ui/core'
 import {
-  CaseAppealState,
   CaseState,
   isExtendedCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
-import TagAppealRuling from '@island.is/judicial-system-web/src/components/TagAppealRuling/TagAppealRuling'
+import {
+  TagAppealState,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 
 import {
   directionType,
@@ -254,7 +255,19 @@ const ActiveCases: React.FC<Props> = (props) => {
                 }}
               >
                 <td className={styles.td}>
-                  {c.courtCaseNumber ? (
+                  {c.appealCaseNumber ? (
+                    <Box display="flex" flexDirection="column">
+                      <Text as="span" variant="small">
+                        {c.appealCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {c.courtCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
+                      </Text>
+                    </Box>
+                  ) : c.courtCaseNumber ? (
                     <>
                       <Box component="span" className={styles.blockColumn}>
                         <Text as="span">{c.courtCaseNumber}</Text>
@@ -345,8 +358,9 @@ const ActiveCases: React.FC<Props> = (props) => {
                     </Tag>
                   </Box>
 
-                  {c.appealState === CaseAppealState.COMPLETED && (
-                    <TagAppealRuling
+                  {c.appealState && (
+                    <TagAppealState
+                      appealState={c.appealState}
                       appealRulingDecision={c.appealRulingDecision}
                     />
                   )}
