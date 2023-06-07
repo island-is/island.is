@@ -5,10 +5,14 @@ import { session } from '../../../../support/session'
 
 const homeUrl = `${
   urls.islandisBaseUrl
-}/stjornbord/innskraningarkerfi/${encodeURIComponent('@island.is')}/forrit`
+}/stjornbord/innskraningarkerfi/${encodeURIComponent(
+  '@admin.island.is',
+)}/rettindi`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Admin portal tenant applications', () => {
+const permissionId = '@admin.island.is/delegations'
+
+test.describe('Admin portal tenant permissions', () => {
   let contextGranter: BrowserContext
 
   test.beforeAll(async ({ browser }) => {
@@ -24,60 +28,58 @@ test.describe('Admin portal tenant applications', () => {
     await contextGranter.close()
   })
 
-  test('can manage tenant applications', async () => {
+  test('can manage tenant permissions', async () => {
     // Arrange
     const page = await contextGranter.newPage()
     // Act
     await page.goto(homeUrl)
 
-    await test.step('See tenant applications overview', async () => {
+    await test.step('See tenant permissions overview', async () => {
       // Assert
       await expect(
-        page.getByRole('heading', { name: 'Applications' }),
+        page.getByRole('heading', { name: 'Permissions' }),
       ).toBeVisible()
     })
 
     await test.step(
-      'Filter tenant applications list by name or id',
+      'Filter tenant permissions list by name or id',
       async () => {
         // Act
         await page
           .getByPlaceholder('Search')
           // filter by id
-          .fill('Mínar síður')
+          .fill(permissionId)
 
         // Assert
         await expect(
-          page.getByRole('heading', { name: 'Mínar síður Ísland.is' }),
+          page.getByRole('heading', { name: 'Aðgangsstýring' }),
         ).toBeVisible()
         await expect(
-          page.getByTestId('tenant-applications-list-item'),
+          page.getByTestId('tenant-permissions-list-item'),
         ).toBeVisible()
         await expect(
-          page.getByTestId('tenant-applications-list-item'),
+          page.getByTestId('tenant-permissions-list-item'),
         ).toHaveCount(1)
       },
     )
 
-    await test.step('To link to tenant application page', async () => {
-      const applicationId = '@island.is/web'
+    await test.step('To link to tenant permission page', async () => {
       // Act
       await page
         .getByPlaceholder('Search')
         // filter by id
-        .fill(applicationId)
+        .fill(permissionId)
       await page.getByRole('button', { name: 'Change' }).click()
 
       // Assert
       await expect(page).toHaveURL(
-        `${homeUrl}/${encodeURIComponent(applicationId)}`,
+        `${homeUrl}/${encodeURIComponent(permissionId)}`,
       )
     })
 
     await test.step(
-      'To link to tenant application page with env as query param',
+      'To link to tenant permission page with env as query param',
       async () => {
-        const applicationId = '@island.is/web'
         const env = 'Development'
 
         // Arrange
@@ -87,12 +89,12 @@ test.describe('Admin portal tenant applications', () => {
         await page
           .getByPlaceholder('Search')
           // filter by id
-          .fill(applicationId)
+          .fill(permissionId)
         await page.getByRole('button', { name: 'Development' }).click()
 
         // Assert
         await expect(page).toHaveURL(
-          `${homeUrl}/${encodeURIComponent(applicationId)}?env=${env}`,
+          `${homeUrl}/${encodeURIComponent(permissionId)}?env=${env}`,
         )
       },
     )

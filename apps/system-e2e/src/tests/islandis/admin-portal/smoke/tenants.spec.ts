@@ -24,47 +24,47 @@ test.describe('Admin portal tenants', () => {
 
   test('can manage tenants', async () => {
     // Arrange
-    const granterPage = await contextGranter.newPage()
+    const page = await contextGranter.newPage()
     // Act
-    await granterPage.goto(homeUrl)
+    await page.goto(homeUrl)
 
     await test.step('See tenants overview', async () => {
       await expect(
-        granterPage.getByRole('heading', { name: 'Innskráningarkerfi' }),
+        page.getByRole('heading', { name: 'Innskráningarkerfi' }),
       ).toBeVisible()
     })
 
     await test.step('Filter tenants list by name or id', async () => {
       // Arrange
-      await granterPage
+      await page
         .getByPlaceholder('Search')
         // filter by id
         .fill('@island.is')
 
       // Assert
       await expect(
-        granterPage.getByRole('link', {
+        page.getByRole('link', {
           name: 'Mínar síður Ísland.is @island.is',
         }),
       ).toBeVisible()
 
-      await expect(granterPage.getByTestId('tenant-list-item')).toBeVisible()
-      await expect(granterPage.getByTestId('tenant-list-item')).toHaveCount(1)
+      await expect(page.getByTestId('tenant-list-item')).toBeVisible()
+      await expect(page.getByTestId('tenant-list-item')).toHaveCount(1)
     })
 
     //
     await test.step('To link to tenant applications page', async () => {
       // Arrange
-      await granterPage
+      await page
         .getByPlaceholder('Search')
         // filter by id
         .fill('@island.is')
 
       // Act
-      await granterPage.getByTestId('tenant-list-item').click()
+      await page.getByTestId('tenant-list-item').click()
 
       // Assert
-      await expect(granterPage).toHaveURL(
+      await expect(page).toHaveURL(
         `${homeUrl}/${encodeURIComponent('@island.is')}/forrit`,
       )
     })
