@@ -44,6 +44,7 @@ import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks
 import { defenderCaseOverview as m } from './CaseOverview.strings'
 import Conclusion from '../../components/Conclusion/Conclusion'
 import CaseFilesOverview from '../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
+import IndictmentCaseFilesList from '../../components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 
 type availableModals =
   | 'NoModal'
@@ -302,50 +303,8 @@ export const CaseOverview: React.FC = () => {
           {workingCase.appealState ? (
             <CaseFilesOverview />
           ) : (
-            <Box marginBottom={10}>
-              <Text as="h3" variant="h3" marginBottom={3}>
-                {formatMessage(m.documentHeading)}
-              </Text>
-              <Box>
-                <PdfButton
-                  renderAs="row"
-                  caseId={workingCase.id}
-                  title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'limitedAccess/request'}
-                />
-                {completedCaseStates.includes(workingCase.state) && (
-                  <>
-                    <PdfButton
-                      renderAs="row"
-                      caseId={workingCase.id}
-                      title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'limitedAccess/courtRecord'}
-                    >
-                      {workingCase.courtRecordSignatory ? (
-                        <SignedDocument
-                          signatory={workingCase.courtRecordSignatory.name}
-                          signingDate={workingCase.courtRecordSignatureDate}
-                        />
-                      ) : null}
-                    </PdfButton>
-                    <PdfButton
-                      renderAs="row"
-                      caseId={workingCase.id}
-                      title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'limitedAccess/ruling'}
-                    >
-                      {workingCase.rulingDate ? (
-                        <SignedDocument
-                          signatory={workingCase.judge?.name}
-                          signingDate={workingCase.rulingDate}
-                        />
-                      ) : (
-                        <Text>{formatMessage(m.unsignedRuling)}</Text>
-                      )}
-                    </PdfButton>
-                  </>
-                )}
-              </Box>
+            <Box component="section" marginBottom={10}>
+              <IndictmentCaseFilesList workingCase={workingCase} />
             </Box>
           )}
         </FormContentContainer>
