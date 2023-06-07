@@ -8,10 +8,11 @@ import { AuthAdminTranslatedValue } from '@island.is/api/schema'
 import { m } from '../../../lib/messages'
 import { FormCard } from '../../../components/FormCard'
 import { usePermission } from '../PermissionContext'
-import { PermissionFormTypes } from '../EditPermission.action'
+import { PermissionFormTypes } from '../EditPermission.schema'
 import { Languages } from '../../../utils/languages'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 
 type Locales = Languages.IS | Languages.EN
 type ErrorKeys = `${Locales}_description` | `${Locales}_displayName`
@@ -107,8 +108,10 @@ export const PermissionContent = () => {
     <FormCard
       title={formatMessage(m.content)}
       intent={PermissionFormTypes.CONTENT}
-      selectedEnvironment={selectedPermission.environment}
-      availableEnvironments={permission.availableEnvironments}
+      inSync={checkEnvironmentsSync(permission.environments, [
+        'description',
+        'displayName',
+      ])}
     >
       <Tabs
         size="md"
