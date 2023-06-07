@@ -35,6 +35,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { FilterTag } from '@island.is/web/components'
 import { sortAlpha } from '@island.is/shared/utils'
 import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
@@ -455,33 +456,39 @@ IcelandicGovernmentInstitutionVacanciesList.getInitialProps = async ({
   apolloClient,
   locale,
 }) => {
-  const [vacanciesResponse, namespaceResponse] = await Promise.all([
-    apolloClient.query<
-      GetIcelandicGovernmentInstitutionVacanciesQuery,
-      GetIcelandicGovernmentInstitutionVacanciesQueryVariables
-    >({
-      query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES,
-      variables: {
-        input: {},
+  const namespaceResponse = await apolloClient.query<
+    GetNamespaceQuery,
+    GetNamespaceQueryVariables
+  >({
+    query: GET_NAMESPACE_QUERY,
+    variables: {
+      input: {
+        lang: locale,
+        namespace: 'Starfatorg',
       },
-    }),
-    apolloClient.query<GetNamespaceQuery, GetNamespaceQueryVariables>({
-      query: GET_NAMESPACE_QUERY,
-      variables: {
-        input: {
-          lang: locale,
-          namespace: 'Starfatorg',
-        },
-      },
-    }),
-  ])
-
-  const vacancies =
-    vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
+    },
+  })
 
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
+
+  if (namespace['display404']) {
+    throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
+  }
+
+  const vacanciesResponse = await apolloClient.query<
+    GetIcelandicGovernmentInstitutionVacanciesQuery,
+    GetIcelandicGovernmentInstitutionVacanciesQueryVariables
+  >({
+    query: GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES,
+    variables: {
+      input: {},
+    },
+  })
+
+  const vacancies =
+    vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
 
   return {
     vacancies,
