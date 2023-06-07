@@ -52,46 +52,132 @@ test.describe('Admin portal tenant application', () => {
     /**
      * Basic info
      */
-    await test.step('See tenant application header', async () => {
-      // Arrange
-      const heading = 'Mínar síður Ísland.is'
-      const tag = 'Single page application'
-      const env = 'Development'
+    await test.step(
+      'See tenant basic information card and interact with it',
+      async () => {
+        // Arrange
+        const openIdConfigurationUrl = await page.locator(
+          `input[name="openIdConfigurationUrl"]`,
+        )
+        const authorizationUrl = await page.locator(
+          `input[name="authorizationUrl"]`,
+        )
+        const tokenUrl = await page.locator(`input[name="tokenUrl"]`)
+        const userInfoUrl = await page.locator(`input[name="userInfoUrl"]`)
+        const endSessionUrl = await page.locator(`input[name="endSessionUrl"]`)
+        const jsonWebSetKeyUrl = await page.locator(
+          `input[name="jsonWebSetKeyUrl"]`,
+        )
 
-      // Assert
-      await expect(page.getByRole('heading', { name: heading })).toBeVisible()
-      await expect(page.getByTestId('select-env').getByText(env)).toBeVisible()
-      await expect(page.getByText(tag)).toBeVisible()
-    })
+        // Assert - Heading
+        await expect(page.getByText('Basic information')).toBeVisible()
+
+        // Assert - Default inputs are visible
+        await expect(await page.locator(`input[name="clientId"]`)).toBeVisible()
+        await expect(
+          await page.locator(`input[name="issuerUrl"]`),
+        ).toBeVisible()
+
+        // Assert - Accordion inputs are not visible
+        await expect(openIdConfigurationUrl).not.toBeVisible()
+        await expect(authorizationUrl).not.toBeVisible()
+        await expect(
+          await page.locator(`input[name="tokenUrl"]`),
+        ).not.toBeVisible()
+        await expect(tokenUrl).not.toBeVisible()
+        await expect(userInfoUrl).not.toBeVisible()
+        await expect(endSessionUrl).not.toBeVisible()
+        await expect(jsonWebSetKeyUrl).not.toBeVisible()
+
+        // Act - click on accordion
+        await page.getByRole('button', { name: 'Other endpoints' }).click()
+
+        // Assert - Accordion inputs are now visible
+        await expect(openIdConfigurationUrl).toBeVisible()
+        await expect(authorizationUrl).toBeVisible()
+        await expect(await page.locator(`input[name="tokenUrl"]`)).toBeVisible()
+        await expect(tokenUrl).toBeVisible()
+        await expect(userInfoUrl).toBeVisible()
+        await expect(endSessionUrl).toBeVisible()
+        await expect(jsonWebSetKeyUrl).toBeVisible()
+      },
+    )
 
     /**
-     * Basic info interact with inputs
+     * Content card
      */
-    await test.step('Interact with basic info inputs', async () => {
-      const readTextEvaluate = 'navigator.clipboard.readText()'
-      // Client ID
-      await page.getByRole('button', { name: 'Copy value Client ID' }).click()
-      const clientId = await page.evaluate(readTextEvaluate)
-      expect(clientId).toBe(applicationId)
+    await test.step(
+      'See tenant content card and interact with it',
+      async () => {
+        // Arrange
+        const isDisplayNameInput = 'input[name="is_displayName"]'
+        const enDisplayNameInput = 'input[name="en_displayName"]'
 
-      // Client Secret
-      const clientSecretInput = await page.getByRole('button', {
-        name: 'Copy value Client Secret',
-      })
+        // Assert - Icelandic input is visible and english is not
+        await expect(await page.locator(isDisplayNameInput)).toBeVisible()
+        await expect(await page.locator(enDisplayNameInput)).not.toBeVisible()
 
-      if (clientSecretInput) {
-        await clientSecretInput.click()
-        const clientSecret = await page.evaluate(readTextEvaluate)
-        expect(clientSecret).toBeDefined()
-      }
+        // Act - fill in input
+        await page.locator(isDisplayNameInput).fill('Ísland.is')
 
-      // Issuer
-      await page.getByRole('button', { name: 'Copy value Issuer' }).click()
-      const issuer = await page.evaluate(readTextEvaluate)
-      expect(issuer).toBe('https://identity-server.dev01.devland.is')
+        // Assert - input has value
+        await expect(await page.locator(isDisplayNameInput)).toHaveValue(
+          'Ísland.is',
+        )
 
-      // Act
-      await page.getByRole('button', { name: 'Other endpoints' }).click()
-    })
+        // Act - switch language
+        await page.getByRole('tab', { name: 'English' }).click()
+
+        // Assert - input is not visible
+        await expect(await page.locator(isDisplayNameInput)).not.toBeVisible()
+        await expect(await page.locator(enDisplayNameInput)).toBeVisible()
+
+        // Assert - heading is visible
+        await expect(page.getByText('Content')).toBeVisible()
+      },
+    )
+
+    /**
+     * Content card
+     */
+    await test.step(
+      'See tenant Application URLs card and interact with it',
+      async () => {
+        // Arrange
+        const redirectUris = 'textarea[name="redirectUris"]'
+        const postLogoutRedirectUris = 'textarea[name="postLogoutRedirectUris"]'
+        const dummyText = 'This is a dummy text'
+        const title = 'Application URLs'
+
+        // Assert - heading is visible
+        await expect(page.getByText(title)).toBeVisible()
+
+        // Assert - inputs are visible
+        await expect(await page.locator(redirectUris)).toBeVisible()
+        await expect(await page.locator(postLogoutRedirectUris)).toBeVisible()
+
+        // Assert - save button is disabled
+        await expect(page.getByTestId(`button-save-${title}`)).toBeDisabled()
+
+        // Act - Type dummy text value into inputs
+        await page.locator(redirectUris).clear()
+        await page.locator(postLogoutRedirectUris).clear()
+        await page.locator(redirectUris).fill(dummyText)
+        await page.locator(postLogoutRedirectUris).fill(dummyText)
+
+        // Assert - inputs have dummy text value
+        await expect(await page.locator(redirectUris)).toHaveValue(dummyText)
+        await expect(await page.locator(postLogoutRedirectUris)).toHaveValue(
+          dummyText,
+        )
+
+        // Assert - save button is enabled
+        await expect(
+          page.getByTestId(`button-save-${title}`),
+        ).not.toBeDisabled()
+      },
+    )
   })
+
+  // TODO remember publish modal
 })
