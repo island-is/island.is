@@ -206,6 +206,149 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
   }),
 
+  period: defineMessages({
+    periodTitle: {
+      id: 'oap.application:period.title',
+      defaultMessage:
+        'Tímabil',
+      description:
+        'Period',
+    },
+    periodDescription: {
+      id: 'oap.application:period.description',
+      defaultMessage:
+        'Veldu dagsetningu sem þú vilt byrja að fá greitt ellilífeyri. Hægt er að sækja fyrir árið í ár og 2 ár aftur í tímann.',
+      description:
+        'Select the date you want to start receiving your retirement pension. You can apply for this year and 2 years back.',
+    },
+    periodAttachmentForEarlyRetirementTitle: {
+      id: 'oap.application:period.attachedment.for.early.retirement.title',
+      defaultMessage:
+        'Fylgiskjöl vegna snemmtöku',
+      description:
+        'Early retirement attachment',
+    },
+    periodAttachmentForEarlyRetirementDescription: {
+      id: 'oap.application:period.attachedment.for.early.retirement.description',
+      defaultMessage:
+        'Hér getur þú skilað yfirliti úr lífeyrisgátt sem þú hefur áunnið þér réttindi í. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit an overview from the pension portal in which you have earned rights. Note that the document must be in .pdf format.',
+    },
+    periodInputMonth: {
+      id: 'oap.application:period.input.month',
+      defaultMessage:
+        'Mánuður',
+      description:
+        'Month',
+    },
+    periodInputMonthDefaultText: {
+      id: 'oap.application:period.input.month.default.text',
+      defaultMessage:
+        'Veldu mánuð',
+      description:
+        'Select month',
+    },
+    periodInputYear: {
+      id: 'oap.application:period.input.year',
+      defaultMessage:
+        'Ár',
+      description:
+        'Year',
+    },
+    periodInputYearDefaultText: {
+      id: 'oap.application:period.input.year.default.text',
+      defaultMessage:
+        'Veldu ár',
+      description:
+        'Select year',
+    },
+    january: {
+      id: 'oap.application:period.january',
+      defaultMessage:
+        'Janúar',
+      description:
+        'January',
+    },
+    february: {
+      id: 'oap.application:period.february',
+      defaultMessage:
+        'Febrúar',
+      description:
+        'February',
+    },
+    march: {
+      id: 'oap.application:period.march',
+      defaultMessage:
+        'Mars',
+      description:
+        'March',
+    },
+    april: {
+      id: 'oap.application:period.april',
+      defaultMessage:
+        'Apríl',
+      description:
+        'April',
+    },
+    may: {
+      id: 'oap.application:period.may',
+      defaultMessage:
+        'Maí',
+      description:
+        'May',
+    },
+    june: {
+      id: 'oap.application:period.june',
+      defaultMessage:
+        'Júní',
+      description:
+        'June',
+    },
+    july: {
+      id: 'oap.application:period.july',
+      defaultMessage:
+        'Júlí',
+      description:
+        'July',
+    },
+    agust: {
+      id: 'oap.application:period.agust',
+      defaultMessage:
+        'Águst',
+      description:
+        'Agust',
+    },
+    september: {
+      id: 'oap.application:period.september',
+      defaultMessage:
+        'September',
+      description:
+        'September',
+    },
+    october: {
+      id: 'oap.application:period.october',
+      defaultMessage:
+        'Október',
+      description:
+        'October',
+    },
+    november: {
+      id: 'oap.application:period.november',
+      defaultMessage:
+        'Nóvember',
+      description:
+        'November',
+    },
+    desember: {
+      id: 'oap.application:period.desember',
+      defaultMessage:
+        'Desember',
+      description:
+        'December',
+    },
+  }),
+
   errors: defineMessages({
     phoneNumber: {
       id: 'oap.application:error.phonenumber',

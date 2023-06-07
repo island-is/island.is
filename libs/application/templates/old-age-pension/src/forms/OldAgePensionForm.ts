@@ -1,9 +1,11 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
   buildPhoneField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
@@ -18,6 +20,7 @@ import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import { UserProfile } from '@island.is/api/schema'
+import { getApplicationAnswers, getAvailableMonths, getAvailableYears } from '../lib/oldAgePensionUtils'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -34,6 +37,52 @@ export const OldAgePensionForm: Form = buildForm({
       id: 'applicant',
       title: oldAgePensionFormMessage.shared.applicantSection,
       children: [
+        buildSubSection({
+          id: 'period',
+          title: oldAgePensionFormMessage.period.periodTitle,
+          children: [
+            // Period is from 65 year old or last 2 years if applicant is 67+
+            //           to 6 month ahead
+            buildMultiField({
+              id: 'period',
+              title: oldAgePensionFormMessage.period.periodTitle,
+              description:
+                oldAgePensionFormMessage.period.periodDescription,
+              children: [
+                buildCustomField({
+                  id: 'period',
+                  component: 'Period',
+                  title: oldAgePensionFormMessage.period.periodTitle,
+                }),
+              ]
+            })
+            // buildMultiField({
+            //   id: 'period',
+            //   title: oldAgePensionFormMessage.period.periodTitle,
+            //   children: [
+            //     buildSelectField({
+            //       id: 'period.year',
+            //       title: oldAgePensionFormMessage.period.periodInputYear,
+            //       options: (application: Application) => getAvailableYears(application),
+            //       defaultValue: oldAgePensionFormMessage.period.periodInputYearDefaultText,
+            //       width: 'half',
+                  
+            //     }),
+            //     buildSelectField({
+            //       id: 'period.month',
+            //       condition: (answers) => {
+            //         const { selectedYear } = getApplicationAnswers(answers)
+            //         return !!selectedYear
+            //       },
+            //       title: oldAgePensionFormMessage.period.periodInputMonth,
+            //       options: (application: Application) => getAvailableMonths(application),
+            //       defaultValue: oldAgePensionFormMessage.period.periodInputMonthDefaultText,
+            //       width: 'half'
+            //     }),
+            //   ]
+            // })
+          ],
+        }),
         buildSubSection({
           id: 'info',
           title: oldAgePensionFormMessage.shared.applicantInfoSubSectionTitle,
