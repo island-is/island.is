@@ -27,6 +27,9 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 })
 
 applicationTest.describe('Criminal record application payment test', () => {
+  // for (const locale of [{ language: 'Icelandic', lang: 'is' }, { language: 'English', lang: 'en' }])
+  //   applicationTest(
+  //     `Should be able to proceed through payment in ${locale.language}`,
   applicationTest(
     'Should be able to proceed through payment',
     async ({ applicationPage }) => {
