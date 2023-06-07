@@ -6,6 +6,8 @@ export const NO = 'No'
 export const JA = 'Já'
 export const NEI = 'Nei'
 
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'
+
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',

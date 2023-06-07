@@ -15,7 +15,7 @@ import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
 import { testamentInfo } from '../sharedSections/testamentInfo'
-import { YES } from '../../lib/constants'
+import { UPLOAD_ACCEPT, YES } from '../../lib/constants'
 
 export const form: Form = buildForm({
   id: 'permitToPostponeEstateDivisionForm',
@@ -469,6 +469,7 @@ export const form: Form = buildForm({
             buildFileUploadField({
               id: 'estateAttachments',
               title: m.attachmentsTitle,
+              uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: m.uploadHeader,
               uploadDescription: m.uploadDescription,
               uploadButtonLabel: m.attachmentsButton,
