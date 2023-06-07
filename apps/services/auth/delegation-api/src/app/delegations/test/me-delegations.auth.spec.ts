@@ -1,11 +1,14 @@
 import request from 'supertest'
 
 import { User } from '@island.is/auth-nest-tools'
+import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { getRequestMethod, TestApp } from '@island.is/testing/nest'
+import {
+  getRequestMethod,
+  TestApp,
+  TestEndpointOptions,
+} from '@island.is/testing/nest'
 
-import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
-import { TestEndpointOptions } from '../../../../test/types'
 import {
   setupWithoutAuth,
   setupWithoutPermission,
@@ -18,6 +21,7 @@ describe('withoutAuth and permissions', () => {
     }
     const factory = new FixtureFactory(app)
     const domain = await factory.createDomain({
+      name: 'd1',
       apiScopes: [{ name: 's1' }],
     })
     const delegation = await factory.createCustomDelegation({

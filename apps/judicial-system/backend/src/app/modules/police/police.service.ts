@@ -21,9 +21,9 @@ import {
 import {
   CaseState,
   CaseType,
-  IndictmentSubtype,
-  User,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
@@ -62,7 +62,7 @@ export class PoliceService {
 
   private async fetchPoliceDocumentApi(url: string): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
-      throw 'Police document API not available'
+      throw new ServiceUnavailableException('Police document API not available')
     }
 
     return fetch(url, {
@@ -79,7 +79,7 @@ export class PoliceService {
     requestInit: RequestInit,
   ): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
-      throw 'Police case API not available'
+      throw new ServiceUnavailableException('Police case API not available')
     }
 
     return fetch(url, requestInit)
@@ -87,6 +87,7 @@ export class PoliceService {
 
   private async throttleUploadPoliceCaseFile(
     caseId: string,
+    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
@@ -116,6 +117,15 @@ export class PoliceService {
           throw reason
         }
 
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the file was not found
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
+            detail: reason.message,
+          })
+        }
+
         this.eventService.postErrorEvent(
           'Failed to get police case file',
           {
@@ -128,15 +138,6 @@ export class PoliceService {
           reason,
         )
 
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the file was not found
-          throw new NotFoundException({
-            ...reason,
-            message: `Police case file ${uploadPoliceCaseFile.id} of case ${caseId} not found`,
-            detail: reason.message,
-          })
-        }
-
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case file ${uploadPoliceCaseFile.id} of case ${caseId}`,
@@ -144,7 +145,9 @@ export class PoliceService {
         })
       })
 
-    const key = `uploads/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `${
+      isIndictmentCase(caseType) ? 'indictments' : 'uploads'
+    }/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
     await this.awsS3Service.putObject(key, pdf)
 
@@ -163,11 +166,16 @@ export class PoliceService {
           const response = await res.json()
 
           return response.map(
-            (file: { rvMalSkjolMals_ID: string; heitiSkjals: string }) => ({
+            (file: {
+              rvMalSkjolMals_ID: string
+              heitiSkjals: string
+              malsnumer: string
+            }) => ({
               id: file.rvMalSkjolMals_ID,
               name: file.heitiSkjals.endsWith('.pdf')
                 ? file.heitiSkjals
                 : `${file.heitiSkjals}.pdf`,
+              policeCaseNumber: file.malsnumer,
             }),
           )
         }
@@ -175,7 +183,7 @@ export class PoliceService {
         const reason = await res.text()
 
         // The police system does not provide a structured error response.
-        // When police case does not exist, a stack trace is returned.
+        // When a police case does not exist, a stack trace is returned.
         throw new NotFoundException({
           message: `Police case for case ${caseId} does not exist`,
           detail: reason,
@@ -184,6 +192,15 @@ export class PoliceService {
       .catch((reason) => {
         if (reason instanceof NotFoundException) {
           throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case for case ${caseId} does not exist`,
+            detail: reason.message,
+          })
         }
 
         this.eventService.postErrorEvent(
@@ -196,11 +213,6 @@ export class PoliceService {
           reason,
         )
 
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case has no files
-          return []
-        }
-
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case files for case ${caseId}`,
@@ -211,11 +223,13 @@ export class PoliceService {
 
   async uploadPoliceCaseFile(
     caseId: string,
+    caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
+      caseType,
       uploadPoliceCaseFile,
       user,
     )
@@ -224,36 +238,73 @@ export class PoliceService {
   }
 
   async updatePoliceCase(
+    user: User,
     caseId: string,
-    caseType: CaseType | IndictmentSubtype,
+    caseType: CaseType,
     caseState: CaseState,
-    courtRecordPdf: string,
     policeCaseNumber: string,
-    defendantNationalIds?: string[],
-    caseConclusion?: string,
+    defendantNationalId: string,
+    validToDate: Date,
+    caseConclusion: string,
+    requestPdf: string,
+    courtRecordPdf: string,
+    rulingPdf: string,
+    custodyNoticePdf?: string,
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
-      method: 'PUT',
-      headers: {
-        accept: '*/*',
-        'Content-Type': 'application/json',
-        'X-Road-Client': this.config.clientId,
-        'X-API-KEY': this.config.policeApiKey,
-      },
-      agent: this.agent,
-      body: JSON.stringify({
-        rvMal_ID: caseId,
-        caseNumber: policeCaseNumber,
-        ssn:
-          defendantNationalIds && defendantNationalIds[0]
-            ? defendantNationalIds[0]
-            : '',
-        type: caseType,
-        courtVerdict: caseState,
-        courtVerdictString: caseConclusion,
-        courtDocument: Base64.btoa(courtRecordPdf),
-      }),
-    } as RequestInit)
+    const promise = this.config.policeCaseApiV2Available
+      ? this.fetchPoliceCaseApi(`${this.xRoadPath}/V2/UpdateRVCase/${caseId}`, {
+          method: 'PUT',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+          body: JSON.stringify({
+            rvMal_ID: caseId,
+            caseNumber: policeCaseNumber,
+            ssn: defendantNationalId,
+            type: caseType,
+            courtVerdict: caseState,
+            expiringDate: validToDate?.toISOString(),
+            courtVerdictString: caseConclusion,
+            courtDocuments: [
+              { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
+              { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
+              { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+              ...(custodyNoticePdf
+                ? [
+                    {
+                      type: 'RVVI',
+                      courtDocument: Base64.btoa(custodyNoticePdf),
+                    },
+                  ]
+                : []),
+            ],
+          }),
+        } as RequestInit)
+      : this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
+          method: 'PUT',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+          body: JSON.stringify({
+            rvMal_ID: caseId,
+            caseNumber: policeCaseNumber,
+            ssn: defendantNationalId,
+            type: caseType,
+            courtVerdict: caseState,
+            courtVerdictString: caseConclusion,
+            courtDocument: Base64.btoa(courtRecordPdf),
+          }),
+        } as RequestInit)
+
+    return promise
       .then(async (res) => {
         if (res.ok) {
           return true
@@ -264,8 +315,11 @@ export class PoliceService {
         throw response
       })
       .catch((reason) => {
-        // Do not spam the logs with errors
-        if (!(reason instanceof ServiceUnavailableException)) {
+        if (reason instanceof ServiceUnavailableException) {
+          // Do not spam the logs with errors
+          // Act as if the case was updated
+          return true
+        } else {
           this.logger.error(`Failed to update police case ${caseId}`, {
             reason,
           })
@@ -275,6 +329,8 @@ export class PoliceService {
           'Failed to update police case',
           {
             caseId,
+            actor: user.name,
+            institution: user.institution?.name,
             caseType,
             caseState,
             policeCaseNumber,

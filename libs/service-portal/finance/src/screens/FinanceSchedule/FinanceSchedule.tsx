@@ -16,12 +16,13 @@ import {
   ErrorScreen,
   IntroHeader,
   NoDataScreen,
-  ServicePortalModuleComponent,
   m as coreMessage,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
+import { useUserInfo } from '@island.is/auth/react'
+import { m } from '../../lib/messages'
 
 export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   query getPaymentSchedulesQuery {
@@ -47,10 +48,10 @@ export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
   }
 `
 
-const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
+const FinanceSchedule = () => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
-
+  const userInfo = useUserInfo()
   const isDelegation = checkDelegation(userInfo)
 
   const {
@@ -63,10 +64,7 @@ const FinanceSchedule: ServicePortalModuleComponent = ({ userInfo }) => {
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule
       ?.paymentSchedules || []
 
-  const applicationButtonText = formatMessage({
-    id: 'sp.finance-schedule:finance-schedule-application',
-    defaultMessage: 'Gera greiðsluáætlun',
-  })
+  const applicationButtonText = formatMessage(m.scheduleApplication)
 
   if (paymentSchedulesError && !paymentSchedulesLoading) {
     return (

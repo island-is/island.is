@@ -1,30 +1,31 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useContext } from 'react'
 import {
-  Logo,
-  Columns,
-  Column,
   Box,
-  Button,
-  Hidden,
-  ResponsiveSpace,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  ColorSchemeContext,
-  FocusableBox,
   ButtonTypes,
-  Link,
+  ColorSchemeContext,
+  Column,
+  Columns,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Logo,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { useI18n } from '@island.is/web/i18n'
 import { FixedNav, SearchInput } from '@island.is/web/components'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { LoginButton } from './LoginButton'
+import { useI18n } from '@island.is/web/i18n'
+import { LayoutProps } from '@island.is/web/layouts/main'
+import React, { FC, useContext } from 'react'
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
+import { webMenuButtonClicked } from '@island.is/plausible'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
+  languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
   megaMenuData
 }
 
@@ -34,11 +35,11 @@ export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
   buttonColorScheme = 'default',
   megaMenuData,
+  languageToggleQueryParams,
   children,
 }) => {
   const { activeLocale, t } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
-  const { linkResolver } = useLinkResolver()
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -93,44 +94,24 @@ export const Header: FC<HeaderProps> = ({
                       </Box>
                     )}
 
-                    <Hidden below="lg">
-                      <Box marginLeft={marginLeft}>
-                        <Link {...linkResolver('login')} skipTab>
-                          <Button
-                            colorScheme={buttonColorScheme}
-                            variant="utility"
-                            icon="person"
-                            as="span"
-                          >
-                            {t.login}
-                          </Button>
-                        </Link>
-                      </Box>
-                    </Hidden>
-
-                    <Hidden above="md">
-                      <Box marginLeft={marginLeft}>
-                        <Link {...linkResolver('login')} skipTab>
-                          <Button
-                            colorScheme={buttonColorScheme}
-                            variant="utility"
-                            icon="person"
-                            as="span"
-                          />
-                        </Link>
-                      </Box>
-                    </Hidden>
+                    <Box marginLeft={marginLeft}>
+                      <LoginButton colorScheme={buttonColorScheme} />
+                    </Box>
 
                     <Box
                       marginLeft={marginLeft}
                       display={['none', 'none', 'none', 'block']}
                     >
-                      <LanguageToggler buttonColorScheme={buttonColorScheme} />
+                      <LanguageToggler
+                        buttonColorScheme={buttonColorScheme}
+                        queryParams={languageToggleQueryParams}
+                      />
                     </Box>
                     <Box marginLeft={marginLeft}>
                       <Menu
                         {...megaMenuData}
                         buttonColorScheme={buttonColorScheme}
+                        onMenuOpen={webMenuButtonClicked}
                       />
                     </Box>
                   </Box>

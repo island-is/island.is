@@ -1,12 +1,11 @@
 import { Response } from 'express'
-
 import {
   Body,
   Controller,
   Get,
   Param,
   Post,
-  Put,
+  Patch,
   ForbiddenException,
   Query,
   Res,
@@ -15,7 +14,7 @@ import {
   BadRequestException,
   HttpException,
   Inject,
-  ParseBoolPipe,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -26,16 +25,19 @@ import {
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
 import {
+  CaseAppealDecision,
+  CaseAppealState,
   CaseState,
+  CaseTransition,
   CaseType,
-  completedCaseStates,
   indictmentCases,
+  InstitutionType,
   investigationCases,
-  isIndictmentCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -50,6 +52,7 @@ import {
   representativeRule,
   staffRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import { nowFactory } from '../../factories'
 import { UserService } from '../user'
@@ -60,7 +63,6 @@ import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CurrentCase } from './guards/case.decorator'
 import {
-  staffUpdateRule,
   judgeTransitionRule,
   judgeUpdateRule,
   prosecutorTransitionRule,
@@ -77,8 +79,9 @@ import { TransitionCaseDto } from './dto/transitionCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
+import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { transitionCase } from './state/case.state'
-import { CaseService } from './case.service'
+import { CaseService, UpdateCase } from './case.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -93,7 +96,8 @@ export class CaseController {
   private async validateAssignedUser(
     assignedUserId: string,
     assignedUserRole: UserRole[],
-    institutionId: string | undefined,
+    institutionType: InstitutionType,
+    institutionId?: string,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
@@ -103,7 +107,10 @@ export class CaseController {
       )
     }
 
-    if (institutionId && assignedUser.institutionId !== institutionId) {
+    if (
+      assignedUser.institution?.type !== institutionType ||
+      (institutionId && assignedUser.institutionId !== institutionId)
+    ) {
       throw new ForbiddenException(
         `User ${assignedUserId} belongs to the wrong institution`,
       )
@@ -134,55 +141,100 @@ export class CaseController {
     judgeUpdateRule,
     registrarUpdateRule,
     assistantUpdateRule,
-    staffUpdateRule,
   )
-  @Put('case/:caseId')
+  @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
   async update(
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() caseToUpdate: UpdateCaseDto,
+    @Body() updateDto: UpdateCaseDto,
   ): Promise<Case> {
     this.logger.debug(`Updating case ${caseId}`)
 
+    const update: UpdateCase = updateDto
+
     // Make sure valid users are assigned to the case's roles
-    if (caseToUpdate.prosecutorId) {
+    if (update.prosecutorId) {
       await this.validateAssignedUser(
-        caseToUpdate.prosecutorId,
+        update.prosecutorId,
         [UserRole.PROSECUTOR],
+        InstitutionType.PROSECUTORS_OFFICE,
         theCase.creatingProsecutor?.institutionId,
       )
 
       // If the case was created via xRoad, then there may not have been a creating prosecutor
       if (!theCase.creatingProsecutor) {
-        caseToUpdate = {
-          ...caseToUpdate,
-          creatingProsecutorId: caseToUpdate.prosecutorId,
-        } as UpdateCaseDto
+        update.creatingProsecutorId = update.prosecutorId
       }
     }
 
-    if (caseToUpdate.judgeId) {
+    if (update.judgeId) {
       await this.validateAssignedUser(
-        caseToUpdate.judgeId,
+        update.judgeId,
         [UserRole.JUDGE, UserRole.ASSISTANT],
+        InstitutionType.COURT,
         theCase.courtId,
       )
     }
 
-    if (caseToUpdate.registrarId) {
+    if (update.registrarId) {
       await this.validateAssignedUser(
-        caseToUpdate.registrarId,
+        update.registrarId,
         [UserRole.REGISTRAR],
+        InstitutionType.COURT,
         theCase.courtId,
       )
     }
 
-    return this.caseService.update(theCase, caseToUpdate, user) as Promise<Case> // Never returns undefined
+    if (update.appealAssistantId) {
+      await this.validateAssignedUser(
+        update.appealAssistantId,
+        [UserRole.ASSISTANT],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge1Id) {
+      await this.validateAssignedUser(
+        update.appealJudge1Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge2Id) {
+      await this.validateAssignedUser(
+        update.appealJudge2Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.appealJudge3Id) {
+      await this.validateAssignedUser(
+        update.appealJudge3Id,
+        [UserRole.JUDGE],
+        InstitutionType.HIGH_COURT,
+      )
+    }
+
+    if (update.rulingModifiedHistory) {
+      const history = theCase.rulingModifiedHistory
+        ? `${theCase.rulingModifiedHistory}\n\n`
+        : ''
+      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+      update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
+    }
+
+    if (update.prosecutorStatementDate) {
+      update.prosecutorStatementDate = nowFactory()
+    }
+
+    return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
+  @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorTransitionRule,
     representativeTransitionRule,
@@ -190,7 +242,7 @@ export class CaseController {
     registrarTransitionRule,
     assistantTransitionRule,
   )
-  @Put('case/:caseId/state')
+  @Patch('case/:caseId/state')
   @ApiOkResponse({
     type: Case,
     description: 'Transitions an existing case to a new state',
@@ -203,43 +255,66 @@ export class CaseController {
   ): Promise<Case> {
     this.logger.debug(`Transitioning case ${caseId}`)
 
-    const state = transitionCase(transition.transition, theCase.state)
+    const states = transitionCase(
+      transition.transition,
+      theCase.state,
+      theCase.appealState,
+    )
 
-    // TODO: UpdateCaseDto does not contain state - create a new type for CaseService.update
-    const update: {
-      state: CaseState
-      parentCaseId?: null
-      rulingDate?: Date
-    } = { state }
+    let update: UpdateCase = states
 
-    if (state === CaseState.DELETED) {
+    if (transition.transition === CaseTransition.DELETE) {
       update.parentCaseId = null
     }
 
-    if (isIndictmentCase(theCase.type) && completedCaseStates.includes(state)) {
-      update.rulingDate = nowFactory()
+    if (transition.transition === CaseTransition.REOPEN) {
+      update.rulingDate = null
+      update.courtRecordSignatoryId = null
+      update.courtRecordSignatureDate = null
+    }
+
+    // TODO: Consider changing the names of the postponed appeal date variables
+    // as they are now also used when the case is appealed in court
+    if (states.appealState === CaseAppealState.APPEALED) {
+      // The only roles that can appeal a case here are prosecutor roles
+      update.prosecutorPostponedAppealDate = nowFactory()
+    } else if (
+      // Handle appealed in court
+      !theCase.appealState &&
+      [
+        CaseTransition.ACCEPT,
+        CaseTransition.REJECT,
+        CaseTransition.DISMISS,
+      ].includes(transition.transition) &&
+      (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
+        theCase.accusedAppealDecision === CaseAppealDecision.APPEAL)
+    ) {
+      if (theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL) {
+        update.prosecutorPostponedAppealDate = nowFactory()
+      } else {
+        update.accusedPostponedAppealDate = nowFactory()
+      }
+
+      update = {
+        ...update,
+        ...transitionCase(
+          CaseTransition.APPEAL,
+          states.state ?? theCase.state,
+          states.appealState ?? theCase.appealState,
+        ),
+      }
+    }
+
+    if (states.appealState === CaseAppealState.RECEIVED) {
+      update.appealReceivedByCourtDate = nowFactory()
     }
 
     const updatedCase = await this.caseService.update(
       theCase,
-      update as UpdateCaseDto,
+      update,
       user,
-      state !== CaseState.DELETED,
+      states.state !== CaseState.DELETED,
     )
-
-    if (isIndictmentCase(theCase.type)) {
-      if (completedCaseStates.includes(state)) {
-        // Indictment cases are not signed
-        await this.caseService.addMessagesForCompletedIndictmentCaseToQueue(
-          theCase,
-        )
-      } else if (state === CaseState.DELETED) {
-        // Indictment cases need some case file cleanup
-        await this.caseService.addMessagesForDeletedIndictmentCaseToQueue(
-          theCase,
-        )
-      }
-    }
 
     // No need to wait
     this.eventService.postEvent(
@@ -258,6 +333,7 @@ export class CaseController {
     registrarRule,
     assistantRule,
     staffRule,
+    defenderRule,
   )
   @Get('cases')
   @ApiOkResponse({
@@ -265,6 +341,7 @@ export class CaseController {
     isArray: true,
     description: 'Gets all existing cases',
   })
+  @UseInterceptors(CaseListInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
@@ -330,19 +407,20 @@ export class CaseController {
     registrarRule,
     assistantRule,
   )
-  @Get('case/:caseId/caseFiles/:policeCaseNumber')
+  @Get('case/:caseId/caseFilesRecord/:policeCaseNumber')
   @ApiOkResponse({
     content: { 'application/pdf': {} },
-    description: 'Gets the case files for an existing case as a pdf document',
+    description:
+      'Gets the case files record for an existing case as a pdf document',
   })
-  async getCaseFilesPdf(
+  async getCaseFilesRecordPdf(
     @Param('caseId') caseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
   ): Promise<void> {
     this.logger.debug(
-      `Getting the case files for case ${caseId} as a pdf document`,
+      `Getting the case files record for case ${caseId} and police case ${policeCaseNumber} as a pdf document`,
     )
 
     if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
@@ -351,7 +429,7 @@ export class CaseController {
       )
     }
 
-    const pdf = await this.caseService.getCaseFilesPdf(
+    const pdf = await this.caseService.getCaseFilesRecordPdf(
       theCase,
       policeCaseNumber,
     )
@@ -406,11 +484,10 @@ export class CaseController {
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Res() res: Response,
-    @Query('useSigned', ParseBoolPipe) useSigned: boolean,
   ): Promise<void> {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
-    const pdf = await this.caseService.getRulingPdf(theCase, useSigned)
+    const pdf = await this.caseService.getRulingPdf(theCase)
 
     res.end(pdf)
   }
@@ -446,6 +523,39 @@ export class CaseController {
     }
 
     const pdf = await this.caseService.getCustodyPdf(theCase)
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard([...indictmentCases]),
+    CaseReadGuard,
+  )
+  @RolesRules(
+    prosecutorRule,
+    representativeRule,
+    judgeRule,
+    registrarRule,
+    assistantRule,
+  )
+  @Get('case/:caseId/indictment')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the indictment for an existing case as a pdf document',
+  })
+  async getIndictmentPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the indictment for case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.caseService.getIndictmentPdf(theCase)
 
     res.end(pdf)
   }

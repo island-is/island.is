@@ -39,11 +39,10 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ANNOUNCEMENT_OF_DEATH,
-  name: m.applicationTitle, //TODO: add in once merged => determineMessageFromApplicationAnswers,
+  name: determineMessageFromApplicationAnswers,
   institution: m.applicationInstitution,
   dataSchema: dataSchema,
   readyForProduction: false,
-  featureFlag: Features.announcementOfDeath,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -119,8 +118,8 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/draft').then((val) =>
-                  Promise.resolve(val.draft()),
+                import('../forms/draft/draft').then((val) =>
+                  Promise.resolve(val.draft),
                 ),
               actions: [
                 {

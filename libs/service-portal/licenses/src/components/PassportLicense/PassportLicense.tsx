@@ -46,6 +46,7 @@ export const PassportLicense = ({
       subtitle={formatMessage(m.passportNumber) + ': ' + id}
       link={ServicePortalPath.LicensesPassportDetail.replace(':id', id)}
       img={passportLogo}
+      dataTestId="passport-card"
       tag={{
         text: getLabel(),
         color: expiresWithinNoticeTime || isInvalid ? 'red' : 'blue',

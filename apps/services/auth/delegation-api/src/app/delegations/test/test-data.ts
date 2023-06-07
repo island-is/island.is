@@ -6,7 +6,7 @@ import { AuthScope } from '@island.is/auth/scopes'
 import {
   CreateCustomDelegation,
   CreateDomain,
-} from '../../../../test/fixtures/types'
+} from '@island.is/services/auth/testing'
 import addDays from 'date-fns/addDays'
 import { AuthDelegationType } from '@island.is/shared/types'
 

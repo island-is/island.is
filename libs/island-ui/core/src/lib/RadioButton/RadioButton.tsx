@@ -30,7 +30,7 @@ export interface RadioButtonProps {
   /** backgroundColor can only be used if the 'large' prop set to true */
   backgroundColor?: InputBackgroundColor
   /** subLabel can only be used if the 'large' prop set to true */
-  subLabel?: string
+  subLabel?: React.ReactNode
   /** illustration can only be used if the 'large' prop set to true */
   illustration?: React.FC
 }

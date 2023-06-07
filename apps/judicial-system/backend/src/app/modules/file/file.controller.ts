@@ -48,15 +48,15 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
+import { UpdateFilesDto } from './dto/updateFile.dto'
 import { PresignedPost } from './models/presignedPost.model'
 import { CaseFile } from './models/file.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { FileService } from './file.service'
-import { UpdateFilesDto } from './dto/updateFile.dto'
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('api/case/:caseId')
 @ApiTags('files')
 export class FileController {
@@ -65,7 +65,7 @@ export class FileController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     representativeRule,
@@ -80,15 +80,15 @@ export class FileController {
   })
   createPresignedPost(
     @Param('caseId') caseId: string,
-    @Body() createPresignedPost: CreatePresignedPostDto,
     @CurrentCase() theCase: Case,
+    @Body() createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
     this.logger.debug(`Creating a presigned post for case ${caseId}`)
 
     return this.fileService.createPresignedPost(theCase, createPresignedPost)
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, CaseNotCompletedGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard)
   @RolesRules(
     prosecutorRule,
     representativeRule,
@@ -103,39 +103,20 @@ export class FileController {
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
-    @Body() createFile: CreateFileDto,
     @CurrentCase() theCase: Case,
+    @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
     return this.fileService.createCaseFile(theCase, createFile)
   }
 
-  @UseGuards(CaseExistsGuard, CaseReadGuard)
-  @RolesRules(
-    prosecutorRule,
-    representativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
-  )
-  @Get('files')
-  @ApiOkResponse({
-    type: CaseFile,
-    isArray: true,
-    description: 'Gets all existing case file',
-  })
-  getAllCaseFiles(@Param('caseId') caseId: string): Promise<CaseFile[]> {
-    this.logger.debug(`Getting all files for case ${caseId}`)
-
-    return this.fileService.getAllCaseFiles(caseId)
-  }
-
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     CaseReadGuard,
-    ViewCaseFileGuard,
     CaseFileExistsGuard,
+    ViewCaseFileGuard,
   )
   @RolesRules(
     prosecutorRule,
@@ -146,7 +127,7 @@ export class FileController {
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({
-    type: PresignedPost,
+    type: SignedUrl,
     description: 'Gets a signed url for a case file',
   })
   getCaseFileSignedUrl(
@@ -161,13 +142,8 @@ export class FileController {
     return this.fileService.getCaseFileSignedUrl(caseFile)
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    CaseWriteGuard,
-    CaseNotCompletedGuard,
-    CaseFileExistsGuard,
-  )
-  @RolesRules(prosecutorRule, representativeRule)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseWriteGuard, CaseFileExistsGuard)
+  @RolesRules(prosecutorRule, representativeRule, registrarRule, judgeRule)
   @Delete('file/:fileId')
   @ApiOkResponse({
     type: DeleteFileResponse,
@@ -184,6 +160,7 @@ export class FileController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
@@ -209,6 +186,7 @@ export class FileController {
   }
 
   @UseGuards(
+    RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     CaseWriteGuard,
@@ -217,7 +195,8 @@ export class FileController {
   @RolesRules(prosecutorRule, representativeRule)
   @Patch('files')
   @ApiOkResponse({
-    type: Boolean,
+    type: CaseFile,
+    isArray: true,
     description: 'Updates multiple files of the case',
   })
   updateFiles(

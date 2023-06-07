@@ -15,8 +15,10 @@ air-discount-scheme-api:
     NODE_OPTIONS: '--max-old-space-size=464'
     NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'islandis'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -30,10 +32,10 @@ air-discount-scheme-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -52,15 +54,15 @@ air-discount-scheme-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     ADMINS: '/k8s/air-discount-scheme/api/ADMINS'
@@ -99,8 +101,10 @@ air-discount-scheme-backend:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'islandis'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -114,10 +118,10 @@ air-discount-scheme-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -146,7 +150,7 @@ air-discount-scheme-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -160,15 +164,15 @@ air-discount-scheme-backend:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '50m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -192,8 +196,10 @@ air-discount-scheme-web:
     NEXTAUTH_URL: 'https://loftbru.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'islandis'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -207,10 +213,10 @@ air-discount-scheme-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -218,8 +224,10 @@ air-discount-scheme-web:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/configuration-snippet: 'rewrite /$ https://beta.staging01.devland.is/loftbru; rewrite /en$ https://beta.staging01.devland.is/en/lower-airfares-for-residents-in-rural-areas;'
-        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '16k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
+        nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
       hosts:
         - host: 'loftbru.staging01.devland.is'
           paths:
@@ -230,9 +238,9 @@ air-discount-scheme-web:
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -259,11 +267,15 @@ api:
   env:
     AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
+    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.staging01.devland.is'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend","staging":"https://identity-server.staging01.devland.is/backend"}'
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
+    AUTH_IDS_API_URL: 'https://identity-server.staging01.devland.is'
     AUTH_PUBLIC_API_URL: 'https://identity-server.staging01.devland.is/api'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
+    CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
     CONTACT_US_EMAIL: 'island@island.is'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.staging01.devland.is'
@@ -278,6 +290,7 @@ api:
     FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token'
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
+    HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
     ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
@@ -285,29 +298,37 @@ api:
     MUNICIPALITIES_FINANCIAL_AID_BACKEND_URL: 'http://web-financial-aid-backend'
     NODE_OPTIONS: '--max-old-space-size=2000'
     NO_UPDATE_NOTIFIER: 'true'
-    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
+    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
+    SOFFIA_SOAP_URL: 'https://soffiaprufa.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CHARGE_FJS_V2_TIMEOUT: '20000'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1'
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
-    XROAD_DISABILTITY_LICENSE_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1'
+    XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
+    XROAD_DISABILITY_LICENSE_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1'
     XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
+    XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
+    XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-TEST/EDU/5708150320/MMS-Protected/license-api-v1'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -317,16 +338,21 @@ api:
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
+    XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1'
-    XROAD_PROPERTIES_TIMEOUT: '20000'
+    XROAD_PROPERTIES_TIMEOUT: '35000'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
-    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2'
+    XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
+    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3'
     XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
+    XROAD_VEHICLE_PLATE_ORDERING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
+    XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
@@ -338,6 +364,7 @@ api:
     - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -352,10 +379,10 @@ api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 50
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -372,21 +399,26 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 50
-    min: 10
+    min: 2
   resources:
     limits:
-      cpu: '800m'
+      cpu: '400m'
       memory: '2048Mi'
     requests:
-      cpu: '200m'
-      memory: '1024Mi'
+      cpu: '150m'
+      memory: '512Mi'
   secrets:
+    ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
-    DOCUMENT_PROVIDER_ADMINS: '/k8s/documentprovider/DOCUMENT_PROVIDER_ADMINS'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY'
+    DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
+    DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
     DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH'
     DOCUMENT_PROVIDER_BASE_PATH_TEST: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH_TEST'
     DOCUMENT_PROVIDER_CLIENTID: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENTID'
@@ -395,11 +427,15 @@ api:
     DOCUMENT_PROVIDER_CLIENT_SECRET_TEST: '/k8s/documentprovider/DOCUMENT_PROVIDER_CLIENT_SECRET_TEST'
     DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL'
     DOCUMENT_PROVIDER_TOKEN_URL_TEST: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL_TEST'
+    DOMSYSLA_PASSWORD: '/k8s/api/DOMSYSLA_PASSWORD'
+    DOMSYSLA_USERNAME: '/k8s/api/DOMSYSLA_USERNAME'
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/api/DRIVING_LICENSE_BOOK_XROAD_PATH'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
     FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
     FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_AUDIENCE'
     FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID: '/k8s/api/FISKISTOFA_API_ACCESS_TOKEN_SERVICE_CLIENT_ID'
@@ -412,12 +448,14 @@ api:
     FISKISTOFA_ZENTER_CLIENT_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD'
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
+    HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET'
+    HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL'
+    ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD: '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD'
+    ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME: '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET'
     ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
-    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
-    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
     PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
     PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES'
@@ -429,15 +467,18 @@ api:
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
     POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
     REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     SOFFIA_HOST_URL: '/k8s/api/SOFFIA_HOST_URL'
     SOFFIA_PASS: '/k8s/service-portal/SOFFIA_PASS'
-    SOFFIA_SOAP_URL: '/k8s/api/SOFFIA_SOAP_URL'
     SOFFIA_USER: '/k8s/service-portal/SOFFIA_USER'
     SYSLUMENN_HOST: '/k8s/api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME'
+    TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
     XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
@@ -475,6 +516,7 @@ application-system-api:
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    EHIC_XROAD_PROVIDER_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
     ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-staging-fs-presign-bucket'
@@ -497,7 +539,6 @@ application-system-api:
     NODE_OPTIONS: '--max-old-space-size=976'
     NOVA_USERNAME: 'IslandIs_User_Development'
     NO_UPDATE_NOTIFIER: 'true'
-    PAYMENT_SCHEDULE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
@@ -506,26 +547,36 @@ application-system-api:
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CHARGE_FJS_V2_TIMEOUT: '20000'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_COURT_BANKRUPTCY_CERT_PATH: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1'
     XROAD_CRIMINAL_RECORD_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Sakaskra-v1'
+    XROAD_DIGITAL_TACHOGRAPH_DRIVERS_CARD_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1'
     XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
     XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-TEST/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
     XROAD_HEALTH_INSURANCE_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected'
+    XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_PASSPORT_LICENSE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Forskraning-V1'
     XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
+    XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-TEST/GOV/5812191480/HMS-Protected/Fasteignir-v1'
     XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
-    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V2'
+    XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
+    XROAD_VEHICLE_OPERATORS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Operators-V3'
     XROAD_VEHICLE_OWNER_CHANGE_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Ownerchange-V2'
+    XROAD_VEHICLE_PLATE_ORDERING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOrdering-V1'
+    XROAD_VEHICLE_PLATE_RENEWAL_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1'
     XROAD_VEHICLE_PRINTING_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1'
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: 'IS-DEV/GOV/10021/FJS-Public/VehicleServiceFJS_v1'
     XROAD_VMST_API_PATH: '/VMST-ParentalLeave-Protected/ParentalLeaveApplication-v1'
@@ -549,10 +600,10 @@ application-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 60
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -563,6 +614,10 @@ application-system-api:
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
       hosts:
         - host: 'application-payment-callback-xrd.internal.staging01.devland.is'
+          paths:
+            - '/application-payment'
+            - '/applications'
+        - host: 'application-callback-xrd.internal.staging01.devland.is'
           paths:
             - '/application-payment'
             - '/applications'
@@ -578,7 +633,7 @@ application-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -594,15 +649,15 @@ application-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 60
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
       memory: '1024Mi'
     requests:
-      cpu: '100m'
+      cpu: '50m'
       memory: '512Mi'
   secrets:
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
@@ -615,6 +670,8 @@ application-system-api:
     DOCUMENT_PROVIDER_ONBOARDING_REVIEWER: '/k8s/application-system/api/DOCUMENT_PROVIDER_ONBOARDING_REVIEWER'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
+    DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD'
+    DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME'
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
@@ -629,8 +686,6 @@ application-system-api:
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
     NOVA_URL: '/k8s/application-system-api/NOVA_URL'
-    PAYMENT_SCHEDULE_PASSWORD: '/k8s/api/PAYMENT_SCHEDULE_PASSWORD'
-    PAYMENT_SCHEDULE_USER: '/k8s/api/PAYMENT_SCHEDULE_USER'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -662,10 +717,12 @@ application-system-api-worker:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-staging-storage-application-system'
+    CLIENT_LOCATION_ORIGIN: 'https://beta.staging01.devland.is/umsoknir'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'application_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'application_system_api'
+    EHIC_XROAD_PROVIDER_ID: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-staging-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-staging-upload-api'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
@@ -677,6 +734,9 @@ application-system-api-worker:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
     XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_PAYMENT_ADDITION_CALLBACK_URL: '/'
+    XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:'
+    XROAD_PAYMENT_PROVIDER_ID: 'IS-TEST/GOV/10021/FJS-DEV-Public'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
@@ -696,10 +756,10 @@ application-system-api-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
@@ -707,9 +767,9 @@ application-system-api-worker:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -719,10 +779,13 @@ application-system-api-worker:
       memory: '128Mi'
   schedule: '*/30 * * * *'
   secrets:
+    ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/application-system/api/DOKOBIT_ACCESS_TOKEN'
     DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL'
+    DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD'
+    DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME'
     DRIVING_LICENSE_BOOK_PASSWORD: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD'
     DRIVING_LICENSE_BOOK_USERNAME: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME'
     DRIVING_LICENSE_BOOK_XROAD_PATH: '/k8s/application-system-api/DRIVING_LICENSE_BOOK_XROAD_PATH'
@@ -730,6 +793,8 @@ application-system-api-worker:
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
+    XROAD_PAYMENT_PASSWORD: '/k8s/application-system-api/PAYMENT_PASSWORD'
+    XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -764,10 +829,10 @@ application-system-form:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
@@ -784,15 +849,15 @@ application-system-form:
   namespace: 'application-system'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '10m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -823,10 +888,10 @@ contentful-translation-extension:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
   ingress:
@@ -841,9 +906,9 @@ contentful-translation-extension:
   namespace: 'contentful-translation-extension'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -862,6 +927,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=464'
+    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -869,6 +935,7 @@ download-service:
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
   grantNamespaces:
     - 'islandis'
@@ -887,10 +954,10 @@ download-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
@@ -905,9 +972,9 @@ download-service:
   namespace: 'download-service'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -922,6 +989,10 @@ download-service:
     POSTHOLF_CLIENTID: '/k8s/documents/POSTHOLF_CLIENTID'
     POSTHOLF_CLIENT_SECRET: '/k8s/documents/POSTHOLF_CLIENT_SECRET'
     POSTHOLF_TOKEN_URL: '/k8s/documents/POSTHOLF_TOKEN_URL'
+    REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -962,10 +1033,10 @@ endorsement-system-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
   initContainer:
@@ -981,7 +1052,7 @@ endorsement-system-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -997,9 +1068,9 @@ endorsement-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1061,10 +1132,10 @@ icelandic-names-registry-backend:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
   initContainer:
@@ -1080,7 +1151,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
       - args:
           - 'sequelize-cli'
@@ -1093,7 +1164,7 @@ icelandic-names-registry-backend:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1107,9 +1178,9 @@ icelandic-names-registry-backend:
   namespace: 'icelandic-names-registry'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1118,7 +1189,6 @@ icelandic-names-registry-backend:
       cpu: '100m'
       memory: '128Mi'
   secrets:
-    ALLOWED_NATIONAL_IDS: '/k8s/icelandic-names-registry-backend/ALLOWED_NATIONAL_IDS'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   securityContext:
@@ -1145,10 +1215,10 @@ island-ui-storybook:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
@@ -1163,18 +1233,100 @@ island-ui-storybook:
   namespace: 'storybook'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '10m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+license-api:
+  enabled: true
+  env:
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_DISABILITY_LICENSE_PATH: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1'
+    XROAD_DRIVING_LICENSE_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v1'
+    XROAD_DRIVING_LICENSE_V2_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2'
+    XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5'
+    XROAD_FIREARM_LICENSE_PATH: 'IS/GOV/5309672079/Logreglan-Protected/island-api-v1'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 2
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+      hosts:
+        - host: 'license-api-xrd.internal.staging01.devland.is'
+          paths:
+            - '/'
+  namespace: 'license-api'
+  pvcs: []
+  replicaCount:
+    default: 2
+    max: 10
+    min: 2
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '15m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
+    DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
+    DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT'
+    DRIVING_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID'
+    FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
+    FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
+    PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
+    PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
+    PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES'
+    PKPASS_CACHE_KEY: '/k8s/api/PKPASS_CACHE_KEY'
+    PKPASS_CACHE_TOKEN_EXPIRY_DELTA: '/k8s/api/PKPASS_CACHE_TOKEN_EXPIRY_DELTA'
+    PKPASS_SECRET_KEY: '/k8s/api/PKPASS_SECRET_KEY'
+    RLS_OPEN_LOOKUP_API_KEY: '/k8s/api/RLS_OPEN_LOOKUP_API_KEY'
+    RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
+    SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
+    TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1195,7 +1347,10 @@ namespaces:
     - 'icelandic-names-registry'
     - 'endorsement-system'
     - 'air-discount-scheme'
+    - 'regulations-admin'
     - 'user-notification'
+    - 'license-api'
+    - 'services-sessions'
 portals-admin:
   enabled: true
   env:
@@ -1219,10 +1374,10 @@ portals-admin:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 30
-        min: 5
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -1239,9 +1394,9 @@ portals-admin:
   namespace: 'portals-admin'
   pvcs: []
   replicaCount:
-    default: 5
+    default: 2
     max: 30
-    min: 5
+    min: 2
   resources:
     limits:
       cpu: '400m'
@@ -1257,9 +1412,99 @@ portals-admin:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+regulations-admin-backend:
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'regulations_admin_backend'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'regulations_admin_backend'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/regulations-admin-api'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
+    XROAD_CLIENT_ID: 'IS-TEST/GOV/5501692829/island-is-client'
+    XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
+  grantNamespaces:
+    - 'islandis'
+    - 'download-service'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'regulations_admin_backend'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'regulations_admin_backend'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+  namespace: 'regulations-admin'
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-regulations-admin/IDENTITY_SERVER_CLIENT_SECRET'
+    REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 search-indexer-service:
   enabled: true
   env:
+    AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.staging01.devland.is'
     APPLICATION_URL: 'http://search-indexer-service'
     CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
     CONTENTFUL_ENVIRONMENT: 'master'
@@ -1284,7 +1529,7 @@ search-indexer-service:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 1
         min: 1
@@ -1338,6 +1583,7 @@ search-indexer-service:
             cpu: '100m'
             memory: '512Mi'
     env:
+      AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.staging01.devland.is'
       APPLICATION_URL: 'http://search-indexer-service'
       CONTENTFUL_ENTRY_FETCH_CHUNK_SIZE: '40'
       CONTENTFUL_ENVIRONMENT: 'master'
@@ -1346,6 +1592,7 @@ search-indexer-service:
       ELASTIC_DOMAIN: 'search'
       ELASTIC_INDEX: 'island-is'
       ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
+      NODE_OPTIONS: '--max-old-space-size=2048'
       S3_BUCKET: 'staging-es-custom-packages'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
@@ -1353,6 +1600,7 @@ search-indexer-service:
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
+  progressDeadlineSeconds: 1500
   pvcs: []
   replicaCount:
     default: 1
@@ -1366,6 +1614,7 @@ search-indexer-service:
       cpu: '100m'
       memory: '512Mi'
   secrets:
+    API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
@@ -1381,9 +1630,10 @@ service-portal:
   enabled: true
   env:
     BASEPATH: '/minarsidur'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
+    SI_PUBLIC_GRAPHQL_API: '/api/graphql'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -1404,10 +1654,10 @@ service-portal:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 30
-        min: 5
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -1424,16 +1674,16 @@ service-portal:
   namespace: 'service-portal'
   pvcs: []
   replicaCount:
-    default: 5
+    default: 2
     max: 30
-    min: 5
+    min: 2
   resources:
     limits:
-      cpu: '400m'
-      memory: '512Mi'
-    requests:
-      cpu: '200m'
+      cpu: '300m'
       memory: '256Mi'
+    requests:
+      cpu: '5m'
+      memory: '32Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1474,7 +1724,7 @@ service-portal-api:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 30
         min: 2
@@ -1500,7 +1750,7 @@ service-portal-api:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1572,10 +1822,10 @@ services-documents:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
   initContainer:
@@ -1590,7 +1840,7 @@ services-documents:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1604,9 +1854,9 @@ services-documents:
   namespace: 'services-documents'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1620,6 +1870,161 @@ services-documents:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+services-sessions:
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_sessions'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_sessions_read'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    REDIS_USE_SSL: 'true'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  ingress:
+    internal-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-internal-alb'
+      hosts:
+        - host: 'sessions-api.internal.staging01.devland.is'
+          paths:
+            - '/'
+  namespace: 'services-sessions'
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 10
+    min: 1
+  resources:
+    limits:
+      cpu: '250m'
+      memory: '512Mi'
+    requests:
+      cpu: '25m'
+      memory: '300Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-sessions/readonly/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+services-sessions-worker:
+  args:
+    - 'main.js'
+    - '--job=worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_EXTENSIONS: 'uuid-ossp'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_sessions'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_sessions'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=464'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
+    REDIS_USE_SSL: 'true'
+    SERVERSIDE_FEATURES_ON: ''
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'islandis'
+    - 'identity-server'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_EXTENSIONS: 'uuid-ossp'
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'services_sessions'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'services_sessions'
+      NO_UPDATE_NOTIFIER: 'true'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
+  namespace: 'services-sessions'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '100m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/sessions-worker'
+    create: true
+    name: 'sessions-worker'
 skilavottord-web:
   enabled: true
   env:
@@ -1644,10 +2049,10 @@ skilavottord-web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -1663,15 +2068,15 @@ skilavottord-web:
   namespace: 'skilavottord'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
       memory: '256Mi'
     requests:
-      cpu: '100m'
+      cpu: '20m'
       memory: '128Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1711,10 +2116,10 @@ skilavottord-ws:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
@@ -1737,7 +2142,7 @@ skilavottord-ws:
             cpu: '200m'
             memory: '256Mi'
           requests:
-            cpu: '100m'
+            cpu: '50m'
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
@@ -1751,9 +2156,9 @@ skilavottord-ws:
   namespace: 'skilavottord'
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1787,7 +2192,7 @@ user-notification:
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     MAIN_QUEUE_NAME: 'user-notification'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=336'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -1805,10 +2210,10 @@ user-notification:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
@@ -1826,18 +2231,19 @@ user-notification:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
-      memory: '256Mi'
+      memory: '384Mi'
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: '15m'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
   securityContext:
     allowPrivilegeEscalation: false
@@ -1863,7 +2269,7 @@ user-notification-worker:
     NODE_OPTIONS: '--max-old-space-size=208'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.staging'
+    USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
   grantNamespaces:
     - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
@@ -1880,10 +2286,10 @@ user-notification-worker:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   namespace: 'user-notification'
@@ -1891,9 +2297,9 @@ user-notification-worker:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -1931,6 +2337,7 @@ web:
     - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1945,10 +2352,10 @@ web:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 50
-        min: 10
+        min: 2
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -1964,15 +2371,15 @@ web:
   namespace: 'islandis'
   pvcs: []
   replicaCount:
-    default: 10
+    default: 2
     max: 50
-    min: 10
+    min: 2
   resources:
     limits:
       cpu: '400m'
       memory: '512Mi'
     requests:
-      cpu: '200m'
+      cpu: '100m'
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -2013,10 +2420,10 @@ xroad-collector:
     scaling:
       metric:
         cpuAverageUtilization: 70
-        nginxRequestsIrate: 2
+        nginxRequestsIrate: 5
       replicas:
         max: 3
-        min: 2
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
@@ -2024,9 +2431,9 @@ xroad-collector:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
+    default: 1
     max: 3
-    min: 2
+    min: 1
   resources:
     limits:
       cpu: '200m'

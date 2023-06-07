@@ -3,9 +3,8 @@ import { Application } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
-import { PaymentService } from '../../payment/payment.service'
-import { ExternalData } from '@island.is/application/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
+import { PaymentService } from '@island.is/application/api/payment'
 
 @Injectable()
 export class ApplicationChargeService {
@@ -50,14 +49,7 @@ export class ApplicationChargeService {
       // Delete the charge, using the ID we got from FJS
       const chargeId = payment.id
       if (chargeId) {
-        const status = await this.chargeFjsV2ClientService.getChargeStatus(
-          chargeId,
-        )
-
-        // Make sure charge has not been deleted yet (will otherwise end in error here and application wont be pruned/deleted)
-        if (status !== 'cancelled') {
-          await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-        }
+        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
       }
     } catch (error) {
       this.logger.error(

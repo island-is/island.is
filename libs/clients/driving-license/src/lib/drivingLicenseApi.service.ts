@@ -8,6 +8,7 @@ import {
 } from '..'
 import * as v1 from '../v1'
 import * as v2 from '../v2'
+import * as v5 from '../v5'
 import {
   CanApplyErrorCodeBTemporary,
   DriversLicense,
@@ -15,13 +16,18 @@ import {
   Teacher,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
+import { PracticePermitDto } from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
-  constructor(private readonly v1: v1.ApiV1, private readonly v2: v2.ApiV2) {}
-
+  constructor(
+    private readonly v1: v1.ApiV1,
+    private readonly v2: v2.ApiV2,
+    private readonly v5: v5.ApiV5,
+  ) {}
   public async getCurrentLicense(input: {
     nationalId: string
+    token?: string
   }): Promise<DriversLicense | null> {
     try {
       const skirteini = await this.v2.getCurrentLicenseV2({
@@ -71,6 +77,33 @@ export class DrivingLicenseApi {
         })
         return licenseWithinLimit || null
       }
+      // The API returns an error when disqualification present on license.
+      // The 'svipting' (en: disqualification) field is never set for the
+      // driving license model in any endpoint. We catch the response and
+      // disqualification is set manually via the deprivation endpoint.
+      // This is less than ideal, but the API offers no alternative.
+      if (e.body.detail === 'Einstaklingur er sviptur ökuréttindum') {
+        const getAllLicenses = await this.getAllLicenses(input)
+        const currentLicense = getAllLicenses.find((license) => {
+          const categoryB = license.categories.find((cat) => cat.name === 'B')
+          if (categoryB && categoryB.expires && categoryB.issued) {
+            const now = new Date()
+            return categoryB.issued < now && now < categoryB.expires
+          }
+          return false
+        })
+
+        // Add disqualification to current license.
+        const deprivation = await this.getDeprivation(input)
+        if (currentLicense && deprivation.dateFrom && deprivation.dateTo) {
+          currentLicense.disqualification = {
+            from: deprivation.dateFrom,
+            to: deprivation.dateTo,
+          }
+        }
+        return currentLicense || null
+      }
+
       return null
     }
   }
@@ -94,6 +127,13 @@ export class DrivingLicenseApi {
           expires: rettindi.gildirTil ?? null,
           comments: rettindi.aths ?? '',
         })) ?? [],
+      disqualification:
+        skirteini?.svipting?.dagsTil && skirteini?.svipting?.dagsFra
+          ? {
+              to: skirteini.svipting.dagsTil,
+              from: skirteini.svipting.dagsFra,
+            }
+          : null,
       birthCountry: skirteini.faedingarStadurHeiti,
     }
   }
@@ -115,6 +155,17 @@ export class DrivingLicenseApi {
       nationalId: okukennari.kennitala || '',
       name: okukennari.nafn || '',
     }))
+  }
+
+  public async getDeprivation(input: {
+    nationalId: string
+    token?: string
+  }): Promise<v5.DeprivationDto> {
+    return await this.v5.apiDrivinglicenseV5DeprivationGet({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: input.token ?? '',
+    })
   }
 
   public async getIsTeacher(params: { nationalId: string }) {
@@ -311,6 +362,38 @@ export class DrivingLicenseApi {
     }
 
     return handledResponse.success
+  }
+
+  async postCanApplyForPracticePermit(params: {
+    token: string
+    studentSSN: string
+  }): Promise<PracticePermitDto> {
+    return await this.v5.apiDrivinglicenseV5CanapplyforPracticepermitPost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token,
+      postPracticePermit: {
+        dateFrom: new Date(),
+        studentSSN: params.studentSSN,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
+  }
+
+  async postPracticePermitApplication(params: {
+    token: string
+    studentSSN: string
+  }): Promise<PracticePermitDto> {
+    return await this.v5.apiDrivinglicenseV5ApplicationsPracticepermitPost({
+      apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+      apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+      jwttoken: params.token,
+      postPracticePermit: {
+        dateFrom: new Date(),
+        studentSSN: params.studentSSN,
+        userId: v5.DRIVING_LICENSE_API_USER_ID,
+      },
+    })
   }
 
   async getHasQualityPhoto(params: { nationalId: string }): Promise<boolean> {

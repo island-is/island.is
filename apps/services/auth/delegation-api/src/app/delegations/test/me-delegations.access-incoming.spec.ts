@@ -6,12 +6,14 @@ import request from 'supertest'
 
 import { Delegation, DelegationScope } from '@island.is/auth-api-lib'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { expectMatchingDelegations } from '@island.is/services/auth/testing'
+import {
+  expectMatchingDelegations,
+  FixtureFactory,
+} from '@island.is/services/auth/testing'
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
 
 import { accessIncomingTestCases } from '../../../../test/access-incoming-test-cases'
-import { FixtureFactory } from '../../../../test/fixtures/fixture-factory'
 import { setupWithAuth } from '../../../../test/setup'
 import { filterExpectedDelegations } from './utils'
 

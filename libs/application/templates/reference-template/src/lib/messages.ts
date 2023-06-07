@@ -21,6 +21,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn - Aldrei unnið áður',
     description: `Application's name`,
   },
+  nameApplicationWithValue: {
+    id: 'example.application:name.application.with.value',
+    defaultMessage: 'Umsókn {value}',
+    description: `Application's name with value`,
+  },
   draftTitle: {
     id: 'example.application:draft.title',
     defaultMessage: 'Drög',

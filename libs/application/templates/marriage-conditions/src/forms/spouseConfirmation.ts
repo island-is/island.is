@@ -9,7 +9,6 @@ import {
   buildTextField,
   buildSubSection,
   buildExternalDataProvider,
-  buildDataProviderItem,
 } from '@island.is/application/core'
 import { YES } from '../lib/constants'
 import { m } from '../lib/messages'
@@ -18,18 +17,16 @@ import {
   FormModes,
   DefaultEvents,
   Application,
-  NationalRegistryUserApi,
-  UserProfileApi,
+  NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { Individual } from '../types'
 import { format as formatNationalId } from 'kennitala'
-import type { User } from '@island.is/api/domains/national-registry'
 import { UserProfile } from '../types/schema'
 import { fakeDataSection } from './fakeDataSection'
-import { MaritalStatusApi } from '../dataProviders'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import { removeCountryCode } from '@island.is/application/ui-components'
+import { dataCollection } from './sharedSections/dataCollection'
 
 export const spouseConfirmation = ({ allowFakeData = false }): Form =>
   buildForm({
@@ -83,29 +80,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
             subTitle: m.dataCollectionSubtitle,
             description: m.dataCollectionDescription,
             checkboxLabel: m.dataCollectionCheckboxLabel,
-            dataProviders: [
-              buildDataProviderItem({
-                provider: NationalRegistryUserApi,
-                title: m.dataCollectionNationalRegistryTitle,
-                subTitle: m.dataCollectionNationalRegistrySubtitle,
-              }),
-              buildDataProviderItem({
-                provider: UserProfileApi,
-                title: m.dataCollectionUserProfileTitle,
-                subTitle: m.dataCollectionUserProfileSubtitle,
-              }),
-              buildDataProviderItem({
-                id: 'birthCertificate',
-                type: '',
-                title: m.dataCollectionBirthCertificateTitle,
-                subTitle: m.dataCollectionBirthCertificateDescription,
-              }),
-              buildDataProviderItem({
-                provider: MaritalStatusApi,
-                title: m.dataCollectionMaritalStatusTitle,
-                subTitle: m.dataCollectionMaritalStatusDescription,
-              }),
-            ],
+            dataProviders: dataCollection,
           }),
         ],
       }),
@@ -147,7 +122,7 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
+                        .nationalRegistry.data as NationalRegistryIndividual
                       return nationalRegistry.fullName ?? ''
                     },
                   }),
@@ -183,10 +158,28 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     titleVariant: 'h4',
                     space: 'gutter',
                   }),
-                  buildCustomField({
-                    id: 'spouse.person',
-                    title: '',
-                    component: 'NationalIdWithName',
+                  buildTextField({
+                    id: 'spouse.person.nationalId',
+                    title: m.nationalId,
+                    width: 'half',
+                    backgroundColor: 'white',
+                    format: '######-####',
+                    readOnly: true,
+                    defaultValue: (application: Application) => {
+                      const info = application.answers.spouse as Individual
+                      return formatNationalId(info?.person.nationalId) ?? ''
+                    },
+                  }),
+                  buildTextField({
+                    id: 'spouse.person.name',
+                    title: m.name,
+                    width: 'half',
+                    backgroundColor: 'white',
+                    readOnly: true,
+                    defaultValue: (application: Application) => {
+                      const info = application.answers.spouse as Individual
+                      return info?.person.name ?? ''
+                    },
                   }),
                   buildTextField({
                     id: 'spouse.phone',
@@ -230,8 +223,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.address.streetAddress
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry?.address?.streetAddress
                     },
                   }),
                   buildTextField({
@@ -242,8 +235,8 @@ export const spouseConfirmation = ({ allowFakeData = false }): Form =>
                     readOnly: true,
                     defaultValue: (application: Application) => {
                       const nationalRegistry = application.externalData
-                        .nationalRegistry.data as User
-                      return nationalRegistry.citizenship.code
+                        .nationalRegistry.data as NationalRegistryIndividual
+                      return nationalRegistry?.citizenship?.code
                     },
                   }),
                   buildTextField({

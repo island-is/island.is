@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import { SubmitHandler } from 'react-hook-form'
-
-import { AirDiscountSchemeFlightLegsInput } from '@island.is/api/schema'
+import { useLoaderData } from 'react-router-dom'
 import {
   Box,
   Stack,
@@ -11,192 +9,84 @@ import {
   GridColumn,
   GridContainer,
   SkeletonLoader,
-  Button,
+  Divider,
 } from '@island.is/island-ui/core'
-import { useHistory } from 'react-router-dom'
+import { PortalNavigation } from '@island.is/portals/core'
 import { Filters, Panel, Summary } from './components'
-import { isCSVAvailable, downloadCSV } from './utils'
-import {
-  useConfirmInvoiceMutation,
-  useFlightLegsQuery,
-} from './Overview.generated'
-import { FlightLegsFilters } from './types'
-import Modal from '../../components/Modal/Modal'
+import { downloadCSV } from './utils'
+import { useConfirmInvoiceMutation } from './Overview.generated'
 
-const TODAY = new Date()
+import { airDiscountSchemeNavigation } from '../../lib/navigation'
+import Modal from '../../components/Modal/Modal'
+import { OverviewLoaderReturnType } from './Overview.loader'
 
 const Overview = () => {
-  const history = useHistory()
+  const { flightLegs, filters } = useLoaderData() as OverviewLoaderReturnType
   const [showModal, setModal] = useState(false)
-  const [filters, setFilters] = useState<FlightLegsFilters>({
-    nationalId: '',
-    state: [],
-    period: {
-      from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0, 0),
-      to: new Date(
-        TODAY.getFullYear(),
-        TODAY.getMonth(),
-        TODAY.getDate(),
-        23,
-        59,
-        59,
-        999,
-      ),
-    },
-  })
-  const input: AirDiscountSchemeFlightLegsInput = {
-    ...filters,
-    airline: filters.airline?.value,
-    gender: filters.gender?.value || undefined,
-    age: {
-      from: parseInt(Number(filters.age?.from).toString()) || -1,
-      to: parseInt(Number(filters.age?.to).toString()) || 1000,
-    },
-    postalCode: filters.postalCode
-      ? parseInt(filters.postalCode.toString())
-      : undefined,
-    isExplicit: Boolean(filters.isExplicit),
-  }
-  const [
-    confirmInvoice,
-    { loading: confirmInvoiceLoading },
-  ] = useConfirmInvoiceMutation()
-
-  const { data, loading: queryLoading, refetch } = useFlightLegsQuery({
-    ssr: false,
-    fetchPolicy: 'network-only',
-    variables: {
-      input,
-    },
-  })
-  const { airDiscountSchemeFlightLegs: flightLegs = [] } = data ?? {}
-
-  const loading = queryLoading || confirmInvoiceLoading
-  const applyFilters: SubmitHandler<FlightLegsFilters> = (
-    data: FlightLegsFilters,
-  ) => {
-    setFilters(data)
-    refetch()
-  }
+  const [confirmInvoice, { loading }] = useConfirmInvoiceMutation()
 
   return (
     <GridContainer>
+      <Hidden above="md">
+        <Box paddingBottom={4}>
+          <PortalNavigation navigation={airDiscountSchemeNavigation} />
+        </Box>
+      </Hidden>
       <GridRow>
         <GridColumn
-          span={['12/12', '12/12', '7/12', '8/12', '9/12']}
-          order={[0, 0, 2]}
+          span={['12/12', '12/12', '12/12', '4/12', '3/12']}
+          order={[2, 2, 2, 0]}
         >
-          <Hidden above="sm">
-            {!loading && (
-              <Summary
-                flightLegs={flightLegs}
-                airline={filters.airline?.value}
-              />
-            )}
-          </Hidden>
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '5/12', '4/12']} order={1}>
           <Stack space={3}>
-            <Box
-              background="purple100"
-              padding={4}
-              marginBottom={3}
-              borderRadius="standard"
-            >
-              <Box marginBottom={2}>
+            <Hidden below="lg">
+              <PortalNavigation navigation={airDiscountSchemeNavigation} />
+            </Hidden>
+            <Box background="purple100" marginY={3} borderRadius="large">
+              <Box paddingX={4} paddingY={3}>
                 <Text variant="h4">Síun</Text>
               </Box>
-              <Filters onSubmit={applyFilters} defaultValues={filters} />
-            </Box>
-            <Box
-              background="purple100"
-              padding={4}
-              marginBottom={3}
-              borderRadius="standard"
-            >
-              <Box marginBottom={2}>
-                <Text variant="h4">Aðgerðir</Text>
-              </Box>
-              <Box paddingTop={2}>
-                <Button
-                  fluid
-                  variant="ghost"
-                  onClick={() => downloadCSV(flightLegs, filters)}
-                  disabled={!isCSVAvailable(filters)}
-                >
-                  Prenta yfirlit
-                </Button>
-              </Box>
-              <Box paddingTop={3}>
-                <Button
-                  fluid
-                  variant="ghost"
-                  colorScheme="destructive"
-                  onClick={() => setModal(true)}
-                  disabled={!isCSVAvailable(filters)}
-                >
-                  <Box
-                    display="inlineFlex"
-                    flexDirection="column"
-                    alignItems="center"
-                  >
-                    Gjaldfæra / Endurgreiða
-                  </Box>
-                </Button>
-              </Box>
-              <Box paddingTop={3}>
-                <Button
-                  fluid
-                  variant="ghost"
-                  colorScheme="destructive"
-                  onClick={() => history.push('/loftbru/handvirkir-kodar')}
-                >
-                  Handvirkir kóðar
-                </Button>
+              <Divider weight="purple200" />
+              <Box padding={4}>
+                <Filters defaultValues={filters} />
               </Box>
             </Box>
           </Stack>
         </GridColumn>
 
-        <GridColumn span={['12/12', '12/12', '7/12', '8/12']} order={[2, 2, 0]}>
-          <GridRow>
-            {loading ? (
-              <GridColumn span={['12/12', '12/12', '12/12', '12/12', '8/9']}>
-                <SkeletonLoader height={500} />
-              </GridColumn>
-            ) : (
-              <>
-                <GridColumn span={['12/12', '12/12', '12/12', '12/12', '8/9']}>
-                  <Hidden below="md">
-                    <Summary
-                      flightLegs={flightLegs}
-                      airline={filters.airline?.value}
-                    />
-                  </Hidden>
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '12/12', '12/12', '8/9']}>
-                  <Box marginBottom={[3, 3, 3, 12]}>
-                    <Stack space={3}>
-                      <Box paddingBottom={2} paddingTop={3}>
-                        <Text variant="h3" as="h3">
-                          <span>Niðurstaða</span>
-                        </Text>
-                      </Box>
-
-                      <Panel flightLegs={flightLegs} />
-                    </Stack>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '8/12']}
+          offset={['0', '0', '0', '0', '1/12']}
+        >
+          {loading ? (
+            <SkeletonLoader height={500} />
+          ) : (
+            <>
+              <Summary
+                flightLegs={flightLegs}
+                airline={filters.airline}
+                onClickDownload={() => downloadCSV(flightLegs, filters)}
+                onClickRefund={() => setModal(true)}
+              />
+              <Box marginBottom={[3, 3, 3, 12]}>
+                <Stack space={3}>
+                  <Box paddingBottom={2} paddingTop={3}>
+                    <Text variant="h3" as="h3">
+                      <span>Niðurstaða</span>
+                    </Text>
                   </Box>
-                </GridColumn>
-              </>
-            )}
-          </GridRow>
+
+                  <Panel flightLegs={flightLegs} />
+                </Stack>
+              </Box>
+            </>
+          )}
         </GridColumn>
       </GridRow>
       <Modal
         show={showModal}
         onCancel={() => setModal(false)}
         onContinue={() => {
-          confirmInvoice({ variables: { input } })
+          confirmInvoice({ variables: { input: filters } })
           setModal(false)
         }}
         t={{

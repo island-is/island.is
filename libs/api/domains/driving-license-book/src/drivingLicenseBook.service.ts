@@ -13,9 +13,9 @@ import {
   DrivingLicenseBookStudentForTeacher,
   DrivingLicenseBookStudent,
   PracticalDrivingLesson,
-  DrivingLicenseBookStudentOverview,
   Organization,
   SchoolType,
+  DrivingLicenseBookStudentOverview,
 } from './drivinLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 
@@ -143,5 +143,16 @@ export class DrivingLicenseBookService {
   async getSchoolTypes(): Promise<SchoolType[] | null> {
     this.logger.debug(`driving-license-book: Get types for driving schools`)
     return await this.drivingLicenseBookClientApiFactory.getSchoolTypes()
+  }
+
+  async allowPracticeDriving(
+    user: User,
+    student: DrivingLicenseBookStudentInput,
+  ) {
+    this.logger.debug(`driving-license-book: Allow practice driving`)
+    return await this.drivingLicenseBookClientApiFactory.allowPracticeDriving({
+      teacherNationalId: user.nationalId,
+      studentNationalId: student.nationalId,
+    })
   }
 }

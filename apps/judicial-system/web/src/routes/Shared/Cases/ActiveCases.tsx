@@ -18,19 +18,23 @@ import {
   isExtendedCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
+import {
+  TagAppealState,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
+  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import {
   capitalize,
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
-import type { Case } from '@island.is/judicial-system/types'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { displayCaseType, mapCaseStateToTagVariant } from './utils'
@@ -39,18 +43,16 @@ import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
 
 interface Props {
-  cases: Case[]
+  cases: CaseListEntry[]
   onRowClick: (id: string) => void
   isDeletingCase: boolean
-  onDeleteCase?: (caseToDelete: Case) => Promise<void>
+  onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
 const ActiveCases: React.FC<Props> = (props) => {
   const { cases, onRowClick, isDeletingCase, onDeleteCase } = props
 
   const controls = useAnimation()
-
-  const [showDeleteButton, setShowDeleteButton] = useState(false)
 
   const variants = {
     isDeleting: (custom: number) =>
@@ -74,7 +76,7 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   useMemo(() => {
     if (cases && sortConfig) {
-      cases.sort((a: Case, b: Case) => {
+      cases.sort((a: CaseListEntry, b: CaseListEntry) => {
         // Credit: https://stackoverflow.com/a/51169
         return sortConfig.direction === 'ascending'
           ? (sortConfig.column === 'defendant' &&
@@ -129,7 +131,7 @@ const ActiveCases: React.FC<Props> = (props) => {
 
   return width < theme.breakpoints.md ? (
     <>
-      {cases.map((theCase: Case) => (
+      {cases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
@@ -162,7 +164,7 @@ const ActiveCases: React.FC<Props> = (props) => {
         <tr>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.caseNumber)}
+              {formatMessage(tables.caseNumber)}
             </Text>
           </th>
           <th className={cn(styles.th, styles.largeColumn)}>
@@ -200,7 +202,7 @@ const ActiveCases: React.FC<Props> = (props) => {
           </th>
           <th className={styles.th}>
             <Text as="span" fontWeight="regular">
-              {formatMessage(m.activeRequests.table.headers.state)}
+              {formatMessage(tables.state)}
             </Text>
           </th>
           <th className={styles.th}>
@@ -253,7 +255,19 @@ const ActiveCases: React.FC<Props> = (props) => {
                 }}
               >
                 <td className={styles.td}>
-                  {c.courtCaseNumber ? (
+                  {c.appealCaseNumber ? (
+                    <Box display="flex" flexDirection="column">
+                      <Text as="span" variant="small">
+                        {c.appealCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {c.courtCaseNumber}
+                      </Text>
+                      <Text as="span" variant="small">
+                        {displayFirstPlusRemaining(c.policeCaseNumbers)}
+                      </Text>
+                    </Box>
+                  ) : c.courtCaseNumber ? (
                     <>
                       <Box component="span" className={styles.blockColumn}>
                         <Text as="span">{c.courtCaseNumber}</Text>
@@ -308,7 +322,7 @@ const ActiveCases: React.FC<Props> = (props) => {
                     <Text as="span">
                       {displayCaseType(formatMessage, c.type, c.decision)}
                     </Text>
-                    {c.parentCase && (
+                    {c.parentCaseId && (
                       <Text as="span" variant="small" color="dark400">
                         Framlenging
                       </Text>
@@ -316,31 +330,40 @@ const ActiveCases: React.FC<Props> = (props) => {
                   </Box>
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Tag
-                    variant={
-                      mapCaseStateToTagVariant(
-                        formatMessage,
-                        c.state,
-                        isCourt,
-                        c.type,
-                        c.isValidToDateInThePast,
-                        c.courtDate,
-                      ).color
-                    }
-                    outlined
-                    disabled
-                  >
-                    {
-                      mapCaseStateToTagVariant(
-                        formatMessage,
-                        c.state,
-                        isCourt,
-                        c.type,
-                        c.isValidToDateInThePast,
-                        c.courtDate,
-                      ).text
-                    }
-                  </Tag>
+                  <Box marginRight={1} marginBottom={1}>
+                    <Tag
+                      variant={
+                        mapCaseStateToTagVariant(
+                          formatMessage,
+                          c.state,
+                          isCourt,
+                          c.type,
+                          c.isValidToDateInThePast,
+                          c.courtDate,
+                        ).color
+                      }
+                      outlined
+                      disabled
+                    >
+                      {
+                        mapCaseStateToTagVariant(
+                          formatMessage,
+                          c.state,
+                          isCourt,
+                          c.type,
+                          c.isValidToDateInThePast,
+                          c.courtDate,
+                        ).text
+                      }
+                    </Tag>
+                  </Box>
+
+                  {c.appealState && (
+                    <TagAppealState
+                      appealState={c.appealState}
+                      appealRulingDecision={c.appealRulingDecision}
+                    />
+                  )}
                 </td>
                 <td className={styles.td}>
                   {c.courtDate ? (
@@ -380,7 +403,6 @@ const ActiveCases: React.FC<Props> = (props) => {
                         onClick={async (evt) => {
                           evt.stopPropagation()
 
-                          setShowDeleteButton((show) => !show)
                           await new Promise((resolve) => {
                             setRequestToRemoveIndex(
                               requestToRemoveIndex === i ? undefined : i,
@@ -397,29 +419,26 @@ const ActiveCases: React.FC<Props> = (props) => {
                     )}
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
-                  {showDeleteButton ? (
-                    <Button
-                      colorScheme="destructive"
-                      size="small"
-                      loading={isDeletingCase}
-                      onClick={async (evt) => {
-                        if (onDeleteCase) {
-                          evt.stopPropagation()
+                  <Button
+                    colorScheme="destructive"
+                    size="small"
+                    loading={isDeletingCase}
+                    onClick={async (evt) => {
+                      if (onDeleteCase) {
+                        evt.stopPropagation()
 
-                          await onDeleteCase(cases[i])
+                        await onDeleteCase(cases[i])
 
-                          controls.start('isNotDeleting').then(() => {
-                            setRequestToRemoveIndex(undefined)
-                            setShowDeleteButton(false)
-                          })
-                        }
-                      }}
-                    >
-                      <Box as="span" className={styles.deleteButtonText}>
-                        Afturkalla
-                      </Box>
-                    </Button>
-                  ) : null}
+                        controls.start('isNotDeleting').then(() => {
+                          setRequestToRemoveIndex(undefined)
+                        })
+                      }
+                    }}
+                  >
+                    <Box as="span" className={styles.deleteButtonText}>
+                      Afturkalla
+                    </Box>
+                  </Button>
                 </td>
               </motion.tr>
             ))}

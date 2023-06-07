@@ -7,6 +7,7 @@ export enum GenericLicenseType {
   AdrLicense = 'AdrLicense',
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
+  DisabilityLicense = 'DisabilityLicense',
 }
 
 /**
@@ -19,6 +20,7 @@ export enum GenericLicenseOrganizationSlug {
   HuntingLicense = 'umhverfisstofnun',
   AdrLicense = 'vinnueftirlitid',
   MachineLicense = 'vinnueftirlitid',
+  DisabilityLicense = 'tryggingastofnun',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -26,6 +28,7 @@ export enum GenericLicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
+  SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
@@ -189,6 +192,7 @@ export type PassTemplateIds = {
   firearmLicense: string
   adrLicense: string
   machineLicense: string
+  disabilityLicense: string
 }
 
 export type PkPassVerificationData = {

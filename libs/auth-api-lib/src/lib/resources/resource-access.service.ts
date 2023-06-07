@@ -1,3 +1,4 @@
+import { NoContentException } from '@island.is/nest/problem'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
@@ -53,7 +54,7 @@ export class ResourceAccessService {
     searchString: string,
     page: number,
     count: number,
-  ): Promise<{ rows: ApiScopeUser[]; count: number } | null> {
+  ): Promise<{ rows: ApiScopeUser[]; count: number }> {
     this.logger.debug(
       `Getting Api Scope Users list with page "${page}" and count "${count} with searchString "${searchString}""`,
     )
@@ -65,7 +66,13 @@ export class ResourceAccessService {
         limit: count,
         offset: offset,
         distinct: true,
-        where: { nationalId: searchString },
+        where: {
+          [Op.or]: ['nationalId', 'name', 'email'].map((key) => ({
+            [key]: {
+              [Op.iLike]: `%${searchString.toLowerCase()}%`,
+            },
+          })),
+        },
         order: ['nationalId'],
       })
     } else {
@@ -82,42 +89,48 @@ export class ResourceAccessService {
   async create({
     userAccess,
     ...apiScopeUser
-  }: ApiScopeUserDTO): Promise<ApiScopeUser | null> {
+  }: ApiScopeUserDTO): Promise<ApiScopeUser> {
     this.logger.debug('Creating a new admin')
 
-    const response = await this.apiScopeUser.create(apiScopeUser)
-    if (response) {
+    const newApiScopeUser = await this.apiScopeUser.create(apiScopeUser)
+
+    if (newApiScopeUser) {
       const apiScopeResponse = await this.createUserScopes(userAccess)
+
       if (apiScopeResponse) {
-        return response
+        return newApiScopeUser
       } else {
         throw new Error('Error inserting scopes')
       }
     }
 
-    return response
+    return newApiScopeUser
   }
 
   /** Updates an existing Api Scope User */
   async update(
-    { userAccess, ...apiScopeUser }: ApiScopeUserUpdateDTO,
+    { userAccess, ...apiScopeUserData }: ApiScopeUserUpdateDTO,
     nationalId: string,
-  ): Promise<ApiScopeUser | null> {
+  ): Promise<ApiScopeUser> {
     this.logger.debug('Updating Api Scope User with nationalId: ', nationalId)
 
     if (!nationalId) {
       throw new BadRequestException('nationalId must be provided')
     }
 
-    await this.deleteUserScopes(nationalId)
-
-    await this.apiScopeUser.update(apiScopeUser, {
-      where: { nationalId: nationalId },
+    const apiScopeUser = await this.apiScopeUser.findByPk(nationalId, {
+      include: [ApiScopeUserAccess],
     })
+    if (!apiScopeUser) {
+      throw new NoContentException()
+    }
 
+    await apiScopeUser.update({ ...apiScopeUserData })
+
+    await this.deleteUserScopes(nationalId)
     await this.createUserScopes(userAccess)
 
-    return await this.findOne(nationalId)
+    return (await this.findOne(nationalId)) as ApiScopeUser
   }
 
   /** Deleting an Api Scope User by nationalId */
@@ -163,16 +176,13 @@ export class ResourceAccessService {
   /** Creates User Scopes of Api Scope User */
   async createUserScopes(
     scopes: ApiScopeUserAccessDTO[] | undefined,
-  ): Promise<ApiScopeUserAccess | null> {
-    if (scopes === undefined) return null
+  ): Promise<ApiScopeUserAccess[] | null> {
+    if (!scopes) return null
 
     this.logger.debug('Insert scopes for Api Scope User: ', scopes)
 
-    let response = null
-    scopes.forEach(async (x) => {
-      response = await this.apiScopeUserAccess.create({ ...x })
-    })
-
-    return response
+    return Promise.all(
+      scopes.map((scope) => this.apiScopeUserAccess.create({ ...scope })),
+    )
   }
 }

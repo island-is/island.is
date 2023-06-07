@@ -13,29 +13,28 @@ export const conclusion = {
         'Umsókn um greiðsluáætlun hefur verið send til Innheimtumanns',
       description: 'Conclusion screen alert title',
     },
+    alertMessage: {
+      id: 'pdpp.application:conclusion.general.alertMessage',
+      defaultMessage: 'Þú getur nú nálgast umsóknina inni á mínum síðum',
+      description: 'Conclusion screen alert message',
+    },
   }),
   information: defineMessages({
     title: {
       id: 'pdpp.application:conclusion.information.title',
-      defaultMessage: 'Hér eru næstu skref',
+      defaultMessage: 'Hvað gerist næst?',
       description: 'Title of conclusion information box',
     },
-    bulletOne: {
-      id: 'pdpp.application:conclusion.information.bulletOne',
-      defaultMessage:
-        'Þú getur nálgast upplýsingar um greiðsluáætlun á mínum síðum.',
-      description: 'Conclusion information box bulletOne',
+    intro: {
+      id: 'pdpp.application:conclusion.information.intro#markdown',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Conclusion information box intro',
     },
-    bulletTwo: {
-      id: 'pdpp.application:conclusion.information.bulletTwo',
-      defaultMessage: 'Staðfesting verður send í rafræn skjöl á Ísland.is.',
-      description: 'Conclusion information box bulletTwo',
-    },
-    bulletThree: {
-      id: 'pdpp.application:conclusion.information.bulletThree',
+    bulletList: {
+      id: 'pdpp.application:conclusion.information.bulletList#markdown',
       defaultMessage:
-        'Innheimtumaður ríkissjóðs mun hafa samband við þig ef þörf er á frekari gögnum eða upplýsingum.',
-      description: 'Conclusion information box bulletThree',
+        '* Þú getur nálgast upplýsingar um greiðsluáætlun á mínum síðum.\n* Staðfesting verður send í rafræn skjöl á Ísland.is.\n* Innheimtumaður ríkissjóðs mun hafa samband við þig ef þörf er á frekari gögnum eða upplýsingum.',
+      description: 'Conclusion information box bullet list',
     },
   }),
 }

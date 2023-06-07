@@ -18,7 +18,6 @@ import {
   IntroHeader,
   m,
   NotFound,
-  ServicePortalModuleComponent,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 
@@ -34,14 +33,18 @@ const dataInfoSpouse = defineMessage({
   defaultMessage: 'Hér fyrir neðan eru gögn um fjölskyldumeðlim.',
 })
 
-const FamilyMember: ServicePortalModuleComponent = () => {
+type UseParams = {
+  nationalId: string
+}
+
+const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
   const { nationalRegistryUser } = data || {}
 
-  const { nationalId }: { nationalId: string | undefined } = useParams()
+  const { nationalId } = useParams() as UseParams
 
   const person =
     nationalRegistryUser?.spouse?.nationalId === nationalId

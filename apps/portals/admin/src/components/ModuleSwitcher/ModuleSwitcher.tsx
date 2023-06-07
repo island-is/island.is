@@ -1,19 +1,21 @@
-import React from 'react'
+import { useBreakpoint } from '@island.is/island-ui/core'
+import {
+  SingleNavigationItemStatus,
+  useSingleNavigationItem,
+} from '@island.is/portals/core'
 
-import { Hidden } from '@island.is/island-ui/core'
-
+import { BOTTOM_NAVIGATION, TOP_NAVIGATION } from '../../lib/masterNavigation'
 import { ModuleSwitcherDesktop } from './ModuleSwitcherDesktop'
 import { ModuleSwitcherMobile } from './ModuleSwitcherMobile'
 
 export const ModuleSwitcher = () => {
-  return (
+  const { status } = useSingleNavigationItem(TOP_NAVIGATION, BOTTOM_NAVIGATION)
+  const { lg } = useBreakpoint()
+
+  return status === SingleNavigationItemStatus.NO_ITEM ? null : (
     <>
-      <Hidden below="lg">
-        <ModuleSwitcherDesktop />
-      </Hidden>
-      <Hidden above="md">
-        <ModuleSwitcherMobile />
-      </Hidden>
+      {lg && <ModuleSwitcherDesktop />}
+      {!lg && <ModuleSwitcherMobile />}
     </>
   )
 }

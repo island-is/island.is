@@ -1,4 +1,4 @@
-export type RegistryGender = 'kk' | 'kvk' | 'x'
+export type RegistryGender = 'kk' | 'kvk' | 'x' | 'hvk'
 
 export type UncategorizedGender = 'manneskja'
 

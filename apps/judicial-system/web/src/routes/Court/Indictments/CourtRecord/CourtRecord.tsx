@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -12,10 +18,6 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -23,8 +25,10 @@ import {
   Box,
   InputFileUpload,
   toast,
+  UploadFile,
 } from '@island.is/island-ui/core'
 import {
+  TUploadFile,
   useCase,
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -32,7 +36,10 @@ import {
   CaseFileCategory,
   CaseTransition,
 } from '@island.is/judicial-system/types'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  mapCaseFileToUploadFile,
+  stepValidationsType,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
@@ -42,22 +49,43 @@ const CourtRecord: React.FC = () => {
     FormContext,
   )
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
   const {
-    files,
-    handleS3Upload,
-    handleRemoveFromS3,
+    handleChange,
+    handleRemove,
     handleRetry,
-    allFilesUploaded,
-  } = useS3Upload(workingCase)
+    generateSingleFileUpdate,
+  } = useS3Upload(workingCase.id)
+
+  useEffect(() => {
+    if (workingCase.caseFiles) {
+      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
+    }
+  }, [workingCase.caseFiles])
+
+  const allFilesUploaded = useMemo(() => {
+    return displayFiles.every(
+      (file) => file.status === 'done' || file.status === 'error',
+    )
+  }, [displayFiles])
+
+  const handleUIUpdate = useCallback(
+    (displayFile: TUploadFile, newId?: string) => {
+      setDisplayFiles((previous) =>
+        generateSingleFileUpdate(previous, displayFile, newId),
+      )
+    },
+    [generateSingleFileUpdate],
+  )
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
       const transitionSuccessful = await transitionCase(
-        workingCase,
+        workingCase.id,
         CaseTransition.ACCEPT,
       )
 
@@ -70,11 +98,15 @@ const CourtRecord: React.FC = () => {
     [transitionCase, workingCase, formatMessage],
   )
 
+  const removeFileCB = useCallback((file: UploadFile) => {
+    setDisplayFiles((previous) =>
+      previous.filter((caseFile) => caseFile.id !== file.id),
+    )
+  }, [])
+
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.JUDGE}
-      activeSubSection={IndictmentsCourtSubsections.COURT_RECORD}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
       isValid={allFilesUploaded}
@@ -93,37 +125,56 @@ const CourtRecord: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.courtRecordTitle)} />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.COURT_RECORD,
             )}
+            accept="application/pdf"
             header={formatMessage(m.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
             buttonLabel={formatMessage(m.uploadButtonText)}
-            onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.COURT_RECORD)
-            }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
+            onChange={(files) => {
+              handleChange(
+                files,
+                CaseFileCategory.COURT_RECORD,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
+            }}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading title={formatMessage(m.rulingTitle)} />
           <InputFileUpload
-            fileList={files.filter(
+            fileList={displayFiles.filter(
               (file) => file.category === CaseFileCategory.RULING,
             )}
+            accept="application/pdf"
             header={formatMessage(m.inputFieldLabel)}
+            description={formatMessage(core.uploadBoxDescription, {
+              fileEndings: '.pdf',
+            })}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
-              handleS3Upload(files, false, CaseFileCategory.RULING)
+              handleChange(
+                files,
+                CaseFileCategory.RULING,
+                setDisplayFiles,
+                handleUIUpdate,
+              )
             }
-            onRemove={handleRemoveFromS3}
-            onRetry={handleRetry}
+            onRemove={(file) => handleRemove(file, removeFileCB)}
+            onRetry={(file) => handleRetry(file, handleUIUpdate)}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
+          nextButtonIcon="arrowForward"
+          previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)
           }

@@ -20,7 +20,9 @@ describe('findByTagsEndorsementList', () => {
     expect(response.body).toMatchObject({
       ...errorExpectedStructure,
       statusCode: 400,
-      message: ['each value in tags must be a valid enum value'],
+      message: [
+        'each value in tags must be one of the following values: generalPetition',
+      ],
     })
   })
   it(`GET /endorsement-list?tags should return 200 and a list`, async () => {

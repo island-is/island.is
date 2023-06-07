@@ -22,11 +22,12 @@ import {
   exists,
 } from '../util/mortgageCertificateValidation'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   NationalRegistryRealEstateApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -50,7 +51,11 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.MortgageCertificate.translation,
   ],
   dataSchema: MortgageCertificateSchema,
-  readyForProduction: true,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+  ],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -85,7 +90,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
+                IdentityApi,
                 NationalRegistryRealEstateApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,

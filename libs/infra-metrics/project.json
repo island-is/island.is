@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/infra-metrics"]
     }
   },
-  "tags": []
+  "tags": ["lib:node", "scope:node"]
 }

@@ -9,6 +9,7 @@ const Greeting: FC<{}> = () => {
   const { formatMessage } = useLocale()
   const { userInfo } = useAuth()
   const currentHour = new Date().getHours()
+
   const isEveningGreeting = currentHour > 17 || currentHour < 4
 
   return (

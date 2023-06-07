@@ -64,6 +64,10 @@ export class FileStorageService {
     return this.s3.getSignedUrlPromise('getObject', params)
   }
 
+  public getObjectUrl(key: string): string {
+    return `s3://${this.config.uploadBucket}/${key}`
+  }
+
   async copyObjectFromUploadBucket(
     sourceKey: string,
     destinationBucket: string,

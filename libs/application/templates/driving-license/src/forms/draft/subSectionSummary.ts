@@ -150,7 +150,7 @@ export const subSectionSummary = buildSubSection({
         buildKeyValueField({
           label: m.overviewPaymentCharge,
           value: ({ externalData, answers }) => {
-            const items = externalData.paymentCatalog.data as {
+            const items = externalData.payment.data as {
               priceAmount: number
               chargeItemCode: string
             }[]

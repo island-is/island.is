@@ -14,15 +14,13 @@ import {
   DrivingAssessmentApi,
   NationalRegistryUserApi,
   UserProfileApi,
-  PaymentCatalogApi,
   QualityPhotoApi,
   TeachersApi,
   ExistingApplicationApi,
-  Answer,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { Events, States, Roles, SYSLUMADUR_NATIONAL_ID } from './constants'
+import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
@@ -30,6 +28,7 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
+import { SyslumadurPaymentCatalogApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -40,7 +39,6 @@ const template: ApplicationTemplate<
   name: m.applicationForDrivingLicense,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -77,9 +75,7 @@ const template: ApplicationTemplate<
                 NationalRegistryUserApi,
                 TeachersApi,
                 UserProfileApi,
-                PaymentCatalogApi.configure({
-                  params: { orginizationId: SYSLUMADUR_NATIONAL_ID },
-                }),
+                SyslumadurPaymentCatalogApi,
                 CurrentLicenseApi,
                 DrivingAssessmentApi,
                 JuristictionApi,

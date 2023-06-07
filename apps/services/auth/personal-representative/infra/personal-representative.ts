@@ -45,7 +45,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-personal-represent
       },
       requests: {
         cpu: '100m',
-        memory: '128Mi',
+        memory: '192Mi',
       },
     })
     .replicaCount({

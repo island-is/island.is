@@ -13,7 +13,6 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -50,24 +49,8 @@ export class FileService {
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
-    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async deleteFileFromDatabase(
     fileId: string,
@@ -120,14 +103,8 @@ export class FileService {
 
     switch (file.category) {
       case CaseFileCategory.COVER_LETTER:
-        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        break
       case CaseFileCategory.INDICTMENT:
-        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        break
       case CaseFileCategory.CRIMINAL_RECORD:
-        courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
-        break
       case CaseFileCategory.COST_BREAKDOWN:
         courtDocumentFolder = CourtDocumentFolder.INDICTMENT_DOCUMENTS
         break
@@ -138,10 +115,19 @@ export class FileService {
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
+      case undefined:
+      case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
         break
+      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
+      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+      case CaseFileCategory.APPEAL_RULING:
+        courtDocumentFolder = CourtDocumentFolder.APPEAL_DOCUMENTS
+        break
       default:
-        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+        throw new BadRequestException(`Invalid file category ${file.category}`)
     }
 
     return courtDocumentFolder
@@ -150,8 +136,9 @@ export class FileService {
   private async throttleUpload(
     file: CaseFile,
     theCase: Case,
-    user?: User,
+    user: User,
   ): Promise<string> {
+    // Serialise all uploads in this process
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
     })
@@ -161,6 +148,7 @@ export class FileService {
     const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
     return this.courtService.createDocument(
+      user,
       theCase.id,
       theCase.courtId,
       theCase.courtCaseNumber,
@@ -169,7 +157,6 @@ export class FileService {
       file.name,
       file.type,
       content,
-      user,
     )
   }
 
@@ -231,13 +218,6 @@ export class FileService {
     })
   }
 
-  async getAllCaseFiles(caseId: string): Promise<CaseFile[]> {
-    return this.fileModel.findAll({
-      where: { caseId, state: { [Op.not]: CaseFileState.DELETED } },
-      order: [['created', 'DESC']],
-    })
-  }
-
   async getCaseFileSignedUrl(file: CaseFile): Promise<SignedUrl> {
     if (!file.key) {
       throw new NotFoundException(`File ${file.id} does not exists in AWS S3`)
@@ -272,10 +252,8 @@ export class FileService {
   async uploadCaseFileToCourt(
     file: CaseFile,
     theCase: Case,
-    user?: User,
+    user: User,
   ): Promise<UploadFileToCourtResponse> {
-    await this.refreshFormatMessage()
-
     if (file.state === CaseFileState.STORED_IN_COURT) {
       return { success: true }
     }

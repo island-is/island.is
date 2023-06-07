@@ -20,11 +20,13 @@ import {
   MunicipalityModel,
   PersonalTaxReturnApi,
 } from '@island.is/clients/municipalities-financial-aid'
-import { UploadFile } from '@island.is/island-ui/core'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationAnswerFile,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import { FetchError } from '@island.is/clients/middlewares'
 import { messages } from '@island.is/application/templates/financial-aid'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -81,7 +83,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       }
     }
 
-    const formatFiles = (files: UploadFile[], type: FileType) => {
+    const formatFiles = (files: ApplicationAnswerFile[], type: FileType) => {
       if (!files || files.length <= 0) {
         return []
       }
@@ -89,7 +91,7 @@ export class FinancialAidService extends BaseTemplateApiService {
         return {
           name: f.name ?? '',
           key: f.key ?? '',
-          size: f.size ?? 0,
+          size: 0,
           type: type,
         }
       })

@@ -32,15 +32,16 @@ import {
 } from '@island.is/judicial-system/types'
 import {
   useFileList,
-  useS3UploadV2,
+  useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { core, errors } from '@island.is/judicial-system-web/messages'
+import {
+  FileNotFoundModal,
+  IndictmentInfo,
+} from '@island.is/judicial-system-web/src/components'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import { UpdateFileMutation } from './UpdateFiles.gql'
-import IndictmentInfo from '../../IndictmentInfo/IndictmentInfo'
-import Modal from '../../Modal/Modal'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'
@@ -407,7 +408,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
   )
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
-  const { remove } = useS3UploadV2(caseId)
+  const { remove } = useS3Upload(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
@@ -651,14 +652,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         </AnimatePresence>
       </AccordionItem>
       <AnimatePresence>
-        {fileNotFound && (
-          <Modal
-            title={formatMessage(errors.fileNotFoundModalTitle)}
-            onClose={() => dismissFileNotFound()}
-            onPrimaryButtonClick={() => dismissFileNotFound()}
-            primaryButtonText={formatMessage(core.closeModal)}
-          />
-        )}
+        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
     </>
   )

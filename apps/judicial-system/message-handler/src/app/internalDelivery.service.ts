@@ -5,6 +5,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@island.is/nest/config'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import type { User } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'
 
@@ -17,9 +18,10 @@ export class InternalDeliveryService {
   ) {}
 
   async deliver(
+    user: User,
     caseId: string,
     what: string,
-    body?: unknown,
+    body: { [key: string]: unknown } = {},
   ): Promise<boolean> {
     this.logger.debug(`Posting ${what} for case ${caseId}`)
 
@@ -31,7 +33,7 @@ export class InternalDeliveryService {
           'Content-Type': 'application/json',
           authorization: `Bearer ${this.config.backendAccessToken}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ ...body, user }),
       },
     )
       .then(async (res) => {

@@ -6,38 +6,84 @@ import {
   PARENTAL_LEAVE,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
+  States,
 } from '../constants'
-import { requiresOtherParentApproval } from '../lib/parentalLeaveUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  requiresOtherParentApproval,
+} from '../lib/parentalLeaveUtils'
+import { EmployerRow } from '../types'
+import { getValueViaPath } from '@island.is/application/core'
+import { disableResidenceGrantApplication } from './answerValidationSections/utils'
+
+export function allEmployersHaveApproved(context: ApplicationContext) {
+  const employers = getValueViaPath<EmployerRow[]>(
+    context.application.answers,
+    'employers',
+  )
+  if (!employers) {
+    return false
+  }
+  return employers.every((e) => !!e.isApproved)
+}
 
 export function hasEmployer(context: ApplicationContext) {
   const currentApplicationAnswers = context.application.answers as {
-    isRecivingUnemploymentBenefits: typeof YES | typeof NO
+    isReceivingUnemploymentBenefits: typeof YES | typeof NO
     applicationType: {
       option:
         | typeof PARENTAL_LEAVE
         | typeof PARENTAL_GRANT
         | typeof PARENTAL_GRANT_STUDENTS
     }
-    employer: { isSelfEmployed: typeof YES | typeof NO }
+    isSelfEmployed: typeof YES | typeof NO
+    employers: [
+      {
+        stillEmployed: typeof YES | typeof NO
+      },
+    ]
   }
+  const oldApplicationAnswers = context.application.answers as {
+    isRecivingUnemploymentBenefits: typeof YES | typeof NO
+    employer: {
+      isSelfEmployed: typeof YES | typeof NO
+    }
+  }
+
+  const isUndefinedReceivingUnemploymentBenefits =
+    currentApplicationAnswers.isReceivingUnemploymentBenefits !== undefined ||
+    oldApplicationAnswers.isRecivingUnemploymentBenefits !== undefined
+  const receivingUnemploymentBenefits =
+    currentApplicationAnswers.isReceivingUnemploymentBenefits === NO ||
+    oldApplicationAnswers.isRecivingUnemploymentBenefits === NO
+  const selfEmployed =
+    currentApplicationAnswers.isSelfEmployed === NO ||
+    oldApplicationAnswers.employer?.isSelfEmployed === NO
 
   // Added this check for applications that is in the db already so they can go through to next state
   if (currentApplicationAnswers.applicationType === undefined) {
-    if (
-      currentApplicationAnswers.isRecivingUnemploymentBenefits !== undefined
-    ) {
-      return (
-        currentApplicationAnswers.employer.isSelfEmployed === NO &&
-        currentApplicationAnswers.isRecivingUnemploymentBenefits === NO
-      )
+    if (isUndefinedReceivingUnemploymentBenefits) {
+      return selfEmployed && receivingUnemploymentBenefits
     }
 
-    return currentApplicationAnswers.employer.isSelfEmployed === NO
-  } else
-    return currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE
-      ? currentApplicationAnswers.employer.isSelfEmployed === NO &&
-          currentApplicationAnswers.isRecivingUnemploymentBenefits === NO
-      : false
+    return selfEmployed
+  } else {
+    if (currentApplicationAnswers.applicationType.option === PARENTAL_LEAVE) {
+      return selfEmployed && receivingUnemploymentBenefits
+    } else if (
+      (currentApplicationAnswers.applicationType.option === PARENTAL_GRANT ||
+        currentApplicationAnswers.applicationType.option ===
+          PARENTAL_GRANT_STUDENTS) &&
+      currentApplicationAnswers.employers !== undefined
+    ) {
+      return currentApplicationAnswers.employers.some(
+        (employer) => employer.stillEmployed === YES,
+      )
+    } else {
+      return false
+    }
+  }
 }
 
 export function needsOtherParentApproval(context: ApplicationContext) {
@@ -50,4 +96,35 @@ export function needsOtherParentApproval(context: ApplicationContext) {
 export function currentDateStartTime() {
   const date = new Date().toDateString()
   return new Date(date).getTime()
+}
+
+export function findActionName(context: ApplicationContext) {
+  const { application } = context
+  const { state } = application
+  if (
+    state === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
+    state === States.RESIDENCE_GRAND_APPLICATION
+  )
+    return 'documentPeriod'
+  if (state === States.ADDITIONAL_DOCUMENTS_REQUIRED) return 'document'
+  if (state === States.EDIT_OR_ADD_PERIODS) return 'period'
+
+  return 'period' // Have default on period so we always reset actionName
+}
+
+export function hasDateOfBirth(context: ApplicationContext) {
+  const { application } = context
+  const { dateOfBirth } = getApplicationExternalData(application.externalData)
+  return disableResidenceGrantApplication(dateOfBirth?.data?.dateOfBirth || '')
+}
+
+export function goToState(
+  applicationContext: ApplicationContext,
+  state: States,
+) {
+  const { previousState } = getApplicationAnswers(
+    applicationContext.application.answers,
+  )
+  if (previousState === state) return true
+  return false
 }

@@ -18,7 +18,10 @@ export const UnEmploymentBenefits: FC<FieldBaseProps> = ({
   application,
   field,
 }) => {
-  const { errors, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
 
@@ -55,7 +58,6 @@ export const UnEmploymentBenefits: FC<FieldBaseProps> = ({
             }
             if (s === YES) {
               setValue('unemploymentBenefits', '')
-              setValue('employer.email', '')
             }
           },
         }}

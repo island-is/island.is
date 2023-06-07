@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const policeCaseFiles = defineMessages({
+  // TODO: Remove heading
   heading: {
     id: 'judicial.system.core:police_case_files.heading_v1',
     defaultMessage:
@@ -8,6 +9,7 @@ export const policeCaseFiles = defineMessages({
     description:
       'Notaður sem titill fyrir "LOKE" gagnapakkann á rannsóknargagna skrefi.',
   },
+  // TODO: Remove introduction
   introduction: {
     id: 'judicial.system.core:police_case_files.introduction',
     defaultMessage:
@@ -54,16 +56,17 @@ export const policeCaseFiles = defineMessages({
       'Notaður sem texti í "hlaða upp" takka í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
   },
   originNotLokeTitle: {
-    id: 'judicial.system.core:police_case_files.origin_not_loke_title',
-    defaultMessage: 'Krafa ekki stofnuð í LÖKE',
+    id: 'judicial.system.core:police_case_files.origin_not_loke_title_v1',
+    defaultMessage:
+      '{isIndictmentCase, select, true {Ákæra} other {Krafa}} ekki stofnuð í LÖKE',
     description:
-      'Notaður sem titill í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
+      'Notaður sem titill í upplýsingaboxi fyrir ákæru/kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
   },
   originNotLokeMessage: {
-    id: 'judicial.system.core:police_case_files.origin_not_loke_message',
+    id: 'judicial.system.core:police_case_files.origin_not_loke_message_v1',
     defaultMessage:
-      'Til að fá sjálfkrafa yfirlit yfir skjöl úr LÖKE þarf að stofna kröfuna í gegnum LÖKE.',
+      'Til að fá sjálfkrafa yfirlit yfir skjöl úr LÖKE þarf að stofna {isIndictmentCase, select, true {ákæruna} other {kröfuna}} í gegnum LÖKE',
     description:
-      'Notaður sem texti í upplýsingaboxi fyrir kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
+      'Notaður sem texti í upplýsingaboxi fyrir ákæru/kröfu sem ekki er stofnuð í LÖKE í LÖKE gagnapakkanum á rannsóknargagna skrefi.',
   },
 })

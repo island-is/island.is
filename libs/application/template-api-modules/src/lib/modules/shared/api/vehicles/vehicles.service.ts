@@ -69,7 +69,6 @@ export class VehiclesService extends BaseTemplateApiService {
       make: vehicle.make,
       color: vehicle.color,
       role: vehicle.role,
-      isStolen: vehicle.stolen,
     }))
   }
 }

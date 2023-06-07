@@ -41,6 +41,7 @@ import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
+import { PowerBiService } from './powerbi.service'
 import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { GetArticlesInput } from './dto/getArticles.input'
@@ -92,6 +93,11 @@ import { FeaturedArticles } from './models/featuredArticles.model'
 import { GetServicePortalAlertBannersInput } from './dto/getServicePortalAlertBanners.input'
 import { GetTabSectionInput } from './dto/getTabSection.input'
 import { TabSection } from './models/tabSection.model'
+import { GenericTag } from './models/genericTag.model'
+import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
+import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
+import { PowerBiSlice } from './models/powerBiSlice.model'
+import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
 
 const { cacheTime } = environment
 
@@ -524,6 +530,14 @@ export class CmsResolver {
   ): Promise<TabSection | null> {
     return this.cmsContentfulService.getTabSection(input)
   }
+
+  @Directive(cacheControlDirective())
+  @Query(() => GenericTag, { nullable: true })
+  getGenericTagBySlug(
+    @Args('input') input: GetGenericTagBySlugInput,
+  ): Promise<GenericTag | null> {
+    return this.cmsContentfulService.getGenericTagBySlug(input)
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -573,9 +587,40 @@ export class FeaturedArticlesResolver {
     if (input.size === 0) {
       return []
     }
-    return await this.cmsElasticsearchService.getArticles(
+    return this.cmsElasticsearchService.getArticles(
       getElasticsearchIndex(input.lang),
       input,
     )
+  }
+}
+
+@Resolver(() => FeaturedSupportQNAs)
+@Directive(cacheControlDirective())
+export class FeaturedSupportQNAsResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @ResolveField(() => [SupportQNA])
+  async resolvedSupportQNAs(
+    @Parent() { resolvedSupportQNAs: input }: FeaturedSupportQNAs,
+  ): Promise<SupportQNA[]> {
+    if (input.size === 0) {
+      return []
+    }
+    return this.cmsElasticsearchService.getFeaturedSupportQNAs(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+}
+
+@Resolver(() => PowerBiSlice)
+export class PowerBiSliceResolver {
+  constructor(private powerBiService: PowerBiService) {}
+
+  @ResolveField(() => GetPowerBiEmbedPropsFromServerResponse, {
+    nullable: true,
+  })
+  async powerBiEmbedPropsFromServer(@Parent() powerBiSlice: PowerBiSlice) {
+    return this.powerBiService.getEmbedProps(powerBiSlice)
   }
 }

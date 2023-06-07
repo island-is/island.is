@@ -13,6 +13,7 @@ import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNo
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { NationalRegistry, UserProfile } from './types'
 import { ChargeItemCode } from '@island.is/shared/constants'
@@ -37,8 +38,9 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     try {
       const result = this.sharedTemplateAPIService.createCharge(
-        auth.authorization,
+        auth,
         id,
+        InstitutionNationalIds.SYSLUMENN,
         [ChargeItemCode.CRIMINAL_RECORD],
       )
       return result
@@ -60,7 +62,7 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     const isPayment:
       | { fulfilled: boolean }
       | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 

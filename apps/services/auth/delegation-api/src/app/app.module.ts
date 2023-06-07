@@ -18,8 +18,10 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { environment } from '../environments'
+import { ClientsModule } from './clients/clients.module'
 import { DelegationsModule } from './delegations/delegations.module'
 import { DomainsModule } from './domains/domains.module'
+import { ScopesModule } from './scopes/scopes.module'
 
 @Module({
   imports: [
@@ -28,8 +30,10 @@ import { DomainsModule } from './domains/domains.module'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    ClientsModule,
     DelegationsModule,
     DomainsModule,
+    ScopesModule,
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,

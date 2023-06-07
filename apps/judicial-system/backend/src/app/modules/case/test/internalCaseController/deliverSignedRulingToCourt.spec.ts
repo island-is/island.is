@@ -1,10 +1,17 @@
 import { uuid } from 'uuidv4'
+import format from 'date-fns/format'
+
+import { User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 import { AwsS3Service } from '../../../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../../../court'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Case } from '../../models/case.model'
+import { randomDate } from '../../../../test'
+import { nowFactory } from '../../../../factories'
+
+jest.mock('../../../../factories/date.factory')
 
 interface Then {
   result: DeliverResponse
@@ -14,6 +21,9 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('InternalCaseController - Deliver signed ruling to court', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockCourtService: CourtService
   let mockAwsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen
@@ -37,7 +47,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverSignedRulingToCourt(caseId, theCase)
+        .deliverSignedRulingToCourt(caseId, theCase, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -51,9 +61,13 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     const courtCaseNumber = uuid()
     const theCase = { id: caseId, courtId, courtCaseNumber } as Case
     const pdf = Buffer.from('test ruling')
+    const now = randomDate()
+
     let then: Then
 
     beforeEach(async () => {
+      const mockNowFactory = nowFactory as jest.Mock
+      mockNowFactory.mockReturnValue(now)
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
       mockGetObject.mockResolvedValueOnce(pdf)
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
@@ -70,15 +84,15 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
 
     it('should create a ruling at court', async () => {
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+        user,
         caseId,
         courtId,
         courtCaseNumber,
         CourtDocumentFolder.COURT_DOCUMENTS,
-        `Úrskurður ${courtCaseNumber}`,
-        `Úrskurður ${courtCaseNumber}.pdf`,
+        `Úrskurður ${courtCaseNumber} ${format(now, 'yyyy-MM-dd HH:mm')}`,
+        `Úrskurður ${courtCaseNumber} ${format(now, 'yyyy-MM-dd HH:mm')}.pdf`,
         'application/pdf',
         pdf,
-        undefined,
       )
     })
 

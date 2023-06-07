@@ -1,14 +1,6 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
-export const progressMeter = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      maxWidth: '60%',
-    },
-  }),
-})
-
 export const tag = style({
   marginBottom: theme.spacing[1],
   ...themeUtils.responsiveStyle({
@@ -35,9 +27,4 @@ export const button = style({
       alignSelf: 'flex-end',
     },
   }),
-})
-
-export const logo = style({
-  backgroundSize: 'contain',
-  backgroundRepeat: 'no-repeat',
 })

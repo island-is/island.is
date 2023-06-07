@@ -28,67 +28,18 @@ This is simpler for admin portal module, create a new module for each self-conta
 ```typescript
 export interface PortalModule {
   name: string
-  widgets: (props: PortalModuleProps) => PortalWidget[]
-  routes: (props: PortalModuleProps) => PortalRoute[]
+  routes: (props: PortalModuleRoutesProps) => PortalRoute[]
 }
 ```
 
 All libraries are implemented by defining an interface that gets loaded into portals on startup. This interface defines four aspects about the library:
 
 - Name - The name of the library
-- Widgets - A function that return an array of widgets
 - Routes - A function that returns an array of routes
-- Global - A function that returns an array of global components
-
-### Widgets
-
-A widget is a small component rendered on the frontpage that usually gives a small amount of basic info about the libraries functionality and information.
-The widget function receives props of the type **≠PortalModuleProps** that it should use to determine which widgets should be presented in the portal and how they should be rendered.
-
-```typescript
-export interface PortalModuleProps {
-  userInfo: User
-  client: ApolloClient<NormalizedCacheObject>
-}
-```
-
-The userInfo property contains information about the current session and user. Based on which user is logged in and what he has access to, different widgets could be rendered out for the user.
-
-```typescript
-export type PortalWidget = {
-  name: string
-  weight: number
-  render: (props: PortalModuleProps) => PortalModuleRenderValue
-}
-```
-
-The weight property determines where on the frontpage it should be rendered, the lower the weight, the higher up it will be.
-The render returns a lazy loaded component.
-An example of an implementation of a widget property might be something like this:
-
-```typescript
-widgets: ({ userInfo }) => {
-  const applicationWidgets = [
-    {
-      name: 'Applications',
-      weight: 2,
-      render: () => lazy(() => import('./widgets/ApplicationOverview')),
-    },
-  ]
-  const openApplications = getOpenApplicationsForUser(userInfo)
-  if (openApplications.length > 0)
-    applicationWidgets.push({
-      name: 'Open Applications',
-      weight: 1,
-      render: () => lazy(() => import('widgets/OpenApplications')),
-    })
-  return applicationWidgets
-}
-```
 
 ### Routes
 
-Routes function in many of the same ways as widgets but instead of returning an array of widgets they return an array of routes.
+Routes function returns an array of routes.
 
 ```typescript
 export interface PortalModuleProps {
@@ -98,27 +49,60 @@ export interface PortalModuleProps {
 ```
 
 ```typescript
-export type PortalRoute = {
+import { RouteObject } from 'react-router-dom'
+
+export type PortalRoute = RouteObject & {
   name: string
   path: string | string[]
-  render?: (props: PortalModuleProps) => PortalModuleRenderValue
+  // ------------------------------------------------------------------
+  // React Router RouteObject properties that are being used in modules
+  // ------------------------------------------------------------------
+
+  /**
+   * The component prop is rendered when the path matches.
+   */
+  element?: RouteObject['element']
+  /**
+   * Each route can define a "loader" function to provide data to the route element before it renders.
+   */
+  loader?: RouteObject['loader']
+  /**
+   * When exceptions are thrown in loaders, actions, or component rendering, the errorElement will be rendered.
+   */
+  errorElement?: RouteObject['errorElement']
+  /**
+   * Route actions are the "writes" to route loader "reads".
+   * They provide a way for apps to perform data mutations with simple HTML and HTTP semantics
+   * while React Router abstracts away the complexity of asynchronous UI and revalidation.
+   */
+  action?: RouteObject['action']
+  /**
+   * The children prop is rendered when the path matches. Remember to use <Outlet /> in the parent compoennt to render the children.
+   */
+  children?: PortalRoute['children']
 }
 ```
 
 Path defines at what path or paths this route should be rendered.
 
-The render property returns a lazy loaded component to be rendered when the user navigates to the described path.
+The element property should be a lazy-loaded component which is rendered when the user navigates to the described path.
 
 An example of an implementation of a route property might be something like this:
 
-```typescript
-routes: (userInfo) => {
+```tsx
+const ApplicationList = lazy(
+  () => import('./screens/ApplicationList/ApplicationList'),
+)
+const ProtectedScreen = lazy(
+  () => import('./screens/ProtectedScreen/ProtectedScreen'),
+)
+
+routes: () => {
   const applicationRoutes = [
     {
       name: 'Applications',
       path: ServicePortalPath.ApplicationRoot,
-      render: () =>
-        lazy(() => import('./screens/ApplicationList/ApplicationList')),
+      element: <ApplicationList />,
     },
   ]
 
@@ -128,45 +112,11 @@ routes: (userInfo) => {
     applicationRoutes.push({
       name: 'Super secret application screen',
       path: ServicePortalPath.UmsoknirSecret,
-      render: () =>
-        lazy(() => import('./screens/ProtectedScreen/ProtectedScreen')),
+      element: <ProtectedScreen />,
     })
   }
 
   return applicationRoutes
-}
-```
-
-### Global Components
-
-Global components will always be rendered by default
-These are usually utility components that prompt the user about certain things or provide other global functionality
-Example: A modal providing onboarding for unfilled user profiles
-
-Global components should be used very sparingly to reduce harrassment on the user.
-
-```typescript
-interface PortalModule {
-  global?: (props: PortalModuleProps) => Promise<PortalGlobalComponent[]>
-}
-```
-
-An example of how a global component might be implemented
-
-```typescript
-global: async ({ client }) => {
-  if (client.userDoesNotHaveAUserProfile())
-    return [
-      {
-        render: () =>
-          lazy(
-            () =>
-              import('./components/UserOnboardingModal/UserOnboardingModal'),
-          ),
-      },
-    ]
-
-  return []
 }
 ```
 
@@ -176,22 +126,18 @@ A portal library might then look something like this:
 import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 
+const ApplicationList = lazy(
+  () => import('./screens/ApplicationList/ApplicationList'),
+)
+
 export const applicationsModule: PortalModule = {
   name: 'Applications',
-  widgets: () => [
-    {
-      name: 'Applications',
-      weight: 0,
-      render: () => lazy(() => import('./Widgets')),
-    },
-  ],
-  routes: (userInfo) => {
+  routes: () => {
     const applicationRoutes = [
       {
         name: 'Applications',
         path: ServicePortalPath.ApplicationRoot,
-        render: () =>
-          lazy(() => import('./screens/ApplicationList/ApplicationList')),
+        element: <ApplicationList />,
       },
     ]
 
@@ -199,23 +145,18 @@ export const applicationsModule: PortalModule = {
   },
 }
 
-// Widgets.tsx
-const ApplicationWidgets: PortalModuleComponent = ({ userInfo }) => (
-  <>
-    <h1>Widgets for {userInfo.profile.name}</h1>
-    <OpenApplications />
-  </>
-)
-
 // ApplicationList.tsx
-const ApplicationList: PortalModuleComponent = ({ userInfo }) => (
-  <>
-    <h1>Applications for {userInfo.profile.name}</h1>
-    <div>Application 1</div>
-    <div>Application 2</div>
-    <div>Application 3</div>
-  </>
-)
+const ApplicationList = () => {
+  const userInfo = useUserInfo()
+  return (
+    <>
+      <h1>Applications for {userInfo.profile.name}</h1>
+      <div>Application 1</div>
+      <div>Application 2</div>
+      <div>Application 3</div>
+    </>
+  )
+}
 ```
 
 ## Running unit tests

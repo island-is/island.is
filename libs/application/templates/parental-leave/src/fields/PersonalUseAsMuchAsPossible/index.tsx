@@ -18,7 +18,10 @@ export const PersonalUseAsMuchAsPossible: FC<FieldBaseProps> = ({
   application,
   field,
 }) => {
-  const { errors, setValue } = useFormContext()
+  const {
+    formState: { errors },
+    setValue,
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const { id, title, description } = field
 
@@ -55,7 +58,7 @@ export const PersonalUseAsMuchAsPossible: FC<FieldBaseProps> = ({
               setValue('personalAllowance.usage', '100')
             }
             if (s === NO) {
-              setValue('personalAllowance.usage', '0')
+              setValue('personalAllowance.usage', '1')
             }
           },
         }}

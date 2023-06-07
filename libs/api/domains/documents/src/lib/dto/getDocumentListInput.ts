@@ -34,4 +34,7 @@ export class GetDocumentListInput {
 
   @Field({ nullable: true })
   pageSize?: number
+
+  @Field({ nullable: true, defaultValue: null })
+  isLegalGuardian?: boolean
 }

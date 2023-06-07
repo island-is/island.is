@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { S3 } from 'aws-sdk'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 import cloneDeep from 'lodash/cloneDeep'
 
 import type { Attachment, Period } from '@island.is/clients/vmst'
@@ -16,6 +17,7 @@ import {
   ApplicationConfigurations,
   Application,
   ApplicationTypes,
+  ApplicationWithAttachments,
 } from '@island.is/application/types'
 import {
   getApplicationAnswers,
@@ -26,11 +28,23 @@ import {
   StartDateOptions,
   UnEmployedBenefitTypes,
   PARENTAL_LEAVE,
+  PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
   getMultipleBirthsDays,
   SINGLE,
   getAdditionalSingleParentRightsInDays,
   getApplicationExternalData,
+  DAYS_IN_MONTH,
+  getUnApprovedEmployers,
+  ParentalRelations,
+  ChildInformation,
+  isParentWithoutBirthParent,
+  calculatePeriodLength,
+  PERMANENT_FOSTER_CARE,
+  OTHER_NO_CHILDREN_FOUND,
+  States,
+  ADOPTION,
+  FileType,
 } from '@island.is/application/templates/parental-leave'
 
 import { SharedTemplateApiService } from '../../shared'
@@ -56,12 +70,14 @@ import {
   transformApplicationToParentalLeaveDTO,
   getRatio,
   getRightsCode,
+  checkIfPhoneNumberIsGSM,
 } from './parental-leave.utils'
 import { apiConstants } from './constants'
 import { ConfigService } from '@nestjs/config'
 import { getConfigValue } from '../../shared/shared.utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ChildrenService } from './children/children.service'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 interface VMSTError {
   type: string
@@ -100,6 +116,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly attachmentBucket: string,
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     private readonly childrenService: ChildrenService,
+    private readonly nationalRegistryApi: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -114,8 +131,141 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
+  // Check whether phoneNumber is GSM
+  checkIfPhoneNumberIsGSM(phoneNumber: string) {
+    const phoneNumberStartStr = ['6', '7', '8']
+    return phoneNumberStartStr.some((substr) => phoneNumber.startsWith(substr))
+  }
+
+  getFromDate(
+    isFirstPeriod: boolean,
+    isActualDateOfBirth: boolean,
+    useLength: string,
+    period: AnswerPeriod,
+  ) {
+    return isFirstPeriod && isActualDateOfBirth && useLength === YES
+      ? apiConstants.actualDateOfBirthMonths
+      : isFirstPeriod && isActualDateOfBirth
+      ? apiConstants.actualDateOfBirth
+      : period.startDate
+  }
+
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
     return this.childrenService.provideChildren(application, auth.nationalId)
+  }
+
+  async getPerson({ auth }: TemplateApiModuleActionProps) {
+    const spouse = await this.nationalRegistryApi.getCohabitationInfo(
+      auth.nationalId,
+    )
+    const person = await this.nationalRegistryApi.getIndividual(auth.nationalId)
+
+    return (
+      person && {
+        spouse: spouse && {
+          nationalId: spouse.spouseNationalId,
+          name: spouse.spouseName,
+        },
+        fullname: person.fullName,
+        genderCode: person.genderCode,
+      }
+    )
+  }
+
+  // If no children information from Heilsuvera
+  // and the application is adoption | foster care | without primary parent
+  // we make a children data
+  async setChildrenInformation({ application }: TemplateApiModuleActionProps) {
+    const {
+      noPrimaryParentBirthDate,
+      noChildrenFoundTypeOfApplication,
+      fosterCareOrAdoptionDate,
+      fosterCareOrAdoptionBirthDate,
+    } = getApplicationAnswers(application.answers)
+
+    const {
+      applicantGenderCode,
+      children,
+      existingApplications,
+    } = getApplicationExternalData(application.externalData)
+
+    if (noChildrenFoundTypeOfApplication === OTHER_NO_CHILDREN_FOUND) {
+      const child: ChildInformation = {
+        hasRights: true,
+        remainingDays: 180,
+        expectedDateOfBirth: noPrimaryParentBirthDate,
+        parentalRelation: ParentalRelations.secondary,
+        primaryParentNationalRegistryId: '',
+        primaryParentGenderCode: applicantGenderCode,
+        primaryParentTypeOfApplication: noChildrenFoundTypeOfApplication,
+      }
+
+      const children: ChildInformation[] = [child]
+
+      return {
+        children: children,
+        existingApplications,
+      }
+    } else if (
+      noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE ||
+      noChildrenFoundTypeOfApplication === ADOPTION
+    ) {
+      const child: ChildInformation = {
+        hasRights: true,
+        remainingDays: 180,
+        expectedDateOfBirth: '',
+        adoptionDate: fosterCareOrAdoptionDate,
+        dateOfBirth: fosterCareOrAdoptionBirthDate,
+        parentalRelation: ParentalRelations.primary,
+      }
+
+      const children: ChildInformation[] = [child]
+
+      return {
+        children: children,
+        existingApplications,
+      }
+    } else {
+      // "normal application" - children found just return them
+      return {
+        children: children,
+        existingApplications,
+      }
+    }
+  }
+
+  async setBirthDate({ application }: TemplateApiModuleActionProps) {
+    const { dateOfBirth } = getApplicationExternalData(application.externalData)
+    if (dateOfBirth?.data?.dateOfBirth) {
+      return dateOfBirth?.data?.dateOfBirth
+    }
+    /*
+    If you want to MOCK getting dateOfBirth from API use this.
+    const fakeDateOfBirth = '2023-02-10'
+    const promise = new Promise(function (resolve) {
+      setTimeout(() => {
+        resolve(fakeDateOfBirth)}, 5000)})
+        const newValue = await promise
+        return {
+          dateOfBirth: newValue,
+        }
+    */
+    try {
+      const applicationInformation = await this.applicationInformationAPI.applicationGetApplicationInformation(
+        {
+          applicationId: application.id,
+        },
+      )
+      return {
+        dateOfBirth: applicationInformation.dateOfBirth,
+      }
+    } catch (e) {
+      this.logger.warning('Failed to fetch application information', e)
+    }
+
+    return {
+      dateOfBirth: '',
+    }
   }
 
   async assignOtherParent({ application }: TemplateApiModuleActionProps) {
@@ -128,16 +278,26 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (otherParentPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+    try {
+      if (
+        otherParentPhoneNumber &&
+        checkIfPhoneNumberIsGSM(otherParentPhoneNumber)
+      ) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateAssignOtherParentApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateAssignOtherParentApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send assigned SMS to otherParent in parental leave application',
+        e,
       )
     }
   }
@@ -152,17 +312,27 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (applicantPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
+    try {
+      if (
+        applicantPhoneNumber &&
+        checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
 
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateOtherParentRejectedApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateOtherParentRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about otherParent rejection in parental leave application',
+        e,
       )
     }
   }
@@ -177,23 +347,33 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       application,
     )
 
-    if (applicantPhoneNumber) {
-      const clientLocationOrigin = getConfigValue(
-        this.configService,
-        'clientLocationOrigin',
-      ) as string
+    try {
+      if (
+        applicantPhoneNumber &&
+        checkIfPhoneNumberIsGSM(applicantPhoneNumber)
+      ) {
+        const clientLocationOrigin = getConfigValue(
+          this.configService,
+          'clientLocationOrigin',
+        ) as string
 
-      const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
+        const link = `${clientLocationOrigin}/${ApplicationConfigurations.ParentalLeave.slug}/${application.id}`
 
-      await this.sharedTemplateAPIService.sendSms(
-        () => generateEmployerRejectedApplicationSms(application, link),
-        application,
+        await this.sharedTemplateAPIService.sendSms(
+          () => generateEmployerRejectedApplicationSms(application, link),
+          application,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send SMS notification about Employer rejection in parental leave application',
+        e,
       )
     }
   }
 
   async assignEmployer({ application }: TemplateApiModuleActionProps) {
-    const { employerPhoneNumber } = getApplicationAnswers(application.answers)
+    const employers = getUnApprovedEmployers(application.answers)
 
     const token = await this.sharedTemplateAPIService.createAssignToken(
       application,
@@ -207,11 +387,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     )
 
     // send confirmation sms to employer
-    if (employerPhoneNumber) {
-      await this.sharedTemplateAPIService.assignApplicationThroughSms(
-        generateAssignEmployerApplicationSms,
-        application,
-        token,
+    try {
+      const phoneNumber = employers.length > 0 ? employers[0].phoneNumber : ''
+      if (phoneNumber && checkIfPhoneNumberIsGSM(phoneNumber)) {
+        await this.sharedTemplateAPIService.assignApplicationThroughSms(
+          generateAssignEmployerApplicationSms,
+          application,
+          token,
+        )
+      }
+    } catch (e) {
+      this.logger.error(
+        'Failed to send assign SMS notification to Employer in parental leave application',
+        e,
       )
     }
   }
@@ -246,14 +434,61 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       isSelfEmployed,
       applicationType,
       otherParent,
+      selfEmployedFiles: selfEmployedPdfs,
+      studentFiles: studentPdfs,
+      singleParentFiles: singleParentPdfs,
+      employmentTerminationCertificateFiles: employmentTerminationCertificatePdfs,
+      additionalDocuments,
+      noChildrenFoundTypeOfApplication,
+      employerLastSixMonths,
+      employers,
     } = getApplicationAnswers(application.answers)
+    const { applicationFundId } = getApplicationExternalData(
+      application.externalData,
+    )
+    const { residenceGrantFiles } = getApplicationAnswers(application.answers)
+    const { state } = application
+    const isNotStillEmployed = employers?.some(
+      (employer) => employer.stillEmployed === NO,
+    )
+
+    if (
+      state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      state === States.RESIDENCE_GRAND_APPLICATION
+    ) {
+      if (residenceGrantFiles) {
+        residenceGrantFiles.forEach(async (item, index) => {
+          const pdf = await this.getPdf(
+            application,
+            index,
+            'fileUpload.residenceGrant',
+          )
+          attachments.push({
+            attachmentType: apiConstants.attachments.residenceGrant,
+            attachmentBytes: pdf,
+          })
+        })
+      }
+    }
+    // We don't want to send old files to VMST again
+    if (applicationFundId && applicationFundId !== '') {
+      if (additionalDocuments) {
+        additionalDocuments.forEach(async (val, i) => {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.additionalDocuments',
+          )
+          attachments.push({
+            attachmentType: apiConstants.attachments.other,
+            attachmentBytes: pdf,
+          })
+        })
+      }
+      return attachments
+    }
 
     if (isSelfEmployed === YES && applicationType === PARENTAL_LEAVE) {
-      const selfEmployedPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.selfEmployedFile',
-      )) as unknown[]
-
       if (selfEmployedPdfs?.length) {
         for (let i = 0; i <= selfEmployedPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
@@ -289,13 +524,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       }
     } else if (applicationType === PARENTAL_GRANT_STUDENTS) {
-      const stuydentPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.studentFile',
-      )) as unknown[]
-
-      if (stuydentPdfs?.length) {
-        for (let i = 0; i <= stuydentPdfs.length - 1; i++) {
+      if (studentPdfs?.length) {
+        for (let i = 0; i <= studentPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
             application,
             i,
@@ -309,13 +539,34 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       }
     }
+    if (
+      (applicationType === PARENTAL_GRANT ||
+        applicationType === PARENTAL_GRANT_STUDENTS) &&
+      employerLastSixMonths === YES &&
+      isNotStillEmployed
+    ) {
+      if (employmentTerminationCertificatePdfs?.length) {
+        for (
+          let i = 0;
+          i <= employmentTerminationCertificatePdfs.length - 1;
+          i++
+        ) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.employmentTerminationCertificateFile',
+          )
+
+          attachments.push({
+            attachmentType:
+              apiConstants.attachments.employmentTerminationCertificate,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
 
     if (otherParent === SINGLE) {
-      const singleParentPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.singleParent',
-      )) as unknown[]
-
       if (singleParentPdfs?.length) {
         for (let i = 0; i <= singleParentPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
@@ -333,19 +584,16 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     const {
-      isRecivingUnemploymentBenefits,
+      isReceivingUnemploymentBenefits,
       unemploymentBenefits,
+      benefitsFiles: benefitsPdfs,
+      commonFiles: genericPdfs,
     } = getApplicationAnswers(application.answers)
     if (
-      isRecivingUnemploymentBenefits === YES &&
+      isReceivingUnemploymentBenefits === YES &&
       (unemploymentBenefits === UnEmployedBenefitTypes.union ||
         unemploymentBenefits == UnEmployedBenefitTypes.healthInsurance)
     ) {
-      const benefitsPdfs = (await getValueViaPath(
-        application.answers,
-        'fileUpload.benefitsFile',
-      )) as unknown[]
-
       if (benefitsPdfs?.length) {
         for (let i = 0; i <= benefitsPdfs.length - 1; i++) {
           const pdf = await this.getPdf(
@@ -362,10 +610,67 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
     }
 
-    const genericPdfs = (await getValueViaPath(
-      application.answers,
-      'fileUpload.file',
-    )) as unknown[]
+    if (isParentWithoutBirthParent(application.answers)) {
+      const parentWithoutBirthParentPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.parentWithoutBirthParent',
+      )) as unknown[]
+
+      if (parentWithoutBirthParentPdfs?.length) {
+        for (let i = 0; i <= parentWithoutBirthParentPdfs.length - 1; i++) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.parentWithoutBirthParent',
+          )
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.parentWithoutBirthParent,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (noChildrenFoundTypeOfApplication === PERMANENT_FOSTER_CARE) {
+      const permanentFosterCarePdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.permanentFosterCare',
+      )) as unknown[]
+
+      if (permanentFosterCarePdfs?.length) {
+        for (let i = 0; i <= permanentFosterCarePdfs.length - 1; i++) {
+          const pdf = await this.getPdf(
+            application,
+            i,
+            'fileUpload.permanentFosterCare',
+          )
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.permanentFosterCare,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
+
+    if (noChildrenFoundTypeOfApplication === ADOPTION) {
+      const adoptionPdfs = (await getValueViaPath(
+        application.answers,
+        'fileUpload.adoption',
+      )) as unknown[]
+
+      if (adoptionPdfs?.length) {
+        for (let i = 0; i <= adoptionPdfs.length - 1; i++) {
+          const pdf = await this.getPdf(application, i, 'fileUpload.adoption')
+
+          attachments.push({
+            attachmentType: apiConstants.attachments.adoption,
+            attachmentBytes: pdf,
+          })
+        }
+      }
+    }
 
     if (genericPdfs?.length) {
       for (let i = 0; i <= genericPdfs.length - 1; i++) {
@@ -389,34 +694,62 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     period: AnswerPeriod,
     rightsCodePeriod: string,
   ): Promise<Period> {
-    const isUsingNumberOfDays = period.daysToUse !== undefined
-    const getPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
-      {
-        nationalRegistryId,
-        startDate: startDate,
-        length: String(periodLength),
-        percentage: period.ratio,
-      },
-    )
-
-    if (getPeriodEndDate.periodEndDate === undefined) {
-      throw new Error(
-        `Could not calculate end date of period starting ${period.startDate} and using ${periodLength} days of rights`,
-      )
-    }
-
-    // Add the period rights
-    return {
+    const periodObj = {
       from: startDateString ?? format(startDate, df),
-      to: format(getPeriodEndDate.periodEndDate, df),
-      ratio: getRatio(
-        period.ratio,
-        periodLength.toString(),
-        isUsingNumberOfDays,
-      ),
       approved: false,
       paid: false,
       rightsCodePeriod: rightsCodePeriod,
+    }
+    if (period.ratio === '100') {
+      const isUsingNumberOfDays = period.daysToUse !== undefined
+      const getPeriodEndDate = await this.parentalLeaveApi.parentalLeaveGetPeriodEndDate(
+        {
+          nationalRegistryId,
+          startDate: startDate,
+          length: String(periodLength),
+          percentage: period.ratio,
+        },
+      )
+
+      if (getPeriodEndDate.periodEndDate === undefined) {
+        throw new Error(
+          `Could not calculate end date of period starting ${period.startDate} and using ${periodLength} days of rights`,
+        )
+      }
+
+      return {
+        ...periodObj,
+        to: format(getPeriodEndDate.periodEndDate, df),
+        ratio: getRatio(
+          period.ratio,
+          periodLength.toString(),
+          isUsingNumberOfDays,
+        ),
+      }
+    } else {
+      const isUsingNumberOfDays = true
+
+      // Calculate endDate from periodLength, startDate and percentage ( period.ratio )
+      const actualDaysFromPercentage = Math.floor(
+        periodLength / (Number(period.ratio) / 100),
+      )
+      const additionalMonths = Math.floor(
+        actualDaysFromPercentage / DAYS_IN_MONTH,
+      )
+      const additionalDays = actualDaysFromPercentage % DAYS_IN_MONTH
+
+      const startDateAddMonths = addMonths(startDate, additionalMonths)
+      const endDate = addDays(startDateAddMonths, additionalDays)
+
+      return {
+        ...periodObj,
+        to: format(endDate, df),
+        ratio: getRatio(
+          period.ratio,
+          periodLength.toString(),
+          isUsingNumberOfDays,
+        ),
+      }
     }
   }
 
@@ -452,7 +785,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
 
         if (VMSTperiods?.periods) {
-          vmstRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod
+          /*
+           * Sometime applicant uses other right than basic right ( grunnréttindi)
+           * Here we make sure we only use/sync amd use basic right ( grunnréttindi ) from VMST
+           */
+          const getVMSTRightCodePeriod = VMSTperiods.periods[0].rightsCodePeriod.split(
+            ',',
+          )[0]
+          const periodCodeStartCharacters = ['M', 'F']
+          if (
+            periodCodeStartCharacters.some((c) =>
+              getVMSTRightCodePeriod.startsWith(c),
+            )
+          ) {
+            vmstRightCodePeriod = getVMSTRightCodePeriod
+          }
         }
       } catch (e) {
         this.logger.warn(
@@ -490,7 +837,8 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     for (const [index, period] of answers.entries()) {
       const isFirstPeriod = index === 0
-      const isUsingNumberOfDays = period.daysToUse !== undefined
+      const isUsingNumberOfDays =
+        period.daysToUse !== undefined && period.daysToUse !== ''
 
       // If a period doesn't have both startDate or endDate we skip it
       if (!isFirstPeriod && (!period.startDate || !period.endDate)) {
@@ -499,12 +847,23 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       const startDate = new Date(period.startDate)
       const endDate = new Date(period.endDate)
-      const useLength = period.useLength
+      const useLength = period.useLength || ''
 
       let periodLength = 0
 
       if (isUsingNumberOfDays) {
         periodLength = Number(period.daysToUse)
+      } else if (Number(period.ratio) < 100) {
+        /*
+         * We need to calculate periodLength when ratio is not 100%
+         * because there could be mis-calculate betweeen island.is and VMST
+         * for example:
+         * 8 months period with 75%
+         * island.is calculator returns: 180 days
+         * VMST returns: 184 days
+         */
+        const fullLength = calculatePeriodLength(startDate, endDate)
+        periodLength = Math.round(fullLength * (Number(period.ratio) / 100))
       } else {
         const getPeriodLength = await this.parentalLeaveApi.parentalLeaveGetPeriodLength(
           { nationalRegistryId, startDate, endDate, percentage: period.ratio },
@@ -558,7 +917,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         ** 2. single parent rights
         ** 3. common rights ( from multiple births)
         ** 4. transfer rights ( from other parent)
-        We have to finished first one before go to next and so on
+        We have to finish first one before go to next and so on
         */
       if (
         !isUsingTransferredRights &&
@@ -570,17 +929,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       ) {
         // We know its a normal period and it will not exceed personal rights
         periods.push({
-          from:
-            isFirstPeriod && isActualDateOfBirth && useLength === YES
-              ? apiConstants.actualDateOfBirthMonths
-              : isFirstPeriod && isActualDateOfBirth
-              ? apiConstants.actualDateOfBirth
-              : period.startDate,
+          from: this.getFromDate(
+            isFirstPeriod,
+            isActualDateOfBirth,
+            useLength,
+            period,
+          ),
           to: period.endDate,
           ratio: getRatio(
             period.ratio,
             periodLength.toString(),
-            isUsingNumberOfDays,
+            period.ratio === '100' ? isUsingNumberOfDays : true,
           ),
           approved: false,
           paid: false,
@@ -596,7 +955,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
@@ -616,12 +975,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               // Personal rights
               const daysLeftOfPersonalRights =
                 maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-              const fromDate =
-                isFirstPeriod && isActualDateOfBirth && useLength === YES
-                  ? apiConstants.actualDateOfBirthMonths
-                  : isFirstPeriod && isActualDateOfBirth
-                  ? apiConstants.actualDateOfBirth
-                  : period.startDate
+              const fromDate = this.getFromDate(
+                isFirstPeriod,
+                isActualDateOfBirth,
+                useLength,
+                period,
+              )
 
               const personalPeriod = await this.getCalculatedPeriod(
                 nationalRegistryId,
@@ -642,16 +1001,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               const lengthOfPeriodUsingAdditionalSingleParentDays =
                 periodLength - daysLeftOfPersonalRights
 
-              const additionalPeriod = await this.getCalculatedPeriod(
-                nationalRegistryId,
-                additionalSingleParentPeriodStartDate,
-                undefined,
-                lengthOfPeriodUsingAdditionalSingleParentDays,
-                period,
-                apiConstants.rights.artificialInseminationRightsId,
-              )
-
-              periods.push(additionalPeriod)
+              periods.push({
+                from: format(additionalSingleParentPeriodStartDate, df),
+                to: period.endDate,
+                ratio: getRatio(
+                  period.ratio,
+                  lengthOfPeriodUsingAdditionalSingleParentDays.toString(),
+                  true,
+                ),
+                approved: false,
+                paid: false,
+                rightsCodePeriod:
+                  apiConstants.rights.artificialInseminationRightsId,
+              })
             } else {
               // 4. Additional rights
               periods.push({
@@ -660,7 +1022,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                 ratio: getRatio(
                   period.ratio,
                   periodLength.toString(),
-                  isUsingNumberOfDays,
+                  period.ratio === '100' ? isUsingNumberOfDays : true,
                 ),
                 approved: false,
                 paid: false,
@@ -674,12 +1036,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               // Personal rights
               const daysLeftOfPersonalRights =
                 maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-              const fromDate =
-                isFirstPeriod && isActualDateOfBirth && useLength === YES
-                  ? apiConstants.actualDateOfBirthMonths
-                  : isFirstPeriod && isActualDateOfBirth
-                  ? apiConstants.actualDateOfBirth
-                  : period.startDate
+              const fromDate = this.getFromDate(
+                isFirstPeriod,
+                isActualDateOfBirth,
+                useLength,
+                period,
+              )
 
               const personalPeriod = await this.getCalculatedPeriod(
                 nationalRegistryId,
@@ -719,29 +1081,37 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                   periodLength -
                   daysLeftOfPersonalRights -
                   maximumAdditionalSingleParentDaysToSpend
-                const commonPeriod = await this.getCalculatedPeriod(
-                  nationalRegistryId,
-                  commonPeriodStartDate,
-                  undefined,
-                  lengthOfPeriodUsingCommonDays,
-                  period,
-                  mulitpleBirthsRights,
-                )
 
-                periods.push(commonPeriod)
+                periods.push({
+                  from: format(commonPeriodStartDate, df),
+                  to: period.endDate,
+                  ratio: getRatio(
+                    period.ratio,
+                    lengthOfPeriodUsingCommonDays.toString(),
+                    true,
+                  ),
+                  approved: false,
+                  paid: false,
+                  rightsCodePeriod: mulitpleBirthsRights,
+                })
               } else {
                 // Additional rights
                 const lengthOfPeriodUsingAdditionalDays =
                   periodLength - daysLeftOfPersonalRights
-                const additionalPeriod = await this.getCalculatedPeriod(
-                  nationalRegistryId,
-                  additionalSingleParentPeriodStartDate,
-                  undefined,
-                  lengthOfPeriodUsingAdditionalDays,
-                  period,
-                  apiConstants.rights.artificialInseminationRightsId,
-                )
-                periods.push(additionalPeriod)
+
+                periods.push({
+                  from: format(additionalSingleParentPeriodStartDate, df),
+                  to: period.endDate,
+                  ratio: getRatio(
+                    period.ratio,
+                    lengthOfPeriodUsingAdditionalDays.toString(),
+                    true,
+                  ),
+                  approved: false,
+                  paid: false,
+                  rightsCodePeriod:
+                    apiConstants.rights.artificialInseminationRightsId,
+                })
               }
             } else {
               // 3. Additional rights and multipleBirths rights
@@ -770,16 +1140,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                 )
                 const lengthOfPeriodUsingCommonDays =
                   periodLength - lengthOfPeriodUsingAdditionalSingleParentDays
-                const commonPeriod = await this.getCalculatedPeriod(
-                  nationalRegistryId,
-                  commonPeriodStartDate,
-                  undefined,
-                  lengthOfPeriodUsingCommonDays,
-                  period,
-                  mulitpleBirthsRights,
-                )
 
-                periods.push(commonPeriod)
+                periods.push({
+                  from: format(commonPeriodStartDate, df),
+                  to: period.endDate,
+                  ratio: getRatio(
+                    period.ratio,
+                    lengthOfPeriodUsingCommonDays.toString(),
+                    true,
+                  ),
+                  approved: false,
+                  paid: false,
+                  rightsCodePeriod: mulitpleBirthsRights,
+                })
               } else {
                 // Only additional rights
                 periods.push({
@@ -788,7 +1161,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
                   ratio: getRatio(
                     period.ratio,
                     periodLength.toString(),
-                    isUsingNumberOfDays,
+                    period.ratio === '100' ? isUsingNumberOfDays : true,
                   ),
                   approved: false,
                   paid: false,
@@ -809,7 +1182,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
@@ -828,13 +1201,20 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
           // 1. Period includes personal and transfer rights
           if (maximumMultipleBirthsDaysToSpend === 0) {
+            const fromDate = this.getFromDate(
+              isFirstPeriod,
+              isActualDateOfBirth,
+              useLength,
+              period,
+            )
+
             // Personal
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
             const personalPeriod = await this.getCalculatedPeriod(
               nationalRegistryId,
               startDate,
-              undefined,
+              fromDate,
               daysLeftOfPersonalRights,
               period,
               basicRightCodePeriod,
@@ -849,16 +1229,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             )
             const lengthOfPeriodUsingTransferredDays =
               periodLength - daysLeftOfPersonalRights
-            const transferredPeriod = await this.getCalculatedPeriod(
-              nationalRegistryId,
-              transferredPeriodStartDate,
-              undefined,
-              lengthOfPeriodUsingTransferredDays,
-              period,
-              apiConstants.rights.receivingRightsId,
-            )
 
-            periods.push(transferredPeriod)
+            periods.push({
+              from: format(transferredPeriodStartDate, df),
+              to: period.endDate,
+              ratio: getRatio(
+                period.ratio,
+                lengthOfPeriodUsingTransferredDays.toString(),
+                true,
+              ),
+              approved: false,
+              paid: false,
+              rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            })
           }
           // 2. Period includes common and transfer rights
           else if (maximumPersonalDaysToSpend < numberOfDaysAlreadySpent) {
@@ -883,28 +1266,31 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             )
             const lengthOfPeriodUsingTransferredDays =
               periodLength - daysLeftOfCommonRights
-            const transferredPeriod = await this.getCalculatedPeriod(
-              nationalRegistryId,
-              transferredPeriodStartDate,
-              undefined,
-              lengthOfPeriodUsingTransferredDays,
-              period,
-              apiConstants.rights.receivingRightsId,
-            )
 
-            periods.push(transferredPeriod)
+            periods.push({
+              from: format(transferredPeriodStartDate, df),
+              to: period.endDate,
+              ratio: getRatio(
+                period.ratio,
+                lengthOfPeriodUsingTransferredDays.toString(),
+                true,
+              ),
+              approved: false,
+              paid: false,
+              rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            })
           }
           // 3. Period includes personal, common and transfer rights
           else {
             // Personal
             const daysLeftOfPersonalRights =
               maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-            const fromDate =
-              isFirstPeriod && isActualDateOfBirth && useLength === YES
-                ? apiConstants.actualDateOfBirthMonths
-                : isFirstPeriod && isActualDateOfBirth
-                ? apiConstants.actualDateOfBirth
-                : period.startDate
+            const fromDate = this.getFromDate(
+              isFirstPeriod,
+              isActualDateOfBirth,
+              useLength,
+              period,
+            )
             const personalPeriod = await this.getCalculatedPeriod(
               nationalRegistryId,
               startDate,
@@ -941,16 +1327,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
               periodLength -
               daysLeftOfPersonalRights -
               maximumMultipleBirthsDaysToSpend
-            const transferredPeriod = await this.getCalculatedPeriod(
-              nationalRegistryId,
-              transferredPeriodStartDate,
-              undefined,
-              lengthOfPeriodUsingTransferredDays,
-              period,
-              apiConstants.rights.receivingRightsId,
-            )
 
-            periods.push(transferredPeriod)
+            periods.push({
+              from: format(transferredPeriodStartDate, df),
+              to: period.endDate,
+              ratio: getRatio(
+                period.ratio,
+                lengthOfPeriodUsingTransferredDays.toString(),
+                true,
+              ),
+              approved: false,
+              paid: false,
+              rightsCodePeriod: apiConstants.rights.receivingRightsId,
+            })
           }
         } else if (isUsingMultipleBirthsRights) {
           // Applicant used upp his/her basic rights and started to use 'common' rights
@@ -961,7 +1350,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
             ratio: getRatio(
               period.ratio,
               periodLength.toString(),
-              isUsingNumberOfDays,
+              period.ratio === '100' ? isUsingNumberOfDays : true,
             ),
             approved: false,
             paid: false,
@@ -972,12 +1361,12 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           // Personal
           const daysLeftOfPersonalRights =
             maximumPersonalDaysToSpend - numberOfDaysAlreadySpent
-          const fromDate =
-            isFirstPeriod && isActualDateOfBirth && useLength === YES
-              ? apiConstants.actualDateOfBirthMonths
-              : isFirstPeriod && isActualDateOfBirth
-              ? apiConstants.actualDateOfBirth
-              : period.startDate
+          const fromDate = this.getFromDate(
+            isFirstPeriod,
+            isActualDateOfBirth,
+            useLength,
+            period,
+          )
           const personalPeriod = await this.getCalculatedPeriod(
             nationalRegistryId,
             startDate,
@@ -993,16 +1382,19 @@ export class ParentalLeaveService extends BaseTemplateApiService {
           const commonPeriodStartDate = addDays(new Date(personalPeriod.to), 1)
           const lengthOfPeriodUsingCommonDays =
             periodLength - daysLeftOfPersonalRights
-          const commonPeriod = await this.getCalculatedPeriod(
-            nationalRegistryId,
-            commonPeriodStartDate,
-            undefined,
-            lengthOfPeriodUsingCommonDays,
-            period,
-            mulitpleBirthsRights,
-          )
 
-          periods.push(commonPeriod)
+          periods.push({
+            from: format(commonPeriodStartDate, df),
+            to: period.endDate,
+            ratio: getRatio(
+              period.ratio,
+              lengthOfPeriodUsingCommonDays.toString(),
+              true,
+            ),
+            approved: false,
+            paid: false,
+            rightsCodePeriod: mulitpleBirthsRights,
+          })
         }
       }
 
@@ -1013,16 +1405,65 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
-  async sendApplication({ application }: TemplateApiModuleActionProps) {
+  checkActionName = (
+    application: ApplicationWithAttachments,
+    params: FileType | undefined = undefined,
+  ) => {
+    const { actionName } = getApplicationAnswers(application.answers)
+    if (params) {
+      params === 'document' ||
+        params === 'documentPeriod' ||
+        params === 'period'
+      return params
+    }
+    if (
+      actionName === 'document' ||
+      actionName === 'documentPeriod' ||
+      actionName === 'period'
+    ) {
+      return actionName
+    }
+    return undefined
+  }
+
+  isParamsActionName = (params: any) => {
+    typeof params === 'string' &&
+    (params === 'period' ||
+      params === 'document' ||
+      params === 'documentPeriod')
+      ? (params as FileType)
+      : undefined
+    return params
+  }
+
+  async sendApplication({
+    application,
+    params = undefined,
+  }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
-      isRecivingUnemploymentBenefits,
+      isReceivingUnemploymentBenefits,
       applicationType,
+      previousState,
+      employerLastSixMonths,
+      employers,
     } = getApplicationAnswers(application.answers)
+    // if (
+    //   previousState === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+    //   previousState === States.VINNUMALASTOFNUN_APPROVAL ||
+    //   previousState === States.APPROVED
+    // ) {
+    //   return
+    // }
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
 
     try {
+      const actionNameFromParams =
+        previousState === States.RESIDENCE_GRAND_APPLICATION
+          ? this.isParamsActionName(params)
+          : undefined
+
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1033,6 +1474,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
+        this.checkActionName(application, actionNameFromParams),
       )
 
       const response = await this.parentalLeaveApi.parentalLeaveSetParentalLeave(
@@ -1048,15 +1490,37 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         )
       }
 
+      // If applicant is sending additional documents then don't need to send email
+      const { actionName } = getApplicationAnswers(application.answers)
+      if (actionName === 'document') {
+        return
+      }
+
       // There has been case when island.is got Access Denied from AWS when sending out emails
       // This try/catch keeps application in correct state
       try {
+        //if (
+        //  application.state === States.RESIDENCE_GRAND_APPLICATION ||
+        //  application.state ===
+        //    States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE ||
+        //  previousState === States.RESIDENCE_GRAND_APPLICATION
+        //)
+        //  return
         const selfEmployed =
           applicationType === PARENTAL_LEAVE ? isSelfEmployed === YES : true
         const recivingUnemploymentBenefits =
-          isRecivingUnemploymentBenefits === YES
+          isReceivingUnemploymentBenefits === YES
+        const isStillEmployed = employers?.some(
+          (employer) => employer.stillEmployed === YES,
+        )
 
-        if (!selfEmployed && !recivingUnemploymentBenefits) {
+        if (
+          (!selfEmployed && !recivingUnemploymentBenefits) ||
+          ((applicationType === PARENTAL_GRANT ||
+            applicationType === PARENTAL_GRANT_STUDENTS) &&
+            employerLastSixMonths === YES &&
+            isStillEmployed)
+        ) {
           // Only needs to send an email if being approved by employer
           // Self employed applicant was aware of the approval
           await this.sharedTemplateAPIService.sendEmail(
@@ -1084,10 +1548,21 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async validateApplication({ application }: TemplateApiModuleActionProps) {
+  async validateApplication({
+    application,
+    params = undefined,
+  }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
+    const { previousState } = getApplicationAnswers(application.answers)
+    /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
+    // Reject from
+    if (previousState === States.RESIDENCE_GRAND_APPLICATION_NO_BIRTH_DATE) {
+      return
+    }
     const attachments = await this.getAttachments(application)
     try {
+      const actionNameFromParams = this.isParamsActionName(params)
+
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1098,6 +1573,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
+        this.checkActionName(application, actionNameFromParams),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request

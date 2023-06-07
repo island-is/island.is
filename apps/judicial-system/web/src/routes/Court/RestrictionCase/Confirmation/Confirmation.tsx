@@ -3,6 +3,14 @@ import { useIntl } from 'react-intl'
 
 import { Accordion, Box, Text } from '@island.is/island-ui/core'
 import {
+  CaseDecision,
+  CaseTransition,
+  completedCaseStates,
+  isAcceptingCaseDecision,
+  NotificationType,
+} from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
+import {
   FormFooter,
   PoliceRequestAccordionItem,
   CourtRecordAccordionItem,
@@ -16,23 +24,15 @@ import {
   useRequestRulingSignature,
   SigningModal,
   UserContext,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseCourtSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
-import {
-  CaseDecision,
-  CaseTransition,
-  completedCaseStates,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import * as constants from '@island.is/judicial-system/consts'
 
+import { RulingModifiedModal } from '../../components'
 import { confirmation as strings } from './Confirmation.strings'
+
+type VisibleModal = 'none' | 'rulingModifiedModal' | 'signingModal'
 
 export const Confirmation: React.FC = () => {
   const {
@@ -41,7 +41,7 @@ export const Confirmation: React.FC = () => {
     isLoadingWorkingCase,
     caseNotFound,
   } = useContext(FormContext)
-  const [modalVisible, setModalVisible] = useState<boolean>(false)
+  const [modalVisible, setModalVisible] = useState<VisibleModal>('none')
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -51,17 +51,15 @@ export const Confirmation: React.FC = () => {
     requestRulingSignature,
     requestRulingSignatureResponse,
     isRequestingRulingSignature,
-  } = useRequestRulingSignature(workingCase.id, () => setModalVisible(true))
+  } = useRequestRulingSignature(workingCase.id, () =>
+    setModalVisible('signingModal'),
+  )
 
-  const handleNextButtonClick = async () => {
-    if (!workingCase) {
-      return
-    }
-
+  async function signRuling() {
     const shouldSign =
       completedCaseStates.includes(workingCase.state) ||
       (await transitionCase(
-        workingCase,
+        workingCase.id,
         workingCase.decision === CaseDecision.REJECTING
           ? CaseTransition.REJECT
           : workingCase.decision === CaseDecision.DISMISSING
@@ -75,13 +73,22 @@ export const Confirmation: React.FC = () => {
     }
   }
 
+  const handleNextButtonClick = async () => {
+    const isCorrectingRuling = workingCase.notifications?.some(
+      (notification) => notification.type === NotificationType.RULING,
+    )
+
+    if (isCorrectingRuling) {
+      setModalVisible('rulingModifiedModal')
+      return
+    }
+
+    await signRuling()
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.JUDGE_EXTENSION : Sections.JUDGE
-      }
-      activeSubSection={RestrictionCaseCourtSubsections.CONFIRMATION}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -115,7 +122,7 @@ export const Confirmation: React.FC = () => {
               </Box>
             </Box>
             <Box marginBottom={1} textAlign="center">
-              <Text variant="h4">{workingCase?.judge?.name}</Text>
+              <Text variant="h4">{workingCase.judge?.name}</Text>
             </Box>
           </BlueBox>
         </Box>
@@ -173,12 +180,18 @@ export const Confirmation: React.FC = () => {
           }
         />
       </FormContentContainer>
-      {modalVisible && (
+      {modalVisible === 'rulingModifiedModal' && (
+        <RulingModifiedModal
+          onCancel={() => setModalVisible('none')}
+          onContinue={signRuling}
+        />
+      )}
+      {modalVisible === 'signingModal' && (
         <SigningModal
           workingCase={workingCase}
           requestRulingSignature={requestRulingSignature}
           requestRulingSignatureResponse={requestRulingSignatureResponse}
-          onClose={() => setModalVisible(false)}
+          onClose={() => setModalVisible('none')}
         />
       )}
     </PageLayout>

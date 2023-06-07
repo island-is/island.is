@@ -16,7 +16,6 @@ export type ValueSource = string | ((e: Context) => string)
 export type ValueType = MissingSettingType | ValueSource
 // See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes for more info
 export type AccessModes = 'ReadWrite' | 'ReadOnly'
-
 export type PostgresInfo = {
   host?: {
     [idx in OpsEnv]: string
@@ -24,12 +23,22 @@ export type PostgresInfo = {
   name?: string
   username?: string
   passwordSecret?: string
+  extensions?: string[]
 }
 export type PostgresInfoForEnv = {
   host?: string
   name?: string
   username?: string
   passwordSecret?: string
+  extensions?: string[]
+}
+
+export type RedisInfo = {
+  host?: { [idx in OpsEnv]: string }
+}
+
+export type RedisInfoForEnv = {
+  host?: string
 }
 
 export type HealthProbe = {
@@ -103,6 +112,7 @@ export type ServiceDefinition = ServiceDefinitionCore & {
   env: EnvironmentVariables
   ingress: { [name: string]: Ingress }
   postgres?: PostgresInfo
+  redis?: RedisInfo
   extraAttributes?: ExtraValues
   xroadConfig: XroadConfig[]
 }
@@ -115,6 +125,7 @@ export type ServiceDefinitionForEnv = ServiceDefinitionCore & {
   env: EnvironmentVariablesForEnv
   ingress: { [name: string]: IngressForEnv }
   postgres?: PostgresInfoForEnv
+  redis?: RedisInfoForEnv
   extraAttributes?: ExtraValuesForEnv
 }
 

@@ -13,7 +13,10 @@ import {
   IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -263,19 +266,21 @@ export function formatAppeal(
   }
 }
 
-export function formatRequestCaseType(type: CaseType): string {
-  return isRestrictionCase(type) ||
-    type === CaseType.RESTRAINING_ORDER ||
-    type === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
-    type === CaseType.EXPULSION_FROM_HOME ||
-    type === CaseType.PSYCHIATRIC_EXAMINATION
-    ? caseTypes[type]
+export function formatRequestCaseType(type: string): string {
+  const caseType = type as CaseType
+
+  return isRestrictionCase(caseType) ||
+    caseType === CaseType.RESTRAINING_ORDER ||
+    caseType === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
+    caseType === CaseType.EXPULSION_FROM_HOME ||
+    caseType === CaseType.PSYCHIATRIC_EXAMINATION
+    ? caseTypes[caseType]
     : 'rannsóknarheimild'
 }
 
 export const formatDOB = (
-  nationalId?: string,
-  noNationalId?: boolean,
+  nationalId?: string | null,
+  noNationalId?: boolean | null,
   fallback = '-',
 ) => {
   if (!nationalId) {
@@ -307,11 +312,12 @@ export const displayFirstPlusRemaining = (
 
 export const formatDefenderRoute = (
   baseUrl: string,
-  caseType: CaseType,
+  type: string,
   id: string,
 ) => {
-  return `${baseUrl}${DEFENDER_ROUTE}${
-    isIndictmentCase(caseType) ? '/akaera' : ''
+  const caseType = type as CaseType
+  return `${baseUrl}${
+    isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
   }/${id}`
 }
 

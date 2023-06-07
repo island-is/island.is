@@ -45,7 +45,7 @@ export class TemplateApi<TParams = unknown> {
     return this._externalDataId ? this._externalDataId : this.action
   }
 
-  configure(config: ConfigureTemplateApi<TParams>) {
+  configure(config: ConfigureTemplateApi<TParams>): TemplateApi<TParams> {
     const {
       order,
       params,
@@ -53,20 +53,21 @@ export class TemplateApi<TParams = unknown> {
       throwOnError,
       externalDataId,
     } = config
+    const configuredApi = Object.create(this)
 
     if (params) {
-      this.params = {
-        ...this.params,
+      configuredApi.params = {
+        ...configuredApi.params,
         ...(params as TParams),
       }
     }
 
-    if (externalDataId) this._externalDataId = externalDataId
-    if (order) this.order = order
+    if (externalDataId) configuredApi._externalDataId = externalDataId
+    if (order) configuredApi.order = order
     if (shouldPersistToExternalData !== undefined)
-      this.shouldPersistToExternalData = shouldPersistToExternalData
-    if (throwOnError !== undefined) this.throwOnError = throwOnError
-    return this
+      configuredApi.shouldPersistToExternalData = shouldPersistToExternalData
+    if (throwOnError !== undefined) configuredApi.throwOnError = throwOnError
+    return configuredApi
   }
 }
 

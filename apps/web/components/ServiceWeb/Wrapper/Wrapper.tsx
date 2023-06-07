@@ -10,6 +10,7 @@ import {
   WatsonChatPanel,
 } from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
+import { usePlausiblePageview } from '@island.is/web/hooks'
 import { BackgroundVariations, Options, TextModes } from '../types'
 import config, { watsonConfig } from '../config'
 
@@ -64,6 +65,8 @@ export const Wrapper: FC<WrapperProps> = ({
   const [textMode, setTextMode] = useState<TextModes>('light')
   const showSearchSection = searchTitle && organizationTitle
 
+  usePlausiblePageview(organization?.trackingDomain)
+
   useEffect(() => {
     if (institutionSlug in config) {
       setOptions(config[institutionSlug ?? 'default'])
@@ -108,6 +111,7 @@ export const Wrapper: FC<WrapperProps> = ({
               ? DEFAULT_INSTITUTION_SLUG
               : institutionSlug
           }
+          namespace={namespace}
           small={smallBackground}
         />
         {!!showSearchSection && (

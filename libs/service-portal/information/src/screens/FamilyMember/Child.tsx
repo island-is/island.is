@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { useUserInfo } from '@island.is/auth/react'
 import ChildView from '../../components/ChildView/ChildView'
 
 const ChildGuardianshipQuery = gql`
@@ -21,6 +21,9 @@ const ChildrenQuery = gql`
     nationalRegistryChildren {
       nationalId
       fullName
+      firstName
+      middleName
+      lastName
       displayName
       genderDisplay
       birthplace
@@ -55,8 +58,13 @@ export const NATIONAL_REGISTRY_USER_NAME = gql`
   }
 `
 
-const Child: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { nationalId }: { nationalId: string | undefined } = useParams()
+type UseParams = {
+  nationalId: string
+}
+
+const Child = () => {
+  const userInfo = useUserInfo()
+  const { nationalId } = useParams() as UseParams
 
   const { data: userData } = useQuery<Query>(NATIONAL_REGISTRY_USER_NAME)
   const { data, loading, error } = useQuery<Query>(ChildrenQuery)

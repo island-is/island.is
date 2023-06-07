@@ -19,5 +19,5 @@
       "outputs": ["coverage/libs/cms-translations"]
     }
   },
-  "tags": []
+  "tags": ["lib:nest", "scope:nest"]
 }

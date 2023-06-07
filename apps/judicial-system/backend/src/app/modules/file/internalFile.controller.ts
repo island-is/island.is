@@ -1,4 +1,11 @@
-import { Controller, Inject, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Inject,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -18,6 +25,7 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { DeliverResponse } from './models/deliver.response'
 import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
+import { DeliverDto } from './dto/deliver.dto'
 
 @UseGuards(TokenGuard)
 @Controller('api/internal/case/:caseId/file/:fileId')
@@ -39,12 +47,14 @@ export class InternalFileController {
     @Param('fileId') fileId: string,
     @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering file ${fileId} of case ${caseId} to court`)
 
     const { success } = await this.fileService.uploadCaseFileToCourt(
       caseFile,
       theCase,
+      deliverDto.user,
     )
 
     return { delivered: success }

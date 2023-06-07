@@ -18,13 +18,14 @@ import {
   DelegationType,
   MergedDelegationDTO,
 } from '@island.is/auth-api-lib'
-import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+
+import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -50,8 +51,18 @@ export class DelegationsController {
   @Version('2')
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllToV2(@CurrentUser() user: User): Promise<MergedDelegationDTO[]> {
-    return this.delegationsIncomingService.findAllAvailable(user)
+  async findAllToV2(
+    @CurrentUser() user: User,
+    @Query(
+      'requestedScopes',
+      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
+    )
+    requestedScopes: Array<string>,
+  ): Promise<MergedDelegationDTO[]> {
+    return this.delegationsIncomingService.findAllAvailable({
+      user,
+      requestedScopes,
+    })
   }
 
   @Scopes('@identityserver.api/authentication')
@@ -97,7 +108,11 @@ export class DelegationsController {
 
     let scopes = ([] as string[]).concat(...scopeSets)
 
-    if (scopes.length > 0) {
+    if (
+      scopes.length > 0 ||
+      delegationType.includes(DelegationType.ProcurationHolder) ||
+      delegationType.includes(DelegationType.LegalGuardian)
+    ) {
       scopes = [
         ...scopes,
         ...(await this.delegationScopeService.findAllAutomaticScopes()),

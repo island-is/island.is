@@ -86,6 +86,7 @@ export interface DrivingLicenseBook {
   teachersAndLessons: DrivingBookLesson[]
   drivingSchoolExams: DrivingSchoolExam[]
   testResults: DrivingLicenceTestResult[]
+  practiceDriving?: boolean
 }
 
 export interface DrivingLicenseBookStudentOverview
@@ -157,4 +158,9 @@ export interface CreateDrivingSchoolTestResultInput {
   schoolEmployeeNationalId: string
   createdOn: string
   comments?: string
+}
+
+export interface AllowedPractieDrivingInput {
+  teacherNationalId: string
+  studentNationalId: string
 }

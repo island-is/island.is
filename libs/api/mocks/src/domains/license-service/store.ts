@@ -15,10 +15,13 @@ export const store = createStore(() => {
 
   const getLicenses = () => {
     if (!licenses.length) {
-      licenses = genericUserLicenses(
-        ['AdrLicense', 'FirearmLicense', 'DriversLicense', 'MachineLicense'] ??
-          [],
-      )
+      licenses = genericUserLicenses([
+        'DriversLicense',
+        'FirearmLicense',
+        'AdrLicense',
+        'MachineLicense',
+        'DisabilityLicense',
+      ])
     }
     return licenses
   }

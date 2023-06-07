@@ -31,10 +31,8 @@ describe(`${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
 
   it('should enable continue button when required fields are valid', () => {
     cy.intercept('POST', '**/api/graphql', (req) => {
-      console.log('intercepting')
       if (hasOperationName(req, Operation.UpdateCaseMutation)) {
         const { body } = req
-        console.log('intercepting updatecase', body)
         req.reply({
           data: {
             updateCase: {

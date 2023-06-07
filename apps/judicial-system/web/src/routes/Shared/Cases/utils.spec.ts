@@ -1,11 +1,8 @@
 import { createIntl } from 'react-intl'
 
-import {
-  CaseDecision,
-  CaseState,
-  CaseType,
-  indictmentCases,
-} from '@island.is/judicial-system/types'
+import { CaseDecision, CaseState } from '@island.is/judicial-system/types'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { tables } from '@island.is/judicial-system-web/messages'
 
 import { mapCaseStateToTagVariant, displayCaseType } from './utils'
 import { cases as m } from './Cases.strings'
@@ -23,9 +20,12 @@ describe('displayCaseType', () => {
     ).toBe('Farbann')
   })
 
-  it.each(indictmentCases)('should display indictment case: %s', (caseType) => {
-    expect(fn(caseType)).toEqual('Ákæra')
-  })
+  it.each([CaseType.INDICTMENT])(
+    'should display indictment case: %s',
+    (caseType) => {
+      expect(fn(caseType)).toEqual('Ákæra')
+    },
+  )
 })
 
 describe('mapCaseStateToTagVariant', () => {
@@ -59,7 +59,7 @@ describe('mapCaseStateToTagVariant', () => {
   test('should return new state', () => {
     expect(fn(CaseState.SUBMITTED, true, CaseType.CUSTODY)).toEqual({
       color: 'purple',
-      text: m.tags.new.defaultMessage,
+      text: tables.newTag.defaultMessage,
     })
   })
 
@@ -82,7 +82,7 @@ describe('mapCaseStateToTagVariant', () => {
   test('should return received state', () => {
     expect(fn(CaseState.RECEIVED, false, CaseType.CUSTODY)).toEqual({
       color: 'blueberry',
-      text: m.tags.received.defaultMessage,
+      text: tables.receivedTag.defaultMessage,
     })
   })
 

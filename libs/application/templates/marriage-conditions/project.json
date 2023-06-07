@@ -23,5 +23,6 @@
         "command": "graphql-codegen --config libs/application/templates/marriage-conditions/codegen.yml"
       }
     }
-  }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
 }

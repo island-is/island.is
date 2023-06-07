@@ -343,7 +343,10 @@ components:
         - applicationRights
         - employers
         - testData
+        - type
       properties:
+        adoptionDate:
+          type: string
         result:
           type: string
           minLength: 1
@@ -513,6 +516,8 @@ components:
         - status
         - rightsCode
       properties:
+        adoptionDate:
+          type: string
         applicationId:
           type: string
           minLength: 1
@@ -561,6 +566,9 @@ components:
         testData:
           type: string
         noOfChildren:
+          type: string
+          nullable: true
+        type:
           type: string
           nullable: true
     PaymentInfo:

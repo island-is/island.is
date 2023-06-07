@@ -15,6 +15,7 @@ let sqs: SQSClient
 jest.mock('@aws-sdk/client-sqs', () => ({
   SQSClient: jest.fn(() => sqs),
   GetQueueUrlCommand: jest.fn((c) => c),
+  CreateQueueCommand: jest.fn((c) => c),
   SendMessageCommand: jest.fn((c) => c),
   SendMessageBatchCommand: jest.fn((c) => c),
   ReceiveMessageCommand: jest.fn((c) => c),
@@ -52,6 +53,11 @@ export const createTestingMessageModule = async () => {
   }).compile()
 
   const messageService = messageModule.get<MessageService>(MessageService)
+
+  // Initiate queue connection
+  await messageService
+    .receiveMessagesFromQueue(async () => true)
+    .catch(() => true)
 
   return { setSendMocks, queueUrl, sqs, messageService }
 }

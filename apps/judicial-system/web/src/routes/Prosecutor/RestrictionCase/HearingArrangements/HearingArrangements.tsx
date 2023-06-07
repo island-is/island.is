@@ -5,13 +5,8 @@ import { useRouter } from 'next/router'
 import {
   CaseState,
   CaseTransition,
-  Institution,
   NotificationType,
 } from '@island.is/judicial-system/types'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import {
   ProsecutorCaseInfo,
   FormContentContainer,
@@ -37,6 +32,8 @@ import {
 } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
+import { Institution } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import ArrestDate from './ArrestDate'
@@ -45,7 +42,6 @@ import {
   SelectCourt,
   ProsecutorSectionHeightenedSecurity,
 } from '../../components'
-import { isHearingArrangementsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const HearingArrangements: React.FC = () => {
   const router = useRouter()
@@ -98,7 +94,7 @@ export const HearingArrangements: React.FC = () => {
       const caseOpened =
         workingCase.state === CaseState.NEW
           ? await transitionCase(
-              workingCase,
+              workingCase.id,
               CaseTransition.OPEN,
               setWorkingCase,
             )
@@ -130,10 +126,6 @@ export const HearingArrangements: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={RestrictionCaseProsecutorSubsections.STEP_TWO}
       isLoading={isLoadingWorkingCase || institutionLoading}
       notFound={caseNotFound}
       isValid={stepIsValid}
@@ -232,6 +224,7 @@ export const HearingArrangements: React.FC = () => {
           </FormContentContainer>
           <FormContentContainer isFooter>
             <FormFooter
+              nextButtonIcon="arrowForward"
               previousUrl={`${constants.RESTRICTION_CASE_DEFENDANT_ROUTE}/${workingCase.id}`}
               onNextButtonClick={async () =>
                 await handleNavigationTo(

@@ -17,11 +17,11 @@ export const DisabilityLicenseClientConfig = defineConfig<
   load(env) {
     return {
       xRoadServicePath: env.required(
-        'XROAD_DISABILTITY_LICENSE_PATH',
+        'XROAD_DISABILITY_LICENSE_PATH',
         'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
       ),
       fetch: {
-        timeout: 30000,
+        timeout: env.optionalJSON('DISABILITY_LICENSE_FETCH_TIMEOUT') ?? 10000,
         scope: ['@tr.is/oryrki:read'],
       },
     }

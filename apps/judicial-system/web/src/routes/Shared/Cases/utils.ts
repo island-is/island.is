@@ -6,12 +6,12 @@ import {
   CaseAppealDecision,
   CaseDecision,
   CaseState,
-  CaseType,
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { cases as m } from './Cases.strings'
 
@@ -46,12 +46,12 @@ export const mapCaseStateToTagVariant = (
     case CaseState.SUBMITTED:
       return {
         color: 'purple',
-        text: formatMessage(isCourtRole ? m.tags.new : m.tags.sent),
+        text: formatMessage(isCourtRole ? tables.newTag : m.tags.sent),
       }
     case CaseState.RECEIVED:
       return courtDate
         ? { color: 'mint', text: formatMessage(m.tags.scheduled) }
-        : { color: 'blueberry', text: formatMessage(m.tags.received) }
+        : { color: 'blueberry', text: formatMessage(tables.receivedTag) }
     case CaseState.ACCEPTED:
       return isIndictmentCase(caseType) || isValidToDateInThePast
         ? { color: 'darkerBlue', text: formatMessage(m.tags.inactive) }
@@ -76,13 +76,13 @@ export const getAppealDate = (
   accusedAppealDecision: CaseAppealDecision,
   prosecutorPostponedAppealDate: string,
   accusedPostponedAppealDate: string,
-  rulingDate: string,
+  courtEndTime: string,
 ) => {
   if (
     prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
     accusedAppealDecision === CaseAppealDecision.APPEAL
   ) {
-    return rulingDate
+    return courtEndTime
   } else if (accusedPostponedAppealDate && !prosecutorPostponedAppealDate) {
     return accusedPostponedAppealDate
   } else if (prosecutorPostponedAppealDate && !accusedPostponedAppealDate) {

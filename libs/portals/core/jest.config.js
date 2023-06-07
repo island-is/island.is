@@ -1,9 +1,16 @@
 module.exports = {
   displayName: 'portals-core',
-  preset: '../../../jest.preset.js',
+  testEnvironment: 'jsdom',
+  preset: './jest.preset.js',
+  rootDir: '../../..',
+  roots: [__dirname],
   transform: {
-    '^.+\\.[tj]sx?$': 'babel-jest',
+    '\\.[tj]sx?$': [
+      'babel-jest',
+      { cwd: __dirname, configFile: `${__dirname}/babel-jest.config.json` },
+    ],
   },
+  setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../coverage/libs/portals/core',
+  coverageDirectory: '<rootDir>/coverage/libs/portals/core',
 }

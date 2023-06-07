@@ -9,13 +9,13 @@ import {
   NationalRegistryUserApi,
   TeachersApi,
   UserProfileApi,
-  PaymentCatalogApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
   JuristictionApi,
   QualityPhotoApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
+import { SyslumadurPaymentCatalogApi } from '../../dataProviders'
 export const sectionExternalData = buildSubSection({
   id: 'externalData',
   title: m.externalDataSection,
@@ -55,7 +55,7 @@ export const sectionExternalData = buildSubSection({
           title: '',
         }),
         buildDataProviderItem({
-          provider: PaymentCatalogApi,
+          provider: SyslumadurPaymentCatalogApi,
           title: '',
         }),
         buildDataProviderItem({

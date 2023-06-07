@@ -5,8 +5,10 @@ import {
   buildCustomField,
   buildDescriptionField,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import type { User } from '@island.is/api/domains/national-registry'
+import {
+  Application,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { HasQualityPhotoData } from '../../fields/QualityPhoto/hooks/useQualityPhoto'
@@ -31,7 +33,7 @@ export const sectionInformation = buildSection({
           disabled: true,
           defaultValue: (application: Application) => {
             const nationalRegistry = application.externalData.nationalRegistry
-              .data as User
+              .data as NationalRegistryIndividual
             return nationalRegistry.fullName
           },
         }),

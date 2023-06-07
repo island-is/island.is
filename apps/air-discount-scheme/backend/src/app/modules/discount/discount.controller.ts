@@ -63,6 +63,11 @@ export class PublicDiscountController {
 
     // Constructor masks nationalId
     const airlineUser = new AirlineUser(discount.user, discount.user.fund)
+
+    // TODO: remove once addressed externally
+    if (airlineUser.gender === 'x') {
+      airlineUser.gender = 'hvk'
+    }
     return airlineUser
   }
 }

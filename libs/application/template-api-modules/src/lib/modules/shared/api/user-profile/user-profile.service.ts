@@ -5,6 +5,7 @@ import { UserProfileApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
+import { UserProfileParameters } from '@island.is/application/types'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -21,7 +22,10 @@ export class UserProfileService extends BaseTemplateApiService {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async userProfile({ auth }: TemplateApiModuleActionProps) {
+  async userProfile({
+    auth,
+    params,
+  }: TemplateApiModuleActionProps<UserProfileParameters>) {
     // Temporary solution while we still run the old user profile service.
     return this.islyklarApi
       .islyklarGet({ ssn: auth.nationalId })
@@ -30,6 +34,7 @@ export class UserProfileService extends BaseTemplateApiService {
         return {
           mobilePhoneNumber: results?.mobile,
           email: results?.email,
+          bankInfo: results?.bankInfo,
         }
       })
       .catch((error) => {
@@ -37,7 +42,11 @@ export class UserProfileService extends BaseTemplateApiService {
           return {
             email: 'mockEmail@island.is',
             mobilePhoneNumber: '9999999',
+            bankInfo: '0000-11-222222',
           }
+        }
+        if (params?.catchMock) {
+          return {}
         }
         throw error
       })

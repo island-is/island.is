@@ -6,6 +6,7 @@ import {
   formatNationalId,
   getSupportedCaseCustodyRestrictions,
   laws,
+  readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 
 import type { FormatMessage } from '@island.is/cms-translations'
@@ -20,7 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 import type { Gender } from '@island.is/judicial-system/types'
 
-import { notifications, custodyNotice, courtUpload } from '../messages'
+import { core, notifications, custodyNotice } from '../messages'
 import { Case } from '../modules/case'
 
 type SubjectAndBody = {
@@ -293,19 +294,18 @@ export function formatPrisonCourtDateEmailNotification(
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
-  accusedName?: string,
   accusedGender?: Gender,
   requestedValidToDate?: Date,
   isolation?: boolean,
   defenderName?: string,
   isExtension?: boolean,
   sessionArrangements?: SessionArrangements,
+  courtCaseNumber?: string,
 ): string {
   const courtText = formatMessage(
     notifications.prisonCourtDateEmail.courtText,
     { court: court || 'NONE' },
   ).replace('dómur', 'dóms')
-
   const courtDateText = formatMessage(
     notifications.prisonCourtDateEmail.courtDateText,
     {
@@ -316,7 +316,6 @@ export function formatPrisonCourtDateEmailNotification(
         : 'NONE',
     },
   )
-
   const requestedValidToDateText = formatMessage(
     notifications.prisonCourtDateEmail.requestedValidToDateText,
     {
@@ -327,17 +326,14 @@ export function formatPrisonCourtDateEmailNotification(
         : 'NONE',
     },
   )
-
   const requestText = formatMessage(
     notifications.prisonCourtDateEmail.requestText,
     {
       caseType: type,
-      accusedName: accusedName ?? 'NONE',
       gender: accusedGender,
       requestedValidToDateText,
     },
   )
-
   const isolationText = formatMessage(
     notifications.prisonCourtDateEmail.isolationTextV2,
     { isolation: Boolean(isolation) },
@@ -347,7 +343,7 @@ export function formatPrisonCourtDateEmailNotification(
     sessionArrangements,
   })
 
-  return formatMessage(notifications.prisonCourtDateEmail.bodyV2, {
+  return formatMessage(notifications.prisonCourtDateEmail.body, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     courtText,
@@ -357,6 +353,7 @@ export function formatPrisonCourtDateEmailNotification(
     isolationText,
     defenderText,
     sessionArrangements,
+    courtCaseNumber,
   })
 }
 
@@ -435,19 +432,6 @@ export function formatDefenderCourtDateLinkEmailNotification(
   return `${body}${link}`
 }
 
-// This function is only intended for case type CUSTODY and
-// ADMISSION_TO_FACILITY
-export function formatPrisonRulingEmailNotification(
-  formatMessage: FormatMessage,
-  type: CaseType,
-  courtEndTime?: Date,
-): string {
-  return formatMessage(notifications.prisonRulingEmail.body, {
-    courtEndTime: courtEndTime ? formatDate(courtEndTime, 'PPP') : 'NONE',
-    caseType: type,
-  })
-}
-
 export function formatPrisonAdministrationRulingNotification(
   formatMessage: FormatMessage,
   courtCaseNumber: string | undefined,
@@ -488,7 +472,6 @@ export function formatCourtRevokedSmsNotification(
         time: formatDate(requestedCourtDate, 'p'),
       })
     : undefined
-
   const courtRevokedText = formatMessage(
     notifications.courtRevoked.caseTypeRevoked,
     { caseType: type },
@@ -505,13 +488,12 @@ export function formatPrisonRevokedEmailNotification(
   prosecutorOffice?: string,
   court?: string,
   courtDate?: Date,
-  accusedName?: string,
   defenderName?: string,
   isExtension?: boolean,
+  courtCaseNumber?: string,
 ): string {
   const cf = notifications.prisonRevokedEmail
   const courtText = formatMessage(cf.court, { court })?.replace('dómur', 'dóms')
-
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPPp')
@@ -519,23 +501,21 @@ export function formatPrisonRevokedEmailNotification(
           ?.replace(' kl.', ', kl.')
       : 'NONE',
   })
-  const accusedNameText = formatMessage(notifications.accused, {
-    accusedName: accusedName || 'NONE',
-  })
   const defenderText = formatMessage(cf.defender, {
     defenderName: defenderName || 'NONE',
   })
-  const revokedCaseText = formatMessage(cf.revokedCaseV2, {
+  const revokedCaseText = formatMessage(cf.revokedCase, {
     caseType: type,
     prosecutorOffice: prosecutorOffice || 'NONE',
     isExtension,
     courtText,
     courtDateText,
   })
+
   return formatMessage(cf.body, {
     revokedCaseText,
-    accusedNameText,
     defenderText,
+    courtCaseNumber,
   })
 }
 
@@ -552,7 +532,6 @@ export function formatDefenderRevokedEmailNotification(
   const courtText = formatMessage(cf.court, {
     court: court || 'NONE',
   }).replace('dómur', 'dómi')
-
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPPp')
@@ -576,7 +555,6 @@ export function formatDefenderRevokedEmailNotification(
             : 'noPrefix',
         courtTypeName: caseTypes[type],
       })
-
   const defendantNationalIdText = defendantNoNationalId
     ? defendantNationalId || 'NONE'
     : formatNationalId(defendantNationalId || 'NONE')
@@ -632,28 +610,6 @@ export function formatCustodyRestrictions(
   })
 }
 
-export function formatRulingModifiedHistory(
-  rulingModifiedHistory: string | undefined,
-  newRulingDate: Date,
-  judgeName?: string,
-  judgeTitle?: string,
-): string {
-  const history = rulingModifiedHistory ? `${rulingModifiedHistory}\n\n` : ''
-  const dateFormated = capitalize(formatDate(newRulingDate, 'PPPPp') || '')
-  return `${history}${dateFormated} - ${judgeName} ${judgeTitle}`
-}
-
-export function formatCourtUploadRulingTitle(
-  formatMessage: FormatMessage,
-  courtCaseNumber: string | undefined,
-  isModifyingRuling: boolean,
-) {
-  return formatMessage(courtUpload.ruling, {
-    courtCaseNumber: courtCaseNumber ?? '',
-    isModifyingRuling,
-  })
-}
-
 export function formatDefenderAssignedEmailNotification(
   formatMessage: FormatMessage,
   theCase: Case,
@@ -663,11 +619,36 @@ export function formatDefenderAssignedEmailNotification(
     court: capitalize(theCase.court?.name ?? ''),
   })
 
-  const body = formatMessage(notifications.defenderAssignedEmail.bodyV2, {
+  const body = formatMessage(notifications.defenderAssignedEmail.body, {
     defenderHasAccessToRVG: Boolean(overviewUrl),
     courtCaseNumber: capitalize(theCase.courtCaseNumber ?? ''),
     court: theCase.court?.name ?? '',
     courtName: theCase.court?.name.replace('dómur', 'dómi') ?? '',
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { body, subject }
+}
+
+export function formatCourtIndictmentReadyForCourtEmailNotification(
+  formatMessage: FormatMessage,
+  theCase: Case,
+  overviewUrl?: string,
+) {
+  const subject = formatMessage(
+    notifications.indictmentCourtReadyForCourt.subject,
+  )
+
+  const body = formatMessage(notifications.indictmentCourtReadyForCourt.body, {
+    indictmentSubtypes: enumerate(
+      readableIndictmentSubtypes(
+        theCase.policeCaseNumbers,
+        theCase.indictmentSubtypes,
+      ),
+      formatMessage(core.and),
+    ),
+    prosecutorName: theCase.prosecutor?.institution?.name,
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })

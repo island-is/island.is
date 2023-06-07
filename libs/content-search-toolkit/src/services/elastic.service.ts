@@ -35,8 +35,9 @@ import { dateAggregationQuery } from '../queries/dateAggregation'
 import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
-import { filterDoc } from './utils'
+import { filterDoc, getValidBulkRequestChunk } from './utils'
 
+type RequestBodyType<T = Record<string, any>> = T | string | Buffer
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
@@ -108,9 +109,10 @@ export class ElasticService {
   async bulkRequest(index: string, requests: Record<string, unknown>[]) {
     try {
       // elasticsearch does not like big requests (above 5mb) so we limit the size to X entries just in case
-      const chunkSize = 20 // this has to be an even number
       const client = await this.getClient()
-      let requestChunk = requests.splice(-chunkSize, chunkSize)
+
+      let requestChunk = getValidBulkRequestChunk(requests)
+
       while (requestChunk.length) {
         // wait for request b4 continuing
         const response = await client.bulk({
@@ -126,7 +128,7 @@ export class ElasticService {
             response,
           })
         }
-        requestChunk = requests.splice(-chunkSize, chunkSize)
+        requestChunk = getValidBulkRequestChunk(requests)
       }
 
       return true
@@ -138,7 +140,7 @@ export class ElasticService {
     }
   }
 
-  async findByQuery<ResponseBody, RequestBody>(
+  async findByQuery<ResponseBody, RequestBody extends RequestBodyType>(
     index: string,
     query: RequestBody,
   ) {
@@ -170,7 +172,7 @@ export class ElasticService {
     }
   }
 
-  async rankEvaluation<ResponseBody, RequestBody>(
+  async rankEvaluation<ResponseBody, RequestBody extends RequestBodyType>(
     index: string,
     body: RequestBody,
   ) {
@@ -325,7 +327,7 @@ export class ElasticService {
       body: {
         query: {
           bool: {
-            must: ids.map((id) => ({ match: { _id: id } })),
+            should: ids.map((id) => ({ match: { _id: id } })),
           },
         },
       },

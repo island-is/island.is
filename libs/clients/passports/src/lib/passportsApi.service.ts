@@ -3,6 +3,7 @@ import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { Injectable, Inject } from '@nestjs/common'
 import {
+  DeliveryAddressApi,
   IdentityDocumentApi,
   IdentityDocumentResponse,
   PreregistrationApi,
@@ -12,6 +13,7 @@ import {
   IdentityDocument,
   IdentityDocumentChild,
   Passport,
+  DeliveryAddress,
   PreregisterResponse,
   PreregistrationInput,
 } from './passportsApi.types'
@@ -23,6 +25,7 @@ import { ApolloError } from 'apollo-server-express'
 import isBefore from 'date-fns/isBefore'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { ExpiryStatus } from './passportsApi.types'
+import { format as formatNationalId } from 'kennitala'
 
 const LOG_CATEGORY = 'passport-service'
 
@@ -35,6 +38,7 @@ export class PassportsService {
     private xroadConfig: ConfigType<typeof XRoadConfig>,
     private identityDocumentApi: IdentityDocumentApi,
     private preregistrationApi: PreregistrationApi,
+    private deliveryAddressApi: DeliveryAddressApi,
   ) {}
 
   handleError(error: any, detail?: string): ApolloError | null {
@@ -151,6 +155,15 @@ export class PassportsService {
     }
   }
 
+  async getDeliveryAddress(user: User): Promise<DeliveryAddress[]> {
+    const response = await this.deliveryAddressApi
+      .withMiddleware(new AuthMiddleware(user))
+      .deliveryAddressGetLookupTables({
+        xRoadClient: this.xroadConfig.xRoadClient,
+      })
+    return response as DeliveryAddress[]
+  }
+
   async preregisterIdentityDocument(
     user: User,
     input: PreregistrationInput,
@@ -174,14 +187,14 @@ export class PassportsService {
     input: PreregistrationInput,
   ): Promise<PreregisterResponse> {
     try {
-      const { appliedForPersonId, approvalA, approvalB } = input
+      const { appliedForPersonId, approvalA, approvalB, guid } = input
       const pdfBuffer = await this.createDocumentBuffer({
+        guid,
         appliedForPersonId,
         approvalA,
         approvalB,
       })
       const pdfDoc = Buffer.from(pdfBuffer).toString('base64')
-
       const res = await this.preregistrationApi
         .withMiddleware(new AuthMiddleware(user))
         .preregistrationPreregistration({
@@ -191,8 +204,9 @@ export class PassportsService {
             documents: [
               {
                 name: 'samþykki',
-                documentType: 'pdf',
-                contentType: 'base64',
+                documentType: 'PDF',
+                contentType: 'CUSTODIAN_APPROVAL',
+                dataSpecification: 'CUST_APPROV_IS',
                 content: pdfDoc,
               },
             ],
@@ -216,12 +230,13 @@ export class PassportsService {
   }
 
   async createDocumentBuffer({
+    guid,
     appliedForPersonId,
     approvalA,
     approvalB,
   }: Pick<
     PreregistrationInput,
-    'appliedForPersonId' | 'approvalA' | 'approvalB'
+    'guid' | 'appliedForPersonId' | 'approvalA' | 'approvalB'
   >) {
     // build pdf
     const doc = new PDFDocument()
@@ -233,8 +248,22 @@ export class PassportsService {
 
     doc
       .fontSize(big)
-      .text('Umsókn um vegabréf með samþykki forsjáraðila fyrir hönd: ')
-      .text(appliedForPersonId ?? '')
+      .text(
+        'Rafrænt samþykki vegna útgáfu vegabréfs fyrir einstakling undir 18 ára aldri ',
+      )
+      .moveDown()
+
+      .fontSize(regular)
+      .font(fontBold)
+      .text('Sótt er um fyrir: ')
+      .moveDown()
+
+      .font(fontRegular)
+      .text(
+        `Kenntiala: ${
+          appliedForPersonId ? formatNationalId(appliedForPersonId) : ''
+        }`,
+      )
       .moveDown()
 
       .fontSize(regular)
@@ -245,25 +274,34 @@ export class PassportsService {
       .moveDown()
 
       .font(fontBold)
-      .text('Forsjáraðila A: ')
+      .text('Forsjáraðili: ')
       .font(fontRegular)
-      .text(`${approvalA?.personId}, ${approvalA?.approved}`)
+      .text(`Nafn: ${approvalA?.name}`)
+      .text(
+        `Kenntiala: ${approvalA ? formatNationalId(approvalA?.personId) : ''}`,
+      )
+      .text(`Dagsetning: ${approvalA?.approved}`)
       .moveDown()
 
       .font(fontBold)
-      .text('Forsjáraðila B: ')
+      .text('Forsjáraðili: ')
       .font(fontRegular)
-      .text(`${approvalB?.personId}, ${approvalB?.approved}`)
+      .text(`Nafn: ${approvalB?.name}`)
+      .text(
+        `Kenntiala: ${approvalB ? formatNationalId(approvalB?.personId) : ''}`,
+      )
+      .text(`Dagsetning: ${approvalB?.approved}`)
       .moveDown()
-
-      .font(fontRegular)
-      .text('Með kveðju frá island.is')
 
       .moveDown()
       .text(
-        'Þetta skjal var framkallað sjálfvirkt þann: ' +
+        'Þetta skjal var framkallað með sjálfvirkum hætti á island.is þann:' +
           new Date().toLocaleDateString(locale),
       )
+
+      .moveDown()
+      .text('guId: ' + guid)
+
     doc.end()
     return await getStream.buffer(doc)
   }

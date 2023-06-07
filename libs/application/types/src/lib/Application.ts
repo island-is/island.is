@@ -1,3 +1,4 @@
+import { PendingActionDisplayType } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderResult } from './DataProviderResult'
 
@@ -14,7 +15,12 @@ export interface ExternalData {
   [key: string]: DataProviderResult
 }
 
-export type Answer = string | number | boolean | Answer[] | FormValue
+export type Answer =
+  | string
+  | number
+  | boolean
+  | Array<string | number | boolean | FormValue>
+  | FormValue
 
 export interface FormValue {
   [key: string]: Answer
@@ -22,14 +28,27 @@ export interface FormValue {
 
 export type ActionCardTag = 'red' | 'blueberry' | 'blue' | 'purple' | 'mint'
 
+export type ApplicationHistoryItem = {
+  date: Date
+  log: string
+}
+
 export interface ActionCardMetaData {
   title?: string
   description?: string
+  pendingAction?: {
+    displayStatus: PendingActionDisplayType
+    title?: string
+    content?: string
+  }
+  history?: ApplicationHistoryItem[]
   tag?: {
     label?: string
     variant?: ActionCardTag
   }
   deleteButton?: boolean
+  draftTotalSteps?: number
+  draftFinishedSteps?: number
 }
 
 export interface Application<TAnswers = FormValue> {
@@ -48,8 +67,15 @@ export interface Application<TAnswers = FormValue> {
   institution?: string
   progress?: number
   status: ApplicationStatus
+  draftTotalSteps?: number
+  draftFinishedSteps?: number
 }
 
 export interface ApplicationWithAttachments extends Application {
   attachments: object
+}
+
+export interface ApplicationAnswerFile {
+  key: string
+  name: string
 }

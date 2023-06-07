@@ -1,9 +1,10 @@
 import { uuid } from 'uuidv4'
 
-import { User } from '../../../user'
+import { User } from '@island.is/judicial-system/types'
+
 import { CourtService } from '../../../court'
 import { Case } from '../../../case'
-import { DeliverProsecutorToCourtDto } from '../../dto/deliverProsecutorToCourt.dto'
+import { DeliverDto } from '../../dto/deliver.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -14,9 +15,8 @@ interface Then {
 
 type GivenWhenThen = (
   caseId: string,
-  body: DeliverProsecutorToCourtDto,
-  user: User,
   theCase: Case,
+  body: DeliverDto,
 ) => Promise<Then>
 
 describe('InternalCaseController - Deliver prosecutor to court', () => {
@@ -47,16 +47,11 @@ describe('InternalCaseController - Deliver prosecutor to court', () => {
     const mockUpdateCaseWithProsecutor = mockCourtService.updateCaseWithProsecutor as jest.Mock
     mockUpdateCaseWithProsecutor.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async (
-      caseId: string,
-      body: DeliverProsecutorToCourtDto,
-      user: User,
-      theCase: Case,
-    ) => {
+    givenWhenThen = async (caseId: string, theCase: Case, body: DeliverDto) => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverProsecutorToCourt(caseId, body, user, theCase)
+        .deliverProsecutorToCourt(caseId, theCase, body)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -71,7 +66,7 @@ describe('InternalCaseController - Deliver prosecutor to court', () => {
       const mockUpdateCaseWithProsecutor = mockCourtService.updateCaseWithProsecutor as jest.Mock
       mockUpdateCaseWithProsecutor.mockResolvedValueOnce(uuid())
 
-      then = await givenWhenThen(caseId, { userId }, user, theCase)
+      then = await givenWhenThen(caseId, theCase, { user })
     })
 
     it('should deliver the defendant', () => {
@@ -91,7 +86,7 @@ describe('InternalCaseController - Deliver prosecutor to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, { userId }, user, theCase)
+      then = await givenWhenThen(caseId, theCase, { user })
     })
 
     it('should return a failure response', () => {

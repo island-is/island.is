@@ -7,6 +7,7 @@ import { generateOutputOne } from './processing/rendering-pipeline'
 
 const Staging: EnvironmentConfig = {
   auroraHost: 'a',
+  redisHost: 'b',
   domain: 'staging01.devland.is',
   type: 'staging',
   featuresOn: [],
@@ -107,7 +108,7 @@ describe('Basic serialization', () => {
     })
   })
 
-  it('secretes', () => {
+  it('secrets', () => {
     expect(result.serviceDef[0].secrets).toEqual({
       SECRET: '/path',
       DB_PASS: '/k8s/api/DB_PASSWORD',

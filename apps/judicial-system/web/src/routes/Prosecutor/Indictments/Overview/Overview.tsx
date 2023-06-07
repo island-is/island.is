@@ -12,10 +12,6 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  IndictmentsProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { Box, Text } from '@island.is/island-ui/core'
@@ -43,12 +39,15 @@ const Overview: React.FC = () => {
   const isNewIndictment =
     workingCase.state === CaseState.NEW || workingCase.state === CaseState.DRAFT
 
-  const caseHasBeenSentToCourt =
-    workingCase.state !== CaseState.NEW && workingCase.state !== CaseState.DRAFT
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNextButtonClick = async () => {
     if (isNewIndictment) {
-      await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      await transitionCase(
+        workingCase.id,
+        CaseTransition.SUBMIT,
+        setWorkingCase,
+      )
     }
 
     setModal('caseSubmittedModal')
@@ -57,12 +56,6 @@ const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={Sections.PROSECUTOR}
-      activeSubSection={
-        caseHasBeenSentToCourt
-          ? undefined
-          : IndictmentsProsecutorSubsections.OVERVIEW
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -83,17 +76,18 @@ const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={
-            caseHasBeenSentToCourt
+            caseHasBeenReceivedByCourt
               ? constants.CASES_ROUTE
               : `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${workingCase.id}`
           }
           nextButtonText={formatMessage(strings.overview.nextButtonText, {
             isNewIndictment,
           })}
-          hideNextButton={caseHasBeenSentToCourt}
+          hideNextButton={caseHasBeenReceivedByCourt}
           infoBoxText={
-            caseHasBeenSentToCourt
+            caseHasBeenReceivedByCourt
               ? formatMessage(strings.overview.caseSendToCourt)
               : undefined
           }

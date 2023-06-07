@@ -87,6 +87,8 @@ export const basicVehicleInformationMapper = (
       plateLocation: data.platestoragelocation,
       specialName: data.speccom,
       plateStatus: data.platestatus,
+      plateTypeFront: data.platetypefront,
+      plateTypeRear: data.platetyperear,
     },
     currentOwnerInfo: {
       owner: owner?.fullname,
@@ -167,7 +169,6 @@ export const basicVehicleInformationMapper = (
           endDate: operator.enddate,
         }
       }) || undefined,
-    isStolen: data.stolens ? data.stolens.length > 0 : false,
     isOutOfCommission: data.vehiclestatus === 'Úr umferð',
   }
 

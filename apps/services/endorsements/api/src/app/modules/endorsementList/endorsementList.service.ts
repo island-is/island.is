@@ -19,7 +19,7 @@ import environment, {
 } from '../../../environments/environment'
 import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
@@ -44,7 +44,7 @@ export class EndorsementListService {
 
   async hasAdminScope(user: User): Promise<boolean> {
     for (const [_, value] of Object.entries(user.scope)) {
-      if (value == EndorsementsScope.admin) {
+      if (value === AdminPortalScope.petitionsAdmin) {
         return true
       }
     }
@@ -53,6 +53,7 @@ export class EndorsementListService {
 
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
+    this.logger.info(`Finding endorsement lists`)
     return await paginate({
       Model: this.endorsementListModel,
       limit: query.limit || 10,
@@ -66,7 +67,7 @@ export class EndorsementListService {
 
   async findListsByTags(tags: string[], query: any, user: User) {
     const isAdmin = await this.hasAdminScope(user)
-    this.logger.debug(`Finding endorsement lists by tags "${tags.join(', ')}"`)
+    this.logger.info(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // check if user is admin
     return await paginate({
       Model: this.endorsementListModel,
@@ -86,7 +87,7 @@ export class EndorsementListService {
     // Check variable needed since finAll function in Endorsement controller uses this function twice
     // on the second call it passes nationalID of user but does not go throught the get list pipe
     const isAdmin = user && check ? await this.hasAdminScope(user) : false
-    this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
       where: {
         id: listId,
@@ -95,6 +96,7 @@ export class EndorsementListService {
     })
 
     if (!result) {
+      this.logger.warn('This endorsement list does not exist.')
       throw new NotFoundException(['This endorsement list does not exist.'])
     }
 
@@ -102,7 +104,7 @@ export class EndorsementListService {
   }
 
   async findAllEndorsementsByNationalId(nationalId: string, query: any) {
-    this.logger.debug(
+    this.logger.info(
       `Finding endorsements for single national id ${nationalId}`,
     )
     return await paginate({
@@ -133,7 +135,7 @@ export class EndorsementListService {
   }
 
   async findAllEndorsementListsByNationalId(nationalId: string, query: any) {
-    this.logger.debug(
+    this.logger.info(
       `Finding endorsement lists created by single national id ${nationalId}`,
     )
 
@@ -186,16 +188,21 @@ export class EndorsementListService {
 
   async create(list: CreateInput) {
     if (!list.openedDate || !list.closedDate) {
+      this.logger.warn('Body missing openedDate or closedDate value.')
       throw new BadRequestException([
         'Body missing openedDate or closedDate value.',
       ])
     }
     if (list.openedDate >= list.closedDate) {
+      this.logger.warn('openedDate can not be bigger than closedDate.')
       throw new BadRequestException([
         'openedDate can not be bigger than closedDate.',
       ])
     }
     if (new Date() >= list.closedDate) {
+      this.logger.warn(
+        'closedDate can not have already passed on creation of Endorsement List',
+      )
       throw new BadRequestException([
         'closedDate can not have already passed on creation of Endorsement List',
       ])
@@ -216,6 +223,7 @@ export class EndorsementListService {
       }
       return await this.findListsGenericQuery(query, where)
     } catch (error) {
+      this.logger.warn('findOpenListsTaggedGeneralPetition not found')
       throw new NotFoundException()
     }
   }
@@ -234,6 +242,7 @@ export class EndorsementListService {
       },
     })
     if (!result) {
+      this.logger.warn('findSingleOpenListTaggedGeneralPetition not found')
       throw new NotFoundException()
     }
     return result
@@ -243,7 +252,7 @@ export class EndorsementListService {
     // Is used by both unauthenticated users, authenticated users and admin
     // Admin needs to access locked lists and can not use the EndorsementListById pipe
     // Since the endpoint is not authenticated
-    this.logger.debug(`Finding single endorsement lists by id "${listId}"`)
+    this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     if (!owner) {
       const endorsementList = await this.endorsementListModel.findOne({
         where: {
@@ -251,6 +260,7 @@ export class EndorsementListService {
         },
       })
       if (!endorsementList) {
+        this.logger.warn('This endorsement list does not exist.')
         throw new NotFoundException(['This endorsement list does not exist.'])
       }
       owner = endorsementList.owner
@@ -354,6 +364,7 @@ export class EndorsementListService {
       ],
     })
     if (!endorsementList) {
+      this.logger.warn('This endorsement list does not exist.')
       throw new NotFoundException(['This endorsement list does not exist.'])
     }
     const ownerName = await this.getOwnerInfo(

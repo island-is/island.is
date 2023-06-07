@@ -3,6 +3,9 @@ import { DefaultEvents } from '@island.is/application/types'
 export const YES = 'Yes'
 export const NO = 'No'
 
+export const JA = 'Já'
+export const NEI = 'Nei'
+
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -18,13 +21,15 @@ export type EstateEvent =
 
 export enum Roles {
   APPLICANT = 'applicant',
-  APPLICANT_OFFICIAL_ESTATE = 'applicant_official_estate',
-  APPLICANT_NO_PROPERTY = 'applicant_no_property',
-  APPLICANT_RESIDENCE_PERMIT = 'applicant_residence_permit',
+  APPLICANT_DIVISION_OF_ESTATE = 'applicant_division_of_estate',
+  APPLICANT_NO_ASSETS = 'applicant_no_assets',
+  APPLICANT_POSTPONE_ESTATE_DIVISION = 'applicant_postpone_estate_division',
+  APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS = 'applicant_division_of_estate_by_heirs',
 }
 
 export const EstateTypes = {
-  officialEstate: 'Opinber skipti',
-  noPropertyEstate: 'Eignalaust dánarbú',
-  residencePermit: 'Búsetuleyfi',
+  divisionOfEstate: 'Opinber skipti',
+  estateWithoutAssets: 'Eignalaust dánarbú',
+  permitToPostponeEstateDivision: 'Búsetuleyfi',
+  divisionOfEstateByHeirs: 'Einkaskipti',
 }

@@ -14,6 +14,8 @@ import { DocumentBuilder } from './documentBuilder'
 import { GetDocumentListInput } from './dto/getDocumentListInput'
 import { DocumentType } from './models/documentType.model'
 import { DocumentSender } from './models/documentSender.model'
+import { PaperMailBody } from './models/paperMail.model'
+import { PostRequestPaperInput } from './dto/postRequestPaperInput'
 
 @Injectable()
 export class DocumentService {
@@ -62,8 +64,31 @@ export class DocumentService {
     nationalId: string,
     input: GetDocumentListInput,
   ): Promise<DocumentListResponse> {
+    const healthId = '3' // The
+    let newInput: GetDocumentListInput = input
     try {
-      const body = await this.documentClient.getDocumentList(nationalId, input)
+      if (
+        (input.categoryId === '' ||
+          input.categoryId?.indexOf(healthId) !== -1) &&
+        input.isLegalGuardian
+      ) {
+        const allCategories = await this.getCategories(nationalId)
+        if (allCategories.find((x) => x.id === healthId)) {
+          newInput = {
+            ...input,
+            categoryId: allCategories
+              .filter((item) => item.id !== healthId)
+              .map((item) => item.id)
+              .toString(),
+          }
+        }
+      }
+
+      const body = await this.documentClient.getDocumentList(
+        nationalId,
+        newInput,
+      )
+
       return {
         data: (body?.messages || []).reduce(
           (result: Document[], documentMessage: DocumentInfoDTO) => {
@@ -129,6 +154,45 @@ export class DocumentService {
     } catch (exception) {
       logger.error(exception)
       return []
+    }
+  }
+
+  async getPaperMailInfo(nationalId: string): Promise<PaperMailBody> {
+    try {
+      const res = await this.documentClient.requestPaperMail(nationalId)
+      return {
+        nationalId: res?.kennitala,
+        wantsPaper: res?.wantsPaper,
+      }
+    } catch (exception) {
+      logger.error(exception)
+      return {
+        nationalId,
+        wantsPaper: undefined,
+      }
+    }
+  }
+
+  async postPaperMailInfo(
+    nationalId: string,
+    body: PostRequestPaperInput,
+  ): Promise<PaperMailBody> {
+    try {
+      const postBody = {
+        kennitala: nationalId,
+        wantsPaper: body.wantsPaper,
+      }
+      const res = await this.documentClient.postPaperMail(postBody)
+      return {
+        nationalId: res?.kennitala,
+        wantsPaper: res?.wantsPaper,
+      }
+    } catch (exception) {
+      logger.error(exception)
+      return {
+        nationalId,
+        wantsPaper: undefined,
+      }
     }
   }
 }

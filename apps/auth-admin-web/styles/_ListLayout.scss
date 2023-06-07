@@ -24,46 +24,37 @@
 
     &__options {
       display: flex;
-      padding: 10px 0;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
 
       &__button {
-        padding-top: 13px;
-        flex: 1;
+        flex: 65%;
+      }
+
+      form {
+        flex: 35%;
       }
 
       &__search {
-        padding-top: 20px;
+        display: flex;
+        align-items: center;
+        column-gap: 15px;
         position: relative;
+
         label {
           position: absolute;
           top: 0;
           font-size: 0.8rem;
         }
         input {
-          height: 25px;
+          min-height: 40px;
+          width: 100%;
           border-radius: $border-radius;
+          padding: 0 15px;
         }
         button {
-          border: 1px solid $color-border;
-          box-sizing: border-box;
-          border-radius: $border-radius;
-          background: $color-body-bg;
-          font-size: 0.9rem;
-          font-style: normal;
-          font-weight: $weight-semi-bold;
-          line-height: 25px;
-          letter-spacing: 0em;
-          text-align: center;
-          color: $color-text-primary;
-          width: 51px;
-          height: 25px;
-          padding: 0;
-          margin-left: 15px;
-          cursor: pointer;
-
-          &:focus {
-            outline: none;
-          }
+          padding: 6px 0;
         }
       }
     }

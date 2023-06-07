@@ -16,7 +16,6 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { User, CurrentUser, UserExistsGuard } from '../user'
 import { Case, CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
@@ -32,7 +31,6 @@ import { DefendantService } from './defendant.service'
   CaseExistsGuard,
   new CaseTypeGuard([...restrictionCases, ...investigationCases]),
   DefendantExistsGuard,
-  UserExistsGuard,
 )
 export class InternalDefendantController {
   constructor(
@@ -48,10 +46,9 @@ export class InternalDefendantController {
   deliverDefendantToCourt(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
-    @Body() _: DeliverDefendantToCourtDto,
-    @CurrentUser() user: User,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
+    @Body() deliverDefendantToCourtDto: DeliverDefendantToCourtDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
       `Delivering defendant ${defendantId} of case ${caseId} to court`,
@@ -60,7 +57,7 @@ export class InternalDefendantController {
     return this.defendantService.deliverDefendantToCourt(
       theCase,
       defendant,
-      user,
+      deliverDefendantToCourtDto.user,
     )
   }
 }

@@ -5,11 +5,13 @@ import { MockedProvider } from '@apollo/client/testing'
 
 import {
   CaseAppealDecision,
-  CaseOrigin,
   CaseState,
-  CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
+import {
+  CaseType,
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import AppealSection from './AppealSection'
 

@@ -1,17 +1,28 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { CoOwnerAndOperator } from '../types'
+import { CoOwnerAndOperator } from '../shared'
 
 export const getApproveAnswers = (
   reviewerNationalId: string,
   answers: FormValue,
 ) => {
+  const returnAnswers = {}
   // If reviewer is buyer
+  const buyerNationalId = getValueViaPath(
+    answers,
+    'buyer.nationalId',
+    '',
+  ) as string
+  const buyerApproved = getValueViaPath(
+    answers,
+    'buyer.approved',
+    undefined,
+  ) as boolean | undefined
   if (
-    (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
-    reviewerNationalId
+    buyerNationalId === reviewerNationalId &&
+    (buyerApproved === undefined || buyerApproved === false)
   ) {
-    return {
+    Object.assign(returnAnswers, {
       buyer: {
         nationalId: getValueViaPath(answers, 'buyer.nationalId', '') as string,
         name: getValueViaPath(answers, 'buyer.name', '') as string,
@@ -19,7 +30,7 @@ export const getApproveAnswers = (
         phone: getValueViaPath(answers, 'buyer.phone', '') as string,
         approved: true,
       },
-    }
+    })
   }
 
   // If reviewer is buyers coowner or operator
@@ -28,11 +39,18 @@ export const getApproveAnswers = (
     'buyerCoOwnerAndOperator',
     [],
   ) as CoOwnerAndOperator[]
-  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators.find(
-    (coOwnerOrOperator) => coOwnerOrOperator.nationalId === reviewerNationalId,
-  )
-  if (buyerCoOwnerAndOperator) {
-    return {
+  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators
+    .filter(({ wasRemoved }) => wasRemoved !== 'true')
+    .find(
+      (coOwnerOrOperator) =>
+        coOwnerOrOperator.nationalId === reviewerNationalId,
+    )
+  if (
+    buyerCoOwnerAndOperator &&
+    (buyerCoOwnerAndOperator.approved === undefined ||
+      buyerCoOwnerAndOperator.approved === false)
+  ) {
+    Object.assign(returnAnswers, {
       buyerCoOwnerAndOperator: buyerCoOwnersAndOperators.map(
         (coOwnerOrOperator) => {
           return {
@@ -41,6 +59,7 @@ export const getApproveAnswers = (
             email: coOwnerOrOperator.email,
             phone: coOwnerOrOperator.phone,
             type: coOwnerOrOperator.type,
+            wasRemoved: coOwnerOrOperator.wasRemoved,
             approved:
               coOwnerOrOperator.nationalId === reviewerNationalId
                 ? true
@@ -48,7 +67,7 @@ export const getApproveAnswers = (
           }
         },
       ),
-    }
+    })
   }
 
   // If reviewer is sellers coowner
@@ -60,23 +79,27 @@ export const getApproveAnswers = (
   const sellerCoOwner = sellerCoOwners.find(
     (coOwner) => coOwner.nationalId === reviewerNationalId,
   )
-  if (sellerCoOwner) {
-    return {
+  if (
+    sellerCoOwner &&
+    (sellerCoOwner.approved === undefined || sellerCoOwner.approved === false)
+  ) {
+    Object.assign(returnAnswers, {
       sellerCoOwner: sellerCoOwners.map((coOwner) => {
         return {
           nationalId: coOwner.nationalId,
           name: coOwner.name,
           email: coOwner.email,
           phone: coOwner.phone,
-          type: coOwner.type,
           approved:
             coOwner.nationalId === reviewerNationalId
               ? true
               : coOwner.approved || false,
         }
       }),
-    }
+    })
   }
 
-  return {}
+  console.log('getApproveAnswers', returnAnswers)
+
+  return returnAnswers
 }

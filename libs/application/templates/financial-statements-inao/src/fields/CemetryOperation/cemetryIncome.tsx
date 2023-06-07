@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { CEMETRYOPERATIONIDS, INPUTCHANGEINTERVAL } from '../../lib/constants'
 import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
@@ -26,22 +26,46 @@ export const CemetryIncome = ({
   getSum,
 }: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
-  const { clearErrors, setValue } = useFormContext()
+  const { clearErrors, getValues, setValue } = useFormContext()
 
   useEffect(() => {
+    const values = getValues()
+
+    const careIncome = getValueViaPath(values, CEMETRYOPERATIONIDS.careIncome)
+    const burialRevenue = getValueViaPath(
+      values,
+      CEMETRYOPERATIONIDS.burialRevenue,
+    )
+    const grantFromTheCemeteryFund = getValueViaPath(
+      values,
+      CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
+    )
+
     if (data?.financialStatementsInaoTaxInfo) {
-      setValue(
-        CEMETRYOPERATIONIDS.careIncome,
-        data.financialStatementsInaoTaxInfo?.[0]?.value?.toString() ?? '',
-      )
-      setValue(
-        CEMETRYOPERATIONIDS.burialRevenue,
-        data.financialStatementsInaoTaxInfo?.[1]?.value?.toString() ?? '',
-      )
-      setValue(
-        CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
-        data.financialStatementsInaoTaxInfo?.[2]?.value?.toString() ?? '',
-      )
+      if (!careIncome) {
+        setValue(
+          CEMETRYOPERATIONIDS.careIncome,
+          data.financialStatementsInaoTaxInfo
+            ?.find((x) => x.key === 300)
+            ?.value?.toString() ?? '',
+        )
+      }
+      if (!burialRevenue) {
+        setValue(
+          CEMETRYOPERATIONIDS.burialRevenue,
+          data.financialStatementsInaoTaxInfo
+            ?.find((x) => x.key === 301)
+            ?.value?.toString() ?? '',
+        )
+      }
+      if (!grantFromTheCemeteryFund) {
+        setValue(
+          CEMETRYOPERATIONIDS.grantFromTheCemeteryFund,
+          data.financialStatementsInaoTaxInfo
+            ?.find((x) => x.key === 302)
+            ?.value?.toString() ?? '',
+        )
+      }
       getSum()
     }
   }, [data, getSum, setValue])

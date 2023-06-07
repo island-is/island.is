@@ -18,6 +18,21 @@ export const options: Record<BackgroundVariations, Options> = {
   mannaudstorg: {
     textMode: 'light',
   },
+
+  sjukratryggingar: {
+    textMode: 'blueberry',
+  },
+  'icelandic-health-insurance': {
+    textMode: 'blueberry',
+  },
+
+  utlendingastofnun: {
+    textMode: 'light',
+  },
+  'directorate-of-immigration': {
+    textMode: 'light',
+  },
+
   default: {
     textMode: 'dark',
   },

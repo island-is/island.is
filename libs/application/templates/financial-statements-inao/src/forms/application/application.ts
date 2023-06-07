@@ -24,7 +24,7 @@ import {
 import {
   CurrentUserTypeProvider,
   IndentityApiProvider,
-  UserProfileApi,
+  UserInfoApi,
 } from '../../dataProviders'
 import { FSIUSERTYPE, LESS } from '../../types'
 
@@ -52,14 +52,14 @@ export const getApplication = (allowFakeData = false): Form => {
                 subTitle: m.dataCollectionNationalRegistrySubtitle,
               }),
               buildDataProviderItem({
-                provider: UserProfileApi,
+                provider: UserInfoApi,
                 title: m.dataCollectionUserProfileTitle,
                 subTitle: m.dataCollectionUserProfileSubtitle,
               }),
               buildDataProviderItem({
                 provider: CurrentUserTypeProvider,
-                title: '',
-                subTitle: '',
+                title: m.dataCollectionUserFinancialInfoTitle,
+                subTitle: m.dataCollectionUserFinancialInfo,
               }),
             ],
           }),

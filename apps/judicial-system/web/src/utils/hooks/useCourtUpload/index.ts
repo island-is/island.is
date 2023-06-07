@@ -1,17 +1,22 @@
+import { useCallback, useEffect, useState } from 'react'
 import { ApolloError, useMutation } from '@apollo/client'
-import { UploadFileToCourtMutation } from '@island.is/judicial-system-web/graphql'
+
 import {
-  Case,
   CaseFile as TCaseFile,
   CaseFileState,
 } from '@island.is/judicial-system/types'
-import { useCallback, useEffect, useState } from 'react'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  UploadFileToCourtDocument,
+  UploadFileToCourtMutation,
+  UploadFileToCourtMutationVariables,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum UploadState {
   ALL_UPLOADED = 'ALL_UPLOADED',
   ALL_UPLOADED_NONE_AVAILABLE = 'ALL_UPLOADED_NONE_AVAILABLE',
-  NONE_AVAILABLE = 'NONE_AVAILABLE',
-  NONE_CAN_BE_UPLOADED = 'NONE_CAN_BE_UPLOADED',
+  SOME_NOT_UPLOADED_NONE_AVAILABLE = 'SOME_NOT_UPLOADED_NONE_AVAILABLE',
+  ALL_UPLOADED_OR_NOT_AVAILABLE = 'ALL_UPLOADED_OR_NOT_AVAILABLE',
   SOME_NOT_UPLOADED = 'SOME_NOT_UPLOADED',
   UPLOAD_ERROR = 'UPLOAD_ERROR',
   UPLOADING = 'UPLOADING',
@@ -36,7 +41,10 @@ export const useCourtUpload = (
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
 ) => {
   const [uploadState, setUploadState] = useState<UploadState>()
-  const [uploadFileToCourtMutation] = useMutation(UploadFileToCourtMutation)
+  const [uploadFileToCourtMutation] = useMutation<
+    UploadFileToCourtMutation,
+    UploadFileToCourtMutationVariables
+  >(UploadFileToCourtDocument)
 
   const setFileUploadStatus = useCallback(
     (theCase: Case, file: CaseFile, status: CaseFileStatus) => {
@@ -92,8 +100,8 @@ export const useCourtUpload = (
         : files?.every(
             (file) => file.status === 'broken' || file.status === 'done-broken',
           )
-        ? UploadState.NONE_AVAILABLE
-        : UploadState.NONE_CAN_BE_UPLOADED,
+        ? UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE
+        : UploadState.ALL_UPLOADED_OR_NOT_AVAILABLE,
     )
   }, [setFileUploadStatus, workingCase])
 

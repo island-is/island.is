@@ -26,6 +26,11 @@ interface FormErrors {
   code: string | undefined
 }
 
+interface UseFormProps {
+  email: string
+  code: string
+}
+
 export const InputEmail: FC<Props> = ({
   buttonText,
   email,
@@ -33,7 +38,13 @@ export const InputEmail: FC<Props> = ({
   emailDirty,
 }) => {
   useNamespaces('sp.settings')
-  const { handleSubmit, control, errors, getValues, setValue } = useForm()
+  const {
+    handleSubmit,
+    control,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = useForm<UseFormProps>()
   const {
     updateOrCreateUserProfile,
     loading: saveLoading,
@@ -213,7 +224,7 @@ export const InputEmail: FC<Props> = ({
                 checkSetPristineInput()
               }}
               placeholder="nafn@island.is"
-              error={errors.email?.message || formErrors.email}
+              error={errors?.email?.message || formErrors?.email}
               size="xs"
               defaultValue={email}
             />
@@ -238,7 +249,7 @@ export const InputEmail: FC<Props> = ({
                       emailInternal
                         ? () =>
                             handleSendEmailVerification({
-                              email: getValues().email,
+                              email: getValues().email ?? '',
                             })
                         : () => saveEmptyChange()
                     }
@@ -292,7 +303,7 @@ export const InputEmail: FC<Props> = ({
                   label={formatMessage(m.verificationCode)}
                   placeholder="000000"
                   defaultValue=""
-                  error={errors.code?.message || formErrors.code}
+                  error={errors?.code?.message || formErrors?.code}
                   disabled={verificationValid || disabled}
                   icon={verificationValid ? 'checkmark' : undefined}
                   size="xs"

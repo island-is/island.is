@@ -12,19 +12,21 @@ import { EstateTypes } from '../../lib/constants'
 export const announcerInfo = buildSection({
   id: 'information',
   title: (application) =>
-    application.answers.selectedEstate === EstateTypes.noPropertyEstate
-      ? m.announcerNoProperty
-      : application.answers.selectedEstate === EstateTypes.residencePermit
-      ? m.announcerRP
+    application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+      ? m.announcerNoAssets
+      : application.answers.selectedEstate ===
+        EstateTypes.permitToPostponeEstateDivision
+      ? m.announcerPTP
       : m.announcer,
   children: [
     buildMultiField({
       id: 'applicant',
       title: (application) =>
-        application.answers.selectedEstate === EstateTypes.noPropertyEstate
-          ? m.announcerNoProperty
-          : application.answers.selectedEstate === EstateTypes.residencePermit
-          ? m.announcerResidencePermit
+        application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+          ? m.announcerNoAssets
+          : application.answers.selectedEstate ===
+            EstateTypes.permitToPostponeEstateDivision
+          ? m.announcerPermitToPostpone
           : m.announcer,
       description: m.applicantsInfoSubtitle,
       children: [
@@ -62,6 +64,7 @@ export const announcerInfo = buildSection({
           title: m.phone,
           width: 'half',
           format: '###-####',
+          required: true,
           defaultValue: (application: Application) => {
             const phone =
               (application.externalData.userProfile?.data as {
@@ -75,6 +78,7 @@ export const announcerInfo = buildSection({
           id: 'applicant.email',
           title: m.email,
           width: 'half',
+          required: true,
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile?.data as UserProfile
             return data?.email

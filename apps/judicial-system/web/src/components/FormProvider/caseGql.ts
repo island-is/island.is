@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 const CaseQuery = gql`
-  query CaseQuery($input: CaseQueryInput!) {
+  query Case($input: CaseQueryInput!) {
     case(input: $input) {
       id
       created
@@ -142,7 +142,11 @@ const CaseQuery = gql`
         id
       }
       notifications {
+        created
         type
+        recipients {
+          success
+        }
       }
       caseFiles {
         id
@@ -166,9 +170,53 @@ const CaseQuery = gql`
       caseResentExplanation
       origin
       seenByDefender
-      subpoenaType
       defendantWaivesRightToCounsel
       crimeScenes
+      indictmentIntroduction
+      indictmentCounts {
+        id
+        caseId
+        policeCaseNumber
+        created
+        modified
+        vehicleRegistrationNumber
+        offenses
+        substances
+        lawsBroken
+        incidentDescription
+        legalArguments
+      }
+      requestDriversLicenseSuspension
+      appealState
+      isStatementDeadlineExpired
+      statementDeadline
+      canBeAppealed
+      hasBeenAppealed
+      appealedByRole
+      appealedDate
+      appealDeadline
+      prosecutorStatementDate
+      defendantStatementDate
+      appealReceivedByCourtDate
+      appealConclusion
+      appealRulingDecision
+      appealCaseNumber
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
     }
   }
 `

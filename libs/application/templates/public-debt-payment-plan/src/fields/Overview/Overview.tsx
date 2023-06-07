@@ -27,7 +27,6 @@ import {
 import { DistributionTable } from './DistributionTabel'
 import * as styles from './Overview.css'
 import * as kennitala from 'kennitala'
-import { formatNationalId } from '@island.is/service-portal/core'
 
 export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
@@ -58,7 +57,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
 
   const identityRegistry = getValueViaPath(
     application.externalData,
-    'identityRegistry',
+    'identity',
   ) as IdentityResult
 
   // Applicant
@@ -91,9 +90,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
     const distributions = Object.entries(paymentPlans)
       .map(([key, value]) => {
         if (value === undefined) return []
-        const distribution = JSON.parse(
-          value.distribution || '',
-        ) as Array<PaymentSchedulePayment>
+        const distribution = value.distribution as Array<PaymentSchedulePayment>
         if (value.id === 'Wagedection') {
           setWageDeduction({ paymentPlan: key, distribution })
           setWageDeductionTotalAmount(parseInt(value.totalAmount, 10))
@@ -209,7 +206,7 @@ export const Overview = ({ application, goToScreen }: FieldBaseProps) => {
             <GridColumn span={['6/12', '5/12']}>
               <Box>
                 <Label>{formatMessage(overview.companyNationalId)}</Label>
-                <Text>{formatNationalId(application.applicant)}</Text>
+                <Text>{kennitala.format(application.applicant)}</Text>
               </Box>
             </GridColumn>
           </GridRow>

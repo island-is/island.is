@@ -6,7 +6,6 @@ import {
   buildSubmitField,
   coreMessages,
   buildKeyValueField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes, Application } from '@island.is/application/types'
 
@@ -15,7 +14,6 @@ import { YES } from '../constants'
 import { otherParentApprovalFormMessages } from '../lib/messages'
 import { currentDateStartTime } from '../lib/parentalLeaveTemplateUtils'
 import { getApplicationAnswers } from '../lib/parentalLeaveUtils'
-import { YesOrNo } from '../types'
 
 export const OtherParentApproval: Form = buildForm({
   id: 'OtherParentApprovalForParentalLeave',

@@ -9,10 +9,10 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { MessageService } from '@island.is/judicial-system/message'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import type { User } from '@island.is/judicial-system/types'
 
-import { User } from '../user'
 import { CourtService } from '../court'
 import { Case } from '../case/models/case.model'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
@@ -121,6 +121,25 @@ export class DefendantService {
     return defendantsInCustody.some((d) => d.case)
   }
 
+  findLatestDefendantByDefenderNationalId(
+    nationalId: string,
+  ): Promise<Defendant | null> {
+    return this.defendantModel.findOne({
+      include: [
+        {
+          model: Case,
+          as: 'case',
+          where: {
+            state: { [Op.not]: CaseState.DELETED },
+            isArchived: false,
+          },
+        },
+      ],
+      where: { defenderNationalId: nationalId },
+      order: [['created', 'DESC']],
+    })
+  }
+
   async deliverDefendantToCourt(
     theCase: Case,
     defendant: Defendant,
@@ -132,10 +151,10 @@ export class DefendantService {
       defendant.nationalId.replace('-', '').length !== 10
     ) {
       // TODO: Uncomment when we are ready to send notifications
-      // await this.messageService.sendMessageToQueue({
+      // await this.messageService.sendMessagesToQueue([{
       //   type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
       //   caseId: theCase.id,
-      // })
+      // }])
 
       return { delivered: true }
     }
@@ -153,7 +172,7 @@ export class DefendantService {
         return { delivered: true }
       })
       .catch((reason) => {
-        this.logger.error('failed to update case with defendant', { reason })
+        this.logger.error('Failed to update case with defendant', { reason })
 
         return { delivered: false }
       })

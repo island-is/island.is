@@ -6,6 +6,7 @@ import { NotFoundException } from '@nestjs/common'
 import {
   CaseFileCategory,
   CaseFileState,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
@@ -28,6 +29,9 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('InternalFileController - Deliver case file to court', () => {
+  const userId = uuid()
+  const user = { id: userId } as User
+
   let mockAwsS3Service: AwsS3Service
   let mockCourtService: CourtService
   let mockFileModel: typeof CaseFile
@@ -54,7 +58,7 @@ describe('InternalFileController - Deliver case file to court', () => {
       const then = {} as Then
 
       await internalFileController
-        .deliverCaseFileToCourt(caseId, fileId, theCase, caseFile)
+        .deliverCaseFileToCourt(caseId, fileId, theCase, caseFile, { user })
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -108,6 +112,7 @@ describe('InternalFileController - Deliver case file to court', () => {
 
     it('should upload the file to court', () => {
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
+        user,
         caseId,
         courtId,
         courtCaseNumber,
@@ -116,7 +121,6 @@ describe('InternalFileController - Deliver case file to court', () => {
         fileName,
         fileType,
         content,
-        undefined,
       )
     })
 
@@ -133,16 +137,21 @@ describe('InternalFileController - Deliver case file to court', () => {
   })
 
   each`
-    caseFileCategory                       | courtDocumentFolder
-    ${CaseFileCategory.COURT_RECORD}       | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.RULING}             | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.COVER_LETTER}       | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.INDICTMENT}         | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.CRIMINAL_RECORD}    | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.COST_BREAKDOWN}     | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.CASE_FILE}          | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    caseFileCategory                                          | courtDocumentFolder
+    ${CaseFileCategory.COURT_RECORD}                          | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.RULING}                                | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.COVER_LETTER}                          | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.INDICTMENT}                            | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.CRIMINAL_RECORD}                       | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.COST_BREAKDOWN}                        | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.CASE_FILE}                             | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF}               | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE}     | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF}                | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE}      | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.APPEAL_RULING}                         | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     `.describe(
-    'indictment file upload to court',
+    'indictment $caseFileCategory file upload to court folder $courtDocumentFolder',
     ({ caseFileCategory, courtDocumentFolder }) => {
       const caseId = uuid()
       const courtId = uuid()
@@ -178,6 +187,7 @@ describe('InternalFileController - Deliver case file to court', () => {
 
       it('should upload the file to court', () => {
         expect(mockCreateDocument).toHaveBeenCalledWith(
+          user,
           caseId,
           courtId,
           courtCaseNumber,
@@ -186,7 +196,6 @@ describe('InternalFileController - Deliver case file to court', () => {
           fileName,
           fileType,
           content,
-          undefined,
         )
       })
     },

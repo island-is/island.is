@@ -1,17 +1,22 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
+import { CaseState, Defendant } from '@island.is/judicial-system/types'
+import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
-  Case,
-  CaseOrigin,
-  CaseState,
   CaseType,
-  Defendant,
-} from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+  CaseOrigin,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CaseData, LimitedAccessCaseData } from '../../types'
+import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
+import { UserContext } from '../UserProvider/UserProvider'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
 import CaseQuery from './caseGql'
 
@@ -44,7 +49,7 @@ const initialState: Case = {
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumbers: [],
-  defendants: [{ id: '' } as Defendant],
+  defendants: [{ id: '', noNationalId: false } as Defendant],
   defendantWaivesRightToCounsel: false,
 }
 
@@ -58,9 +63,19 @@ export const FormContext = createContext<FormProvider>({
   refreshCase: () => {},
 })
 
-export const FormProvider = ({ children }: Props) => {
+const MaybeFormProvider = ({ children }: Props) => {
   const router = useRouter()
-  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
+  return router.pathname.includes(USERS_ROUTE) ? (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>{children}</>
+  ) : (
+    <FormProvider>{children}</FormProvider>
+  )
+}
+
+const FormProvider = ({ children }: Props) => {
+  const { limitedAccess } = useContext(UserContext)
+  const router = useRouter()
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')
@@ -79,6 +94,7 @@ export const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
+    policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
   })
 
   // Used in exported indicators
@@ -156,3 +172,5 @@ export const FormProvider = ({ children }: Props) => {
     </FormContext.Provider>
   )
 }
+
+export { MaybeFormProvider as FormProvider }

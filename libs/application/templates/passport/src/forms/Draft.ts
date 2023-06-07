@@ -15,14 +15,15 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  MockProviderApi,
   NationalRegistryUserApi,
-  PaymentCatalogApi,
-  UserProfileApi,
-  DistrictsApi,
   YES,
 } from '@island.is/application/types'
-import { IdentityDocumentApi } from '../dataProviders'
+import {
+  DeliveryAddressApi,
+  IdentityDocumentApi,
+  SyslumadurPaymentCatalogApi,
+  UserInfoApi,
+} from '../dataProviders'
 import {
   DistrictCommissionerAgencies,
   Passport,
@@ -43,6 +44,25 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
+      id: 'introSection',
+      title: m.introTitle,
+      children: [
+        buildMultiField({
+          id: 'introApplicant',
+          title: m.passport,
+          description: m.introDescription,
+          children: [
+            buildDescriptionField({
+              id: 'introDescription',
+              title: '',
+              description: '',
+            }),
+          ],
+        }),
+      ],
+    }),
+
+    buildSection({
       id: 'externalDataSection',
       title: m.dataCollectionTitle,
       children: [
@@ -58,7 +78,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: UserInfoApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
@@ -68,11 +88,11 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
             buildDataProviderItem({
-              provider: PaymentCatalogApi,
+              provider: SyslumadurPaymentCatalogApi,
               title: '',
             }),
             buildDataProviderItem({
-              provider: DistrictsApi,
+              provider: DeliveryAddressApi,
               title: '',
             }),
           ],
@@ -169,14 +189,13 @@ export const Draft: Form = buildForm({
               placeholder: m.dropLocationPlaceholder.defaultMessage,
               options: ({
                 externalData: {
-                  districtCommissioners: { data },
+                  deliveryAddress: { data },
                 },
               }) => {
                 return (data as DistrictCommissionerAgencies[])?.map(
-                  ({ id, name, place, address }) => ({
-                    value: id,
-                    label: `${name}, ${place}`,
-                    tooltip: `${address}`,
+                  ({ key, name }) => ({
+                    value: key,
+                    label: name,
                   }),
                 )
               },

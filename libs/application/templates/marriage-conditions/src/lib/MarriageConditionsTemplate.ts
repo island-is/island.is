@@ -23,7 +23,7 @@ import {
   getApplicationFeatureFlags,
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { MaritalStatusApi } from '../dataProviders'
+import { MaritalStatusApi, ReligionCodesApi } from '../dataProviders'
 
 const pruneAfter = (time: number) => {
   return {
@@ -41,7 +41,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  readyForProduction: true,
   featureFlag: Features.marriageConditions,
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -84,6 +83,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
+                ReligionCodesApi,
               ],
               delete: true,
             },
@@ -169,6 +169,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 UserProfileApi,
                 DistrictsApi,
                 MaritalStatusApi,
+                ReligionCodesApi,
               ],
             },
           ],

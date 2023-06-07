@@ -14,7 +14,6 @@ import {
   NotificationType,
   CaseState,
   CaseTransition,
-  completedCaseStates,
 } from '@island.is/judicial-system/types'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
 import {
@@ -31,10 +30,6 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  RestrictionCaseProsecutorSubsections,
-  Sections,
-} from '@island.is/judicial-system-web/src/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
@@ -70,6 +65,7 @@ export const Overview: React.FC = () => {
   const router = useRouter()
   const {
     transitionCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,
@@ -86,7 +82,11 @@ export const Overview: React.FC = () => {
     const shouldSubmitCase = workingCase.state === CaseState.DRAFT
 
     const caseSubmitted = shouldSubmitCase
-      ? await transitionCase(workingCase, CaseTransition.SUBMIT, setWorkingCase)
+      ? await transitionCase(
+          workingCase.id,
+          CaseTransition.SUBMIT,
+          setWorkingCase,
+        )
       : workingCase.state !== CaseState.NEW
 
     const notificationSent = caseSubmitted
@@ -115,12 +115,6 @@ export const Overview: React.FC = () => {
   return (
     <PageLayout
       workingCase={workingCase}
-      activeSection={
-        workingCase?.parentCase ? Sections.EXTENSION : Sections.PROSECUTOR
-      }
-      activeSubSection={
-        RestrictionCaseProsecutorSubsections.PROSECUTOR_OVERVIEW
-      }
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
@@ -155,7 +149,7 @@ export const Overview: React.FC = () => {
         <Box marginBottom={7}>
           <Text as="h1" variant="h1">
             {formatMessage(m.headingV3, {
-              isExtended: Boolean(workingCase?.parentCase),
+              isExtended: Boolean(workingCase.parentCase),
               caseType: workingCase.type,
             })}
           </Text>
@@ -268,13 +262,15 @@ export const Overview: React.FC = () => {
                   }
                 : undefined
             }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
+            defenders={[
+              {
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              },
+            ]}
           />
         </Box>
         <Box component="section" marginBottom={5} data-testid="demands">
@@ -362,9 +358,6 @@ export const Overview: React.FC = () => {
                 <CaseFileList
                   caseId={workingCase.id}
                   files={workingCase.caseFiles ?? []}
-                  isCaseCompleted={completedCaseStates.includes(
-                    workingCase.state,
-                  )}
                 />
               </Box>
             </AccordionItem>
@@ -393,6 +386,10 @@ export const Overview: React.FC = () => {
               <CopyLinkForDefenderButton
                 caseId={workingCase.id}
                 type={workingCase.type}
+                disabled={
+                  workingCase.state !== CaseState.RECEIVED ||
+                  !workingCase.courtDate
+                }
               >
                 {formatMessage(m.sections.copyLinkForDefenderButton)}
               </CopyLinkForDefenderButton>
@@ -402,7 +399,9 @@ export const Overview: React.FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
+          nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -410,7 +409,8 @@ export const Overview: React.FC = () => {
               : 'Endursenda kröfu á héraðsdóm'
           }
           nextIsLoading={
-            workingCase.state !== CaseState.RECEIVED && isSendingNotification
+            workingCase.state !== CaseState.RECEIVED &&
+            (isTransitioningCase || isSendingNotification)
           }
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
@@ -427,7 +427,7 @@ export const Overview: React.FC = () => {
             workingCase={workingCase}
             isLoading={isSendingNotification}
             onClose={() => setModal('noModal')}
-            onContinue={(explaination) => handleNextButtonClick(explaination)}
+            onContinue={(explanation) => handleNextButtonClick(explanation)}
           />
         )}
       </AnimatePresence>

@@ -1,4 +1,6 @@
 import {
+  coreHistoryMessages,
+  corePendingActionMessages,
   DefaultStateLifeCycle,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -13,6 +15,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   NationalRegistryUserApi,
+  PendingAction,
 } from '@island.is/application/types'
 import set from 'lodash/set'
 import { assign } from 'xstate'
@@ -21,7 +24,7 @@ import { States } from '../constants'
 import { ApiActions } from '../shared'
 import { WhoIsTheNotificationForEnum } from '../types'
 import { AccidentNotificationSchema } from './dataSchema'
-import { application } from './messages'
+import { anPendingActionMessages, application } from './messages'
 import { Features } from '@island.is/feature-flags'
 
 // The applicant is the applicant of the application, can be someone in power of attorney or the representative for the company
@@ -38,6 +41,45 @@ type AccidentNotificationEvent =
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.ASSIGN }
 
+const assignStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.waitingForAssigneeTitle,
+      content: corePendingActionMessages.waitingForAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForAssigneeTitle,
+      content:
+        anPendingActionMessages.waitForReivewerAndAddAttachmentDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
+const reviewStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  if (role === Roles.ASSIGNEE) {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.waitingForAssigneeDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.youNeedToReviewDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
 const AccidentNotificationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<AccidentNotificationEvent>,
@@ -46,8 +88,6 @@ const AccidentNotificationTemplate: ApplicationTemplate<
   type: ApplicationTypes.ACCIDENT_NOTIFICATION,
   name: application.general.name,
   institution: application.general.institutionName,
-  readyForProduction: true,
-  featureFlag: Features.accidentNotification,
   translationNamespaces: [
     ApplicationConfigurations.AccidentNotification.translation,
   ],
@@ -61,6 +101,14 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
           status: 'draft',
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationSent,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -92,6 +140,23 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
+          },
+          actionCard: {
+            pendingAction: assignStatePendingAction,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.ASSIGN,
+                logMessage: coreHistoryMessages.applicationAssigned,
+              },
+            ],
           },
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -147,6 +212,23 @@ const AccidentNotificationTemplate: ApplicationTemplate<
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: false,
+          },
+          actionCard: {
+            pendingAction: reviewStatePendingAction,
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.attachmentsAdded,
+              },
+            ],
           },
           onEntry: defineTemplateApi({
             action: ApiActions.addAttachment,

@@ -1,11 +1,24 @@
 import compareAsc from 'date-fns/compareAsc'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseFile,
+  CaseDecision,
+  CaseState,
+  CaseType,
+  isInvestigationCase,
+} from '@island.is/judicial-system/types'
+import {
+  TempCase as Case,
+  TempUpdateCase as UpdateCase,
+} from '@island.is/judicial-system-web/src/types'
 import * as constants from '@island.is/judicial-system/consts'
-import type { Case, UpdateCase } from '@island.is/judicial-system/types'
+import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import { padTimeWithZero, parseTime, replaceTabs } from './formatters'
+import { TUploadFile } from './hooks'
 import * as validations from './validate'
+import { IntlShape } from 'react-intl'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -198,6 +211,7 @@ export type stepValidationsType = {
   [constants.INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE]: () => boolean
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
+  [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
@@ -227,11 +241,13 @@ export type stepValidationsType = {
     theCase: Case,
   ) => boolean
   [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE]: (
-    theCase: Case,
-  ) => boolean
+  [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => boolean
   [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => boolean
+  [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
+  [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
+  [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
+  [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => boolean
 }
 
 export const stepValidations = (): stepValidationsType => {
@@ -277,6 +293,8 @@ export const stepValidations = (): stepValidationsType => {
     [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => true,
     [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) =>
       validations.isProcessingStepValidIndictments(theCase),
+    [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
+      validations.isTrafficViolationStepValidIndictments(theCase),
     [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
@@ -309,10 +327,17 @@ export const stepValidations = (): stepValidationsType => {
       validations.isReceptionAndAssignmentStepValid(theCase),
     [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) =>
       validations.isSubpoenaStepValid(theCase),
-    [constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE]: (theCase: Case) =>
-      validations.isProsecutorAndDefenderStepValid(theCase),
+    [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
+      validations.isDefenderStepValid(theCase),
     [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => true,
     [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => true,
+    [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
+    [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
+      validations.isCourtOfAppealCaseStepValid(theCase),
+    [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) =>
+      validations.isCourtOfAppealRulingStepValid(theCase) &&
+      theCase.appealState === 'COMPLETED',
+    [constants.COURT_OF_APPEAL_RESULT_ROUTE]: () => true,
   }
 }
 
@@ -334,4 +359,49 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     []
 
   return key
+}
+
+export const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
+  name: file.name,
+  type: file.type,
+  id: file.id,
+  key: file.key,
+  status: 'done',
+  percent: 100,
+  size: file.size,
+  category: file.category,
+  policeCaseNumber: file.policeCaseNumber,
+})
+
+export const titleForCase = (
+  formatMessage: IntlShape['formatMessage'],
+  theCase: Case,
+) => {
+  const isTravelBan =
+    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
+    theCase.type === CaseType.TRAVEL_BAN
+
+  if (theCase.state === CaseState.REJECTED) {
+    if (isInvestigationCase(theCase.type)) {
+      return 'Kröfu um rannsóknarheimild hafnað'
+    } else {
+      return 'Kröfu hafnað'
+    }
+  }
+
+  if (theCase.state === CaseState.DISMISSED) {
+    return formatMessage(m.dismissedTitle)
+  }
+
+  if (theCase.isValidToDateInThePast) {
+    return formatMessage(m.validToDateInThePast, {
+      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+    })
+  }
+
+  return isInvestigationCase(theCase.type)
+    ? formatMessage(m.investigationAccepted)
+    : formatMessage(m.restrictionActive, {
+        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+      })
 }

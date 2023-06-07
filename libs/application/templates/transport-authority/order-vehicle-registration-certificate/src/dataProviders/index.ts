@@ -1,2 +1,29 @@
-export { NationalRegistryProvider } from '@island.is/application/data-providers'
-export { UserProfileProvider } from '@island.is/application/data-providers'
+import {
+  defineTemplateApi,
+  InstitutionNationalIds,
+  PaymentCatalogApi,
+} from '@island.is/application/types'
+
+export { IdentityApi } from '@island.is/application/types'
+
+export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
+  params: {
+    organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+  },
+  externalDataId: 'payment',
+})
+
+interface CurrentVehiclesParameters {
+  showOwned?: boolean
+  showCoOwned?: boolean
+  showOperated?: boolean
+}
+export const CurrentVehiclesApi = defineTemplateApi<CurrentVehiclesParameters>({
+  action: 'currentVehicles',
+  externalDataId: 'currentVehicleList',
+  namespace: 'VehiclesShared',
+  params: {
+    showOwned: true,
+    showCoOwned: true,
+  },
+})

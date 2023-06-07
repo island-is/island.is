@@ -11,10 +11,10 @@ import type {
   UpdateCase,
   SessionArrangements,
   CourtDocument,
-  SubpoenaType,
   CaseType,
   IndictmentSubtypeMap,
   CrimeSceneMap,
+  CaseAppealRulingDecision,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -81,11 +81,11 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly requestedValidToDate?: string
+  readonly translator?: string
 
   @Allow()
   @Field({ nullable: true })
-  readonly translator?: string
+  readonly requestedValidToDate?: string
 
   @Allow()
   @Field({ nullable: true })
@@ -277,17 +277,53 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly seenByDefender?: string
-
-  @Allow()
-  @Field(() => String, { nullable: true })
-  readonly subpoenaType?: SubpoenaType
-
-  @Allow()
-  @Field({ nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
 
   @Allow()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly indictmentIntroduction?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly requestDriversLicenseSuspension?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly prosecutorStatementDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defendantStatementDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealCaseNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealAssistantId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge1Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge2Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge3Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealConclusion?: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }

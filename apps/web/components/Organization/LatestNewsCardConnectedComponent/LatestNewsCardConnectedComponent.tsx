@@ -5,15 +5,17 @@ import {
   GetNewsWithContentQueryVariables,
   GetSingleNewsItemQuery,
 } from '@island.is/web/graphql/schema'
-import { linkResolver } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_NEWS_WITH_CONTENT_QUERY } from '@island.is/web/screens/queries'
 import * as styles from './LatestNewsCardConnectedComponent.css'
 
 const extractHeadingsFromContent = (
   content: GetSingleNewsItemQuery['getSingleNews']['content'],
+  count?: number,
+  skipLastHeading?: boolean,
 ) => {
-  if (!content) return []
+  if (!content || !count) return []
 
   const headings: string[] = []
 
@@ -32,12 +34,12 @@ const extractHeadingsFromContent = (
     }
   }
 
-  // Skip the last one since that's not a heading we'd like to show
+  // Potentially skip the last one since that's not a heading we'd like to show
   // See here: https://island.is/s/stafraent-island/frett/frettabref-juli-2022
   // The last heading is 'Meðal verkefna Stafræns Íslands þessa dagana eru:'
-  headings.pop()
+  if (skipLastHeading) headings.pop()
 
-  return headings
+  return headings.slice(0, count)
 }
 
 interface LatestNewsCardConnectedComponentProps {
@@ -46,6 +48,8 @@ interface LatestNewsCardConnectedComponentProps {
   tags?: string[]
   imageUrl?: string
   shouldExtractHeadingsFromContent?: boolean
+  numberOfHeadingsToExtractFromContent?: number
+  skipLastHeading?: boolean
 }
 
 export const LatestNewsCardConnectedComponent = ({
@@ -54,7 +58,10 @@ export const LatestNewsCardConnectedComponent = ({
   tags = [],
   imageUrl,
   shouldExtractHeadingsFromContent,
+  numberOfHeadingsToExtractFromContent = 4,
+  skipLastHeading = true,
 }: LatestNewsCardConnectedComponentProps) => {
+  const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
 
   const response = useQuery<
@@ -79,7 +86,11 @@ export const LatestNewsCardConnectedComponent = ({
     : linkResolver('news', [card.slug]).href
 
   const headings = shouldExtractHeadingsFromContent
-    ? extractHeadingsFromContent(card.content)
+    ? extractHeadingsFromContent(
+        card.content,
+        numberOfHeadingsToExtractFromContent,
+        skipLastHeading,
+      )
     : []
 
   return (

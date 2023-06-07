@@ -1,10 +1,10 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
-import { NotificationType } from '@island.is/judicial-system/types'
+import { NotificationType, User } from '@island.is/judicial-system/types'
 
 import { Case } from '../../../case'
-import { SendNotificationDto } from '../../dto/sendNotification.dto'
+import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
@@ -17,11 +17,13 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notification: SendNotificationDto,
+  notificationDto: SendInternalNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send defendants not updated at court notifications', () => {
-  const notification: SendNotificationDto = {
+  const userId = uuid()
+  const notificationDto: SendInternalNotificationDto = {
+    user: { id: userId } as User,
     type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT,
   }
   const caseId = uuid()
@@ -57,12 +59,12 @@ describe('InternalNotificationController - Send defendants not updated at court 
     givenWhenThen = async (
       caseId: string,
       theCase: Case,
-      notification: SendNotificationDto,
+      notificationDto: SendInternalNotificationDto,
     ) => {
       const then = {} as Then
 
       await internalNotificationController
-        .sendCaseNotification(caseId, theCase, notification)
+        .sendCaseNotification(caseId, theCase, notificationDto)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -74,7 +76,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, theCase, notification)
+      then = await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should send email', () => {
@@ -104,7 +106,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
       mockFindAll.mockResolvedValueOnce([
         { recipients: [{ address: judgeEmail, success: true }] },
       ])
-      then = await givenWhenThen(caseId, theCase, notification)
+      then = await givenWhenThen(caseId, theCase, notificationDto)
     })
 
     it('should not send email', () => {

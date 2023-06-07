@@ -5,6 +5,7 @@ import {
   ClientUpdateDTO,
   PagedRowsDto,
 } from '@island.is/auth-api-lib'
+import { NoContentException } from '@island.is/nest/problem'
 import {
   BadRequestException,
   Body,
@@ -16,12 +17,13 @@ import {
   Put,
   Query,
   UseGuards,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import {
   ApiCreatedResponse,
+  ApiExcludeController,
   ApiOkResponse,
   ApiQuery,
-  ApiTags,
   getSchemaPath,
 } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
@@ -38,8 +40,8 @@ import { environment } from '../../../environments/'
 const namespace = `${environment.audit.defaultNamespace}/clients`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@ApiTags('clients')
-@Controller('backend/clients')
+@ApiExcludeController()
+@Controller({ path: 'clients', version: [VERSION_NEUTRAL, '1'] })
 @Audit({ namespace })
 export class ClientsController {
   constructor(
@@ -105,7 +107,11 @@ export class ClientsController {
       throw new BadRequestException('Id must be provided')
     }
 
-    return this.clientsService.findClientById(id)
+    const client = await this.clientsService.findClientById(id)
+    if (!client) {
+      throw new NoContentException()
+    }
+    return client
   }
 
   /** Creates a new client */

@@ -6,7 +6,7 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { Application } from '../../../types/schema'
+import { Application } from '@island.is/api/schema'
 
 export const sellerSubSection = buildSubSection({
   id: 'seller',
@@ -26,25 +26,25 @@ export const sellerSubSection = buildSubSection({
           id: 'seller.nationalId',
           title: information.labels.seller.nationalId,
           backgroundColor: 'white',
-          width: 'full',
+          width: 'half',
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.nationalId,
+            application.externalData?.identity?.data?.nationalId,
         }),
         buildTextField({
           id: 'seller.name',
           title: information.labels.seller.name,
           backgroundColor: 'white',
-          width: 'full',
+          width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fullName,
+            application.externalData?.identity?.data?.name,
         }),
         buildTextField({
           id: 'seller.email',
           title: information.labels.seller.email,
-          width: 'full',
+          width: 'half',
           variant: 'email',
           required: true,
           defaultValue: (application: Application) =>
@@ -53,8 +53,9 @@ export const sellerSubSection = buildSubSection({
         buildTextField({
           id: 'seller.phone',
           title: information.labels.seller.phone,
-          width: 'full',
+          width: 'half',
           variant: 'tel',
+          format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.phone,

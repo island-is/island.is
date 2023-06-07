@@ -21,6 +21,7 @@ import {
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
+import { CurrentLicenseParameters } from '@island.is/application/types'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -31,13 +32,13 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     super('DrivingLicenseShared')
   }
 
-  private async hasTeachingRights(nationalId: string): Promise<Boolean> {
+  private async hasTeachingRights(nationalId: string): Promise<boolean> {
     return await this.drivingLicenseService.getIsTeacher({ nationalId })
   }
 
   async getHasTeachingRights({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Boolean> {
+  }: TemplateApiModuleActionProps): Promise<boolean> {
     const teachingRights = await this.hasTeachingRights(auth.nationalId)
     if (teachingRights) {
       return true
@@ -54,7 +55,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
   async getisEmployee({
     auth,
-  }: TemplateApiModuleActionProps): Promise<Boolean> {
+  }: TemplateApiModuleActionProps): Promise<boolean> {
     const isEmployee = await this.drivingLicenseBookService.isSchoolStaff(auth)
     if (isEmployee) {
       return isEmployee
@@ -72,18 +73,30 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async drivingSchoolForEmployee({
     auth,
   }: TemplateApiModuleActionProps): Promise<DrivingLicenseBookSchool> {
-    const school = await this.hasTeachingRights(auth.nationalId)
-    if (school) {
-      return this.drivingLicenseBookService.getSchoolForSchoolStaff(auth)
-    } else {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
-          summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
-        },
-        400,
-      )
-    }
+    return this.drivingLicenseBookService
+      .isSchoolStaff(auth)
+      .then((isEmployee) => {
+        if (isEmployee) {
+          return this.drivingLicenseBookService.getSchoolForSchoolStaff(auth)
+        } else {
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
+              summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
+            },
+            400,
+          )
+        }
+      })
+      .catch(() => {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.drivingLicenseNotEmployeeTitle,
+            summary: coreErrorMessages.drivingLicenseNotEmployeeSummary,
+          },
+          400,
+        )
+      })
   }
 
   async teachers(): Promise<Teacher[]> {
@@ -104,7 +117,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   async currentLicense({
     auth,
     application,
-  }: TemplateApiModuleActionProps): Promise<DrivingLicense> {
+    params,
+  }: TemplateApiModuleActionProps<CurrentLicenseParameters>): Promise<DrivingLicense> {
     const fakeData = getValueViaPath<DrivingLicenseFakeData>(
       application.answers,
       'fakeData',
@@ -118,15 +132,39 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
             : undefined,
       }
     }
+
     const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
       nationalId: auth.nationalId,
+      token: auth.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
     })
+
     const categoryB = (drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
     )
+
+    // Validate that user has the necessary categories
+    if (
+      params?.validCategories &&
+      (!drivingLicense?.categories ||
+        !drivingLicense.categories.some((x) =>
+          params.validCategories?.includes(x.name),
+        ))
+    ) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.drivingLicenseMissingValidCategory,
+          summary: coreErrorMessages.drivingLicenseMissingValidCategory,
+        },
+        400,
+      )
+    }
+
     return {
       currentLicense: categoryB ? categoryB.name : null,
       healthRemarks: drivingLicense?.healthRemarks,
+      categories: drivingLicense?.categories,
+      id: drivingLicense?.id,
+      birthCountry: drivingLicense?.birthCountry,
     }
   }
 

@@ -1,19 +1,9 @@
-import { DynamicModule, Module } from '@nestjs/common'
-import { PaymentAPI, PaymentServiceOptions } from '@island.is/clients/payment'
+import { Module } from '@nestjs/common'
 import { PaymentResolver } from './api-domains-payment.resolver'
+import { ChargeFjsV2ClientModule } from '@island.is/clients/charge-fjs-v2'
 
-@Module({})
-export class ApiDomainsPaymentModule {
-  static register(config: PaymentServiceOptions): DynamicModule {
-    return {
-      module: ApiDomainsPaymentModule,
-      providers: [
-        {
-          provide: PaymentAPI,
-          useFactory: () => new PaymentAPI(config),
-        },
-        PaymentResolver,
-      ],
-    }
-  }
-}
+@Module({
+  imports: [ChargeFjsV2ClientModule],
+  providers: [PaymentResolver],
+})
+export class ApiDomainsPaymentModule {}

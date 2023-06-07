@@ -1,9 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 
 import AmazonS3URI from 'amazon-s3-uri'
 import { S3 } from 'aws-sdk'
@@ -18,39 +16,187 @@ import {
   File,
   ApplicationAttachments,
   AttachmentPaths,
+  CriminalRecord,
+  DebtLessCertificateResult,
 } from './types/attachments'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  YES,
 } from '@island.is/application/types'
-import { Info } from './types/application'
+import { Info, BankruptcyHistoryResult } from './types/application'
 import { getExtraData } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-
+import { CriminalRecordService } from '@island.is/api/domains/criminal-record'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { FinanceClientService } from '@island.is/clients/finance'
+import { OperatingLicenseFakeData } from '@island.is/application/templates/operating-license/types'
+import { JudicialAdministrationService } from '@island.is/clients/judicial-administration'
+import { BANNED_BANKRUPTCY_STATUSES } from './constants'
+import { error } from '@island.is/application/templates/operating-license'
+import { isPerson } from 'kennitala'
+import { User } from '@island.is/auth-nest-tools'
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
   s3: S3
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
+    private readonly criminalRecordService: CriminalRecordService,
+    private readonly financeService: FinanceClientService,
+    private readonly judicialAdministrationService: JudicialAdministrationService,
   ) {
     super(ApplicationTypes.OPERATING_LCENSE)
     this.s3 = new S3()
+  }
+
+  async criminalRecord({
+    application,
+  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+    const fakeData = getValueViaPath<OperatingLicenseFakeData>(
+      application.answers,
+      'fakeData',
+    )
+    const useFakeData = fakeData?.useFakeData === YES
+
+    if (useFakeData) {
+      return fakeData?.criminalRecord === YES
+        ? Promise.resolve({ success: true })
+        : Promise.reject({
+            reason: {
+              title: error.dataCollectionCriminalRecordTitle,
+              summary: error.dataCollectionCriminalRecordErrorTitle,
+              hideSubmitError: true,
+            },
+            statusCode: 404,
+          })
+    }
+    try {
+      const applicantSsn =
+        application.applicantActors.length > 0
+          ? application.applicantActors[0]
+          : application.applicant
+      const hasCriminalRecord = await this.criminalRecordService.validateCriminalRecord(
+        applicantSsn,
+      )
+      if (hasCriminalRecord) {
+        return { success: true }
+      }
+
+      throw new TemplateApiError(
+        {
+          title: error.dataCollectionCriminalRecordTitle,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    } catch (e) {
+      throw new TemplateApiError(
+        {
+          title: error.dataCollectionCriminalRecordTitle,
+          summary: coreErrorMessages.errorDataProvider,
+        },
+        400,
+      )
+    }
+  }
+
+  async getDebtLessCertificate(auth: User): Promise<DebtLessCertificateResult> {
+    const response = await this.financeService.getDebtLessCertificate(
+      auth.nationalId,
+      'IS',
+      auth,
+    )
+    if (!response?.debtLessCertificateResult) {
+      throw new TemplateApiError(
+        {
+          title: error.missingCertificateTitle,
+          summary: error.missingCertificateSummary,
+        },
+        400,
+      )
+    }
+
+    if (response?.error) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProvider,
+          summary: response.error.message,
+        },
+        response.error.code,
+      )
+    }
+
+    return response.debtLessCertificateResult
+  }
+
+  async debtLessCertificate({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
+    const fakeData = getValueViaPath<OperatingLicenseFakeData>(
+      application.answers,
+      'fakeData',
+    )
+    const useFakeData = fakeData?.useFakeData === YES
+
+    if (useFakeData) {
+      return fakeData?.debtStatus === YES
+        ? Promise.resolve({ success: true })
+        : Promise.reject({
+            reason: {
+              title: error.missingCertificateTitle,
+              summary: error.missingCertificateSummary,
+              hideSubmitError: true,
+            },
+            statusCode: 404,
+          })
+    }
+
+    await this.getDebtLessCertificate(auth)
+    // User can owe under a million and should still pass so the status is checked with a pdf manualy by Sýslumenn
+
+    return { success: true }
+  }
+
+  async courtBankruptcyCert({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<BankruptcyHistoryResult> {
+    const cert = await this.judicialAdministrationService.searchBankruptcy(auth)
+
+    for (const [_, value] of Object.entries(cert)) {
+      if (
+        value.bankruptcyStatus &&
+        BANNED_BANKRUPTCY_STATUSES.includes(value.bankruptcyStatus)
+      ) {
+        throw new TemplateApiError(
+          {
+            title: error.missingJudicialAdministrationificateTitle,
+            summary: error.missingJudicialAdministrationificateSummary,
+          },
+          400,
+        )
+      }
+    }
+
+    return cert[0]
   }
 
   async createCharge({
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
+    const SYSLUMADUR_NATIONAL_ID = '6509142520'
+
     const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
     if (!chargeItemCode) {
       throw new Error('chargeItemCode missing in request')
     }
 
     const response = await this.sharedTemplateAPIService.createCharge(
-      auth.authorization,
+      auth,
       id,
+      SYSLUMADUR_NATIONAL_ID,
       [chargeItemCode],
     )
     // last chance to validate before the user receives a dummy
@@ -69,16 +215,11 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     orderId?: string
   }> {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth.authorization,
+      auth,
       application.id,
     )
 
     if (!isPayment?.fulfilled) {
-      this.log(
-        'info',
-        'Trying to submit OperatingLicenseapplication that has not been paid.',
-        {},
-      )
       throw new Error(
         'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
       )
@@ -113,7 +254,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
       }))
 
       const persons: Person[] = [applicant, ...actors]
-      const attachments = await this.getAttachments(application)
+
+      const attachments = await this.getAttachments(application, auth)
       const extraData = getExtraData(application)
       const result: DataUploadResponse = await this.syslumennService
         .uploadData(
@@ -124,32 +266,74 @@ export class OperatingLicenseService extends BaseTemplateApiService {
           uploadDataId,
         )
         .catch((e) => {
-          return {
-            success: false,
-            errorMessage: e.message,
-          }
+          throw new Error(`Application submission failed ${e}`)
         })
       return {
         success: result.success,
-        orderId: '',
       }
     } catch (e) {
-      this.log('error', 'Submitting operating license failed', {
-        e,
-      })
-
-      throw e
+      throw new Error(`Application submission failed ${e}`)
     }
   }
 
-  private log(lvl: 'error' | 'info', message: string, meta: unknown) {
-    this.logger.log(lvl, `[operation-license] ${message}`, meta)
+  async getCriminalRecord(nationalId: string): Promise<CriminalRecord> {
+    const document = await this.criminalRecordService.getCriminalRecord(
+      nationalId,
+    )
+
+    // Call sýslumaður to get the document sealed before handing it over to the user
+    const sealedDocumentResponse = await this.syslumennService.sealDocument(
+      document.contentBase64,
+    )
+
+    if (!sealedDocumentResponse?.skjal) {
+      throw new Error('Eitthvað fór úrskeiðis.')
+    }
+
+    const sealedDocument: CriminalRecord = {
+      contentBase64: sealedDocumentResponse.skjal,
+    }
+
+    return sealedDocument
   }
 
   private async getAttachments(
     application: ApplicationWithAttachments,
+    auth: User,
   ): Promise<Attachment[]> {
     const attachments: Attachment[] = []
+
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+
+    let criminalRecordSSN = application.applicant
+
+    if (!isPerson(application.applicant)) {
+      // Go through actors until a person is found
+      // if no person then an error is thrown in the next step
+      application.applicantActors.every((actor) => {
+        if (isPerson(actor)) {
+          criminalRecordSSN = actor
+          return false
+        }
+        return true
+      })
+    }
+
+    const criminalRecord = await this.getCriminalRecord(criminalRecordSSN)
+    if (criminalRecord.contentBase64) {
+      attachments.push({
+        name: `sakavottord_${application.applicant}_${dateStr}.pdf`,
+        content: criminalRecord.contentBase64,
+      })
+    }
+
+    const debtLess = await this.getDebtLessCertificate(auth)
+    if (debtLess.certificate?.document) {
+      attachments.push({
+        name: `skuldleysisvottord_${application.applicant}_${dateStr}.pdf`,
+        content: debtLess.certificate?.document,
+      })
+    }
 
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]
@@ -161,9 +345,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
       if (attachmentAnswer) {
         const fileType = attachmentAnswer.name?.split('.').pop()
-        const name = `${prefix}_${new Date(Date.now())
-          .toISOString()
-          .substring(0, 10)}.${fileType}`
+        const name = `${prefix}_${dateStr}.${fileType}`
         const fileName = (application.attachments as ApplicationAttachments)[
           attachmentAnswer?.key
         ]
@@ -188,9 +370,6 @@ export class OperatingLicenseService extends BaseTemplateApiService {
       const fileContent = file.Body as Buffer
       return fileContent?.toString('base64') || ''
     } catch (e) {
-      this.log('error', 'Fetching uploaded file failed', {
-        e,
-      })
       return 'err'
     }
   }

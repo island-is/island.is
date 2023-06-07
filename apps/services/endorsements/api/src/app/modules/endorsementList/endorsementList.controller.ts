@@ -35,7 +35,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
 import { environment } from '../../../environments'
-import { EndorsementsScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, EndorsementsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'
 import { AccessGroup } from '../../guards/accessGuard/access.enum'
@@ -79,7 +79,8 @@ export class EndorsementListController {
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
   @UseInterceptors(EndorsementListsInterceptor)
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
+  @Audit()
   async findByTags(
     @CurrentUser() user: User,
     @Query() query: FindTagPaginationComboDto,
@@ -96,7 +97,7 @@ export class EndorsementListController {
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('general-petition-lists')
   @UseInterceptors(EndorsementListsInterceptor)
-  @BypassAuth()
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionLists(
     @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementListDto> {
@@ -110,7 +111,7 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Get('general-petition-list/:listId')
   @UseInterceptors(EndorsementListInterceptor)
-  @BypassAuth()
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionList(
     @Param('listId') listId: string,
   ): Promise<EndorsementList | null> {
@@ -119,7 +120,7 @@ export class EndorsementListController {
     )
   }
 
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @ApiOperation({
     summary: 'Finds all endorsements for the currently authenticated user',
   })
@@ -150,7 +151,7 @@ export class EndorsementListController {
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
   })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   async findEndorsementLists(
     @CurrentUser() user: User,
     @Query() query: PaginationDto,
@@ -167,7 +168,7 @@ export class EndorsementListController {
   })
   @ApiOperation({ summary: 'Finds a single endorsements list by id' })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Get(':listId')
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
@@ -190,7 +191,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Put(':listId/close')
   @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
@@ -215,7 +216,7 @@ export class EndorsementListController {
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @ApiBody({ type: ChangeEndorsmentListClosedDateDto })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Put(':listId/open')
   @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
@@ -239,7 +240,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.admin)
+  @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/lock')
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
@@ -261,7 +262,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @Scopes(EndorsementsScope.admin)
+  @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/unlock')
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
@@ -285,7 +286,7 @@ export class EndorsementListController {
   })
   @ApiParam({ name: 'listId', type: 'string' })
   @ApiBody({ type: UpdateEndorsementListDto })
-  @Scopes(EndorsementsScope.admin)
+  @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/update')
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -311,7 +312,7 @@ export class EndorsementListController {
     type: EndorsementList,
   })
   @ApiBody({ type: EndorsementListDto })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Post()
   @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
@@ -324,7 +325,6 @@ export class EndorsementListController {
     @Body() endorsementList: EndorsementListDto,
     @CurrentUser() user: User,
   ): Promise<EndorsementList> {
-    console.log(endorsementList.closedDate)
     return await this.endorsementListService.create({
       ...endorsementList,
       owner: user.nationalId,
@@ -337,7 +337,7 @@ export class EndorsementListController {
     type: String,
   })
   @ApiParam({ name: 'listId', type: 'string' })
-  @BypassAuth()
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   @Get(':listId/ownerInfo')
   async getOwnerInfo(@Param('listId') listId: string): Promise<string> {
     return await this.endorsementListService.getOwnerInfo(listId)
@@ -346,11 +346,12 @@ export class EndorsementListController {
   @ApiOperation({
     summary: 'Emails a PDF with list endorsements data',
   })
-  @Scopes(EndorsementsScope.main)
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
   @ApiOkResponse({ type: SendPdfEmailResponse })
   @Post(':listId/email-pdf')
+  @Audit()
   async emailEndorsementsPDF(
     @Param(
       'listId',

@@ -1,13 +1,9 @@
-import React from 'react'
-import {
-  ServicePortalModuleComponent,
-  ServicePortalPath,
-} from '@island.is/service-portal/core'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
-import { Redirect } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
-export const SettingsRoot: ServicePortalModuleComponent = () => {
-  return <Redirect to={ServicePortalPath.SettingsPersonalInformation} />
+export const SettingsRoot = () => {
+  return <Navigate to={ServicePortalPath.SettingsPersonalInformation} replace />
 }
 
 export default SettingsRoot

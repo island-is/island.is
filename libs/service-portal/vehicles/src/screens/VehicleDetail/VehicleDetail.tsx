@@ -1,5 +1,5 @@
 import isNumber from 'lodash/isNumber'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
 import {
@@ -24,14 +24,13 @@ import {
   ErrorScreen,
   formSubmit,
   NotFound,
-  ServicePortalModuleComponent,
   TableGrid,
   UserInfoLine,
   m,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
-import { messages } from '../../lib/messages'
+import { messages, urls } from '../../lib/messages'
 import {
   basicInfoArray,
   coOwnerInfoArray,
@@ -45,7 +44,6 @@ import {
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
-import { SAMGONGUSTOFA_LINK } from '../../utils/constants'
 
 export const GET_USERS_VEHICLE_DETAIL = gql`
   query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
@@ -162,10 +160,14 @@ export const GET_USERS_VEHICLE_DETAIL = gql`
   }
 `
 
-const VehicleDetail: ServicePortalModuleComponent = () => {
+type UseParams = {
+  id: string
+}
+
+const VehicleDetail = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { id }: { id: string | undefined } = useParams()
+  const { id } = useParams() as UseParams
 
   const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
     variables: {
@@ -222,9 +224,33 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
   const technicalArr =
     technicalInfo && technicalInfoArray(technicalInfo, formatMessage)
 
+  const dropdownArray = [
+    {
+      title: formatMessage(messages.orderRegistrationNumber),
+      href: formatMessage(urls.regNumber),
+    },
+    {
+      title: formatMessage(messages.orderRegistrationLicense),
+      href: formatMessage(urls.regCert),
+    },
+    {
+      title: formatMessage(messages.addCoOwner),
+      href: formatMessage(urls.coOwnerChange),
+    },
+    {
+      title: formatMessage(messages.addOperator),
+      href: formatMessage(urls.operator),
+    },
+  ]
+  if (basicInfo?.permno !== basicInfo?.regno) {
+    dropdownArray.push({
+      title: formatMessage(messages.renewPrivateRegistration),
+      href: formatMessage(urls.operator),
+    })
+  }
   return (
     <>
-      <Box marginBottom={6}>
+      <Box marginBottom={[2, 2, 6]}>
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={2}>
@@ -251,10 +277,16 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           </GridColumn>
         </GridRow>
         {!loading && downloadServiceURL && (
-          <GridRow marginTop={6}>
+          <GridRow marginTop={[2, 2, 6]}>
             <GridColumn span="12/12">
-              <Box display="flex" justifyContent="flexStart" printHidden>
-                <Box paddingRight={2}>
+              <Box
+                display="flex"
+                flexDirection="row"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <Button
                     colorScheme="default"
                     icon="receipt"
@@ -267,9 +299,9 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                     {formatMessage(messages.vehicleHistoryReport)}
                   </Button>
                 </Box>
-                <Box paddingRight={2}>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <a
-                    href={SAMGONGUSTOFA_LINK}
+                    href={formatMessage(urls.ownerChange)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -286,26 +318,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
                   </a>
                 </Box>
                 <Box paddingRight={2}>
-                  <Dropdown
-                    dropdownItems={[
-                      {
-                        title: formatMessage(messages.orderRegistrationNumber),
-                        href: SAMGONGUSTOFA_LINK,
-                      },
-                      {
-                        title: formatMessage(messages.orderRegistrationLicense),
-                        href: SAMGONGUSTOFA_LINK,
-                      },
-                      {
-                        title: formatMessage(messages.addCoOwner),
-                        href: SAMGONGUSTOFA_LINK,
-                      },
-                      {
-                        title: formatMessage(messages.addOperator),
-                        href: SAMGONGUSTOFA_LINK,
-                      },
-                    ]}
-                  />
+                  <Dropdown dropdownItems={dropdownArray} />
                 </Box>
               </Box>
             </GridColumn>
@@ -318,7 +331,7 @@ const VehicleDetail: ServicePortalModuleComponent = () => {
           content={mainInfo?.regno ?? ''}
           editLink={{
             title: messages.orderRegistrationNumber,
-            url: SAMGONGUSTOFA_LINK,
+            url: formatMessage(urls.regNumber),
             external: true,
           }}
           loading={loading}

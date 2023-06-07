@@ -31,7 +31,7 @@ import {
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
@@ -39,6 +39,7 @@ import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { webRichText } from '@island.is/web/utils/richText'
 import { Webreader } from '@island.is/web/components'
+import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
 
 interface LifeEventProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -47,17 +48,14 @@ interface LifeEventProps {
 }
 
 export const LifeEvent: Screen<LifeEventProps> = ({
-  lifeEvent: { id, image, title, intro, content },
+  lifeEvent: { id, image, title, intro, content, featuredImage },
   namespace,
   locale,
 }) => {
-  const { value: isWebReaderEnabledForLifeEventPages } = useFeatureFlag(
-    'isWebReaderEnabledForLifeEventPages',
-    false,
-  )
-
   useContentfulId(id)
   useLocalLinkTypeResolver()
+
+  usePlausiblePageview(DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN)
 
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -100,15 +98,17 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     return items
   }, [])
 
+  const socialImage = featuredImage ?? image
+
   return (
     <Box paddingBottom={[2, 2, 10]}>
       <HeadWithSocialSharing
         title={`${title} | Ísland.is`}
         description={intro}
-        imageUrl={image?.url}
-        imageContentType={image?.contentType}
-        imageWidth={image?.width?.toString()}
-        imageHeight={image?.height?.toString()}
+        imageUrl={socialImage?.url}
+        imageContentType={socialImage?.contentType}
+        imageWidth={socialImage?.width?.toString()}
+        imageHeight={socialImage?.height?.toString()}
       />
 
       <GridContainer id="main-content">
@@ -153,9 +153,9 @@ export const LifeEvent: Screen<LifeEventProps> = ({
                     {title}
                   </span>
                 </Text>
-                {isWebReaderEnabledForLifeEventPages && (
-                  <Webreader readId={null} readClass="rs_read" />
-                )}
+
+                <Webreader readId={null} readClass="rs_read" />
+
                 {intro && (
                   <Text variant="intro" as="p" paddingTop={2}>
                     <span className="rs_read" id={slugify(intro)}>

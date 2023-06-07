@@ -1,14 +1,14 @@
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
-  Case,
-  CaseType,
   User,
   UserRole,
-} from '@island.is/judicial-system/types'
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { filterCases, FilterOption, filterOptionsForUser } from './useFilter'
 
 describe('useFilter - filterOptionsForUser', () => {
-  test.each([UserRole.ASSISTANT, UserRole.REGISTRAR])(
+  test.each([UserRole.ASSISTANT, UserRole.REPRESENTATIVE])(
     'should filter out investigation option for %s',
     (role) => {
       const user = { role: role } as User

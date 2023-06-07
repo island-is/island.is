@@ -12,18 +12,16 @@ import { AccidentNotificationService } from './accident-notification.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
-import {
-  createCurrentUser,
-  createApplication,
-} from '@island.is/testing/fixtures'
+import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { createCurrentUser } from '@island.is/testing/fixtures'
 import { S3 } from 'aws-sdk'
 import type { Locale } from '@island.is/shared/types'
-
+import { createApplication } from '@island.is/application/testing'
 import get from 'lodash/get'
 import set from 'lodash/set'
 import { S3Service } from './attachments/s3.service'
 import { SmsService } from '@island.is/nova-sms'
+import { PaymentService } from '@island.is/application/api/payment'
 const nationalId = '1234564321'
 let id = 0
 
@@ -89,6 +87,10 @@ describe('AccidentNotificationService', () => {
         {
           provide: ConfigService,
           useValue: {},
+        },
+        {
+          provide: PaymentService,
+          useValue: {}, //not used
         },
         {
           provide: EmailService,

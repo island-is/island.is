@@ -20,6 +20,10 @@ export const AttachmentPaths: AttachmentPath[] = [
     path: 'attachments.outsideBlueprints.file',
     prefix: 'teikning_utisvaedi',
   },
+  {
+    path: 'attachments.otherFiles.file',
+    prefix: 'onnur_gogn',
+  },
 ]
 
 export type ApplicationAttachments = {
@@ -29,4 +33,16 @@ export type ApplicationAttachments = {
 export type File = {
   key: string
   name: string
+}
+
+export interface CriminalRecord {
+  contentBase64: string
+}
+
+export interface DebtLessCertificateResult {
+  debtLess: boolean
+  certificate?: {
+    type: string
+    document: string
+  }
 }
