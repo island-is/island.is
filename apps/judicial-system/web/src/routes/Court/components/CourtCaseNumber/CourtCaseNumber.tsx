@@ -103,6 +103,7 @@ const CourtCaseNumber: React.FC<Props> = (props) => {
                 label={formatMessage(courtCaseNumber.label)}
                 placeholder={formatMessage(courtCaseNumber.placeholder, {
                   isIndictment: isIndictmentCase(workingCase.type),
+                  year: new Date().getFullYear(),
                 })}
                 autoComplete="off"
                 size="sm"
