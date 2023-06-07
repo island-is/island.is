@@ -78,7 +78,7 @@ test.describe('Admin portal application', () => {
           'userInfoUrl',
           'endSessionUrl',
           'jsonWebSetKeyUrl',
-        ].map((name) => page.locator(`input[name="${name}"]`))
+        ].map((name) => page.locator(getInputByName(name)))
 
         // Assert - Heading
         await expect(page.getByRole('heading', { name: title })).toBeVisible()
@@ -210,7 +210,7 @@ test.describe('Admin portal application', () => {
         await page.locator(slidingRefreshTokenLifetime).clear()
         await page.locator(slidingRefreshTokenLifetime).fill(dummyNumber)
 
-        // Assert - check if absoluteRefreshTokenLifetime and absoluteRefreshTokenLifetime has dummy text value
+        // Assert - check if absoluteRefreshTokenLifetime and slidingRefreshTokenLifetime has dummy text value
         await expect(page.locator(absoluteRefreshTokenLifetime)).toHaveValue(
           dummyNumber,
         )

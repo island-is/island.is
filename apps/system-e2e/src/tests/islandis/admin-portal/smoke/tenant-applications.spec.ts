@@ -24,48 +24,42 @@ test.describe('Admin portal tenant applications', () => {
     await contextGranter.close()
   })
 
-  test('can manage tenant applications', async () => {
+  test('can manage applications', async () => {
     // Arrange
     const page = await contextGranter.newPage()
     // Act
     await page.goto(homeUrl)
 
-    await test.step('See tenant applications overview', async () => {
+    await test.step('See applications overview', async () => {
       // Assert
       await expect(
         page.getByRole('heading', { name: 'Applications' }),
       ).toBeVisible()
     })
 
-    await test.step(
-      'Filter tenant applications list by name or id',
-      async () => {
-        // Act
-        await page
-          .getByPlaceholder('Search')
-          // filter by id
-          .fill('Mínar síður')
-
-        // Assert
-        await expect(
-          page.getByRole('heading', { name: 'Mínar síður Ísland.is' }),
-        ).toBeVisible()
-        await expect(
-          page.getByTestId('tenant-applications-list-item'),
-        ).toBeVisible()
-        await expect(
-          page.getByTestId('tenant-applications-list-item'),
-        ).toHaveCount(1)
-      },
-    )
-
-    await test.step('To link to tenant application page', async () => {
-      const applicationId = '@island.is/web'
+    await test.step('Filter applications list by name or id', async () => {
       // Act
       await page
         .getByPlaceholder('Search')
         // filter by id
-        .fill(applicationId)
+        .fill('Mínar síður')
+
+      // Assert
+      await expect(
+        page.getByRole('heading', { name: 'Mínar síður Ísland.is' }),
+      ).toBeVisible()
+      await expect(
+        page.getByTestId('tenant-applications-list-item'),
+      ).toBeVisible()
+      await expect(
+        page.getByTestId('tenant-applications-list-item'),
+      ).toHaveCount(1)
+    })
+
+    await test.step('To link to application page', async () => {
+      const applicationId = '@island.is/web'
+      // Act
+      await page.getByPlaceholder('Search').fill(applicationId)
       await page.getByRole('button', { name: 'Change' }).click()
 
       // Assert
@@ -75,7 +69,7 @@ test.describe('Admin portal tenant applications', () => {
     })
 
     await test.step(
-      'To link to tenant application page with env as query param',
+      'To link to application page with env as query param',
       async () => {
         const applicationId = '@island.is/web'
         const env = 'Development'
@@ -84,10 +78,7 @@ test.describe('Admin portal tenant applications', () => {
         await page.goto(homeUrl)
 
         // Act
-        await page
-          .getByPlaceholder('Search')
-          // filter by id
-          .fill(applicationId)
+        await page.getByPlaceholder('Search').fill(applicationId)
         await page.getByRole('button', { name: 'Development' }).click()
 
         // Assert

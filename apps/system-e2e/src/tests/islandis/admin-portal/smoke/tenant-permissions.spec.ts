@@ -65,10 +65,7 @@ test.describe('Admin portal tenant permissions', () => {
 
     await test.step('To link to tenant permission page', async () => {
       // Act
-      await page
-        .getByPlaceholder('Search')
-        // filter by id
-        .fill(permissionId)
+      await page.getByPlaceholder('Search').fill(permissionId)
       await page.getByRole('button', { name: 'Change' }).click()
 
       // Assert
@@ -86,10 +83,7 @@ test.describe('Admin portal tenant permissions', () => {
         await page.goto(homeUrl)
 
         // Act
-        await page
-          .getByPlaceholder('Search')
-          // filter by id
-          .fill(permissionId)
+        await page.getByPlaceholder('Search').fill(permissionId)
         await page.getByRole('button', { name: 'Development' }).click()
 
         // Assert
