@@ -1,4 +1,7 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { WorkMachinesAction } from '../api-domains-work-machines.types'
+
+registerEnumType(WorkMachinesAction, { name: 'WorkMachinesAction' })
 
 @ObjectType('WorkMachinesEntity')
 export class WorkMachineEntity {
@@ -95,8 +98,8 @@ export class Link {
   @Field(() => String, { nullable: true })
   href?: string | null
 
-  @Field(() => String, { nullable: true })
-  ref?: string | null
+  @Field(() => WorkMachinesAction, { nullable: true })
+  rel?: WorkMachinesAction | null
 
   @Field(() => String, { nullable: true })
   method?: string | null

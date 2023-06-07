@@ -13,13 +13,32 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
-import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  GridColumn,
+  GridRow,
+  Inline,
+  Stack,
+  Text,
+  IconMapIcon,
+  Link,
+} from '@island.is/island-ui/core'
 import { format } from 'kennitala'
 import chunk from 'lodash/chunk'
+import { WorkMachinesAction, WorkMachinesLink } from '@island.is/api/schema'
 
 type UseParams = {
   id: string
 }
+
+const OrderedLinks = [
+  WorkMachinesAction.OWNER_CHANGE,
+  WorkMachinesAction.REQUEST_INSPECTION,
+  WorkMachinesAction.REGISTER_FOR_TRAFFIC,
+  WorkMachinesAction.CHANGE_STATUS,
+]
 
 const WorkMachinesDetail = () => {
   useNamespaces('sp.vehicles')
@@ -55,6 +74,48 @@ const WorkMachinesDetail = () => {
 
   const workMachine = data?.workMachinesWorkMachine
 
+  const createLinks = (links: Array<WorkMachinesLink>) => {
+    const generateButton = (
+      rel: WorkMachinesAction,
+      title?: string,
+      url?: string,
+    ) => {
+      const icon: IconMapIcon =
+        rel === WorkMachinesAction.CHANGE_STATUS ? 'removeCircle' : 'document'
+
+      const button = (
+        <Button
+          size="medium"
+          disabled={!url}
+          icon={icon}
+          iconType="outline"
+          variant="utility"
+        >
+          {title}
+        </Button>
+      )
+
+      return url ? <Link href={url}>{button}</Link> : button
+    }
+
+    const buttons: Array<React.ReactNode> = []
+    const keys = links
+      .map((l) => l.rel)
+      .filter((Boolean as unknown) as ExcludesFalse)
+
+    OrderedLinks.forEach((ol) => {
+      if (keys.includes(ol)) {
+        const link = links.find((link) => link.rel === ol)
+        if (link) {
+          buttons.push(
+            generateButton(ol, link.displayTitle ?? '', link.href ?? undefined),
+          )
+        }
+      }
+    })
+    return buttons
+  }
+
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -63,6 +124,15 @@ const WorkMachinesDetail = () => {
           intro={workMachine?.registrationNumber ?? ''}
         />
       </Box>
+      <GridRow marginTop={[2, 2, 6]}>
+        <GridColumn span="12/12">
+          <Box marginBottom={3} paddingRight={2}>
+            <Inline space={2}>
+              {workMachine?.links?.length && createLinks(workMachine.links)}
+            </Inline>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Box marginBottom={[2, 2, 6]}>
         <Stack space={2}>
           <Text variant="eyebrow" color="purple400">

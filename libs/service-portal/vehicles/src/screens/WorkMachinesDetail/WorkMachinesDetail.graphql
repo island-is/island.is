@@ -20,5 +20,14 @@ query GetWorkMachineById($input: WorkMachinesWorkMachineInput!) {
     importer
     insurer
     licensePlateNumber
+    links {
+      href
+      rel
+      displayTitle
+    }
+    labels {
+      columnName
+      displayTitle
+    }
   }
 }
