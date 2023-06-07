@@ -3,7 +3,7 @@ import { CaseListEntry } from '@island.is/judicial-system/types'
 
 export function useSortCases(
   defaultColumn: string,
-  defaultDirection: string,
+  defaultDirection: 'ascending' | 'descending',
   data: CaseListEntry[],
 ) {
   const [sortConfig, setSortConfig] = useState({
@@ -12,7 +12,7 @@ export function useSortCases(
   })
 
   const requestSort = (column: string) => {
-    let direction = 'ascending'
+    let direction: 'ascending' | 'descending' = 'ascending'
 
     if (sortConfig.column === column && sortConfig.direction === 'ascending') {
       direction = 'descending'
@@ -39,7 +39,7 @@ export function useSortCases(
           ) {
             return entry.defendants[0].name ?? ''
           }
-          return entry['created']
+          return entry.created
         }
 
         const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))

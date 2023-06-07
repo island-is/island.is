@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import router from 'next/router'
@@ -20,8 +20,9 @@ import CourtCaseNumber from '@island.is/judicial-system-web/src/components/Table
 import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
-import { useSortCases } from './useSortCases'
 import * as styles from './DefenderCasesTable.css'
+import { useSortCases } from './useSortCases'
+import { useFilterCases } from './useFilterCases'
 
 interface Props {
   cases: CaseListEntry[]
@@ -37,47 +38,32 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
     cases,
   )
 
+  const {
+    filteredCases,
+    indictmentCaseFilter,
+    investigationCaseFilter,
+    toggleIndictmentCases,
+    toggleInvestigationCases,
+  } = useFilterCases(cases, sortedData)
+
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
       ? router.push(`${constants.DEFENDER_INDICTMENT_ROUTE}/${id}`)
       : router.push(`${constants.DEFENDER_ROUTE}/${id}`)
   }
 
-  const [filteredCases, setFilteredCases] = useState<CaseListEntry[]>(cases)
-  const [showIndictmentCases, setShowIndictmentCases] = useState<boolean>(true)
-  const [showInvestigationCases, setShowInvestigationCases] = useState<boolean>(
-    true,
-  )
-
-  const getFilteredCases = useCallback(() => {
-    if (showIndictmentCases && showInvestigationCases) {
-      return sortedData
-    } else if (showIndictmentCases) {
-      return sortedData.filter((theCase) => isIndictmentCase(theCase.type))
-    } else if (showInvestigationCases) {
-      return sortedData.filter((theCase) => !isIndictmentCase(theCase.type))
-    } else {
-      return []
-    }
-  }, [showIndictmentCases, showInvestigationCases, sortedData])
-
-  useEffect(() => {
-    const filteredCases = getFilteredCases()
-    setFilteredCases(filteredCases)
-  }, [cases, getFilteredCases])
-
   return (
     <Box marginBottom={7}>
       <Box marginTop={2} className={styles.gridRow}>
         <Checkbox
           label={formatMessage(tables.filterIndictmentCaseLabel)}
-          checked={showIndictmentCases}
-          onChange={() => setShowIndictmentCases(!showIndictmentCases)}
+          checked={indictmentCaseFilter}
+          onChange={toggleIndictmentCases}
         ></Checkbox>
         <Checkbox
           label={formatMessage(tables.filterInvestigationCaseLabel)}
-          checked={showInvestigationCases}
-          onChange={() => setShowInvestigationCases(!showInvestigationCases)}
+          checked={investigationCaseFilter}
+          onChange={toggleInvestigationCases}
         ></Checkbox>
       </Box>
 
