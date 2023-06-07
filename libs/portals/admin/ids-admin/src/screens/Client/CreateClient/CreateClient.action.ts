@@ -64,6 +64,7 @@ export const createClientAction: WrappedActionFn = ({ client }) => async ({
   }
 
   const { data } = result
+
   try {
     await client.mutate<CreateClientMutation, CreateClientMutationVariables>({
       mutation: CreateClientDocument,
