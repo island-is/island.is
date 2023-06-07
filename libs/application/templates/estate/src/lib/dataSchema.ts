@@ -43,6 +43,12 @@ const asset = z
   .array()
   .optional()
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
@@ -286,4 +292,6 @@ export const estateSchema = z.object({
   applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
 
   readTerms: z.array(z.enum([YES])).length(1),
+
+  estateAttachments: z.array(FileSchema),
 })

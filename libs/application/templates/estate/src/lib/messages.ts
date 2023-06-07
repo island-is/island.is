@@ -558,6 +558,34 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Attachments
+  attachmentsTitle: {
+    id: 'es.application:attachmentsTitle',
+    defaultMessage: 'Viðhengi',
+    description: '',
+  },
+  attachmentsDescription: {
+    id: 'es.application:attachmentsDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sollicitudin velit eu gravida ullamcorper.',
+    description: '',
+  },
+  attachmentsButton: {
+    id: 'es.application:attachmentsButton',
+    defaultMessage: 'Velja skjöl',
+    description: '',
+  },
+  uploadHeader: {
+    id: 'es.application:uploadHeader',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: '',
+  },
+  uploadDescription: {
+    id: 'es.application:uploadDescription',
+    defaultMessage: 'Lorem ipsum lorem lorem ipsum',
+    description: '',
+  },
+
   // Overview
   overviewTitle: {
     id: 'es.application:overviewTitle',

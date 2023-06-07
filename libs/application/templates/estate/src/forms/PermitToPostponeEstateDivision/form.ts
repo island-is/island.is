@@ -2,6 +2,7 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -452,6 +453,26 @@ export const form: Form = buildForm({
                 repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
               },
             ),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'estateAttachments',
+      title: m.attachmentsTitle,
+      children: [
+        buildMultiField({
+          id: 'estateAttachments',
+          title: m.attachmentsTitle,
+          description: m.attachmentsDescription,
+          children: [
+            buildFileUploadField({
+              id: 'estateAttachments',
+              title: m.attachmentsTitle,
+              uploadHeader: m.uploadHeader,
+              uploadDescription: m.uploadDescription,
+              uploadButtonLabel: m.attachmentsButton,
+            }),
           ],
         }),
       ],
