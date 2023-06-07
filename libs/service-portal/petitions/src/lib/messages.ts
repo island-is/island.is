@@ -100,6 +100,16 @@ export const m = defineMessages({
     defaultMessage: 'Sækja lista',
     description: '',
   },
+  asPdf: {
+    id: 'sp.petitions:asPdf',
+    defaultMessage: 'Sem PDF',
+    description: '',
+  },
+  asCsv: {
+    id: 'sp.petitions:asCsv',
+    defaultMessage: 'Sem CSV',
+    description: '',
+  },
   copyLinkToList: {
     id: 'sp.petitions:copyLinkToList',
     defaultMessage: 'Afrita hlekk á lista',
