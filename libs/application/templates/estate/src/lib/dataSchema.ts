@@ -93,7 +93,6 @@ export const estateSchema = z.object({
       })
       .array()
       .optional(),
-    estateMembersHaveElectronicID: z.array(z.enum([YES])).length(1),
     assets: asset,
     flyers: asset,
     vehicles: asset,
@@ -114,6 +113,7 @@ export const estateSchema = z.object({
       })
       .optional(),
   }),
+  estateMembersHaveElectronicID: z.array(z.enum([YES])).length(1),
 
   // is: Innbú
   inventory: z

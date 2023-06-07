@@ -42,7 +42,6 @@ export const estateTransformer = (estate: EstateInfo): EstateData => {
     ships,
     vehicles,
     guns,
-    estateMembersHaveElectronicID: [],
   }
 }
 

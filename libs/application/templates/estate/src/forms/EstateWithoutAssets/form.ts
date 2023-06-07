@@ -43,7 +43,7 @@ export const form: Form = buildForm({
               space: 'containerGutter',
             }),
             buildCheckboxField({
-              id: 'estate.estateMembersHaveElectronicID',
+              id: 'estateMembersHaveElectronicID',
               title: '',
               large: true,
               backgroundColor: 'blue',
