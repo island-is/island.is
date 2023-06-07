@@ -12,7 +12,7 @@ const homeUrl = `${
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Admin portal tenant application', () => {
+test.describe('Admin portal application', () => {
   let contextGranter: BrowserContext
 
   test.beforeAll(async ({ browser }) => {
@@ -28,7 +28,7 @@ test.describe('Admin portal tenant application', () => {
     await contextGranter.close()
   })
 
-  test('can manage tenant application', async () => {
+  test('can manage application', async () => {
     // Arrange
     const page = await contextGranter.newPage()
     // Act
@@ -47,7 +47,7 @@ test.describe('Admin portal tenant application', () => {
     /**
      * Header
      */
-    await test.step('See tenant application header', async () => {
+    await test.step('See application header', async () => {
       // Arrange
       const heading = 'Mínar síður Ísland.is'
       const tag = 'Single page application'
@@ -63,7 +63,7 @@ test.describe('Admin portal tenant application', () => {
      * Basic info
      */
     await test.step(
-      'See tenant basic information card and interact with it',
+      'See basic information card and interact with it',
       async () => {
         // Arrange
         const title = 'Basic information'
@@ -99,47 +99,44 @@ test.describe('Admin portal tenant application', () => {
     /**
      * Content card
      */
-    await test.step(
-      'See tenant content card and interact with it',
-      async () => {
-        // Arrange
-        const isDisplayNameInput = 'input[name="is_displayName"]'
-        const enDisplayNameInput = 'input[name="en_displayName"]'
-        const title = 'Content'
+    await test.step('See content card and interact with it', async () => {
+      // Arrange
+      const isDisplayNameInput = 'input[name="is_displayName"]'
+      const enDisplayNameInput = 'input[name="en_displayName"]'
+      const title = 'Content'
 
-        // Assert - heading is visible
-        await expect(page.getByRole('heading', { name: title })).toBeVisible()
+      // Assert - heading is visible
+      await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
-        // Assert - Icelandic input is visible and english is not
-        await expect(page.locator(isDisplayNameInput)).toBeVisible()
-        await expect(page.locator(enDisplayNameInput)).not.toBeVisible()
+      // Assert - Icelandic input is visible and english is not
+      await expect(page.locator(isDisplayNameInput)).toBeVisible()
+      await expect(page.locator(enDisplayNameInput)).not.toBeVisible()
 
-        // Assert - save button is disabled
-        await buttonSaveTest(title)
+      // Assert - save button is disabled
+      await buttonSaveTest(title)
 
-        // Act - fill in input
-        await page.locator(isDisplayNameInput).fill('Ísland.is')
+      // Act - fill in input
+      await page.locator(isDisplayNameInput).fill('Ísland.is')
 
-        // Assert - input has value
-        await expect(page.locator(isDisplayNameInput)).toHaveValue('Ísland.is')
+      // Assert - input has value
+      await expect(page.locator(isDisplayNameInput)).toHaveValue('Ísland.is')
 
-        // Act - switch language
-        await page.getByRole('tab', { name: 'English' }).click()
+      // Act - switch language
+      await page.getByRole('tab', { name: 'English' }).click()
 
-        // Assert - input is not visible
-        await expect(page.locator(isDisplayNameInput)).not.toBeVisible()
-        await expect(page.locator(enDisplayNameInput)).toBeVisible()
+      // Assert - inputs visibility are switched
+      await expect(page.locator(isDisplayNameInput)).not.toBeVisible()
+      await expect(page.locator(enDisplayNameInput)).toBeVisible()
 
-        // Assert - save button is enabled
-        await buttonSaveTest(title, false)
-      },
-    )
+      // Assert - save button is enabled
+      await buttonSaveTest(title, false)
+    })
 
     /**
      * Applications URLs card
      */
     await test.step(
-      'See tenant Application URLs card and interact with it',
+      'See application URLs card and interact with it',
       async () => {
         // Arrange
         const redirectUris = 'textarea[name="redirectUris"]'
@@ -178,7 +175,7 @@ test.describe('Admin portal tenant application', () => {
      * Refresh token lifecycle card
      */
     await test.step(
-      'See tenant Refresh token lifecycle card and interact with it',
+      'See refresh token lifecycle card and interact with it',
       async () => {
         // Arrange
         const absoluteRefreshTokenLifetime =
@@ -233,117 +230,109 @@ test.describe('Admin portal tenant application', () => {
     /**
      * Permissions card
      */
-    await test.step(
-      'See tenant permissions card and interact with it',
-      async () => {
-        const title = 'Permissions'
+    await test.step('See permissions card and interact with it', async () => {
+      const title = 'Permissions'
 
-        // Assert - heading is visible
-        await expect(page.getByRole('heading', { name: title })).toBeVisible()
+      // Assert - heading is visible
+      await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
-        // Assert - save button is disabled
-        await buttonSaveTest(title)
+      // Assert - save button is disabled
+      await buttonSaveTest(title)
 
-        const initialPermissionCount = await page
-          .getByTestId('permission-row')
-          .count()
+      const initialPermissionCount = await page
+        .getByTestId('permission-row')
+        .count()
 
-        // Assert - permission list is visible
-        await expect(initialPermissionCount).toBeGreaterThan(0)
+      // Assert - permission list is visible
+      await expect(initialPermissionCount).toBeGreaterThan(0)
 
-        // Act - Open add permission modal
-        await page.getByTestId('add-permissions-button').click()
+      // Act - Open add permission modal
+      await page.getByTestId('add-permissions-button').click()
 
-        // Assert - modal is visible
-        await expect(
-          await page.getByRole('heading', { name: 'Add permissions' }),
-        ).toBeVisible()
+      // Assert - modal is visible
+      await expect(
+        await page.getByRole('heading', { name: 'Add permissions' }),
+      ).toBeVisible()
 
-        // Act - Add permission by clicking on checkbox and then pressing add button
-        await page
-          .locator('#add-permissions tbody tr td')
-          .first()
-          .locator('input')
-          .click()
+      // Act - Add permission by clicking on checkbox and then pressing add button
+      await page
+        .locator('#add-permissions tbody tr td')
+        .first()
+        .locator('input')
+        .click()
 
-        await page.getByRole('button', { name: 'Add', exact: true }).click()
-        // Wait for modal to close
-        await page.locator('#add-permissions').waitFor({ state: 'hidden' })
+      await page.getByRole('button', { name: 'Add', exact: true }).click()
+      // Wait for modal to close
+      await page.locator('#add-permissions').waitFor({ state: 'hidden' })
 
-        // Assert - Check if permission list has increased
-        const currentPermissionCount = await page
-          .getByTestId('permission-row')
-          .count()
-        await expect(initialPermissionCount).toBeLessThan(
-          currentPermissionCount,
-        )
+      // Assert - Check if permission list has increased
+      const currentPermissionCount = await page
+        .getByTestId('permission-row')
+        .count()
+      await expect(initialPermissionCount).toBeLessThan(currentPermissionCount)
 
-        // Assert - save button is enabled
-        await buttonSaveTest(title, false)
+      // Assert - save button is enabled
+      await buttonSaveTest(title, false)
 
-        // Act - Remove added permission
-        await page
-          .getByTestId('permission-row')
-          .last()
-          .getByRole('button')
-          .click()
+      // Act - Remove added permission
+      await page
+        .getByTestId('permission-row')
+        .last()
+        .getByRole('button')
+        .click()
 
-        // Assert - Check if permission list has decreased
-        await expect(await page.getByTestId('permission-row').count()).toBe(
-          initialPermissionCount,
-        )
-      },
-    )
+      // Assert - Check if permission list has decreased
+      await expect(await page.getByTestId('permission-row').count()).toBe(
+        initialPermissionCount,
+      )
+    })
 
     /**
      * Delegations card
      */
-    await test.step(
-      'See tenant Delegations card and interact with it',
-      async () => {
-        // Arrange
-        const title = 'Delegations'
-        const checkboxes = [
-          'supportsProcuringHolders',
-          'supportsLegalGuardians',
-          'promptDelegations',
-          'supportsPersonalRepresentatives',
-          'supportsCustomDelegation',
-          'requireApiScopes',
-        ].map((name) => page.locator(`input[name="${name}"]`))
+    await test.step('See delegations card and interact with it', async () => {
+      // Arrange
+      const title = 'Delegations'
+      const checkboxes = [
+        'supportsProcuringHolders',
+        'supportsLegalGuardians',
+        'promptDelegations',
+        'supportsPersonalRepresentatives',
+        'supportsCustomDelegation',
+        'requireApiScopes',
+      ].map((name) => page.locator(`input[name="${name}"]`))
 
-        // Assert - Heading
-        await expect(page.getByRole('heading', { name: title })).toBeVisible()
+      // Assert - Heading
+      await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
-        // Assert - All inputs are not visible
-        await Promise.all(
-          checkboxes.map((checkbox) => expect(checkbox).not.toBeVisible()),
-        )
+      // Assert - All inputs are not visible
+      await Promise.all(
+        checkboxes.map((checkbox) => expect(checkbox).not.toBeVisible()),
+      )
 
-        // Act - Click on accordion to make checkboxes visible
-        await page.locator('button[aria-controls="delegations"]').click()
+      // Act - Click on accordion to make checkboxes visible
+      await page.locator('button[aria-controls="delegations"]').click()
 
-        // Assert - save button is disabled
-        await buttonSaveTest(title)
+      // Assert - save button is disabled
+      await buttonSaveTest(title)
 
-        // Assert - All inputs are visible
-        await Promise.all(
-          checkboxes.map((checkbox) => expect(checkbox).toBeVisible()),
-        )
+      // Assert - All inputs are visible
+      await Promise.all(
+        checkboxes.map((checkbox) => expect(checkbox).toBeVisible()),
+      )
 
-        // Act - Click on one checkbox
-        await page.locator('input[name="supportsProcuringHolders"]').click()
+      // Act - Click on one checkbox
+      await page.locator('input[name="supportsProcuringHolders"]').click()
 
-        // Assert - save button is disabled
-        await buttonSaveTest(title, false)
-      },
-    )
+      // Assert - save button is disabled
+      await buttonSaveTest(title, false)
+    })
 
     /**
      * Advanced settings card
      */
     await test.step(
-      'See tenant Advanced settings card and interact with it',
+      'See advanced settings card and interact with it',
       async () => {
         // Arrange
         const title = 'Advanced settings'
@@ -395,7 +384,7 @@ test.describe('Admin portal tenant application', () => {
      * Danger zone
      */
     await test.step(
-      'See Danger zone card and modal and interact with it',
+      'See danger zone card and modal and interact with it',
       async () => {
         // Arrange
         const title = 'Danger zone'
@@ -441,6 +430,4 @@ test.describe('Admin portal tenant application', () => {
       },
     )
   })
-
-  // TODO remember publish modal
 })
