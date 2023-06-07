@@ -82,30 +82,35 @@ export class ClientsService extends MultiEnvironmentService {
     user: User,
     tenantId: string,
     clientId: string,
-  ): Promise<Client> {
-    const clients = await Promise.all([
-      this.adminDevApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
-        .catch((error) => this.handleError(error, Environment.Development)),
-      this.adminStagingApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
-        .catch((error) => this.handleError(error, Environment.Staging)),
-      this.adminProdApiWithAuth(user)
-        ?.meClientsControllerFindByTenantIdAndClientId({ tenantId, clientId })
-        .catch((error) => this.handleError(error, Environment.Production)),
-    ])
+    includeArchived = false,
+  ): Promise<Client | null> {
+    const settledClientsPromises = await Promise.allSettled(
+      environments.map(async (environment) =>
+        this.adminApiByEnvironmentWithAuth(
+          environment,
+          user,
+        )?.meClientsControllerFindByTenantIdAndClientId({
+          tenantId,
+          clientId,
+          includeArchived,
+        }),
+      ),
+    )
 
-    const clientEnvs: ClientEnvironment[] = []
-    for (const [index, env] of environments.entries()) {
-      const client = clients[index]
-      if (client) {
-        clientEnvs.push({
+    const clientEnvs: ClientEnvironment[] = this.handleSettledPromises(
+      settledClientsPromises,
+      {
+        mapper: (client, index) => ({
           ...client,
-          id: this.formatClientId(clientId, env),
-          environment: env,
-        })
-      }
-    }
+          id: this.formatClientId(clientId, environments[index]),
+          environment: environments[index],
+        }),
+        prefixErrorMessage: `Failed to find application ${clientId}`,
+      },
+    )
+
+    // If no client is found for all environments then we return null
+    if (clientEnvs.length === 0) return null
 
     return {
       clientId,
@@ -208,6 +213,7 @@ export class ClientsService extends MultiEnvironmentService {
       ?.meClientsControllerFindByTenantIdAndClientId({
         tenantId: input.tenantId,
         clientId: input.clientId,
+        includeArchived: false,
       })
       .catch((error) => this.handleError(error, input.sourceEnvironment))
 

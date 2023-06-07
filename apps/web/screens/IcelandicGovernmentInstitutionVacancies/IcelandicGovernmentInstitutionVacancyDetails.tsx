@@ -295,6 +295,10 @@ IcelandicGovernmentInstitutionVacancyDetails.getInitialProps = async ({
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
+  if (namespace['display404']) {
+    throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
+  }
+
   return {
     vacancy,
     namespace,
