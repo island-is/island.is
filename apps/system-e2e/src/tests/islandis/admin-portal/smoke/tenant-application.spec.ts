@@ -2,6 +2,10 @@ import { BrowserContext, expect, test } from '@playwright/test'
 
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import {
+  getInputByName,
+  getTextareaByName,
+} from '../../../../utils/pageHelpers'
 
 const applicationId = '@island.is/web'
 const homeUrl = `${
@@ -48,15 +52,13 @@ test.describe('Admin portal application', () => {
      * Header
      */
     await test.step('See application header', async () => {
-      // Arrange
-      const heading = 'Mínar síður Ísland.is'
-      const tag = 'Single page application'
-      const env = 'Development'
-
-      // Assert
-      await expect(page.getByRole('heading', { name: heading })).toBeVisible()
-      await expect(page.getByTestId('select-env').getByText(env)).toBeVisible()
-      await expect(page.getByText(tag)).toBeVisible()
+      await expect(
+        page.getByRole('heading', { name: 'Mínar síður Ísland.is' }),
+      ).toBeVisible()
+      await expect(
+        page.getByTestId('select-env').getByText('Development'),
+      ).toBeVisible()
+      await expect(page.getByText('Single page application')).toBeVisible()
     })
 
     /**
@@ -91,7 +93,7 @@ test.describe('Admin portal application', () => {
         // Act - click on accordion
         await page.getByRole('button', { name: 'Other endpoints' }).click()
 
-        // // Assert - Accordion inputs are now visible
+        // Assert - Accordion inputs are now visible
         await Promise.all(names.map((name) => expect(name).toBeVisible()))
       },
     )
@@ -101,9 +103,10 @@ test.describe('Admin portal application', () => {
      */
     await test.step('See content card and interact with it', async () => {
       // Arrange
-      const isDisplayNameInput = 'input[name="is_displayName"]'
-      const enDisplayNameInput = 'input[name="en_displayName"]'
+      const isDisplayNameInput = getInputByName('is_displayName')
+      const enDisplayNameInput = getInputByName('en_displayName')
       const title = 'Content'
+      const dummyText = 'Ísland.is'
 
       // Assert - heading is visible
       await expect(page.getByRole('heading', { name: title })).toBeVisible()
@@ -116,12 +119,12 @@ test.describe('Admin portal application', () => {
       await buttonSaveTest(title)
 
       // Act - fill in input
-      await page.locator(isDisplayNameInput).fill('Ísland.is')
+      await page.locator(isDisplayNameInput).fill(dummyText)
 
       // Assert - input has value
-      await expect(page.locator(isDisplayNameInput)).toHaveValue('Ísland.is')
+      await expect(page.locator(isDisplayNameInput)).toHaveValue(dummyText)
 
-      // Act - switch language
+      // Act - switch language by clicking on tab
       await page.getByRole('tab', { name: 'English' }).click()
 
       // Assert - inputs visibility are switched
@@ -139,8 +142,10 @@ test.describe('Admin portal application', () => {
       'See application URLs card and interact with it',
       async () => {
         // Arrange
-        const redirectUris = 'textarea[name="redirectUris"]'
-        const postLogoutRedirectUris = 'textarea[name="postLogoutRedirectUris"]'
+        const redirectUris = getTextareaByName('redirectUris')
+        const postLogoutRedirectUris = getTextareaByName(
+          'postLogoutRedirectUris',
+        )
         const dummyText = 'This is a dummy text'
         const title = 'Application URLs'
 
@@ -178,11 +183,13 @@ test.describe('Admin portal application', () => {
       'See refresh token lifecycle card and interact with it',
       async () => {
         // Arrange
-        const absoluteRefreshTokenLifetime =
-          'input[name="absoluteRefreshTokenLifetime"]'
-        const refreshTokenExpiration = 'input[name="refreshTokenExpiration"]'
-        const slidingRefreshTokenLifetime =
-          'input[name="slidingRefreshTokenLifetime"]'
+        const absoluteRefreshTokenLifetime = getInputByName(
+          'absoluteRefreshTokenLifetime',
+        )
+        const refreshTokenExpiration = getInputByName('refreshTokenExpiration')
+        const slidingRefreshTokenLifetime = getInputByName(
+          'slidingRefreshTokenLifetime',
+        )
         const title = 'Refresh token lifecycle'
         const dummyNumber = '3200099'
 
@@ -300,7 +307,7 @@ test.describe('Admin portal application', () => {
         'supportsPersonalRepresentatives',
         'supportsCustomDelegation',
         'requireApiScopes',
-      ].map((name) => page.locator(`input[name="${name}"]`))
+      ].map((name) => page.locator(getInputByName(name)))
 
       // Assert - Heading
       await expect(page.getByRole('heading', { name: title })).toBeVisible()
@@ -322,7 +329,7 @@ test.describe('Admin portal application', () => {
       )
 
       // Act - Click on one checkbox
-      await page.locator('input[name="supportsProcuringHolders"]').click()
+      await page.locator(getInputByName('supportsProcuringHolders')).click()
 
       // Assert - save button is disabled
       await buttonSaveTest(title, false)
@@ -343,9 +350,9 @@ test.describe('Admin portal application', () => {
           'supportTokenExchange',
         ].map((name) => page.locator(`input[name="${name}"]`))
         const accessTokenLifetime = page.locator(
-          `input[name="accessTokenLifetime"]`,
+          getInputByName('accessTokenLifetime'),
         )
-        const customClaims = page.locator(`textarea[name="customClaims"]`)
+        const customClaims = page.locator(getTextareaByName('customClaims'))
         const dummyNumber = '123'
 
         // Assert - Heading exists and all inputs are not visible
@@ -416,7 +423,7 @@ test.describe('Admin portal application', () => {
         ).toBeVisible()
         await expect(page.getByRole('button', { name: 'cancel' })).toBeVisible()
         await expect(
-          page.locator('input[name="revokeOldSecrets"]'),
+          page.locator(getInputByName('revokeOldSecrets')),
         ).toBeVisible()
         await expect(
           page.locator(modalId).getByRole('heading', { name: 'Rotate secret' }),

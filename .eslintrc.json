@@ -191,8 +191,7 @@
                   "lib:client",
                   "lib:application-system",
                   "lib:portals",
-                  "lib:portals-mypages",
-                  "lib:portals-admin"
+                  "lib:portals-mypages"
                 ]
               }
             ]

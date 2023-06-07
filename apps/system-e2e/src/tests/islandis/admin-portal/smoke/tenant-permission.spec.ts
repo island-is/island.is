@@ -2,6 +2,7 @@ import { BrowserContext, expect, test } from '@playwright/test'
 
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { getInputByName } from '../../../../utils/pageHelpers'
 
 const permissionId = '@admin.island.is/delegations'
 const homeUrl = `${
@@ -48,13 +49,12 @@ test.describe('Admin portal permission', () => {
      * Header
      */
     await test.step('See header', async () => {
-      // Arrange
-      const heading = 'Aðgangsstýring'
-      const env = 'Development'
-
-      // Assert
-      await expect(page.getByRole('heading', { name: heading })).toBeVisible()
-      await expect(page.getByTestId('select-env').getByText(env)).toBeVisible()
+      await expect(
+        page.getByRole('heading', { name: 'Aðgangsstýring' }),
+      ).toBeVisible()
+      await expect(
+        page.getByTestId('select-env').getByText('Development'),
+      ).toBeVisible()
     })
 
     /**
@@ -63,7 +63,7 @@ test.describe('Admin portal permission', () => {
     await test.step('See basic information card', async () => {
       // Arrange
       const title = 'Basic information'
-      const clientId = page.locator(`input[name="permissionId"]`)
+      const clientId = page.locator(getInputByName('permissionId'))
 
       // Assert - Heading
       await expect(page.getByRole('heading', { name: title })).toBeVisible()
@@ -79,12 +79,11 @@ test.describe('Admin portal permission', () => {
     await test.step('See content card and interact with it', async () => {
       // Arrange
       const title = 'Content'
-      const getInputByName = (name: string) => `input[name="${name}"]`
       const isDisplayNameInput = getInputByName('is_displayName')
       const enDisplayNameInput = getInputByName('en_displayName')
       const isDescriptionInput = getInputByName('is_description')
       const enDescriptionInput = getInputByName('en_description')
-      const displayNameText = 'permission name'
+      const dummyText = 'permission name'
 
       // Assert - heading is visible
       await expect(page.getByRole('heading', { name: title })).toBeVisible()
@@ -99,14 +98,12 @@ test.describe('Admin portal permission', () => {
       await buttonSaveTest(title)
 
       // Act - fill in input
-      await page.locator(isDisplayNameInput).fill(displayNameText)
+      await page.locator(isDisplayNameInput).fill(dummyText)
 
       // Assert - input has value
-      await expect(page.locator(isDisplayNameInput)).toHaveValue(
-        displayNameText,
-      )
+      await expect(page.locator(isDisplayNameInput)).toHaveValue(dummyText)
 
-      // Act - switch language
+      // Act - switch language by clicking on tab
       await page.getByRole('tab', { name: 'English' }).click()
 
       // Assert - inputs visibility is switched
@@ -134,7 +131,7 @@ test.describe('Admin portal permission', () => {
           'grantToLegalGuardians',
           'allowExplicitDelegationGrant',
           'grantToPersonalRepresentatives',
-        ].map((name) => page.locator(`input[name="${name}"]`))
+        ].map((name) => page.locator(getInputByName(name)))
 
         // Assert - Heading
         await expect(page.getByRole('heading', { name: title })).toBeVisible()
@@ -148,7 +145,7 @@ test.describe('Admin portal permission', () => {
         await buttonSaveTest(title)
 
         // Act - Click on one checkbox
-        await page.locator('input[name="isAccessControlled"]').click()
+        await page.locator(getInputByName('isAccessControlled')).click()
 
         // Assert - save button is disabled
         await buttonSaveTest(title, false)
