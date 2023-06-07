@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Includeable, Op, Transaction } from 'sequelize'
@@ -213,7 +212,7 @@ export class AdminClientsService {
     })
 
     if (!client || client.archived) {
-      throw new NotFoundException()
+      return
     }
 
     await this.clientModel.update(

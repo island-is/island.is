@@ -1,20 +1,12 @@
 import { FC } from 'react'
-import { Modal, ModalProps } from '@island.is/react/components'
-import {
-  AlertMessage,
-  Box,
-  Button,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Modal } from '@island.is/react/components'
+import { AlertMessage, Box, Button, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useDeleteClientMutation } from './DeleteClient.generated'
-import { useClient } from '../../ClientContext'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { IDSAdminPaths } from '../../../../lib/paths'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 interface Props {
   isVisible: boolean
@@ -22,11 +14,7 @@ interface Props {
   deleteOnAllEnvironments?: boolean
 }
 
-export const DeleteClient: FC<Props> = ({
-  isVisible,
-  onClose,
-  deleteOnAllEnvironments = false,
-}) => {
+export const DeleteClient: FC<Props> = ({ isVisible, onClose }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -34,10 +22,6 @@ export const DeleteClient: FC<Props> = ({
     tenant: string
     client: string
   }
-
-  const {
-    selectedEnvironment: { environment },
-  } = useClient()
 
   const [
     deleteClientMutation,
@@ -54,15 +38,12 @@ export const DeleteClient: FC<Props> = ({
         input: {
           tenantId,
           clientId,
-          environments: deleteOnAllEnvironments
-            ? Object.values(AuthAdminEnvironment)
-            : [environment],
         },
       },
     })
 
     // If there is at least one success, we consider it a success
-    if (res.data?.deleteAuthAdminClient.find((envResp) => envResp.success)) {
+    if (res.data?.deleteAuthAdminClient) {
       toast.success(formatMessage(m.successDeletingClient))
       navigate(
         replaceParams({
@@ -81,18 +62,17 @@ export const DeleteClient: FC<Props> = ({
     <Modal
       isVisible={isVisible}
       id="delete-client-modal"
-      label={formatMessage(
-        deleteOnAllEnvironments ? m.deleteClientAllEnv : m.deleteClient,
-        { environment: environment },
-      )}
-      title={formatMessage(
-        deleteOnAllEnvironments ? m.deleteClientAllEnv : m.deleteClient,
-        { environment: environment },
-      )}
+      label={formatMessage(m.deleteClient)}
+      title={formatMessage(m.deleteClient)}
       closeButtonLabel={formatMessage(m.closeDeleteModal)}
       onClose={onClose}
     >
-      <Text>{formatMessage(m.deleteClientDescription)}</Text>
+      <Box marginTop={2}>
+        <AlertMessage
+          type={'warning'}
+          message={formatMessage(m.deleteClientAlertMessage)}
+        />
+      </Box>
 
       {mutationError && (
         <Box marginTop={4}>

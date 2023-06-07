@@ -794,10 +794,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:success-deleting-client',
     defaultMessage: 'Successfully deleted application',
   },
-  deleteClient: {
-    id: 'ap.ids-admin:delete-client',
-    defaultMessage: 'Delete application in {environment} environment',
-  },
   delete: {
     id: 'ap.ids-admin:delete',
     defaultMessage: 'Delete',
@@ -808,10 +804,15 @@ export const m = defineMessages({
   },
   deleteClientDescription: {
     id: 'ap.ids-admin:delete-client-action-card-label',
-    defaultMessage: 'All your apps using this client will stop working.',
+    defaultMessage: 'Authentications will stop working for your application.',
   },
-  deleteClientAllEnv: {
+  deleteClient: {
     id: 'ap.ids-admin:delete-client-all-env',
-    defaultMessage: 'Delete client in all environments',
+    defaultMessage: 'Delete application',
+  },
+  deleteClientAlertMessage: {
+    id: 'ap.ids-admin:delete-client-alert-message',
+    defaultMessage:
+      'The client ID will be deleted from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
   },
 })

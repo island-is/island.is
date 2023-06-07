@@ -26,7 +26,6 @@ import { RevokeSecretsInput } from './dto/revoke-secrets.input'
 import { RotateSecretInput } from './dto/rotate-secret.input'
 import { ClientSecret } from './models/client-secret.model'
 import { DeleteClientInput } from './dto/delete-client.input'
-import { DeleteClientResponse } from './dto/delete-client.response'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => Client)
@@ -93,11 +92,11 @@ export class ClientsResolver {
     return this.clientsService.rotateSecret(user, input)
   }
 
-  @Mutation(() => [DeleteClientResponse], { name: 'deleteAuthAdminClient' })
+  @Mutation(() => Boolean, { name: 'deleteAuthAdminClient' })
   deleteClient(
     @CurrentUser() user: User,
     @Args('input', { type: () => DeleteClientInput }) input: DeleteClientInput,
-  ): Promise<DeleteClientResponse[]> {
+  ): Promise<boolean> {
     return this.clientsService.deleteClient(user, input)
   }
 
