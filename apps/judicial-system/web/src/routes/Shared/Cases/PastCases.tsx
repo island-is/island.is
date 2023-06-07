@@ -267,7 +267,7 @@ const PastCases: React.FC<Props> = (props) => {
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        b['created'].localeCompare(a['created']),
+        a['created'].localeCompare(b['created']),
       ),
     [cases],
   )
