@@ -64,7 +64,6 @@ export const vehiclesModule: PortalModule = {
       enabled:
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
-      key: 'VehicleLookup',
       element: <Lookup />,
     },
     {

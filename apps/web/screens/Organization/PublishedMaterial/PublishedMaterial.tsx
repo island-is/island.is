@@ -20,6 +20,7 @@ import {
   getThemeConfig,
   OrganizationWrapper,
   Webreader,
+  FilterTag,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -48,11 +49,10 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
-import FilterTag from './components/FilterTag/FilterTag'
 import { PublishedMaterialItem } from './components/PublishedMaterialItem'
 import {
   getFilterCategories,
-  getFilterTags,
+  extractFilterTags,
   getGenericTagGroupHierarchy,
   getInitialParameters,
 } from './utils'
@@ -250,7 +250,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     (publishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
     page * ASSETS_PER_PAGE
 
-  const selectedFilters = getFilterTags(filterCategories)
+  const selectedFilters = extractFilterTags(filterCategories)
 
   return (
     <OrganizationWrapper

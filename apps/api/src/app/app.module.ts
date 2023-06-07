@@ -67,6 +67,7 @@ import {
   WatsonAssistantChatConfig,
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
+import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -87,6 +88,7 @@ import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financia
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
+import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -251,6 +253,7 @@ const autoSchemaFile = environment.production
     ElectronicRegistrationsModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
+    IcelandicGovernmentInstitutionVacanciesModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -338,6 +341,7 @@ const autoSchemaFile = environment.production
         WatsonAssistantChatConfig,
         PowerBiConfig,
         AuthIdsApiClientConfig,
+        IcelandicGovernmentInstitutionVacanciesClientConfig,
       ],
     }),
   ],

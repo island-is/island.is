@@ -42,6 +42,7 @@ export const TransitionCaseMutation = gql`
       state
       appealState
       appealReceivedByCourtDate
+      statementDeadline
     }
   }
 `
@@ -226,7 +227,6 @@ export const UpdateCaseMutation = gql`
       caseResentExplanation
       origin
       seenByDefender
-      subpoenaType
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
