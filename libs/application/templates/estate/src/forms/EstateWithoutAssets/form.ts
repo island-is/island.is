@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -11,6 +12,7 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overviewSection } from './overviewSection'
+import { YES } from '../../lib/constants'
 
 export const form: Form = buildForm({
   id: 'estateWithoutProperty',
@@ -34,6 +36,24 @@ export const form: Form = buildForm({
               title: '',
               id: 'estate.estateMembers',
               component: 'EstateMembersRepeater',
+            }),
+            buildDescriptionField({
+              id: 'space0',
+              title: '',
+              space: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'estate.estateMembersHaveElectronicID',
+              title: '',
+              large: true,
+              backgroundColor: 'blue',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: m.estateMembersHaveIDCheckbox.defaultMessage,
+                },
+              ],
             }),
           ],
         }),

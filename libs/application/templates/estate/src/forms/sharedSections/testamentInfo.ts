@@ -26,8 +26,8 @@ export const testamentInfo = buildSubSection({
           marginBottom: 2,
         }),
         buildRadioField({
-          id: 'estate.testament.wills',
-          title: m.doesWillExist,
+          id: 'estate.testament.agreement',
+          title: m.doesAgreementExist,
           largeButtons: false,
           width: 'half',
           space: 2,
@@ -37,8 +37,8 @@ export const testamentInfo = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'estate.testament.agreement',
-          title: m.doesAgreementExist,
+          id: 'estate.testament.wills',
+          title: m.doesWillExist,
           largeButtons: false,
           width: 'half',
           space: 2,

@@ -30,6 +30,6 @@ export enum Roles {
 export const EstateTypes = {
   divisionOfEstate: 'Opinber skipti',
   estateWithoutAssets: 'Eignalaust dánarbú',
-  permitToPostponeEstateDivision: 'Búsetuleyfi',
+  permitToPostponeEstateDivision: 'Seta í óskiptu búi',
   divisionOfEstateByHeirs: 'Einkaskipti',
 }

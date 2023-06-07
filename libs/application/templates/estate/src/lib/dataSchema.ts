@@ -87,6 +87,7 @@ export const estateSchema = z.object({
       })
       .array()
       .optional(),
+    estateMembersHaveElectronicID: z.array(z.enum([YES])).length(1),
     assets: asset,
     flyers: asset,
     vehicles: asset,
@@ -233,16 +234,8 @@ export const estateSchema = z.object({
       creditorName: z.string().optional(),
       nationalId: z.string().optional(),
       balance: z.string().optional(),
+      loanIdentity: z.string().optional(),
     })
-    .refine(
-      ({ creditorName, nationalId, balance }) => {
-        return checkIfFilledOut([creditorName, nationalId, balance])
-      },
-      {
-        params: m.fillOutRates,
-        path: ['balance'],
-      },
-    )
     .refine(
       ({ nationalId }) => {
         return nationalId === ''
