@@ -70,10 +70,13 @@ export const RotateSecret = ({
   }
 
   const handleClose = useCallback(() => {
+    if (newSecret) {
+      revalidate()
+    }
+
     setNewSecret('')
     onClose?.()
-    revalidate()
-  }, [onClose, revalidate])
+  }, [onClose, newSecret, revalidate])
 
   return (
     <Modal
