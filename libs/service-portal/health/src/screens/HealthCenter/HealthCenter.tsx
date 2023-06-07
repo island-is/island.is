@@ -16,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
-import { HealthCenterHistoryEntry } from '@island.is/service-portal/graphql'
+import { RightsPortalHealthCenterHistoryEntry } from '@island.is/service-portal/graphql'
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
@@ -40,7 +40,7 @@ const HealthCenter = () => {
     )
   }
 
-  const generateRow = (rowItem: HealthCenterHistoryEntry) => {
+  const generateRow = (rowItem: RightsPortalHealthCenterHistoryEntry) => {
     const row = (
       <T.Row>
         <T.Data>
@@ -50,9 +50,7 @@ const HealthCenter = () => {
           <Text variant="medium">{rowItem.dateTo ?? '-'}</Text>
         </T.Data>
         <T.Data>
-          <Text variant="medium">
-            {rowItem.healthCenter?.healthCenter ?? '-'}
-          </Text>
+          <Text variant="medium">{rowItem.healthCenter?.name ?? '-'}</Text>
         </T.Data>
         <T.Data>
           <Text variant="medium">{rowItem.healthCenter?.doctor ?? '-'}</Text>
@@ -124,7 +122,7 @@ const HealthCenter = () => {
               </T.Head>
               <T.Body>
                 {healthCenterData.history?.map((rowItem) =>
-                  generateRow(rowItem as HealthCenterHistoryEntry),
+                  generateRow(rowItem as RightsPortalHealthCenterHistoryEntry),
                 )}
               </T.Body>
             </T.Table>
