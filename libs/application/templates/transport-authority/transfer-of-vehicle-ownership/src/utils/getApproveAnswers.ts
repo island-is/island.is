@@ -99,5 +99,7 @@ export const getApproveAnswers = (
     })
   }
 
+  console.log('getApproveAnswers', returnAnswers)
+
   return returnAnswers
 }
