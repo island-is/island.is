@@ -132,7 +132,7 @@ export class MeClientsController {
     @CurrentUser() user: User,
     @Param('clientId') clientId: string,
     @Param('tenantId') tenantId: string,
-  ): Promise<boolean> {
+  ): Promise<void> {
     return this.auditService.auditPromise(
       {
         auth: user,
