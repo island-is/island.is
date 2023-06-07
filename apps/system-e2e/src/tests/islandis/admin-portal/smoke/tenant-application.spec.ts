@@ -34,6 +34,16 @@ test.describe('Admin portal tenant application', () => {
     // Act
     await page.goto(homeUrl)
 
+    const buttonSaveTest = async (title: string, disabled = true) => {
+      const dataTestId = `button-save-${title}`
+
+      if (disabled) {
+        await expect(page.getByTestId(dataTestId)).toBeDisabled()
+      } else {
+        await expect(page.getByTestId(dataTestId)).not.toBeDisabled()
+      }
+    }
+
     /**
      * Header
      */
@@ -56,50 +66,33 @@ test.describe('Admin portal tenant application', () => {
       'See tenant basic information card and interact with it',
       async () => {
         // Arrange
-        const openIdConfigurationUrl = await page.locator(
-          `input[name="openIdConfigurationUrl"]`,
-        )
-        const authorizationUrl = await page.locator(
-          `input[name="authorizationUrl"]`,
-        )
-        const tokenUrl = await page.locator(`input[name="tokenUrl"]`)
-        const userInfoUrl = await page.locator(`input[name="userInfoUrl"]`)
-        const endSessionUrl = await page.locator(`input[name="endSessionUrl"]`)
-        const jsonWebSetKeyUrl = await page.locator(
-          `input[name="jsonWebSetKeyUrl"]`,
-        )
+        const title = 'Basic information'
+        const [clientId, issuerUrl, ...names] = [
+          'clientId',
+          'issuerUrl',
+          'openIdConfigurationUrl',
+          'authorizationUrl',
+          'tokenUrl',
+          'userInfoUrl',
+          'endSessionUrl',
+          'jsonWebSetKeyUrl',
+        ].map((name) => page.locator(`input[name="${name}"]`))
 
         // Assert - Heading
-        await expect(page.getByText('Basic information')).toBeVisible()
+        await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
         // Assert - Default inputs are visible
-        await expect(await page.locator(`input[name="clientId"]`)).toBeVisible()
-        await expect(
-          await page.locator(`input[name="issuerUrl"]`),
-        ).toBeVisible()
+        await expect(clientId).toBeVisible()
+        await expect(issuerUrl).toBeVisible()
 
         // Assert - Accordion inputs are not visible
-        await expect(openIdConfigurationUrl).not.toBeVisible()
-        await expect(authorizationUrl).not.toBeVisible()
-        await expect(
-          await page.locator(`input[name="tokenUrl"]`),
-        ).not.toBeVisible()
-        await expect(tokenUrl).not.toBeVisible()
-        await expect(userInfoUrl).not.toBeVisible()
-        await expect(endSessionUrl).not.toBeVisible()
-        await expect(jsonWebSetKeyUrl).not.toBeVisible()
+        await Promise.all(names.map((name) => expect(name).not.toBeVisible()))
 
         // Act - click on accordion
         await page.getByRole('button', { name: 'Other endpoints' }).click()
 
-        // Assert - Accordion inputs are now visible
-        await expect(openIdConfigurationUrl).toBeVisible()
-        await expect(authorizationUrl).toBeVisible()
-        await expect(await page.locator(`input[name="tokenUrl"]`)).toBeVisible()
-        await expect(tokenUrl).toBeVisible()
-        await expect(userInfoUrl).toBeVisible()
-        await expect(endSessionUrl).toBeVisible()
-        await expect(jsonWebSetKeyUrl).toBeVisible()
+        // // Assert - Accordion inputs are now visible
+        await Promise.all(names.map((name) => expect(name).toBeVisible()))
       },
     )
 
@@ -112,33 +105,38 @@ test.describe('Admin portal tenant application', () => {
         // Arrange
         const isDisplayNameInput = 'input[name="is_displayName"]'
         const enDisplayNameInput = 'input[name="en_displayName"]'
+        const title = 'Content'
+
+        // Assert - heading is visible
+        await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
         // Assert - Icelandic input is visible and english is not
-        await expect(await page.locator(isDisplayNameInput)).toBeVisible()
-        await expect(await page.locator(enDisplayNameInput)).not.toBeVisible()
+        await expect(page.locator(isDisplayNameInput)).toBeVisible()
+        await expect(page.locator(enDisplayNameInput)).not.toBeVisible()
+
+        // Assert - save button is disabled
+        await buttonSaveTest(title)
 
         // Act - fill in input
         await page.locator(isDisplayNameInput).fill('Ísland.is')
 
         // Assert - input has value
-        await expect(await page.locator(isDisplayNameInput)).toHaveValue(
-          'Ísland.is',
-        )
+        await expect(page.locator(isDisplayNameInput)).toHaveValue('Ísland.is')
 
         // Act - switch language
         await page.getByRole('tab', { name: 'English' }).click()
 
         // Assert - input is not visible
-        await expect(await page.locator(isDisplayNameInput)).not.toBeVisible()
-        await expect(await page.locator(enDisplayNameInput)).toBeVisible()
+        await expect(page.locator(isDisplayNameInput)).not.toBeVisible()
+        await expect(page.locator(enDisplayNameInput)).toBeVisible()
 
-        // Assert - heading is visible
-        await expect(page.getByText('Content')).toBeVisible()
+        // Assert - save button is enabled
+        await buttonSaveTest(title, false)
       },
     )
 
     /**
-     * Content card
+     * Applications URLs card
      */
     await test.step(
       'See tenant Application URLs card and interact with it',
@@ -150,14 +148,14 @@ test.describe('Admin portal tenant application', () => {
         const title = 'Application URLs'
 
         // Assert - heading is visible
-        await expect(page.getByText(title)).toBeVisible()
+        await expect(page.getByRole('heading', { name: title })).toBeVisible()
 
         // Assert - inputs are visible
-        await expect(await page.locator(redirectUris)).toBeVisible()
-        await expect(await page.locator(postLogoutRedirectUris)).toBeVisible()
+        await expect(page.locator(redirectUris)).toBeVisible()
+        await expect(page.locator(postLogoutRedirectUris)).toBeVisible()
 
         // Assert - save button is disabled
-        await expect(page.getByTestId(`button-save-${title}`)).toBeDisabled()
+        await buttonSaveTest(title)
 
         // Act - Type dummy text value into inputs
         await page.locator(redirectUris).clear()
@@ -166,15 +164,280 @@ test.describe('Admin portal tenant application', () => {
         await page.locator(postLogoutRedirectUris).fill(dummyText)
 
         // Assert - inputs have dummy text value
-        await expect(await page.locator(redirectUris)).toHaveValue(dummyText)
-        await expect(await page.locator(postLogoutRedirectUris)).toHaveValue(
+        await expect(page.locator(redirectUris)).toHaveValue(dummyText)
+        await expect(page.locator(postLogoutRedirectUris)).toHaveValue(
           dummyText,
         )
 
         // Assert - save button is enabled
+        await buttonSaveTest(title, false)
+      },
+    )
+
+    /**
+     * Refresh token lifecycle card
+     */
+    await test.step(
+      'See tenant Refresh token lifecycle card and interact with it',
+      async () => {
+        // Arrange
+        const absoluteRefreshTokenLifetime =
+          'input[name="absoluteRefreshTokenLifetime"]'
+        const refreshTokenExpiration = 'input[name="refreshTokenExpiration"]'
+        const slidingRefreshTokenLifetime =
+          'input[name="slidingRefreshTokenLifetime"]'
+        const title = 'Refresh token lifecycle'
+        const dummyNumber = '3200099'
+
+        // Assert - heading is visible
+        await expect(page.getByRole('heading', { name: title })).toBeVisible()
+
+        // Assert - save button is disabled
+        await buttonSaveTest(title)
+
+        // Assert - inputs are visible
+        await expect(page.locator(absoluteRefreshTokenLifetime)).toBeVisible()
+        await expect(page.locator(refreshTokenExpiration)).toBeVisible()
+        await expect(page.locator(slidingRefreshTokenLifetime)).toBeVisible()
+
+        // Act - Insert number into input
+        await page.locator(absoluteRefreshTokenLifetime).clear()
+        await page.locator(absoluteRefreshTokenLifetime).fill(dummyNumber)
+        await page.locator(slidingRefreshTokenLifetime).clear()
+        await page.locator(slidingRefreshTokenLifetime).fill(dummyNumber)
+
+        // Assert - check if absoluteRefreshTokenLifetime and absoluteRefreshTokenLifetime has dummy text value
+        await expect(page.locator(absoluteRefreshTokenLifetime)).toHaveValue(
+          dummyNumber,
+        )
+        await expect(page.locator(slidingRefreshTokenLifetime)).toHaveValue(
+          dummyNumber,
+        )
+
+        // Act - Click on checkbox to make slidingRefreshTokenLifetime visible
+        await page
+          .locator('label')
+          .filter({ hasText: 'Inactivity expiration' })
+          .click()
+
+        // Assert - check if slidingRefreshTokenLifetime is visible
         await expect(
-          page.getByTestId(`button-save-${title}`),
-        ).not.toBeDisabled()
+          page.locator(slidingRefreshTokenLifetime),
+        ).not.toBeVisible()
+
+        // Assert - save button is enabled
+        await buttonSaveTest(title, false)
+      },
+    )
+
+    /**
+     * Permissions card
+     */
+    await test.step(
+      'See tenant permissions card and interact with it',
+      async () => {
+        const title = 'Permissions'
+
+        // Assert - heading is visible
+        await expect(page.getByRole('heading', { name: title })).toBeVisible()
+
+        // Assert - save button is disabled
+        await buttonSaveTest(title)
+
+        const initialPermissionCount = await page
+          .getByTestId('permission-row')
+          .count()
+
+        // Assert - permission list is visible
+        await expect(initialPermissionCount).toBeGreaterThan(0)
+
+        // Act - Open add permission modal
+        await page.getByTestId('add-permissions-button').click()
+
+        // Assert - modal is visible
+        await expect(
+          await page.getByRole('heading', { name: 'Add permissions' }),
+        ).toBeVisible()
+
+        // Act - Add permission by clicking on checkbox and then pressing add button
+        await page
+          .locator('#add-permissions tbody tr td')
+          .first()
+          .locator('input')
+          .click()
+
+        await page.getByRole('button', { name: 'Add', exact: true }).click()
+        // Wait for modal to close
+        await page.locator('#add-permissions').waitFor({ state: 'hidden' })
+
+        // Assert - Check if permission list has increased
+        const currentPermissionCount = await page
+          .getByTestId('permission-row')
+          .count()
+        await expect(initialPermissionCount).toBeLessThan(
+          currentPermissionCount,
+        )
+
+        // Assert - save button is enabled
+        await buttonSaveTest(title, false)
+
+        // Act - Remove added permission
+        await page
+          .getByTestId('permission-row')
+          .last()
+          .getByRole('button')
+          .click()
+
+        // Assert - Check if permission list has decreased
+        await expect(await page.getByTestId('permission-row').count()).toBe(
+          initialPermissionCount,
+        )
+      },
+    )
+
+    /**
+     * Delegations card
+     */
+    await test.step(
+      'See tenant Delegations card and interact with it',
+      async () => {
+        // Arrange
+        const title = 'Delegations'
+        const checkboxes = [
+          'supportsProcuringHolders',
+          'supportsLegalGuardians',
+          'promptDelegations',
+          'supportsPersonalRepresentatives',
+          'supportsCustomDelegation',
+          'requireApiScopes',
+        ].map((name) => page.locator(`input[name="${name}"]`))
+
+        // Assert - Heading
+        await expect(page.getByRole('heading', { name: title })).toBeVisible()
+
+        // Assert - All inputs are not visible
+        await Promise.all(
+          checkboxes.map((checkbox) => expect(checkbox).not.toBeVisible()),
+        )
+
+        // Act - Click on accordion to make checkboxes visible
+        await page.locator('button[aria-controls="delegations"]').click()
+
+        // Assert - save button is disabled
+        await buttonSaveTest(title)
+
+        // Assert - All inputs are visible
+        await Promise.all(
+          checkboxes.map((checkbox) => expect(checkbox).toBeVisible()),
+        )
+
+        // Act - Click on one checkbox
+        await page.locator('input[name="supportsProcuringHolders"]').click()
+
+        // Assert - save button is disabled
+        await buttonSaveTest(title, false)
+      },
+    )
+
+    /**
+     * Advanced settings card
+     */
+    await test.step(
+      'See tenant Advanced settings card and interact with it',
+      async () => {
+        // Arrange
+        const title = 'Advanced settings'
+        const checkboxes = [
+          'requirePkce',
+          'allowOfflineAccess',
+          'requireConsent',
+          'supportTokenExchange',
+        ].map((name) => page.locator(`input[name="${name}"]`))
+        const accessTokenLifetime = page.locator(
+          `input[name="accessTokenLifetime"]`,
+        )
+        const customClaims = page.locator(`textarea[name="customClaims"]`)
+        const dummyNumber = '123'
+
+        // Assert - Heading exists and all inputs are not visible
+        await expect(page.getByRole('heading', { name: title })).toBeVisible()
+        await Promise.all(
+          [...checkboxes, accessTokenLifetime, customClaims].map((checkbox) =>
+            expect(checkbox).not.toBeVisible(),
+          ),
+        )
+
+        // Act - Click on accordion to make all inputs visible
+        await page.locator('button[aria-controls="advancedSettings"]').click()
+
+        await Promise.all(
+          [...checkboxes, accessTokenLifetime, customClaims].map((checkbox) =>
+            expect(checkbox).toBeVisible(),
+          ),
+        )
+
+        // Assert - save button is disabled
+        await buttonSaveTest(title)
+
+        // Act - Type into input
+        await accessTokenLifetime.clear()
+        await accessTokenLifetime.fill(dummyNumber)
+
+        // Assert - check if  and  has dummy text value
+        await expect(accessTokenLifetime).toHaveValue(dummyNumber)
+
+        // Assert - save button is disabled
+        await buttonSaveTest(title, false)
+      },
+    )
+
+    /**
+     * Danger zone
+     */
+    await test.step(
+      'See Danger zone card and modal and interact with it',
+      async () => {
+        // Arrange
+        const title = 'Danger zone'
+        const modalId = '#rotate-secret-modal'
+        const rotateSecretButton = page.getByRole('button', {
+          name: 'Rotate',
+          exact: true,
+        })
+
+        // Assert - Heading exists
+        await expect(page.getByText(title)).toBeVisible()
+
+        // Assert - check if rotate secret button is not visible
+        await expect(rotateSecretButton).not.toBeVisible()
+
+        // Act - Click accordion button to make rotate secret button visible
+        await page.locator('button[aria-controls="danger-zone"]').click()
+
+        // Assert - check if rotate secret button is not visible
+        await expect(rotateSecretButton).toBeVisible()
+
+        // Act - Click rotate secret button
+        await rotateSecretButton.click()
+
+        // Assert - check content in modal
+        await expect(page.locator(modalId)).toBeVisible()
+        await expect(
+          page.getByRole('button', { name: 'Generate' }),
+        ).toBeVisible()
+        await expect(page.getByRole('button', { name: 'cancel' })).toBeVisible()
+        await expect(
+          page.locator('input[name="revokeOldSecrets"]'),
+        ).toBeVisible()
+        await expect(
+          page.locator(modalId).getByRole('heading', { name: 'Rotate secret' }),
+        ).toBeVisible()
+
+        // Act - Click cancel button
+        await page.getByRole('button', { name: 'cancel' }).click()
+
+        // Assert - check if modal is not visible
+        await expect(page.locator(modalId)).not.toBeVisible()
       },
     )
   })
