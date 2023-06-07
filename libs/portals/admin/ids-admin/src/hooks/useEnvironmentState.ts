@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction, useContext, useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 
-import { EnvironmentContext } from '../context/EnvironmentContext'
+import { useEnvironment } from '../context/EnvironmentContext'
 
 /**
  * This hook is like useState but re-initializes each time the selected
@@ -11,17 +11,8 @@ import { EnvironmentContext } from '../context/EnvironmentContext'
 export const useEnvironmentState = <S>(
   initialState: S,
 ): [S, Dispatch<SetStateAction<S>>] => {
-  const context = useContext(EnvironmentContext)
-
-  if (!context) {
-    throw new Error(
-      'useEnvironmentState must be used within a EnvironmentProvider',
-    )
-  }
-
-  const { selectedEnvironment } = context
-
   const [state, setState] = useState(initialState)
+  const { selectedEnvironment } = useEnvironment()
   const [prevEnvironment, setPrevEnvironment] = useState(selectedEnvironment)
 
   if (selectedEnvironment !== prevEnvironment) {

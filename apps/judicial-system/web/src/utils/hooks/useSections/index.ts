@@ -888,11 +888,9 @@ const useSections = (
               : undefined,
         },
         {
-          name: formatMessage(
-            sections.indictmentsCourtSection.prosecutorAndDefender,
-          ),
+          name: formatMessage(sections.indictmentsCourtSection.defender),
           isActive: routeIndex === 3,
-          href: `${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`,
+          href: `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
           onClick:
             validateFormStepper(
               isValid,
@@ -904,9 +902,7 @@ const useSections = (
               workingCase,
             ) && onNavigationTo
               ? async () =>
-                  await onNavigationTo(
-                    constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
-                  )
+                  await onNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
               : undefined,
         },
         {
@@ -920,7 +916,7 @@ const useSections = (
                 constants.INDICTMENTS_OVERVIEW_ROUTE,
                 constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
                 constants.INDICTMENTS_SUBPOENA_ROUTE,
-                constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+                constants.INDICTMENTS_DEFENDER_ROUTE,
               ],
               workingCase,
             ) && onNavigationTo

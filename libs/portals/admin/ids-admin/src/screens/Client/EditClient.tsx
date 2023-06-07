@@ -45,7 +45,10 @@ export const EditClient = () => {
   const isMachineApplication = client.clientType === AuthAdminClientType.machine
 
   return (
-    <EnvironmentProvider selectedEnvironment={selectedEnvironment.environment}>
+    <EnvironmentProvider
+      selectedEnvironment={selectedEnvironment.environment}
+      availableEnvironments={client.availableEnvironments}
+    >
       <StickyLayout
         header={(isSticky) => (
           <EnvironmentHeader

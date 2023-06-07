@@ -117,7 +117,7 @@ export class ClientsResolver {
     }
 
     // Depends on the priority order being decided in the service
-    return client.environments[0]
+    return client.environments[client.environments.length - 1]
   }
 
   @ResolveField('availableEnvironments', () => [Environment])

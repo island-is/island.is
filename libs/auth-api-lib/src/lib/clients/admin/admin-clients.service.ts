@@ -251,8 +251,8 @@ export class AdminClientsService {
     if (!client) {
       throw new NoContentException()
     }
-
-    if (!this.validateUserUpdateAccess(user, input)) {
+    const isValid = await this.validateUserUpdateAccess(user, input, tenantId)
+    if (!isValid) {
       throw new ForbiddenException(
         'User does not have access to update admin controlled fields.',
       )
@@ -428,7 +428,6 @@ export class AdminClientsService {
         removedScopes: data.removedScopes,
         transaction,
         clientId: data.clientId,
-        tenantId: data?.tenantId ?? '',
       })
     }
 
@@ -571,7 +570,11 @@ export class AdminClientsService {
    * If the user is a superuser, they can update all fields.
    * If the user is not a superuser, they can only update non-admin fields.
    */
-  private validateUserUpdateAccess(user: User, input: AdminPatchClientDto) {
+  private async validateUserUpdateAccess(
+    user: User,
+    input: AdminPatchClientDto,
+    tenantId: string,
+  ) {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
     const updatedFields = Object.keys(input)
@@ -587,6 +590,18 @@ export class AdminClientsService {
     if (superUserUpdatedFields.length > 0 && isSuperUser) {
       // There are some superuser fields to update and the user has the superuser scope
       return true
+    }
+
+    if (input.addedScopes && input.addedScopes.length > 0) {
+      const verifiedScopes = await this.verifyScopeNames({
+        isSuperUser,
+        scopeNames: input.addedScopes,
+        tenantId,
+      })
+
+      if (verifiedScopes) {
+        return true
+      }
     }
 
     // There are some superuser fields to update and the user does not have the superuser scope
@@ -633,23 +648,22 @@ export class AdminClientsService {
    * @returns true if all scopes exist, are enabled and have the same tenant, false otherwise.
    */
   private async verifyScopeNames({
+    isSuperUser,
     scopeNames,
     tenantId,
-    transaction,
   }: {
+    isSuperUser: boolean
     scopeNames: string[]
     tenantId: string
-    transaction: Transaction
   }): Promise<boolean> {
     const scopes = await this.apiScopeModel.findAndCountAll({
       where: {
         name: {
           [Op.in]: scopeNames,
         },
-        enabled: true,
-        domainName: tenantId,
+        archived: null,
+        ...(isSuperUser ? {} : { domainName: tenantId }),
       },
-      transaction,
     })
 
     return scopes.count === scopeNames.length
@@ -659,38 +673,13 @@ export class AdminClientsService {
     addedScopes,
     removedScopes,
     clientId,
-    tenantId,
     transaction,
   }: {
     addedScopes?: string[]
     removedScopes?: string[]
     clientId: string
-    tenantId: string
     transaction: Transaction
   }): Promise<void> {
-    const mergedScopes = [
-      ...(addedScopes ?? []),
-      ...(removedScopes ?? []),
-    ].filter((scopeName) => scopeName !== '')
-
-    if (mergedScopes.length > 0) {
-      const verifiedScopes = await this.verifyScopeNames({
-        scopeNames: mergedScopes,
-        tenantId,
-        transaction,
-      })
-
-      if (!verifiedScopes) {
-        throw new BadRequestException(
-          `One or more scopes (${mergedScopes
-            .map((scopeName) => scopeName)
-            .join(
-              ', ',
-            )}) do not exist, are not enabled or do not belong to tenant: ${tenantId}`,
-        )
-      }
-    }
-
     if (removedScopes) {
       await this.clientsService.removeAllowedScopes(removedScopes, clientId, {
         transaction,
