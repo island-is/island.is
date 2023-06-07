@@ -15,7 +15,10 @@ export const PermissionBasicInfo = () => {
   const permissionIdRef = useRef<HTMLInputElement>(null)
 
   return (
-    <FormCard title={formatMessage(m.basicInfo)}>
+    <FormCard
+      title={formatMessage(m.basicInfo)}
+      shouldSupportMultiEnvironment={false}
+    >
       <Input
         ref={permissionIdRef}
         readOnly
