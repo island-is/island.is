@@ -80,9 +80,12 @@ export const FilterBox = ({
     setFilters(filtersCopy)
   }
 
-  const renderLabel = (item) => {
-    const renderCount = item?.count !== 0 ? ` (${item.count})` : ``
-    return `${item.label}${renderCount}`
+  const renderLabel = (item: FilterInputItem) => {
+    const count = item?.count
+    const label = item?.label
+    const hasItems = count && count !== 0
+
+    return hasItems ? `${label} (${count})` : `${label}`
   }
 
   const checkedItems = thisFilters.items.filter(
