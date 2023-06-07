@@ -1,6 +1,5 @@
 import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 import { settings } from '../../../infra/src/dsl/settings'
-import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
 import {
   AdrAndMachine,
   Base,
@@ -28,6 +27,7 @@ import {
   UniversityOfIceland,
   Vehicles,
   VehicleServiceFjsV1,
+  IcelandicGovernmentInstitutionVacancies,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -175,7 +175,7 @@ export const serviceSetup = (services: {
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
-        prod: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi.island.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
@@ -326,6 +326,7 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       UniversityOfIceland,
+      IcelandicGovernmentInstitutionVacancies,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

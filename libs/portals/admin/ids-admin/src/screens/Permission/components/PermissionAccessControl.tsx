@@ -6,8 +6,9 @@ import { Checkbox, CheckboxProps, Stack } from '@island.is/island-ui/core'
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard'
 import { m } from '../../../lib/messages'
-import { PermissionFormTypes } from '../EditPermission.action'
+import { PermissionFormTypes } from '../EditPermission.schema'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
+import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 
 const commonProps: Pick<
   CheckboxProps,
@@ -41,10 +42,16 @@ export const PermissionAccessControl = () => {
 
   return (
     <FormCard
-      title={formatMessage(m.basicInfo)}
+      title={formatMessage(m.accessControl)}
       intent={PermissionFormTypes.ACCESS_CONTROL}
-      selectedEnvironment={selectedPermission.environment}
-      availableEnvironments={permission.availableEnvironments}
+      inSync={checkEnvironmentsSync(permission.environments, [
+        'isAccessControlled',
+        'grantToAuthenticatedUser',
+        'grantToProcuringHolders',
+        'grantToLegalGuardians',
+        'allowExplicitDelegationGrant',
+        'grantToPersonalRepresentatives',
+      ])}
     >
       <Stack space={2}>
         <Checkbox

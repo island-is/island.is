@@ -1,6 +1,6 @@
 import { Application, ExternalData } from '@island.is/application/types'
 
-export const getChargeId = (application: Application) => {
+export const getPaymentIdFromExternalData = (application: Application) => {
   const externalData = application.externalData as
     | ExternalData
     | undefined

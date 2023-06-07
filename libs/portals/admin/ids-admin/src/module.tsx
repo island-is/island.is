@@ -15,7 +15,7 @@ import { publishClientAction } from './screens/Client/PublishClient/PublishClien
 import { createPermissionAction } from './screens/Permission/CreatePermission/CreatePermission.action'
 import { permissionsLoader } from './screens/Permissions/Permissions.loader'
 import { permissionLoader } from './screens/Permission/Permission.loader'
-import { updatePermissionAction } from './screens/Permission/EditPermission.action'
+import { editPermissionAction } from './screens/Permission/EditPermission.action'
 
 const IDSAdmin = lazy(() => import('./screens/IDSAdmin'))
 
@@ -142,7 +142,7 @@ export const idsAdminModule: PortalModule = {
                 navHide: true,
                 path: IDSAdminPaths.IDSAdminPermission,
                 element: <Permission />,
-                action: updatePermissionAction(props),
+                action: editPermissionAction(props),
                 loader: permissionLoader(props),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminPermissions,
