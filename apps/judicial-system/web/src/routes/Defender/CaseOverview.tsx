@@ -9,9 +9,7 @@ import {
   InfoCard,
   MarkdownWrapper,
   PageLayout,
-  PdfButton,
   RestrictionTags,
-  SignedDocument,
   PageHeader,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
