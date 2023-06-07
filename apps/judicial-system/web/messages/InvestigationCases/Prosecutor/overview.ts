@@ -16,7 +16,7 @@ export const icOverview = {
         'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í rannsóknarheimildum.',
     },
   }),
-  seenByDefenderAlert: defineMessages({
+  openedByDefenderAlert: defineMessages({
     title: {
       id:
         'judicial.system.investigation_cases:overview.sections.opened_by_defender_alert.title',

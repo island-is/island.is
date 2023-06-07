@@ -12,7 +12,7 @@ export const icCourtOverview = {
           'Notaður sem titill fyrir athugasemdir vegna endursendingar hluta á yfirlitssíðu í rannsóknarheimildum.',
       },
     }),
-    seenByDefenderAlert: defineMessages({
+    openedByDefenderAlert: defineMessages({
       title: {
         id:
           'judicial.system.investigation_cases:court_overview.sections.opened_by_defender_alert.title',

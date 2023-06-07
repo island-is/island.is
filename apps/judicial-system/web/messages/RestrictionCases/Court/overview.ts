@@ -19,7 +19,7 @@ export const rcCourtOverview = {
           'Notaður sem titill fyrir athugasemdir vegna endursendingar hluta á yfirlitssíðu í gæsluvarðhalds- og farbannsmálum.',
       },
     }),
-    seenByDefenderAlert: defineMessages({
+    openedByDefenderAlert: defineMessages({
       title: {
         id:
           'judicial.system.restriction_cases:court_overview.sections.opened_by_defender_alert.title',

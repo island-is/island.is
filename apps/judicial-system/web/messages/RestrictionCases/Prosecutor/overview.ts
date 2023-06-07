@@ -16,7 +16,7 @@ export const rcOverview = {
         'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í gæsluvarðhalds- og farbannsmálum.',
     },
   }),
-  seenByDefenderAlert: defineMessages({
+  openedByDefenderAlert: defineMessages({
     title: {
       id:
         'judicial.system.restriction_cases:overview.opened_by_defender_alert.title',

@@ -64,7 +64,7 @@ export const attributes: (keyof Case)[] = [
   'courtRecordSignatureDate',
   'parentCaseId',
   'caseModifiedExplanation',
-  'seenByDefender',
+  'openedByDefender',
   'caseResentExplanation',
   'appealState',
   'accusedAppealDecision',
@@ -188,9 +188,9 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    if (!theCase.seenByDefender) {
+    if (!theCase.openedByDefender) {
       await this.caseModel.update(
-        { ...theCase, seenByDefender: nowFactory() },
+        { ...theCase, openedByDefender: nowFactory() },
         { where: { id: caseId } },
       )
     }
