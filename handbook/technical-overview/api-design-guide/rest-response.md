@@ -56,39 +56,42 @@ An API should at least use the following HTTP Status Codes for corresponding HTT
 
 ## `GET`
 
-For retrieving a resource or a collection of resources
+For retrieving a resource or a collection of resources.
 
 - `200` should be returned on success. If a collection asked for is empty or user does not have permission to access it, `200` is still to be returned with and empty array.
 - `204` should be returned when a single resource requested does not exist or the user does not have permission to access it.
 
+{% hint style="info" %}  
+When a parent resource of a sub-resource collection is not found or user does not have sufficient permissions the request should return `204` response.
+{% endhint %}
+
 ## `POST`
 
-For creating a resource
+For creating a resource.
 
-- `201` should be returned if the resource was created. The response body should contain a resource identifier to the created resource.
-- `303` should be returned if the resource already exists on the resource server. The reponse should
-  contain the [`Location`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location) header with the URI of the existing resource.
+- `201` should be returned when the resource was created. The response body should contain the created resource.
+- `303` should be returned if the resource already exists on the resource server. The response should contain the [`Location`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Location) header with the URI of the existing resource.
 - `400` should be returned if the request is invalid, i.e. the resource already exists or contains invalid fields.
 
 ## `PUT`
 
-For updating a existing resource
+For updating a existing resource.
 
-- `200` should be returned after a successful execution, when there is a need for content in the response.
-- `204` should be returned after a successful execution, as usually there is no need for content in the response. It should also be used when the resource is not found or the user does not have permission to update it.
-- `400` should be returned if the request is invalid, i.e. the resource contains invalid fields.
+- `200` should be returned when resource is successfully updated with the updated resource in the response.
+- `204` should be returned when the resource is not found or the user does not have permission to update it.
+- `400` should be returned when the request is invalid, i.e. the resource contains invalid fields.
 
 ## `PATCH`
 
-For making a partial update on a resource
+For making a partial update on a resource.
 
-- `200` should be returned after a successful execution, when there is a need for content in the response.
-- `204` should be returned after a successful execution, as usually there is no need for content in the response. It should also be used when the resource is not found or the user does not have permission to update it.
-- `400` should be returned if the request is invalid, i.e. the resource contains invalid fields.
+- `200` should be returned when resource is successfully updated with the updated resource in the response.
+- `204` should be returned when the resource is not found or the user does not have permission to update it.
+- `400` should be returned when the request is invalid, i.e. the resource contains invalid fields.
 
 ## `DELETE`
 
-For removing a resource
+For removing a resource.
 
-- `200` can be returned after a successful execution, when there is a need for a content in the response.
-- `204` should be returned after a successful execution. It should also be used when the resource is not found or the user does not have permission to delete it.
+- `200` should be returned when the resource is deleted and there is a need for a content in the response.
+- `204` should be returned when the resource is deleted, does not exist or the user does not have permission to delete it and there is no content in response.
