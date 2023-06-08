@@ -16,6 +16,8 @@ import { core, sections } from '@island.is/judicial-system-web/messages'
 import { caseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
+import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
+
 import {
   CaseType,
   InstitutionType,
@@ -37,7 +39,6 @@ import * as constants from '@island.is/judicial-system/consts'
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
 import { useContext } from 'react'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
