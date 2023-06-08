@@ -291,6 +291,8 @@ export const LimitedAccessUpdateCaseMutation = gql`
         id
         name
         category
+        created
+        key
       }
       defendants {
         id
