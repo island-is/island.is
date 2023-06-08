@@ -68,7 +68,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     return result
   }
 
-  async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
+  async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
     let estateResponse: EstateInfo
     if (
       application.applicant.startsWith('010130') &&
@@ -158,10 +158,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async completeApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -251,20 +248,19 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]
-      const attachmentAnswerData = getValueViaPath<ApplicationFile[]>(
-        application.answers,
-        path,
-      )
-      const attachmentAnswer = attachmentAnswerData?.pop()
+      const attachmentAnswerData =
+        getValueViaPath<ApplicationFile[]>(application.answers, path) ?? []
 
-      if (attachmentAnswer) {
-        const fileType = attachmentAnswer.name?.split('.').pop()
-        const name = `${prefix}.${dateStr}.${fileType}`
-        const fileName = (application.attachments as ApplicationAttachments)[
-          attachmentAnswer?.key
-        ]
-        const content = await this.getFileContentBase64(fileName)
-        attachments.push({ name, content })
+      for (let index = 0; index < attachmentAnswerData.length; index++) {
+        if (attachmentAnswerData[index]) {
+          const fileType = attachmentAnswerData[index].name?.split('.').pop()
+          const name = `${prefix}_${index}.${dateStr}.${fileType}`
+          const fileName = (application.attachments as ApplicationAttachments)[
+            attachmentAnswerData[index]?.key
+          ]
+          const content = await this.getFileContentBase64(fileName)
+          attachments.push({ name, content })
+        }
       }
     }
 
@@ -273,7 +269,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
         [person],
-        undefined,
+        attachments,
         this.stringifyObject(uploadData),
         uploadDataName,
         uploadDataId,
