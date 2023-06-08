@@ -1,0 +1,22 @@
+{
+  "root": "libs/api/domains/intellectual-property",
+  "sourceRoot": "libs/api/domains/intellectual-property/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/intellectual-property/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/api/domains/intellectual-property"],
+      "options": {
+        "jestConfig": "libs/api/domains/intellectual-property/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

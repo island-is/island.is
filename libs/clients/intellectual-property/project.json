@@ -1,0 +1,40 @@
+{
+  "root": "libs/clients/intellectual-property",
+  "sourceRoot": "libs/clients/intellectual-property/src",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/intellectual-property/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/clients/intellectual-property"],
+      "options": {
+        "jestConfig": "libs/clients/intellectual-property/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "curl https://webapi.hugverk.is/apiv3/swagger/v3/swagger.json > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/intellectual-property"
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/intellectual-property/gen/fetch -i libs/clients/intellectual-property/src/clientConfig.json"
+      }
+    }
+  },
+  "tags": []
+}

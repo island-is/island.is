@@ -131,6 +131,9 @@
       "@island.is/api/domains/identity": [
         "libs/api/domains/identity/src/index.ts"
       ],
+      "@island.is/api/domains/intellectual-property": [
+        "libs/api/domains/intellectual-property/src/index.ts"
+      ],
       "@island.is/api/domains/islykill": [
         "libs/api/domains/islykill/src/index.ts"
       ],
@@ -489,6 +492,9 @@
         "libs/clients/icelandic-health-insurance/rights-portal/src/index.ts"
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
+      "@island.is/clients/intellectual-property": [
+        "libs/clients/intellectual-property/src/index.ts"
+      ],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
