@@ -313,20 +313,26 @@ export class ClientsService extends MultiEnvironmentService {
   }
 
   async deleteClient(user: User, input: DeleteClientInput): Promise<boolean> {
+    const response = environments.map((env) => ({
+      environment: env,
+      success: true,
+    }))
+
     await Promise.all(
-      Object.values(Environment).map((resp) =>
-        this.adminApiByEnvironmentWithAuth(resp, user)
+      response.map((resp, index) =>
+        this.adminApiByEnvironmentWithAuth(resp.environment, user)
           ?.meClientsControllerDelete({
             tenantId: input.tenantId,
             clientId: input.clientId,
           })
           .catch((error) => {
-            this.handleError(error, resp)
+            response[index].success = false
+            this.handleError(error, resp.environment)
           }),
       ),
     )
 
-    return true
+    return response.some((resp) => resp.success)
   }
 
   async revokeSecret(user: User, input: RotateSecretInput) {
