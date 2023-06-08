@@ -293,5 +293,9 @@ export const estateSchema = z.object({
 
   readTerms: z.array(z.enum([YES])).length(1),
 
-  estateAttachments: z.array(FileSchema),
+  estateAttachments: z.object({
+    attached: z.object({
+      file: z.array(FileSchema),
+    }),
+  }),
 })
