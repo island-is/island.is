@@ -49,6 +49,7 @@ const RenderFiles: React.FC<Props & RenderFilesProps> = (props) => {
             caseId={workingCase.id}
             title={file.name}
             renderAs="row"
+            disabled={!file.key}
             handleClick={() => onOpenFile(file.id)}
           />
         </Box>
