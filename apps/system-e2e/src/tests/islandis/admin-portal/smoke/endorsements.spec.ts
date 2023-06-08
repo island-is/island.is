@@ -1,6 +1,13 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
+import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+
+
+// TEST_ENVIRONMENT=dev yarn system-e2e 'admin-portal/smoke/endorsements' --browser chromium --headed
+
+
+// check into any list and follow or unfollow it depending on its current state .......................
+
 
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord/`
 test.use({ baseURL: urls.islandisBaseUrl })
