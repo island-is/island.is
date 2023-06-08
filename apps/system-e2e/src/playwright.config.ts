@@ -27,22 +27,21 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 3 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI
-    ? [
-        ['line'],
-        [
-          'playwright-tesults-reporter',
-          {
-            'tesults-target': process.env.TESULTS_TOKEN,
-            'tesults-build-name': process.env.COMMIT_INFO ?? 'unknown',
-          },
-        ],
-        ['html', { open: 'never' }],
-      ]
+  reporter: process.env.CI ? [
+    ['line'],
+    [
+      'playwright-tesults-reporter',
+      {
+        'tesults-target': process.env.TESULTS_TOKEN,
+        'tesults-build-name': process.env.COMMIT_INFO ?? 'unknown',
+      },
+    ],
+    ['html', { open: 'never' }],
+  ]
     : 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -56,6 +55,10 @@ const config: PlaywrightTestConfig = {
     trace: 'retain-on-failure',
   },
 
+  /* Configure our test targets */
+  projects: [
+    { name: 'smoke', testMatch: 'smoke/*.spec.[jt]s', }
+  ],
   /* Configure projects for major browsers */
   // projects: [
   // {
