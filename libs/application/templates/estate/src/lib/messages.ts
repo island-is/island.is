@@ -199,6 +199,12 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast athugið',
     description: '',
   },
+  estateMembersHaveIDCheckbox: {
+    id: 'es.application:estateMembersHaveIDCheckbox',
+    defaultMessage:
+      'Ég staðfesti að allir ofangreindir séu með rafræn skilríki og geti undirritað samkomulag þetta.',
+    description: '',
+  },
   estateMemberAdvocateWarningDescription: {
     id: 'es.application:estateMemberAdvocateWarningDescription',
     defaultMessage:
@@ -530,6 +536,11 @@ export const m = defineMessages({
     defaultMessage: 'Eftirstöðvar á dánardegi',
     description: '',
   },
+  debtsLoanIdentity: {
+    id: 'es.application:debtsLoanIdentity',
+    defaultMessage: 'Auðkenni / Lánsnúmer',
+    description: '',
+  },
   debtsRepeaterButton: {
     id: 'es.application:debtsRepeaterButton',
     defaultMessage: 'Bæta við skuldum',
@@ -544,6 +555,28 @@ export const m = defineMessages({
   representativeDescription: {
     id: 'es.application:representativeDescription',
     defaultMessage: 'Vanalega er valinn umboðsmaður...',
+    description: '',
+  },
+
+  // Attachments
+  attachmentsTitle: {
+    id: 'es.application:attachmentsTitle',
+    defaultMessage: 'Skjöl með umsókn',
+    description: '',
+  },
+  attachmentsDescription: {
+    id: 'es.application:attachmentsDescription#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
+    description: '',
+  },
+  attachmentsButton: {
+    id: 'es.application:attachmentsButton',
+    defaultMessage: 'Velja skjöl',
+    description: '',
+  },
+  uploadHeader: {
+    id: 'es.application:uploadHeader',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
     description: '',
   },
 
@@ -610,6 +643,11 @@ export const m = defineMessages({
   divisionOfEstateByHeirsSubmissionCheckbox: {
     id: 'es.application:divisionOfEstateByHeirsSubmissionCheckbox',
     defaultMessage: 'Ég hef lesið skilmálana',
+    description: '',
+  },
+  notFilledOut: {
+    id: 'es.application:notFilledOut',
+    defaultMessage: 'Ekki fyllt út',
     description: '',
   },
 
@@ -846,6 +884,11 @@ export const m = defineMessages({
   marketValueTitle: {
     id: 'es.application:marketValueTitle',
     defaultMessage: 'Markaðsvirði á dánardegi',
-    description: 'Placeholder for vehicles type',
+    description: '',
+  },
+  realEstateValueTitle: {
+    id: 'es.application:realEstateValueTitle',
+    defaultMessage: 'Fasteignamat á dánardegi',
+    description: '',
   },
 })

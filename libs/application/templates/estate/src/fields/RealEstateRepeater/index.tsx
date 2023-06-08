@@ -101,7 +101,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
                 <InputController
                   id={`${id}[${index}].marketValue`}
                   name={`${id}[${index}].marketValue`}
-                  label={formatMessage(m.marketValueTitle)}
+                  label={formatMessage(m.realEstateValueTitle)}
                   disabled={!asset.enabled}
                   backgroundColor="blue"
                   placeholder="0 kr."
