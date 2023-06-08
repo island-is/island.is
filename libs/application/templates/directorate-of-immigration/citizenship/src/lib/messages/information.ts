@@ -238,17 +238,47 @@ export const information = {
         defaultMessage: 'Dvöl erlendis',
         description: 'Stays abroad sub section title',
       },
+      pageSubTitle: {
+        id: 'doi.cs.application:information.labels.staysAbroad.subSectionTitle',
+        defaultMessage: 'Gefðu upplýsingar um dvöl erlendis lengur en 3 mánuði frá lögheimilisskráningu, til þess dags þegar þessi umsókn er lögð fram.',
+        description: 'Stays abroad sub section title',
+      },
       pageTitle: {
         id: 'doi.cs.application:information.labels.staysAbroad.pageTitle',
         defaultMessage: 'Dvöl erlendis á tímabilinu',
         description: 'Stays abroad page title',
       },
-      title: {
-        id: 'doi.cs.application:information.labels.staysAbroad.title',
+      questionTitle: {
+        id: 'doi.cs.application:information.labels.staysAbroad.questionTitle',
         defaultMessage:
-          'Hefur þú, á gildistíma síðasta dvalarleyfis, dvalið erlendis?',
+          'Hefur þú frá lögheimilsskráningu dvalið utan Íslands lengur en 3 mánuði?',
         description: 'Stays abroad title',
       },
+      selectLabel: {
+        id: 'doi.cs.application:information.labels.staysAbroad.selectLabel',
+        defaultMessage:
+          'Land sem þú dvaldir í síðast',
+        description: 'Country select label',
+      },
+      dateFromLabel: {
+        id: 'doi.cs.application:information.labels.staysAbroad.dateFromLabel',
+        defaultMessage:
+          'Dagsetning frá',
+        description: 'From date label',
+      },
+      dateToLabel: {
+        id: 'doi.cs.application:information.labels.staysAbroad.dateToLabel',
+        defaultMessage:
+          'Dagsetning til',
+        description: 'To date label',
+      },
+      purposeLabel: {
+        id: 'doi.cs.application:information.labels.staysAbroad.purposeLabel',
+        defaultMessage:
+          'Tilgangur dvalar',
+        description: 'purpose of stay label',
+      },
+      
     }),
   },
 }

@@ -2,7 +2,7 @@ import {
   NationalRegistryIndividual,
   SuccessfulDataProviderResult,
 } from '@island.is/application/types'
-import { ParentInformationSchema } from '../lib/dataSchema'
+import { RemoveableCountrySchema, ParentInformationSchema, RemoveableStayAbroadSchema } from '../lib/dataSchema'
 import { z } from 'zod'
 
 interface IdentityResult extends SuccessfulDataProviderResult {
@@ -14,3 +14,6 @@ export type CitizenshipExternalData = {
 }
 
 export type ParentsToApplicant = z.TypeOf<typeof ParentInformationSchema>
+
+export type CountryOfResidence = z.TypeOf<typeof RemoveableCountrySchema>
+export type CountryOfVisit = z.TypeOf<typeof RemoveableStayAbroadSchema>

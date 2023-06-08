@@ -47,6 +47,29 @@ export const ParentInformationSchema = z.object({
   name: z.string().min(1),
 })
 
+export const RemoveableStayAbroadSchema = z.object({
+  country: z.string().min(1),
+  dateTo: z.string().min(1),
+  dateFrom: z.string().min(1),
+  purposeOfStay: z.string().min(1),
+  wasRemoved: z.string().min(1).optional()
+})
+
+const StaysAbroadSchema = z.object({
+  hasStayedAbroad: z.string().min(1),
+  selectedAbroadCountries: z.array(RemoveableStayAbroadSchema)
+})
+
+export const RemoveableCountrySchema = z.object({
+  country: z.string().min(1),
+  wasRemoved: z.string().min(1).optional()
+})
+
+const CountriesOfResidenceSchema = z.object({
+  hasLivedAbroad: z.string().min(1),
+  selectedAbroadCountries: z.array(RemoveableCountrySchema)
+})
+
 export const CitizenshipSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
@@ -54,6 +77,8 @@ export const CitizenshipSchema = z.object({
   residenceCondition: ResidenceConditionSchema,
   parents: z.array(z.string()).optional(),
   spouse: z.string().min(1),
+  countriesOfResidence: CountriesOfResidenceSchema,
+  countriesOfStays: StaysAbroadSchema
 })
 
 export type Citizenship = z.TypeOf<typeof CitizenshipSchema>

@@ -16,31 +16,31 @@ interface UserProfile {
 }
 
 export interface ExternalData {
-  individual: {
+  individual?: {
     data: any
     date: string
   }
-  childrenCustodyInformation: {
+  childrenCustodyInformation?: {
     data: ApplicantChildCustodyInformation[]
     date: string
   }
-  nationalRegistryBirthplace: {
+  nationalRegistryBirthplace?: {
     data: NationalRegistryBirthplace
     date: string
   }
-  payment: {
+  payment?: {
     data: PaymentCatalogItem
     date: string
   }
-  userProfile: {
+  userProfile?: {
     data: UserProfile
     date: string
   }
-  NationalRegistryParents: {
+  NationalRegistryParents?: {
     data: NationalRegistryParent[]
     date: string
   }
-  spouseDetails: {
+  spouseDetails?: {
     data: any
     date: string
   }

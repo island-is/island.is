@@ -56,7 +56,6 @@ export interface ButtonProps {
   children?: ReactNode
   size?: ButtonSizes
   disabled?: boolean
-  fullWidth?: boolean
   textSize?: 'sm' | 'md'
   unfocusable?: boolean
   fluid?: boolean
@@ -99,7 +98,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
       unfocusable,
       value,
       name,
-      fullWidth,
       textSize,
       ...buttonProps
     },
@@ -137,7 +135,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
             [styles.loading]: loading,
           }
         )}
-        style={fullWidth ? { width: '100%', justifyContent: 'center'}: {}}
         display={variant === 'text' ? 'inline' : inline ? 'inlineFlex' : 'flex'}
         disabled={disabled || loading}
         {...(unfocusable && { tabIndex: -1 })}

@@ -13,7 +13,6 @@ export const SelectChildren = ({ field, application, error }: any) => {
     externalData: { childrenCustodyInformation },
     answers,
   } = application
-  console.log('application', application)
   const children = childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
   const childrenCheckboxes = children.map(
     (child: ApplicantChildCustodyInformation) => {
@@ -24,7 +23,7 @@ export const SelectChildren = ({ field, application, error }: any) => {
       return {
         value: child.nationalId,
         label: child.fullName,
-        subLabel: `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}`,
+        subLabel: child.otherParent ? `${selectChildren.checkboxes.subLabel.defaultMessage} ${child.otherParent?.fullName}` : '',
         rightContent: (
           <div style={{ display: 'flex' }}>
             {showForeignDomicileTag && (

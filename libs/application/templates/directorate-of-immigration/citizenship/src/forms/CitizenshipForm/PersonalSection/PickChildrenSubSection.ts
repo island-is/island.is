@@ -12,7 +12,7 @@ export const PickChildrenSubSection = buildSubSection({
   title: personal.labels.pickChildren.subSectionTitle,
   condition: (_, externalData) => {
     const convertedData = (externalData as unknown) as ExternalData
-    return convertedData.childrenCustodyInformation?.data?.length > 0
+    return convertedData.childrenCustodyInformation?.data ? convertedData.childrenCustodyInformation?.data?.length > 0 : false
   },
   children: [
     buildMultiField({
@@ -33,7 +33,7 @@ export const PickChildrenSubSection = buildSubSection({
                   return childInfo.age >= 17
                 },
               )
-              return childrenInAgeRange.length > 0
+              return childrenInAgeRange ? childrenInAgeRange.length > 0 : false
             },
           },
           {
@@ -63,7 +63,7 @@ export const PickChildrenSubSection = buildSubSection({
                   return childInfo.age >= 11 || childInfo.age <= 18
                 },
               )
-              return childrenInAgeRange.length > 0
+              return childrenInAgeRange ? childrenInAgeRange.length > 0 : false
             },
           },
           {
