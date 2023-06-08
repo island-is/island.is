@@ -264,7 +264,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
       }
     }
 
-    console.log('GOT ATTACHMENTS', attachments)
 
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
