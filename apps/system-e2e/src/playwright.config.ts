@@ -38,18 +38,18 @@ const config: PlaywrightTestConfig = {
     ['dot'],
     ...((process.env.CI
       ? [
-          ['line'],
-          [
-            'playwright-tesults-reporter',
-            {
-              'tesults-target': process.env.TESULTS_TOKEN,
-              'tesults-build-name': process.env.COMMIT_INFO,
-              'tesults-build-result': 'pass',
-              'tesults-build-reason': 'Always succeed 💯',
-              'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
-            },
-          ],
-        ]
+        ['line'],
+        [
+          'playwright-tesults-reporter',
+          {
+            'tesults-target': process.env.TESULTS_TOKEN,
+            'tesults-build-name': process.env.COMMIT_INFO,
+            'tesults-build-result': 'pass',
+            'tesults-build-reason': 'Always succeed 💯',
+            'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
+          },
+        ],
+      ]
       : [['null']]) as ReporterDescription[]),
     ['html', { open: 'never' }],
   ],
@@ -67,9 +67,25 @@ const config: PlaywrightTestConfig = {
   },
 
   /* Configure our test targets */
+  // We should be GENEROUS with projects and Tesults targets
   projects: [
-    { name: 'smoke', testMatch: 'smoke/*.spec.[jt]s' },
-    { name: 'accceptance', testMatch: 'smoke/*.spec.[jt]s' },
+    { name: `smoke`, testMatch: `smoke/*.spec.[jt]s`, },
+    { name: `accceptance`, testMatch: `acceptance/*.spec.[jt]s`, },
+    // ['smoke', 'accceptance'].
+    ...[
+      'admin-portal',
+      'air-discount-scheme',
+      'application-system',
+      'consultation-portal',
+      'service-portal',
+      'skilavottord',
+      'undirskriftarlistar',
+      'web',
+      'judicial-system',
+    ].map(name => (['smoke', 'acceptance'] as const).map(test_type => ({
+      name: `${name}-${test_type}`,
+      testmatch: `${name}/smoke/*.spec.[jt]s`,
+    }))).flat(),
   ],
   /* Configure projects for major browsers */
   // projects: [
