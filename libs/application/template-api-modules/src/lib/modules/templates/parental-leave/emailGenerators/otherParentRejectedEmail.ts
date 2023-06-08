@@ -61,15 +61,13 @@ export const generateOtherParentRejected: OtherParentRejectedEmail = (
         {
           component: 'Copy',
           context: {
-            copy:
-              'Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.',
+            copy: 'Hitt foreldrið hefur hafnað beiðni þinni um yfirfærslu á réttindum. Þú þarft því að breyta umsókn þinni.',
           },
         },
         {
           component: 'Copy',
           context: {
-            copy:
-              'The other parent has denied your request to transfer rights. You therefore need to modify your application.',
+            copy: 'The other parent has denied your request to transfer rights. You therefore need to modify your application.',
           },
         },
         {

@@ -87,11 +87,12 @@ describe('ApplicationAccesService', () => {
       allowedDelegations: [allowedDelegation],
     })
 
-    const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInDraft,
-      procurationHolderUser,
-      template,
-    )
+    const results =
+      await applicationAccessService.shouldShowApplicationOnOverview(
+        applicationInDraft,
+        procurationHolderUser,
+        template,
+      )
 
     expect(results).toBe(true)
   })
@@ -158,11 +159,12 @@ describe('ApplicationAccesService', () => {
       allowedDelegations: [allowedDelegation],
     })
 
-    const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInDraft,
-      procurationHolderUser,
-      template,
-    )
+    const results =
+      await applicationAccessService.shouldShowApplicationOnOverview(
+        applicationInDraft,
+        procurationHolderUser,
+        template,
+      )
 
     expect(results).toBe(false)
   })
@@ -182,11 +184,12 @@ describe('ApplicationAccesService', () => {
       allowedDelegations: [allowedDelegation],
     })
 
-    const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInDraft,
-      procurationHolderUser,
-      template,
-    )
+    const results =
+      await applicationAccessService.shouldShowApplicationOnOverview(
+        applicationInDraft,
+        procurationHolderUser,
+        template,
+      )
 
     expect(results).toBe(false)
   })
@@ -221,11 +224,12 @@ describe('ApplicationAccesService', () => {
       applicant: '111111-3000',
     })
 
-    const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInDraft,
-      createMockUser(),
-      testApplicationTemplate,
-    )
+    const results =
+      await applicationAccessService.shouldShowApplicationOnOverview(
+        applicationInDraft,
+        createMockUser(),
+        testApplicationTemplate,
+      )
     expect(results).toBe(true)
   })
 
@@ -235,11 +239,12 @@ describe('ApplicationAccesService', () => {
       applicant: '111111-3000',
     })
 
-    const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInDraft,
-      createMockUser(),
-      testApplicationTemplate,
-    )
+    const results =
+      await applicationAccessService.shouldShowApplicationOnOverview(
+        applicationInDraft,
+        createMockUser(),
+        testApplicationTemplate,
+      )
     expect(results).toBe(true)
   })
 
@@ -248,11 +253,12 @@ describe('ApplicationAccesService', () => {
       state: 'inReview',
       applicant: '111111-3000',
     })
-    const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInReview,
-      createMockUser('111111-3001'),
-      testApplicationTemplate,
-    )
+    const results =
+      await applicationAccessService.shouldShowApplicationOnOverview(
+        applicationInReview,
+        createMockUser('111111-3001'),
+        testApplicationTemplate,
+      )
     expect(results).toBe(false)
   })
 
@@ -261,11 +267,12 @@ describe('ApplicationAccesService', () => {
       state: 'inReview',
       applicant: '111111-3000',
     })
-    const results = await applicationAccessService.shouldShowApplicationOnOverview(
-      applicationInReview,
-      createMockUser(),
-      testApplicationTemplate,
-    )
+    const results =
+      await applicationAccessService.shouldShowApplicationOnOverview(
+        applicationInReview,
+        createMockUser(),
+        testApplicationTemplate,
+      )
     expect(results).toBe(true)
   })
 })

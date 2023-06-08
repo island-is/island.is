@@ -26,8 +26,7 @@ export const policeCaseNumber = defineMessages({
       'Notaður sem texti á "Bæta við númeri" takkann á sakbornings skrefi í öllum málstegundum.',
   },
   noPoliceCaseNumbersAssignedMessage: {
-    id:
-      'judicial.system.core:police_case_number.no_police_case_numbers_assigned_message',
+    id: 'judicial.system.core:police_case_number.no_police_case_numbers_assigned_message',
     defaultMessage: 'Ekkert LÖKE-málsnúmer hefur verið skráð',
     description: 'Notaður sem texti þegar ekkert LÖKE-málsnúmer er skráð.',
   },

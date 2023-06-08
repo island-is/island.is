@@ -49,10 +49,11 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
 
         // Only validate if fewer than 5 items
         if (result.length <= 5) {
-          validation = await this.vehiclePlateRenewalClient.validatePlateOwnership(
-            auth,
-            item.regno,
-          )
+          validation =
+            await this.vehiclePlateRenewalClient.validatePlateOwnership(
+              auth,
+              item.regno,
+            )
         }
 
         return {
@@ -125,12 +126,8 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(

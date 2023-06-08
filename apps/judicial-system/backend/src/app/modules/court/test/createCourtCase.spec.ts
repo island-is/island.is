@@ -40,10 +40,8 @@ describe('CourtService - Create court case', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      courtClientService,
-      courtService,
-    } = await createTestingCourtModule()
+    const { courtClientService, courtService } =
+      await createTestingCourtModule()
 
     mockCourtClientService = courtClientService
 

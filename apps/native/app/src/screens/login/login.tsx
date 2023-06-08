@@ -216,8 +216,7 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
             justifyContent: 'center',
             paddingTop: 32,
             zIndex: 3,
-          }}
-        >
+          }}>
           <Image
             source={isTestingApp ? testinglogo : logo}
             resizeMode="contain"
@@ -228,8 +227,7 @@ export const LoginScreen: NavigationFunctionComponent = ({componentId}) => {
               <>
                 <Title>{environment?.label ?? 'N/A'}</Title>
                 <Text
-                  style={{marginTop: 8, textAlign: 'center', lineHeight: 22}}
-                >
+                  style={{marginTop: 8, textAlign: 'center', lineHeight: 22}}>
                   {config.bundleId}
                   {'\n'}
                   {environment?.idsIssuer ?? 'N/A'}

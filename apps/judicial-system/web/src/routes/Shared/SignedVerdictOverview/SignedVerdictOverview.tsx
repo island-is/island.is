@@ -193,10 +193,8 @@ export const SignedVerdictOverview: React.FC = () => {
   const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
-  const [
-    selectedSharingInstitutionId,
-    setSelectedSharingInstitutionId,
-  ] = useState<ValueType<ReactSelectOption>>()
+  const [selectedSharingInstitutionId, setSelectedSharingInstitutionId] =
+    useState<ValueType<ReactSelectOption>>()
 
   const [
     requestCourtRecordSignatureResponse,
@@ -255,26 +253,25 @@ export const SignedVerdictOverview: React.FC = () => {
     )
   }, [workingCase.type, user])
 
-  const [
-    getCourtRecordSignatureConfirmation,
-  ] = useCourtRecordSignatureConfirmationLazyQuery({
-    fetchPolicy: 'no-cache',
-    onCompleted: (courtRecordSignatureConfirmationData) => {
-      if (
-        courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
-      ) {
-        setCourtRecordSignatureConfirmationResponse(
-          courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
-        )
-        refreshCase()
-      } else {
+  const [getCourtRecordSignatureConfirmation] =
+    useCourtRecordSignatureConfirmationLazyQuery({
+      fetchPolicy: 'no-cache',
+      onCompleted: (courtRecordSignatureConfirmationData) => {
+        if (
+          courtRecordSignatureConfirmationData?.courtRecordSignatureConfirmation
+        ) {
+          setCourtRecordSignatureConfirmationResponse(
+            courtRecordSignatureConfirmationData.courtRecordSignatureConfirmation as SignatureConfirmationResponse,
+          )
+          refreshCase()
+        } else {
+          setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
+        }
+      },
+      onError: () => {
         setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-      }
-    },
-    onError: () => {
-      setCourtRecordSignatureConfirmationResponse({ documentSigned: false })
-    },
-  })
+      },
+    })
 
   const [
     handleRequestCourtRecordSignature,
@@ -379,7 +376,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       updateCase(workingCase.id, {
-        accusedPostponedAppealDate: (null as unknown) as string,
+        accusedPostponedAppealDate: null as unknown as string,
       })
     }
   }
@@ -392,7 +389,7 @@ export const SignedVerdictOverview: React.FC = () => {
       })
 
       updateCase(workingCase.id, {
-        prosecutorPostponedAppealDate: (null as unknown) as string,
+        prosecutorPostponedAppealDate: null as unknown as string,
       })
     }
   }
@@ -423,7 +420,7 @@ export const SignedVerdictOverview: React.FC = () => {
         setSelectedSharingInstitutionId(null)
 
         updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: (null as unknown) as string,
+          sharedWithProsecutorsOfficeId: null as unknown as string,
         })
       } else {
         setSharedCaseModal({

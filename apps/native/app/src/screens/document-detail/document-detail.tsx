@@ -46,34 +46,32 @@ const PdfWrapper = styled.View`
   background-color: ${dynamicColor('background')};
 `;
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'documentDetail.screenTitle'}),
-      },
-      noBorder: true,
-    },
-  }),
-  {
-    bottomTabs: {
-      visible: false,
-    },
-    topBar: {
-      noBorder: true,
-      rightButtons: [
-        {
-          id: ButtonRegistry.ShareButton,
-          icon: require('../../assets/icons/navbar-share.png'),
-          accessibilityLabel: 'Share',
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'documentDetail.screenTitle'}),
         },
-      ],
+        noBorder: true,
+      },
+    }),
+    {
+      bottomTabs: {
+        visible: false,
+      },
+      topBar: {
+        noBorder: true,
+        rightButtons: [
+          {
+            id: ButtonRegistry.ShareButton,
+            icon: require('../../assets/icons/navbar-share.png'),
+            accessibilityLabel: 'Share',
+          },
+        ],
+      },
     },
-  },
-);
+  );
 
 interface PdfViewerProps {
   url: string;
@@ -225,15 +223,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       <View
         style={{
           flex: 1,
-        }}
-      >
+        }}>
         {visible && accessToken && (
           <Animated.View
             style={{
               flex: 1,
               opacity: fadeAnim,
-            }}
-          >
+            }}>
             {isHtml ? (
               <WebView
                 source={{html: Document.html ?? ''}}
@@ -272,8 +268,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                 justifyContent: 'center',
                 maxHeight: 300,
               },
-            ]}
-          >
+            ]}>
             <Loader
               text={intl.formatMessage({id: 'documentDetail.loadingText'})}
             />

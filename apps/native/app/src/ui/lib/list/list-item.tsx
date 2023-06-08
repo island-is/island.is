@@ -219,8 +219,7 @@ export function ListItem({
               <Button
                 key={action.id}
                 underlayColor={theme.color.blue600}
-                onPress={() => action.onPress(action)}
-              >
+                onPress={() => action.onPress(action)}>
                 <ButtonText>{action.text}</ButtonText>
               </Button>
             ))}
@@ -249,14 +248,12 @@ export function ListItem({
                   }),
                 },
               ],
-            }}
-          >
+            }}>
             <ActionPress
               onPress={() => {
                 onToggleUnread?.();
                 interactableRef.current.snapTo({index: 0});
-              }}
-            >
+              }}>
               <Checkmark source={checkmarkIcon} />
             </ActionPress>
           </Action>
@@ -301,8 +298,7 @@ export function ListItem({
                   markOnRelease.current = false;
                 }
               }
-            }}
-          >
+            }}>
             {content}
           </Interactable.View>
         </>

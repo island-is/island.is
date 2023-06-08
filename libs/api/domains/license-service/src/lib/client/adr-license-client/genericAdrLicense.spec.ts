@@ -6,9 +6,8 @@ describe('license-service/client/adr-license', () => {
   describe('pkpass status', () => {
     it('should be unknown for empty license', async () => {
       const licenseInfo: AdrDto = {}
-      const result = GenericAdrLicenseService.licenseIsValidForPkpass(
-        licenseInfo,
-      )
+      const result =
+        GenericAdrLicenseService.licenseIsValidForPkpass(licenseInfo)
       expect(result).toBe(GenericUserLicensePkPassStatus.Unknown)
     })
 
@@ -16,9 +15,8 @@ describe('license-service/client/adr-license', () => {
       const licenseInfo: AdrDto = {
         gildirTil: '2028-06-01',
       }
-      const result = GenericAdrLicenseService.licenseIsValidForPkpass(
-        licenseInfo,
-      )
+      const result =
+        GenericAdrLicenseService.licenseIsValidForPkpass(licenseInfo)
       expect(result).toBe(GenericUserLicensePkPassStatus.Available)
     })
 
@@ -26,9 +24,8 @@ describe('license-service/client/adr-license', () => {
       const licenseInfo: AdrDto = {
         gildirTil: '2020-06-01',
       }
-      const result = GenericAdrLicenseService.licenseIsValidForPkpass(
-        licenseInfo,
-      )
+      const result =
+        GenericAdrLicenseService.licenseIsValidForPkpass(licenseInfo)
       expect(result).toBe(GenericUserLicensePkPassStatus.NotAvailable)
     })
 
@@ -36,9 +33,8 @@ describe('license-service/client/adr-license', () => {
       const licenseInfo: AdrDto = {
         gildirTil: 'abcc',
       }
-      const result = GenericAdrLicenseService.licenseIsValidForPkpass(
-        licenseInfo,
-      )
+      const result =
+        GenericAdrLicenseService.licenseIsValidForPkpass(licenseInfo)
       expect(result).toBe(GenericUserLicensePkPassStatus.NotAvailable)
     })
   })

@@ -139,9 +139,7 @@ test('should handle error gracefully', async ({ page }) => {
     }),
   )
   await page.locator('role=button[type="submit"]').click()
-  expect(page.locator('role=error')).toHaveText(
-    'There was an error, continue anyways?',
-  )
+  expect(page.locator('role=error')).toHaveText('There was an error, continue anyways?')
 })
 ```
 

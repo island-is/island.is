@@ -42,11 +42,8 @@ const HearingArrangements = () => {
   } = useContext(FormContext)
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const {
-    setAndSendCaseToServer,
-    sendNotification,
-    isSendingNotification,
-  } = useCase()
+  const { setAndSendCaseToServer, sendNotification, isSendingNotification } =
+    useCase()
   const {
     courtDate,
     setCourtDate,

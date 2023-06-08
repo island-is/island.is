@@ -29,13 +29,8 @@ export const Table = <T extends object>(
   } = props
   const [isExpanded, setExpanded] = useState<boolean>(false)
   const tableInstance = useTable<T>({ columns, data })
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = tableInstance
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    tableInstance
   const enoughRowsToTruncate = rows.length > 4
   const lastIndex = rows.length - 1
   const lastRow = rows[lastIndex]

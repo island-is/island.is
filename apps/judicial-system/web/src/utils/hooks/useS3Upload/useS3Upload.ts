@@ -110,9 +110,8 @@ export const useS3Upload = (caseId: string) => {
     LimitedAccessDeleteFileMutation,
     LimitedAccessDeleteFileMutationVariables
   >(LimitedAccessDeleteFileDocument)
-  const [
-    uploadPoliceCaseFileMutation,
-  ] = useMutation<UploadPoliceCaseFileMutation>(UploadPoliceCaseFileDocument)
+  const [uploadPoliceCaseFileMutation] =
+    useMutation<UploadPoliceCaseFileMutation>(UploadPoliceCaseFileDocument)
 
   const upload = useCallback(
     async (
@@ -273,17 +272,16 @@ export const useS3Upload = (caseId: string) => {
       cb: (file: TUploadFile, newId?: string) => void,
     ) => {
       try {
-        const {
-          data: uploadPoliceCaseFileData,
-        } = await uploadPoliceCaseFileMutation({
-          variables: {
-            input: {
-              caseId,
-              id: file.id,
-              name: file.name,
+        const { data: uploadPoliceCaseFileData } =
+          await uploadPoliceCaseFileMutation({
+            variables: {
+              input: {
+                caseId,
+                id: file.id,
+                name: file.name,
+              },
             },
-          },
-        })
+          })
 
         if (
           !uploadPoliceCaseFileData ||

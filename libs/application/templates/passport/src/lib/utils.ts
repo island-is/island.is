@@ -8,8 +8,9 @@ export const getChildPassport = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  return (externalData.identityDocument
-    ?.data as IdentityDocumentData)?.childPassports.find((child) => {
+  return (
+    externalData.identityDocument?.data as IdentityDocumentData
+  )?.childPassports.find((child) => {
     return (
       child.childNationalId === (answers.passport as Passport)?.childPassport
     )

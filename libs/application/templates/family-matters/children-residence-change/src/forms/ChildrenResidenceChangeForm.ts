@@ -28,9 +28,9 @@ const soleCustodyField = () => {
     component: 'SoleCustodyModal',
     title: '',
     condition: (_, externalData) => {
-      return ((externalData as unknown) as ExternalData)?.childrenCustodyInformation?.data?.every(
-        (child) => !child.otherParent,
-      )
+      return (
+        externalData as unknown as ExternalData
+      )?.childrenCustodyInformation?.data?.every((child) => !child.otherParent)
     },
   })
 }
@@ -41,7 +41,7 @@ const noChildrenFoundField = () => {
     component: 'NoChildrenErrorModal',
     title: '',
     condition: (_, externalData) => {
-      return !hasChildren((externalData as unknown) as ExternalData)
+      return !hasChildren(externalData as unknown as ExternalData)
     },
   })
 }

@@ -195,9 +195,8 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
       const actors = application.applicantActors
       const currentActor: string = actors[actors.length - 1]
       const allMembers = values.cemetryCaretaker
-      const { careTakers, boardMembers } = getBoardmembersAndCaretakers(
-        allMembers,
-      )
+      const { careTakers, boardMembers } =
+        getBoardmembersAndCaretakers(allMembers)
       const caretakersIncludeActor =
         careTakers.filter((careTaker) => careTaker === currentActor).length > 0
 

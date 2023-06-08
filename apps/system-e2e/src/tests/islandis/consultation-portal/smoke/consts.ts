@@ -26,8 +26,7 @@ export const LOGGED_IN_NAV = [
 ]
 
 export const HERO = {
-  text:
-    'Markmið Samráðsgáttarinnar er að auka gagnsæi og möguleika almennings og hagsmunaaðila á þátttöku í stefnumótun, reglusetningu og ákvarðanatöku opinberra aðila. Hér er á einum stað hægt að finna öll mál ráðuneyta sem birt hafa verið til samráðs við almenning. Öllum er frjálst að senda inn umsögn eða ábendingu.',
+  text: 'Markmið Samráðsgáttarinnar er að auka gagnsæi og möguleika almennings og hagsmunaaðila á þátttöku í stefnumótun, reglusetningu og ákvarðanatöku opinberra aðila. Hér er á einum stað hægt að finna öll mál ráðuneyta sem birt hafa verið til samráðs við almenning. Öllum er frjálst að senda inn umsögn eða ábendingu.',
   links: [
     {
       label: 'Lesa meira',
@@ -104,8 +103,7 @@ const COMMON_STATES = {
       },
     ],
     title: 'Áskriftir',
-    text:
-      'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.',
+    text: 'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.',
   },
   advices: {
     label: 'Mínar umsagnir',
@@ -164,8 +162,7 @@ export const LOGGED_IN_STATES = {
       },
     ],
     title: 'Mínar áskriftir',
-    text:
-      'Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál. Kerfið er uppfært einu sinni á sólarhring.',
+    text: 'Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál. Kerfið er uppfært einu sinni á sólarhring.',
     tabs: [
       {
         text: 'Mál',
@@ -181,8 +178,7 @@ export const LOGGED_OUT_STATES = {
     ...COMMON_STATES.subscriptions,
     CTA: {
       title: 'Skrá áskrift',
-      text:
-        'Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.',
+      text: 'Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.',
       button: {
         label: 'Skrá mig inn',
       },
@@ -193,8 +189,7 @@ export const LOGGED_OUT_STATES = {
     ...COMMON_STATES.advices,
     CTA: {
       title: 'Mínar umsagnir',
-      text:
-        'Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir.',
+      text: 'Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir.',
       button: {
         label: 'Skrá mig inn',
       },

@@ -95,10 +95,8 @@ export const EditChange = (props: EditChangeProp) => {
   const { data: regulationBase } = useGetRegulationFromApiQuery(change.name)
 
   // fetch all regulation impacts
-  const {
-    data: draftImpacts,
-    loading: impactsLoading,
-  } = useGetRegulationImpactsQuery(change.name)
+  const { data: draftImpacts, loading: impactsLoading } =
+    useGetRegulationImpactsQuery(change.name)
 
   const { allFutureEffects, hasImpactMismatch } = useGetRegulationHistory(
     regulationBase,
@@ -108,13 +106,11 @@ export const EditChange = (props: EditChangeProp) => {
   )
 
   // fetch regulation as it is on a specific date, there might be future effects that are not in regulationBase
-  const {
-    data: regulation,
-    loading: regulationLoading,
-  } = useGetRegulationFromApiQuery(
-    change.name,
-    minDate ? toISODate(minDate) : true,
-  )
+  const { data: regulation, loading: regulationLoading } =
+    useGetRegulationFromApiQuery(
+      change.name,
+      minDate ? toISODate(minDate) : true,
+    )
 
   // if there is draftimpacts, use them, otherwise use regulation
   useEffect(() => {

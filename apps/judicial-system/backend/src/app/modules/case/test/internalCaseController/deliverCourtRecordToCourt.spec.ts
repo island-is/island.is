@@ -32,13 +32,12 @@ describe('InternalCaseController - Deliver court record to court', () => {
     const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
     mockGet.mockRejectedValue(new Error('Some error'))
 
-    const {
-      courtService,
-      internalCaseController,
-    } = await createTestingCaseModule()
+    const { courtService, internalCaseController } =
+      await createTestingCaseModule()
 
     mockCourtService = courtService
-    const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
+    const mockCreateCourtRecord =
+      mockCourtService.createCourtRecord as jest.Mock
     mockCreateCourtRecord.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
@@ -68,7 +67,8 @@ describe('InternalCaseController - Deliver court record to court', () => {
       mockNowFactory.mockReturnValue(now)
       const mockGet = getCourtRecordPdfAsBuffer as jest.Mock
       mockGet.mockResolvedValueOnce(pdf)
-      const mockCreateCourtRecord = mockCourtService.createCourtRecord as jest.Mock
+      const mockCreateCourtRecord =
+        mockCourtService.createCourtRecord as jest.Mock
       mockCreateCourtRecord.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(caseId, theCase)

@@ -246,9 +246,11 @@ export class SharedTemplateApiService {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<string> {
-    const fileName = (application.attachments as {
-      [key: string]: string
-    })[attachmentKey]
+    const fileName = (
+      application.attachments as {
+        [key: string]: string
+      }
+    )[attachmentKey]
 
     const { bucket, key } = AmazonS3URI(fileName)
 

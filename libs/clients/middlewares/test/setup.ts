@@ -79,7 +79,7 @@ export const setupTestEnv = (
   const enhancedFetch = createEnhancedFetch({
     name: 'test',
     fetch: dynamicFetch,
-    logger: (logger as unknown) as Logger,
+    logger: logger as unknown as Logger,
     ...override,
     circuitBreaker: override?.circuitBreaker !== false && {
       volumeThreshold: 0,

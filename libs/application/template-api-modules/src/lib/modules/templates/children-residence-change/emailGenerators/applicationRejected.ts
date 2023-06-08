@@ -14,7 +14,7 @@ export const applicationRejectedEmail: EmailTemplateGenerator = (props) => {
     application,
     options: { email },
   } = props
-  const crcApplication = (application as unknown) as CRCApplication
+  const crcApplication = application as unknown as CRCApplication
   const selectedChildren = getSelectedChildrenFromExternalData(
     crcApplication.externalData.childrenCustodyInformation.data,
     crcApplication.answers.selectedChildren,

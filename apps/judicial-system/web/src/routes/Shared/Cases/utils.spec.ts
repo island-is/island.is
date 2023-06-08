@@ -7,8 +7,10 @@ import { tables } from '@island.is/judicial-system-web/messages'
 import { mapCaseStateToTagVariant, displayCaseType } from './utils'
 import { cases as m } from './Cases.strings'
 
-const formatMessage = createIntl({ locale: 'is-IS', onError: jest.fn })
-  .formatMessage
+const formatMessage = createIntl({
+  locale: 'is-IS',
+  onError: jest.fn,
+}).formatMessage
 
 describe('displayCaseType', () => {
   const fn = (caseType: CaseType, decision?: CaseDecision) =>

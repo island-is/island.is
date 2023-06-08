@@ -59,22 +59,22 @@ export class DocumentProviderOnboardingService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const applicant = (get(
+      const applicant = get(
         application.answers,
         'applicant',
-      ) as unknown) as Applicant
-      const adminContact = (get(
+      ) as unknown as Applicant
+      const adminContact = get(
         application.answers,
         'administrativeContact',
-      ) as unknown) as Contact
-      const techContact = (get(
+      ) as unknown as Contact
+      const techContact = get(
         application.answers,
         'technicalContact',
-      ) as unknown) as Contact
-      const helpdesk = (get(
+      ) as unknown as Contact
+      const helpdesk = get(
         application.answers,
         'helpDesk',
-      ) as unknown) as Helpdesk
+      ) as unknown as Helpdesk
 
       const dto = {
         createOrganisationDto: {

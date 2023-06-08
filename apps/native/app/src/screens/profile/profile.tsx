@@ -19,44 +19,42 @@ const Row = styled.View`
   flex-direction: row;
 `;
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl, initialized) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'profile.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl, initialized) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'profile.screenTitle'}),
+        },
+        rightButtons: initialized ? getRightButtons({theme} as any) : [],
       },
-      rightButtons: initialized ? getRightButtons({theme} as any) : [],
-    },
-    bottomTab: {
-      iconColor: theme.color.blue400,
-      text: initialized
-        ? intl.formatMessage({id: 'profile.bottomTabText'})
-        : '',
-    },
-  }),
-  {
-    topBar: {
-      largeTitle: {
-        visible: true,
+      bottomTab: {
+        iconColor: theme.color.blue400,
+        text: initialized
+          ? intl.formatMessage({id: 'profile.bottomTabText'})
+          : '',
       },
-      scrollEdgeAppearance: {
-        active: true,
-        noBorder: true,
+    }),
+    {
+      topBar: {
+        largeTitle: {
+          visible: true,
+        },
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
+      },
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_PROFILE,
+        iconInsets: {
+          bottom: -4,
+        },
+        icon: require('../../assets/icons/tabbar-profile.png'),
+        selectedIcon: require('../../assets/icons/tabbar-profile-selected.png'),
       },
     },
-    bottomTab: {
-      testID: testIDs.TABBAR_TAB_PROFILE,
-      iconInsets: {
-        bottom: -4,
-      },
-      icon: require('../../assets/icons/tabbar-profile.png'),
-      selectedIcon: require('../../assets/icons/tabbar-profile-selected.png'),
-    },
-  },
-);
+  );
 
 export const ProfileScreen: NavigationFunctionComponent = ({componentId}) => {
   const authStore = useAuthStore();

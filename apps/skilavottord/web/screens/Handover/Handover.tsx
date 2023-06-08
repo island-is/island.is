@@ -91,7 +91,8 @@ const Handover: FC = () => {
     },
   })
 
-  const mutationResponse = mutationData?.createSkilavottordRecyclingRequest as RequestErrors
+  const mutationResponse =
+    mutationData?.createSkilavottordRecyclingRequest as RequestErrors
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {

@@ -48,11 +48,7 @@ export class YourService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 
   async maybeDoSomething(user: User) {
-    const canDoSomething = await this.featureFlagService.getValue(
-      Features.someFeature,
-      false,
-      user,
-    )
+    const canDoSomething = await this.featureFlagService.getValue(Features.someFeature, false, user)
 
     if (canDoIt) {
       return this.doSomething()
@@ -67,11 +63,7 @@ If your feature has new API endpoints, you can use the FeatureFlagGuard to disab
 
 ```tsx
 import { Controller, Get, UseGuards } from '@nestjs/common'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
+import { FeatureFlagGuard, FeatureFlag, Features } from '@island.is/nest/feature-flags'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
 @Controller('some')
@@ -88,11 +80,7 @@ The guard works both for GraphQL resolvers as well as REST controllers. You can 
 
 ```tsx
 import { Controller, Get, UseGuards } from '@nestjs/common'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
+import { FeatureFlagGuard, FeatureFlag, Features } from '@island.is/nest/feature-flags'
 
 @UseGuards(IdsUserGuard, FeatureFlagGuard)
 @FeatureFlag(Features.someFeature)
@@ -115,10 +103,7 @@ If you need access to the low level client and getValue functions, you can depen
 
 ```tsx
 import { Inject } from '@nestjs/common'
-import {
-  FeatureFlagClient,
-  FEATURE_FLAG_CLIENT,
-} from '@island.is/nest/feature-flags'
+import { FeatureFlagClient, FEATURE_FLAG_CLIENT } from '@island.is/nest/feature-flags'
 
 export class YourService {
   constructor(

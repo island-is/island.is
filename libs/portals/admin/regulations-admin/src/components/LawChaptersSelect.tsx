@@ -37,9 +37,8 @@ export const LawChaptersSelect = () => {
   const chaptersField = draft.lawChapters
   const activeChapters = chaptersField.value
 
-  const {
-    data: mentionedList /*, loading  , error */,
-  } = useRegulationListQuery(draft.mentioned)
+  const { data: mentionedList /*, loading  , error */ } =
+    useRegulationListQuery(draft.mentioned)
 
   const lawChaptersOptions = useLawChapterOptions(
     lawChapters.list,

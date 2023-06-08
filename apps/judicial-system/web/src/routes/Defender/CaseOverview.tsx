@@ -50,9 +50,8 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
 
 export const CaseOverview: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { formatMessage } = useIntl()
   const { features } = useContext(FeatureContext)

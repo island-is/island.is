@@ -4,7 +4,7 @@ import { TransformableInfo } from 'logform'
 import { maskNationalIdFormatter } from './formatters'
 
 describe('maskNationalIdFormatter', () => {
-  const messageSymbol = (MESSAGE as unknown) as string
+  const messageSymbol = MESSAGE as unknown as string
 
   it('should mask national ids', () => {
     // Arrange

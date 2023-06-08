@@ -18,13 +18,8 @@ interface Props {
 const Files = ({ header, uploadFiles, fileKey, hasError = false }: Props) => {
   const { form, updateForm } = useContext(FormContext)
 
-  const {
-    files,
-    uploadErrorMessage,
-    onChange,
-    onRemove,
-    onRetry,
-  } = useFileUpload(uploadFiles)
+  const { files, uploadErrorMessage, onChange, onRemove, onRetry } =
+    useFileUpload(uploadFiles)
 
   const stringifyFile = (file: UploadFile) => {
     return {

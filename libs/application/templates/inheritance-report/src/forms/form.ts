@@ -68,9 +68,11 @@ export const form: Form = buildForm({
               format: '###-####',
               defaultValue: (application: Application) => {
                 const phone =
-                  (application.externalData.userProfile?.data as {
-                    mobilePhoneNumber?: string
-                  })?.mobilePhoneNumber ?? ''
+                  (
+                    application.externalData.userProfile?.data as {
+                      mobilePhoneNumber?: string
+                    }
+                  )?.mobilePhoneNumber ?? ''
 
                 return removeCountryCode(phone)
               },

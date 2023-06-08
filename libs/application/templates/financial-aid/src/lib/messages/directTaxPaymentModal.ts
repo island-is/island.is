@@ -26,20 +26,17 @@ export const directTaxPaymentModal = {
       description: 'Headers in tax breakdown, company',
     },
     totalSalary: {
-      id:
-        'fa.application:section.directTaxPaymentModal.taxBreakdown.totalSalary',
+      id: 'fa.application:section.directTaxPaymentModal.taxBreakdown.totalSalary',
       defaultMessage: 'Heildarlaun',
       description: 'Headers in tax breakdown, total salary',
     },
     personalAllowance: {
-      id:
-        'fa.application:section.directTaxPaymentModal.taxBreakdown.personalAllowance',
+      id: 'fa.application:section.directTaxPaymentModal.taxBreakdown.personalAllowance',
       defaultMessage: 'Persónuafsláttur',
       description: 'Headers in tax breakdown, personal allowance',
     },
     withheldAtSource: {
-      id:
-        'fa.application:section.directTaxPaymentModal.taxBreakdown.withheldAtSource',
+      id: 'fa.application:section.directTaxPaymentModal.taxBreakdown.withheldAtSource',
       defaultMessage: 'Staðgreiðsla',
       description: 'Headers in tax breakdown, with held at source',
     },

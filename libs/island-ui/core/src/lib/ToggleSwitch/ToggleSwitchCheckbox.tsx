@@ -6,12 +6,13 @@ import {
   ToggleSwitchBaseProps,
 } from './_ToggleSwitch.utils'
 
-export type ToggleSwitchCheckboxProps = ToggleSwitchBaseProps<HTMLInputElement> & {
-  /** Optional `name=""` for the form `<input type="checkbox" />` element */
-  name?: string
-  /** Optional `value=""` for the form `<input type="checkbox" />` element */
-  value?: string
-}
+export type ToggleSwitchCheckboxProps =
+  ToggleSwitchBaseProps<HTMLInputElement> & {
+    /** Optional `name=""` for the form `<input type="checkbox" />` element */
+    name?: string
+    /** Optional `value=""` for the form `<input type="checkbox" />` element */
+    value?: string
+  }
 
 export const ToggleSwitchCheckbox = (props: ToggleSwitchCheckboxProps) => {
   const { checked } = props

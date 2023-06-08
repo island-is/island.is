@@ -15,9 +15,10 @@ export class OrganizationLogoLoader implements NestDataLoader<string, LogoUrl> {
   async loadOrganizationLogo(
     organizationTitles: readonly string[],
   ): Promise<Array<LogoUrl>> {
-    const organizationLogos = await this.cmsContentfulService.getOrganizationLogos(
-      organizationTitles as string[],
-    )
+    const organizationLogos =
+      await this.cmsContentfulService.getOrganizationLogos(
+        organizationTitles as string[],
+      )
 
     return organizationLogos
   }

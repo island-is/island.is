@@ -18,9 +18,8 @@ const RequestRights: FC<FieldBaseProps> = ({ error, field, application }) => {
     undefined,
   ) as ValidAnswers
 
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
-    currentAnswer,
-  )
+  const [statefulAnswer, setStatefulAnswer] =
+    useState<ValidAnswers>(currentAnswer)
 
   const numberOfBoxes = statefulAnswer === NO ? defaultMonths : maxMonths
 

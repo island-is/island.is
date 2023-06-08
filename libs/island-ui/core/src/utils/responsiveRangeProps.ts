@@ -1,5 +1,5 @@
 import { theme } from '@island.is/island-ui/theme'
-type Breakpoint = keyof typeof theme['breakpoints']
+type Breakpoint = keyof (typeof theme)['breakpoints']
 
 const breakpoints = Object.keys(theme.breakpoints)
 

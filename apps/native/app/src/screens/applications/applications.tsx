@@ -31,47 +31,45 @@ type ListItem =
   | {id: string; type: 'skeleton' | 'empty'}
   | (IArticleSearchResults & {type: undefined});
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl, initialized) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'applications.title'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl, initialized) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'applications.title'}),
+        },
+        searchBar: {
+          visible: false,
+        },
+        rightButtons: initialized ? getRightButtons({theme} as any) : [],
       },
-      searchBar: {
-        visible: false,
+      bottomTab: {
+        iconColor: theme.color.blue400,
+        text: initialized
+          ? intl.formatMessage({id: 'applications.bottomTabText'})
+          : '',
       },
-      rightButtons: initialized ? getRightButtons({theme} as any) : [],
+    }),
+    {
+      topBar: {
+        largeTitle: {
+          visible: true,
+        },
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
+      },
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_APPLICATION,
+        iconInsets: {
+          bottom: -4,
+        },
+        icon: require('../../assets/icons/tabbar-application.png'),
+        selectedIcon: require('../../assets/icons/tabbar-application-selected.png'),
+      },
     },
-    bottomTab: {
-      iconColor: theme.color.blue400,
-      text: initialized
-        ? intl.formatMessage({id: 'applications.bottomTabText'})
-        : '',
-    },
-  }),
-  {
-    topBar: {
-      largeTitle: {
-        visible: true,
-      },
-      scrollEdgeAppearance: {
-        active: true,
-        noBorder: true,
-      },
-    },
-    bottomTab: {
-      testID: testIDs.TABBAR_TAB_APPLICATION,
-      iconInsets: {
-        bottom: -4,
-      },
-      icon: require('../../assets/icons/tabbar-application.png'),
-      selectedIcon: require('../../assets/icons/tabbar-application-selected.png'),
-    },
-  },
-);
+  );
 
 export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
@@ -111,10 +109,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   useEffect(() => {
     if (!res.loading && res.data) {
       setItems(
-        [
-          ...(res?.data?.searchResults?.items || []),
-        ].sort((a: IArticleSearchResults, b: IArticleSearchResults) =>
-          a.title.localeCompare(b.title),
+        [...(res?.data?.searchResults?.items || [])].sort(
+          (a: IArticleSearchResults, b: IArticleSearchResults) =>
+            a.title.localeCompare(b.title),
         ) as any,
       );
     }

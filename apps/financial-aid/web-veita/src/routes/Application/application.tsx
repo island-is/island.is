@@ -33,10 +33,8 @@ const UserApplication = () => {
   const { municipality } = useContext(AdminContext)
 
   const [application, setApplication] = useState<Application>()
-  const [
-    applicationMunicipality,
-    setApplicationMunicipality,
-  ] = useState<Municipality>()
+  const [applicationMunicipality, setApplicationMunicipality] =
+    useState<Municipality>()
 
   useEffect(() => {
     if (data?.application) {

@@ -40,22 +40,19 @@ export interface UpdateIndictmentCount
 const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()
 
-  const [
-    createIndictmentCountMutation,
-  ] = useMutation<CreateIndictmentCountMutationResponse>(
-    CreateIndictmentCountMutation,
-  )
-  const [
-    updateIndictmentCountMutation,
-  ] = useMutation<UpdateIndictmentCountMutationResponse>(
-    UpdateIndictmentCountMutation,
-  )
+  const [createIndictmentCountMutation] =
+    useMutation<CreateIndictmentCountMutationResponse>(
+      CreateIndictmentCountMutation,
+    )
+  const [updateIndictmentCountMutation] =
+    useMutation<UpdateIndictmentCountMutationResponse>(
+      UpdateIndictmentCountMutation,
+    )
 
-  const [
-    deleteIndictmentCountMutation,
-  ] = useMutation<DeleteIndictmentCountMutationResponse>(
-    DeleteIndictmentCountMutation,
-  )
+  const [deleteIndictmentCountMutation] =
+    useMutation<DeleteIndictmentCountMutationResponse>(
+      DeleteIndictmentCountMutation,
+    )
 
   const createIndictmentCount = useCallback(
     async (caseId: string) => {

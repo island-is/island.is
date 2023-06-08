@@ -39,8 +39,7 @@ export const taxReturnForm = {
       description: 'When tax return fails, details about uploading it',
     },
     directTaxPaymentsFailed: {
-      id:
-        'fa.application:section.taxReturnForm.data.directTaxPaymentsFailed#markdown',
+      id: 'fa.application:section.taxReturnForm.data.directTaxPaymentsFailed#markdown',
       defaultMessage:
         'Við þurfum að fá afrit af nýjasta **skattframtali** þínu þar sem ekki náðist að sækja gögnin sjálfvirkt.\n \n Skattframtal er staðfesting á öllum þeim tekjum, eignum og skuldum sem þú áttir á skattárinu og er nauðsynlegt fylgigagn fyrir úrvinnslu á fjárhagsaðstoð.',
       description: 'When tax return fails, details about uploading it',
@@ -48,27 +47,23 @@ export const taxReturnForm = {
   }),
   instructions: defineMessages({
     findTaxReturnTitle: {
-      id:
-        'fa.application:section.taxReturnForm.instructions.findTaxReturnTitle',
+      id: 'fa.application:section.taxReturnForm.instructions.findTaxReturnTitle',
       defaultMessage: 'Hvar finn ég staðfest afrit af mínu skattframtali?',
       description: 'Where to find tax return files title',
     },
     findTaxReturn: {
-      id:
-        'fa.application:section.taxReturnForm.instructions.findTaxReturn#markdown',
+      id: 'fa.application:section.taxReturnForm.instructions.findTaxReturn#markdown',
       defaultMessage:
         'Á vef Skattsins finnur þú [leiðbeiningar](https://www.skatturinn.is/einstaklingar/framtal-og-alagning/stadfest-afrit-framtals/) um hvernig sækja má staðfest afrit skattframtals.',
       description: 'Where to find tax return files',
     },
     findDirectTaxPaymentsTitle: {
-      id:
-        'fa.application:section.taxReturnForm.instructions.findDirectTaxPaymentsTitle',
+      id: 'fa.application:section.taxReturnForm.instructions.findDirectTaxPaymentsTitle',
       defaultMessage: 'Hvar finn ég staðfestingarskjal úr staðgreiðsluskrá?',
       description: 'Where to find direct tax payments files title',
     },
     findDirectTaxPayments: {
-      id:
-        'fa.application:section.taxReturnForm.instructions.findDirectTaxPayments',
+      id: 'fa.application:section.taxReturnForm.instructions.findDirectTaxPayments',
       defaultMessage:
         'Eftir að þú hefur innskráð þig á Þjónustuvef Skattsins ferð þú í Almennt → Staðgreiðsluskrá RSK → Sækja PDF.',
       description: 'Where to find direct tax payments files',

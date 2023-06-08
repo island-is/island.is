@@ -46,13 +46,11 @@ export const Users: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const {
-    data: rawInstitutions,
-    loading: loadingInstitutions,
-  } = useQuery<InstitutionData>(InstitutionsQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { data: rawInstitutions, loading: loadingInstitutions } =
+    useQuery<InstitutionData>(InstitutionsQuery, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
 
   const users = data?.users.filter((u) => {
     return selectedInstitution

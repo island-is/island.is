@@ -70,27 +70,25 @@ module.exports = {
         ...nameSymbols.reduce((rules, name) => {
           return {
             ...rules,
-            [`MethodDefinition[static=true][key.name='${name}'][value.async=true]`]: (
-              node,
-            ) => {
-              context.report({
-                node,
-                messageId: 'noAsyncRegister',
-                data: {
-                  name,
-                },
-              })
-            },
+            [`MethodDefinition[static=true][key.name='${name}'][value.async=true]`]:
+              (node) => {
+                context.report({
+                  node,
+                  messageId: 'noAsyncRegister',
+                  data: {
+                    name,
+                  },
+                })
+              },
           }
         }, {}),
-        "MethodDefinition[static=true] TSTypeReference[typeName.name='Promise'] TSTypeReference[typeName.name='DynamicModule']": (
-          node,
-        ) => {
-          context.report({
-            node,
-            messageId: 'noReturnPromiseDynamicModule',
-          })
-        },
+        "MethodDefinition[static=true] TSTypeReference[typeName.name='Promise'] TSTypeReference[typeName.name='DynamicModule']":
+          (node) => {
+            context.report({
+              node,
+              messageId: 'noReturnPromiseDynamicModule',
+            })
+          },
         "Property[key.name='useFactory'][value.async=true]": (node) => {
           context.report({
             node,

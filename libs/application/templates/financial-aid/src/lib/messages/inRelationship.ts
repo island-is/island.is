@@ -19,8 +19,7 @@ export const inRelationship = {
       description: 'In relationship intro',
     },
     description: {
-      id:
-        'fa.application:section.personalInterest.inRelationship.description#markdown',
+      id: 'fa.application:section.personalInterest.inRelationship.description#markdown',
       defaultMessage:
         'Hvað þýðir það? Þú klárar að fylla út þína umsókn um fjárhagsaðstoð hér og maki þinn notar sín rafrænu skilríki til að skila inn nauðsynlegum gögnum. \n\n\n Úrvinnsla umsóknarinnar hefst þegar öll gögn hafa borist.',
       description: 'In relationship description',
@@ -28,20 +27,17 @@ export const inRelationship = {
   }),
   inputs: defineMessages({
     spouseEmail: {
-      id:
-        'fa.application:section.personalInterest.inRelationship.inputs.spouseEmail',
+      id: 'fa.application:section.personalInterest.inRelationship.inputs.spouseEmail',
       defaultMessage: 'Netfang maka',
       description: 'Spouse email input label',
     },
     spouseEmailPlaceholder: {
-      id:
-        'fa.application:section.personalInterest.inRelationship.inputs.spouseEmailPlaceholder',
+      id: 'fa.application:section.personalInterest.inRelationship.inputs.spouseEmailPlaceholder',
       defaultMessage: 'Sláðu inn netfang maka',
       description: 'Spouse email input placeholder',
     },
     checkboxLabel: {
-      id:
-        'fa.application:section.personalInterest.inRelationship.inputs.checkboxLabel',
+      id: 'fa.application:section.personalInterest.inRelationship.inputs.checkboxLabel',
       defaultMessage:
         'Ég skil að maki minn þarf líka að skila inn umsókn áður en úrvinnsla hefst',
       description: 'Spouse checkbox label',

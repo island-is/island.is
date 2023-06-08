@@ -30,12 +30,8 @@ describe('CaseController - Get court record signature confirmation', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { awsS3Service, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockCaseModel = caseModel
@@ -78,7 +74,7 @@ describe('CaseController - Get court record signature confirmation', () => {
     const user = { id: userId } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: uuid() } as Case
-    ;((theCase as unknown) as { [key: string]: string })[assignedRole] = userId
+    ;(theCase as unknown as { [key: string]: string })[assignedRole] = userId
     const documentToken = uuid()
 
     beforeEach(() => {

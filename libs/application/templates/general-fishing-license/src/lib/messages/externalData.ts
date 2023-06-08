@@ -46,8 +46,7 @@ export const externalData = {
       description: 'Approval of directory of labor',
     },
     description: {
-      id:
-        'gfl.application:section.externalData.directoryOfFisheries.description',
+      id: 'gfl.application:section.externalData.directoryOfFisheries.description',
       defaultMessage: 'Skipaskrá. Upplýsingar um lögskráningu. Haffærni skips.',
       description:
         'Approval of gathering information from directory of fisheries',
@@ -80,8 +79,7 @@ export const externalData = {
   }),
   extraInformation: defineMessages({
     description: {
-      id:
-        'gfl.application:section.externalData.extraInformation.descriptionFirstPart',
+      id: 'gfl.application:section.externalData.extraInformation.descriptionFirstPart',
       defaultMessage:
         'Fiskistofa þarf að afla eftirfarandi upplýsinga til að afgreiða umsóknir um veiðileyfi. Upplýsinganna er aflað á grundvelli heimildar í 5. tölul. 9. gr. laga nr. 90/2018, um persónuvernd og vinnslu persónuupplýsinga.',
       description: 'Description for link in extrainformation',

@@ -54,9 +54,11 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       readOnly: true,
       defaultValue: (application: Application) =>
-        (application.externalData.nationalRegistry?.data as {
-          fullName?: string
-        })?.fullName ?? '',
+        (
+          application.externalData.nationalRegistry?.data as {
+            fullName?: string
+          }
+        )?.fullName ?? '',
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.nationalId',
@@ -73,9 +75,11 @@ export const childsPersonalInfo = buildMultiField({
       width: 'half',
       required: true,
       defaultValue: (application: Application) =>
-        (application.externalData.userProfile?.data as {
-          email?: string
-        })?.email ?? '',
+        (
+          application.externalData.userProfile?.data as {
+            email?: string
+          }
+        )?.email ?? '',
     }),
     buildTextField({
       id: 'childsPersonalInfo.guardian1.phoneNumber',
@@ -86,9 +90,11 @@ export const childsPersonalInfo = buildMultiField({
       required: true,
       defaultValue: (application: Application) => {
         const phone =
-          (application.externalData.userProfile?.data as {
-            mobilePhoneNumber?: string
-          })?.mobilePhoneNumber ?? ''
+          (
+            application.externalData.userProfile?.data as {
+              mobilePhoneNumber?: string
+            }
+          )?.mobilePhoneNumber ?? ''
 
         return removeCountryCode(phone)
       },

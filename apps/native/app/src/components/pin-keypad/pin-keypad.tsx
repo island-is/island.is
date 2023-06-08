@@ -101,8 +101,7 @@ function NumButton({
       accessibilityLabel={accessibilityLabel || value}
       testID={testID}
       size={size}
-      gutter={gutter}
-    >
+      gutter={gutter}>
       {icon ? (
         <Image
           source={icon}

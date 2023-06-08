@@ -145,10 +145,9 @@ export const Draft: Form = buildForm({
                 const withDiscount =
                   ((application.answers.passport as Passport)?.userPassport !==
                     '' &&
-                    (application.answers
-                      .personalInfo as PersonalInfo)?.hasDisabilityDiscount.includes(
-                      YES,
-                    )) ||
+                    (
+                      application.answers.personalInfo as PersonalInfo
+                    )?.hasDisabilityDiscount.includes(YES)) ||
                   (application.answers.passport as Passport)?.childPassport !==
                     ''
                 return [

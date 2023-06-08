@@ -111,7 +111,8 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
                 message: t.modal.inputs.email.rules?.required,
               },
               pattern: {
-                value: /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
+                value:
+                  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i,
                 message: t.modal.inputs.email.rules?.validate,
               },
             }}

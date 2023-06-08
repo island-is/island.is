@@ -35,9 +35,7 @@
           ]
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "build-server": {
       "executor": "@nx/webpack:webpack",
@@ -57,9 +55,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/node:node",
@@ -76,9 +72,7 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/financial-aid/web-osk/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/financial-aid/web-osk/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
@@ -87,13 +81,9 @@
         "jestConfig": "apps/financial-aid/web-osk/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/financial-aid/web-osk"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/web-osk"]
     },
     "docker-next": {}
   },
-  "tags": [
-    "scope:react-next"
-  ]
+  "tags": ["scope:react-next"]
 }

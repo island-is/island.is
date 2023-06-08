@@ -28,7 +28,7 @@ interface ExpectedStudent {
 }
 
 export const StudentLookupField: FC<Props> = ({ application }) => {
-  const student = (application.answers.student as unknown) as ExpectedStudent
+  const student = application.answers.student as unknown as ExpectedStudent
   const studentNationalId = useWatch({
     name: 'student.nationalId',
     // FYI the watch value is not queried unless the value changes after rendering.
@@ -38,7 +38,11 @@ export const StudentLookupField: FC<Props> = ({ application }) => {
 
   const { formatMessage } = useLocale()
 
-  const { data, error: queryError, loading } = useQuery<{
+  const {
+    data,
+    error: queryError,
+    loading,
+  } = useQuery<{
     drivingLicenseStudentInformation: StudentInformationResult
   }>(QUERY, {
     skip:

@@ -17,9 +17,10 @@ const SelectSchool: FC<FieldBaseProps> = ({ application, field, error }) => {
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const drivingSchools: DrivingSchoolType[] = (application.externalData
-    .drivingSchoolForEmployee.data as DrivingLicenseBookSchool)
-    .allowedDrivingSchoolTypes
+  const drivingSchools: DrivingSchoolType[] = (
+    application.externalData.drivingSchoolForEmployee
+      .data as DrivingLicenseBookSchool
+  ).allowedDrivingSchoolTypes
 
   const options = drivingSchools.map((item) => {
     return {

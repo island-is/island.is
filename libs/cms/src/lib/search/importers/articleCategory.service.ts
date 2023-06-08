@@ -10,7 +10,8 @@ import { createTerms } from './utils'
 
 @Injectable()
 export class ArticleCategorySyncService
-  implements CmsSyncProvider<IArticleCategory> {
+  implements CmsSyncProvider<IArticleCategory>
+{
   processSyncData(entries: processSyncDataInput<IArticleCategory>) {
     logger.info('Processing sync data for article category')
 

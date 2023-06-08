@@ -126,11 +126,12 @@ export const DelegationsScreen = ({
   // Check if user has delegations of the delegation types the application supports
   useEffect(() => {
     if (delegations && !!screenData.allowedDelegations && user) {
-      const authActorDelegations: Delegation[] = delegations.authActorDelegations.filter(
-        (delegation: Delegation) =>
-          intersection(screenData.allowedDelegations, delegation.types).length >
-          0,
-      )
+      const authActorDelegations: Delegation[] =
+        delegations.authActorDelegations.filter(
+          (delegation: Delegation) =>
+            intersection(screenData.allowedDelegations, delegation.types)
+              .length > 0,
+        )
       if (authActorDelegations.length <= 0) {
         checkDelegation(true)
       } else {

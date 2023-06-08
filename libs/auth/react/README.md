@@ -23,12 +23,7 @@ configure({
   // You should usually configure these:
   authority: environment.identityServer.authority,
   client_id: '@island.is/web',
-  scope: [
-    'openid',
-    'profile',
-    'api_resource.scope',
-    '@island.is/applications:read',
-  ],
+  scope: ['openid', 'profile', 'api_resource.scope', '@island.is/applications:read'],
   // These can be overridden to control callback urls.
   // These are the default values:
   baseUrl: `${window.location.origin}`,
@@ -65,12 +60,7 @@ Note: Authenticator must be rendered inside React Router to set up callback rout
 You can configure authentication for your GraphQL client like this:
 
 ```typescript
-import {
-  ApolloClient,
-  InMemoryCache,
-  HttpLink,
-  ApolloLink,
-} from '@apollo/client'
+import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client'
 import { authLink } from '@island.is/auth/react'
 
 const httpLink = new HttpLink(/* snip */)

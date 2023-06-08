@@ -230,9 +230,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -255,9 +256,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -281,9 +283,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(true)
       await givenWhenThen(caseId, theCase, notificationDto)
     })
@@ -322,9 +325,10 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     } as Case
 
     beforeEach(async () => {
-      const mockGetDefendantsActiveCases = mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
-        typeof mockDefendantService.isDefendantInActiveCustody
-      >
+      const mockGetDefendantsActiveCases =
+        mockDefendantService.isDefendantInActiveCustody as jest.MockedFunction<
+          typeof mockDefendantService.isDefendantInActiveCustody
+        >
       mockGetDefendantsActiveCases.mockResolvedValueOnce(false)
       await givenWhenThen(caseId, theCase, notificationDto)
     })

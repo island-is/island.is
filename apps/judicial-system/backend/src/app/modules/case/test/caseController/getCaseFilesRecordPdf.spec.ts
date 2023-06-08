@@ -47,7 +47,7 @@ describe('CaseController - Get case files record pdf', () => {
     caseFiles,
   } as Case
   const pdf = uuid()
-  const res = ({ end: jest.fn() } as unknown) as Response
+  const res = { end: jest.fn() } as unknown as Response
 
   let mockawsS3Service: AwsS3Service
   let givenWhenThen: GivenWhenThen

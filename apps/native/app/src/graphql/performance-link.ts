@@ -16,8 +16,9 @@ export const performanceLink = new ApolloLink((operation, forward) => {
   let trace: FirebasePerformanceTypes.Trace | undefined;
 
   try {
-    const operationType = (operation?.query
-      ?.definitions?.[0] as OperationDefinitionNode)?.operation;
+    const operationType = (
+      operation?.query?.definitions?.[0] as OperationDefinitionNode
+    )?.operation;
 
     if (operationType !== 'subscription' && operation) {
       let traceName = `${operation.operationName ?? ''}`.trim();

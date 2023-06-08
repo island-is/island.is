@@ -28,9 +28,7 @@
       "configurations": {
         "production": {}
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "build-server": {
       "executor": "@nx/webpack:webpack",
@@ -50,9 +48,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/node:node",
@@ -80,9 +76,7 @@
         "jestConfig": "apps/air-discount-scheme/web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/air-discount-scheme/web"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/web"]
     },
     "translations": {
       "executor": "nx:run-commands",
@@ -93,7 +87,5 @@
     },
     "docker-next": {}
   },
-  "tags": [
-    "scope:react-next"
-  ]
+  "tags": ["scope:react-next"]
 }

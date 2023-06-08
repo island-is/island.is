@@ -16,19 +16,20 @@ export const isLastReviewer = (
   }
 
   // Buyer's co-owner / Buyer's operator
-  const oldBuyerCoOwnersAndOperators = (getValueViaPath(
-    answers,
-    'buyerCoOwnerAndOperator',
-    [],
-  ) as CoOwnerAndOperator[]).filter(({ wasRemoved }) => wasRemoved !== 'true')
-  const buyerCoOwnerAndOperatorHasNotApproved = oldBuyerCoOwnersAndOperators.find(
-    (coOwnerOrOperator) => {
+  const oldBuyerCoOwnersAndOperators = (
+    getValueViaPath(
+      answers,
+      'buyerCoOwnerAndOperator',
+      [],
+    ) as CoOwnerAndOperator[]
+  ).filter(({ wasRemoved }) => wasRemoved !== 'true')
+  const buyerCoOwnerAndOperatorHasNotApproved =
+    oldBuyerCoOwnersAndOperators.find((coOwnerOrOperator) => {
       return (
         coOwnerOrOperator.nationalId !== reviewerNationalId &&
         !coOwnerOrOperator.approved
       )
-    },
-  )
+    })
   if (buyerCoOwnerAndOperatorHasNotApproved) {
     return false
   }

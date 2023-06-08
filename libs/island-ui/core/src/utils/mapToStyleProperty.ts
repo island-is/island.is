@@ -4,7 +4,7 @@ import type { StyleRule } from '@vanilla-extract/css'
 
 export const mapToStyleProperty = <
   Key extends string | number,
-  Value extends string | number
+  Value extends string | number,
 >(
   map: Record<Key, Value>,
   propertyName: keyof Properties,

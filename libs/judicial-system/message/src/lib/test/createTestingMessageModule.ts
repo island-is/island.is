@@ -34,9 +34,9 @@ export const createTestingMessageModule = async () => {
     }
   }
 
-  sqs = ({
+  sqs = {
     send: mockSend,
-  } as unknown) as SQSClient
+  } as unknown as SQSClient
 
   const messageModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [messageModuleConfig] })],

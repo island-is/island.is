@@ -10,9 +10,7 @@
       "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/apps/consultation-portal",
-        "assets": [
-          "apps/consultation-portal/public/favicon.ico"
-        ],
+        "assets": ["apps/consultation-portal/public/favicon.ico"],
         "commands": [
           "yarn nx build-next consultation-portal",
           "yarn nx build-server consultation-portal"
@@ -38,9 +36,7 @@
       "configurations": {
         "production": {}
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "build-server": {
       "executor": "@nx/webpack:webpack",
@@ -60,9 +56,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/node:node",
@@ -78,9 +72,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/consultation-portal"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/consultation-portal"],
       "options": {
         "jestConfig": "apps/consultation-portal/jest.config.ts",
         "passWithNoTests": true
@@ -89,14 +81,10 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/consultation-portal/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/consultation-portal/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "docker-next": {}
   },
-  "tags": [
-    "scope:react-next"
-  ]
+  "tags": ["scope:react-next"]
 }

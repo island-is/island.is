@@ -172,8 +172,10 @@ describe('formatRequestedCustodyRestrictions', () => {
 })
 
 describe('formatCustodyRestrictions', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
 
   it('should return empty string if no custody restrictions', () => {
     const caseType = CaseType.CUSTODY

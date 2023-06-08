@@ -85,11 +85,8 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const {
-    applicantEmail,
-    employers,
-    employerNationalRegistryId,
-  } = getApplicationAnswers(application.answers)
+  const { applicantEmail, employers, employerNationalRegistryId } =
+    getApplicationAnswers(application.answers)
 
   if (isSelfEmployed) {
     return [
@@ -147,10 +144,8 @@ export const getPensionFund = (
 }
 
 export const getPrivatePensionFundRatio = (application: Application) => {
-  const {
-    privatePensionFundPercentage,
-    applicationType,
-  } = getApplicationAnswers(application.answers)
+  const { privatePensionFundPercentage, applicationType } =
+    getApplicationAnswers(application.answers)
   const privatePensionFundRatio: number =
     applicationType === PARENTAL_LEAVE
       ? Number(privatePensionFundPercentage) || 0

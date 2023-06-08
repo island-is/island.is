@@ -82,16 +82,14 @@ export const useListsUserOwns = () => {
 }
 
 export const useGetSinglePetition = (listId: string) => {
-  const {
-    data: petition,
-    refetch: refetchSinglePetition,
-  } = useQuery<SinglePetition>(GetSinglePetitionList, {
-    variables: {
-      input: {
-        listId: listId,
+  const { data: petition, refetch: refetchSinglePetition } =
+    useQuery<SinglePetition>(GetSinglePetitionList, {
+      variables: {
+        input: {
+          listId: listId,
+        },
       },
-    },
-  })
+    })
 
   const petitionData = petition?.endorsementSystemGetSingleEndorsementList ?? {}
   return { petitionData, refetchSinglePetition }
@@ -113,18 +111,16 @@ export const useGetSingleEndorsement = (listId: string) => {
 }
 
 export const useGetSinglePetitionEndorsements = (listId: string) => {
-  const {
-    data: endorsements,
-    refetch: refetchSinglePetitionEndorsements,
-  } = useQuery<SinglePetitionEndorsements>(GetEndorsements, {
-    variables: {
-      input: {
-        listId: listId,
-        limit: 1000,
+  const { data: endorsements, refetch: refetchSinglePetitionEndorsements } =
+    useQuery<SinglePetitionEndorsements>(GetEndorsements, {
+      variables: {
+        input: {
+          listId: listId,
+          limit: 1000,
+        },
       },
-    },
-    pollInterval: 20000,
-  })
+      pollInterval: 20000,
+    })
 
   const petitionEndorsements =
     endorsements?.endorsementSystemGetEndorsements ?? []

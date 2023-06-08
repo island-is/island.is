@@ -29,8 +29,8 @@ export class QualitySignatureProvider extends BasicDataProvider {
       }
 
       return {
-        hasQualitySignature: !!response.data.drivingLicenseQualitySignature
-          ?.hasQualitySignature,
+        hasQualitySignature:
+          !!response.data.drivingLicenseQualitySignature?.hasQualitySignature,
       }
     })
   }

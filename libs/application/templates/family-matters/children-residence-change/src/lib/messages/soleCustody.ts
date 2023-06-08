@@ -9,8 +9,7 @@ export const soleCustody = defineMessages({
       'Title displayed in modal when the applicant has sole custody of all children',
   },
   description: {
-    id:
-      'crc.application:section.backgroundInformation.soleCustody.description#markdown',
+    id: 'crc.application:section.backgroundInformation.soleCustody.description#markdown',
     defaultMessage:
       'Uppfletting í gögnum hjá Þjóðskrá Íslands skilaði eingöngu börnum sem eru alfarið í þinni forsjá.\n\nÞessi umsókn er ætluð foreldrum sem fara sameiginlega með forsjá barna sinna.',
     description:

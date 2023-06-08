@@ -152,7 +152,7 @@ export class LimitedAccessCaseController {
     )
 
     this.eventService.postEvent(
-      (transition.transition as unknown) as CaseEvent,
+      transition.transition as unknown as CaseEvent,
       updatedCase,
     )
 

@@ -18,8 +18,10 @@ import {
 window.scrollTo = jest.fn()
 
 describe('titleForCase', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn,
+  }).formatMessage
   const fn = (theCase: Case) => titleForCase(formatMessage, theCase)
 
   test('should handle rejected investigation case', () => {
@@ -188,8 +190,10 @@ describe('shouldHideNextButton', () => {
 })
 
 describe('getExtensionInfoText', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn,
+  }).formatMessage
 
   const prosecutor = { role: UserRole.PROSECUTOR } as User
 

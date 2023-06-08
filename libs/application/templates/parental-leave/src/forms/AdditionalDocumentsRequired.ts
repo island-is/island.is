@@ -57,9 +57,8 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  name:
-                    parentalLeaveFormMessages.attachmentScreen
-                      .additionalDocumentsEditSubmit,
+                  name: parentalLeaveFormMessages.attachmentScreen
+                    .additionalDocumentsEditSubmit,
                   type: 'primary',
                   event: 'APPROVE',
                 },

@@ -28,9 +28,8 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
-  const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
-    false,
-  )
+  const [rejectModalVisibility, setRejectModalVisibility] =
+    useState<boolean>(false)
 
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {

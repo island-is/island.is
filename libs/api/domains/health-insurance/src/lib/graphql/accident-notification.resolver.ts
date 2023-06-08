@@ -29,9 +29,10 @@ export class HealthInsuranceAccidentNotificationResolver {
     input: HealthInsuranceAccidentStatusInput,
   ): Promise<AccidentNotificationStatus | null> {
     this.logger.debug(`Getting company information`)
-    const accidentStatus = await this.accidentNotificationService.getAccidentNotificationStatus(
-      input.ihiDocumentID,
-    )
+    const accidentStatus =
+      await this.accidentNotificationService.getAccidentNotificationStatus(
+        input.ihiDocumentID,
+      )
     this.logger.debug(`Getting accident status for id ${input.ihiDocumentID}`)
     if (!accidentStatus) {
       return null

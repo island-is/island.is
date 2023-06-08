@@ -3,7 +3,8 @@ import { ApolloError } from '@apollo/client'
 import { RulingSignatureConfirmationQuery } from '@island.is/judicial-system-web/src/components/SigningModal/RulingSignature.generated'
 import { getSigningProgress } from './SigningModal'
 
-type SignatureConfirmation = RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
+type SignatureConfirmation =
+  RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
 describe('getSigningProcess', () => {
   test('should return success when document has been signed', () => {
     const signatureConfirmation: SignatureConfirmation = {

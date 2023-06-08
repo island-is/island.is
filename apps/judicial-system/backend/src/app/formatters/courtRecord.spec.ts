@@ -4,8 +4,10 @@ import { formatCourtEndDate } from './courtRecordPdf'
 import { courtRecord } from '../messages'
 
 describe('formatCourtEndDate', () => {
-  const formatMessage = createTestIntl({ locale: 'is-IS', onError: jest.fn })
-    .formatMessage
+  const formatMessage = createTestIntl({
+    locale: 'is-IS',
+    onError: jest.fn,
+  }).formatMessage
 
   function fn(startDate?: Date, endDate?: Date) {
     return formatCourtEndDate(formatMessage, startDate, endDate)

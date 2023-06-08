@@ -46,9 +46,8 @@ export const SearchBox = ({
   const [value, setValue] = useState('')
   const [options, setOptions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [waitingForNextPageToLoad, setWaitingForNextPageToLoad] = useState(
-    false,
-  )
+  const [waitingForNextPageToLoad, setWaitingForNextPageToLoad] =
+    useState(false)
 
   const [fetch, { data, loading }] = useLazyQuery<Query, QueryGetArticlesArgs>(
     GET_ORGANIZATION_SERVICES_QUERY,

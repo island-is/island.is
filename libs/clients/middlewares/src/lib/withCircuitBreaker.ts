@@ -34,7 +34,7 @@ export function withCircuitBreaker({
     // False disables timeout logic, the types are incorrect.
     // We want to use our own timeout logic so we can disable the circuit
     // breaker while still supporting timeouts.
-    timeout: (false as unknown) as number,
+    timeout: false as unknown as number,
 
     ...opossum,
     errorFilter,

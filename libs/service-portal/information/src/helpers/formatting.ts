@@ -23,7 +23,7 @@ export const formatNameBreaks = (
     : undefined
 
   const formatted = [first, middle, last]
-    .filter((Boolean as unknown) as ExcludesFalse)
+    .filter(Boolean as unknown as ExcludesFalse)
     .join('\n')
 
   return formatted

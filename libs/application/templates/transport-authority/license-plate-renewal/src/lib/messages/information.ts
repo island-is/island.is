@@ -53,8 +53,7 @@ export const information = {
         description: 'Pick plate has an error title',
       },
       isNotDebtLessTag: {
-        id:
-          'ta.lpr.application:information.labels.pickVehicle.isNotDebtLessTag',
+        id: 'ta.lpr.application:information.labels.pickVehicle.isNotDebtLessTag',
         defaultMessage: 'Ógreidd bifreiðagjöld',
         description: 'Pick plate is not debt less tag',
       },

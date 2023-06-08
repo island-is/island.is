@@ -3,8 +3,10 @@ import { createIntl } from 'react-intl'
 import { createCaseModifiedExplanation } from './ModifyDatesModal'
 
 describe('createCaseModifiedExplanation', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
   beforeAll(() => jest.useFakeTimers())
 
   it('should append nextExplainantion', () => {

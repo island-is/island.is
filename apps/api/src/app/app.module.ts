@@ -208,10 +208,10 @@ const autoSchemaFile = environment.production
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath: environment.documentProviderService
-        .documentsServiceBasePath!,
-      documentProviderAdmins: environment.documentProviderService
-        .documentProviderAdmins!,
+      documentsServiceBasePath:
+        environment.documentProviderService.documentsServiceBasePath!,
+      documentProviderAdmins:
+        environment.documentProviderService.documentProviderAdmins!,
     }),
     CmsTranslationsModule,
     TerminusModule,
@@ -233,8 +233,8 @@ const autoSchemaFile = environment.production
       },
     }),
     UserProfileModule.register({
-      userProfileServiceBasePath: environment.userProfile
-        .userProfileServiceBasePath!,
+      userProfileServiceBasePath:
+        environment.userProfile.userProfileServiceBasePath!,
       islykill: {
         cert: environment.islykill.cert!,
         passphrase: environment.islykill.passphrase!,

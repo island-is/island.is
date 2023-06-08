@@ -104,9 +104,8 @@ module.exports = {
                     subRes[0][0].length === 1 ? subRes[0][0][0].name : '',
                   requestedValidToDate: c.requested_valid_to_date,
                   demands: c.demands,
-                  isolation: c.requested_custody_restrictions?.includes(
-                    'ISOLATION',
-                  ),
+                  isolation:
+                    c.requested_custody_restrictions?.includes('ISOLATION'),
                   isExtension: subRes[1][0].length === 1,
                   previousDecision:
                     subRes[1][0].length === 1

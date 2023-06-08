@@ -117,18 +117,16 @@ const PropertyItem = ({
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const [
-    getProperty,
-    { loading: queryLoading, error: _queryError },
-  ] = useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
-    onCompleted: (data) => {
-      setValue(
-        addressField,
-        data.getRealEstateAddress[0]?.name ??
-          formatMessage(m.propertyNameNotFound),
-      )
-    },
-  })
+  const [getProperty, { loading: queryLoading, error: _queryError }] =
+    useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
+      onCompleted: (data) => {
+        setValue(
+          addressField,
+          data.getRealEstateAddress[0]?.name ??
+            formatMessage(m.propertyNameNotFound),
+        )
+      },
+    })
 
   useEffect(() => {
     // According to Skra.is:

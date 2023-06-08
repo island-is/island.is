@@ -36,7 +36,7 @@ describe('smart-solutions-api', () => {
 
   describe('map Pass to PassDataInput', () => {
     it('should convert the pass to passInputData and no other changes, if the pass has no input values', () => {
-      const pass = (ValidPassNoInputValues as unknown) as Pass
+      const pass = ValidPassNoInputValues as unknown as Pass
 
       const result = mapPassToPassDataInput(pass)
 
@@ -44,8 +44,8 @@ describe('smart-solutions-api', () => {
     })
 
     it('should convert the pass to passInputdata, with the input values', () => {
-      const pass = (ValidPass as unknown) as Pass
-      const expectedResult = (ValidPassDataInput as unknown) as PassDataInput
+      const pass = ValidPass as unknown as Pass
+      const expectedResult = ValidPassDataInput as unknown as PassDataInput
 
       const result = mapPassToPassDataInput(pass)
 
@@ -55,7 +55,7 @@ describe('smart-solutions-api', () => {
 
   describe('merge input fields', () => {
     it('should merge the inputs', () => {
-      const pass = (ValidPassDataInput as unknown) as PassDataInput
+      const pass = ValidPassDataInput as unknown as PassDataInput
       const payload = {
         inputFieldValues: [
           {
@@ -74,11 +74,12 @@ describe('smart-solutions-api', () => {
         payload.inputFieldValues,
       )
 
-      const expectedResult = (ValidUpdatedPassDataInput as unknown) as PassDataInput
+      const expectedResult =
+        ValidUpdatedPassDataInput as unknown as PassDataInput
       expect(result).toStrictEqual(expectedResult.inputFieldValues)
     })
     it('should return the original if the updated payload is missing', () => {
-      const pass = (ValidPassDataInput as unknown) as PassDataInput
+      const pass = ValidPassDataInput as unknown as PassDataInput
 
       const inputValues = pass.inputFieldValues ?? []
 
@@ -87,7 +88,7 @@ describe('smart-solutions-api', () => {
       expect(result).toStrictEqual(inputValues)
     })
     it('should return the payload if the original is missing', () => {
-      const payload = ({
+      const payload = {
         inputFieldValues: [
           {
             identifier: 'gildir',
@@ -98,7 +99,7 @@ describe('smart-solutions-api', () => {
             value: 'TESTI MANNI',
           },
         ],
-      } as unknown) as PassDataInput
+      } as unknown as PassDataInput
 
       const result = mergeInputFields(undefined, payload.inputFieldValues ?? [])
 

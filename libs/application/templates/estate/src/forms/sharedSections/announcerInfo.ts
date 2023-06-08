@@ -67,9 +67,11 @@ export const announcerInfo = buildSection({
           required: true,
           defaultValue: (application: Application) => {
             const phone =
-              (application.externalData.userProfile?.data as {
-                mobilePhoneNumber?: string
-              })?.mobilePhoneNumber ?? ''
+              (
+                application.externalData.userProfile?.data as {
+                  mobilePhoneNumber?: string
+                }
+              )?.mobilePhoneNumber ?? ''
 
             return removeCountryCode(phone)
           },

@@ -9,9 +9,8 @@ import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/
 export const useStaff = () => {
   const { admin, setAdmin } = useContext(AdminContext)
 
-  const [updateStaff, { loading: staffActivationLoading }] = useMutation(
-    UpdateStaffMutation,
-  )
+  const [updateStaff, { loading: staffActivationLoading }] =
+    useMutation(UpdateStaffMutation)
 
   const changeUserActivity = async (active: boolean, id: string) => {
     await updateStaff({

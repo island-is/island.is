@@ -27,9 +27,7 @@
       "configurations": {
         "production": {}
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "build-server": {
       "executor": "@nx/webpack:webpack",
@@ -49,9 +47,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/node:node",
@@ -67,9 +63,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/contentful-apps"
-      ],
+      "outputs": ["{workspaceRoot}/coverage/apps/contentful-apps"],
       "options": {
         "jestConfig": "apps/contentful-apps/jest.config.ts",
         "passWithNoTests": true
@@ -77,18 +71,12 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "apps/contentful-apps/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/contentful-apps/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "docker-next": {}
   },
-  "tags": [
-    "scope:react-next"
-  ]
+  "tags": ["scope:react-next"]
 }

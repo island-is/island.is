@@ -24,11 +24,8 @@ describe('FileController - Get case file signed url', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      fileModel,
-      fileController,
-    } = await createTestingFileModule()
+    const { awsS3Service, fileModel, fileController } =
+      await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockFileModel = fileModel

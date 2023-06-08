@@ -255,11 +255,8 @@ export const getMultipleBirthsDays = (application: Application) => {
 export const getMultipleBirthRequestDays = (
   answers: Application['answers'],
 ) => {
-  const {
-    multipleBirthsRequestDays,
-    otherParent,
-    hasMultipleBirths,
-  } = getApplicationAnswers(answers)
+  const { multipleBirthsRequestDays, otherParent, hasMultipleBirths } =
+    getApplicationAnswers(answers)
 
   if (otherParent === SINGLE && hasMultipleBirths === YES) {
     return getMaxMultipleBirthsDays(answers)
@@ -293,9 +290,8 @@ export const getMaxMultipleBirthsAndSingleParenttMonths = (
   const multipleBirthsDaysInMonths = getMaxMultipleBirthsInMonths(
     application.answers,
   )
-  const singleParentDaysInMonths = getAvailablePersonalRightsSingleParentInMonths(
-    application,
-  )
+  const singleParentDaysInMonths =
+    getAvailablePersonalRightsSingleParentInMonths(application)
 
   return singleParentDaysInMonths + multipleBirthsDaysInMonths
 }
@@ -329,9 +325,8 @@ export const getAvailableRightsInDays = (application: Application) => {
   const multipleBirthsRequestDays = getMultipleBirthRequestDays(
     application.answers,
   )
-  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
-    application,
-  )
+  const additionalSingleParentDays =
+    getAdditionalSingleParentRightsInDays(application)
 
   return (
     selectedChild.remainingDays +
@@ -355,9 +350,8 @@ export const getAvailablePersonalRightsInDays = (application: Application) => {
 
   const totalTransferredDays = getTransferredDays(application, selectedChild)
   const multipleBirthsDays = getMultipleBirthsDays(application)
-  const additionalSingleParentDays = getAdditionalSingleParentRightsInDays(
-    application,
-  )
+  const additionalSingleParentDays =
+    getAdditionalSingleParentRightsInDays(application)
 
   return (
     totalDaysAvailable -
@@ -507,11 +501,8 @@ export const getSelectedChild = (
 export const isEligibleForParentalLeave = (
   externalData: ExternalData,
 ): boolean => {
-  const {
-    dataProvider,
-    children,
-    existingApplications,
-  } = getApplicationExternalData(externalData)
+  const { dataProvider, children, existingApplications } =
+    getApplicationExternalData(externalData)
 
   return (
     dataProvider?.hasActivePregnancy &&
@@ -1083,10 +1074,8 @@ export const requiresOtherParentApproval = (
   const selectedChild = getSelectedChild(answers, externalData)
   const { navId } = getApplicationExternalData(externalData)
 
-  const {
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-  } = applicationAnswers
+  const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+    applicationAnswers
 
   const needsApprovalForRequestingRights =
     selectedChild?.parentalRelation === ParentalRelations.primary
@@ -1108,10 +1097,8 @@ export const otherParentApprovalDescription = (
 ) => {
   const applicationAnswers = getApplicationAnswers(answers)
 
-  const {
-    isRequestingRights,
-    usePersonalAllowanceFromSpouse,
-  } = applicationAnswers
+  const { isRequestingRights, usePersonalAllowanceFromSpouse } =
+    applicationAnswers
 
   const description =
     isRequestingRights === YES && usePersonalAllowanceFromSpouse === YES
@@ -1127,14 +1114,13 @@ export const otherParentApprovalDescription = (
 export const allowOtherParentToUsePersonalAllowance = (
   answers: Application['answers'],
 ) => {
-  const otherParentObj = (answers?.otherParentObj as unknown) as OtherParentObj
+  const otherParentObj = answers?.otherParentObj as unknown as OtherParentObj
   return otherParentObj?.chooseOtherParent === SPOUSE
 }
 
 export const allowOtherParent = (answers: Application['answers']) => {
-  const { otherParent, otherParentRightOfAccess } = getApplicationAnswers(
-    answers,
-  )
+  const { otherParent, otherParentRightOfAccess } =
+    getApplicationAnswers(answers)
 
   return (
     otherParent === SPOUSE ||
@@ -1145,11 +1131,8 @@ export const allowOtherParent = (answers: Application['answers']) => {
 export const getOtherParentId = (
   application: Application,
 ): string | undefined => {
-  const {
-    otherParent,
-    otherParentId,
-    noPrimaryParentBirthDate,
-  } = getApplicationAnswers(application.answers)
+  const { otherParent, otherParentId, noPrimaryParentBirthDate } =
+    getApplicationAnswers(application.answers)
 
   if (noPrimaryParentBirthDate) {
     return ''
@@ -1283,9 +1266,8 @@ export const getLastValidPeriodEndDate = (
 }
 
 export const getMinimumStartDate = (application: Application): Date => {
-  const expectedDateOfBirthOrAdoptionDate = getExpectedDateOfBirthOrAdoptionDate(
-    application,
-  )
+  const expectedDateOfBirthOrAdoptionDate =
+    getExpectedDateOfBirthOrAdoptionDate(application)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
 
   const today = new Date()

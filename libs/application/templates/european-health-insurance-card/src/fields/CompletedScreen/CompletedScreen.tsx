@@ -20,7 +20,7 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
   const tempData = application.externalData.getTemporaryCard?.data as TempData[]
   const links: JSX.Element[] = []
 
-  const answers = (application.answers as unknown) as Answer
+  const answers = application.answers as unknown as Answer
   const plastic = answers.delimitations.applyForPlastic
 
   const nationalRegistryData = application.externalData.nationalRegistry

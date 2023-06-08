@@ -6,9 +6,7 @@
   "targets": {
     "build": {
       "executor": "@nx/next:build",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/tools/contentful-role-permissions"
@@ -56,9 +54,7 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "apps/tools/contentful-role-permissions/**/*.{ts,tsx,js,jsx}"
@@ -66,7 +62,5 @@
       }
     }
   },
-  "tags": [
-    "scope:react-next"
-  ]
+  "tags": ["scope:react-next"]
 }

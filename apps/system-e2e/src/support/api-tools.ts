@@ -16,12 +16,12 @@ export async function graphqlSpy(page: Page, url: string, operation: string) {
     await route.fulfill({ response })
   })
   return {
-    extractor: (
-      fieldExtractor: (op: { request: any; response: any }) => string,
-    ) => () => {
-      const op = data[0]
-      return op ? fieldExtractor(op) : ''
-    },
+    extractor:
+      (fieldExtractor: (op: { request: any; response: any }) => string) =>
+      () => {
+        const op = data[0]
+        return op ? fieldExtractor(op) : ''
+      },
     data: (fieldExtractor: (op: { request: any; response: any }) => string) => {
       const op = data[0]
       return op ? fieldExtractor(op) : ''

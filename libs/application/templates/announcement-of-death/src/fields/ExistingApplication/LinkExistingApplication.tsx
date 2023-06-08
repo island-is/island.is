@@ -37,10 +37,8 @@ export const LinkExistingApplication: FC<FieldBaseProps> = ({
   const navigate = useNavigate()
   const [continueConf, setContinueConf] = useState<IContinueConf>()
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
-  const [
-    updateApplicationExternalData,
-    { loading: _externalDataLoading },
-  ] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA)
+  const [updateApplicationExternalData, { loading: _externalDataLoading }] =
+    useMutation(UPDATE_APPLICATION_EXTERNAL_DATA)
 
   const { deleteApplication, loading: deleteLoading } = useDeleteApplication()
 

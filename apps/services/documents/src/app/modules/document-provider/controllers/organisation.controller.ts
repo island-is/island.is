@@ -111,14 +111,12 @@ export class OrganisationController {
     @Body() organisation: UpdateOrganisationDto,
     @CurrentUser() user: User,
   ): Promise<Organisation> {
-    const {
-      numberOfAffectedRows,
-      updatedOrganisation,
-    } = await this.documentProviderService.updateOrganisation(
-      id,
-      organisation,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedOrganisation } =
+      await this.documentProviderService.updateOrganisation(
+        id,
+        organisation,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Organisation ${id} does not exist.`)
@@ -176,14 +174,12 @@ export class OrganisationController {
     @Body() administrativeContact: UpdateContactDto,
     @CurrentUser() user: User,
   ): Promise<AdministrativeContact> {
-    const {
-      numberOfAffectedRows,
-      updatedContact,
-    } = await this.documentProviderService.updateAdministrativeContact(
-      administrativeContactId,
-      administrativeContact,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedContact } =
+      await this.documentProviderService.updateAdministrativeContact(
+        administrativeContactId,
+        administrativeContact,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(
@@ -232,14 +228,12 @@ export class OrganisationController {
     @Body() technicalContact: UpdateContactDto,
     @CurrentUser() user: User,
   ): Promise<TechnicalContact> {
-    const {
-      numberOfAffectedRows,
-      updatedContact,
-    } = await this.documentProviderService.updateTechnicalContact(
-      technicalContactId,
-      technicalContact,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedContact } =
+      await this.documentProviderService.updateTechnicalContact(
+        technicalContactId,
+        technicalContact,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(
@@ -288,14 +282,12 @@ export class OrganisationController {
     @Body() helpdesk: UpdateHelpdeskDto,
     @CurrentUser() user: User,
   ): Promise<Helpdesk> {
-    const {
-      numberOfAffectedRows,
-      updatedHelpdesk,
-    } = await this.documentProviderService.updateHelpdesk(
-      helpdeskId,
-      helpdesk,
-      user.nationalId,
-    )
+    const { numberOfAffectedRows, updatedHelpdesk } =
+      await this.documentProviderService.updateHelpdesk(
+        helpdeskId,
+        helpdesk,
+        user.nationalId,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Helpdesk ${helpdeskId} does not exist.`)

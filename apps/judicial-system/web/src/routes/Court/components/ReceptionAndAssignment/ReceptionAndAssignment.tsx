@@ -41,22 +41,14 @@ const ReceptionAndAssignment = () => {
   const id = router.query.id
   const { formatMessage } = useIntl()
   const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
-  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] = useState<boolean>(
-    false,
-  )
+  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
+    useState<boolean>(false)
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
-  const {
-    createCourtCase,
-    isCreatingCourtCase,
-    setAndSendCaseToServer,
-  } = useCase()
+  const { createCourtCase, isCreatingCourtCase, setAndSendCaseToServer } =
+    useCase()
 
   const { data: userData, loading: userLoading } = useQuery<UserData>(
     UsersQuery,

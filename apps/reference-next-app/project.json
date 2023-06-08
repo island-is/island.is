@@ -28,9 +28,7 @@
       "configurations": {
         "production": {}
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "build-server": {
       "executor": "@nx/webpack:webpack",
@@ -49,9 +47,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/node:node",
@@ -68,9 +64,7 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/reference-next-app/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/reference-next-app/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
@@ -79,9 +73,7 @@
         "jestConfig": "apps/reference-next-app/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/reference-next-app"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/apps/reference-next-app"]
     },
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -90,7 +82,5 @@
       }
     }
   },
-  "tags": [
-    "scope:react-next"
-  ]
+  "tags": ["scope:react-next"]
 }

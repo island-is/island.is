@@ -77,7 +77,8 @@ const Overview = () => {
 
   const isLoading = queryLoading || orgsLoading
   const { applicationApplicationsAdmin = [] } = data ?? {}
-  const applicationAdminList = applicationApplicationsAdmin as AdminApplication[]
+  const applicationAdminList =
+    applicationApplicationsAdmin as AdminApplication[]
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
 

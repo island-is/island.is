@@ -73,9 +73,8 @@ export class RightsController {
   async get(
     @Param('code') code: string,
   ): Promise<PersonalRepresentativeRightTypeDTO> {
-    const rightType = await this.rightTypesService.getPersonalRepresentativeRightType(
-      code,
-    )
+    const rightType =
+      await this.rightTypesService.getPersonalRepresentativeRightType(code)
 
     if (!rightType) {
       throw new NotFoundException("This particular right type doesn't exist")

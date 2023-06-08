@@ -25,31 +25,26 @@ export const initialState = {
   MyCases: 0,
 }
 
-export const ApplicationFiltersContext = createContext<ApplicationFiltersProvider>(
-  {
+export const ApplicationFiltersContext =
+  createContext<ApplicationFiltersProvider>({
     applicationFilters: initialState,
     loading: true,
     setApplicationFilters: () => initialState,
-  },
-)
+  })
 
 interface PageProps {
   children: ReactNode
 }
 
 const ApplicationFiltersProvider = ({ children }: PageProps) => {
-  const [
-    applicationFilters,
-    setApplicationFilters,
-  ] = useState<ApplicationFilters>(initialState)
+  const [applicationFilters, setApplicationFilters] =
+    useState<ApplicationFilters>(initialState)
 
-  const [
-    applicationFiltersQuery,
-    { loading },
-  ] = useMutation<ApplicationFiltersData>(ApplicationFiltersMutation, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const [applicationFiltersQuery, { loading }] =
+    useMutation<ApplicationFiltersData>(ApplicationFiltersMutation, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
 
   useEffect(() => {
     async function fetchFilters() {

@@ -29,10 +29,8 @@ describe('InternalNotificationController - Send heads up notifications', () => {
   beforeEach(async () => {
     process.env.COURTS_MOBILE_NUMBERS = `{"${courtId}": "${mobileNumber}"}`
 
-    const {
-      smsService,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { smsService, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockSmsService = smsService
 

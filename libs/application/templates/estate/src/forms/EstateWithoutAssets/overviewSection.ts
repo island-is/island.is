@@ -56,7 +56,7 @@ export const overviewSection = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
+                (answers.estate as unknown as EstateInfo).estateMembers.filter(
                   (member) => member.enabled,
                 ) ?? []
               ).map((member) => ({
@@ -89,7 +89,7 @@ export const overviewSection = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo).assets.filter(
+                (answers.estate as unknown as EstateInfo).assets.filter(
                   (asset) => asset.enabled,
                 ) ?? []
               ).map((asset) => ({
@@ -122,7 +122,7 @@ export const overviewSection = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
+                (answers.estate as unknown as EstateInfo)?.vehicles?.filter(
                   (vehicle) => vehicle.enabled,
                 ) ?? []
               ).map((vehicle) => ({

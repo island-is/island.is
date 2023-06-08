@@ -9,8 +9,10 @@ import {
   getLegalArguments,
 } from './IndictmentCount'
 
-const formatMessage = createIntl({ locale: 'is', onError: jest.fn })
-  .formatMessage
+const formatMessage = createIntl({
+  locale: 'is',
+  onError: jest.fn,
+}).formatMessage
 
 describe('getRelevantSubstances', () => {
   test('should return relevant substances in the correct order for the indictment description', () => {

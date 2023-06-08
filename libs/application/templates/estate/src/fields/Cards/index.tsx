@@ -13,9 +13,7 @@ import { m } from '../../lib/messages'
 type Props = {
   field: {
     props: {
-      cards: (
-        application: Application,
-      ) => {
+      cards: (application: Application) => {
         title?: string
         description?:
           | string

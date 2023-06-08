@@ -5,8 +5,10 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { getCaseResubmittedText } from './CaseResubmitModal'
 
 describe('getCaseResubmittedText', () => {
-  const formatMessage = createIntl({ locale: 'is', onError: jest.fn() })
-    .formatMessage
+  const formatMessage = createIntl({
+    locale: 'is',
+    onError: jest.fn(),
+  }).formatMessage
 
   const fn = (theCase: Case) => getCaseResubmittedText(formatMessage, theCase)
 

@@ -59,8 +59,7 @@ export const bankInfoForm = {
       description: 'Placeholder for ledger input',
     },
     accountNumber: {
-      id:
-        'fa.application:section.bankInfoForm.inputsPlaceholders.accountNumber',
+      id: 'fa.application:section.bankInfoForm.inputsPlaceholders.accountNumber',
       defaultMessage: '000000',
       description: 'Placeholder for account number input',
     },

@@ -37,15 +37,13 @@ export const conclusion = {
         'The title of the expandable description field in the conclusion section',
     },
     introText: {
-      id:
-        'uiForms.application:conclusion.expandableDescriptionField.introText#markdown',
+      id: 'uiForms.application:conclusion.expandableDescriptionField.introText#markdown',
       defaultMessage: 'Umsókn þín hefur verið móttekin og verður skoðuð.',
       description:
         'The intro text of the expandable description field in the conclusion section',
     },
     description: {
-      id:
-        'uiForms.application:conclusion.expandableDescriptionField.description#markdown',
+      id: 'uiForms.application:conclusion.expandableDescriptionField.description#markdown',
       defaultMessage:
         '* Þú getur nálgast þínar umsóknir á mínum síðum á island.is.\n',
       description:

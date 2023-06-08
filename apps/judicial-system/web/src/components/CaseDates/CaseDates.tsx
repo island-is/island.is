@@ -59,19 +59,20 @@ const CaseDates: React.FC<Props> = (props) => {
                   )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
                 })}
               </Text>
-              {workingCase.isCustodyIsolation && workingCase.isolationToDate && (
-                <Text variant="h5" as="h5">
-                  {formatMessage(caseDates.isolationValidTo, {
-                    date: `${formatDate(
-                      workingCase.isolationToDate,
-                      'PPP',
-                    )} kl. ${formatDate(
-                      workingCase.isolationToDate,
-                      TIME_FORMAT,
-                    )}`,
-                  })}
-                </Text>
-              )}
+              {workingCase.isCustodyIsolation &&
+                workingCase.isolationToDate && (
+                  <Text variant="h5" as="h5">
+                    {formatMessage(caseDates.isolationValidTo, {
+                      date: `${formatDate(
+                        workingCase.isolationToDate,
+                        'PPP',
+                      )} kl. ${formatDate(
+                        workingCase.isolationToDate,
+                        TIME_FORMAT,
+                      )}`,
+                    })}
+                  </Text>
+                )}
             </Box>
             <Box>
               {button && (

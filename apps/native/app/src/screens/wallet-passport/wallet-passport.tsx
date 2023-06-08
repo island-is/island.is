@@ -26,28 +26,26 @@ const Spacer = styled.View`
   height: 150px;
 `;
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+        },
+        noBorder: true,
       },
-      noBorder: true,
+    }),
+    {
+      topBar: {
+        rightButtons: [],
+      },
+      bottomTabs: {
+        visible: false,
+        drawBehind: true,
+      },
     },
-  }),
-  {
-    topBar: {
-      rightButtons: [],
-    },
-    bottomTabs: {
-      visible: false,
-      drawBehind: true,
-    },
-  },
-);
+  );
 const capitalizeEveryWord = (s: string) => {
   if (typeof s !== 'string') return '';
 
@@ -99,8 +97,11 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
 
           {expireWarning ? (
             <View
-              style={{paddingTop: 16, paddingHorizontal: 16, paddingBottom: 10}}
-            >
+              style={{
+                paddingTop: 16,
+                paddingHorizontal: 16,
+                paddingBottom: 10,
+              }}>
               <Alert
                 title={intl.formatMessage({id: 'walletPassport.warningTitle'})}
                 message={intl.formatMessage({
@@ -187,8 +188,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
           left: 0,
           right: 0,
           zIndex: 100,
-        }}
-      >
+        }}>
         <LicenceCard
           nativeID={`license-${LicenseType.PASSPORT}_destination`}
           type={LicenseType.PASSPORT}

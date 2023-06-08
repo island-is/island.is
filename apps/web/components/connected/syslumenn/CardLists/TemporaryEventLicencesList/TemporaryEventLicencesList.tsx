@@ -280,11 +280,12 @@ const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
           </GridContainer>
         </Box>
       )}
-      {listState === 'loaded' && filteredTemporaryEventLicences.length === 0 && (
-        <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">{n('noResults', 'Engin leyfi fundust.')}</Text>
-        </Box>
-      )}
+      {listState === 'loaded' &&
+        filteredTemporaryEventLicences.length === 0 && (
+          <Box display="flex" marginTop={4} justifyContent="center">
+            <Text variant="h3">{n('noResults', 'Engin leyfi fundust.')}</Text>
+          </Box>
+        )}
       {listState === 'loaded' && filteredTemporaryEventLicences.length > 0 && (
         <Box>
           <Box paddingTop={[4, 4, 6]} paddingBottom={[4, 5, 10]}>

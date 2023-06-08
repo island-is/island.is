@@ -91,12 +91,15 @@ const convertHtmlToContentfulRichText = async (html: string) => {
 }
 
 const mapLocations = (item: DefaultApiVacanciesListItem) => {
-  const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] = []
+  const locations: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]['locations'] =
+    []
 
   if ('stadsetning' in (item?.stadsetningar ?? {})) {
-    const location = (item.stadsetningar as {
-      stadsetning?: DefaultApiVacancyLocation
-    })['stadsetning']
+    const location = (
+      item.stadsetningar as {
+        stadsetning?: DefaultApiVacancyLocation
+      }
+    )['stadsetning']
 
     if (location) {
       locations.push({
@@ -119,11 +122,14 @@ const mapLocations = (item: DefaultApiVacanciesListItem) => {
 }
 
 const mapContacts = (item: DefaultApiVacanciesListItem) => {
-  const contacts: IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']['contacts'] = []
+  const contacts: IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']['contacts'] =
+    []
   if ('tengilidur' in (item?.tengilidir ?? {})) {
-    const contact = (item.tengilidir as {
-      tengilidur?: DefaultApiVacancyContact
-    })['tengilidur']
+    const contact = (
+      item.tengilidir as {
+        tengilidur?: DefaultApiVacancyContact
+      }
+    )['tengilidur']
 
     if (contact) {
       contacts.push({
@@ -150,7 +156,8 @@ const mapContacts = (item: DefaultApiVacanciesListItem) => {
 export const mapIcelandicGovernmentInstitutionVacanciesResponse = (
   data: DefaultApiVacanciesListItem[],
 ) => {
-  const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] = []
+  const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] =
+    []
 
   for (const item of data) {
     const locations = mapLocations(item)
@@ -177,15 +184,12 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = async (
   const contacts = mapContacts(item)
   const locations = mapLocations(item)
 
-  const [
-    intro,
-    qualificationRequirements,
-    tasksAndResponsibilities,
-  ] = await Promise.all([
-    convertHtmlToContentfulRichText(item.inngangur ?? ''),
-    convertHtmlToContentfulRichText(item.haefnikrofur ?? ''),
-    convertHtmlToContentfulRichText(item.verkefni ?? ''),
-  ])
+  const [intro, qualificationRequirements, tasksAndResponsibilities] =
+    await Promise.all([
+      convertHtmlToContentfulRichText(item.inngangur ?? ''),
+      convertHtmlToContentfulRichText(item.haefnikrofur ?? ''),
+      convertHtmlToContentfulRichText(item.verkefni ?? ''),
+    ])
 
   return {
     id: item.id,

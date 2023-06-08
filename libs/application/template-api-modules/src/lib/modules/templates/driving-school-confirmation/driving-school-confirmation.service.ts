@@ -27,20 +27,20 @@ export class DrivingSchoolConfirmationService extends BaseTemplateApiService {
     if (!confirmation || !studentBookId) {
       throw new Error(`Missing date and school`)
     }
-    const schoolNationalId = (externalData.drivingSchoolForEmployee
-      .data as DrivingSchool).nationalId
+    const schoolNationalId = (
+      externalData.drivingSchoolForEmployee.data as DrivingSchool
+    ).nationalId
 
     try {
-      const result = await this.drivingLicenseBookService.createDrivingSchoolTestResult(
-        {
+      const result =
+        await this.drivingLicenseBookService.createDrivingSchoolTestResult({
           bookId: studentBookId,
           schoolTypeId: parseInt(confirmation?.school),
           schoolNationalId: schoolNationalId,
           schoolEmployeeNationalId: auth.nationalId,
           createdOn: confirmation?.date,
           comments: '',
-        },
-      )
+        })
 
       if (!result) {
         throw new Error(`Application submission failed`)

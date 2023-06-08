@@ -29,8 +29,7 @@ export function TopLine({scrollY}: TopLineProps) {
 
   return (
     <SafeAreaView
-      style={{width: '100%', position: 'absolute', top: 0, zIndex: 10}}
-    >
+      style={{width: '100%', position: 'absolute', top: 0, zIndex: 10}}>
       <Host
         style={{
           flex: 1,

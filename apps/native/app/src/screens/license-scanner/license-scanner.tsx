@@ -39,29 +39,27 @@ const FlashImg = styled.Image`
   width: 32px;
 `;
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl, initialized) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'licenseScanner.title'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl, initialized) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'licenseScanner.title'}),
+        },
+      },
+    }),
+    {
+      topBar: {
+        visible: true,
+        rightButtons: [
+          {
+            id: 'LICENSE_SCANNER_DONE',
+            systemItem: 'done',
+          },
+        ],
       },
     },
-  }),
-  {
-    topBar: {
-      visible: true,
-      rightButtons: [
-        {
-          id: 'LICENSE_SCANNER_DONE',
-          systemItem: 'done',
-        },
-      ],
-    },
-  },
-);
+  );
 
 export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
@@ -180,8 +178,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   return (
     <View
       style={{flex: 1, backgroundColor: '#000'}}
-      onLayout={e => setLayout(e.nativeEvent.layout)}
-    >
+      onLayout={e => setLayout(e.nativeEvent.layout)}>
       {hasPermission === true && active && (
         <Camera
           onBarCodeScanned={active ? onBarCodeScanned : undefined}
@@ -206,8 +203,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           left: 0,
           right: 0,
           alignItems: 'center',
-        }}
-      >
+        }}>
         <Bubble>
           {typeof hasPermission === 'undefined' || hasPermission === null
             ? intl.formatMessage({id: 'licenseScanner.awaitingPermission'})

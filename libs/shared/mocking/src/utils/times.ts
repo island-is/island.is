@@ -12,10 +12,12 @@ type Times = <T, FactoryArgs extends Array<unknown>>(
   factory: FactoryFn<T, FactoryArgs>,
 ) => TimesFn<T, FactoryArgs>
 
-export const times: Times = (factory) => (times, ...args) => {
-  const result = []
-  for (let i = 0; i < times; i++) {
-    result.push(factory(args, i))
+export const times: Times =
+  (factory) =>
+  (times, ...args) => {
+    const result = []
+    for (let i = 0; i < times; i++) {
+      result.push(factory(args, i))
+    }
+    return result
   }
-  return result
-}

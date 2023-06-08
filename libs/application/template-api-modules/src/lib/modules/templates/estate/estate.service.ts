@@ -180,7 +180,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const uploadDataName = 'danarbusskipti1.0'
     const uploadDataId = 'danarbusskipti1.0'
 
-    const answers = (application.answers as unknown) as EstateSchema
+    const answers = application.answers as unknown as EstateSchema
 
     const relation =
       externalData?.estate.estateMembers?.find(

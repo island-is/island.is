@@ -26,7 +26,7 @@ const Nav: React.FC = () => {
     resolveRoles()
   }, [])
 
-  if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
+  if (!isLoggedIn(session as unknown as SessionInfo, loading)) {
     return <div className="nav-logged-out"></div>
   }
 

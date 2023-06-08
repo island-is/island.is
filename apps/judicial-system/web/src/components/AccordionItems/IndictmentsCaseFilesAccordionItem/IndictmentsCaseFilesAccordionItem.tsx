@@ -403,9 +403,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] = useMutation<UpdateFilesMutationResponse>(
-    UpdateFileMutation,
-  )
+  const [updateFilesMutation] =
+    useMutation<UpdateFilesMutationResponse>(UpdateFileMutation)
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
   const { remove } = useS3Upload(caseId)
@@ -543,9 +542,8 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
 
     setReorderableItems((prev) => {
       const newReorderableItems = [...prev]
-      newReorderableItems[
-        fileInReorderableItems
-      ].userGeneratedFilename = newName
+      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
+        newName
       newReorderableItems[fileInReorderableItems].displayDate = newDate
         ? newDate.toISOString()
         : newReorderableItems[fileInReorderableItems].displayDate

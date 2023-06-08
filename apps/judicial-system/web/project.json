@@ -28,9 +28,7 @@
       "configurations": {
         "production": {}
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "build-server": {
       "executor": "@nx/webpack:webpack",
@@ -50,9 +48,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/node:node",
@@ -69,9 +65,7 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/judicial-system/web/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/judicial-system/web/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
@@ -80,9 +74,7 @@
         "jestConfig": "apps/judicial-system/web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/judicial-system/web"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/web"]
     },
     "docker-next": {},
     "extract-strings": {
@@ -92,7 +84,5 @@
       }
     }
   },
-  "tags": [
-    "scope:judicial-system-web"
-  ]
+  "tags": ["scope:judicial-system-web"]
 }

@@ -90,14 +90,14 @@ describe('JwtStrategy#validate', () => {
         },
       },
     }
-    const request = ({
+    const request = {
       headers: {
         authorization: 'authorization',
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },
       ip: '1.1.1.1',
-    } as unknown) as Request
+    } as unknown as Request
 
     // Act
     const user = await jwtStrategy.validate(request, payload)

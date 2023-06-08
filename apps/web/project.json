@@ -9,10 +9,7 @@
       "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/apps/web",
-        "commands": [
-          "yarn nx build-next web",
-          "yarn nx build-server web"
-        ]
+        "commands": ["yarn nx build-next web", "yarn nx build-server web"]
       },
       "configurations": {
         "production": {
@@ -28,9 +25,7 @@
       "configurations": {
         "production": {}
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "build-server": {
       "executor": "@nx/webpack:webpack",
@@ -50,9 +45,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/node:node",
@@ -69,9 +62,7 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/web/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/web/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
@@ -80,9 +71,7 @@
         "jestConfig": "apps/web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/web"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/apps/web"]
     },
     "schemas/codegen": {
       "executor": "nx:run-commands",
@@ -121,7 +110,5 @@
     },
     "docker-next": {}
   },
-  "tags": [
-    "scope:react-next"
-  ]
+  "tags": ["scope:react-next"]
 }

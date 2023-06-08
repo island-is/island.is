@@ -41,10 +41,12 @@ export const ParentB: Form = buildForm({
           description: (application: Application) => ({
             ...m.parentBIntroText,
             values: {
-              childsName: (application.answers
-                .childsPersonalInfo as ChildsPersonalInfo)?.name,
-              guardianName: (application.answers
-                .childsPersonalInfo as ChildsPersonalInfo)?.guardian1.name,
+              childsName: (
+                application.answers.childsPersonalInfo as ChildsPersonalInfo
+              )?.name,
+              guardianName: (
+                application.answers.childsPersonalInfo as ChildsPersonalInfo
+              )?.guardian1.name,
             },
           }),
           children: [

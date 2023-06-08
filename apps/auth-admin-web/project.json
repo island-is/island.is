@@ -28,9 +28,7 @@
       "configurations": {
         "production": {}
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "build-server": {
       "executor": "@nx/webpack:webpack",
@@ -50,9 +48,7 @@
           "inspect": false
         }
       },
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "outputs": ["{options.outputPath}"]
     },
     "serve": {
       "executor": "@nx/node:node",
@@ -69,9 +65,7 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "apps/auth-admin-web/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/auth-admin-web/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
@@ -80,13 +74,9 @@
         "jestConfig": "apps/auth-admin-web/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": [
-        "{workspaceRoot}/coverage/apps/auth-admin-web"
-      ]
+      "outputs": ["{workspaceRoot}/coverage/apps/auth-admin-web"]
     },
     "docker-next": {}
   },
-  "tags": [
-    "scope:react-next"
-  ]
+  "tags": ["scope:react-next"]
 }

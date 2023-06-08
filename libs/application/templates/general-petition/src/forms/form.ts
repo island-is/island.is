@@ -110,9 +110,11 @@ export const form: Form = buildForm({
             buildKeyValueField({
               label: m.overviewApplicant,
               value: ({ externalData }) =>
-                (externalData.nationalRegistry?.data as {
-                  fullName?: string
-                })?.fullName,
+                (
+                  externalData.nationalRegistry?.data as {
+                    fullName?: string
+                  }
+                )?.fullName,
             }),
             buildKeyValueField({
               label: m.listName,

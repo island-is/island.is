@@ -18,14 +18,17 @@ export default async function handler(req, res) {
     variables: { input: { slug: 'opinbernyskopun', lang: 'is' } },
   })
 
-  const projectSubpage = projectPage.data?.getProjectPage?.projectSubpages?.find(
-    (page) => page?.slug === 'askoranir-opinberra-adila',
-  )
+  const projectSubpage =
+    projectPage.data?.getProjectPage?.projectSubpages?.find(
+      (page) => page?.slug === 'askoranir-opinberra-adila',
+    )
 
   const faqListItems =
-    (projectSubpage?.content?.find(
-      (slice) => slice?.__typename === 'FaqList',
-    ) as FaqList)?.questions ?? []
+    (
+      projectSubpage?.content?.find(
+        (slice) => slice?.__typename === 'FaqList',
+      ) as FaqList
+    )?.questions ?? []
 
   const host: string = req.headers.host
   const protocol = `http${host.startsWith('localhost') ? '' : 's'}://`

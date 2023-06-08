@@ -14,9 +14,8 @@ const mapServiceToNXname = async (serviceName: string) => {
   const fileContent = await readFile(join(projectRootPath, 'workspace.json'), {
     encoding: 'utf-8',
   })
-  const workspace: { projects: { [name: string]: string } } = JSON.parse(
-    fileContent,
-  )
+  const workspace: { projects: { [name: string]: string } } =
+    JSON.parse(fileContent)
   const nxName = (
     await Promise.all(
       Object.entries(workspace.projects)

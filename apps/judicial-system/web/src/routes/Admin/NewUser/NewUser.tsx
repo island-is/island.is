@@ -44,9 +44,8 @@ export const NewUser: React.FC = () => {
   } = useInstitution()
   const { formatMessage } = useIntl()
 
-  const [createUserMutation, { loading: createLoading }] = useMutation(
-    CreateUserMutation,
-  )
+  const [createUserMutation, { loading: createLoading }] =
+    useMutation(CreateUserMutation)
 
   const createUser = async (user: User): Promise<void> => {
     if (createLoading === false && user) {

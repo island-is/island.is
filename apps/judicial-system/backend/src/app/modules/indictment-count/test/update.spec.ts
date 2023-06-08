@@ -25,10 +25,8 @@ describe('IndictmentCountController - Update', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      indictmentCountModel,
-      indictmentCountController,
-    } = await createTestingIndictmentCountModule()
+    const { indictmentCountModel, indictmentCountController } =
+      await createTestingIndictmentCountModule()
 
     mockIndictmentCountModel = indictmentCountModel
 

@@ -68,13 +68,20 @@ const AidsAndNutrition = () => {
       />
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !supportData.aids.length && !supportData.nutrition.length && (
-        <Box width="full" marginTop={4} display="flex" justifyContent="center">
-          <Box marginTop={8}>
-            <EmptyState />
+      {!loading &&
+        !supportData.aids.length &&
+        !supportData.nutrition.length && (
+          <Box
+            width="full"
+            marginTop={4}
+            display="flex"
+            justifyContent="center"
+          >
+            <Box marginTop={8}>
+              <EmptyState />
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
 
       {!loading && !error && tabs.length > 0 && (
         <Box>

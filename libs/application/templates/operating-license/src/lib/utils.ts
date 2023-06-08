@@ -61,7 +61,8 @@ export const get24HFormatTime = (value: string) => {
 }
 
 const vskNrRegex = /([0-9]){6}/
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const timeRegex = /^$|^(([01][0-9])|(2[0-3])):[0-5][0-9]$/
 
 export const getCurrencyString = (n: number) =>
@@ -103,5 +104,7 @@ export const getChargeItemCode = (answers: FormValue) => {
   }
 }
 
-export const allowFakeCondition = (result = YES) => (answers: FormValue) =>
-  getValueViaPath(answers, 'fakeData.useFakeData') === result
+export const allowFakeCondition =
+  (result = YES) =>
+  (answers: FormValue) =>
+    getValueViaPath(answers, 'fakeData.useFakeData') === result

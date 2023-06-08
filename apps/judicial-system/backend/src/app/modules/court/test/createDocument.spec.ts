@@ -39,15 +39,14 @@ describe('CourtService - Create document', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      courtClientService,
-      courtService,
-    } = await createTestingCourtModule()
+    const { courtClientService, courtService } =
+      await createTestingCourtModule()
 
     mockCourtClientService = courtClientService
     const mockUploadStream = mockCourtClientService.uploadStream as jest.Mock
     mockUploadStream.mockResolvedValue(streamId)
-    const mockCreateDocument = mockCourtClientService.createDocument as jest.Mock
+    const mockCreateDocument =
+      mockCourtClientService.createDocument as jest.Mock
     mockCreateDocument.mockResolvedValue(documentId)
 
     givenWhenThen = async (
@@ -155,7 +154,8 @@ describe('CourtService - Create document', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockCreateDocument = mockCourtClientService.createDocument as jest.Mock
+      const mockCreateDocument =
+        mockCourtClientService.createDocument as jest.Mock
       mockCreateDocument.mockRejectedValueOnce(
         new Error('Create document failed'),
       )

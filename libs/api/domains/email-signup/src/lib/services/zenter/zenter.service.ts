@@ -73,10 +73,10 @@ export class ZenterSignupService {
 
     formData.append(
       'audiences',
-      (this.getZenterAudienceIdsFromSignupForm(
+      this.getZenterAudienceIdsFromSignupForm(
         emailSignupModel,
         inputFields,
-      ) as unknown) as string,
+      ) as unknown as string,
     )
     const response = await axios.post(url, formData.toString(), {
       headers: {

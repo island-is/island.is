@@ -38,12 +38,8 @@ describe('InternalFileController - Deliver case file to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      courtService,
-      fileModel,
-      internalFileController,
-    } = await createTestingFileModule()
+    const { awsS3Service, courtService, fileModel, internalFileController } =
+      await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockCourtService = courtService

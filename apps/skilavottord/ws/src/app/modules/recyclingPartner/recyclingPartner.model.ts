@@ -100,5 +100,5 @@ export class RecyclingPartnerModel extends Model<RecyclingPartnerModel> {
 
   @Field(() => [RecyclingRequestModel])
   @HasMany(() => RecyclingRequestModel)
-  recyclingRequests?: typeof RecyclingRequestModel[]
+  recyclingRequests?: (typeof RecyclingRequestModel)[]
 }

@@ -183,7 +183,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
     } catch (e) {
       if (e instanceof Error && e.name === 'FetchError') {
-        const err = (e as unknown) as FetchError
+        const err = e as unknown as FetchError
         throw new TemplateApiError(
           {
             title:

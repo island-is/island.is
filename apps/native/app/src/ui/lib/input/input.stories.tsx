@@ -12,8 +12,7 @@ const CenterView = ({children}: any) => (
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
-    }}
-  >
+    }}>
     {children}
   </View>
 );

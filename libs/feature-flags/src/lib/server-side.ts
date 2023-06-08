@@ -27,7 +27,8 @@ export class ServerSideFeatures implements ServerSideFeatureClientType {
 }
 
 export class ServerSideFeaturesOnTheClientSide
-  implements ServerSideFeatureClientType {
+  implements ServerSideFeatureClientType
+{
   isOn(feature: ServerSideFeature): boolean {
     throw new Error(
       'Using server-side features in the browser is not supported',

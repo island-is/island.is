@@ -91,16 +91,18 @@ const Admin: Screen = () => {
   const [confirmInvoice, { loading: confirmInvoiceLoading }] = useMutation(
     ConfirmInvoiceMutation,
   )
-  const { data, loading: queryLoading, error, refetch } = useQuery(
-    FlightLegsQuery,
-    {
-      ssr: false,
-      fetchPolicy: 'network-only',
-      variables: {
-        input,
-      },
+  const {
+    data,
+    loading: queryLoading,
+    error,
+    refetch,
+  } = useQuery(FlightLegsQuery, {
+    ssr: false,
+    fetchPolicy: 'network-only',
+    variables: {
+      input,
     },
-  )
+  })
   const { flightLegs = [] } = data ?? {}
 
   if (!user) {
@@ -251,8 +253,7 @@ const Admin: Screen = () => {
         }}
         t={{
           title: 'Gjaldfæra og endurgreiða',
-          info:
-            'Vertu viss um að hafa prentað yfirlitið út frá núverandi síu áður en þú heldur áfram.<br/>Með því að halda áfram, munt þú merkja allar færslur sem annað hvort gjaldfærð eða endurgreidd, eftir því sem á við.',
+          info: 'Vertu viss um að hafa prentað yfirlitið út frá núverandi síu áður en þú heldur áfram.<br/>Með því að halda áfram, munt þú merkja allar færslur sem annað hvort gjaldfærð eða endurgreidd, eftir því sem á við.',
           buttons: {
             cancel: 'Hætta við',
             continue: 'Halda áfram',

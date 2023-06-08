@@ -24,12 +24,8 @@ import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealOverview: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()

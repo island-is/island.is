@@ -25,14 +25,13 @@ describe('NotificationController - Send defender assigned notification', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageService,
-      notificationController,
-    } = await createTestingNotificationModule()
+    const { messageService, notificationController } =
+      await createTestingNotificationModule()
 
     mockMessageService = messageService
 
-    const mockSendMessagesToQueue = messageService.sendMessagesToQueue as jest.Mock
+    const mockSendMessagesToQueue =
+      messageService.sendMessagesToQueue as jest.Mock
     mockSendMessagesToQueue.mockResolvedValue(undefined)
 
     givenWhenThen = async (caseId) => {

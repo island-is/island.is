@@ -134,37 +134,39 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     {
       provide: GENERIC_LICENSE_FACTORY,
-      useFactory: (
-        genericFirearmService: GenericFirearmLicenseService,
-        genericAdrService: GenericAdrLicenseService,
-        genericMachineService: GenericMachineLicenseService,
-        genericDisabilityService: GenericDisabilityLicenseService,
-        drivingLicenseConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
-        xRoadConfig: ConfigType<typeof XRoadConfig>,
-      ) => async (
-        type: GenericLicenseType,
-        cacheManager: CacheManager,
-      ): Promise<GenericLicenseClient<unknown> | null> => {
-        switch (type) {
-          case GenericLicenseType.DriversLicense:
-            return new GenericDrivingLicenseApi(
-              logger,
-              xRoadConfig,
-              drivingLicenseConfig,
-              cacheManager,
-            )
-          case GenericLicenseType.AdrLicense:
-            return genericAdrService
-          case GenericLicenseType.MachineLicense:
-            return genericMachineService
-          case GenericLicenseType.FirearmLicense:
-            return genericFirearmService
-          case GenericLicenseType.DisabilityLicense:
-            return genericDisabilityService
-          default:
-            return null
-        }
-      },
+      useFactory:
+        (
+          genericFirearmService: GenericFirearmLicenseService,
+          genericAdrService: GenericAdrLicenseService,
+          genericMachineService: GenericMachineLicenseService,
+          genericDisabilityService: GenericDisabilityLicenseService,
+          drivingLicenseConfig: ConfigType<typeof GenericDrivingLicenseConfig>,
+          xRoadConfig: ConfigType<typeof XRoadConfig>,
+        ) =>
+        async (
+          type: GenericLicenseType,
+          cacheManager: CacheManager,
+        ): Promise<GenericLicenseClient<unknown> | null> => {
+          switch (type) {
+            case GenericLicenseType.DriversLicense:
+              return new GenericDrivingLicenseApi(
+                logger,
+                xRoadConfig,
+                drivingLicenseConfig,
+                cacheManager,
+              )
+            case GenericLicenseType.AdrLicense:
+              return genericAdrService
+            case GenericLicenseType.MachineLicense:
+              return genericMachineService
+            case GenericLicenseType.FirearmLicense:
+              return genericFirearmService
+            case GenericLicenseType.DisabilityLicense:
+              return genericDisabilityService
+            default:
+              return null
+          }
+        },
       inject: [
         GenericFirearmLicenseService,
         GenericAdrLicenseService,

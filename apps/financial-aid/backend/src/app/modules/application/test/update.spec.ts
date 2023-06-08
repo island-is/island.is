@@ -101,7 +101,8 @@ describe('ApplicationController - Update', () => {
       mockUpdate = mockApplicationModel.update as jest.Mock
       const eventFindById = mockApplicationEventService.findById as jest.Mock
       eventFindById.mockReturnValueOnce(new Promise(() => []))
-      const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
+      const getApplicationFiles =
+        mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(new Promise(() => []))
 
       await givenWhenThen(id, applicationUpdate, user)
@@ -151,9 +152,11 @@ describe('ApplicationController - Update', () => {
       mockUpdate.mockReturnValueOnce([1, [application]])
       const eventFindById = mockApplicationEventService.findById as jest.Mock
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
-      const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
+      const getApplicationFiles =
+        mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
-      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      const getDirectTaxPayment =
+        mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, user)
@@ -264,9 +267,11 @@ describe('ApplicationController - Update', () => {
       mockUpdate.mockReturnValueOnce([1, [application]])
       const eventFindById = mockApplicationEventService.findById as jest.Mock
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
-      const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
+      const getApplicationFiles =
+        mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
-      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      const getDirectTaxPayment =
+        mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
     })
 
@@ -363,15 +368,19 @@ describe('ApplicationController - Update', () => {
       mockUpdate.mockReturnValueOnce([1, [application]])
       const eventFindById = mockApplicationEventService.findById as jest.Mock
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
-      const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
+      const getApplicationFiles =
+        mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
-      const findStaffByNationalId = mockStaffService.findByNationalId as jest.Mock
+      const findStaffByNationalId =
+        mockStaffService.findByNationalId as jest.Mock
       findStaffByNationalId.mockReturnValueOnce(Promise.resolve(staff))
-      const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
+      const findByMunicipalityId =
+        mockMunicipalityService.findByMunicipalityId as jest.Mock
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
       const sendEmail = mockEmailService.sendEmail as jest.Mock
       sendEmail.mockReturnValueOnce(Promise.resolve())
-      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      const getDirectTaxPayment =
+        mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
     })
 
@@ -475,15 +484,19 @@ describe('ApplicationController - Update', () => {
       mockUpdate.mockReturnValueOnce([1, [application]])
       const eventFindById = mockApplicationEventService.findById as jest.Mock
       eventFindById.mockReturnValueOnce(Promise.resolve([]))
-      const getApplicationFiles = mockFileService.getAllApplicationFiles as jest.Mock
+      const getApplicationFiles =
+        mockFileService.getAllApplicationFiles as jest.Mock
       getApplicationFiles.mockReturnValueOnce(Promise.resolve([]))
-      const findStaffByNationalId = mockStaffService.findByNationalId as jest.Mock
+      const findStaffByNationalId =
+        mockStaffService.findByNationalId as jest.Mock
       findStaffByNationalId.mockReturnValueOnce(Promise.resolve(staff))
-      const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
+      const findByMunicipalityId =
+        mockMunicipalityService.findByMunicipalityId as jest.Mock
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
       const sendEmail = mockEmailService.sendEmail as jest.Mock
       sendEmail.mockReturnValueOnce(Promise.resolve())
-      const getDirectTaxPayment = mockDirectTaxPaymentService.getByApplicationId as jest.Mock
+      const getDirectTaxPayment =
+        mockDirectTaxPaymentService.getByApplicationId as jest.Mock
       getDirectTaxPayment.mockReturnValueOnce(Promise.resolve([]))
 
       then = await givenWhenThen(id, applicationUpdate, staff)
@@ -559,7 +572,8 @@ describe('ApplicationController - Update', () => {
     } as User
 
     beforeEach(async () => {
-      const findStaffByNationalId = mockStaffService.findByNationalId as jest.Mock
+      const findStaffByNationalId =
+        mockStaffService.findByNationalId as jest.Mock
       findStaffByNationalId.mockReturnValueOnce(Promise.resolve(undefined))
 
       then = await givenWhenThen(id, applicationUpdate, staff)

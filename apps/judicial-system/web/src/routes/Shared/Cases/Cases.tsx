@@ -128,28 +128,26 @@ export const Cases: React.FC = () => {
 
   const resCases = data?.cases
 
-  const [allActiveCases, allPastCases]: [
-    CaseListEntry[],
-    CaseListEntry[],
-  ] = useMemo(() => {
-    if (!resCases) {
-      return [[], []]
-    }
-
-    const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
-      return c.state !== CaseState.DELETED
-    })
-
-    return partition(casesWithoutDeleted, (c) => {
-      if (isIndictmentCase(c.type)) {
-        return !completedCaseStates.includes(c.state)
-      } else if (isPrisonAdminUser || isPrisonUser) {
-        return !c.isValidToDateInThePast
-      } else {
-        return !(completedCaseStates.includes(c.state) && c.rulingDate)
+  const [allActiveCases, allPastCases]: [CaseListEntry[], CaseListEntry[]] =
+    useMemo(() => {
+      if (!resCases) {
+        return [[], []]
       }
-    })
-  }, [resCases, isPrisonAdminUser, isPrisonUser])
+
+      const casesWithoutDeleted = resCases.filter((c: CaseListEntry) => {
+        return c.state !== CaseState.DELETED
+      })
+
+      return partition(casesWithoutDeleted, (c) => {
+        if (isIndictmentCase(c.type)) {
+          return !completedCaseStates.includes(c.state)
+        } else if (isPrisonAdminUser || isPrisonUser) {
+          return !c.isValidToDateInThePast
+        } else {
+          return !(completedCaseStates.includes(c.state) && c.rulingDate)
+        }
+      })
+    }, [resCases, isPrisonAdminUser, isPrisonUser])
 
   const {
     filter,

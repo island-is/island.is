@@ -181,8 +181,8 @@ export const ApplicationDetails = ({
           application={{
             id: application.id,
             modified: new Date(application.modified),
-            status: (application.status as unknown) as ApplicationStatus,
-            typeId: (application.typeId as unknown) as ApplicationTypes,
+            status: application.status as unknown as ApplicationStatus,
+            typeId: application.typeId as unknown as ApplicationTypes,
             name: application.name,
             progress: application.progress,
             actionCard: application.actionCard as ActionCardMetaData,

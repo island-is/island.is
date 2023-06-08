@@ -99,9 +99,10 @@ export class IndexingService {
     */
     if (syncType === 'full' && didImportAll) {
       logger.info('Removing stale data from index', { index: elasticIndex })
-      const response = await this.elasticService.deleteAllDocumentsNotVeryRecentlyUpdated(
-        elasticIndex,
-      )
+      const response =
+        await this.elasticService.deleteAllDocumentsNotVeryRecentlyUpdated(
+          elasticIndex,
+        )
       logger.info('Removed stale documents', {
         count: response.body.deleted,
         index: elasticIndex,

@@ -48,9 +48,8 @@ const PetitionList = () => {
   const actionData = useActionData() as UpdateListMutation
 
   const [isLockListModalVisible, setIsLockListModalVisible] = useState(false)
-  const [isUnlockListModalVisible, setIsUnlockListModalVisible] = useState(
-    false,
-  )
+  const [isUnlockListModalVisible, setIsUnlockListModalVisible] =
+    useState(false)
 
   useEffect(() => {
     if (actionData) {

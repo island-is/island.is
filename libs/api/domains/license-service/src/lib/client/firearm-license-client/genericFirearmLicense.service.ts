@@ -29,7 +29,8 @@ import { LicenseData } from './genericFirearmLicense.type'
 const LOG_CATEGORY = 'firearmlicense-service'
 @Injectable()
 export class GenericFirearmLicenseService
-  implements GenericLicenseClient<LicenseInfo> {
+  implements GenericLicenseClient<LicenseInfo>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,

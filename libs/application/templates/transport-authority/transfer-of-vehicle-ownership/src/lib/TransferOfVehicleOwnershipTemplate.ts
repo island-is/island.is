@@ -89,10 +89,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/TransferOfVehicleOwnershipForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.TransferOfVehicleOwnershipForm),
+                import('../forms/TransferOfVehicleOwnershipForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.TransferOfVehicleOwnershipForm),
                 ),
               actions: [
                 {

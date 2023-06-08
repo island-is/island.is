@@ -19,9 +19,8 @@ const GiveRights: FC<FieldBaseProps> = ({ error, field, application }) => {
 
   const { formatMessage } = useLocale()
 
-  const [statefulAnswer, setStatefulAnswer] = useState<ValidAnswers>(
-    currentAnswer,
-  )
+  const [statefulAnswer, setStatefulAnswer] =
+    useState<ValidAnswers>(currentAnswer)
 
   const boxChartKeys = [
     {

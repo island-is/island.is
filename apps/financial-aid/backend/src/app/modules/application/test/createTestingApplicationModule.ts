@@ -56,9 +56,8 @@ export const createTestingApplicationModule = async () => {
     typeof ApplicationModel
   >(getModelToken(ApplicationModel))
 
-  const applicationService = applicationModule.get<ApplicationService>(
-    ApplicationService,
-  )
+  const applicationService =
+    applicationModule.get<ApplicationService>(ApplicationService)
 
   const applicationController = applicationModule.get<ApplicationController>(
     ApplicationController,
@@ -66,21 +65,18 @@ export const createTestingApplicationModule = async () => {
 
   const fileService = applicationModule.get<FileService>(FileService)
 
-  const directTaxPaymentService = applicationModule.get<DirectTaxPaymentService>(
-    DirectTaxPaymentService,
-  )
+  const directTaxPaymentService =
+    applicationModule.get<DirectTaxPaymentService>(DirectTaxPaymentService)
 
   const staffService = applicationModule.get<StaffService>(StaffService)
 
   const amountService = applicationModule.get<AmountService>(AmountService)
 
-  const applicationEventService = applicationModule.get<ApplicationEventService>(
-    ApplicationEventService,
-  )
+  const applicationEventService =
+    applicationModule.get<ApplicationEventService>(ApplicationEventService)
 
-  const municipalityService = applicationModule.get<MunicipalityService>(
-    MunicipalityService,
-  )
+  const municipalityService =
+    applicationModule.get<MunicipalityService>(MunicipalityService)
 
   const emailService = applicationModule.get<EmailService>(EmailService)
 

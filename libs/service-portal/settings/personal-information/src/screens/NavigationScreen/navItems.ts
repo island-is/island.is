@@ -22,40 +22,35 @@ export const navScreenItems: NavigationScreenItem[] = [
   {
     name: 'Skilaboð - í vinnslu',
     url: ServicePortalPath.UserProfileRoot,
-    text:
-      'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
+    text: 'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
     tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
   {
     name: 'Skilaboð - í vinnslu',
     url: ServicePortalPath.UserProfileRoot,
-    text:
-      'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
+    text: 'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
     tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
   {
     name: 'Skilaboð - í vinnslu',
     url: ServicePortalPath.UserProfileRoot,
-    text:
-      'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
+    text: 'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
     tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
   {
     name: 'Skilaboð - í vinnslu',
     url: ServicePortalPath.UserProfileRoot,
-    text:
-      'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
+    text: 'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
     tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },
   {
     name: 'Skilaboð - í vinnslu',
     url: ServicePortalPath.UserProfileRoot,
-    text:
-      'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
+    text: 'Hér verður hægt að stilla skilaboðin þín og ákveða hvernig við sendum þau til þín.',
     tags: [m.email, m.telNumber, m.telNumber],
     disabled: true,
   },

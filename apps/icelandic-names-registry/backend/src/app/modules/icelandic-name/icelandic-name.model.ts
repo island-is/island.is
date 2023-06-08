@@ -22,7 +22,8 @@ interface IcelandicNameCreationAttributes
 })
 export class IcelandicName
   extends Model<TIcelandicName, IcelandicNameCreationAttributes>
-  implements TIcelandicName {
+  implements TIcelandicName
+{
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,

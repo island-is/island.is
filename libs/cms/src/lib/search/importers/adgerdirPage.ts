@@ -16,7 +16,8 @@ import {
 
 @Injectable()
 export class AdgerdirPageSyncService
-  implements CmsSyncProvider<IVidspyrnaPage> {
+  implements CmsSyncProvider<IVidspyrnaPage>
+{
   processSyncData(entries: processSyncDataInput<IVidspyrnaPage>) {
     // only process pages that we consider not to be empty and don't have circular structures
     return entries.filter(
@@ -34,9 +35,9 @@ export class AdgerdirPageSyncService
       .map<MappedData | boolean>((entry) => {
         try {
           const mapped = mapAdgerdirPage(entry)
-          const content = `${
-            mapped.longDescription
-          } ${extractStringsFromObject({ ...mapped.content })}` // this function only accepts plain js objects
+          const content = `${mapped.longDescription} ${extractStringsFromObject(
+            { ...mapped.content },
+          )}` // this function only accepts plain js objects
           return {
             _id: mapped.id,
             title: mapped.title,

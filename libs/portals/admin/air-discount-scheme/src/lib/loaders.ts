@@ -41,20 +41,22 @@ export const prepareFlightLegsQuery = (): {
   }
 }
 
-export const overviewLoader: WrappedLoaderFn = ({ client }) => async () => {
-  const { input } = prepareFlightLegsQuery()
+export const overviewLoader: WrappedLoaderFn =
+  ({ client }) =>
+  async () => {
+    const { input } = prepareFlightLegsQuery()
 
-  const flightLegs = await client.query<FlightLegsQuery>({
-    fetchPolicy: 'network-only',
-    query: FlightLegsDocument,
-    variables: {
-      input,
-    },
-  })
+    const flightLegs = await client.query<FlightLegsQuery>({
+      fetchPolicy: 'network-only',
+      query: FlightLegsDocument,
+      variables: {
+        input,
+      },
+    })
 
-  if (flightLegs.error) {
-    throw flightLegs.error
+    if (flightLegs.error) {
+      throw flightLegs.error
+    }
+
+    return flightLegs.data
   }
-
-  return flightLegs.data
-}

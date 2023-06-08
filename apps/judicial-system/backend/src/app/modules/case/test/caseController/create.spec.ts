@@ -32,12 +32,8 @@ describe('CaseController - Create', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantService,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { defendantService, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
 
     mockDefendantService = defendantService
     mockCaseModel = caseModel

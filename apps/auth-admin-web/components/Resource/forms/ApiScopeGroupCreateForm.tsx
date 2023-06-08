@@ -19,13 +19,8 @@ interface Props {
 }
 
 const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
-  const {
-    register,
-    handleSubmit,
-    formState,
-    reset,
-    resetField,
-  } = useForm<ApiScopeGroupDTO>()
+  const { register, handleSubmit, formState, reset, resetField } =
+    useForm<ApiScopeGroupDTO>()
   const { errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [localization] = useState<FormControl>(

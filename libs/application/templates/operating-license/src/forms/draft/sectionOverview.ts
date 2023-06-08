@@ -111,17 +111,21 @@ export const sectionOverview = buildMultiField({
       label: m.operationName,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.info as {
-          operationName?: string
-        })?.operationName,
+        (
+          application.answers.info as {
+            operationName?: string
+          }
+        )?.operationName,
     }),
     buildKeyValueField({
       label: m.vskNr,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.info as {
-          vskNr?: string
-        })?.vskNr,
+        (
+          application.answers.info as {
+            vskNr?: string
+          }
+        )?.vskNr,
     }),
     buildDescriptionField({
       id: 'overview.space4',
@@ -133,17 +137,21 @@ export const sectionOverview = buildMultiField({
       label: m.email,
       width: 'half',
       value: (application: Application) =>
-        (application.answers.info as {
-          email?: string
-        })?.email,
+        (
+          application.answers.info as {
+            email?: string
+          }
+        )?.email,
     }),
     buildKeyValueField({
       label: m.phoneNumber,
       width: 'half',
       value: (application: Application) => {
-        const phone = (application.answers.info as {
-          phoneNumber?: string
-        })?.phoneNumber
+        const phone = (
+          application.answers.info as {
+            phoneNumber?: string
+          }
+        )?.phoneNumber
 
         return formatPhoneNumber(phone as string)
       },

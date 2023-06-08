@@ -134,9 +134,9 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_POSTPONE_ESTATE_DIVISION,
               formLoader: () =>
-                import(
-                  '../forms/PermitToPostponeEstateDivision/form'
-                ).then((module) => Promise.resolve(module.form)),
+                import('../forms/PermitToPostponeEstateDivision/form').then(
+                  (module) => Promise.resolve(module.form),
+                ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',
               delete: true,
@@ -193,9 +193,9 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_POSTPONE_ESTATE_DIVISION,
               formLoader: () =>
-                import(
-                  '../forms/PermitToPostponeEstateDivision/done'
-                ).then((val) => Promise.resolve(val.done)),
+                import('../forms/PermitToPostponeEstateDivision/done').then(
+                  (val) => Promise.resolve(val.done),
+                ),
               read: 'all',
             },
             {

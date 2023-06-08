@@ -66,7 +66,8 @@ interface FlightLegCreationAttributes
 @Table({ tableName: 'flight_leg' })
 export class FlightLeg
   extends Model<TFlightLeg, FlightLegCreationAttributes>
-  implements TFlightLeg {
+  implements TFlightLeg
+{
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -181,7 +182,8 @@ interface FlightCreationAttributes
 @Table({ tableName: 'flight' })
 export class Flight
   extends Model<TFlight, FlightCreationAttributes>
-  implements TFlight {
+  implements TFlight
+{
   @Column({
     type: DataType.UUID,
     primaryKey: true,

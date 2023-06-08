@@ -4,12 +4,8 @@ import isEmpty from 'lodash/isEmpty'
 import { LocaleContext } from './LocaleContext'
 
 export function useNamespaces(namespaces?: string | string[]) {
-  const {
-    loadMessages,
-    loadingMessages,
-    messages,
-    changeLanguage,
-  } = useContext(LocaleContext)
+  const { loadMessages, loadingMessages, messages, changeLanguage } =
+    useContext(LocaleContext)
 
   useEffect(() => {
     if (namespaces && !isEmpty(namespaces)) {

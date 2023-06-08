@@ -15,7 +15,8 @@ import { YES } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const getExtraData = (application: ApplicationWithAttachments) => {
-  const answers: OperatingLicenseAnswers = application.answers as OperatingLicenseAnswers
+  const answers: OperatingLicenseAnswers =
+    application.answers as OperatingLicenseAnswers
   const chargeItems = getValueViaPath<PaymentCatalogItem[]>(
     application.externalData,
     'payment.data',

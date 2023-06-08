@@ -73,10 +73,8 @@ export const PoliceCaseInfo: React.FC<Props> = (props) => {
   const [policeCaseNumberInput, setPoliceCaseNumberInput] = useState<string>(
     policeCaseNumbers[index],
   )
-  const [
-    policeCaseNumberErrorMessage,
-    setPoliceCaseNumberErrorMessage,
-  ] = useState<string>('')
+  const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
+    useState<string>('')
 
   useEffect(() => {
     if (policeCaseNumberInput !== policeCaseNumbers[index]) {

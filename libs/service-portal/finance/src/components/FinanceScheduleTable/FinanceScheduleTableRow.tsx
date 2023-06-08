@@ -32,10 +32,8 @@ interface Props {
 }
 
 const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
-  const [
-    getPaymentScheduleById,
-    { loading, error, ...detailsQuery },
-  ] = useLazyQuery(GET_FINANCE_PAYMENT_SCHEDULE_BY_ID)
+  const [getPaymentScheduleById, { loading, error, ...detailsQuery }] =
+    useLazyQuery(GET_FINANCE_PAYMENT_SCHEDULE_BY_ID)
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 

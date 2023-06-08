@@ -56,10 +56,8 @@ export const ClientProvider: FC = ({ children }) => {
     toEnvironment: null,
     fromEnvironment: null,
   })
-  const {
-    environment: selectedEnvironment,
-    updateEnvironment,
-  } = useEnvironmentQuery(client.environments)
+  const { environment: selectedEnvironment, updateEnvironment } =
+    useEnvironmentQuery(client.environments)
 
   const openPublishModal = (to: AuthAdminEnvironment) => {
     setPublishData({
