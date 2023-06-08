@@ -6,6 +6,8 @@ import {
   ForbiddenException,
 } from '@nestjs/common'
 
+import { completedCaseStates } from '@island.is/judicial-system/types'
+
 @Injectable()
 export class RequestSharedWithDefenderGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
@@ -17,7 +19,10 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case')
     }
 
-    if (!theCase.sendRequestToDefender) {
+    if (
+      !theCase.sendRequestToDefender &&
+      !completedCaseStates.includes(theCase.state)
+    ) {
       throw new ForbiddenException(
         'Forbidden when request is not shared with defender',
       )

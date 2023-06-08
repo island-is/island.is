@@ -4,6 +4,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
+import { completedCaseStates } from '@island.is/judicial-system/types'
+
 import { RequestSharedWithDefenderGuard } from '../requestSharedWithDefender.guard'
 
 interface Then {
@@ -49,6 +51,25 @@ describe('Request Shared With Defender Guard', () => {
       expect(then.result).toBe(true)
     })
   })
+
+  describe.each(completedCaseStates)(
+    'request shared with defender',
+    (state) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          case: { state, sendRequestToDefender: false },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    },
+  )
 
   describe('request not shared with defender', () => {
     let then: Then
