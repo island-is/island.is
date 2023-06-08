@@ -44,6 +44,7 @@ export const attributes: (keyof Case)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
+  'sendRequestToDefender',
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
