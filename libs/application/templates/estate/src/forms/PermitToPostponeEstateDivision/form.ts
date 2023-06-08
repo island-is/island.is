@@ -27,54 +27,45 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'estateMembersAndWillsInfo',
-      title: m.estateMembersTitle,
+      id: 'estateMembersInfo',
+      title: m.estateMembers,
       children: [
-        buildSubSection({
-          id: 'estateMembers',
+        buildMultiField({
+          id: 'estateMembersInfo',
           title: m.estateMembers,
+          description: m.estateMembersSubtitle,
           children: [
-            buildMultiField({
-              id: 'estateMembersInfo',
-              title: m.estateMembersTitle,
-              description: m.estateMembersSubtitle,
-              children: [
-                buildDescriptionField({
-                  id: 'membersOfEstateTitle',
-                  title: m.estateMembers,
-                  description: m.estateMembersHeaderDescription,
-                  titleVariant: 'h3',
-                  marginBottom: 5,
-                }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.estateMembers',
-                  component: 'EstateMembersRepeater',
-                }),
-                buildDescriptionField({
-                  id: 'space0',
-                  title: '',
-                  space: 'containerGutter',
-                }),
-                buildCheckboxField({
-                  id: 'estateMembersHaveElectronicID',
-                  title: '',
-                  large: true,
-                  backgroundColor: 'blue',
-                  defaultValue: [],
-                  options: [
-                    {
-                      value: YES,
-                      label: m.estateMembersHaveIDCheckbox.defaultMessage,
-                    },
-                  ],
-                }),
+            buildCustomField({
+              title: '',
+              id: 'estate.estateMembers',
+              component: 'EstateMembersRepeater',
+            }),
+            buildDescriptionField({
+              id: 'space0',
+              title: '',
+              space: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'estateMembersHaveElectronicID',
+              title: '',
+              large: true,
+              backgroundColor: 'blue',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: m.estateMembersHaveIDCheckbox.defaultMessage,
+                },
               ],
             }),
           ],
         }),
-        testamentInfo,
       ],
+    }),
+    buildSection({
+      id: 'testamentInfo',
+      title: m.willsAndAgreements,
+      children: [testamentInfo],
     }),
     buildSection({
       id: 'estateProperties',
