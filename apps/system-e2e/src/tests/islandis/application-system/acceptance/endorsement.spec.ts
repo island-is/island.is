@@ -71,7 +71,9 @@ test.describe('Endorsements', () => {
     // )
     // Assert
     await expect(
-      page.locator('div:has-text("Undirskriftalista hefur verið skilað til Ísland.is")'),
+      page.locator(
+        'div:has-text("Undirskriftalista hefur verið skilað til Ísland.is")',
+      ),
     ).toBeVisible()
   })
 
