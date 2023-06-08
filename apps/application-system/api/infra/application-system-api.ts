@@ -104,7 +104,7 @@ export const workerSetup = (): ServiceBuilder<'application-system-api-worker'> =
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
-  servicesApplicationSystemForm: ServiceBuilder<'application-system-form'>
+  applicationSystemForm: ServiceBuilder<'application-system-form'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -205,7 +205,7 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       APPLICATION_SYSTEM_FORM_BASE: ref(
-        (h) => `http://${h.svc(services.servicesApplicationSystemForm)}`,
+        (h) => `http://${h.svc(services.applicationSystemForm)}`,
       ),
       NO_UPDATE_NOTIFIER: 'true',
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {

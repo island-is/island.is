@@ -55,13 +55,7 @@ import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/a
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
-const endorsement = endorsementServiceSetup({})
 
-const documentsService = serviceDocumentsSetup()
-const appSystemApi = appSystemApiSetup({
-  documentsService,
-  servicesEndorsementApi: endorsement,
-})
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
@@ -77,6 +71,14 @@ const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
 
 const authAdminApi = authAdminApiSetup()
+const endorsement = endorsementServiceSetup({})
+const documentsService = serviceDocumentsSetup()
+const appSystemForm = appSystemFormSetup({ api: api }) // TODO FIX CIRCULAR DEPENDENCY
+const appSystemApi = appSystemApiSetup({
+  documentsService,
+  servicesEndorsementApi: endorsement,
+  applicationSystemForm: appSystemForm,
+})
 
 const api = apiSetup({
   appSystemApi,
@@ -90,7 +92,7 @@ const api = apiSetup({
   authAdminApi,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
-const appSystemForm = appSystemFormSetup({ api: api })
+
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
