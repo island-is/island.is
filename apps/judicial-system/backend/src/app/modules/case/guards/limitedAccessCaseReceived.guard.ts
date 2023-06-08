@@ -9,10 +9,11 @@ import {
 import {
   CaseState,
   completedCaseStates,
+  isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
 @Injectable()
-export class CaseScheduledGuard implements CanActivate {
+export class LimitedAccessCaseReceivedGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
@@ -23,10 +24,15 @@ export class CaseScheduledGuard implements CanActivate {
     }
 
     if (
-      !(theCase.state === CaseState.RECEIVED && theCase.courtDate) &&
+      !(
+        theCase.state === CaseState.RECEIVED &&
+        (isIndictmentCase(theCase.type) || theCase.courtDate)
+      ) &&
       !completedCaseStates.includes(theCase.state)
     ) {
-      throw new ForbiddenException('Forbidden for unscheduled cases')
+      throw new ForbiddenException(
+        'Forbidden for unreceived limited access case',
+      )
     }
 
     return true

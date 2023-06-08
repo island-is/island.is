@@ -1,14 +1,12 @@
-import each from 'jest-each'
-
 import {
   ExecutionContext,
   ForbiddenException,
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import { CaseState } from '@island.is/judicial-system/types'
+import { completedCaseStates } from '@island.is/judicial-system/types'
 
-import { CaseScheduledGuard } from '../caseScheduled.guard'
+import { RequestSharedWithDefenderGuard } from '../requestSharedWithDefender.guard'
 
 interface Then {
   result: boolean
@@ -17,13 +15,13 @@ interface Then {
 
 type GivenWhenThen = () => Then
 
-describe('Case Scheduled Guard', () => {
+describe('Request Shared With Defender Guard', () => {
   const mockRequest = jest.fn()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(() => {
     givenWhenThen = (): Then => {
-      const guard = new CaseScheduledGuard()
+      const guard = new RequestSharedWithDefenderGuard()
       const then = {} as Then
 
       try {
@@ -38,31 +36,12 @@ describe('Case Scheduled Guard', () => {
     }
   })
 
-  each`
-    state
-    ${CaseState.ACCEPTED}
-    ${CaseState.REJECTED}
-    ${CaseState.DISMISSED}
-  `.describe('completed case', ({ state }) => {
-    let then: Then
-
-    beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ case: { state } }))
-
-      then = givenWhenThen()
-    })
-
-    it('should activate', () => {
-      expect(then.result).toBe(true)
-    })
-  })
-
-  describe('scheduled case', () => {
+  describe('request shared with defender', () => {
     let then: Then
 
     beforeEach(() => {
       mockRequest.mockImplementationOnce(() => ({
-        case: { state: CaseState.RECEIVED, courtDate: new Date() },
+        case: { sendRequestToDefender: true },
       }))
 
       then = givenWhenThen()
@@ -73,25 +52,41 @@ describe('Case Scheduled Guard', () => {
     })
   })
 
-  each`
-    state
-    ${CaseState.NEW}
-    ${CaseState.DRAFT}
-    ${CaseState.SUBMITTED}
-    ${CaseState.RECEIVED}
-    ${CaseState.DELETED}
-  `.describe('unscheduled case', ({ state }) => {
+  describe.each(completedCaseStates)(
+    'request shared with defender',
+    (state) => {
+      let then: Then
+
+      beforeEach(() => {
+        mockRequest.mockImplementationOnce(() => ({
+          case: { state, sendRequestToDefender: false },
+        }))
+
+        then = givenWhenThen()
+      })
+
+      it('should activate', () => {
+        expect(then.result).toBe(true)
+      })
+    },
+  )
+
+  describe('request not shared with defender', () => {
     let then: Then
 
     beforeEach(() => {
-      mockRequest.mockImplementationOnce(() => ({ case: { state } }))
+      mockRequest.mockImplementationOnce(() => ({
+        case: {},
+      }))
 
       then = givenWhenThen()
     })
 
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe('Forbidden for unscheduled cases')
+      expect(then.error.message).toBe(
+        'Forbidden when request is not shared with defender',
+      )
     })
   })
 
