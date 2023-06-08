@@ -60,7 +60,7 @@
     "lowercase-keys",
     "mimic-response",
     "pdfkit",
-    "turndown"
+    "showdown"
   ],
   "keepNames": true
 }
