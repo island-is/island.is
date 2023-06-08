@@ -1,6 +1,5 @@
 #!/bin/bash
-set -euo pipefail
-[[ -z "${CI:-}" ]] || set -x
+set -euxo pipefail
 
 source ./scripts/ci/_common.sh
 
