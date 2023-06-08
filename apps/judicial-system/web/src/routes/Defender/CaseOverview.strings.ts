@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 // Strings on signed verdict overview screen
-export const defenderCaseOverview = defineMessages({
+export const strings = defineMessages({
   investigationCaseRejectedTitle: {
     id:
       'judicial.system.core:defender_case_overview.investigation_case_rejected_title',
