@@ -1,2 +1,4 @@
-export const getInputByName = (name: string) => `input[name="${name}"]`
-export const getTextareaByName = (name: string) => `textarea[name="${name}"]`
+import { Page } from '@playwright/test'
+
+export const getTextboxByName = (page: Page, name: string) =>
+  page.getByRole('textbox', { name })
