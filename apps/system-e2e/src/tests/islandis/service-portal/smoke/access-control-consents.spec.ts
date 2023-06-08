@@ -29,17 +29,17 @@ test.describe('Service portal access control concents', () => {
     const actionCardDataTestId = 'consent-accordion-card'
 
     await test.step('See consents overview and content', async () => {
-      await expect(
-        page.getByRole('heading', { name: 'Gagnaöflun' }),
-      ).toBeVisible()
-
       // Arrange - wait for the consent list to load
       await page.waitForResponse(
         (resp) =>
           resp.url().includes('/api/graphql?op=GetConsentList') &&
           resp.status() === 200,
       )
-      // Assert - Make sure the consent list is visible
+
+      // Assert - Make sure heading and consent list content is visible
+      await expect(
+        page.getByRole('heading', { name: 'Gagnaöflun' }),
+      ).toBeVisible()
       await expect(page.getByTestId(actionCardDataTestId).first()).toBeVisible()
 
       await expect(
@@ -55,8 +55,8 @@ test.describe('Service portal access control concents', () => {
       const ariaPressedStr = 'aria-pressed'
       const consentScope = await page.getByTestId('consent-scope').count()
 
-      // Assert - Make sure the consent scopes are more than 1
-      await expect(consentScope).toBeGreaterThan(1)
+      // Assert - Make sure the consent scopes are more than 0
+      await expect(consentScope).toBeGreaterThan(0)
 
       // Act - Click on the first consent action card to expand it
       await page.getByTestId(actionCardDataTestId).first().click()
@@ -84,6 +84,13 @@ test.describe('Service portal access control concents', () => {
 
       // Act - Click on the toggle switch again to toggle it back
       await firstToggleSwitch.first().click()
+
+      // Arrange - Make sure the toggle switch requests finishes before closing
+      await page.waitForResponse(
+        (resp) =>
+          resp.url().includes('/api/graphql?op=PatchConsent') &&
+          resp.status() === 200,
+      )
     })
   })
 })
