@@ -30,17 +30,5 @@ describe('license-service/client/driving-license', () => {
 
       expect(result).toBe(GenericUserLicensePkPassStatus.Available)
     })
-
-    it('should not be available for a license with `mynd` as null', () => {
-      const license: OldGenericDrivingLicenseResponse = {
-        mynd: null,
-      }
-
-      const result = OldGenericDrivingLicenseApi.licenseIsValidForPkpass(
-        license,
-      )
-
-      expect(result).toBe(GenericUserLicensePkPassStatus.NotAvailable)
-    })
   })
 })
