@@ -264,7 +264,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
       }
     }
 
-
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
         [person],
