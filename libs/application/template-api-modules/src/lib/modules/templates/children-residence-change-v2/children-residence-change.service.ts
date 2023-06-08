@@ -117,7 +117,8 @@ export class ChildrenResidenceChangeServiceV2 extends BaseTemplateApiService {
     const durationType = answers.selectDuration?.type
     const durationDate = answers.selectDuration?.date
     const extraData = {
-      typeOfChildSupport: answers.selectChildSupportPayment, // TODO: is this correct?
+      applicationId: application.id,
+      typeOfChildSupport: answers.selectChildSupportPayment,
       reasonForChildrenResidenceChange: answers.residenceChangeReason ?? '',
       transferExpirationDate:
         durationType === 'temporary' && durationDate
