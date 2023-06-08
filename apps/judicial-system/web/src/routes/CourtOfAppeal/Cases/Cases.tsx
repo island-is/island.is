@@ -219,7 +219,7 @@ const CourtOfAppealCases = () => {
       }) => {
         const thisRow = row.row.original
 
-        if (isRestrictionCase(thisRow.type)) {
+        if (!isRestrictionCase(thisRow.type)) {
           return null
         }
 
