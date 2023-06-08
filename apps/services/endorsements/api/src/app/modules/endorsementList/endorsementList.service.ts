@@ -528,7 +528,7 @@ export class EndorsementListService {
     }
     const locale = 'is-IS'
     const ownerEmail = this.getOwnerContact(endorsementList.meta, 'email')
-    const ownerPhone= this.getOwnerContact(endorsementList.meta, 'phone')
+    const ownerPhone = this.getOwnerContact(endorsementList.meta, 'phone')
     const ownerName = await this.getOwnerInfo(
       endorsementList?.id,
       endorsementList.owner,
@@ -570,12 +570,14 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Tímabil lista: ${endorsementList.openedDate.toLocaleDateString(locale) +
+                copy: `Tímabil lista: ${
+                  endorsementList.openedDate.toLocaleDateString(locale) +
                   ' - ' +
-                  endorsementList.closedDate.toLocaleDateString(locale)}`,
+                  endorsementList.closedDate.toLocaleDateString(locale)
+                }`,
                 small: true,
               },
-            }, 
+            },
             {
               component: 'Copy',
               context: {
@@ -592,13 +594,15 @@ export class EndorsementListService {
                 copy: `Kennitala stofnenda: ${endorsementList.owner}`,
                 small: true,
               },
-            },   {
+            },
+            {
               component: 'Copy',
               context: {
                 copy: `Netfang stofnenda: ${ownerEmail}`,
                 small: true,
               },
-            },   {
+            },
+            {
               component: 'Copy',
               context: {
                 copy: `Sími stofnenda: ${ownerPhone}`,
