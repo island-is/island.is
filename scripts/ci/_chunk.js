@@ -35,6 +35,6 @@ const groups = groupbByPrefix(projects)
 const chunked_groups = groups.map((group) => chunk(group, chunkSize)).flat()
 const chunks = chunked_groups.map((chunk) => chunk.join(',')).filter((job) => job.length > 0)
 
-console.error("Chunks:", chunked_groups)
+// console.error("Chunked groups:", chunked_groups)
 
 process.stdout.write(JSON.stringify(chunks))
