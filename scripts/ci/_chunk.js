@@ -1,52 +1,40 @@
 // This a script that given a list of strings, returns a list of comma-separated chunks of the original list
 
+const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
+const projects = (process.argv[2].split(',').map((s) => s.trim())) ?? []
 
-const apps = [
-  { substr: 'templates', name: 'Templates' },
-  { substr: 'judicial', name: 'Judicial System' },
-  { substr: 'domains', name: 'Domains' },
-  { substr: 'service', name: 'Services' },
-  { substr: 'clients', name: 'Clients' },
-]
 
-// source: https://www.w3resource.com/javascript-exercises/fundamental/javascript-fundamental-exercise-265.php
-function chunk(arr, size) {
+function groupbByPrefix(arr) {
   arr.sort()
   const parts = new Map()
 
   for (const item of arr) {
-    const key = item.split('-')[0]
-    if (!parts.has(key)) { parts.set(key, []) }
-    parts.get(key).push(item)
+    const key = item.split('-')[0]  // Get prefix, or defaut to project name
+    if (!parts.has(key)) { parts.set(key, []) }  // Initialise with empty array
+    parts.get(key).push(item)  // Add item to array
   }
 
-  console.log(parts)
+  // Extract items grouped by prefix
+  const values = []
+  for (const part of parts.values()) { values.push(part); }
 
-
-  return parts.forEach((part) => parts[part].join(','))
-
-  for (const app of apps) {
-    const subPart = arr.filter((item) => item.indexOf(app.substr) !== -1)
-    parts[part] = subPart
-  }
-  console.log('parts: ', parts)
-
-
-  const result = Array.from({ length: Math.ceil(arr.length / size) }, (_v, i) =>
-    arr.slice(i * size, i * size + size),
-  )
-
-  return result
+  // console.error("Values:", values)
+  return values
 }
 
-// Chunk size
-const chunkSize = 3  // parseInt(process.env['CHUNK_SIZE'] || '2')
+function chunk(groups, chunkSize) {
+  const chunks = []
+  for (let i = 0; i < groups.length; i += chunkSize) {
+    chunks.push(groups.slice(i, i + chunkSize))
+  }
+  // console.error('Chunked group:', chunks)
+  return chunks
+}
 
-let chunks = chunk(
-  process.argv[2].split(',').map((s) => s.trim()),
-  chunkSize,
-)
-  .map((ch) => ch.join(','))
-  .filter((job) => job.length > 0)
+const groups = groupbByPrefix(projects)
+const chunked_groups = groups.map((group) => chunk(group, chunkSize)).flat()
+const chunks = chunked_groups.map((chunk) => chunk.join(',')).filter((job) => job.length > 0)
+
+console.error("Chunks:", chunked_groups)
 
 process.stdout.write(JSON.stringify(chunks))
