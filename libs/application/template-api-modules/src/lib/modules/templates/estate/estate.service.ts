@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import fs from 'fs'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
@@ -20,14 +21,23 @@ import {
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationAttachments,
+  AttachmentPaths,
+  ApplicationFile,
+} from './types/attachments'
+import AmazonS3Uri from 'amazon-s3-uri'
+import { S3 } from 'aws-sdk'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
+  s3: S3
   constructor(private readonly syslumennService: SyslumennService) {
     super(ApplicationTypes.ESTATE)
+    this.s3 = new S3()
   }
 
   async estateProvider({
@@ -64,7 +74,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     return result
   }
 
-  async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
+  async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
     let estateResponse: EstateInfo
     if (
       application.applicant.startsWith('010130') &&
@@ -154,10 +164,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async completeApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -254,23 +261,52 @@ export class EstateTemplateService extends BaseTemplateApiService {
         : { representative: undefined }),
     }
 
+    const attachments: Attachment[] = []
+
+    // Convert form data to a PDF backup for syslumenn
     const pdfBuffer = await transformUploadDataToPDFStream(
       uploadData,
       application.id,
     )
-    const pdfAttachment: Attachment = {
-      name: `${uploadData.caseNumber}.pdf`,
+    attachments.push({
+      name: `Form_data_${uploadData.caseNumber}.pdf`,
       content: pdfBuffer.toString('base64'),
+    })
+
+    const output = await fs.writeFile(
+      '/home/steini/Documents/estate.pdf',
+      pdfBuffer,
+      () => {
+        console.log('done')
+      },
+    )
+
+    throw new Error('stopping this')
+
+    // Retrieve attachments from the application and attach them to the upload data
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+    for (let i = 0; i < AttachmentPaths.length; i++) {
+      const { path, prefix } = AttachmentPaths[i]
+      const attachmentAnswerData =
+        getValueViaPath<ApplicationFile[]>(application.answers, path) ?? []
+
+      for (let index = 0; index < attachmentAnswerData.length; index++) {
+        if (attachmentAnswerData[index]) {
+          const fileType = attachmentAnswerData[index].name?.split('.').pop()
+          const name = `${prefix}_${index}.${dateStr}.${fileType}`
+          const fileName = (application.attachments as ApplicationAttachments)[
+            attachmentAnswerData[index]?.key
+          ]
+          const content = await this.getFileContentBase64(fileName)
+          attachments.push({ name, content })
+        }
+      }
     }
-
-    console.log(JSON.stringify(pdfAttachment))
-
-    throw new Error('TODO, remove me!!!')
 
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
         [person],
-        [pdfAttachment],
+        attachments,
         this.stringifyObject(uploadData),
         uploadDataName,
         uploadDataId,
@@ -286,5 +322,22 @@ export class EstateTemplateService extends BaseTemplateApiService {
       throw new Error('Application submission failed on syslumadur upload data')
     }
     return { sucess: result.success, id: result.caseNumber }
+  }
+  private async getFileContentBase64(fileName: string): Promise<string> {
+    const { bucket, key } = AmazonS3Uri(fileName)
+
+    const uploadBucket = bucket
+    try {
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64') || ''
+    } catch (e) {
+      return 'err'
+    }
   }
 }

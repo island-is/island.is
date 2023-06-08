@@ -43,6 +43,12 @@ const asset = z
   .array()
   .optional()
 
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
 
@@ -108,6 +114,7 @@ export const estateSchema = z.object({
       })
       .optional(),
   }),
+  estateMembersHaveElectronicID: z.array(z.enum([YES])).length(1),
 
   // is: Innbú
   inventory: z
@@ -234,16 +241,8 @@ export const estateSchema = z.object({
       creditorName: z.string().optional(),
       nationalId: z.string().optional(),
       balance: z.string().optional(),
+      loanIdentity: z.string().optional(),
     })
-    .refine(
-      ({ creditorName, nationalId, balance }) => {
-        return checkIfFilledOut([creditorName, nationalId, balance])
-      },
-      {
-        params: m.fillOutRates,
-        path: ['balance'],
-      },
-    )
     .refine(
       ({ nationalId }) => {
         return nationalId === ''
@@ -294,4 +293,10 @@ export const estateSchema = z.object({
   applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
 
   readTerms: z.array(z.enum([YES])).length(1),
+
+  estateAttachments: z.object({
+    attached: z.object({
+      file: z.array(FileSchema),
+    }),
+  }),
 })

@@ -60,6 +60,12 @@ export const filterAndRemoveRepeaterMetadata = <T>(
   return elements
 }
 
+const someValueIsSet = (object: Record<string, unknown>) => {
+  return Object.values(object).some(
+    (value) => value !== undefined && value !== '',
+  )
+}
+
 const moveDownBy = (n: number, doc: PDFKit.PDFDocument) => {
   for (let i = 0; i < n; i++) {
     doc.moveDown()
@@ -124,8 +130,9 @@ export const transformUploadDataToPDFStream = async (
     moveDownBy(2, doc)
   }
 
-  data.assets.forEach((asset, index) => {
-    doc.fontSize(fontSizes.subtitle).text(`Eign ${index + 1}`)
+  data.assets.filter(someValueIsSet).forEach((asset, index) => {
+    const activeInfo = asset.enabled ? '' : ' (Óvirkjað í umsókn)'
+    doc.fontSize(fontSizes.subtitle).text(`Eign ${index + 1}${activeInfo}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(doc, 'Númer', asset.assetNumber ?? 'Eignanúmer vantar')
     fieldWithValue(doc, 'Lýsing', asset.description ?? 'Lýsingu vantar')
@@ -138,7 +145,7 @@ export const transformUploadDataToPDFStream = async (
   })
   doc.moveDown()
 
-  data.bankAccounts.forEach((bankAccount, index) => {
+  data.bankAccounts.filter(someValueIsSet).forEach((bankAccount, index) => {
     doc.fontSize(fontSizes.subtitle).text(`Bankareikningur ${index + 1}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(
@@ -155,7 +162,8 @@ export const transformUploadDataToPDFStream = async (
   })
   moveDownBy(2, doc)
 
-  data.debts.forEach((debt, index) => {
+  data.debts.filter(someValueIsSet).forEach((debt, index) => {
+    console.log('PROCESSING DEBT', debt)
     doc.fontSize(fontSizes.subtitle).text(`Skuld ${index + 1}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(
@@ -166,19 +174,17 @@ export const transformUploadDataToPDFStream = async (
     fieldWithValue(
       doc,
       'Kennitala',
-      debt.ssn ?? 'Kennitölu lánardrottins vantar',
+      debt.nationalId ?? 'Kennitölu lánardrottins vantar',
     )
-    fieldWithValue(
-      doc,
-      'Upphæð',
-      debt.balance?.toString() ?? 'Skuldbindingu vantar',
-    )
+    fieldWithValue(doc, 'Upphæð', debt.balance?.toString() ?? 'Upphæð vantar')
+    fieldWithValue(doc, 'Lánanúmer', debt.loanIdentity ?? 'Lánanúmer vantar')
     doc.moveDown()
   })
   moveDownBy(2, doc)
 
-  data.estateMembers.forEach((estateMember, index) => {
-    doc.fontSize(fontSizes.subtitle).text(`Erfingi ${index + 1}`)
+  data.estateMembers.filter(someValueIsSet).forEach((estateMember, index) => {
+    const activeInfo = estateMember?.enabled ? '' : ' (Óvirkjað í umsókn)'
+    doc.fontSize(fontSizes.subtitle).text(`Erfingi ${index + 1}${activeInfo}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(doc, 'Nafn', estateMember.name ?? 'Nafn vantar')
     fieldWithValue(
@@ -201,8 +207,9 @@ export const transformUploadDataToPDFStream = async (
   })
   moveDownBy(2, doc)
 
-  data.guns.forEach((gun, index) => {
-    doc.fontSize(fontSizes.subtitle).text(`Vopn ${index + 1}`)
+  data.guns.filter(someValueIsSet).forEach((gun, index) => {
+    const activeInfo = gun.enabled ? '' : ' (Óvirkjað í umsókn)'
+    doc.fontSize(fontSizes.subtitle).text(`Vopn ${index + 1}${activeInfo}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(doc, 'Númer', gun.assetNumber ?? 'Númer vantar')
     fieldWithValue(doc, 'Lýsing', gun.description ?? 'Lýsingu vantar')
@@ -263,11 +270,11 @@ export const transformUploadDataToPDFStream = async (
     moveDownBy(2, doc)
   }
 
-  data.stocks.forEach((stock, index) => {
+  data.stocks.filter(someValueIsSet).forEach((stock, index) => {
     doc.fontSize(fontSizes.subtitle).text(`Verðbréf ${index + 1}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(doc, 'Fyrirtæki', stock.organization ?? 'Fyrirtæki vantar')
-    fieldWithValue(doc, 'Kennitala', stock.ssn ?? 'Kennitölu vantar')
+    fieldWithValue(doc, 'Kennitala', stock.nationalId ?? 'Kennitölu vantar')
     fieldWithValue(
       doc,
       'Nafnvirði',
@@ -283,8 +290,9 @@ export const transformUploadDataToPDFStream = async (
   })
   moveDownBy(2, doc)
 
-  data.vehicles.forEach((vehicle, index) => {
-    doc.fontSize(fontSizes.subtitle).text(`Farartæki ${index + 1}`)
+  data.vehicles.filter(someValueIsSet).forEach((vehicle, index) => {
+    const activeInfo = vehicle?.enabled ? '' : ' (Óvirkjað í umsókn)'
+    doc.fontSize(fontSizes.subtitle).text(`Farartæki ${index + 1}${activeInfo}`)
     doc.fontSize(fontSizes.text)
     fieldWithValue(doc, 'Lýsing', vehicle.description ?? 'Lýsingu vantar')
     fieldWithValue(doc, 'Númer', vehicle.assetNumber ?? 'Númer vantar')

@@ -27,7 +27,7 @@ type EstateMember = {
   foreignCitizenShip?: 'yes' | 'no'
   phone?: string
   email?: string
-}
+} & SystemMetadata
 
 type Representative = {
   name: string
@@ -40,7 +40,7 @@ type AssetFrame = {
   assetNumber?: string
   description?: string
   marketValue?: string | number
-}
+} & SystemMetadata
 
 type BankAccount = {
   accountNumber?: string
@@ -50,6 +50,7 @@ type BankAccount = {
 type Stock = {
   organization?: string
   ssn?: string
+  nationalId?: string
   faceValue?: string | number
   rateOfExchange?: string | number
   value?: string | number
@@ -58,7 +59,9 @@ type Stock = {
 type Debt = {
   creditorName?: string
   ssn?: string
+  nationalId?: string
   balance?: string | number
+  loanIdentity?: string
 }
 
 type InfoValueField = {
@@ -76,6 +79,10 @@ type Deceased = {
   ssn: string
   dateOfDeath: string
   address: string
+}
+
+type SystemMetadata = {
+  enabled?: boolean
 }
 
 export type UploadData = {
