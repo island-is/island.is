@@ -55,7 +55,6 @@ import { serviceSetup as authAdminApiSetup } from '../../../apps/services/auth/a
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 
-
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
 const servicePortalApi = servicePortalApiSetup()
