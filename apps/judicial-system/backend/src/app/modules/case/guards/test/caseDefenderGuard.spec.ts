@@ -95,7 +95,7 @@ describe('Case Defender Guard', () => {
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toBe(
-        `User ${userId} does not have read access to case ${caseId}`,
+        `User ${userId} does not have access to case ${caseId}`,
       )
     })
   })

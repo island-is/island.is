@@ -84,7 +84,7 @@ export class AdminClientsService {
     const clients = await this.clientModel.findAll({
       where: {
         domainName: tenantId,
-        enabled: true,
+        archived: null,
       },
       include: this.clientInclude(),
     })
@@ -102,12 +102,14 @@ export class AdminClientsService {
   async findByTenantIdAndClientId(
     tenantId: string,
     clientId: string,
+    includeArchived = false,
   ): Promise<AdminClientDto> {
     const client = await this.clientModel.findOne({
       where: {
         clientId,
         domainName: tenantId,
         enabled: true,
+        ...(!includeArchived && { archived: null }),
       },
       include: this.clientInclude(),
     })
@@ -135,6 +137,17 @@ export class AdminClientsService {
     })
     if (!tenant) {
       throw new NoContentException()
+    }
+
+    const existingClient = await this.clientModel.findOne({
+      where: {
+        clientId: clientDto.clientId,
+        domainName: tenantId,
+      },
+    })
+
+    if (existingClient) {
+      throw new BadRequestException('Client already exists')
     }
 
     if (

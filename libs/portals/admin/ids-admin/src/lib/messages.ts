@@ -790,6 +790,10 @@ export const m = defineMessages({
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
   },
+  clientIdAlreadyExists: {
+    id: 'ap.ids-admin:client-id-already-exists',
+    defaultMessage: 'Client ID already exists',
+  },
   successDeletingClient: {
     id: 'ap.ids-admin:success-deleting-client',
     defaultMessage: 'Successfully deleted application',
