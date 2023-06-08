@@ -5,7 +5,7 @@ export const getNextConfig = async (appDir: string, dev: boolean) => {
   const config = { dev }
 
   if (dev || process.env.API_MOCKS) {
-    const { prepareConfig } = require('@nrwl/next/src/utils/config')
+    const { prepareConfig } = require('@nx/next/src/utils/config')
     const options = {
       root: `${appDir}`,
       outputPath: `dist/${appDir}`,
@@ -15,7 +15,7 @@ export const getNextConfig = async (appDir: string, dev: boolean) => {
       root: process.cwd(),
     }
 
-    // UPGRADE WARNING: Calling @nrwl/next internals. Be sure to test.
+    // UPGRADE WARNING: Calling @nx/next internals. Be sure to test.
     // Only needs context.workspaceRoot in v10.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const conf = await prepareConfig(

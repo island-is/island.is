@@ -1,22 +1,23 @@
 {
-  "root": "libs/judicial-system/auth",
+  "name": "judicial-system-auth",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/judicial-system/auth/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/judicial-system/auth/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/judicial-system/auth/jest.config.js",
+        "jestConfig": "libs/judicial-system/auth/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/judicial-system/auth"]
+      "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/auth"]
     }
   },
   "tags": ["lib:judicial-system-api", "scope:judicial-system-api"]

@@ -1,20 +1,21 @@
 {
-  "root": "libs/api/domains/fiskistofa",
+  "name": "api-domains-fiskistofa",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/fiskistofa/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/api/domains/fiskistofa/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/fiskistofa"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/fiskistofa"],
       "options": {
-        "jestConfig": "libs/api/domains/fiskistofa/jest.config.js",
+        "jestConfig": "libs/api/domains/fiskistofa/jest.config.ts",
         "passWithNoTests": true
       }
     }

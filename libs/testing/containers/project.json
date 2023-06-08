@@ -1,19 +1,20 @@
 {
-  "root": "libs/testing/containers",
+  "name": "testing-containers",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/testing/containers/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/testing/containers/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/testing/containers"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/testing/containers"],
       "options": {
-        "jestConfig": "libs/testing/containers/jest.config.js",
+        "jestConfig": "libs/testing/containers/jest.config.ts",
         "passWithNoTests": true
       }
     }

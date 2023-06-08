@@ -1,12 +1,22 @@
 {
   "root": true,
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "eslint-plugin-local-rules"],
+  "ignorePatterns": [
+    "**/*"
+  ],
+  "plugins": [
+    "@nx",
+    "eslint-plugin-local-rules"
+  ],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": [
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx"
+      ],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -14,7 +24,9 @@
             "depConstraints": [
               {
                 "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "onlyDependOnLibsWithTags": [
+                  "*"
+                ]
               },
               {
                 "sourceTag": "scope:api",
@@ -148,11 +160,18 @@
               },
               {
                 "sourceTag": "scope:judicial-system",
-                "onlyDependOnLibsWithTags": ["lib:judicial-system", "lib:js"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:judicial-system",
+                  "lib:js"
+                ]
               },
               {
                 "sourceTag": "scope:react",
-                "onlyDependOnLibsWithTags": ["lib:react", "lib:dom", "lib:js"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:react",
+                  "lib:dom",
+                  "lib:js"
+                ]
               },
               {
                 "sourceTag": "scope:client",
@@ -165,7 +184,10 @@
               },
               {
                 "sourceTag": "scope:dom",
-                "onlyDependOnLibsWithTags": ["lib:dom", "lib:js"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:dom",
+                  "lib:js"
+                ]
               },
               {
                 "sourceTag": "scope:nest",
@@ -178,11 +200,16 @@
               },
               {
                 "sourceTag": "scope:node",
-                "onlyDependOnLibsWithTags": ["lib:node", "lib:js"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:node",
+                  "lib:js"
+                ]
               },
               {
                 "sourceTag": "scope:js",
-                "onlyDependOnLibsWithTags": ["lib:js"]
+                "onlyDependOnLibsWithTags": [
+                  "lib:js"
+                ]
               },
               {
                 "sourceTag": "scope:e2e",
@@ -222,8 +249,13 @@
       }
     },
     {
-      "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "extends": [
+        "plugin:@nx/typescript"
+      ],
       "rules": {
         "@typescript-eslint/no-extra-semi": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
@@ -242,7 +274,9 @@
           "warn",
           {
             "selector": "default",
-            "format": ["camelCase"]
+            "format": [
+              "camelCase"
+            ]
           },
           {
             "selector": "variable",
@@ -254,7 +288,11 @@
           },
           {
             "selector": "variable",
-            "format": ["camelCase", "PascalCase", "UPPER_CASE"],
+            "format": [
+              "camelCase",
+              "PascalCase",
+              "UPPER_CASE"
+            ],
             "filter": {
               "regex": "^_[a-zA-Z0-9]*$",
               "match": false
@@ -262,22 +300,36 @@
           },
           {
             "selector": "variable",
-            "modifiers": ["destructured"],
+            "modifiers": [
+              "destructured"
+            ],
             "leadingUnderscore": "allow",
-            "format": ["camelCase", "PascalCase"]
+            "format": [
+              "camelCase",
+              "PascalCase"
+            ]
           },
           {
             "selector": "parameter",
             "leadingUnderscore": "allow",
-            "format": ["camelCase", "PascalCase"]
+            "format": [
+              "camelCase",
+              "PascalCase"
+            ]
           },
           {
             "selector": "function",
-            "format": ["camelCase", "PascalCase"]
+            "format": [
+              "camelCase",
+              "PascalCase"
+            ]
           },
           {
             "selector": "objectLiteralMethod",
-            "format": ["camelCase", "PascalCase"],
+            "format": [
+              "camelCase",
+              "PascalCase"
+            ],
             "filter": {
               "regex": "^(__resolveType)$",
               "match": false
@@ -289,15 +341,24 @@
           },
           {
             "selector": "typeLike",
-            "format": ["PascalCase"]
+            "format": [
+              "PascalCase"
+            ]
           },
           {
             "selector": "typeAlias",
-            "format": ["camelCase", "PascalCase"]
+            "format": [
+              "camelCase",
+              "PascalCase"
+            ]
           },
           {
             "selector": "enumMember",
-            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+            "format": [
+              "camelCase",
+              "UPPER_CASE",
+              "PascalCase"
+            ]
           }
         ],
         "@typescript-eslint/no-empty-interface": [
@@ -309,15 +370,26 @@
       }
     },
     {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
+      "extends": [
+        "plugin:@nx/javascript"
+      ],
       "rules": {}
     },
     {
-      "files": ["schema.d.ts"],
+      "files": [
+        "schema.d.ts"
+      ],
       "rules": {
         "@typescript-eslint/no-explicit-any": "off"
       }
     }
+  ],
+  "extends": [
+    null,
+    "plugin:storybook/recommended"
   ]
 }

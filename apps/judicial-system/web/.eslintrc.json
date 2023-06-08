@@ -1,12 +1,12 @@
 {
   "extends": [
-    "plugin:@nrwl/nx/react",
+    "plugin:@nx/react",
     "plugin:jsx-a11y/strict",
     "../../../.eslintrc.json"
   ],
   "ignorePatterns": ["!**/*", "/src/graphql/schema.tsx"],
   "rules": {
-    "@nrwl/nx/enforce-module-boundaries": [
+    "@nx/enforce-module-boundaries": [
       "error",
       {
         "enforceBuildableLibDependency": true,

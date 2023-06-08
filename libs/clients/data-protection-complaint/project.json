@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/data-protection-complaint",
+  "name": "clients-data-protection-complaint",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/data-protection-complaint/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/data-protection-complaint/**/*.{ts,tsx,js,jsx}"
@@ -12,16 +13,18 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/data-protection-complaint/src/gen/fetch/dev -i libs/clients/data-protection-complaint/src/clientConfig.yml"
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/data-protection-complaint"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/data-protection-complaint"
+      ],
       "options": {
-        "jestConfig": "libs/clients/data-protection-complaint/jest.config.js",
+        "jestConfig": "libs/clients/data-protection-complaint/jest.config.ts",
         "passWithNoTests": true
       }
     }

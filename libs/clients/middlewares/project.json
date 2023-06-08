@@ -1,19 +1,20 @@
 {
-  "root": "libs/clients/middlewares",
+  "name": "clients-middlewares",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/middlewares/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/middlewares/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/middlewares"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/middlewares"],
       "options": {
-        "jestConfig": "libs/clients/middlewares/jest.config.js",
+        "jestConfig": "libs/clients/middlewares/jest.config.ts",
         "passWithNoTests": true
       }
     }

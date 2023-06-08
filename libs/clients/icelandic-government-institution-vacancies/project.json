@@ -1,9 +1,10 @@
 {
-  "root": "libs/clients/icelandic-government-institution-vacancies",
+  "name": "clients-icelandic-government-institution-vacancies",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/icelandic-government-institution-vacancies/src",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -12,17 +13,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/clients/icelandic-government-institution-vacancies"
+        "{workspaceRoot}/coverage/libs/clients/icelandic-government-institution-vacancies"
       ],
       "options": {
-        "jestConfig": "libs/clients/icelandic-government-institution-vacancies/jest.config.js",
+        "jestConfig": "libs/clients/icelandic-government-institution-vacancies/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10021/FJS-Protected/getOpenAPI?serviceCode=recruitment-v1 > src/clientConfig.yaml",
@@ -33,7 +34,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/icelandic-government-institution-vacancies/gen/fetch -i libs/clients/icelandic-government-institution-vacancies/src/clientConfig.yaml"
       }

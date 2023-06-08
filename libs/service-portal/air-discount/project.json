@@ -1,12 +1,13 @@
 {
-  "root": "libs/service-portal/air-discount",
+  "name": "service-portal-air-discount",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/air-discount/src",
   "projectType": "library",
   "generators": {},
   "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -15,15 +16,15 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/service-portal/air-discount"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/air-discount"],
       "options": {
-        "jestConfig": "libs/service-portal/air-discount/jest.config.js",
+        "jestConfig": "libs/service-portal/air-discount/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/air-discount/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
       }

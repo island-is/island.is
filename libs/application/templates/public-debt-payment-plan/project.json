@@ -1,10 +1,11 @@
 {
-  "root": "libs/application/templates/public-debt-payment-plan",
+  "name": "application-templates-public-debt-payment-plan",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/public-debt-payment-plan/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/public-debt-payment-plan/**/*.{ts,tsx,js,jsx}"
@@ -12,17 +13,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/application/templates/public-debt-payment-plan"
+        "{workspaceRoot}/coverage/libs/application/templates/public-debt-payment-plan"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/public-debt-payment-plan/jest.config.js",
+        "jestConfig": "libs/application/templates/public-debt-payment-plan/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/public-debt-payment-plan/src/**/*.{js,ts,tsx}'"
       }

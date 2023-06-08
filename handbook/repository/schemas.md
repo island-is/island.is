@@ -65,12 +65,7 @@ First, we need to create an `openApi.ts` file to define the document builder. Ad
 ```typescript
 import { DocumentBuilder } from '@nestjs/swagger'
 
-export const openApi = new DocumentBuilder()
-  .setTitle('title')
-  .setDescription('description')
-  .setVersion('version')
-  .addTag('application')
-  .build()
+export const openApi = new DocumentBuilder().setTitle('title').setDescription('description').setVersion('version').addTag('application').build()
 ```
 
 Next, we need to create an `buildOpenApi.ts` that will consume the previous file and generate the `openapi.yaml` file.
@@ -92,7 +87,7 @@ Finally, we add the script into the `project.json` for the project.
 
 ```json
 "schemas/build-openapi": {
-  "executor": "@nrwl/workspace:run-commands",
+  "executor": "@nx/workspace:run-commands",
   "options": {
     "outputPath": "PATH/openapi.yaml",
     "command": "yarn ts-node -P PATH/tsconfig.app.json PATH/buildOpenApi.ts"
@@ -133,7 +128,7 @@ Add the following script to the project's `project.json`.
 
 ```json
 "schemas/openapi-generator": {
-  "executor": "@nrwl/workspace:run-commands",
+  "executor": "@nx/workspace:run-commands",
   "options": {
     "outputPath": "PATH/gen/fetch",
     "command": "yarn openapi-generator -o PATH/gen/fetch -i PATH/openapi.yaml"
@@ -151,7 +146,7 @@ starting running the server:
 
 ```json
 "schemas/build-graphql-schema": {
-  "executor": "@nrwl/workspace:run-commands",
+  "executor": "@nx/workspace:run-commands",
   "options": {
     "command": "yarn ts-node -P PATH/tsconfig.json PATH_TO_ROOT_MODULE"
   }
@@ -182,7 +177,7 @@ Finally, you need to add it inside your `project.json`
 
 ```json
 "schemas/codegen": {
-  "executor": "@nrwl/workspace:run-commands",
+  "executor": "@nx/workspace:run-commands",
   "options": {
     "command": "graphql-codegen --config PATH/codegen.yml"
   }

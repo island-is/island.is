@@ -1,22 +1,23 @@
 {
-  "root": "libs/nova-sms",
+  "name": "nova-sms",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nova-sms/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/nova-sms/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/nova-sms/jest.config.js",
+        "jestConfig": "libs/nova-sms/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/nova-sms"]
+      "outputs": ["{workspaceRoot}/coverage/libs/nova-sms"]
     }
   },
   "tags": ["lib:nest", "scope:nest"]

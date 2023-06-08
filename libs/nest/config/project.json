@@ -1,19 +1,20 @@
 {
-  "root": "libs/nest/config",
+  "name": "nest-config",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/config/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/nest/config/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/config"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/config"],
       "options": {
-        "jestConfig": "libs/nest/config/jest.config.js",
+        "jestConfig": "libs/nest/config/jest.config.ts",
         "passWithNoTests": true
       }
     }

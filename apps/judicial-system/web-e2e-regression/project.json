@@ -1,10 +1,11 @@
 {
-  "root": "apps/judicial-system/web-e2e-regression",
+  "name": "judicial-system-web-e2e-regression",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/web-e2e-regression/src",
   "projectType": "application",
   "targets": {
     "e2e": {
-      "executor": "@nrwl/cypress:cypress",
+      "executor": "@nx/cypress:cypress",
       "options": {
         "cypressConfig": "apps/judicial-system/web-e2e-regression/cypress.config.ts",
         "tsConfig": "apps/judicial-system/web-e2e-regression/tsconfig.e2e.json",
@@ -18,7 +19,7 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/judicial-system/web-e2e-regression/**/*.{ts,tsx,js,jsx}"

@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/templates/general-petition",
+  "name": "application-templates-general-petition",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/general-petition/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/general-petition/**/*.{ts,tsx,js,jsx}"
@@ -13,21 +14,23 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/general-petition/jest.config.js",
+        "jestConfig": "libs/application/templates/general-petition/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/templates/general-petition"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/general-petition"
+      ]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/general-petition/src/lib/messages.ts'"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run application-system-api:dev-services",
@@ -42,7 +45,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
@@ -55,13 +58,13 @@
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/application/templates/general-petition/codegen.yml"
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
@@ -71,7 +74,7 @@
       }
     },
     "schemas/openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       }

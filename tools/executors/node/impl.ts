@@ -1,5 +1,5 @@
 // UPGRADE WARNING:
-// - Expects compatibility between @nrwl/node:webpack and @anatine/esbuildnx:build
+// - Expects compatibility between @nx/node:webpack and @anatine/esbuildnx:build
 // - Special logic around externalDependencies and option handling.
 // - Modifying workspace object and running executor recursively.
 
@@ -37,7 +37,7 @@ export default async function* buildExecutor(
   if (!options.watch) {
     targets[target].executor = '@anatine/esbuildnx:build'
   } else {
-    targets[target].executor = '@nrwl/node:webpack'
+    targets[target].executor = '@nx/node:webpack'
 
     // WARNING -- this is a doozy:
     // webpack5 + es modules + typescript metadata reflection + circular dependencies + barrel files = JS errors

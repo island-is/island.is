@@ -1,6 +1,6 @@
 {
   "title": "Custom Node Application Build Target",
-  "description": "Wraps @nrwl/node:webpack locally and @anatine/esbuildnx:build for production builds.",
+  "description": "Wraps @nx/node:webpack locally and @anatine/esbuildnx:build for production builds.",
   "cli": "nx",
   "type": "object",
   "properties": {

@@ -1,21 +1,22 @@
 {
-  "root": "libs/judicial-system/types",
+  "name": "judicial-system-types",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/judicial-system/types/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/judicial-system/types/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/judicial-system/types/jest.config.js",
+        "jestConfig": "libs/judicial-system/types/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/judicial-system/types"]
+      "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/types"]
     }
   },
   "tags": ["scope:judicial-system", "lib:judicial-system"]

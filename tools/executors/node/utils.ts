@@ -3,7 +3,7 @@ import { dirname, join, relative } from 'path'
 import { writeJsonFile } from '@nrwl/devkit'
 
 /**
- * This "hacky" code is copied and tweaked from @nrwl/workspace.
+ * This "hacky" code is copied and tweaked from @nx/workspace.
  * It allows us to override the tsconfig for webpack to have `"module": "commonjs",`.
  */
 export function createTmpTsConfig(

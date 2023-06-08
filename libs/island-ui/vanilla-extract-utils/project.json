@@ -1,10 +1,11 @@
 {
-  "root": "libs/island-ui/vanilla-extract-utils",
+  "name": "island-ui-vanilla-extract-utils",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/island-ui/vanilla-extract-utils/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/island-ui/vanilla-extract-utils/**/*.{ts,tsx,js,jsx}"
@@ -12,10 +13,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/island-ui/vanilla-extract-utils"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/island-ui/vanilla-extract-utils"
+      ],
       "options": {
-        "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.js",
+        "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,19 +1,20 @@
 {
-  "root": "libs/shared/problem",
+  "name": "shared-problem",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/problem/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/shared/problem/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/problem"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/problem"],
       "options": {
-        "jestConfig": "libs/shared/problem/jest.config.js",
+        "jestConfig": "libs/shared/problem/jest.config.ts",
         "passWithNoTests": true
       }
     }

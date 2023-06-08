@@ -1,19 +1,20 @@
 {
-  "root": "libs/react/feature-flags",
+  "name": "react-feature-flags",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/react/feature-flags/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/react/feature-flags/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/react/feature-flags"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/react/feature-flags"],
       "options": {
-        "jestConfig": "libs/react/feature-flags/jest.config.js",
+        "jestConfig": "libs/react/feature-flags/jest.config.ts",
         "passWithNoTests": true
       }
     }

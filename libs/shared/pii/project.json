@@ -1,19 +1,20 @@
 {
-  "root": "libs/shared/pii",
+  "name": "shared-pii",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/pii/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/shared/pii/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/pii"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/pii"],
       "options": {
-        "jestConfig": "libs/shared/pii/jest.config.js",
+        "jestConfig": "libs/shared/pii/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,19 +1,20 @@
 {
-  "root": "libs/api/domains/identity",
+  "name": "api-domains-identity",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/identity/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api/domains/identity/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/identity"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/identity"],
       "options": {
-        "jestConfig": "libs/api/domains/identity/jest.config.js",
+        "jestConfig": "libs/api/domains/identity/jest.config.ts",
         "passWithNoTests": true
       }
     }

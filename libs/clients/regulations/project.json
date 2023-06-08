@@ -1,22 +1,23 @@
 {
-  "root": "libs/clients/regulations",
+  "name": "clients-regulations",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/regulations/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/regulations/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/clients/regulations/jest.config.js",
+        "jestConfig": "libs/clients/regulations/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/clients/regulations"]
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/regulations"]
     }
   },
   "tags": ["lib:client", "scope:client"]

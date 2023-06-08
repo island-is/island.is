@@ -1,11 +1,12 @@
 {
-  "root": "libs/service-portal/constants",
+  "name": "service-portal-constants",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/constants/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/service-portal/constants/**/*.{ts,tsx,js,jsx}"
@@ -13,12 +14,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/constants/jest.config.js",
+        "jestConfig": "libs/service-portal/constants/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/service-portal/constants"]
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/constants"]
     }
   },
   "tags": ["lib:portals-mypages", "scope:portals-mypages"]

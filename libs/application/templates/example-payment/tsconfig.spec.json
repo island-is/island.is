@@ -15,6 +15,7 @@
     "**/*.spec.jsx",
     "**/*.test.jsx",
     "**/*.d.ts",
-    "src/lib/examplePaymentTemplate.ts"
+    "src/lib/examplePaymentTemplate.ts",
+    "jest.config.ts"
   ]
 }

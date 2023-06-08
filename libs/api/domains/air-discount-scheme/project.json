@@ -1,10 +1,11 @@
 {
-  "root": "libs/api/domains/air-discount-scheme",
+  "name": "api-domains-air-discount-scheme",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/air-discount-scheme/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/api/domains/air-discount-scheme/**/*.{ts,tsx,js,jsx}"
@@ -12,15 +13,17 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/air-discount-scheme"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/air-discount-scheme"
+      ],
       "options": {
-        "jestConfig": "libs/api/domains/air-discount-scheme/jest.config.js",
+        "jestConfig": "libs/api/domains/air-discount-scheme/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run clients-air-discount-scheme:schemas/build-openapi $NX_OPTIONS",
@@ -32,7 +35,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn start api",

@@ -1,7 +1,7 @@
 // UPGRADE WARNING
-// Copied from @nrwl/jest/plugins/resolver.js v11.4.0
+// Copied from @nx/jest/plugins/resolver.js v11.4.0
 // Removed .css extension override to support vanilla-extract.
-// May need an update whenever @nrwl/jest changes.
+// May need an update whenever @nx/jest changes.
 
 const path_1 = require('path')
 const fs = require('fs')

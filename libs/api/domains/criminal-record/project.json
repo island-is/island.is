@@ -1,10 +1,11 @@
 {
-  "root": "libs/api/domains/criminal-record",
+  "name": "api-domains-criminal-record",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/criminal-record/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/api/domains/criminal-record/**/*.{ts,tsx,js,jsx}"
@@ -12,10 +13,10 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/criminal-record"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/criminal-record"],
       "options": {
-        "jestConfig": "libs/api/domains/criminal-record/jest.config.js",
+        "jestConfig": "libs/api/domains/criminal-record/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -4,9 +4,9 @@ We use a custom NextJS server to standardise logging, tracing and metrics in pro
 
 ## How it works
 
-In development, we use `@nrwl/node:execute` to build and run a project-specific `server.ts` module. This file imports shared code that configures our environments, and starts an express server. It then configures NextJS as an express middleware that builds and serves pages directly from the source folder.
+In development, we use `@nx/node:execute` to build and run a project-specific `server.ts` module. This file imports shared code that configures our environments, and starts an express server. It then configures NextJS as an express middleware that builds and serves pages directly from the source folder.
 
-In production, we run two build commands targeting the same `dist` folder: A NextJS build (using `@nrwl/next:build`) and a `server.ts` build (using `@nrwl/node:build`). When we run the compiled `server.ts` module, it runs the same code, but this time using the compiled NextJS app.
+In production, we run two build commands targeting the same `dist` folder: A NextJS build (using `@nx/next:build`) and a `server.ts` build (using `@nx/node:build`). When we run the compiled `server.ts` module, it runs the same code, but this time using the compiled NextJS app.
 
 {% hint style="warning" %}
 This logic depends on `process.env.NODE_ENV === 'production'`. When it is true, `server.ts` loads a production nextjs build in `cwd`. When it is false, `server.ts` runs NextJS in development mode, and tries to serve pages from the source directory.
@@ -31,7 +31,7 @@ bootstrap({
 
 ```json
 "build": {
-  "executor": "@nrwl/workspace:run-commands",
+  "executor": "@nx/workspace:run-commands",
   "options": {
     "outputPath": "dist/apps/{{pathToAppDir}}",
     "commands": [
@@ -41,7 +41,7 @@ bootstrap({
   }
 },
 "build-next": {
-  "executor": "@nrwl/next:build",
+  "executor": "@nx/next:build",
   "options": {
     "root": "apps/{{pathToAppDir}}",
     "outputPath": "dist/apps/{{pathToAppDir}}"
@@ -58,7 +58,7 @@ bootstrap({
   }
 },
 "build-server": {
-  "executor": "@nrwl/node:build",
+  "executor": "@nx/node:build",
   "options": {
     "outputPath": "dist/apps/{{pathToAppDir}}",
     "main": "apps/{{pathToAppDir}}/server.ts",
@@ -74,7 +74,7 @@ bootstrap({
   }
 },
 "serve": {
-  "executor": "@nrwl/node:execute",
+  "executor": "@nx/node:execute",
   "options": {
     "buildTarget": "{{projectName}}:build-server"
   }
@@ -85,7 +85,7 @@ bootstrap({
 
 ```json
 "e2e": {
-  "executor": "@nrwl/cypress:cypress",
+  "executor": "@nx/cypress:cypress",
   "options": {
     "cypressConfig": "apps/{{pathToAppDir}}-e2e/cypress.config.ts",
     "tsConfig": "apps/{{pathToAppDir}}-e2e/tsconfig.e2e.json",

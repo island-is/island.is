@@ -1,19 +1,20 @@
 {
-  "root": "libs/nest/dataloader",
+  "name": "nest-dataloader",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/dataloader/src",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/nest/dataloader/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/dataloader"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/dataloader"],
       "options": {
-        "jestConfig": "libs/nest/dataloader/jest.config.js",
+        "jestConfig": "libs/nest/dataloader/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -1,22 +1,23 @@
 {
-  "root": "libs/api-catalogue/types",
+  "name": "api-catalogue-types",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api-catalogue/types/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api-catalogue/types/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api-catalogue/types/jest.config.js",
+        "jestConfig": "libs/api-catalogue/types/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api-catalogue/types"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api-catalogue/types"]
     }
   },
   "tags": ["scope:js", "lib:js"]
