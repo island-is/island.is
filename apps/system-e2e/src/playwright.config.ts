@@ -1,4 +1,4 @@
-import type { PlaywrightTestConfig } from '@playwright/test'
+import type { PlaywrightTestConfig, ReporterDescription } from '@playwright/test'
 import './addons'
 import { urls } from './support/urls'
 
@@ -33,18 +33,19 @@ const config: PlaywrightTestConfig = {
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['dot'],
-    // ['line'],
-    process.env.CI ?
+    ...(process.env.CI ?
       [
-        'playwright-tesults-reporter',
-        {
-          'tesults-target': process.env.TESULTS_TOKEN,
-          'tesults-build-name': process.env.COMMIT_INFO,
-          'tesults-build-result': 'pass',
-          'tesults-build-reason': 'Always succeed 💯',
-          'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
-        },
-      ] : ['null'],
+        ['line'],
+        [
+          'playwright-tesults-reporter',
+          {
+            'tesults-target': process.env.TESULTS_TOKEN,
+            'tesults-build-name': process.env.COMMIT_INFO,
+            'tesults-build-result': 'pass',
+            'tesults-build-reason': 'Always succeed 💯',
+            'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
+          },
+        ]] : [['null']]) as ReporterDescription[],
     ['html', { open: 'never' }]
   ],
 
