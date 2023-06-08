@@ -1,13 +1,7 @@
-import { useEffect, useState } from 'react'
-import { useClient } from '../screens/Client/ClientContext'
+import { useEnvironment } from '../context/EnvironmentContext'
 
-export const useMultiEnvSupport = () => {
-  const { client } = useClient()
-  const [shouldSupportMultiEnv, setShouldSupportMultiEnv] = useState(true)
+export const useMultiEnvSupport = (shouldSupportMultiEnvOverride = true) => {
+  const { availableEnvironments } = useEnvironment()
 
-  useEffect(() => {
-    setShouldSupportMultiEnv(client?.availableEnvironments?.length > 1)
-  }, [client])
-
-  return { shouldSupportMultiEnv }
+  return shouldSupportMultiEnvOverride && availableEnvironments?.length > 1
 }

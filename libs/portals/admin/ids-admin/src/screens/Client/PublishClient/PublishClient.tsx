@@ -31,13 +31,6 @@ export default function PublishClient() {
       toast.error(formatMessage(m.errorPublishingEnvironment))
   }, [actionData?.globalError, isSubmitting, isLoading])
 
-  useEffect(() => {
-    if (actionData?.data) {
-      toast.success(formatMessage(m.successfullySaved))
-      cancel()
-    }
-  }, [actionData])
-
   const cancel = () => {
     navigate(
       replaceParams({

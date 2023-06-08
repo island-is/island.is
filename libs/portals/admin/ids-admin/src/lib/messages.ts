@@ -726,6 +726,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:content',
     defaultMessage: 'Content',
   },
+  accessControl: {
+    id: 'ap.ids-admin:access-control',
+    defaultMessage: 'Access control',
+  },
   icelandic: {
     id: 'ap.ids-admin:icelandic',
     defaultMessage: 'Icelandic',
@@ -785,5 +789,9 @@ export const m = defineMessages({
     id: 'ap.ids-admin:grant-to-personal-representatives-description',
     defaultMessage:
       'Should personal representatives automatically get this scope for their clients',
+  },
+  clientIdAlreadyExists: {
+    id: 'ap.ids-admin:client-id-already-exists',
+    defaultMessage: 'Client ID already exists',
   },
 })
