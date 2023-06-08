@@ -89,7 +89,6 @@ export function getAvailableMonths(application: Application, selectedYear: strin
   else if (endDate.getFullYear().toString() === selectedYear){
     months = months.slice(0, endDate.getMonth() + 1)
   }
-  console.log('months---------', months)
 
   return months.map(month => {
     switch(month){
