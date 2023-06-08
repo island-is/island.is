@@ -6,7 +6,16 @@ import {
   ForbiddenException,
 } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import {
+  CaseFile,
+  CaseFileCategory,
+  User,
+  UserRole,
+  completedCaseStates,
+  indictmentCases,
+  investigationCases,
+  restrictionCases,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
 
@@ -25,6 +34,39 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
+    }
+    const caseFile: CaseFile = request.caseFile
+
+    if (!caseFile) {
+      throw new InternalServerErrorException('Missing case file')
+    }
+
+    if (
+      user.role === UserRole.DEFENDER &&
+      completedCaseStates.includes(theCase.state) &&
+      caseFile.category
+    ) {
+      if (
+        [...restrictionCases, ...investigationCases].includes(theCase.type) &&
+        [
+          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
+          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.APPEAL_RULING,
+        ].includes(caseFile.category)
+      ) {
+        return true
+      }
+
+      if (
+        indictmentCases.includes(theCase.type) &&
+        caseFile.category === CaseFileCategory.RULING
+      ) {
+        return true
+      }
     }
 
     throw new ForbiddenException(`Forbidden for ${user.role}`)
