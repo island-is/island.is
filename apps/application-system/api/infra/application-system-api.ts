@@ -21,14 +21,8 @@ import {
   Passports,
   EHIC,
 } from '../../../../infra/src/dsl/xroad'
-import {
-  ref,
-  service,
-  ServiceBuilder,
-  json,
-} from '../../../../infra/src/dsl/dsl'
+import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import { PostgresInfo } from '../../../../infra/src/dsl/types/input-types'
-import { RedisInfo } from '../../../../infra/src/dsl/types/input-types'
 
 const postgresInfo: PostgresInfo = {
   passwordSecret: '/k8s/application-system/api/DB_PASSWORD',
@@ -209,6 +203,9 @@ export const serviceSetup = (services: {
       ),
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
+      ),
+      APPLICATION_SYSTEM_FORM_BASE: ref(
+        (h) => `http://${h.svc(services.servicesApplicationSystemForm)}`,
       ),
       NO_UPDATE_NOTIFIER: 'true',
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {

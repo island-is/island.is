@@ -499,6 +499,7 @@ application-system-api:
   enabled: true
   env:
     APPLICATION_ATTACHMENT_BUCKET: 'island-is-prod-storage-application-system'
+    APPLICATION_SYSTEM_FORM_BASE: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
     CLIENT_LOCATION_ORIGIN: 'https://island.is/umsoknir'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
