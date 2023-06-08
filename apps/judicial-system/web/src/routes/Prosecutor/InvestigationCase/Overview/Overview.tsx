@@ -48,7 +48,6 @@ import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
-import { CopyLinkForDefenderButton } from '../../components'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -339,20 +338,6 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
-          {workingCase.defenderNationalId && (
-            <Box marginTop={3}>
-              <CopyLinkForDefenderButton
-                caseId={workingCase.id}
-                type={workingCase.type}
-                disabled={
-                  workingCase.state !== CaseState.RECEIVED ||
-                  !workingCase.courtDate
-                }
-              >
-                {formatMessage(m.sections.copyLinkForDefenderButton)}
-              </CopyLinkForDefenderButton>
-            </Box>
-          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
