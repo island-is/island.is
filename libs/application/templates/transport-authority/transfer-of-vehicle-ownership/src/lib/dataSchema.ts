@@ -89,9 +89,10 @@ export const TransferOfVehicleOwnershipSchema = z.object({
   vehicle: z.object({
     plate: z.string().min(1),
     type: z.string().min(1),
-    salePrice: z.string().optional(),
+    salePrice: z.string().optional().refine((p) => p === undefined || p === '' || parseInt(p?.split(' ')[0]) >= 0),
     date: z.string().min(1),
-  }),
+  })
+,
   seller: UserInformationSchema,
   sellerCoOwner: z.array(UserInformationSchema),
   buyer: UserInformationSchema,
