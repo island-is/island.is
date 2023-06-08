@@ -13,12 +13,15 @@ import { core, tables } from '@island.is/judicial-system-web/messages'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 
+import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
 import TagAppealState from '@island.is/judicial-system-web/src/components/TagAppealState/TagAppealState'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import DefendantInfo from '@island.is/judicial-system-web/src/components/Table/DefendantInfo/DefendantInfo'
 import CourtCaseNumber from '@island.is/judicial-system-web/src/components/Table/CourtCaseNumber/CourtCaseNumber'
-import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './DefenderCasesTable.css'
 import useSortCases from './useSortCases'
@@ -45,8 +48,8 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
-      ? router.push(`${constants.DEFENDER_INDICTMENT_ROUTE}/${id}`)
-      : router.push(`${constants.DEFENDER_ROUTE}/${id}`)
+      ? router.push(`${DEFENDER_INDICTMENT_ROUTE}/${id}`)
+      : router.push(`${DEFENDER_ROUTE}/${id}`)
   }
 
   return (
