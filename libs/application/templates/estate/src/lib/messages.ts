@@ -561,13 +561,12 @@ export const m = defineMessages({
   // Attachments
   attachmentsTitle: {
     id: 'es.application:attachmentsTitle',
-    defaultMessage: 'Viðhengi',
+    defaultMessage: 'Skjöl með umsókn',
     description: '',
   },
   attachmentsDescription: {
-    id: 'es.application:attachmentsDescription',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sollicitudin velit eu gravida ullamcorper.',
+    id: 'es.application:attachmentsDescription#markdown',
+    defaultMessage: 'Með umsókn skulu fylgja eftirfarandi skjöl:',
     description: '',
   },
   attachmentsButton: {
@@ -578,11 +577,6 @@ export const m = defineMessages({
   uploadHeader: {
     id: 'es.application:uploadHeader',
     defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
-    description: '',
-  },
-  uploadDescription: {
-    id: 'es.application:uploadDescription',
-    defaultMessage: 'Lorem ipsum lorem lorem ipsum',
     description: '',
   },
 
