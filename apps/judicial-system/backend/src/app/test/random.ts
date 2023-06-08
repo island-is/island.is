@@ -3,7 +3,7 @@ export const randomDate = () => {
   const latest = new Date(2999, 11, 31)
   return new Date(
     earliest.getTime() +
-      Math.random() * (latest.getTime() - earliest.getTime()),
+    Math.random() * (latest.getTime() - earliest.getTime()),
   )
 }
 
