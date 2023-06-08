@@ -36,9 +36,10 @@ import { User } from '../user'
 import { CaseExistsGuard } from './guards/caseExists.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
-import { CaseScheduledGuard } from './guards/caseScheduled.guard'
+import { LimitedAccessCaseReceivedGuard } from './guards/limitedAccessCaseReceived.guard'
 import { CaseDefenderGuard } from './guards/caseDefender.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
+import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
 import { CurrentCase } from './guards/case.decorator'
 import { UpdateCaseDto } from './dto/updateCase.dto'
@@ -67,7 +68,7 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    CaseScheduledGuard,
+    LimitedAccessCaseReceivedGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
@@ -177,7 +178,8 @@ export class LimitedAccessCaseController {
     RolesGuard,
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
-    CaseScheduledGuard,
+    LimitedAccessCaseReceivedGuard,
+    RequestSharedWithDefenderGuard,
     CaseDefenderGuard,
   )
   @RolesRules(defenderRule)
