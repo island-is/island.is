@@ -300,6 +300,7 @@ export const CaseOverview: React.FC = () => {
           )}
 
           <AppealCaseFilesOverview />
+
           {(workingCase.sendRequestToDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>

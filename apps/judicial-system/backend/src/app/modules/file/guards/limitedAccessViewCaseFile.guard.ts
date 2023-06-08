@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common'
 
 import {
-  CaseFile,
   CaseFileCategory,
   User,
   UserRole,
@@ -18,6 +17,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
+import { CaseFile } from '../models/file.model'
 
 @Injectable()
 export class LimitedAccessViewCaseFileGuard implements CanActivate {
@@ -63,7 +63,15 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
 
       if (
         indictmentCases.includes(theCase.type) &&
-        caseFile.category === CaseFileCategory.RULING
+        [
+          CaseFileCategory.COURT_RECORD,
+          CaseFileCategory.RULING,
+          CaseFileCategory.COVER_LETTER,
+          CaseFileCategory.INDICTMENT,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+          CaseFileCategory.CASE_FILE,
+        ].includes(caseFile.category)
       ) {
         return true
       }
