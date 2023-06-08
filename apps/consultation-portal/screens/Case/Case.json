@@ -22,6 +22,11 @@
     "description": "Allir geta sent inn umsögn og verið áskrifendur að málum í Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent eftirtöldum:",
     "noList": "Enginn listi skráður."
   },
+  "relatedCases": {
+    "title": "Tenging við önnur mál",
+    "description": "Mál sem eru tengd þessu máli, t.d. mál hefur verið í gáttinni á fyrra stigi eða málin eru skyld.",
+    "noList": "Engin tenging við önnur mál"
+  },
   "coordinator": {
     "title": "Umsjónaraðili",
     "noCoordinator": "Engin skráður umsjónaraðili."
@@ -62,7 +67,7 @@
       "button": "Skrá mig inn"
     },
     "setEmailCardSkeleton": {
-      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta til að hægt sé að skrá áskrift á það.",
+      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta.",
       "input": {
         "label": "Netfang",
         "placeholder": "nonni@island.is"
@@ -75,23 +80,15 @@
     },
     "subbedCardSkeleton": {
       "initial": {
-        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að breyta tegund áskriftar eða fjarlægja áskrift.",
-        "buttonChange": "Breyta áskrift",
+        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að fjarlægja áskrift.",
         "buttonRemove": "Fjarlægja áskrift"
-      },
-      "clickedChange": {
-        "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
-        "button": "Staðfesta breytingu"
       }
     },
     "notSubbedCardSkeleton": {
-      "text": "Veldu hvernig tilkynningar þú vilt af þessu máli.",
+      "text": "Tilkyningar um breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna verða sendar á skráð netfang.",
       "button": "Skrá í áskrift"
     },
     "buttonLabel": "Skrá áskrift"
-  },
-  "caseEmailActionBox": {
-    "buttonLabel": "Breyta áskrift"
   },
   "adviceList": {
     "buttonShow": "Sjá allar umsagnir",
@@ -144,7 +141,8 @@
       "heading": "Senda umsögn",
       "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
       "ctaLabel": "Skrá mig inn"
-    }
+    },
+    "privateLabel": "Viltu að þessi umsögn verði falin almenningi?"
   },
   "agencyText": {
     "textBefore": "Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð þaðan,",
@@ -171,5 +169,15 @@
       "text": "Umsagnarfrestur er liðinn.",
       "textCont": "Niðurstöður hafa verið birtar og samráði lokið."
     }
+  },
+  "adviceCard": {
+    "privateContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína.",
+    "hiddenContent": "Umsögn barst en birtist ekki í gáttinni samkvæmt ákvörðun umsjónaraðila samráðsmáls. Upplýsingalög gilda, sjá nánar í",
+    "hiddenContentLink": "um samráðsgáttina",
+    "hiddenContentHref": "/um"
+  },
+  "caseDocuments": {
+    "linkTitle": "Hlekkur",
+    "documentTitle": "Skjal"
   }
 }

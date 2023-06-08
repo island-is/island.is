@@ -32,6 +32,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
+  errors,
   icOverview as m,
   requestCourtDate,
   titles,
@@ -47,7 +48,6 @@ import { Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
-import { CopyLinkForDefenderButton } from '../../components'
 
 export const Overview: React.FC = () => {
   const router = useRouter()
@@ -59,8 +59,10 @@ export const Overview: React.FC = () => {
   } = useContext(FormContext)
   const {
     transitionCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
+    sendNotificationError,
     updateCase,
   } = useCase()
   const { formatMessage } = useIntl()
@@ -336,26 +338,13 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
-          {workingCase.defenderNationalId && (
-            <Box marginTop={3}>
-              <CopyLinkForDefenderButton
-                caseId={workingCase.id}
-                type={workingCase.type}
-                disabled={
-                  workingCase.state !== CaseState.RECEIVED ||
-                  !workingCase.courtDate
-                }
-              >
-                {formatMessage(m.sections.copyLinkForDefenderButton)}
-              </CopyLinkForDefenderButton>
-            </Box>
-          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INVESTIGATION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -364,7 +353,7 @@ export const Overview: React.FC = () => {
           }
           nextIsLoading={
             workingCase.state !== CaseState.RECEIVED &&
-            (isLoadingWorkingCase || isSendingNotification)
+            (isTransitioningCase || isSendingNotification)
           }
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
@@ -381,7 +370,7 @@ export const Overview: React.FC = () => {
             workingCase={workingCase}
             isLoading={isSendingNotification}
             onClose={() => setModal('noModal')}
-            onContinue={(explaination) => handleNextButtonClick(explaination)}
+            onContinue={(explanation) => handleNextButtonClick(explanation)}
           />
         )}
       </AnimatePresence>
@@ -394,6 +383,11 @@ export const Overview: React.FC = () => {
             onSecondaryButtonClick={() => {
               router.push(constants.CASES_ROUTE)
             }}
+            errorMessage={
+              sendNotificationError
+                ? formatMessage(errors.sendNotification)
+                : undefined
+            }
             secondaryButtonText={formatMessage(core.closeModal)}
           />
         )}

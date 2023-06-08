@@ -48,7 +48,6 @@ import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
-import { CopyLinkForDefenderButton } from '../../components'
 
 export const Overview: React.FC = () => {
   const [modal, setModal] = useState<
@@ -65,6 +64,7 @@ export const Overview: React.FC = () => {
   const router = useRouter()
   const {
     transitionCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,
@@ -380,26 +380,13 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
-          {workingCase.defenderNationalId && (
-            <Box marginTop={3}>
-              <CopyLinkForDefenderButton
-                caseId={workingCase.id}
-                type={workingCase.type}
-                disabled={
-                  workingCase.state !== CaseState.RECEIVED ||
-                  !workingCase.courtDate
-                }
-              >
-                {formatMessage(m.sections.copyLinkForDefenderButton)}
-              </CopyLinkForDefenderButton>
-            </Box>
-          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -407,7 +394,8 @@ export const Overview: React.FC = () => {
               : 'Endursenda kröfu á héraðsdóm'
           }
           nextIsLoading={
-            workingCase.state !== CaseState.RECEIVED && isSendingNotification
+            workingCase.state !== CaseState.RECEIVED &&
+            (isTransitioningCase || isSendingNotification)
           }
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
@@ -424,7 +412,7 @@ export const Overview: React.FC = () => {
             workingCase={workingCase}
             isLoading={isSendingNotification}
             onClose={() => setModal('noModal')}
-            onContinue={(explaination) => handleNextButtonClick(explaination)}
+            onContinue={(explanation) => handleNextButtonClick(explanation)}
           />
         )}
       </AnimatePresence>

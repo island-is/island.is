@@ -15,7 +15,6 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
-  isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
@@ -26,7 +25,7 @@ import {
 } from '@island.is/judicial-system/message'
 
 import { nowFactory, uuidFactory } from '../../factories'
-import { Defendant } from '../defendant'
+import { Defendant, DefendantService } from '../defendant'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { CaseFile } from '../file'
@@ -45,6 +44,7 @@ export const attributes: (keyof Case)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
+  'sendRequestToDefender',
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
@@ -168,6 +168,7 @@ export const order: OrderItem[] = [
 export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
+    private readonly defendantService: DefendantService,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -266,55 +267,62 @@ export class LimitedAccessCaseService {
     return updatedCase
   }
 
-  findDefenderNationalId(theCase: Case, nationalId: string): User {
-    let defender:
-      | {
-          nationalId: string
-          name?: string
-          phoneNumber?: string
-          email?: string
-        }
-      | undefined
-
-    if (isIndictmentCase(theCase.type)) {
-      const defendant = theCase.defendants?.find(
-        (defendant) => defendant.defenderNationalId === nationalId,
-      )
-
-      if (defendant) {
-        defender = {
-          nationalId: defendant.defenderNationalId as string,
-          name: defendant.defenderName,
-          phoneNumber: defendant.defenderPhoneNumber,
-          email: defendant.defenderEmail,
-        }
-      }
-    } else if (theCase.defenderNationalId === nationalId) {
-      defender = {
-        nationalId: theCase.defenderNationalId,
-        name: theCase.defenderName,
-        phoneNumber: theCase.defenderPhoneNumber,
-        email: theCase.defenderEmail,
-      }
-    }
-
-    if (!defender) {
-      throw new NotFoundException('Defender not found')
-    }
-
+  private constructDefender(
+    nationalId: string,
+    name?: string,
+    mobileNumber?: string,
+    email?: string,
+  ): User {
     const now = nowFactory()
 
     return {
       id: uuidFactory(),
       created: now,
       modified: now,
-      nationalId: defender.nationalId,
-      name: defender.name ?? '',
+      nationalId,
+      name: name ?? '',
       title: 'verjandi',
-      mobileNumber: defender.phoneNumber ?? '',
-      email: defender.email ?? '',
+      mobileNumber: mobileNumber ?? '',
+      email: email ?? '',
       role: UserRole.DEFENDER,
       active: true,
     } as User
+  }
+
+  async findDefenderByNationalId(nationalId: string): Promise<User> {
+    return this.caseModel
+      .findOne({
+        where: {
+          defenderNationalId: nationalId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
+        order: [['created', 'DESC']],
+      })
+      .then((theCase) => {
+        if (theCase) {
+          return this.constructDefender(
+            nationalId,
+            theCase.defenderName,
+            theCase.defenderPhoneNumber,
+            theCase.defenderEmail,
+          )
+        }
+
+        return this.defendantService
+          .findLatestDefendantByDefenderNationalId(nationalId)
+          .then((defendant) => {
+            if (defendant) {
+              return this.constructDefender(
+                nationalId,
+                defendant.defenderName,
+                defendant.defenderPhoneNumber,
+                defendant.defenderEmail,
+              )
+            }
+
+            throw new NotFoundException('Defender not found')
+          })
+      })
   }
 }

@@ -5,6 +5,7 @@ import {
   CombinedLinkActions,
   MultipleEntryReferenceEditor,
 } from '@contentful/field-editor-reference'
+import { DEFAULT_LOCALE } from '../../constants'
 
 const ArticleSubArticlesField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
@@ -41,7 +42,7 @@ const ArticleSubArticlesField = () => {
                 {
                   fields: {
                     parent: {
-                      'is-IS': {
+                      [DEFAULT_LOCALE]: {
                         sys: { id: sdk.entry.getSys().id, linkType: 'Entry' },
                       },
                     },
