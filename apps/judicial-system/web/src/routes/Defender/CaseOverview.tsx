@@ -2,19 +2,13 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseDates,
-  FormContentContainer,
-  FormContext,
-  InfoCard,
-  MarkdownWrapper,
-  PageLayout,
-  RestrictionTags,
-  PageHeader,
-  Modal,
-} from '@island.is/judicial-system-web/src/components'
-import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
-import { core, titles } from '@island.is/judicial-system-web/messages'
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
   CaseDecision,
@@ -25,24 +19,30 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import * as constants from '@island.is/judicial-system/consts'
-import AppealConclusion from '@island.is/judicial-system-web/src/components/Conclusion/AppealConclusion'
-import { AlertBanner } from '@island.is/judicial-system-web/src/components/AlertBanner'
-import useAppealAlertBanner from '@island.is/judicial-system-web/src/utils/hooks/useAppealAlertBanner'
+  CaseDates,
+  FormContentContainer,
+  FormContext,
+  InfoCard,
+  MarkdownWrapper,
+  PageLayout,
+  RestrictionTags,
+  PageHeader,
+  Modal,
+  Conclusion,
+  AppealCaseFilesOverview,
+  CaseResentExplanation,
+  FeatureContext,
+  AppealConclusion,
+  AlertBanner,
+  PdfButton,
+  SignedDocument,
+} from '@island.is/judicial-system-web/src/components'
+import { core, titles } from '@island.is/judicial-system-web/messages'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { defenderCaseOverview as m } from './CaseOverview.strings'
-import Conclusion from '../../components/Conclusion/Conclusion'
-import CaseFilesOverview from '../CourtOfAppeal/components/CaseFilesOverview/CaseFilesOverview'
-import IndictmentCaseFilesList from '../../components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import { strings } from './CaseOverview.strings'
 
 type availableModals =
   | 'NoModal'
@@ -67,17 +67,17 @@ export const CaseOverview: React.FC = () => {
   const titleForCase = (theCase: Case) => {
     if (theCase.state === CaseState.REJECTED) {
       return isInvestigationCase(theCase.type)
-        ? formatMessage(m.investigationCaseRejectedTitle)
-        : formatMessage(m.restrictionCaseRejectedTitle)
+        ? formatMessage(strings.investigationCaseRejectedTitle)
+        : formatMessage(strings.restrictionCaseRejectedTitle)
     }
 
     if (theCase.state === CaseState.DISMISSED) {
-      return formatMessage(m.caseDismissedTitle)
+      return formatMessage(strings.caseDismissedTitle)
     }
 
     if (theCase.state === CaseState.ACCEPTED) {
       if (isInvestigationCase(theCase.type)) {
-        return formatMessage(m.investigationCaseAcceptedTitle)
+        return formatMessage(strings.investigationCaseAcceptedTitle)
       }
 
       const caseType =
@@ -86,25 +86,26 @@ export const CaseOverview: React.FC = () => {
           : theCase.type
 
       if (theCase.isValidToDateInThePast) {
-        return formatMessage(m.restrictionCaseExpiredTitle, { caseType })
+        return formatMessage(strings.restrictionCaseExpiredTitle, { caseType })
       }
 
-      return formatMessage(m.restrictionCaseActiveTitle, {
+      return formatMessage(strings.restrictionCaseActiveTitle, {
         caseType,
       })
     }
 
     return isInvestigationCase(theCase.type)
       ? ''
-      : formatMessage(m.restrictionCaseScheduledTitle, {
+      : formatMessage(strings.restrictionCaseScheduledTitle, {
           caseType: theCase.type,
           isExtended: Boolean(theCase.parentCase),
         })
   }
 
   const shouldDisplayAlertBanner =
-    workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-    workingCase.hasBeenAppealed
+    completedCaseStates.includes(workingCase.state) &&
+    (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+      workingCase.hasBeenAppealed)
 
   return (
     <>
@@ -144,13 +145,13 @@ export const CaseOverview: React.FC = () => {
                 {completedCaseStates.includes(workingCase.state) && (
                   <Box>
                     <Text variant="h5">
-                      {formatMessage(m.rulingDate, {
+                      {formatMessage(strings.rulingDate, {
                         courtEndTime: `${formatDate(
                           workingCase.courtEndTime,
                           'PPP',
                         )} kl. ${formatDate(
                           workingCase.courtEndTime,
-                          TIME_FORMAT,
+                          constants.TIME_FORMAT,
                         )}`,
                       })}
                     </Text>
@@ -174,7 +175,7 @@ export const CaseOverview: React.FC = () => {
               <Box marginBottom={5}>
                 <AlertMessage
                   type="info"
-                  title={formatMessage(m.modifiedDatesHeading, {
+                  title={formatMessage(strings.modifiedDatesHeading, {
                     caseType: workingCase.type,
                   })}
                   message={
@@ -298,23 +299,68 @@ export const CaseOverview: React.FC = () => {
             </Box>
           )}
 
-          {workingCase.appealState ? (
-            <CaseFilesOverview />
-          ) : (
-            <Box component="section" marginBottom={10}>
-              <IndictmentCaseFilesList workingCase={workingCase} />
+          <AppealCaseFilesOverview />
+          {(workingCase.sendRequestToDefender ||
+            completedCaseStates.includes(workingCase.state)) && (
+            <Box marginBottom={10}>
+              <Text as="h3" variant="h3" marginBottom={3}>
+                {formatMessage(strings.documentHeading)}
+              </Text>
+              <Box>
+                {(workingCase.sendRequestToDefender ||
+                  completedCaseStates.includes(workingCase.state)) && (
+                  <PdfButton
+                    renderAs="row"
+                    caseId={workingCase.id}
+                    title={formatMessage(core.pdfButtonRequest)}
+                    pdfType={'limitedAccess/request'}
+                  />
+                )}
+                {completedCaseStates.includes(workingCase.state) && (
+                  <>
+                    <PdfButton
+                      renderAs="row"
+                      caseId={workingCase.id}
+                      title={formatMessage(core.pdfButtonRulingShortVersion)}
+                      pdfType={'limitedAccess/courtRecord'}
+                    >
+                      {workingCase.courtRecordSignatory ? (
+                        <SignedDocument
+                          signatory={workingCase.courtRecordSignatory.name}
+                          signingDate={workingCase.courtRecordSignatureDate}
+                        />
+                      ) : null}
+                    </PdfButton>
+                    <PdfButton
+                      renderAs="row"
+                      caseId={workingCase.id}
+                      title={formatMessage(core.pdfButtonRuling)}
+                      pdfType={'limitedAccess/ruling'}
+                    >
+                      {workingCase.rulingDate ? (
+                        <SignedDocument
+                          signatory={workingCase.judge?.name}
+                          signingDate={workingCase.rulingDate}
+                        />
+                      ) : (
+                        <Text>{formatMessage(strings.unsignedRuling)}</Text>
+                      )}
+                    </PdfButton>
+                  </>
+                )}
+              </Box>
             </Box>
           )}
         </FormContentContainer>
         {modalVisible === 'ConfirmAppealAfterDeadline' && (
           <Modal
-            title={formatMessage(m.confirmAppealAfterDeadlineModalTitle)}
-            text={formatMessage(m.confirmAppealAfterDeadlineModalText)}
+            title={formatMessage(strings.confirmAppealAfterDeadlineModalTitle)}
+            text={formatMessage(strings.confirmAppealAfterDeadlineModalText)}
             primaryButtonText={formatMessage(
-              m.confirmAppealAfterDeadlineModalPrimaryButtonText,
+              strings.confirmAppealAfterDeadlineModalPrimaryButtonText,
             )}
             secondaryButtonText={formatMessage(
-              m.confirmAppealAfterDeadlineModalSecondaryButtonText,
+              strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
@@ -326,13 +372,15 @@ export const CaseOverview: React.FC = () => {
         )}
         {modalVisible === 'ConfirmStatementAfterDeadline' && (
           <Modal
-            title={formatMessage(m.confirmStatementAfterDeadlineModalTitle)}
-            text={formatMessage(m.confirmStatementAfterDeadlineModalText)}
+            title={formatMessage(
+              strings.confirmStatementAfterDeadlineModalTitle,
+            )}
+            text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
             primaryButtonText={formatMessage(
-              m.confirmStatementAfterDeadlineModalPrimaryButtonText,
+              strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
             )}
             secondaryButtonText={formatMessage(
-              m.confirmStatementAfterDeadlineModalSecondaryButtonText,
+              strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
