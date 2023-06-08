@@ -43,7 +43,7 @@ export class LicenseServiceService {
     @Inject(GENERIC_LICENSE_FACTORY)
     private genericLicenseFactory: (
       type: GenericLicenseType,
-      cacheManager: CacheManager,
+      user?: User,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -196,7 +196,7 @@ export class LicenseServiceService {
       if (!onlyList) {
         const licenseService = await this.genericLicenseFactory(
           license.type,
-          this.cacheManager,
+          user,
         )
 
         if (!licenseService) {
@@ -270,10 +270,7 @@ export class LicenseServiceService {
     let licenseUserdata: GenericLicenseUserdataExternal | null = null
 
     const license = AVAILABLE_LICENSES.find((i) => i.type === licenseType)
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService = await this.genericLicenseFactory(licenseType, user)
 
     const licenseLabels = await this.getLicenseLabels(locale)
 
@@ -319,10 +316,7 @@ export class LicenseServiceService {
   ) {
     let pkpassUrl: string | null = null
 
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService = await this.genericLicenseFactory(licenseType, user)
 
     if (licenseService) {
       pkpassUrl = await licenseService.getPkPassUrl(user, licenseType, locale)
@@ -346,10 +340,7 @@ export class LicenseServiceService {
   ) {
     let pkpassQRCode: string | null = null
 
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService = await this.genericLicenseFactory(licenseType, user)
 
     if (licenseService) {
       pkpassQRCode = await licenseService.getPkPassQRCode(
@@ -407,10 +398,7 @@ export class LicenseServiceService {
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
     }
 
-    const licenseService = await this.genericLicenseFactory(
-      licenseType,
-      this.cacheManager,
-    )
+    const licenseService = await this.genericLicenseFactory(licenseType, user)
 
     if (licenseService) {
       verification = await licenseService.verifyPkPass(data, passTemplateId)

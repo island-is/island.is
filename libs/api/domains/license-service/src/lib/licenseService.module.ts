@@ -2,6 +2,7 @@ import { Module, CacheModule } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
+import { Cache as CacheManager } from 'cache-manager'
 import { LicenseServiceService } from './licenseService.service'
 import { MainResolver } from './graphql/main.resolver'
 import {
@@ -40,6 +41,14 @@ import {
   GenericDisabilityLicenseService,
 } from './client/disability-license-client'
 import { GenericDrivingLicenseModule } from './client/driving-license-client/genericDrivingLicense.module'
+import { OldGenericDrivingLicenseModule } from './client/old-driving-license-client/oldGenericDrivingLicense.module'
+import { OldGenericDrivingLicenseApi } from './client/old-driving-license-client'
+import {
+  FeatureFlagModule,
+  FeatureFlagService,
+  Features,
+} from '@island.is/nest/feature-flags'
+import { User } from '@island.is/auth-nest-tools'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -97,10 +106,12 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   imports: [
     CacheModule.register(),
     GenericDrivingLicenseModule,
+    OldGenericDrivingLicenseModule,
     GenericFirearmLicenseModule,
     GenericAdrLicenseModule,
     GenericMachineLicenseModule,
     GenericDisabilityLicenseModule,
+    FeatureFlagModule,
     CmsModule,
   ],
   providers: [
@@ -144,12 +155,22 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         genericMachineService: GenericMachineLicenseService,
         genericDisabilityService: GenericDisabilityLicenseService,
         genericDrivingService: GenericDrivingLicenseService,
+        oldGenericDrivingLicenseApi: OldGenericDrivingLicenseApi,
+        featureFlagService: FeatureFlagService,
       ) => async (
         type: GenericLicenseType,
+        user: User,
       ): Promise<GenericLicenseClient<unknown> | null> => {
+        const isNewDriversLicenseEnabled = await featureFlagService.getValue(
+          Features.licenseServiceDrivingLicenseClient,
+          false,
+          user,
+        )
         switch (type) {
           case GenericLicenseType.DriversLicense:
-            return genericDrivingService
+            return isNewDriversLicenseEnabled
+              ? genericDrivingService
+              : oldGenericDrivingLicenseApi
           case GenericLicenseType.AdrLicense:
             return genericAdrService
           case GenericLicenseType.MachineLicense:
@@ -158,6 +179,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
             return genericFirearmService
           case GenericLicenseType.DisabilityLicense:
             return genericDisabilityService
+
           default:
             return null
         }
@@ -168,6 +190,8 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         GenericMachineLicenseService,
         GenericDisabilityLicenseService,
         GenericDrivingLicenseService,
+        OldGenericDrivingLicenseApi,
+        FeatureFlagService,
       ],
     },
   ],

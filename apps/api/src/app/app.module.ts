@@ -46,6 +46,7 @@ import {
   GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
+  OldGenericDrivingLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
@@ -296,6 +297,7 @@ const autoSchemaFile = environment.production
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
+        OldGenericDrivingLicenseConfig,
         GenericDisabilityLicenseConfig,
         VehiclesClientConfig,
         RightsPortalClientConfig,
