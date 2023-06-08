@@ -20,7 +20,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
-import { YES } from '../../lib/constants'
+import { JA, NEI, YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
@@ -88,13 +88,17 @@ export const overview = buildSection({
         buildKeyValueField({
           label: m.doesWillExist,
           value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.wills'),
+            getValueViaPath(answers, 'estate.testament.wills') === YES
+              ? JA
+              : NEI,
           width: 'half',
         }),
         buildKeyValueField({
           label: m.doesAgreementExist,
           value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.agreement'),
+            getValueViaPath(answers, 'estate.testament.agreement') === YES
+              ? JA
+              : NEI,
           width: 'half',
         }),
         buildDescriptionField({
@@ -121,6 +125,11 @@ export const overview = buildSection({
           label: m.additionalInfo,
           value: ({ answers }) =>
             getValueViaPath(answers, 'estate.testament.additionalInfo'),
+          condition: (answers) =>
+            !!getValueViaPath<string>(
+              answers,
+              'estate.testament.additionalInfo',
+            ),
         }),
         buildDescriptionField({
           id: 'space3',
@@ -173,7 +182,8 @@ export const overview = buildSection({
           id: 'overviewInventory',
           title: m.inventoryTextField,
           description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'inventory.info'),
+            getValueViaPath<string>(application.answers, 'inventory.info') ||
+            m.notFilledOut,
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -360,9 +370,10 @@ export const overview = buildSection({
         }),
         buildDescriptionField({
           id: 'overviewOtherAssets',
-          title: m.moneyAndDepositText,
+          title: m.otherAssetsText,
           description: (application: Application) =>
-            getValueViaPath<string>(application.answers, 'otherAssets.info'),
+            getValueViaPath<string>(application.answers, 'otherAssets.info') ||
+            m.notFilledOut,
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -396,7 +407,7 @@ export const overview = buildSection({
             getValueViaPath<string>(
               application.answers,
               'moneyAndDeposit.info',
-            ),
+            ) || m.notFilledOut,
           titleVariant: 'h4',
           space: 'gutter',
         }),
@@ -439,6 +450,9 @@ export const overview = buildSection({
                   description: [
                     `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
                       debt.nationalId ?? '',
+                    )}`,
+                    `${m.debtsLoanIdentity.defaultMessage}: ${formatNationalId(
+                      debt.loanIdentity ?? '',
                     )}`,
                     `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                       debt.balance ?? '0',

@@ -92,7 +92,6 @@ export const EmailBox = () => {
     return (
       <ActionCard
         heading={loc.setEmailActionCard.heading}
-        text={loc.setEmailActionCard.text}
         input={{
           name: 'subscriptionEmail',
           label: loc.setEmailActionCard.input.label,
