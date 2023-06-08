@@ -458,7 +458,7 @@ export const form: Form = buildForm({
           description: m.attachmentsDescription,
           children: [
             buildFileUploadField({
-              id: 'estateAttachments',
+              id: 'estateAttachments.attached.file',
               title: m.attachmentsTitle,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: m.uploadHeader,

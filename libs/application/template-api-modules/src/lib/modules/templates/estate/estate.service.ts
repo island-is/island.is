@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
 import {
+  Attachment,
   DataUploadResponse,
   EstateInfo,
   Person,
@@ -15,14 +16,23 @@ import { estateTransformer, filterAndRemoveRepeaterMetadata } from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import {
+  ApplicationAttachments,
+  AttachmentPaths,
+  ApplicationFile,
+} from './types/attachments'
+import AmazonS3Uri from 'amazon-s3-uri'
+import { S3 } from 'aws-sdk'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
+  s3: S3
   constructor(private readonly syslumennService: SyslumennService) {
     super(ApplicationTypes.ESTATE)
+    this.s3 = new S3()
   }
 
   async estateProvider({
@@ -237,6 +247,29 @@ export class EstateTemplateService extends BaseTemplateApiService {
         : {}),
     }
 
+    const attachments: Attachment[] = []
+    const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
+    for (let i = 0; i < AttachmentPaths.length; i++) {
+      const { path, prefix } = AttachmentPaths[i]
+      const attachmentAnswerData = getValueViaPath<ApplicationFile[]>(
+        application.answers,
+        path,
+      )
+      const attachmentAnswer = attachmentAnswerData?.pop()
+
+      if (attachmentAnswer) {
+        const fileType = attachmentAnswer.name?.split('.').pop()
+        const name = `${prefix}.${dateStr}.${fileType}`
+        const fileName = (application.attachments as ApplicationAttachments)[
+          attachmentAnswer?.key
+        ]
+        const content = await this.getFileContentBase64(fileName)
+        attachments.push({ name, content })
+      }
+    }
+
+    console.log('GOT ATTACHMENTS', attachments)
+
     const result: DataUploadResponse = await this.syslumennService
       .uploadData(
         [person],
@@ -256,5 +289,22 @@ export class EstateTemplateService extends BaseTemplateApiService {
       throw new Error('Application submission failed on syslumadur upload data')
     }
     return { sucess: result.success, id: result.caseNumber }
+  }
+  private async getFileContentBase64(fileName: string): Promise<string> {
+    const { bucket, key } = AmazonS3Uri(fileName)
+
+    const uploadBucket = bucket
+    try {
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64') || ''
+    } catch (e) {
+      return 'err'
+    }
   }
 }
