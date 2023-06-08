@@ -210,9 +210,6 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
-      APPLICATION_SYSTEM_FORM: ref(
-        (h) => `http://${h.svc(services.servicesApplicationSystemForm)}`,
-      ),
       NO_UPDATE_NOTIFIER: 'true',
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {
         dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
