@@ -106,7 +106,9 @@ const AppealCase = () => {
             name="appealCaseNumber"
             label={formatMessage(strings.caseNumberLabel)}
             value={workingCase.appealCaseNumber ?? ''}
-            placeholder={formatMessage(strings.caseNumberPlaceholder)}
+            placeholder={formatMessage(strings.caseNumberPlaceholder, {
+              year: new Date().getFullYear(),
+            })}
             errorMessage={appealCaseNumberErrorMessage}
             onChange={(event) => {
               removeTabsValidateAndSet(

@@ -207,6 +207,8 @@
 /libs/clients/syslumenn/                                                                                 @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                                  @island-is/stefna
 /libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
+/libs/clients/icelandic-government-institution-vacancies/                                                @island-is/stefna
+/libs/api/domains/icelandic-government-institution-vacancies/                                            @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
