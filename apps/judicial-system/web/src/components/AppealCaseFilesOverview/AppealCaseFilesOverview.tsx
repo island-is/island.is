@@ -61,7 +61,7 @@ const AppealCaseFilesOverview: React.FC = () => {
     user?.role === UserRole.STAFF
       ? appealRulingFiles
       : appealCaseFiles?.concat(appealRulingFiles ? appealRulingFiles : [])
-  console.log('allFiles', allFiles)
+
   return completedCaseStates.includes(workingCase.state) &&
     allFiles &&
     allFiles.length > 0 ? (
