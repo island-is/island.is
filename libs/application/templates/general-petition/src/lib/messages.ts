@@ -69,16 +69,6 @@ export const m = defineMessages({
     defaultMessage: 'Ég samþykki skilmála hér að ofan',
     description: '',
   },
-  settingsInfoProviderTitle: {
-    id: 'gpl.application:settingsInfoProviderTitle',
-    defaultMessage: 'Stillingar frá Ísland.is',
-    description: '',
-  },
-  settingsInfoProviderSubtitle: {
-    id: 'gpl.application:settingsInfoProviderSubtitle',
-    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
-    description: '',
-  },
 
   // Petition List Information
   listInformationTitle: {
