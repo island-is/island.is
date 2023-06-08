@@ -10,23 +10,35 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import DropdownExport, { getCSV } from './ExportPetition'
+import {
+  Endorsement,
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
-const PetitionsTable = (data: any) => {
+const PetitionsTable = (data: {
+  canEdit: boolean
+  listId: string
+  petition?: EndorsementList
+  petitionSigners: PaginatedEndorsementResponse
+}) => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [listOfPetitions, setPetitions] = useState(data.petitions?.data ?? [])
+  const [petitionSigners, setPetitionSigners] = useState(
+    data.petitionSigners?.data ?? [],
+  )
 
-  const handlePagination = (page: number, petitions: any) => {
+  const handlePagination = (page: number, petitionSigners: Endorsement[]) => {
     setPage(page)
-    setTotalPages(pages(petitions?.length))
-    setPetitions(paginate(petitions, PAGE_SIZE, page))
+    setTotalPages(pages(petitionSigners?.length))
+    setPetitionSigners(paginate(petitionSigners, PAGE_SIZE, page))
   }
 
   useEffect(() => {
-    setPetitions(data.petitions?.data ?? [])
-    handlePagination(1, data.petitions?.data ?? [])
+    setPetitionSigners(data.petitionSigners?.data ?? [])
+    handlePagination(1, data.petitionSigners?.data ?? [])
   }, [data])
 
   return (
@@ -35,7 +47,10 @@ const PetitionsTable = (data: any) => {
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         {data.canEdit && (
           <DropdownExport
-            onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
+            petition={data.petition}
+            petitionSigners={data.petitionSigners}
+            petitionId={data.listId}
+            onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
           />
         )}
       </Box>
@@ -51,11 +66,13 @@ const PetitionsTable = (data: any) => {
             </T.Row>
           </T.Head>
           <T.Body>
-            {listOfPetitions?.map((petition: any) => {
+            {petitionSigners?.map((petition: Endorsement) => {
               return (
                 <T.Row key={petition.id}>
-                  <T.Data>{formatDate(petition.created)}</T.Data>
-                  <T.Data colSpan={4}>
+                  <T.Data text={{ variant: 'medium' }}>
+                    {formatDate(petition.created)}
+                  </T.Data>
+                  <T.Data text={{ variant: 'medium' }} colSpan={4}>
                     {petition.meta.fullName
                       ? petition.meta.fullName
                       : formatMessage(m.noName)}
@@ -69,7 +86,7 @@ const PetitionsTable = (data: any) => {
           </T.Body>
         </T.Table>
 
-        {listOfPetitions && !!listOfPetitions.length ? (
+        {petitionSigners && !!petitionSigners.length ? (
           <Pagination
             page={page}
             totalPages={totalPages}
@@ -77,7 +94,9 @@ const PetitionsTable = (data: any) => {
               <Box
                 cursor="pointer"
                 className={className}
-                onClick={() => handlePagination(page, data.petitions?.data)}
+                onClick={() =>
+                  handlePagination(page, data.petitionSigners?.data)
+                }
               >
                 {children}
               </Box>

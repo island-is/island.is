@@ -1,4 +1,4 @@
-import { Address, NationalRegistry, Answer } from '../../lib/types'
+import { Address, Answer, NationalRegistry } from '../../lib/types'
 import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 
 import { FC } from 'react'
@@ -51,7 +51,7 @@ const ReviewScreen: FC<FieldBaseProps> = ({ application }) => {
               <Box>
                 <Text variant="h5">
                   {formatText(
-                    'Umsækjendur sem vilja fá tímabundið bráðabirgðakort',
+                    e.review.sectionPersonsWhoWantPDFLabel,
                     application,
                     formatMessage,
                   )}

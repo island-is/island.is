@@ -3,9 +3,25 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  Accordion,
+  AccordionItem,
+  AlertMessage,
+  Box,
+  Button,
+  Text,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  formatDate,
+  caseTypes,
+  capitalize,
+} from '@island.is/judicial-system/formatters'
+import {
   AccordionListItem,
   CaseFilesAccordionItem,
   CommentsAccordionItem,
+  CourtCaseInfo,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -13,8 +29,9 @@ import {
   PageLayout,
   PdfButton,
   UserContext,
+  CaseResentExplanation,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   useCase,
   useOnceOn,
@@ -26,26 +43,10 @@ import {
   ruling,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
-import {
-  Accordion,
-  AccordionItem,
-  AlertMessage,
-  Box,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  formatDate,
-  caseTypes,
-  capitalize,
-} from '@island.is/judicial-system/formatters'
-import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
 
@@ -129,6 +130,8 @@ const Overview = () => {
             Yfirlit kröfu um rannsóknarheimild
           </Text>
         </Box>
+        <CourtCaseInfo workingCase={workingCase} />
+
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[

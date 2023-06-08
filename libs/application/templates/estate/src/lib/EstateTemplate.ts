@@ -17,7 +17,7 @@ import {
 import { m } from './messages'
 import { estateSchema } from './dataSchema'
 import { EstateEvent, EstateTypes, Roles, States } from './constants'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { EstateApi } from '../dataProviders'
 import {
@@ -37,7 +37,6 @@ const EstateTemplate: ApplicationTemplate<
       : m.prerequisitesTitle.defaultMessage,
   institution: m.institution,
   dataSchema: estateSchema,
-  featureFlag: Features.estateApplication,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
     initial: States.prerequisites,

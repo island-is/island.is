@@ -14,7 +14,7 @@ import { CasesAggregateResult } from '../models/casesAggregateResult.model'
 import { PostAdviceInput } from '../dto/postAdvice.input'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { FileStorageService } from '@island.is/file-storage'
-import { CaseAdviceCommand } from '../models/caseAdviceCommand.model'
+import { PostCaseAdviceCommand } from '../models/postCaseAdviceCommand.model'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { ApolloError } from '@apollo/client'
@@ -83,17 +83,20 @@ export class CasesService {
 
   async postAdvice(auth: User, input: PostAdviceInput): Promise<void> {
     const uploadUrls = await this.prepareDownloads(
-      input.caseAdviceCommand?.fileUrls ? input.caseAdviceCommand.fileUrls : [],
+      input.postCaseAdviceCommand?.fileUrls
+        ? input.postCaseAdviceCommand.fileUrls
+        : [],
     )
 
-    const caseAdviceCommand: CaseAdviceCommand = {
-      content: input.caseAdviceCommand?.content,
+    const postCaseAdviceCommand: PostCaseAdviceCommand = {
+      content: input.postCaseAdviceCommand?.content,
       fileUrls: uploadUrls,
+      privateAdvice: input.postCaseAdviceCommand?.privateAdvice,
     }
 
     const request: ApiCasesCaseIdAdvicesPostRequest = {
       caseId: input.caseId,
-      caseAdviceCommand: caseAdviceCommand,
+      postCaseAdviceCommand: postCaseAdviceCommand,
     }
 
     const response = await this.casesApiWithAuth(auth)

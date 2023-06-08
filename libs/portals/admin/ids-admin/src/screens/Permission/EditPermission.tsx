@@ -7,10 +7,13 @@ import { EnvironmentProvider } from '../../context/EnvironmentContext'
 import { usePermission } from './PermissionContext'
 
 export const EditPermission = () => {
-  const { selectedPermission } = usePermission()
+  const { selectedPermission, permission } = usePermission()
 
   return (
-    <EnvironmentProvider selectedEnvironment={selectedPermission.environment}>
+    <EnvironmentProvider
+      selectedEnvironment={selectedPermission.environment}
+      availableEnvironments={permission.availableEnvironments}
+    >
       <Box display="flex" flexDirection="column" rowGap={5}>
         <PermissionBasicInfo />
         <PermissionContent />

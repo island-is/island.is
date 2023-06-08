@@ -3,6 +3,20 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  Text,
+  Accordion,
+  AccordionItem,
+  Box,
+  Button,
+  AlertMessage,
+} from '@island.is/island-ui/core'
+import {
+  CaseLegalProvisions,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
   FormFooter,
   PageLayout,
   FormContentContainer,
@@ -13,12 +27,16 @@ import {
   InfoCard,
   FormContext,
   UserContext,
+  CourtCaseInfo,
+  CaseResentExplanation,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
 import {
   UploadState,
   useCourtUpload,
+  useCase,
+  useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   titles,
   ruling,
@@ -28,26 +46,7 @@ import {
   requestCourtDate,
   restrictionsV2,
 } from '@island.is/judicial-system-web/messages'
-import {
-  CaseLegalProvisions,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  Text,
-  Accordion,
-  AccordionItem,
-  Box,
-  Button,
-  AlertMessage,
-} from '@island.is/island-ui/core'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { DraftConclusionModal } from '../../components'
 
@@ -135,6 +134,7 @@ export const JudgeOverview: React.FC = () => {
             })}
           </Text>
         </Box>
+        <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[

@@ -532,3 +532,19 @@ export const TransportAuthority = new XroadConf({
     },
   },
 })
+
+export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
+  env: {
+    XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1',
+      prod: 'IS/GOV/5402697509/FJS-Protected/recruitment-v1',
+    },
+  },
+  secrets: {
+    ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME:
+      '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME',
+    ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD:
+      '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD',
+  },
+})
