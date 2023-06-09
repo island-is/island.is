@@ -105,6 +105,7 @@ function run_container() {
     --env-file "${secrets_env_file}" \
     "${DOCKER_IMAGE}" "$@"
   # These options are breaking, causing 'playwright not found'
+  # TODO: But are still needed, so we don't have to re-build every time 😿
   #  -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":z \
   #  -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":z \
   return $?
