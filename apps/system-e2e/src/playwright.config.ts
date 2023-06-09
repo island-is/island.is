@@ -69,7 +69,7 @@ const config: PlaywrightTestConfig = {
   /* Configure our test targets */
   // Current thought is to use {smoke,acceptance},{main,release} + judicial-system
   projects: [
-    { name: 'judicial-system', testmatch: 'judicial-system/*.spec.[jt]s' },
+    { name: 'judicial-system', testMatch: 'judicial-system/*.spec.[jt]s' },
     // ['smoke', 'accceptance'].
     ...['dev', 'release']
       .map((env) =>
