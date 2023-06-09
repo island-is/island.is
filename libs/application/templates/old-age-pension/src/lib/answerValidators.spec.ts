@@ -94,7 +94,7 @@ describe('answerValidators', () => {
     ]
 
     expect(answerValidators['period'](newAnswers, application)).toStrictEqual({
-      message: validatorErrorMessages.periodYear,
+      message: validatorErrorMessages.periodMonth,
       path: 'period.month',
       values: {},
     })
@@ -109,7 +109,7 @@ describe('answerValidators', () => {
     ]
 
     expect(answerValidators['period'](newAnswers, application)).toStrictEqual({
-      message: validatorErrorMessages.periodYear,
+      message: validatorErrorMessages.periodMonth,
       path: 'period.month',
       values: {},
     })
