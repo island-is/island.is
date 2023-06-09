@@ -65,7 +65,6 @@ export class OldGenericDrivingLicenseApi
   }
 
   private async requestApi(url: string): Promise<unknown | null> {
-    this.logger.debug('in old driving license')
     let res: Response | null = null
 
     try {
