@@ -16,6 +16,7 @@ const LimitedAccessCaseQuery = gql`
         category
         created
         key
+        policeCaseNumber
       }
       defendants {
         id
