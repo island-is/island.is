@@ -208,7 +208,10 @@ const PageLayout: React.FC<PageProps> = ({
       variant="error"
       link={
         user?.role === UserRole.DEFENDER
-          ? undefined
+          ? {
+              href: constants.DEFENDER_CASES_ROUTE,
+              title: 'Fara á yfirlitssíðu',
+            }
           : {
               href: constants.CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',
