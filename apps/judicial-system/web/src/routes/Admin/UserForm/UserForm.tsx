@@ -161,14 +161,14 @@ export const UserForm: React.FC<Props> = (props) => {
             mask="999999-9999"
             maskPlaceholder={null}
             value={user.nationalId || ''}
-            onChange={(event) => {
+            onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'nationalId',
                 event.target.value.replace('-', ''),
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
               )
-            }}
+            }
             onBlur={(event) =>
               validateAndSetError(
                 event.target.value.replace('-', ''),
