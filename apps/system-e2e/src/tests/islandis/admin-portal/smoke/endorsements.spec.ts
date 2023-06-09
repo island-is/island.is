@@ -2,7 +2,6 @@ import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord/`
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -74,7 +73,7 @@ test.describe('Admin portal access control', () => {
         .getByLabel('Tímabil til')
         .last()
         .fill(exampleDateInThePast)
-        await granterPage.keyboard.press('Enter')
+      await granterPage.keyboard.press('Enter')
       await granterPage.click('button:text("Uppfæra lista")')
 
       // Assert
