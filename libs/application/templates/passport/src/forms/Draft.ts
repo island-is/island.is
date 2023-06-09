@@ -15,7 +15,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
   YES,
 } from '@island.is/application/types'
 import {
@@ -23,6 +22,7 @@ import {
   IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   UserInfoApi,
+  NationalRegistryUser,
 } from '../dataProviders'
 import {
   DistrictCommissionerAgencies,
@@ -73,7 +73,7 @@ export const Draft: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryUser,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
