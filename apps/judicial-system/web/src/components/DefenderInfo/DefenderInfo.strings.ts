@@ -27,22 +27,22 @@ export const defenderInfo = {
             'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á fyrirtöku skrefi í rannsóknarheimildum.',
         },
       }),
-      sendRequest: defineMessages({
+      defenderRequestAccess: defineMessages({
         label: {
           id:
-            'judicial.system.core:defender_info.investigation_cases.sections.send_request.label',
+            'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.label',
           defaultMessage:
-            'Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma',
+            'Gefa verjanda aðgang að kröfu við úthlutun fyrirtökutíma',
           description:
-            'Notaður sem texti í "senda kröfu sjálfvirkt..." gátreit á varnaraðila skrefi í rannsóknarheimildum.',
+            'Notaður sem texti í "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í rannsóknarheimildum.',
         },
         tooltip: {
           id:
-            'judicial.system.core:defender_info.investigation_cases.sections.send_request.tooltip',
+            'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.tooltip',
           defaultMessage:
-            'Ef hakað er hér þá fær verjandi kröfuna senda þegar fyrirtökutíma hefur verið úthlutað',
+            'Ef hakað er hér þá fær verjandi aðgang að {caseType, select, ADMISSION_TO_FACILITY {kröfunni um vistun á viðeigandi stofnun} TRAVEL_BAN {farbannskröfunni} other {gæsluvarðhaldskröfunni}} þegar fyrirtökutíma hefur verið úthlutað',
           description:
-            'Notaður sem upplýsingatexti í upplýsingasvæði við "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í rannsóknarheimildum.',
+            'Notaður sem upplýsingatexti í upplýsingasvæði við "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í rannsóknarheimildum.',
         },
       }),
     },
@@ -73,22 +73,22 @@ export const defenderInfo = {
             'Notaður sem upplýsingatexti í upplýsingasvæði við "Verjanda" fyrirsögn á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
       }),
-      sendRequest: defineMessages({
+      defenderRequestAccess: defineMessages({
         label: {
           id:
-            'judicial.system.core:defender_info.restriction_cases.sections.send_request.label',
+            'judicial.system.core:defender_info.restriction_cases.sections.defender_request_access.label',
           defaultMessage:
-            'Senda kröfu sjálfvirkt í tölvupósti til verjanda við úthlutun fyrirtökutíma',
+            'Gefa verjanda aðgang að kröfu við úthlutun fyrirtökutíma',
           description:
-            'Notaður sem texti í "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
+            'Notaður sem texti í "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
         tooltip: {
           id:
-            'judicial.system.core:defender_info.restriction_cases.sections.send_request.tooltip',
+            'judicial.system.core:defender_info.restriction_cases.sections.defender_request_access.tooltip',
           defaultMessage:
-            'Ef hakað er hér þá fær verjandi {caseType, select, ADMISSION_TO_FACILITY {kröfuna um vistun á viðeigandi stofnun} TRAVEL_BAN {farbannskröfuna} other {gæsluvarðhaldskröfuna}} senda þegar fyrirtökutíma hefur verið úthlutað',
+            'Ef hakað er hér þá fær verjandi aðgang að {caseType, select, ADMISSION_TO_FACILITY {kröfunni um vistun á viðeigandi stofnun} TRAVEL_BAN {farbannskröfunni} other {gæsluvarðhaldskröfunni}} þegar fyrirtökutíma hefur verið úthlutað',
           description:
-            'Notaður sem upplýsingatexti í upplýsingasvæði við "senda kröfu sjálfvirkt..." gátreit á sakbornings skrefi í gæsluvarðhalds- og farbannsmálum.',
+            'Notaður sem upplýsingatexti í upplýsingasvæði við "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í gæsluvarðhalds- og farbannsmálum.',
         },
       }),
     },
