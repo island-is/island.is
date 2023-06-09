@@ -202,7 +202,7 @@ export const FormCard = <Intent extends string>({
         <ConditionalWrapper
           condition={Boolean(accordionLabel)}
           trueWrapper={(cld) => (
-            <AccordionItem label={accordionLabel} id={title}>
+            <AccordionItem label={accordionLabel} id={intent as string}>
               {cld}
             </AccordionItem>
           )}
@@ -238,6 +238,7 @@ export const FormCard = <Intent extends string>({
                   value={intent}
                   disabled={!dirty}
                   loading={loading}
+                  dataTestId={`button-save-${title}`}
                 >
                   {formatMessage(m.saveSettings)}
                 </Button>

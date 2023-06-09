@@ -872,6 +872,7 @@ consultation-portal:
   enabled: true
   env:
     API_URL: 'http://web-api.islandis.svc.cluster.local'
+    BACKEND_DL_URL: 'https://samradapi-test.devland.is/api/Documents/'
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'

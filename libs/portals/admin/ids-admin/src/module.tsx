@@ -11,7 +11,6 @@ import { tenantLoader, tenantLoaderId } from './screens/Tenant/Tenant.loader'
 import { clientsLoader } from './screens/Clients/Clients.loader'
 import { clientLoader } from './screens/Client/Client.loader'
 import { editClientAction } from './screens/Client/EditClient.action'
-import PublishClient from './screens/Client/PublishClient/PublishClient'
 import { publishClientAction } from './screens/Client/PublishClient/PublishClient.action'
 import { createPermissionAction } from './screens/Permission/CreatePermission/CreatePermission.action'
 import { permissionsLoader } from './screens/Permissions/Permissions.loader'
@@ -36,6 +35,9 @@ const Permissions = lazy(() => import('./screens/Permissions/Permissions'))
 const Permission = lazy(() => import('./screens/Permission/Permission'))
 const CreatePermission = lazy(() =>
   import('./screens/Permission/CreatePermission/CreatePermission'),
+)
+const PublishClient = lazy(() =>
+  import('./screens/Client/PublishClient/PublishClient'),
 )
 
 const allowedScopes: string[] = [
