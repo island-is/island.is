@@ -273,16 +273,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
       content: pdfBuffer.toString('base64'),
     })
 
-    const output = await fs.writeFile(
-      '/home/steini/Documents/estate.pdf',
-      pdfBuffer,
-      () => {
-        console.log('done')
-      },
-    )
-
-    throw new Error('stopping this')
-
     // Retrieve attachments from the application and attach them to the upload data
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     for (let i = 0; i < AttachmentPaths.length; i++) {
