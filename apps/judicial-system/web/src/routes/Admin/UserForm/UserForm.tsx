@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { ValueType } from 'react-select/src/types'
 
@@ -34,10 +34,6 @@ import {
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
 import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
-import {
-  removeErrorMessageIfValid,
-  validateAndSetErrorMessage,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
@@ -53,16 +49,10 @@ interface Props {
 export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
 
-  const {
-    personData,
-    businessData,
-    personError,
-    businessError,
-  } = useNationalRegistry(user.nationalId)
+  const { personData, personError } = useNationalRegistry(user.nationalId)
 
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
   const [
@@ -71,21 +61,29 @@ export const UserForm: React.FC<Props> = (props) => {
   ] = useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
 
+  const setName = useCallback(
+    (name: string) => {
+      if (name !== user.name) {
+        setUser({
+          ...user,
+          name: name,
+        })
+      }
+    },
+    [user],
+  )
+
   useEffect(() => {
     if (personError || (personData && personData.items?.length === 0)) {
-      setNationalIdNotFound(true)
+      setNationalIdErrorMessage('Kennitala fannst ekki í þjóðskrá')
       return
     }
 
     if (personData && personData.items && personData.items.length > 0) {
-      storeAndRemoveErrorIfValid(
-        'name',
-        personData.items[0].name,
-        ['empty'],
-        setNameErrorMessage,
-      )
+      setNationalIdErrorMessage(undefined)
+      setName(personData.items[0].name)
     }
-  }, [personData, personError])
+  }, [personData, personError, setName])
 
   const selectInstitutions = (isProsecutionRole(user.role)
     ? props.prosecutorsOffices
@@ -164,8 +162,6 @@ export const UserForm: React.FC<Props> = (props) => {
             maskPlaceholder={null}
             value={user.nationalId || ''}
             onChange={(event) => {
-              setNationalIdNotFound(false)
-
               storeAndRemoveErrorIfValid(
                 'nationalId',
                 event.target.value.replace('-', ''),
