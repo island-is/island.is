@@ -90,7 +90,7 @@ const DropdownExport: FC<Props> = ({
               >
                 {({ loading }) =>
                   loading ? (
-                    <Bod>Hleð... </Bod>
+                    <Box>Hleð... </Box>
                   ) : (
                     <Box>{formatMessage(m.asPdf)}</Box>
                   )
