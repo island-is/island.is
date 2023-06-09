@@ -1,4 +1,4 @@
-import { BrowserContext, expect, test } from '@playwright/test'
+import { BrowserContext, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import {
@@ -6,7 +6,6 @@ import {
   disablePreviousApplications,
   disableDelegations,
 } from '../../../../support/disablers'
-import format from 'date-fns/format'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -41,6 +40,8 @@ test.describe('Endorsements', () => {
     await page.getByRole('button', { name: 'Skoða lista' }).first().click()
     await page.waitForSelector('button:text("Setja nafn mitt á þennan lista")')
     await page.getByRole('button', { name: 'Setja nafn mitt á þennan lista' }).click()
+
+    await page.waitForSelector('button:text("Setja nafn mitt á þennan lista")')
 
     // from here a new tab opens and we need to find out how to tap into that ...
 
