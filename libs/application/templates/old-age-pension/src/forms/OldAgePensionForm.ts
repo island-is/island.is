@@ -22,8 +22,13 @@ import * as kennitala from 'kennitala'
 
 import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
-import { FILE_SIZE_LIMIT } from '../lib/constants'
 import {
+  earlyRetirementMaxAge,
+  earlyRetirementMinAge,
+  FILE_SIZE_LIMIT,
+} from '../lib/constants'
+import {
+  getAgeBetweenTwoDates,
   getApplicationAnswers,
   getApplicationExternalDate,
 } from '../lib/oldAgePensionUtils'
@@ -243,18 +248,14 @@ export const OldAgePensionForm: Form = buildForm({
                 const dateOfBirth00 = new Date(
                   dateOfBirth.getFullYear(),
                   dateOfBirth.getMonth(),
-                ).getTime()
-                const startDate = new Date(
-                  +selectedYear,
-                  +selectedMonth,
-                ).getTime()
-
-                const diffTime = startDate - dateOfBirth00
-                const age = Math.floor(
-                  diffTime / (365.25 * 60 * 60 * 24 * 1000),
                 )
+                const selectedDate = new Date(+selectedYear, +selectedMonth)
 
-                return age === 65 || age === 66
+                const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
+
+                return (
+                  age >= earlyRetirementMinAge && age <= earlyRetirementMaxAge
+                )
               },
             }),
           ],

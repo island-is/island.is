@@ -384,4 +384,9 @@ export const validatorErrorMessages = defineMessages({
     defaultMessage: 'Vitlaus mánuður.',
     description: 'Invalid month.',
   },
+  requireAttachment: {
+    id: 'pl.application:fileUpload.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'Error message when the attachment file is not provided.',
+  },
 })
