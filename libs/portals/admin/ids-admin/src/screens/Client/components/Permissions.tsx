@@ -118,7 +118,11 @@ function Permissions({ allowedScopes }: PermissionsProps) {
         display="flex"
         justifyContent="flexEnd"
       >
-        <Button size="small" onClick={handleModalOpen}>
+        <Button
+          size="small"
+          onClick={handleModalOpen}
+          dataTestId="add-permissions-button"
+        >
           {formatMessage(m.permissionsAdd)}
         </Button>
       </Box>
@@ -138,7 +142,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
             </T.Head>
             <T.Body>
               {permissions.map((item) => (
-                <T.Row key={item.name}>
+                <T.Row key={item.name} dataTestId="permission-row">
                   <T.Data>
                     <Box display="flex" columnGap={1} alignItems="center">
                       {item.domainName !== tenant && (
