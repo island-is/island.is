@@ -16,7 +16,7 @@ yarn playwright test -c src "$@" || TEST_EXIT_CODE=$?
 
 # Upload results
 zip -r -0 test-results playwright-report src/test-results
-if [[ "$TEST_ENVIRONMENT" != local ]]; then
+if [[ -n "$TEST_RESULTS_S3" ]]; then
   aws s3 cp test-results.zip "$TEST_RESULTS_S3"
 fi
 if [ "$TEST_EXIT_CODE" != "0" ]; then
