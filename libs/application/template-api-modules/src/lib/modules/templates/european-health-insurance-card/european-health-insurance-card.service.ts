@@ -29,6 +29,7 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
   }
 
+  /** Returns unique values of an array */
   onlyUnique(value: string, index: number, array: string[]) {
     return array.indexOf(value) === index
   }
@@ -110,11 +111,14 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
               (x) => x.isPlastic === true,
             )
             if (plasticCard) {
-              pdfApplicantArr.push({
-                cardNumber: plasticCard.cardNumber ?? '',
-                nationalId: applicants[i],
-              })
-              continue
+              if (
+                !pdfApplicantArr.some((x) => x.nationalId === applicants[i])
+              ) {
+                pdfApplicantArr.push({
+                  cardNumber: plasticCard.cardNumber ?? '',
+                  nationalId: applicants[i],
+                })
+              }
             }
           }
         }
@@ -127,10 +131,12 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
             (x) => x.isPlastic === true,
           )
           if (plasticCard) {
-            pdfApplicantArr.push({
-              cardNumber: plasticCard?.cardNumber ?? '',
-              nationalId: applicants[i],
-            })
+            if (!pdfApplicantArr.some((x) => x.nationalId === applicants[i])) {
+              pdfApplicantArr.push({
+                cardNumber: plasticCard?.cardNumber ?? '',
+                nationalId: applicants[i],
+              })
+            }
           }
         }
       }
