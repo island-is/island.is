@@ -38,18 +38,18 @@ const config: PlaywrightTestConfig = {
     ['dot'],
     ...((process.env.CI
       ? [
-          ['line'],
-          [
-            'playwright-tesults-reporter',
-            {
-              'tesults-target': process.env.TESULTS_TOKEN,
-              'tesults-build-name': process.env.COMMIT_INFO,
-              'tesults-build-result': 'pass',
-              'tesults-build-reason': 'Always succeed 💯',
-              'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
-            },
-          ],
-        ]
+        ['line'],
+        [
+          'playwright-tesults-reporter',
+          {
+            'tesults-target': process.env.TESULTS_TOKEN,
+            'tesults-build-name': process.env.COMMIT_INFO,
+            'tesults-build-result': 'pass',
+            'tesults-build-reason': 'Always succeed 💯',
+            'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
+          },
+        ],
+      ]
       : [['null']]) as ReporterDescription[]),
     ['html', { open: 'never' }],
   ],
