@@ -181,7 +181,7 @@ const SubscriptionTableItem = ({
                 icon="informationCircle"
                 type="outline"
                 size="small"
-                color="blue300"
+                color="purple300"
               />
             </FocusableBox>
           )}
