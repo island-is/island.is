@@ -27,10 +27,10 @@ LE2E_HEADEDEDNESS="headless"
 LE2E_BROWSER="chrome"
 LE2E_RUN_MODE="container"
 
-DOCKERFILE="${PROJECT_DIR}/scripts/ci/Dockerfile"
-DOCKER_TAG="$(git rev-parse --short HEAD)"
+DOCKERFILE="Dockerfile"
+DOCKER_TAG=local-e2e #"$(git rev-parse --short HEAD)"
 DOCKER_IMAGE="localhost/${APP}":"${DOCKER_TAG}"
-DOCKER_TARGET="playwright-local"
+DOCKER_TARGET="output-playwright"
 DOCKER_BUILD_ARGS="--build-arg APP=${APP} --build-arg APP_HOME=${APP_HOME} --build-arg APP_DIST_HOME=${APP_DIST_HOME} --build-arg GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg GIT_SHA=${DOCKER_TAG}"
 
 # shellcheck disable=SC1091,SC1090
@@ -52,13 +52,18 @@ function builder() {
   fi
 }
 
-function _image_exists() {
-  image=$(builder images -q "${DOCKER_IMAGE}" 2>/dev/null)
+function image_exists() {
+  builder images -q "${1}" 2>/dev/null
+  return $?
+}
+function _ensure_image() {
 
-  if [ -z "${image}" ]; then
+  if image_exists "${DOCKER_IMAGE}"; then
     warning "${DOCKER_IMAGE} has not been built yet, starting build now ..."
     build_image
+    log debug "Successfully built image"
   fi
+  return 0
 }
 
 function _get_source_path() {
@@ -67,35 +72,64 @@ function _get_source_path() {
 }
 
 function _build_app() {
-  nx run ${APP}:build
+  yarn nx run ${APP}:build
 }
 
 function run_container() {
+  debug "run_container START"
   local tmp_dir="${PROJECT_DIR}/tmp"
   local secrets_file="${PROJECT_DIR}/.env.secret"
   local secrets_env_file="${secrets_file}.docker"
 
+  debug "run_container mkdir"
   mkdir -p "${tmp_dir}"
 
+  debug "run_container cp"
   cp "${secrets_file}" "${secrets_env_file}"
 
+  debug "run_container creating .env"
+  debug "run_container Secrets file: ${secrets_file}"
+  debug "run_container Secrets file (docker): ${secrets_env_file}"
   # transform .env secrets file to actual .env file
-  grep -v '^#' "${secrets_file}" | cut -d ' ' -f 2- >"${secrets_env_file}"
+  grep -v '^#' "${secrets_file}" | cut -d ' ' -f 2- >"${secrets_env_file}" || true
 
-  _build_app
-  _image_exists
+  if ! image_exists "${DOCKER_IMAGE}"; then
+    log warning "Missing image ${DOCKER_IMAGE}"
+    log warning "Run $0 build"
+    return 1
+  fi
+
+  log info "Running $APP in container with args '$*'"
   runner \
     -v "${tmp_dir}":/out:Z \
-    -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":Z \
-    -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":Z \
     --env-file "${secrets_env_file}" \
     "${DOCKER_IMAGE}" "$@"
+  # These options are breaking, causing 'playwright not found'
+  #  -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":z \
+  #  -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":z \
+  return $?
+
+  log info "Checking container pre-requisites"
+  log debug "Building app"
+  _build_app
+  log debug "Making sure the image exists"
+  _image_exists
+  log info "Running $APP in container"
+  log debug "Running $APP in container with args '$*'"
+  (
+    set -x
+    runner \
+      -v "${tmp_dir}":/out:Z \
+      -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":Z \
+      -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":Z \
+      --env-file "${secrets_env_file}" \
+      "${DOCKER_IMAGE}" "$@"
+  )
 }
 
-# shellcheck disable=SC2086
 function build_image() {
-  DOCKER_TAG=local-e2e exec ./scripts/ci/_podman.sh Dockerfile playwright-local
-  return
+  ./scripts/ci/_podman.sh "$DOCKERFILE" "$DOCKER_TARGET"
+  return 0
 }
 
 function runner() {
