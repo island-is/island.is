@@ -118,7 +118,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
-        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli S-123/2022.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
       })
     })
   })
@@ -332,7 +332,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
         attachments: undefined,
         subject: 'Héraðsdómur Reykjavíkur - aðgangur að málsgögnum',
         text: expect.anything(), // same as hmtl but stripped hmtl tags
-        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli S-123/2022.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+        html: `Héraðsdómur Reykjavíkur hefur skipað þig verjanda í máli ${theCase.courtCaseNumber}.<br /><br />Gögn málsins eru aðgengileg í <a href="${mockConfig.clientUrl}${DEFENDER_INDICTMENT_ROUTE}/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
       })
       expect(then.result).toEqual(expect.objectContaining({ delivered: true }))
     })
