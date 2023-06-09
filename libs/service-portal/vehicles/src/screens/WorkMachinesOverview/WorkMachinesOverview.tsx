@@ -28,9 +28,12 @@ const WorkMachinesOverview = () => {
   const { formatMessage } = useLocale()
 
   const filterTypes: Array<{ label: string; value: string }> = [
-    { label: 'Changing Owners', value: 'CHANGING_OWNERS' },
-    { label: 'Show deregistered machines', value: 'SHOW_DEREGISTERED' },
-    { label: 'Machines wiht upservioser', value: 'MACHINES_WITH_SUPERVISOR' },
+    { label: 'Í eigendaskiptum', value: 'CHANGING_OWNERS' },
+    { label: 'Sýna afskráð tæki', value: 'SHOW_DEREGISTERED' },
+    {
+      label: 'Tæki með skráðann umráðamann',
+      value: 'MACHINES_WITH_SUPERVISOR',
+    },
   ]
 
   const [activeFilters, setActiveFilters] = useState<Array<string>>([])
