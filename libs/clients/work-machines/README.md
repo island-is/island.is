@@ -1,4 +1,4 @@
-# clients-work-machines
+# Clients Work Machines
 
 This library was generated with [Nx](https://nx.dev).
 

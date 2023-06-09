@@ -1,4 +1,4 @@
-# service-portal-work-machines
+# Service Portal Work Machines
 
 This library was generated with [Nx](https://nx.dev).
 
