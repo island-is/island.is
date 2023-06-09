@@ -259,7 +259,6 @@
   - [React Spa Shared](libs/react-spa/shared/README.md)
 - [Regulations](libs/regulations/README.md)
 - [Residence History](libs/residence-history/README.md)
-  - [Service Portal Work Machines](libs/service-portal/work-machines/README.md)
 - [Shared](libs/shared/README.md)
   - [Babel](libs/shared/babel/README.md)
   - [Components](libs/shared/components/README.md)
