@@ -2,6 +2,8 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const YES = 'yes'
 export const NO = 'no'
+export const earlyRetirementMinAge = 65
+export const earlyRetirementMaxAge = 66
 
 export const MONTHS = [
   'January',
