@@ -7,7 +7,7 @@
   "schematics": {},
   "targets": {
     "lint": {
-      "builder": "@nx/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/driving-learners-permit/**/*.{ts,tsx,js,jsx}"
@@ -15,7 +15,7 @@
       }
     },
     "test": {
-      "builder": "@nx/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "libs/application/templates/driving-learners-permit/jest.config.js",
         "passWithNoTests": true
@@ -25,13 +25,13 @@
       ]
     },
     "extract-strings": {
-      "builder": "@nx/workspace:run-commands",
+      "executor": "@nx/workspace:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/driving-learners-permit/src/lib/messages.ts"
       }
     },
     "schemas/codegen": {
-      "builder": "@nx/workspace:run-commands",
+      "executor": "@nx/workspace:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/application/templates/driving-learners-permit/codegen.yml"
       }
