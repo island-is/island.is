@@ -16,12 +16,30 @@ export const educationNavigation: PortalNavigationItem = {
     },
     {
       name: m.educationFramhskoli,
-      path: EducationPaths.EducationFramhskoliCareer,
+      path: EducationPaths.EducationFramhskoli,
       children: [
         {
           name: m.educationFramhskoliCareer,
-          navHide: true,
+          breadcrumbHide: true,
           path: EducationPaths.EducationFramhskoliCareer,
+        },
+        {
+          // TODO: Move this.
+          name: m.educationFramhskoliGraduation,
+          breadcrumbHide: true,
+          path: EducationPaths.EducationFramhskoliGraduationOverview,
+          children: [
+            {
+              name: m.educationFramhskoliGraduation,
+              breadcrumbHide: true,
+              path: EducationPaths.EducationFramhskoliGraduationSingle,
+            },
+            {
+              name: m.educationFramhskoliGraduation,
+              breadcrumbHide: true,
+              path: EducationPaths.EducationFramhskoliGraduationDetail,
+            },
+          ],
         },
       ],
     },

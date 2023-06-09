@@ -441,6 +441,10 @@ export const m = defineMessages({
     id: 'service.portal:education-framhskoli',
     defaultMessage: 'Framhaldsskóli',
   },
+  educationFramhskoliGraduation: {
+    id: 'service.portal:education-framhskoli',
+    defaultMessage: 'Framhaldsskóli - útskriftir',
+  },
   educationFramhskoliCareer: {
     id: 'service.portal:education-framhskoli-career',
     defaultMessage: 'Námsferill',

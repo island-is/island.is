@@ -134,7 +134,7 @@ export const SortableTable = (props: SortableTableProps) => {
                 {valueItems.map((valueItem, i) => {
                   const lastItem = valueItems.length - 1 === i
                   return (
-                    <T.Data>
+                    <T.Data key={`body-${id}-${i}`}>
                       {lastItem && tag ? (
                         <Tag variant={tag}>{valueItem}</Tag>
                       ) : (
@@ -153,6 +153,7 @@ export const SortableTable = (props: SortableTableProps) => {
                   <T.Data
                     text={{ fontWeight: 'semiBold' }}
                     borderColor={'white'}
+                    key={`footer-${valueItem}`}
                   >
                     {valueItem}
                   </T.Data>

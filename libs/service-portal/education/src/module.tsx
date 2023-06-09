@@ -24,6 +24,24 @@ const SecondarySchoolCareer = lazy(() =>
   import('./screens/SecondarySchoolCareer/SecondarySchoolCareer'),
 )
 
+const SecondarySchoolGraduationOverview = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
+  ),
+)
+
+const SecondarySchoolGraduationSingle = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
+  ),
+)
+
+const SecondarySchoolGraduationDetail = lazy(() =>
+  import(
+    './screens/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
+  ),
+)
+
 export const educationModule: PortalModule = {
   name: 'Menntun',
   enabled: ({ isCompany }) => !isCompany,
@@ -67,6 +85,24 @@ export const educationModule: PortalModule = {
       path: EducationPaths.EducationFramhskoliCareer,
       enabled: userInfo.scopes.includes(ApiScope.education),
       element: <SecondarySchoolCareer />,
+    },
+    {
+      name: 'Útskriftaryfirlit',
+      path: EducationPaths.EducationFramhskoliGraduationOverview,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <SecondarySchoolGraduationOverview />,
+    },
+    {
+      name: 'Útskriftarferill',
+      path: EducationPaths.EducationFramhskoliGraduationSingle,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <SecondarySchoolGraduationSingle />,
+    },
+    {
+      name: 'Útskriftarferill nánar',
+      path: EducationPaths.EducationFramhskoliGraduationDetail,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <SecondarySchoolGraduationDetail />,
     },
   ],
 }
