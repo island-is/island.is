@@ -1,14 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
+  Feature,
 } from '@island.is/judicial-system/types'
 
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import { Tag, TagVariant } from '@island.is/island-ui/core'
 import { tables } from '@island.is/judicial-system-web/messages'
+import { FeatureContext } from '../FeatureProvider/FeatureProvider'
 
 interface Props {
   appealState?: CaseAppealState
@@ -20,6 +22,11 @@ const TagAppealState: React.FC<Props> = ({
   appealState,
 }) => {
   const { formatMessage } = useIntl()
+  const { features } = useContext(FeatureContext)
+
+  if (!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)) {
+    return null
+  }
 
   const getTagVariantForAppealState = (
     state?: CaseAppealState,

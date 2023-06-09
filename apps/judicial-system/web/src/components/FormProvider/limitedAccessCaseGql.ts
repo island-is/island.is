@@ -34,6 +34,7 @@ const LimitedAccessCaseQuery = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
+      sendRequestToDefender
       court {
         id
         name
