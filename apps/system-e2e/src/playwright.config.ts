@@ -74,7 +74,7 @@ const config: PlaywrightTestConfig = {
     ...['dev', 'release']
       .map((env) =>
         (['smoke', 'acceptance'] as const).map((test_type) => ({
-          name: `${env}-${test_type}`,
+          name: `${test_type}-${env}`,
           testmatch: `smoke/*.spec.[jt]s`,
         })),
       )
