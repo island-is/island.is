@@ -1,7 +1,14 @@
 import { FC } from 'react'
 import { Application, FieldBaseProps } from '@island.is/application/types'
-import { GridColumn, GridRow, ProfileCard } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridRow,
+  ProfileCard,
+  Text,
+} from '@island.is/island-ui/core'
 import { FormatMessage, useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 type Props = {
   field: {
@@ -23,25 +30,34 @@ export const Cards: FC<FieldBaseProps & Props> = ({ application, field }) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow marginBottom={3}>
-      {field.props.cards(application).map(
-        ({ title, description }, idx) =>
-          title && (
+      {field.props.cards(application).length ? (
+        field.props.cards(application).map(({ title, description }, idx) => {
+          return (
             <GridColumn
               span={['12/12', '12/12', '6/12']}
-              key={idx}
               paddingTop={3}
+              key={idx}
             >
-              <ProfileCard
-                heightFull
-                title={title}
-                description={
-                  typeof description === 'function'
-                    ? description(formatMessage)
-                    : description
-                }
-              />
+              {title && title !== '' ? (
+                <ProfileCard
+                  heightFull
+                  title={title}
+                  description={
+                    typeof description === 'function'
+                      ? description(formatMessage)
+                      : description
+                  }
+                />
+              ) : (
+                <Text>{formatMessage(m.notFilledOut)}</Text>
+              )}
             </GridColumn>
-          ),
+          )
+        })
+      ) : (
+        <GridColumn paddingTop={3}>
+          <Text>{formatMessage(m.notFilledOut)}</Text>
+        </GridColumn>
       )}
     </GridRow>
   )
