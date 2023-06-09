@@ -128,7 +128,10 @@ function run_container() {
 }
 
 function build_image() {
-  ./scripts/ci/_podman.sh "$DOCKERFILE" "$DOCKER_TARGET"
+  (
+    export DOCKER_TAG
+    exec ./scripts/ci/_podman.sh "$DOCKERFILE" "$DOCKER_TARGET"
+  )
   return 0
 }
 
