@@ -205,7 +205,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
             ],
             cc: mockConfig.email.prisonEmail.split(',').slice(1),
 
-            subject: 'Úrskurður í máli' + theCase.courtCaseNumber,
+            subject: 'Úrskurður í máli ' + theCase.courtCaseNumber,
             html: `Héraðsdómur Reykjavíkur hefur úrskurðað aðila í gæsluvarðhald í þinghaldi sem lauk rétt í þessu. Hægt er að nálgast þingbók og vistunarseðil í ${expectedLink}Réttarvörslugátt</a>.`,
           }),
         )
