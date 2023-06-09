@@ -65,7 +65,7 @@ const CompletedScreen: FC<FieldBaseProps> = ({ application }) => {
               formatMessage,
             )}
           </Bullet>
-          {plastic.length > 0 && (
+          {plastic?.length > 0 && (
             <Bullet>
               {formatText(
                 e.confirmation.sectionInfoBulletSecondOne,

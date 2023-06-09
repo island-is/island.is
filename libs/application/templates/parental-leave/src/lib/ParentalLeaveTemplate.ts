@@ -369,6 +369,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'periods',
                   'selectedChild',
                   'payments',
+                  'employers',
                 ],
               },
               actions: [
@@ -940,6 +941,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   'periods',
                   'selectedChild',
                   'payments',
+                  'employers',
                 ],
               },
               actions: [

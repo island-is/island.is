@@ -29,6 +29,11 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
   }
 
+  /** Returns unique values of an array */
+  onlyUnique(value: string, index: number, array: string[]) {
+    return array.indexOf(value) === index
+  }
+
   /** Helper function. Get's applicants by type. If no type is provided then it returns from national registry */
   getApplicants(
     application: ApplicationWithAttachments,
@@ -55,15 +60,15 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
       for (let i = 0; i < custodyData?.length; i++) {
         nridArr.push(custodyData[i].nationalId)
       }
-      return nridArr
+      return nridArr.filter(this.onlyUnique)
     }
 
     if (applyType === FormApplyType.APPLYING_FOR_PLASTIC) {
-      const ans = application.answers as unknown as Answer
-      return ans.delimitations.applyForPlastic
+      const ans = (application.answers as unknown) as Answer
+      return ans.delimitations.applyForPlastic?.filter(this.onlyUnique)
     }
 
-    return application.answers[applyType] as string[]
+    return (application.answers[applyType] as string[])?.filter(this.onlyUnique)
   }
 
   toCommaDelimitedList(arr: string[]) {
@@ -106,11 +111,14 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
               (x) => x.isPlastic === true,
             )
             if (plasticCard) {
-              pdfApplicantArr.push({
-                cardNumber: plasticCard.cardNumber ?? '',
-                nationalId: applicants[i],
-              })
-              continue
+              if (
+                !pdfApplicantArr.some((x) => x.nationalId === applicants[i])
+              ) {
+                pdfApplicantArr.push({
+                  cardNumber: plasticCard.cardNumber ?? '',
+                  nationalId: applicants[i],
+                })
+              }
             }
           }
         }
@@ -123,10 +131,12 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
             (x) => x.isPlastic === true,
           )
           if (plasticCard) {
-            pdfApplicantArr.push({
-              cardNumber: plasticCard?.cardNumber ?? '',
-              nationalId: applicants[i],
-            })
+            if (!pdfApplicantArr.some((x) => x.nationalId === applicants[i])) {
+              pdfApplicantArr.push({
+                cardNumber: plasticCard?.cardNumber ?? '',
+                nationalId: applicants[i],
+              })
+            }
           }
         }
       }

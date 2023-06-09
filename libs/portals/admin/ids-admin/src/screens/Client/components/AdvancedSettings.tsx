@@ -62,7 +62,7 @@ export const AdvancedSettings = ({
         'allowOfflineAccess',
         'requireConsent',
         'supportTokenExchange',
-        'slidingRefreshTokenLifetime',
+        'accessTokenLifetime',
         'customClaims',
       ])}
     >

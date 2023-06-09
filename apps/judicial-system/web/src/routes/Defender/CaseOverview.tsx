@@ -26,9 +26,7 @@ import {
   InfoCard,
   MarkdownWrapper,
   PageLayout,
-  PdfButton,
   RestrictionTags,
-  SignedDocument,
   PageHeader,
   Modal,
   Conclusion,
@@ -37,6 +35,8 @@ import {
   FeatureContext,
   AppealConclusion,
   AlertBanner,
+  PdfButton,
+  SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -299,6 +299,7 @@ export const CaseOverview: React.FC = () => {
           )}
 
           <AppealCaseFilesOverview />
+
           {(workingCase.sendRequestToDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>

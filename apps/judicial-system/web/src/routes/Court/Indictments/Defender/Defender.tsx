@@ -18,6 +18,7 @@ import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/va
 import { NotificationType } from '@island.is/judicial-system/types'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import * as constants from '@island.is/judicial-system/consts'
+import { core } from '@island.is/judicial-system-web/messages'
 
 import { defender as m } from './Defender.strings'
 import SelectDefender from './SelectDefender'
@@ -72,7 +73,7 @@ const HearingArrangements: React.FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase || isSendingNotification}
-          nextButtonText={formatMessage(m.nextButtonText)}
+          nextButtonText={formatMessage(core.continue)}
           nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>

@@ -19,7 +19,12 @@ import {
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { core, tables, titles } from '@island.is/judicial-system-web/messages'
+import {
+  core,
+  tables,
+  titles,
+  errors,
+} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { capitalize } from '@island.is/judicial-system/formatters'
 
@@ -204,8 +209,8 @@ export const Cases: React.FC = () => {
           data-testid="custody-requests-error"
         >
           <AlertMessage
-            title="Ekki tókst að sækja gögn úr gagnagrunni"
-            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
+            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
             type="error"
           />
         </div>
