@@ -14,7 +14,7 @@ test.describe('Endorsements', () => {
 
   test.beforeAll(async ({ browser }) => {
     context = await session({
-      browser: browser,
+      browser,
       storageState: 'service-portal-faereyjar.json',
       homeUrl: '/undirskriftalistar',
       phoneNumber: '0102399',
