@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { ValueType } from 'react-select/src/types'
 
@@ -33,6 +33,11 @@ import {
   isExtendedCourtRole,
   isProsecutionRole,
 } from '@island.is/judicial-system/types'
+import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+import {
+  removeErrorMessageIfValid,
+  validateAndSetErrorMessage,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 
 type ExtendedOption = ReactSelectOption & { institution: Institution }
 
@@ -48,14 +53,39 @@ interface Props {
 export const UserForm: React.FC<Props> = (props) => {
   const [user, setUser] = useState<User>(props.user)
 
+  const {
+    personData,
+    businessData,
+    personError,
+    businessError,
+  } = useNationalRegistry(user.nationalId)
+
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
+  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
+
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>()
   const [
     mobileNumberErrorMessage,
     setMobileNumberErrorMessage,
   ] = useState<string>()
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>()
+
+  useEffect(() => {
+    if (personError || (personData && personData.items?.length === 0)) {
+      setNationalIdNotFound(true)
+      return
+    }
+
+    if (personData && personData.items && personData.items.length > 0) {
+      storeAndRemoveErrorIfValid(
+        'name',
+        personData.items[0].name,
+        ['empty'],
+        setNameErrorMessage,
+      )
+    }
+  }, [personData, personError])
 
   const selectInstitutions = (isProsecutionRole(user.role)
     ? props.prosecutorsOffices
@@ -128,6 +158,43 @@ export const UserForm: React.FC<Props> = (props) => {
           </Text>
         </Box>
         <Box marginBottom={2}>
+          <InputMask
+            // eslint-disable-next-line local-rules/disallow-kennitalas
+            mask="999999-9999"
+            maskPlaceholder={null}
+            value={user.nationalId || ''}
+            onChange={(event) => {
+              setNationalIdNotFound(false)
+
+              storeAndRemoveErrorIfValid(
+                'nationalId',
+                event.target.value.replace('-', ''),
+                ['empty', 'national-id'],
+                setNationalIdErrorMessage,
+              )
+            }}
+            onBlur={(event) =>
+              validateAndSetError(
+                event.target.value.replace('-', ''),
+                ['empty', 'national-id'],
+                setNationalIdErrorMessage,
+              )
+            }
+            readOnly={user.id.length > 0 ? true : false}
+          >
+            <Input
+              data-testid="nationalId"
+              name="nationalId"
+              label="Kennitala"
+              placeholder="Kennitala"
+              autoComplete="off"
+              required
+              hasError={nationalIdErrorMessage !== undefined}
+              errorMessage={nationalIdErrorMessage}
+            />
+          </InputMask>
+        </Box>
+        <Box marginBottom={2}>
           <Input
             name="name"
             label="Nafn"
@@ -154,41 +221,7 @@ export const UserForm: React.FC<Props> = (props) => {
             required
           />
         </Box>
-        <Box marginBottom={2}>
-          <InputMask
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            mask="999999-9999"
-            maskPlaceholder={null}
-            value={user.nationalId || ''}
-            onChange={(event) =>
-              storeAndRemoveErrorIfValid(
-                'nationalId',
-                event.target.value.replace('-', ''),
-                ['empty', 'national-id'],
-                setNationalIdErrorMessage,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSetError(
-                event.target.value.replace('-', ''),
-                ['empty', 'national-id'],
-                setNationalIdErrorMessage,
-              )
-            }
-            readOnly={user.id.length > 0 ? true : false}
-          >
-            <Input
-              data-testid="nationalId"
-              name="nationalId"
-              label="Kennitala"
-              placeholder="Kennitala"
-              autoComplete="off"
-              required
-              hasError={nationalIdErrorMessage !== undefined}
-              errorMessage={nationalIdErrorMessage}
-            />
-          </InputMask>
-        </Box>
+
         <Box>
           <Box display="flex" marginBottom={2}>
             <Box className={styles.roleColumn}>
