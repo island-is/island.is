@@ -1,0 +1,3 @@
+mutation DeleteClient($input: AuthAdminDeleteClientInput!) {
+  deleteAuthAdminClient(input: $input)
+}
