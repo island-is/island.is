@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import fs from 'fs'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
