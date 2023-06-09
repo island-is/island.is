@@ -48,13 +48,16 @@ describe('createEndorsementList', () => {
         today.getTime() + 7 * 24 * 60 * 60 * 1000,
       ).toISOString(),
       adminLock: false,
-      meta: {email: 'rafn@juni.is', phone: '9999999'},
+      meta: { email: 'rafn@juni.is', phone: '9999999' },
     }
     const response = await request(app.getHttpServer())
       .post('/endorsement-list')
       .send(newEndorsementList)
       .expect(201)
 
-    expect(response.body).toMatchObject({...newEndorsementList, meta:{...newEndorsementList.meta, email: '', phone: ''},}) // should return the created object
+    expect(response.body).toMatchObject({
+      ...newEndorsementList,
+      meta: { ...newEndorsementList.meta, email: '', phone: '' },
+    }) // should return the created object
   })
 })
