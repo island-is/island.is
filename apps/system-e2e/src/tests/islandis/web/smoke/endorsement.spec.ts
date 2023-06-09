@@ -10,7 +10,6 @@ import format from 'date-fns/format'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-
 test.describe('Endorsements', () => {
   let context: BrowserContext
 
@@ -29,7 +28,6 @@ test.describe('Endorsements', () => {
   })
 
   test('should be able to see overview and endorse a list', async () => {
-    
     const page = await context.newPage()
 
     await page.goto(icelandicAndNoPopupUrl('/undirskriftalistar'))
@@ -40,11 +38,10 @@ test.describe('Endorsements', () => {
 
     await page.getByRole('button', { name: 'Skoða lista' }).first().click()
     await page.waitForSelector('button:text("Setja nafn mitt á þennan lista")')
-    await page.getByRole('button', { name: 'Setja nafn mitt á þennan lista' }).click()
+    await page
+      .getByRole('button', { name: 'Setja nafn mitt á þennan lista' })
+      .click()
 
     // from here a new tab opens and we need to find out how to tap into that ...
-
-
   })
-
 })

@@ -66,8 +66,6 @@ test.describe('Endorsements', () => {
     await page.click('button:text("Stofna lista")')
 
     // 5 see some kind of success confirmation
-    await expect(
-      page.locator('button:text("Afrita hlekk")'),
-    ).toBeVisible()
+    await expect(page.locator('button:text("Afrita hlekk")')).toBeVisible()
   })
 })
