@@ -1,7 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, YesOrNo } from '@island.is/application/types'
 import { MONTHS } from './constants'
-import {oldAgePensionFormMessage} from './messages'
+import { oldAgePensionFormMessage } from './messages'
 
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
@@ -23,102 +23,115 @@ export function getApplicationAnswers(answers: Application['answers']) {
     pensionFundQuestion,
     abroadQuestion,
     selectedYear,
-    selectedMonth
+    selectedMonth,
   }
 }
 
-export function getApplicationExternalDate(externalData: Application['externalData']) {
-  const nationalId = getValueViaPath(externalData, 'nationalRegistry.data.nationalId') as string
+export function getApplicationExternalDate(
+  externalData: Application['externalData'],
+) {
+  const nationalId = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.nationalId',
+  ) as string
 
-  return { nationalId}
+  return { nationalId }
 }
 
-export function getStartDateAndEndDate(nationalId: string){
+export function getStartDateAndEndDate(nationalId: string) {
   const today = new Date()
   const nationalIdInfo = kennitala.info(nationalId)
   const dateOfBirth = new Date(nationalIdInfo.birthday)
   const age = nationalIdInfo.age
-  const dateOfBirthThisYear = new Date( today.getFullYear(), dateOfBirth.getMonth(), dateOfBirth.getDay())
+  const dateOfBirthThisYear = new Date(
+    today.getFullYear(),
+    dateOfBirth.getMonth(),
+    dateOfBirth.getDay(),
+  )
 
   const thisYearAge = dateOfBirthThisYear > today ? age + 1 : age
 
   let startDate = dateOfBirthThisYear
   let endDate = addMonths(today, 6)
-  if (thisYearAge >= 67){
-    startDate = addYears(dateOfBirthThisYear > today ? dateOfBirthThisYear : today, -2)
-  }
-  else if (thisYearAge === 66){
+  if (thisYearAge >= 67) {
+    startDate = addYears(
+      dateOfBirthThisYear > today ? dateOfBirthThisYear : today,
+      -2,
+    )
+  } else if (thisYearAge === 66) {
     startDate = addYears(dateOfBirthThisYear, -1)
-  }
-  else if (thisYearAge < 65){
+  } else if (thisYearAge < 65) {
     return {}
   }
   if (startDate > endDate) return {}
 
-  return { startDate, endDate}
-
+  return { startDate, endDate }
 }
 
-export function getAvailableYears(application: Application){
-  const {nationalId} = getApplicationExternalDate(application['externalData'])
+export function getAvailableYears(application: Application) {
+  const { nationalId } = getApplicationExternalDate(application['externalData'])
   if (!nationalId) return []
 
-  const {startDate, endDate } = getStartDateAndEndDate(nationalId)
+  const { startDate, endDate } = getStartDateAndEndDate(nationalId)
   if (!startDate || !endDate) return []
 
   const startDateYear = startDate.getFullYear()
   const endDateYear = endDate.getFullYear()
 
-  return Array.from(Array(endDateYear - startDateYear + 1).keys()).map( x => {
+  return Array.from(Array(endDateYear - startDateYear + 1).keys()).map((x) => {
     const theYear = x + startDateYear
-    return {value: theYear.toString(), label: theYear.toString() }
+    return { value: theYear.toString(), label: theYear.toString() }
   })
 }
 
-export function getAvailableMonths(application: Application, selectedYear: string){
-  const {nationalId} = getApplicationExternalDate(application['externalData'])
+export function getAvailableMonths(
+  application: Application,
+  selectedYear: string,
+) {
+  const { nationalId } = getApplicationExternalDate(application['externalData'])
   if (!nationalId) return []
 
   const { startDate, endDate } = getStartDateAndEndDate(nationalId)
   if (!startDate || !endDate || !selectedYear) return []
 
   let months = MONTHS
-  if (startDate.getFullYear().toString() === selectedYear){
+  if (startDate.getFullYear().toString() === selectedYear) {
     months = months.slice(startDate.getMonth(), months.length + 1)
-  }
-  else if (endDate.getFullYear().toString() === selectedYear){
+  } else if (endDate.getFullYear().toString() === selectedYear) {
     months = months.slice(0, endDate.getMonth() + 1)
   }
 
-  return months.map(month => {
-    switch(month){
+  return months.map((month) => {
+    switch (month) {
       case 'January':
-        return {value: month, label: oldAgePensionFormMessage.period.january}
+        return { value: month, label: oldAgePensionFormMessage.period.january }
       case 'February':
-        return {value: month, label: oldAgePensionFormMessage.period.february}
+        return { value: month, label: oldAgePensionFormMessage.period.february }
       case 'March':
-        return {value: month, label: oldAgePensionFormMessage.period.march}
+        return { value: month, label: oldAgePensionFormMessage.period.march }
       case 'April':
-        return {value: month, label: oldAgePensionFormMessage.period.april}
+        return { value: month, label: oldAgePensionFormMessage.period.april }
       case 'May':
-        return {value: month, label: oldAgePensionFormMessage.period.may}
+        return { value: month, label: oldAgePensionFormMessage.period.may }
       case 'June':
-        return {value: month, label: oldAgePensionFormMessage.period.june}
+        return { value: month, label: oldAgePensionFormMessage.period.june }
       case 'July':
-        return {value: month, label: oldAgePensionFormMessage.period.july}
+        return { value: month, label: oldAgePensionFormMessage.period.july }
       case 'Agust':
-        return {value: month, label: oldAgePensionFormMessage.period.agust}
+        return { value: month, label: oldAgePensionFormMessage.period.agust }
       case 'September':
-        return {value: month, label: oldAgePensionFormMessage.period.september}
+        return {
+          value: month,
+          label: oldAgePensionFormMessage.period.september,
+        }
       case 'October':
-        return {value: month, label: oldAgePensionFormMessage.period.october}
+        return { value: month, label: oldAgePensionFormMessage.period.october }
       case 'November':
-        return {value: month, label: oldAgePensionFormMessage.period.november}
+        return { value: month, label: oldAgePensionFormMessage.period.november }
       case 'December':
-        return {value: month, label: oldAgePensionFormMessage.period.desember}
+        return { value: month, label: oldAgePensionFormMessage.period.desember }
       default:
-        return {value: '0', label: ''}
+        return { value: '0', label: '' }
     }
   })
-
 }

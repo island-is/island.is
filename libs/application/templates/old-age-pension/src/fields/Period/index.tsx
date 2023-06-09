@@ -13,28 +13,38 @@ import {
 import { SelectFormField } from '@island.is/application/ui-fields'
 
 import { oldAgePensionFormMessage } from '../../lib/messages'
-import { getApplicationAnswers, getAvailableMonths, getAvailableYears } from '../../lib/oldAgePensionUtils'
+import {
+  getApplicationAnswers,
+  getAvailableMonths,
+  getAvailableYears,
+} from '../../lib/oldAgePensionUtils'
 
 export const Period: FC<FieldBaseProps> = ({ application }) => {
   const {
     formState: { errors },
   } = useFormContext()
 
-  const { selectedYear: year, selectedMonth: month } = getApplicationAnswers(application.answers)
-  
+  const { selectedYear: year, selectedMonth: month } = getApplicationAnswers(
+    application.answers,
+  )
+
   const [selectedYear, setSeletedYear] = useState(year)
   const [selectedMonth, setSeletedMonth] = useState(month)
   const [isShowMonth, setIsShowMonth] = useState(!!month)
-  
-  const optionsYears = getAvailableYears(application)
-  const [optionsMonths, setOptionsMonths] = useState(getAvailableMonths(application, new Date().getFullYear().toString()))
 
-  const error = getErrorViaPath(errors, 'period.year') ?? getErrorViaPath(errors, 'period.month')
-  
+  const optionsYears = getAvailableYears(application)
+  const [optionsMonths, setOptionsMonths] = useState(
+    getAvailableMonths(application, new Date().getFullYear().toString()),
+  )
+
+  const error =
+    getErrorViaPath(errors, 'period.year') ??
+    getErrorViaPath(errors, 'period.month')
+
   const onSelectYear = (option: SelectOption) => {
     const value = option.value as string
     setSeletedYear(value)
-    
+
     setIsShowMonth(true)
     const months = getAvailableMonths(application, value)
     setOptionsMonths(months)
@@ -48,42 +58,45 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
   return (
     <Box paddingTop={6}>
       <Box display={'flex'} className={styles.flexBox}>
-        <Box width='half' marginRight={3} className={styles.yearBox}>
-            <SelectFormField
-                application={application}
-                error={error}
-                field={{
-                type: FieldTypes.SELECT,
-                component: FieldComponents.SELECT,
-                title: oldAgePensionFormMessage.period.periodInputYear,
-                placeholder: oldAgePensionFormMessage.period.periodInputYearDefaultText,
-                id: 'period.year',
-                children: undefined,
-                options: optionsYears,
-                backgroundColor: 'blue',
-                onSelect: onSelectYear,
-                }}
-            />
+        <Box width="half" marginRight={3} className={styles.yearBox}>
+          <SelectFormField
+            application={application}
+            error={error}
+            field={{
+              type: FieldTypes.SELECT,
+              component: FieldComponents.SELECT,
+              title: oldAgePensionFormMessage.period.periodInputYear,
+              placeholder:
+                oldAgePensionFormMessage.period.periodInputYearDefaultText,
+              id: 'period.year',
+              children: undefined,
+              options: optionsYears,
+              backgroundColor: 'blue',
+              onSelect: onSelectYear,
+            }}
+          />
         </Box>
-        { isShowMonth &&
-        <Box width='half' marginLeft={3} className={styles.monthBox}>
+        {isShowMonth && (
+          <Box width="half" marginLeft={3} className={styles.monthBox}>
             <SelectFormField
-                application={application}
-                error={error}
-                field={{
+              application={application}
+              error={error}
+              field={{
                 type: FieldTypes.SELECT,
                 component: FieldComponents.SELECT,
                 title: oldAgePensionFormMessage.period.periodInputMonth,
-                placeholder: oldAgePensionFormMessage.period.periodInputMonthDefaultText,
+                placeholder:
+                  oldAgePensionFormMessage.period.periodInputMonthDefaultText,
                 id: 'period.month',
                 children: undefined,
                 options: optionsMonths,
                 backgroundColor: 'blue',
                 onSelect: onSelectMonth,
-                }}
+              }}
             />
-        </Box> }
-        </Box>
+          </Box>
+        )}
+      </Box>
     </Box>
   )
 }

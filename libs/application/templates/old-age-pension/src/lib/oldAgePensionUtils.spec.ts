@@ -8,54 +8,54 @@ import {
   FormValue,
 } from '@island.is/application/types'
 
-import { getStartDateAndEndDate , getAvailableYears} from './oldAgePensionUtils'
+import { getStartDateAndEndDate, getAvailableYears } from './oldAgePensionUtils'
 
 function buildApplication(data?: {
-    answers?: FormValue
-    externalData?: ExternalData
-    state?: string
-  }): Application {
-    const { answers = {}, externalData = {}, state = 'draft' } = data ?? {}
-  
-    return {
-      id: '12345',
-      assignees: [],
-      applicant: '0101307789',
-      typeId: ApplicationTypes.OLD_AGE_PENSION,
-      created: new Date(),
-      modified: new Date(),
-      attachments: {},
-      applicantActors: [],
-      answers,
-      state,
-      externalData,
-      status: ApplicationStatus.IN_PROGRESS,
-    }
+  answers?: FormValue
+  externalData?: ExternalData
+  state?: string
+}): Application {
+  const { answers = {}, externalData = {}, state = 'draft' } = data ?? {}
+
+  return {
+    id: '12345',
+    assignees: [],
+    applicant: '0101307789',
+    typeId: ApplicationTypes.OLD_AGE_PENSION,
+    created: new Date(),
+    modified: new Date(),
+    attachments: {},
+    applicantActors: [],
+    answers,
+    state,
+    externalData,
+    status: ApplicationStatus.IN_PROGRESS,
   }
-  
-  describe('getStartDateAndEndDate', () => {
-      it('should return 2 years ago for startDate and 6 months ahead for endDate', () => {
-        const application = buildApplication()
-        const today = new Date()
-        const startDate = addYears(today, -2)
-        const endDate = addMonths(today, 6)
-        const res = getStartDateAndEndDate(application.applicant)
-    
-        expect(res).toEqual({ startDate, endDate })
-      })
+}
+
+describe('getStartDateAndEndDate', () => {
+  it('should return 2 years ago for startDate and 6 months ahead for endDate', () => {
+    const application = buildApplication()
+    const today = new Date()
+    const startDate = addYears(today, -2)
+    const endDate = addMonths(today, 6)
+    const res = getStartDateAndEndDate(application.applicant)
+
+    expect(res).toEqual({ startDate, endDate })
+  })
+})
+
+describe('getAvailableYears', () => {
+  it('should return available years', () => {
+    const application = buildApplication()
+    const startDateYear = addYears(new Date(), -2).getFullYear()
+
+    const res = getAvailableYears(application)
+    const expected = Array.from(Array(3).keys()).map((x) => {
+      const theYear = x + startDateYear
+      return { value: theYear.toString(), label: theYear.toString() }
     })
 
-    describe('getAvailableYears', () => {
-        it('should return available years', () => {
-          const application = buildApplication()
-          const startDateYear = addYears(new Date(), -2 ).getFullYear()
-  
-          const res = getAvailableYears(application)
-          const expected = Array.from(Array(3).keys()).map( x => {
-              const theYear = x + startDateYear
-              return {value: theYear.toString(), label: theYear.toString() }
-          })
-      
-          expect(res).toEqual(expected)
-        })
-      })
+    expect(res).toEqual(expected)
+  })
+})

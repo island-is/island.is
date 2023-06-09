@@ -28,8 +28,8 @@ export const dataSchema = z.object({
   }),
   period: z.object({
     year: z.string(),
-    month: z.string()
-  })  
+    month: z.string(),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

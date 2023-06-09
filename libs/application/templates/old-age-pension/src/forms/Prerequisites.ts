@@ -36,8 +36,7 @@ export const PrerequisitesForm: Form = buildForm({
         buildSubSection({
           id: 'information',
           title: 'Til upplýsinga',
-          children: [
-          ],
+          children: [],
         }),
         buildSubSection({
           id: 'externalData',

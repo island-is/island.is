@@ -209,10 +209,8 @@ export const oldAgePensionFormMessage: MessageDir = {
   period: defineMessages({
     periodTitle: {
       id: 'oap.application:period.title',
-      defaultMessage:
-        'Tímabil',
-      description:
-        'Period',
+      defaultMessage: 'Tímabil',
+      description: 'Period',
     },
     periodDescription: {
       id: 'oap.application:period.description',
@@ -223,13 +221,12 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     periodAttachmentForEarlyRetirementTitle: {
       id: 'oap.application:period.attachedment.for.early.retirement.title',
-      defaultMessage:
-        'Fylgiskjöl vegna snemmtöku',
-      description:
-        'Early retirement attachment',
+      defaultMessage: 'Fylgiskjöl vegna snemmtöku',
+      description: 'Early retirement attachment',
     },
     periodAttachmentForEarlyRetirementDescription: {
-      id: 'oap.application:period.attachedment.for.early.retirement.description',
+      id:
+        'oap.application:period.attachedment.for.early.retirement.description',
       defaultMessage:
         'Hér getur þú skilað yfirliti úr lífeyrisgátt sem þú hefur áunnið þér réttindi í. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
@@ -237,115 +234,123 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     periodInputMonth: {
       id: 'oap.application:period.input.month',
-      defaultMessage:
-        'Mánuður',
-      description:
-        'Month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
     },
     periodInputMonthDefaultText: {
       id: 'oap.application:period.input.month.default.text',
-      defaultMessage:
-        'Veldu mánuð',
-      description:
-        'Select month',
+      defaultMessage: 'Veldu mánuð',
+      description: 'Select month',
     },
     periodInputYear: {
       id: 'oap.application:period.input.year',
-      defaultMessage:
-        'Ár',
-      description:
-        'Year',
+      defaultMessage: 'Ár',
+      description: 'Year',
     },
     periodInputYearDefaultText: {
       id: 'oap.application:period.input.year.default.text',
-      defaultMessage:
-        'Veldu ár',
-      description:
-        'Select year',
+      defaultMessage: 'Veldu ár',
+      description: 'Select year',
     },
     january: {
       id: 'oap.application:period.january',
-      defaultMessage:
-        'Janúar',
-      description:
-        'January',
+      defaultMessage: 'Janúar',
+      description: 'January',
     },
     february: {
       id: 'oap.application:period.february',
-      defaultMessage:
-        'Febrúar',
-      description:
-        'February',
+      defaultMessage: 'Febrúar',
+      description: 'February',
     },
     march: {
       id: 'oap.application:period.march',
-      defaultMessage:
-        'Mars',
-      description:
-        'March',
+      defaultMessage: 'Mars',
+      description: 'March',
     },
     april: {
       id: 'oap.application:period.april',
-      defaultMessage:
-        'Apríl',
-      description:
-        'April',
+      defaultMessage: 'Apríl',
+      description: 'April',
     },
     may: {
       id: 'oap.application:period.may',
-      defaultMessage:
-        'Maí',
-      description:
-        'May',
+      defaultMessage: 'Maí',
+      description: 'May',
     },
     june: {
       id: 'oap.application:period.june',
-      defaultMessage:
-        'Júní',
-      description:
-        'June',
+      defaultMessage: 'Júní',
+      description: 'June',
     },
     july: {
       id: 'oap.application:period.july',
-      defaultMessage:
-        'Júlí',
-      description:
-        'July',
+      defaultMessage: 'Júlí',
+      description: 'July',
     },
     agust: {
       id: 'oap.application:period.agust',
-      defaultMessage:
-        'Águst',
-      description:
-        'Agust',
+      defaultMessage: 'Águst',
+      description: 'Agust',
     },
     september: {
       id: 'oap.application:period.september',
-      defaultMessage:
-        'September',
-      description:
-        'September',
+      defaultMessage: 'September',
+      description: 'September',
     },
     october: {
       id: 'oap.application:period.october',
-      defaultMessage:
-        'Október',
-      description:
-        'October',
+      defaultMessage: 'Október',
+      description: 'October',
     },
     november: {
       id: 'oap.application:period.november',
-      defaultMessage:
-        'Nóvember',
-      description:
-        'November',
+      defaultMessage: 'Nóvember',
+      description: 'November',
     },
     desember: {
       id: 'oap.application:period.desember',
+      defaultMessage: 'Desember',
+      description: 'December',
+    },
+  }),
+
+  fileUpload: defineMessages({
+    title: {
+      id: 'oap.application:fileUpload.title',
+      defaultMessage: 'Fylgiskjöl snemmtöku',
+      description: 'Early retirement',
+    },
+    attachmentButton: {
+      id: 'pl.application:fileUpload.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Upload file',
+    },
+    attachmentHeader: {
+      id: 'pl.application:fileUpload.attachment.header',
+      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
+    attachmentDescription: {
+      id: 'pl.application:fileUpload.attachment.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description: 'Accepted documents with the following extensions: .pdf',
+    },
+    attachmentMaxSizeError: {
+      id: 'pl.application:fileUpload.attachment.maxSizeError',
+      defaultMessage: 'Hámark 5 MB á skrá',
+      description: 'Max 5 MB per file',
+    },
+    earlyRetirementTitle: {
+      id: 'oap.application:fileUpload.earlyRetirement.title',
+      defaultMessage: 'Fylgiskjöl vegna snemmtöku',
+      description: 'Early retirement attachment',
+    },
+    earlyRetirementDescription: {
+      id: 'oap.application:fileUpload.earlyRetirement.description',
       defaultMessage:
-        'Desember',
+        'Hér getur þú skilað yfirliti úr lífeyrisgátt sem þú hefur áunnið þér réttindi í. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
-        'December',
+        'Here you can submit an overview from the pension portal in which you have earned rights. Note that the document must be in .pdf format.',
     },
   }),
 
@@ -357,3 +362,26 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
   }),
 }
+
+export const validatorErrorMessages = defineMessages({
+  periodStartDateNeeded: {
+    id: 'pl.application:period.startDate.Needed',
+    defaultMessage: 'Finn ekki byrjunardagsetning.',
+    description: 'Could not calculate startDate.',
+  },
+  periodEndDateNeeded: {
+    id: 'pl.application:period.endDate.Needed',
+    defaultMessage: 'Finn ekki endadagsetning.',
+    description: 'Could not calculate endDate.',
+  },
+  periodYear: {
+    id: 'pl.application:period.year',
+    defaultMessage: 'Vitlaust ár.',
+    description: 'Invalid year.',
+  },
+  periodMonth: {
+    id: 'pl.application:period.month',
+    defaultMessage: 'Vitlaus mánuður.',
+    description: 'Invalid month.',
+  },
+})
