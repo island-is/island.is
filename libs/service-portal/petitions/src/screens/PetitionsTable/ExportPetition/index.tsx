@@ -88,7 +88,7 @@ const DropdownExport: FC<Props> = ({
                 }
                 fileName="Undirskriftalisti.pdf"
               >
-                {() => <Box>{formatMessage(m.asPdf)}</Box>}
+                {({loading}) => loading ? <Bod>Hleð... </Bod> : <Box>{formatMessage(m.asPdf)}</Box>}
               </PDFDownloadLink>
             ),
           },
