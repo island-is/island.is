@@ -18,6 +18,7 @@ import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage } from './messages'
 import { MaritalStatus } from '@island.is/api/schema'
+import { answerValidators } from './answerValidators'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -108,6 +109,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
     }
     return undefined
   },
+  answerValidators,
 }
 
 export default OldAgePensionTemplate

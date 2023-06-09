@@ -1,5 +1,7 @@
 import {
+  buildCustomField,
   buildDescriptionField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildPhoneField,
@@ -14,10 +16,17 @@ import {
   NationalRegistryIndividual,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
+import { UserProfile } from '@island.is/api/schema'
+
+import * as kennitala from 'kennitala'
+
 import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
-import { format as formatNationalId } from 'kennitala'
-import { UserProfile } from '@island.is/api/schema'
+import { FILE_SIZE_LIMIT } from '../lib/constants'
+import {
+  getApplicationAnswers,
+  getApplicationExternalDate,
+} from '../lib/oldAgePensionUtils'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -63,7 +72,7 @@ export const OldAgePensionForm: Form = buildForm({
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) =>
-                    formatNationalId(application.applicant),
+                    kennitala.format(application.applicant),
                 }),
                 buildTextField({
                   id: 'applicantInfo.address',
@@ -180,6 +189,73 @@ export const OldAgePensionForm: Form = buildForm({
               description:
                 oldAgePensionFormMessage.shared.residenceHistoryDescription,
               children: [],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'periodSection',
+          title: oldAgePensionFormMessage.period.periodTitle,
+          children: [
+            // Period is from 65 year old birthday or last 2 years if applicant is 67+
+            //           to 6 month ahead
+            buildMultiField({
+              id: 'periodField',
+              title: oldAgePensionFormMessage.period.periodTitle,
+              description: oldAgePensionFormMessage.period.periodDescription,
+              children: [
+                buildCustomField({
+                  id: 'period',
+                  component: 'Period',
+                  title: oldAgePensionFormMessage.period.periodTitle,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUpload',
+          title: oldAgePensionFormMessage.fileUpload.title,
+          children: [
+            buildFileUploadField({
+              id: 'fileUpload.earlyRetirement',
+              title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+              condition: (answers, externalData) => {
+                const { nationalId } = getApplicationExternalDate(externalData)
+                const { selectedMonth, selectedYear } = getApplicationAnswers(
+                  answers,
+                )
+
+                const dateOfBirth = kennitala.info(nationalId).birthday
+                const dateOfBirth00 = new Date(
+                  dateOfBirth.getFullYear(),
+                  dateOfBirth.getMonth(),
+                ).getTime()
+                const startDate = new Date(
+                  +selectedYear,
+                  +selectedMonth,
+                ).getTime()
+
+                const diffTime = startDate - dateOfBirth00
+                const age = Math.floor(
+                  diffTime / (365.25 * 60 * 60 * 24 * 1000),
+                )
+
+                return age === 65 || age === 66
+              },
             }),
           ],
         }),
