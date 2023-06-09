@@ -25,6 +25,7 @@ export const NationalRegistryUser = NationalRegistryUserApi.configure({
       title: error.invalidAgeTitle,
       summary: error.invalidAgeDescription,
     },
+    icelandicCitizenship: true,
   },
 })
 

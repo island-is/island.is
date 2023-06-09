@@ -29,7 +29,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const result = await this.getIndividual(auth.nationalId)
-
     // Make sure user has domicile country as Iceland
     if (params?.legalDomicileIceland) {
       const domicileCode = result?.address?.municipalityCode
@@ -38,6 +37,19 @@ export class NationalRegistryService extends BaseTemplateApiService {
           {
             title: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
             summary: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
+          },
+          400,
+        )
+      }
+    }
+
+    if (params?.icelandicCitizenship) {
+      const citizenship = result?.citizenship
+      if (!citizenship || citizenship.code !== 'IS') {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
+            summary: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
           },
           400,
         )
