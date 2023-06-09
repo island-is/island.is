@@ -392,14 +392,14 @@ export class EndorsementListService {
             address: recipientEmail,
           },
         ],
-        subject: `Meðmælendalisti "${endorsementList?.title}"`,
+        subject: `Undirskriftalisti "${endorsementList?.title}"`,
         template: {
-          title: `Meðmælendalisti "${endorsementList?.title}"`,
+          title: `Undirskriftalisti "${endorsementList?.title}"`,
           body: [
             {
               component: 'Heading',
               context: {
-                copy: `Meðmælendalisti "${endorsementList?.title}"`,
+                copy: `Undirskriftalisti "${endorsementList?.title}"`,
                 small: true,
               },
             },
@@ -407,7 +407,7 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}",
+                copy: `Meðfylgjandi er undirskriftalisti "${endorsementList?.title}",
                 sem ${ownerName} er skráður ábyrgðarmaður fyrir.`,
                 small: true,
               },
@@ -428,7 +428,7 @@ export class EndorsementListService {
         },
         attachments: [
           {
-            filename: 'Meðmælendalisti.pdf',
+            filename: 'Undirskriftalisti.pdf',
             content: await this.createDocumentBuffer(
               endorsementList,
               ownerName,
@@ -483,14 +483,14 @@ export class EndorsementListService {
             address: recipientEmail,
           },
         ],
-        subject: `Meðmælendalisti "${endorsementList?.title} hefur verið læst"`,
+        subject: `Undirskriftalista "${endorsementList?.title} hefur verið læst"`,
         template: {
-          title: `Meðmælendalisti "${endorsementList?.title}"`,
+          title: `Undirskriftalisti "${endorsementList?.title}"`,
           body: [
             {
               component: 'Heading',
               context: {
-                copy: `Meðmælendalisti "${endorsementList?.title}"`,
+                copy: `Undirskriftalisti "${endorsementList?.title}"`,
                 small: true,
               },
             },
@@ -498,7 +498,7 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}",
+                copy: `Meðfylgjandi er undirskriftalisti "${endorsementList?.title}",
                 sem ${ownerName} er skráður ábyrgðarmaður fyrir, hefur verið læst af umsjónaraðilum kerfisins hjá Þjóðskrá.`,
                 small: true,
               },
@@ -549,14 +549,14 @@ export class EndorsementListService {
             address: 'skra@skra.is',
           },
         ],
-        subject: `Nýr meðmælendalisti  hefur verið stofnaður`,
+        subject: `Nýr undirskriftalisti  hefur verið stofnaður`,
         template: {
-          title: `Meðmælendalisti "${endorsementList?.title}"`,
+          title: `Undirskriftalisti "${endorsementList?.title}"`,
           body: [
             {
               component: 'Heading',
               context: {
-                copy: `Meðmælendalisti "${endorsementList?.title}"`,
+                copy: `Undirskriftalisti "${endorsementList?.title}"`,
                 small: true,
               },
             },
