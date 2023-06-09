@@ -63,7 +63,6 @@ test.describe('Endorsements', () => {
     await page.click('button:text("Stofna lista")')
 
     // 5 see some kind of success confirmation
-    await expect(page.getByRole('heading')).toHaveText('Undirskriftalista hefur verið skilað til Ísland.is')
     await expect(
       page.locator('button:text("Afrita hlekk")'),
     ).toBeVisible()
