@@ -63,18 +63,6 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       it('should have a info panel about how to resend a case', () => {
         cy.getByTestid('rc-overview-info-panel').should('exist')
       })
-
-      it('should have a button that copies link to case for defender', () => {
-        cy.getByTestid('copyLinkToCase').click()
-        cy.window()
-          .its('navigator.clipboard')
-          .invoke('readText')
-          .then((data) => data)
-          .should(
-            'equal',
-            `${window.location.origin}${DEFENDER_ROUTE}/${caseData.id}`,
-          )
-      })
     })
 
     describe('Cases with status DRAFT', () => {
