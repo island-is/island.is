@@ -67,30 +67,22 @@ const config: PlaywrightTestConfig = {
   },
 
   /* Configure our test targets */
-  // We should be GENEROUS with projects and Tesults targets
+  // Current thought is to use {smoke,acceptance},{main,release} + judicial-system
   projects: [
-    { name: `smoke`, testMatch: `smoke/*.spec.[jt]s` },
-    { name: `accceptance`, testMatch: `acceptance/*.spec.[jt]s` },
+    { name: 'judicial-system', testmatch: 'judicial-system/*.spec.[jt]s' },
     // ['smoke', 'accceptance'].
     ...[
-      'admin-portal',
-      'air-discount-scheme',
-      'application-system',
-      'consultation-portal',
-      'service-portal',
-      'skilavottord',
-      'undirskriftarlistar',
-      'web',
-      'judicial-system',
+      'dev', 'release',
     ]
-      .map((name) =>
+      .map((env) =>
         (['smoke', 'acceptance'] as const).map((test_type) => ({
-          name: `${name}-${test_type}`,
-          testmatch: `${name}/smoke/*.spec.[jt]s`,
+          name: `${env}-${test_type}`,
+          testmatch: `smoke/*.spec.[jt]s`,
         })),
       )
       .flat(),
   ],
+
   /* Configure projects for major browsers */
   // projects: [
   // {
