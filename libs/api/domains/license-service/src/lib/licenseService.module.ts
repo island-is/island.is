@@ -2,7 +2,6 @@ import { Module, CacheModule } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
-import { Cache as CacheManager } from 'cache-manager'
 import { LicenseServiceService } from './licenseService.service'
 import { MainResolver } from './graphql/main.resolver'
 import {
@@ -160,12 +159,19 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
       ) => async (
         type: GenericLicenseType,
         user: User,
+        forceOldDriversLicenseClient = false,
       ): Promise<GenericLicenseClient<unknown> | null> => {
+        //option for forcing a client since verify is a big pain
+        if (forceOldDriversLicenseClient) {
+          return oldGenericDrivingLicenseApi
+        }
+
         const isNewDriversLicenseEnabled = await featureFlagService.getValue(
           Features.licenseServiceDrivingLicenseClient,
           false,
           user,
         )
+
         switch (type) {
           case GenericLicenseType.DriversLicense:
             return isNewDriversLicenseEnabled

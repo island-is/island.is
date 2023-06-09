@@ -44,6 +44,7 @@ export class LicenseServiceService {
     private genericLicenseFactory: (
       type: GenericLicenseType,
       user?: User,
+      forceOldDriversLicenseClient?: boolean,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -398,7 +399,15 @@ export class LicenseServiceService {
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
     }
 
-    const licenseService = await this.genericLicenseFactory(licenseType, user)
+    // Temporariy flag until every user has the new digital driving license
+    // We have to make the driving license client decision dependant on the barcode
+    // being scanned. The simplest way for that is to add a force flag so we can make the
+    // decision based on input rather than the authenticated user's license
+    const licenseService = await this.genericLicenseFactory(
+      licenseType,
+      user,
+      !passTemplateId,
+    )
 
     if (licenseService) {
       verification = await licenseService.verifyPkPass(data, passTemplateId)
