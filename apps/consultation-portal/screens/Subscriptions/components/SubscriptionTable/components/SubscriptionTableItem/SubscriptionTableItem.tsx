@@ -7,6 +7,7 @@ import {
   LinkV2,
   Icon,
   Button,
+  Inline,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { mapIsToEn } from '../../../../../../utils/helpers'
@@ -112,10 +113,10 @@ const SubscriptionTableItem = ({
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <FocusableBox>
+              <FocusableBox onClick={() => onCheckboxChange()}>
                 <Text variant="h5">{loc.allCases}</Text>
               </FocusableBox>
-              <FocusableBox>
+              <FocusableBox onClick={() => onCheckboxChange()}>
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
