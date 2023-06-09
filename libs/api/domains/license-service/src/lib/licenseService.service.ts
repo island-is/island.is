@@ -427,8 +427,12 @@ export class LicenseServiceService {
         // firearmLicense => FirearmLicense
         const keyAsEnumKey = key.slice(0, 1).toUpperCase() + key.slice(1)
 
+        //temporariy fix for the drivers licenses
+        //pr currently under review that fixes this
         const valueFromEnum: GenericLicenseType | undefined =
-          GenericLicenseType[keyAsEnumKey as GenericLicenseTypeType]
+          keyAsEnumKey === 'DrivingLicense'
+            ? GenericLicenseType.DriversLicense
+            : GenericLicenseType[keyAsEnumKey as GenericLicenseTypeType]
 
         if (!valueFromEnum) {
           this.logger.warn('Invalid license type in verication input', {
