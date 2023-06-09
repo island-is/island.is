@@ -135,3 +135,13 @@ export function getAvailableMonths(
     }
   })
 }
+
+export function getAgeBetweenTwoDates(
+  selectedDate: Date,
+  dateOfBirth: Date,
+): number {
+  const diffTime = selectedDate.getTime() - dateOfBirth.getTime()
+  const age = Math.abs(Math.floor(diffTime / (365.25 * 60 * 60 * 24 * 1000)))
+
+  return age
+}
