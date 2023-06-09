@@ -443,9 +443,9 @@ export class EndorsementListService {
     }
   }
 
-  getOwnerContact(obj: any, key: string): string {
+  getOwnerContact(obj: any, search: string): string {
     for (const [key, value] of Object.entries(obj)) {
-      if (key === key) {
+      if (key === search) {
         return value as string
       }
     }
@@ -581,10 +581,7 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Stofnandi lista: ${ownerName}
-                Kennitala stofnenda: ${endorsementList.owner}
-                Netfang stofnenda: ${ownerEmail}
-                Sími stofnenda: ${ownerPhone}`,
+                copy: `Stofnandi lista: ${ownerName}`,
                 small: true,
               },
             },
