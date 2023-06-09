@@ -1,7 +1,11 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
-import { RegulationsService } from '@island.is/clients/regulations'
+import {
+  RegulationsService,
+  RegulationsPublishService,
+  UpdateResponse,
+} from '@island.is/clients/regulations'
 import {
   RegulationSearchResults,
   RegulationYears,
@@ -22,12 +26,17 @@ import { GetRegulationsMinistriesInput } from './dto/getRegulationsMinistriesInp
 import { GetRegulationsSearchInput } from './dto/getRegulationsSearch.input'
 import { CreatePresignedPostInput } from './dto/createPresignedPost.input'
 import { PresignedPostResults } from '@island.is/regulations/admin'
+import { UiRegulationPublishInput } from './dto/saveRegulationPublish.input'
+import { UpdateRegulation } from './models/updateRegulation.model'
 
 const validPage = (page: number | undefined) => (page && page >= 1 ? page : 1)
 
 @Resolver()
 export class RegulationsResolver {
-  constructor(private regulationsService: RegulationsService) {}
+  constructor(
+    private regulationsService: RegulationsService,
+    private regulationsPublishService: RegulationsPublishService,
+  ) {}
 
   @Mutation(() => graphqlTypeJson)
   createPresignedPost(
@@ -113,5 +122,12 @@ export class RegulationsResolver {
       input.tree ?? (input.slugs ? false : true),
       input.slugs,
     )
+  }
+
+  @Mutation(() => UpdateRegulation)
+  postSaveRegulation(
+    @Args('input') input: UiRegulationPublishInput,
+  ): Promise<UpdateRegulation | null> {
+    return this.regulationsPublishService.postRegulationSave(input)
   }
 }

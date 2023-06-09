@@ -109,7 +109,7 @@ export class RegulationsAdminResolver {
   }
 
   @Mutation(() => DeleteDraftRegulationModel)
-  async deleteDraftRegulation(
+  async deleteDraftRegulation( // Þetta er notað on delete!
     @Args('input') input: DeleteDraftRegulationInput,
     @CurrentUser() auth: User,
   ): Promise<DeleteDraftRegulationModel> {

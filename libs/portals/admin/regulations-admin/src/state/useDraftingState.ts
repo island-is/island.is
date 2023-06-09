@@ -31,6 +31,11 @@ import {
 } from './validations'
 import { toast } from 'react-toastify'
 import { findRegulationType } from '../utils/guessers'
+import {
+  Mutation,
+  MutationPostSaveRegulationArgs,
+  Query,
+} from '@island.is/api/schema'
 
 // ---------------------------------------------------------------------------
 
@@ -63,6 +68,22 @@ const DELETE_DRAFT_REGULATION_MUTATION = gql`
   mutation DeleteDraftRegulationMutation($input: DeleteDraftRegulationInput!) {
     deleteDraftRegulation(input: $input) {
       id
+    }
+  }
+`
+const PUBLISH_DRAFT_REGULATION_MUTATION = gql`
+  mutation PublishDraftRegulationMutation($input: UiRegulationPublishInput!) {
+    postSaveRegulation(input: $input) {
+      success
+      code
+      message
+      errors
+      data {
+        id
+        regulationId
+        regulation
+        original
+      }
     }
   }
 `
@@ -112,6 +133,10 @@ const useMakeDraftingState = (inputs: StateInputs) => {
   const [updateDraftRegulationById] = useMutation(
     UPDATE_DRAFT_REGULATION_MUTATION,
   )
+  const [publishDraftRegulation] = useMutation<
+    Mutation,
+    MutationPostSaveRegulationArgs
+  >(PUBLISH_DRAFT_REGULATION_MUTATION)
 
   return useMemo(() => {
     const { draft, step } = state
@@ -144,6 +169,39 @@ const useMakeDraftingState = (inputs: StateInputs) => {
               draftingStatus: newStatus || draft.draftingStatus,
               signedDocumentUrl: draft.signedDocumentUrl.value,
             },
+          },
+        },
+      })
+        .then((res) => {
+          if (res.errors && res.errors.length > 1) {
+            throw res.errors[0]
+          }
+          return { success: true, error: undefined }
+        })
+        .catch((error) => {
+          return { success: false, error: error as Error }
+        })
+
+    const publishDraft = (newStatus?: DraftingStatus) =>
+      publishDraftRegulation({
+        variables: {
+          input: {
+            // appendixes: Array<IRegulationAppendixInput>
+            // comments: Scalars['String']
+            // effectiveDate: Scalars['String']
+            // externalLink?: InputMaybe<Scalars['String']>
+            // id: Scalars['Float']
+            // ministryId?: InputMaybe<Scalars['Float']>
+            // name: Scalars['String']
+            // publishedDate: Scalars['String']
+            // repealedBeacuseReasons?: InputMaybe<Scalars['Boolean']>
+            // repealedDate?: InputMaybe<Scalars['String']>
+            // signatureDate: Scalars['String']
+            // status: Scalars['String']
+            // text: Scalars['String']
+            // title: Scalars['String']
+            // type: Scalars['String']
+            // Don't send ID here, it's auto generated.
           },
         },
       })
@@ -353,13 +411,21 @@ const useMakeDraftingState = (inputs: StateInputs) => {
       publish:
         state.isEditor &&
         // only offer publish from "publish" step
+
+        /**
+         * Posta reglugerð á /save-regulation (postRegulationUpdate)
+         * Posta öllum breytingafærslum á /save-change
+         * Posta öllum brottfellingum á /save-cancel
+         * Eyða draft reglugerð úr ritsjórnarkerfi (er merkt með 'published' í dag)
+         * -Geyma delete impact-
+         */
         state.step.name === StepNames.publish
           ? async () => {
               if (!isDraftPublishable(state)) {
                 return false
               }
               dispatch({ type: 'SAVING_STATUS' })
-              await saveDraftStatus('published').then(({ success, error }) => {
+              await publishDraft().then(({ success, error }) => {
                 if (error) {
                   dispatch({
                     type: 'SAVING_STATUS_DONE',
@@ -369,6 +435,16 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                   navigate(getHomeUrl())
                 }
               })
+              // await saveDraftStatus('published').then(({ success, error }) => {
+              //   if (error) {
+              //     dispatch({
+              //       type: 'SAVING_STATUS_DONE',
+              //       error: { message: buttonsMsgs.saveFailure, error },
+              //     })
+              //   } else {
+              //     navigate(getHomeUrl())
+              //   }
+              // })
               return true
             }
           : undefined,

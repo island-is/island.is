@@ -67,7 +67,6 @@ export class RegulationsAdminClientService {
   }
 
   getDraftRegulation(draftId: string, auth: Auth) {
-    console.log('GET THE DRAFT')
     return (this.draftRegulationsApiWithAuth(
       auth,
     ).draftRegulationControllerGetById({

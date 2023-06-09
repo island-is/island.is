@@ -21,7 +21,6 @@ import {
   RegulationOptionList,
 } from '@island.is/regulations'
 import {
-  RegulationListItem,
   RegulationOriginalDates,
   RegulationSearchResults,
   RegulationViewTypes,
