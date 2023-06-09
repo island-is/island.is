@@ -238,6 +238,11 @@ export const titles = {
       defaultMessage: 'Yfirlit - Verjandi - Réttarvörslugátt',
       description: 'Notaður sem titill fyrir Yfirlit máls skjá hjá verjanda',
     }),
+    cases: defineMessage({
+      id: 'judicial.system.core:titles.defender.cases',
+      defaultMessage: 'Öll mál - Verjandi - Réttarvörslugátt',
+      description: 'Notaður sem titill fyrir öll mál skjá hjá verjanda',
+    }),
   },
   shared: {
     login: defineMessage({
