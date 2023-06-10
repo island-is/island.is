@@ -71,3 +71,13 @@ export const navigation = style({
     },
   }),
 })
+
+export const desktopTitle = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      position: 'absolute',
+      left: '400px',
+      top: '280px',
+    },
+  }),
+})
