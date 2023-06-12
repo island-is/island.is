@@ -480,6 +480,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
     description: 'You do not have a domicile in Iceland',
   },
+  nationalRegistryCitizenshipNotIcelandic: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryCitizenshipNotIcelandic',
+    defaultMessage: 'Þú ert ekki með íslenskt ríkisfang',
+    description: 'You do not have a domicile in Iceland',
+  },
   nationalRegistryAgeNotValid: {
     id: 'application.system:core.fetch.data.nationalRegistryAgeNotValid',
     defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',

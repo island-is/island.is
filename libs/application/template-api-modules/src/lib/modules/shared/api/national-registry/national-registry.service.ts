@@ -30,7 +30,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const result = await this.getIndividual(auth.nationalId)
-
     // Make sure user has domicile country as Iceland
     if (params?.legalDomicileIceland) {
       const domicileCode = result?.address?.municipalityCode
@@ -45,18 +44,35 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
+    if (params?.icelandicCitizenship) {
+      const citizenship = result?.citizenship
+      if (!citizenship || citizenship.code !== 'IS') {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
+            summary: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
+          },
+          400,
+        )
+      }
+    }
+
     if (
       params?.ageToValidate &&
       result?.age &&
       result?.age < params.ageToValidate
     ) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.nationalRegistryAgeLimitNotMetTitle,
-          summary: coreErrorMessages.nationalRegistryAgeLimitNotMetSummary,
-        },
-        400,
-      )
+      if (params?.ageToValidateError) {
+        throw new TemplateApiError(params?.ageToValidateError, 400)
+      } else {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryAgeNotValid,
+            summary: coreErrorMessages.nationalRegistryAgeNotValid,
+          },
+          400,
+        )
+      }
     }
 
     if (!result) {
