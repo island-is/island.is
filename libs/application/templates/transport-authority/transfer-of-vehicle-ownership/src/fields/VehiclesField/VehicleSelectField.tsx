@@ -25,9 +25,7 @@ interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
 }
 
-export const VehicleSelectField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
+export const VehicleSelectField: FC<React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>> = ({ currentVehicleList, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 

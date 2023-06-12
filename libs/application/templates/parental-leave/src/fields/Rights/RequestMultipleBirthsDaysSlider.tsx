@@ -17,7 +17,7 @@ import { formatText } from '@island.is/application/core'
 import { NO } from '../../constants'
 import { useEffectOnce } from 'react-use'
 
-const RequestMultipleBirthsDaysSlider: FC<FieldBaseProps> = ({
+const RequestMultipleBirthsDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
 }) => {

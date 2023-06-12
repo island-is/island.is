@@ -29,7 +29,7 @@ interface Props {
   onExpandCallback?: () => void
 }
 
-const ExpandableLine: FC<Props> = ({
+const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   data,
   onExpandCallback,
   backgroundColor = 'default',

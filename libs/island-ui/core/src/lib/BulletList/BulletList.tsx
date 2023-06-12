@@ -17,7 +17,7 @@ const BulletListContext = createContext<BulletListContextValue>({
   color: 'red400',
 })
 
-export const Bullet: FC = ({ children }) => {
+export const Bullet: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const { type, color } = useContext(BulletListContext)
 
   return (
@@ -52,7 +52,7 @@ interface BulletListProps {
   color?: Colors
 }
 
-export const BulletList: FC<BulletListProps> = ({
+export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
   children,
   space = 1,
   type = 'ul',

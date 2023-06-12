@@ -9,7 +9,7 @@ import {
   subjectOfComplaintValueLabelMapper,
 } from '../../shared'
 
-export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
+export const Applicant: FC<React.PropsWithChildren<{ answers: DataProtectionComplaint }>> = ({
   answers,
 }) => (
   <>
@@ -37,9 +37,9 @@ export const Applicant: FC<{ answers: DataProtectionComplaint }> = ({
   </>
 )
 
-export const OrganizationOrInstitution: FC<{
+export const OrganizationOrInstitution: FC<React.PropsWithChildren<{
   answers: DataProtectionComplaint
-}> = ({ answers }) => (
+}>> = ({ answers }) => (
   <>
     <SectionHeading title={info.general.organizationOrInstitutionPageTitle} />
     <ValueLine
@@ -77,7 +77,7 @@ export const OrganizationOrInstitution: FC<{
   </>
 )
 
-export const Commissions: FC<{ answers: DataProtectionComplaint }> = ({
+export const Commissions: FC<React.PropsWithChildren<{ answers: DataProtectionComplaint }>> = ({
   answers,
 }) => (
   <>
@@ -97,7 +97,7 @@ export const Commissions: FC<{ answers: DataProtectionComplaint }> = ({
   </>
 )
 
-export const Complainees: FC<{ answers: DataProtectionComplaint }> = ({
+export const Complainees: FC<React.PropsWithChildren<{ answers: DataProtectionComplaint }>> = ({
   answers,
 }) => (
   <>
@@ -140,7 +140,7 @@ const GenerateComplaintList = (
   return complaintData
 }
 
-export const Complaint: FC<{ answers: DataProtectionComplaint }> = ({
+export const Complaint: FC<React.PropsWithChildren<{ answers: DataProtectionComplaint }>> = ({
   answers,
 }) => {
   const { formatMessage } = useLocale()

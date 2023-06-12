@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { Localization } from '../../../entities/common/Localization'
 
-const ResourcesTabsNav: React.FC = () => {
+const ResourcesTabsNav: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [localization] = useState<Localization>(
     LocalizationUtils.getLocalization(),

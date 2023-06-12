@@ -48,7 +48,7 @@ interface HeadProps {
   sticky?: boolean
 }
 
-export const Head: FC<HeadProps> = ({ children, sticky }) => (
+export const Head: FC<React.PropsWithChildren<HeadProps>> = ({ children, sticky }) => (
   <thead
     {...(sticky && {
       className: styles.stickyHead,
@@ -58,11 +58,11 @@ export const Head: FC<HeadProps> = ({ children, sticky }) => (
   </thead>
 )
 
-export const Body: FC = ({ children }) => <tbody>{children}</tbody>
+export const Body: FC<React.PropsWithChildren<unknown>> = ({ children }) => <tbody>{children}</tbody>
 
-export const Foot: FC = ({ children }) => <tfoot>{children}</tfoot>
+export const Foot: FC<React.PropsWithChildren<unknown>> = ({ children }) => <tfoot>{children}</tfoot>
 
-export const Row: FC<TestSupport> = ({ children, dataTestId }) => (
+export const Row: FC<React.PropsWithChildren<TestSupport>> = ({ children, dataTestId }) => (
   <tr data-testid={dataTestId}>{children}</tr>
 )
 

@@ -24,7 +24,7 @@ export interface LinkProps extends NextLinkProps {
 }
 
 // Next link that can handle external urls
-export const Link: React.FC<LinkProps> = ({
+export const Link: React.FC<React.PropsWithChildren<LinkProps>> = ({
   children,
   href,
   as,

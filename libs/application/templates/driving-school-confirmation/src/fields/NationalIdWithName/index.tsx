@@ -20,7 +20,7 @@ const IdentityQuery = gql`
   }
 `
 
-const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
+const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = ({ field, application }) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const {
@@ -55,7 +55,7 @@ const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
   }, [nationalIdInput])
 
   return (
-    <Box>
+    (<Box>
       <Text marginBottom={3}>
         {formatMessage(m.studentInfoSubtitle) +
           (application.externalData.drivingSchoolForEmployee.data as any)
@@ -96,8 +96,8 @@ const NationalIdWithName: FC<FieldBaseProps> = ({ field, application }) => {
           />
         </GridColumn>
       </GridRow>
-    </Box>
-  )
+    </Box>)
+  );
 }
 
 export default NationalIdWithName

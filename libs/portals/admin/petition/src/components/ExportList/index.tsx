@@ -29,7 +29,7 @@ export const getCSV = async (data: any[], fileName: string) => {
   await downloadCSV(name, ['Dagsetning', 'Nafn'], dataArray)
 }
 
-const ExportList: FC<Props> = ({ onGetCSV, dropdownItems = [] }) => {
+const ExportList: FC<React.PropsWithChildren<Props>> = ({ onGetCSV, dropdownItems = [] }) => {
   const { formatMessage } = useLocale()
   return (
     <Box className={styles.buttonWrapper}>

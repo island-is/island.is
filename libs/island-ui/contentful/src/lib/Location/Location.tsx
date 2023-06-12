@@ -18,7 +18,7 @@ export interface LocationProps {
   background: { url: string }
 }
 
-export const Location: FC<LocationProps> = ({
+export const Location: FC<React.PropsWithChildren<LocationProps>> = ({
   title,
   subTitle,
   address,
@@ -26,7 +26,7 @@ export const Location: FC<LocationProps> = ({
   background,
 }) => {
   return (
-    <div className={styles.container}>
+    (<div className={styles.container}>
       <Box
         className={styles.background}
         style={{ backgroundImage: `url(${background.url})` }}
@@ -86,6 +86,6 @@ export const Location: FC<LocationProps> = ({
           </GridRow>
         </GridContainer>
       </Box>
-    </div>
-  )
+    </div>)
+  );
 }

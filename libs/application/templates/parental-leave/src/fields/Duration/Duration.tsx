@@ -26,7 +26,7 @@ import * as styles from './Duration.css'
 
 const DEFAULT_PERIOD_LENGTH = usageMinMonths
 
-export const Duration: FC<FieldBaseProps> = ({
+export const Duration: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
   errors,

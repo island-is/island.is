@@ -10,7 +10,7 @@ interface Props {
   data: VehiclesVehicle[]
 }
 
-export const TabContent: FC<Props> = ({ data }) => {
+export const TabContent: FC<React.PropsWithChildren<Props>> = ({ data }) => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)

@@ -9,7 +9,7 @@ interface Props {
   url: string
 }
 
-export const EventCard: React.FC<Props> = ({
+export const EventCard: React.FC<React.PropsWithChildren<Props>> = ({
   title,
   renderContent,
   image,

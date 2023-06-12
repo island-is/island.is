@@ -81,7 +81,7 @@ export const withLinks = (editor: ReactEditor) => {
   return editor
 }
 
-export const LinkButton: FC<LinkButtonProps> = ({ dialogs }) => {
+export const LinkButton: FC<React.PropsWithChildren<LinkButtonProps>> = ({ dialogs }) => {
   const editor = useSlate()
 
   return (

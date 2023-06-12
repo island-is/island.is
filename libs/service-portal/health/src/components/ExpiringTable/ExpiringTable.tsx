@@ -10,7 +10,7 @@ interface Props {
   linkText: string
 }
 
-const ExpiringTable: FC<Props> = ({
+const ExpiringTable: FC<React.PropsWithChildren<Props>> = ({
   header,
   children,
   footnote,

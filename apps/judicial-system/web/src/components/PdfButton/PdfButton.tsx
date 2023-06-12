@@ -24,7 +24,7 @@ interface Props {
   policeCaseNumber?: string // Only used if pdfType is caseFilesRecord
 }
 
-const PdfButton: React.FC<Props> = ({
+const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
   caseId,
   title,
   pdfType,

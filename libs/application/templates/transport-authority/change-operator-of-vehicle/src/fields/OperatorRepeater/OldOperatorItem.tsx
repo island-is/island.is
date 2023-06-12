@@ -22,7 +22,7 @@ interface Props {
   handleRemove: (index: number) => void
 }
 
-export const OldOperatorItem: FC<Props & FieldBaseProps> = ({
+export const OldOperatorItem: FC<React.PropsWithChildren<Props & FieldBaseProps>> = ({
   id,
   index,
   rowLocation,

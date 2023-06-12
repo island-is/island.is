@@ -11,7 +11,7 @@ interface Props {
   disclosure?: ReactElement
 }
 
-export const Modal: FC<Props> = ({
+export const Modal: FC<React.PropsWithChildren<Props>> = ({
   id,
   children,
   toggleClose,

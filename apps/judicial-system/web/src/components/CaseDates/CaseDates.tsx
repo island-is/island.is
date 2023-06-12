@@ -20,7 +20,7 @@ export interface Props {
   }
 }
 
-const CaseDates: React.FC<Props> = (props) => {
+const CaseDates: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, button } = props
   const { formatMessage } = useIntl()
 

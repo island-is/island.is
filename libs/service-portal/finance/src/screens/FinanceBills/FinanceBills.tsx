@@ -5,7 +5,7 @@ import { m } from '@island.is/service-portal/core'
 
 import DocumentScreen from '../../components/DocumentScreen/DocumentScreen'
 
-const FinanceBills: FC = () => {
+const FinanceBills: FC<React.PropsWithChildren<unknown>> = () => {
   useNamespaces('sp.finance-bills')
   const { formatMessage } = useLocale()
   return (

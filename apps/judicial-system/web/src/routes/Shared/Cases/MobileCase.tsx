@@ -19,7 +19,7 @@ interface CategoryCardProps {
   onClick: () => void
 }
 
-const CategoryCard: React.FC<CategoryCardProps> = ({
+const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
   heading,
   onClick,
   tags,
@@ -50,7 +50,7 @@ interface Props {
   isCourtRole: boolean
 }
 
-const MobileCase: React.FC<Props> = ({
+const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
   theCase,
   onClick,
   isCourtRole,

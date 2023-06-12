@@ -11,7 +11,7 @@ import { FC } from 'react'
 import { Jobs } from '../assets/Jobs'
 import { confirmation } from '../lib/messages'
 
-export const Confirmation: FC<FieldBaseProps> = () => {
+export const Confirmation: FC<React.PropsWithChildren<FieldBaseProps>> = () => {
   const { formatMessage } = useLocale()
 
   return (

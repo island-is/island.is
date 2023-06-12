@@ -9,7 +9,7 @@ import { Localization } from '../../entities/common/Localization'
 import LocalizationUtils from '../../utils/localization.utils'
 import { RoleUtils } from './../../utils/role.utils'
 
-const Nav: React.FC = () => {
+const Nav: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [session, loading] = useSession()
   const router = useRouter()
   const [localization] = useState<Localization>(

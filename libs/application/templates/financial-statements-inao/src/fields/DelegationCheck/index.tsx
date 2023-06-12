@@ -8,7 +8,7 @@ import { VALIDATOR } from '../../lib/constants'
 import { FinancialStatementsInao } from '../../lib/utils/dataSchema'
 import { m } from '../../lib/messages'
 
-export const DelegationCheck: FC<FieldBaseProps<FinancialStatementsInao>> = ({
+export const DelegationCheck: FC<React.PropsWithChildren<FieldBaseProps<FinancialStatementsInao>>> = ({
   application,
   setBeforeSubmitCallback,
 }) => {

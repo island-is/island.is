@@ -4,7 +4,7 @@ import { FieldBaseProps, DefaultEvents } from '@island.is/application/types'
 import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 
-export const ConfirmationPendingField: FC<FieldBaseProps> = ({
+export const ConfirmationPendingField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   refetch,
 }) => {

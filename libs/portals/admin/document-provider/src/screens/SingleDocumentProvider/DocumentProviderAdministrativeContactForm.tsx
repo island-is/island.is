@@ -22,7 +22,7 @@ interface UseFormProps {
   organisationNationalId: string
 }
 
-export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
+export const DocumentProviderAdministrativeContactForm: FC<React.PropsWithChildren<Props>> = ({
   administrativeContact,
   organisationId,
   organisationNationalId,
@@ -52,7 +52,7 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
     }
   }
   return (
-    <Box marginY={3}>
+    (<Box marginY={3}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={4}>
           <Box marginBottom={2}>
@@ -161,6 +161,6 @@ export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
           </Box>
         </Box>
       </form>
-    </Box>
-  )
+    </Box>)
+  );
 }

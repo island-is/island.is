@@ -46,7 +46,7 @@ interface Props {
   document: Document
 }
 
-const DocumentCard: FC<Props> = ({ document }) => {
+const DocumentCard: FC<React.PropsWithChildren<Props>> = ({ document }) => {
   const { formatMessage } = useLocale()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { pathname } = useLocation()

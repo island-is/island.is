@@ -24,7 +24,7 @@ export type Tag = {
   outlined?: boolean | undefined
 }
 
-export const PassportSelection: FC<FieldBaseProps> = ({
+export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
 }) => {

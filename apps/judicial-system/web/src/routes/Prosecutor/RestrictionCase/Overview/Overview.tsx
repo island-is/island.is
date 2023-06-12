@@ -49,7 +49,7 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 
-export const Overview: React.FC = () => {
+export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [modal, setModal] = useState<
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')

@@ -18,7 +18,7 @@ interface Props {
   rows?: number
 }
 
-const RulingInput: React.FC<Props> = (props) => {
+const RulingInput: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase, rows } = props
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()

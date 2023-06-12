@@ -23,7 +23,7 @@ export interface CompanyListConnectedProps {
   graphqlLink: string
 }
 
-export const CompanyListConnected: FC<CompanyListConnectedProps> = ({
+export const CompanyListConnected: FC<React.PropsWithChildren<CompanyListConnectedProps>> = ({
   graphqlLink = '',
 }) => {
   const uri = graphqlLink || 'https://skilavottord.dev01.devland.is/api/graphql'

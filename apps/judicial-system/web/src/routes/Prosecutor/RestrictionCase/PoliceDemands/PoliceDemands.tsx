@@ -92,7 +92,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const PoliceDemands: React.FC = () => {
+export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

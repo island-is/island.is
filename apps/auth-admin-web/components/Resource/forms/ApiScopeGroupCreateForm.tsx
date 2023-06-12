@@ -18,7 +18,7 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ApiScopeGroupCreateForm: React.FC<Props> = (props: Props) => {
+const ApiScopeGroupCreateForm: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const { register, handleSubmit, formState, reset, resetField } =
     useForm<ApiScopeGroupDTO>()
   const { errors } = formState

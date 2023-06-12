@@ -17,7 +17,7 @@ type DescriptionLinkProps = {
   }
 }
 
-export const DescriptionWithLink: FC<FieldBaseProps & DescriptionLinkProps> = ({
+export const DescriptionWithLink: FC<React.PropsWithChildren<FieldBaseProps & DescriptionLinkProps>> = ({
   application,
   field,
 }) => {

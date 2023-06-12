@@ -19,7 +19,7 @@ interface Props {
     ) => ReactElement
   }[]
 }
-const DropdownExport: FC<Props> = ({
+const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
   onGetCSV,
   onGetExcel,
   dropdownItems = [],

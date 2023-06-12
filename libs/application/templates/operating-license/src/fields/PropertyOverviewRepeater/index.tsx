@@ -10,7 +10,7 @@ interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-export const PropertyOverviewRepeater: FC<PropTypes> = ({
+export const PropertyOverviewRepeater: FC<React.PropsWithChildren<PropTypes>> = ({
   field,
   application,
 }) => {

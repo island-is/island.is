@@ -93,7 +93,7 @@ const sortDefendants = (rowA: Row<Case>, rowB: Row<Case>) => {
   return a.localeCompare(b, 'is', { ignorePunctuation: true })
 }
 
-const PastCases: React.FC<Props> = (props) => {
+const PastCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, onRowClick } = props
 
   const { user } = useContext(UserContext)

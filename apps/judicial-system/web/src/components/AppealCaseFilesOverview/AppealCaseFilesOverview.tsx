@@ -18,7 +18,7 @@ import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 
-const AppealCaseFilesOverview: React.FC = () => {
+const AppealCaseFilesOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase } = useContext(FormContext)
 
   const { onOpen } = useFileList({

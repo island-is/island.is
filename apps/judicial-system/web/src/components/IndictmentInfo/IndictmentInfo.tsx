@@ -20,7 +20,7 @@ interface Props {
   crimeScenes?: CrimeSceneMap
 }
 
-const IndictmentInfo: React.FC<Props> = (props) => {
+const IndictmentInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { policeCaseNumber, subtypes, crimeScenes } = props
   const { formatMessage } = useIntl()
 

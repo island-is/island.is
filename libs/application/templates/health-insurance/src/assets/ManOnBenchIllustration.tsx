@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-const ManOnBenchIllustration: FC = () => (
+const ManOnBenchIllustration: FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="432"
     height="445"

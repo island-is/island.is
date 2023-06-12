@@ -16,7 +16,7 @@ interface Props {
   setOrganisationName: (name: string) => void
 }
 
-export const DocumentProviderOrganisationForm: FC<Props> = ({
+export const DocumentProviderOrganisationForm: FC<React.PropsWithChildren<Props>> = ({
   organisation,
   setOrganisationName,
 }) => {
@@ -45,7 +45,7 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
   }
 
   return (
-    <Box marginY={3}>
+    (<Box marginY={3}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={4}>
           <Box marginBottom={2}>
@@ -190,6 +190,6 @@ export const DocumentProviderOrganisationForm: FC<Props> = ({
           </Box>
         </Box>
       </form>
-    </Box>
-  )
+    </Box>)
+  );
 }

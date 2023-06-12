@@ -9,7 +9,7 @@ interface Props {
   children: ReactNode
 }
 
-export const DynamicWrapper: FC<Props> = ({ children }) => {
+export const DynamicWrapper: FC<React.PropsWithChildren<Props>> = ({ children }) => {
   const [noMatch, setNoMatch] = useState(false)
   const { activeDynamicRoutes, loading } = useDynamicRoutes()
   const location = useLocation()

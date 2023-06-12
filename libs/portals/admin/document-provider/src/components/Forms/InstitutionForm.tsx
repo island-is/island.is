@@ -21,7 +21,7 @@ interface Props {
   organisation: Organisation
 }
 
-export const InstitutionForm: FC<Props> = ({ organisation }) => {
+export const InstitutionForm: FC<React.PropsWithChildren<Props>> = ({ organisation }) => {
   const {
     handleSubmit,
     control,
@@ -41,7 +41,7 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    (<form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
@@ -210,6 +210,6 @@ export const InstitutionForm: FC<Props> = ({ organisation }) => {
           {formatMessage(m.SettingsEditInstitutionSaveButton)}
         </Button>
       </Box>
-    </form>
-  )
+    </form>)
+  );
 }

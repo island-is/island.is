@@ -26,7 +26,7 @@ Default.args = {
   handleChange: (date: Date) => console.log(date),
 }
 
-const Wrap: React.FC = ({ children }) => (
+const Wrap: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   <div style={{ height: 400 }}>{children}</div>
 )
 

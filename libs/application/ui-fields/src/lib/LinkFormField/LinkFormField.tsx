@@ -5,10 +5,10 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import useGenerateFileUrl from './hooks/useGenerateFileUrl'
 
-export const LinkFormField: FC<{
+export const LinkFormField: FC<React.PropsWithChildren<{
   field: LinkField
   application: Application
-}> = ({ field, application }) => {
+}>> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
   const openLink = useCallback(() => {

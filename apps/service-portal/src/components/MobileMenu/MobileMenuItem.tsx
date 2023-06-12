@@ -11,7 +11,7 @@ interface MobileMenuItem {
   itemName: string
 }
 
-const MobileMenuItem: FC<MobileMenuItem> = ({ item, itemName }) => {
+const MobileMenuItem: FC<React.PropsWithChildren<MobileMenuItem>> = ({ item, itemName }) => {
   const figure = getMobileMenuFigure(item.path)
 
   return (
@@ -39,7 +39,7 @@ const MobileMenuItem: FC<MobileMenuItem> = ({ item, itemName }) => {
   )
 }
 
-const MobileMenuItemWrapper: FC<MobileMenuItem> = (props) => {
+const MobileMenuItemWrapper: FC<React.PropsWithChildren<MobileMenuItem>> = (props) => {
   return (
     <GridColumn span={['1/2', '1/4']}>
       {props.item.external ? (

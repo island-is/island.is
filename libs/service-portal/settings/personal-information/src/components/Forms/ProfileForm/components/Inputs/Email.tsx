@@ -31,7 +31,7 @@ interface UseFormProps {
   code: string
 }
 
-export const InputEmail: FC<Props> = ({
+export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   buttonText,
   email,
   disabled,
@@ -186,7 +186,7 @@ export const InputEmail: FC<Props> = ({
   }
 
   return (
-    <Box>
+    (<Box>
       <form
         onSubmit={handleSubmit(
           emailInternal ? handleSendEmailVerification : saveEmptyChange,
@@ -341,6 +341,6 @@ export const InputEmail: FC<Props> = ({
           </form>
         </Box>
       )}
-    </Box>
-  )
+    </Box>)
+  );
 }

@@ -30,7 +30,7 @@ interface Props {
   withdrawProsecutorAppealDate?: () => void
 }
 
-const AppealSection: React.FC<Props> = (props) => {
+const AppealSection: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     workingCase,
     setAccusedAppealDate,

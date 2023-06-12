@@ -40,7 +40,7 @@ interface UseFormProps {
   code: string
 }
 
-export const InputPhone: FC<Props> = ({
+export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   buttonText,
   mobile,
   disabled,
@@ -191,7 +191,7 @@ export const InputPhone: FC<Props> = ({
   }
 
   return (
-    <Box>
+    (<Box>
       <form
         onSubmit={handleSubmit(
           telInternal ? handleSendTelVerification : saveEmptyChange,
@@ -369,6 +369,6 @@ export const InputPhone: FC<Props> = ({
           </form>
         </Box>
       )}
-    </Box>
-  )
+    </Box>)
+  );
 }

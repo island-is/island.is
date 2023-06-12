@@ -24,7 +24,7 @@ import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
-export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
+export const RealEstateRepeater: FC<React.PropsWithChildren<FieldBaseProps<Answers>>> = ({
   application,
   field,
   errors,

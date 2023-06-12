@@ -8,7 +8,7 @@ import { AdminTab } from './../../../entities/common/AdminTab'
 import GrantTypeCreateForm from './../../../components/Admin/form/GrantTypeCreateForm'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const grantTypeName = query.grantType
   const [grantType, setGrantType] = useState<GrantType>()

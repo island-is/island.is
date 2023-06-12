@@ -48,7 +48,7 @@ export const SkilavottordVehiclesQuery = gql`
   }
 `
 
-const Overview: FC = () => {
+const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const {
     t: { recyclingFundOverview: t, recyclingFundSidenav: sidenavText, routes },

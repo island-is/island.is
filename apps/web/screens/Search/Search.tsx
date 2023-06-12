@@ -844,7 +844,7 @@ interface EnglishResultsLinkProps {
   q: string
 }
 
-const EnglishResultsLink: FC<EnglishResultsLinkProps> = ({ q }) => {
+const EnglishResultsLink: FC<React.PropsWithChildren<EnglishResultsLinkProps>> = ({ q }) => {
   const { linkResolver } = useLinkResolver()
   const [getCount, { data }] = useLazyQuery<
     GetSearchResultsTotalQuery,

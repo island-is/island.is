@@ -16,7 +16,7 @@ import { useLocale } from '@island.is/localization'
 import { YesOrNo } from '../../types'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
-export const SelfEmployed: FC<FieldBaseProps> = ({
+export const SelfEmployed: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   error,

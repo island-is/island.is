@@ -13,7 +13,7 @@ interface Props {
   disabled?: boolean
 }
 
-export const FormButton: FC<Props> = ({
+export const FormButton: FC<React.PropsWithChildren<Props>> = ({
   children,
   onClick,
   disabled,

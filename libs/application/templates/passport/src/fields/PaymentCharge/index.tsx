@@ -15,7 +15,7 @@ import { PaymentCatalogItem } from '@island.is/api/schema'
 import { getCurrencyString } from '../../lib/utils'
 import { useFormContext } from 'react-hook-form'
 
-export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const serviceTypeRegular =

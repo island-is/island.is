@@ -10,7 +10,7 @@ import { isIndictmentCase } from '@island.is/judicial-system/types'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
-const ProsecutorSection: React.FC = () => {
+const ProsecutorSection: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { setAndSendCaseToServer } = useCase()
 

@@ -22,7 +22,7 @@ import {
   ROENET_FIELD_ID,
 } from '../../utils/fields'
 
-export const FishingLicenseFurtherInfoTitleSection: FC<FieldBaseProps> = ({
+export const FishingLicenseFurtherInfoTitleSection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { setValue, getValues } = useFormContext()

@@ -7,7 +7,7 @@ import { VehicleRadioField } from './VehicleRadioField'
 import { useLocale } from '@island.is/localization'
 import { error } from '../../lib/messages'
 
-export const VehiclesField: FC<FieldBaseProps> = (props) => {
+export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { formatMessage } = useLocale()
   const { application, errors } = props
   const currentVehicleList = application.externalData.currentVehicleList

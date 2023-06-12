@@ -7,7 +7,7 @@ interface Props {
   showOverlay: boolean
 }
 
-const Overlay: React.FC<Props> = ({
+const Overlay: React.FC<React.PropsWithChildren<Props>> = ({
   handleButtonClosed,
   title,
   showOverlay,

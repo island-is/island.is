@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { render, screen } from '@testing-library/react'
 import { RadioController } from './RadioController'
 
-const Wrapper: React.FC = ({ children }) => {
+const Wrapper: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const hookFormData = useForm({ defaultValues: { values: [] } })
   return <FormProvider {...hookFormData}>{children}</FormProvider>
 }

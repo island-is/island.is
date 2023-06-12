@@ -22,7 +22,7 @@ interface ActionCardProps {
   car: VehicleInformation
 }
 
-export const ActionCard: FC<ActionCardProps> = ({
+export const ActionCard: FC<React.PropsWithChildren<ActionCardProps>> = ({
   onContinue,
   car: { permno, type, firstRegDate, isRecyclable, hasCoOwner },
 }: ActionCardProps) => {

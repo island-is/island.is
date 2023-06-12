@@ -13,7 +13,7 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientIdpRestrictionsForm: React.FC<Props> = (props: Props) => {
+const ClientIdpRestrictionsForm: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const [idpProviders, setIdpProviders] = useState<IdpProvider[]>([])
   const [allowAll, setAllowAll] = useState<boolean>(
     props.restrictions.length === 0,

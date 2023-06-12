@@ -24,7 +24,7 @@ type FieldProps = FieldBaseProps & {
 }
 type ScreenProps = RepeaterProps & FieldProps
 
-const UploadAdditionalFilesInfoScreen: FC<ScreenProps> = ({
+const UploadAdditionalFilesInfoScreen: FC<React.PropsWithChildren<ScreenProps>> = ({
   field,
   application,
   setRepeaterItems,

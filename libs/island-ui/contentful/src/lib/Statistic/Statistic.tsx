@@ -7,7 +7,7 @@ export interface StatisticProps {
   label: string
 }
 
-export const Statistic: FC<StatisticProps> = ({ value, label }) => {
+export const Statistic: FC<React.PropsWithChildren<StatisticProps>> = ({ value, label }) => {
   return (
     <div className={styles.container}>
       <Box

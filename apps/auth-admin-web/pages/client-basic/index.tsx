@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import ClientDTO from './../../entities/dtos/client-dto'
 import LocalizationUtils from '../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const handleCancel = () => {
     router.back()

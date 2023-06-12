@@ -12,9 +12,7 @@ interface PropertyTableProps {
   selectedPropertyNumber: string | undefined
 }
 
-export const PropertyTable: FC<
-  FieldBaseProps & PropertyTableProps & PropertyDetail
-> = ({
+export const PropertyTable: FC<React.PropsWithChildren<FieldBaseProps & PropertyTableProps & PropertyDetail>> = ({
   application,
   field,
   myProperties,
@@ -63,7 +61,7 @@ export const PropertyTable: FC<
   )
 }
 
-const TableHeadText: FC<{ text: string }> = ({ text }) => {
+const TableHeadText: FC<React.PropsWithChildren<{ text: string }>> = ({ text }) => {
   return (
     <Text variant={'small'} as={'p'} fontWeight={'semiBold'}>
       {text}

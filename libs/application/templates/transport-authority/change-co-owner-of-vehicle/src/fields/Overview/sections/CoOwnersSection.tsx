@@ -16,7 +16,7 @@ import {
 } from '@island.is/application/ui-components'
 import kennitala from 'kennitala'
 
-export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const CoOwnersSection: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = ({
   application,
   reviewerNationalId = '',
 }) => {

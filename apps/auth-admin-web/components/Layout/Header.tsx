@@ -6,7 +6,7 @@ import { SessionInfo } from './../../entities/common/SessionInfo'
 import LocalizationUtils from '../../utils/localization.utils'
 import { Localization } from '../../entities/common/Localization'
 
-const Header: React.FC = () => {
+const Header: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [session, loading] = useSession()
   const router = useRouter()
   const [localization] = useState<Localization>(

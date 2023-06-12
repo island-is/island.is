@@ -12,7 +12,7 @@ import {
 import kennitala from 'kennitala'
 import { ReviewScreenProps } from '../../../shared'
 
-export const OwnerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const OwnerSection: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = ({
   application,
   reviewerNationalId = '',
 }) => {

@@ -46,7 +46,7 @@ export type ClientContextType = {
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined)
 
-export const ClientProvider: FC = ({ children }) => {
+export const ClientProvider: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const navigate = useNavigate()
   const params = useParams()
   const [searchParams] = useSearchParams()

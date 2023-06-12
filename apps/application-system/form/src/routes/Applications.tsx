@@ -41,7 +41,7 @@ type UseParams = {
   slug: string
 }
 
-export const Applications: FC = () => {
+export const Applications: FC<React.PropsWithChildren<unknown>> = () => {
   const { slug } = useParams() as UseParams
   const navigate = useNavigate()
   const { formatMessage } = useLocale()

@@ -17,7 +17,7 @@ type InfoCardProps = {
   }
 }
 
-export const InfoCard: FC<FieldBaseProps & InfoCardProps> = ({
+export const InfoCard: FC<React.PropsWithChildren<FieldBaseProps & InfoCardProps>> = ({
   application,
   field,
 }) => {

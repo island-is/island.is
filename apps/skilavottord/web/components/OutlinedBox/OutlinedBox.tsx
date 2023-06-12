@@ -13,7 +13,7 @@ export interface OutlinedBoxProps {
   paddingY?: ResponsiveSpace
 }
 
-export const OutlinedBox: FC<OutlinedBoxProps> = ({
+export const OutlinedBox: FC<React.PropsWithChildren<OutlinedBoxProps>> = ({
   children,
   borderColor,
   padding,

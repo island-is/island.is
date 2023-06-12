@@ -47,7 +47,7 @@ interface AdgerdirArticlesProps {
   startingIds?: Array<string>
 }
 
-export const AdgerdirArticles: FC<AdgerdirArticlesProps> = ({
+export const AdgerdirArticles: FC<React.PropsWithChildren<AdgerdirArticlesProps>> = ({
   title,
   items,
   tags,

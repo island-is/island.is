@@ -7,7 +7,7 @@ import { useSession } from 'next-auth/client'
 import { SessionInfo } from '../entities/common/SessionInfo'
 import LocalizationUtils from '../utils/localization.utils'
 
-const Home: React.FC = () => {
+const Home: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [session, loading] = useSession()
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import { FAFieldBaseProps } from '../../lib/types'
 import * as styles from './Logo.css'
 
 const withLogo =
-  (Component: React.ComponentType<FAFieldBaseProps>) =>
+  (Component: React.ComponentType<React.PropsWithChildren<FAFieldBaseProps>>) =>
   (props: FAFieldBaseProps) => {
     const [logo, setLogo] = useState<string>()
     const municipality = props.application.externalData.municipality.data

@@ -123,7 +123,7 @@ export const DeleteSkilavottordAccessControlMutation = gql`
   }
 `
 
-const AccessControlCompany: FC = () => {
+const AccessControlCompany: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
 

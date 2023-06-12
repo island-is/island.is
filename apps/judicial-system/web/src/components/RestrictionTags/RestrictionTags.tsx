@@ -14,7 +14,7 @@ interface Props {
   workingCase: Case
 }
 
-const RestrictionTags: React.FC<Props> = (props) => {
+const RestrictionTags: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase } = props
 
   return (

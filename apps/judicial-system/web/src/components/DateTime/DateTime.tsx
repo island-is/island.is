@@ -26,7 +26,7 @@ interface Props {
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const DateTime: React.FC<Props> = (props) => {
+const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     name,
     datepickerLabel = 'Veldu dagsetningu',

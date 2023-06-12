@@ -4,7 +4,7 @@ import ResourcesTabsNav from '../../../components/Resource/nav/ResourcesTabsNav'
 import React, { useEffect } from 'react'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   useEffect(() => {
     document.title = LocalizationUtils.getPageTitle(
       'resources.api-scopes.index',

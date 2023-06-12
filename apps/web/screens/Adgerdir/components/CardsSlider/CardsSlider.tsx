@@ -37,7 +37,7 @@ const initialSlideState = {
   isNextSlideDisabled: false,
 } as EventObject
 
-export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
+export const CardsSlider: FC<React.PropsWithChildren<CardsSliderProps>> = ({ items, variant }) => {
   const { linkResolver } = useLinkResolver()
   const { colorScheme } = useContext(ColorSchemeContext)
 

@@ -12,7 +12,7 @@ interface Props {
   title?: string
 }
 
-const Conclusion: React.FC<Props> = (props) => {
+const Conclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { conclusionText, judgeName, title } = props
 

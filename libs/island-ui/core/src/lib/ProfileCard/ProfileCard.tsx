@@ -47,7 +47,7 @@ export interface ProfileCardProps {
   disabled?: boolean
 }
 
-export const ProfileCard: FC<ProfileCardProps> = ({
+export const ProfileCard: FC<React.PropsWithChildren<ProfileCardProps>> = ({
   image,
   title,
   description,

@@ -10,7 +10,7 @@ interface Props {
   title?: string
 }
 
-export const HeaderArrow: FC<Props> = ({
+export const HeaderArrow: FC<React.PropsWithChildren<Props>> = ({
   onClick,
   direction,
   title,

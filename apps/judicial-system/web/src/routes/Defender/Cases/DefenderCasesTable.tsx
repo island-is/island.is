@@ -32,7 +32,7 @@ interface Props {
   showingCompletedCases?: boolean
 }
 
-export const DefenderCasesTable: React.FC<Props> = (props) => {
+export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { cases, showingCompletedCases } = props
   const { sortedData, requestSort, getClassNamesFor } = useSortCases(

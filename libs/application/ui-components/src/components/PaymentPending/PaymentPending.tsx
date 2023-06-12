@@ -16,7 +16,7 @@ export interface PaymentPendingProps {
   refetch: FieldBaseProps['refetch']
 }
 
-export const PaymentPending: FC<PaymentPendingProps> = ({
+export const PaymentPending: FC<React.PropsWithChildren<PaymentPendingProps>> = ({
   application,
   refetch,
   targetEvent,

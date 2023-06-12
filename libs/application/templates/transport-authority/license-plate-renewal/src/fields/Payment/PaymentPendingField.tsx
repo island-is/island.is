@@ -2,7 +2,7 @@ import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { PaymentPending } from '@island.is/application/ui-components'
 
-export const PaymentPendingField: FC<FieldBaseProps> = ({
+export const PaymentPendingField: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   refetch,
 }) => (

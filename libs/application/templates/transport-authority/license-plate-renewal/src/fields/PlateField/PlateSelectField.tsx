@@ -19,7 +19,7 @@ interface PlateSearchFieldProps {
   myPlateOwnershipList: PlateOwnership[]
 }
 
-export const PlateSelectField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
+export const PlateSelectField: FC<React.PropsWithChildren<PlateSearchFieldProps & FieldBaseProps>> = ({
   myPlateOwnershipList,
   application,
 }) => {

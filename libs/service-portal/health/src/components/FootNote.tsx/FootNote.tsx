@@ -7,7 +7,7 @@ interface Props {
   type: string
 }
 
-export const FootNote: FC<Props> = ({ type }) => {
+export const FootNote: FC<React.PropsWithChildren<Props>> = ({ type }) => {
   const { formatMessage } = useLocale()
 
   return (

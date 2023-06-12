@@ -6,7 +6,7 @@ export interface CopyToClipboardInputProps {
   inputValue: string
 }
 
-export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
+export const CopyToClipboardInput: FC<React.PropsWithChildren<CopyToClipboardInputProps>> = ({
   inputLabel,
   inputValue,
 }) => {

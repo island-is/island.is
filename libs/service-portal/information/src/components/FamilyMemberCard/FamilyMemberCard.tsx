@@ -15,7 +15,7 @@ interface Props {
   currentUser?: boolean
 }
 
-export const FamilyMemberCard: FC<Props> = ({
+export const FamilyMemberCard: FC<React.PropsWithChildren<Props>> = ({
   title,
   nationalId,
   currentUser,

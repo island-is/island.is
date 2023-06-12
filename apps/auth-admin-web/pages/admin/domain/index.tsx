@@ -6,7 +6,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import DomainCreateForm from './../../../components/Admin/form/DomainCreateForm'
 import { DomainDTO } from './../../../entities/dtos/domain.dto'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const handleCancel = () => {
     router.back()

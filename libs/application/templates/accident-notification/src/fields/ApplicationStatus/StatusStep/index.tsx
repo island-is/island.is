@@ -3,7 +3,7 @@ import React, { FC } from 'react'
 import * as styles from './ReviewSection.css'
 import { ReviewSectionProps } from './types'
 
-export const StatusStep: FC<ReviewSectionProps> = ({
+export const StatusStep: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   title,
   description,
   tagVariant = 'blue',

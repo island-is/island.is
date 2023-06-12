@@ -19,7 +19,7 @@ interface Props {
   organisationId: string
   technicalContact: Contact
 }
-export const TechnicalContactForm: FC<Props> = ({
+export const TechnicalContactForm: FC<React.PropsWithChildren<Props>> = ({
   organisationId,
   technicalContact,
 }) => {
@@ -42,7 +42,7 @@ export const TechnicalContactForm: FC<Props> = ({
     }
   }
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    (<form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
@@ -155,6 +155,6 @@ export const TechnicalContactForm: FC<Props> = ({
           {formatMessage(m.SettingsEditTechnicalContactSaveButton)}
         </Button>
       </Box>
-    </form>
-  )
+    </form>)
+  );
 }

@@ -15,7 +15,7 @@ export type ComplaineeField = {
   countryOfOperation: string
 }
 
-export const ComplaineeRepeater: FC<FieldBaseProps> = ({
+export const ComplaineeRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   errors,

@@ -29,7 +29,7 @@ interface Props {
   required?: boolean
 }
 
-export const CompanySearchController: FC<Props> = ({
+export const CompanySearchController: FC<React.PropsWithChildren<Props>> = ({
   defaultValue,
   id,
   shouldIncludeIsatNumber,

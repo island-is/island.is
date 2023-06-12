@@ -14,7 +14,7 @@ import UsersList from './../../components/Admin/lists/UsersList'
 import ApiScopeGroupList from './../../components/Resource/lists/ApiScopeGroupList'
 import DomainList from './../../components/Admin/lists/DomainList'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const { query } = useRouter()
   const tabQuery = query.tab

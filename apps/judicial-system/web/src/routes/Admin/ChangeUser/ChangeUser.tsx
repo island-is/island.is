@@ -28,7 +28,7 @@ interface SaveData {
   user: User
 }
 
-export const ChangeUser: React.FC = () => {
+export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const id = router.query.id
   const { formatMessage } = useIntl()

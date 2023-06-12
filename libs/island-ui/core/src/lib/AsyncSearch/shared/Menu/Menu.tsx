@@ -9,7 +9,10 @@ export interface MenuProps {
   shouldShowItems?: boolean
 }
 
-export const Menu = forwardRef<HTMLUListElement, MenuProps>(
+export const Menu = forwardRef<
+  HTMLUListElement,
+  React.PropsWithChildren<MenuProps>
+>(
   (
     { comp: Comp = 'ul', isOpen, shouldShowItems = isOpen, children, ...props },
     ref,

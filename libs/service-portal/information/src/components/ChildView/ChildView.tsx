@@ -63,7 +63,7 @@ interface Props {
   guardianship?: NationalRegistryXRoadChildGuardianship | null
 }
 
-const ChildView: FC<Props> = ({
+const ChildView: FC<React.PropsWithChildren<Props>> = ({
   nationalId,
   error,
   loading,

@@ -19,7 +19,7 @@ interface Props {
   ariaLabel?: string
 }
 
-const ErrorModal: FC<Props> = ({ title, ariaLabel, children, link }) => {
+const ErrorModal: FC<React.PropsWithChildren<Props>> = ({ title, ariaLabel, children, link }) => {
   return (
     <ModalBase
       baseId="noChildrenFoundModal"

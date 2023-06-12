@@ -18,7 +18,7 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientPostLogoutRedirectUriForm: React.FC<Props> = (props: Props) => {
+const ClientPostLogoutRedirectUriForm: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const { register, handleSubmit, formState } =
     useForm<ClientPostLogoutRedirectUriDTO>()
   const { isSubmitting, errors } = formState

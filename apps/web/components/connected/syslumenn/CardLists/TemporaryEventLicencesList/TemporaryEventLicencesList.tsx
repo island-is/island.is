@@ -38,7 +38,7 @@ interface TemporaryEventLicencesListProps {
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const TemporaryEventLicencesList: FC<TemporaryEventLicencesListProps> = ({
+const TemporaryEventLicencesList: FC<React.PropsWithChildren<TemporaryEventLicencesListProps>> = ({
   slice,
 }) => {
   const n = useNamespace(slice.json ?? {})

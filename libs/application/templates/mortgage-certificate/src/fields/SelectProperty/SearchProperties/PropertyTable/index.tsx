@@ -11,9 +11,7 @@ interface PropertyTableProps {
   selectedPropertyNumber: string | undefined
 }
 
-export const PropertyTable: FC<
-  FieldBaseProps & PropertyTableProps & PropertyDetail
-> = ({ selectHandler, propertyInfo, selectedPropertyNumber }) => {
+export const PropertyTable: FC<React.PropsWithChildren<FieldBaseProps & PropertyTableProps & PropertyDetail>> = ({ selectHandler, propertyInfo, selectedPropertyNumber }) => {
   const unitOfUse = (propertyInfo?.unitsOfUse?.unitsOfUse || [])[0]
 
   const propertyNumber = propertyInfo?.propertyNumber || ''
@@ -61,7 +59,7 @@ export const PropertyTable: FC<
   )
 }
 
-const TableHeadText: FC<{ text: string }> = ({ text }) => {
+const TableHeadText: FC<React.PropsWithChildren<{ text: string }>> = ({ text }) => {
   return (
     <Text variant={'small'} as={'p'} fontWeight={'semiBold'}>
       {text}

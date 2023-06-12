@@ -11,7 +11,7 @@ interface Props extends FieldBaseProps {
   field: FileUploadField
 }
 
-export const FileUploadFormField: FC<Props> = ({
+export const FileUploadFormField: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
   error,

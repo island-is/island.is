@@ -18,7 +18,7 @@ interface FooterProps {
   footerItems: Array<FooterItem>
 }
 
-const UtlendingastofnunFooter: React.FC<FooterProps> = ({
+const UtlendingastofnunFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   title,
   logo,
   footerItems,

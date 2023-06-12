@@ -35,7 +35,7 @@ import * as styles from './Header.css'
 
 const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 
-const LogoIcon: React.FC = () => (
+const LogoIcon: React.FC<React.PropsWithChildren<unknown>> = () => (
   <>
     <Hidden above="sm">
       <Logo width={40} iconOnly />
@@ -46,7 +46,7 @@ const LogoIcon: React.FC = () => (
   </>
 )
 
-const Container: React.FC = ({ children }) => {
+const Container: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <Box paddingX={[3, 3, 4]}>
       <GridContainer className={styles.gridContainer}>
@@ -67,7 +67,7 @@ const Container: React.FC = ({ children }) => {
   )
 }
 
-const HeaderContainer: React.FC = () => {
+const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
 

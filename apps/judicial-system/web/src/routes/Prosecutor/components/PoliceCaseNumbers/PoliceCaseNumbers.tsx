@@ -35,7 +35,7 @@ export const usePoliceCaseNumbers = (workingCase: Case) => {
   return { clientPoliceNumbers, setClientPoliceNumbers }
 }
 
-export const PoliceCaseNumbers: React.FC<Props> = (props) => {
+export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     workingCase,
     setWorkingCase,

@@ -43,7 +43,7 @@ type ConfirmationFieldProps = {
   }
 }
 
-export const ConfirmationField: FC<FieldBaseProps & ConfirmationFieldProps> = ({
+export const ConfirmationField: FC<React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>> = ({
   application,
 }) => {
   const { externalData } = application

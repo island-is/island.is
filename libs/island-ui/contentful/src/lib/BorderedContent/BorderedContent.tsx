@@ -8,7 +8,7 @@ export interface BorderedContentProps {
   bottomContent: ReactNode
 }
 
-export const BorderedContent: FC<BorderedContentProps> = ({
+export const BorderedContent: FC<React.PropsWithChildren<BorderedContentProps>> = ({
   topContent,
   bottomContent,
 }) => {

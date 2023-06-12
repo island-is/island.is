@@ -24,7 +24,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const UniversityStudiesHeader: React.FC<HeaderProps> = ({
+const UniversityStudiesHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()

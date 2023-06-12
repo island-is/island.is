@@ -9,7 +9,7 @@ interface Props {
   withdrawProsecutorAppealDate?: () => void
 }
 
-const ProsecutorInfo: React.FC<Props> = (props) => {
+const ProsecutorInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { prosecutorPostponedAppealDate, withdrawProsecutorAppealDate } = props
 
   const animateInAndOut = {

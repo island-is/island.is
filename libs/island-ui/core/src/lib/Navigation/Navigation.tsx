@@ -129,7 +129,7 @@ const defaultLinkRender: NavigationTreeProps['renderLink'] = (link) => link
 const toggleId = (arr: Array<string> = [], id: string, single = false) =>
   arr.includes(id) ? arr.filter((i) => i !== id) : [...(single ? [] : arr), id]
 
-export const Navigation: FC<NavigationProps> = ({
+export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   title = 'Efnisyfirlit',
   titleLink,
   activeItemTitle,
@@ -384,7 +384,7 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
   )
 }
 
-export const NavigationTree: FC<NavigationTreeProps> = ({
+export const NavigationTree: FC<React.PropsWithChildren<NavigationTreeProps>> = ({
   items,
   level = 1,
   colorScheme = 'blue',

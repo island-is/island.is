@@ -12,7 +12,7 @@ interface Props {
   onClick: (selectedHeadingId: string) => void
 }
 
-export const TableOfContents: FC<Props> = ({
+export const TableOfContents: FC<React.PropsWithChildren<Props>> = ({
   tableOfContentsTitle,
   headings,
   selectedHeadingId,

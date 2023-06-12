@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-export const BoostChatPanel: React.FC<BoostChatPanelProps> = ({
+export const BoostChatPanel: React.FC<React.PropsWithChildren<BoostChatPanelProps>> = ({
   endpoint,
   pushUp = false,
 }) => {

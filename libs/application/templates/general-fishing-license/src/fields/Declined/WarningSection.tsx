@@ -15,7 +15,7 @@ type WarningSectionProps = {
   step: Step
 }
 
-export const WarningSection: FC<WarningSectionProps> = ({
+export const WarningSection: FC<React.PropsWithChildren<WarningSectionProps>> = ({
   application,
   step: { description, title },
 }) => {

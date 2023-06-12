@@ -68,7 +68,7 @@ const SkilavottordRecyclingRequestMutation = gql`
   }
 `
 
-const Confirm: FC = () => {
+const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const {
     t: {

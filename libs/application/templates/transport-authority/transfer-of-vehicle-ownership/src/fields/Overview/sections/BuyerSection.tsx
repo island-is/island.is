@@ -11,7 +11,7 @@ import { ReviewScreenProps } from '../../../shared'
 import { formatPhoneNumber, hasReviewerApproved } from '../../../utils'
 import kennitala from 'kennitala'
 
-export const BuyerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const BuyerSection: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = ({
   application,
   setStep,
   reviewerNationalId = '',

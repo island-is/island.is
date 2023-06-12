@@ -43,7 +43,7 @@ export const SkilavottordAllRecyclingPartnersQuery = gql`
   }
 `
 
-const RecyclingCompanies: FC = () => {
+const RecyclingCompanies: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
   const router = useRouter()

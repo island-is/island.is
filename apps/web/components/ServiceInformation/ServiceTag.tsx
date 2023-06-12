@@ -14,7 +14,7 @@ interface ServiceTagProps {
   item: PricingCategory | DataCategory | TypeCategory | AccessCategory
   namespace?: Record<string, string>
 }
-export const ServiceTag: React.FC<ServiceTagProps> = ({
+export const ServiceTag: React.FC<React.PropsWithChildren<ServiceTagProps>> = ({
   category,
   item,
   namespace,

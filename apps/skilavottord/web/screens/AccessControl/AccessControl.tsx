@@ -118,7 +118,7 @@ export const DeleteSkilavottordAccessControlMutation = gql`
   }
 `
 
-const AccessControl: FC = () => {
+const AccessControl: FC<React.PropsWithChildren<unknown>> = () => {
   const { Table, Head, Row, HeadData, Body, Data } = T
   const { user } = useContext(UserContext)
   const {

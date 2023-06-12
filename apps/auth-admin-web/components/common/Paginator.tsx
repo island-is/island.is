@@ -7,7 +7,7 @@ interface Props {
   handlePageChange: (page: number, count: number) => void
 }
 
-const Paginator: React.FC<Props> = (props: Props) => {
+const Paginator: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const [page, setPage] = useState<number>(1)
   const [count, setCount] = useState<number>(100)
   const [localization] = useState<Localization>(

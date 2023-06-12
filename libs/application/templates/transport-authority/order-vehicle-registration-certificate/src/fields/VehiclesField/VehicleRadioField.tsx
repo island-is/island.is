@@ -15,9 +15,7 @@ interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
 }
 
-export const VehicleRadioField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList }) => {
+export const VehicleRadioField: FC<React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>> = ({ currentVehicleList }) => {
   const { setValue } = useFormContext()
 
   const onRadioControllerSelect = (s: string) => {

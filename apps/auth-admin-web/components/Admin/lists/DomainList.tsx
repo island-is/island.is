@@ -9,7 +9,7 @@ import { ResourcesService } from './../../../services/ResourcesService'
 import { Domain } from './../../../entities/models/domain.model'
 import { PagedRowsDTO } from './../../../entities/models/paged-rows.dto'
 
-const DomainList: React.FC = () => {
+const DomainList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [page, setPage] = useState(1)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [count, setCount] = useState(0)

@@ -16,7 +16,7 @@ import {
 } from '../../utils/fields'
 import { FishingLicenseListOptions } from '../../types/schema'
 
-export const AreaWithDateSelection: FC<FieldBaseProps> = ({
+export const AreaWithDateSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   errors,
 }) => {

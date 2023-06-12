@@ -5,7 +5,7 @@ interface Props {
   title: string
 }
 
-const PageHeader: React.FC<Props> = (props) => {
+const PageHeader: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { title } = props
 
   return (

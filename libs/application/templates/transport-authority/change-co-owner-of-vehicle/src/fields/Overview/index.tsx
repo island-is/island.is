@@ -20,7 +20,7 @@ import { RejectConfirmationModal } from './RejectConfirmationModal'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 
-export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const Overview: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = ({
   setStep,
   reviewerNationalId = '',
   ...props

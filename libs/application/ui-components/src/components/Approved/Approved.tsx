@@ -6,7 +6,7 @@ export interface Props {
   subtitle: string
 }
 
-const Approved: FC<Props> = ({ title, subtitle }) => {
+const Approved: FC<React.PropsWithChildren<Props>> = ({ title, subtitle }) => {
   return (
     <Box
       padding={2}

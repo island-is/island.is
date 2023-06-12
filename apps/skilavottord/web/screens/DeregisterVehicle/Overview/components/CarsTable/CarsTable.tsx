@@ -21,7 +21,7 @@ interface TableProps {
   deregisteredVehicles: Vehicle[]
 }
 
-export const CarsTable: FC<TableProps> = ({ titles, deregisteredVehicles }) => {
+export const CarsTable: FC<React.PropsWithChildren<TableProps>> = ({ titles, deregisteredVehicles }) => {
   return (
     <Stack space={5}>
       <Table>

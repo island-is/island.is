@@ -11,9 +11,7 @@ interface RegisteredPropertiesProps {
   selectedPropertyNumber: string | undefined
 }
 
-export const RegisteredProperties: FC<
-  FieldBaseProps & RegisteredPropertiesProps
-> = ({ application, field, selectHandler, selectedPropertyNumber }) => {
+export const RegisteredProperties: FC<React.PropsWithChildren<FieldBaseProps & RegisteredPropertiesProps>> = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
 
   const { properties } = externalData.nationalRegistryRealEstate?.data as {

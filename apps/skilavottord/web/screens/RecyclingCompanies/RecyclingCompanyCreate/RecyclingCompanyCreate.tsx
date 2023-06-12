@@ -44,7 +44,7 @@ export const CreateSkilavottordRecyclingPartnerMutation = gql`
   }
 `
 
-const RecyclingCompanyCreate: FC = () => {
+const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const [createSkilavottordRecyclingPartner] = useMutation(

@@ -27,7 +27,7 @@ interface Props {
   workingCase: Case
 }
 
-const PoliceRequestAccordionItem: React.FC<Props> = ({
+const PoliceRequestAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
 }: Props) => {
   const { formatMessage } = useIntl()

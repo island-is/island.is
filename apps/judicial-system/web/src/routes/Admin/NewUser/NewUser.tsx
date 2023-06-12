@@ -32,7 +32,7 @@ const user: User = {
   active: true,
 }
 
-export const NewUser: React.FC = () => {
+export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   const {

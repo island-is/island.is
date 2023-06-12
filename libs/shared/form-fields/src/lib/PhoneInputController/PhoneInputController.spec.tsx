@@ -5,7 +5,7 @@ import { PhoneInputController } from './PhoneInputController'
 
 const DEFAULT_COUNTRY_CODE = '+354'
 
-const Wrapper: React.FC<{ defaultValues: Record<string, any> }> = ({
+const Wrapper: React.FC<React.PropsWithChildren<{ defaultValues: Record<string, any> }>> = ({
   children,
   defaultValues = {},
 }) => {

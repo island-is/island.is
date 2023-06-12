@@ -10,7 +10,7 @@ interface Props {
   policeCaseNumbers: string[]
 }
 
-const CourtCaseNumber: React.FC<Props> = ({
+const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = ({
   courtCaseNumber,
   policeCaseNumbers,
 }) => {

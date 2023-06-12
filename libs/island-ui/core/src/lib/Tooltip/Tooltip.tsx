@@ -17,7 +17,7 @@ interface ArrowIconProps {
   placement: string
 }
 
-const ArrowIcon: FC<ArrowIconProps> = ({ placement }) => {
+const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({ placement }) => {
   let deg = 0
 
   if (placement.startsWith('left')) {
@@ -61,7 +61,7 @@ interface TooltipProps {
   as?: ElementType
 }
 
-export const Tooltip: FC<TooltipProps> = ({
+export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   placement,
   text,
   iconSize = 'small',

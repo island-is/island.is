@@ -121,7 +121,7 @@ export const Placeholder = (props: PlaceholderProps<ReactSelectOption>) => {
   )
 }
 
-export const Input: ComponentType<InputProps> = (
+export const Input: ComponentType<React.PropsWithChildren<InputProps>> = (
   props: InputProps & { selectProps?: Props<ReactSelectOption> },
 ) => {
   const ariaError = props?.selectProps?.ariaError

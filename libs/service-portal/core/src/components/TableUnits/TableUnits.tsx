@@ -15,7 +15,7 @@ interface Props {
   paginateCallback?: () => void
 }
 
-export const TableUnits: FC<Props> = ({ tables, title, paginateCallback }) => {
+export const TableUnits: FC<React.PropsWithChildren<Props>> = ({ tables, title, paginateCallback }) => {
   const { formatMessage } = useLocale()
   const getMoreItems = () => {
     if (paginateCallback) {

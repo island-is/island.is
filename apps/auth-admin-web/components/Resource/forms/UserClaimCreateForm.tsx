@@ -13,7 +13,7 @@ interface Props {
   existingClaims: string[]
 }
 
-const UserClaimCreateForm: React.FC<Props> = (props: Props) => {
+const UserClaimCreateForm: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const {
     register,
     handleSubmit,

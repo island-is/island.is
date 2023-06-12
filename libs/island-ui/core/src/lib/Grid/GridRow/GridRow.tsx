@@ -16,7 +16,7 @@ interface Props {
   rowGap?: BoxProps['rowGap']
 }
 
-export const GridRow: FC<Props> = ({
+export const GridRow: FC<React.PropsWithChildren<Props>> = ({
   children,
   className,
   direction = 'row',

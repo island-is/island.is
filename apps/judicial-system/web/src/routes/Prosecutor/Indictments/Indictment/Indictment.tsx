@@ -39,7 +39,7 @@ import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graph
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
 
-const Indictment: React.FC = () => {
+const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

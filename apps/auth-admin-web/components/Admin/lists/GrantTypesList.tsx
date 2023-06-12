@@ -8,7 +8,7 @@ import { GrantType } from './../../../entities/models/grant-type.model'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const GrantTypesList: React.FC = () => {
+const GrantTypesList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [grantTypes, setGrantTypes] = useState<GrantType[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)

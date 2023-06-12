@@ -17,7 +17,7 @@ import { EmployersTable } from '../components/EmployersTable'
 import { States, YES } from '../../constants'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 
-const EmployersOverview: FC<RepeaterProps> = ({
+const EmployersOverview: FC<React.PropsWithChildren<RepeaterProps>> = ({
   error,
   application,
   expandRepeater,

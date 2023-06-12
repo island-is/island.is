@@ -33,7 +33,7 @@ const colorSchemes = {
   },
 } as const
 
-export const ProgressMeter: React.FC<ProgressMeterProps> = ({
+export const ProgressMeter: React.FC<React.PropsWithChildren<ProgressMeterProps>> = ({
   progress,
   variant = 'blue',
   className,

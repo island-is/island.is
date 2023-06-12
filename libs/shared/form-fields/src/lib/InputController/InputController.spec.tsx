@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { render, fireEvent } from '@testing-library/react'
 import { InputController } from './InputController'
 
-const Wrapper: React.FC<{ defaultValues: Record<string, any> }> = ({
+const Wrapper: React.FC<React.PropsWithChildren<{ defaultValues: Record<string, any> }>> = ({
   children,
   defaultValues = {},
 }) => {

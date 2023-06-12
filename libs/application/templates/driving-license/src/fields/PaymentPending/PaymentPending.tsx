@@ -14,7 +14,7 @@ export interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-export const PaymentPending: FC<Props> = (props) => {
+export const PaymentPending: FC<React.PropsWithChildren<Props>> = (props) => {
   const { application, refetch } = props
   const msg = useMsg(application)
 
@@ -57,7 +57,7 @@ export const PaymentPending: FC<Props> = (props) => {
   }
 }
 
-const ForwardToPaymentFlow: FC<{ url: string; message: string }> = ({
+const ForwardToPaymentFlow: FC<React.PropsWithChildren<{ url: string; message: string }>> = ({
   url,
   message,
 }) => {
@@ -68,7 +68,7 @@ const ForwardToPaymentFlow: FC<{ url: string; message: string }> = ({
   return <Text>{message}</Text>
 }
 
-const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
+const PollingForPayment: FC<React.PropsWithChildren<Props>> = ({ error, application, refetch }) => {
   const msg = useMsg(application)
 
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
@@ -120,12 +120,12 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
   )
 }
 
-const PaymentError: FC<{
+const PaymentError: FC<React.PropsWithChildren<{
   title: string | string[]
   errorMessage: string | string[]
   buttonCaption: string | string[]
   onClick?: () => unknown
-}> = ({ title, errorMessage, buttonCaption, onClick }) => (
+}>> = ({ title, errorMessage, buttonCaption, onClick }) => (
   <Box>
     <Text variant="h3">{title}</Text>
     <Text marginBottom="p2">{errorMessage}</Text>

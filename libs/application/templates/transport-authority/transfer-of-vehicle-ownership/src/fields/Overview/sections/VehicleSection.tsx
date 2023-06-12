@@ -15,7 +15,7 @@ import {
 } from '../../../shared'
 import { formatIsk } from '../../../utils'
 
-export const VehicleSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const VehicleSection: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = ({
   application,
   reviewerNationalId = '',
 }) => {

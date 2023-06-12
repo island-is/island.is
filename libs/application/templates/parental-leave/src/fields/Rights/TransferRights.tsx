@@ -84,7 +84,7 @@ const calculateHiddenValues = (
   }
 }
 
-export const TransferRights: FC<FieldBaseProps & CustomField> = ({
+export const TransferRights: FC<React.PropsWithChildren<FieldBaseProps & CustomField>> = ({
   field,
   application,
   error,

@@ -14,7 +14,7 @@ interface ShipInformationProps {
   isDisabled?: boolean
 }
 
-export const ShipInformation: FC<ShipInformationProps> = ({
+export const ShipInformation: FC<React.PropsWithChildren<ShipInformationProps>> = ({
   ship,
   seaworthinessHasColor = false,
   isDisabled = false,

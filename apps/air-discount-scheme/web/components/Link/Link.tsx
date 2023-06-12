@@ -16,7 +16,7 @@ interface LinkProps {
   as?: TypographyProps['as']
 }
 
-export const Link: FC<LinkProps> = ({
+export const Link: FC<React.PropsWithChildren<LinkProps>> = ({
   href,
   variant = 'p',
   as = 'span',

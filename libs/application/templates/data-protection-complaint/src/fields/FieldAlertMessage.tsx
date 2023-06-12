@@ -17,7 +17,7 @@ type FieldAlertMessageProps = {
   }
 }
 
-export const FieldAlertMessage: FC<FieldBaseProps & FieldAlertMessageProps> = ({
+export const FieldAlertMessage: FC<React.PropsWithChildren<FieldBaseProps & FieldAlertMessageProps>> = ({
   application,
   field,
 }) => {

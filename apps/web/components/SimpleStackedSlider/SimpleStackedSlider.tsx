@@ -22,7 +22,7 @@ interface SimpleStackedSliderProps {
   itemWidth?: number
 }
 
-export const SimpleStackedSlider: FC<SimpleStackedSliderProps> = ({
+export const SimpleStackedSlider: FC<React.PropsWithChildren<SimpleStackedSliderProps>> = ({
   children,
   levels = 'auto',
   itemWidth = 400,

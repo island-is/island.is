@@ -11,7 +11,7 @@ interface Props {
   courtEndTime: string
 }
 
-const RulingDateLabel: React.FC<Props> = (props) => {
+const RulingDateLabel: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { courtEndTime } = props
   const { formatMessage } = useIntl()
 

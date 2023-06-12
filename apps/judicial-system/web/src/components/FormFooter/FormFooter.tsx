@@ -30,7 +30,7 @@ interface Props {
   infoBoxText?: string
 }
 
-const FormFooter: React.FC<Props> = (props: Props) => {
+const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { width } = useWindowSize()

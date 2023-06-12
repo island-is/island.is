@@ -25,7 +25,7 @@ interface AccessControlModalProps
   // partnerIdRequired?: boolean
 }
 
-export const AccessControlModal: FC<AccessControlModalProps> = ({
+export const AccessControlModal: FC<React.PropsWithChildren<AccessControlModalProps>> = ({
   title,
   text,
   show,
@@ -43,7 +43,7 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
   } = useI18n()
 
   return (
-    <Modal
+    (<Modal
       title={title}
       text={text}
       show={show}
@@ -222,6 +222,6 @@ export const AccessControlModal: FC<AccessControlModalProps> = ({
           </Button>
         </Box>
       </form>
-    </Modal>
-  )
+    </Modal>)
+  );
 }

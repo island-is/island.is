@@ -17,7 +17,7 @@ import { information } from '../../lib/messages'
 import { UserInformation, VehiclesCurrentVehicle } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 
-export const CoOwner: FC<FieldBaseProps> = ({
+export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   setFieldLoadingState,

@@ -20,11 +20,11 @@ import { PortalContext, PortalMeta } from '../components/PortalProvider'
 const user = { profile: { name: 'Peter' } }
 const userInfo = createMockUser(user)
 
-const MockedPortalProvider: FC<{
+const MockedPortalProvider: FC<React.PropsWithChildren<{
   meta: PortalMeta
   modules: PortalModule[]
   routes: PortalRoute[]
-}> = ({ modules, meta, routes, children }) => (
+}>> = ({ modules, meta, routes, children }) => (
   <PortalContext.Provider
     value={{
       meta,

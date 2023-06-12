@@ -20,7 +20,7 @@ interface YourRightsBoxChartProps {
   showDisclaimer?: boolean
 }
 
-const YourRightsBoxChart: FC<YourRightsBoxChartProps> = ({
+const YourRightsBoxChart: FC<React.PropsWithChildren<YourRightsBoxChartProps>> = ({
   application,
   showDisclaimer = false,
 }) => {

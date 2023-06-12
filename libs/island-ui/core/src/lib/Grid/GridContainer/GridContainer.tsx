@@ -10,7 +10,7 @@ interface Props {
   position?: position | 'none'
 }
 
-export const GridContainer: FC<Props> = ({
+export const GridContainer: FC<React.PropsWithChildren<Props>> = ({
   children,
   className,
   id,

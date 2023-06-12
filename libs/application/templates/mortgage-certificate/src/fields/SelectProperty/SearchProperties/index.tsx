@@ -25,7 +25,7 @@ export const searchPropertiesQuery = gql`
   ${SEARCH_PROPERTIES_QUERY}
 `
 
-export const SearchProperties: FC<FieldBaseProps & SearchPropertiesProps> = ({
+export const SearchProperties: FC<React.PropsWithChildren<FieldBaseProps & SearchPropertiesProps>> = ({
   application,
   field,
   selectHandler,

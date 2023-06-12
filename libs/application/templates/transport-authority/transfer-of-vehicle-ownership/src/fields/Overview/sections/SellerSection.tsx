@@ -10,7 +10,7 @@ import { ReviewGroup } from '../../ReviewGroup'
 import kennitala from 'kennitala'
 import { formatPhoneNumber } from '../../../utils'
 
-export const SellerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const SellerSection: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = ({
   application,
   reviewerNationalId = '',
 }) => {

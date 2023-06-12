@@ -18,7 +18,7 @@ interface Props {
   remove: (name: string) => void
 }
 
-const ResourceListDisplay: React.FC<Props> = ({
+const ResourceListDisplay: React.FC<React.PropsWithChildren<Props>> = ({
   list,
   header,
   linkHeader,

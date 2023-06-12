@@ -52,7 +52,7 @@ const initialNameData: IcelandicNameType = {
   visible: true,
 }
 
-const EditForm: React.FC<PropTypes> = ({
+const EditForm: React.FC<React.PropsWithChildren<PropTypes>> = ({
   closeModal,
   onSubmit,
   nameData = initialNameData,

@@ -76,7 +76,7 @@ export interface AlertBannerProps {
   onDismiss?: () => void
 }
 
-export const AlertBanner: FC<AlertBannerProps> = ({
+export const AlertBanner: FC<React.PropsWithChildren<AlertBannerProps>> = ({
   variant: variantKey = 'default',
   dismissable,
   title,

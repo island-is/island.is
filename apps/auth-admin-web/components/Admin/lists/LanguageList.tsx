@@ -8,7 +8,7 @@ import { TranslationService } from './../../../services/TranslationService'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const LanguageList: React.FC = () => {
+const LanguageList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [languages, setLanguages] = useState<Language[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)

@@ -33,7 +33,7 @@ interface SectionNumberProps {
   isHistory?: boolean
 }
 
-export const SectionNumber: FC<SectionNumberProps> = ({
+export const SectionNumber: FC<React.PropsWithChildren<SectionNumberProps>> = ({
   theme = types.FormStepperThemes.BLUE,
   currentState,
   number,

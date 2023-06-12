@@ -12,7 +12,7 @@ interface Props {
   withdrawAccusedAppealDate?: () => void
 }
 
-const AccusedAppealInfo: React.FC<Props> = (props) => {
+const AccusedAppealInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, withdrawAccusedAppealDate } = props
   const { formatMessage } = useIntl()
 

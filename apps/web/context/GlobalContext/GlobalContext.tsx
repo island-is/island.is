@@ -29,7 +29,7 @@ export const GlobalContext = createContext<GlobalContextProps>({
   setResolveLinkTypeLocally: () => null,
 })
 
-export const GlobalContextProvider: FC<GlobalContextProviderProps> = ({
+export const GlobalContextProvider: FC<React.PropsWithChildren<GlobalContextProviderProps>> = ({
   namespace = {},
   isServiceWeb = false,
   children,

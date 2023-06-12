@@ -15,7 +15,7 @@ interface Props {
   workingCase: Case
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
-const CommentsInput: React.FC<Props> = (props) => {
+const CommentsInput: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { updateCase } = useCase()

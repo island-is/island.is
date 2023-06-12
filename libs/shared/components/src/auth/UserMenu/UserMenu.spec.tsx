@@ -52,7 +52,7 @@ const mocks = [
   },
 ]
 
-const wrapper: FC = ({ children }) => (
+const wrapper: FC<React.PropsWithChildren<unknown>> = ({ children }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
     <BrowserRouter>
       <LocaleProvider skipPolyfills>{children}</LocaleProvider>
@@ -65,7 +65,7 @@ async function openMenu() {
   await act(async () => {
     fireEvent.click(screen.getAllByRole('button', { name: /útskráning/i })[0])
   })
-  return screen.getByRole('dialog', { name: /útskráning/i })
+  return screen.getByRole('dialog', { name: /útskráning/i });
 }
 
 describe('UserMenu', () => {

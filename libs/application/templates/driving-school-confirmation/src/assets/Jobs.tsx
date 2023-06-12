@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Jobs: React.FC = () => (
+const Jobs: React.FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="432"
     height="445"

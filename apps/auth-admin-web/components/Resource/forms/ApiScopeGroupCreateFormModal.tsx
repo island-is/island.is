@@ -11,7 +11,7 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ApiScopeGroupCreateFormModal: React.FC<Props> = (props: Props) => {
+const ApiScopeGroupCreateFormModal: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const [visible, setVisible] = useState<boolean>(false)
   const [localization] = useState<FormControl>(
     LocalizationUtils.getFormControl('ApiScopeGroupCreateForm'),

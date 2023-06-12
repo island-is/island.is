@@ -13,7 +13,7 @@ import { useDeprecatedComponent } from '../private/useDeprecatedComponent'
  * This component is depreacted because it violated the open-closed principle (https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle)
  * in such a way that it did not accept `Sections` and `SubSections` to be in as React elements.
  */
-export const FormStepper: FC<{
+export const FormStepper: FC<React.PropsWithChildren<{
   theme?: types.FormStepperThemes
   tag?: ReactNode
   formName?: string
@@ -32,7 +32,7 @@ export const FormStepper: FC<{
    */
   subSection?: string
   showSubSectionIcons?: boolean
-}> = ({
+}>> = ({
   theme = types.FormStepperThemes.PURPLE,
   tag,
   formName,

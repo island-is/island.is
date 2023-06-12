@@ -199,7 +199,7 @@ export const getThemeConfig = (
     : { themeConfig: { footerVersion } }
 }
 
-export const OrganizationHeader: React.FC<HeaderProps> = ({
+export const OrganizationHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
 }) => {
   switch (organizationPage.theme) {
@@ -263,7 +263,7 @@ interface ExternalLinksProps {
   showOnMobile?: boolean
 }
 
-export const OrganizationExternalLinks: React.FC<ExternalLinksProps> = ({
+export const OrganizationExternalLinks: React.FC<React.PropsWithChildren<ExternalLinksProps>> = ({
   organizationPage,
   showOnMobile = true,
 }) => {
@@ -331,7 +331,7 @@ interface FooterProps {
   force?: boolean
 }
 
-export const OrganizationFooter: React.FC<FooterProps> = ({
+export const OrganizationFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   organizations,
   force = false,
 }) => {
@@ -614,7 +614,7 @@ const renderConnectedComponent = (slice) => {
   }
 }
 
-export const OrganizationWrapper: React.FC<WrapperProps> = ({
+export const OrganizationWrapper: React.FC<React.PropsWithChildren<WrapperProps>> = ({
   pageTitle,
   pageDescription,
   pageFeaturedImage,

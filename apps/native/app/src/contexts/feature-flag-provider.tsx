@@ -66,7 +66,7 @@ const featureFlagClient = configcat.getClient(
   },
 );
 
-export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
+export const FeatureFlagProvider: FC<React.PropsWithChildren<FeatureFlagContextProviderProps>> = ({
   children,
 }) => {
   const {userInfo} = useAuthStore();

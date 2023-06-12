@@ -8,7 +8,7 @@ import { IdpProvider } from '../../../entities/models/IdpProvider.model'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const IdpProvidersList: React.FC = () => {
+const IdpProvidersList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [idpProviders, setIdpProviders] = useState<IdpProvider[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)

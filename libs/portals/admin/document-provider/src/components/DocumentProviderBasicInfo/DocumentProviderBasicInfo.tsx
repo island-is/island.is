@@ -59,7 +59,7 @@ interface UseFormProps {
   helpDeskContact: HelpDeskContact
 }
 
-export const DocumentProviderBasicInfo: FC<Props> = ({
+export const DocumentProviderBasicInfo: FC<React.PropsWithChildren<Props>> = ({
   data,
   onSubmit,
   isFetching,
@@ -72,7 +72,7 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
   } = useForm<UseFormProps>()
 
   return (
-    <Box marginY={3}>
+    (<Box marginY={3}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={4}>
           <Box marginBottom={4}>
@@ -651,6 +651,6 @@ export const DocumentProviderBasicInfo: FC<Props> = ({
           </Button>
         </Box>
       </form>
-    </Box>
-  )
+    </Box>)
+  );
 }

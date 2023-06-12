@@ -15,7 +15,7 @@ interface Props {
   item: AsyncSearchOption
 }
 
-export const Item: React.FC<Props> = ({
+export const Item: React.FC<React.PropsWithChildren<Props>> = ({
   children,
   isSelected,
   isActive,

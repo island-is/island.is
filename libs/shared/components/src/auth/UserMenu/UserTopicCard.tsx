@@ -30,7 +30,7 @@ const colorSchemes = {
   },
 } as const
 
-export const UserTopicCard: React.FC<UserTopicCardProps> = ({
+export const UserTopicCard: React.FC<React.PropsWithChildren<UserTopicCardProps>> = ({
   children,
   colorScheme = 'blue',
   href,

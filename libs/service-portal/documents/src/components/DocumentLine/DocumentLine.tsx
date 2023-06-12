@@ -40,7 +40,7 @@ const GET_DOCUMENT_BY_ID = gql`
     }
   }
 `
-const DocumentLine: FC<Props> = ({
+const DocumentLine: FC<React.PropsWithChildren<Props>> = ({
   documentLine,
   img,
   documentCategories,

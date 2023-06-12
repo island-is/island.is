@@ -45,7 +45,7 @@ interface SlideState {
   breakpoints: Breakpoints
 }
 
-export const SimpleSlider: FC<SimpleSliderProps> = ({
+export const SimpleSlider: FC<React.PropsWithChildren<SimpleSliderProps>> = ({
   items,
   slideCount = 1,
   gutterWidth = 0,

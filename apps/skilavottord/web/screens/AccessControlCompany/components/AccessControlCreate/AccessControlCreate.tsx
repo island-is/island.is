@@ -24,7 +24,7 @@ interface AccessControlCreateProps
   roles: Option[]
 }
 
-export const AccessControlCreate: FC<AccessControlCreateProps> = ({
+export const AccessControlCreate: FC<React.PropsWithChildren<AccessControlCreateProps>> = ({
   title,
   text,
   show,

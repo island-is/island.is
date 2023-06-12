@@ -41,7 +41,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const HeilbrigdisstofnunAusturlandsHeader: React.FC<HeaderProps> = ({
+const HeilbrigdisstofnunAusturlandsHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
 }) => {
   const { linkResolver } = useLinkResolver()

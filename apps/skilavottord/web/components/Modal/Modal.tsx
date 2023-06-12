@@ -28,7 +28,7 @@ export interface ModalProps {
   children?: React.ReactNode
 }
 
-export const Modal: FC<ModalProps> = ({
+export const Modal: FC<React.PropsWithChildren<ModalProps>> = ({
   show,
   onCancel,
   onContinue,

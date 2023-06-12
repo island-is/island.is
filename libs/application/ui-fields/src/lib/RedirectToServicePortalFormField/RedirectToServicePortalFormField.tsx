@@ -10,7 +10,7 @@ interface Props extends FieldBaseProps {
   field: RedirectToServicePortalField
 }
 
-export const RedirectToServicePortalFormField: FC<Props> = ({
+export const RedirectToServicePortalFormField: FC<React.PropsWithChildren<Props>> = ({
   application,
 }) => {
   useEffect(() => {

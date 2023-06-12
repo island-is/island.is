@@ -13,7 +13,7 @@ interface Button {
   action: () => void
 }
 
-export const InlineError: FC<InlineErrorProps> = ({
+export const InlineError: FC<React.PropsWithChildren<InlineErrorProps>> = ({
   title,
   message,
   primaryButton,

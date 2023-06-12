@@ -32,7 +32,7 @@ const HOTKEYS = {
   'mod+o': 'ol_list',
 }
 
-export const MarkdownEditor: FC<MarkdownEditorProps> = ({
+export const MarkdownEditor: FC<React.PropsWithChildren<MarkdownEditorProps>> = ({
   value,
   dialogs,
   onChange,

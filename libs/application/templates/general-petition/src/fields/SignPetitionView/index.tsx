@@ -20,7 +20,7 @@ import Skeleton from './Skeleton'
 import Illustration from '../../assets/Illustration'
 import { useNavigate } from 'react-router-dom'
 
-const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
+const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 

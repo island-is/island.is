@@ -9,7 +9,7 @@ import { complaint, sharedFields } from '../../lib/messages'
 const calcWordCount = (value: string) =>
   value.split(' ').filter((item) => item).length
 
-export const ComplaintDescription: FC<FieldBaseProps> = ({
+export const ComplaintDescription: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   errors,

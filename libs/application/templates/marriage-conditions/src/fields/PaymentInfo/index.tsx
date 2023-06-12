@@ -11,7 +11,7 @@ export type Individual = {
   email: string
 }
 
-export const PaymentInfo: FC<FieldBaseProps> = () => {
+export const PaymentInfo: FC<React.PropsWithChildren<FieldBaseProps>> = () => {
   const { formatMessage } = useLocale()
 
   return (

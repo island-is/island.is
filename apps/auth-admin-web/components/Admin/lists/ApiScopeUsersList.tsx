@@ -8,7 +8,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 import { ApiScopeUser } from '../../../entities/models/api-scope-user.model'
 
-const ApiScopeUsersList: React.FC = () => {
+const ApiScopeUsersList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [adminAccess, setAdminAccess] = useState<ApiScopeUser[]>([])
   const [page, setPage] = useState(1)
   const [modalIsOpen, setIsOpen] = React.useState(false)

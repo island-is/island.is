@@ -26,7 +26,7 @@ export interface GridColumnProps {
   position?: position | 'none'
 }
 
-export const GridColumn: FC<GridColumnProps> = ({
+export const GridColumn: FC<React.PropsWithChildren<GridColumnProps>> = ({
   children,
   span,
   offset,

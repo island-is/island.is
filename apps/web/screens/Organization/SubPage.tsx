@@ -53,7 +53,7 @@ interface SubPageProps {
   locale: Locale
 }
 
-const TOC: FC<{ slices: Slice[]; title: string }> = ({ slices, title }) => {
+const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({ slices, title }) => {
   const navigation = useMemo(
     () =>
       slices

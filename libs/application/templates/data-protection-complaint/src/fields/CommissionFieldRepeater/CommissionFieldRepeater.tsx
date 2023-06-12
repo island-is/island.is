@@ -19,7 +19,7 @@ type PersonField = {
   nationalId: string
 }
 
-export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
+export const CommissionFieldRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   errors,
   field,

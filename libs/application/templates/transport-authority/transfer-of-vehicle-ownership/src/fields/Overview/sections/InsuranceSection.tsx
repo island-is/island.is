@@ -15,9 +15,7 @@ interface Props {
   noInsuranceError: boolean
 }
 
-export const InsuranceSection: FC<
-  FieldBaseProps & ReviewScreenProps & Props
-> = ({
+export const InsuranceSection: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps & Props>> = ({
   setStep,
   insurance = undefined,
   reviewerNationalId = '',

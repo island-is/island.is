@@ -51,13 +51,13 @@ import {
 } from '../../components/CaseFiles/CaseFiles'
 import { policeCaseFiles as m } from './PoliceCaseFilesRoute.strings'
 
-const UploadFilesToPoliceCase: React.FC<{
+const UploadFilesToPoliceCase: React.FC<React.PropsWithChildren<{
   caseId: string
   policeCaseNumber: string
   setAllUploaded: (allUploaded: boolean) => void
   caseFiles: CaseFile[]
   caseOrigin: CaseOrigin
-}> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
+}>> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
   const { formatMessage } = useIntl()
   const {
     handleChange,
@@ -270,7 +270,7 @@ type AllUploadedState = {
  * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
  * causing a endless rendering loop.
  */
-const PoliceUploadListMemo: React.FC<{
+const PoliceUploadListMemo: React.FC<React.PropsWithChildren<{
   caseId: string
   policeCaseNumbers: string[]
   subtypes?: IndictmentSubtypeMap
@@ -278,7 +278,7 @@ const PoliceUploadListMemo: React.FC<{
   caseFiles?: CaseFile[]
   setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
   caseOrigin: CaseOrigin
-}> = memo(
+}>> = memo(
   ({
     caseId,
     policeCaseNumbers,

@@ -56,7 +56,7 @@ const getErrorMessageFromErrorCode = (errorCode: string): string => {
   return errorMessage ?? m.studentIsNotMentorableDescription.defaultMessage
 }
 
-export const LookupStudent: FC<FieldBaseProps> = ({ application }) => {
+export const LookupStudent: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
   const { formatMessage } = useLocale()
   const fakeData = getValueViaPath<LearnersPermitFakeData>(
     application.answers,

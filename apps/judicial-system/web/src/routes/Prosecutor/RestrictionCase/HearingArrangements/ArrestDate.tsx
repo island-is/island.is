@@ -13,7 +13,7 @@ interface Props {
   title: string
 }
 
-const ArrestDate: React.FC<Props> = (props) => {
+const ArrestDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { title, workingCase, setWorkingCase } = props
   const { setAndSendCaseToServer } = useCase()
 

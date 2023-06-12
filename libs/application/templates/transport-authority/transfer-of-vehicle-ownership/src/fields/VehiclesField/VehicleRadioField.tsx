@@ -25,9 +25,7 @@ interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicleWithOwnerchangeChecks[]
 }
 
-export const VehicleRadioField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application, errors }) => {
+export const VehicleRadioField: FC<React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>> = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 

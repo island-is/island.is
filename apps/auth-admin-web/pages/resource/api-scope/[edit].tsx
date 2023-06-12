@@ -15,7 +15,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import ApiScopeResourceForm from './../../../components/Resource/forms/ApiScopeResourceForm'
 import ApiScopePersonalRepresentativePermissionsForm from '../../../components/Resource/forms/ApiScopePersonalRepresentativePermissionsForm'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const stepQuery = query.step
   const apiScopeName = query.edit

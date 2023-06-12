@@ -32,7 +32,7 @@ import {
   Steps,
 } from './StatusStep/types'
 
-export const ApplicationStatus: FC<ApplicationStatusProps & FieldBaseProps> = ({
+export const ApplicationStatus: FC<React.PropsWithChildren<ApplicationStatusProps & FieldBaseProps>> = ({
   goToScreen,
   application,
   refetch,

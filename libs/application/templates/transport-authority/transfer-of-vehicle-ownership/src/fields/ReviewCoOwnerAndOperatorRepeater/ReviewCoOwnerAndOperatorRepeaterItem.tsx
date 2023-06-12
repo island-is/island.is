@@ -28,9 +28,7 @@ interface Props {
   errorMessage?: string
 }
 
-export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
-  Props & FieldBaseProps
-> = ({
+export const ReviewCoOwnerAndOperatorRepeaterItem: FC<React.PropsWithChildren<Props & FieldBaseProps>> = ({
   id,
   index,
   rowLocation,

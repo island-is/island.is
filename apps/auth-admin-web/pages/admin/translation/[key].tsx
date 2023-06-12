@@ -8,7 +8,7 @@ import { Translation } from './../../../entities/models/translation.model'
 import TranslationCreateForm from './../../../components/Admin/form/TranslationCreateForm'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { query } = useRouter()
   const key = query.key
   const [translation, setTranslation] = useState<Translation>()

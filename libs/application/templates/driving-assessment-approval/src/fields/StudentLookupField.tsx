@@ -27,7 +27,7 @@ interface ExpectedStudent {
   nationalId?: string
 }
 
-export const StudentLookupField: FC<Props> = ({ application }) => {
+export const StudentLookupField: FC<React.PropsWithChildren<Props>> = ({ application }) => {
   const student = application.answers.student as unknown as ExpectedStudent
   const studentNationalId = useWatch({
     name: 'student.nationalId',

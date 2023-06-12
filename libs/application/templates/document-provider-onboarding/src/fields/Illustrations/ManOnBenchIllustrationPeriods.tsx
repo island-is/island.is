@@ -4,7 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 import ManOnBenchIllustration from './ManOnBenchIllustration'
 
 // TODO this will be moved into a reusable library
-const PeriodsSectionImage: FC<FieldBaseProps> = () => {
+const PeriodsSectionImage: FC<React.PropsWithChildren<FieldBaseProps>> = () => {
   //TODO make responsive when moved into reusable library
   const isMobile = window.innerWidth < 480
   return (

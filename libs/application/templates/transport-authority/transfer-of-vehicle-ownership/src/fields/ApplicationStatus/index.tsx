@@ -14,7 +14,7 @@ import { StatusStep } from './StatusStep'
 import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 import { coreMessages } from '@island.is/application/core'
 
-export const ApplicationStatus: FC<FieldBaseProps & ReviewScreenProps> = (
+export const ApplicationStatus: FC<React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>> = (
   props,
 ) => {
   const {

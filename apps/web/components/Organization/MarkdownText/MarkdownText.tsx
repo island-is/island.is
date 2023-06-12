@@ -9,13 +9,13 @@ interface MarkdownTextProps {
   variant?: TextProps['variant']
 }
 
-export const MarkdownText: React.FC<MarkdownTextProps> = ({
+export const MarkdownText: React.FC<React.PropsWithChildren<MarkdownTextProps>> = ({
   children,
   color = null,
   variant = 'default',
 }) => {
   return (
-    <div className={styles.markdownText}>
+    (<div className={styles.markdownText}>
       <Markdown
         options={{
           forceBlock: true,
@@ -63,6 +63,6 @@ export const MarkdownText: React.FC<MarkdownTextProps> = ({
       >
         {(children as string).replace(/\n/gi, '<br>')}
       </Markdown>
-    </div>
-  )
+    </div>)
+  );
 }

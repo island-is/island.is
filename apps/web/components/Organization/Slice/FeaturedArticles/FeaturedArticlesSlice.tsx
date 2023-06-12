@@ -18,7 +18,7 @@ interface SliceProps {
   namespace?: Record<string, string>
 }
 
-export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
+export const FeaturedArticlesSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slice,
   namespace,
 }) => {

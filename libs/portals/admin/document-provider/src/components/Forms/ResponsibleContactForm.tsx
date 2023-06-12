@@ -12,7 +12,7 @@ interface Props {
   administrativeContact: Contact
 }
 
-export const ResponsibleContactForm: FC<Props> = ({
+export const ResponsibleContactForm: FC<React.PropsWithChildren<Props>> = ({
   organisationId,
   administrativeContact,
 }) => {
@@ -35,7 +35,7 @@ export const ResponsibleContactForm: FC<Props> = ({
     }
   }
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    (<form onSubmit={handleSubmit(onSubmit)}>
       <Stack space={2}>
         <Controller
           control={control}
@@ -148,6 +148,6 @@ export const ResponsibleContactForm: FC<Props> = ({
           {formatMessage(m.SettingsEditResponsibleContactSaveButton)}
         </Button>
       </Box>
-    </form>
-  )
+    </form>)
+  );
 }

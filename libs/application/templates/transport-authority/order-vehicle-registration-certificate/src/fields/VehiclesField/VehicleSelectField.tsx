@@ -12,9 +12,7 @@ interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
 }
 
-export const VehicleSelectField: FC<
-  VehicleSearchFieldProps & FieldBaseProps
-> = ({ currentVehicleList, application }) => {
+export const VehicleSelectField: FC<React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>> = ({ currentVehicleList, application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 

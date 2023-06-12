@@ -12,7 +12,7 @@ export type ContactField = {
   email: string
 }
 
-export const ContactRepeater: FC<FieldBaseProps> = ({
+export const ContactRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   errors,

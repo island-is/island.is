@@ -90,11 +90,11 @@ const Table = <T extends object>(
     )
   }
 
-  const ButtonRow: FC<{
+  const ButtonRow: FC<React.PropsWithChildren<{
     label: string
     onClick: () => void
     style?: React.CSSProperties
-  }> = ({ label, onClick, style }) => {
+  }>> = ({ label, onClick, style }) => {
     return (
       <tr>
         <td colSpan={columns.length} style={{ textAlign: 'left', ...style }}>
@@ -135,7 +135,7 @@ const Table = <T extends object>(
   return (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore - 'CSSProperties | undefined' is not assignable to type 'React.CSSProperties | undefined' ?
-    <table
+    (<table
       {...getTableProps()}
       className={cn(styles.table, className)}
       data-testid={testid}
@@ -144,12 +144,12 @@ const Table = <T extends object>(
         {headerGroups.map((headerGroup) => (
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore - Same as above
-          <tr {...headerGroup.getHeaderGroupProps()}>
+          (<tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => {
               return (
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore - Same as above
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                (<th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   <Text fontWeight="regular" as="span">{`${column.render(
                     'Header',
                   )} `}</Text>
@@ -168,10 +168,10 @@ const Table = <T extends object>(
                       )
                     ) : null}
                   </span>
-                </th>
-              )
+                </th>)
+              );
             })}
-          </tr>
+          </tr>)
         ))}
       </thead>
       {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
@@ -180,8 +180,8 @@ const Table = <T extends object>(
         {(truncate && enoughRowsToTruncate && renderTruncatedRows()) ||
           rows.map((row) => renderRow(row))}
       </tbody>
-    </table>
-  )
+    </table>)
+  );
 }
 
 export default Table

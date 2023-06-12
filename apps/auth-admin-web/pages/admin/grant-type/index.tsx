@@ -7,7 +7,7 @@ import GrantTypeCreateForm from './../../../components/Admin/form/GrantTypeCreat
 import { GrantTypeDTO } from './../../../entities/dtos/grant-type.dto'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   useEffect(() => {

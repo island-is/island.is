@@ -47,7 +47,7 @@ interface Props {
   nationalIdImmutable: boolean
 }
 
-const DefendantInfo: React.FC<Props> = (props) => {
+const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     defendant,
     workingCase,

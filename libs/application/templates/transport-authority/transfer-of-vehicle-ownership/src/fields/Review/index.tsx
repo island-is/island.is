@@ -11,7 +11,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 import { ReviewMainOperator } from '../ReviewMainOperator'
 
-export const Review: FC<FieldBaseProps> = (props) => {
+export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
   const { userInfo } = useAuth()
   const [step, setStep] = useState<ReviewState>('states')

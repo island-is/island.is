@@ -8,7 +8,7 @@ interface Props extends FieldBaseProps {
   field: AlertMessageField
 }
 
-export const AlertMessageFormField: FC<Props> = ({ application, field }) => {
+export const AlertMessageFormField: FC<React.PropsWithChildren<Props>> = ({ application, field }) => {
   const { formatMessage } = useLocale()
   return (
     <Box marginY={2}>

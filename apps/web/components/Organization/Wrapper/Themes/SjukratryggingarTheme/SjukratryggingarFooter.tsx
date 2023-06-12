@@ -21,7 +21,7 @@ interface FooterProps {
   organizationSlug: string
 }
 
-const SjukratryggingarFooter: React.FC<FooterProps> = ({
+const SjukratryggingarFooter: React.FC<React.PropsWithChildren<FooterProps>> = ({
   footerItems,
   namespace,
   organizationSlug,

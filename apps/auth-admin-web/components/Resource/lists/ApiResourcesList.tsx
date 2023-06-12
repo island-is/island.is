@@ -11,7 +11,7 @@ import { downloadCSV } from '../../../utils/csv.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const ApiResourcesList: React.FC = () => {
+const ApiResourcesList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [count, setCount] = useState(0)
   const [page, setPage] = useState(1)
   const [apiResources, setApiResources] = useState<ApiResource[]>([])

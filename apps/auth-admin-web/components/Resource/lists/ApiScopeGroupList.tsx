@@ -8,7 +8,7 @@ import { ListControl } from '../../../entities/common/Localization'
 import { ResourcesService } from './../../../services/ResourcesService'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 
-const ApiScopeGroupList: React.FC = () => {
+const ApiScopeGroupList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [apiScopeGroups, setApiScopeGroups] = useState<ApiScopeGroup[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)

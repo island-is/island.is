@@ -21,7 +21,7 @@ interface Props {
   wasRemoved: boolean
 }
 
-export const OwnerCoOwners: FC<Props & FieldBaseProps> = ({
+export const OwnerCoOwners: FC<React.PropsWithChildren<Props & FieldBaseProps>> = ({
   id,
   index,
   rowLocation,

@@ -7,7 +7,7 @@ interface AccordionListItemProps {
   breakSpaces?: boolean
 }
 
-const AccordionListItem: React.FC<AccordionListItemProps> = (
+const AccordionListItem: React.FC<React.PropsWithChildren<AccordionListItemProps>> = (
   props: PropsWithChildren<AccordionListItemProps>,
 ) => {
   return (

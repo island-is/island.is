@@ -12,7 +12,7 @@ interface Props {
   startExpanded?: boolean
 }
 
-const RulingAccordionItem: React.FC<Props> = ({
+const RulingAccordionItem: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
   startExpanded,
 }: Props) => {

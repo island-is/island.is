@@ -12,7 +12,7 @@ interface HiddenInformationProps {
   }
 }
 
-export const HiddenInformation: FC<FieldBaseProps & HiddenInformationProps> = ({
+export const HiddenInformation: FC<React.PropsWithChildren<FieldBaseProps & HiddenInformationProps>> = ({
   application,
   field,
 }) => {

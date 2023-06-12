@@ -14,7 +14,7 @@ interface SubSectionItemProps {
   children: React.ReactNode
 }
 
-export const SubSectionItem: FC<SubSectionItemProps> = ({
+export const SubSectionItem: FC<React.PropsWithChildren<SubSectionItemProps>> = ({
   currentState,
   showIcon = false,
   children,

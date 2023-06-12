@@ -19,7 +19,7 @@ type Props = {
   document: string
 }
 
-export const IntroText: React.FC<Props> = ({ document }) => {
+export const IntroText: React.FC<React.PropsWithChildren<Props>> = ({ document }) => {
   const parsed = useMemo(() => {
     if (typeof document === 'object') {
       return document

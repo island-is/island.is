@@ -19,7 +19,7 @@ interface FormOutput {
   domain: DomainDTO
 }
 
-const DomainCreateForm: React.FC<Props> = (props: Props) => {
+const DomainCreateForm: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const { register, handleSubmit, formState } = useForm<FormOutput>()
   const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)

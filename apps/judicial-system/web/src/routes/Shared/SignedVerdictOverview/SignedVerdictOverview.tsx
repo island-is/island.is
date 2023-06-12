@@ -179,7 +179,7 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
   | 'AppealReceived'
 
-export const SignedVerdictOverview: React.FC = () => {
+export const SignedVerdictOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

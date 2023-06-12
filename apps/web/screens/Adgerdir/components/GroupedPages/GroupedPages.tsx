@@ -19,7 +19,7 @@ interface GroupedPagesProps {
   variant?: ColorSchemes
 }
 
-export const GroupedPages: FC<GroupedPagesProps> = ({
+export const GroupedPages: FC<React.PropsWithChildren<GroupedPagesProps>> = ({
   topContent,
   bottomContent,
   variant,

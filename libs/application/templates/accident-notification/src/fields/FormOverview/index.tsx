@@ -71,7 +71,7 @@ interface FormOverviewProps {
   }
 }
 
-export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
+export const FormOverview: FC<React.PropsWithChildren<FieldBaseProps & FormOverviewProps>> = ({
   application,
   goToScreen,
   field,

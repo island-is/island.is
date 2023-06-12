@@ -20,7 +20,7 @@ interface FormOutput {
   id: string
 }
 
-const UsersList: React.FC = () => {
+const UsersList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [users, setUsers] = useState<UserIdentity[]>([])
   const [id, setId] = useState<string>('')
   const [claimShow, setClaimShow] = useState<ClaimShow[]>([])

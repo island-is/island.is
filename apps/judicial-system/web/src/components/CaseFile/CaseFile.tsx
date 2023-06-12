@@ -17,7 +17,7 @@ interface Props {
   canOpenFiles?: boolean
 }
 
-const CaseFile: React.FC<Props> = (props) => {
+const CaseFile: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { fileId, name, size, uploadedAt, canOpenFiles = true, onOpen } = props
 
   const isValidUpdatedAtDate = isValid(new Date(uploadedAt))

@@ -18,9 +18,7 @@ interface FishingLicenseAlertMessageProps {
   }[]
 }
 
-export const FishingLicenseAlertMessage: FC<
-  FishingLicenseAlertMessageProps
-> = ({ title, description, reasons }) => {
+export const FishingLicenseAlertMessage: FC<React.PropsWithChildren<FishingLicenseAlertMessageProps>> = ({ title, description, reasons }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const handleExpandClick = () => setIsExpanded(!isExpanded)

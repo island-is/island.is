@@ -18,7 +18,7 @@ interface FormOutput {
   idp: IdpProviderDTO
 }
 
-const IdpProviderCreateForm: React.FC<Props> = (props: Props) => {
+const IdpProviderCreateForm: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const { register, handleSubmit, formState } = useForm<FormOutput>()
   const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)

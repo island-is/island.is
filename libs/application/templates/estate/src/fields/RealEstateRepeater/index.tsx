@@ -16,7 +16,7 @@ import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
 import { InputController } from '@island.is/shared/form-fields'
 
-export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
+export const RealEstateRepeater: FC<React.PropsWithChildren<FieldBaseProps<Answers>>> = ({
   application,
   field,
   errors,

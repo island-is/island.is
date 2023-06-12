@@ -19,7 +19,7 @@ export const validateCertificateQuery = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
 
-export const PendingRejectedTryAgain: FC<FieldBaseProps> = ({
+export const PendingRejectedTryAgain: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   refetch,
 }) => {

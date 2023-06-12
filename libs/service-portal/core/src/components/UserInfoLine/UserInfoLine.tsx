@@ -43,7 +43,7 @@ interface Props {
   className?: string
 }
 
-export const UserInfoLine: FC<Props> = ({
+export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
   label,
   content,
   renderContent,

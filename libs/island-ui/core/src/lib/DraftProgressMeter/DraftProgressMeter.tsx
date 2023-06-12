@@ -37,7 +37,7 @@ const colorSchemes = {
   },
 } as const
 
-export const DraftProgressMeter: React.FC<DraftProgressMeterProps> = ({
+export const DraftProgressMeter: React.FC<React.PropsWithChildren<DraftProgressMeterProps>> = ({
   draftFinishedSteps,
   draftTotalSteps,
   variant = 'blue',

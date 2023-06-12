@@ -11,7 +11,7 @@ interface Props extends FieldBaseProps {
   field: MessageWithLinkButtonField
 }
 
-export const MessageWithLinkButtonFormField: FC<Props> = ({
+export const MessageWithLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
   application,
   field,
 }) => {

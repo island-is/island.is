@@ -75,7 +75,7 @@ type TitleAndOrMessage =
       message?: never
     }
 
-export const AlertMessage: React.FC<AlertMessageProps & TitleAndOrMessage> = ({
+export const AlertMessage: React.FC<React.PropsWithChildren<AlertMessageProps & TitleAndOrMessage>> = ({
   type,
   title,
   message,

@@ -15,7 +15,7 @@ interface Props extends FieldBaseProps {
   field: CustomField
 }
 
-export const SubmitAndDecline: FC<Props> = ({
+export const SubmitAndDecline: FC<React.PropsWithChildren<Props>> = ({
   error,
   application,
   refetch,

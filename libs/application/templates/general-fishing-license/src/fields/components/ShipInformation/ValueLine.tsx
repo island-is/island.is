@@ -9,7 +9,7 @@ interface ShipInformationProps {
   disabled?: boolean
 }
 
-export const ValueLine: FC<ShipInformationProps> = ({
+export const ValueLine: FC<React.PropsWithChildren<ShipInformationProps>> = ({
   label,
   value,
   color = 'black',

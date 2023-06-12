@@ -35,7 +35,7 @@ interface CardProps {
   status?: string
 }
 
-export const Card: FC<CardProps> = ({
+export const Card: FC<React.PropsWithChildren<CardProps>> = ({
   title,
   image,
   description,

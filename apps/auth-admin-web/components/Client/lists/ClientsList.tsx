@@ -9,7 +9,7 @@ import { downloadCSV } from '../../../utils/csv.utils'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const ClientsList: React.FC = () => {
+const ClientsList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [clients, setClients] = useState<Client[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)

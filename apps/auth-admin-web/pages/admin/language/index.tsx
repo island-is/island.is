@@ -7,7 +7,7 @@ import LanguageCreateForm from '../../../components/Admin/form/LanguageCreateFor
 import { LanguageDTO } from './../../../entities/dtos/language.dto'
 import LocalizationUtils from '../../../utils/localization.utils'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   useEffect(() => {

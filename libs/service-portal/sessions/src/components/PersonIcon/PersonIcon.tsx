@@ -8,7 +8,7 @@ interface IProps {
   sessionType: SessionType
 }
 
-const PersonIcon: FC<IProps> = ({ sessionType = SessionType.self }) => {
+const PersonIcon: FC<React.PropsWithChildren<IProps>> = ({ sessionType = SessionType.self }) => {
   const { formatMessage } = useLocale()
   const textColor =
     sessionType === SessionType.onBehalf ? 'blue400' : 'purple400'

@@ -20,7 +20,7 @@ interface SidebarLayoutProps {
   contentId?: string
 }
 
-export const SidebarLayout: FC<SidebarLayoutProps> = ({
+export const SidebarLayout: FC<React.PropsWithChildren<SidebarLayoutProps>> = ({
   sidebarContent,
   isSticky = true,
   hiddenOnTablet = false,

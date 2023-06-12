@@ -25,7 +25,7 @@ interface PlateSearchFieldProps {
   myPlateOwnershipList: PlateOwnership[]
 }
 
-export const PlateRadioField: FC<PlateSearchFieldProps & FieldBaseProps> = ({
+export const PlateRadioField: FC<React.PropsWithChildren<PlateSearchFieldProps & FieldBaseProps>> = ({
   myPlateOwnershipList,
   application,
 }) => {

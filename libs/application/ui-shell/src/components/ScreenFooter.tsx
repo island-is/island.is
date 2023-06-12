@@ -52,7 +52,7 @@ const submitButtonConfig: Record<CallToAction['type'], SubmitButton> = {
   },
 }
 
-export const ScreenFooter: FC<FooterProps> = ({
+export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   activeScreenIndex,
   application,
   canProceed,

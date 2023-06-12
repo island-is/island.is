@@ -22,7 +22,7 @@ import { StartDateOptions } from '../../constants'
 
 type ValidAnswers = StartDateOptions | undefined
 
-const FirstPeriodStart: FC<FieldBaseProps> = ({
+const FirstPeriodStart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   field,
   application,

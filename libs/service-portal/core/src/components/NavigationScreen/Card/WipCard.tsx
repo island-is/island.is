@@ -5,7 +5,7 @@ interface Props {
   label: string
 }
 
-export const WipCard: FC<Props> = ({ label }) => {
+export const WipCard: FC<React.PropsWithChildren<Props>> = ({ label }) => {
   return (
     <Box
       background="white"

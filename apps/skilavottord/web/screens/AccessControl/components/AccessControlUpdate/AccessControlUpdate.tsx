@@ -22,7 +22,7 @@ interface AccessControlUpdateProps
   currentPartner?: AccessControl
 }
 
-export const AccessControlUpdate: FC<AccessControlUpdateProps> = ({
+export const AccessControlUpdate: FC<React.PropsWithChildren<AccessControlUpdateProps>> = ({
   title,
   text,
   show,

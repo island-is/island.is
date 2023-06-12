@@ -65,7 +65,7 @@ const getFinanceDocumentsListQuery = gql`
   }
 `
 
-const DocumentScreen: FC<Props> = ({
+const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
   title,
   intro,
   listPath,

@@ -31,7 +31,7 @@ import { m } from '../../lib/messages'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
 import { getValueViaPath, hasYes } from '@island.is/application/core'
 
-export const EstateMemberRepeater: FC<FieldBaseProps<Answers>> = ({
+export const EstateMemberRepeater: FC<React.PropsWithChildren<FieldBaseProps<Answers>>> = ({
   application,
   field,
   errors,

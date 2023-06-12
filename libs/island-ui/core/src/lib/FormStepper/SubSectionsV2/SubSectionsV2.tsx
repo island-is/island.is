@@ -6,10 +6,10 @@ import { Box } from '../../Box/Box'
 import { SectionNumberColumn } from '../SectionNumberColumn/SectionNumberColumn'
 import * as styles from './SubSectionsV2.css'
 
-export const SubSections: FC<{
+export const SubSections: FC<React.PropsWithChildren<{
   isActive?: boolean
   subSections?: React.ReactNodeArray
-}> = ({ isActive = false, subSections }) => {
+}>> = ({ isActive = false, subSections }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight } = useComponentSize(containerRef)
   const [containerHeight, setContainerHeight] = useState<string | number>(

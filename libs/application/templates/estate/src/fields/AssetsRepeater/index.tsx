@@ -34,7 +34,7 @@ type AssetsRepeaterProps = {
   error: Record<string, string> | any
 }
 
-export const AssetsRepeater: FC<FieldBaseProps & AssetsRepeaterProps> = ({
+export const AssetsRepeater: FC<React.PropsWithChildren<FieldBaseProps & AssetsRepeaterProps>> = ({
   application,
   field,
   errors,

@@ -13,7 +13,7 @@ import {
 import { useFields } from '../context/FieldContext'
 import { FieldDef } from '../types'
 
-const FormField: FC<{
+const FormField: FC<React.PropsWithChildren<{
   application: Application
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
@@ -24,7 +24,7 @@ const FormField: FC<{
   errors: RecordObject
   goToScreen: (id: string) => void
   refetch: () => void
-}> = ({
+}>> = ({
   application,
   setBeforeSubmitCallback,
   setFieldLoadingState,

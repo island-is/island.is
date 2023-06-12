@@ -43,7 +43,7 @@ interface WrapperProps {
   indexableBySearchEngine?: boolean
 }
 
-export const Wrapper: FC<WrapperProps> = ({
+export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   pageTitle,
   headerTitle,
   institutionSlug,

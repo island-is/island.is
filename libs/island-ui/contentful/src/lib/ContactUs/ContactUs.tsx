@@ -39,7 +39,7 @@ export interface ContactUsProps {
   onSubmit: (formState: ContactUsFormState) => Promise<void>
 }
 
-export const ContactUs: FC<ContactUsProps> = ({
+export const ContactUs: FC<React.PropsWithChildren<ContactUsProps>> = ({
   onSubmit,
   state = 'edit',
   title = 'Sendu okkur línu',
@@ -70,7 +70,7 @@ export const ContactUs: FC<ContactUsProps> = ({
   const isNotSent = state !== 'success'
 
   return (
-    <Box position="relative">
+    (<Box position="relative">
       <Box background="blue100" borderRadius="large" paddingY={6}>
         <GridRow>
           <GridColumn span="7/9" offset="1/9">
@@ -158,6 +158,6 @@ export const ContactUs: FC<ContactUsProps> = ({
         closeButton={true}
         useKeyframeStyles={false}
       />
-    </Box>
-  )
+    </Box>)
+  );
 }

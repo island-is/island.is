@@ -24,7 +24,7 @@ interface Props {
   onChange: (updatedIndictmentCount: UpdateIndictmentCount) => void
 }
 
-export const Substances: React.FC<Props> = (props) => {
+export const Substances: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     indictmentCount,
     indictmentCountOffenseType,

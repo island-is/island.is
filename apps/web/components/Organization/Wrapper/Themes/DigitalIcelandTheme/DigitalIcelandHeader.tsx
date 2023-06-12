@@ -17,7 +17,7 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const DigitalIcelandHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const DigitalIcelandHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   return (

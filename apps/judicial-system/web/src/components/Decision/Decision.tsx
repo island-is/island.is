@@ -17,7 +17,7 @@ interface Props {
   disabled?: boolean
 }
 
-const Decision: React.FC<Props> = ({
+const Decision: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
   acceptedLabelText,
   acceptingAlternativeTravelBanLabelText,

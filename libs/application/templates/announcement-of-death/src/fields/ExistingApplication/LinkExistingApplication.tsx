@@ -26,7 +26,7 @@ interface IContinueConf {
   action: ACTION
 }
 
-export const LinkExistingApplication: FC<FieldBaseProps> = ({
+export const LinkExistingApplication: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
   refetch,

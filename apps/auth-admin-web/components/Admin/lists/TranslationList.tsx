@@ -9,7 +9,7 @@ import { Translation } from './../../../entities/models/translation.model'
 import LocalizationUtils from '../../../utils/localization.utils'
 import { ListControl } from '../../../entities/common/Localization'
 
-const TranslationList: React.FC = () => {
+const TranslationList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [translations, setTranslations] = useState<Translation[]>([])
   const [page, setPage] = useState(1)
   const [lastPage, setLastPage] = useState(1)

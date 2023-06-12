@@ -36,11 +36,11 @@ import { verifyExternalData } from '../utils'
 import { handleServerError } from '@island.is/application/ui-components'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 
-const ItemHeader: React.FC<{
+const ItemHeader: React.FC<React.PropsWithChildren<{
   title: FormText
   subTitle?: FormText
   application: Application
-}> = ({ title, subTitle, application }) => {
+}>> = ({ title, subTitle, application }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -60,12 +60,12 @@ const ItemHeader: React.FC<{
   )
 }
 
-const ProviderItem: FC<{
+const ProviderItem: FC<React.PropsWithChildren<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
   suppressProviderError: boolean
   application: Application
-}> = ({ dataProviderResult, provider, suppressProviderError, application }) => {
+}>> = ({ dataProviderResult, provider, suppressProviderError, application }) => {
   const [reasons, setReasons] = useState<ProviderErrorReason[]>([])
   const { title, subTitle } = provider
   const { formatMessage } = useLocale()
@@ -112,10 +112,10 @@ const ProviderItem: FC<{
   )
 }
 
-const PermissionItem: FC<{
+const PermissionItem: FC<React.PropsWithChildren<{
   permission: DataProviderPermissionItem
   application: Application
-}> = ({ permission, application }) => {
+}>> = ({ permission, application }) => {
   const { title, subTitle } = permission
 
   return (
@@ -136,7 +136,7 @@ const getExternalDataFromResponse = (
   responseData: UpdateApplicationExternalDataResponse,
 ) => responseData?.updateApplicationExternalData?.externalData
 
-const FormExternalDataProvider: FC<{
+const FormExternalDataProvider: FC<React.PropsWithChildren<{
   application: Application
   applicationId: string
   addExternalData(data: ExternalData): void
@@ -145,7 +145,7 @@ const FormExternalDataProvider: FC<{
   externalDataProvider: ExternalDataProviderScreen
   formValue: FormValue
   errors: RecordObject
-}> = ({
+}>> = ({
   addExternalData,
   setBeforeSubmitCallback,
   application,

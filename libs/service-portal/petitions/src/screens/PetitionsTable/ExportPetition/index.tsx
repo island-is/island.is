@@ -43,7 +43,7 @@ export const getCSV = async (data: any[], fileName: string) => {
 
 const baseUrl = `${document.location.origin}/undirskriftalistar/`
 
-const DropdownExport: FC<Props> = ({
+const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
   petition,
   petitionSigners,
   petitionId,

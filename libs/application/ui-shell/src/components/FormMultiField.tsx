@@ -20,7 +20,7 @@ import { FieldDef, MultiFieldScreen } from '../types'
 
 const IGNORED_HALF_TYPES: FieldTypes[] = [FieldTypes.RADIO]
 
-const FormMultiField: FC<{
+const FormMultiField: FC<React.PropsWithChildren<{
   application: Application
   errors: RecordObject
   multiField: MultiFieldScreen
@@ -30,7 +30,7 @@ const FormMultiField: FC<{
   setBeforeSubmitCallback?: SetBeforeSubmitCallback
   setFieldLoadingState?: SetFieldLoadingState
   setSubmitButtonDisabled?: SetSubmitButtonDisabled
-}> = ({
+}>> = ({
   application,
   answerQuestions,
   errors,

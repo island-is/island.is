@@ -10,7 +10,7 @@ export interface AdgerdirHeadingProps {
   main?: boolean
 }
 
-export const AdgerdirHeading: FC<AdgerdirHeadingProps> = ({
+export const AdgerdirHeading: FC<React.PropsWithChildren<AdgerdirHeadingProps>> = ({
   subtitle,
   title,
   intro,

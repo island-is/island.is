@@ -20,7 +20,7 @@ export interface FeatureFlagContextProviderProps {
   defaultUser?: FeatureFlagUser
 }
 
-export const FeatureFlagProvider: FC<FeatureFlagContextProviderProps> = ({
+export const FeatureFlagProvider: FC<React.PropsWithChildren<FeatureFlagContextProviderProps>> = ({
   children,
   sdkKey,
   defaultUser: userProp,
@@ -68,7 +68,7 @@ export interface MockedFeatureFlagProviderProps {
   flags: string[] | FeatureFlagRecord
 }
 
-export const MockedFeatureFlagProvider: FC<MockedFeatureFlagProviderProps> = ({
+export const MockedFeatureFlagProvider: FC<React.PropsWithChildren<MockedFeatureFlagProviderProps>> = ({
   flags,
   children,
 }) => {

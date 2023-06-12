@@ -11,7 +11,7 @@ interface Props {
   judgeName?: string
 }
 
-const AppealConclusion: React.FC<Props> = (props) => {
+const AppealConclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { conclusionText, judgeName } = props
 

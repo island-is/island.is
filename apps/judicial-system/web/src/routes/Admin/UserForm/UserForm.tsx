@@ -45,7 +45,7 @@ interface Props {
   loading: boolean
 }
 
-export const UserForm: React.FC<Props> = (props) => {
+export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const [user, setUser] = useState<User>(props.user)
 
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()

@@ -23,7 +23,7 @@ interface Props {
   errorMessage?: string
 }
 
-export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
+export const NationalIdWithName: FC<React.PropsWithChildren<Props & FieldBaseProps>> = ({
   customId = '',
   customNationalIdLabel = '',
   customNameLabel = '',
@@ -98,7 +98,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   }, [nationalIdInput, getIdentity])
 
   return (
-    <Box>
+    (<Box>
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
@@ -142,6 +142,6 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
           />
         </GridColumn>
       </GridRow>
-    </Box>
-  )
+    </Box>)
+  );
 }

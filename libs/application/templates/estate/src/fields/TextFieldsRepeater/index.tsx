@@ -34,7 +34,7 @@ type Props = {
   }
 }
 
-export const TextFieldsRepeater: FC<FieldBaseProps<Answers> & Props> = ({
+export const TextFieldsRepeater: FC<React.PropsWithChildren<FieldBaseProps<Answers> & Props>> = ({
   field,
   errors,
 }) => {

@@ -24,7 +24,7 @@ export const SkilavottordUserQuery = gql`
   }
 `
 
-export const Header: FC = () => {
+export const Header: FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
   const [session] = useSession() as [AuthSession, boolean]

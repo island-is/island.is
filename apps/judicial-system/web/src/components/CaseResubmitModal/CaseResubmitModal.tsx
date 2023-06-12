@@ -24,7 +24,7 @@ export function getCaseResubmittedText(
   })
 }
 
-const CaseResubmitModal: React.FC<Props> = ({
+const CaseResubmitModal: React.FC<React.PropsWithChildren<Props>> = ({
   workingCase,
   isLoading,
   onClose,

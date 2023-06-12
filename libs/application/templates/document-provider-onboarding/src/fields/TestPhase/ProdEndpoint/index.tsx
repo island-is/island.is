@@ -23,7 +23,7 @@ export const updateEndpointMutation = gql`
   }
 `
 
-const ProdEndPoint: FC<FieldBaseProps> = ({ application }) => {
+const ProdEndPoint: FC<React.PropsWithChildren<FieldBaseProps>> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   interface Variable {

@@ -20,7 +20,7 @@ type Props = {
   onEdit: (id: string) => void
 }
 
-export const ComplainedFor: FC<Props> = ({
+export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
   complainedFor,
   connection,
   complainedForType,
