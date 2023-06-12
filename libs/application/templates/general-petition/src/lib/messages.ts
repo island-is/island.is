@@ -219,7 +219,7 @@ export const m = defineMessages({
   },
   backtoSP: {
     id: 'gpl.application:backtoSP',
-    defaultMessage: 'Til baka á Mínar Síður',
+    defaultMessage: 'Mínar Síður',
     description: '',
   },
 
