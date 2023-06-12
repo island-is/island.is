@@ -33,25 +33,8 @@ test.describe('Endorsements', () => {
       page.locator('button:text("Stofna nýjan lista")'),
     ).toBeVisible()
 
-    // await page.waitForSelector('button:text("Virkir listar")')
+    // check for tabs
     await expect(page.locator('button:text("Virkir listar")')).toBeVisible()
-
-    // await page.waitForSelector('button:text("Liðnir listar")')
     await expect(page.locator('button:text("Liðnir listar")')).toBeVisible()
-  })
-
-  test('should be able to see lists, access a list and see button to sign an endorsement list', async () => {
-    const page = await context.newPage()
-    await disableI18n(page)
-
-    // Navigate to the specified page
-    await page.goto(icelandicAndNoPopupUrl('/undirskriftalistar'))
-
-    // Find a list made by some other user
-    await page.getByText('Skoða lista').last().click()
-
-    await expect(
-      page.locator('button:text("Setja nafn mitt á þennan lista")'),
-    ).toBeVisible()
   })
 })

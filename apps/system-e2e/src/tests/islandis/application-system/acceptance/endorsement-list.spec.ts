@@ -48,8 +48,13 @@ test.describe('Endorsements', () => {
     await page.click('button:text("Halda áfram")')
 
     // 3 fill in the form and click next
-    await page.getByLabel('Heiti undirskriftalista').fill(title)
-    await page.getByLabel('Um undirskriftalista').fill(description)
+
+    await page.getByLabel('Heiti lista').fill(title)
+    await page
+      .getByPlaceholder(
+        'Texti sem birtist með undirskriftalista. Ekki er hægt að breyta texta eftir að undirskriftalisti hefur verið birtur.',
+      )
+      .fill(description)
     await page
       .getByLabel('Tímabil lista')
       .first()
