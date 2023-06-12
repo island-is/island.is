@@ -21,7 +21,6 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 
-
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit as AuditOptions),
@@ -34,11 +33,7 @@ import {
     LoggingModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        NationalRegistryClientConfig,
-        IdsClientConfig,
-        XRoadConfig,
-      ],
+      load: [NationalRegistryClientConfig, IdsClientConfig, XRoadConfig],
     }),
   ],
   providers: [
