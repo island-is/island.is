@@ -84,7 +84,7 @@ export const AdviceCard = ({ advice }: Props) => {
             {getShortDate(advice.created)}
           </Text>
           {scrollHeight > REVIEW_CARD_SCROLL_HEIGHT && (
-            <FocusableBox onClick={() => setOpen(!open)}>
+            <FocusableBox component="button" onClick={() => setOpen(!open)}>
               <Icon
                 icon={open ? 'remove' : 'add'}
                 type="outline"
