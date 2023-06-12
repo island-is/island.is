@@ -14,7 +14,9 @@ import {
   NotificationType,
   CaseState,
   CaseTransition,
+  CaseLegalProvisions,
 } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
 import {
   FormFooter,
@@ -29,6 +31,8 @@ import {
   CaseResubmitModal,
   FormContext,
   UserContext,
+  CommentsAccordionItem,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -40,12 +44,8 @@ import {
   titles,
   errors,
 } from '@island.is/judicial-system-web/messages'
-import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 

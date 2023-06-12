@@ -2,6 +2,7 @@ import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import React, { ComponentPropsWithoutRef, ReactNode } from 'react'
 import * as styles from './IdsAdminCard.css'
+import type { TestSupport } from '@island.is/island-ui/utils'
 
 interface ButtonAction {
   onClick?: ComponentPropsWithoutRef<typeof Button>['onClick']
@@ -29,7 +30,8 @@ export default function IdsAdminCard({
   eyebrow,
   tags = [],
   text,
-}: IdsAdminCardProps) {
+  dataTestId,
+}: IdsAdminCardProps & TestSupport) {
   const renderCTA = () => {
     if (!cta) {
       return null
@@ -67,6 +69,7 @@ export default function IdsAdminCard({
       display="flex"
       columnGap={2}
       flexGrow={1}
+      data-testid={dataTestId}
     >
       <Box
         display="flex"

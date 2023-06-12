@@ -9,11 +9,18 @@ import {
   AlertMessage,
   Box,
 } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
+import {
+  formatDate,
+  caseTypes,
+  capitalize,
+} from '@island.is/judicial-system/formatters'
 import {
   NotificationType,
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   AccordionListItem,
   CaseFileList,
@@ -28,6 +35,7 @@ import {
   CaseResubmitModal,
   FormContext,
   UserContext,
+  PageHeader,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
@@ -38,14 +46,6 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  formatDate,
-  caseTypes,
-  capitalize,
-} from '@island.is/judicial-system/formatters'
-import { Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
 
 import * as styles from './Overview.css'
 

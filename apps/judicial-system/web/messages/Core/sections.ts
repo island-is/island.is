@@ -271,8 +271,8 @@ export const sections = {
         'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
     defender: {
-      id: 'judicial.system.core:sections.indictments_court_section.defender',
-      defaultMessage: 'Verjendur',
+      id: 'judicial.system.core:sections.indictments_court_section.defender_v1',
+      defaultMessage: 'Verjandi',
       description:
         'Notaður sem texti fyrir Verjenda skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
