@@ -18,6 +18,7 @@ import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage } from './messages'
 import { answerValidators } from './answerValidators'
+import { NationalRegistryResidenceHistoryApi } from '../dataProviders'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -59,6 +60,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 NationalRegistrySpouseApi,
+                NationalRegistryResidenceHistoryApi,
               ],
               delete: true,
             },
