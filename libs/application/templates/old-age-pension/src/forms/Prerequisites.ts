@@ -22,6 +22,7 @@ import Logo from '../assets/Logo'
 import { NO, YES } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { getApplicationAnswers } from '../lib/oldAgePensionUtils'
+import { NationalRegistryResidenceHistoryApi } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'OldAgePensionPrerequisites',
@@ -62,6 +63,11 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle:
                     oldAgePensionFormMessage.shared.skraInformationSubTitle,
                 }),
+                buildDataProviderItem({
+                  provider: NationalRegistryResidenceHistoryApi,
+                  title: 'Búsetusaga',
+                  subTitle: 'Búsetusaga frá Þjóðskrá.',
+                }),
               ],
             }),
           ],
@@ -85,6 +91,7 @@ export const PrerequisitesForm: Form = buildForm({
                   ],
                   width: 'half',
                 }),
+<<<<<<< HEAD
                 buildCustomField({
                   id: 'question.pensionFundAlert',
                   title: oldAgePensionFormMessage.shared.pensionFundAlertTitle,
@@ -96,10 +103,30 @@ export const PrerequisitesForm: Form = buildForm({
                     const { pensionFundQuestion } = getApplicationAnswers(
                       answers,
                     )
+=======
+                buildCustomField(
+                  {
+                    id: 'question.pensionFundAlert',
+                    title:
+                      oldAgePensionFormMessage.shared.pensionFundAlertTitle,
+                    component: 'FieldAlertMessage',
+                    description:
+                      oldAgePensionFormMessage.shared
+                        .pensionFundAlertDescription,
+                    doesNotRequireAnswer: true,
+                    condition: (answers) => {
+                      const { pensionFundQuestion } = getApplicationAnswers(
+                        answers,
+                      )
+>>>>>>> 13bb35bd24 (merge)
 
-                    return pensionFundQuestion === NO
+                      return pensionFundQuestion === NO
+                    },
                   },
-                }),
+                  {
+                    type: 'warning',
+                  },
+                ),
                 buildRadioField({
                   id: 'questions.abroad',
                   title: oldAgePensionFormMessage.shared.abroadQuestionTitle,
