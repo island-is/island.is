@@ -7736,7 +7736,7 @@ __metadata:
     configcat-js: 7.0.0
     dynamic-color: 0.3.0
     expo: 47.0.13
-    expo-barcode-scanner: 12.2.0
+    expo-barcode-scanner: 12.1.0
     expo-camera: 13.1.0
     expo-file-system: 15.1.1
     expo-haptics: 12.0.1
@@ -25511,14 +25511,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-barcode-scanner@npm:12.2.0":
-  version: 12.2.0
-  resolution: "expo-barcode-scanner@npm:12.2.0"
+"expo-barcode-scanner@npm:12.1.0":
+  version: 12.1.0
+  resolution: "expo-barcode-scanner@npm:12.1.0"
   dependencies:
     expo-image-loader: ~4.0.0
   peerDependencies:
     expo: "*"
-  checksum: 0e71378efc67055c223143e4c0747b71ebbbc0e0bbb094ce31e413f46e9247d83d903cc8a5e34c221fb0464863cf690bfbee60e43240abfcc4a592e7a1389951
+  checksum: 196ed1433f561bc46a7bc6bd2085b4ede8c3e82a7f0ea0cc3d6aeaec7f6636246eafb2d46a6ae81af202365f66cb3c6b4a8df098aa694cd805ada7c7fead9201
   languageName: node
   linkType: hard
 
