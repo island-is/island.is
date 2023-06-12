@@ -1,6 +1,28 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Applicant
+  phone: {
+    id: 'gpl.application:phone',
+    defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  email: {
+    id: 'gpl.application:email',
+    defaultMessage: 'Netfang',
+    description: '',
+  },
+  phoneLabel: {
+    id: 'gpl.application:phoneLabel',
+    defaultMessage: 'Símanúmer ábyrgðarmanns',
+    description: '',
+  },
+  emailLabel: {
+    id: 'gpl.application:emailLabel',
+    defaultMessage: 'Netfang ábyrgðarmanns',
+    description: '',
+  },
+
   // Application Name
   applicationName: {
     id: 'gpl.application:applicationName',
@@ -61,7 +83,7 @@ export const m = defineMessages({
   },
   listName: {
     id: 'gpl.application:listName',
-    defaultMessage: 'Heiti undirskriftalista',
+    defaultMessage: 'Heiti lista',
     description: '',
   },
   listNamePlaceholder: {
@@ -71,7 +93,7 @@ export const m = defineMessages({
   },
   aboutList: {
     id: 'gpl.application:aboutList',
-    defaultMessage: 'Um undirskriftalista',
+    defaultMessage: 'Um lista',
     description: '',
   },
   aboutListPlaceholder: {
