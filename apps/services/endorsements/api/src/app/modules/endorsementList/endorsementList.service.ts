@@ -24,6 +24,11 @@ import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 
+import {
+  AddressDto as NationalRegistryAddress,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
+
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -40,6 +45,7 @@ export class EndorsementListService {
     private logger: Logger,
     @Inject(EmailService)
     private emailService: EmailService,
+    private readonly nationalRegistryApiV2: NationalRegistryClientService,
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -256,7 +262,20 @@ export class EndorsementListService {
     return result
   }
 
+  async whodis(ssn: string) {
+    try {
+      const result = await this.nationalRegistryApiV2.getIndividual(ssn)
+      return result
+    } catch (error) {
+      this.logger.warn('whodis not found')
+      throw new NotFoundException()
+    }
+  }
+
+  
   async getOwnerInfo(listId: string, owner?: string) {
+
+    
     // Is used by both unauthenticated users, authenticated users and admin
     // Admin needs to access locked lists and can not use the EndorsementListById pipe
     // Since the endpoint is not authenticated
@@ -275,7 +294,15 @@ export class EndorsementListService {
     }
 
     try {
-      return (await this.nationalRegistryApi.getUser(owner)).Fulltnafn
+      // return (await this.nationalRegistryApi.getUser(owner)).Fulltnafn
+      const person = await this.nationalRegistryApiV2.getIndividual(owner)
+      if(person?.fullName){
+        return person?.fullName
+      } else {
+        return "bob"
+      }
+      
+
     } catch (e) {
       if (e instanceof Error) {
         this.logger.warn(

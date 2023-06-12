@@ -14,6 +14,13 @@ import { EndorsementListModule } from './modules/endorsementList/endorsementList
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { AccessGuard } from './guards/accessGuard/access.guard'
 import { LoggingModule } from '@island.is/logging'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import {
+  ConfigModule,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
+
 
 @Module({
   imports: [
@@ -25,6 +32,14 @@ import { LoggingModule } from '@island.is/logging'
     EndorsementModule,
     EndorsementListModule,
     LoggingModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        NationalRegistryClientConfig,
+        IdsClientConfig,
+        XRoadConfig,
+      ],
+    }),
   ],
   providers: [
     {

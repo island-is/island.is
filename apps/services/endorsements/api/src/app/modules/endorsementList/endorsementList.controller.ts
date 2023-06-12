@@ -331,6 +331,11 @@ export class EndorsementListController {
     })
   }
 
+  @Get('/whodis/:ssn')
+  async whodis(@Param('ssn') ssn: string): Promise<any> {
+    return await this.endorsementListService.whodis(ssn)
+  }
+  
   @ApiOperation({ summary: 'Fetches owner info from national registry' })
   @ApiOkResponse({
     description: 'Create an endorsements list',
