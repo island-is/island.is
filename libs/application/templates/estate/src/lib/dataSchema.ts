@@ -114,7 +114,6 @@ export const estateSchema = z.object({
       })
       .optional(),
   }),
-  estateMembersHaveElectronicID: z.array(z.enum([YES])).length(1),
 
   // is: Innbú
   inventory: z
