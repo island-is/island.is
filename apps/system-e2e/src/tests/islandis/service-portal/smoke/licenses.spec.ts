@@ -32,8 +32,7 @@ test.describe('MS - Skírteini', () => {
   })
 
   test.afterAll(async () => {
-    for (const context of contexts)
-      await context.close()
+    for (const context of contexts) await context.close()
   })
 
   test('License overview', async () => {
