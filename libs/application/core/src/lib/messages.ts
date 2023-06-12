@@ -252,6 +252,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Áfram',
     description: 'Button text for form builder component, go to service portal',
   },
+  copyLinkSuccessToast: {
+    id: 'application.system:copyLinkSuccessToast',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Copy link success toast',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -533,7 +538,13 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Greiðsla er enn í vinnslu. Vinsamlega reynið aftur síðar.',
     description: 'Not able to create payment description',
   },
+  copyLinkErrorToast: {
+    id: 'application.system:copyLink.copyLinkErrorToast',
+    defaultMessage: 'Tókst ekki að afrita hlekk',
+    description: 'Copy link error toast',
+  },
 })
+
 export const coreDelegationsMessages = defineMessages({
   delegationPersons: {
     id: 'application.system:core.delegations.delegationPersons',

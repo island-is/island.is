@@ -514,6 +514,23 @@ export const overview = buildSection({
               },
             )
           },
+          condition: (answers) => {
+            const files = getValueViaPath(answers, 'estateAttachments') as {
+              attached: { file: { length: number } }
+            }
+            return files?.attached?.file?.length === 0
+          },
+        }),
+        buildCustomField({
+          id: 'attachmentsNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) => {
+            const files = getValueViaPath(answers, 'estateAttachments') as {
+              attached: { file: { length: number } }
+            }
+            return files?.attached?.file?.length === 0
+          },
         }),
         buildSubmitField({
           id: 'permitToPostponeEstateDivision.submit',
