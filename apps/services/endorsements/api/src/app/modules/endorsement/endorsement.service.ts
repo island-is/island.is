@@ -13,10 +13,10 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+// import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 
 import {
-  AddressDto as NationalRegistryAddress,
+  // AddressDto as NationalRegistryAddress,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 
@@ -58,14 +58,14 @@ export class EndorsementService {
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private readonly nationalRegistryApi: NationalRegistryApi,
+    // private readonly nationalRegistryApi: NationalRegistryApi,
     private readonly nationalRegistryApiV2: NationalRegistryClientService,
   ) {}
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.info(`Finding endorsements by list id "${listId}"`)
 
-    return await paginate({
+    const res = await paginate({
       Model: this.endorsementModel,
       limit: query.limit || 10,
       after: query.after,
@@ -74,6 +74,8 @@ export class EndorsementService {
       orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
+    console.log('res', res)
+    return res
   }
 
   async findEndorsementsGeneralPetition(

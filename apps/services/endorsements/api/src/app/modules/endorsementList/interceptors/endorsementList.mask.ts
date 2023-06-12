@@ -5,7 +5,7 @@ export function maskEndorsementList(
   isAdmin: boolean,
 ): EndorsementList {
   // Masks owner from EndorsementList
-  theList.owner = 'xxxxxx-xxxx'
+  // theList.owner = 'xxxxxx-xxxx'
 
   if (!isAdmin) {
     theList.meta = { ...theList.meta, phone: '', email: '' }
