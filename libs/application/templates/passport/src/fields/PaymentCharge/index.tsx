@@ -2,17 +2,11 @@ import React, { FC, useEffect } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Column, Columns, Divider, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  Passport,
-  PASSPORT_CHARGE_CODES,
-  PersonalInfo,
-  Service,
-  Services,
-} from '../../lib/constants'
+import { PASSPORT_CHARGE_CODES, Service, Services } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { PaymentCatalogItem } from '@island.is/api/schema'
-import { getCurrencyString } from '../../lib/utils'
+import { getCurrencyString, hasDiscount } from '../../lib/utils'
 import { useFormContext } from 'react-hook-form'
 
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
@@ -20,12 +14,8 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { setValue } = useFormContext()
   const serviceTypeRegular =
     (application.answers.service as Service).type === Services.REGULAR
-
-  const withDiscount =
-    ((application.answers.passport as Passport)?.userPassport !== '' &&
-      (application.answers.personalInfo as PersonalInfo)
-        ?.hasDisabilityDiscountChecked) ||
-    (application.answers.passport as Passport)?.childPassport !== ''
+  const { answers, externalData } = application
+  const withDiscount = hasDiscount(answers, externalData)
 
   const chargeCode = withDiscount
     ? serviceTypeRegular
