@@ -43,11 +43,14 @@ export class EndorsementListService {
   ) {}
 
   hasAdminScope(user: User): boolean {
-    for (const [_, value] of Object.entries(user.scope)) {
-      if (value === AdminPortalScope.petitionsAdmin) {
-        return true
+    if (user?.scope) {
+      for (const [_, value] of Object.entries(user.scope)) {
+        if (value === AdminPortalScope.petitionsAdmin) {
+          return true
+        }
       }
     }
+
     return false
   }
 
