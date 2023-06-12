@@ -265,7 +265,9 @@ export class LimitedAccessCaseService {
       })
     }
 
-    await this.messageService.sendMessagesToQueue(messages)
+    if (messages.length > 0) {
+      await this.messageService.sendMessagesToQueue(messages)
+    }
 
     return updatedCase
   }
