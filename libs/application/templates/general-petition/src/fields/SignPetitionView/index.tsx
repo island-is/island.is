@@ -114,17 +114,20 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                     readOnly
                   />
                 </Box>
-                <CheckboxController
-                  id="showName"
-                  large={false}
-                  onSelect={() => setShowName(!showName)}
-                  options={[
-                    {
-                      value: YES,
-                      label: formatMessage(m.hideNameLabel),
-                    },
-                  ]}
-                />
+                <Box marginTop={6} width="half">
+                  <CheckboxController
+                    id="showName"
+                    large={false}
+                    onSelect={() => setShowName(!showName)}
+                    options={[
+                      {
+                        value: YES,
+                        label: formatMessage(m.hideNameLabel),
+                      },
+                    ]}
+                  />
+                  <Text variant="eyebrow">{formatMessage(m.hideNameText)}</Text>
+                </Box>
               </Box>
 
               <Box marginTop={5}>
