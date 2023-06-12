@@ -23,7 +23,7 @@ test.describe('MS - Skírteini', () => {
     })
     contextFaereyjar = await session({
       browser: browser,
-      storageState: 'service-portal-færeyjar.json',
+      storageState: 'service-portal-faereyjar.json',
       homeUrl,
       phoneNumber: '0102399',
       idsLoginOn: true,
