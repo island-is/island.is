@@ -440,6 +440,9 @@ services-auth-ids-api:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
+    NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
+    NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
+    NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
     RSK_PASSWORD: '/k8s/xroad/client/RSK/PASSWORD'
     RSK_USERNAME: '/k8s/xroad/client/RSK/USERNAME'
   securityContext:
