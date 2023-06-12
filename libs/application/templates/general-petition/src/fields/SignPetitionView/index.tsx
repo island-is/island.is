@@ -66,7 +66,12 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
           <Text marginBottom={2} variant="h2">
             {formatMessage(m.petitionSigned)}
           </Text>
-          <Box paddingY={10} display="flex" justifyContent="center" height='full'>
+          <Box
+            paddingY={10}
+            display="flex"
+            justifyContent="center"
+            height="full"
+          >
             <Illustration />
           </Box>
           <Box position="absolute" bottom={0} right={0}>
