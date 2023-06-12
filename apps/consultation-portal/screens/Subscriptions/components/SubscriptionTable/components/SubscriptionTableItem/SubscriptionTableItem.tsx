@@ -178,12 +178,7 @@ const SubscriptionTableItem = ({
               target="_blank"
               title={loc.infoText}
             >
-              <Icon
-                icon="open"
-                type="outline"
-                size="small"
-                color="purple300"
-              />
+              <Icon icon="open" type="outline" size="small" color="purple300" />
             </FocusableBox>
           )}
         </TData>
