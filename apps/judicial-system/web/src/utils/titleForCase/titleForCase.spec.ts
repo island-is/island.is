@@ -100,4 +100,80 @@ describe('titleForCase', () => {
     const res = fn(theCase)
     expect(res).toEqual('Farbann virkt')
   })
+
+  test('should handle investigation case in progress', () => {
+    const theCase = {
+      state: CaseState.NEW,
+      type: CaseType.SEARCH_WARRANT,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um rannsóknarheimild')
+  })
+
+  test('should handle extended investigation case in progress', () => {
+    const theCase = {
+      state: CaseState.NEW,
+      type: CaseType.SEARCH_WARRANT,
+      parentCase: {},
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um framlengingu á rannsóknarheimild')
+  })
+
+  test('should handle custody case in progress', () => {
+    const theCase = {
+      state: CaseState.NEW,
+      type: CaseType.CUSTODY,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um gæsluvarðhald')
+  })
+
+  test('should handle extended custody case in progress', () => {
+    const theCase = {
+      state: CaseState.NEW,
+      type: CaseType.CUSTODY,
+      parentCase: {},
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um framlengingu á gæsluvarðhaldi')
+  })
+
+  test('should handle admission case in progress', () => {
+    const theCase = {
+      state: CaseState.NEW,
+      type: CaseType.ADMISSION_TO_FACILITY,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um vistun á viðeigandi stofnun')
+  })
+
+  test('should handle extended admission case in progress', () => {
+    const theCase = {
+      state: CaseState.NEW,
+      type: CaseType.ADMISSION_TO_FACILITY,
+      parentCase: {},
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um framlengingu á vistun á viðeigandi stofnun')
+  })
+
+  test('should handle travel case in progress', () => {
+    const theCase = {
+      state: CaseState.NEW,
+      type: CaseType.TRAVEL_BAN,
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um farbann')
+  })
+
+  test('should handle extended travel case in progress', () => {
+    const theCase = {
+      state: CaseState.NEW,
+      type: CaseType.TRAVEL_BAN,
+      parentCase: {},
+    } as Case
+    const res = fn(theCase)
+    expect(res).toEqual('Krafa um framlengingu á farbanni')
+  })
 })
