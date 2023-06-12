@@ -12,7 +12,6 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
-import { dark200 } from '@island.is/island-ui/theme'
 
 const MyPdfDocument = (data: {
   petition?: EndorsementList
@@ -23,11 +22,6 @@ const MyPdfDocument = (data: {
     <Document>
       <Page style={pdfStyles.body}>
         {/* Header */}
-        <Image
-          src={require('./assets/thjodskra.png')}
-          style={pdfStyles.image}
-          fixed
-        />
 
         {/* Body */}
         <View style={pdfStyles.listInfo}>
@@ -73,11 +67,6 @@ const MyPdfDocument = (data: {
         </View>
 
         {/* Footer */}
-        <Image
-          src={require('./assets/island.png')}
-          style={pdfStyles.footerImage}
-          fixed
-        />
       </Page>
     </Document>
   )

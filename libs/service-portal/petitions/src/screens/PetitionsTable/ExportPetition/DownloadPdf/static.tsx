@@ -92,19 +92,4 @@ export const pdfStyles = StyleSheet.create({
   },
 })
 
-Font.register({
-  family: 'Open Sans',
-  fonts: [
-    {
-      src:
-        'https://cdn.jsdelivr.net/npm/open-sans-all@0.1.3/fonts/open-sans-regular.ttf',
-    },
-    {
-      src:
-        'https://cdn.jsdelivr.net/npm/open-sans-all@0.1.3/fonts/open-sans-600.ttf',
-      fontWeight: 600,
-    },
-  ],
-})
-
 export default MyPdfDocument

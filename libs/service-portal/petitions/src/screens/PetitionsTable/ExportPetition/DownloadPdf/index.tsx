@@ -24,7 +24,7 @@ const MyPdfDocument = (data: {
       <Page style={pdfStyles.body}>
         {/* Header */}
         <Image
-          src={require('./assets/thjodskra.png')}
+          src={'./assets/images/thjodskra.png'}
           style={pdfStyles.image}
           fixed
         />
@@ -74,7 +74,7 @@ const MyPdfDocument = (data: {
 
         {/* Footer */}
         <Image
-          src={require('./assets/island.png')}
+          src={'./assets/images/island.png'}
           style={pdfStyles.footerImage}
           fixed
         />
@@ -135,12 +135,10 @@ Font.register({
   family: 'Open Sans',
   fonts: [
     {
-      src:
-        'https://cdn.jsdelivr.net/npm/open-sans-all@0.1.3/fonts/open-sans-regular.ttf',
+      src: './assets/fonts/ibm-plex-sans-v7-latin-regular.ttf',
     },
     {
-      src:
-        'https://cdn.jsdelivr.net/npm/open-sans-all@0.1.3/fonts/open-sans-600.ttf',
+      src: './assets/fonts/ibm-plex-sans-v7-latin-600.ttf',
       fontWeight: 600,
     },
   ],
