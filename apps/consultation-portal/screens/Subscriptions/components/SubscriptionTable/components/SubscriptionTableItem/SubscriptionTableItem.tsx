@@ -179,7 +179,7 @@ const SubscriptionTableItem = ({
               title={loc.infoText}
             >
               <Icon
-                icon="informationCircle"
+                icon="open"
                 type="outline"
                 size="small"
                 color="purple300"
