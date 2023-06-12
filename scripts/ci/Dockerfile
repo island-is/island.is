@@ -182,8 +182,13 @@ RUN ["yarn", "set", "version", "berry"]
 # ENV YARN_CACHE_FOLDER=/cache/yarn
 # RUN mkdir -p $YARN_CACHE_FOLDER
 
+# COPY package.json /data/
+RUN ["yarn", "add", "playwright"]
+RUN ["yarn", "playwright", "install"]
+
 VOLUME /cache
 VOLUME /data
+
 COPY . /data/
 
 
