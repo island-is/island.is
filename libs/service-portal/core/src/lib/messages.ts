@@ -916,8 +916,12 @@ export const m = defineMessages({
     defaultMessage: 'Hjálpartæki og næring',
   },
   workMachines: {
-    id: 'service.portal.work-machines',
+    id: 'service.portal:work-machines',
     defaultMessage: 'Vinnuvélar',
+  },
+  workMachineDetail: {
+    id: 'service.portal:work-machine-detail',
+    defaultMessage: 'Nánar um vinnuvél',
   },
   health: {
     id: 'service.portal:health',

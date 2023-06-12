@@ -38,7 +38,7 @@ export const vehiclesNavigation: PortalNavigationItem = {
       path: VehiclePaths.AssetsWorkMachines,
       children: [
         {
-          name: 'id',
+          name: m.workMachineDetail,
           navHide: true,
           path: VehiclePaths.AssetsWorkMachinesDetail,
         },
