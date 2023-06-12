@@ -1,4 +1,4 @@
-# clients-intellectual-property
+# Intellectual Property
 
 This library was generated with [Nx](https://nx.dev).
 
