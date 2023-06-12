@@ -1,7 +1,11 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
 ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
+FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as base-image
+FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as base-image
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-image
+
+FROM base-image as deps
 
 RUN apk add -U git
 
@@ -34,7 +38,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
+FROM base-image as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -79,7 +83,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
-FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
+FROM nginx-image as output-static
 
 ARG APP
 ARG APP_DIST_HOME
@@ -116,14 +120,13 @@ CMD [ "jest", "main.spec.js" ]
 
 
 
-FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
 
 
 
 
 
 
-FROM playwright-base as output-playwright
+FROM playwright-image as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
 RUN apt-get update && apt-get install -y zip awscli && apt-get purge
 
@@ -148,7 +151,7 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
-FROM playwright-base as output-local
+FROM playwright-image as output-local
 ARG APP_HOME
 
 
@@ -164,3 +167,24 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 FROM output-base as output-native
 RUN echo "not-implemented"
+
+
+
+FROM base-image as localrun
+WORKDIR /data
+
+RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+  chmod a+x /tmp/jq-linux64 && \
+  mv /tmp/jq-linux64 /usr/bin/jq
+
+RUN apk add --update --no-cache bash nodejs python3 build-base gcc openjdk11 && ln -sf /usr/bin/python3 /usr/bin/python
+RUN ["yarn", "set", "version", "berry"]
+# ENV YARN_CACHE_FOLDER=/cache/yarn
+# RUN mkdir -p $YARN_CACHE_FOLDER
+
+VOLUME /cache
+VOLUME /data
+COPY . /data/
+
+
+CMD [ "yarn", "install" ]
