@@ -165,9 +165,7 @@ export function withCache({
 
     cacheResponse.cacheStatus.stored = true
     debugLog('Storing', cacheResponse)
-    await cacheManager.set(cacheKey, entry, {
-      ttl,
-    })
+    await cacheManager.set(cacheKey, entry, ttl)
   }
 
   /**
