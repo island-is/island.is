@@ -42,6 +42,7 @@ export const TransitionCaseMutation = gql`
       state
       appealState
       appealReceivedByCourtDate
+      statementDeadline
     }
   }
 `
@@ -291,6 +292,9 @@ export const LimitedAccessUpdateCaseMutation = gql`
         id
         name
         category
+        created
+        key
+        policeCaseNumber
       }
       defendants {
         id
@@ -310,6 +314,7 @@ export const LimitedAccessUpdateCaseMutation = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
+      sendRequestToDefender
       court {
         id
         name

@@ -1,9 +1,10 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import parseISO from 'date-fns/parseISO'
+import { Row } from 'react-table'
 
 import { theme } from '@island.is/island-ui/theme'
-import { Box, Text, Tag } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
@@ -25,14 +26,15 @@ import {
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Table,
+  TagAppealState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import BigTextSmallText from '@island.is/judicial-system-web/src/components/BigTextSmallText/BigTextSmallText'
-import TagAppealRuling from '@island.is/judicial-system-web/src/components/TagAppealRuling/TagAppealRuling'
 
-import { displayCaseType, mapCaseStateToTagVariant } from './utils'
+import { displayCaseType } from './utils'
 import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
@@ -80,6 +82,15 @@ const DurationDate = ({ date }: { date: string | null }) => {
       {`${formatMessage(tables.duration)} ${date}`}
     </Text>
   )
+}
+
+const sortDefendants = (rowA: Row<Case>, rowB: Row<Case>) => {
+  const a =
+    (rowA.original.defendants && rowA.original.defendants[0]?.name) || ''
+  const b =
+    (rowB.original.defendants && rowB.original.defendants[0]?.name) || ''
+
+  return a.localeCompare(b, 'is', { ignorePunctuation: true })
 }
 
 const PastCases: React.FC<Props> = (props) => {
@@ -131,6 +142,7 @@ const PastCases: React.FC<Props> = (props) => {
       {
         Header: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
         accessor: 'accusedName' as keyof CaseListEntry,
+        sortType: sortDefendants,
         Cell: (row: { row: { original: { defendants: Defendant[] } } }) => {
           const theCase = row.row.original
 
@@ -185,6 +197,7 @@ const PastCases: React.FC<Props> = (props) => {
         Header: formatMessage(m.pastRequests.table.headers.state),
         accessor: 'state' as keyof CaseListEntry,
         disableSortBy: true,
+
         Cell: (row: {
           row: {
             original: {
@@ -196,23 +209,23 @@ const PastCases: React.FC<Props> = (props) => {
             }
           }
         }) => {
-          const tagVariant = mapCaseStateToTagVariant(
-            formatMessage,
-            row.row.original.state,
-            user?.role ? isExtendedCourtRole(user.role) : false,
-            row.row.original.type,
-            row.row.original.isValidToDateInThePast,
-          )
-
           return (
             <>
               <Box marginRight={1} marginBottom={1}>
-                <Tag variant={tagVariant.color} outlined disabled>
-                  {tagVariant.text}
-                </Tag>
+                <TagCaseState
+                  caseState={row.row.original.state}
+                  caseType={row.row.original.type}
+                  isCourtRole={
+                    user?.role ? isExtendedCourtRole(user.role) : false
+                  }
+                  isValidToDateInThePast={
+                    row.row.original.isValidToDateInThePast
+                  }
+                />
               </Box>
-              {row.row.original.appealState === CaseAppealState.COMPLETED && (
-                <TagAppealRuling
+              {row.row.original.appealState && (
+                <TagAppealState
+                  appealState={row.row.original.appealState}
                   appealRulingDecision={row.row.original.appealRulingDecision}
                 />
               )}
@@ -254,7 +267,7 @@ const PastCases: React.FC<Props> = (props) => {
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        b['created'].localeCompare(a['created']),
+        a['created'].localeCompare(b['created']),
       ),
     [cases],
   )
