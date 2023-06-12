@@ -29,7 +29,7 @@ import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
 import { personalOverview } from './overviewSection/personalOverview'
-import { getChargeCode, getPrice, hasDiscount } from '../lib/utils'
+import { getChargeCode, getPrice } from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',

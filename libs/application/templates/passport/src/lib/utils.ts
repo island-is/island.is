@@ -8,12 +8,10 @@ import {
   PASSPORT_CHARGE_CODES,
   Passport,
   PersonalInfo,
-  Prices,
   Service,
   Services,
 } from './constants'
 import { getValueViaPath } from '@island.is/application/core'
-import { m } from './messages'
 
 export const getCurrencyString = (n: number) =>
   n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
