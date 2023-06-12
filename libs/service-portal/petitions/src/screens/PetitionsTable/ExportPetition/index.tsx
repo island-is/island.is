@@ -9,6 +9,9 @@ import { toast } from 'react-toastify'
 import { usePDF } from '@react-pdf/renderer'
 import { menuItem } from './styles.css'
 import MyPdfDocument from './DownloadPdf'
+import MyPdfDocumentStatic from './DownloadPdf/static'
+import MyPdfDocumentEmpty from './DownloadPdf/empty'
+import MyPdfDocumentStripped from './DownloadPdf/stripped'
 import {
   EndorsementList,
   PaginatedEndorsementResponse,
@@ -58,17 +61,50 @@ const DropdownExport: FC<Props> = ({
       <MyPdfDocument petition={petition} petitionSigners={petitionSigners} />
     ),
   })
+
+  const [instance] = usePDF({
+    document: (
+      <MyPdfDocumentStatic
+        title={'Test title'}
+        description={'Test Description'}
+      />
+    ),
+  })
+
+  const [instance2] = usePDF({
+    document: <MyPdfDocumentEmpty />,
+  })
+
+  const [instance3] = usePDF({
+    document: (
+      <MyPdfDocumentStripped
+        petition={petition}
+        petitionSigners={petitionSigners}
+      />
+    ),
+  })
+
   if (document.error) {
     console.warn(document.error)
   }
 
   const getPdfURL = () => {
+    console.log('getPdfURL document', document)
     if (!document.blob) {
       return ''
     }
     return URL.createObjectURL(document.blob)
   }
 
+  const getPdfURLInst = (inst: any) => {
+    console.log('getPdfURLInst instance', inst)
+    if (!inst.url) {
+      return ''
+    }
+    return inst.url
+  }
+
+  console.log('render document', document)
   return (
     <Box className={styles.buttonWrapper} display="flex">
       <Box marginRight={2}>
@@ -119,15 +155,23 @@ const DropdownExport: FC<Props> = ({
           },
           {
             title: 'btn',
-            render: () => (
-              <Button onClick={() => window.open(getPdfURL(), '_blank')}>
-                {formatMessage(m.asPdf)} btn
-              </Button>
-            ),
+            onClick: () => window.open(getPdfURL(), '_blank'),
           },
           {
             title: 're render',
-            render: () => <Button onClick={reRender}>RE-RENDER</Button>,
+            onClick: () => reRender(),
+          },
+          {
+            title: 'MyPdfDocumentStatic',
+            onClick: () => window.open(getPdfURLInst(instance), '_blank'),
+          },
+          {
+            title: 'MyPdfDocumentEmpty',
+            onClick: () => window.open(getPdfURLInst(instance2), '_blank'),
+          },
+          {
+            title: 'MyPdfDocumentStripped',
+            onClick: () => window.open(getPdfURLInst(instance3), '_blank'),
           },
           {
             onClick: () => onGetCSV(),
