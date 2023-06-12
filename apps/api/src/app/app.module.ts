@@ -64,6 +64,7 @@ import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-au
 import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
+import { IntellectualPropertyModule } from '@island.is/api/domains/intellectual-property'
 import {
   WatsonAssistantChatConfig,
   WatsonAssistantChatModule,
@@ -281,6 +282,7 @@ const autoSchemaFile = environment.production
     }),
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
+    IntellectualPropertyModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
     UniversityOfIcelandModule,
