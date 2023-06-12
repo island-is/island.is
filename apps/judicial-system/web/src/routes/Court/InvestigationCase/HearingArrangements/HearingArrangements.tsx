@@ -272,24 +272,23 @@ const HearingArrangements = () => {
                   />
                 </Box>
                 <RadioButton
-                  name="session-arrangements-nonePresent"
-                  id="session-arrangements-nonePresent"
+                  name="session-arrangements-none-present"
+                  id="session-arrangements-none-present"
                   label={formatMessage(
                     m.sections.sessionArrangements.options.nonePresent,
                   )}
                   checked={
-                    checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||
+                    checkedRadio === SessionArrangements.NONE_PRESENT ||
                     (!checkedRadio &&
                       workingCase.sessionArrangements ===
-                        SessionArrangements.PROSECUTOR_PRESENT)
+                        SessionArrangements.NONE_PRESENT)
                   }
                   onChange={() => {
-                    setCheckedRadio(SessionArrangements.PROSECUTOR_PRESENT)
+                    setCheckedRadio(SessionArrangements.NONE_PRESENT)
                     setAndSendCaseToServer(
                       [
                         {
-                          sessionArrangements:
-                            SessionArrangements.PROSECUTOR_PRESENT,
+                          sessionArrangements: SessionArrangements.NONE_PRESENT,
                           force: true,
                         },
                       ],
