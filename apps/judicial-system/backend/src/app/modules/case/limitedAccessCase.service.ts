@@ -82,12 +82,16 @@ export const attributes: (keyof Case)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealReceivedByCourtDate',
+  'openedByDefender',
 ]
 
 export interface LimitedAccessUpdateCase
   extends Pick<
     Case,
-    'accusedPostponedAppealDate' | 'appealState' | 'defendantStatementDate'
+    | 'accusedPostponedAppealDate'
+    | 'appealState'
+    | 'defendantStatementDate'
+    | 'openedByDefender'
   > {}
 
 export const include: Includeable[] = [
