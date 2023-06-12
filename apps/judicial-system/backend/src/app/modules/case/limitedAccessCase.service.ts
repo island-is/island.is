@@ -199,13 +199,6 @@ export class LimitedAccessCaseService {
       throw new NotFoundException(`Case ${caseId} does not exist`)
     }
 
-    if (!theCase.openedByDefender) {
-      await this.caseModel.update(
-        { ...theCase, openedByDefender: nowFactory() },
-        { where: { id: caseId } },
-      )
-    }
-
     return theCase
   }
 
