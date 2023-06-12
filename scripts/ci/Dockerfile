@@ -177,7 +177,7 @@ RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
 
-RUN apk add --update --no-cache bash nodejs python3 build-base gcc openjdk11 && ln -sf /usr/bin/python3 /usr/bin/python
+RUN apk add --update --no-cache git bash nodejs python3 build-base gcc openjdk11 && ln -sf /usr/bin/python3 /usr/bin/python
 RUN ["yarn", "set", "version", "berry"]
 # ENV YARN_CACHE_FOLDER=/cache/yarn
 # RUN mkdir -p $YARN_CACHE_FOLDER
