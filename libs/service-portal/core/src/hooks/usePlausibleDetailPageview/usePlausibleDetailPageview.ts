@@ -13,7 +13,7 @@ export const PlausiblePageviewDetail = (
   const absoluteUrl = `${pageOrigin}${rootPath}${pagePath}`
 
   if (plausible) {
-    plausible('pageview', { u: absoluteUrl, props: { entity: entity } })
+    plausible('pageview', { u: absoluteUrl, props: { entity } })
   }
 }
 
