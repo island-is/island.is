@@ -1,4 +1,4 @@
-export interface SmsMessage {
-  toPhoneNumber: string
-  content: string
+export class SmsMessage {
+  toPhoneNumber!: string
+  content!: string
 }
