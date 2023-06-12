@@ -26,7 +26,7 @@ test.describe('Endorsements', () => {
     await context.close()
   })
 
-  test('should be able to see overview and endorse a list', async () => {
+  test('should be able to see overview and endorse a list if there are lists', async () => {
     const page = await context.newPage()
 
     await page.goto(icelandicAndNoPopupUrl('/undirskriftalistar'))
