@@ -1,4 +1,4 @@
-import { IntlShape } from 'react-intl'
+import { FormattedMessage, IntlShape } from 'react-intl'
 
 import {
   CaseDecision,
@@ -14,31 +14,39 @@ export const titleForCase = (
   formatMessage: IntlShape['formatMessage'],
   theCase: Case,
 ) => {
-  const isTravelBan =
-    theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    theCase.type === CaseType.TRAVEL_BAN
-
   if (theCase.state === CaseState.REJECTED) {
-    if (isInvestigationCase(theCase.type)) {
-      return formatMessage(strings.investigationCaseRejected)
-    } else {
-      return formatMessage(strings.restrictionCaseRejected)
-    }
+    return isInvestigationCase(theCase.type)
+      ? formatMessage(strings.investigationCaseRejectedTitle)
+      : formatMessage(strings.restrictionCaseRejectedTitle)
   }
 
   if (theCase.state === CaseState.DISMISSED) {
-    return formatMessage(strings.dismissedTitle)
+    return formatMessage(strings.caseDismissedTitle)
   }
 
-  if (theCase.isValidToDateInThePast) {
-    return formatMessage(strings.validToDateInThePast, {
-      caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
-    })
+  if (theCase.state === CaseState.ACCEPTED) {
+    if (isInvestigationCase(theCase.type)) {
+      return formatMessage(strings.investigationCaseAcceptedTitle)
+    }
+
+    const caseType =
+      theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+        ? CaseType.TRAVEL_BAN
+        : theCase.type
+
+    return theCase.isValidToDateInThePast
+      ? formatMessage(strings.restrictionCaseExpiredTitle, { caseType })
+      : formatMessage(strings.restrictionCaseActiveTitle, {
+          caseType,
+        })
   }
 
   return isInvestigationCase(theCase.type)
-    ? formatMessage(strings.investigationAccepted)
-    : formatMessage(strings.restrictionActive, {
-        caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
+    ? formatMessage(strings.investigationCaseInProgressTitle, {
+        isExtended: Boolean(theCase.parentCase),
+      })
+    : formatMessage(strings.restrictionCaseInProgressTitle, {
+        caseType: theCase.type,
+        isExtended: Boolean(theCase.parentCase),
       })
 }
