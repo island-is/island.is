@@ -15,10 +15,7 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import {
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '../../types/schema'
+
 import PetitionsTable from '../PetitionsTable'
 import { UnendorseList } from '../queries'
 
@@ -28,12 +25,16 @@ import {
   useGetSinglePetition,
   useGetSinglePetitionEndorsements,
 } from '../hooks'
+import {
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
 const ViewSignedList = () => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
-  const location: any = useLocation()
-  const listId = location.pathname.replace('/min-gogn/listar/', '')
+  const { pathname } = useLocation()
+  const listId = pathname.replace('/min-gogn/listar/', '')
 
   const { petitionData } = useGetSinglePetition(listId)
   const petition = petitionData as EndorsementList
@@ -153,7 +154,9 @@ const ViewSignedList = () => {
             )}
           </Box>
           <PetitionsTable
-            petitions={petitionEndorsements}
+            petitionSigners={
+              petitionEndorsements as PaginatedEndorsementResponse
+            }
             listId={listId}
             canEdit={false}
           />

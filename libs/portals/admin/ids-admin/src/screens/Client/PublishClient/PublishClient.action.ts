@@ -1,66 +1,85 @@
+import { z } from 'zod'
+import { redirect } from 'react-router-dom'
+
 import {
+  replaceParams,
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
-import { WrappedActionFn } from '@island.is/portals/core'
-import { z } from 'zod'
+import { RouterActionRedirect, WrappedActionFn } from '@island.is/portals/core'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
+
 import {
   PublishClientDocument,
   PublishClientMutation,
   PublishClientMutationVariables,
 } from './PublishClient.generated'
+import { IDSAdminPaths } from '../../../lib/paths'
 
 const schema = z.object({
   targetEnvironment: z.nativeEnum(AuthAdminEnvironment),
   sourceEnvironment: z.nativeEnum(AuthAdminEnvironment),
 })
 
-export type PublishEnvironmentResult =
-  | (ValidateFormDataResult<typeof schema> & {
-      /**
-       * Global error message if the mutation fails
-       */
-      globalError?: boolean
-    })
-  | undefined
+export type PublishEnvironmentResult = RouterActionRedirect<
+  ValidateFormDataResult<typeof schema>['errors']
+>
 
 export const publishClientAction: WrappedActionFn = ({ client }) => async ({
   request,
   params,
-}) => {
+}): Promise<PublishEnvironmentResult | Response> => {
+  const tenantId = params['tenant']
+  const clientId = params['client']
+
+  if (!tenantId) throw new Error('Tenant id not found')
+  if (!clientId) throw new Error('Client id not found')
+
   const formData = await request.formData()
   const result = await validateFormData({ formData, schema })
 
   if (result.errors || !result.data) {
-    return result
+    return {
+      errors: result.errors,
+      globalError: false,
+    }
   }
 
   const { data } = result
 
   try {
-    const response = await client.mutate<
+    const { errors } = await client.mutate<
       PublishClientMutation,
       PublishClientMutationVariables
     >({
       mutation: PublishClientDocument,
       variables: {
         input: {
-          clientId: params['client'] as string,
-          tenantId: params['tenant'] as string,
+          clientId,
+          tenantId,
           targetEnvironment: data?.targetEnvironment,
           sourceEnvironment: data?.sourceEnvironment,
         },
       },
     })
 
-    return {
-      data: response.data?.publishAuthAdminClient,
+    if (errors?.length) {
+      return {
+        globalError: true,
+      }
     }
+
+    const searchParams = new URLSearchParams(window.location.search)
+    const env = searchParams.get('env')
+    const href = replaceParams({
+      href: IDSAdminPaths.IDSAdminClient,
+      params: { tenant: tenantId, client: clientId },
+    })
+
+    return redirect(env ? `${href}?env=${env}` : href)
   } catch (e) {
     return {
       errors: null,
-      data: null,
       globalError: true,
     }
   }

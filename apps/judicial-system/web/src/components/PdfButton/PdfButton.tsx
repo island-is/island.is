@@ -57,8 +57,20 @@ const PdfButton: React.FC<Props> = ({
   ) : (
     <Box
       data-testid={`${pdfType || ''}PDFButton`}
-      className={styles.pdfRow}
-      onClick={handleClick ? handleClick : pdfType ? handlePdfClick : undefined}
+      className={`${styles.pdfRow} ${disabled ? '' : styles.cursor}`}
+      onClick={() => {
+        if (disabled) {
+          return
+        }
+
+        if (handleClick) {
+          return handleClick()
+        }
+
+        if (pdfType) {
+          return handlePdfClick()
+        }
+      }}
     >
       <Text color="blue400" variant="h4">
         {title}

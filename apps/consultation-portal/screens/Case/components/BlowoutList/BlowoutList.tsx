@@ -51,7 +51,7 @@ export const BlowoutList = ({ list, isStakeholder }: Props) => {
           </FocusableBox>
           {showList && (
             <>
-              <Text>{loc.description}</Text>
+              {isStakeholder && <Text>{loc.description}</Text>}
               {list?.length < 1 && <Text>{loc.noList}</Text>}
               <Box padding="smallGutter">
                 <BulletList type="ul">

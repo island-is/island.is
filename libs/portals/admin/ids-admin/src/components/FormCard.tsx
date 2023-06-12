@@ -1,73 +1,169 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Form } from 'react-router-dom'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
+import { Form, useActionData } from 'react-router-dom'
 
-import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import {
+  AccordionItem,
+  Box,
+  Button,
+  Checkbox,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useSubmitting } from '@island.is/react-spa/shared'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
+import { RouterActionResponse } from '@island.is/portals/core'
 
 import { m } from '../lib/messages'
+import { DropdownSync } from './DropdownSync/DropdownSync'
+import { useMultiEnvSupport } from '../hooks/useMultiEnvSupport'
+import { useEnvironment } from '../context/EnvironmentContext'
+import { useIntent } from '../hooks/useIntent'
+import { ConditionalWrapper } from './ConditionalWrapper'
 
 /**
  * Compares if two form data objects are equal
  */
-const isFormDataEqual = (a: FormData, b: FormData): boolean =>
+const isFormDataEqual = (a: FormData, b: FormData) =>
   JSON.stringify([...a.entries()]) === JSON.stringify([...b.entries()])
 
 type FormCardProps<Intent> = {
+  children: ReactNode
+  title: string
+  description?: string | ReactNode
   /**
    * Form intent, used to determine what form is currently being submitted
    */
   intent?: Intent
-  selectedEnvironment?: AuthAdminEnvironment
-  availableEnvironments?: AuthAdminEnvironment[]
-  title: string
-  children: React.ReactNode
+  /**
+   * If false the card will not render the sync dropdown
+   */
+  shouldSupportMultiEnvironment?: boolean
+  /**
+   * Determines if environment section contents is in sync with other environments
+   */
+  inSync?: boolean
+  /**
+   * The children will be wrapped in an accordion when a label is provided to the component.
+   */
+  accordionLabel?: string
+  /**
+   * Custom validation function that will be called on form change to determine if form is dirty
+   * and when data arrives from mutation.
+   * If true is returned then the form is considered dirty.
+   *
+   * Note: This function should be memoized to prevent unnecessary re-renders.
+   */
+  customValidation?(currentValue: FormData, originalValue: FormData): boolean
 }
 
-export const FormCard = <Intent,>({
+export const FormCard = <Intent extends string>({
   title,
   children,
   intent,
-  selectedEnvironment,
-  availableEnvironments,
+  inSync = false,
+  shouldSupportMultiEnvironment,
+  accordionLabel,
+  description,
+  customValidation,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
-  const [allEnvironments, setAllEnvironments] = useState(false)
+  const [allEnvironmentsCheck, setAllEnvironmentsCheck] = useState(inSync)
   const formRef = useRef<HTMLFormElement | null>(null)
-  const originalFormData = useRef<FormData | undefined>()
+  const prevFormData = useRef<FormData | undefined>()
   const [dirty, setDirty] = useState(false)
+  const shouldSupportMultiEnv = useMultiEnvSupport(
+    shouldSupportMultiEnvironment,
+  )
+
+  const { availableEnvironments, selectedEnvironment } = useEnvironment()
   const { isLoading, isSubmitting, formData } = useSubmitting()
-  const currentIntent = formData?.get('intent')
-
-  useEffect(() => {
-    if (formRef.current) {
-      originalFormData.current = new FormData(formRef.current)
-    }
-  }, [formRef])
-
-  useEffect(() => {
-    if (!isSubmitting && intent === currentIntent && dirty) {
-      setDirty(false)
-    }
-  }, [isLoading, isSubmitting, formData, intent, currentIntent, dirty])
+  const { loading } = useIntent(intent)
+  const actionData = useActionData() as RouterActionResponse<
+    unknown, // We don't know the type of the data or the error since it can be permission or client.
+    unknown,
+    Intent
+  >
 
   /**
-   * Handle form change. Check if form is dirty and set dirty state accordingly
+   * On form change check if form is dirty and set dirty state accordingly.
+   * Update original form data if it has changed and use custom validation if provided.
    */
   const onFormChange = () => {
     if (formRef.current) {
       const newFormData = new FormData(formRef.current)
+      const newFormDataEntries = [...newFormData.entries()]
+      const prevFormDataEntries = [...(prevFormData.current?.entries() ?? [])]
+
+      // If a formData entry is removed or added, then the form is dirty
+      if (newFormDataEntries.length !== prevFormDataEntries.length) {
+        setDirty(true)
+        return
+      }
 
       if (
-        originalFormData.current &&
-        !isFormDataEqual(newFormData, originalFormData.current)
+        prevFormData.current &&
+        // If a formData entry value is changed, then the form is dirty
+        !isFormDataEqual(newFormData, prevFormData.current)
       ) {
-        originalFormData.current = newFormData
-        setDirty(true)
+        // If custom validation is provided, use that to determine if form is dirty
+        setDirty(
+          customValidation
+            ? customValidation(newFormData, prevFormData.current)
+            : true,
+        )
       }
     }
   }
+
+  useEffect(() => {
+    if (inSync !== allEnvironmentsCheck) {
+      // Update state check if inSync updates
+      setAllEnvironmentsCheck(inSync)
+    }
+  }, [inSync])
+
+  useEffect(() => {
+    if (actionData?.intent === intent) {
+      if (actionData?.data) {
+        if (formRef.current) {
+          prevFormData.current = new FormData(formRef.current)
+        }
+
+        onFormChange()
+        toast.success(formatMessage(m.successfullySaved))
+      } else if (actionData?.globalError) {
+        toast.error(formatMessage(m.globalErrorMessage))
+      }
+    }
+  }, [actionData, intent])
+
+  // On mount, set the original form data
+  useEffect(() => {
+    if (formRef.current) {
+      prevFormData.current = new FormData(formRef.current)
+    }
+  }, [formRef])
+
+  useEffect(() => {
+    // Reset dirty state if form is not submitting, prev and current form data are the same and if form is already dirty
+    if (
+      !isSubmitting &&
+      dirty &&
+      formRef.current &&
+      prevFormData.current &&
+      isFormDataEqual(new FormData(formRef.current), prevFormData.current)
+    ) {
+      setDirty(false)
+    }
+  }, [isLoading, isSubmitting, formData, intent, dirty])
+
+  useEffect(() => {
+    if (customValidation && formRef.current && prevFormData.current && !dirty) {
+      setDirty(
+        customValidation(new FormData(formRef.current), prevFormData.current),
+      )
+    }
+  }, [formData, customValidation])
 
   return (
     <Form ref={formRef} method="post" onChange={onFormChange}>
@@ -81,56 +177,93 @@ export const FormCard = <Intent,>({
         width="full"
         border="standard"
       >
-        <Box>
-          <Text as="h2" variant="h3">
-            {title}
-          </Text>
-        </Box>
-        <Box marginTop={5}>{children}</Box>
-        {intent && (
+        <Box display="flex" rowGap={2} flexDirection="column" marginBottom={4}>
           <Box
-            alignItems={['flexStart', 'center']}
-            marginTop={5}
             display="flex"
-            justifyContent="spaceBetween"
-            rowGap={[2, 0]}
             flexDirection={['column', 'row']}
+            rowGap={2}
+            justifyContent="spaceBetween"
+            alignItems={['flexStart', 'center']}
           >
-            <Checkbox
-              label={formatMessage(m.saveForAllEnvironments)}
-              value={allEnvironments.toString()}
-              name={`${intent}_saveInAllEnvironments`}
-              onChange={() => setAllEnvironments(!allEnvironments)}
-            />
-            <Button
-              type="submit"
-              name="intent"
-              value={intent as string}
-              disabled={!dirty}
-              loading={currentIntent === intent && (isLoading || isSubmitting)}
-            >
-              {formatMessage(m.saveSettings)}
-            </Button>
-            {/* hidden input to pass the selected environment to the form */}
-            {selectedEnvironment && (
-              <input
-                type="hidden"
-                name="environment"
-                value={selectedEnvironment}
+            <Text as="h2" variant="h3">
+              {title}
+            </Text>
+            {shouldSupportMultiEnv && intent && (
+              <DropdownSync
+                intent={intent}
+                inSync={inSync}
+                isDirty={dirty}
+                isLoading={loading}
               />
             )}
-            {availableEnvironments
-              ?.filter((env) => env !== selectedEnvironment)
-              .map((env) => (
-                <input
-                  key={env}
-                  type="hidden"
-                  name="syncEnvironments"
-                  value={env}
-                />
-              ))}
           </Box>
-        )}
+          {description && <Text>{description}</Text>}
+        </Box>
+        <ConditionalWrapper
+          condition={Boolean(accordionLabel)}
+          trueWrapper={(cld) => (
+            <AccordionItem label={accordionLabel} id={intent as string}>
+              {cld}
+            </AccordionItem>
+          )}
+        >
+          <>
+            <Box marginTop={5}>{children}</Box>
+            {intent && (
+              <Box
+                alignItems={['flexStart', 'center']}
+                marginTop="containerGutter"
+                display="flex"
+                justifyContent={
+                  shouldSupportMultiEnv ? 'spaceBetween' : 'flexEnd'
+                }
+                rowGap={[2, 0]}
+                flexDirection={['column', 'row']}
+              >
+                {shouldSupportMultiEnv && (
+                  <Checkbox
+                    label={formatMessage(m.saveForAllEnvironments)}
+                    checked={allEnvironmentsCheck}
+                    value="true"
+                    disabled={!dirty}
+                    name={`${intent}_saveInAllEnvironments`}
+                    onChange={() =>
+                      setAllEnvironmentsCheck(!allEnvironmentsCheck)
+                    }
+                  />
+                )}
+                <Button
+                  type="submit"
+                  name="intent"
+                  value={intent}
+                  disabled={!dirty}
+                  loading={loading}
+                  dataTestId={`button-save-${title}`}
+                >
+                  {formatMessage(m.saveSettings)}
+                </Button>
+                {/* hidden input to pass the selected environment to the form */}
+                {selectedEnvironment && (
+                  <input
+                    type="hidden"
+                    name="environment"
+                    value={selectedEnvironment}
+                  />
+                )}
+                {availableEnvironments
+                  ?.filter((env) => env !== selectedEnvironment)
+                  .map((env) => (
+                    <input
+                      key={env}
+                      type="hidden"
+                      name="syncEnvironments"
+                      value={env}
+                    />
+                  ))}
+              </Box>
+            )}
+          </>
+        </ConditionalWrapper>
       </Box>
     </Form>
   )
