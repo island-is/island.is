@@ -79,7 +79,11 @@ export const SubscriptionCard = ({
         isToggled={isOpen}
         onToggle={onClick}
       >
-        <FocusableBox component="button" onClick={onClick} style={{ minHeight: '24px' }}>
+        <FocusableBox
+          component="button"
+          onClick={onClick}
+          style={{ minHeight: '24px' }}
+        >
           {titleColumn}
         </FocusableBox>
         {children}
