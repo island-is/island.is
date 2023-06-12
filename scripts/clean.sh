@@ -117,7 +117,8 @@ clean_all() {
 
 cli "$@"
 if (return 2>/dev/null); then
-  echo "Exiting because sourced"
+  echo "Exiting without running (only parsed arguments) because you sourced it."
+  echo "Run the script with './scripts/clean.sh' to actually clean 😊 "
   return
 fi
 clean_all
