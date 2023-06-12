@@ -91,14 +91,6 @@ export const PrerequisitesForm: Form = buildForm({
                   width: 'half',
                 }),
                 buildCustomField({
-                  id: '......',
-                  title: 'Hvert sækir TR upplýsingarnar sínar',
-                  component: 'FieldAccordionCard',
-                  description:
-                    oldAgePensionFormMessage.shared.pensionFundAlertDescription,
-                  doesNotRequireAnswer: true,
-                }),
-                buildCustomField({
                   id: 'question.pensionFundAlert',
                   title: oldAgePensionFormMessage.shared.pensionFundAlertTitle,
                   component: 'FieldAlertMessage',
@@ -114,8 +106,8 @@ export const PrerequisitesForm: Form = buildForm({
                   },
                 }),
                 buildRadioField({
-                  id: 'questions.abroad',
-                  title: oldAgePensionFormMessage.shared.abroadQuestionTitle,
+                  id: 'questions.fishermen',
+                  title: oldAgePensionFormMessage.shared.fishermenQuestionTitle,
                   description: '',
                   options: [
                     { value: YES, label: oldAgePensionFormMessage.shared.yes },

@@ -13,7 +13,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'questions.pensionFund',
   ) as YesOrNo
 
-  const abroadQuestion = getValueViaPath(answers, 'questions.abroad') as YesOrNo
+  const isFishermen = getValueViaPath(answers, 'questions.fishermen') as YesOrNo
 
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
@@ -21,7 +21,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   return {
     pensionFundQuestion,
-    abroadQuestion,
+    isFishermen,
     selectedYear,
     selectedMonth,
   }

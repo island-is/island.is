@@ -15,6 +15,7 @@ import {
   FormModes,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
+  YES,
 } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
 
@@ -226,11 +227,11 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'fileUpload',
+          id: 'fileUploadPeriod',
           title: oldAgePensionFormMessage.fileUpload.title,
           children: [
             buildFileUploadField({
-              id: 'fileUpload.earlyRetirement',
+              id: 'fileUploadPeriod.earlyRetirement',
               title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
@@ -265,6 +266,71 @@ export const OldAgePensionForm: Form = buildForm({
                   age >= earlyRetirementMinAge && age <= earlyRetirementMaxAge
                 )
               },
+            }),
+            buildFileUploadField({
+              id: 'fileUploadPeriod.pension',
+              title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.pensionFileDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.pensionFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUploadPeriod.fishermen',
+              title: oldAgePensionFormMessage.fileUpload.fishermenFileTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+              condition: (answers) => {
+                const { isFishermen } = getApplicationAnswers(answers)
+
+                return isFishermen === YES
+              },
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadAdditionalFiles',
+          title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUploadAdditionalFiles.additionalDocuments',
+              title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
             }),
           ],
         }),

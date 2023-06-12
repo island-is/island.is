@@ -73,10 +73,10 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Hefur þú sótt um í öllum þínum lífeyrissjóðum?',
       description: 'Have you applied to all your pension funds?',
     },
-    abroadQuestionTitle: {
-      id: 'oap.application:abroad.question.title',
-      defaultMessage: 'Hefur þú búið/starfað erlendis?',
-      description: 'Have you lived/worked abroad?',
+    fishermenQuestionTitle: {
+      id: 'oap.application:fishermen.question.title',
+      defaultMessage: 'Sækirðu um ellilífeyri sjómanna?',
+      description: 'Are you applying for fishermen old-age pension?',
     },
     yes: {
       id: 'oal.application:yes',
@@ -317,8 +317,8 @@ export const oldAgePensionFormMessage: MessageDir = {
   fileUpload: defineMessages({
     title: {
       id: 'oap.application:fileUpload.title',
-      defaultMessage: 'Fylgiskjöl snemmtöku',
-      description: 'Early retirement',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
     },
     attachmentButton: {
       id: 'pl.application:fileUpload.attachment.button',
@@ -351,6 +351,42 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Hér getur þú skilað yfirliti úr lífeyrisgátt sem þú hefur áunnið þér réttindi í. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         'Here you can submit an overview from the pension portal in which you have earned rights. Note that the document must be in .pdf format.',
+    },
+    pensionFileTitle: {
+      id: 'oap.application:fileUpload.pensionFile.title',
+      defaultMessage: 'Fylgiskjöl lífeyrissjóða',
+      description: 'Pension fund attachment',
+    },
+    pensionFileDescription: {
+      id: 'oap.application:fileUpload.pensionFile.description',
+      defaultMessage:
+        'Hér getur þú skilað staðfestingu greiðslna hjá lífeyrissjóði. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can return confirmation of payments to the pension fund. Note that the document must be in .pdf format.',
+    },
+    fishermenFileTitle: {
+      id: 'oap.application:fileUpload.pensionFile.title',
+      defaultMessage: 'Fylgiskjöl sjómanna',
+      description: 'Fishermen attachment',
+    },
+    fishermenFileDescription: {
+      id: 'oap.application:fileUpload.pensionFile.description',
+      defaultMessage:
+        'Hér getur þú skilað gögnum sem staðfesta hversu marga daga þú hefur verið lögskráður á sjó. Dæmi um slík gögn eru; Yfirlit af stöðuskráningu sjómanns frá Samgöngustofu, sjóferðabækur sem gefnar voru út af Siglingastofnun Íslands, skattframtöl eða siglingavottorð frá Sýslumanni. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit data confirming how many days you have been legally registered at sea. Examples of such data are; An overview of the seafarers status registration from the Transport Agency, sea voyage books published by the Icelandic Maritime Administration, tax returns or sailing certificates from the County Commissioner. Note that the document must be in .pdf format.',
+    },
+    additionalFileTitle: {
+      id: 'oap.application:fileUpload.additionalFile.title',
+      defaultMessage: 'Fylgiskjöl viðbótagögn',
+      description: 'Additional attachments',
+    },
+    additionalFileDescription: {
+      id: 'oap.application:fileUpload.earlyRetirement.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangar upplýsingar. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
     },
   }),
 
