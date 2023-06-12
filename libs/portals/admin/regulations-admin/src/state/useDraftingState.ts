@@ -77,12 +77,20 @@ const PUBLISH_DRAFT_REGULATION_MUTATION = gql`
       success
       code
       message
-      errors
+      errors {
+        field
+        code
+        message
+      }
       data {
         id
         regulationId
-        regulation
-        original
+        regulation {
+          id
+        }
+        original {
+          id
+        }
       }
     }
   }
@@ -182,26 +190,33 @@ const useMakeDraftingState = (inputs: StateInputs) => {
           return { success: false, error: error as Error }
         })
 
-    const publishDraft = (newStatus?: DraftingStatus) =>
+    const publishDraft = () =>
       publishDraftRegulation({
         variables: {
           input: {
-            // appendixes: Array<IRegulationAppendixInput>
-            // comments: Scalars['String']
-            // effectiveDate: Scalars['String']
+            text: draft.text.value,
+            title: draft.title.value,
+            type: draft.type.value || '',
+            name: draft.name.value || '',
+            status: 'shipped',
+            comments: '',
+            // ministryId: draft.ministry.value,
+            signatureDate: draft.signatureDate.value
+              ? toISODate(draft.signatureDate.value)
+              : '',
+            effectiveDate: draft.effectiveDate.value
+              ? toISODate(draft.effectiveDate.value)
+              : '',
+            publishedDate: draft.idealPublishDate.value
+              ? toISODate(draft.idealPublishDate.value)
+              : '', // TODO: Is this the right draft value?
+            appendixes: draft.appendixes.map((apx) => ({
+              title: apx.title.value,
+              text: apx.text.value,
+            })),
             // externalLink?: InputMaybe<Scalars['String']>
-            // id: Scalars['Float']
-            // ministryId?: InputMaybe<Scalars['Float']>
-            // name: Scalars['String']
-            // publishedDate: Scalars['String']
             // repealedBeacuseReasons?: InputMaybe<Scalars['Boolean']>
             // repealedDate?: InputMaybe<Scalars['String']>
-            // signatureDate: Scalars['String']
-            // status: Scalars['String']
-            // text: Scalars['String']
-            // title: Scalars['String']
-            // type: Scalars['String']
-            // Don't send ID here, it's auto generated.
           },
         },
       })
@@ -425,7 +440,10 @@ const useMakeDraftingState = (inputs: StateInputs) => {
                 return false
               }
               dispatch({ type: 'SAVING_STATUS' })
-              await publishDraft().then(({ success, error }) => {
+              await publishDraft().then((res) => {
+                const { error, ...response } = res
+                console.log('response', response)
+                console.log('error', error)
                 if (error) {
                   dispatch({
                     type: 'SAVING_STATUS_DONE',
