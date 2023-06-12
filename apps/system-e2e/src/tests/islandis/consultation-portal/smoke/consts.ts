@@ -105,7 +105,7 @@ const COMMON_STATES = {
     ],
     title: 'Áskriftir',
     text:
-      'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn á Ísland.is, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velur hvort þú vilt tilkynningar um ný mál eða fleiri atriði og smellir á „Staðfesta“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.',
+      'Hér er hægt að skrá sig í áskrift að málum. Þú skráir þig inn, hakar við einn eða fleiri flokka (mál/stofnanir/málefnasvið), í stofnunum og málefnasviðum þá getur þú valið um hvort þú vilt tilkynningar um ný mál eða tilkynningar um ný mál og breytingar, og smellir á „Skrá í áskrift“. Loks þarftu að staðfesta áskriftina í gegnum netfangið sem þú skráðir. Kerfið er uppfært einu sinni á sólarhring.',
   },
   advices: {
     label: 'Mínar umsagnir',
