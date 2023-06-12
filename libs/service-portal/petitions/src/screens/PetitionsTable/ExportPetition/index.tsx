@@ -53,13 +53,20 @@ const DropdownExport: FC<Props> = ({
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
 
-  const [document] = usePDF({
+  const [document, reRender] = usePDF({
     document: (
       <MyPdfDocument petition={petition} petitionSigners={petitionSigners} />
     ),
   })
   if (document.error) {
     console.warn(document.error)
+  }
+
+  const getPdfURL = () => {
+    if (!document.blob) {
+      return ''
+    }
+    return URL.createObjectURL(document.blob)
   }
 
   return (
@@ -96,6 +103,29 @@ const DropdownExport: FC<Props> = ({
                 {formatMessage(m.asPdf)}
               </a>
             ),
+          },
+          {
+            title: '2',
+            render: () => (
+              <a
+                key={petitionId}
+                href={getPdfURL()}
+                download={'Undirskriftalisti.pdf'}
+                className={menuItem}
+              >
+                {formatMessage(m.asPdf)} 2
+              </a>
+            ),
+          },
+          {
+            title: 'btn',
+            render: () => (
+              <Button onClick={getPdfURL}>{formatMessage(m.asPdf)} btn</Button>
+            ),
+          },
+          {
+            title: 're render',
+            render: () => <Button onClick={reRender}>RE-RENDER</Button>,
           },
           {
             onClick: () => onGetCSV(),
