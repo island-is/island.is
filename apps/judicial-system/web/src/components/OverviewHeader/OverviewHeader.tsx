@@ -13,6 +13,10 @@ import { TempCase } from '../../types'
 import { strings } from './OverviewHeader.strings'
 import { FormContext } from '../FormProvider/FormProvider'
 
+interface Props {
+  dataTestid?: string
+}
+
 export const titleForCase = (
   formatMessage: IntlShape['formatMessage'],
   theCase: Case | TempCase,
@@ -45,14 +49,13 @@ export const titleForCase = (
         caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
       })
 }
-
-const OverviewHeader: React.FC = () => {
+const OverviewHeader: React.FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
-
   const { formatMessage } = useIntl()
+  const { dataTestid } = props
 
   return (
-    <Box marginBottom={1}>
+    <Box marginBottom={1} data-testid={dataTestid}>
       <Text as="h1" variant="h1">
         {titleForCase(formatMessage, workingCase)}
       </Text>

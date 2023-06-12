@@ -56,6 +56,7 @@ export interface CardResponse {
   applicantNationalId?: string | null
   isInsured?: boolean | null
   canApply?: boolean | null
+  canApplyForPDF?: boolean | null
   cards?: Array<CardInfo> | null
 }
 

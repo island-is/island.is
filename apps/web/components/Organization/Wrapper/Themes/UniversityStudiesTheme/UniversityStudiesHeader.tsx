@@ -42,25 +42,6 @@ const UniversityStudiesHeader: React.FC<HeaderProps> = ({
       style={n(`universityStudiesHeader-${screenWidth}`, getDefaultStyle())}
       className={styles.headerBg}
     >
-      <Hidden below="lg">
-        <Box className={styles.largeTitle}>
-          <Link
-            href={
-              linkResolver('organizationpage', [organizationPage.slug]).href
-            }
-          >
-            <Text color="white" variant="h1" fontWeight="semiBold">
-              {organizationPage.title}
-            </Text>
-          </Link>
-          <Text color="white">
-            {n(
-              'allUniversityStudiesInIcelandAtTheSamePlace',
-              'Allt háskólanám á Íslandi á sama stað',
-            )}
-          </Text>
-        </Box>
-      </Hidden>
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
@@ -96,28 +77,24 @@ const UniversityStudiesHeader: React.FC<HeaderProps> = ({
               </Link>
             </Hidden>
           )}
-          <Hidden above="md">
-            <Box
-              marginTop={[2, 2, 15]}
-              textAlign={['center', 'center', 'left']}
+
+          <Box marginTop={[2, 2, 15]} textAlign={['center', 'center', 'left']}>
+            <Link
+              href={
+                linkResolver('organizationpage', [organizationPage.slug]).href
+              }
             >
-              <Link
-                href={
-                  linkResolver('organizationpage', [organizationPage.slug]).href
-                }
-              >
-                <Text color="white" variant="h1" fontWeight="semiBold">
-                  {organizationPage.title}
-                </Text>
-              </Link>
-              <Text fontWeight="regular" color="white">
-                {n(
-                  'allUniversityStudiesInIcelandAtTheSamePlace',
-                  'Allt háskólanám á Íslandi á sama stað',
-                )}
+              <Text color="white" variant="h1" fontWeight="semiBold">
+                {organizationPage.title}
               </Text>
-            </Box>
-          </Hidden>
+            </Link>
+            <Text fontWeight="regular" color="white">
+              {n(
+                'allUniversityStudiesInIcelandAtTheSamePlace',
+                'Allt háskólanám á Íslandi á sama stað',
+              )}
+            </Text>
+          </Box>
         </SidebarLayout>
       </div>
     </div>
