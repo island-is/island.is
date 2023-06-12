@@ -17,8 +17,8 @@ import {
   Conclusion,
 } from '@island.is/judicial-system-web/src/components'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 import { core } from '@island.is/judicial-system-web/messages'
-import { titleForCase } from '@island.is/judicial-system-web/src/components/OverviewHeader/OverviewHeader'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
