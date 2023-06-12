@@ -13,6 +13,7 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { dark200 } from '@island.is/island-ui/theme'
 
 const MyPdfDocument = (data: {
   petition?: EndorsementList
@@ -113,7 +114,7 @@ export const pdfStyles = StyleSheet.create({
   },
   tableView: {
     paddingTop: 35,
-    borderTop: `1px solid #ccccd8`,
+    borderTop: `1px solid ${dark200}`,
   },
   tableRow: {
     flexDirection: 'row',
