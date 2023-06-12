@@ -184,8 +184,8 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
             <Box marginTop={6} marginBottom={8}>
               <Button
                 variant="primary"
-                icon="arrowForward"
                 iconType="outline"
+                icon="open"
                 onClick={() =>
                   window?.open(`${getBaseUrl()}/${list.meta.applicationId}`)
                 }
