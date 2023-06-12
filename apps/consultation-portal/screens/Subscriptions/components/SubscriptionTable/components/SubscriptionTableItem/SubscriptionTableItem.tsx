@@ -4,6 +4,10 @@ import {
   Text,
   Stack,
   FocusableBox,
+  LinkV2,
+  Icon,
+  Button,
+  Inline,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { mapIsToEn } from '../../../../../../utils/helpers'
@@ -109,10 +113,10 @@ const SubscriptionTableItem = ({
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <FocusableBox>
+              <FocusableBox onClick={() => onCheckboxChange()}>
                 <Text variant="h5">{loc.allCases}</Text>
               </FocusableBox>
-              <FocusableBox>
+              <FocusableBox onClick={() => onCheckboxChange()}>
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
@@ -120,7 +124,7 @@ const SubscriptionTableItem = ({
             </Data>
           ) : (
             <Data>
-              <FocusableBox onClick={onClick}>
+              <FocusableBox onClick={() => onCheckboxChange()}>
                 <Text variant="h5">{item.name}</Text>
               </FocusableBox>
             </Data>
@@ -128,14 +132,14 @@ const SubscriptionTableItem = ({
         ) : mdBreakpoint ? (
           <>
             <Data>
-              <FocusableBox onClick={onClick}>
+              <FocusableBox onClick={() => onCheckboxChange()}>
                 <Text variant="h5">
                   {isGeneralSubscription ? loc.allCases : item.caseNumber}
                 </Text>
               </FocusableBox>
             </Data>
             <Data>
-              <FocusableBox onClick={onClick}>
+              <FocusableBox onClick={() => onCheckboxChange()}>
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
@@ -145,7 +149,7 @@ const SubscriptionTableItem = ({
         ) : (
           <>
             <Data>
-              <FocusableBox onClick={onClick}>
+              <FocusableBox onClick={() => onCheckboxChange()}>
                 <Stack space={1}>
                   <Text variant="h5">
                     {isGeneralSubscription ? loc.allCases : item.caseNumber}
@@ -166,7 +170,18 @@ const SubscriptionTableItem = ({
             background: tableRowBackgroundColor(idx),
           }}
           align="right"
-        ></TData>
+        >
+          {currentTab === Area.case && !isGeneralSubscription && (
+            <FocusableBox
+              component="button"
+              href={`${loc.caseHref}${item.id}`}
+              target="_blank"
+              title={loc.infoText}
+            >
+              <Icon icon="open" type="outline" size="small" color="purple300" />
+            </FocusableBox>
+          )}
+        </TData>
       </Row>
     </>
   )

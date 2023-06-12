@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 import { useQuery } from '@apollo/client'
@@ -10,13 +10,9 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import {
-  PageHeader,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
+import { PageHeader } from '@island.is/judicial-system-web/src/components'
 import { titles, errors } from '@island.is/judicial-system-web/messages'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import TableSkeleton from '@island.is/judicial-system-web/src/routes/Shared/Cases/TableSkeleton'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 
 import DefenderCasesTable from './DefenderCasesTable'
@@ -25,7 +21,6 @@ import * as styles from './Cases.css'
 
 export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
 
   const availableTabs = ['active', 'completed']
 
@@ -78,8 +73,6 @@ export const Cases: React.FC = () => {
             type="error"
           />
         </div>
-      ) : loading || !user ? (
-        <TableSkeleton />
       ) : (
         <Box marginBottom={5}>
           <Text as="h1" variant="h1" marginBottom={1}>
@@ -101,7 +94,9 @@ export const Cases: React.FC = () => {
           {
             id: 'active',
             label: formatMessage(m.activeCasesTabLabel),
-            content: <DefenderCasesTable cases={activeCases} />,
+            content: (
+              <DefenderCasesTable cases={activeCases} loading={loading} />
+            ),
           },
           {
             id: 'completed',
@@ -110,6 +105,7 @@ export const Cases: React.FC = () => {
               <DefenderCasesTable
                 cases={completedCases}
                 showingCompletedCases={true}
+                loading={loading}
               />
             ),
           },
