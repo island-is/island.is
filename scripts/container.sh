@@ -3,6 +3,7 @@
 set -euo pipefail
 
 DIR="$(dirname $0)"
+PROGRAM_NAME="$(basename $0)"
 
 print_usage() {
   echo "Usage: container.sh [COMMAND]"

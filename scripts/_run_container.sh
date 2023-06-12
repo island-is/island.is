@@ -36,6 +36,9 @@ parse_args() {
       echo "Unknown option: $1"
       exit 1
       ;;
+    run | yarn)
+      shift
+      ;;
     *)
       yarn_args="$*"
       break
@@ -72,7 +75,7 @@ run_container() {
   run_cmd+=" $image:$tag"
 
   if [[ -n $yarn_args ]]; then
-    run_cmd+=" yarn run $yarn_args"
+    run_cmd+=" yarn $yarn_args"
   fi
 
   echo "Running container using: $run_cmd"
