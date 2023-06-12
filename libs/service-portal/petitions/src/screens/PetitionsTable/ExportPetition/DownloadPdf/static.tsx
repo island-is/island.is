@@ -2,17 +2,10 @@ import {
   Page,
   Text,
   Document,
-  Image,
   View,
   Font,
   StyleSheet,
 } from '@react-pdf/renderer'
-import {
-  Endorsement,
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '@island.is/api/schema'
-import { dark200 } from '@island.is/island-ui/theme'
 
 const MyPdfDocument = (data: { title: string; description: string }) => {
   const { title, description } = data
@@ -20,11 +13,6 @@ const MyPdfDocument = (data: { title: string; description: string }) => {
     <Document>
       <Page style={pdfStyles.body}>
         {/* Header */}
-        <Image
-          src={require('./assets/thjodskra.png')}
-          style={pdfStyles.image}
-          fixed
-        />
 
         {/* Body */}
         <View style={pdfStyles.listInfo}>
@@ -51,13 +39,6 @@ const MyPdfDocument = (data: { title: string; description: string }) => {
             <Text style={pdfStyles.tableHeader}>Nafn</Text>
           </View>
         </View>
-
-        {/* Footer */}
-        <Image
-          src={require('./assets/island.png')}
-          style={pdfStyles.footerImage}
-          fixed
-        />
       </Page>
     </Document>
   )
@@ -93,7 +74,7 @@ export const pdfStyles = StyleSheet.create({
   },
   tableView: {
     paddingTop: 35,
-    borderTop: `1px solid ${dark200}`,
+    borderTop: `1px solid #ebebeb`,
   },
   tableRow: {
     flexDirection: 'row',

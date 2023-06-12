@@ -4,7 +4,6 @@ import {
   Document,
   Image,
   View,
-  Font,
   StyleSheet,
 } from '@react-pdf/renderer'
 import { formatDate } from '../../../../lib/utils'
@@ -114,7 +113,7 @@ export const pdfStyles = StyleSheet.create({
   },
   tableView: {
     paddingTop: 35,
-    borderTop: `1px solid ${dark200}`,
+    borderTop: `1px solid #ccccd8`,
   },
   tableRow: {
     flexDirection: 'row',
