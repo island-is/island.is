@@ -173,6 +173,7 @@ const ChildView: FC<Props> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editChild),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
@@ -201,6 +202,7 @@ const ChildView: FC<Props> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editResidenceChild),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
@@ -241,6 +243,7 @@ const ChildView: FC<Props> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editChildReligion),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
