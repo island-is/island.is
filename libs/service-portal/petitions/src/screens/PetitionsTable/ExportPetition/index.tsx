@@ -120,7 +120,9 @@ const DropdownExport: FC<Props> = ({
           {
             title: 'btn',
             render: () => (
-              <Button onClick={getPdfURL}>{formatMessage(m.asPdf)} btn</Button>
+              <Button onClick={() => window.open(getPdfURL(), '_blank')}>
+                {formatMessage(m.asPdf)} btn
+              </Button>
             ),
           },
           {
