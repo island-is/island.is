@@ -23,6 +23,7 @@ export type EditLink = {
   external?: boolean
   url: string
   title?: MessageDescriptor
+  skipOutboundTrack?: boolean
 }
 
 interface Props {
@@ -130,7 +131,11 @@ export const UserInfoLine: FC<Props> = ({
                 <a
                   href={editLink.url}
                   rel="noopener noreferrer"
-                  onClick={trackExternalLinkClick}
+                  onClick={
+                    editLink.skipOutboundTrack
+                      ? undefined
+                      : trackExternalLinkClick
+                  }
                   target="_blank"
                 >
                   <Button
