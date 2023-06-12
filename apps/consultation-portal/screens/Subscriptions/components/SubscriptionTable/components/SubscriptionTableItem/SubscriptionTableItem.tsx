@@ -5,11 +5,7 @@ import {
   Stack,
   FocusableBox,
   LinkV2,
-  Icon,
-  Button,
-  Inline,
 } from '@island.is/island-ui/core'
-import { useState } from 'react'
 import { mapIsToEn } from '../../../../../../utils/helpers'
 import * as styles from './SubscriptionTableItem.css'
 import { Area } from '../../../../../../types/enums'
@@ -39,16 +35,12 @@ const SubscriptionTableItem = ({
   subscriptionArray,
   setSubscriptionArray,
 }: Props) => {
-  const [isOpen, setIsOpen] = useState(false)
   const loc = localization.subscriptionTableItem
-
-  const onClick = () => {
-    setIsOpen(!isOpen)
-  }
-
+  const areaIsCaseAndIsNotGeneralSubscription =
+    currentTab === Area.case && !isGeneralSubscription
   const borderColor = 'transparent'
 
-  const onCheckboxChange = () => {
+  const checkboxHandler = () => {
     if (isGeneralSubscription) {
       const subscriptionArrayCopy = { ...subscriptionArray }
       // idx 0 is All, idx 1 is changes
@@ -80,10 +72,6 @@ const SubscriptionTableItem = ({
       thisData[thisInstance].checked = !oldVal
       subscriptionArrayCopy[mapIsToEn[currentTab]] = thisData
       setSubscriptionArray(subscriptionArrayCopy)
-
-      if ((oldVal && isOpen) || (!oldVal && !isOpen)) {
-        setIsOpen(!isOpen)
-      }
     }
   }
 
@@ -105,18 +93,15 @@ const SubscriptionTableItem = ({
     <>
       <Row key={item.key}>
         <Data width="10">
-          <Checkbox
-            checked={item.checked}
-            onChange={() => onCheckboxChange()}
-          />
+          <Checkbox checked={item.checked} onChange={checkboxHandler} />
         </Data>
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <FocusableBox onClick={() => onCheckboxChange()}>
+              <FocusableBox onClick={checkboxHandler}>
                 <Text variant="h5">{loc.allCases}</Text>
               </FocusableBox>
-              <FocusableBox onClick={() => onCheckboxChange()}>
+              <FocusableBox onClick={checkboxHandler}>
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
@@ -124,7 +109,7 @@ const SubscriptionTableItem = ({
             </Data>
           ) : (
             <Data>
-              <FocusableBox onClick={() => onCheckboxChange()}>
+              <FocusableBox onClick={checkboxHandler}>
                 <Text variant="h5">{item.name}</Text>
               </FocusableBox>
             </Data>
@@ -132,14 +117,14 @@ const SubscriptionTableItem = ({
         ) : mdBreakpoint ? (
           <>
             <Data>
-              <FocusableBox onClick={() => onCheckboxChange()}>
+              <FocusableBox onClick={checkboxHandler}>
                 <Text variant="h5">
                   {isGeneralSubscription ? loc.allCases : item.caseNumber}
                 </Text>
               </FocusableBox>
             </Data>
             <Data>
-              <FocusableBox onClick={() => onCheckboxChange()}>
+              <FocusableBox onClick={checkboxHandler}>
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
@@ -149,7 +134,7 @@ const SubscriptionTableItem = ({
         ) : (
           <>
             <Data>
-              <FocusableBox onClick={() => onCheckboxChange()}>
+              <FocusableBox onClick={checkboxHandler}>
                 <Stack space={1}>
                   <Text variant="h5">
                     {isGeneralSubscription ? loc.allCases : item.caseNumber}
@@ -171,14 +156,16 @@ const SubscriptionTableItem = ({
           }}
           align="right"
         >
-          {currentTab === Area.case && !isGeneralSubscription && (
+          {areaIsCaseAndIsNotGeneralSubscription && (
             <FocusableBox
-              component="button"
+              component={LinkV2}
               href={`${loc.caseHref}${item.id}`}
               target="_blank"
               title={loc.infoText}
             >
-              <Icon icon="open" type="outline" size="small" color="purple300" />
+              <Text variant="small" color="dark200" fontWeight="light">
+                {loc.linkText}
+              </Text>
             </FocusableBox>
           )}
         </TData>
