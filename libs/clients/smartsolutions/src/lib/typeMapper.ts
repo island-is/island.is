@@ -62,6 +62,7 @@ export function mergeInputFields(
     )
 
     if (!fieldToUpdate) {
+      updatedInputFields.push(field)
       continue
     }
 
@@ -69,6 +70,5 @@ export function mergeInputFields(
     //update!
     updatedInputFields[index].value = field.value
   }
-
   return updatedInputFields
 }

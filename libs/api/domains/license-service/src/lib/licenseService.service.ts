@@ -6,6 +6,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { CmsContentfulService } from '@island.is/cms'
+import { DriversLicenseClientTypes } from './licenceService.type'
 import {
   GenericUserLicense,
   GenericLicenseTypeType,
@@ -43,8 +44,8 @@ export class LicenseServiceService {
     @Inject(GENERIC_LICENSE_FACTORY)
     private genericLicenseFactory: (
       type: GenericLicenseType,
-      user?: User,
-      forceOldDriversLicenseClient?: boolean,
+      user: User,
+      forceSpecificDriversLicenseClient?: DriversLicenseClientTypes,
     ) => Promise<GenericLicenseClient<unknown> | null>,
     @Inject(CACHE_MANAGER) private cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -378,7 +379,7 @@ export class LicenseServiceService {
       throw new Error(`Missing input data`)
     }
 
-    const { passTemplateId } = JSON.parse(data)
+    const { passTemplateId }: { passTemplateId?: string } = JSON.parse(data)
 
     /*
      * PkPass barcodes provide a PassTemplateId that we can use to
@@ -403,14 +404,23 @@ export class LicenseServiceService {
     // We have to make the driving license client decision dependant on the barcode
     // being scanned. The simplest way for that is to add a force flag so we can make the
     // decision based on input rather than the authenticated user's license
+
+    let forceDriversLicenseClient:
+      | DriversLicenseClientTypes
+      | undefined = undefined
+
+    if (licenseType === GenericLicenseType.DriversLicense) {
+      forceDriversLicenseClient = passTemplateId ? 'new' : 'old'
+    }
+
     const licenseService = await this.genericLicenseFactory(
       licenseType,
       user,
-      !passTemplateId,
+      forceDriversLicenseClient,
     )
 
     if (licenseService) {
-      verification = await licenseService.verifyPkPass(data, passTemplateId)
+      verification = await licenseService.verifyPkPass(data)
     } else {
       this.logger.warn('Invalid license type for pkpass verifcation', {
         category: LOG_CATEGORY,

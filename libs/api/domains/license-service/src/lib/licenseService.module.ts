@@ -42,6 +42,7 @@ import {
 import { GenericDrivingLicenseModule } from './client/driving-license-client/genericDrivingLicense.module'
 import { OldGenericDrivingLicenseModule } from './client/old-driving-license-client/oldGenericDrivingLicense.module'
 import { OldGenericDrivingLicenseApi } from './client/old-driving-license-client'
+import { DriversLicenseClientTypes } from './licenceService.type'
 import {
   FeatureFlagModule,
   FeatureFlagService,
@@ -159,11 +160,13 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
       ) => async (
         type: GenericLicenseType,
         user: User,
-        forceOldDriversLicenseClient = false,
+        forceSpecificDriversLicenseClient?: DriversLicenseClientTypes,
       ): Promise<GenericLicenseClient<unknown> | null> => {
         //option for forcing a client since verify is a big pain
-        if (forceOldDriversLicenseClient) {
-          return oldGenericDrivingLicenseApi
+        if (forceSpecificDriversLicenseClient) {
+          return forceSpecificDriversLicenseClient === 'old'
+            ? oldGenericDrivingLicenseApi
+            : genericDrivingService
         }
 
         const isNewDriversLicenseEnabled = await featureFlagService.getValue(

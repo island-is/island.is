@@ -91,7 +91,7 @@ export const createPkPassDataInput = (
         : '',
     },
     {
-      identifier: 'takntolur',
+      identifier: 'athugasemdir',
       value: license.comments
         ? license.comments.map((c) => c.comment).join(' ')
         : '',

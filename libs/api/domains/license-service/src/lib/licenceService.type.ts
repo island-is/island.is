@@ -1,6 +1,8 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
+export type DriversLicenseClientTypes = 'old' | 'new'
+
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',
@@ -249,10 +251,7 @@ export interface GenericLicenseClient<LicenseType> {
     locale?: Locale,
   ) => Promise<string | null>
 
-  verifyPkPass: (
-    data: string,
-    passTemplateId: string,
-  ) => Promise<PkPassVerification | null>
+  verifyPkPass: (data: string) => Promise<PkPassVerification | null>
 }
 
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
