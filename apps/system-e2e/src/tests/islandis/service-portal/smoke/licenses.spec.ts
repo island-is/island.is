@@ -28,8 +28,7 @@ test.describe('MS - Skírteini', () => {
       phoneNumber: '0102399',
       idsLoginOn: true,
     })
-    contexts.push(contextAmerika
-  , contextFaereyjar)
+    contexts.push(contextAmerika, contextFaereyjar)
   })
 
   test.afterAll(async () => {
@@ -71,8 +70,7 @@ test.describe('MS - Skírteini', () => {
   })
 
   test('should display child passports', async () => {
-    const page = await contextAmerika
-.newPage()
+    const page = await contextAmerika.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
     await page.waitForLoadState('networkidle')
