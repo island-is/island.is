@@ -42,7 +42,7 @@ export class EndorsementListService {
     private emailService: EmailService,
   ) {}
 
-  async hasAdminScope(user: User): Promise<boolean> {
+  hasAdminScope(user: User): boolean {
     for (const [_, value] of Object.entries(user.scope)) {
       if (value === AdminPortalScope.petitionsAdmin) {
         return true
@@ -66,7 +66,7 @@ export class EndorsementListService {
   }
 
   async findListsByTags(tags: string[], query: any, user: User) {
-    const isAdmin = await this.hasAdminScope(user)
+    const isAdmin = this.hasAdminScope(user)
     this.logger.info(`Finding endorsement lists by tags "${tags.join(', ')}"`)
     // check if user is admin
     return await paginate({
@@ -86,7 +86,7 @@ export class EndorsementListService {
   async findSingleList(listId: string, user?: User, check?: boolean) {
     // Check variable needed since finAll function in Endorsement controller uses this function twice
     // on the second call it passes nationalID of user but does not go throught the get list pipe
-    const isAdmin = user && check ? await this.hasAdminScope(user) : false
+    const isAdmin = user && check ? this.hasAdminScope(user) : false
     this.logger.info(`Finding single endorsement lists by id "${listId}"`)
     const result = await this.endorsementListModel.findOne({
       where: {
@@ -170,6 +170,9 @@ export class EndorsementListService {
 
   async lock(endorsementList: EndorsementList): Promise<EndorsementList> {
     this.logger.info(`Locking endorsement list: ${endorsementList.id}`)
+
+    await this.emailLock(endorsementList)
+
     return await endorsementList.update({ adminLock: true })
   }
 
@@ -208,7 +211,9 @@ export class EndorsementListService {
       ])
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
-    return this.endorsementListModel.create({ ...list })
+    const endorsementList = await this.endorsementListModel.create({ ...list })
+    await this.emailCreated(endorsementList)
+    return endorsementList
   }
 
   // generic get open lists
@@ -387,14 +392,14 @@ export class EndorsementListService {
             address: recipientEmail,
           },
         ],
-        subject: `Meðmælendalisti "${endorsementList?.title}"`,
+        subject: `Undirskriftalisti "${endorsementList?.title}"`,
         template: {
-          title: `Meðmælendalisti "${endorsementList?.title}"`,
+          title: `Undirskriftalisti "${endorsementList?.title}"`,
           body: [
             {
               component: 'Heading',
               context: {
-                copy: `Meðmælendalisti "${endorsementList?.title}"`,
+                copy: `Undirskriftalisti "${endorsementList?.title}"`,
                 small: true,
               },
             },
@@ -402,7 +407,7 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Meðfylgjandi er meðmælendalisti "${endorsementList?.title}",
+                copy: `Meðfylgjandi er undirskriftalisti "${endorsementList?.title}",
                 sem ${ownerName} er skráður ábyrgðarmaður fyrir.`,
                 small: true,
               },
@@ -423,13 +428,191 @@ export class EndorsementListService {
         },
         attachments: [
           {
-            filename: 'Meðmælendalisti.pdf',
+            filename: 'Undirskriftalisti.pdf',
             content: await this.createDocumentBuffer(
               endorsementList,
               ownerName,
             ),
           },
         ],
+      })
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Failed to send email', error)
+      return { success: false }
+    }
+  }
+
+  getOwnerContact(obj: any, search: string): string {
+    for (const [key, value] of Object.entries(obj)) {
+      if (key === search) {
+        return value as string
+      }
+    }
+    this.logger.warn('This endorsement list does not include owner email.')
+    throw new NotFoundException([
+      'This endorsement list does not include owner email.',
+    ])
+  }
+
+  async emailLock(
+    endorsementList: EndorsementList,
+  ): Promise<{ success: boolean }> {
+    if (!endorsementList) {
+      this.logger.warn('This endorsement list does not exist.')
+      throw new NotFoundException(['This endorsement list does not exist.'])
+    }
+    const recipientEmail = this.getOwnerContact(endorsementList.meta, 'email')
+    const ownerName = await this.getOwnerInfo(
+      endorsementList?.id,
+      endorsementList.owner,
+    )
+    this.logger.info(
+      `sending list ${endorsementList.id} to ${recipientEmail} from ${environment.email.sender}`,
+    )
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: environment.email.sender,
+          address: environment.email.address,
+        },
+        to: [
+          {
+            // message can be sent to any email so recipient name is unknown
+            name: recipientEmail,
+            address: recipientEmail,
+          },
+        ],
+        subject: `Undirskriftalista "${endorsementList?.title} hefur verið læst"`,
+        template: {
+          title: `Undirskriftalisti "${endorsementList?.title}"`,
+          body: [
+            {
+              component: 'Heading',
+              context: {
+                copy: `Undirskriftalisti "${endorsementList?.title}"`,
+                small: true,
+              },
+            },
+            { component: 'Copy', context: { copy: 'Sæl/l/t', small: true } },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Meðfylgjandi er undirskriftalisti "${endorsementList?.title}",
+                sem ${ownerName} er skráður ábyrgðarmaður fyrir, hefur verið læst af umsjónaraðilum kerfisins hjá Þjóðskrá.`,
+                small: true,
+              },
+            },
+
+            {
+              component: 'Copy',
+              context: { copy: 'Kær kveðja,', small: true },
+            },
+            { component: 'Copy', context: { copy: 'Ísland.is', small: true } },
+          ],
+        },
+      })
+      return { success: true }
+    } catch (error) {
+      this.logger.error('Failed to send email', error)
+      return { success: false }
+    }
+  }
+
+  async emailCreated(
+    endorsementList: EndorsementList,
+  ): Promise<{ success: boolean }> {
+    if (!endorsementList) {
+      this.logger.warn('This endorsement list does not exist.')
+      throw new NotFoundException(['This endorsement list does not exist.'])
+    }
+    const locale = 'is-IS'
+    const ownerEmail = this.getOwnerContact(endorsementList.meta, 'email')
+    const ownerPhone = this.getOwnerContact(endorsementList.meta, 'phone')
+    const ownerName = await this.getOwnerInfo(
+      endorsementList?.id,
+      endorsementList.owner,
+    )
+    this.logger.info(
+      `sending new list ${endorsementList.id} to skra@skra.is from ${environment.email.sender}`,
+    )
+    try {
+      await this.emailService.sendEmail({
+        from: {
+          name: environment.email.sender,
+          address: environment.email.address,
+        },
+        to: [
+          {
+            // message can be sent to any email so recipient name is unknown
+            name: 'skra@skra.is',
+            address: 'skra@skra.is',
+          },
+        ],
+        subject: `Nýr undirskriftalisti  hefur verið stofnaður`,
+        template: {
+          title: `Undirskriftalisti "${endorsementList?.title}"`,
+          body: [
+            {
+              component: 'Heading',
+              context: {
+                copy: `Undirskriftalisti "${endorsementList?.title}"`,
+                small: true,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Lýsing: ${endorsementList?.description}`,
+                small: true,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Tímabil lista: ${
+                  endorsementList.openedDate.toLocaleDateString(locale) +
+                  ' - ' +
+                  endorsementList.closedDate.toLocaleDateString(locale)
+                }`,
+                small: true,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Stofnandi lista: ${ownerName}`,
+                small: true,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Kennitala stofnenda: ${endorsementList.owner}`,
+                small: true,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Netfang stofnenda: ${ownerEmail}`,
+                small: true,
+              },
+            },
+            {
+              component: 'Copy',
+              context: {
+                copy: `Sími stofnenda: ${ownerPhone}`,
+                small: true,
+              },
+            },
+            {
+              component: 'Copy',
+              context: { copy: 'Kær kveðja,', small: true },
+            },
+            { component: 'Copy', context: { copy: 'Ísland.is', small: true } },
+          ],
+        },
       })
       return { success: true }
     } catch (error) {
