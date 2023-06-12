@@ -99,6 +99,7 @@ export const estateSchema = z.object({
     ships: asset,
     guns: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
+    addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().min(1).optional(),
@@ -113,7 +114,6 @@ export const estateSchema = z.object({
       })
       .optional(),
   }),
-  estateMembersHaveElectronicID: z.array(z.enum([YES])).length(1),
 
   // is: Innbú
   inventory: z
