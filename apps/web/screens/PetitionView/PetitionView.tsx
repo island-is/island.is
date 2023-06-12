@@ -185,6 +185,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
               <Button
                 variant="primary"
                 icon="arrowForward"
+                iconType="outline"
                 onClick={() =>
                   window?.open(`${getBaseUrl()}/${list.meta.applicationId}`)
                 }
