@@ -141,7 +141,7 @@ const ViewSignedList = () => {
               <Box width="half">
                 <Button
                   variant="ghost"
-                  icon="arrowForward"
+                  icon="open"
                   onClick={() =>
                     window.open(
                       `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
