@@ -9,26 +9,27 @@ const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - Skírteini', () => {
-  let contextFæreyjar: BrowserContext
-  let contextAmeríka: BrowserContext
+  let contextFaereyjar: BrowserContext
+  let contextAmerika: BrowserContext
   const contexts: BrowserContext[] = []
 
   test.beforeAll(async ({ browser }) => {
-    contextAmeríka = await session({
+    contextAmerika = await session({
       browser: browser,
       storageState: 'service-portal-amerika.json',
       homeUrl,
       phoneNumber: '0102989',
       idsLoginOn: true,
     })
-    contextFæreyjar = await session({
+    contextFaereyjar = await session({
       browser: browser,
       storageState: 'service-portal-færeyjar.json',
       homeUrl,
       phoneNumber: '0102399',
       idsLoginOn: true,
     })
-    contexts.push(contextAmeríka, contextFæreyjar)
+    contexts.push(contextAmerika
+  , contextFaereyjar)
   })
 
   test.afterAll(async () => {
@@ -36,7 +37,7 @@ test.describe('MS - Skírteini', () => {
   })
 
   test('License overview', async () => {
-    const page = await contextFæreyjar.newPage()
+    const page = await contextFaereyjar.newPage()
     await disableI18n(page)
 
     await test.step('Renders the page', async () => {
@@ -50,7 +51,7 @@ test.describe('MS - Skírteini', () => {
   })
 
   test('should display passport in overview', async () => {
-    const page = await contextFæreyjar.newPage()
+    const page = await contextFaereyjar.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
     await page.waitForLoadState('networkidle')
@@ -70,7 +71,8 @@ test.describe('MS - Skírteini', () => {
   })
 
   test('should display child passports', async () => {
-    const page = await contextAmeríka.newPage()
+    const page = await contextAmerika
+.newPage()
     await disableI18n(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur/skirteini'))
     await page.waitForLoadState('networkidle')
