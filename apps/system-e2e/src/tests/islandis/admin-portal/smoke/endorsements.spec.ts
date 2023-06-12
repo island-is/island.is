@@ -63,11 +63,14 @@ test.describe('Admin portal access control', () => {
       ).toBeVisible()
 
       //Act
-      await granterPage.click('button:text("Liðnir listar")')
       await granterPage
         .getByRole('button', { name: 'Skoða lista' })
         .first()
         .click()
+      const currentEndDate = await granterPage
+        .getByLabel('Tímabil til')
+        .last()
+        .inputValue()
       const exampleDateInThePast = '13.05.2023'
       await granterPage
         .getByLabel('Tímabil til')
@@ -77,11 +80,23 @@ test.describe('Admin portal access control', () => {
       await granterPage.click('button:text("Uppfæra lista")')
 
       // Assert
-      const dateValue = await granterPage
+      let dateValue = await granterPage
         .getByLabel('Tímabil til')
         .last()
         .inputValue()
       await expect(dateValue).toBe(exampleDateInThePast)
+
+      // And lets end by setting the date back to what it was
+      await granterPage.getByLabel('Tímabil til').last().fill(currentEndDate)
+      await granterPage.keyboard.press('Enter')
+      await granterPage.click('button:text("Uppfæra lista")')
+
+      // Assert
+      dateValue = await granterPage
+        .getByLabel('Tímabil til')
+        .last()
+        .inputValue()
+      await expect(dateValue).toBe(currentEndDate)
     })
   })
 })
