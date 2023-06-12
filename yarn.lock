@@ -8807,8 +8807,8 @@ __metadata:
     "@tsconfig/react-native": ^2.0.2
     "@types/intl": ^1
     "@types/jest": ^29.2.1
-    "@types/react": ^18.0.24
-    "@types/react-dom": ^18
+    "@types/react": 18.2.11
+    "@types/react-dom": 18.2.4
     "@types/react-test-renderer": ^18.0.0
     "@types/styled-components": ^5
     "@types/styled-components-react-native": 5.2.1
@@ -16034,16 +16034,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.0.11, @types/react-dom@npm:^18":
-  version: 18.0.11
-  resolution: "@types/react-dom@npm:18.0.11"
-  dependencies:
-    "@types/react": "*"
-  checksum: 579691e4d5ec09688087568037c35edf8cfb1ab3e07f6c60029280733ee7b5c06d66df6fcc90786702c93ac8cb13bc7ff16c79ddfc75d082938fbaa36e1cdbf4
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:^18.0.0":
+"@types/react-dom@npm:18.2.4, @types/react-dom@npm:^18.0.0":
   version: 18.2.4
   resolution: "@types/react-dom@npm:18.2.4"
   dependencies:
@@ -16179,14 +16170,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.0.28":
-  version: 18.0.28
-  resolution: "@types/react@npm:18.0.28"
+"@types/react@npm:18.2.11":
+  version: 18.2.11
+  resolution: "@types/react@npm:18.2.11"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: e752df961105e5127652460504785897ca6e77259e0da8f233f694f9e8f451cde7fa0709d4456ade0ff600c8ce909cfe29f9b08b9c247fa9b734e126ec53edd7
+  checksum: 3dcc326ea87468a06079b6c3a9e0f9a98a8438526aba81d29820954e2cb343b6beb8ca3d6a212878797a909fbd3199d07a4d819cd3efbbdba8c22039c06f1ed8
   languageName: node
   linkType: hard
 
@@ -16209,17 +16200,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: ed9c551a7d50d073a5fb0295c1d939536c66c3286d42b6c94c20749464492ed95a408e6d3694bf49df0012da69e22202065c8c2fac0406356972a7fcb4960dd3
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^18.0.24":
-  version: 18.0.34
-  resolution: "@types/react@npm:18.0.34"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 60d2766e7644ec480075bbb154bf8fb8476089466b643662ef59964e27cae2d8c71fd9c717a4dfa9627c3e050fa2ae866d10d16f66b4509058d1bfe2a564b18c
   languageName: node
   linkType: hard
 
@@ -32768,10 +32748,10 @@ __metadata:
     "@types/pdfkit": 0.11.2
     "@types/pg": 8.6.4
     "@types/pubsub-js": 1.8.1
-    "@types/react": 18.0.28
+    "@types/react": 18.2.11
     "@types/react-csv": 1.1.1
     "@types/react-datepicker": 4.10.0
-    "@types/react-dom": 18.0.11
+    "@types/react-dom": 18.2.4
     "@types/react-html-parser": 2.0.1
     "@types/react-infinite-scroller": ^1.2.3
     "@types/react-input-mask": 3.0.0
