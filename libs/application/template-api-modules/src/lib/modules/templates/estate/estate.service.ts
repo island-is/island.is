@@ -12,7 +12,11 @@ import {
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
-import { estateTransformer, filterAndRemoveRepeaterMetadata } from './utils'
+import {
+  estateTransformer,
+  filterAndRemoveRepeaterMetadata,
+  transformUploadDataToPDFStream,
+} from './utils'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -55,9 +59,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
     return true
   }
 
-  stringifyObject(obj: Record<string, unknown>): Record<string, string> {
+  stringifyObject(obj: UploadData): Record<string, string> {
     const result: Record<string, string> = {}
-    for (const key in obj) {
+    // Curiously: https://github.com/Microsoft/TypeScript/issues/12870
+    for (const key of Object.keys(obj) as Array<keyof typeof obj>) {
       if (typeof obj[key] === 'string') {
         result[key] = obj[key] as string
       } else {
@@ -204,6 +209,17 @@ export class EstateTemplateService extends BaseTemplateApiService {
     )
 
     const uploadData: UploadData = {
+      deceased: {
+        name: externalData.estate.nameOfDeceased ?? '',
+        ssn: externalData.estate.nationalIdOfDeceased ?? '',
+        dateOfDeath: externalData.estate.dateOfDeath?.toString() ?? '',
+        address: externalData.estate.addressOfDeceased ?? '',
+      },
+      districtCommissionerHasWill: answers.estate?.testament?.wills ?? '',
+      settlement: answers.estate?.testament?.agreement ?? '',
+      dividedEstate: answers.estate?.testament?.dividedEstate ?? '',
+      remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',
+      guns: answers.estate?.guns ?? [],
       applicationType: answers.selectedEstate,
       caseNumber: externalData?.estate?.caseNumber ?? '',
       assets: processedAssets,
@@ -241,10 +257,22 @@ export class EstateTemplateService extends BaseTemplateApiService {
               ssn: answers.representative.nationalId ?? '',
             },
           }
-        : {}),
+        : { representative: undefined }),
     }
 
     const attachments: Attachment[] = []
+
+    // Convert form data to a PDF backup for syslumenn
+    const pdfBuffer = await transformUploadDataToPDFStream(
+      uploadData,
+      application.id,
+    )
+    attachments.push({
+      name: `Form_data_${uploadData.caseNumber}.pdf`,
+      content: pdfBuffer.toString('base64'),
+    })
+
+    // Retrieve attachments from the application and attach them to the upload data
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]
