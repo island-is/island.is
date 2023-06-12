@@ -15,26 +15,21 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
-  YES,
 } from '@island.is/application/types'
 import {
   DeliveryAddressApi,
   IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   UserInfoApi,
+  NationalRegistryUser,
 } from '../dataProviders'
-import {
-  DistrictCommissionerAgencies,
-  Passport,
-  PersonalInfo,
-  Services,
-} from '../lib/constants'
+import { DistrictCommissionerAgencies, Services } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
 import { personalOverview } from './overviewSection/personalOverview'
+import { hasDiscount } from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -73,7 +68,7 @@ export const Draft: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryUser,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
@@ -141,16 +136,8 @@ export const Draft: Form = buildForm({
               title: '',
               width: 'half',
               space: 'none',
-              options: (application: Application) => {
-                const withDiscount =
-                  ((application.answers.passport as Passport)?.userPassport !==
-                    '' &&
-                    (application.answers
-                      .personalInfo as PersonalInfo)?.hasDisabilityDiscount.includes(
-                      YES,
-                    )) ||
-                  (application.answers.passport as Passport)?.childPassport !==
-                    ''
+              options: ({ answers, externalData }: Application) => {
+                const withDiscount = hasDiscount(answers, externalData)
                 return [
                   {
                     value: Services.REGULAR,
