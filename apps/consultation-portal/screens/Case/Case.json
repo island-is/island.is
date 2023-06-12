@@ -67,7 +67,7 @@
       "button": "Skrá mig inn"
     },
     "setEmailCardSkeleton": {
-      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarf að staðfesta.",
+      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarft að staðfesta.",
       "input": {
         "label": "Netfang",
         "placeholder": "nonni@island.is"
