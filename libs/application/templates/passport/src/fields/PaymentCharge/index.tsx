@@ -6,7 +6,12 @@ import { PASSPORT_CHARGE_CODES, Service, Services } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import { PaymentCatalogItem } from '@island.is/api/schema'
-import { getCurrencyString, hasDiscount } from '../../lib/utils'
+import {
+  getChargeCode,
+  getCurrencyString,
+  getPrice,
+  hasDiscount,
+} from '../../lib/utils'
 import { useFormContext } from 'react-hook-form'
 
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
@@ -15,24 +20,26 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const serviceTypeRegular =
     (application.answers.service as Service).type === Services.REGULAR
   const { answers, externalData } = application
-  const withDiscount = hasDiscount(answers, externalData)
+  const chargeCode = getChargeCode(answers, externalData)
 
-  const chargeCode = withDiscount
-    ? serviceTypeRegular
-      ? PASSPORT_CHARGE_CODES.DISCOUNT_REGULAR
-      : PASSPORT_CHARGE_CODES.DISCOUNT_EXPRESS
-    : serviceTypeRegular
-    ? PASSPORT_CHARGE_CODES.REGULAR
-    : PASSPORT_CHARGE_CODES.EXPRESS
+  // const chargeCode = withDiscount
+  //   ? serviceTypeRegular
+  //     ? PASSPORT_CHARGE_CODES.DISCOUNT_REGULAR
+  //     : PASSPORT_CHARGE_CODES.DISCOUNT_EXPRESS
+  //   : serviceTypeRegular
+  //   ? PASSPORT_CHARGE_CODES.REGULAR
+  //   : PASSPORT_CHARGE_CODES.EXPRESS
 
-  const chargeItems = getValueViaPath(
-    application.externalData,
-    'payment.data',
-  ) as PaymentCatalogItem[]
+  // const chargeItems = getValueViaPath(
+  //   application.externalData,
+  //   'payment.data',
+  // ) as PaymentCatalogItem[]
 
-  const chargeItem = chargeItems.find(
-    (item) => item.chargeItemCode === chargeCode,
-  )
+  // const chargeItem = chargeItems.find(
+  //   (item) => item.chargeItemCode === chargeCode,
+  // )
+
+  const charge = getPrice(externalData, chargeCode)
   useEffect(() => {
     setValue('chargeItemCode', chargeCode)
   }, [chargeCode, setValue])
@@ -56,7 +63,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
         </Column>
         <Column>
           <Box display="flex" justifyContent="flexEnd" marginBottom="gutter">
-            <Text>{getCurrencyString(chargeItem?.priceAmount || 0)}</Text>
+            <Text>{charge}</Text>
           </Box>
         </Column>
       </Columns>
@@ -72,7 +79,7 @@ export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
         <Column>
           <Box display="flex" justifyContent="flexEnd">
             <Text variant="h4" color="blue400">
-              {getCurrencyString(chargeItem?.priceAmount || 0)}
+              {charge}
             </Text>
           </Box>
         </Column>

@@ -29,7 +29,7 @@ import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
 import { childsOverview } from './overviewSection/childsOverview'
 import { personalOverview } from './overviewSection/personalOverview'
-import { hasDiscount } from '../lib/utils'
+import { getChargeCode, getPrice, hasDiscount } from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'PassportApplicationDraftForm',
@@ -137,16 +137,25 @@ export const Draft: Form = buildForm({
               width: 'half',
               space: 'none',
               options: ({ answers, externalData }: Application) => {
-                const withDiscount = hasDiscount(answers, externalData)
+                const regularCode = getChargeCode(
+                  answers,
+                  externalData,
+                  Services.REGULAR,
+                )
+                const regularPrices = getPrice(externalData, regularCode)
+                const expressCode = getChargeCode(
+                  answers,
+                  externalData,
+                  Services.EXPRESS,
+                )
+                const expressPrices = getPrice(externalData, expressCode)
                 return [
                   {
                     value: Services.REGULAR,
                     label:
                       m.serviceTypeRegular.defaultMessage +
                       ' - ' +
-                      (withDiscount === true
-                        ? m.serviceTypeRegularPriceWithDiscount.defaultMessage
-                        : m.serviceTypeRegularPrice.defaultMessage),
+                      regularPrices,
                     subLabel: m.serviceTypeRegularSublabel.defaultMessage,
                   },
                   {
@@ -154,9 +163,7 @@ export const Draft: Form = buildForm({
                     label:
                       m.serviceTypeExpress.defaultMessage +
                       ' - ' +
-                      (withDiscount === true
-                        ? m.serviceTypeExpressPriceWithDiscount.defaultMessage
-                        : m.serviceTypeExpressPrice.defaultMessage),
+                      expressPrices,
                     subLabel: m.serviceTypeExpressSublabel.defaultMessage,
                   },
                 ]
