@@ -25,4 +25,17 @@ export const strings = defineMessages({
     description:
       'Notaður sem titil á yfirlitsskjá afreiddra mála þegar dagsetning gæslu/vistunar/farbanni er liðin.',
   },
+  restrictionActive: {
+    id: 'judicial.system.core:overview_header.restriction_active',
+    defaultMessage:
+      '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun virk} TRAVEL_BAN {Farbann virkt} other {Gæsluvarðhald virkt}}',
+    description:
+      'Notaður sem titil á yfirlitsskjá afreiddra mála þegar dagsetning gæslu/vistunar/farbanni er liðin.',
+  },
+  investigationAccepted: {
+    id: 'judicial.system.core:overview_header.investigation_accepted',
+    defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
+    description:
+      'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimild samþykkt.',
+  },
 })

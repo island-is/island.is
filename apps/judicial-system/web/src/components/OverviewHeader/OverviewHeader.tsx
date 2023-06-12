@@ -9,7 +9,6 @@ import {
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
 import { TempCase } from '../../types'
-import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 
 import { strings } from './OverviewHeader.strings'
 import { FormContext } from '../FormProvider/FormProvider'
@@ -41,11 +40,12 @@ export const titleForCase = (
   }
 
   return isInvestigationCase(theCase.type)
-    ? formatMessage(m.investigationAccepted)
-    : formatMessage(m.restrictionActive, {
+    ? formatMessage(strings.investigationAccepted)
+    : formatMessage(strings.restrictionActive, {
         caseType: isTravelBan ? CaseType.TRAVEL_BAN : theCase.type,
       })
 }
+
 const OverviewHeader: React.FC = () => {
   const { workingCase } = useContext(FormContext)
 
