@@ -197,7 +197,7 @@
     - [Health Insurance](libs/clients/icelandic-health-insurance/health-insurance/README.md)
     - [Rights Portal](libs/clients/icelandic-health-insurance/rights-portal/README.md)
   - [Identity](libs/clients/identity/README.md)
-  - [Clients Intellectual Property](libs/clients/intellectual-property/README.md)
+  - [Intellectual Property](libs/clients/intellectual-property/README.md)
   - [Islykill](libs/clients/islykill/README.md)
   - [Enhanced Fetch](libs/clients/middlewares/README.md)
   - [MMS](libs/clients/mms/README.md)
