@@ -236,6 +236,16 @@ export const AdrAndMachine = new XroadConf({
   },
 })
 
+export const WorkMachines = new XroadConf({
+  env: {
+    XROAD_WORK_MACHINE_LICENSE_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token',
+      staging: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token',
+      prod: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token',
+    },
+  },
+})
+
 export const JudicialAdministration = new XroadConf({
   env: {
     XROAD_COURT_BANKRUPTCY_CERT_PATH: {
