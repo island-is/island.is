@@ -44,14 +44,17 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
       <Box marginBottom={4}>
         {currentLicense.categories.map(
           (
-            category: { expires: string | number | Date; name: string },
+            category: {
+              expires: string | number | Date
+              name: string
+              nr: string
+            },
             index: number,
           ) => {
             const expires =
               formatMessage(m.validTag) +
               ' ' +
               format(new Date(category.expires), 'dd.MM.yyyy')
-            const messages = getApplicationInfo(category.name)
             return (
               <Box
                 key={category.name + JSON.stringify(index)}
@@ -81,21 +84,15 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
                         alignItems="center"
                       >
                         <Text variant="h3">
-                          {formatText(
-                            messages.title,
+                          {`${category.nr} - ${formatText(
+                            m.categorySectionTitle,
                             application,
                             formatMessage,
-                          )}
+                          )}`}
                         </Text>
                       </Box>
                     </Box>
-                    <Text paddingTop={1}>
-                      {formatText(
-                        messages.rightsDescription,
-                        application,
-                        formatMessage,
-                      )}
-                    </Text>
+                    <Text paddingTop={1}>{category.name}</Text>
                   </Box>
                   <Box
                     display="flex"

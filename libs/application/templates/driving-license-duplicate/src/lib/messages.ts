@@ -428,4 +428,11 @@ export const m = defineMessages({
     defaultMessage: 'Vinsamlegast veldu embætti',
     description: 'Validation error for district',
   },
+
+  /* Category Section */
+  categorySectionTitle: {
+    id: 'dld.application:categorySectionTitle',
+    defaultMessage: 'Réttindi',
+    description: 'text for category section after NR',
+  },
 })

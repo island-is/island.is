@@ -14,6 +14,7 @@ export const TeachersApi = defineTemplateApi({
 
 export interface CurrentLicenseParameters {
   validCategories?: string[]
+  useLegacyVersion: boolean
 }
 
 export const CurrentLicenseApi = defineTemplateApi<CurrentLicenseParameters>({

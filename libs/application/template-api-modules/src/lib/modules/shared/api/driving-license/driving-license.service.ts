@@ -134,10 +134,19 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
     }
 
-    const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-      nationalId: auth.nationalId,
-      token: auth.authorization.split(' ')[1] ?? '', // removes the Bearer prefix,
-    })
+    let drivingLicense
+    if (params?.useLegacyVersion) {
+      drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
+        {
+          nationalId: auth.nationalId,
+          token: auth.authorization,
+        },
+      )
+    } else {
+      drivingLicense = await this.drivingLicenseService.getCurrentLicense({
+        token: auth.authorization,
+      })
+    }
 
     const categoryB = (drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B',
@@ -219,7 +228,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.drivingLicenseService.getCurrentLicense(
+      const teacherLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
         {
           nationalId: assessment.nationalIdTeacher,
         },
