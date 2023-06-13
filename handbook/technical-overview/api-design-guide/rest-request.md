@@ -54,7 +54,7 @@ https://api.example.com/v1/users/1234567890
 do:
 
 ```http
-https://api.example.com/v1/users/.nationalId
+https://api.example.com/v1/users/.national-id
 
 // Headers section
 X-Param-National-Id: 1234567890
