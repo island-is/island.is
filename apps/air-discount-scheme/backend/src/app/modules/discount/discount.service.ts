@@ -72,7 +72,7 @@ export class DiscountService {
     value: T,
     ttl: number = ONE_DAY,
   ): Promise<void> {
-    return this.cacheManager.set(key, value, ttl)
+    return this.cacheManager.set(key, value, ttl * 1000)
   }
 
   private async getCache<T>(cacheKey: string): Promise<T | undefined> {

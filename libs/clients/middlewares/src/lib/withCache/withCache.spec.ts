@@ -1,3 +1,10 @@
+/**
+ * Need to mock timers before importing cache-manager since they cache it.
+ * Also need to advance timers by 10ms to avoid cache-manager's 0-based logic.
+ */
+jest.useFakeTimers()
+jest.advanceTimersByTime(10)
+
 import { caching } from 'cache-manager'
 
 import { Auth } from '@island.is/auth-nest-tools'
@@ -106,7 +113,6 @@ describe('EnhancedFetch#withCache', () => {
 
   it('expires responses', async () => {
     // Arrange
-    jest.useFakeTimers()
     const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
@@ -279,7 +285,6 @@ describe('EnhancedFetch#withCache', () => {
 
   it('does not get stale if not error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers()
     const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
@@ -305,7 +310,6 @@ describe('EnhancedFetch#withCache', () => {
 
   it('gets stale if http error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers()
     const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },
@@ -342,7 +346,6 @@ describe('EnhancedFetch#withCache', () => {
 
   it('gets stale if network error during stale-if-error', async () => {
     // Arrange
-    jest.useFakeTimers()
     const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       cache: { cacheManager },

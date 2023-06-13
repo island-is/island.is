@@ -1,3 +1,10 @@
+/**
+ * Need to mock timers before importing cache-manager since they cache it.
+ * Also need to advance timers by 10ms to avoid cache-manager's 0-based logic.
+ */
+jest.useFakeTimers()
+jest.advanceTimersByTime(10)
+
 import { caching } from 'cache-manager'
 
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -89,7 +96,6 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should not cache token forever', async () => {
     // Arrange
-    jest.useFakeTimers()
     env = setupTestEnv({
       autoAuth: { ...autoAuth, mode: 'token' },
     })
@@ -99,8 +105,11 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
     // Act
     await env.enhancedFetch(testUrl)
+    console.log('before advance')
     jest.advanceTimersByTime(6 * 1000)
+    console.log('after advance')
     await env.enhancedFetch(testUrl)
+    console.log('after second request')
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(2)
@@ -168,7 +177,6 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
   it('should not cache token exchange forever', async () => {
     // Arrange
-    jest.useFakeTimers()
     const cacheManager = await caching('memory', { ttl: 0 })
     env = setupTestEnv({
       autoAuth: {

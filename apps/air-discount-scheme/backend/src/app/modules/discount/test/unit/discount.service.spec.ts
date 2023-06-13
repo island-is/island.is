@@ -1,3 +1,4 @@
+import { Cache as CacheManager } from 'cache-manager'
 import { Test } from '@nestjs/testing'
 import { CACHE_MANAGER } from '@nestjs/common'
 

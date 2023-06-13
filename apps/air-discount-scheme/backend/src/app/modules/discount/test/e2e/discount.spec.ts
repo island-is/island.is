@@ -1,4 +1,5 @@
 import request from 'supertest'
+import { Cache as CacheManager } from 'cache-manager'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import {
   NationalRegistryService,

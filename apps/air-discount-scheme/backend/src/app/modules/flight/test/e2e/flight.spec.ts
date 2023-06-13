@@ -1,3 +1,4 @@
+import { Cache as CacheManager } from 'cache-manager'
 import request from 'supertest'
 import { CACHE_MANAGER, INestApplication } from '@nestjs/common'
 import {

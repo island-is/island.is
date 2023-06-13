@@ -236,7 +236,7 @@ export const withAutoAuth = ({
       await tokenCacheManager.set(
         TOKEN_CACHE_KEY,
         authorization,
-        result.expires_in,
+        result.expires_in * 1000,
       )
     }
 

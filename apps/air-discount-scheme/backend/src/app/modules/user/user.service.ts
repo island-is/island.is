@@ -66,7 +66,7 @@ export class UserService {
             user.nationalId,
           )),
         ]
-        await this.cacheManager.set(cacheKey, { custodians }, ONE_WEEK)
+        await this.cacheManager.set(cacheKey, { custodians }, ONE_WEEK * 1000)
       }
 
       // Check child custodians if they have valid ADS postal code.
