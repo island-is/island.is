@@ -1,58 +1,55 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { IsEnum, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator'
 import { Season } from '../../major/types'
 
-export class CreateCourseDto {
-  @IsString()
+export class ExampleCourse {
   @ApiProperty({
     description: 'External ID for the course (from University)',
     example: 'ABC12345',
   })
   externalId!: string
 
-  @IsString()
   @ApiProperty({
     description: 'Course name (Icelandic)',
     example: 'Tölvunarfræði I',
   })
   nameIs!: string
 
-  @IsString()
   @ApiProperty({
     description: 'Course name (English)',
     example: 'Computer science I',
   })
   nameEn!: string
 
-  @IsUUID()
   @ApiProperty({
-    description: 'University ID',
-    example: '00000000-0000-0000-0000-000000000000',
+    description: 'Whether the course is required to take within the major',
+    example: true,
   })
-  universityId!: string
+  required!: boolean
 
-  @IsUUID()
-  @ApiProperty({
-    description: 'Major ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
-  majorId!: string
+  // @ApiProperty({
+  //   description: 'University ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  // universityId!: string
 
-  @IsNumber()
+  // @ApiProperty({
+  //   description: 'Major ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  // majorId!: string
+
   @ApiProperty({
     description: 'Number of course credits (in ECTS)',
     example: 8,
   })
   credits!: number
 
-  @IsNumber()
   @ApiProperty({
     description: 'Which year this course is taught on',
     example: 2023,
   })
   semesterYear!: number
 
-  @IsEnum(Season)
   @ApiProperty({
     description: 'Which season this course is taught on',
     example: Season.FALL,
@@ -60,8 +57,6 @@ export class CreateCourseDto {
   })
   semesterSeason!: Season
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Course description (Icelandic)',
     example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -69,8 +64,6 @@ export class CreateCourseDto {
   @ApiPropertyOptional()
   descriptionIs?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Course description (English)',
     example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
@@ -78,8 +71,6 @@ export class CreateCourseDto {
   @ApiPropertyOptional()
   descriptionEn?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description:
       'External url  for the course from the university web page (Icelandic)',
@@ -88,8 +79,6 @@ export class CreateCourseDto {
   @ApiPropertyOptional()
   externalUrlIs?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description:
       'External url  for the course from the university web page (English)',

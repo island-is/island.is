@@ -28,6 +28,12 @@ export class Course {
   nameEn!: string
 
   @ApiProperty({
+    description: 'Whether the course is required to take within the major',
+    example: true,
+  })
+  required!: boolean
+
+  @ApiProperty({
     description: 'University ID',
     example: '00000000-0000-0000-0000-000000000000',
   })

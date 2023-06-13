@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { CourseDetails, CourseDetailsResponse, CourseResponse } from './model'
+import { CourseDetailsResponse, CourseResponse } from './model'
 import { PaginateInput } from '../major/types'
-import { CreateCourseDto, UpdateCourseDto } from './dto'
 
 //TODOx connect with new university DB
 
@@ -16,21 +15,6 @@ export class CourseService {
   }
 
   async getCourseDetails(id: string): Promise<CourseDetailsResponse> {
-    throw Error('Not ready')
-  }
-
-  async createCourse(courseDto: CreateCourseDto): Promise<CourseDetails> {
-    throw Error('Not ready')
-  }
-
-  async updateCourse(
-    externalId: string,
-    courseDto: UpdateCourseDto,
-  ): Promise<CourseDetails> {
-    throw Error('Not ready')
-  }
-
-  async deleteCourse(externalId: string): Promise<number> {
     throw Error('Not ready')
   }
 }

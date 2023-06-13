@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class University {
   @ApiProperty({
@@ -19,6 +19,27 @@ export class University {
     example: 'Háskóli Íslands',
   })
   name!: string
+
+  @ApiProperty({
+    description: 'Contentful key for university name',
+    example: 'UniversityOfIcelandName',
+  })
+  @ApiPropertyOptional()
+  contentfulKeyName?: string
+
+  @ApiProperty({
+    description: 'Contentful key for university description',
+    example: 'UniversityOfIcelandDescription',
+  })
+  @ApiPropertyOptional()
+  contentfulKeyLogoDescription?: string
+
+  @ApiProperty({
+    description: 'Contentful key for university logo',
+    example: 'UniversityOfIcelandLogo',
+  })
+  @ApiPropertyOptional()
+  contentfulKeyLogo?: string
 }
 
 export class UniversityResponse {

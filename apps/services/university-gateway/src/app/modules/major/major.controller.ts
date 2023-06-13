@@ -1,26 +1,14 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common'
+import { Controller, Get, Param, Query } from '@nestjs/common'
 import { MajorService } from './major.service'
 import {
-  ApiBody,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { MajorDetails, MajorDetailsResponse, MajorResponse } from './model'
+import { MajorDetailsResponse, MajorResponse } from './model'
 import { DegreeType, Season } from './types'
-import { CreateMajorDto, UpdateMajorDto } from './dto'
 
 @ApiTags('Major')
 @Controller()
@@ -45,6 +33,12 @@ export class MajorController {
     required: false,
     description:
       'The client provides the value of endCursor from the previous response to query the next page of limit number of data items.',
+  })
+  @ApiQuery({
+    name: 'active',
+    required: false,
+    description:
+      'If true, will return only active majors. If false, will return only inactive majors. If undefined, will return both active and inactive.',
   })
   @ApiQuery({
     name: 'year',
@@ -73,12 +67,13 @@ export class MajorController {
     description: 'Returns all majors for the selected filtering',
   })
   @ApiOperation({
-    summary: 'Get all majors (used by application system)',
+    summary: 'Get all majors',
   })
   async getMajors(
     @Query('limit') limit: number,
     @Query('before') before: string,
     @Query('after') after: string,
+    @Query('active') active: boolean,
     @Query('year') year: number,
     @Query('season') season: Season,
     @Query('universityId') universityId: string,
@@ -86,6 +81,7 @@ export class MajorController {
   ): Promise<MajorResponse> {
     return this.majorService.getMajors(
       { after, before, limit },
+      active,
       year,
       season,
       universityId,
@@ -105,68 +101,11 @@ export class MajorController {
     description: 'Returns the major by ID',
   })
   @ApiOperation({
-    summary: 'Get major (and courses) by ID (used by application system)',
+    summary: 'Get major (and courses) by ID',
   })
   async getMajorDetails(
     @Param('id') id: string,
   ): Promise<MajorDetailsResponse> {
     return this.majorService.getMajorDetails(id)
-  }
-
-  @Post('majors')
-  @ApiBody({
-    type: CreateMajorDto,
-  })
-  @ApiCreatedResponse({
-    type: MajorDetails,
-    description: 'Returns the major that was created',
-  })
-  @ApiOperation({
-    summary: 'Create major (and courses) (used by universities)',
-  })
-  async createMajor(@Body() majorDto: CreateMajorDto): Promise<MajorDetails> {
-    return this.majorService.createMajor(majorDto)
-  }
-
-  @Put('majors/external/:externalId')
-  @ApiParam({
-    name: 'externalId',
-    required: true,
-    allowEmptyValue: false,
-    description: 'Major external ID',
-  })
-  @ApiBody({
-    type: UpdateMajorDto,
-  })
-  @ApiOkResponse({
-    type: MajorDetails,
-    description: 'Returns the updated major',
-  })
-  @ApiOperation({
-    summary: 'Update major (and courses) (used by universities)',
-  })
-  async updateMajor(
-    @Param('externalId') externalId: string,
-    @Body() majorDto: UpdateMajorDto,
-  ): Promise<MajorDetails> {
-    return this.majorService.updateMajor(externalId, majorDto)
-  }
-
-  @Delete('majors/external/:externalId')
-  @ApiParam({
-    name: 'externalId',
-    required: true,
-    allowEmptyValue: false,
-    description: 'Major External ID',
-  })
-  @ApiOkResponse({
-    type: Number,
-    description: 'Returns the number of majors that was deleted',
-  })
-  @ApiOperation({
-    summary: 'Delete major (and courses) (used by universities)',
-  })
-  async deleteMajor(@Param('externalId') externalId: string): Promise<number> {
-    return this.majorService.deleteMajor(externalId)
   }
 }

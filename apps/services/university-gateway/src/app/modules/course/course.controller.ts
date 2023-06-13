@@ -1,25 +1,13 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common'
+import { Controller, Get, Param, Query } from '@nestjs/common'
 import { CourseService } from './course.service'
 import {
-  ApiBody,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { CourseDetails, CourseDetailsResponse, CourseResponse } from './model'
-import { CreateCourseDto, UpdateCourseDto } from './dto'
+import { CourseDetailsResponse, CourseResponse } from './model'
 
 @ApiTags('Course')
 @Controller()
@@ -60,7 +48,7 @@ export class CourseController {
     description: 'Returns all courses for the selected filtering',
   })
   @ApiOperation({
-    summary: 'Get all courses (used by application system)',
+    summary: 'Get all courses',
   })
   async getCourses(
     @Query('limit') limit: number,
@@ -88,70 +76,11 @@ export class CourseController {
     description: 'Returns the course by ID',
   })
   @ApiOperation({
-    summary: 'Get course by ID (used by application system)',
+    summary: 'Get course by ID',
   })
   async getCourseDetails(
     @Param('id') id: string,
   ): Promise<CourseDetailsResponse> {
     return this.courseService.getCourseDetails(id)
-  }
-
-  @Post('courses')
-  @ApiBody({
-    type: CreateCourseDto,
-  })
-  @ApiCreatedResponse({
-    type: CourseDetails,
-    description: 'Returns the course that was created',
-  })
-  @ApiOperation({
-    summary: 'Create course (used by universities)',
-  })
-  async createCourse(
-    @Body() courseDto: CreateCourseDto,
-  ): Promise<CourseDetails> {
-    return this.courseService.createCourse(courseDto)
-  }
-
-  @Put('courses/external/:externalId')
-  @ApiParam({
-    name: 'externalId',
-    required: true,
-    allowEmptyValue: false,
-    description: 'Course external ID',
-  })
-  @ApiBody({
-    type: UpdateCourseDto,
-  })
-  @ApiOkResponse({
-    type: CourseDetails,
-    description: 'Returns the updated course',
-  })
-  @ApiOperation({
-    summary: 'Update course (used by universities)',
-  })
-  async updateCourse(
-    @Param('externalId') externalId: string,
-    @Body() courseDto: UpdateCourseDto,
-  ): Promise<CourseDetails> {
-    return this.courseService.updateCourse(externalId, courseDto)
-  }
-
-  @Delete('courses/external/:externalId')
-  @ApiParam({
-    name: 'externalId',
-    required: true,
-    allowEmptyValue: false,
-    description: 'Course external ID',
-  })
-  @ApiOkResponse({
-    type: Number,
-    description: 'Returns the number of courses that was deleted',
-  })
-  @ApiOperation({
-    summary: 'Delete course (used by universities)',
-  })
-  async deleteCourse(@Param('externalId') externalId: string): Promise<number> {
-    return this.courseService.deleteCourse(externalId)
   }
 }

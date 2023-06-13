@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { MajorDetails, MajorDetailsResponse, MajorResponse } from './model'
+import { MajorDetailsResponse, MajorResponse } from './model'
 import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
 import { DegreeType, PaginateInput, Season } from './types'
-import { CreateMajorDto, UpdateMajorDto } from './dto'
 
 //TODOx connect with new university DB
 
@@ -14,6 +13,7 @@ export class MajorService {
 
   async getMajors(
     { after, before, limit }: PaginateInput,
+    active: boolean,
     year: number,
     season: Season,
     universityId: string,
@@ -23,21 +23,6 @@ export class MajorService {
   }
 
   async getMajorDetails(id: string): Promise<MajorDetailsResponse> {
-    throw Error('Not ready')
-  }
-
-  async createMajor(majorDto: CreateMajorDto): Promise<MajorDetails> {
-    throw Error('Not ready')
-  }
-
-  async updateMajor(
-    externalId: string,
-    majorDto: UpdateMajorDto,
-  ): Promise<MajorDetails> {
-    throw Error('Not ready')
-  }
-
-  async deleteMajor(externalId: string): Promise<number> {
     throw Error('Not ready')
   }
 }

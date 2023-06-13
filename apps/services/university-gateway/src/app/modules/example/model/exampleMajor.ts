@@ -1,68 +1,51 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import {
-  IsArray,
-  IsDate,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator'
-import { DegreeType, InterestTag, Season, StudyType } from '../types'
-import { CreateCourseDto } from '../../course/dto'
-import { MajorOtherFieldDto } from './majorOtherFieldDto'
+import { DegreeType, InterestTag, Season, StudyType } from '../../major/types'
+import { ExampleCourse } from './exampleCourse'
+import { ExampleMajorOtherField } from './exampleMajorOtherField'
 
-export class CreateMajorDto {
-  @IsString()
+export class ExampleMajor {
   @ApiProperty({
     description: 'External ID for the major (from University)',
     example: 'ABC12345',
   })
   externalId!: string
 
-  @IsString()
   @ApiProperty({
     description: 'Major name (Icelandic)',
     example: 'Tölvunarfræði',
   })
   nameIs!: string
 
-  @IsString()
   @ApiProperty({
     description: 'Major name (English)',
     example: 'Computer science',
   })
   nameEn!: string
 
-  @IsUUID()
-  @ApiProperty({
-    description: 'University ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
-  universityId!: string
+  // @ApiProperty({
+  //   description: 'University ID',
+  //   example: '00000000-0000-0000-0000-000000000000',
+  // })
+  // universityId!: string
 
-  @IsString()
   @ApiProperty({
     description: 'Name of the department that the major belongs to (Icelandic)',
     example: 'Verkfræði og náttúruvísindasvið',
   })
   departmentNameIs!: string
 
-  @IsString()
   @ApiProperty({
     description: 'Name of the department that the major belongs to (English)',
     example: 'Engineering and Natural Sciences',
   })
   departmentNameEn!: string
 
-  @IsNumber()
   @ApiProperty({
     description: 'Which year this major started on',
     example: 2023,
   })
   startingSemesterYear!: number
 
-  @IsEnum(Season)
   @ApiProperty({
     description: 'Which season this major started on',
     example: Season.FALL,
@@ -70,21 +53,18 @@ export class CreateMajorDto {
   })
   startingSemesterSeason!: Season
 
-  @IsDate()
   @ApiProperty({
     description: 'When registration for this major opens',
     example: new Date('2023-05-01'),
   })
   registrationStart!: Date
 
-  @IsDate()
   @ApiProperty({
     description: 'When registration for this major closes',
     example: new Date('2023-08-01'),
   })
   registrationEnd!: Date
 
-  @IsEnum(DegreeType)
   @ApiProperty({
     description: 'Degree type',
     example: DegreeType.UNDERGRADUATE,
@@ -92,22 +72,18 @@ export class CreateMajorDto {
   })
   degreeType!: DegreeType
 
-  @IsString()
   @ApiProperty({
     description: 'Degree abbreviation',
     example: 'BSc',
   })
   degreeAbbreviation!: string
 
-  @IsNumber()
   @ApiProperty({
     description: 'Number of course credits (in ECTS)',
     example: '180',
   })
   credits!: number
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Major description (Icelandic)',
     example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -115,8 +91,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   descriptionIs?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Major description (English)',
     example: 'Mauris a justo arcu. Orci varius natoque penatibus.',
@@ -124,8 +98,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   descriptionEn?: string
 
-  @IsNumber()
-  @IsOptional()
   @ApiProperty({
     description: 'Total duration for this major (in years)',
     example: 3,
@@ -133,8 +105,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   durationInYears?: number
 
-  @IsNumber()
-  @IsOptional()
   @ApiProperty({
     description: 'Cost for major (per year)',
     example: 75000,
@@ -142,15 +112,12 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   costPerYear?: number
 
-  @IsString()
   @ApiProperty({
     description: 'ISCED code for major',
     example: '481',
   })
   iscedCode!: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description:
       'External url  for the major from the university web page (Icelandic)',
@@ -159,8 +126,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   externalUrlIs?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description:
       'External url  for the major from the university web page (English)',
@@ -169,8 +134,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   externalUrlEn?: string
 
-  @IsEnum(StudyType)
-  @IsArray()
   @ApiProperty({
     description: 'Study types available for the major',
     example: [StudyType.ON_SITE],
@@ -179,8 +142,6 @@ export class CreateMajorDto {
   })
   studyTypes!: [StudyType]
 
-  @IsEnum(InterestTag)
-  @IsArray()
   @ApiProperty({
     description:
       'Interest tag for the major (to be able to categorize majors after interest)',
@@ -190,8 +151,6 @@ export class CreateMajorDto {
   })
   interestTags?: [InterestTag]
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Admission requirements for major (Icelandic)',
     example: 'Nemandinn verður að hafa klárað stúdentspróf',
@@ -199,8 +158,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   admissionRequirementsIs?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Admission requirements for major (English)',
     example: 'The student needs to have finished the matriculation exam',
@@ -208,8 +165,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   admissionRequirementsEn?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Study requirements for major (Icelandic)',
     example: 'Nemandinn verður að vera með lágmarkseinkunn 6 í öllum áföngum',
@@ -217,8 +172,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   studyRequirementsIs?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Study requirements for major (English)',
     example: 'The student must have a minimum grade of 6 in all courses',
@@ -226,8 +179,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   studyRequirementsEn?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Cost information for major (Icelandic)',
     example: 'Það verður að borga 10.000 kr staðfestingargjald fyrir 1. ágúst',
@@ -235,8 +186,6 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   costInformationIs?: string
 
-  @IsString()
-  @IsOptional()
   @ApiProperty({
     description: 'Cost information for major (English)',
     example: 'A confirmation fee of ISK 10.000 must be paid before August 1',
@@ -244,18 +193,24 @@ export class CreateMajorDto {
   @ApiPropertyOptional()
   costInformationEn?: string
 
-  @IsArray()
   @ApiProperty({
     description: 'Column description for data',
-    type: [CreateCourseDto],
+    type: [ExampleCourse],
   })
-  courses!: CreateCourseDto[]
+  courses!: ExampleCourse[]
 
-  @IsArray()
   @ApiProperty({
     description:
       'Other fields that should be displayed in the application for the major',
-    type: [MajorOtherFieldDto],
+    type: [ExampleMajorOtherField],
   })
-  otherFields?: MajorOtherFieldDto[]
+  otherFields?: ExampleMajorOtherField[]
+}
+
+export class ExampleMajorResponse {
+  @ApiProperty({
+    description: 'Major data',
+    type: [ExampleMajor],
+  })
+  data!: ExampleMajor[]
 }

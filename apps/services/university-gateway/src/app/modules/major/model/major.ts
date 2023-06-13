@@ -19,6 +19,13 @@ export class Major {
   externalId!: string
 
   @ApiProperty({
+    description:
+      'Whether the major is active and should be displayed on the external web',
+    example: true,
+  })
+  active!: boolean
+
+  @ApiProperty({
     description: 'Major name (Icelandic)',
     example: 'Tölvunarfræði',
   })

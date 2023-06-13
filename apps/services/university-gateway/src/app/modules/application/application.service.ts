@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Application, ApplicationResponse } from './model'
 import { UgReykjavikUniversityClient } from '@island.is/clients/university-gateway/reykjavik-university'
-import {
-  CreateApplicationDto,
-  UpdateApplicationStatusDto,
-  UpdateApplicationExtradataDto,
-} from './dto'
+import { CreateApplicationDto, UpdateApplicationDto } from './dto'
 
 // TODOx connect to ReykjavikUniversityClient and UniversityOfIcelandClient
 
@@ -25,16 +21,9 @@ export class ApplicationService {
     throw Error('Not ready')
   }
 
-  async updateApplicationStatus(
+  async updateApplication(
     id: string,
-    applicationDto: UpdateApplicationStatusDto,
-  ): Promise<Application> {
-    throw Error('Not ready')
-  }
-
-  async updateApplicationExtradata(
-    id: string,
-    applicationDto: UpdateApplicationExtradataDto,
+    applicationDto: UpdateApplicationDto,
   ): Promise<Application> {
     throw Error('Not ready')
   }
