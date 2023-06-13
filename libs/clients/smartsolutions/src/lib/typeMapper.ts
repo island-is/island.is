@@ -57,7 +57,7 @@ export function mergeInputFields(
   const updatedInputFields = original
 
   for (const field of toUpdate) {
-    const fieldToUpdate = updatedInputFields.find(
+    const fieldToUpdate = original.find(
       (v) => v.identifier === field.identifier,
     )
 
@@ -70,5 +70,6 @@ export function mergeInputFields(
     //update!
     updatedInputFields[index].value = field.value
   }
+
   return updatedInputFields
 }
