@@ -79,7 +79,7 @@ export const AdvicesScreen = () => {
                 item.adviceDocuments?.length !== 0 ? (
                   <FocusableBox
                     onClick={() => handleDropdown(item.id)}
-                    component="div"
+                    component="button"
                   >
                     <DropdownMenu
                       title={loc.card.dropdownMenuTitle}
