@@ -30,6 +30,9 @@ export const dataSchema = z.object({
     year: z.string(),
     month: z.string(),
   }),
+  onePaymentPerYear: z.object({
+    question: z.enum([YES, NO]),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

@@ -22,6 +22,7 @@ import Logo from '../assets/Logo'
 import { NO, YES } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { getApplicationAnswers } from '../lib/oldAgePensionUtils'
+import { NationalRegistryResidenceHistoryApi } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'OldAgePensionPrerequisites',
@@ -67,6 +68,11 @@ export const PrerequisitesForm: Form = buildForm({
                   subTitle:
                     oldAgePensionFormMessage.shared.skraInformationSubTitle,
                 }),
+                buildDataProviderItem({
+                  provider: NationalRegistryResidenceHistoryApi,
+                  title: 'Búsetusaga',
+                  subTitle: 'Búsetusaga frá Þjóðskrá.',
+                }),
               ],
             }),
           ],
@@ -102,9 +108,13 @@ export const PrerequisitesForm: Form = buildForm({
                       answers,
                     )
 
-                    return pensionFundQuestion === NO
+                      return pensionFundQuestion === NO
+                    },
                   },
-                }),
+                  {
+                    type: 'warning',
+                  },
+                ),
                 buildRadioField({
                   id: 'questions.fishermen',
                   title: oldAgePensionFormMessage.shared.fishermenQuestionTitle,
