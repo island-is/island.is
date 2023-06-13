@@ -88,6 +88,20 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return result
   }
 
+  private getAgeFromDateOfBirth(dateOfBirth: Date): number {
+    const today: Date = new Date()
+    const birthDate: Date = dateOfBirth
+    let age: number = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff: number = today.getMonth() - birthDate.getMonth()
+    const dayDiff: number = today.getDate() - birthDate.getDate()
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--
+    }
+
+    return age
+  }
+
   private async getIndividual(
     nationalId: string,
   ): Promise<NationalRegistryIndividual | null> {
@@ -99,7 +113,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
       person && {
         nationalId: person.nationalId,
         fullName: person.name,
-        age: kennitala.info(person.nationalId).age,
+        age: this.getAgeFromDateOfBirth(person.birthdate),
         citizenship: citizenship && {
           code: citizenship.countryCode,
           name: citizenship.countryName,
