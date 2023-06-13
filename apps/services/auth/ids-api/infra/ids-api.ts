@@ -72,9 +72,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
-      NOVA_URL: '/k8s/service-portal-api/NOVA_URL',
-      NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME',
-      NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD',
+      NOVA_URL: '/k8s/services-auth/NOVA_URL',
+      NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
+      NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
     .readiness('/liveness')

@@ -1,7 +1,13 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
-import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  Auth,
+  CurrentAuth,
+  IdsAuthGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
@@ -30,10 +36,10 @@ export class NotificationsController {
     description: 'Send a message via SMS.',
     response: { status: 202 },
   })
-  sendSms(@Body() message: SmsMessage): Promise<void> {
+  sendSms(@CurrentAuth() auth: Auth, @Body() message: SmsMessage): Promise<void> {
     return this.auditService.auditPromise(
       {
-        system: true,
+        auth,
         action: 'sms',
         namespace,
         meta: { toPhoneNumber: message.toPhoneNumber },
