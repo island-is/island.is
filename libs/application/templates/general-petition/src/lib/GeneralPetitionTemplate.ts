@@ -8,6 +8,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { ApiModuleActions, States, Roles } from '../constants'
@@ -81,7 +82,7 @@ const GeneralPetitionTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi],
+              api: [NationalRegistryUserApi, UserProfileApi],
               delete: true,
             },
           ],

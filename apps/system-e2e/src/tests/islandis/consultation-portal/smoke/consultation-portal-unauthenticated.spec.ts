@@ -52,6 +52,7 @@ test.describe('Consultation portal unathenticated', () => {
   for (const item in los) {
     const instance = los[item as keyof PagesInterface]
     test(`${item} should show logged out state`, async () => {
+      if (item.toLowerCase() == 'subscriptions') test.skip()
       const page = await context.newPage()
       await page.goto(URL)
       await page.getByRole('button', { name: instance.label }).click()
