@@ -852,8 +852,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        user &&
-        isExtendedCourtRole(user.role) &&
+        isExtendedCourtRole(user?.role) &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       children: [
