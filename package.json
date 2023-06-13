@@ -98,7 +98,7 @@
     "@nestjs/jwt": "8.0.1",
     "@nestjs/passport": "8.2.2",
     "@nestjs/platform-express": "9.4.2",
-    "@nestjs/sequelize": "8.0.0",
+    "@nestjs/sequelize": "9.0.2",
     "@nestjs/swagger": "6.3.0",
     "@nestjs/terminus": "7.0.1",
     "@nx/next": "16.3.2",

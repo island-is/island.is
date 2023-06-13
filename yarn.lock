@@ -10182,19 +10182,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/sequelize@npm:8.0.0":
-  version: 8.0.0
-  resolution: "@nestjs/sequelize@npm:8.0.0"
+"@nestjs/sequelize@npm:9.0.2":
+  version: 9.0.2
+  resolution: "@nestjs/sequelize@npm:9.0.2"
   dependencies:
-    uuid: 8.3.2
+    uuid: 9.0.0
   peerDependencies:
-    "@nestjs/common": ^8.0.0
-    "@nestjs/core": ^8.0.0
+    "@nestjs/common": ^8.0.0 || ^9.0.0
+    "@nestjs/core": ^8.0.0 || ^9.0.0
     reflect-metadata: ^0.1.13
     rxjs: ^7.2.0
     sequelize: ^6.3.5
     sequelize-typescript: ^2.0.0
-  checksum: 79b501af1604d111ec2882151e7921313c07c2e5de9b0c2138da8e6fa42311b4c0425d4513cc340da8fc645b22f24c0c54429e64ecf57ccd78cb6072fcbff4b7
+  checksum: f7d6aaf257619b502cab0eac5cd45b554a2c3eed2bfd511b4ac24621f949f600bd58ca236b8de1e864d8c4ac07fa80aabded98c16b263612306e5d00b4450e1e
   languageName: node
   linkType: hard
 
@@ -32665,7 +32665,7 @@ __metadata:
     "@nestjs/passport": 8.2.2
     "@nestjs/platform-express": 9.4.2
     "@nestjs/schematics": 9.2.0
-    "@nestjs/sequelize": 8.0.0
+    "@nestjs/sequelize": 9.0.2
     "@nestjs/swagger": 6.3.0
     "@nestjs/terminus": 7.0.1
     "@nestjs/testing": 9.4.2
@@ -52025,6 +52025,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"uuid@npm:9.0.0, uuid@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "uuid@npm:9.0.0"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 8dd2c83c43ddc7e1c71e36b60aea40030a6505139af6bee0f382ebcd1a56f6cd3028f7f06ffb07f8cf6ced320b76aea275284b224b002b289f89fe89c389b028
+  languageName: node
+  linkType: hard
+
 "uuid@npm:^3.2.1, uuid@npm:^3.3.2, uuid@npm:^3.4.0":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
@@ -52040,15 +52049,6 @@ __metadata:
   bin:
     uuid: dist/bin/uuid
   checksum: f5b7b5cc28accac68d5c083fd51cca64896639ebd4cca88c6cfb363801aaa83aa439c86dfc8446ea250a7a98d17afd2ad9e88d9d4958c79a412eccb93bae29de
-  languageName: node
-  linkType: hard
-
-"uuid@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "uuid@npm:9.0.0"
-  bin:
-    uuid: dist/bin/uuid
-  checksum: 8dd2c83c43ddc7e1c71e36b60aea40030a6505139af6bee0f382ebcd1a56f6cd3028f7f06ffb07f8cf6ced320b76aea275284b224b002b289f89fe89c389b028
   languageName: node
   linkType: hard
 
