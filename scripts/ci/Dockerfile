@@ -151,23 +151,6 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
-FROM playwright-image as output-local
-ARG APP_HOME
-
-
-# node user exists in the base image
-RUN mkdir -p /out \
-  && chown node:node /out
-
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
-
-USER pwuser
-
-ENTRYPOINT ["./entrypoint.sh"]
-
-FROM output-base as output-native
-RUN echo "not-implemented"
-
 
 
 FROM base-image as localrun
@@ -188,8 +171,11 @@ RUN ["yarn", "playwright", "install"]
 
 VOLUME /cache
 VOLUME /data
-
 COPY . /data/
 
-
 CMD [ "yarn", "install" ]
+
+
+
+FROM output-base as output-native
+RUN echo "not-implemented"
