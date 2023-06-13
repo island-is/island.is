@@ -158,26 +158,56 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseFile[]> {
-    return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetDocumentListById/${caseId}`,
-    )
+    const promise = this.config.policeCaseApiV2Available
+      ? this.fetchPoliceDocumentApi(
+          `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
+        )
+      : this.fetchPoliceDocumentApi(
+          `${this.xRoadPath}/GetDocumentListById/${caseId}`,
+        )
+
+    return promise
       .then(async (res: Response) => {
         if (res.ok) {
-          const response = await res.json()
+          if (this.config.policeCaseApiV2Available) {
+            const response = await res
+              .json()
+              .then((result) =>
+                typeof result === 'string' ? JSON.parse(result) : result,
+              )
 
-          return response.map(
-            (file: {
-              rvMalSkjolMals_ID: string
-              heitiSkjals: string
-              malsnumer: string
-            }) => ({
-              id: file.rvMalSkjolMals_ID,
-              name: file.heitiSkjals.endsWith('.pdf')
-                ? file.heitiSkjals
-                : `${file.heitiSkjals}.pdf`,
-              policeCaseNumber: file.malsnumer,
-            }),
-          )
+            return (
+              response.skjol?.map(
+                (file: {
+                  rvMalSkjolMals_ID: string
+                  heitiSkjals: string
+                  malsnumer: string
+                }) => ({
+                  id: file.rvMalSkjolMals_ID,
+                  name: file.heitiSkjals.endsWith('.pdf')
+                    ? file.heitiSkjals
+                    : `${file.heitiSkjals}.pdf`,
+                  policeCaseNumber: file.malsnumer,
+                }),
+              ) ?? []
+            )
+          } else {
+            const response = await res.json()
+
+            return response.map(
+              (file: {
+                rvMalSkjolMals_ID: string
+                heitiSkjals: string
+                malsnumer: string
+              }) => ({
+                id: file.rvMalSkjolMals_ID,
+                name: file.heitiSkjals.endsWith('.pdf')
+                  ? file.heitiSkjals
+                  : `${file.heitiSkjals}.pdf`,
+                policeCaseNumber: file.malsnumer,
+              }),
+            )
+          }
         }
 
         const reason = await res.text()
@@ -251,60 +281,41 @@ export class PoliceService {
     rulingPdf: string,
     custodyNoticePdf?: string,
   ): Promise<boolean> {
-    const promise = this.config.policeCaseApiV2Available
-      ? this.fetchPoliceCaseApi(`${this.xRoadPath}/V2/UpdateRVCase/${caseId}`, {
-          method: 'PUT',
-          headers: {
-            accept: '*/*',
-            'Content-Type': 'application/json',
-            'X-Road-Client': this.config.clientId,
-            'X-API-KEY': this.config.policeApiKey,
-          },
-          agent: this.agent,
-          body: JSON.stringify({
-            rvMal_ID: caseId,
-            caseNumber: policeCaseNumber,
-            ssn: defendantNationalId,
-            type: caseType,
-            courtVerdict: caseState,
-            expiringDate: validToDate?.toISOString(),
-            courtVerdictString: caseConclusion,
-            courtDocuments: [
-              { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
-              { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
-              { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
-              ...(custodyNoticePdf
-                ? [
-                    {
-                      type: 'RVVI',
-                      courtDocument: Base64.btoa(custodyNoticePdf),
-                    },
-                  ]
-                : []),
-            ],
-          }),
-        } as RequestInit)
-      : this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
-          method: 'PUT',
-          headers: {
-            accept: '*/*',
-            'Content-Type': 'application/json',
-            'X-Road-Client': this.config.clientId,
-            'X-API-KEY': this.config.policeApiKey,
-          },
-          agent: this.agent,
-          body: JSON.stringify({
-            rvMal_ID: caseId,
-            caseNumber: policeCaseNumber,
-            ssn: defendantNationalId,
-            type: caseType,
-            courtVerdict: caseState,
-            courtVerdictString: caseConclusion,
-            courtDocument: Base64.btoa(courtRecordPdf),
-          }),
-        } as RequestInit)
-
-    return promise
+    return this.fetchPoliceCaseApi(
+      `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
+      {
+        method: 'PUT',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+          'X-API-KEY': this.config.policeApiKey,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          rvMal_ID: caseId,
+          caseNumber: policeCaseNumber,
+          ssn: defendantNationalId,
+          type: caseType,
+          courtVerdict: caseState,
+          expiringDate: validToDate?.toISOString(),
+          courtVerdictString: caseConclusion,
+          courtDocuments: [
+            { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
+            { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
+            { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+            ...(custodyNoticePdf
+              ? [
+                  {
+                    type: 'RVVI',
+                    courtDocument: Base64.btoa(custodyNoticePdf),
+                  },
+                ]
+              : []),
+          ],
+        }),
+      } as RequestInit,
+    )
       .then(async (res) => {
         if (res.ok) {
           return true
