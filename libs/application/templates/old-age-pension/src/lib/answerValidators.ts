@@ -21,7 +21,7 @@ import {
 } from './constants'
 
 const PERIOD = 'period'
-const FILEUPLOADPERIOD = 'fileUploadPeriod'
+const FILEUPLOADPERIOD = 'fileUploadEarlyPenFisher'
 
 const buildError = (message: StaticText, path: string) =>
   buildValidationError(`${path}`)(message)
@@ -86,7 +86,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       if (isEmpty((obj as { pension: unknown[] }).pension)) {
         return buildError(
           validatorErrorMessages.requireAttachment,
-          'fileUploadPeriod.pension',
+          'fileUploadEarlyPenFisher.pension',
         )
       }
     }
@@ -99,7 +99,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       if (isEmpty((obj as { earlyRetirement: unknown[] }).earlyRetirement)) {
         return buildError(
           validatorErrorMessages.requireAttachment,
-          'fileUploadPeriod.earlyRetirement',
+          'fileUploadEarlyPenFisher.earlyRetirement',
         )
       }
     }
@@ -108,7 +108,7 @@ export const answerValidators: Record<string, AnswerValidator> = {
       if (isEmpty((obj as { fishermen: unknown[] }).fishermen)) {
         return buildError(
           validatorErrorMessages.requireAttachment,
-          'fileUploadPeriod.fishermen',
+          'fileUploadEarlyPenFisher.fishermen',
         )
       }
     }

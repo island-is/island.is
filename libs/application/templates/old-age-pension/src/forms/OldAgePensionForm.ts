@@ -288,11 +288,11 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'fileUploadPeriod',
+          id: 'fileUploadEarlyPenFisher',
           title: oldAgePensionFormMessage.fileUpload.title,
           children: [
             buildFileUploadField({
-              id: 'fileUploadPeriod.earlyRetirement',
+              id: 'fileUploadEarlyPenFisher.earlyRetirement',
               title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
@@ -329,7 +329,7 @@ export const OldAgePensionForm: Form = buildForm({
               },
             }),
             buildFileUploadField({
-              id: 'fileUploadPeriod.pension',
+              id: 'fileUploadEarlyPenFisher.pension',
               title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.pensionFileDescription,
@@ -347,7 +347,7 @@ export const OldAgePensionForm: Form = buildForm({
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
             }),
             buildFileUploadField({
-              id: 'fileUploadPeriod.fishermen',
+              id: 'fileUploadEarlyPenFisher.fishermen',
               title: oldAgePensionFormMessage.fileUpload.fishermenFileTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
