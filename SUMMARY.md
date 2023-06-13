@@ -242,6 +242,7 @@
   - [Core](libs/nest/core/README.md)
   - [Dataloader](libs/nest/dataloader/README.md)
   - [Feature Flags](libs/nest/feature-flags/README.md)
+  - [GraphQL](libs/nest/graphql/README.md)
   - [Pagination](libs/nest/pagination/README.md)
   - [Problem](libs/nest/problem/README.md)
   - [Sequelize](libs/nest/sequelize/README.md)
