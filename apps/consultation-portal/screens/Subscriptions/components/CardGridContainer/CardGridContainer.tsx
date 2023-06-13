@@ -43,7 +43,11 @@ const CardGridContainer = ({
         </Column>
         {isToggleable && (
           <Column width="content">
-            <FocusableBox onClick={onToggle} style={{ height: '24px' }}>
+            <FocusableBox
+              component="button"
+              onClick={onToggle}
+              style={{ height: '24px' }}
+            >
               <Icon
                 icon={!isToggled ? 'chevronUp' : 'chevronDown'}
                 color="blue400"
