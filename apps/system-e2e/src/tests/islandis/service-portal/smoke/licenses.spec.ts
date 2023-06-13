@@ -6,6 +6,7 @@ import { m } from '@island.is/service-portal/licenses/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - Skírteini', () => {
   let context: BrowserContext

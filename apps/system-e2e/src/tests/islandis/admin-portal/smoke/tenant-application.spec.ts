@@ -14,6 +14,8 @@ const homeUrl = `${
   '@island.is',
 )}/forrit/${encodeURIComponent(applicationId)}`
 
+test.use({ baseURL: urls.islandisBaseUrl })
+
 test.describe('Admin portal application', () => {
   let contextGranter: BrowserContext
 

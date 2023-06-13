@@ -3,6 +3,7 @@ import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur/`
+test.use({ baseURL: urls.islandisBaseUrl })
 
 const switchUser = async (page: Page, name?: string) => {
   await page.locator('data-testid=user-menu >> visible=true').click()

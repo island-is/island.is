@@ -9,6 +9,8 @@ const sessionHistoryUrl = icelandicAndNoPopupUrl(
   '/minarsidur/adgangsstyring/notkun',
 )
 
+test.use({ baseURL: urls.islandisBaseUrl })
+
 test.describe('Service portal, in session history', () => {
   let context: BrowserContext
 

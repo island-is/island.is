@@ -6,6 +6,7 @@ import { session } from '../../../../support/session'
 const homeUrl = `${
   urls.islandisBaseUrl
 }/stjornbord/innskraningarkerfi/${encodeURIComponent('@island.is')}/forrit`
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Admin portal tenant applications', () => {
   let contextGranter: BrowserContext

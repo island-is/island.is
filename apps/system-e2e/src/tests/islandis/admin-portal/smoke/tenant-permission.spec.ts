@@ -11,6 +11,8 @@ const homeUrl = `${
   '@admin.island.is',
 )}/rettindi/${encodeURIComponent(permissionId)}`
 
+test.use({ baseURL: urls.islandisBaseUrl })
+
 test.describe('Admin portal permission', () => {
   let contextGranter: BrowserContext
 

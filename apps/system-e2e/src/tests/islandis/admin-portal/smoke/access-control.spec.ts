@@ -3,6 +3,7 @@ import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord/`
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Admin portal access control', () => {
   let contextGranter: BrowserContext

@@ -5,6 +5,7 @@ import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/finance/messages'
 import { disableI18n } from '../../../../support/disablers'
 
+test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('MS - Fjármál overview', () => {
   let context: BrowserContext
 

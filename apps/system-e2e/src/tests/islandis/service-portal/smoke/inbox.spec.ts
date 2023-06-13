@@ -7,6 +7,7 @@ import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - Pósthólf overview', () => {
   let context: BrowserContext

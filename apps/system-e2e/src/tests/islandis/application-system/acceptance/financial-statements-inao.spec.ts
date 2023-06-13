@@ -4,6 +4,8 @@ import { session } from '../../../../support/session'
 import { urls } from '../../../../support/urls'
 import { createMockPdf, deleteMockPdf } from '../../../../support/utils'
 
+test.use({ baseURL: urls.islandisBaseUrl })
+
 test.describe('Financial Statements INAO', () => {
   let context: BrowserContext
 

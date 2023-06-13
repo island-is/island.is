@@ -6,6 +6,7 @@ import { session } from '../../../../support/session'
 type GetByRole = Pick<Page, 'getByRole'>['getByRole']
 type GetByRoleParameters = Parameters<GetByRole>
 
+test.use({ baseURL: urls.islandisBaseUrl })
 type Orgs = {
   organisationName: string
   organisationHome?: string

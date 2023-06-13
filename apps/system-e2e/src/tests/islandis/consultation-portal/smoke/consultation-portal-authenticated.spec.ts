@@ -13,6 +13,8 @@ import {
   URL_LOCALE,
 } from './consts'
 
+test.use({ baseURL: urls.islandisBaseUrl })
+
 test.describe('Consultation portal authenticated', () => {
   let context: BrowserContext
   const authLink = new RegExp(`^${urls.authUrl}`)
