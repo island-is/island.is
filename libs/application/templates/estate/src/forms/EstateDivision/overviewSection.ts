@@ -20,8 +20,66 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
-import { JA, NEI, YES } from '../../lib/constants'
+import { EstateTypes, JA, NEI, YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
+
+const commonOverviewFields = [
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'overviewDeceasedHeader',
+    title: m.theDeceased,
+    titleVariant: 'h3',
+    marginBottom: 'gutter',
+    space: 'gutter',
+  }),
+  ...deceasedInfoFields,
+  buildDescriptionField({
+    id: 'space0',
+    title: '',
+    marginBottom: 'gutter',
+    space: 'gutter',
+  }),
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'overviewEstateMembersHeader',
+    title: m.estateMembersTitle,
+    titleVariant: 'h3',
+    space: 'gutter',
+  }),
+  buildCustomField(
+    {
+      title: '',
+      id: 'estateMembersCards',
+      component: 'Cards',
+      doesNotRequireAnswer: true,
+    },
+    {
+      cards: ({ answers }: Application) =>
+        (
+          ((answers.estate as unknown) as EstateInfo).estateMembers?.filter(
+            (member) => member.enabled,
+          ) ?? []
+        ).map((member) => ({
+          title: member.name,
+          description: [
+            member.nationalId !== ''
+              ? formatNationalId(member.nationalId)
+              : member.dateOfBirth,
+            member.relation,
+            formatPhoneNumber(member.phone || ''),
+            member.email,
+          ],
+        })),
+    },
+  ),
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'space1',
+    title: '',
+    marginBottom: 'gutter',
+    space: 'gutter',
+  }),
+]
 
 export const overview = buildSection({
   id: 'overviewPermitToPostponeEstateDivision',
@@ -31,60 +89,15 @@ export const overview = buildSection({
       id: 'overviewPermitToPostponeEstateDivision',
       title: m.overviewTitle,
       description: m.overviewSubtitlePermitToPostpone,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.permitForUndividedEstate ||
+        (getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.estateWithoutAssets &&
+          (getValueViaPath(answers, 'estatePropertiesExist') === YES ||
+            getValueViaPath(answers, 'estateDebtsExist') === YES)),
       children: [
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'overviewDeceasedHeader',
-          title: m.theDeceased,
-          titleVariant: 'h3',
-          marginBottom: 'gutter',
-          space: 'gutter',
-        }),
-        ...deceasedInfoFields,
-        buildDescriptionField({
-          id: 'space0',
-          title: '',
-          marginBottom: 'gutter',
-          space: 'gutter',
-        }),
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'overviewEstateMembersHeader',
-          title: m.estateMembersTitle,
-          titleVariant: 'h3',
-          space: 'gutter',
-        }),
-        buildCustomField(
-          {
-            title: '',
-            id: 'estateMembersCards',
-            component: 'Cards',
-            doesNotRequireAnswer: true,
-          },
-          {
-            cards: ({ answers }: Application) =>
-              (
-                ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
-                  (member) => member.enabled,
-                ) ?? []
-              ).map((member) => ({
-                title: member.name,
-                description: [
-                  member.nationalId !== ''
-                    ? formatNationalId(member.nationalId)
-                    : member.dateOfBirth,
-                  member.relation,
-                  formatPhoneNumber(member.phone || ''),
-                  member.email,
-                ],
-              })),
-          },
-        ),
-        buildDescriptionField({
-          id: 'space1',
-          title: '',
-          space: 'gutter',
-        }),
+        ...commonOverviewFields,
         buildKeyValueField({
           label: m.doesWillExist,
           value: ({ answers }) =>
@@ -154,7 +167,7 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo).assets.filter(
+                ((answers.estate as unknown) as EstateInfo).assets?.filter(
                   (asset) => asset.enabled,
                 ) ?? []
               ).map((asset) => ({
@@ -534,6 +547,39 @@ export const overview = buildSection({
         }),
         buildSubmitField({
           id: 'permitToPostponeEstateDivision.submit',
+          title: '',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.submitApplication,
+              type: 'primary',
+            },
+          ],
+        }),
+      ],
+    }),
+    buildMultiField({
+      id: 'overviewEstateWithoutAssetsAndDebts',
+      title: m.overviewTitle,
+      description: m.overviewSubtitlePermitToPostpone,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets,
+      children: [
+        ...commonOverviewFields,
+        buildKeyValueField({
+          label: 'Eru til eignir?',
+          value: NEI,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: 'Eru til skuldir?',
+          value: NEI,
+          width: 'half',
+        }),
+        buildSubmitField({
+          id: 'estateWithoutAssetsAndDebts.submit',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [

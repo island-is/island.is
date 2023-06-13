@@ -42,13 +42,13 @@ export const getForm = ({
                 id: 'selectedEstate',
                 title: '',
                 width: 'full',
-                defaultValue: EstateTypes.permitToPostponeEstateDivision,
+                defaultValue: EstateTypes.permitForUndividedEstate,
                 options: [
                   ...(allowDivisionOfEstate
                     ? [
                         {
-                          value: EstateTypes.divisionOfEstate,
-                          label: EstateTypes.divisionOfEstate,
+                          value: EstateTypes.officialDivision,
+                          label: EstateTypes.officialDivision,
                         },
                       ]
                     : []),
@@ -63,8 +63,8 @@ export const getForm = ({
                   ...(allowPermitToPostponeEstateDivision
                     ? [
                         {
-                          value: EstateTypes.permitToPostponeEstateDivision,
-                          label: EstateTypes.permitToPostponeEstateDivision,
+                          value: EstateTypes.permitForUndividedEstate,
+                          label: EstateTypes.permitForUndividedEstate,
                         },
                       ]
                     : []),

@@ -1,13 +1,14 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../../lib/messages'
@@ -15,7 +16,14 @@ import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
 import { testamentInfo } from '../sharedSections/testamentInfo'
-import { UPLOAD_ACCEPT, YES } from '../../lib/constants'
+import {
+  EstateTypes,
+  JA,
+  NEI,
+  NO,
+  UPLOAD_ACCEPT,
+  YES,
+} from '../../lib/constants'
 
 export const form: Form = buildForm({
   id: 'permitToPostponeEstateDivisionForm',
@@ -53,10 +61,59 @@ export const form: Form = buildForm({
       id: 'testamentInfo',
       title: m.willsAndAgreements,
       children: [testamentInfo],
+      condition: (answers) => {
+        return answers.selectedEstate !== EstateTypes.estateWithoutAssets
+      },
+    }),
+    buildSection({
+      id: 'estatePropertiesExist',
+      title: 'Eru eignir og/eða skuldir til staðar?',
+      children: [
+        buildMultiField({
+          id: 'estatePropertiesExist',
+          title: 'Eru eignir og/eða skuldir til staðar?',
+          description: 'Eru eignir til staðar?',
+          children: [
+            buildRadioField({
+              id: 'estatePropertiesExist',
+              title: 'Eru eignir til staðar?',
+              width: 'half',
+              largeButtons: false,
+              options: [
+                { label: JA, value: YES },
+                { label: NEI, value: NO },
+              ],
+            }),
+            buildRadioField({
+              id: 'estateDebtsExist',
+              title: 'Eru skuldir til staðar?',
+              width: 'half',
+              largeButtons: false,
+              space: 'containerGutter',
+              options: [
+                { label: JA, value: YES },
+                { label: NEI, value: NO },
+              ],
+            }),
+          ],
+        }),
+      ],
+      condition: (answers) => {
+        return (
+          getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.estateWithoutAssets
+        )
+      },
     }),
     buildSection({
       id: 'estateProperties',
       title: m.properties,
+      condition: (answers) => {
+        return getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.estateWithoutAssets
+          ? getValueViaPath(answers, 'estatePropertiesExist') === YES
+          : true
+      },
       children: [
         buildSubSection({
           id: 'realEstate',
@@ -394,6 +451,12 @@ export const form: Form = buildForm({
     buildSection({
       id: 'debts',
       title: m.debtsTitle,
+      condition: (answers) => {
+        return getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.estateWithoutAssets
+          ? getValueViaPath(answers, 'estateDebtsExist') === YES
+          : true
+      },
       children: [
         buildMultiField({
           id: 'debts',
@@ -438,6 +501,9 @@ export const form: Form = buildForm({
     buildSection({
       id: 'estateAttachments',
       title: m.attachmentsTitle,
+      condition: (answers) => {
+        return answers.selectedEstate !== EstateTypes.estateWithoutAssets
+      },
       children: [
         buildMultiField({
           id: 'estateAttachments',

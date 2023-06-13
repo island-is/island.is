@@ -47,7 +47,7 @@ export const testamentInfo = buildMultiField({
       condition: (answers) =>
         getValueViaPath<string>(answers, 'estate.testament.wills') === YES &&
         getValueViaPath<string>(answers, 'selectedEstate') ===
-          EstateTypes.permitToPostponeEstateDivision,
+          EstateTypes.permitForUndividedEstate,
     }),
     buildDescriptionField({
       id: 'space',

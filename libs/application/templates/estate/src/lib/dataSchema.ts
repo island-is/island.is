@@ -64,9 +64,9 @@ export const estateSchema = z.object({
   }),
 
   selectedEstate: z.enum([
-    EstateTypes.divisionOfEstate,
+    EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
-    EstateTypes.permitToPostponeEstateDivision,
+    EstateTypes.permitForUndividedEstate,
     EstateTypes.divisionOfEstateByHeirs,
   ]),
 
