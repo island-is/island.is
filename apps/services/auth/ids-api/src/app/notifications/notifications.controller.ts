@@ -2,7 +2,6 @@ import { Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
-  Auth,
   CurrentAuth,
   IdsAuthGuard,
   Scopes,
@@ -14,6 +13,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import { SmsMessage } from './dto/sms-message'
 import { NotificationsService } from './notifications.service'
 
+import type { Auth } from '@island.is/auth-nest-tools'
 const namespace = '@island.is/auth/ids-api/v1/notifications'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
