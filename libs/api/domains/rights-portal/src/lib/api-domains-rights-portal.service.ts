@@ -9,6 +9,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { HealthCenterHistory } from './models/getHealthCenter.model'
 import { Dentists, DentistBill } from './models/getDentists.model'
+import add from 'date-fns/add'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'rights-portal-service'
@@ -33,14 +34,20 @@ export class RightsPortalService {
       .aidsandnutrition()
       .catch(handle404)
 
-  async getDentists(user: User): Promise<Dentists | null> {
+  async getDentists(
+    user: User,
+    dateFrom?: Date,
+    dateTo?: Date,
+  ): Promise<Dentists | null> {
     const api = this.dentistApi.withMiddleware(new AuthMiddleware(user as Auth))
     try {
       const res = await Promise.all([
         api.dentistsCurrent(),
         api.dentistsBills({
-          dateFrom: new Date().toISOString(),
-          dateTo: new Date().toISOString(),
+          dateFrom: dateFrom
+            ? dateFrom.toDateString()
+            : add(new Date(), { days: -7 }).toDateString(),
+          dateTo: dateTo ? dateTo.toDateString() : new Date().toDateString(),
         }),
       ])
 
@@ -56,6 +63,8 @@ export class RightsPortalService {
 
   async getHealthCenterHistory(
     user: User,
+    dateFrom?: Date,
+    dateTo?: Date,
   ): Promise<HealthCenterHistory | null> {
     const api = this.healthCenterApi.withMiddleware(
       new AuthMiddleware(user as Auth),
@@ -64,8 +73,10 @@ export class RightsPortalService {
       const res = await Promise.all([
         api.healthcentersCurrent(),
         api.healthcentersHistory({
-          dateFrom: new Date().toISOString(),
-          dateTo: new Date().toISOString(),
+          dateFrom: dateFrom
+            ? dateFrom.toDateString()
+            : add(new Date(), { days: -7 }).toDateString(),
+          dateTo: dateTo ? dateTo.toDateString() : new Date().toDateString(),
         }),
       ])
 

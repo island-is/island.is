@@ -4,6 +4,7 @@ import {
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  formatDate,
 } from '@island.is/service-portal/core'
 import { useGetDentistsQuery } from './Dentists.generated'
 import {
@@ -19,16 +20,30 @@ import {
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import { RightsPortalDentistBill } from '@island.is/service-portal/graphql'
+import add from 'date-fns/add'
+import { useState } from 'react'
 
 const Dentists = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
-  const { loading, error, data } = useGetDentistsQuery()
+  const [selectedDateFrom, setSelectedDateFrom] = useState(
+    add(new Date(), { years: -1 }),
+  )
+  const [selectedDateTo, setSelectedDateTo] = useState(new Date())
+
+  const { loading, error, data } = useGetDentistsQuery({
+    variables: {
+      input: {
+        dateFrom: selectedDateFrom,
+        dateTo: selectedDateTo,
+      },
+    },
+  })
 
   const dentistData = data?.rightsPortalDentists
 
-  if (!error && !loading) {
+  if (error && !loading) {
     return (
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
@@ -49,10 +64,14 @@ const Dentists = () => {
           <Text variant="medium">{rowItem.number}</Text>
         </T.Data>
         <T.Data>
-          <Text variant="medium">{rowItem.date}</Text>
+          <Text variant="medium">
+            {rowItem.date ? formatDate(rowItem.date) : ''}
+          </Text>
         </T.Data>
         <T.Data>
-          <Text variant="medium">{rowItem.refundDate}</Text>
+          <Text variant="medium">
+            {rowItem.refundDate ? formatDate(rowItem.refundDate) : ''}
+          </Text>
         </T.Data>
         <T.Data>
           <Text variant="medium">{`${rowItem.amount} kr.`}</Text>
@@ -91,15 +110,23 @@ const Dentists = () => {
               content={dentistData.currentDentistName ?? ''}
             />
             <Divider />
-            <Text variant="h3">{messages.yourDentistBills}</Text>
-            <Inline>
+            <Text variant="h3">{formatMessage(messages.yourDentistBills)}</Text>
+            <Inline space={2}>
               <DatePicker
+                size="sm"
                 label={formatMessage(m.dateFrom)}
                 placeholderText={undefined}
-              ></DatePicker>
+                selected={selectedDateFrom}
+                handleChange={(e) => setSelectedDateFrom(e)}
+                maxDate={add(selectedDateTo, { days: -1 })}
+              />
               <DatePicker
-                label={formatMessage(m.dateFrom)}
+                size="sm"
+                label={formatMessage(m.dateTo)}
                 placeholderText={undefined}
+                selected={selectedDateTo}
+                handleChange={(e) => setSelectedDateTo(e)}
+                minDate={add(selectedDateFrom, { days: 1 })}
               ></DatePicker>
             </Inline>
           </Stack>

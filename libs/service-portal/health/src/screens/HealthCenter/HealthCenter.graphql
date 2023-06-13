@@ -1,5 +1,5 @@
-query getHealthCenter {
-  rightsPortalHealthCenterHistory {
+query getHealthCenter($input: HealthCenterHistoryInput) {
+  rightsPortalHealthCenterHistory(input: $input) {
     current {
       name
       doctor
