@@ -51,7 +51,7 @@ An API should at least use the following HTTP Status Codes for corresponding HTT
 
 - `401` should be returned when client fails to authenticate.
 - `403` should be returned when client is authenticated but does not have necessary permission to perform the operation.
-- `404` should be returned when the static path of the request does not exists on the server.
+- `404` should be returned when the static path of the request does not exist on the server.
 - `500` should be returned when the server encounters some unexpected error, preferably along with an [errors](errors.md) object.
 
 ## `GET`
