@@ -36,8 +36,8 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     userProfileInformationTitle: {
       id: 'oap.application:userprofile.title',
-      defaultMessage: 'Upplýsingar um fjölskyldu',
-      description: 'Family information',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá',
+      description: 'Information from Registers Iceland',
     },
     userProfileInformationSubTitle: {
       id: 'oap.application:userprofile.subtitle',
@@ -48,20 +48,26 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     skraInformationTitle: {
       id: 'oap.application:userprofile.title',
-      defaultMessage: 'Upplýsingar úr prófílgrunni á Ísland.is',
-      description: 'Information from the profile base on Ísland.is',
+      defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
+      description: 'Information from your account at Ísland.is',
     },
     skraInformationSubTitle: {
       id: 'oap.application:userprofile.subtitle',
       defaultMessage:
-        'Sækir upplýsingar um netfang og símanúmer frá mínum síðum Ísland.is.',
+        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar frá mínum síðum á Ísland.is.',
       description:
-        'Information about email adress and phone number will be retrieved from your account at Ísland.is.',
+        'Information about email address, phone number and bank account will be retrieved from your account at Ísland.is.',
     },
     confirmationTitle: {
       id: 'oap.application:confirmation.title',
       defaultMessage: 'Senda inn umsókn',
       description: 'Review and submit',
+    },
+    confirmationDescription: {
+      id: 'oap.application:confirmation.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Please review the application before submitting.',
     },
     questionTitle: {
       id: 'oap.application:question.title',
@@ -192,6 +198,33 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Here is information about your residence history after 1987. Full entitlement to old age pension is based on a total of 40 years of residence in Iceland between the ages of 16-67. When the period of residence in Iceland is shorter, the rights are calculated proportionally based on residence. Note that if the following information is not correct, it must be changed at Registers Iceland and then come back to complete the application.',
     },
+    residenceHistoryQuestion: {
+      id: 'oap.application:residence.history.question',
+      defaultMessage: 'Hefur þú búið erlendis fyrir árið 1987?',
+      description: 'Have you live abroad before 1987?',
+    },
+    onePaymentPerYearTitle: {
+      id: 'oap.application:one.payment.per.year.title',
+      defaultMessage: 'Ein greiðsla á ári',
+      description: 'One payment per year',
+    },
+    onePaymentPerYearDescription: {
+      id: 'oap.application:one.payment.per.year.description',
+      defaultMessage:
+        'Vilt þú óska eftir að fá greiddan lífeyri einu sinni á ári? Þá eru réttindin reiknuð út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
+      description: 'description',
+    },
+    onePaymentPerYearAlertTitle: {
+      id: 'oap.application:one.payment.per.year.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
+    onePaymentPerYearAlertDescription: {
+      id: 'oap.application:one.payment.per.year.alert.description',
+      defaultMessage:
+        'Að óska eftir að fá greiddan lífeyri einu sinni á ári hefur áhrif á allar þínar lífeyrisgreiðslur frá Tryggingastofnun og mánaðargreiðslur þínar munu stöðvast.',
+      description: 'description',
+    },
     pensionFundAlertTitle: {
       id: 'oap.application:pension.fund.alert.title',
       defaultMessage: 'Lífeyrissjóðir',
@@ -203,6 +236,54 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Þú verður að byrja á því að hafa samband við þá lífeyrissjóði sem þú hefur greitt í áður en þú getur sótt um ellilífeyrir.',
       description:
         'You must start by contacting the pension funds you have paid into before you can apply for a old age pension.',
+    },
+    confirmSectionTitle: {
+      id: 'oap.application:confirmation.section.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirm',
+    },
+    confirmTitle: {
+      id: 'oap.application:confirmation.title',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application',
+    },
+  }),
+
+  review: defineMessages({
+    name: {
+      id: 'oap.application:review.name',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'oap.application:review.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National registry ID',
+    },
+    address: {
+      id: 'oap.application:review.address',
+      defaultMessage: 'Heimili',
+      description: 'Address',
+    },
+    municipality: {
+      id: 'oap.application:review.municipality',
+      defaultMessage: 'Sveitarfélag',
+      description: 'Municipality',
+    },
+    email: {
+      id: 'oap.application:review.email',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phonenumber: {
+      id: 'oap.application:review.phonenumber',
+      defaultMessage: 'Símanúmer',
+      description: 'phonenumber',
+    },
+    spouseName: {
+      id: 'oap.application:review.spouse.name',
+      defaultMessage: 'Nafn maka',
+      description: `Spouse's name`,
     },
   }),
 

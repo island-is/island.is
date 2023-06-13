@@ -5,16 +5,21 @@ import {
   buildForm,
   buildMultiField,
   buildPhoneField,
+  buildRadioField,
   buildSection,
+  buildSubmitField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import {
   Application,
+  DefaultEvents,
   Form,
   FormModes,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
+  NO,
+  YES,
 } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
 
@@ -30,7 +35,7 @@ import {
 import {
   getAgeBetweenTwoDates,
   getApplicationAnswers,
-  getApplicationExternalDate,
+  getApplicationExternalData,
 } from '../lib/oldAgePensionUtils'
 
 export const OldAgePensionForm: Form = buildForm({
@@ -54,9 +59,11 @@ export const OldAgePensionForm: Form = buildForm({
           children: [
             buildMultiField({
               id: 'applicantInfo',
-              title: oldAgePensionFormMessage.shared.applicantInfoSubSectionTitle,
+              title:
+                oldAgePensionFormMessage.shared.applicantInfoSubSectionTitle,
               description:
-                oldAgePensionFormMessage.shared.applicantInfoSubSectionDescription,
+                oldAgePensionFormMessage.shared
+                  .applicantInfoSubSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.name',
@@ -93,7 +100,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.postcode',
-                  title: oldAgePensionFormMessage.shared.applicantInfoPostalcode,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoPostalcode,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -105,7 +113,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.municipality',
-                  title: oldAgePensionFormMessage.shared.applicantInfoMunicipality,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoMunicipality,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -129,7 +138,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
-                  title: oldAgePensionFormMessage.shared.applicantInfoPhonenumber,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoPhonenumber,
                   width: 'half',
                   placeholder: '000-0000',
                   required: true,
@@ -143,11 +153,20 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'applicantInfo.descriptionField',
                   space: 'containerGutter',
                   titleVariant: 'h5',
-                  title: oldAgePensionFormMessage.shared.applicantInfoMaritalTitle,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoMaritalTitle,
+                  condition: (answers, externalData) => {
+                    const { hasSpouse } = getApplicationExternalData(
+                      externalData,
+                    )
+                    if (hasSpouse) return true
+                    return false
+                  },
                 }),
                 buildTextField({
                   id: 'applicantInfo.maritalStatus',
-                  title: oldAgePensionFormMessage.shared.applicantInfoMaritalStatus,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoMaritalStatus,
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
@@ -155,10 +174,18 @@ export const OldAgePensionForm: Form = buildForm({
                       .data as NationalRegistrySpouse
                     return data.maritalStatus
                   },
+                  condition: (answers, externalData) => {
+                    const { maritalStatus } = getApplicationExternalData(
+                      externalData,
+                    )
+                    if (maritalStatus) return true
+                    return false
+                  },
                 }),
                 buildTextField({
                   id: 'applicantInfo.spouseName',
-                  title: oldAgePensionFormMessage.shared.applicantInfoSpouseName,
+                  title:
+                    oldAgePensionFormMessage.shared.applicantInfoSpouseName,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -166,6 +193,13 @@ export const OldAgePensionForm: Form = buildForm({
                     const data = application.externalData.nationalRegistrySpouse
                       .data as NationalRegistrySpouse
                     return data.name
+                  },
+                  condition: (answers, externalData) => {
+                    const { spouseName } = getApplicationExternalData(
+                      externalData,
+                    )
+                    if (spouseName) return true
+                    return false
                   },
                 }),
                 buildTextField({
@@ -178,6 +212,13 @@ export const OldAgePensionForm: Form = buildForm({
                     const data = application.externalData.nationalRegistrySpouse
                       .data as NationalRegistrySpouse
                     return data.nationalId
+                  },
+                  condition: (answers, externalData) => {
+                    const { spouseNationalId } = getApplicationExternalData(
+                      externalData,
+                    )
+                    if (spouseNationalId) return true
+                    return false
                   },
                 }),
               ],
@@ -193,7 +234,34 @@ export const OldAgePensionForm: Form = buildForm({
               title: oldAgePensionFormMessage.shared.residenceHistoryTitle,
               description:
                 oldAgePensionFormMessage.shared.residenceHistoryDescription,
-              children: [],
+              children: [
+                buildCustomField({
+                  id: 'residenceHistory.table',
+                  doesNotRequireAnswer: true,
+                  title: '',
+                  component: 'ResidenceHistoryTable',
+                }),
+                buildRadioField({
+                  id: 'residenceHistory.question',
+                  title:
+                    oldAgePensionFormMessage.shared.residenceHistoryQuestion,
+                  options: [
+                    { value: YES, label: oldAgePensionFormMessage.shared.yes },
+                    { value: NO, label: oldAgePensionFormMessage.shared.no },
+                  ],
+                  width: 'half',
+                  largeButtons: true,
+                  // required: true,
+                  condition: (answers, externalData) => {
+                    const { residenceHistory } = getApplicationExternalData(
+                      externalData,
+                    )
+                    // check if no res history or?? or if only res history is iceland?
+                    if (residenceHistory.length === 0) return true
+                    return false
+                  },
+                }),
+              ],
             }),
           ],
         }),
@@ -239,12 +307,14 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers, externalData) => {
-                const { nationalId } = getApplicationExternalDate(externalData)
+                const { applicantNationalId } = getApplicationExternalData(
+                  externalData,
+                )
                 const { selectedMonth, selectedYear } = getApplicationAnswers(
                   answers,
                 )
 
-                const dateOfBirth = kennitala.info(nationalId).birthday
+                const dateOfBirth = kennitala.info(applicantNationalId).birthday
                 const dateOfBirth00 = new Date(
                   dateOfBirth.getFullYear(),
                   dateOfBirth.getMonth(),
@@ -261,29 +331,57 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'payment',
-          title: oldAgePensionFormMessage.shared.residenceHistoryTitle,
+          id: 'onePaymentPerYear',
+          title: oldAgePensionFormMessage.shared.onePaymentPerYearTitle,
           children: [
             buildMultiField({
-              id: 'paymentInfo',
-              title: oldAgePensionFormMessage.shared.residenceHistoryTitle,
-              description:
-                oldAgePensionFormMessage.shared.residenceHistoryDescription,
-              children: [],
+              id: 'onePaymentPerYear',
+              title: oldAgePensionFormMessage.shared.onePaymentPerYearTitle,
+              children: [
+                buildRadioField({
+                  id: 'onePaymentPerYear.question',
+                  title: '',
+                  description:
+                    oldAgePensionFormMessage.shared
+                      .onePaymentPerYearDescription,
+                  options: [
+                    {
+                      value: YES,
+                      label: oldAgePensionFormMessage.shared.yes,
+                    },
+                    {
+                      value: NO,
+                      label: oldAgePensionFormMessage.shared.no,
+                    },
+                  ],
+                  defaultValue: NO,
+                  width: 'half',
+                }),
+                buildCustomField(
+                  {
+                    id: 'onePaymentPerYear.alert',
+                    title:
+                      oldAgePensionFormMessage.shared
+                        .onePaymentPerYearAlertTitle,
+                    component: 'FieldAlertMessage',
+                    description:
+                      oldAgePensionFormMessage.shared
+                        .onePaymentPerYearAlertDescription,
+                    condition: (answers) => {
+                      const { onePaymentPerYear } = getApplicationAnswers(
+                        answers,
+                      )
+
+                      return onePaymentPerYear === YES
+                    },
+                  },
+                  { type: 'warning' },
+                ),
+              ],
             }),
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'arrangement',
-      title: oldAgePensionFormMessage.shared.arrangementSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'relatedApplications',
-      title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
-      children: [],
     }),
     buildSection({
       id: 'comment',
@@ -291,9 +389,49 @@ export const OldAgePensionForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confirmation',
-      title: oldAgePensionFormMessage.shared.confirmationSection,
-      children: [],
+      id: 'confirm',
+      title: oldAgePensionFormMessage.shared.confirmSectionTitle,
+      children: [
+        buildSubSection({
+          title: '',
+          children: [
+            buildMultiField({
+              id: 'confirm',
+              title: '',
+              description: '',
+              children: [
+                buildCustomField(
+                  {
+                    id: 'confirmScreen',
+                    title: oldAgePensionFormMessage.shared.confirmTitle,
+                    component: 'Review',
+                  },
+                  {
+                    editable: true,
+                  },
+                ),
+                buildSubmitField({
+                  id: 'submit',
+                  placement: 'footer',
+                  title: oldAgePensionFormMessage.shared.confirmationTitle,
+                  actions: [
+                    {
+                      event: DefaultEvents.SUBMIT,
+                      name: oldAgePensionFormMessage.shared.confirmationTitle,
+                      type: 'primary',
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildCustomField({
+          id: 'thankYou',
+          title: 'Takk vantar texta',
+          component: 'Conclusion',
+        }),
+      ],
     }),
   ],
 })

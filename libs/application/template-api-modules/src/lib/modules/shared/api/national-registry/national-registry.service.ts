@@ -8,6 +8,7 @@ import {
   NationalRegistrySpouse,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
+  NationalRegistryResidenceHistory,
   ChildrenCustodyInformationParameters,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -270,5 +271,19 @@ export class NationalRegistryService extends BaseTemplateApiService {
         municipalityCode: birthplace.municipalityNumber,
       }
     )
+  }
+
+  async getResidenceHistory({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<
+    NationalRegistryResidenceHistory[] | null
+  > {
+    const residenceHistory: NationalRegistryResidenceHistory[] | null = await this.nationalRegistryApi.getResidenceHistory(
+      auth.nationalId,
+    )
+
+    // vantar villumeðhöndlun?
+    console.log('res his ', residenceHistory)
+    return residenceHistory
   }
 }
