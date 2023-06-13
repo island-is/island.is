@@ -7,8 +7,8 @@ export function maskEndorsementList(
   // Masks owner from EndorsementList
   // theList.owner = 'xxxxxx-xxxx'
 
-  if (!isAdmin) {
-    theList.meta = { ...theList.meta, phone: '', email: '' }
-  }
+  // if (!isAdmin) {
+  //   theList.meta = { ...theList.meta, phone: '', email: '' }
+  // }
   return theList
 }

@@ -272,10 +272,7 @@ export class EndorsementListService {
     }
   }
 
-  
   async getOwnerInfo(listId: string, owner?: string) {
-
-    
     // Is used by both unauthenticated users, authenticated users and admin
     // Admin needs to access locked lists and can not use the EndorsementListById pipe
     // Since the endpoint is not authenticated
@@ -296,13 +293,11 @@ export class EndorsementListService {
     try {
       // return (await this.nationalRegistryApi.getUser(owner)).Fulltnafn
       const person = await this.nationalRegistryApiV2.getIndividual(owner)
-      if(person?.fullName){
+      if (person?.fullName) {
         return person?.fullName
       } else {
-        return "bob"
+        return 'bob'
       }
-      
-
     } catch (e) {
       if (e instanceof Error) {
         this.logger.warn(

@@ -3,6 +3,7 @@ import {
   Injectable,
   MethodNotAllowedException,
   NotFoundException,
+  Scope,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Endorsement } from './models/endorsement.model'
@@ -19,6 +20,10 @@ import {
   // AddressDto as NationalRegistryAddress,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
+import { end } from 'pdfkit'
+
+import { REQUEST } from '@nestjs/core'
+import { Request } from 'express'
 
 interface FindEndorsementInput {
   listId: string
@@ -49,7 +54,6 @@ export interface NationalIdError {
   message: string
 }
 
-@Injectable()
 export class EndorsementService {
   constructor(
     @InjectModel(EndorsementList)
@@ -62,10 +66,14 @@ export class EndorsementService {
     private readonly nationalRegistryApiV2: NationalRegistryClientService,
   ) {}
 
-  async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
+  async findEndorsements(
+    { listId }: FindEndorsementsInput,
+    query: any,
+    nationanlId: string,
+  ) {
     this.logger.info(`Finding endorsements by list id "${listId}"`)
 
-    const res = await paginate({
+    const endorsements = await paginate({
       Model: this.endorsementModel,
       limit: query.limit || 10,
       after: query.after,
@@ -74,13 +82,44 @@ export class EndorsementService {
       orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
-    console.log('res', res)
-    return res
+
+    // MOVE TO FUNCTION
+    // REMOVE INTERCEPTORS
+    // WRITE A TEST SO NOBODY MESSES UP PRIVACY LOGIC
+
+    // process endorsement data privacy display settings
+    const requestFromListOwner = await this.isListOwner(nationanlId, listId)
+    endorsements.data.map((endorsement) => {
+      // always mask endorsement nationalId
+      endorsement.endorser = 'xxxxxx-xxxx'
+      // owner sees all endorser info, others only masked data if requested by endorser
+      if (!requestFromListOwner)
+        if (!endorsement.meta.showName) {
+          endorsement.meta.fullName = ''
+          endorsement.meta.locality = ''
+        }
+    })
+
+    return endorsements
+  }
+
+  async isListOwner(nationalId: string, listId: string) {
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+      },
+    })
+    if (endorsementList) {
+      return nationalId == endorsementList.owner
+    } else {
+      return NotFoundException
+    }
   }
 
   async findEndorsementsGeneralPetition(
     { listId }: FindEndorsementsInput,
     query: any,
+    nationalId: string,
   ) {
     this.logger.info(
       `Finding GeneralPetitionendorsements by list id "${listId}"`,
@@ -95,7 +134,7 @@ export class EndorsementService {
     if (!result) {
       throw new NotFoundException(['Not found - not a General Petition List'])
     }
-    return this.findEndorsements({ listId }, query)
+    return this.findEndorsements({ listId }, query, nationalId)
   }
 
   async findSingleUserEndorsement({

@@ -81,12 +81,14 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @Query() query: PaginationDto,
+    @CurrentUser() user: User,
   ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementService.findEndorsements(
       {
         listId: endorsementList.id,
       },
       query,
+      user.nationalId,
     )
   }
 
@@ -107,12 +109,14 @@ export class EndorsementController {
     )
     endorsementList: EndorsementList,
     @Query() query: PaginationDto,
+    @CurrentUser() user: User,
   ): Promise<PaginatedEndorsementDto> {
     return await this.endorsementService.findEndorsementsGeneralPetition(
       {
         listId: endorsementList.id,
       },
       query,
+      user.nationalId,
     )
   }
 

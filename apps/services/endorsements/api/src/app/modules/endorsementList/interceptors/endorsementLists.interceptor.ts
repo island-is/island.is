@@ -24,10 +24,13 @@ export class EndorsementListsInterceptor implements NestInterceptor {
   ): Observable<PaginatedEndorsementListDto> {
     const user = GqlExecutionContext.create(context).getContext().req?.user
     const isAdmin = this.endorsementListService.hasAdminScope(user as User)
+
     return next.handle().pipe(
       map((retEndorsementLists: PaginatedEndorsementListDto) => {
         retEndorsementLists.data = retEndorsementLists.data.map(
           (retEndorsementList) => {
+            console.log('**********************************************')
+            console.log(retEndorsementList)
             return maskEndorsementList(retEndorsementList, isAdmin)
           },
         )

@@ -12,7 +12,6 @@ import { environment } from '../../../environments'
 import { EmailModule } from '@island.is/email-service'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
-
 export interface Config {
   nationalRegistry: NationalRegistryConfig
 }
