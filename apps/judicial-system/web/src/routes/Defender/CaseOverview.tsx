@@ -24,9 +24,7 @@ import {
   InfoCard,
   MarkdownWrapper,
   PageLayout,
-  PdfButton,
   RestrictionTags,
-  SignedDocument,
   PageHeader,
   Modal,
   Conclusion,
@@ -36,6 +34,8 @@ import {
   AppealConclusion,
   AlertBanner,
   OverviewHeader,
+  PdfButton,
+  SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -256,6 +256,7 @@ export const CaseOverview: React.FC = () => {
           )}
 
           <AppealCaseFilesOverview />
+
           {(workingCase.sendRequestToDefender ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>
