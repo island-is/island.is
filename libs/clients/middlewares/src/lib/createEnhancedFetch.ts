@@ -7,7 +7,7 @@ import { logger as defaultLogger } from '@island.is/logging'
 import {
   AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
   AGENT_DEFAULTS,
-} from '../../../../shared/constants/src/lib/agent'
+} from '@island.is/shared/constants'
 
 import { buildFetch } from './buildFetch'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
