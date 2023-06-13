@@ -72,12 +72,19 @@ export const navigation = style({
   }),
 })
 
+export const desktopTitleContainer = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      display: 'flex',
+      justifyContent: 'center',
+    },
+  }),
+})
+
 export const desktopTitle = style({
   ...themeUtils.responsiveStyle({
     xl: {
-      position: 'absolute',
-      left: '400px',
-      top: '280px',
+      transform: 'translate(-150px, 165px)',
     },
   }),
 })
