@@ -36,7 +36,10 @@ export class NotificationsController {
     description: 'Send a message via SMS.',
     response: { status: 202 },
   })
-  sendSms(@CurrentAuth() auth: Auth, @Body() message: SmsMessage): Promise<void> {
+  sendSms(
+    @CurrentAuth() auth: Auth,
+    @Body() message: SmsMessage,
+  ): Promise<void> {
     return this.auditService.auditPromise(
       {
         auth,
