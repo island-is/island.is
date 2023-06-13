@@ -4,23 +4,24 @@ import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import { indictmentCases } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
-import { CaseController } from '../../case.controller'
+import { LimitedAccessCaseReceivedGuard } from '../../guards/limitedAccessCaseReceived.guard'
+import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
+import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
-describe('CaseController - Get case files record pdf guards', () => {
+describe('LimitedAccessCaseController - Get case files record pdf guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      CaseController.prototype.getCaseFilesRecordPdf,
+      LimitedAccessCaseController.prototype.getCaseFilesRecordPdf,
     )
   })
 
-  it('should have five guards', () => {
-    expect(guards).toHaveLength(5)
+  it('should have six guards', () => {
+    expect(guards).toHaveLength(6)
   })
 
   describe('JwtAuthGuard', () => {
@@ -74,15 +75,27 @@ describe('CaseController - Get case files record pdf guards', () => {
     })
   })
 
-  describe('CaseReadGuard', () => {
+  describe('LimitedAccessCaseReceivedGuard', () => {
     let guard: CanActivate
 
     beforeEach(() => {
       guard = new guards[4]()
     })
 
-    it('should have CaseReadGuard as guard 5', () => {
-      expect(guard).toBeInstanceOf(CaseReadGuard)
+    it('should have LimitedAccessCaseReceivedGuard as guard 5', () => {
+      expect(guard).toBeInstanceOf(LimitedAccessCaseReceivedGuard)
+    })
+  })
+
+  describe('CaseDefenderGuard', () => {
+    let guard: CanActivate
+
+    beforeEach(() => {
+      guard = new guards[5]()
+    })
+
+    it('should have CaseDefenderGuard as guard 6', () => {
+      expect(guard).toBeInstanceOf(CaseDefenderGuard)
     })
   })
 })
