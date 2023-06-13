@@ -8,6 +8,7 @@ import {
   NationalRegistrySpouse,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
+  ChildrenCustodyInformationParameters,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -132,13 +133,26 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async childrenCustodyInformation({
     auth,
-  }: TemplateApiModuleActionProps): Promise<
+    params,
+  }: TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>): Promise<
     ApplicantChildCustodyInformation[]
   > {
     const parentUser = auth
     const childrenNationalIds = await this.nationalRegistryApi.getCustodyChildren(
       parentUser,
     )
+
+    if (params?.validateHasChildren) {
+      if (!childrenNationalIds || childrenNationalIds.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryHasNoChildrenTitle,
+            summary: coreErrorMessages.nationalRegistryHasNoChildrenSummary,
+          },
+          400,
+        )
+      }
+    }
 
     if (childrenNationalIds.length === 0) {
       return []
@@ -189,9 +203,27 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }),
     )
 
-    return children.filter(
+    const filteredChildren = children.filter(
       (child): child is ApplicantChildCustodyInformation => child != null,
     )
+
+    if (params?.validateHasJointCustody) {
+      const hasNoJointCustody = filteredChildren.every(
+        (child) => !child.otherParent,
+      )
+
+      if (hasNoJointCustody) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.nationalRegistryHasNoJointCustodyTitle,
+            summary: coreErrorMessages.nationalRegistryHasNoJointCustodySummary,
+          },
+          400,
+        )
+      }
+    }
+
+    return filteredChildren
   }
 
   async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
