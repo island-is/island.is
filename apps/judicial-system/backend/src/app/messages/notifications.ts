@@ -186,6 +186,13 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
     },
+    nonePresentSession: {
+      id:
+        'judicial.system.backend:notifications.prosecutor_court_date_email.none_present_sessione',
+      defaultMessage: 'Krafan verður tekin fyrir án boðunar í þinghald.',
+      description:
+        'Notaður sem texti í pósti til að láta vita að krafa verður tekin fyrir án boðunar í þinghald.',
+    },
     subject: {
       id:
         'judicial.system.backend:notifications.prosecutor_court_date_email.subject',
