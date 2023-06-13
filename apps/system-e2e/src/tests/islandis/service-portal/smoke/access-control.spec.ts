@@ -1,6 +1,7 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { sleep } from '../../../../support/utils'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur/`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -9,10 +10,24 @@ const switchUser = async (page: Page, name?: string) => {
   await page.locator('data-testid=user-menu >> visible=true').click()
   await page.locator('role=button[name="Skipta um notanda"]').click()
   if (name) {
-    await page.locator(`role=button[name*="${name}"]`).click()
-    await page.waitForURL(new RegExp(homeUrl), {
-      waitUntil: 'domcontentloaded',
-    })
+    // repeat page.goto 3 times in a loop
+    for (let i = 0; i < 5; ++i) {
+      await page.reload()
+      await sleep(3000)
+      await expect(page.locator('.icon--people').first()).toBeVisible()
+      const delegationSelector = page.getByRole('button').filter({ hasText: 'Umboð' })
+
+      await expect(delegationSelector).toHaveCountGreaterThan(0)
+      if (await delegationSelector.filter({ hasText: name }).count()) {
+        await page.locator(`role=button[name*="${name}"]`).click()
+        await page.waitForURL(new RegExp(homeUrl), {
+          waitUntil: 'domcontentloaded',
+        })
+        return
+      }
+    }
+
+    throw new Error('Could not find delegation')
   }
 }
 
