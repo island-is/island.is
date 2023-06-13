@@ -14,17 +14,19 @@ const backgroundImageUrl =
   'https://images.ctfassets.net/8k0h54kbe6bj/1F4J4R4GxCkQezDQhHPjaT/71b4afc65e6184bb42341785bb2fc539/haskolanam.svg'
 
 const getDefaultStyle = (width: number): CSSProperties => {
-  if (width > theme.breakpoints.xl) {
+  if (width >= theme.breakpoints.xl) {
     return {
       backgroundImage: `url(${backgroundImageUrl})`,
       backgroundRepeat: 'no-repeat',
-      backgroundSize: '1350px',
+      backgroundSize: '1440px',
+      backgroundPosition: 'center',
     }
   }
   return {
     backgroundImage: `url(${backgroundImageUrl})`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
+    backgroundPosition: 'center',
   }
 }
 
@@ -54,22 +56,24 @@ const UniversityStudiesHeader: React.FC<HeaderProps> = ({
       className={styles.headerBg}
     >
       <Hidden below="xl">
-        <Box className={styles.desktopTitle}>
-          <Link
-            href={
-              linkResolver('organizationpage', [organizationPage.slug]).href
-            }
-          >
-            <Text color="white" variant="h1" fontWeight="semiBold">
-              {organizationPage.title}
+        <Box className={styles.desktopTitleContainer}>
+          <Box className={styles.desktopTitle}>
+            <Link
+              href={
+                linkResolver('organizationpage', [organizationPage.slug]).href
+              }
+            >
+              <Text color="white" variant="h1" fontWeight="semiBold">
+                {organizationPage.title}
+              </Text>
+            </Link>
+            <Text fontWeight="regular" color="white">
+              {n(
+                'allUniversityStudiesInIcelandAtTheSamePlace',
+                'Allt háskólanám á Íslandi á sama stað',
+              )}
             </Text>
-          </Link>
-          <Text fontWeight="regular" color="white">
-            {n(
-              'allUniversityStudiesInIcelandAtTheSamePlace',
-              'Allt háskólanám á Íslandi á sama stað',
-            )}
-          </Text>
+          </Box>
         </Box>
       </Hidden>
       <div className={styles.headerWrapper}>
