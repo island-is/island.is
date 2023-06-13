@@ -90,6 +90,7 @@ import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
 import { FishingLicenseClientConfig } from '@island.is/clients/fishing-license'
 import { FiskistofaClientConfig } from '@island.is/clients/fiskistofa'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
+import { IntellectualPropertyClientConfig } from '@island.is/clients/intellectual-property'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
@@ -312,6 +313,7 @@ const autoSchemaFile = environment.production
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,
+        IntellectualPropertyClientConfig,
         NationalRegistryClientConfig,
         SyslumennClientConfig,
         ElectronicRegistrationsClientConfig,

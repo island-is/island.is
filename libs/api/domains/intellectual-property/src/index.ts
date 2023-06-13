@@ -1,1 +1,1 @@
-export * from './lib/api-domains-intellectual-property.module'
+export * from './lib/intellectualProperty.module'

@@ -2,15 +2,15 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('IntellectualPropertyDesign')
 export class Design {
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   applicationNumber?: Date
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   hid?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   status?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   specification?: string | null
 }

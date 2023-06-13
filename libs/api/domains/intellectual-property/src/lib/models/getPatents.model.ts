@@ -2,21 +2,21 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('IntellectualPropertyPatent')
 export class Patent {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   applicationNumber?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   registrationNumber?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   patentName?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   patentNameInOrgLanguage?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   applicationDate?: Date
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   statusText?: string | null
 }

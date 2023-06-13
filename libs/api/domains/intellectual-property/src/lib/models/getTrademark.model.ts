@@ -2,18 +2,18 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('IntellectualPropertyTrademark')
 export class Trademark {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   text?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   type?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   status?: string | null
 
-  @Field({ nullable: true })
+  @Field(() => Date, { nullable: true })
   applicationDate?: Date | null
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   vmId?: string | null
 }

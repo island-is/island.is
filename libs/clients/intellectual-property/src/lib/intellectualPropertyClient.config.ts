@@ -16,12 +16,9 @@ export const IntellectualPropertyClientConfig = defineConfig<
   load(env) {
     return {
       fetch: {
-        scope: ['@tr.is/oryrki:read'],
+        scope: [''],
       },
-      apiKey: env.required(
-        'IP_API_KEY',
-        '7F04EA52-C8BC-47B1-BA18-B39335FEA822',
-      ),
+      apiKey: env.required('IP_API_KEY', ''),
     }
   },
 })
