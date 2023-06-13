@@ -178,6 +178,7 @@ export const OldAgePensionForm: Form = buildForm({
                     const { maritalStatus } = getApplicationExternalData(
                       externalData,
                     )
+                    console.log('MAR STATUS ', maritalStatus)
                     if (maritalStatus) return true
                     return false
                   },
@@ -286,11 +287,11 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'fileUpload',
+          id: 'fileUploadEarlyPenFisher',
           title: oldAgePensionFormMessage.fileUpload.title,
           children: [
             buildFileUploadField({
-              id: 'fileUpload.earlyRetirement',
+              id: 'fileUploadEarlyPenFisher.earlyRetirement',
               title: oldAgePensionFormMessage.fileUpload.earlyRetirementTitle,
               description:
                 oldAgePensionFormMessage.fileUpload.earlyRetirementDescription,
@@ -327,6 +328,71 @@ export const OldAgePensionForm: Form = buildForm({
                   age >= earlyRetirementMinAge && age <= earlyRetirementMaxAge
                 )
               },
+            }),
+            buildFileUploadField({
+              id: 'fileUploadEarlyPenFisher.pension',
+              title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.pensionFileDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.pensionFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+            }),
+            buildFileUploadField({
+              id: 'fileUploadEarlyPenFisher.fishermen',
+              title: oldAgePensionFormMessage.fileUpload.fishermenFileTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.fishermenFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+              condition: (answers) => {
+                const { isFishermen } = getApplicationAnswers(answers)
+
+                return isFishermen === YES
+              },
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadAdditionalFiles',
+          title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUploadAdditionalFiles.additionalDocuments',
+              title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
             }),
           ],
         }),

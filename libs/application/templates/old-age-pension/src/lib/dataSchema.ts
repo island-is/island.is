@@ -7,7 +7,7 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   questions: z.object({
     pensionFund: z.enum([YES, NO]),
-    abroad: z.enum([YES, NO]),
+    fishermen: z.enum([YES, NO]),
   }),
   applicantInfo: z.object({
     email: z.string().email(),

@@ -6,6 +6,8 @@ import get from 'lodash/get'
 import has from 'lodash/has'
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { BaseInformation } from './review-groups/BaseInformation'
+import { Fishermen } from './review-groups/Fishermen'
+import { Period } from './review-groups/Period'
 
 interface ReviewScreenProps {
   application: Application
@@ -48,11 +50,15 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
         <Box marginBottom={10}>
           <Text variant="default">
-            {formatMessage(oldAgePensionFormMessage.shared.confirmationDescription)}
+            {formatMessage(
+              oldAgePensionFormMessage.shared.confirmationDescription,
+            )}
           </Text>
         </Box>
       </Box>
       <BaseInformation {...childProps} />
+      <Period {...childProps} />
+      <Fishermen {...childProps} />
     </>
   )
 }

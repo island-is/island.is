@@ -278,7 +278,9 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<
     NationalRegistryResidenceHistory[] | null
   > {
-    const residenceHistory: NationalRegistryResidenceHistory[] | null = await this.nationalRegistryApi.getResidenceHistory(
+    const residenceHistory:
+      | NationalRegistryResidenceHistory[]
+      | null = await this.nationalRegistryApi.getResidenceHistory(
       auth.nationalId,
     )
 

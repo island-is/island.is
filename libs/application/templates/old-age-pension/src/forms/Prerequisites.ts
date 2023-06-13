@@ -113,8 +113,8 @@ export const PrerequisitesForm: Form = buildForm({
                   { type: 'warning' },
                 ),
                 buildRadioField({
-                  id: 'questions.abroad',
-                  title: oldAgePensionFormMessage.shared.abroadQuestionTitle,
+                  id: 'questions.fishermen',
+                  title: oldAgePensionFormMessage.shared.fishermenQuestionTitle,
                   description: '',
                   options: [
                     { value: YES, label: oldAgePensionFormMessage.shared.yes },

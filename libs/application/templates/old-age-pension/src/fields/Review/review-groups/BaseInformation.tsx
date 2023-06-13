@@ -1,9 +1,9 @@
-import {
-  DataValue,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { InputController, PhoneInputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
 import { getApplicationExternalData } from '../../../lib/oldAgePensionUtils'
@@ -22,7 +22,14 @@ export const BaseInformation = ({
     setStateful,
   ] = useStatefulAnswers(application)
 
-  const { applicantName, applicantNationalId, applicantAddress, applicantMunicipality, spouseName, spouseNationalId } = getApplicationExternalData(application.externalData)
+  const {
+    applicantName,
+    applicantNationalId,
+    applicantAddress,
+    applicantMunicipality,
+    spouseName,
+    spouseNationalId,
+  } = getApplicationExternalData(application.externalData)
 
   const { formatMessage } = useLocale()
 
@@ -70,9 +77,7 @@ export const BaseInformation = ({
                     ...prev,
                     applicantPhonenumber: e.target.value,
                   }))
-                }
-
-                }
+                }}
                 error={hasError('applicantInfo.phoneNumber')}
               />
             </GridColumn>
@@ -85,17 +90,13 @@ export const BaseInformation = ({
         <GridRow marginBottom={3}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
-              label={formatMessage(
-                oldAgePensionFormMessage.review.name,
-              )}
+              label={formatMessage(oldAgePensionFormMessage.review.name)}
               value={applicantName}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
-              label={formatMessage(
-                oldAgePensionFormMessage.review.nationalId,
-              )}
+              label={formatMessage(oldAgePensionFormMessage.review.nationalId)}
               value={formatKennitala(applicantNationalId)}
             />
           </GridColumn>
@@ -112,9 +113,7 @@ export const BaseInformation = ({
 
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
-            label={formatMessage(
-              oldAgePensionFormMessage.review.municipality,
-            )}
+            label={formatMessage(oldAgePensionFormMessage.review.municipality)}
             value={applicantMunicipality}
           />
         </GridColumn>
@@ -131,9 +130,7 @@ export const BaseInformation = ({
 
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
-            label={formatMessage(
-              oldAgePensionFormMessage.review.phonenumber,
-            )}
+            label={formatMessage(oldAgePensionFormMessage.review.phonenumber)}
             value={applicantPhonenumber}
             error={hasError('applicantInfo.phonenumber')}
           />
@@ -150,9 +147,7 @@ export const BaseInformation = ({
 
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
-            label={formatMessage(
-              oldAgePensionFormMessage.review.nationalId,
-            )}
+            label={formatMessage(oldAgePensionFormMessage.review.nationalId)}
             value={formatKennitala(spouseNationalId)}
           />
         </GridColumn>

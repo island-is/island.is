@@ -17,10 +17,11 @@ import {
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
   MONTHS,
+  YES,
 } from './constants'
 
 const PERIOD = 'period'
-const FILEUPLOAD = 'fileUpload'
+const FILEUPLOADPERIOD = 'fileUploadEarlyPenFisher'
 
 const buildError = (message: StaticText, path: string) =>
   buildValidationError(`${path}`)(message)
@@ -66,10 +67,10 @@ export const answerValidators: Record<string, AnswerValidator> = {
 
     return undefined
   },
-  [FILEUPLOAD]: (newAnswer: unknown, application: Application) => {
+  [FILEUPLOADPERIOD]: (newAnswer: unknown, application: Application) => {
     const obj = newAnswer as Record<string, Answer>
 
-    const { selectedMonth, selectedYear } = getApplicationAnswers(
+    const { selectedMonth, selectedYear, isFishermen } = getApplicationAnswers(
       application.answers,
     )
     const dateOfBirth = kennitala.info(application.applicant).birthday
@@ -81,11 +82,33 @@ export const answerValidators: Record<string, AnswerValidator> = {
     const selectedDate = new Date(+selectedYear, +selectedMonth)
     const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
 
-    if (age >= earlyRetirementMinAge && age <= earlyRetirementMaxAge) {
+    if (obj.pension) {
+      if (isEmpty((obj as { pension: unknown[] }).pension)) {
+        return buildError(
+          validatorErrorMessages.requireAttachment,
+          'fileUploadEarlyPenFisher.pension',
+        )
+      }
+    }
+
+    if (
+      age >= earlyRetirementMinAge &&
+      age <= earlyRetirementMaxAge &&
+      obj.earlyRetirement
+    ) {
       if (isEmpty((obj as { earlyRetirement: unknown[] }).earlyRetirement)) {
         return buildError(
           validatorErrorMessages.requireAttachment,
-          'fileUpload.earlyRetirement',
+          'fileUploadEarlyPenFisher.earlyRetirement',
+        )
+      }
+    }
+
+    if (isFishermen === YES && obj.fishermen) {
+      if (isEmpty((obj as { fishermen: unknown[] }).fishermen)) {
+        return buildError(
+          validatorErrorMessages.requireAttachment,
+          'fileUploadEarlyPenFisher.fishermen',
         )
       }
     }

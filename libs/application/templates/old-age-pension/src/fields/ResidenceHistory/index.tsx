@@ -12,9 +12,11 @@ export const ResidenceHistoryTable: FC<FieldBaseProps> = ({
 }) => {
   const { title, description } = field
   const { lang, formatMessage } = useLocale()
-  const { residenceHistory } = getApplicationExternalData(application.externalData)
+  const { residenceHistory } = getApplicationExternalData(
+    application.externalData,
+  )
   console.log('RES HIS ', residenceHistory)
-  const formattedData = 
+  const formattedData =
     residenceHistory.map((history) => {
       return {
         country: getCountryByCode(history.country)?.name, //lang === 'is' ? getCountryByCode(history.country)?.nameIsk : getCountryByCode(history.country)?.name,
