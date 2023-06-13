@@ -285,6 +285,16 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Nafn maka',
       description: `Spouse's name`,
     },
+    period: {
+      id: 'oap.application:review.period',
+      defaultMessage: 'Tímabil',
+      description: `Period`,
+    },
+    fishermen: {
+      id: 'oap.application:review.fishermen',
+      defaultMessage: 'Ellilífeyri sjómanna',
+      description: `Fishermen`,
+    },
   }),
 
   period: defineMessages({
