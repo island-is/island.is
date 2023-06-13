@@ -153,13 +153,16 @@ const ViewSignedList = () => {
               </Box>
             )}
           </Box>
-          <PetitionsTable
-            petitionSigners={
-              petitionEndorsements as PaginatedEndorsementResponse
-            }
-            listId={listId}
-            canEdit={false}
-          />
+
+          {isListOpen && (
+            <PetitionsTable
+              petitionSigners={
+                petitionEndorsements as PaginatedEndorsementResponse
+              }
+              listId={listId}
+              canEdit={false}
+            />
+          )}
         </>
       ) : (
         <Skeleton />
