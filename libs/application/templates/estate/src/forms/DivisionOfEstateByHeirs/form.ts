@@ -45,19 +45,6 @@ export const form: Form = buildForm({
               title: '',
               space: 'containerGutter',
             }),
-            buildCheckboxField({
-              id: 'estateMembersHaveElectronicID',
-              title: '',
-              large: true,
-              backgroundColor: 'blue',
-              defaultValue: [],
-              options: [
-                {
-                  value: YES,
-                  label: m.estateMembersHaveIDCheckbox.defaultMessage,
-                },
-              ],
-            }),
           ],
         }),
       ],
@@ -431,13 +418,13 @@ export const form: Form = buildForm({
                     format: '######-####',
                   },
                   {
+                    title: m.debtsLoanIdentity.defaultMessage,
+                    id: 'loanIdentity',
+                  },
+                  {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
                     currency: true,
-                  },
-                  {
-                    title: m.debtsLoanIdentity.defaultMessage,
-                    id: 'loanIdentity',
                   },
                 ],
                 repeaterButtonText: m.debtsRepeaterButton.defaultMessage,

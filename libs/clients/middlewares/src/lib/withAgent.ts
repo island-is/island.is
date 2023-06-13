@@ -13,8 +13,6 @@ export interface ClientCertificateOptions {
 export interface AgentMiddlewareOptions extends FetchMiddlewareOptions {
   clientCertificate?: ClientCertificateOptions
   agentOptions?: AgentOptions
-  freeSocketTimeout: number
-  keepAlive: boolean
 }
 
 const AGENTS = new Map<string, Agent>()
@@ -22,14 +20,10 @@ const AGENTS = new Map<string, Agent>()
 export function withAgent({
   clientCertificate,
   agentOptions,
-  freeSocketTimeout,
-  keepAlive,
   fetch,
 }: AgentMiddlewareOptions): MiddlewareAPI {
   const options: AgentOptions = {
     ...clientCertificate,
-    freeSocketTimeout,
-    keepAlive,
     ...agentOptions,
   }
   const agentKeyBase = JSON.stringify(options)

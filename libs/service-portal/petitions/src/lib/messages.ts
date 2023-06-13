@@ -48,7 +48,7 @@ export const m = defineMessages({
   },
   listPeriod: {
     id: 'sp.petitions:listPeriod',
-    defaultMessage: 'Tímabil lista: ',
+    defaultMessage: 'Gildistímabil lista: ',
     description: '',
   },
   toastErrorOnCloseList: {
@@ -75,7 +75,7 @@ export const m = defineMessages({
   // Info about the list
   listOpenTil: {
     id: 'sp.petitions:listOpenTil',
-    defaultMessage: 'Tímabil lista:',
+    defaultMessage: 'Gildistímabil lista:',
     description: '',
   },
   listHowManySigned: {
