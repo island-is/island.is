@@ -98,10 +98,10 @@ const SubscriptionTableItem = ({
         {currentTab !== Area.case ? (
           isGeneralSubscription ? (
             <Data>
-              <FocusableBox onClick={checkboxHandler}>
+              <FocusableBox component="button" onClick={checkboxHandler}>
                 <Text variant="h5">{loc.allCases}</Text>
               </FocusableBox>
-              <FocusableBox onClick={checkboxHandler}>
+              <FocusableBox component="button" onClick={checkboxHandler}>
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
@@ -109,7 +109,7 @@ const SubscriptionTableItem = ({
             </Data>
           ) : (
             <Data>
-              <FocusableBox onClick={checkboxHandler}>
+              <FocusableBox component="button" onClick={checkboxHandler}>
                 <Text variant="h5">{item.name}</Text>
               </FocusableBox>
             </Data>
@@ -117,14 +117,14 @@ const SubscriptionTableItem = ({
         ) : mdBreakpoint ? (
           <>
             <Data>
-              <FocusableBox onClick={checkboxHandler}>
+              <FocusableBox component="button" onClick={checkboxHandler}>
                 <Text variant="h5">
                   {isGeneralSubscription ? loc.allCases : item.caseNumber}
                 </Text>
               </FocusableBox>
             </Data>
             <Data>
-              <FocusableBox onClick={checkboxHandler}>
+              <FocusableBox component="button" onClick={checkboxHandler}>
                 <Text variant="medium" fontWeight="light">
                   {item.name}
                 </Text>
@@ -134,7 +134,7 @@ const SubscriptionTableItem = ({
         ) : (
           <>
             <Data>
-              <FocusableBox onClick={checkboxHandler}>
+              <FocusableBox component="button" onClick={checkboxHandler}>
                 <Stack space={1}>
                   <Text variant="h5">
                     {isGeneralSubscription ? loc.allCases : item.caseNumber}
