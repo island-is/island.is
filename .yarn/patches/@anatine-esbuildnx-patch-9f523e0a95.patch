@@ -1,0 +1,41 @@
+diff --git a/src/executors/build/build.impl.js b/src/executors/build/build.impl.js
+index a9bbeb1a9bdc9721ef904f65d14af12743118023..d2437fcebd18d55464a3d13859c8d21fd456c500 100644
+--- a/src/executors/build/build.impl.js
++++ b/src/executors/build/build.impl.js
+@@ -4,7 +4,7 @@ exports.buildExecutor = void 0;
+ const tslib_1 = require("tslib");
+ const normalize_options_1 = require("../../utils/normalize-options");
+ const fs_extra_1 = require("fs-extra");
+-const workspace_1 = require("@nrwl/workspace");
++const workspace_1 = require("@nx/devkit");
+ const esbuild_1 = require("esbuild");
+ const child_process_1 = require("child_process");
+ const esbuild_decorators_1 = require("@anatine/esbuild-decorators");
+diff --git a/src/executors/build/build.impl.ts b/src/executors/build/build.impl.ts
+index 35f2af84b4fbb51bc2878a6b37a0a7a93b910ca0..f544215a99f2db1c84b1f8d99141aa93ee986819 100644
+--- a/src/executors/build/build.impl.ts
++++ b/src/executors/build/build.impl.ts
+@@ -1,8 +1,7 @@
+ import { BuildExecutorSchema } from './schema';
+-import { ExecutorContext } from '@nrwl/devkit';
++import { ExecutorContext, readJsonFile } from '@nx/devkit';
+ import { normalizeBuildOptions } from '../../utils/normalize-options';
+ import { pathExistsSync } from 'fs-extra';
+-import { readJsonFile } from '@nrwl/workspace';
+ import { build, BuildFailure, BuildOptions, BuildResult } from 'esbuild';
+ import { spawn } from 'child_process';
+ import { esbuildDecorators } from '@anatine/esbuild-decorators';
+@@ -17,12 +16,11 @@ import { inspect } from 'util';
+ import { copyPackages, getPackagesToCopy } from '../../utils/walk-packages';
+ import { copyAssets } from '../../utils/assets';
+ import { OUTFILE_NAME } from '../../utils/constants';
+-import { NodeBuildEvent } from '@nrwl/node/src/executors/build/build.impl';
+ 
+ export function buildExecutor(
+   rawOptions: BuildExecutorSchema,
+   context: ExecutorContext
+-): AsyncIterableIterator<NodeBuildEvent> {
++): AsyncIterableIterator<any> {
+   const { sourceRoot, root } = context.workspace.projects[context.projectName];
+ 
+   if (!sourceRoot) {
