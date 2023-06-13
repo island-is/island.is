@@ -156,6 +156,7 @@
     - [Application Templates Example Payment](libs/application/templates/example-payment/README.md)
     - [Application Templates General Fishing License](libs/application/templates/general-fishing-license/README.md)
     - [Inheritance Report](libs/application/templates/inheritance-report/README.md)
+    - [Application Templates Old Age Pension](libs/application/templates/old-age-pension/README.md)
     - [Reference Template](libs/application/templates/reference-template/README.md)
   - [Application Testing](libs/application/testing/README.md)
   - [Types](libs/application/types/README.md)
