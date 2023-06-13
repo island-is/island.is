@@ -344,7 +344,7 @@ export class EndorsementListService {
       .moveDown()
 
       .font(fontBold)
-      .text('Tímabil lista: ')
+      .text('Gildistímabil lista: ')
       .font(fontRegular)
       .text(
         endorsementList.openedDate.toLocaleDateString(locale) +
@@ -595,7 +595,7 @@ export class EndorsementListService {
             {
               component: 'Copy',
               context: {
-                copy: `Tímabil lista: ${
+                copy: `Gildistímabil lista: ${
                   endorsementList.openedDate.toLocaleDateString(locale) +
                   ' - ' +
                   endorsementList.closedDate.toLocaleDateString(locale)

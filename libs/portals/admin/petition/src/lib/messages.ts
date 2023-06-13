@@ -50,7 +50,7 @@ export const m = defineMessages({
   },
   listPeriod: {
     id: 'admin-portal.petition:listPeriod',
-    defaultMessage: 'Tímabil lista: ',
+    defaultMessage: 'Gildistímabil lista: ',
     description: '',
   },
   listOwner: {

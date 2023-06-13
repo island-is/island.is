@@ -531,7 +531,7 @@ export class CaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...indictmentCases]),
+    new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
   @RolesRules(

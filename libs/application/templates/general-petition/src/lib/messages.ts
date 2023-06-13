@@ -196,6 +196,12 @@ export const m = defineMessages({
     defaultMessage: 'Ekki birta nafn mitt á lista',
     description: '',
   },
+  hideNameText: {
+    id: 'gpl.application:hideNameText',
+    defaultMessage:
+      '* Athugið að nafn þitt er sýnilegt ábyrgðamanni listans en birtist ekki á vef eða hjá öðrum sem hafa skráð sig á lista.',
+    description: '',
+  },
   agreeToTermsLabel: {
     id: 'gpl.application:agreeToTermsLabel',
     defaultMessage:
