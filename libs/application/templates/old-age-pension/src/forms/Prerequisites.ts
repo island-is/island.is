@@ -96,17 +96,20 @@ export const PrerequisitesForm: Form = buildForm({
                   ],
                   width: 'half',
                 }),
-                buildCustomField({
-                  id: 'question.pensionFundAlert',
-                  title: oldAgePensionFormMessage.shared.pensionFundAlertTitle,
-                  component: 'FieldAlertMessage',
-                  description:
-                    oldAgePensionFormMessage.shared.pensionFundAlertDescription,
-                  doesNotRequireAnswer: true,
-                  condition: (answers) => {
-                    const { pensionFundQuestion } = getApplicationAnswers(
-                      answers,
-                    )
+                buildCustomField(
+                  {
+                    id: 'question.pensionFundAlert',
+                    title:
+                      oldAgePensionFormMessage.shared.pensionFundAlertTitle,
+                    component: 'FieldAlertMessage',
+                    description:
+                      oldAgePensionFormMessage.shared
+                        .pensionFundAlertDescription,
+                    doesNotRequireAnswer: true,
+                    condition: (answers) => {
+                      const { pensionFundQuestion } = getApplicationAnswers(
+                        answers,
+                      )
 
                       return pensionFundQuestion === NO
                     },

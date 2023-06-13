@@ -65,7 +65,8 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     confirmationDescription: {
       id: 'oap.application:confirmation.description',
-      defaultMessage: 'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
     questionTitle: {
@@ -209,7 +210,8 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     onePaymentPerYearDescription: {
       id: 'oap.application:one.payment.per.year.description',
-      defaultMessage: 'Vilt þú óska eftir að fá greiddan lífeyri einu sinni á ári? Þá eru réttindin reiknuð út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
+      defaultMessage:
+        'Vilt þú óska eftir að fá greiddan lífeyri einu sinni á ári? Þá eru réttindin reiknuð út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
       description: 'description',
     },
     onePaymentPerYearAlertTitle: {
@@ -219,7 +221,8 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     onePaymentPerYearAlertDescription: {
       id: 'oap.application:one.payment.per.year.alert.description',
-      defaultMessage: 'Að óska eftir að fá greiddan lífeyri einu sinni á ári hefur áhrif á allar þínar lífeyrisgreiðslur frá Tryggingastofnun og mánaðargreiðslur þínar munu stöðvast.',
+      defaultMessage:
+        'Að óska eftir að fá greiddan lífeyri einu sinni á ári hefur áhrif á allar þínar lífeyrisgreiðslur frá Tryggingastofnun og mánaðargreiðslur þínar munu stöðvast.',
       description: 'description',
     },
     pensionFundAlertTitle: {
@@ -243,7 +246,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:confirmation.title',
       defaultMessage: 'Senda inn umsókn',
       description: 'Submit application',
-    }
+    },
   }),
 
   review: defineMessages({

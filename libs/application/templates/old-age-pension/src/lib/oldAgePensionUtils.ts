@@ -20,9 +20,15 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
 
-  const applicantEmail = getValueViaPath(answers, 'applicantInfo.email') as string
+  const applicantEmail = getValueViaPath(
+    answers,
+    'applicantInfo.email',
+  ) as string
 
-  const applicantPhonenumber = getValueViaPath(answers, 'applicantInfo.phonenumber') as string
+  const applicantPhonenumber = getValueViaPath(
+    answers,
+    'applicantInfo.phonenumber',
+  ) as string
 
   const onePaymentPerYear = getValueViaPath(
     answers,
@@ -76,13 +82,25 @@ export function getApplicationExternalData(
 
   const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
-  const hasSpouse = getValueViaPath(externalData, 'nationalRegistrySpouse.data') as object
+  const hasSpouse = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data',
+  ) as object
 
-  const spouseName = getValueViaPath(externalData, 'nationalRegistrySpouse.data.name') as string
+  const spouseName = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.name',
+  ) as string
 
-  const spouseNationalId = getValueViaPath(externalData, 'nationalRegistrySpouse.data.nationalId') as string
+  const spouseNationalId = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.data.nationalId',
+  ) as string
 
-  const maritalStatus = getValueViaPath(externalData, 'nationalRegistrySpouse.maritalStatus') as string
+  const maritalStatus = getValueViaPath(
+    externalData,
+    'nationalRegistrySpouse.maritalStatus',
+  ) as string
 
   return {
     residenceHistory,
@@ -93,7 +111,7 @@ export function getApplicationExternalData(
     hasSpouse,
     spouseName,
     spouseNationalId,
-    maritalStatus
+    maritalStatus,
   }
 }
 
@@ -128,7 +146,9 @@ export function getStartDateAndEndDate(nationalId: string) {
 }
 
 export function getAvailableYears(application: Application) {
-  const { applicantNationalId } = getApplicationExternalData(application['externalData'])
+  const { applicantNationalId } = getApplicationExternalData(
+    application['externalData'],
+  )
   if (!applicantNationalId) return []
 
   const { startDate, endDate } = getStartDateAndEndDate(applicantNationalId)
@@ -147,7 +167,9 @@ export function getAvailableMonths(
   application: Application,
   selectedYear: string,
 ) {
-  const { applicantNationalId } = getApplicationExternalData(application['externalData'])
+  const { applicantNationalId } = getApplicationExternalData(
+    application['externalData'],
+  )
   if (!applicantNationalId) return []
 
   const { startDate, endDate } = getStartDateAndEndDate(applicantNationalId)

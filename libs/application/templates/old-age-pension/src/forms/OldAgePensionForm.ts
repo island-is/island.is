@@ -309,7 +309,9 @@ export const OldAgePensionForm: Form = buildForm({
               uploadButtonLabel:
                 oldAgePensionFormMessage.fileUpload.attachmentButton,
               condition: (answers, externalData) => {
-                const { applicantNationalId } = getApplicationExternalData(externalData)
+                const { applicantNationalId } = getApplicationExternalData(
+                  externalData,
+                )
                 const { selectedMonth, selectedYear } = getApplicationAnswers(
                   answers,
                 )
