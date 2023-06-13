@@ -2,13 +2,13 @@ import {
   buildCacheControl,
   createEnhancedFetch,
 } from '@island.is/clients/middlewares'
-import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
 import {
   ConfigType,
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
+import { RskProcuringClientConfig } from './RskProcuringClientConfig'
 
 import { createRedisCacheManager } from '@island.is/cache'
 
