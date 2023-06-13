@@ -47,14 +47,31 @@ const dateToPkpassDate = (date: string): string => {
 @Injectable()
 export class OldGenericDrivingLicenseApi
   implements GenericLicenseClient<OldGenericDrivingLicenseResponse> {
+  private readonly xroadApiUrl: string
+  private readonly xroadClientId: string
+  private readonly xroadPath: string
+  private readonly xroadSecret: string
+
+  private pkpassClient: OldPkPassClient
+
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(XRoadConfig.KEY)
+    private logger: Logger,
     private xroadConfig: ConfigType<typeof XRoadConfig>,
-    @Inject(OldGenericDrivingLicenseConfig.KEY)
     private config: ConfigType<typeof OldGenericDrivingLicenseConfig>,
-    private pkpassClient: OldPkPassClient,
-  ) {}
+    private cacheManager?: CacheManager | null,
+  ) {
+    // TODO inject the actual RLS x-road client
+    this.xroadApiUrl = xroadConfig.xRoadBasePath
+    this.xroadClientId = xroadConfig.xRoadClient
+    this.xroadPath = config.xroad.path
+    this.xroadSecret = config.xroad.secret
+
+    this.logger = logger
+    this.cacheManager = cacheManager
+
+    // TODO this should be injected by nest
+    this.pkpassClient = new OldPkPassClient(config, logger, cacheManager)
+  }
 
   private headers() {
     return {
