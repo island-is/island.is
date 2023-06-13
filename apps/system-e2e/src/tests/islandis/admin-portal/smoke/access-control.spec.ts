@@ -1,4 +1,4 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
@@ -10,7 +10,7 @@ test.describe('Admin portal access control', () => {
 
   test.beforeAll(async ({ browser }) => {
     contextGranter = await session({
-      browser: browser,
+      browser,
       storageState: 'service-portal-faereyjar.json',
       homeUrl,
       phoneNumber: '0102399',

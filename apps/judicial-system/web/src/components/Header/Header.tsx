@@ -75,7 +75,7 @@ const HeaderContainer: React.FC = () => {
     !user || !isAuthenticated
       ? '/'
       : user.role === UserRole.DEFENDER
-      ? '#' // Defenders should never be able to navigate anywhere from the logo
+      ? constants.DEFENDER_CASES_ROUTE
       : user.role === UserRole.ADMIN
       ? constants.USERS_ROUTE
       : user.institution?.type === InstitutionType.HIGH_COURT

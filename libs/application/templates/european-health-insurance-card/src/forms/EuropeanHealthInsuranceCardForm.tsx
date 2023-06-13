@@ -14,6 +14,8 @@ import {
   getEhicResponse,
   getFullName,
   hasAPDF,
+  hasPlastic,
+  someAreInsuredButCannotApply,
   someAreNotInsured,
   someCanApplyForPlastic,
   someCanApplyForPlasticOrPdf,
@@ -98,7 +100,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                 const applying: Array<Option> = []
 
                 getEhicResponse(application).forEach((x) => {
-                  if (x.isInsured && !x.canApply && !hasAPDF(x)) {
+                  if (x.canApplyForPDF) {
                     applying.push({
                       value: x.applicantNationalId ?? '',
                       label:
@@ -156,11 +158,18 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
               backgroundColor: 'white',
               title: e.no.sectionTitle,
               description: e.no.sectionDescription,
-              condition: (_, externalData) => someAreNotInsured(externalData),
+              condition: (_, externalData) =>
+                someAreNotInsured(externalData) ||
+                someAreInsuredButCannotApply(externalData),
               options: (application: Application) => {
                 const applying: Array<Option> = []
                 getEhicResponse(application).forEach((x) => {
-                  if (!x.isInsured && !x.canApply) {
+                  if (
+                    !x.canApply &&
+                    !x.canApplyForPDF &&
+                    !hasAPDF(x) &&
+                    !hasPlastic(x)
+                  ) {
                     applying.push({
                       value: x.applicantNationalId ?? '',
                       label:
@@ -215,7 +224,7 @@ export const EuropeanHealthInsuranceCardForm: Form = buildForm({
                   .data as CardResponse[]
 
                 cardResponse.forEach((x) => {
-                  if (x.isInsured && !x.canApply) {
+                  if (x.canApplyForPDF) {
                     applying.push({
                       value: x.applicantNationalId ?? '',
                       label:
