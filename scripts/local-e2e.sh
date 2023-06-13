@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-print_usage() {
+print_build_usage() {
   echo "Usage: build-container.sh [OPTIONS]"
   echo "Options:"
   echo "  -t, --target            Set the target build stage"
@@ -42,7 +42,7 @@ parse_build_args() {
       shift 2
       ;;
     -h | --help)
-      print_usage
+      print_build_usage
       exit 0
       ;;
     *)
@@ -96,9 +96,7 @@ build_container() {
   $build_cmd
 }
 
-set -euo pipefail
-
-print_usage() {
+print_run_usage() {
   echo "Usage: run-container.sh [OPTIONS] <yarn run arguments>"
   echo "Options:"
   # echo "  -v, --volume <directory>   Mount the specified directory as a volume for caching"
@@ -117,7 +115,7 @@ parse_run_args() {
   while [[ $# -gt 0 ]]; do
     case $1 in
     -h | --help)
-      print_usage
+      print_run_usage
       exit 0
       ;;
     -i | --image)
@@ -178,12 +176,7 @@ run_container() {
   $run_cmd
 }
 
-set -euo pipefail
-
-DIR="$(dirname $0)"
-PROGRAM_NAME="$(basename $0)"
-
-print_usage() {
+print_general_usage() {
   echo "Usage: container.sh [COMMAND]"
   echo "Commands:"
   echo "  build [OPTIONS]        Build the container image"
@@ -195,26 +188,26 @@ parse_arguments() {
     case $1 in
     build)
       shift
-      . $DIR/_build_container.sh "$@"
+      parse_build_args "$@"
       return
       ;;
     run)
       shift
-      . $DIR/_run_container.sh "$@"
+      parse_run_args "$@"
       return
       ;;
     -h | --help)
-      print_usage
+      print_general_usage
       exit 0
       ;;
     *)
       echo "Unknown command: $1"
-      print_usage
+      print_general_usage
       exit 1
       ;;
     esac
   done
-  print_usage
+  print_general_usage
 }
 
 parse_arguments "$@"
