@@ -23,6 +23,7 @@ export {
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
+  formatDefenderRoute,
   stripHtmlTags,
 } from './formatters'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'
