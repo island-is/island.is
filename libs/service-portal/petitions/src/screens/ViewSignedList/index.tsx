@@ -141,7 +141,7 @@ const ViewSignedList = () => {
               <Box width="half">
                 <Button
                   variant="ghost"
-                  icon="arrowForward"
+                  icon="open"
                   onClick={() =>
                     window.open(
                       `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
@@ -153,13 +153,16 @@ const ViewSignedList = () => {
               </Box>
             )}
           </Box>
-          <PetitionsTable
-            petitionSigners={
-              petitionEndorsements as PaginatedEndorsementResponse
-            }
-            listId={listId}
-            canEdit={false}
-          />
+
+          {isListOpen && (
+            <PetitionsTable
+              petitionSigners={
+                petitionEndorsements as PaginatedEndorsementResponse
+              }
+              listId={listId}
+              canEdit={false}
+            />
+          )}
         </>
       ) : (
         <Skeleton />
