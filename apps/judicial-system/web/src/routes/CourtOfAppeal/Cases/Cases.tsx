@@ -37,6 +37,10 @@ import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mut
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType } from '../../Shared/Cases/utils'
 import { courtOfAppealCases as strings } from './Cases.strings'
+import TableV from '@island.is/judicial-system-web/src/components/TableV2/Table'
+import { useFilter } from '../../Shared/Cases/useFilter'
+import ActiveTable from './Tables/ActiveTable'
+import PastCasesTable from './Tables/PastCasesTable'
 
 export interface AppealedCasesQueryResponse {
   courtCaseNumber: string
@@ -233,6 +237,7 @@ const CourtOfAppealCases = () => {
 
   const appealedCasesData = appealedCases?.cases || []
 
+  console.log(appealedCases)
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
@@ -241,13 +246,12 @@ const CourtOfAppealCases = () => {
       </div>
       <SectionHeading title={formatMessage(strings.appealedCasesTitle)} />
       <Box marginBottom={7}>
-        <Table
-          handleRowClick={(id) => {
+        <ActiveTable
+          onRowClick={(id) => {
             getCaseToOpen({
               variables: { input: { id } },
             })
           }}
-          columns={appealedCasesColumns}
           data={
             appealedCasesData?.filter(
               (a) => a.appealState !== CaseAppealState.COMPLETED,
@@ -256,13 +260,13 @@ const CourtOfAppealCases = () => {
         />
       </Box>
       <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
-      <Table
-        handleRowClick={(id) =>
+
+      <PastCasesTable
+        onRowClick={(id) =>
           getCaseToOpen({
             variables: { input: { id } },
           })
         }
-        columns={completedCasesColumns}
         data={
           appealedCasesData?.filter(
             (a) => a.appealState === CaseAppealState.COMPLETED,
