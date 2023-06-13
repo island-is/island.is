@@ -8807,8 +8807,8 @@ __metadata:
     "@tsconfig/react-native": ^2.0.2
     "@types/intl": ^1
     "@types/jest": ^29.2.1
-    "@types/react": 18.2.11
-    "@types/react-dom": 18.2.4
+    "@types/react": ^18.0.24
+    "@types/react-dom": ^18
     "@types/react-test-renderer": ^18.0.0
     "@types/styled-components": ^5
     "@types/styled-components-react-native": 5.2.1
@@ -16016,12 +16016,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:*":
-  version: 17.0.3
-  resolution: "@types/react-dom@npm:17.0.3"
+"@types/react-dom@npm:*, @types/react-dom@npm:18.2.5, @types/react-dom@npm:^18, @types/react-dom@npm:^18.0.0":
+  version: 18.2.5
+  resolution: "@types/react-dom@npm:18.2.5"
   dependencies:
     "@types/react": "*"
-  checksum: 102a3ee9ecf96fdd82d37d90860d0b80e160a368117e4e84512c801f8c7f381d7a2b9305f155670f42eab4784d036375cbf16c9905839dd0857e7031ff966803
+  checksum: c48209f8c60cb9054f3deee5365bc9fd6dadd8f901b67f1612a334057b2671518fc5145f14aca63ff276a926ccb5358308a6cf58ec700178f382bb3ebde96d91
   languageName: node
   linkType: hard
 
@@ -16031,15 +16031,6 @@ __metadata:
   dependencies:
     "@types/react": ^16
   checksum: 68a4ee88f7a56cdbfbca24b1936b9aa5dad8b40ffbf1f047ddf990454aec6e0c9da2a01c9ae87045e95236602061646c90d02f01281533e14f1970687873030f
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:18.2.4, @types/react-dom@npm:^18.0.0":
-  version: 18.2.4
-  resolution: "@types/react-dom@npm:18.2.4"
-  dependencies:
-    "@types/react": "*"
-  checksum: 8301f35cf1cbfec8c723e9477aecf87774e3c168bd457d353b23c45064737213d3e8008b067c6767b7b08e4f2b3823ee239242a6c225fc91e7f8725ef8734124
   languageName: node
   linkType: hard
 
@@ -16137,14 +16128,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
-  version: 17.0.45
-  resolution: "@types/react@npm:17.0.45"
+"@types/react@npm:*, @types/react@npm:18.2.12, @types/react@npm:>=16, @types/react@npm:^18.0.24":
+  version: 18.2.12
+  resolution: "@types/react@npm:18.2.12"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 3cc13a02824c13f6fa4807a83abd065ac1d9943359e76bd995cc7cd2b4148c1176ebd54a30a9f4eb8a0f141ff359d712876f256c4fee707e4290607ef8410b3e
+  checksum: ad85a7eadaf1b35cfeee9f715b39311420ff46d46e0650377d918b3f888c2e47416037da4a765e1dccd3d1916abd54c105a3bee803c971ba56c955a7768ce976
   languageName: node
   linkType: hard
 
@@ -16167,28 +16158,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 4b49644466c72c4fc2eafa16f8c787eac09d84117b3ab7d17d547f938cdb7bdce7cac92cb12c94d860bbdc0316802eca5af01afd7ed4ef06f6009b4bae8a494b
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:18.2.11":
-  version: 18.2.11
-  resolution: "@types/react@npm:18.2.11"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 3dcc326ea87468a06079b6c3a9e0f9a98a8438526aba81d29820954e2cb343b6beb8ca3d6a212878797a909fbd3199d07a4d819cd3efbbdba8c22039c06f1ed8
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:>=16":
-  version: 18.2.9
-  resolution: "@types/react@npm:18.2.9"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: f155256171a2d701eb962a1d3aa2a1c9ee36d9dd4a4aecb911d29e50717aab1a76914aef25242665147c455b9e8d081d1a60275d13ca81075c148ebd6607414a
   languageName: node
   linkType: hard
 
@@ -32748,10 +32717,10 @@ __metadata:
     "@types/pdfkit": 0.11.2
     "@types/pg": 8.6.4
     "@types/pubsub-js": 1.8.1
-    "@types/react": 18.2.11
+    "@types/react": 18.2.12
     "@types/react-csv": 1.1.1
     "@types/react-datepicker": 4.10.0
-    "@types/react-dom": 18.2.4
+    "@types/react-dom": 18.2.5
     "@types/react-html-parser": 2.0.1
     "@types/react-infinite-scroller": ^1.2.3
     "@types/react-input-mask": 3.0.0
