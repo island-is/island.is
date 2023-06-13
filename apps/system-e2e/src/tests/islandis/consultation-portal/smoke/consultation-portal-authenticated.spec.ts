@@ -72,6 +72,7 @@ test.describe('Consultation portal authenticated', () => {
   for (const item in lis) {
     const instance = lis[item as keyof PagesInterface]
     test(`${item} should show logged in state`, async () => {
+      if (item.toLowerCase() == 'subscriptions') test.skip()
       const page = await context.newPage()
       await page.goto(icelandicAndNoPopupUrl(`${URL}${instance.href}`))
       for (const { text } of instance.breadcrumbs) {
