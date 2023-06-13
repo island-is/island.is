@@ -162,7 +162,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
             <GridRow>
               <GridColumn span="4/12">
                 <Text variant="h4" marginBottom={0}>
-                  {n('listOpenFromTil', 'Tímabil lista:')}
+                  {n('listOpenFromTil', 'Gildistímabil lista:')}
                 </Text>
                 <Text variant="default">
                   {formatDate(list.openedDate) +
@@ -266,7 +266,7 @@ PetitionView.getInitialProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'PetitionViews',
+            namespace: 'PetitionView',
             lang: locale,
           },
         },
