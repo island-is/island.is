@@ -193,7 +193,7 @@ function getDefenceUserCasesQueryFilter(user: User): WhereOptions {
         },
         {
           [Op.and]: [
-            { type: [...indictmentCases] },
+            { type: indictmentCases },
             { state: [CaseState.RECEIVED, ...completedCaseStates] },
             {
               '$defendants.defender_national_id$': user.nationalId,
