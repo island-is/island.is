@@ -12,8 +12,6 @@ import {
   URL,
 } from './consts'
 
-test.use({ baseURL: urls.islandisBaseUrl })
-
 test.describe('Consultation portal unathenticated', () => {
   let context: BrowserContext
   const authLink = new RegExp(`^${urls.authUrl}`)

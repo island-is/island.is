@@ -10,8 +10,6 @@ import {
   disableObjectKey,
 } from '../../../../support/disablers'
 
-test.use({ baseURL: urls.islandisBaseUrl })
-
 test.describe('P-sign', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {

@@ -6,8 +6,6 @@ import { m } from '@island.is/service-portal/core/messages'
 import { spmm } from '@island.is/service-portal/information/messages'
 import { disableI18n } from '../../../../support/disablers'
 
-test.use({ baseURL: urls.islandisBaseUrl })
-
 test.describe('MS - Mínar upplýsingar', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {

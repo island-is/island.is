@@ -24,8 +24,6 @@ import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
-test.use({ baseURL: urls.islandisBaseUrl })
-
 async function getEmployerEmailAndApprove(employer: EmailAccount, page: Page) {
   const { proceed } = helpers(page)
 

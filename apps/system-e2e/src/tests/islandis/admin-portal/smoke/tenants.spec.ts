@@ -4,7 +4,6 @@ import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord/innskraningarkerfi`
-test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Admin portal tenants', () => {
   let contextGranter: BrowserContext

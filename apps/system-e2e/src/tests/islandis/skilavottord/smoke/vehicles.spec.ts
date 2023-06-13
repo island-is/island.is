@@ -2,8 +2,6 @@ import { BrowserContext, expect, test } from '@playwright/test'
 import { AuthUrl, getEnvironmentBaseUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-test.use({ baseURL: urls.islandisBaseUrl })
-
 test.describe.skip('Service portal', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {

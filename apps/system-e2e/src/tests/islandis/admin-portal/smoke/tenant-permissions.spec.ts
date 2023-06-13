@@ -8,7 +8,6 @@ const homeUrl = `${
 }/stjornbord/innskraningarkerfi/${encodeURIComponent(
   '@admin.island.is',
 )}/rettindi`
-test.use({ baseURL: urls.islandisBaseUrl })
 
 const permissionId = '@admin.island.is/delegations'
 

@@ -2,8 +2,6 @@ import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-test.use({ baseURL: urls.islandisBaseUrl })
-
 test.describe('Search feature', () => {
   let context: BrowserContext
   test.beforeAll(async ({ browser }) => {

@@ -3,8 +3,6 @@ import format from 'date-fns/format'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-test.use({ baseURL: urls.islandisBaseUrl })
-
 test.describe('Driving School Confirmation', () => {
   let context: BrowserContext
 

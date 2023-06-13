@@ -11,7 +11,6 @@ import { disableI18n } from '../../../../support/disablers'
 import { switchDelegation } from './auth.spec'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
-test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal', () => {
   let context: BrowserContext

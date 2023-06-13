@@ -1,8 +1,6 @@
 import { test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 
-test.use({ baseURL: urls.islandisBaseUrl })
-
 test.describe.skip('Óflokkað', () => {
   for (const { testCase, home } of [
     { testCase: 'Þjónustuvefur opnast - https://island.is/adstod', home: '/' },

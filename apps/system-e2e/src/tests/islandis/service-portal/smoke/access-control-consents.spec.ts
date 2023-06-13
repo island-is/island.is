@@ -4,7 +4,6 @@ import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur/adgangsstyring/gagnaoflun`
-test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal access control concents', () => {
   let contextGranter: BrowserContext

@@ -3,7 +3,6 @@ import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
-test.use({ baseURL: urls.islandisBaseUrl })
 
 export async function switchDelegation(
   page: Page,
