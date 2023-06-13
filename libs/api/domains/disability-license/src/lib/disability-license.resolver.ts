@@ -19,7 +19,7 @@ export class DisabilityLicenseResolver {
   constructor(private disabilityLicenseApi: DisabilityLicenseService) {}
 
   @Query(() => Boolean)
-  hasDisabilityLicense(@CurrentUser() user: User): Promise<Boolean> {
+  hasDisabilityLicense(@CurrentUser() user: User): Promise<boolean> {
     return this.disabilityLicenseApi.hasDisabilityLicense(user)
   }
 }
