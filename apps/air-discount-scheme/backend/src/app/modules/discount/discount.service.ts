@@ -232,7 +232,7 @@ export class DiscountService {
       return null
     }
 
-    const ttl = await this.cacheManager.store.ttl(cacheKey)
+    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
 
     return new Discount(
       cacheValue.user,
@@ -253,7 +253,7 @@ export class DiscountService {
       return await this.getDiscountByConnectionDiscountCode(discountCode)
     }
 
-    const ttl = await this.cacheManager.store.ttl(cacheKey)
+    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
     return new Discount(
       cacheValue.user,
       discountCode,
@@ -282,7 +282,7 @@ export class DiscountService {
       return null
     }
 
-    const ttl = await this.cacheManager.store.ttl(cacheKey)
+    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
     return new Discount(
       cacheValue.user,
       cacheValue.discountCode,
@@ -369,7 +369,7 @@ export class DiscountService {
       }
 
       if (cacheId) {
-        const ttl = await this.cacheManager.store.ttl(cacheId)
+        const ttl = (await this.cacheManager.store.ttl(cacheId)) / 1000
         await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
       }
     }
@@ -392,7 +392,7 @@ export class DiscountService {
       return
     }
 
-    const ttl = await this.cacheManager.store.ttl(cacheId)
+    const ttl = (await this.cacheManager.store.ttl(cacheId)) / 1000
 
     // Point the discount code back to the old cache
     await this.setCache<CachedDiscount>(cacheId, cacheValue)

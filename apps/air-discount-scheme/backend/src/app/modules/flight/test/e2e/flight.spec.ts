@@ -36,7 +36,7 @@ beforeAll(async () => {
       builder.overrideGuard(IdsUserGuard).useValue(mockAuthGuard),
   })
   cacheManager = app.get<CacheManager>(CACHE_MANAGER)
-  cacheManager.ttl = () => Promise.resolve('')
+  cacheManager.store.ttl = () => Promise.resolve(0)
   nationalRegistryService = app.get<NationalRegistryService>(
     NationalRegistryService,
   )

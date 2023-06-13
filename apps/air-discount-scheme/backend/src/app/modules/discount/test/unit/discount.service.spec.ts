@@ -48,7 +48,9 @@ describe('DiscountService', () => {
             get: () => ({}),
             set: () => ({}),
             del: () => ({}),
-            ttl: () => ({}),
+            store: {
+              ttl: () => ({}),
+            },
           })),
         },
         {
@@ -105,7 +107,7 @@ describe('DiscountService', () => {
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ discountCode }))
       const cacheManagerTtlSpy = jest
-        .spyOn(cacheManager, 'ttl')
+        .spyOn(cacheManager.store, 'ttl')
         .mockImplementation(() => Promise.resolve(ttl))
 
       const result = await discountService.getDiscountByNationalId(nationalId)
@@ -142,7 +144,7 @@ describe('DiscountService', () => {
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve({ nationalId, discountCode }))
       const cacheManagerTtlSpy = jest
-        .spyOn(cacheManager, 'ttl')
+        .spyOn(cacheManager.store, 'ttl')
         .mockImplementation(() => Promise.resolve(ttl))
 
       const result = await discountService.getDiscountByDiscountCode(
