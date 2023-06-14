@@ -17,6 +17,7 @@ test.describe('Endorsements', () => {
       browser,
       storageState: 'service-portal-faereyjar.json',
       homeUrl: '/undirskriftalistar',
+      authUrl: '/minarsidur',
       phoneNumber: '0102399',
       delegation: '65° Arctic ehf',
     })
