@@ -17,7 +17,7 @@ module.exports = {
       id: listYouOwnListId,
       owner: authNationalId,
     },
-  
+
     {
       ...getGenericEndorsementList(),
       id: listYouDoNotOwnListId,

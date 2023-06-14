@@ -13,10 +13,7 @@ import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 
-import {
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
-
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 interface FindEndorsementInput {
   listId: string
@@ -238,5 +235,4 @@ export class EndorsementService {
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
   }
-
 }
