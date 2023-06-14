@@ -105,21 +105,23 @@ const DefenderInfo: React.FC<Props> = (props) => {
               name="sendRequestToDefender"
               label={formatMessage(
                 isRestrictionCase(workingCase.type)
-                  ? defenderInfo.restrictionCases.sections.sendRequest.label
-                  : defenderInfo.investigationCases.sections.sendRequest.label,
+                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
+                      .label
+                  : defenderInfo.investigationCases.sections
+                      .defenderRequestAccess.label,
               )}
               tooltip={
                 isRestrictionCase(workingCase.type)
                   ? formatMessage(
-                      defenderInfo.restrictionCases.sections.sendRequest
-                        .tooltip,
+                      defenderInfo.restrictionCases.sections
+                        .defenderRequestAccess.tooltip,
                       {
                         caseType: workingCase.type,
                       },
                     )
                   : formatMessage(
-                      defenderInfo.investigationCases.sections.sendRequest
-                        .tooltip,
+                      defenderInfo.investigationCases.sections
+                        .defenderRequestAccess.tooltip,
                     )
               }
               checked={workingCase.sendRequestToDefender}

@@ -51,6 +51,8 @@ export class GeneralPetitionService extends BaseTemplateApiService {
       application.answers,
       'dates',
     ) as { dateFrom: string; dateTil: string }
+    const phone = getValueViaPath<string>(application.answers, 'phone')
+    const email = getValueViaPath<string>(application.answers, 'email')
     const endorsementListResponse = await this.sharedTemplateAPIService
       .makeGraphqlQuery<EndorsementListData>(
         auth.authorization,
@@ -67,6 +69,8 @@ export class GeneralPetitionService extends BaseTemplateApiService {
               // to be able to link back to this application
               applicationTypeId: application.typeId,
               applicationId: application.id,
+              phone,
+              email,
             },
             closedDate: dateTil,
             openedDate: dateFrom,
