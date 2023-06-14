@@ -251,7 +251,6 @@
 - [Portals](libs/portals/README.md)
   - [Admin](libs/portals/admin/README.md)
     - [Core](libs/portals/admin/core/README.md)
-    - [Portals Admin Service Desk](libs/portals/admin/service-desk/README.md)
   - [Core](libs/portals/core/README.md)
 - [React Libraries](libs/react/README.md)
   - [React Components](libs/react/components/README.md)
