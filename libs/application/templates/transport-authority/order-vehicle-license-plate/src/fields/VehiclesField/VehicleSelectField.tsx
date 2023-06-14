@@ -25,7 +25,9 @@ interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
 }
 
-export const VehicleSelectField: FC<React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>> = ({ currentVehicleList, application, errors }) => {
+export const VehicleSelectField: FC<
+  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
+> = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
@@ -164,7 +166,7 @@ export const VehicleSelectField: FC<React.PropsWithChildren<VehicleSearchFieldPr
           </Box>
         )}
       </Box>
-      {!isLoading && plate.length === 0 && errors && errors.pickVehicle && (
+      {!isLoading && plate.length === 0 && (errors as any)?.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </Box>

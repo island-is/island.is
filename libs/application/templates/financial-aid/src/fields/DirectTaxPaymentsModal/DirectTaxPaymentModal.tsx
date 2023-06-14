@@ -34,11 +34,7 @@ const DirectTaxPaymentModal = ({
         }
       }}
     >
-      {({
-        closeModal,
-      }: {
-        closeModal: () => React.Dispatch<React.SetStateAction<boolean>>
-      }) => (
+      {({ closeModal }) => (
         <Box onClick={closeModal} className={styles.container}>
           <Box
             position="relative"

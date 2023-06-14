@@ -26,7 +26,7 @@ export const ValueLine: FC<React.PropsWithChildren<ValueLineProps>> = ({
         as="p"
         fontWeight={isTotal ? 'semiBold' : 'regular'}
       >
-        {value}
+        {formatMessage(value)}
       </Text>
     </Box>
   )

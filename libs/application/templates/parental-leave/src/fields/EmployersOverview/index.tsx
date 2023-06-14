@@ -83,8 +83,8 @@ const EmployersOverview: FC<React.PropsWithChildren<RepeaterProps>> = ({
     <Box>
       <Text variant="default">
         {answers.employerLastSixMonths === YES
-          ? parentalLeaveFormMessages.employer.grantsDescription.defaultMessage
-          : parentalLeaveFormMessages.employer.description.defaultMessage}
+          ? formatMessage(parentalLeaveFormMessages.employer.grantsDescription)
+          : formatMessage(parentalLeaveFormMessages.employer.description)}
       </Text>
       <Box paddingTop={5} paddingBottom={5}>
         <EmployersTable

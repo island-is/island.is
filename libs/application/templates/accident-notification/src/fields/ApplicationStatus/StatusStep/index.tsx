@@ -1,4 +1,5 @@
 import { Box, Button, Tag, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import * as styles from './ReviewSection.css'
 import { ReviewSectionProps } from './types'
@@ -12,6 +13,7 @@ export const StatusStep: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
   action,
   visible = true,
 }) => {
+  const { formatMessage } = useLocale()
   const handleOnCTAButtonClick = () => {
     action?.cta && action.cta()
   }
@@ -30,7 +32,7 @@ export const StatusStep: FC<React.PropsWithChildren<ReviewSectionProps>> = ({
           <Box display="flex" justifyContent="spaceBetween">
             <Text variant="h3">{title}</Text>
             <Tag variant={tagVariant} disabled>
-              {tagText}
+              {formatMessage(tagText)}
             </Tag>
           </Box>
           <Box

@@ -25,7 +25,9 @@ interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicleWithPlateOrderChecks[]
 }
 
-export const VehicleRadioField: FC<React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>> = ({ currentVehicleList, application, errors }) => {
+export const VehicleRadioField: FC<
+  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
+> = ({ currentVehicleList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
@@ -109,7 +111,7 @@ export const VehicleRadioField: FC<React.PropsWithChildren<VehicleSearchFieldPro
           currentVehicleList as VehiclesCurrentVehicleWithPlateOrderChecks[],
         )}
       />
-      {plate.length === 0 && errors && errors.pickVehicle && (
+      {plate.length === 0 && (errors as any)?.pickVehicle && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
       )}
     </div>
