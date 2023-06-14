@@ -224,7 +224,7 @@ export const FormCard = <Intent extends string>({
             {intent && (
               <Box
                 alignItems={['flexStart', 'center']}
-                marginTop="containerGutter"
+                marginTop={5}
                 display="flex"
                 justifyContent={
                   shouldSupportMultiEnv ? 'spaceBetween' : 'flexEnd'

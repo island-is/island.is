@@ -137,7 +137,7 @@ const Lifetime = ({
             {formatMessage(m.inactivityExpirationDescription)}
           </Text>
         </Stack>
-        <Box hidden={!lifetime.refreshTokenExpiration}>
+        {lifetime.refreshTokenExpiration && (
           <Stack space={1}>
             <Input
               size="sm"
@@ -158,7 +158,7 @@ const Lifetime = ({
               {readableInactivityLifetime}
             </Text>
           </Stack>
-        </Box>
+        )}
       </Stack>
     </FormCard>
   )
