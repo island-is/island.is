@@ -373,30 +373,6 @@ export const OldAgePensionForm: Form = buildForm({
           ],
         }),
         buildSubSection({
-          id: 'fileUploadAdditionalFiles',
-          title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
-          children: [
-            buildFileUploadField({
-              id: 'fileUploadAdditionalFiles.additionalDocuments',
-              title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
-              description:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
-              introduction:
-                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
-              maxSize: FILE_SIZE_LIMIT,
-              maxSizeErrorText:
-                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
-              uploadAccept: '.pdf',
-              uploadHeader:
-                oldAgePensionFormMessage.fileUpload.attachmentHeader,
-              uploadDescription:
-                oldAgePensionFormMessage.fileUpload.attachmentDescription,
-              uploadButtonLabel:
-                oldAgePensionFormMessage.fileUpload.attachmentButton,
-            }),
-          ],
-        }),
-        buildSubSection({
           id: 'onePaymentPerYear',
           title: oldAgePensionFormMessage.shared.onePaymentPerYearTitle,
           children: [
@@ -444,6 +420,44 @@ export const OldAgePensionForm: Form = buildForm({
                   { type: 'warning' },
                 ),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'fileUploadAdditionalFiles',
+          title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUploadAdditionalFiles.additionalDocuments',
+              title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.additionalFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'commentSection',
+          title: oldAgePensionFormMessage.shared.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: oldAgePensionFormMessage.shared.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              description: oldAgePensionFormMessage.comment.description,
+              placeholder: oldAgePensionFormMessage.comment.placeholder,
             }),
           ],
         }),

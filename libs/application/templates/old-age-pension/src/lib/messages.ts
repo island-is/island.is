@@ -481,6 +481,19 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
   }),
 
+  comment: defineMessages({
+    description: {
+      id: 'oap.application:comment.description',
+      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
+      description: 'If you have any comments, leave them here.',
+    },
+    placeholder: {
+      id: 'oap.application:comment.placeholder',
+      defaultMessage: 'Skrifaðu hér athugasemd',
+      description: 'Your comment',
+    },
+  }),
+
   errors: defineMessages({
     phoneNumber: {
       id: 'oap.application:error.phonenumber',
