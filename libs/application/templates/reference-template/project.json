@@ -15,10 +15,12 @@
     "test": {
       "executor": "@nrwl/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/reference-template/jest.config.js",
+        "_jestConfig": "libs/application/templates/reference-template/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/templates/reference-template"]
+      "outputs": [
+        "coverage/libs/application/templates/reference-template"
+      ]
     },
     "extract-strings": {
       "executor": "@nrwl/workspace:run-commands",
@@ -27,5 +29,8 @@
       }
     }
   },
-  "tags": ["scope:application-system", "lib:application-system"]
+  "tags": [
+    "scope:application-system",
+    "lib:application-system"
+  ]
 }
