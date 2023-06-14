@@ -302,5 +302,6 @@ export const estateSchema = z.object({
   estateWithoutAssets: z.object({
     estateAssetsExist: z.enum([YES, NO]),
     estateDebtsExist: z.enum([YES, NO]),
+    acceptAssetsSelection: z.array(z.enum([YES])).length(1),
   }),
 })

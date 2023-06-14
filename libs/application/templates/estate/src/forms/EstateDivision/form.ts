@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
@@ -63,6 +64,7 @@ export const form: Form = buildForm({
       title: m.willsAndAgreements,
       children: [testamentInfo],
     }),
+    /* Section for "Eignalaust dánarbú" */
     buildSection({
       id: 'estateAssetsExist',
       title: 'Eru eignir og/eða skuldir til staðar?',
@@ -92,6 +94,48 @@ export const form: Form = buildForm({
                 { label: JA, value: YES },
                 { label: NEI, value: NO },
               ],
+            }),
+            buildDescriptionField({
+              id: 'space1',
+              title: '',
+              space: 'containerGutter',
+            }),
+            buildDescriptionField({
+              id: 'test',
+              title: '',
+              condition: (answers) =>
+                getValueViaPath(
+                  answers,
+                  'estateWithoutAssets.estateAssetsExist',
+                ) === YES,
+            }),
+            buildCheckboxField({
+              id: 'estateWithoutAssets.acceptAssetsSelection',
+              title: '',
+              backgroundColor: 'blue',
+              defaultValue: [],
+              condition: (answers) =>
+                !!getValueViaPath(
+                  answers,
+                  'estateWithoutAssets.estateAssetsExist',
+                ),
+              options: (application) =>
+                getValueViaPath(
+                  application.answers,
+                  'estateWithoutAssets.estateAssetsExist',
+                ) === NO
+                  ? [
+                      {
+                        value: YES,
+                        label: m.acceptNoAssets.defaultMessage,
+                      },
+                    ]
+                  : [
+                      {
+                        value: YES,
+                        label: m.acceptAssets.defaultMessage,
+                      },
+                    ],
             }),
           ],
         }),

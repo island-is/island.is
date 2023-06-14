@@ -498,14 +498,20 @@ export const m = defineMessages({
     defaultMessage: 'Fjárhæð á dánardegi',
     description: '',
   },
-
-  // Debts
-  acceptDebtsLabel: {
-    id: 'es.application:acceptDebtsLabel',
+  acceptAssets: {
+    id: 'es.application:acceptExistenceAssets',
     defaultMessage:
-      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför og að eignirnar séu tæmandi taldar hér að ofan. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
+      'Ég lýsi því yfir, að eftir minni bestu vitund nema eignir búsins ekki meira en kostnaði af útför. Gegn því að fá eignirnar framseldar mér, mun ég kosta útför hins látna.',
     description: '',
   },
+  acceptNoAssets: {
+    id: 'es.application:acceptNoAssets',
+    defaultMessage:
+      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
+    description: '',
+  },
+
+  // Debts
   debtsTitle: {
     id: 'es.application:debtsTitle',
     defaultMessage: 'Skuldir',
