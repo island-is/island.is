@@ -20,15 +20,15 @@ import {
 } from '@island.is/judicial-system/consts'
 import TagAppealState from '@island.is/judicial-system-web/src/components/TagAppealState/TagAppealState'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import DefendantInfo from '@island.is/judicial-system-web/src/components/Table/DefendantInfo/DefendantInfo'
-import CourtCaseNumber from '@island.is/judicial-system-web/src/components/Table/CourtCaseNumber/CourtCaseNumber'
 import {
   useFilterCases,
   useSortCases,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
-import TableSkeleton from '@island.is/judicial-system-web/src/components/TableV2/TableSkeleton/TableSkeleton'
+import TableSkeleton from '@island.is/judicial-system-web/src/components/Table/TableSkeleton/TableSkeleton'
+import CourtCaseNumber from '@island.is/judicial-system-web/src/components/Table/CourtCaseNumber/CourtCaseNumber'
+import DefendantInfo from '@island.is/judicial-system-web/src/components/Table/DefendantInfo/DefendantInfo'
 
 interface Props {
   cases: CaseListEntry[]
@@ -173,6 +173,7 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                   <CourtCaseNumber
                     courtCaseNumber={c.courtCaseNumber}
                     policeCaseNumbers={c.policeCaseNumbers}
+                    appealCaseNumber={c.appealCaseNumber}
                   />
                 </td>
                 <td className={cn(styles.td)}>

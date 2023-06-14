@@ -5,25 +5,24 @@ import { Box, Text } from '@island.is/island-ui/core'
 
 import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { useIntl } from 'react-intl'
-import {
-  capitalize,
-  displayFirstPlusRemaining,
-  formatDOB,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages/Core'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
-import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-import TagAppealState from '../../TagAppealState/TagAppealState'
-import SortButton from '../SortButton/SortButton'
-import TableHeaderText from '../TableHeaderText/TableHeaderText'
 import { theme } from '@island.is/island-ui/theme'
-import TableContainer from '../TableContainer/TableContainer'
 import useSortAppealCases from '@island.is/judicial-system-web/src/utils/hooks/useTable/useSortAppealCases'
 import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Cases/Cases'
+import { TagAppealState } from '@island.is/judicial-system-web/src/components'
+import {
+  ColumnCaseType,
+  CourtCaseNumber,
+  DefendantInfo,
+  SortButton,
+  TableContainer,
+  TableHeaderText,
+} from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from '../Table.css'
-import { isRestrictionCase } from '@island.is/judicial-system/types'
+import { Defendant, isRestrictionCase } from '@island.is/judicial-system/types'
 import MobileAppealCase from './MobileAppealCase'
 
 interface Props {
@@ -55,7 +54,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
   return width < theme.breakpoints.md ? (
     <>
       {activeCasesData.map((theCase) => (
-        <Box marginTop={2} key={theCase.parentCaseId}>
+        <Box marginTop={2} key={theCase.id}>
           <MobileAppealCase
             theCase={theCase}
             onClick={() => onRowClick(theCase.id)}
@@ -84,7 +83,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
           ) : (
             <th className={cn(styles.th, styles.largeColumn)}>
               <SortButton
-                title="Stofnað"
+                title={formatMessage(tables.appealDate)}
                 onClick={() => requestSort('appealedDate')}
                 sortAsc={getClassNamesFor('appealedDate') === 'ascending'}
                 sortDes={getClassNamesFor('appealedDate') === 'descending'}
@@ -99,70 +98,24 @@ const AppealCasesTable: React.FC<Props> = (props) => {
           <tr
             className={styles.row}
             onClick={() => onRowClick(column.parentCaseId)}
+            key={column.id}
           >
             <td>
-              {column.appealCaseNumber ? (
-                <Box display="flex" flexDirection="column">
-                  <Text as="span" variant="small">
-                    {column.appealCaseNumber}
-                  </Text>
-                  <Text as="span" variant="small">
-                    {column.courtCaseNumber}
-                  </Text>
-                  <Text as="span" variant="small">
-                    {displayFirstPlusRemaining(column.policeCaseNumbers)}
-                  </Text>
-                </Box>
-              ) : (
-                <Box display="flex" flexDirection="column">
-                  <Text as="span">{column.courtCaseNumber}</Text>
-                  <Text as="span" variant="small">
-                    {displayFirstPlusRemaining(column.policeCaseNumbers)}
-                  </Text>
-                </Box>
-              )}
+              <CourtCaseNumber
+                courtCaseNumber={column.courtCaseNumber}
+                policeCaseNumbers={column.policeCaseNumbers}
+                appealCaseNumber={column.appealCaseNumber}
+              />
             </td>
             <td className={cn(styles.td, styles.largeColumn)}>
-              {column.defendants && column.defendants.length > 0 ? (
-                <>
-                  <Text>
-                    <Box component="span" className={styles.blockColumn}>
-                      {column.defendants[0].name ?? '-'}
-                    </Box>
-                  </Text>
-                  {column.defendants.length === 1 ? (
-                    (!column.defendants[0].noNationalId ||
-                      column.defendants[0].nationalId) && (
-                      <Text>
-                        <Text as="span" variant="small" color="dark400">
-                          {formatDOB(
-                            column.defendants[0].nationalId,
-                            column.defendants[0].noNationalId,
-                          )}
-                        </Text>
-                      </Text>
-                    )
-                  ) : (
-                    <Text as="span" variant="small" color="dark400">
-                      {`+ ${column.defendants.length - 1}`}
-                    </Text>
-                  )}
-                </>
-              ) : (
-                <Text>-</Text>
-              )}
+              <DefendantInfo defendants={column.defendants as Defendant[]} />
             </td>
             <td>
-              <Box component="span" display="flex" flexDirection="column">
-                <Text as="span">
-                  {displayCaseType(formatMessage, column.type, column.decision)}
-                </Text>
-                {column.parentCaseId && (
-                  <Text as="span" variant="small" color="dark400">
-                    Framlenging
-                  </Text>
-                )}
-              </Box>
+              <ColumnCaseType
+                type={column.type}
+                decision={column.decision}
+                parentCaseId={column.parentCaseId}
+              />
             </td>
             <td>
               <TagAppealState

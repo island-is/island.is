@@ -1,12 +1,5 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
-
 import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
-
-import {
-  displayFirstPlusRemaining,
-  formatDOB,
-} from '@island.is/judicial-system/formatters'
 
 import * as styles from './CategoryCard.css'
 

@@ -8,10 +8,9 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-
+import { TagCaseState } from '@island.is/judicial-system-web/src/components'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-import CategoryCard from '../CategoryCard/CategoryCard'
+import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
 
 interface Props {
   theCase: CaseListEntry

@@ -35,13 +35,13 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 import * as constants from '@island.is/judicial-system/consts'
-import PastCasesTable from '@island.is/judicial-system-web/src/components/TableV2/PastCasesTable/PastCasesTable'
+import PastCasesTable from '@island.is/judicial-system-web/src/components/Table/PastCasesTable/PastCasesTable'
 
 import ActiveCases from './ActiveCases'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import TableSkeleton from '@island.is/judicial-system-web/src/components/TableV2/TableSkeleton/TableSkeleton'
+import TableSkeleton from '@island.is/judicial-system-web/src/components/Table/TableSkeleton/TableSkeleton'
 
 const CreateCaseButton: React.FC<{
   user: User

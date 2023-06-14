@@ -10,8 +10,8 @@ import {
 
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Cases/Cases'
-import TagAppealState from '../../TagAppealState/TagAppealState'
-import CategoryCard from '../CategoryCard/CategoryCard'
+import { TagAppealState } from '@island.is/judicial-system-web/src/components'
+import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
 
 interface Props {
   theCase: AppealedCasesQueryResponse

@@ -36,7 +36,7 @@ import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mut
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType } from '../../Shared/Cases/utils'
 import { courtOfAppealCases as strings } from './Cases.strings'
-import AppealCasesTable from '@island.is/judicial-system-web/src/components/TableV2/AppealCasesTable/AppealCasesTable'
+import AppealCasesTable from '@island.is/judicial-system-web/src/components/Table/AppealCasesTable/AppealCasesTable'
 
 export interface AppealedCasesQueryResponse {
   courtCaseNumber: string

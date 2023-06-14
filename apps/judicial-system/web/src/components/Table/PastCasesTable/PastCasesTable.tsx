@@ -7,12 +7,7 @@ import parseISO from 'date-fns/parseISO'
 import * as styles from '../Table.css'
 import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { useIntl } from 'react-intl'
-import {
-  capitalize,
-  displayFirstPlusRemaining,
-  formatDOB,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages/Core'
 import {
   Case,
@@ -24,15 +19,21 @@ import {
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-import TagAppealState from '../../TagAppealState/TagAppealState'
-import SortButton from '../SortButton/SortButton'
-import TableHeaderText from '../TableHeaderText/TableHeaderText'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import {
+  TagAppealState,
+  TagCaseState,
+} from '@island.is/judicial-system-web/src/components'
 import { UserContext } from '../../UserProvider/UserProvider'
 import { theme } from '@island.is/island-ui/theme'
-import TableContainer from '../TableContainer/TableContainer'
 import MobilePastCase from './MobilePastCase'
+import {
+  ColumnCaseType,
+  CourtCaseNumber,
+  DefendantInfo,
+  SortButton,
+  TableContainer,
+  TableHeaderText,
+} from '@island.is/judicial-system-web/src/components/Table'
 
 export function getDurationDate(
   state: Case['state'],
@@ -145,68 +146,21 @@ const PastCasesTable: React.FC<Props> = (props) => {
         return (
           <tr className={styles.row} onClick={() => onRowClick(column.id)}>
             <td>
-              {column.appealCaseNumber ? (
-                <Box display="flex" flexDirection="column">
-                  <Text as="span" variant="small">
-                    {column.appealCaseNumber}
-                  </Text>
-                  <Text as="span" variant="small">
-                    {column.courtCaseNumber}
-                  </Text>
-                  <Text as="span" variant="small">
-                    {displayFirstPlusRemaining(column.policeCaseNumbers)}
-                  </Text>
-                </Box>
-              ) : (
-                <Box display="flex" flexDirection="column">
-                  <Text as="span">{column.courtCaseNumber}</Text>
-                  <Text as="span" variant="small">
-                    {displayFirstPlusRemaining(column.policeCaseNumbers)}
-                  </Text>
-                </Box>
-              )}
+              <CourtCaseNumber
+                courtCaseNumber={column.courtCaseNumber}
+                policeCaseNumbers={column.policeCaseNumbers}
+                appealCaseNumber={column.appealCaseNumber}
+              />
             </td>
             <td className={cn(styles.td, styles.largeColumn)}>
-              {column.defendants && column.defendants.length > 0 ? (
-                <>
-                  <Text>
-                    <Box component="span" className={styles.blockColumn}>
-                      {column.defendants[0].name ?? '-'}
-                    </Box>
-                  </Text>
-                  {column.defendants.length === 1 ? (
-                    (!column.defendants[0].noNationalId ||
-                      column.defendants[0].nationalId) && (
-                      <Text>
-                        <Text as="span" variant="small" color="dark400">
-                          {formatDOB(
-                            column.defendants[0].nationalId,
-                            column.defendants[0].noNationalId,
-                          )}
-                        </Text>
-                      </Text>
-                    )
-                  ) : (
-                    <Text as="span" variant="small" color="dark400">
-                      {`+ ${column.defendants.length - 1}`}
-                    </Text>
-                  )}
-                </>
-              ) : (
-                <Text>-</Text>
-              )}
+              <DefendantInfo defendants={column.defendants} />
             </td>
             <td>
-              <Box component="span" display="flex" flexDirection="column">
-                <Text as="span">
-                  {displayCaseType(formatMessage, column.type, column.decision)}
-                </Text>
-                {column.parentCaseId && (
-                  <Text as="span" variant="small" color="dark400">
-                    Framlenging
-                  </Text>
-                )}
-              </Box>
+              <ColumnCaseType
+                type={column.type}
+                decision={column?.decision}
+                parentCaseId={column.parentCaseId}
+              />
             </td>
             <td>
               <Box marginRight={1} marginBottom={1}>
