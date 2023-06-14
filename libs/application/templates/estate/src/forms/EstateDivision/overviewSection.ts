@@ -139,7 +139,8 @@ export const overview = buildSection({
           EstateTypes.permitForUndividedEstate ||
         (getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.estateWithoutAssets &&
-          getValueViaPath(answers, 'estatePropertiesExist') === YES),
+          getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist') ===
+            YES),
       children: [
         ...commonOverviewFields,
         buildDescriptionField({
@@ -560,7 +561,8 @@ export const overview = buildSection({
       condition: (answers) =>
         getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.estateWithoutAssets &&
-        getValueViaPath(answers, 'estatePropertiesExist') === NO,
+        getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist') ===
+          NO,
       children: [
         ...commonOverviewFields,
         buildDescriptionField({
@@ -591,7 +593,8 @@ export const overview = buildSection({
           titleVariant: 'h3',
           space: 'gutter',
           condition: (answers) =>
-            getValueViaPath(answers, 'estateDebtsExist') === YES,
+            getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') ===
+            YES,
         }),
         buildCustomField(
           {
@@ -600,7 +603,10 @@ export const overview = buildSection({
             component: 'Cards',
             doesNotRequireAnswer: true,
             condition: (answers) =>
-              getValueViaPath(answers, 'estateDebtsExist') === YES,
+              getValueViaPath(
+                answers,
+                'estateWithoutAssets.estateDebtsExist',
+              ) === YES,
           },
           {
             cards: ({ answers }: Application) =>
@@ -624,7 +630,8 @@ export const overview = buildSection({
         ),
         buildDividerField({
           condition: (answers) =>
-            getValueViaPath(answers, 'estateDebtsExist') === YES,
+            getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') ===
+            YES,
         }),
         buildDescriptionField({
           id: 'overviewAttachments',

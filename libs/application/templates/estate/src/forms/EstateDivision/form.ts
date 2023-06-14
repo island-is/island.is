@@ -63,16 +63,16 @@ export const form: Form = buildForm({
       children: [testamentInfo],
     }),
     buildSection({
-      id: 'estatePropertiesExist',
+      id: 'estateAssetsExist',
       title: 'Eru eignir og/eða skuldir til staðar?',
       children: [
         buildMultiField({
-          id: 'estatePropertiesExist',
+          id: 'estateAssetsExist',
           title: 'Eru eignir og/eða skuldir til staðar?',
           description: 'Eru eignir til staðar?',
           children: [
             buildRadioField({
-              id: 'estatePropertiesExist',
+              id: 'estateWithoutAssets.estateAssetsExist',
               title: 'Eru eignir til staðar?',
               width: 'half',
               largeButtons: false,
@@ -82,7 +82,7 @@ export const form: Form = buildForm({
               ],
             }),
             buildRadioField({
-              id: 'estateDebtsExist',
+              id: 'estateWithoutAssets.estateDebtsExist',
               title: 'Eru skuldir til staðar?',
               width: 'half',
               largeButtons: false,
@@ -108,7 +108,10 @@ export const form: Form = buildForm({
       condition: (answers) => {
         return getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.estateWithoutAssets
-          ? getValueViaPath(answers, 'estatePropertiesExist') === YES
+          ? getValueViaPath(
+              answers,
+              'estateWithoutAssets.estateAssetsExist',
+            ) === YES
           : true
       },
       children: [
@@ -451,7 +454,8 @@ export const form: Form = buildForm({
       condition: (answers) => {
         return getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.estateWithoutAssets
-          ? getValueViaPath(answers, 'estateDebtsExist') === YES
+          ? getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') ===
+              YES
           : true
       },
       children: [

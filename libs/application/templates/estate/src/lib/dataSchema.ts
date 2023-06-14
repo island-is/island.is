@@ -299,6 +299,8 @@ export const estateSchema = z.object({
     }),
   }),
 
-  estatePropertiesExist: z.enum([YES, NO]),
-  estateDebtsExist: z.enum([YES, NO]),
+  estateWithoutAssets: z.object({
+    estateAssetsExist: z.enum([YES, NO]),
+    estateDebtsExist: z.enum([YES, NO]),
+  }),
 })
