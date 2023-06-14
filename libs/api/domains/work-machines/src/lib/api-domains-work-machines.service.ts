@@ -1,8 +1,10 @@
 import { WorkMachinesClientService } from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
-import { WorkMachine } from './models/getWorkMachines'
+import { WorkMachine, WorkMachineCollection } from './models/getWorkMachines'
 import { Injectable } from '@nestjs/common'
 import { Action, ExternalLink } from './api-domains-work-machines.types'
+import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
+import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 @Injectable()
 export class WorkMachinesService {
   constructor(private readonly machineService: WorkMachinesClientService) {}
@@ -39,8 +41,11 @@ export class WorkMachinesService {
     }
   }
 
-  async getWorkMachines(user: User) {
-    const data = await this.machineService.getWorkMachines(user)
+  async getWorkMachines(
+    user: User,
+    input: GetWorkMachineCollectionInput,
+  ): Promise<WorkMachineCollection> {
+    const data = await this.machineService.getWorkMachines(user, input)
 
     const value = data.value?.map(
       (v) =>
@@ -69,14 +74,9 @@ export class WorkMachinesService {
 
   async getWorkMachineById(
     user: User,
-    machineId: string,
-    locale: string,
+    input: GetWorkMachineInput,
   ): Promise<WorkMachine | null> {
-    const data = await this.machineService.getWorkMachineById(
-      user,
-      machineId,
-      locale,
-    )
+    const data = await this.machineService.getWorkMachineById(user, input)
 
     const links = data.links?.length
       ? data.links.map((l) => {

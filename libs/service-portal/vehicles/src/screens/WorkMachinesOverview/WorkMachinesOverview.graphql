@@ -1,10 +1,13 @@
-query GetWorkMachines {
-  workMachinesWorkMachineEntity {
+query GetWorkMachines($input: WorkMachinesWorkMachineCollectionInput) {
+  workMachinesWorkMachineCollection(input: $input) {
     value {
       id
       registrationNumber
       type
       status
+    }
+    links {
+      rel
     }
   }
 }

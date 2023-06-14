@@ -6,8 +6,8 @@ registerEnumType(ExternalLink, {
   name: 'WorkMachinesExternalLink',
 })
 
-@ObjectType('WorkMachinesEntity')
-export class WorkMachineEntity {
+@ObjectType('WorkMachinesWorkMachineCollection')
+export class WorkMachineCollection {
   @Field(() => [WorkMachine], { nullable: true })
   value?: Array<WorkMachine> | null
 

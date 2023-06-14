@@ -667,13 +667,29 @@ export const messages = defineMessages({
     defaultMessage: 'Skoða nánar',
   },
   workMachinesTitle: {
-    id: 'sp.vehicles:work-machines',
+    id: 'sp.work-machines:title',
     defaultMessage: 'Vinnuvélar',
   },
   workMachinesDescription: {
-    id: 'sp.vehicles:work-machines',
+    id: 'sp.work-machines:description',
     defaultMessage:
       'Hér finnur þú upplýsingar um þínar vinnuvélar úr skrá Vinnueftirlit ríkisins. Einnig er hægt að sjá yfirlit yfir eigendaskipti.',
+  },
+  showDeregisteredWorkMachines: {
+    id: 'sp.work-machines:show-deregistered',
+    defaultMessage: 'Sýna afskráð tæki',
+  },
+  showOwnerChangingWorkMachines: {
+    id: 'sp.work-machines:show-owner-change',
+    defaultMessage: 'Í eigendaskiptum',
+  },
+  showOwnerSupervisorRegisteredWorkMachines: {
+    id: 'sp.work-machines:show-supervisor',
+    defaultMessage: 'Tæki með skráðann umráðamann',
+  },
+  workMachinesSearchPlaceholder: {
+    id: 'sp.work-machines:search-placeholder',
+    defaultMessage: 'Leita',
   },
 })
 

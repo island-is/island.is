@@ -285,6 +285,66 @@
         }
       }
     },
+    "/api/MachinesDocument": {
+      "get": {
+        "tags": ["MachinesDocument"],
+        "summary": "Returns a list of machines as a file.",
+        "operationId": "Excel",
+        "parameters": [
+          {
+            "name": "fileType",
+            "in": "query",
+            "description": "The filetype to return. Accepts \"excel\" and \"csv\"",
+            "schema": { "type": "string", "default": "excel" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Success" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Openapi": {
       "get": {
         "tags": ["Openapi"],

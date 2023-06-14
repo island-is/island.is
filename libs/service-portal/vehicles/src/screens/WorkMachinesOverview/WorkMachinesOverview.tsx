@@ -19,27 +19,75 @@ import {
   GridRow,
   Inline,
   Input,
+  Pagination,
   Text,
 } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
+import { useDebounce } from 'react-use'
+import { WorkMachinesExternalLink } from '@island.is/api/schema'
+
+type FilterValue = {
+  label: string
+  value: boolean
+}
+
+type FilterValues = {
+  deregistered: FilterValue
+  ownerChange: FilterValue
+  registeredSupervisor: FilterValue
+}
+
+const DEFAULT_PAGE_SIZE = 8
+const DEFAULT_PAGE_NUMBER = 1
+const DEFAULT_ORDER_BY = 'RegistrationNumber'
 
 const WorkMachinesOverview = () => {
   useNamespaces('sp.vehicles')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale } = useLocale()
 
-  const filterTypes: Array<{ label: string; value: string }> = [
-    { label: 'Í eigendaskiptum', value: 'CHANGING_OWNERS' },
-    { label: 'Sýna afskráð tæki', value: 'SHOW_DEREGISTERED' },
-    {
-      label: 'Tæki með skráðann umráðamann',
-      value: 'MACHINES_WITH_SUPERVISOR',
+  const defaultFilterValues: FilterValues = {
+    deregistered: {
+      label: formatMessage(messages.showDeregisteredWorkMachines),
+      value: false,
     },
-  ]
+    ownerChange: {
+      label: formatMessage(messages.showOwnerChangingWorkMachines),
+      value: false,
+    },
+    registeredSupervisor: {
+      label: formatMessage(messages.showOwnerSupervisorRegisteredWorkMachines),
+      value: false,
+    },
+  }
 
-  const [activeFilters, setActiveFilters] = useState<Array<string>>([])
-  const [searchTerm, setSearchTerm] = useState('')
+  const [activeFilters, setActiveFilters] = useState<FilterValues>(
+    defaultFilterValues,
+  )
+  const [searchTerm, setSearchTerm] = useState<string>('')
+  const [activeSearch, setActiveSearch] = useState<string>('')
 
-  const { loading, error, data } = useGetWorkMachinesQuery()
+  const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
+
+  const { loading, error, data } = useGetWorkMachinesQuery({
+    variables: {
+      input: {
+        locale,
+        pageNumber: page,
+        pageSize: DEFAULT_PAGE_SIZE,
+        searchQuery: activeSearch,
+        orderBy: DEFAULT_ORDER_BY,
+        showDeregisteredMachines: activeFilters.deregistered.value,
+      },
+    },
+  })
+
+  useDebounce(
+    () => {
+      setActiveSearch(searchTerm)
+    },
+    500,
+    [searchTerm],
+  )
 
   const onGetCsv = () => {
     console.log('get csv')
@@ -49,14 +97,14 @@ const WorkMachinesOverview = () => {
     console.log('get Excel')
   }
 
-  const onFilterChange = (filter: string) => {
-    if (!activeFilters.includes(filter)) {
-      setActiveFilters([...activeFilters, filter])
-      return
-    }
-    const filterArray = activeFilters
-    filterArray.splice(filterArray.indexOf(filter), 1)
-    setActiveFilters([...filterArray])
+  const onFilterChange = (key: keyof FilterValues, value: FilterValue) => {
+    setActiveFilters({
+      ...activeFilters,
+      [key]: {
+        ...value,
+        value: !value.value,
+      },
+    })
   }
 
   if (error && !loading) {
@@ -97,7 +145,7 @@ const WorkMachinesOverview = () => {
                   labelClear={formatMessage(m.clearFilter)}
                   labelClearAll={formatMessage(m.clearAllFilters)}
                   labelTitle={formatMessage(m.filterBy)}
-                  onFilterClear={() => setActiveFilters([])}
+                  onFilterClear={() => setActiveFilters(defaultFilterValues)}
                   variant="popover"
                   reverse
                   filterInput={
@@ -108,7 +156,9 @@ const WorkMachinesOverview = () => {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       name="work-machines-input-search"
-                      placeholder={formatMessage(messages.searchPlaceholder)}
+                      placeholder={formatMessage(
+                        messages.workMachinesSearchPlaceholder,
+                      )}
                     />
                   }
                 >
@@ -116,15 +166,18 @@ const WorkMachinesOverview = () => {
                     <Box paddingX={3} marginTop={2}>
                       <Text variant="h4">{formatMessage(m.filterBy)}</Text>
                       <Box paddingY={3}>
-                        {filterTypes.map((filter, index) => (
-                          <Checkbox
-                            id={`work-machine-filter-${index}`}
-                            label={filter.label}
-                            value={filter.value}
-                            checked={activeFilters.includes(filter.value)}
-                            onChange={(e) => onFilterChange(e.target.value)}
-                          />
-                        ))}
+                        {Object.keys(activeFilters).map((filterKey, index) => {
+                          const key = filterKey as keyof FilterValues
+                          const filter = activeFilters[key]
+                          return (
+                            <Checkbox
+                              id={`work-machine-filter-${index}`}
+                              label={filter.label}
+                              checked={filter.value}
+                              onChange={() => onFilterChange(key, filter)}
+                            />
+                          )
+                        })}
                       </Box>
                       <Box
                         borderBottomWidth="standard"
@@ -160,7 +213,7 @@ const WorkMachinesOverview = () => {
         </Box>
       )}
 
-      {!loading && !data?.workMachinesWorkMachineEntity?.value && (
+      {!loading && !data?.workMachinesWorkMachineCollection?.value && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -170,8 +223,8 @@ const WorkMachinesOverview = () => {
 
       {!loading &&
         !error &&
-        data?.workMachinesWorkMachineEntity?.value &&
-        data.workMachinesWorkMachineEntity.value.map((wm, index) => {
+        data?.workMachinesWorkMachineCollection?.value &&
+        data.workMachinesWorkMachineCollection.value.map((wm, index) => {
           return (
             <Box marginBottom={3} key={index}>
               <ActionCard
@@ -196,6 +249,27 @@ const WorkMachinesOverview = () => {
             </Box>
           )
         })}
+
+      {!loading &&
+        !error &&
+        data?.workMachinesWorkMachineCollection?.links?.find(
+          (l) => l.rel === WorkMachinesExternalLink.NEXT_PAGE,
+        ) && (
+          <Box>
+            <Pagination
+              page={page}
+              totalPages={10}
+              renderLink={(page, className, children) => (
+                <button
+                  className={className}
+                  onClick={() => setPage(page - 1 + 1)}
+                >
+                  {children}
+                </button>
+              )}
+            />
+          </Box>
+        )}
     </Box>
   )
 }

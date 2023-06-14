@@ -1,6 +1,8 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiMachinesGetRequest,
+  GetMachineRequest,
   MachineHateoasDto,
   MachinesApi,
   MachinesFriendlyHateaosDto,
@@ -13,13 +15,14 @@ export class WorkMachinesClientService {
   private apiWithAuth = (user: User) =>
     this.machinesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  getWorkMachines = (user: User): Promise<MachinesFriendlyHateaosDto> =>
-    this.apiWithAuth(user).apiMachinesGet({})
+  getWorkMachines = (
+    user: User,
+    input: ApiMachinesGetRequest,
+  ): Promise<MachinesFriendlyHateaosDto> =>
+    this.apiWithAuth(user).apiMachinesGet(input)
 
   getWorkMachineById = (
     user: User,
-    machineId: string,
-    locale: string,
-  ): Promise<MachineHateoasDto> =>
-    this.apiWithAuth(user).getMachine({ id: machineId, locale })
+    input: GetMachineRequest,
+  ): Promise<MachineHateoasDto> => this.apiWithAuth(user).getMachine(input)
 }
