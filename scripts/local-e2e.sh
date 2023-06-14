@@ -1,233 +1,213 @@
 #!/bin/bash
 
-#########################################
-# Script for testing system-e2e locally #
-#########################################
-
 set -euo pipefail
 
-
-RESET=$(echo -en '\033[0m')
-RED=$(echo -en '\033[00;31m')
-GREEN=$(echo -en '\033[00;32m')
-YELLOW=$(echo -en '\033[00;33m')
-LBLUE=$(echo -en '\033[01;34m')
-
-
-export \
-  APP="system-e2e" \
-  TEST_ENVIRONMENT="local"
-
-PROJECT_DIR=$(git rev-parse --show-toplevel)
-APP_HOME=$(jq ".projects[\"$APP\"]" -r < "$PROJECT_DIR"/workspace.json)
-APP_DIST_HOME=$(jq ".targets.build.options.outputPath" -r < "$PROJECT_DIR"/"$APP_HOME"/project.json)
-CYPRESS_BIN="$PROJECT_DIR/node_modules/.bin/cypress"
-ENV_FILE="$PROJECT_DIR/.env.secret"
-
-# shellcheck disable=SC1091,SC1090
-source "$ENV_FILE"
-
-DOCKERFILE="${PROJECT_DIR}/scripts/ci/Dockerfile"
-DOCKER_TAG="$(git rev-parse --short HEAD)"
-DOCKER_IMAGE="localhost/${APP}":"${DOCKER_TAG}"
-DOCKER_TARGET="output-local"
-DOCKER_BUILD_ARGS="--build-arg APP=${APP} --build-arg APP_HOME=${APP_HOME} --build-arg APP_DIST_HOME=${APP_DIST_HOME} --build-arg GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg GIT_SHA=${DOCKER_TAG}"
-
-function info() {
-  local msg
-  msg="$1"
-  echo "${LBLUE}[info]: ${msg}${RESET}"
+print_build_usage() {
+  echo "Usage: build-container.sh [OPTIONS]"
+  echo "Options:"
+  echo "  -t, --target            Set the target build stage"
+  echo "  -f, --dockerfile        Specify the Dockerfile to use (default: Dockerfile)"
+  echo "  -p, --publish           Publish the image to a registry with the specified tag"
+  echo "  -c, --cache-from        Cache images from the specified source (defaut: localhost)"
+  echo "  -h, --help              Show this help message"
 }
 
-function success() {
-  local msg
-  msg="$1"
-  echo "${GREEN}[success]: ${msg}${RESET}"
+parse_build_args() {
+  local target="localrun"
+  local dockerfile="Dockerfile"
+  local publish=""
+  local tag="latest"
+  local cache_from="local"
+
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+    -t | --target)
+      target="$2"
+      shift 2
+      ;;
+    -f | --dockerfile)
+      dockerfile="$2"
+      shift 2
+      ;;
+    -p | --publish)
+      publish="$2"
+      shift 2
+      ;;
+    -c | --cache-from)
+      cache_from="$2"
+      shift 2
+      ;;
+    --tag)
+      tag="$2"
+      shift 2
+      ;;
+    -h | --help)
+      print_build_usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+    esac
+  done
+
+  build_container "$dockerfile" "$target" "$tag" "$publish" "$cache_from"
 }
 
-function error() {
-  local msg
-  msg="$1"
-  echo "${RED}[error]: ${msg}${RESET}"
-}
+build_container() {
+  local dockerfile=$1
+  local target=$2
+  local tag=$3
+  local _publish=$4
+  local cache_from=$5
 
-function warning() {
-  local msg
-  msg="$1"
-  echo "${YELLOW}[warn]: ${msg}${RESET}"
-}
-
-function _get_builder_name() {
-  if command -v podman >/dev/null; then
-    echo "podman"
+  local build_cmd=""
+  if command -v podman &>/dev/null; then
+    build_cmd="podman build"
+    if [[ -n $cache_from ]]; then
+      build_cmd+=" --cache-from $cache_from"
+    fi
+  elif command -v docker &>/dev/null; then
+    build_cmd="DOCKER_BUILDKIT=1 docker build"
+    if [[ -n $cache_from ]]; then
+      build_cmd+=" --cache-from $cache_from"
+    fi
   else
-      echo "docker"
+    echo "Neither Podman nor Docker is installed. Please install one of them."
+    exit 1
   fi
+
+  if [[ -n $tag ]]; then
+    build_cmd+=" --tag $target:$tag"
+  fi
+
+  if [[ -n $target ]]; then
+    build_cmd+=" --target $target"
+  fi
+
+  if [[ -n $dockerfile ]]; then
+    build_cmd+=" --file $dockerfile"
+  fi
+
+  build_cmd+=" ."
+
+  echo "Building container using: $build_cmd"
+  $build_cmd
 }
 
-function builder() {
-  if command -v podman >/dev/null; then
-    podman "$@"
+print_run_usage() {
+  echo "Usage: run-container.sh [OPTIONS] <yarn run arguments>"
+  echo "Options:"
+  # echo "  -v, --volume <directory>   Mount the specified directory as a volume for caching"
+  # echo "  -c, --cache                Use yarn cache in current directory"
+  echo "  -i, --image <name>         Specify the name of the container image (default: localrun)"
+  echo "  -t, --tag <tag>            Specify the tag of the container image (default: latest)"
+  echo "  -h, --help                 Show this help message"
+}
+
+parse_run_args() {
+  local image="localhost/localrun"
+  local yarn_args=""
+  local tag="latest"
+  # local volume="${image##*/}-cache"
+
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+    -h | --help)
+      print_run_usage
+      exit 0
+      ;;
+    -i | --image)
+      image="$2"
+      shift 2
+      ;;
+    -t | --tag)
+
+      shift 2
+      ;;
+    -*)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+    run | yarn)
+      shift
+      ;;
+    *)
+      yarn_args="$*"
+      break
+      ;;
+    esac
+  done
+
+  run_container "$image" "$tag" "$yarn_args"
+}
+
+run_container() {
+  local image=$1
+  local tag=$2
+  local yarn_args=$3
+  local container_name=${image##*/}
+
+  local run_cmd=""
+  if command -v podman &>/dev/null; then
+    run_cmd="podman run"
+  elif command -v docker &>/dev/null; then
+    run_cmd="docker run"
   else
-      docker "$@"
+    echo "Neither Podman nor Docker is installed. Please install one of them."
+    exit 1
   fi
-}
 
-function _image_exists() {
-  image=$(builder images -q "${DOCKER_IMAGE}" 2> /dev/null)
+  run_cmd+=" --rm"
+  run_cmd+=" -it"
+  run_cmd+=" --name ${container_name##*/}"
+  run_cmd+=" --publish-all"
 
-  if [ -z "${image}" ]; then
-    warning "${DOCKER_IMAGE} has not been built yet, starting build now ..."
-    build_image
+  run_cmd+=" --volume $PWD:/data:z"
+
+  run_cmd+=" $image:$tag"
+
+  if [[ -n $yarn_args ]]; then
+    run_cmd+=" yarn $yarn_args"
   fi
+
+  echo "Running container using: $run_cmd"
+  $run_cmd
 }
 
-function _get_source_path() {
-  [ "${CODE_SOURCE}" = "source" ] && echo "${APP_HOME}"
-  [ "${CODE_SOURCE}" = "dist" ] && echo "${APP_DIST_HOME}"
+print_general_usage() {
+  echo "Usage: container.sh [COMMAND]"
+  echo "Commands:"
+  echo "  build [OPTIONS]        Build the container image"
+  echo "  run [OPTIONS]          Run the container"
 }
 
-function _build_app() {
-  nx run ${APP}:build
-}
-
-function open_menu() {
-  "${CYPRESS_BIN}" open -P "$@"
-}
-
-function run_container() {
-  TMP_DIR="${PROJECT_DIR}/tmp"
-  SECRETS_FILE="${PROJECT_DIR}/.env.secret"
-  SECRETS_ENV_FILE="${SECRETS_FILE}.docker"
-
-  mkdir -p "${TMP_DIR}"
-
-  cp "${SECRETS_FILE}" "${SECRETS_ENV_FILE}"
-
-  # transform .env secrets file to actual .env file
-  grep -v '^#' "${SECRETS_FILE}" | cut -d ' ' -f 2- > "${SECRETS_ENV_FILE}"
-
-  _build_app
-  _image_exists
-  runner \
-    -v "${TMP_DIR}":/out:Z \
-    -v "${PROJECT_DIR}/${APP_DIST_HOME}":"/${APP_DIST_HOME}":Z \
-    -v "${PROJECT_DIR}/${APP_HOME}/entrypoint.sh":"/${APP_DIST_HOME}/entrypoint.sh":Z \
-    --env-file "${SECRETS_ENV_FILE}" \
-    "${DOCKER_IMAGE}" "$@"
-  exit 0
-}
-
-# shellcheck disable=SC2086
-function build_image() {
-  builder build \
-    -f "${DOCKERFILE}" \
-    --target="${DOCKER_TARGET}" \
-    "${PUBLISH_TO_REGISTRY[@]}" \
-    ${DOCKER_BUILD_ARGS:-} \
-    ${EXTRA_DOCKER_BUILD_ARGS:-} \
-    -t "${DOCKER_IMAGE}" \
-    "$PROJECT_DIR"
-}
-
-function runner() {
-  if command -v podman >/dev/null; then
-    podman run --stop-signal SIGKILL --userns=keep-id "$@"
-  else
-      docker run "$@"
-  fi
-}
-
-usage() {
-  echo
-  echo "Usage: $(basename "$0") <build|menu|run>" 2>&1
-  echo
-  echo "menu          opens up Cypress interactive spec dashboard " 2>&1
-  echo "build         [-a app-name: default system-e2e]" 2>&1
-  echo "run           -i integration -t smoke|acceptance -c <source|dist|container> [-e <local|dev|staging|prod>, default: local] [-b browser, default: chrome] [-l, default: headless] [-d, extremely verbose cypress debugging]" 2>&1
-  echo
-  echo "examples " 2>&1
-  echo "         $(basename "$0") run -i air-discount-scheme -t acceptance -c source -l" 2>&1
-  echo "         $(basename "$0") run -i skilavottord -t acceptance -c container -b electron" 2>&1
-  echo "         $(basename "$0") run -i web -t smoke -c dist -b firefox -l" 2>&1
-  exit 1
-}
-
-CODE_SOURCE=""
-INTEGRATION=""
-TEST_TYPE=""
-HEAD="--headless"
-BROWSER="chrome"
-
-if [ ! 0 == $# ]; then
-  case "$1" in
+parse_arguments() {
+  while [[ $# -gt 0 ]]; do
+    case $1 in
     build)
       shift
-      while getopts ":a:" opt; do
-        case "${opt}" in
-          a)
-            export APP=${OPTARG}
-            ;;
-          :)
-            error "-${OPTARG} requires an argument."
-            ;;
-          \?)
-            usage
-            ;;
-        esac
-      done
-      build_image && exit 0
-      ;;
-    menu)
-      shift
-      open_menu "${APP_HOME}" && exit 0
+      parse_build_args "$@"
+      return
       ;;
     run)
       shift
-      while getopts ":i:c:t:b:e:ld" opt; do
-        case "${opt}" in
-          i)
-            INTEGRATION=${OPTARG}
-            ;;
-          c)
-            [ "${OPTARG}" != "dist" ] && [ "${OPTARG}" != "source" ] && [ "${OPTARG}" != "container" ] && usage
-            CODE_SOURCE=${OPTARG}
-            ;;
-          t)
-            TEST_TYPE=${OPTARG}
-            ;;
-          b)
-            BROWSER=${OPTARG}
-            ;;
-          d)
-            export DEBUG="cypress:*"
-            ;;
-          l)
-            HEAD="--headed"
-            ;;
-          e)
-            [ "${OPTARG}" != "local" ] && [ "${OPTARG}" != "dev" ] && [ "${OPTARG}" != "staging" ] && [ "${OPTARG}" != "prod" ] && usage
-            export TEST_ENVIRONMENT=${OPTARG}
-            ;;
-          :)
-            error "-${OPTARG} requires an argument."
-            ;;
-          \?)
-            usage
-            ;;
-        esac
-      done
+      parse_run_args "$@"
+      return
+      ;;
+    -h | --help)
+      print_general_usage
+      exit 0
       ;;
     *)
-      usage
+      echo "Unknown command: $1"
+      print_general_usage
+      exit 1
       ;;
-  esac
-else
-  usage
-fi
+    esac
+  done
+  print_general_usage
+}
 
-# run dist in container
-[ "$CODE_SOURCE" = "container" ] && run_container -s "**/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --headless
-
-# run either from source or dist
-"${CYPRESS_BIN}" run -P "$(_get_source_path "${CODE_SOURCE}")" -s "**/integration/${INTEGRATION}/${TEST_TYPE}/*.spec.{ts,js}" --browser "${BROWSER}" ${HEAD} && exit 0
+parse_arguments "$@"
