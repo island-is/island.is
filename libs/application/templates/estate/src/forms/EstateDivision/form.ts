@@ -61,9 +61,6 @@ export const form: Form = buildForm({
       id: 'testamentInfo',
       title: m.willsAndAgreements,
       children: [testamentInfo],
-      condition: (answers) => {
-        return answers.selectedEstate !== EstateTypes.estateWithoutAssets
-      },
     }),
     buildSection({
       id: 'estatePropertiesExist',
@@ -501,9 +498,6 @@ export const form: Form = buildForm({
     buildSection({
       id: 'estateAttachments',
       title: m.attachmentsTitle,
-      condition: (answers) => {
-        return answers.selectedEstate !== EstateTypes.estateWithoutAssets
-      },
       children: [
         buildMultiField({
           id: 'estateAttachments',

@@ -20,7 +20,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
-import { EstateTypes, JA, NEI, YES } from '../../lib/constants'
+import { EstateTypes, JA, NEI, NO, YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 const commonOverviewFields = [
@@ -72,19 +72,64 @@ const commonOverviewFields = [
         })),
     },
   ),
-  buildDividerField({}),
   buildDescriptionField({
     id: 'space1',
     title: '',
     marginBottom: 'gutter',
     space: 'gutter',
   }),
+  buildKeyValueField({
+    label: m.doesWillExist,
+    value: ({ answers }) =>
+      getValueViaPath(answers, 'estate.testament.wills') === YES ? JA : NEI,
+    width: 'half',
+  }),
+  buildKeyValueField({
+    label: m.doesAgreementExist,
+    value: ({ answers }) =>
+      getValueViaPath(answers, 'estate.testament.agreement') === YES ? JA : NEI,
+    width: 'half',
+  }),
+  buildDescriptionField({
+    id: 'spaceTestament',
+    title: '',
+    space: 'gutter',
+    condition: (answers) =>
+      getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
+  }),
+  buildKeyValueField({
+    label: m.doesPermissionToPostponeExist,
+    value: ({ answers }) =>
+      getValueViaPath(answers, 'estate.testament.dividedEstate'),
+    width: 'half',
+    condition: (answers) =>
+      getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
+  }),
+  buildDescriptionField({
+    id: 'space2',
+    title: '',
+    space: 'gutter',
+  }),
+  buildKeyValueField({
+    label: m.additionalInfo,
+    value: ({ answers }) =>
+      getValueViaPath(answers, 'estate.testament.additionalInfo'),
+    condition: (answers) =>
+      !!getValueViaPath<string>(answers, 'estate.testament.additionalInfo'),
+  }),
+  buildDescriptionField({
+    id: 'space3',
+    title: '',
+    space: 'gutter',
+  }),
+  buildDividerField({}),
 ]
 
 export const overview = buildSection({
   id: 'overviewPermitToPostponeEstateDivision',
   title: m.overviewTitle,
   children: [
+    /* With assets and debts */
     buildMultiField({
       id: 'overviewPermitToPostponeEstateDivision',
       title: m.overviewTitle,
@@ -94,62 +139,9 @@ export const overview = buildSection({
           EstateTypes.permitForUndividedEstate ||
         (getValueViaPath(answers, 'selectedEstate') ===
           EstateTypes.estateWithoutAssets &&
-          (getValueViaPath(answers, 'estatePropertiesExist') === YES ||
-            getValueViaPath(answers, 'estateDebtsExist') === YES)),
+          getValueViaPath(answers, 'estatePropertiesExist') === YES),
       children: [
         ...commonOverviewFields,
-        buildKeyValueField({
-          label: m.doesWillExist,
-          value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.wills') === YES
-              ? JA
-              : NEI,
-          width: 'half',
-        }),
-        buildKeyValueField({
-          label: m.doesAgreementExist,
-          value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.agreement') === YES
-              ? JA
-              : NEI,
-          width: 'half',
-        }),
-        buildDescriptionField({
-          id: 'spaceTestament',
-          title: '',
-          space: 'gutter',
-          condition: (answers) =>
-            getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
-        }),
-        buildKeyValueField({
-          label: m.doesPermissionToPostponeExist,
-          value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.dividedEstate'),
-          width: 'half',
-          condition: (answers) =>
-            getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
-        }),
-        buildDescriptionField({
-          id: 'space2',
-          title: '',
-          space: 'gutter',
-        }),
-        buildKeyValueField({
-          label: m.additionalInfo,
-          value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.additionalInfo'),
-          condition: (answers) =>
-            !!getValueViaPath<string>(
-              answers,
-              'estate.testament.additionalInfo',
-            ),
-        }),
-        buildDescriptionField({
-          id: 'space3',
-          title: '',
-          space: 'gutter',
-        }),
-        buildDividerField({}),
         buildDescriptionField({
           id: 'overviewEstateHeader',
           title: m.realEstate,
@@ -559,15 +551,23 @@ export const overview = buildSection({
         }),
       ],
     }),
+
+    /* Without assets */
     buildMultiField({
       id: 'overviewEstateWithoutAssetsAndDebts',
       title: m.overviewTitle,
-      description: m.overviewSubtitlePermitToPostpone,
+      description: m.overviewSubtitleWithoutAssets,
       condition: (answers) =>
         getValueViaPath(answers, 'selectedEstate') ===
-        EstateTypes.estateWithoutAssets,
+          EstateTypes.estateWithoutAssets &&
+        getValueViaPath(answers, 'estatePropertiesExist') === NO,
       children: [
         ...commonOverviewFields,
+        buildDescriptionField({
+          id: 'space4',
+          title: '',
+          space: 'gutter',
+        }),
         buildKeyValueField({
           label: 'Eru til eignir?',
           value: NEI,
@@ -577,6 +577,92 @@ export const overview = buildSection({
           label: 'Eru til skuldir?',
           value: NEI,
           width: 'half',
+        }),
+        buildDescriptionField({
+          id: 'space5',
+          title: '',
+          space: 'gutter',
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewDebtsTitle',
+          title: m.debtsTitle,
+          description: m.debtsDescription,
+          titleVariant: 'h3',
+          space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath(answers, 'estateDebtsExist') === YES,
+        }),
+        buildCustomField(
+          {
+            title: '',
+            id: 'debtsCards',
+            component: 'Cards',
+            doesNotRequireAnswer: true,
+            condition: (answers) =>
+              getValueViaPath(answers, 'estateDebtsExist') === YES,
+          },
+          {
+            cards: ({ answers }: Application) =>
+              (((answers as unknown) as EstateSchema).debts ?? []).map(
+                (debt) => ({
+                  title: debt.creditorName,
+                  description: [
+                    `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
+                      debt.nationalId ?? '',
+                    )}`,
+                    `${m.debtsLoanIdentity.defaultMessage}: ${
+                      debt.loanIdentity ?? ''
+                    }`,
+                    `${m.debtsBalance.defaultMessage}: ${formatCurrency(
+                      debt.balance ?? '0',
+                    )}`,
+                  ],
+                }),
+              ),
+          },
+        ),
+        buildDividerField({
+          condition: (answers) =>
+            getValueViaPath(answers, 'estateDebtsExist') === YES,
+        }),
+        buildDescriptionField({
+          id: 'overviewAttachments',
+          title: m.attachmentsTitle,
+          titleVariant: 'h3',
+          space: 'gutter',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          label: '',
+          value: ({ answers }) => {
+            const attachments = getValueViaPath(
+              answers,
+              'estateAttachments',
+            ) as any
+            return attachments?.attached.file.map(
+              (f: { key: string; name: string }) => {
+                return f.name
+              },
+            )
+          },
+          condition: (answers) => {
+            const files = getValueViaPath(answers, 'estateAttachments') as {
+              attached: { file: { length: number } }
+            }
+            return files?.attached?.file?.length === 0
+          },
+        }),
+        buildCustomField({
+          id: 'attachmentsNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) => {
+            const files = getValueViaPath(answers, 'estateAttachments') as {
+              attached: { file: { length: number } }
+            }
+            return files?.attached?.file?.length === 0
+          },
         }),
         buildSubmitField({
           id: 'estateWithoutAssetsAndDebts.submit',
