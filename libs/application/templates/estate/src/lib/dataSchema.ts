@@ -298,4 +298,7 @@ export const estateSchema = z.object({
       file: z.array(FileSchema),
     }),
   }),
+
+  estatePropertiesExist: z.enum([YES, NO]),
+  estateDebtsExist: z.enum([YES, NO]),
 })
