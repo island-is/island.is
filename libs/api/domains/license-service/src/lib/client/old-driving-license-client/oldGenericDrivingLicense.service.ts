@@ -212,9 +212,9 @@ export class OldGenericDrivingLicenseApi
       return GenericUserLicensePkPassStatus.Unknown
     }
 
-    /*if (!license.mynd?.skrad || !license.mynd?.mynd) {
+    if (!license.mynd?.skrad || !license.mynd?.mynd) {
       return GenericUserLicensePkPassStatus.NotAvailable
-    }*/
+    }
 
     return GenericUserLicensePkPassStatus.Available
   }

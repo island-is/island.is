@@ -45,17 +45,13 @@ export class GenericDrivingLicenseService
   private checkLicenseValidity(
     license: DriversLicense,
   ): GenericUserLicensePkPassStatus {
-    if (
-      !license // || license.photo === undefined
-    ) {
+    if (!license || license.photo === undefined) {
       return GenericUserLicensePkPassStatus.Unknown
     }
 
-    /*
-    if (!license.photo?.noted || !license.photo?.image) {
-      return LicensePkPassAvailability.NotAvailable
+    if (!license.photo.image) {
+      return GenericUserLicensePkPassStatus.NotAvailable
     }
-    */
 
     return GenericUserLicensePkPassStatus.Available
   }
