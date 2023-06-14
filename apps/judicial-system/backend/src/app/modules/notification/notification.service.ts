@@ -861,7 +861,11 @@ export class NotificationService {
     const promises = [this.sendRulingEmailNotificationToProsecutor(theCase)]
 
     if (isIndictmentCase(theCase.type)) {
-      theCase.defendants?.forEach((defendant) => {
+      const uniqueDefendants = _uniqBy(
+        theCase.defendants ?? [],
+        (d: Defendant) => d.defenderEmail,
+      )
+      uniqueDefendants.forEach((defendant) => {
         if (defendant.defenderEmail) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(

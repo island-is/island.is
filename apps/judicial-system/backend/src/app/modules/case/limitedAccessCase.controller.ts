@@ -79,8 +79,21 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
-  getById(@Param('caseId') caseId: string, @CurrentCase() theCase: Case): Case {
+  async getById(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentHttpUser() user: TUser,
+  ): Promise<Case> {
     this.logger.debug(`Getting limitedAccess case ${caseId} by id`)
+
+    if (!theCase.openedByDefender) {
+      const updated = await this.limitedAccessCaseService.update(
+        theCase,
+        { openedByDefender: nowFactory() },
+        user,
+      )
+      return updated
+    }
 
     return theCase
   }
