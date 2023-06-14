@@ -35,7 +35,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
     defenderEmail,
     defenderPhoneNumber,
     demands,
-    seenByDefender: '2020-09-16T19:50:08.033Z',
+    openedByDefender: '2020-09-16T19:50:08.033Z',
     state: CaseState.SUBMITTED,
     prosecutor: makeProsecutor(),
     creatingProsecutor: makeProsecutor(),
@@ -50,7 +50,7 @@ describe(`${INVESTIGATION_CASE_POLICE_CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {
-    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
+    cy.getByTestid('alertMessageOpenedByDefender').should('not.match', ':empty')
   })
 
   it('should display information about the case in an info card', () => {
