@@ -1,15 +1,18 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
-import { WorkMachinesAction } from '../api-domains-work-machines.types'
+import { Action, ExternalLink } from '../api-domains-work-machines.types'
 
-registerEnumType(WorkMachinesAction, { name: 'WorkMachinesAction' })
+registerEnumType(Action, { name: 'WorkMachinesAction' })
+registerEnumType(ExternalLink, {
+  name: 'WorkMachinesExternalLink',
+})
 
 @ObjectType('WorkMachinesEntity')
 export class WorkMachineEntity {
   @Field(() => [WorkMachine], { nullable: true })
   value?: Array<WorkMachine> | null
 
-  @Field(() => [Link], { nullable: true })
-  links?: Array<Link> | null
+  @Field(() => [CollectionLink], { nullable: true })
+  links?: Array<CollectionLink> | null
 
   @Field(() => [Label], { nullable: true })
   labels?: Array<Label> | null
@@ -98,8 +101,22 @@ export class Link {
   @Field(() => String, { nullable: true })
   href?: string | null
 
-  @Field(() => WorkMachinesAction, { nullable: true })
-  rel?: WorkMachinesAction | null
+  @Field(() => Action, { nullable: true })
+  rel?: Action | null
+
+  @Field(() => String, { nullable: true })
+  method?: string | null
+
+  @Field(() => String, { nullable: true })
+  displayTitle?: string | null
+}
+@ObjectType('WorkMachinesCollectionLink')
+export class CollectionLink {
+  @Field(() => String, { nullable: true })
+  href?: string | null
+
+  @Field(() => ExternalLink, { nullable: true })
+  rel?: ExternalLink | null
 
   @Field(() => String, { nullable: true })
   method?: string | null

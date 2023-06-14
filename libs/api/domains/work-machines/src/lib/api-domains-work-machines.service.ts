@@ -2,7 +2,7 @@ import { WorkMachinesClientService } from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
 import { WorkMachine } from './models/getWorkMachines'
 import { Injectable } from '@nestjs/common'
-import { WorkMachinesAction } from './api-domains-work-machines.types'
+import { Action, ExternalLink } from './api-domains-work-machines.types'
 @Injectable()
 export class WorkMachinesService {
   constructor(private readonly machineService: WorkMachinesClientService) {}
@@ -10,15 +10,30 @@ export class WorkMachinesService {
   private mapRelToAction = (rel?: string) => {
     switch (rel) {
       case 'requestInspection':
-        return WorkMachinesAction.REQUEST_INSPECTION
+        return Action.REQUEST_INSPECTION
       case 'changeStatus':
-        return WorkMachinesAction.CHANGE_STATUS
+        return Action.CHANGE_STATUS
       case 'ownerChange':
-        return WorkMachinesAction.OWNER_CHANGE
+        return Action.OWNER_CHANGE
       case 'supervisorChange':
-        return WorkMachinesAction.SUPERVISOR_CHANGE
+        return Action.SUPERVISOR_CHANGE
       case 'registerForTraffic':
-        return WorkMachinesAction.REGISTER_FOR_TRAFFIC
+        return Action.REGISTER_FOR_TRAFFIC
+      default:
+        return null
+    }
+  }
+
+  private mapRelToCollectionLink = (rel?: string) => {
+    switch (rel) {
+      case 'self':
+        return ExternalLink.SELF
+      case 'nextPage':
+        return ExternalLink.NEXT_PAGE
+      case 'excel':
+        return ExternalLink.EXCEL
+      case 'csv':
+        return ExternalLink.CSV
       default:
         return null
     }
@@ -36,9 +51,19 @@ export class WorkMachinesService {
         } as WorkMachine),
     ) as Array<WorkMachine>
 
+    const links = data.links?.length
+      ? data.links.map((l) => {
+          return {
+            ...l,
+            rel: this.mapRelToCollectionLink(l.rel ?? ''),
+          }
+        })
+      : null
+
     return {
       ...data,
       value,
+      links,
     }
   }
 
