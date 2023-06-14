@@ -524,7 +524,7 @@ export const overview = buildSection({
             const files = getValueViaPath(answers, 'estateAttachments') as {
               attached: { file: { length: number } }
             }
-            return files?.attached?.file?.length === 0
+            return files?.attached?.file?.length > 0
           },
         }),
         buildCustomField({
@@ -657,7 +657,7 @@ export const overview = buildSection({
             const files = getValueViaPath(answers, 'estateAttachments') as {
               attached: { file: { length: number } }
             }
-            return files?.attached?.file?.length === 0
+            return files?.attached?.file?.length > 0
           },
         }),
         buildCustomField({

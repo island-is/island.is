@@ -19,6 +19,7 @@ import { overview } from './overviewSection'
 import { testamentInfo } from '../sharedSections/testamentInfo'
 import {
   EstateTypes,
+  FILE_SIZE_LIMIT,
   JA,
   NEI,
   NO,
@@ -558,6 +559,8 @@ export const form: Form = buildForm({
               title: m.attachmentsTitle,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: m.uploadHeader,
+              uploadMultiple: true,
+              maxSize: FILE_SIZE_LIMIT,
               uploadButtonLabel: m.attachmentsButton,
             }),
           ],
