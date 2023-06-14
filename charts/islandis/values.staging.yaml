@@ -875,7 +875,7 @@ consultation-portal:
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'staging'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.staging01.devland.is'
-    NEXTAUTH_URL: 'https://staging.staging01.devland.is/samradsgatt/api/auth'
+    NEXTAUTH_URL: 'https://beta.staging01.devland.is/samradsgatt/api/auth'
     NODE_OPTIONS: '--max-old-space-size=464'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
