@@ -12,7 +12,7 @@ import { ClientFormTypes } from '../EditClient.schema'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 import { useClient } from '../ClientContext'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 
