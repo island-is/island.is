@@ -303,5 +303,13 @@ export const estateSchema = z.object({
     estateAssetsExist: z.enum([YES, NO]),
     estateDebtsExist: z.enum([YES, NO]),
     acceptAssetsSelection: z.array(z.enum([YES])).length(1),
-  }),
+  }).refine(
+    ({ estateAssetsExist, acceptAssetsSelection }) => {
+      return estateAssetsExist === YES || estateAssetsExist === NO
+        ? !!acceptAssetsSelection.length
+        : true
+    },{
+      path: ['acceptAssetsSelection']
+    }
+  ),
 })
