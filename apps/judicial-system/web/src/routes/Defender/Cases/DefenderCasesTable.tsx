@@ -18,17 +18,21 @@ import {
   DEFENDER_INDICTMENT_ROUTE,
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
-import TagAppealState from '@island.is/judicial-system-web/src/components/TagAppealState/TagAppealState'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import {
+  TagCaseState,
+  TagAppealState,
+} from '@island.is/judicial-system-web/src/components'
 import {
   useFilterCases,
   useSortCases,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  TableSkeleton,
+  CourtCaseNumber,
+  DefendantInfo,
+} from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from './DefenderCasesTable.css'
-import TableSkeleton from '@island.is/judicial-system-web/src/components/Table/TableSkeleton/TableSkeleton'
-import CourtCaseNumber from '@island.is/judicial-system-web/src/components/Table/CourtCaseNumber/CourtCaseNumber'
-import DefendantInfo from '@island.is/judicial-system-web/src/components/Table/DefendantInfo/DefendantInfo'
 
 interface Props {
   cases: CaseListEntry[]
