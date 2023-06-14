@@ -9,7 +9,7 @@ import { NotificationsService } from './app/modules/notifications/notifications.
 @Module({
   imports: [
     CacheModule.register({
-      ttl: 60,
+      ttl: 60 * 1000,
       max: 100,
     }),
     QueueModule.register({

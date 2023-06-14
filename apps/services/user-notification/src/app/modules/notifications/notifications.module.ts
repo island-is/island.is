@@ -23,7 +23,7 @@ import { NotificationsService } from './notifications.service'
 @Module({
   imports: [
     CacheModule.register({
-      ttl: 60 * 10, // 10 minutes
+      ttl: 60 * 10 * 1000, // 10 minutes
       max: 100, // 100 items max
     }),
     LoggingModule,
