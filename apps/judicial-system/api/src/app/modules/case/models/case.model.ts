@@ -281,7 +281,7 @@ export class Case implements TCase {
   readonly caseResentExplanation?: string
 
   @Field({ nullable: true })
-  readonly seenByDefender?: string
+  readonly openedByDefender?: string
 
   @Field(() => Boolean, { nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
