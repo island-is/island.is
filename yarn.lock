@@ -19415,6 +19415,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cache-manager-ioredis-yet@patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch::locator=island.is%40workspace%3A.":
+  version: 1.1.0
+  resolution: "cache-manager-ioredis-yet@patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch::version=1.1.0&hash=5e3e7d&locator=island.is%40workspace%3A."
+  dependencies:
+    cache-manager: ^5.1.0
+    ioredis: ^5.2.3
+  checksum: 80b199d2ba7f8d8bca47aee267bde3a466401392eeb5103dcb1d9cbfb13567b92da0ec919c7bc84cd7a8d09a59d2de159ede6c6ad38501cdab5ad2ea5aca349a
+  languageName: node
+  linkType: hard
+
 "cache-manager@npm:5.2.2, cache-manager@npm:^5.1.0":
   version: 5.2.2
   resolution: "cache-manager@npm:5.2.2"
