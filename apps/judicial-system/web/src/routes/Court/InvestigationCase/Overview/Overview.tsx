@@ -102,26 +102,26 @@ const Overview = () => {
       />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
-          <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
+          <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
             <CaseResentExplanation
               explanation={workingCase.caseResentExplanation}
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
               title={formatMessage(
-                icCourtOverview.sections.seenByDefenderAlert.title,
+                icCourtOverview.sections.openedByDefenderAlert.title,
               )}
               message={formatMessage(
-                icCourtOverview.sections.seenByDefenderAlert.text,
+                icCourtOverview.sections.openedByDefenderAlert.text,
                 {
-                  when: formatDate(workingCase.seenByDefender, 'PPPp'),
+                  when: formatDate(workingCase.openedByDefender, 'PPPp'),
                 },
               )}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
