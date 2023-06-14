@@ -11,6 +11,7 @@ import { Events, States, Roles } from './constants'
 import { application } from './messages'
 import { dataSchema } from './dataSchema'
 import { Features } from '@island.is/feature-flags'
+import { externalData } from '../lib/messages'
 
 const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -49,6 +50,10 @@ const AlcoholTaxRedemptionTemplate: ApplicationTemplate<
                 NationalRegistryUserApi.configure({
                   params: {
                     ageToValidate: 20,
+                    ageToValidateError: {
+                      title: externalData.userProfileTitleValidateAgeError,
+                      summary: externalData.userProfileSubTitleValidateAgeError,
+                    },
                   },
                 }),
               ],

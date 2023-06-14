@@ -794,4 +794,29 @@ export const m = defineMessages({
     id: 'ap.ids-admin:client-id-already-exists',
     defaultMessage: 'Client ID already exists',
   },
+  successDeletingClient: {
+    id: 'ap.ids-admin:success-deleting-client',
+    defaultMessage: 'Successfully deleted application',
+  },
+  delete: {
+    id: 'ap.ids-admin:delete',
+    defaultMessage: 'Delete',
+  },
+  closeDeleteModal: {
+    id: 'ap.ids-admin:close-delete-modal',
+    defaultMessage: 'Close',
+  },
+  deleteClientDescription: {
+    id: 'ap.ids-admin:delete-client-action-card-label',
+    defaultMessage: 'Authentications will stop working for your application.',
+  },
+  deleteClient: {
+    id: 'ap.ids-admin:delete-client-all-env',
+    defaultMessage: 'Delete application',
+  },
+  deleteClientAlertMessage: {
+    id: 'ap.ids-admin:delete-client-alert-message',
+    defaultMessage:
+      'The client ID will be deleted from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
+  },
 })
