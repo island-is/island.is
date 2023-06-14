@@ -1,4 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
+import { sleep } from '../../../../support/utils'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
@@ -51,8 +52,12 @@ test.describe('MS - Pósthólf overview', () => {
         name: label(messages.clearFilters),
       })
 
+      await sleep(500)
+
+      const docFoundText = page.getByTestId('doc-found-text')
+
       // Assert
-      await expect(page.getByRole('main')).toContainText(label(messages.found))
+      await expect(docFoundText).toContainText(label(messages.found))
       await expect(btnClearFilter).toBeVisible()
     })
 
@@ -72,7 +77,7 @@ test.describe('MS - Pósthólf overview', () => {
       await page.mouse.wheel(0, 50)
 
       // "institution" comes from the api - not translateable
-      const institution = 'Ísland.is'
+      const institution = 'RLS'
       await page.locator(`role=checkbox[name="${institution}"]`).click()
 
       // Assert
