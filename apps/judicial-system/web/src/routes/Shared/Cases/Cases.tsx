@@ -35,15 +35,13 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 import * as constants from '@island.is/judicial-system/consts'
+import PastCasesTable from '@island.is/judicial-system-web/src/components/TableV2/PastCasesTable/PastCasesTable'
 
 import ActiveCases from './ActiveCases'
-import PastCases from './PastCases'
 import TableSkeleton from './TableSkeleton'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-import PastCasesV from './PastCasesV'
-import PastCasesTable from '@island.is/judicial-system-web/src/components/TableV2/PastCasesTable/PastCasesTable'
 
 const CreateCaseButton: React.FC<{
   user: User
@@ -234,13 +232,10 @@ export const Cases: React.FC = () => {
           <Box marginBottom={[5, 5, 12]}>
             {activeCases.length > 0 ? (
               isPrisonUser || isPrisonAdminUser ? (
-                <>
-                  <PastCasesTable
-                    cases={activeCases}
-                    onRowClick={handleRowClick}
-                  />
-                  {/* <PastCases cases={activeCases} onRowClick={handleRowClick} /> */}
-                </>
+                <PastCasesTable
+                  cases={activeCases}
+                  onRowClick={handleRowClick}
+                />
               ) : (
                 <ActiveCases
                   cases={activeCases}
@@ -279,10 +274,7 @@ export const Cases: React.FC = () => {
         )}
       />
       {pastCases.length > 0 ? (
-        <>
-          <PastCasesTable cases={pastCases} onRowClick={handleRowClick} />
-          {/* <PastCases cases={pastCases} onRowClick={handleRowClick} /> */}
-        </>
+        <PastCasesTable cases={pastCases} onRowClick={handleRowClick} />
       ) : (
         <div className={styles.infoContainer}>
           <AlertMessage
