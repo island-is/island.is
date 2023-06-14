@@ -56,62 +56,68 @@ describe('answerValidators', () => {
   })
 
   it('should return an error if selectedYear is more than 2 years ago', () => {
-    const newAnswers = [
-      {
-        year: addYears(today, -3).getFullYear().toString(),
-        month: MONTHS[today.getMonth()],
-      },
-    ]
+    const newAnswers = {
+      year: addYears(today, -3).getFullYear().toString(),
+      month: MONTHS[today.getMonth()],
+    }
 
     expect(answerValidators['period'](newAnswers, application)).toStrictEqual({
       message: validatorErrorMessages.periodYear,
       path: 'period.year',
-      values: {},
+      values: undefined,
     })
   })
 
   it('should return an error if selectedYear is more than 6 months ahead', () => {
-    const newAnswers = [
-      {
-        year: addYears(today, 1).getFullYear().toString(),
-        month: MONTHS[today.getMonth()],
-      },
-    ]
+    const newAnswers = {
+      year: addYears(today, 1).getFullYear().toString(),
+      month: MONTHS[today.getMonth()],
+    }
 
     expect(answerValidators['period'](newAnswers, application)).toStrictEqual({
       message: validatorErrorMessages.periodYear,
       path: 'period.year',
-      values: {},
+      values: undefined,
     })
   })
 
   it('should return an error if selectedMonth is more than 2 years ago', () => {
-    const newAnswers = [
-      {
-        year: addYears(today, -2).getFullYear().toString(),
-        month: MONTHS[addMonths(today, -2).getMonth()],
-      },
-    ]
+    const newAnswers = {
+      year: addYears(today, -2).getFullYear().toString(),
+      month: MONTHS[addMonths(today, -2).getMonth()],
+    }
 
     expect(answerValidators['period'](newAnswers, application)).toStrictEqual({
       message: validatorErrorMessages.periodMonth,
       path: 'period.month',
-      values: {},
+      values: undefined,
     })
   })
 
   it('should return an error if selectedMonth is more than 6 months ahead', () => {
-    const newAnswers = [
-      {
-        year: today.getFullYear().toString(),
-        month: MONTHS[addMonths(today, 8).getMonth()],
-      },
-    ]
+    const today = new Date()
+    const newDate = addMonths(today, 8)
+    const newAnswers = {
+      year: newDate.getFullYear().toString(),
+      month: MONTHS[newDate.getMonth()],
+    }
 
-    expect(answerValidators['period'](newAnswers, application)).toStrictEqual({
-      message: validatorErrorMessages.periodMonth,
-      path: 'period.month',
-      values: {},
-    })
+    if (today.getFullYear() != newDate.getFullYear()) {
+      expect(answerValidators['period'](newAnswers, application)).toStrictEqual(
+        {
+          message: validatorErrorMessages.periodYear,
+          path: 'period.year',
+          values: undefined,
+        },
+      )
+    } else {
+      expect(answerValidators['period'](newAnswers, application)).toStrictEqual(
+        {
+          message: validatorErrorMessages.periodMonth,
+          path: 'period.month',
+          values: undefined,
+        },
+      )
+    }
   })
 })

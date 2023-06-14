@@ -28,7 +28,15 @@ function buildApplication(data?: {
     applicantActors: [],
     answers,
     state,
-    externalData,
+    externalData: {
+      nationalRegistry: {
+        data: {
+          nationalId: '0101307789',
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    },
     status: ApplicationStatus.IN_PROGRESS,
   }
 }
@@ -37,11 +45,14 @@ describe('getStartDateAndEndDate', () => {
   it('should return 2 years ago for startDate and 6 months ahead for endDate', () => {
     const application = buildApplication()
     const today = new Date()
-    const startDate = addYears(today, -2)
-    const endDate = addMonths(today, 6)
+    const startDate = addYears(today, -2).toDateString()
+    const endDate = addMonths(today, 6).toDateString()
     const res = getStartDateAndEndDate(application.applicant)
 
-    expect(res).toEqual({ startDate, endDate })
+    expect({
+      startDate: res.startDate?.toDateString(),
+      endDate: res.endDate?.toDateString(),
+    }).toEqual({ startDate, endDate })
   })
 })
 
