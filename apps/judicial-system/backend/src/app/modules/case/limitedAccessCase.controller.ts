@@ -1,6 +1,7 @@
 import { Response } from 'express'
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -25,6 +26,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   CaseAppealState,
+  indictmentCases,
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
@@ -220,6 +222,45 @@ export class LimitedAccessCaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    LimitedAccessCaseReceivedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get('case/:caseId/limitedAccess/caseFilesRecord/:policeCaseNumber')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description:
+      'Gets the case files record for an existing case as a pdf document',
+  })
+  async getCaseFilesRecordPdf(
+    @Param('caseId') caseId: string,
+    @Param('policeCaseNumber') policeCaseNumber: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the case files record for case ${caseId} and police case ${policeCaseNumber} as a pdf document`,
+    )
+
+    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
+      throw new BadRequestException(
+        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
+      )
+    }
+
+    const pdf = await this.caseService.getCaseFilesRecordPdf(
+      theCase,
+      policeCaseNumber,
+    )
+
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
     CaseDefenderGuard,
@@ -269,6 +310,35 @@ export class LimitedAccessCaseController {
     this.logger.debug(`Getting the ruling for case ${caseId} as a pdf document`)
 
     const pdf = await this.caseService.getRulingPdf(theCase)
+
+    res.end(pdf)
+  }
+
+  @UseGuards(
+    JwtAuthGuard,
+    RolesGuard,
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    LimitedAccessCaseReceivedGuard,
+    CaseDefenderGuard,
+  )
+  @RolesRules(defenderRule)
+  @Get('case/:caseId/limitedAccess/indictment')
+  @Header('Content-Type', 'application/pdf')
+  @ApiOkResponse({
+    content: { 'application/pdf': {} },
+    description: 'Gets the indictment for an existing case as a pdf document',
+  })
+  async getIndictmentPdf(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Res() res: Response,
+  ): Promise<void> {
+    this.logger.debug(
+      `Getting the indictment for case ${caseId} as a pdf document`,
+    )
+
+    const pdf = await this.caseService.getIndictmentPdf(theCase)
 
     res.end(pdf)
   }
