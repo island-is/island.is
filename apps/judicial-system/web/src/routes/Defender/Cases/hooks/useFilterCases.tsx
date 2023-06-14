@@ -4,11 +4,13 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-const useFilterCases = (
-  cases: CaseListEntry[],
-  sortedData: CaseListEntry[],
-) => {
-  const [filters, setFilters] = useState({
+export interface Filters {
+  indictmentCaseFilter: boolean
+  investigationCaseFilter: boolean
+}
+
+const useFilterCases = (cases: CaseListEntry[]) => {
+  const [filters, setFilters] = useState<Filters>({
     indictmentCaseFilter: true,
     investigationCaseFilter: true,
   })
@@ -17,10 +19,10 @@ const useFilterCases = (
     const { indictmentCaseFilter, investigationCaseFilter } = filters
 
     if (indictmentCaseFilter && investigationCaseFilter) {
-      return sortedData
+      return cases
     }
 
-    return sortedData.filter((theCase) => {
+    return cases.filter((theCase) => {
       if (indictmentCaseFilter) {
         return isIndictmentCase(theCase.type)
       } else if (investigationCaseFilter) {
@@ -28,7 +30,7 @@ const useFilterCases = (
       }
       return false
     })
-  }, [filters, sortedData])
+  }, [filters, cases])
 
   useEffect(() => {
     setFilters((prevFilters) => ({

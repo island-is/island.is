@@ -1,14 +1,6 @@
 import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
-export const gridRow = style({
-  display: 'grid',
-  gridTemplateColumns: '157px 157px',
-  gridGap: theme.spacing[1],
-  marginBottom: theme.spacing[3],
-  marginTop: theme.spacing[4],
-})
-
 export const blockColumn = style({
   display: 'block',
   overflow: 'hidden',
