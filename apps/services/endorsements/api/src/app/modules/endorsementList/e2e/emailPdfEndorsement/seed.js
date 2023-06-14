@@ -17,16 +17,11 @@ module.exports = {
       id: listYouOwnListId,
       owner: authNationalId,
     },
-    // {
-    //   ...getGenericEndorsementList(),
-    //   id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
-    //   owner: authNationalId,
-    //   tags: ['generalPetition'],
-    // },
+  
     {
       ...getGenericEndorsementList(),
       id: listYouDoNotOwnListId,
-      owner: '1305775399',
+      owner: authNationalId,
       tags: ['generalPetition'],
     },
   ],
@@ -39,25 +34,5 @@ module.exports = {
       ...getGenericEndorsement(),
       endorsement_list_id: listYouOwnListId,
     },
-    // {
-    //   ...getGenericEndorsement(),
-    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
-    // },
-    // {
-    //   ...getGenericEndorsement(),
-    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
-    // },
-    // {
-    //   ...getGenericEndorsement(),
-    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
-    // },
-    // {
-    //   ...getGenericEndorsement(),
-    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
-    // },
-    // {
-    //   ...getGenericEndorsement(),
-    //   endorsement_list_id: 'aa042d38-9ff8-45b7-b0b2-9ca1d9cec543',
-    // },
   ],
 }
