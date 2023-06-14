@@ -585,6 +585,12 @@ export const m = defineMessages({
     defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
     description: '',
   },
+  uploadDescription: {
+    id: 'es.application:uploadDescription',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf, .heic',
+    description: '',
+  },
 
   // Overview
   overviewTitle: {

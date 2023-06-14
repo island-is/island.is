@@ -559,6 +559,7 @@ export const form: Form = buildForm({
               title: m.attachmentsTitle,
               uploadAccept: UPLOAD_ACCEPT,
               uploadHeader: m.uploadHeader,
+              uploadDescription: m.uploadDescription,
               uploadMultiple: true,
               maxSize: FILE_SIZE_LIMIT,
               uploadButtonLabel: m.attachmentsButton,
