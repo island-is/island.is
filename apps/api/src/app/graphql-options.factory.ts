@@ -83,11 +83,11 @@ function overrideCacheControlPlugin(): ApolloServerPlugin {
             // Make sure X-Bypass-Cache gets past browser and CDN caches.
             response.http.headers.set('Vary', 'Accept-Encoding, X-Bypass-Cache')
 
-            // Store the response in browser/CDN cache for 10% of the maxAge after which it'll be revalidated in the
+            // Store the response in CDN cache for 10% of the maxAge after which it'll be revalidated in the
             // background.
             response.http.headers.set(
               'Cache-Control',
-              `max-age=${
+              `s-maxage=${
                 policyIfCacheable.maxAge / 10
               }, stale-while-revalidate=${
                 policyIfCacheable.maxAge
