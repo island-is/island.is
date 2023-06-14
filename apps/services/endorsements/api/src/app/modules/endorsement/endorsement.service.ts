@@ -92,7 +92,7 @@ export class EndorsementService {
     endorsements.data.map((endorsement) => {
       // always mask endorsement nationalId
       endorsement.endorser = 'xxxxxx-xxxx'
-      // owner sees all endorser info, others only masked data if requested by endorser
+      // owner sees all endorser info, otherwise filtered out for public and admins
       if (!requestFromListOwner)
         if (!endorsement.meta.showName) {
           endorsement.meta.fullName = ''
