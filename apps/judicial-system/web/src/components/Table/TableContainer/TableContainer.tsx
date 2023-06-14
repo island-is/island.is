@@ -1,7 +1,7 @@
 import React from 'react'
+import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
 
 import * as styles from '../Table.css'
-import TableSkeleton from '../TableSkeleton/TableSkeleton'
 
 interface Props {
   tableHeader: React.ReactNode

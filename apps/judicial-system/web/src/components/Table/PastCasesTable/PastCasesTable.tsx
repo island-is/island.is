@@ -1,31 +1,30 @@
 import React, { useContext, useMemo } from 'react'
 import cn from 'classnames'
-
-import { Box, Text } from '@island.is/island-ui/core'
 import parseISO from 'date-fns/parseISO'
+import { theme } from '@island.is/island-ui/theme'
+import { Box, Text } from '@island.is/island-ui/core'
 
-import * as styles from '../Table.css'
-import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { useIntl } from 'react-intl'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages/Core'
+import { tables, core } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseListEntry,
   CaseState,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
+
 import {
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+
 import {
+  UserContext,
   TagAppealState,
   TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
-import { UserContext } from '../../UserProvider/UserProvider'
-import { theme } from '@island.is/island-ui/theme'
-import MobilePastCase from './MobilePastCase'
+
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -34,6 +33,9 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
+
+import MobilePastCase from './MobilePastCase'
+import * as styles from '../Table.css'
 
 export function getDurationDate(
   state: Case['state'],
