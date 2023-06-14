@@ -79,6 +79,7 @@ const CompanyInfo = () => {
           <UserInfoLine
             title={formatMessage(m.info)}
             label={formatMessage(mCompany.name)}
+            translate="no"
             content={
               error ? formatMessage(dataNotFoundMessage) : data?.name || ''
             }
