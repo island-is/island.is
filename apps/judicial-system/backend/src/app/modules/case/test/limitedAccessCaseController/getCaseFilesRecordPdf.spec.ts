@@ -20,7 +20,7 @@ interface Then {
 
 type GivenWhenThen = (policeCaseNumber: string) => Promise<Then>
 
-describe('CaseController - Get case files record pdf', () => {
+describe('LimitedAccessCaseController - Get case files record pdf', () => {
   const caseId = uuid()
   const policeCaseNumber = uuid()
   const caseFiles = [
@@ -48,7 +48,10 @@ describe('CaseController - Get case files record pdf', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, caseController } = await createTestingCaseModule()
+    const {
+      awsS3Service,
+      limitedAccessCaseController,
+    } = await createTestingCaseModule()
 
     mockawsS3Service = awsS3Service
     const mockGetObject = mockawsS3Service.getObject as jest.Mock
@@ -58,7 +61,7 @@ describe('CaseController - Get case files record pdf', () => {
       const then = {} as Then
 
       try {
-        await caseController.getCaseFilesRecordPdf(
+        await limitedAccessCaseController.getCaseFilesRecordPdf(
           caseId,
           policeCaseNumber,
           theCase,
