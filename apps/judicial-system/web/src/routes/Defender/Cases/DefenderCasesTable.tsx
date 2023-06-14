@@ -22,10 +22,12 @@ import TagAppealState from '@island.is/judicial-system-web/src/components/TagApp
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import DefendantInfo from '@island.is/judicial-system-web/src/components/Table/DefendantInfo/DefendantInfo'
 import CourtCaseNumber from '@island.is/judicial-system-web/src/components/Table/CourtCaseNumber/CourtCaseNumber'
+import {
+  useFilterCases,
+  useSortCases,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
-import useSortCases from './useSortCases'
-import useFilterCases from './useFilterCases'
 import TableSkeleton from '../../Shared/Cases/TableSkeleton'
 
 interface Props {

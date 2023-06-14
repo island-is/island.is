@@ -17,7 +17,6 @@ import { core } from '@island.is/judicial-system-web/messages/Core'
 import { directionType } from '@island.is/judicial-system-web/src/types'
 import { displayCaseType } from '../../../Shared/Cases/utils'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
-import useSortCases from '../../../Defender/Cases/useSortCases'
 
 interface Props {
   data: any[]
@@ -35,49 +34,66 @@ const ActiveTable: React.FC<Props> = (props) => {
   const { data, onRowClick } = props
   const { formatMessage } = useIntl()
 
-  const { sortedData, requestSort, getClassNamesFor } = useSortCases(
-    'createdAt',
-    'descending',
-    data,
-  )
+  // const { sortedData, requestSort, getClassNamesFor } = useSortCases(
+  //   'createdAt',
+  //   'descending',
+  //   data,
+  // )
 
-  // const [sortConfig, setSortConfig] = useState<SortConfig>({
-  //   column: 'appealedDate',
-  //   direction: 'ascending',
-  // })
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    column: 'appealedDate',
+    direction: 'ascending',
+  })
 
-  // useMemo(() => {
-  //   if (data && sortConfig) {
-  //     data.sort((a: any, b: any) => {
-  //       // Credit: https://stackoverflow.com/a/51169
-  //       return sortConfig.direction === 'ascending'
-  //         ? (sortConfig.column === 'defendant' &&
-  //           a.defendants &&
-  //           a.defendants.length > 0
-  //             ? a.defendants[0].name ?? ''
-  //             : b['appealedDate'] + a['created']
-  //           ).localeCompare(
-  //             sortConfig.column === 'defendant' &&
-  //               b.defendants &&
-  //               b.defendants.length > 0
-  //               ? b.defendants[0].name ?? ''
-  //               : a['appealedDate'] + b['created'],
-  //           )
-  //         : (sortConfig.column === 'defendant' &&
-  //           b.defendants &&
-  //           b.defendants.length > 0
-  //             ? b.defendants[0].name ?? ''
-  //             : a['appealedDate'] + b['created']
-  //           ).localeCompare(
-  //             sortConfig.column === 'defendant' &&
-  //               a.defendants &&
-  //               a.defendants.length > 0
-  //               ? a.defendants[0].name ?? ''
-  //               : b['appealedDate'] + a['created'],
-  //           )
-  //     })
-  //   }
-  // }, [data, sortConfig])
+  useMemo(() => {
+    if (data && sortConfig) {
+      data.sort((a: any, b: any) => {
+        // Credit: https://stackoverflow.com/a/51169
+        return sortConfig.direction === 'ascending'
+          ? (sortConfig.column === 'defendant' &&
+            a.defendants &&
+            a.defendants.length > 0
+              ? a.defendants[0].name ?? ''
+              : b['appealedDate'] + a['created']
+            ).localeCompare(
+              sortConfig.column === 'defendant' &&
+                b.defendants &&
+                b.defendants.length > 0
+                ? b.defendants[0].name ?? ''
+                : a['appealedDate'] + b['created'],
+            )
+          : (sortConfig.column === 'defendant' &&
+            b.defendants &&
+            b.defendants.length > 0
+              ? b.defendants[0].name ?? ''
+              : a['appealedDate'] + b['created']
+            ).localeCompare(
+              sortConfig.column === 'defendant' &&
+                a.defendants &&
+                a.defendants.length > 0
+                ? a.defendants[0].name ?? ''
+                : b['appealedDate'] + a['created'],
+            )
+      })
+    }
+  }, [data, sortConfig])
+
+  const requestSort = (column: string) => {
+    let direction: 'ascending' | 'descending' = 'ascending'
+
+    if (sortConfig.column === column && sortConfig.direction === 'ascending') {
+      direction = 'descending'
+    }
+
+    setSortConfig({ column, direction })
+  }
+
+  const getClassNamesFor = (column: string) => {
+    if (!sortConfig) {
+      return
+    }
+    return sortConfig.column === column ? sortConfig.direction : undefined
+  }
 
   return (
     <table className={styles.table}>
