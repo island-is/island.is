@@ -17,7 +17,6 @@ import { paginate } from '@island.is/nest/pagination'
 import environment, {
   ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
 } from '../../../environments/environment'
-// import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
@@ -25,7 +24,6 @@ import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 
 import {
-  // AddressDto as NationalRegistryAddress,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 

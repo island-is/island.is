@@ -1,9 +1,7 @@
 import {
   Inject,
-  Injectable,
   MethodNotAllowedException,
   NotFoundException,
-  Scope,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Endorsement } from './models/endorsement.model'
@@ -14,16 +12,11 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
-// import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 
 import {
-  // AddressDto as NationalRegistryAddress,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import { end } from 'pdfkit'
 
-import { REQUEST } from '@nestjs/core'
-import { Request } from 'express'
 
 interface FindEndorsementInput {
   listId: string
@@ -62,7 +55,6 @@ export class EndorsementService {
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    // private readonly nationalRegistryApi: NationalRegistryApi,
     private readonly nationalRegistryApiV2: NationalRegistryClientService,
   ) {}
 
@@ -186,7 +178,7 @@ export class EndorsementService {
     if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
-    // const fullName = showName ? await this.getEndorserInfo(nationalId) : ''
+    /////////// TRY CATCH ////////////////
     const person = await this.nationalRegistryApiV2.getIndividual(nationalId)
 
     const endorsement = {
@@ -247,20 +239,4 @@ export class EndorsementService {
     }
   }
 
-  // private async getEndorserInfo(nationalId: string) {
-  //   this.logger.info(`Finding fullName of Endorser "${nationalId}" by id`)
-
-  //   try {
-  //     return (await this.nationalRegistryApi.getUser(nationalId)).Fulltnafn
-  //   } catch (e) {
-  //     if (e instanceof Error) {
-  //       this.logger.warn(
-  //         `Occured when fetching endorser name from NationalRegistryApi v1 ${e.message} \n${e.stack}`,
-  //       )
-  //       return ''
-  //     } else {
-  //       throw e
-  //     }
-  //   }
-  // }
 }
