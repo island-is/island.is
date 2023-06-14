@@ -38,10 +38,10 @@ import * as constants from '@island.is/judicial-system/consts'
 import PastCasesTable from '@island.is/judicial-system-web/src/components/TableV2/PastCasesTable/PastCasesTable'
 
 import ActiveCases from './ActiveCases'
-import TableSkeleton from './TableSkeleton'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
+import TableSkeleton from '@island.is/judicial-system-web/src/components/TableV2/TableSkeleton/TableSkeleton'
 
 const CreateCaseButton: React.FC<{
   user: User
@@ -273,6 +273,7 @@ export const Cases: React.FC = () => {
             : tables.completedCasesTitle,
         )}
       />
+
       {pastCases.length > 0 ? (
         <PastCasesTable cases={pastCases} onRowClick={handleRowClick} />
       ) : (

@@ -1,10 +1,8 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import parseISO from 'date-fns/parseISO'
 
-import * as styles from '../Table.css'
 import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { useIntl } from 'react-intl'
 import {
@@ -14,85 +12,40 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages/Core'
-import {
-  Case,
-  CaseListEntry,
-  CaseState,
-  isExtendedCourtRole,
-} from '@island.is/judicial-system/types'
-import {
-  useSortCases,
-  useViewport,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import TagAppealState from '../../TagAppealState/TagAppealState'
 import SortButton from '../SortButton/SortButton'
 import TableHeaderText from '../TableHeaderText/TableHeaderText'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
-import { UserContext } from '../../UserProvider/UserProvider'
 import { theme } from '@island.is/island-ui/theme'
 import TableContainer from '../TableContainer/TableContainer'
-import MobilePastCase from './MobilePastCase'
+import useSortAppealCases from '@island.is/judicial-system-web/src/utils/hooks/useTable/useSortAppealCases'
+import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Cases/Cases'
 
-export function getDurationDate(
-  state: Case['state'],
-  validToDate?: Case['validToDate'],
-  initialRulingDate?: Case['initialRulingDate'],
-  courtEndTime?: Case['courtEndTime'],
-): string | null {
-  if (
-    [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
-    !validToDate
-  ) {
-    return null
-  } else if (initialRulingDate) {
-    return `${formatDate(parseISO(initialRulingDate), 'd.M.y')} - ${formatDate(
-      parseISO(validToDate),
-      'd.M.y',
-    )}`
-  } else if (courtEndTime) {
-    return `${formatDate(parseISO(courtEndTime), 'd.M.y')} - ${formatDate(
-      parseISO(validToDate),
-      'd.M.y',
-    )}`
-  } else if (validToDate) {
-    return formatDate(parseISO(validToDate), 'd.M.y') || null
-  }
-  return null
-}
+import * as styles from '../Table.css'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
+import MobileAppealCase from './MobileAppealCase'
 
-const DurationDate = ({ date }: { date: string | null }) => {
-  const { formatMessage } = useIntl()
-  if (!date) {
-    return null
-  }
-
-  return (
-    <Text fontWeight={'medium'} variant="small">
-      {`${formatMessage(tables.duration)} ${date}`}
-    </Text>
-  )
-}
 interface Props {
-  cases: CaseListEntry[]
+  cases: AppealedCasesQueryResponse[]
   onRowClick: (id: string) => void
-  loading?: boolean
+  loading: boolean
+  showingCompletedCases?: boolean
 }
 
-const PastCasesTable: React.FC<Props> = (props) => {
-  const { cases, onRowClick, loading = false } = props
+const AppealCasesTable: React.FC<Props> = (props) => {
+  const { cases, onRowClick, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
-
-  const { sortedData, requestSort, getClassNamesFor } = useSortCases(
-    'createdAt',
+  const { sortedData, requestSort, getClassNamesFor } = useSortAppealCases(
+    'appealedDate',
     'descending',
     cases,
   )
-  const pastCasesData = useMemo(
+  const activeCasesData = useMemo(
     () =>
-      cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        a['created'].localeCompare(b['created']),
+      cases.sort(
+        (a: AppealedCasesQueryResponse, b: AppealedCasesQueryResponse) =>
+          a['appealedDate'].localeCompare(b['appealedDate']),
       ),
     [cases],
   )
@@ -101,23 +54,12 @@ const PastCasesTable: React.FC<Props> = (props) => {
 
   return width < theme.breakpoints.md ? (
     <>
-      {pastCasesData.map((theCase) => (
-        <Box marginTop={2} key={theCase.id}>
-          <MobilePastCase
+      {activeCasesData.map((theCase) => (
+        <Box marginTop={2} key={theCase.parentCaseId}>
+          <MobileAppealCase
             theCase={theCase}
             onClick={() => onRowClick(theCase.id)}
-            isCourtRole={false}
-          >
-            <DurationDate
-              key={`${theCase.id}-duration-date`}
-              date={getDurationDate(
-                theCase.state,
-                theCase.validToDate,
-                theCase.initialRulingDate,
-                theCase.courtEndTime,
-              )}
-            />
-          </MobilePastCase>
+          ></MobileAppealCase>
         </Box>
       ))}
     </>
@@ -137,13 +79,27 @@ const PastCasesTable: React.FC<Props> = (props) => {
           </th>
           <TableHeaderText title={formatMessage(tables.type)} />
           <TableHeaderText title={formatMessage(tables.state)} />
-          <TableHeaderText title={formatMessage(tables.duration)} />
+          {showingCompletedCases ? (
+            <TableHeaderText title={formatMessage(tables.duration)} />
+          ) : (
+            <th className={cn(styles.th, styles.largeColumn)}>
+              <SortButton
+                title="Stofnað"
+                onClick={() => requestSort('appealedDate')}
+                sortAsc={getClassNamesFor('appealedDate') === 'ascending'}
+                sortDes={getClassNamesFor('appealedDate') === 'descending'}
+              />
+            </th>
+          )}
         </>
       }
     >
       {sortedData.map((column) => {
         return (
-          <tr className={styles.row} onClick={() => onRowClick(column.id)}>
+          <tr
+            className={styles.row}
+            onClick={() => onRowClick(column.parentCaseId)}
+          >
             <td>
               {column.appealCaseNumber ? (
                 <Box display="flex" flexDirection="column">
@@ -209,29 +165,26 @@ const PastCasesTable: React.FC<Props> = (props) => {
               </Box>
             </td>
             <td>
-              <Box marginRight={1} marginBottom={1}>
-                <TagCaseState
-                  caseState={column.state}
-                  caseType={column.type}
-                  isCourtRole={
-                    user?.role ? isExtendedCourtRole(user.role) : false
-                  }
-                  isValidToDateInThePast={column.isValidToDateInThePast}
-                />
-              </Box>
-              {column.appealState && (
-                <TagAppealState appealState={column.appealState} />
-              )}
+              <TagAppealState
+                appealState={column.appealState}
+                appealRulingDecision={column.appealRulingDecision}
+              />
             </td>
             <td>
-              <Text fontWeight={'medium'} variant="small">
-                {getDurationDate(
-                  column.state,
-                  column.validToDate,
-                  column.initialRulingDate,
-                  column.courtEndTime,
-                )}
-              </Text>
+              {showingCompletedCases ? (
+                <Text>
+                  {isRestrictionCase(column.type)
+                    ? `${formatDate(column.courtEndTime, 'd.M.y')} -
+                      ${formatDate(column.validToDate, 'd.M.y')}`
+                    : ''}
+                </Text>
+              ) : (
+                <Text>
+                  {column.appealedDate
+                    ? formatDate(column.appealedDate, 'd.M.y')
+                    : '-'}
+                </Text>
+              )}
             </td>
           </tr>
         )
@@ -240,4 +193,4 @@ const PastCasesTable: React.FC<Props> = (props) => {
   )
 }
 
-export default PastCasesTable
+export default AppealCasesTable

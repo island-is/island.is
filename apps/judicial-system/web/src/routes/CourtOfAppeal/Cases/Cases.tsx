@@ -7,7 +7,6 @@ import {
   Logo,
   PageHeader,
   SectionHeading,
-  Table,
   TagAppealState,
 } from '@island.is/judicial-system-web/src/components'
 import { titles, tables, core } from '@island.is/judicial-system-web/messages'
@@ -37,10 +36,7 @@ import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mut
 import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { displayCaseType } from '../../Shared/Cases/utils'
 import { courtOfAppealCases as strings } from './Cases.strings'
-import TableV from '@island.is/judicial-system-web/src/components/TableV2/Table'
-import { useFilter } from '../../Shared/Cases/useFilter'
-import ActiveTable from './Tables/ActiveTable'
-import PastCasesTable from './Tables/PastCasesTable'
+import AppealCasesTable from '@island.is/judicial-system-web/src/components/TableV2/AppealCasesTable/AppealCasesTable'
 
 export interface AppealedCasesQueryResponse {
   courtCaseNumber: string
@@ -59,6 +55,8 @@ export interface AppealedCasesQueryResponse {
   policeCaseNumbers: string[]
   parentCaseId: string
   appealedDate: string
+  appealCaseNumber: string
+  id: string
 }
 
 const CourtOfAppealCases = () => {
@@ -67,7 +65,7 @@ const CourtOfAppealCases = () => {
 
   const input = { appealState: ['RECEIVED', 'COMPLETED'] }
 
-  const { data: appealedCases } = useQuery<{
+  const { data: appealedCases, loading } = useQuery<{
     cases: AppealedCasesQueryResponse[]
   }>(AppealedCasesQuery, { variables: { input }, fetchPolicy: 'no-cache' })
 
@@ -246,13 +244,14 @@ const CourtOfAppealCases = () => {
       </div>
       <SectionHeading title={formatMessage(strings.appealedCasesTitle)} />
       <Box marginBottom={7}>
-        <ActiveTable
+        <AppealCasesTable
+          loading={loading}
           onRowClick={(id) => {
             getCaseToOpen({
               variables: { input: { id } },
             })
           }}
-          data={
+          cases={
             appealedCasesData?.filter(
               (a) => a.appealState !== CaseAppealState.COMPLETED,
             ) || []
@@ -260,18 +259,19 @@ const CourtOfAppealCases = () => {
         />
       </Box>
       <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
-
-      <PastCasesTable
-        onRowClick={(id) =>
+      <AppealCasesTable
+        loading={loading}
+        onRowClick={(id) => {
           getCaseToOpen({
             variables: { input: { id } },
           })
-        }
-        data={
+        }}
+        cases={
           appealedCasesData?.filter(
             (a) => a.appealState === CaseAppealState.COMPLETED,
           ) || []
         }
+        showingCompletedCases={true}
       />
     </SharedPageLayout>
   )

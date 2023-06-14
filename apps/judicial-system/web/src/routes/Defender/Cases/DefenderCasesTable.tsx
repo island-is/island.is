@@ -28,7 +28,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
-import TableSkeleton from '../../Shared/Cases/TableSkeleton'
+import TableSkeleton from '@island.is/judicial-system-web/src/components/TableV2/TableSkeleton/TableSkeleton'
 
 interface Props {
   cases: CaseListEntry[]

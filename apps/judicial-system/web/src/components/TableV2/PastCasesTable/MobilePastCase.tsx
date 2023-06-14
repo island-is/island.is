@@ -1,7 +1,7 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 import {
   displayFirstPlusRemaining,
@@ -10,39 +10,8 @@ import {
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 
-import * as styles from './MobileCase.css'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-
-interface CategoryCardProps {
-  heading: string | React.ReactNode
-  tags?: React.ReactNode
-  onClick: () => void
-}
-
-const CategoryCard: React.FC<CategoryCardProps> = ({
-  heading,
-  onClick,
-  tags,
-  children,
-}) => {
-  return (
-    <FocusableBox
-      className={styles.card}
-      height="full"
-      width="full"
-      component="button"
-      onClick={onClick}
-    >
-      <Box>
-        <Text variant="h3" as="h3" color={'blue400'} marginBottom={1}>
-          {heading}
-        </Text>
-        {children}
-        <Box marginTop={3}>{tags}</Box>
-      </Box>
-    </FocusableBox>
-  )
-}
+import CategoryCard from '../CategoryCard/CategoryCard'
 
 interface Props {
   theCase: CaseListEntry
@@ -50,7 +19,7 @@ interface Props {
   isCourtRole: boolean
 }
 
-const MobileCase: React.FC<Props> = ({
+const MobilePastCase: React.FC<Props> = ({
   theCase,
   onClick,
   isCourtRole,
@@ -97,4 +66,4 @@ const MobileCase: React.FC<Props> = ({
   )
 }
 
-export default MobileCase
+export default MobilePastCase
