@@ -14,8 +14,9 @@ import { dataCollection } from '../sharedSections/dataCollection'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 import { YES } from '../../lib/constants'
 
+/* This form is being used for "Opinber skipti" */
 export const form: Form = buildForm({
-  id: 'divisionOfEstate',
+  id: 'officialDivisionOfEstate',
   title: '',
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
@@ -67,7 +68,7 @@ export const form: Form = buildForm({
               ],
             }),
             buildSubmitField({
-              id: 'divisionOfEstateByHeirs.submit',
+              id: 'officialDivisionForm.submit',
               title: '',
               refetchApplicationAfterSubmit: true,
               actions: [

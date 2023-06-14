@@ -17,8 +17,9 @@ import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
 import { testamentInfo } from '../sharedSections/testamentInfo'
 
+/* This form is being used for "Einkaskipti" */
 export const form: Form = buildForm({
-  id: 'divisionOfEstateByHeirsForm',
+  id: 'privateEstateDivision',
   title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

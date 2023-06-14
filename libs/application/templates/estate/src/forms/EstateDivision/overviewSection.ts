@@ -539,7 +539,7 @@ export const overview = buildSection({
           },
         }),
         buildSubmitField({
-          id: 'permitToPostponeEstateDivision.submit',
+          id: 'estateDivisionForm.submit',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [
@@ -672,7 +672,7 @@ export const overview = buildSection({
           },
         }),
         buildSubmitField({
-          id: 'estateWithoutAssetsAndDebts.submit',
+          id: 'estateDivisionForm.submit',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [

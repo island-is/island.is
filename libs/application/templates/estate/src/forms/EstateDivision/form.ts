@@ -25,8 +25,9 @@ import {
   YES,
 } from '../../lib/constants'
 
+/* This form is being used for both "Seta í óskiptu búi" and "Eignalaust dánarbú" */
 export const form: Form = buildForm({
-  id: 'permitToPostponeEstateDivisionForm',
+  id: 'estateDivisionForm',
   title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
