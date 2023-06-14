@@ -6,8 +6,6 @@ import {
   setupTestEnv,
 } from '../../test/setup'
 
-import { Request } from './nodeFetch'
-
 const testUrl = 'http://localhost/test'
 
 describe('EnhancedFetch', () => {

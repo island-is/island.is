@@ -6,7 +6,7 @@ import { m } from '../../../lib/messages'
 import { downloadCSV } from './downloadCSV'
 import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
-import { PDFDownloadLink } from '@react-pdf/renderer'
+import { usePDF } from '@react-pdf/renderer'
 import { menuItem } from './styles.css'
 import MyPdfDocument from './DownloadPdf'
 import {
@@ -52,6 +52,16 @@ const DropdownExport: FC<Props> = ({
 }) => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
+
+  const [document] = usePDF({
+    document: (
+      <MyPdfDocument petition={petition} petitionSigners={petitionSigners} />
+    ),
+  })
+  if (document.error) {
+    console.warn(document.error)
+  }
+
   return (
     <Box className={styles.buttonWrapper} display="flex">
       <Box marginRight={2}>
@@ -77,19 +87,14 @@ const DropdownExport: FC<Props> = ({
           {
             title: formatMessage(m.asPdf),
             render: () => (
-              <PDFDownloadLink
-                className={menuItem}
+              <a
                 key={petitionId}
-                document={
-                  <MyPdfDocument
-                    petition={petition}
-                    petitionSigners={petitionSigners}
-                  />
-                }
-                fileName="Undirskriftalisti.pdf"
+                href={document.url ?? ''}
+                download={'Undirskriftalisti.pdf'}
+                className={menuItem}
               >
-                {() => <Box>{formatMessage(m.asPdf)}</Box>}
-              </PDFDownloadLink>
+                {formatMessage(m.asPdf)}
+              </a>
             ),
           },
           {

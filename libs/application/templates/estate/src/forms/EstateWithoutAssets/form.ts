@@ -42,19 +42,6 @@ export const form: Form = buildForm({
               title: '',
               space: 'containerGutter',
             }),
-            buildCheckboxField({
-              id: 'estateMembersHaveElectronicID',
-              title: '',
-              large: true,
-              backgroundColor: 'blue',
-              defaultValue: [],
-              options: [
-                {
-                  value: YES,
-                  label: m.estateMembersHaveIDCheckbox.defaultMessage,
-                },
-              ],
-            }),
           ],
         }),
       ],
