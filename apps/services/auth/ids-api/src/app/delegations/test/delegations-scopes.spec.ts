@@ -91,6 +91,7 @@ describe('DelegationsController', () => {
   let factory: FixtureFactory
 
   beforeAll(async () => {
+    console.time('DelegationsController#beforeAll')
     app = await setupWithAuth({
       user: user,
     })
@@ -99,7 +100,8 @@ describe('DelegationsController', () => {
     server = request(app.getHttpServer())
 
     factory = new FixtureFactory(app)
-  })
+    console.timeEnd('DelegationsController#beforeAll')
+  }, 10000)
 
   afterAll(async () => {
     await app.cleanUp()
