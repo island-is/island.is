@@ -32,9 +32,9 @@ The following table specifies the mappings between standard and custom methods a
 | `DELETE` | `DELETE`                   |
 | `Custom` | `POST` (usually)           |
 
-## Custom methods
+## Custom methods (RPC)
 
-APIs should prefer standard methods over custom methods. However, in the real world there is often a need to provide custom methods. A custom method is an action that does not cleanly map to any of the standard methods. The way to add custom methods to your API is to nounify the action and make it a sub-resource.
+APIs should prefer standard methods over custom methods. However, in the real world there is often a need to provide custom methods. A custom method is an action that does not cleanly map to any of the standard methods. The way to add custom methods to your API is to use `POST` and add the verb of the action as a sub-resource.
 
 ### Example
 
@@ -51,15 +51,15 @@ DELETE https://api.island.is/v1/messages/:messageId
 Then there is a requirement to provide a functionality to be able to archive and unarchive a single message and a batch of messages. The archiving and unarchiving of a single message is then provided by:
 
 ```text
-POST   https://api.island.is/v1/messages/:messageId/archives
-DELETE https://api.island.is/v1/messages/:messageId/archives
+POST   https://api.island.is/v1/messages/:messageId/archive
+POST   https://api.island.is/v1/messages/:messageId/unarchive
 ```
 
 The batch archiving is provided by
 
 ```text
-POST   https://api.island.is/v1/messages/archives
-DELETE https://api.island.is/v1/messages/archives
+POST   https://api.island.is/v1/messages/archive
+POST   https://api.island.is/v1/messages/unarchive
 ```
 
 _Note:_ The `POST` method accepts a list of message Ids in the request body.
