@@ -38,6 +38,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
+
 import { nowFactory } from '../../factories'
 import {
   getRequestPdfAsBuffer,
