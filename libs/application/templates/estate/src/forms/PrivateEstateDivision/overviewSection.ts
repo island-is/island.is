@@ -5,9 +5,10 @@ import {
   buildKeyValueField,
   buildMultiField,
   buildSection,
+  buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
@@ -495,6 +496,18 @@ export const overview = buildSection({
             getValueViaPath<string>(answers, 'representative.email'),
           condition: (answers) =>
             !!getValueViaPath<string>(answers, 'representative.email'),
+        }),
+        buildSubmitField({
+          id: 'privateEstateDivision.submit',
+          title: '',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.submitApplication,
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

@@ -2,6 +2,7 @@ import {
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -10,7 +11,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { YES } from '../../lib/constants'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT, YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
@@ -470,7 +471,29 @@ export const form: Form = buildForm({
         }),
       ],
     }),
-    overview,
+    buildSection({
+      id: 'estateAttachments',
+      title: m.attachmentsTitle,
+      children: [
+        buildMultiField({
+          id: 'estateAttachments',
+          title: m.attachmentsTitle,
+          description: m.attachmentsDescription,
+          children: [
+            buildFileUploadField({
+              id: 'estateAttachments.attached.file',
+              title: m.attachmentsTitle,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: m.uploadHeader,
+              uploadDescription: m.uploadDescription,
+              uploadMultiple: true,
+              maxSize: FILE_SIZE_LIMIT,
+              uploadButtonLabel: m.attachmentsButton,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'approveSubmission',
       title: m.divisionOfEstateByHeirsTerms,
@@ -486,7 +509,7 @@ export const form: Form = buildForm({
               space: 'containerGutter',
             }),
             buildCheckboxField({
-              id: 'readTerms',
+              id: 'confirmAction',
               title: '',
               large: false,
               backgroundColor: 'white',
@@ -499,21 +522,10 @@ export const form: Form = buildForm({
                 },
               ],
             }),
-            buildSubmitField({
-              id: 'divisionOfEstateByHeirs.submit',
-              title: '',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: m.submitApplication,
-                  type: 'primary',
-                },
-              ],
-            }),
           ],
         }),
       ],
     }),
+    overview,
   ],
 })
