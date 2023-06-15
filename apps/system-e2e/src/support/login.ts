@@ -63,10 +63,9 @@ export async function idsLogin(
     if (!delegation) await delegations.first().click()
     else {
       // Support national IDS and names
-      const filteredDelegations = delegation.match(/^[0-9-]+$/) ?
-        delegations.locator(`[value="${delegation.replace('-', '')}"]`)
+      const filteredDelegations = delegation.match(/^[0-9-]+$/)
+        ? delegations.locator(`[value="${delegation.replace('-', '')}"]`)
         : delegations.getByRole('button', { name: delegation })
-
 
       await filteredDelegations.first().click()
     }

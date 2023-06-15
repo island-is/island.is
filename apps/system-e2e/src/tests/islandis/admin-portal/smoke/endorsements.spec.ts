@@ -36,23 +36,35 @@ test.describe('Admin portal access control', () => {
       ).toBeVisible()
 
       await granterPage.getByTestId('active-module-name').click()
-      await granterPage.getByRole('button', { name: 'Undirskriftalistar' }).click()
+      await granterPage
+        .getByRole('button', { name: 'Undirskriftalistar' })
+        .click()
 
       await granterPage.getByRole('button', { name: 'Liðnir listar' }).click()
       await granterPage.getByRole('button', { name: 'Skoða lista' }).click()
-      await expect(granterPage.getByRole('heading', { name: 'Heiti lista' })).toBeVisible()
-      await expect(granterPage.getByRole('heading', { name: 'Yfirlit undirskrifta' })).toBeVisible()
+      await expect(
+        granterPage.getByRole('heading', { name: 'Heiti lista' }),
+      ).toBeVisible()
+      await expect(
+        granterPage.getByRole('heading', { name: 'Yfirlit undirskrifta' }),
+      ).toBeVisible()
 
       await granterPage.getByRole('button', { name: 'Uppfæra lista' }).click()
-      await expect(granterPage.getByRole('note', { name: 'Tókst að uppfæra lista' })).toBeVisible()
+      await expect(
+        granterPage.getByRole('note', { name: 'Tókst að uppfæra lista' }),
+      ).toBeVisible()
 
       await granterPage.getByRole('note', { name: 'Til baka' }).click()
       await granterPage.getByRole('button', { name: 'Læstir listar' }).click()
-      await expect(granterPage.getByRole('row', { name: 'Læstir listar' })).toHaveCountGreaterThan(1)
+      await expect(
+        granterPage.getByRole('row', { name: 'Læstir listar' }),
+      ).toHaveCountGreaterThan(1)
 
       await granterPage.getByTestId('active-module-name').click()
       await granterPage.getByRole('button', { name: 'Yfirlit' }).click()
-      await expect(granterPage.getByRole('heading', { name: 'Stjórnborð Ísland.is' })).toBeVisible()
+      await expect(
+        granterPage.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
+      ).toBeVisible()
     })
 
     await test.step('access endorsement lists', async () => {
