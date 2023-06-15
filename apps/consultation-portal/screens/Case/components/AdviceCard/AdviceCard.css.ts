@@ -7,3 +7,7 @@ export const spanStyle = style({
 export const iconStyle = style({
   marginLeft: 7,
 })
+
+export const divStyle = style({
+  whiteSpace: 'pre-wrap',
+})
