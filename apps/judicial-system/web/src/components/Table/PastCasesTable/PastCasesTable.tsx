@@ -140,7 +140,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
               )}
             </td>
             <td>
-              <Text fontWeight={'medium'} variant="small">
+              <Text>
                 {getDurationDate(
                   column.state,
                   column.validToDate,
