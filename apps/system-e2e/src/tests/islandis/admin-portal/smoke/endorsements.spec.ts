@@ -22,9 +22,7 @@ test.describe('Admin portal access control', () => {
     await contextGranter.close()
   })
 
-  test.skip('access undirskriftalsitar, access and edit a list', async ({
-    browser,
-  }) => {
+  test.skip('access undirskriftalsitar, access and edit a list', async ({ }) => {
     // Arrange
     const granterPage = await contextGranter.newPage()
 
