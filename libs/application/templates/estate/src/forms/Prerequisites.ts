@@ -9,7 +9,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
-import { deceasedInfoFields } from './sharedSections/deceasedInfoFields'
+import { deceasedInfoFields } from './Sections/deceasedInfoFields'
 
 export const getForm = ({
   allowDivisionOfEstate = false,

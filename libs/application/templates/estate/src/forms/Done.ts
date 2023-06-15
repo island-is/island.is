@@ -5,8 +5,8 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../../lib/messages'
-import { EstateTypes } from '../../lib/constants'
+import { m } from '../lib/messages'
+import { EstateTypes } from '../lib/constants'
 
 export const done: Form = buildForm({
   id: 'divisionOfEstateDone',

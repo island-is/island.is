@@ -11,7 +11,7 @@ import {
 import { Application, DefaultEvents } from '@island.is/application/types'
 import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
-import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
+import { deceasedInfoFields } from '../Sections/deceasedInfoFields'
 import { format as formatNationalId } from 'kennitala'
 import {
   formatBankInfo,
