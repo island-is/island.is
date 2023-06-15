@@ -125,7 +125,7 @@ export const Index = ({ types, statistics }: HomeProps) => {
       seo={{
         title: loc.seo.title,
         description: loc.seo.description,
-        keywords: loc.seo.keywords
+        keywords: loc.seo.keywords,
       }}
     >
       <HeroBanner statistics={statistics} />

@@ -43,7 +43,7 @@ const SUBSCRIPTIONS = {
   title: loc.subscriptions.title,
   url: loc.subscriptions.url,
   description: loc.subscriptions.description,
-  keywords: loc.subscriptions.keywords
+  keywords: loc.subscriptions.keywords,
 }
 
 const MY_SUBSCRIPTIONS = {

@@ -4,9 +4,9 @@ import localization from '../../Layout.json'
 
 const SEO = ({ title, image, url, description, keywords }: SEOProps) => {
   const loc = localization.seo
-  const desc = description ? description : ""
-  const kwords = keywords ? keywords : ""
-  const _url = url ? url : ""
+  const desc = description ? description : ''
+  const kwords = keywords ? keywords : ''
+  const _url = url ? url : ''
 
   return (
     <Head>
