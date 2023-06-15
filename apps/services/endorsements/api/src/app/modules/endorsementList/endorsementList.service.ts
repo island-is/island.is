@@ -258,8 +258,6 @@ export class EndorsementListService {
     return result
   }
 
-
-
   async getOwnerInfo(listId: string, owner?: string) {
     // Is used by both unauthenticated users, authenticated users and admin
     // Admin needs to access locked lists and can not use the EndorsementListById pipe
