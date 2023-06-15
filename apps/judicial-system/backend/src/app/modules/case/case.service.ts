@@ -24,6 +24,7 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  CaseAppealDecision,
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
@@ -714,6 +715,14 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
+    // If case was appealed in court we don't need to send these messages
+    if (
+      theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+      theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
+    ) {
+      return Promise.resolve()
+    }
+
     const messages: CaseMessage[] =
       theCase.caseFiles
         ?.filter(
