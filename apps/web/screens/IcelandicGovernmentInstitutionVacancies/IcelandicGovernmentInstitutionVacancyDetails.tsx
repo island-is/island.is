@@ -172,7 +172,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
         {(vacancy.salaryTerms ||
           vacancy.description ||
           vacancy.jobPercentage ||
-          vacancy.applicationDeadlineFrom) && (
+          vacancy.applicationDeadlineTo) && (
           <Text variant="h3" as="h2">
             {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
           </Text>
@@ -190,10 +190,10 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
           </Text>
         )}
 
-        {vacancy.applicationDeadlineFrom && (
+        {vacancy.applicationDeadlineTo && (
           <Text>
             {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
-            {vacancy.applicationDeadlineFrom}
+            {vacancy.applicationDeadlineTo}
           </Text>
         )}
 

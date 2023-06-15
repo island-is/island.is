@@ -11,9 +11,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealDecision,
-  CaseDecision,
   CaseState,
-  CaseType,
   completedCaseStates,
   Feature,
   isInvestigationCase,
@@ -35,11 +33,11 @@ import {
   FeatureContext,
   AppealConclusion,
   AlertBanner,
+  OverviewHeader,
   PdfButton,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import { core, titles } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './CaseOverview.strings'
@@ -63,44 +61,6 @@ export const CaseOverview: React.FC = () => {
   )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
-
-  const titleForCase = (theCase: Case) => {
-    if (theCase.state === CaseState.REJECTED) {
-      return isInvestigationCase(theCase.type)
-        ? formatMessage(strings.investigationCaseRejectedTitle)
-        : formatMessage(strings.restrictionCaseRejectedTitle)
-    }
-
-    if (theCase.state === CaseState.DISMISSED) {
-      return formatMessage(strings.caseDismissedTitle)
-    }
-
-    if (theCase.state === CaseState.ACCEPTED) {
-      if (isInvestigationCase(theCase.type)) {
-        return formatMessage(strings.investigationCaseAcceptedTitle)
-      }
-
-      const caseType =
-        theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-          ? CaseType.TRAVEL_BAN
-          : theCase.type
-
-      if (theCase.isValidToDateInThePast) {
-        return formatMessage(strings.restrictionCaseExpiredTitle, { caseType })
-      }
-
-      return formatMessage(strings.restrictionCaseActiveTitle, {
-        caseType,
-      })
-    }
-
-    return isInvestigationCase(theCase.type)
-      ? ''
-      : formatMessage(strings.restrictionCaseScheduledTitle, {
-          caseType: theCase.type,
-          isExtended: Boolean(theCase.parentCase),
-        })
-  }
 
   const shouldDisplayAlertBanner =
     completedCaseStates.includes(workingCase.state) &&
@@ -137,11 +97,7 @@ export const CaseOverview: React.FC = () => {
           <Box marginBottom={5}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
-                <Box marginBottom={1} data-testid="caseTitle">
-                  <Text as="h1" variant="h1">
-                    {titleForCase(workingCase)}
-                  </Text>
-                </Box>
+                <OverviewHeader dataTestid="caseTitle" />
                 {completedCaseStates.includes(workingCase.state) && (
                   <Box>
                     <Text variant="h5">

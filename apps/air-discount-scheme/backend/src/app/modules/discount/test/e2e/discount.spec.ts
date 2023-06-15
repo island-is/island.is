@@ -1,4 +1,5 @@
 import request from 'supertest'
+import { Cache as CacheManager } from 'cache-manager'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import {
   NationalRegistryService,
@@ -48,7 +49,7 @@ beforeAll(async () => {
         .useValue({ canActivate: () => true }),
   })
   cacheManager = app.get<CacheManager>(CACHE_MANAGER)
-  cacheManager.ttl = () => Promise.resolve('')
+  cacheManager.store.ttl = () => Promise.resolve(0)
   nationalRegistryService = app.get<NationalRegistryService>(
     NationalRegistryService,
   )
