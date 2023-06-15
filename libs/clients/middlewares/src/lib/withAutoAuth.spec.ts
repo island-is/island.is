@@ -105,11 +105,8 @@ describe('EnhancedFetch#withAutoAuth', () => {
 
     // Act
     await env.enhancedFetch(testUrl)
-    console.log('before advance')
     jest.advanceTimersByTime(6 * 1000)
-    console.log('after advance')
     await env.enhancedFetch(testUrl)
-    console.log('after second request')
 
     // Assert
     expect(env.authFetch).toHaveBeenCalledTimes(2)
