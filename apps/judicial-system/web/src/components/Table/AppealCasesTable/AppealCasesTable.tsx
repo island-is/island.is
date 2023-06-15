@@ -58,7 +58,16 @@ const AppealCasesTable: React.FC<Props> = (props) => {
           <MobileAppealCase
             theCase={theCase}
             onClick={() => onRowClick(theCase.id)}
-          ></MobileAppealCase>
+          >
+            {showingCompletedCases && (
+              <Text fontWeight={'medium'} variant="small">
+                {isRestrictionCase(theCase.type)
+                  ? `${formatDate(theCase.courtEndTime, 'd.M.y')} -
+                      ${formatDate(theCase.validToDate, 'd.M.y')}`
+                  : ''}
+              </Text>
+            )}
+          </MobileAppealCase>
         </Box>
       ))}
     </>
@@ -97,7 +106,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
         return (
           <tr
             className={styles.row}
-            onClick={() => onRowClick(column.parentCaseId)}
+            onClick={() => onRowClick(column.id)}
             key={column.id}
           >
             <td>
