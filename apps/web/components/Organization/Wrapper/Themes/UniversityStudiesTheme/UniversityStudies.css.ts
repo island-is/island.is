@@ -72,8 +72,19 @@ export const navigation = style({
   }),
 })
 
-export const largeTitle = style({
-  position: 'absolute',
-  left: '33%',
-  bottom: '550px',
+export const desktopTitleContainer = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      display: 'flex',
+      justifyContent: 'center',
+    },
+  }),
+})
+
+export const desktopTitle = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      transform: 'translate(-150px, 165px)',
+    },
+  }),
 })

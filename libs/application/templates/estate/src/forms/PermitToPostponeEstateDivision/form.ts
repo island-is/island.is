@@ -1,6 +1,8 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -13,6 +15,7 @@ import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
 import { testamentInfo } from '../sharedSections/testamentInfo'
+import { UPLOAD_ACCEPT, YES } from '../../lib/constants'
 
 export const form: Form = buildForm({
   id: 'permitToPostponeEstateDivisionForm',
@@ -24,36 +27,32 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'estateMembersAndWillsInfo',
-      title: m.estateMembersTitle,
+      id: 'estateMembersInfo',
+      title: m.estateMembers,
       children: [
-        buildSubSection({
-          id: 'estateMembers',
+        buildMultiField({
+          id: 'estateMembersInfo',
           title: m.estateMembers,
+          description: m.estateMembersSubtitle,
           children: [
-            buildMultiField({
-              id: 'estateMembersInfo',
-              title: m.estateMembersTitle,
-              description: m.estateMembersSubtitle,
-              children: [
-                buildDescriptionField({
-                  id: 'membersOfEstateTitle',
-                  title: m.estateMembers,
-                  description: m.estateMembersHeaderDescription,
-                  titleVariant: 'h3',
-                  marginBottom: 5,
-                }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.estateMembers',
-                  component: 'EstateMembersRepeater',
-                }),
-              ],
+            buildCustomField({
+              title: '',
+              id: 'estate.estateMembers',
+              component: 'EstateMembersRepeater',
+            }),
+            buildDescriptionField({
+              id: 'space0',
+              title: '',
+              space: 'containerGutter',
             }),
           ],
         }),
-        testamentInfo,
       ],
+    }),
+    buildSection({
+      id: 'testamentInfo',
+      title: m.willsAndAgreements,
+      children: [testamentInfo],
     }),
     buildSection({
       id: 'estateProperties',
@@ -419,6 +418,10 @@ export const form: Form = buildForm({
                     format: '######-####',
                   },
                   {
+                    title: m.debtsLoanIdentity.defaultMessage,
+                    id: 'loanIdentity',
+                  },
+                  {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
                     currency: true,
@@ -428,6 +431,26 @@ export const form: Form = buildForm({
                 repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
               },
             ),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'estateAttachments',
+      title: m.attachmentsTitle,
+      children: [
+        buildMultiField({
+          id: 'estateAttachments',
+          title: m.attachmentsTitle,
+          description: m.attachmentsDescription,
+          children: [
+            buildFileUploadField({
+              id: 'estateAttachments.attached.file',
+              title: m.attachmentsTitle,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: m.uploadHeader,
+              uploadButtonLabel: m.attachmentsButton,
+            }),
           ],
         }),
       ],

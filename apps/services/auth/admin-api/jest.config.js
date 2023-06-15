@@ -6,6 +6,7 @@ module.exports = {
   globals: {
     'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
+  testTimeout: 10000,
   displayName: 'services-auth-admin-api',
   testEnvironment: 'node',
 }

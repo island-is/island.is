@@ -65,7 +65,7 @@ const CourtOfAppealCases = () => {
 
   const { data: appealedCases } = useQuery<{
     cases: AppealedCasesQueryResponse[]
-  }>(AppealedCasesQuery, { variables: { input } })
+  }>(AppealedCasesQuery, { variables: { input }, fetchPolicy: 'no-cache' })
 
   const appealedCasesColumns = [
     {
@@ -219,7 +219,7 @@ const CourtOfAppealCases = () => {
       }) => {
         const thisRow = row.row.original
 
-        if (isRestrictionCase(thisRow.type)) {
+        if (!isRestrictionCase(thisRow.type)) {
           return null
         }
 

@@ -1,7 +1,4 @@
-import { z } from 'zod'
-import { zfd } from 'zod-form-data'
-
-import { WrappedActionFn } from '@island.is/portals/core'
+import { RouterActionResponse, WrappedActionFn } from '@island.is/portals/core'
 import {
   validateFormData,
   ValidateFormDataResult,
@@ -13,114 +10,24 @@ import {
   PatchAuthAdminScopeMutation,
   PatchAuthAdminScopeMutationVariables,
 } from './EditPermission.generated'
-import { Languages } from '../../utils/languages'
 import { authAdminEnvironments } from '../../utils/environments'
+import { getIntent } from '../../utils/getIntent'
+import {
+  MergedFormDataSchema,
+  PermissionFormTypes,
+  schema,
+} from './EditPermission.schema'
 
-export enum PermissionFormTypes {
-  CONTENT = 'CONTENT',
-  ACCESS_CONTROL = 'ACCESS_CONTROL',
-  NONE = 'NONE',
-}
+export type EditPermissionResult = RouterActionResponse<
+  PatchAuthAdminScopeMutation['patchAuthAdminScope'],
+  ValidateFormDataResult<MergedFormDataSchema>['errors'],
+  keyof typeof PermissionFormTypes
+>
 
-const defaultSchema = z.object({
-  environment: z.nativeEnum(AuthAdminEnvironment),
-  syncEnvironments: zfd.repeatable(
-    z.optional(z.array(z.nativeEnum(AuthAdminEnvironment))),
-  ),
-})
-
-const contentSchema = z
-  .object({
-    is_displayName: z.string().nonempty('errorDisplayName'),
-    is_description: z.string().nonempty('errorDescription'),
-    en_displayName: z.optional(z.string()),
-    en_description: z.optional(z.string()),
-  })
-  .merge(defaultSchema)
-  .transform(
-    ({
-      is_description: isDescription,
-      en_description: enDescription,
-      is_displayName: isDisplayName,
-      en_displayName: enDisplayName,
-      ...rest
-    }) => ({
-      ...rest,
-      displayName: [
-        {
-          locale: Languages.IS,
-          value: isDisplayName,
-        },
-        {
-          locale: Languages.EN,
-          value: enDisplayName ?? '',
-        },
-      ],
-      description: [
-        {
-          locale: Languages.IS,
-          value: isDescription,
-        },
-        {
-          locale: Languages.EN,
-          value: enDescription ?? '',
-        },
-      ],
-    }),
-  )
-
-const booleanCheckbox = z.preprocess((value) => value === 'true', z.boolean())
-
-const accessControlSchema = z
-  .object({
-    isAccessControlled: booleanCheckbox,
-    grantToAuthenticatedUser: booleanCheckbox,
-    grantToProcuringHolders: booleanCheckbox,
-    grantToLegalGuardians: booleanCheckbox,
-    allowExplicitDelegationGrant: booleanCheckbox,
-    grantToPersonalRepresentatives: booleanCheckbox,
-  })
-  .merge(defaultSchema)
-
-const schema = {
-  [PermissionFormTypes.CONTENT]: contentSchema,
-  [PermissionFormTypes.NONE]: defaultSchema,
-  [PermissionFormTypes.ACCESS_CONTROL]: accessControlSchema,
-}
-
-function getIntent(formData: FormData) {
-  const intent = formData.get('intent') as keyof typeof PermissionFormTypes
-
-  if (!Object.values(PermissionFormTypes).some((type) => type === intent)) {
-    throw new Error('wrong intent string')
-  }
-
-  return intent
-}
-
-type MergedFormDataSchema = typeof schema[PermissionFormTypes.CONTENT] &
-  typeof schema[PermissionFormTypes.ACCESS_CONTROL] &
-  typeof schema[PermissionFormTypes.NONE]
-
-type Result = ValidateFormDataResult<MergedFormDataSchema>
-
-export type UpdatePermissionResult = {
-  data: PatchAuthAdminScopeMutation['patchAuthAdminScope'] | null
-  errors?: Result['errors'] | null
-  /**
-   * Global error message if the mutation fails
-   */
-  globalError?: boolean
-  /**
-   * Intent of the form
-   */
-  intent: keyof typeof PermissionFormTypes
-}
-
-export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
+export const editPermissionAction: WrappedActionFn = ({ client }) => async ({
   request,
   params,
-}): Promise<UpdatePermissionResult> => {
+}): Promise<EditPermissionResult> => {
   const tenantId = params['tenant']
   const scopeName = params['permission']
 
@@ -128,10 +35,9 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
   if (!scopeName) throw new Error('Permission id not found')
 
   const formData = await request.formData()
-  const intent = getIntent(formData)
+  const { intent, sync } = getIntent(formData, PermissionFormTypes)
   const saveInAllEnvironments =
     formData.get(`${intent}_saveInAllEnvironments`) ?? false
-  const syncIntent = formData.get(`${intent}-sync`)
 
   const result = await validateFormData({
     formData,
@@ -153,7 +59,7 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
 
   // If sync settings from this environment was clicked for current form intent, i.e. form section
   // then update all environments with the same settings as the current environment intent
-  if (syncIntent && syncEnvironments && syncEnvironments.length > 0) {
+  if (sync && syncEnvironments && syncEnvironments.length > 0) {
     environments.push(...syncEnvironments)
     // If the save in all environments was enabled, then update all environments
   } else if (saveInAllEnvironments) {
@@ -178,10 +84,10 @@ export const updatePermissionAction: WrappedActionFn = ({ client }) => async ({
       mutation: PatchAuthAdminScopeDocument,
       variables: {
         input: {
+          ...data,
           tenantId,
           scopeName,
           environments,
-          ...data,
         },
       },
     })

@@ -6,10 +6,18 @@ import { m } from '../../../lib/messages'
 import { downloadCSV } from './downloadCSV'
 import copyToClipboard from 'copy-to-clipboard'
 import { toast } from 'react-toastify'
+import { usePDF } from '@react-pdf/renderer'
+import { menuItem } from './styles.css'
+import MyPdfDocument from './DownloadPdf'
+import {
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
 interface Props {
+  petition?: EndorsementList
+  petitionSigners: PaginatedEndorsementResponse
   petitionId: string
-  onGetPDF?: () => void
   onGetCSV: () => void
   dropdownItems?: {
     href?: string
@@ -36,13 +44,24 @@ export const getCSV = async (data: any[], fileName: string) => {
 const baseUrl = `${document.location.origin}/undirskriftalistar/`
 
 const DropdownExport: FC<Props> = ({
+  petition,
+  petitionSigners,
   petitionId,
-  onGetPDF,
   onGetCSV,
   dropdownItems = [],
 }) => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
+
+  const [document] = usePDF({
+    document: (
+      <MyPdfDocument petition={petition} petitionSigners={petitionSigners} />
+    ),
+  })
+  if (document.error) {
+    console.warn(document.error)
+  }
+
   return (
     <Box className={styles.buttonWrapper} display="flex">
       <Box marginRight={2}>
@@ -66,12 +85,21 @@ const DropdownExport: FC<Props> = ({
         menuLabel={formatMessage(m.downloadPetitions)}
         items={[
           {
-            onClick: () => onGetPDF && onGetPDF(),
-            title: 'Sem PDF',
+            title: formatMessage(m.asPdf),
+            render: () => (
+              <a
+                key={petitionId}
+                href={document.url ?? ''}
+                download={'Undirskriftalisti.pdf'}
+                className={menuItem}
+              >
+                {formatMessage(m.asPdf)}
+              </a>
+            ),
           },
           {
             onClick: () => onGetCSV(),
-            title: 'Sem CSV',
+            title: formatMessage(m.asCsv),
           },
           ...dropdownItems,
         ]}

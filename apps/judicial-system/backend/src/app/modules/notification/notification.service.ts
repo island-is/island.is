@@ -42,10 +42,7 @@ import {
   getStatementDeadline,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
-import {
-  formatDate,
-  formatDefenderRoute,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 import {
   formatProsecutorCourtDateEmailNotification,
@@ -65,6 +62,7 @@ import {
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
+  formatDefenderRoute,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -802,7 +800,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRulingEmail.subject,
-      { caseType: theCase.type },
+      { courtCaseNumber: theCase.courtCaseNumber },
     )
     const html = this.formatMessage(notifications.prisonRulingEmail.body, {
       institutionName: theCase.court?.name,
@@ -863,7 +861,11 @@ export class NotificationService {
     const promises = [this.sendRulingEmailNotificationToProsecutor(theCase)]
 
     if (isIndictmentCase(theCase.type)) {
-      theCase.defendants?.forEach((defendant) => {
+      const uniqueDefendants = _uniqBy(
+        theCase.defendants ?? [],
+        (d: Defendant) => d.defenderEmail,
+      )
+      uniqueDefendants.forEach((defendant) => {
         if (defendant.defenderEmail) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(
@@ -1249,34 +1251,15 @@ export class NotificationService {
   private async sendDefenderAssignedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
+    // Only applies to indictment cases
     const promises: Promise<Recipient>[] = []
 
-    if (isIndictmentCase(theCase.type)) {
-      const uniqDefendants = _uniqBy(
-        theCase.defendants ?? [],
-        (d: Defendant) => d.defenderEmail,
-      )
-      for (const defendant of uniqDefendants) {
-        const { defenderEmail, defenderNationalId, defenderName } = defendant
-
-        const shouldSend = await this.shouldSendDefenderAssignedNotification(
-          theCase,
-          defenderEmail,
-        )
-
-        if (shouldSend === true) {
-          promises.push(
-            this.sendDefenderAssignedNotification(
-              theCase,
-              undefined && defenderNationalId, // Temporarily disable links in defender emails for indictments
-              defenderName,
-              defenderEmail,
-            ),
-          )
-        }
-      }
-    } else {
-      const { defenderEmail, defenderNationalId, defenderName } = theCase
+    const uniqDefendants = _uniqBy(
+      theCase.defendants ?? [],
+      (d: Defendant) => d.defenderEmail,
+    )
+    for (const defendant of uniqDefendants) {
+      const { defenderEmail, defenderNationalId, defenderName } = defendant
 
       const shouldSend = await this.shouldSendDefenderAssignedNotification(
         theCase,
