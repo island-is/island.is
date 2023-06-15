@@ -61,10 +61,15 @@ export async function idsLogin(
     await expect(delegations).toHaveCountGreaterThan(0)
     // Default to the first delegation
     if (!delegation) await delegations.first().click()
-    else
-      await delegations
-        .locator(`[value="${delegation.replace('-', '')}"]`)
-        .click()
+    else {
+      // Support national IDS and names
+      const filteredDelegations = delegation.match(/^[0-9-]+$/) ?
+        delegations.locator(`[value="${delegation.replace('-', '')}"]`)
+        : delegations.getByRole('button', { name: delegation })
+
+
+      await filteredDelegations.first().click()
+    }
   }
   await page.waitForURL(new RegExp(`${home}`), {
     waitUntil: 'domcontentloaded',
