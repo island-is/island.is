@@ -1,16 +1,13 @@
 import React, { useContext, useMemo } from 'react'
 import cn from 'classnames'
-import parseISO from 'date-fns/parseISO'
 import { theme } from '@island.is/island-ui/theme'
 import { Box, Text } from '@island.is/island-ui/core'
 
 import { useIntl } from 'react-intl'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import { tables, core } from '@island.is/judicial-system-web/messages'
 import {
-  Case,
   CaseListEntry,
-  CaseState,
   isExtendedCourtRole,
 } from '@island.is/judicial-system/types'
 
@@ -32,50 +29,13 @@ import {
   SortButton,
   TableContainer,
   TableHeaderText,
+  DurationDate,
+  getDurationDate,
 } from '@island.is/judicial-system-web/src/components/Table'
 
 import MobilePastCase from './MobilePastCase'
 import * as styles from '../Table.css'
 
-export function getDurationDate(
-  state: Case['state'],
-  validToDate?: Case['validToDate'],
-  initialRulingDate?: Case['initialRulingDate'],
-  courtEndTime?: Case['courtEndTime'],
-): string | null {
-  if (
-    [CaseState.REJECTED, CaseState.DISMISSED].includes(state) ||
-    !validToDate
-  ) {
-    return null
-  } else if (initialRulingDate) {
-    return `${formatDate(parseISO(initialRulingDate), 'd.M.y')} - ${formatDate(
-      parseISO(validToDate),
-      'd.M.y',
-    )}`
-  } else if (courtEndTime) {
-    return `${formatDate(parseISO(courtEndTime), 'd.M.y')} - ${formatDate(
-      parseISO(validToDate),
-      'd.M.y',
-    )}`
-  } else if (validToDate) {
-    return formatDate(parseISO(validToDate), 'd.M.y') || null
-  }
-  return null
-}
-
-const DurationDate = ({ date }: { date: string | null }) => {
-  const { formatMessage } = useIntl()
-  if (!date) {
-    return null
-  }
-
-  return (
-    <Text fontWeight={'medium'} variant="small">
-      {`${formatMessage(tables.duration)} ${date}`}
-    </Text>
-  )
-}
 interface Props {
   cases: CaseListEntry[]
   onRowClick: (id: string) => void
