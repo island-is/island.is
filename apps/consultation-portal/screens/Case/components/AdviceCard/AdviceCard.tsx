@@ -8,7 +8,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { CardSkeleton } from '../../../../components/'
-import { ReactNode, Ref, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import * as styles from './AdviceCard.css'
 import { getShortDate } from '../../../../utils/helpers/dateFunctions'
 import env from '../../../../lib/environment'
