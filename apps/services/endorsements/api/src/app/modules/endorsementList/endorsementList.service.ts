@@ -23,9 +23,7 @@ import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 
-import {
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 interface CreateInput extends EndorsementListDto {
   owner: string

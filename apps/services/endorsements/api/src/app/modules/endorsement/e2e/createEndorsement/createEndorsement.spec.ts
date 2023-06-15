@@ -7,6 +7,11 @@ import {
 import { getAuthenticatedApp } from '../../../../../../test/setup'
 import { authNationalId } from './seed'
 
+import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
+
 describe('createEndorsement', () => {
   it(`POST /endorsement-list/:listId/endorsement should fail and return 403 error if scope is missing`, async () => {
     const app = await getAuthenticatedApp({
@@ -72,6 +77,7 @@ describe('createEndorsement', () => {
   //     nationalId: authNationalId,
   //     scope: [EndorsementsScope.main],
   //   })
+
   //   const endorsementBody = {
   //     showName: true,
   //   }
