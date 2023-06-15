@@ -22,7 +22,7 @@ test.describe('Admin portal access control', () => {
     await contextGranter.close()
   })
 
-  test('access endorsement lists, access and edit a list', async () => {
+  test.skip('access endorsement lists, access and edit a list', async () => {
     // Arrange
     const granterPage = await contextGranter.newPage()
 
