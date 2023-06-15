@@ -119,14 +119,16 @@ export const estateSchema = z.object({
   deceasedWithUndividedEstate: z
     .object({
       selection: z.enum([YES, NO]),
-      spouse: z.object({
-        name: z.string().optional(),
-        nationalId: z.string().optional(),
-      }),
+      spouse: z
+        .object({
+          name: z.string().optional(),
+          nationalId: z.string().optional(),
+        })
+        .optional(),
     })
     .refine(
       ({ selection, spouse }) => {
-        return selection === YES ? !!spouse.nationalId : true
+        return selection === YES ? !!spouse?.nationalId : true
       },
       {
         path: ['spouse', 'nationalId'],

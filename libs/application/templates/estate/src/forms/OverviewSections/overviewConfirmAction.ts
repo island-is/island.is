@@ -7,7 +7,7 @@ import { EstateTypes, NO, YES } from '../../lib/constants'
 
 export const overviewConfirmAction = [
   buildCheckboxField({
-    id: 'overviewConfirmAction',
+    id: 'confirmAction',
     title: '',
     backgroundColor: 'blue',
     defaultValue: [],

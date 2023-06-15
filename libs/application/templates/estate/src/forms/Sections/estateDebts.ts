@@ -13,8 +13,7 @@ export const estateDebts = buildSection({
   condition: (answers) =>
     getValueViaPath(answers, 'selectedEstate') ===
     EstateTypes.estateWithoutAssets
-      ? getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist') ===
-        YES
+      ? getValueViaPath(answers, 'estateAssets.estateDebtsExist') === YES
       : true,
   children: [
     buildMultiField({

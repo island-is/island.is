@@ -5,15 +5,12 @@ import {
   buildKeyValueField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
-import { deceasedInfoFields } from '../Sections/deceasedInfoFields'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
-import { JA, NEI, YES } from '../../lib/constants'
 
 export const representativeOverview = [
+  buildDividerField({}),
   buildDescriptionField({
     id: 'overviewRepresentativeTitle',
     title: m.representativeTitle,
@@ -39,7 +36,7 @@ export const representativeOverview = [
       !!getValueViaPath<string>(answers, 'representative.name'),
   }),
   buildDescriptionField({
-    id: 'space4',
+    id: 'spaceRepresentative',
     title: '',
     space: 'gutter',
     condition: (answers) =>
@@ -70,5 +67,4 @@ export const representativeOverview = [
     condition: (answers) =>
       !getValueViaPath<string>(answers, 'representative.nationalId'),
   }),
-  buildDividerField({}),
 ]

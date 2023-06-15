@@ -61,7 +61,7 @@ export const overviewAttachments = [
     },
   }),
   buildDescriptionField({
-    id: 'space4',
+    id: 'spaceAttachments',
     title: '',
     space: 'gutter',
   }),
