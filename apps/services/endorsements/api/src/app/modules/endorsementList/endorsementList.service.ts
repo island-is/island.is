@@ -36,7 +36,6 @@ export class EndorsementListService {
     private endorsementModel: typeof Endorsement,
     @InjectModel(EndorsementList)
     private readonly endorsementListModel: typeof EndorsementList,
-    // private readonly nationalRegistryApi: NationalRegistryApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     @Inject(EmailService)
