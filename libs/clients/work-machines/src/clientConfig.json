@@ -49,6 +49,16 @@
         "responses": {
           "200": {
             "description": "Success",
+            "headers": {
+              "X-Pagination": {
+                "description": "Paging info",
+                "schema": {
+                  "type": "object",
+                  "description": "Paging info",
+                  "format": "{\"totalCount\":6,\"pageSize\":10,\"currentPage\":1,\"totalPages\":1}"
+                }
+              }
+            },
             "content": {
               "application/vnd.ver.machines.hateoas.v1+json": {
                 "schema": {

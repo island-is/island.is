@@ -12,3 +12,8 @@ export enum ExternalLink {
   EXCEL = 'excel',
   CSV = 'csv',
 }
+
+export enum FileType {
+  CSV = 'csv',
+  EXCEL = 'excel',
+}

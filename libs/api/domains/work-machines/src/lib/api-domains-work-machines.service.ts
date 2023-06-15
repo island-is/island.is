@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { Action, ExternalLink } from './api-domains-work-machines.types'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
 import { GetWorkMachineInput } from './dto/getWorkMachine.input'
+import { GetDocumentsInput } from './dto/getDocuments.input'
 @Injectable()
 export class WorkMachinesService {
   constructor(private readonly machineService: WorkMachinesClientService) {}
@@ -92,4 +93,7 @@ export class WorkMachinesService {
       links,
     }
   }
+
+  getDocuments = (user: User, input: GetDocumentsInput): Promise<void> =>
+    this.machineService.getDocuments(user, input)
 }

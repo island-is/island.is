@@ -2,6 +2,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   ApiMachinesGetRequest,
+  ExcelRequest,
   GetMachineRequest,
   MachineHateoasDto,
   MachinesApi,
@@ -29,4 +30,7 @@ export class WorkMachinesClientService {
     user: User,
     input: GetMachineRequest,
   ): Promise<MachineHateoasDto> => this.apiWithAuth(user).getMachine(input)
+
+  getDocuments = (user: User, input: ExcelRequest): Promise<void> =>
+    this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 }
