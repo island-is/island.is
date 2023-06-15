@@ -1,7 +1,6 @@
-import { Cache as CacheManager } from 'cache-manager'
 import { Module } from '@nestjs/common'
 import { CacheModule } from '@island.is/cache'
-import { ConfigType, XRoadConfig } from '@island.is/nest/config'
+import { ConfigType } from '@island.is/nest/config'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsModule } from '@island.is/cms'
 import { LicenseServiceService } from './licenseService.service'
