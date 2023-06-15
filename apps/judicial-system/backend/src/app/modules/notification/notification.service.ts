@@ -800,7 +800,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRulingEmail.subject,
-      { caseType: theCase.type },
+      { courtCaseNumber: theCase.courtCaseNumber },
     )
     const html = this.formatMessage(notifications.prisonRulingEmail.body, {
       institutionName: theCase.court?.name,

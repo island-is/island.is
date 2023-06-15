@@ -6,14 +6,14 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import localeIS from 'date-fns/locale/is'
 
-import { Box, Checkbox, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
+
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
 
 import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-
-import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
 import {
   DEFENDER_INDICTMENT_ROUTE,
   DEFENDER_ROUTE,
@@ -22,10 +22,7 @@ import {
   TagCaseState,
   TagAppealState,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  useFilterCases,
-  useSortCases,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   TableSkeleton,
   CourtCaseNumber,
@@ -49,11 +46,6 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
     cases,
   )
 
-  const { filteredCases, filters, toggleFilter } = useFilterCases(
-    cases,
-    sortedData,
-  )
-
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
       ? router.push(`${DEFENDER_INDICTMENT_ROUTE}/${id}`)
@@ -62,18 +54,6 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
 
   return (
     <Box marginBottom={7}>
-      <Box marginTop={2} className={styles.gridRow}>
-        <Checkbox
-          label={formatMessage(tables.filterIndictmentCaseLabel)}
-          checked={filters.indictmentCaseFilter}
-          onChange={() => toggleFilter('indictmentCaseFilter')}
-        ></Checkbox>
-        <Checkbox
-          label={formatMessage(tables.filterInvestigationCaseLabel)}
-          checked={filters.investigationCaseFilter}
-          onChange={() => toggleFilter('investigationCaseFilter')}
-        ></Checkbox>
-      </Box>
       {loading ? (
         <TableSkeleton />
       ) : (
@@ -167,7 +147,7 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
           </thead>
 
           <tbody>
-            {filteredCases?.map((c: CaseListEntry) => (
+            {sortedData?.map((c: CaseListEntry) => (
               <tr
                 className={cn(styles.tableRowContainer)}
                 key={c.id}

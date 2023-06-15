@@ -9,7 +9,7 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages/Core'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import { theme } from '@island.is/island-ui/theme'
-import useSortAppealCases from '@island.is/judicial-system-web/src/utils/hooks/useTable/useSortAppealCases'
+import useSortAppealCases from '@island.is/judicial-system-web/src/utils/hooks/useSort/useSortAppealCases'
 import { AppealedCasesQueryResponse } from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/Cases/Cases'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import {

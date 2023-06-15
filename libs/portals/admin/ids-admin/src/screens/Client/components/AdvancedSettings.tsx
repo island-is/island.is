@@ -11,7 +11,7 @@ import { useReadableSeconds } from '../../../hooks/useReadableSeconds'
 import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 import { ClientFormTypes } from '../EditClient.schema'
 
 type AdvancedSettingsProps = Pick<
@@ -57,6 +57,7 @@ export const AdvancedSettings = ({
       title={formatMessage(m.advancedSettings)}
       intent={ClientFormTypes.advancedSettings}
       accordionLabel={formatMessage(m.settings)}
+      headerMarginBottom={3}
       inSync={checkEnvironmentsSync(client.environments, [
         'requirePkce',
         'allowOfflineAccess',
