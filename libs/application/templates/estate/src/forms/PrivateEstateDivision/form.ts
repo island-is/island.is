@@ -498,6 +498,29 @@ export const form: Form = buildForm({
       ],
     }),
     buildSection({
+      id: 'estateAttachments',
+      title: m.attachmentsTitle,
+      children: [
+        buildMultiField({
+          id: 'estateAttachments',
+          title: m.attachmentsTitle,
+          description: m.attachmentsDescription,
+          children: [
+            buildFileUploadField({
+              id: 'estateAttachments.attached.file',
+              title: m.attachmentsTitle,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: m.uploadHeader,
+              uploadDescription: m.uploadDescription,
+              uploadMultiple: true,
+              maxSize: FILE_SIZE_LIMIT,
+              uploadButtonLabel: m.attachmentsButton,
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
       id: 'representative',
       title: m.representativeTitle,
       children: [
@@ -526,29 +549,6 @@ export const form: Form = buildForm({
               id: 'representative.email',
               title: m.email,
               width: 'half',
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'estateAttachments',
-      title: m.attachmentsTitle,
-      children: [
-        buildMultiField({
-          id: 'estateAttachments',
-          title: m.attachmentsTitle,
-          description: m.attachmentsDescription,
-          children: [
-            buildFileUploadField({
-              id: 'estateAttachments.attached.file',
-              title: m.attachmentsTitle,
-              uploadAccept: UPLOAD_ACCEPT,
-              uploadHeader: m.uploadHeader,
-              uploadDescription: m.uploadDescription,
-              uploadMultiple: true,
-              maxSize: FILE_SIZE_LIMIT,
-              uploadButtonLabel: m.attachmentsButton,
             }),
           ],
         }),

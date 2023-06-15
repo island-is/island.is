@@ -24,11 +24,11 @@ import { JA, NEI, YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
-  id: 'overviewDivisionOfEstateByHeirs',
+  id: 'overviewPrivateEstateDivision',
   title: m.overviewTitle,
   children: [
     buildMultiField({
-      id: 'overviewDivisionOfEstateByHeirs',
+      id: 'overviewPrivateEstateDivision',
       title: m.overviewTitle,
       description: m.overviewSubtitleDivisionOfEstateByHeirs,
       children: [
@@ -80,6 +80,12 @@ export const overview = buildSection({
               })),
           },
         ),
+        buildDescriptionField({
+          id: 'space1',
+          title: '',
+          marginBottom: 'gutter',
+          space: 'gutter',
+        }),
         buildKeyValueField({
           label: m.doesWillExist,
           value: ({ answers }) =>
@@ -97,7 +103,7 @@ export const overview = buildSection({
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'space1',
+          id: 'space2',
           title: '',
           space: 'gutter',
         }),
@@ -108,6 +114,21 @@ export const overview = buildSection({
         }),
         buildDescriptionField({
           id: 'space2',
+          title: '',
+          space: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.additionalInfo,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.additionalInfo'),
+          condition: (answers) =>
+            !!getValueViaPath<string>(
+              answers,
+              'estate.testament.additionalInfo',
+            ),
+        }),
+        buildDescriptionField({
+          id: 'space3',
           title: '',
           space: 'gutter',
         }),
@@ -160,6 +181,8 @@ export const overview = buildSection({
             getValueViaPath<string>(application.answers, 'inventory.info'),
           titleVariant: 'h4',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'inventory.info') !== '',
         }),
         buildDescriptionField({
           id: 'overviewInventoryValue',
@@ -167,12 +190,21 @@ export const overview = buildSection({
           description: (application: Application) => {
             const value =
               getValueViaPath<string>(application.answers, 'inventory.value') ??
-              ''
+              '0'
             return formatCurrency(value)
           },
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'inventory.value') !== '',
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
+        }),
+        buildCustomField({
+          id: 'inventoryNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'inventory.value') === '',
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -347,11 +379,13 @@ export const overview = buildSection({
         }),
         buildDescriptionField({
           id: 'overviewOtherAssets',
-          title: m.moneyAndDepositText,
+          title: m.otherAssetsText,
           description: (application: Application) =>
             getValueViaPath<string>(application.answers, 'otherAssets.info'),
           titleVariant: 'h4',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'otherAssets.info') !== '',
         }),
         buildDescriptionField({
           id: 'overviewMOtherAssetsValue',
@@ -361,12 +395,21 @@ export const overview = buildSection({
               getValueViaPath<string>(
                 application.answers,
                 'otherAssets.value',
-              ) ?? ''
-            return formatCurrency(value)
+              ) ?? '0'
+            return formatCurrency(value === '' ? '0' : value)
           },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'otherAssets.value') !== '',
+        }),
+        buildCustomField({
+          id: 'otherAssetsNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'otherAssets.value') === '',
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -386,6 +429,8 @@ export const overview = buildSection({
             ),
           titleVariant: 'h4',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'moneyAndDeposit.info') !== '',
         }),
         buildDescriptionField({
           id: 'overviewMoneyAndDepositValue',
@@ -395,13 +440,22 @@ export const overview = buildSection({
               getValueViaPath<string>(
                 application.answers,
                 'moneyAndDeposit.value',
-              ) ?? ''
+              ) ?? '0'
 
             return formatCurrency(value)
           },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'moneyAndDeposit.value') !== '',
+        }),
+        buildCustomField({
+          id: 'moneyAndDepositNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'moneyAndDeposit.value') === '',
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -478,6 +532,8 @@ export const overview = buildSection({
           id: 'space4',
           title: '',
           space: 'gutter',
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.nationalId'),
         }),
         buildKeyValueField({
           width: 'half',
@@ -496,6 +552,52 @@ export const overview = buildSection({
             getValueViaPath<string>(answers, 'representative.email'),
           condition: (answers) =>
             !!getValueViaPath<string>(answers, 'representative.email'),
+        }),
+        buildCustomField({
+          id: 'representativeNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) =>
+            !getValueViaPath<string>(answers, 'representative.nationalId'),
+        }),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewAttachments',
+          title: m.attachmentsTitle,
+          titleVariant: 'h3',
+          space: 'gutter',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          label: '',
+          value: ({ answers }) => {
+            const attachments = getValueViaPath(
+              answers,
+              'estateAttachments',
+            ) as any
+            return attachments?.attached.file.map(
+              (f: { key: string; name: string }) => {
+                return f.name
+              },
+            )
+          },
+          condition: (answers) => {
+            const files = getValueViaPath(answers, 'estateAttachments') as {
+              attached: { file: { length: number } }
+            }
+            return files?.attached?.file?.length > 0
+          },
+        }),
+        buildCustomField({
+          id: 'attachmentsNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) => {
+            const files = getValueViaPath(answers, 'estateAttachments') as {
+              attached: { file: { length: number } }
+            }
+            return files?.attached?.file?.length === 0
+          },
         }),
         buildSubmitField({
           id: 'privateEstateDivision.submit',
