@@ -9,6 +9,8 @@ import {
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './IcelandicNaturalDisasterInsuranceFooter.css'
 
@@ -22,6 +24,8 @@ const IcelandicNaturalDisasterInsuranceFooter = ({
   footerItems,
 }: IcelandicNaturalDisasterInsuranceFooterProps) => {
   const n = useNamespace(namespace)
+  const { width } = useWindowSize()
+  const shouldWrap = width < theme.breakpoints.xl
 
   return (
     <footer className={styles.footer} aria-labelledby="nti-footer">
@@ -40,11 +44,17 @@ const IcelandicNaturalDisasterInsuranceFooter = ({
           </GridColumn>
 
           {footerItems.map((item, index) => (
-            <GridColumn key={index}>
-              <Box marginRight={12} marginBottom={2}>
-                <Text fontWeight="semiBold">{item.title}</Text>
+            <GridColumn span={shouldWrap ? '1/1' : undefined} key={index}>
+              <Box
+                marginTop={index === 0 && shouldWrap ? 3 : 0}
+                marginLeft={shouldWrap ? 7 : undefined}
+                marginRight={shouldWrap ? null : 12}
+              >
+                <Box marginBottom={2}>
+                  <Text fontWeight="semiBold">{item.title}</Text>
+                </Box>
+                {webRichText(item.content as SliceType[])}
               </Box>
-              {webRichText(item.content as SliceType[])}
             </GridColumn>
           ))}
         </GridRow>
