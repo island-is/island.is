@@ -276,7 +276,7 @@ api:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     CONSULTATION_PORTAL_CLIENT_BASE_PATH: 'https://samradapi-test.devland.is'
-    CONSULTATION_PORTAL_SCOPE: '{"dev":"@stjornarradid.is/samradsgatt","staging":"@stjornarradid.is/samradsgatt","prod":"@stjornarradid.is/samradsgatt"}'
+    CONSULTATION_PORTAL_SCOPE: '@stjornarradid.is/samradsgatt'
     CONTACT_US_EMAIL: 's@kogk.is'
     CONTENTFUL_HOST: 'preview.contentful.com'
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
