@@ -40,10 +40,11 @@ interface Props {
   cases: CaseListEntry[]
   onRowClick: (id: string) => void
   loading?: boolean
+  testid?: string
 }
 
 const PastCasesTable: React.FC<Props> = (props) => {
-  const { cases, onRowClick, loading = false } = props
+  const { cases, onRowClick, loading = false, testid } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
@@ -87,6 +88,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
   ) : (
     <TableContainer
       loading={loading}
+      testid={testid}
       tableHeader={
         <>
           <TableHeaderText title={formatMessage(tables.caseNumber)} />

@@ -7,16 +7,17 @@ interface Props {
   tableHeader: React.ReactNode
   children: React.ReactNode
   loading: boolean
+  testid?: string
 }
 
 const TableContainer: React.FC<Props> = (props) => {
-  const { loading, tableHeader, children } = props
+  const { loading, tableHeader, children, testid } = props
 
   if (loading) {
     return <TableSkeleton />
   } else {
     return (
-      <table className={styles.table}>
+      <table className={styles.table} data-testid={testid}>
         <thead className={styles.thead}>
           <tr>{tableHeader}</tr>
         </thead>

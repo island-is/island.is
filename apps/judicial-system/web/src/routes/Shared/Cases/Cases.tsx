@@ -279,6 +279,7 @@ export const Cases: React.FC = () => {
           cases={pastCases}
           onRowClick={handleRowClick}
           loading={loading}
+          testid="pastCasesTable"
         />
       ) : (
         <div className={styles.infoContainer}>
