@@ -274,8 +274,12 @@ export const Cases: React.FC = () => {
         )}
       />
 
-      {pastCases.length > 0 ? (
-        <PastCasesTable cases={pastCases} onRowClick={handleRowClick} />
+      {loading || pastCases.length > 0 ? (
+        <PastCasesTable
+          cases={pastCases}
+          onRowClick={handleRowClick}
+          loading={loading}
+        />
       ) : (
         <div className={styles.infoContainer}>
           <AlertMessage
