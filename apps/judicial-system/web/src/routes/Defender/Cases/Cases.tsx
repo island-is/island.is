@@ -15,7 +15,10 @@ import { titles, errors } from '@island.is/judicial-system-web/messages'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 
-import DefenderCasesTable from './DefenderCasesTable'
+import DefenderCasesTable from './components/DefenderCasesTable'
+import FilterCheckboxes from './components/FilterCheckboxes'
+import useFilterCases, { Filters } from './hooks/useFilterCases'
+
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -40,6 +43,7 @@ export const Cases: React.FC = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
   const cases = data?.cases
 
   const [activeCases, completedCases]: [
@@ -58,6 +62,22 @@ export const Cases: React.FC = () => {
       }
     })
   }, [cases])
+
+  const {
+    filteredCases: activeFilteredCases,
+    filters,
+    toggleFilter: toggleActiveFilter,
+  } = useFilterCases(activeCases)
+  const {
+    filteredCases: completedFilteredCases,
+    toggleFilter: toggleCompletedFilter,
+  } = useFilterCases(completedCases)
+
+  // We want to toggle both tables so that when we switch tabs, the filters are the same
+  const toggleFilters = (filter: keyof Filters) => {
+    toggleActiveFilter(filter)
+    toggleCompletedFilter(filter)
+  }
 
   return (
     <SharedPageLayout>
@@ -95,18 +115,33 @@ export const Cases: React.FC = () => {
             id: 'active',
             label: formatMessage(m.activeCasesTabLabel),
             content: (
-              <DefenderCasesTable cases={activeCases} loading={loading} />
+              <Box>
+                <FilterCheckboxes
+                  filters={filters}
+                  toggleFilter={toggleFilters}
+                />
+                <DefenderCasesTable
+                  cases={activeFilteredCases}
+                  loading={loading}
+                />
+              </Box>
             ),
           },
           {
             id: 'completed',
             label: formatMessage(m.completedCasesTabLabel),
             content: (
-              <DefenderCasesTable
-                cases={completedCases}
-                showingCompletedCases={true}
-                loading={loading}
-              />
+              <Box>
+                <FilterCheckboxes
+                  filters={filters}
+                  toggleFilter={toggleFilters}
+                />
+                <DefenderCasesTable
+                  cases={completedFilteredCases}
+                  showingCompletedCases={true}
+                  loading={loading}
+                />
+              </Box>
             ),
           },
         ]}
