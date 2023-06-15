@@ -122,12 +122,12 @@ const ViewStudent = ({
     // Returns most recently confirmed school types
     const schools = [
       ...new Map(
-        student?.book?.drivingSchoolExams.map((item: any) => [
+        student?.book?.drivingSchoolExams.map((item: DrivingSchoolExam) => [
           item.schoolTypeName,
           item,
         ]),
       ).values(),
-    ]
+    ].filter((school) => school.status !== 9)
     setCompletedSchools(schools)
   }, [student])
 
@@ -246,9 +246,9 @@ const ViewStudent = ({
     student: DrivingLicenseBookStudentOverview,
   ): boolean =>
     !student.book.practiceDriving &&
-    !!student.book.drivingSchoolExams.find(
-      (school) => school.schoolTypeId === 1,
-    )
+    !!student.book.drivingSchoolExams
+      .filter((exam) => exam.status !== 9)
+      .find((school) => school.schoolTypeId === 1)
 
   const getExamString = ({
     name,
@@ -372,21 +372,20 @@ const ViewStudent = ({
                 </GridColumn>
               </GridRow>
               {/* Allow practice driving button */}
-              {isAllowPracticeDrivingVisible(student) &&
-                student.book.totalLessonCount >= 10 && (
-                  <GridRow marginBottom={[7, 3]}>
-                    <GridColumn span={['12/12', '4/12']}>
-                      <Button
-                        fluid
-                        size="medium"
-                        loading={loadingAllow}
-                        onClick={() => allowPracticeDriving(student.nationalId)}
-                      >
-                        {formatMessage(m.viewStudentPracticeDrivingButton)}
-                      </Button>
-                    </GridColumn>
-                  </GridRow>
-                )}
+              {isAllowPracticeDrivingVisible(student) && (
+                <GridRow marginBottom={[7, 3]}>
+                  <GridColumn span={['12/12', '4/12']}>
+                    <Button
+                      fluid
+                      size="medium"
+                      loading={loadingAllow}
+                      onClick={() => allowPracticeDriving(student.nationalId)}
+                    >
+                      {formatMessage(m.viewStudentPracticeDrivingButton)}
+                    </Button>
+                  </GridColumn>
+                </GridRow>
+              )}
             </>
           )}
 
