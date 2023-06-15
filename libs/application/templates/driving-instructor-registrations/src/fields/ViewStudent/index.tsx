@@ -127,7 +127,7 @@ const ViewStudent = ({
           item,
         ]),
       ).values(),
-    ].filter((school) => school.status !== 9)
+    ]
     setCompletedSchools(schools)
   }, [student])
 
@@ -246,9 +246,9 @@ const ViewStudent = ({
     student: DrivingLicenseBookStudentOverview,
   ): boolean =>
     !student.book.practiceDriving &&
-    !!student.book.drivingSchoolExams
-      .filter((exam) => exam.status !== 9)
-      .find((school) => school.schoolTypeId === 1)
+    !!student.book.drivingSchoolExams.find(
+      (school) => school.schoolTypeId === 1,
+    )
 
   const getExamString = ({
     name,

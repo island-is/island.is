@@ -2664,18 +2664,6 @@
             "nullable": true,
             "example": "Ökuskóli 1"
           },
-          "status": {
-            "type": "integer",
-            "description": "Status id of DrivingSchoolExam (2 = Completed, 4 = Expired, 9 = Canceled)",
-            "format": "int32",
-            "example": 1
-          },
-          "statusName": {
-            "type": "string",
-            "description": "Status name of DrivingSchoolExam",
-            "nullable": true,
-            "example": "Lokið"
-          },
           "comments": {
             "type": "string",
             "description": "Comments about registration",

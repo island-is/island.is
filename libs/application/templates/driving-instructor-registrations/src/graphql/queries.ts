@@ -29,7 +29,6 @@ export const ViewSingleStudentQuery = gql`
           schoolTypeName
           examDate
           schoolTypeId
-          status
         }
         testResults {
           testTypeName
