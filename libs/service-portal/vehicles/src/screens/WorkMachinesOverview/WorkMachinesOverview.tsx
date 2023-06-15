@@ -17,6 +17,7 @@ import {
   Filter,
   GridColumn,
   GridRow,
+  Hidden,
   Inline,
   Input,
   Pagination,
@@ -139,54 +140,58 @@ const WorkMachinesOverview = () => {
           >
             <Box marginBottom={3} paddingRight={2}>
               <Inline space={2}>
-                <Filter
-                  labelOpen={formatMessage(m.openFilter)}
-                  labelClose={formatMessage(m.closeFilter)}
-                  labelClear={formatMessage(m.clearFilter)}
-                  labelClearAll={formatMessage(m.clearAllFilters)}
-                  labelTitle={formatMessage(m.filterBy)}
-                  onFilterClear={() => setActiveFilters(defaultFilterValues)}
-                  variant="popover"
-                  reverse
-                  filterInput={
-                    <Input
-                      icon={{ name: 'search' }}
-                      backgroundColor="blue"
-                      size="xs"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      name="work-machines-input-search"
-                      placeholder={formatMessage(
-                        messages.workMachinesSearchPlaceholder,
-                      )}
-                    />
-                  }
-                >
-                  {
-                    <Box paddingX={3} marginTop={2}>
-                      <Text variant="h4">{formatMessage(m.filterBy)}</Text>
-                      <Box paddingY={3}>
-                        {Object.keys(activeFilters).map((filterKey, index) => {
-                          const key = filterKey as keyof FilterValues
-                          const filter = activeFilters[key]
-                          return (
-                            <Checkbox
-                              id={`work-machine-filter-${index}`}
-                              label={filter.label}
-                              checked={filter.value}
-                              onChange={() => onFilterChange(key, filter)}
-                            />
-                          )
-                        })}
-                      </Box>
-                      <Box
-                        borderBottomWidth="standard"
-                        borderColor="blue200"
-                        width="full"
+                <Hidden print={true}>
+                  <Filter
+                    labelOpen={formatMessage(m.openFilter)}
+                    labelClose={formatMessage(m.closeFilter)}
+                    labelClear={formatMessage(m.clearFilter)}
+                    labelClearAll={formatMessage(m.clearAllFilters)}
+                    labelTitle={formatMessage(m.filterBy)}
+                    onFilterClear={() => setActiveFilters(defaultFilterValues)}
+                    variant="popover"
+                    reverse
+                    filterInput={
+                      <Input
+                        icon={{ name: 'search' }}
+                        backgroundColor="blue"
+                        size="xs"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        name="work-machines-input-search"
+                        placeholder={formatMessage(
+                          messages.workMachinesSearchPlaceholder,
+                        )}
                       />
-                    </Box>
-                  }
-                </Filter>
+                    }
+                  >
+                    {
+                      <Box paddingX={3} marginTop={2}>
+                        <Text variant="h4">{formatMessage(m.filterBy)}</Text>
+                        <Box paddingY={3}>
+                          {Object.keys(activeFilters).map(
+                            (filterKey, index) => {
+                              const key = filterKey as keyof FilterValues
+                              const filter = activeFilters[key]
+                              return (
+                                <Checkbox
+                                  id={`work-machine-filter-${index}`}
+                                  label={filter.label}
+                                  checked={filter.value}
+                                  onChange={() => onFilterChange(key, filter)}
+                                />
+                              )
+                            },
+                          )}
+                        </Box>
+                        <Box
+                          borderBottomWidth="standard"
+                          borderColor="blue200"
+                          width="full"
+                        />
+                      </Box>
+                    }
+                  </Filter>
+                </Hidden>
                 <DropdownMenu
                   title={formatMessage(m.get)}
                   icon="download"

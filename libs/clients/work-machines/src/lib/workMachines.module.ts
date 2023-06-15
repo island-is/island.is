@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
-import { WorkMachinesApiProvider } from './workMachines.provider'
+import { apiProviders } from './providers'
 import { WorkMachinesClientService } from './workMachines.service'
+import { ApiConfig } from './api.config'
 
 @Module({
-  providers: [WorkMachinesClientService, WorkMachinesApiProvider],
+  providers: [WorkMachinesClientService, ApiConfig, ...apiProviders],
   exports: [WorkMachinesClientService],
 })
 export class WorkMachinesClientModule {}
