@@ -13,12 +13,13 @@ import { useLocale } from '@island.is/localization'
 import { useSubmitting } from '@island.is/react-spa/shared'
 import { RouterActionResponse } from '@island.is/portals/core'
 
-import { m } from '../lib/messages'
-import { DropdownSync } from './DropdownSync/DropdownSync'
-import { useMultiEnvSupport } from '../hooks/useMultiEnvSupport'
-import { useEnvironment } from '../context/EnvironmentContext'
-import { useIntent } from '../hooks/useIntent'
-import { ConditionalWrapper } from './ConditionalWrapper'
+import { m } from '../../lib/messages'
+import { DropdownSync } from '../DropdownSync/DropdownSync'
+import { useMultiEnvSupport } from '../../hooks/useMultiEnvSupport'
+import { useEnvironment } from '../../context/EnvironmentContext'
+import { useIntent } from '../../hooks/useIntent'
+import { ConditionalWrapper } from '../ConditionalWrapper'
+import { accordionWrapper } from './FormCard.css'
 
 /**
  * Compares if two form data objects are equal
@@ -54,6 +55,7 @@ type FormCardProps<Intent> = {
    * Note: This function should be memoized to prevent unnecessary re-renders.
    */
   customValidation?(currentValue: FormData, originalValue: FormData): boolean
+  headerMarginBottom?: 3 | 5
 }
 
 export const FormCard = <Intent extends string>({
@@ -65,6 +67,7 @@ export const FormCard = <Intent extends string>({
   accordionLabel,
   description,
   customValidation,
+  headerMarginBottom = 5,
 }: FormCardProps<Intent>) => {
   const { formatMessage } = useLocale()
   const [allEnvironmentsCheck, setAllEnvironmentsCheck] = useState(inSync)
@@ -177,7 +180,12 @@ export const FormCard = <Intent extends string>({
         width="full"
         border="standard"
       >
-        <Box display="flex" rowGap={2} flexDirection="column" marginBottom={4}>
+        <Box
+          display="flex"
+          rowGap={2}
+          flexDirection="column"
+          marginBottom={headerMarginBottom}
+        >
           <Box
             display="flex"
             flexDirection={['column', 'row']}
@@ -202,17 +210,21 @@ export const FormCard = <Intent extends string>({
         <ConditionalWrapper
           condition={Boolean(accordionLabel)}
           trueWrapper={(cld) => (
-            <AccordionItem label={accordionLabel} id={intent as string}>
-              {cld}
-            </AccordionItem>
+            <div className={accordionWrapper}>
+              <Box marginTop={3}>
+                <AccordionItem label={accordionLabel} id={intent as string}>
+                  {cld}
+                </AccordionItem>
+              </Box>
+            </div>
           )}
         >
           <>
-            <Box marginTop={5}>{children}</Box>
+            <Box>{children}</Box>
             {intent && (
               <Box
                 alignItems={['flexStart', 'center']}
-                marginTop="containerGutter"
+                marginTop={5}
                 display="flex"
                 justifyContent={
                   shouldSupportMultiEnv ? 'spaceBetween' : 'flexEnd'
