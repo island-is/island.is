@@ -1,6 +1,6 @@
 const DefinePlugin = require('webpack/lib/DefinePlugin')
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
-const nrwlConfig = require('@nrwl/react/plugins/webpack.js')
+const { getWebpackConfig } = require('@nx/react/plugins/webpack')
 const webpack = require('webpack')
 
 /**
@@ -105,11 +105,12 @@ const addNodeModulesPolyfill = (config) => {
 
 /**
  * Adds common web related configs to webpack
- * @param {*} config
+ * @param {*} config Webpack config object
+ * @param {*} context  NxWebpackExecutionContext
  */
-module.exports = function (config) {
+module.exports = function (config, context) {
   // Call @nrwl/react plugin for default webpack config
-  nrwlConfig(config)
+  getWebpackConfig(config, context)
 
   setApiMocks(config)
   addNodeModulesPolyfill(config)
@@ -118,6 +119,9 @@ module.exports = function (config) {
 
   // Add the Vanilla Extract plugin
   config.plugins.push(new VanillaExtractPlugin())
+
+  // Disable stats for child compilations
+  config.stats.children = false
 
   return config
 }
