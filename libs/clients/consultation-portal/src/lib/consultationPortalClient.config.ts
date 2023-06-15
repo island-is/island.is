@@ -16,9 +16,7 @@ export const ConsultationPortalClientConfig = defineConfig({
         'CONSULTATION_PORTAL_CLIENT_BASE_PATH',
         'https://samradapi-test.devland.is',
       ),
-      tokenExchangeScope: env.optionalJSON('CONSULTATION_PORTAL_SCOPE') ?? [
-        StjornarradidScope.samradsgatt,
-      ],
+      tokenExchangeScope: [StjornarradidScope.samradsgatt],
     }
   },
 })
