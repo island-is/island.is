@@ -2,7 +2,8 @@
   "case": {
     "seo": {
       "title": "Mál",
-      "url": "/mal/"
+      "url": "/mal/",
+      "keywords": "Opinbert samráð, lagasetning, frumvarp, reglugerð, stefna, umsögn, umsagnir"
     },
     "breadcrumbs": {
       "parent": { "title": "Öll mál", "href": "/samradsgatt" },

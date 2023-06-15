@@ -42,11 +42,14 @@ const MY_BREADCRUMBS_LIST = [
 const SUBSCRIPTIONS = {
   title: loc.subscriptions.title,
   url: loc.subscriptions.url,
+  description: loc.subscriptions.description,
+  keywords: loc.subscriptions.keywords
 }
 
 const MY_SUBSCRIPTIONS = {
   title: loc.mySubscriptions.title,
   url: loc.mySubscriptions.url,
+  description: loc.mySubscriptions.description,
 }
 
 const SubscriptionsSkeleton = ({

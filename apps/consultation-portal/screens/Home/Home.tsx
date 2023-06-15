@@ -120,7 +120,14 @@ export const Index = ({ types, statistics }: HomeProps) => {
   }
 
   return (
-    <Layout isFrontPage seo={{ title: loc.seo.title }}>
+    <Layout
+      isFrontPage
+      seo={{
+        title: loc.seo.title,
+        description: loc.seo.description,
+        keywords: loc.seo.keywords
+      }}
+    >
       <HeroBanner statistics={statistics} />
       {isMobile ? (
         <MobileFilter

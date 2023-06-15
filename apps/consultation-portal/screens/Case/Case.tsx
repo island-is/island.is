@@ -57,6 +57,8 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
       seo={{
         title: `${loc.seo.title}: S-${chosenCase?.caseNumber}`,
         url: `${loc.seo.url}${chosenCase?.id}`,
+        keywords: loc.seo.keywords,
+        description: chosenCase?.summaryText,
       }}
     >
       <GridContainer>
