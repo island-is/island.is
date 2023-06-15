@@ -16,8 +16,7 @@ test.describe('Endorsements', () => {
     context = await session({
       browser,
       storageState: 'service-portal-faereyjar.json',
-      homeUrl: '/undirskriftalistar',
-      authUrl: '/minarsidur',
+      homeUrl: '/minarsidur',
       phoneNumber: '0102399',
       delegation: '65° Arctic ehf',
     })
@@ -27,7 +26,7 @@ test.describe('Endorsements', () => {
     await context.close()
   })
 
-  test.skip('should be able to see overview and endorse a list if there are lists', async () => {
+  test('should be able to see overview and endorse a list if there are lists', async () => {
     const page = await context.newPage()
 
     await page.goto(icelandicAndNoPopupUrl('/undirskriftalistar'))
