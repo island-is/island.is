@@ -37,7 +37,6 @@ test.describe('Admin portal access control', () => {
     })
 
     test.step('Open old endorsement list', async () => {
-
       await granterPage.getByTestId('active-module-name').click()
       await granterPage
         .getByRole('link', { name: 'Undirskriftalistar' })
