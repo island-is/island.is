@@ -18,7 +18,7 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => (
+          link: (str: any) => (
             <LinkButton
               skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
@@ -32,7 +32,7 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => (
+          link: (str: any) => (
             <LinkButton
               skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
@@ -45,7 +45,7 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => (
+          link: (str: any) => (
             <LinkButton
               skipIcon
               to={formatMessage(messages['physioDisclaimerLink'])}
@@ -62,7 +62,7 @@ export const getFootNoteByType = (
     case OCCUPATIONAL_THERAPY:
       return {
         first: formatMessage(messages['occupationalDisclaimer'], {
-          link: (str) => (
+          link: (str: any) => (
             <LinkButton
               skipIcon
               to={formatMessage(messages['occupationalDisclaimerLink'])}
@@ -75,7 +75,7 @@ export const getFootNoteByType = (
       return {
         first: formatMessage(messages['physioDisclaimer1']),
         second: formatMessage(messages['physioDisclaimer2'], {
-          link: (str) => <LinkButton to="" text={str ?? ''} />,
+          link: (str: any) => <LinkButton to="" text={str ?? ''} />,
         }),
       }
   }

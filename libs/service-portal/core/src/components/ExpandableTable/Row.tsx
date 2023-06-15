@@ -45,7 +45,7 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
-  const handleAnimationEnd = useCallback((height) => {
+  const handleAnimationEnd = useCallback((height: number) => {
     if (height === 0) {
       setClosed(true)
     } else {

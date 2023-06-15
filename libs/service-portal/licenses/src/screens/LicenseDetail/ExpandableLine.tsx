@@ -28,12 +28,17 @@ interface Props {
   description?: string
 }
 
-const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({ data, title, type, description }) => {
+const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
+  data,
+  title,
+  type,
+  description,
+}) => {
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
   const ref = useRef<HTMLDivElement>(null)
 
-  const handleAnimationEnd = useCallback((height) => {
+  const handleAnimationEnd = useCallback((height: number) => {
     if (height === 0) {
       setClosed(true)
     } else {
