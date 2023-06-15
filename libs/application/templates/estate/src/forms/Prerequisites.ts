@@ -42,7 +42,6 @@ export const getForm = ({
                 id: 'selectedEstate',
                 title: '',
                 width: 'full',
-                defaultValue: EstateTypes.permitForUndividedEstate,
                 options: [
                   ...(allowDivisionOfEstate
                     ? [

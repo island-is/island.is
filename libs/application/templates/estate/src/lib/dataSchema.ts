@@ -291,8 +291,6 @@ export const estateSchema = z.object({
   // is: Hefur umsækjandi forræði á búi?
   applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
 
-  readTerms: z.array(z.enum([YES])).length(1),
-
   estateAttachments: z.object({
     attached: z.object({
       file: z.array(FileSchema),
@@ -315,4 +313,6 @@ export const estateSchema = z.object({
         path: ['acceptAssetsSelection'],
       },
     ),
+
+  confirmAction: z.array(z.enum([YES])).length(1),
 })

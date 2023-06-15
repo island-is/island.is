@@ -625,6 +625,12 @@ export const m = defineMessages({
     defaultMessage: 'Ég hef lesið skilmálana',
     description: '',
   },
+  divisionOfEstateConfirmActionCheckbox: {
+    id: 'es.application:divisionOfEstateConfirmActionCheckbox',
+    defaultMessage:
+      'Ég krefst þess að eftirfarandi dánarbú verði tekið til opinberra skipta.',
+    description: '',
+  },
   overviewSubtitlePermitToPostpone: {
     id: 'es.application:overviewSubtitlePermitToPostpone#markdown',
     defaultMessage:

@@ -39,31 +39,24 @@ export const form: Form = buildForm({
               title: m.theDeceased,
               titleVariant: 'h3',
               marginBottom: 2,
+              space: 'gutter',
             }),
             ...deceasedInfoFields,
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'approveSubmission',
-      title: m.divisionOfEstateTerms,
-      children: [
-        buildMultiField({
-          id: 'approveSubmission',
-          title: m.divisionOfEstateTerms,
-          description: m.divisionOfEstateTermsText,
-          children: [
-            buildCheckboxField({
-              id: 'readTerms',
+            buildDescriptionField({
+              id: 'space0',
               title: '',
-              large: false,
-              backgroundColor: 'white',
+              space: 'containerGutter',
+            }),
+            buildCheckboxField({
+              id: 'confirmAction',
+              title: '',
+              large: true,
+              backgroundColor: 'blue',
               defaultValue: [],
               options: [
                 {
                   value: YES,
-                  label: m.divisionOfEstateSubmissionCheckbox.defaultMessage,
+                  label: m.divisionOfEstateConfirmActionCheckbox.defaultMessage,
                 },
               ],
             }),
