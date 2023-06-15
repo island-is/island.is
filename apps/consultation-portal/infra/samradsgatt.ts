@@ -29,7 +29,7 @@ export const serviceSetup = (services: {
       },
       NEXTAUTH_URL: {
         dev: 'https://beta.dev01.devland.is/samradsgatt/api/auth',
-        staging: 'https://staging.staging01.devland.is/samradsgatt/api/auth',
+        staging: 'https://beta.staging01.devland.is/samradsgatt/api/auth',
         prod: 'https://island.is/samradsgatt/api/auth',
       },
       BACKEND_DL_URL: {

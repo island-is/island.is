@@ -31,6 +31,7 @@ if (userMocked) {
       AdminPortalScope.idsAdmin,
       AdminPortalScope.idsAdminSuperUser,
       AdminPortalScope.petitionsAdmin,
+      AdminPortalScope.serviceDesk,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'ap.',
