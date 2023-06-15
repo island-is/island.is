@@ -22,7 +22,7 @@ test.describe('Admin portal access control', () => {
     await contextGranter.close()
   })
 
-  test.skip('access undirskriftalsitar, access and edit a list', async ({}) => {
+  test('access endorsement lists, access and edit a list', async () => {
     // Arrange
     const granterPage = await contextGranter.newPage()
 
@@ -39,7 +39,7 @@ test.describe('Admin portal access control', () => {
       ).toBeVisible()
     })
 
-    await test.step('access undirskriftalistar', async () => {
+    await test.step('access endorsement lists', async () => {
       // Act
       await granterPage
         .getByRole('button', { name: 'Opna Stjórnborðs valmynd' })
