@@ -215,7 +215,7 @@ function remainingJudgeCaseData() {
     validToDate: '2021-09-28T12:00:00.000Z',
     isolationToDate: '2021-09-10T12:00:00.000Z',
     conclusion: 'Addition to Conclusion',
-    accusedAppealDecision: CaseAppealDecision.APPEAL,
+    accusedAppealDecision: CaseAppealDecision.ACCEPT,
     accusedAppealAnnouncement: 'Accused Appeal Announcement',
     prosecutorAppealDecision: CaseAppealDecision.ACCEPT,
     prosecutorAppealAnnouncement: 'Prosecutor Appeal Announcement',
@@ -472,7 +472,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.caseResentExplanation ?? null).toBe(
     caseTwo.caseResentExplanation ?? null,
   )
-  expect(caseOne.seenByDefender ?? null).toBe(caseTwo.seenByDefender ?? null)
+  expect(caseOne.openedByDefender ?? null).toBe(
+    caseTwo.openedByDefender ?? null,
+  )
   if (caseOne.parentCase || caseTwo.parentCase) {
     expectCasesToMatch(caseOne.parentCase, caseTwo.parentCase)
   }
@@ -721,6 +723,7 @@ describe('Case', () => {
       ...getCaseData(),
       origin: CaseOrigin.RVG,
       state: CaseState.DRAFT,
+      courtId: judge.institution?.id,
     })
       .then((value) => {
         dbCase = caseToCCase(value)
@@ -742,6 +745,7 @@ describe('Case', () => {
           ...judgeCaseData,
           judge,
           registrar,
+          court,
         } as CCase)
 
         // Check the data in the database

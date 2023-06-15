@@ -6,12 +6,17 @@ import {
   insuranceToXML,
   transformApplicationToHealthInsuranceDTO,
 } from './health-insurance.utils'
-import { DocumentApi, PersonApi } from '@island.is/clients/health-insurance-v2'
+import {
+  DocumentApi,
+  PersonApi,
+} from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { BucketService } from './bucket/bucket.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core/messages'
 
 @Injectable()
 export class HealthInsuranceService extends BaseTemplateApiService {
@@ -39,7 +44,14 @@ export class HealthInsuranceService extends BaseTemplateApiService {
       return resp.isHealthInsured === 1
     } catch (error) {
       logger.error('Error fetching health insurance data', error)
-      return false
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.defaultTemplateApiError,
+          summary:
+            coreErrorMessages.errorDataProviderHealthInsuranceCantBeReached,
+        },
+        500,
+      )
     }
   }
 
@@ -55,9 +67,16 @@ export class HealthInsuranceService extends BaseTemplateApiService {
       this.bucketService,
     )
 
-    await this.documentApi.documentPost({
-      document: { doc: xml, documentType: 570 },
-    })
+    try {
+      await this.documentApi.documentPost({
+        document: { doc: xml, documentType: 570 },
+      })
+    } catch (error) {
+      if (error.status === 412) {
+        error.status = 500
+      }
+      throw error
+    }
 
     logger.info(`Finished send Health Insurance application`)
   }

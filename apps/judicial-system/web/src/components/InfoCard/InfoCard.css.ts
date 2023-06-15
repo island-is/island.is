@@ -21,6 +21,19 @@ export const infoCardDataContainer = style({
   },
 })
 
+export const infoCardCourtOfAppealDataContainer = style({
+  display: 'grid',
+  gap: theme.spacing[2],
+  borderTop: `2px solid ${theme.color.blue200}`,
+  paddingTop: theme.spacing[3],
+  marginTop: theme.spacing[3],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridTemplateColumns: '1fr 1fr',
+    },
+  },
+})
+
 export const infoCardDefendant = style({
   display: 'flex',
   flexDirection: 'column',

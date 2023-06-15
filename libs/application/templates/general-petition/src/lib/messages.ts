@@ -1,6 +1,28 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // Applicant
+  phone: {
+    id: 'gpl.application:phone',
+    defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  email: {
+    id: 'gpl.application:email',
+    defaultMessage: 'Netfang',
+    description: '',
+  },
+  phoneLabel: {
+    id: 'gpl.application:phoneLabel',
+    defaultMessage: 'Símanúmer ábyrgðarmanns',
+    description: '',
+  },
+  emailLabel: {
+    id: 'gpl.application:emailLabel',
+    defaultMessage: 'Netfang ábyrgðarmanns',
+    description: '',
+  },
+
   // Application Name
   applicationName: {
     id: 'gpl.application:applicationName',
@@ -15,7 +37,7 @@ export const m = defineMessages({
     description: '',
   },
   introDescription: {
-    id: 'gpl.application:introDescription',
+    id: 'gpl.application:introDescription#markdown',
     defaultMessage: 'Vantar texta hér',
     description: '',
   },
@@ -61,7 +83,7 @@ export const m = defineMessages({
   },
   listName: {
     id: 'gpl.application:listName',
-    defaultMessage: 'Heiti undirskriftalista',
+    defaultMessage: 'Heiti lista',
     description: '',
   },
   listNamePlaceholder: {
@@ -71,7 +93,7 @@ export const m = defineMessages({
   },
   aboutList: {
     id: 'gpl.application:aboutList',
-    defaultMessage: 'Um undirskriftalista',
+    defaultMessage: 'Um lista',
     description: '',
   },
   aboutListPlaceholder: {
@@ -127,13 +149,13 @@ export const m = defineMessages({
   // Done
   listCreatedTitle: {
     id: 'gpl.application:listCreatedTitle',
-    defaultMessage: 'Undirskriftalista hefur verið skilað til Island.is',
+    defaultMessage: 'Undirskriftalista hefur verið skilað til Ísland.is',
     description: '',
   },
   listCreatedSubtitle: {
     id: 'gpl.application:listCreatedSubtitle#markdown',
     defaultMessage:
-      'Hægt er að sjá stöðu lista, undirskriftir og einnig er hægt að breyta gildisdagsetningu lista inná Mínum Síðum.',
+      'Hægt er að sjá stöðu lista, undirskriftir og breyta gildistíma lista inná Mínum Síðum.',
     description: '',
   },
   linkToList: {
@@ -174,6 +196,12 @@ export const m = defineMessages({
     defaultMessage: 'Ekki birta nafn mitt á lista',
     description: '',
   },
+  hideNameText: {
+    id: 'gpl.application:hideNameText',
+    defaultMessage:
+      '* Athugið að nafn þitt er sýnilegt ábyrgðamanni listans en birtist ekki á vef eða hjá öðrum sem hafa skráð sig á lista.',
+    description: '',
+  },
   agreeToTermsLabel: {
     id: 'gpl.application:agreeToTermsLabel',
     defaultMessage:
@@ -197,7 +225,7 @@ export const m = defineMessages({
   },
   backtoSP: {
     id: 'gpl.application:backtoSP',
-    defaultMessage: 'Til baka á Mínar Síður',
+    defaultMessage: 'Mínar Síður',
     description: '',
   },
 

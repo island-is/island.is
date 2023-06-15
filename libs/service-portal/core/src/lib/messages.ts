@@ -491,7 +491,7 @@ export const m = defineMessages({
   },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
-    defaultMessage: 'Laungreiðendakröfur',
+    defaultMessage: 'Launagreiðendakröfur',
   },
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
@@ -707,6 +707,10 @@ export const m = defineMessages({
     id: 'service.portal:refuse-email-title',
     defaultMessage: 'Tölvupóstur',
   },
+  requestPaperMailTitle: {
+    id: 'service.portal:req-paper-mail-title',
+    defaultMessage: 'Bréfpóstur',
+  },
   nextStep: {
     id: 'service.portal:next-step',
     defaultMessage: 'Næsta skref',
@@ -886,8 +890,37 @@ export const m = defineMessages({
     defaultMessage: 'Loftbrú',
     description: 'Airfare discount',
   },
+  airDiscountDescription: {
+    id: 'service.portal:air-discount-description',
+    defaultMessage: 'Lægri flug­fargjöld fyrir íbúa lands­byggð­arinnar',
+    description: 'Airfare discount',
+  },
   sessions: {
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
+  },
+  health: {
+    id: 'service.portal:health',
+    defaultMessage: 'Heilsa',
+  },
+  healthDescription: {
+    id: 'service.portal:health-description',
+    defaultMessage: 'Hér eru heilsugögn um þig',
+  },
+  therapies: {
+    id: 'service.portal:therapies',
+    defaultMessage: 'Þjálfun',
+  },
+  aidsAndNutrition: {
+    id: 'service.portal:aids-and-nutrition',
+    defaultMessage: 'Hjálpartæki og næring',
+  },
+  financeBreakdown: {
+    id: 'service.portal:finance-detail-breakdown',
+    defaultMessage: 'Sundurliðun',
+  },
+  consent: {
+    id: 'service.portal:consent',
+    defaultMessage: 'Gagnaöflun',
   },
 })

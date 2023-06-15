@@ -3,8 +3,10 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, AccordionItem, Button, Text } from '@island.is/island-ui/core'
-import { UploadState } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import { useCourtUpload } from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
+import {
+  UploadState,
+  useCourtUpload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   CaseState,
   completedCaseStates,
@@ -36,10 +38,8 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
   )
 
   const canCaseFilesBeOpened = () => {
-    const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
-
     const canProsecutorOpen =
-      user.role === UserRole.Prosecutor &&
+      user.role === UserRole.PROSECUTOR &&
       user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
     const canCourtRoleOpen =
@@ -50,19 +50,15 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         ...completedCaseStates,
       ].includes(workingCase.state)
 
-    return (
-      !isAppealGracePeriodExpired && (canProsecutorOpen || canCourtRoleOpen)
-    )
+    return canProsecutorOpen || canCourtRoleOpen
   }
 
   const canCaseFilesBeUploaded = () => {
-    const isAppealGracePeriodExpired = workingCase.isAppealGracePeriodExpired
-
     const canCourtRoleUpload =
       isCourtRole(user.role) &&
       [CaseState.RECEIVED, ...completedCaseStates].includes(workingCase.state)
 
-    return !isAppealGracePeriodExpired && canCourtRoleUpload
+    return canCourtRoleUpload
   }
 
   return (
@@ -83,8 +79,8 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
           </Text>
           {canCaseFilesBeUploaded() && (
             <AnimatePresence>
-              {(uploadState === UploadState.NONE_AVAILABLE ||
-                uploadState === UploadState.NONE_CAN_BE_UPLOADED ||
+              {(uploadState === UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE ||
+                uploadState === UploadState.ALL_UPLOADED_OR_NOT_AVAILABLE ||
                 uploadState === UploadState.UPLOAD_ERROR) && (
                 <UploadStateMessage
                   icon="warning"
@@ -112,7 +108,7 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
         caseId={workingCase.id}
         files={workingCase.caseFiles ?? []}
         canOpenFiles={canCaseFilesBeOpened()}
-        hideIcons={user?.role === UserRole.Prosecutor}
+        hideIcons={user?.role === UserRole.PROSECUTOR}
         handleRetryClick={(id: string) =>
           workingCase.caseFiles &&
           uploadFilesToCourt([
@@ -121,34 +117,34 @@ const CaseFilesAccordionItem: React.FC<Props> = (props) => {
             ],
           ])
         }
-        isCaseCompleted={completedCaseStates.includes(workingCase.state)}
       />
-      {canCaseFilesBeUploaded() && (
-        <Box display="flex" justifyContent="flexEnd" marginTop={3}>
-          {(workingCase.caseFiles || []).length === 0 ? null : uploadState ===
-              UploadState.ALL_UPLOADED_NONE_AVAILABLE ||
-            uploadState === UploadState.NONE_AVAILABLE ? (
-            <InfoBox text={formatMessage(m.uploadToCourtAllBrokenText)} />
-          ) : (
-            <Button
-              size="small"
-              data-testid="upload-to-court-button"
-              onClick={() => uploadFilesToCourt(workingCase.caseFiles)}
-              loading={uploadState === UploadState.UPLOADING}
-              disabled={
-                uploadState !== UploadState.SOME_NOT_UPLOADED &&
-                uploadState !== UploadState.UPLOAD_ERROR
-              }
-            >
-              {formatMessage(
-                uploadState === UploadState.UPLOAD_ERROR
-                  ? m.retryUploadToCourtButtonText
-                  : m.uploadToCourtButtonText,
-              )}
-            </Button>
-          )}
-        </Box>
-      )}
+      {canCaseFilesBeUploaded() &&
+        uploadState !== UploadState.ALL_UPLOADED_OR_NOT_AVAILABLE && (
+          <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+            {(workingCase.caseFiles || []).length === 0 ? null : uploadState ===
+                UploadState.ALL_UPLOADED_NONE_AVAILABLE ||
+              uploadState === UploadState.SOME_NOT_UPLOADED_NONE_AVAILABLE ? (
+              <InfoBox text={formatMessage(m.uploadToCourtAllBrokenText)} />
+            ) : (
+              <Button
+                size="small"
+                data-testid="upload-to-court-button"
+                onClick={() => uploadFilesToCourt(workingCase.caseFiles)}
+                loading={uploadState === UploadState.UPLOADING}
+                disabled={
+                  uploadState !== UploadState.SOME_NOT_UPLOADED &&
+                  uploadState !== UploadState.UPLOAD_ERROR
+                }
+              >
+                {formatMessage(
+                  uploadState === UploadState.UPLOAD_ERROR
+                    ? m.retryUploadToCourtButtonText
+                    : m.uploadToCourtButtonText,
+                )}
+              </Button>
+            )}
+          </Box>
+        )}
     </AccordionItem>
   )
 }

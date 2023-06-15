@@ -3,6 +3,11 @@ import { DefaultEvents } from '@island.is/application/types'
 export const YES = 'Yes'
 export const NO = 'No'
 
+export const JA = 'Já'
+export const NEI = 'Nei'
+
+export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'
+
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
@@ -27,6 +32,6 @@ export enum Roles {
 export const EstateTypes = {
   divisionOfEstate: 'Opinber skipti',
   estateWithoutAssets: 'Eignalaust dánarbú',
-  permitToPostponeEstateDivision: 'Búsetuleyfi',
+  permitToPostponeEstateDivision: 'Seta í óskiptu búi',
   divisionOfEstateByHeirs: 'Einkaskipti',
 }

@@ -15,6 +15,7 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
+import { testamentInfo } from '../sharedSections/testamentInfo'
 
 export const form: Form = buildForm({
   id: 'divisionOfEstateByHeirsForm',
@@ -27,27 +28,31 @@ export const form: Form = buildForm({
     announcerInfo,
     buildSection({
       id: 'estateMembersInfo',
-      title: m.estateMembersTitle,
+      title: m.estateMembers,
       children: [
         buildMultiField({
           id: 'estateMembersInfo',
-          title: m.estateMembersTitle,
+          title: m.estateMembers,
           description: m.estateMembersSubtitle,
           children: [
-            buildDescriptionField({
-              id: 'membersOfEstateTitle',
-              title: m.estateMembers,
-              description: m.estateMembersHeaderDescription,
-              titleVariant: 'h3',
-            }),
             buildCustomField({
               title: '',
               id: 'estate.estateMembers',
               component: 'EstateMembersRepeater',
             }),
+            buildDescriptionField({
+              id: 'space0',
+              title: '',
+              space: 'containerGutter',
+            }),
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'testamentInfo',
+      title: m.willsAndAgreements,
+      children: [testamentInfo],
     }),
     buildSection({
       id: 'estateProperties',
@@ -124,18 +129,29 @@ export const form: Form = buildForm({
                   description: m.vehiclesDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.vehicles',
-                  component: 'VehiclesRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.vehicles',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'vehicles',
+                    texts: {
+                      assetTitle: m.vehiclesTitle,
+                      assetNumber: m.vehicleNumberLabel,
+                      assetType: m.vehicleTypeLabel,
+                      addAsset: m.addVehicle,
+                    },
+                  },
+                ),
               ],
             }),
           ],
         }),
         buildSubSection({
-          id: 'firearms',
-          title: m.firearms,
+          id: 'guns',
+          title: m.guns,
           children: [
             buildMultiField({
               id: 'realEstate',
@@ -143,16 +159,27 @@ export const form: Form = buildForm({
               description: m.propertiesDescription,
               children: [
                 buildDescriptionField({
-                  id: 'firearmsTitle',
-                  title: m.firearms,
-                  description: m.firearmsDescription,
+                  id: 'gunsTitle',
+                  title: m.guns,
+                  description: m.gunsDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.firearms',
-                  component: 'FirearmsRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.guns',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'guns',
+                    texts: {
+                      assetTitle: m.gunTitle,
+                      assetNumber: m.gunNumberLabel,
+                      assetType: m.gunTypeLabel,
+                      addAsset: m.addGun,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -286,7 +313,7 @@ export const form: Form = buildForm({
                       {
                         title: m.stocksValue.defaultMessage,
                         id: 'value',
-                        color: 'white',
+                        backgroundColor: 'white',
                         readOnly: true,
                       },
                     ],
@@ -391,6 +418,10 @@ export const form: Form = buildForm({
                     format: '######-####',
                   },
                   {
+                    title: m.debtsLoanIdentity.defaultMessage,
+                    id: 'loanIdentity',
+                  },
+                  {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
                     currency: true,
@@ -413,25 +444,24 @@ export const form: Form = buildForm({
           title: m.representativeTitle,
           description: m.representativeDescription,
           children: [
+            buildCustomField(
+              {
+                title: '',
+                id: 'representative',
+                component: 'LookupPerson',
+              },
+              {
+                requiredNationalId: false,
+              },
+            ),
             buildTextField({
-              id: 'representative.representativeNationalId',
-              title: m.nationalId,
-              width: 'half',
-              format: '######-####',
-            }),
-            buildTextField({
-              id: 'representative.representativeName',
-              title: m.name,
-              width: 'half',
-            }),
-            buildTextField({
-              id: 'representative.representativePhoneNumber',
+              id: 'representative.phone',
               title: m.phone,
               width: 'half',
               format: '###-####',
             }),
             buildTextField({
-              id: 'representative.representativeEmail',
+              id: 'representative.email',
               title: m.email,
               width: 'half',
             }),

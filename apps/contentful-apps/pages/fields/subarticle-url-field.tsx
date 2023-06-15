@@ -4,11 +4,16 @@ import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 import { TextInput, Text, Spinner } from '@contentful/f36-components'
 import { EntryProps, SysLink } from 'contentful-management'
+import {
+  CONTENTFUL_ENVIRONMENT,
+  CONTENTFUL_SPACE,
+  DEFAULT_LOCALE,
+} from '../../constants'
 
 type Article = EntryProps<{
-  subArticles: { 'is-IS': SysLink[] }
+  subArticles: { [DEFAULT_LOCALE]: SysLink[] }
   slug: {
-    'is-IS': string
+    [DEFAULT_LOCALE]: string
     en: string
   }
 }>
@@ -45,8 +50,8 @@ const SubArticleUrlField = () => {
     cma.entry
       .get({
         entryId: parentArticleId,
-        environmentId: process.env.CONTENTFUL_ENVIRONMENT,
-        spaceId: process.env.CONTENTFUL_SPACE,
+        environmentId: CONTENTFUL_ENVIRONMENT,
+        spaceId: CONTENTFUL_SPACE,
       })
       .then((parentArticle: Article) => {
         const subArticles =

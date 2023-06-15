@@ -35,12 +35,13 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { core, errors } from '@island.is/judicial-system-web/messages'
+import {
+  FileNotFoundModal,
+  IndictmentInfo,
+} from '@island.is/judicial-system-web/src/components'
 
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import { UpdateFileMutation } from './UpdateFiles.gql'
-import IndictmentInfo from '../../IndictmentInfo/IndictmentInfo'
-import Modal from '../../Modal/Modal'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'
@@ -71,6 +72,7 @@ export interface ReorderableItem {
   orderWithinChapter?: number
   userGeneratedFilename?: string
   displayDate?: string
+  canOpen?: boolean
 }
 
 interface UpdateFilesMutationResponse {
@@ -168,6 +170,7 @@ export const sortedFilesInChapter = (
         orderWithinChapter: file.orderWithinChapter,
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
+        canOpen: Boolean(file.key),
       }
     })
     .sort((a, b) => {
@@ -347,9 +350,9 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                   <Box
                     display="flex"
                     alignItems="center"
-                    component="button"
+                    component={caseFile.canOpen ? 'button' : undefined}
                     onClick={() => {
-                      if (caseFile.id) {
+                      if (caseFile.canOpen && caseFile.id) {
                         onOpen(caseFile.id)
                       }
                     }}
@@ -367,9 +370,11 @@ const CaseFile: React.FC<CaseFileProps> = (props) => {
                         {displayName}
                       </span>
                     </Text>
-                    <Box marginLeft={2}>
-                      <Icon icon="open" type="outline" size="small" />
-                    </Box>
+                    {caseFile.canOpen && (
+                      <Box marginLeft={2}>
+                        <Icon icon="open" type="outline" size="small" />
+                      </Box>
+                    )}
                   </Box>
                   <Box display="flex" alignItems="center">
                     <Box marginRight={1}>
@@ -470,6 +475,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
             displayText: caseFile.name,
             userGeneratedFilename: caseFile.userGeneratedFilename,
             isDivider: false,
+            canOpen: Boolean(caseFile.key),
           }
         }),
     ])
@@ -651,14 +657,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<Props> = (props) => {
         </AnimatePresence>
       </AccordionItem>
       <AnimatePresence>
-        {fileNotFound && (
-          <Modal
-            title={formatMessage(errors.fileNotFoundModalTitle)}
-            onClose={() => dismissFileNotFound()}
-            onPrimaryButtonClick={() => dismissFileNotFound()}
-            primaryButtonText={formatMessage(core.closeModal)}
-          />
-        )}
+        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
     </>
   )

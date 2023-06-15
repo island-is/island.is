@@ -1,6 +1,0 @@
-mutation CreateClient($input: CreateAuthAdminClientInput!) {
-  createAuthAdminClient(input: $input) {
-    clientId
-    environment
-  }
-}

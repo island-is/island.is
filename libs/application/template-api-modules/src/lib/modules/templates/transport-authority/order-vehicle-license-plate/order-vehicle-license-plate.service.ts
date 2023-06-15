@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import {
   OrderVehicleLicensePlateAnswers,
   getChargeItemCodes,
@@ -15,8 +18,9 @@ import {
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
-import { YES } from '@island.is/application/core'
+import { YES, coreErrorMessages } from '@island.is/application/core'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
@@ -64,6 +68,17 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       showOperated: false,
     })
 
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwner,
+        },
+        400,
+      )
+    }
+
     return await Promise.all(
       result?.map(async (vehicle) => {
         let validation: PlateOrderValidation | undefined
@@ -108,8 +123,6 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
   async createCharge({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const SAMGONGUSTOFA_NATIONAL_ID = '5405131040'
-
       const answers = application.answers as OrderVehicleLicensePlateAnswers
 
       const chargeItemCodes = getChargeItemCodes(answers)
@@ -117,7 +130,7 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
       const result = this.sharedTemplateAPIService.createCharge(
         auth,
         application.id,
-        SAMGONGUSTOFA_NATIONAL_ID,
+        InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes,
         [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
       )

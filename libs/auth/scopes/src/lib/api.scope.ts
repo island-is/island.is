@@ -13,4 +13,6 @@ export enum ApiScope {
   licensesVerify = '@island.is/licenses:verify',
   company = '@island.is/company',
   vehicles = '@island.is/vehicles',
+  samradsgatt = '@island.is/samradsgatt',
+  health = '@island.is/health',
 }

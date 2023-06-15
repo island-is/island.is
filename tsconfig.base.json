@@ -122,6 +122,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-government-institution-vacancies": [
+        "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
       ],
@@ -164,6 +167,9 @@
       "@island.is/api/domains/regulations-admin": [
         "libs/api/domains/regulations-admin/src/index.ts"
       ],
+      "@island.is/api/domains/rights-portal": [
+        "libs/api/domains/rights-portal/src/index.ts"
+      ],
       "@island.is/api/domains/sessions": [
         "libs/api/domains/sessions/src/index.ts"
       ],
@@ -184,6 +190,9 @@
       ],
       "@island.is/api/domains/vehicles": [
         "libs/api/domains/vehicles/src/index.ts"
+      ],
+      "@island.is/api/domains/watson-assistant-chat": [
+        "libs/api/domains/watson-assistant-chat/src/index.ts"
       ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
@@ -231,14 +240,23 @@
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
+      "@island.is/application/templates/children-residence-change-v2": [
+        "libs/application/templates/family-matters/children-residence-change-v2/src/index.ts"
+      ],
       "@island.is/application/templates/complaints-to-althingi-ombudsman": [
         "libs/application/templates/complaints-to-althingi-ombudsman/src/index.ts"
       ],
       "@island.is/application/templates/criminal-record": [
         "libs/application/templates/criminal-record/src/index.ts"
       ],
+      "@island.is/application/templates/criminal-record/messages": [
+        "libs/application/templates/criminal-record/src/lib/messages.ts"
+      ],
       "@island.is/application/templates/data-protection-complaint": [
         "libs/application/templates/data-protection-complaint/src/index.ts"
+      ],
+      "@island.is/application/templates/data-protection-complaint/messages": [
+        "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
       ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
@@ -248,6 +266,9 @@
       ],
       "@island.is/application/templates/driving-instructor-registrations": [
         "libs/application/templates/driving-instructor-registrations/src/index.ts"
+      ],
+      "@island.is/application/templates/driving-learners-permit": [
+        "libs/application/templates/driving-learners-permit/src/index.ts"
       ],
       "@island.is/application/templates/driving-license": [
         "libs/application/templates/driving-license/src/index.ts"
@@ -266,6 +287,9 @@
       ],
       "@island.is/application/templates/estate/types": [
         "libs/application/templates/estate/src/types.ts"
+      ],
+      "@island.is/application/templates/european-health-insurance-card": [
+        "libs/application/templates/european-health-insurance-card/src/index.ts"
       ],
       "@island.is/application/templates/example-payment": [
         "libs/application/templates/example-payment/src/index.ts"
@@ -395,6 +419,7 @@
       "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
       "@island.is/auth/react": ["libs/auth/react/src/index.ts"],
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
+      "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
@@ -408,6 +433,9 @@
       ],
       "@island.is/clients/auth/delegation-api": [
         "libs/clients/auth/delegation-api/src/index.ts"
+      ],
+      "@island.is/clients/auth/ids-api": [
+        "libs/clients/auth/ids-api/src/index.ts"
       ],
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
@@ -437,6 +465,9 @@
       "@island.is/clients/driving-license-book": [
         "libs/clients/driving-license-book/src/index.ts"
       ],
+      "@island.is/clients/ehic-client-v1": [
+        "libs/clients/ehic-client-v1/src/index.ts"
+      ],
       "@island.is/clients/electronic-registration-statistics": [
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
@@ -451,8 +482,14 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
-      "@island.is/clients/health-insurance-v2": [
-        "libs/clients/health-insurance-v2/src/index.ts"
+      "@island.is/clients/icelandic-government-institution-vacancies": [
+        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
+      ],
+      "@island.is/clients/icelandic-health-insurance/health-insurance": [
+        "libs/clients/icelandic-health-insurance/health-insurance/src/index.ts"
+      ],
+      "@island.is/clients/icelandic-health-insurance/rights-portal": [
+        "libs/clients/icelandic-health-insurance/rights-portal/src/index.ts"
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
@@ -581,6 +618,7 @@
       "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
       "@island.is/infra-next-server": ["libs/infra-next-server/src/index.ts"],
       "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
+      "@island.is/island-ui-native": ["apps/native/island-ui/src/index.ts"],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"
       ],
@@ -645,12 +683,21 @@
       "@island.is/portals/admin/ids-admin": [
         "libs/portals/admin/ids-admin/src/index.ts"
       ],
+      "@island.is/portals/admin/petition": [
+        "libs/portals/admin/petition/src/index.ts"
+      ],
       "@island.is/portals/admin/regulations-admin": [
         "libs/portals/admin/regulations-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/service-desk": [
+        "libs/portals/admin/service-desk/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
+      ],
+      "@island.is/portals/shared-modules/delegations/messages": [
+        "libs/portals/shared-modules/delegations/src/lib/messages.ts"
       ],
       "@island.is/react-spa/shared": ["libs/react-spa/shared/src/index.ts"],
       "@island.is/react/components": ["libs/react/components/src/index.ts"],
@@ -669,14 +716,23 @@
       "@island.is/service-portal/assets": [
         "libs/service-portal/assets/src/index.ts"
       ],
+      "@island.is/service-portal/consent": [
+        "libs/service-portal/consent/src/index.ts"
+      ],
       "@island.is/service-portal/constants": [
         "libs/service-portal/constants/src/index.ts"
       ],
       "@island.is/service-portal/core": [
         "libs/service-portal/core/src/index.ts"
       ],
+      "@island.is/service-portal/core/messages": [
+        "libs/service-portal/core/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"
+      ],
+      "@island.is/service-portal/documents/messages": [
+        "libs/service-portal/documents/src/utils/messages.ts"
       ],
       "@island.is/service-portal/education": [
         "libs/service-portal/education/src/index.ts"
@@ -699,6 +755,9 @@
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
       ],
+      "@island.is/service-portal/finance/messages": [
+        "libs/service-portal/finance/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
       ],
@@ -708,8 +767,14 @@
       "@island.is/service-portal/information": [
         "libs/service-portal/information/src/index.ts"
       ],
+      "@island.is/service-portal/information/messages": [
+        "libs/service-portal/information/src/lib/messages.ts"
+      ],
       "@island.is/service-portal/licenses": [
         "libs/service-portal/licenses/src/index.ts"
+      ],
+      "@island.is/service-portal/licenses/messages": [
+        "libs/service-portal/licenses/src/lib/messages.ts"
       ],
       "@island.is/service-portal/modules": [
         "libs/service-portal/modules/src/index.ts"
@@ -728,6 +793,9 @@
       ],
       "@island.is/service-portal/vehicles": [
         "libs/service-portal/vehicles/src/index.ts"
+      ],
+      "@island.is/service-portal/vehicles/messages": [
+        "libs/service-portal/vehicles/src/lib/messages.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"

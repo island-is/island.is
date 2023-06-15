@@ -17,7 +17,6 @@ import {
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { Features } from '@island.is/feature-flags'
 import { TransferOfVehicleOwnershipSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
 import { CoOwnerAndOperator, UserInformation } from '../shared'
@@ -66,11 +65,8 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag:
-        Features.transportAuthorityTransferOfVehicleOwnershipDelegations,
     },
   ],
-  featureFlag: Features.transportAuthorityTransferOfVehicleOwnership,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -193,10 +189,10 @@ const template: ApplicationTemplate<
               write: {
                 answers: [
                   'sellerCoOwner',
-                  'buyerCoOwnerAndOperator',
-                  'rejecter',
-                  'insurance',
                   'buyer',
+                  'buyerCoOwnerAndOperator',
+                  'insurance',
+                  'rejecter',
                 ],
               },
               read: 'all',
@@ -210,11 +206,12 @@ const template: ApplicationTemplate<
                 ),
               write: {
                 answers: [
-                  'buyerCoOwnerAndOperator',
-                  'insurance',
+                  'sellerCoOwner',
                   'buyer',
-                  'rejecter',
+                  'buyerCoOwnerAndOperator',
                   'buyerMainOperator',
+                  'insurance',
+                  'rejecter',
                 ],
               },
               read: 'all',

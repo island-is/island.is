@@ -93,10 +93,14 @@ export const CREATE_TRAVEL_BAN_ROUTE = '/krafa/ny/farbann'
 export const CREATE_INVESTIGATION_CASE_ROUTE = '/krafa/ny/rannsoknarheimild'
 export const CREATE_INDICTMENT_ROUTE = '/akaera/ny'
 
-export const DEFENDER_ROUTE = '/verjandi'
+export const DEFENDER_ROUTE = '/verjandi/krafa'
+export const DEFENDER_INDICTMENT_ROUTE = '/verjandi/akaera'
 export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
+export const DEFENDER_STATEMENT_ROUTE = '/verjandi/greinargerd'
+export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
 
 export const APPEAL_ROUTE = '/kaera'
+export const STATEMENT_ROUTE = '/greinargerd'
 
 /* PROSECUTOR ROUTES START */
 export const RESTRICTION_CASE_DEFENDANT_ROUTE = '/krafa/sakborningur'
@@ -155,13 +159,17 @@ export const INDICTMENTS_COURT_OVERVIEW_ROUTE = '/domur/akaera/yfirlit'
 export const INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE =
   '/domur/akaera/mottaka'
 export const INDICTMENTS_SUBPOENA_ROUTE = '/domur/akaera/fyrirkall'
-export const INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE =
-  '/domur/akaera/malflytjendur'
+export const INDICTMENTS_DEFENDER_ROUTE = '/domur/akaera/malflytjendur'
 export const INDICTMENTS_COURT_RECORD_ROUTE = '/domur/akaera/thingbok'
 /* COURT ROUTES END */
 
 /* COURT OF APPEAL ROUTES START */
-export const COURT_OF_APPEAL_OVERVIEW = '/landsrettur/yfirlit'
+export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
+export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
+export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
+export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
+export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
+
 /* COURT OF APPEAL ROUTES END */
 
 export const prosecutorRestrictionCasesRoutes = [
@@ -205,8 +213,8 @@ export const courtInvestigationCasesRoutes = [
   INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
   INVESTIGATION_CASE_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
-  INVESTIGATION_CASE_COURT_RECORD_ROUTE,
   INVESTIGATION_CASE_RULING_ROUTE,
+  INVESTIGATION_CASE_COURT_RECORD_ROUTE,
   INVESTIGATION_CASE_CONFIRMATION_ROUTE,
 ]
 
@@ -214,11 +222,16 @@ export const courtIndictmentRoutes = [
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE,
   INDICTMENTS_SUBPOENA_ROUTE,
-  INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+  INDICTMENTS_DEFENDER_ROUTE,
   INDICTMENTS_COURT_RECORD_ROUTE,
 ]
 
-export const courtOfAppealRoutes = [COURT_OF_APPEAL_OVERVIEW]
+export const courtOfAppealRoutes = [
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_CASE_ROUTE,
+  COURT_OF_APPEAL_RULING_ROUTE,
+  COURT_OF_APPEAL_RESULT_ROUTE,
+]
 
 // Feedback
 export const FEEDBACK_FORM_URL =

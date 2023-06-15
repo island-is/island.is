@@ -20,11 +20,11 @@ import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
   EXPIRES_IN_MILLISECONDS,
-  DEFENDER_ROUTE,
   CASES_ROUTE,
   USERS_ROUTE,
+  COURT_OF_APPEAL_CASES_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { UserRole } from '@island.is/judicial-system/types'
+import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
 import { SharedAuthService } from '@island.is/judicial-system/auth'
 import {
   AuditedAction,
@@ -170,6 +170,7 @@ export class AuthController {
     requestedRedirectRoute: string,
   ) {
     const user = await this.authService.findUser(authUser.nationalId)
+
     if (user && this.authService.validateUser(user)) {
       return {
         userId: user.id,
@@ -178,13 +179,12 @@ export class AuthController {
           ? requestedRedirectRoute
           : user.role === UserRole.ADMIN
           ? USERS_ROUTE
+          : user.institution?.type === InstitutionType.HIGH_COURT
+          ? COURT_OF_APPEAL_CASES_ROUTE
           : CASES_ROUTE,
       }
-    } else if (requestedRedirectRoute?.startsWith(`${DEFENDER_ROUTE}/`)) {
-      const defender = await this.authService.findDefender(
-        requestedRedirectRoute.split('/').pop() || '',
-        authUser.nationalId,
-      )
+    } else {
+      const defender = await this.authService.findDefender(authUser.nationalId)
 
       if (defender && this.authService.validateUser(defender)) {
         return {

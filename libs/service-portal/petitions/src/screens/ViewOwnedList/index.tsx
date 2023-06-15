@@ -14,10 +14,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { m } from '../../lib/messages'
-import {
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '../../types/schema'
 import PetitionsTable from '../PetitionsTable'
 import { CloseList, OpenList } from '../queries'
 
@@ -27,24 +23,33 @@ import {
   useGetSinglePetition,
   useGetSinglePetitionEndorsements,
 } from '../hooks'
+import {
+  PaginatedEndorsementResponse,
+  EndorsementList,
+} from '@island.is/api/schema'
 
 const ViewOwnedList = () => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
-  const location: any = useLocation()
-  const listId = location.pathname.replace('/min-gogn/listar/minn-listi/', '')
+  const { pathname } = useLocation()
+  const listId = pathname.replace('/min-gogn/listar/minn-listi/', '')
 
   const { petitionData, refetchSinglePetition } = useGetSinglePetition(listId)
+
   const petition = petitionData as EndorsementList
 
   const [closeList, { loading: closeLoading }] = useMutation(CloseList, {
     onCompleted: () => {
-      refetchSinglePetition()
+      refetchSinglePetition().then(() => {
+        setModalIsOpen(false)
+      })
     },
   })
   const [openList, { loading: openLoading }] = useMutation(OpenList, {
     onCompleted: () => {
-      refetchSinglePetition()
+      refetchSinglePetition().then(() => {
+        setModalIsOpen(false)
+      })
     },
   })
 
@@ -52,7 +57,7 @@ const ViewOwnedList = () => {
     new Date() <= new Date(petition?.closedDate),
   )
 
-  const [modalIsOpen] = useState(false)
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const [selectedDateToOpenList, setSelectedDateToOpenList] = useState(
     isListOpen ? new Date(petition?.closedDate) : undefined,
   )
@@ -108,8 +113,10 @@ const ViewOwnedList = () => {
           <Columns>
             <Column width="11/12">
               <Stack space={2}>
-                <Text variant="h3">{petition?.title}</Text>
-                <Text>{petition?.description as string}</Text>
+                <Box>
+                  <Text variant="h3">{petition?.title}</Text>
+                  <Text>{petition?.description as string}</Text>
+                </Box>
                 <Box
                   display={['block', 'flex']}
                   justifyContent="spaceBetween"
@@ -151,6 +158,7 @@ const ViewOwnedList = () => {
                     placeholderText={formatMessage(m.selectDate)}
                     selected={selectedDateToOpenList}
                     handleChange={(date) => setSelectedDateToOpenList(date)}
+                    minDate={new Date()}
                   />
                   <Box display={'flex'}>
                     <Box marginX={3}>
@@ -174,6 +182,7 @@ const ViewOwnedList = () => {
                           colorScheme="destructive"
                           variant="ghost"
                           iconType="outline"
+                          onClick={() => setModalIsOpen(true)}
                         >
                           {formatMessage(m.stopSignatureCollection)}
                         </Button>
@@ -187,7 +196,10 @@ const ViewOwnedList = () => {
                         display="flex"
                         justifyContent="spaceBetween"
                       >
-                        <Button variant="ghost">
+                        <Button
+                          variant="ghost"
+                          onClick={() => setModalIsOpen(false)}
+                        >
                           {formatMessage(m.modalButtonNo)}
                         </Button>
                         <Button
@@ -195,7 +207,7 @@ const ViewOwnedList = () => {
                           disabled={!selectedDateToOpenList}
                           loading={closeLoading}
                         >
-                          {formatMessage(m.modalButtonYes)}
+                          {formatMessage(m.modalButtonCloseListYes)}
                         </Button>
                       </Box>
                     </Modal>
@@ -220,7 +232,11 @@ const ViewOwnedList = () => {
                       toggleClose={false}
                       initialVisibility={false}
                       disclosure={
-                        <Button icon="reload" variant="ghost">
+                        <Button
+                          icon="reload"
+                          variant="ghost"
+                          onClick={() => setModalIsOpen(true)}
+                        >
                           {formatMessage(m.restartList)}
                         </Button>
                       }
@@ -234,6 +250,8 @@ const ViewOwnedList = () => {
                         </Text>
                         <DatePicker
                           label={formatMessage(m.date)}
+                          locale="is"
+                          minDate={new Date()}
                           placeholderText={formatMessage(m.selectDate)}
                           handleChange={(date) =>
                             setSelectedDateToOpenList(date)
@@ -245,7 +263,10 @@ const ViewOwnedList = () => {
                         display="flex"
                         justifyContent="spaceBetween"
                       >
-                        <Button variant="ghost">
+                        <Button
+                          variant="ghost"
+                          onClick={() => setModalIsOpen(false)}
+                        >
                           {formatMessage(m.modalButtonNo)}
                         </Button>
                         <Button
@@ -253,7 +274,7 @@ const ViewOwnedList = () => {
                           disabled={!selectedDateToOpenList}
                           loading={openLoading}
                         >
-                          {formatMessage(m.modalButtonYes)}
+                          {formatMessage(m.modalButtonOpenListYes)}
                         </Button>
                       </Box>
                     </Modal>
@@ -264,7 +285,10 @@ const ViewOwnedList = () => {
           </Box>
 
           <PetitionsTable
-            petitions={petitionEndorsements}
+            petition={petition}
+            petitionSigners={
+              petitionEndorsements as PaginatedEndorsementResponse
+            }
             listId={listId}
             canEdit={true}
           />

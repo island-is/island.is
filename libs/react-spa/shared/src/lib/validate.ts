@@ -149,15 +149,10 @@ type ValidateFormDataArgs<Schema> = {
   schema: Schema
 }
 
-type ValidateFormDataReturnType<Schema extends z.ZodTypeAny> = {
-  errors: Partial<z.infer<Schema>> | null
-  data: z.infer<Schema> | null
-}
-
 export async function validateFormData<Schema extends z.ZodTypeAny>({
   formData,
   schema,
-}: ValidateFormDataArgs<Schema>): Promise<ValidateFormDataReturnType<Schema>> {
+}: ValidateFormDataArgs<Schema>): Promise<ValidateFormDataResult<Schema>> {
   type InferredSchema = z.infer<typeof schema>
 
   const values = getValuesFromFormData(formData)
@@ -180,6 +175,7 @@ export async function validateFormData<Schema extends z.ZodTypeAny>({
 /**
  * Get the return type of validateFormData for a given schema
  */
-export type ValidateFormDataResult<
-  Schema extends z.ZodTypeAny
-> = ValidateFormDataReturnType<Schema>
+export type ValidateFormDataResult<Schema extends z.ZodTypeAny> = {
+  errors: Partial<z.infer<Schema>> | null
+  data: z.infer<Schema> | null
+}

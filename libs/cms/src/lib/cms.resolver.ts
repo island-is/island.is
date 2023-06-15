@@ -41,6 +41,7 @@ import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
+import { PowerBiService } from './powerbi.service'
 import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { GetArticlesInput } from './dto/getArticles.input'
@@ -95,6 +96,8 @@ import { TabSection } from './models/tabSection.model'
 import { GenericTag } from './models/genericTag.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { FeaturedSupportQNAs } from './models/featuredSupportQNAs.model'
+import { PowerBiSlice } from './models/powerBiSlice.model'
+import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPropsFromServer.response'
 
 const { cacheTime } = environment
 
@@ -607,5 +610,17 @@ export class FeaturedSupportQNAsResolver {
       getElasticsearchIndex(input.lang),
       input,
     )
+  }
+}
+
+@Resolver(() => PowerBiSlice)
+export class PowerBiSliceResolver {
+  constructor(private powerBiService: PowerBiService) {}
+
+  @ResolveField(() => GetPowerBiEmbedPropsFromServerResponse, {
+    nullable: true,
+  })
+  async powerBiEmbedPropsFromServer(@Parent() powerBiSlice: PowerBiSlice) {
+    return this.powerBiService.getEmbedProps(powerBiSlice)
   }
 }

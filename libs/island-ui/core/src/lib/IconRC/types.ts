@@ -28,3 +28,7 @@ export interface SvgProps {
   fill?: string
   color?: string
 }
+
+export interface PlaceholderProps
+  extends Pick<IconProps, 'skipPlaceholderSize' | 'className'>,
+    Required<Pick<IconProps, 'size'>> {}

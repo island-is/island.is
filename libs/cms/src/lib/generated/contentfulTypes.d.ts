@@ -1500,8 +1500,11 @@ export interface ILifeEventPageFields {
   /** see more text */
   seeMoreText?: string | undefined
 
-  /** Page Type */
+  /** page type */
   pageType?: 'Life Event' | 'Digital Iceland Service' | undefined
+
+  /** featured image */
+  featuredImage?: Asset | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -1964,6 +1967,9 @@ export interface INewsFields {
 
   /** Initial Publish Date */
   initialPublishDate?: string | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2224,6 +2230,9 @@ export interface IOrganizationFields {
 
   /** Has A Landing Page */
   hasALandingPage?: boolean | undefined
+
+  /** Plausible Tracking Domain */
+  trackingDomain?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -2347,6 +2356,7 @@ export interface IOrganizationPageFields {
     | 'sak'
     | 'gev'
     | 'hve'
+    | 'shh'
 
   /** Theme Properties */
   themeProperties?: Record<string, any> | undefined
@@ -2604,6 +2614,7 @@ export interface IProcessEntryFields {
     | 'Drop and sign'
     | 'Paper'
     | 'Ísland.is mínar síður'
+    | 'Umsoknarkerfi'
 
   /** Process title */
   processTitle: string
@@ -2719,6 +2730,8 @@ export interface IProjectPageFields {
         | IOneColumnText
         | ITimeline
         | ITwoColumnText
+        | ITabSection
+        | ISliceConnectedComponent
       )[]
     | undefined
 
@@ -2786,6 +2799,9 @@ export interface IProjectSubpageFields {
         | ITwoColumnText
       )[]
     | undefined
+
+  /** Bottom Slices */
+  bottomSlices?: IPowerBiSlice[] | undefined
 }
 
 export interface IProjectSubpage extends Entry<IProjectSubpageFields> {
@@ -2975,6 +2991,34 @@ export interface ISliceConnectedComponent
     contentType: {
       sys: {
         id: 'sliceConnectedComponent'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISliceDropdownFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Dropdown Label */
+  dropdownLabel?: string | undefined
+
+  /** Slices */
+  slices?: IOneColumnText[] | undefined
+}
+
+export interface ISliceDropdown extends Entry<ISliceDropdownFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sliceDropdown'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -3511,6 +3555,9 @@ export interface ITeamMemberFields {
 
   /** Mynd */
   mynd: Asset
+
+  /** Image On Select */
+  imageOnSelect?: Asset | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {
@@ -4088,6 +4135,7 @@ export type CONTENT_TYPE =
   | 'sectionWithImage'
   | 'sidebarCard'
   | 'sliceConnectedComponent'
+  | 'sliceDropdown'
   | 'statistic'
   | 'statistics'
   | 'statisticsCard'

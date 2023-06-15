@@ -270,12 +270,11 @@ export const sections = {
       description:
         'Notaður sem texti fyrir Fyrirkall skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
-    prosecutorAndDefender: {
-      id:
-        'judicial.system.core:sections.indictments_court_section.prosecutor_and_defender',
-      defaultMessage: 'Málflytjendur',
+    defender: {
+      id: 'judicial.system.core:sections.indictments_court_section.defender_v1',
+      defaultMessage: 'Verjandi',
       description:
-        'Notaður sem texti fyrir Málflytjendur skref í hliðarstiku í ákærum hjá héraðsdómum',
+        'Notaður sem texti fyrir Verjenda skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
     courtRecord: {
       id:
@@ -376,7 +375,7 @@ export const sections = {
         'Notaður sem texti í skrefum á hliðarstiku þegar krafa er kærð',
     },
     result: {
-      id: 'judicial.system.core:sections.court_of_appeal_section.appealed',
+      id: 'judicial.system.core:sections.court_of_appeal_section.result',
       defaultMessage: 'Úrskurður Landsréttar',
       description: 'Notaður sem texti í skrefum á hliðarstiku Landsréttar',
     },

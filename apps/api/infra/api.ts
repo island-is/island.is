@@ -1,34 +1,34 @@
 import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { settings } from '../../../infra/src/dsl/settings'
 import {
+  AdrAndMachine,
   Base,
+  ChargeFjsV2,
   Client,
+  CriminalRecord,
+  Disability,
   DrivingLicense,
+  DrivingLicenseBook,
   Education,
   Finance,
+  Firearm,
+  FishingLicense,
   HealthInsurance,
+  JudicialAdministration,
   Labor,
+  MunicipalitiesFinancialAid,
   NationalRegistry,
   Passports,
   Payment,
-  Properties,
   PaymentSchedule,
-  CriminalRecord,
+  Properties,
   RskCompanyInfo,
-  DrivingLicenseBook,
-  FishingLicense,
-  MunicipalitiesFinancialAid,
-  Vehicles,
-  AdrAndMachine,
-  JudicialAdministration,
-  Firearm,
-  Disability,
-  VehicleServiceFjsV1,
   TransportAuthority,
-  ChargeFjsV2,
   UniversityOfIceland,
+  Vehicles,
+  VehicleServiceFjsV1,
+  IcelandicGovernmentInstitutionVacancies,
 } from '../../../infra/src/dsl/xroad'
-import { settings } from '../../../infra/src/dsl/settings'
-import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
@@ -126,12 +126,12 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       REGULATIONS_ADMIN_URL: ref(
-        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
-      XROAD_PROPERTIES_TIMEOUT: '20000',
+      XROAD_PROPERTIES_TIMEOUT: '35000',
       SYSLUMENN_TIMEOUT: '40000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
@@ -175,7 +175,7 @@ export const serviceSetup = (services: {
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
-        prod: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi.island.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
@@ -200,6 +200,11 @@ export const serviceSetup = (services: {
           staging: 'https://identity-server.staging01.devland.is/backend',
           production: 'https://innskra.island.is/backend',
         }),
+      },
+      AUTH_IDS_API_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
       },
     })
 
@@ -256,6 +261,11 @@ export const serviceSetup = (services: {
       MACHINE_LICENSE_PASS_TEMPLATE_ID:
         '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID',
       ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID',
+      ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT',
+      DRIVING_LICENSE_FETCH_TIMEOUT: '/k8s/api/DRIVING_LICENSE_FETCH_TIMEOUT',
+      FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
+      DISABILITY_LICENSE_FETCH_TIMEOUT:
+        '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -282,6 +292,12 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
       HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
       HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET',
+      DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY:
+        '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_RSA_KEY',
+      DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY:
+        '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY',
+      DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY:
+        '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -310,6 +326,7 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       UniversityOfIceland,
+      IcelandicGovernmentInstitutionVacancies,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

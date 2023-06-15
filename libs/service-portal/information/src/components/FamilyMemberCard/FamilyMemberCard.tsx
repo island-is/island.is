@@ -6,6 +6,7 @@ import {
 } from '@island.is/service-portal/core'
 import React, { FC, useEffect, useState } from 'react'
 import { ActionCard } from '@island.is/service-portal/core'
+import { spmm } from '../../lib/messages'
 
 interface Props {
   title: string
@@ -85,6 +86,7 @@ export const FamilyMemberCard: FC<Props> = ({
   return (
     <ActionCard
       image={{ type: 'avatar' }}
+      translateLabel="no"
       heading={title}
       text={
         nationalId &&
@@ -99,10 +101,7 @@ export const FamilyMemberCard: FC<Props> = ({
             }
       }
       cta={{
-        label: formatMessage({
-          id: 'sp.family:see-info',
-          defaultMessage: 'Skoða nánar',
-        }),
+        label: formatMessage(spmm.seeInfo),
         variant: 'text',
         url: getUrl(),
       }}

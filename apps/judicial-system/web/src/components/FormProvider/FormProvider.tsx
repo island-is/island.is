@@ -1,15 +1,22 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
 
 import { CaseState, Defendant } from '@island.is/judicial-system/types'
-import { DEFENDER_ROUTE, USERS_ROUTE } from '@island.is/judicial-system/consts'
+import { USERS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   CaseOrigin,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
+import { UserContext } from '../UserProvider/UserProvider'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
 import CaseQuery from './caseGql'
 
@@ -38,8 +45,8 @@ const initialState: Case = {
   id: '',
   created: '',
   modified: '',
-  origin: CaseOrigin.Unknown,
-  type: CaseType.Custody,
+  origin: CaseOrigin.UNKNOWN,
+  type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumbers: [],
   defendants: [{ id: '', noNationalId: false } as Defendant],
@@ -67,19 +74,19 @@ const MaybeFormProvider = ({ children }: Props) => {
 }
 
 const FormProvider = ({ children }: Props) => {
+  const { limitedAccess } = useContext(UserContext)
   const router = useRouter()
-  const limitedAccess = router.pathname.includes(DEFENDER_ROUTE)
   const id = router.query.id
 
   const caseType = router.pathname.includes('farbann')
-    ? CaseType.TravelBan
+    ? CaseType.TRAVEL_BAN
     : router.pathname.includes('gaesluvardhald')
-    ? CaseType.Custody
+    ? CaseType.CUSTODY
     : router.pathname.includes('akaera')
-    ? CaseType.Indictment
+    ? CaseType.INDICTMENT
     : // This is a random case type for the default value.
       // It is updated when the case is created.
-      CaseType.Other
+      CaseType.OTHER
 
   const [state, setState] = useState<ProviderState>()
   const [caseId, setCaseId] = useState<string>()
@@ -87,7 +94,7 @@ const FormProvider = ({ children }: Props) => {
   const [workingCase, setWorkingCase] = useState<Case>({
     ...initialState,
     type: caseType,
-    policeCaseNumbers: caseType === CaseType.Indictment ? [''] : [],
+    policeCaseNumbers: caseType === CaseType.INDICTMENT ? [''] : [],
   })
 
   // Used in exported indicators

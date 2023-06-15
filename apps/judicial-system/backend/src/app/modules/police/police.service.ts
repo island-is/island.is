@@ -21,14 +21,12 @@ import {
 import {
   CaseState,
   CaseType,
-  IndictmentSubtype,
   isIndictmentCase,
-  User as TUser,
 } from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
-import { User } from '../user'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
@@ -64,7 +62,7 @@ export class PoliceService {
 
   private async fetchPoliceDocumentApi(url: string): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
-      throw 'Police document API not available'
+      throw new ServiceUnavailableException('Police document API not available')
     }
 
     return fetch(url, {
@@ -81,7 +79,7 @@ export class PoliceService {
     requestInit: RequestInit,
   ): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
-      throw 'Police case API not available'
+      throw new ServiceUnavailableException('Police case API not available')
     }
 
     return fetch(url, requestInit)
@@ -91,7 +89,7 @@ export class PoliceService {
     caseId: string,
     caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-    user: TUser,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
@@ -158,7 +156,7 @@ export class PoliceService {
 
   async getAllPoliceCaseFiles(
     caseId: string,
-    user: TUser,
+    user: User,
   ): Promise<PoliceCaseFile[]> {
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/GetDocumentListById/${caseId}`,
@@ -227,7 +225,7 @@ export class PoliceService {
     caseId: string,
     caseType: CaseType,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
-    user: TUser,
+    user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
@@ -242,35 +240,71 @@ export class PoliceService {
   async updatePoliceCase(
     user: User,
     caseId: string,
-    caseType: CaseType | IndictmentSubtype,
+    caseType: CaseType,
     caseState: CaseState,
-    courtRecordPdf: string,
     policeCaseNumber: string,
-    defendantNationalIds?: string[],
-    caseConclusion?: string,
+    defendantNationalId: string,
+    validToDate: Date,
+    caseConclusion: string,
+    requestPdf: string,
+    courtRecordPdf: string,
+    rulingPdf: string,
+    custodyNoticePdf?: string,
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
-      method: 'PUT',
-      headers: {
-        accept: '*/*',
-        'Content-Type': 'application/json',
-        'X-Road-Client': this.config.clientId,
-        'X-API-KEY': this.config.policeApiKey,
-      },
-      agent: this.agent,
-      body: JSON.stringify({
-        rvMal_ID: caseId,
-        caseNumber: policeCaseNumber,
-        ssn:
-          defendantNationalIds && defendantNationalIds[0]
-            ? defendantNationalIds[0].replace('-', '')
-            : '',
-        type: caseType,
-        courtVerdict: caseState,
-        courtVerdictString: caseConclusion,
-        courtDocument: Base64.btoa(courtRecordPdf),
-      }),
-    } as RequestInit)
+    const promise = this.config.policeCaseApiV2Available
+      ? this.fetchPoliceCaseApi(`${this.xRoadPath}/V2/UpdateRVCase/${caseId}`, {
+          method: 'PUT',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+          body: JSON.stringify({
+            rvMal_ID: caseId,
+            caseNumber: policeCaseNumber,
+            ssn: defendantNationalId,
+            type: caseType,
+            courtVerdict: caseState,
+            expiringDate: validToDate?.toISOString(),
+            courtVerdictString: caseConclusion,
+            courtDocuments: [
+              { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
+              { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
+              { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+              ...(custodyNoticePdf
+                ? [
+                    {
+                      type: 'RVVI',
+                      courtDocument: Base64.btoa(custodyNoticePdf),
+                    },
+                  ]
+                : []),
+            ],
+          }),
+        } as RequestInit)
+      : this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
+          method: 'PUT',
+          headers: {
+            accept: '*/*',
+            'Content-Type': 'application/json',
+            'X-Road-Client': this.config.clientId,
+            'X-API-KEY': this.config.policeApiKey,
+          },
+          agent: this.agent,
+          body: JSON.stringify({
+            rvMal_ID: caseId,
+            caseNumber: policeCaseNumber,
+            ssn: defendantNationalId,
+            type: caseType,
+            courtVerdict: caseState,
+            courtVerdictString: caseConclusion,
+            courtDocument: Base64.btoa(courtRecordPdf),
+          }),
+        } as RequestInit)
+
+    return promise
       .then(async (res) => {
         if (res.ok) {
           return true

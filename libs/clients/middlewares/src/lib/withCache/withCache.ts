@@ -150,7 +150,7 @@ export function withCache({
       return
     }
 
-    const ttl = Math.round(cacheResponse.policy.timeToLive() / 1000)
+    const ttl = cacheResponse.policy.timeToLive()
     if (ttl <= 0) {
       cacheResponse.cacheStatus.stored = false
       debugLog('Not storing', cacheResponse)
@@ -165,9 +165,7 @@ export function withCache({
 
     cacheResponse.cacheStatus.stored = true
     debugLog('Storing', cacheResponse)
-    await cacheManager.set(cacheKey, entry, {
-      ttl,
-    })
+    await cacheManager.set(cacheKey, entry, ttl)
   }
 
   /**

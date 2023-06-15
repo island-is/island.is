@@ -19,6 +19,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
+import { JA, NEI, YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
@@ -72,12 +73,40 @@ export const overview = buildSection({
                     ? formatNationalId(member.nationalId)
                     : member.dateOfBirth,
                   member.relation,
+                  formatPhoneNumber(member.phone || ''),
+                  member.email,
                 ],
               })),
           },
         ),
+        buildKeyValueField({
+          label: m.doesWillExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.wills') === YES
+              ? JA
+              : NEI,
+          width: 'half',
+        }),
+        buildKeyValueField({
+          label: m.doesAgreementExist,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.agreement') === YES
+              ? JA
+              : NEI,
+          width: 'half',
+        }),
         buildDescriptionField({
           id: 'space1',
+          title: '',
+          space: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.additionalInfo,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.additionalInfo'),
+        }),
+        buildDescriptionField({
+          id: 'space2',
           title: '',
           space: 'gutter',
         }),
@@ -106,6 +135,11 @@ export const overview = buildSection({
                 title: asset.description,
                 description: [
                   `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (asset.marketValue
+                      ? formatCurrency(asset.marketValue)
+                      : '0 kr.'),
                 ],
               })),
           },
@@ -157,7 +191,7 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.vehicles.filter(
+                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
                   (vehicle) => vehicle.enabled,
                 ) ?? []
               ).map((vehicle) => ({
@@ -175,23 +209,23 @@ export const overview = buildSection({
         ),
         buildDividerField({}),
         buildDescriptionField({
-          id: 'overviewFirearms',
-          title: m.firearms,
-          description: m.firearmsDescription,
+          id: 'overviewGuns',
+          title: m.guns,
+          description: m.gunsDescription,
           titleVariant: 'h3',
           space: 'gutter',
         }),
         buildCustomField(
           {
             title: '',
-            id: 'estateFirearmsCards',
+            id: 'estateGunsCards',
             component: 'Cards',
             doesNotRequireAnswer: true,
           },
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo)?.guns.filter(
+                ((answers.estate as unknown) as EstateInfo)?.guns?.filter(
                   (guns) => guns.enabled,
                 ) ?? []
               ).map((gun) => ({
@@ -397,6 +431,9 @@ export const overview = buildSection({
                     `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
                       debt.nationalId ?? '',
                     )}`,
+                    `${m.debtsLoanIdentity.defaultMessage}: ${
+                      debt.loanIdentity ?? ''
+                    }`,
                     `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                       debt.balance ?? '',
                     )}`,
@@ -414,29 +451,27 @@ export const overview = buildSection({
         buildDescriptionField({
           id: 'overviewRepresentativeTitle',
           title: m.representativeTitle,
-          description: m.representativeDescription,
           titleVariant: 'h3',
           marginBottom: 'gutter',
-        }),
-        buildKeyValueField({
-          width: 'half',
-          label: m.name,
-          value: ({ answers }) =>
-            getValueViaPath<string>(
-              answers,
-              'representative.representativeName',
-            ),
         }),
         buildKeyValueField({
           width: 'half',
           label: m.nationalId,
           value: ({ answers }) =>
             formatNationalId(
-              getValueViaPath<string>(
-                answers,
-                'representative.representativeNationalId',
-              ) ?? '',
+              getValueViaPath<string>(answers, 'representative.nationalId') ??
+                '',
             ),
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.nationalId'),
+        }),
+        buildKeyValueField({
+          width: 'half',
+          label: m.name,
+          value: ({ answers }) =>
+            getValueViaPath<string>(answers, 'representative.name'),
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.name'),
         }),
         buildDescriptionField({
           id: 'space4',
@@ -448,20 +483,18 @@ export const overview = buildSection({
           label: m.phone,
           value: ({ answers }) =>
             formatPhoneNumber(
-              getValueViaPath<string>(
-                answers,
-                'representative.representativePhoneNumber',
-              ) ?? '',
+              getValueViaPath<string>(answers, 'representative.phone') ?? '',
             ),
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.phone'),
         }),
         buildKeyValueField({
           width: 'half',
           label: m.email,
           value: ({ answers }) =>
-            getValueViaPath<string>(
-              answers,
-              'representative.representativeEmail',
-            ),
+            getValueViaPath<string>(answers, 'representative.email'),
+          condition: (answers) =>
+            !!getValueViaPath<string>(answers, 'representative.email'),
         }),
       ],
     }),

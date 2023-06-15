@@ -1,6 +1,8 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -12,6 +14,8 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
+import { testamentInfo } from '../sharedSections/testamentInfo'
+import { UPLOAD_ACCEPT, YES } from '../../lib/constants'
 
 export const form: Form = buildForm({
   id: 'permitToPostponeEstateDivisionForm',
@@ -24,27 +28,31 @@ export const form: Form = buildForm({
     announcerInfo,
     buildSection({
       id: 'estateMembersInfo',
-      title: m.estateMembersTitle,
+      title: m.estateMembers,
       children: [
         buildMultiField({
           id: 'estateMembersInfo',
-          title: m.estateMembersTitle,
+          title: m.estateMembers,
           description: m.estateMembersSubtitle,
           children: [
-            buildDescriptionField({
-              id: 'membersOfEstateTitle',
-              title: m.estateMembers,
-              description: m.estateMembersHeaderDescription,
-              titleVariant: 'h3',
-            }),
             buildCustomField({
               title: '',
               id: 'estate.estateMembers',
               component: 'EstateMembersRepeater',
             }),
+            buildDescriptionField({
+              id: 'space0',
+              title: '',
+              space: 'containerGutter',
+            }),
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'testamentInfo',
+      title: m.willsAndAgreements,
+      children: [testamentInfo],
     }),
     buildSection({
       id: 'estateProperties',
@@ -121,11 +129,57 @@ export const form: Form = buildForm({
                   description: m.vehiclesDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.vehicles',
-                  component: 'VehiclesRepeater',
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.vehicles',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'vehicles',
+                    texts: {
+                      assetTitle: m.vehiclesTitle,
+                      assetNumber: m.vehicleNumberLabel,
+                      assetType: m.vehicleTypeLabel,
+                      addAsset: m.addVehicle,
+                    },
+                  },
+                ),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'guns',
+          title: m.guns,
+          children: [
+            buildMultiField({
+              id: 'realEstate',
+              title: m.propertiesTitle,
+              description: m.propertiesDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'gunsTitle',
+                  title: m.guns,
+                  description: m.gunsDescription,
+                  titleVariant: 'h3',
                 }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.guns',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'guns',
+                    texts: {
+                      assetTitle: m.gunTitle,
+                      assetNumber: m.gunNumberLabel,
+                      assetType: m.gunTypeLabel,
+                      addAsset: m.addGun,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -259,7 +313,7 @@ export const form: Form = buildForm({
                       {
                         title: m.stocksValue.defaultMessage,
                         id: 'value',
-                        color: 'white',
+                        backgroundColor: 'white',
                         readOnly: true,
                       },
                     ],
@@ -364,6 +418,10 @@ export const form: Form = buildForm({
                     format: '######-####',
                   },
                   {
+                    title: m.debtsLoanIdentity.defaultMessage,
+                    id: 'loanIdentity',
+                  },
+                  {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
                     currency: true,
@@ -373,6 +431,26 @@ export const form: Form = buildForm({
                 repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
               },
             ),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'estateAttachments',
+      title: m.attachmentsTitle,
+      children: [
+        buildMultiField({
+          id: 'estateAttachments',
+          title: m.attachmentsTitle,
+          description: m.attachmentsDescription,
+          children: [
+            buildFileUploadField({
+              id: 'estateAttachments.attached.file',
+              title: m.attachmentsTitle,
+              uploadAccept: UPLOAD_ACCEPT,
+              uploadHeader: m.uploadHeader,
+              uploadButtonLabel: m.attachmentsButton,
+            }),
           ],
         }),
       ],

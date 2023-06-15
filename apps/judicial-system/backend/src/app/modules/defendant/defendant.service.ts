@@ -10,18 +10,17 @@ import { InjectModel } from '@nestjs/sequelize'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
-  CaseState,
-  CaseType,
-  isIndictmentCase,
-  User as TUser,
-} from '@island.is/judicial-system/types'
-import {
   CaseMessage,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
+import {
+  CaseState,
+  CaseType,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
+import type { User } from '@island.is/judicial-system/types'
 
-import { User } from '../user'
 import { CourtService } from '../court'
 import { Case } from '../case/models/case.model'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
@@ -39,25 +38,25 @@ export class DefendantService {
   ) {}
 
   private getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
-    caseId: string,
-    userId: string,
+    theCase: Case,
+    user: User,
   ): CaseMessage {
     return {
       type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
-      caseId,
-      userId,
+      user,
+      caseId: theCase.id,
     }
   }
 
   private getMessageForDeliverDefendantToCourt(
     defendant: Defendant,
-    user: TUser,
+    user: User,
   ): CaseMessage {
     const message = {
       type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+      user,
       caseId: defendant.caseId,
       defendantId: defendant.id,
-      userId: user.id,
     }
 
     return message
@@ -97,7 +96,7 @@ export class DefendantService {
   async create(
     theCase: Case,
     defendantToCreate: CreateDefendantDto,
-    user: TUser,
+    user: User,
   ): Promise<Defendant> {
     const defendant = await this.defendantModel.create({
       ...defendantToCreate,
@@ -109,8 +108,8 @@ export class DefendantService {
       // Attempt to add the new defendant, but also ask the court to verify defendants.
       await this.messageService.sendMessagesToQueue([
         this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase.id,
-          user.id,
+          theCase,
+          user,
         ),
         this.getMessageForDeliverDefendantToCourt(defendant, user),
       ])
@@ -146,7 +145,7 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
-    user: TUser,
+    user: User,
   ): Promise<Defendant> {
     const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
       update,
@@ -173,8 +172,8 @@ export class DefendantService {
       // Attempt to add the new defendant, but also ask the court to verify defendants.
       await this.messageService.sendMessagesToQueue([
         this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase.id,
-          user.id,
+          theCase,
+          user,
         ),
         this.getMessageForDeliverDefendantToCourt(defendant, user),
       ])
@@ -208,7 +207,7 @@ export class DefendantService {
       // Ask the court to verify defendants.
       await this.messageService.sendMessagesToQueue([
         this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase.id,
+          theCase,
           user.id,
         ),
       ])
@@ -244,6 +243,25 @@ export class DefendantService {
     return defendantsInCustody.some((d) => d.case)
   }
 
+  findLatestDefendantByDefenderNationalId(
+    nationalId: string,
+  ): Promise<Defendant | null> {
+    return this.defendantModel.findOne({
+      include: [
+        {
+          model: Case,
+          as: 'case',
+          where: {
+            state: { [Op.not]: CaseState.DELETED },
+            isArchived: false,
+          },
+        },
+      ],
+      where: { defenderNationalId: nationalId },
+      order: [['created', 'DESC']],
+    })
+  }
+
   async deliverDefendantToCourt(
     theCase: Case,
     defendant: Defendant,
@@ -256,8 +274,8 @@ export class DefendantService {
     ) {
       await this.messageService.sendMessagesToQueue([
         this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase.id,
-          user.id,
+          theCase,
+          user,
         ),
       ])
 

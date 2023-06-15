@@ -52,6 +52,15 @@ const ApplicationList = ({
     )
   }
 
+  const onApplicationDelete = () => {
+    if ((applications.length - 1) % pageSize === 0 && page > 1) {
+      setPage(page - 1)
+    }
+    if (refetch) {
+      refetch()
+    }
+  }
+
   return (
     <>
       <Stack space={2}>
@@ -63,7 +72,7 @@ const ApplicationList = ({
               application={application}
               focused={focus}
               logo={getLogo(application.typeId)}
-              onDelete={refetch}
+              onDelete={onApplicationDelete}
               onClick={onClick}
             />
           ))}

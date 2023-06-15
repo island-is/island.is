@@ -14,11 +14,13 @@ import { educationLicenseNavigation } from '@island.is/service-portal/education-
 import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
 import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
 import { airDiscountNavigation } from '@island.is/service-portal/air-discount'
+import { healthNavigation } from '@island.is/service-portal/health'
 import {
   delegationsNavigation,
   delegationsNavigationChildren,
 } from '@island.is/portals/shared-modules/delegations'
 import { sessionsNavigation } from '@island.is/service-portal/sessions'
+import { consentNavigation } from '@island.is/service-portal/consent'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -44,9 +46,14 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     financeNavigation,
     vehiclesNavigation,
     airDiscountNavigation,
+    healthNavigation,
     {
       ...delegationsNavigation,
-      children: [...delegationsNavigationChildren, sessionsNavigation],
+      children: [
+        ...delegationsNavigationChildren,
+        sessionsNavigation,
+        consentNavigation,
+      ],
     },
   ],
 }

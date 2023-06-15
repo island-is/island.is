@@ -7,14 +7,16 @@ import {
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
+import { Audit } from '@island.is/nest/audit'
 
 @Resolver(() => DocumentInfoResult)
 @UseGuards(FeatureFlagGuard)
+@FeatureFlag(Features.consultationPortalApplication)
+@Audit({ namespace: '@island.is/samradsgatt' })
 export class DocumentResolver {
   constructor(private documentService: DocumentService) {}
 
   @Query(() => [DocumentInfoResult], { name: 'consultationPortalDocument' })
-  @FeatureFlag(Features.consultationPortalApplication)
   async getCaseDocument(@Args('documentId') documentId: string): Promise<void> {
     return this.documentService.getCaseDocument(documentId)
   }
