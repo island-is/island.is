@@ -180,7 +180,7 @@ export const serviceSetup = (services: {
       CONSULTATION_PORTAL_SCOPE: {
         dev: '@stjornarradid.is/samradsgatt',
         staging: '@stjornarradid.is/samradsgatt',
-        prod: '@stjornarradid.is/samradsgatt'
+        prod: '@stjornarradid.is/samradsgatt',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
