@@ -258,15 +258,7 @@ export class EndorsementListService {
     return result
   }
 
-  async whodis(ssn: string) {
-    try {
-      const result = await this.nationalRegistryApiV2.getIndividual(ssn)
-      return result
-    } catch (error) {
-      this.logger.warn('whodis not found')
-      throw new NotFoundException()
-    }
-  }
+
 
   async getOwnerInfo(listId: string, owner?: string) {
     // Is used by both unauthenticated users, authenticated users and admin
