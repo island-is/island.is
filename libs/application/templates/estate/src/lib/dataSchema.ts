@@ -300,17 +300,16 @@ export const estateSchema = z.object({
   estateWithoutAssets: z
     .object({
       estateAssetsExist: z.enum([YES, NO]),
-      estateDebtsExist: z.enum([YES, NO]),
-      acceptAssetsSelection: z.array(z.enum([YES])).length(1),
+      estateDebtsExist: z.enum([YES, NO]).optional(),
     })
     .refine(
-      ({ estateAssetsExist, acceptAssetsSelection }) => {
-        return estateAssetsExist === YES || estateAssetsExist === NO
-          ? !!acceptAssetsSelection.length
+      ({ estateAssetsExist, estateDebtsExist }) => {
+        return estateAssetsExist === YES
+          ? estateDebtsExist === YES || estateDebtsExist === NO
           : true
       },
       {
-        path: ['acceptAssetsSelection'],
+        path: ['estateDebtsExist'],
       },
     ),
 

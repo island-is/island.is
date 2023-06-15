@@ -95,6 +95,11 @@ export const form: Form = buildForm({
                 { label: JA, value: YES },
                 { label: NEI, value: NO },
               ],
+              condition: (answers) =>
+                getValueViaPath(
+                  answers,
+                  'estateWithoutAssets.estateAssetsExist',
+                ) === YES,
             }),
             buildDescriptionField({
               id: 'space1',
@@ -109,34 +114,6 @@ export const form: Form = buildForm({
                   answers,
                   'estateWithoutAssets.estateAssetsExist',
                 ) === YES,
-            }),
-            buildCheckboxField({
-              id: 'estateWithoutAssets.acceptAssetsSelection',
-              title: '',
-              backgroundColor: 'blue',
-              defaultValue: [],
-              condition: (answers) =>
-                !!getValueViaPath(
-                  answers,
-                  'estateWithoutAssets.estateAssetsExist',
-                ),
-              options: (application) =>
-                getValueViaPath(
-                  application.answers,
-                  'estateWithoutAssets.estateAssetsExist',
-                ) === NO
-                  ? [
-                      {
-                        value: YES,
-                        label: m.acceptNoAssets.defaultMessage,
-                      },
-                    ]
-                  : [
-                      {
-                        value: YES,
-                        label: m.acceptAssets.defaultMessage,
-                      },
-                    ],
             }),
           ],
         }),

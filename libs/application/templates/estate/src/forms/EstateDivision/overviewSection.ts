@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
@@ -538,6 +539,37 @@ export const overview = buildSection({
             return files?.attached?.file?.length === 0
           },
         }),
+        buildDescriptionField({
+          id: 'space4',
+          title: '',
+          space: 'gutter',
+        }),
+        buildCheckboxField({
+          id: 'confirmAction',
+          title: '',
+          backgroundColor: 'blue',
+          defaultValue: [],
+          condition: (answers) =>
+            getValueViaPath(answers, 'selectedEstate') ===
+            EstateTypes.estateWithoutAssets,
+          options: (application) =>
+            getValueViaPath(
+              application.answers,
+              'estateWithoutAssets.estateAssetsExist',
+            ) === NO
+              ? [
+                  {
+                    value: YES,
+                    label: m.acceptNoAssets.defaultMessage,
+                  },
+                ]
+              : [
+                  {
+                    value: YES,
+                    label: m.acceptAssets.defaultMessage,
+                  },
+                ],
+        }),
         buildSubmitField({
           id: 'estateDivisionForm.submit',
           title: '',
@@ -670,6 +702,37 @@ export const overview = buildSection({
             }
             return files?.attached?.file?.length === 0
           },
+        }),
+        buildDescriptionField({
+          id: 'space6',
+          title: '',
+          space: 'gutter',
+        }),
+        buildCheckboxField({
+          id: 'confirmAction',
+          title: '',
+          backgroundColor: 'blue',
+          defaultValue: [],
+          condition: (answers) =>
+            getValueViaPath(answers, 'selectedEstate') ===
+            EstateTypes.estateWithoutAssets,
+          options: (application) =>
+            getValueViaPath(
+              application.answers,
+              'estateWithoutAssets.estateAssetsExist',
+            ) === NO
+              ? [
+                  {
+                    value: YES,
+                    label: m.acceptNoAssets.defaultMessage,
+                  },
+                ]
+              : [
+                  {
+                    value: YES,
+                    label: m.acceptAssets.defaultMessage,
+                  },
+                ],
         }),
         buildSubmitField({
           id: 'estateDivisionForm.submit',
