@@ -1,3 +1,4 @@
+// toremovecomment
 import { TypesApi } from '@island.is/clients/consultation-portal'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
