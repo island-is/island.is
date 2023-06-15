@@ -1,8 +1,10 @@
 #!/bin/bash
-set -euo pipefail
-if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
-. "${DIR}/_docker.sh" "$@" || true
+set -euxo pipefail
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+. "${DIR}/_docker.sh"
 
-mkargs local-cache=false
-CONTAINER_BUILDER=podman container_build
+function podman_build() {
+  mkargs local-cache=false
+  builder_build podman
+}
+podman_build
