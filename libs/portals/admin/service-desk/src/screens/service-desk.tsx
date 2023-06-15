@@ -1,10 +1,14 @@
-import { Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import { m } from '../lib/messages'
+import Procures from './procures'
 
+// This company will be used as a dashboard for the service desk with the navigation
+// and the main content area.
+// But until we have more components to show, we will just show render the procures.
 const ServiceDesk = () => {
-  const { formatMessage } = useLocale()
-  return <Text variant={'h1'}>{formatMessage(m.serviceDesk)}</Text>
+  return (
+    <div>
+      <Procures />
+    </div>
+  )
 }
 
 export default ServiceDesk

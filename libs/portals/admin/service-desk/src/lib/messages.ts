@@ -9,4 +9,20 @@ export const m = defineMessages({
     id: 'admin-portal.service-desk:serviceDeskDescription',
     defaultMessage: 'Þjónustuborð fyrir notendur',
   },
+  procures: {
+    id: 'admin-portal.service-desk:procures',
+    defaultMessage: 'Prókúruhafar',
+  },
+  procuresDescription: {
+    id: 'admin-portal.service-desk:procuresDescription',
+    defaultMessage: 'Flettu upp fyrirtæki til að birta prókúruhafa',
+  },
+  pleaseEnterValueToBeingSearch: {
+    id: 'admin-portal.service-desk:pleaseEnterValueToBeingSearch',
+    defaultMessage: 'Sláðu inn kennitölu til að byrja leit',
+  },
+  searchByNationalId: {
+    id: 'service.portal:search-by-national-id',
+    defaultMessage: 'Leita eftir kennitölu',
+  },
 })

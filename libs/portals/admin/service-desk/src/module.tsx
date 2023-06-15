@@ -8,7 +8,7 @@ const ServiceDesk = lazy(() => import('./screens/service-desk'))
 
 export const serviceDeskModule: PortalModule = {
   name: m.serviceDesk,
-  layout: 'default',
+  layout: 'full',
   enabled: ({ userInfo }) =>
     userInfo.scopes.includes(AdminPortalScope.serviceDesk),
   routes: (props) => [
