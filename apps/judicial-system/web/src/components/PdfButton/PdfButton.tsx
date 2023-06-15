@@ -14,14 +14,16 @@ interface Props {
     | 'courtRecord'
     | 'request'
     | 'custodyNotice'
+    | 'indictment'
     | 'limitedAccess/ruling'
+    | 'limitedAccess/caseFilesRecord'
     | 'limitedAccess/courtRecord'
     | 'limitedAccess/request'
-    | 'indictment'
+    | 'limitedAccess/indictment'
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType is caseFilesRecord
+  policeCaseNumber?: string // Only used if pdfType ends with caseFilesRecord
 }
 
 const PdfButton: React.FC<Props> = ({
@@ -35,8 +37,9 @@ const PdfButton: React.FC<Props> = ({
   policeCaseNumber,
 }) => {
   const handlePdfClick = async () => {
-    const newPdfType =
-      pdfType === 'caseFilesRecord' ? `${pdfType}/${policeCaseNumber}` : pdfType
+    const newPdfType = pdfType?.endsWith('caseFilesRecord')
+      ? `${pdfType}/${policeCaseNumber}`
+      : pdfType
     const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
 
     window.open(url, '_blank')

@@ -472,7 +472,9 @@ function expectCasesToMatch(caseOne: CCase, caseTwo: CCase) {
   expect(caseOne.caseResentExplanation ?? null).toBe(
     caseTwo.caseResentExplanation ?? null,
   )
-  expect(caseOne.seenByDefender ?? null).toBe(caseTwo.seenByDefender ?? null)
+  expect(caseOne.openedByDefender ?? null).toBe(
+    caseTwo.openedByDefender ?? null,
+  )
   if (caseOne.parentCase || caseTwo.parentCase) {
     expectCasesToMatch(caseOne.parentCase, caseTwo.parentCase)
   }

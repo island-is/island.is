@@ -36,7 +36,10 @@ All feedback is welcomed and encouraged to help make the guide better so please 
   - [Monorepo library](pagination.md#monorepo-library)
 - [Methods](methods.md)
   - [Methods mapping to HTTP verbs](methods.md#methods-mapping-to-http-verbs)
-  - [Custom methods](methods.md#custom-methods)
+  - [Custom methods (RPC)](methods.md#custom-methods-rpc)
+- [REST Request](rest-request.md)
+  - [Query parameters](rest-request.md#query-parameters)
+  - [Path parameters](rest-request.md#path-parameters)
 - [REST Response](rest-response.md)
   - [General](rest-response.md#general)
   - [GET](rest-response.md#get)
@@ -65,6 +68,12 @@ All feedback is welcomed and encouraged to help make the guide better so please 
 - [Example Service](example.md)
 
 ## Changelog
+
+_Draft 4 - Published 2023-06-07_
+
+- Updated usage of [HTTP status codes](rest-response.md#http-status-codes) to use `204` instead of `404` when resources are not found or not accessible to the user.
+- Update [REST Requests](rest-request.md#working-with-sensitive-data) to describe arrays in query parameters and how to handle sensitive data in query and path parameters.
+- Update [Custom Methods (RPC)](methods.md#custom-methods-rpc) to use verbs instead of nouns for method names with `POST`.
 
 _Draft 3 - Published 2022-08-16_
 
