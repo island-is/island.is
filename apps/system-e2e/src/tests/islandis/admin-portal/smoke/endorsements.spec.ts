@@ -34,32 +34,39 @@ test.describe('Admin portal access control', () => {
       await expect(
         granterPage.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
       ).toBeVisible()
+    })
+
+    test.step('Open old endorsement list', async () => {
 
       await granterPage.getByTestId('active-module-name').click()
       await granterPage
-        .getByRole('button', { name: 'Undirskriftalistar' })
+        .getByRole('link', { name: 'Undirskriftalistar' })
         .click()
 
-      await granterPage.getByRole('button', { name: 'Liðnir listar' }).click()
-      await granterPage.getByRole('button', { name: 'Skoða lista' }).click()
-      await expect(
-        granterPage.getByRole('heading', { name: 'Heiti lista' }),
-      ).toBeVisible()
+      await granterPage.getByRole('tab', { name: 'Liðnir listar' }).click()
+      await granterPage.getByText('Skoða lista').first().click()
+      await expect(granterPage.getByLabel('Heiti lista')).toBeVisible()
       await expect(
         granterPage.getByRole('heading', { name: 'Yfirlit undirskrifta' }),
       ).toBeVisible()
+    })
 
+    test.step('Update old endorsement list', async () => {
       await granterPage.getByRole('button', { name: 'Uppfæra lista' }).click()
       await expect(
         granterPage.getByRole('note', { name: 'Tókst að uppfæra lista' }),
       ).toBeVisible()
+    })
 
-      await granterPage.getByRole('note', { name: 'Til baka' }).click()
-      await granterPage.getByRole('button', { name: 'Læstir listar' }).click()
+    test.step('Update old endorsement list', async () => {
+      await granterPage.getByRole('button', { name: 'Til baka' }).click()
+      await granterPage.getByRole('tab', { name: 'Læstir listar' }).click()
       await expect(
         granterPage.getByRole('row', { name: 'Læstir listar' }),
       ).toHaveCountGreaterThan(1)
+    })
 
+    test.step('Go bacck to overview', async () => {
       await granterPage.getByTestId('active-module-name').click()
       await granterPage.getByRole('button', { name: 'Yfirlit' }).click()
       await expect(
