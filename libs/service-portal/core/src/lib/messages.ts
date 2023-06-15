@@ -133,9 +133,17 @@ export const m = defineMessages({
     id: 'service.portal:date-from',
     defaultMessage: 'Dagsetning frá',
   },
+  dateFromShort: {
+    id: 'service.portal:date-from-short',
+    defaultMessage: 'Dags. frá',
+  },
   dateTo: {
     id: 'service.portal:date-to',
     defaultMessage: 'Dagsetning til',
+  },
+  dateToShort: {
+    id: 'service.portal:date-to-short',
+    defaultMessage: 'Dags. til',
   },
   selectForResults: {
     id: 'service.portal:select-for-results',

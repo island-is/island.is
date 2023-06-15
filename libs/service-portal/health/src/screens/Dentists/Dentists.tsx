@@ -4,8 +4,6 @@ import {
   ErrorScreen,
   EmptyState,
   UserInfoLine,
-  formatDate,
-  amountFormat,
 } from '@island.is/service-portal/core'
 import { useGetDentistsQuery } from './Dentists.generated'
 import {
@@ -15,7 +13,6 @@ import {
   Inline,
   SkeletonLoader,
   Stack,
-  Table as T,
   Text,
 } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'

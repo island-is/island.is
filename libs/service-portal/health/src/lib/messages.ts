@@ -261,7 +261,6 @@ export const messages = defineMessages({
     id: 'sp.health:available-unit-refund',
     defaultMessage: 'Heimild nú til úttektar',
   },
-
   availableTo: {
     id: 'sp.health:available-to',
     defaultMessage: 'Heimild gildir til',

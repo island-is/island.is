@@ -62,8 +62,8 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
             </T.Row>
           </T.Head>
           <T.Body>
-            {bills.map((rowItem) => (
-              <T.Row key={rowItem.number}>
+            {bills.map((rowItem, index) => (
+              <T.Row key={index}>
                 <T.Data>
                   <Text variant="medium">{rowItem.number}</Text>
                 </T.Data>

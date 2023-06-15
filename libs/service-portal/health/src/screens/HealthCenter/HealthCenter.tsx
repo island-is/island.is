@@ -6,27 +6,46 @@ import {
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
-import {
-  Box,
-  Divider,
-  SkeletonLoader,
-  Stack,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Divider, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
-import { RightsPortalHealthCenterHistoryEntry } from '@island.is/service-portal/graphql'
+import { useState } from 'react'
+import HistoryTable from './HistoryTable'
+
+interface CurrentInfo {
+  healthCenter: string
+  doctor: string
+}
 
 const HealthCenter = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
-  const { loading, error, data } = useGetHealthCenterQuery()
+  const [selectedDateFrom, setSelectedDateFrom] = useState(
+    new Date('2010-11-03'),
+  )
+  const [selectedDateTo, setSelectedDateTo] = useState(new Date('2017-09-22'))
+  const [currentInfo, setCurrentInfo] = useState<CurrentInfo>()
+
+  const { loading, error, data } = useGetHealthCenterQuery({
+    variables: {
+      input: {
+        dateFrom: selectedDateFrom,
+        dateTo: selectedDateTo,
+      },
+    },
+  })
 
   const healthCenterData = data?.rightsPortalHealthCenterHistory
 
-  if (!error && !loading) {
+  if (!currentInfo && healthCenterData?.current) {
+    setCurrentInfo({
+      healthCenter: healthCenterData.current.name ?? '',
+      doctor: healthCenterData.current.doctor ?? '',
+    })
+  }
+
+  if (error && !loading) {
     return (
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
@@ -40,34 +59,12 @@ const HealthCenter = () => {
     )
   }
 
-  const generateRow = (rowItem: RightsPortalHealthCenterHistoryEntry) => {
-    const row = (
-      <T.Row>
-        <T.Data>
-          <Text variant="medium">{rowItem.dateFrom ?? '-'}</Text>
-        </T.Data>
-        <T.Data>
-          <Text variant="medium">{rowItem.dateTo ?? '-'}</Text>
-        </T.Data>
-        <T.Data>
-          <Text variant="medium">{rowItem.healthCenter?.name ?? '-'}</Text>
-        </T.Data>
-        <T.Data>
-          <Text variant="medium">{rowItem.healthCenter?.doctor ?? '-'}</Text>
-        </T.Data>
-      </T.Row>
-    )
-
-    return row
-  }
-
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
       />
-      {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
       {!loading && !data && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
@@ -77,57 +74,27 @@ const HealthCenter = () => {
         </Box>
       )}
 
-      {!loading && !error && healthCenterData && (
+      {currentInfo && (
         <Box width="full" marginTop={[1, 1, 4]}>
           <Stack space={2}>
             <UserInfoLine
               title={formatMessage(messages.yourInformation)}
               label={formatMessage(messages.healthCenterTitle)}
-              content={healthCenterData.current?.name ?? ''}
+              content={currentInfo.healthCenter ?? ''}
             />
             <Divider />
             <UserInfoLine
               label={formatMessage(messages.personalDoctor)}
-              content={healthCenterData.current?.doctor ?? ''}
+              content={currentInfo.doctor ?? ''}
             />
           </Stack>
-
-          <Box marginTop={2}>
-            <Text variant="h3">{messages.checkInHistory}</Text>
-            <T.Table>
-              <T.Head>
-                <T.Row>
-                  <T.HeadData>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(m.dateFrom)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(m.dateTo)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(messages.healthCenterTitle)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData>
-                    <Text variant="medium" fontWeight="semiBold">
-                      {formatMessage(messages.doctor)}
-                    </Text>
-                  </T.HeadData>
-                  <T.HeadData />
-                </T.Row>
-              </T.Head>
-              <T.Body>
-                {healthCenterData.history?.map((rowItem) =>
-                  generateRow(rowItem as RightsPortalHealthCenterHistoryEntry),
-                )}
-              </T.Body>
-            </T.Table>
-          </Box>
         </Box>
+      )}
+
+      {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
+
+      {!loading && !error && healthCenterData?.history && (
+        <HistoryTable history={healthCenterData.history} />
       )}
     </Box>
   )
