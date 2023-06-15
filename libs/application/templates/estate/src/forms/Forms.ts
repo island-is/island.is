@@ -1,12 +1,4 @@
-import {
-  buildCheckboxField,
-  buildDescriptionField,
-  buildDividerField,
-  buildForm,
-  buildMultiField,
-  buildSection,
-  buildSubmitField,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { dataCollection } from './Sections/dataCollection'
 import { announcerInfo } from './Sections/announcerInfo'
@@ -18,7 +10,7 @@ import { estateDebts } from './Sections/estateDebts'
 import { attachments } from './Sections/attachments'
 import { representative } from './Sections/representative'
 import { approvePrivateDivisionSubmission } from './Sections/approveSubmission'
-import { overview } from './Overview'
+import { overview } from './Overviews'
 import { estateWithoutAssets } from './Sections/estateWithoutAssets'
 
 /* EINKASKIPTI */

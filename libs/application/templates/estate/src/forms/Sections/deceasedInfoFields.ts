@@ -1,5 +1,6 @@
 import {
   buildDescriptionField,
+  buildDividerField,
   buildKeyValueField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -8,6 +9,14 @@ import { isEstateInfo } from '../../lib/utils/isEstateInfo'
 import { format as formatKennitala } from 'kennitala'
 
 export const deceasedInfoFields = [
+  buildDividerField({}),
+  buildDescriptionField({
+    id: 'deceasedHeader',
+    title: m.theDeceased,
+    titleVariant: 'h3',
+    marginBottom: 2,
+    space: 'gutter',
+  }),
   buildKeyValueField({
     label: m.nameOfTheDeceased,
     value: ({

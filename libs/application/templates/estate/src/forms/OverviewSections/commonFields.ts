@@ -14,14 +14,6 @@ import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { JA, NEI, YES } from '../../lib/constants'
 
 export const commonOverviewFields = [
-  buildDividerField({}),
-  buildDescriptionField({
-    id: 'overviewDeceasedHeader',
-    title: m.theDeceased,
-    titleVariant: 'h3',
-    marginBottom: 'gutter',
-    space: 'gutter',
-  }),
   ...deceasedInfoFields,
   buildDescriptionField({
     id: 'space0',
@@ -81,7 +73,7 @@ export const commonOverviewFields = [
     width: 'half',
   }),
   buildDescriptionField({
-    id: 'spaceTestament',
+    id: 'space2',
     title: '',
     space: 'gutter',
     condition: (answers) =>
@@ -96,7 +88,7 @@ export const commonOverviewFields = [
       getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
   }),
   buildDescriptionField({
-    id: 'space2',
+    id: 'space3',
     title: '',
     space: 'gutter',
   }),
@@ -108,7 +100,7 @@ export const commonOverviewFields = [
       !!getValueViaPath<string>(answers, 'estate.testament.additionalInfo'),
   }),
   buildDescriptionField({
-    id: 'space3',
+    id: 'space4',
     title: '',
     space: 'gutter',
   }),

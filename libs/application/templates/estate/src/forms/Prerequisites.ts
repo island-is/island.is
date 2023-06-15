@@ -5,6 +5,7 @@ import {
   buildSection,
   buildRadioField,
   buildSubmitField,
+  buildDividerField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
@@ -30,13 +31,13 @@ export const getForm = ({
           buildMultiField({
             id: 'estate',
             title: m.prerequisitesTitle,
-            description: m.prerequisitesSubtitle,
             children: [
               ...deceasedInfoFields,
               buildDescriptionField({
-                id: 'spacePrereqs',
-                space: 'gutter',
+                id: 'applicationInfo',
+                space: 'containerGutter',
                 title: '',
+                description: m.prerequisitesSubtitle,
               }),
               buildRadioField({
                 id: 'selectedEstate',

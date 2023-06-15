@@ -10,9 +10,9 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { commonOverviewFields } from './OverviewSections/commonFields'
-import { overviewAssetsAndDebts } from './OverviewSections/overviewAssetsAndDebts'
-import { overviewAttachments } from './OverviewSections/overviewAttachments'
-import { overviewConfirmAction } from './OverviewSections/overviewConfirmAction'
+import { overviewAssetsAndDebts } from './OverviewSections/assetsAndDebts'
+import { overviewAttachments } from './OverviewSections/attachments'
+import { overviewConfirmAction } from './OverviewSections/confirmAction'
 import { EstateTypes, YES, NO } from '../lib/constants'
 import { deceasedInfoFields } from './Sections/deceasedInfoFields'
 import { representativeOverview } from './OverviewSections/representative'
@@ -34,6 +34,18 @@ export const overview = buildSection({
         ...overviewAssetsAndDebts,
         ...overviewAttachments,
         ...representativeOverview,
+        buildSubmitField({
+          id: 'estateDivisionSubmit.submit',
+          title: '',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.submitApplication,
+              type: 'primary',
+            },
+          ],
+        }),
       ],
     }),
 
@@ -121,20 +133,13 @@ export const overview = buildSection({
         getValueViaPath(answers, 'selectedEstate') ===
         EstateTypes.officialDivision,
       children: [
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'deceasedHeader',
-          title: m.theDeceased,
-          titleVariant: 'h3',
-          marginBottom: 2,
-          space: 'gutter',
-        }),
         ...deceasedInfoFields,
         buildDescriptionField({
-          id: 'space0',
+          id: 'space',
           title: '',
           space: 'containerGutter',
         }),
+
         buildCheckboxField({
           id: 'confirmAction',
           title: '',
@@ -149,7 +154,7 @@ export const overview = buildSection({
           ],
         }),
         buildSubmitField({
-          id: 'officialDivisionForm.submit',
+          id: 'estateDivisionSubmit.submit',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [

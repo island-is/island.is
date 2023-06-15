@@ -1,28 +1,10 @@
 import {
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
-  buildDividerField,
   buildKeyValueField,
-  buildMultiField,
-  buildSection,
-  buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, DefaultEvents } from '@island.is/application/types'
-import { EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
-import { format as formatNationalId } from 'kennitala'
-import {
-  formatBankInfo,
-  formatCurrency,
-} from '@island.is/application/ui-components'
-import { infer as zinfer } from 'zod'
-import { estateSchema } from '../../lib/dataSchema'
-import { EstateTypes, NEI, NO, YES } from '../../lib/constants'
-import { commonOverviewFields } from './commonFields'
-import { overviewAssetsAndDebts } from './overviewAssetsAndDebts'
-type EstateSchema = zinfer<typeof estateSchema>
 
 export const overviewAttachments = [
   buildDescriptionField({
