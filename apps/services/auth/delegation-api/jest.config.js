@@ -8,6 +8,7 @@ module.exports = {
       tsconfig: `${__dirname}/tsconfig.spec.json`,
     },
   },
+  testTimeout: 10000,
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': 'ts-jest',
