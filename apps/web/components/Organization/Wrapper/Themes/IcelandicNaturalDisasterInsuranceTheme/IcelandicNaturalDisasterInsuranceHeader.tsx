@@ -9,26 +9,33 @@ import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './IcelandicNaturalDisasterInsuranceHeader.css'
 
+const treeImageUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/52r9AXIIGj5d3VxfQA2yQL/ff654c88c6309ad799ccc5668754371d/nti-trees.svg'
+const townImageUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/7ryH2zTpjxid0iakBnSgKV/37daf02f0c0051b9ddb1327b0a83ec59/nti-town.svg'
+
 const getDefaultStyle = (width: number) => {
-  if (width > theme.breakpoints.lg)
+  if (width > theme.breakpoints.xl) {
     return {
       backgroundRepeat: 'no-repeat',
-      backgroundSize: '100% 340px, cover',
-      backgroundPosition: 'bottom',
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/2urQfUGjA4HrUVAqIqJPp/ff94bb07a9922141d9f2dd96ae5be370/Vefsi____a_mynd_1440x385pix__1_.png'), linear-gradient(#25afb9, #25afb9)",
+      backgroundSize: 'auto 280px, auto 280px, cover',
+      backgroundPosition: 'bottom left, bottom right, center',
+      backgroundImage: `url('${treeImageUrl}'), url('${townImageUrl}'), linear-gradient(0deg, #FFFFFF -40.18%, #FAFDFD -23.09%, #ECF8F9 -4.3%, #D6F0F1 16.21%, #B7E5E7 36.72%, #8ED6DA 57.23%, #5DC4CA 77.74%, #23AFB8 100.93%, #00A3AD 113.54%)`,
     }
-  if (width > theme.breakpoints.md)
+  }
+  if (width > theme.breakpoints.md) {
     return {
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
       backgroundImage:
         "url('https://images.ctfassets.net/8k0h54kbe6bj/2urQfUGjA4HrUVAqIqJPp/ff94bb07a9922141d9f2dd96ae5be370/Vefsi____a_mynd_1440x385pix__1_.png')",
     }
+  }
   return {
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    backgroundImage: 'linear-gradient(#6bcacf, #25afb9)',
+    backgroundImage:
+      'linear-gradient(0deg, #FFFFFF -40.18%, #FAFDFD -23.09%, #ECF8F9 -4.3%, #D6F0F1 16.21%, #B7E5E7 36.72%, #8ED6DA 57.23%, #5DC4CA 77.74%, #23AFB8 100.93%, #00A3AD 113.54%)',
   }
 }
 
