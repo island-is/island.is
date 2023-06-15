@@ -115,6 +115,24 @@ export const estateSchema = z.object({
       .optional(),
   }),
 
+  // is: Maki hins látna
+  deceasedWithUndividedEstate: z
+    .object({
+      selection: z.enum([YES, NO]),
+      spouse: z.object({
+        name: z.string().optional(),
+        nationalId: z.string().optional(),
+      }),
+    })
+    .refine(
+      ({ selection, spouse }) => {
+        return selection === YES ? !!spouse.nationalId : true
+      },
+      {
+        path: ['spouse', 'nationalId'],
+      },
+    ),
+
   // is: Innbú
   inventory: z
     .object({
@@ -297,6 +315,7 @@ export const estateSchema = z.object({
     }),
   }),
 
+  // is: Eignalaust bú
   estateWithoutAssets: z
     .object({
       estateAssetsExist: z.enum([YES, NO]),

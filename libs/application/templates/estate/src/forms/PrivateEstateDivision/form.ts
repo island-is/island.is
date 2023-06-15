@@ -5,18 +5,27 @@ import {
   buildFileUploadField,
   buildForm,
   buildMultiField,
+  buildRadioField,
   buildSection,
-  buildSubmitField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT, YES } from '../../lib/constants'
+import { Form, FormModes } from '@island.is/application/types'
+import {
+  FILE_SIZE_LIMIT,
+  JA,
+  NEI,
+  NO,
+  UPLOAD_ACCEPT,
+  YES,
+} from '../../lib/constants'
 import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overview } from './overviewSection'
 import { testamentInfo } from '../sharedSections/testamentInfo'
+import { deceasedInfoFields } from '../sharedSections/deceasedInfoFields'
 
 /* This form is being used for "Einkaskipti" */
 export const form: Form = buildForm({
@@ -28,6 +37,57 @@ export const form: Form = buildForm({
   children: [
     dataCollection,
     announcerInfo,
+    buildSection({
+      id: 'deceased',
+      title: 'Hinn látni',
+      children: [
+        buildMultiField({
+          id: 'deceased',
+          title: 'Hinn látni',
+          description: 'Trolo',
+          children: [
+            ...deceasedInfoFields,
+            buildDescriptionField({
+              id: 'space0',
+              space: 'containerGutter',
+              title: '',
+            }),
+            buildRadioField({
+              id: 'deceasedWithUndividedEstate.selection',
+              title: 'Sat hinn látni í óskiptu búi?',
+              width: 'half',
+              largeButtons: false,
+              options: [
+                { label: JA, value: YES },
+                { label: NEI, value: NO },
+              ],
+            }),
+            buildDescriptionField({
+              id: 'deceasedSpouse',
+              space: 'containerGutter',
+              title: 'Maki hins látna',
+              titleVariant: 'h4',
+              marginBottom: 2,
+              condition: (answers) =>
+                getValueViaPath(
+                  answers,
+                  'deceasedWithUndividedEstate.selection',
+                ) === YES,
+            }),
+            buildCustomField({
+              id: 'deceasedWithUndividedEstate.spouse',
+              title: '',
+              component: 'LookupPerson',
+              condition: (answers) =>
+                getValueViaPath(
+                  answers,
+                  'deceasedWithUndividedEstate.selection',
+                ) === YES,
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'estateMembersInfo',
       title: m.estateMembers,
@@ -43,7 +103,7 @@ export const form: Form = buildForm({
               component: 'EstateMembersRepeater',
             }),
             buildDescriptionField({
-              id: 'space0',
+              id: 'space2',
               title: '',
               space: 'containerGutter',
             }),
@@ -504,7 +564,7 @@ export const form: Form = buildForm({
           description: m.divisionOfEstateByHeirsText,
           children: [
             buildDescriptionField({
-              id: 'space',
+              id: 'space3',
               title: '',
               space: 'containerGutter',
             }),
