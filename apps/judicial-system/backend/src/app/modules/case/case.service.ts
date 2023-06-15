@@ -37,8 +37,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 import type { User as TUser } from '@island.is/judicial-system/types'
+import { splitStringByComma } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../../factories'
+import { environment } from '../../../environments'
 import {
   getRequestPdfAsBuffer,
   getRulingPdfAsString,
@@ -62,6 +64,8 @@ import { getCasesQueryFilter } from './filters/cases.filter'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
+
+const hiddenFeatures = splitStringByComma(environment.features?.hidden)
 
 export interface UpdateCase
   extends Pick<
@@ -715,6 +719,10 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
+    // Temporary while we are still hiding the new appeal feature
+    if (hiddenFeatures.includes('APPEAL_TO_COURT_OF_APPEALS')) {
+      return Promise.resolve()
+    }
     const messages: CaseMessage[] =
       theCase.caseFiles
         ?.filter(

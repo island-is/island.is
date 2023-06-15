@@ -29,6 +29,9 @@ const devConfig = {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
   },
+  features: {
+    hidden: process.env.HIDDEN_FEATURES,
+  },
 }
 
 if (process.env.NODE_ENV === 'production') {
@@ -96,6 +99,9 @@ const prodConfig = {
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
+  },
+  features: {
+    hidden: process.env.HIDDEN_FEATURES,
   },
 }
 
