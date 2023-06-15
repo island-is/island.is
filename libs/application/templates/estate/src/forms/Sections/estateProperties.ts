@@ -5,6 +5,7 @@ import {
   buildTextField,
   buildCustomField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
@@ -13,8 +14,10 @@ export const estateAssets = buildSection({
   id: 'estateProperties',
   title: m.properties,
   condition: (answers) =>
-    answers.selectedEstate === EstateTypes.estateWithoutAssets
-      ? answers.estateAssetsExist === YES
+    getValueViaPath(answers, 'selectedEstate') ===
+    EstateTypes.estateWithoutAssets
+      ? getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist') ===
+        YES
       : true,
   children: [
     buildSubSection({

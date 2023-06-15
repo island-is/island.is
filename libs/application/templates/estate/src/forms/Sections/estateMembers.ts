@@ -21,7 +21,7 @@ export const estateMembers = buildSection({
           component: 'EstateMembersRepeater',
         }),
         buildDescriptionField({
-          id: 'space',
+          id: 'spaceEstatesMembers',
           title: '',
           space: 'containerGutter',
         }),

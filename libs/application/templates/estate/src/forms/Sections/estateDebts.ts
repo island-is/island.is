@@ -2,6 +2,7 @@ import {
   buildSection,
   buildMultiField,
   buildCustomField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
@@ -10,8 +11,10 @@ export const estateDebts = buildSection({
   id: 'debts',
   title: m.debtsTitle,
   condition: (answers) =>
-    answers.selectedEstate === EstateTypes.estateWithoutAssets
-      ? answers.estateAssetsExist === YES
+    getValueViaPath(answers, 'selectedEstate') ===
+    EstateTypes.estateWithoutAssets
+      ? getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist') ===
+        YES
       : true,
   children: [
     buildMultiField({

@@ -6,25 +6,23 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { commonOverviewFields } from './commonFields'
-import { overviewAssetsAndDebts } from './overviewAssetsAndDebts'
-import { representativeOverview } from './representativeOverview'
 import { overviewAttachments } from './overviewAttachments'
+import { overviewConfirmAction } from './overviewConfirmAction'
 
-export const overviewPrivateDivision = buildSection({
-  id: 'overviewPrivateDivision',
+export const overviewWithoutAssets = buildSection({
+  id: 'overviewWithoutAssets',
   title: m.overviewTitle,
   children: [
     buildMultiField({
-      id: 'overviewPrivateEstateDivision',
+      id: 'overviewWithoutAssets',
       title: m.overviewTitle,
-      description: m.overviewSubtitleDivisionOfEstateByHeirs,
+      description: m.overviewSubtitlePermitToPostpone,
       children: [
         ...commonOverviewFields,
-        ...overviewAssetsAndDebts,
-        ...representativeOverview,
         ...overviewAttachments,
+        ...overviewConfirmAction,
         buildSubmitField({
-          id: 'privateEstateDivision.submit',
+          id: 'estateDivisionSubmit.submit',
           title: '',
           refetchApplicationAfterSubmit: true,
           actions: [

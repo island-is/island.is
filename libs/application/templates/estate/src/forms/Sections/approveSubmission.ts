@@ -17,7 +17,7 @@ export const approvePrivateDivisionSubmission = buildSection({
       description: m.divisionOfEstateByHeirsText,
       children: [
         buildDescriptionField({
-          id: 'space',
+          id: 'spaceSubmission',
           title: '',
           space: 'containerGutter',
         }),

@@ -6,15 +6,15 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { JA, YES, NEI, NO, EstateTypes } from '../../lib/constants'
+import { JA, YES, NEI, NO } from '../../lib/constants'
 
 export const estateWithoutAssets = buildSection({
   id: 'estateAssetsExist',
-  title: 'Eru eignir og/eða skuldir til staðar?',
+  title: 'Eru eignir til staðar?',
   children: [
     buildMultiField({
       id: 'estateAssetsExist',
-      title: 'Eru eignir og/eða skuldir til staðar?',
+      title: 'Eru eignir til staðar?',
       description: 'Eru eignir til staðar?',
       children: [
         buildRadioField({
@@ -44,7 +44,7 @@ export const estateWithoutAssets = buildSection({
             ) === YES,
         }),
         buildDescriptionField({
-          id: 'space',
+          id: 'spaceNoAssets',
           title: '',
           space: 'containerGutter',
         }),

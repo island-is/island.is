@@ -18,8 +18,8 @@ import { estateDebts } from './Sections/estateDebts'
 import { attachments } from './Sections/attachments'
 import { representative } from './Sections/representative'
 import { approvePrivateDivisionSubmission } from './Sections/approveSubmission'
-import { overview } from './Overview/overviewSection'
-import { overview as privateOverview } from './Overview/privateOverviewSection'
+import { overview } from './Overview/overview'
+import { overviewPrivateDivision } from './Overview/privateOverviewSection'
 import { estateWithoutAssets } from './Sections/estateWithoutAssets'
 import { m } from '../lib/messages'
 import { deceasedInfoFields } from './Sections/deceasedInfoFields'
@@ -27,8 +27,8 @@ import { YES } from '../lib/constants'
 
 /* EINKASKIPTI */
 
-export const privateExchangeForm: Form = buildForm({
-  id: 'privateExchangeForm',
+export const privateDivisionForm: Form = buildForm({
+  id: 'privateDivisionForm',
   title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
@@ -44,7 +44,7 @@ export const privateExchangeForm: Form = buildForm({
     attachments,
     representative,
     approvePrivateDivisionSubmission,
-    privateOverview,
+    overviewPrivateDivision,
   ],
 })
 

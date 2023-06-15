@@ -34,7 +34,7 @@ export const getForm = ({
             children: [
               ...deceasedInfoFields,
               buildDescriptionField({
-                id: 'space1',
+                id: 'spacePrereqs',
                 space: 'gutter',
                 title: '',
               }),

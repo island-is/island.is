@@ -142,7 +142,7 @@ const EstateTemplate: ApplicationTemplate<
               id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
               formLoader: () =>
                 import('../forms/Forms').then((module) =>
-                  Promise.resolve(module.privateExchangeForm),
+                  Promise.resolve(module.privateDivisionForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               write: 'all',

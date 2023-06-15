@@ -56,7 +56,7 @@ export const testamentInfo = buildSection({
               EstateTypes.permitForUndividedEstate,
         }),
         buildDescriptionField({
-          id: 'space',
+          id: 'spaceTestamentInfo',
           title: '',
           marginBottom: 2,
         }),
