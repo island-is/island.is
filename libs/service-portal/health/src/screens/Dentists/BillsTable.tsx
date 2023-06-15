@@ -93,19 +93,25 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
             ))}
             <T.Row key={'total-row'}>
               <T.Data>
-                <Text variant="medium">{formatMessage(m.total)}</Text>
-                <Text>''</Text>
-                <Text>''</Text>
+                <Text variant="medium" fontWeight="semiBold">
+                  {formatMessage(m.total)}
+                </Text>
+              </T.Data>
+              <T.Data></T.Data>
+              <T.Data></T.Data>
+              <T.Data>
                 <Text variant="medium" fontWeight="semiBold">
                   {totalBills.totalCharge
                     ? amountFormat(totalBills.totalCharge)
                     : ''}
-                </Text>
+                </Text>{' '}
+              </T.Data>
+              <T.Data>
                 <Text variant="medium" fontWeight="semiBold">
                   {totalBills.totalCovered
                     ? amountFormat(totalBills.totalCovered)
                     : ''}
-                </Text>
+                </Text>{' '}
               </T.Data>
             </T.Row>
           </T.Body>
