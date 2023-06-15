@@ -19,7 +19,7 @@ interface Then {
 
 type GivenWhenThen = (defenderNationalId?: string) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal received by court notification', () => {
+describe('InternalNotificationController - Send appeal received by court notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
@@ -93,7 +93,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
             'PPPp',
-          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          )}. Hægt er að skila greinargerð og nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

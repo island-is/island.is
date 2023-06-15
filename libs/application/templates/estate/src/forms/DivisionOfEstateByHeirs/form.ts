@@ -27,36 +27,32 @@ export const form: Form = buildForm({
     dataCollection,
     announcerInfo,
     buildSection({
-      id: 'estateMembersAndWillsInfo',
-      title: m.estateMembersTitle,
+      id: 'estateMembersInfo',
+      title: m.estateMembers,
       children: [
-        buildSubSection({
-          id: 'estateMembers',
-          title: m.estateMembersTitle,
+        buildMultiField({
+          id: 'estateMembersInfo',
+          title: m.estateMembers,
+          description: m.estateMembersSubtitle,
           children: [
-            buildMultiField({
-              id: 'estateMembersInfo',
-              title: m.estateMembersTitle,
-              description: m.estateMembersSubtitle,
-              children: [
-                buildDescriptionField({
-                  id: 'membersOfEstateTitle',
-                  title: m.estateMembers,
-                  description: m.estateMembersHeaderDescription,
-                  titleVariant: 'h3',
-                  marginBottom: 5,
-                }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.estateMembers',
-                  component: 'EstateMembersRepeater',
-                }),
-              ],
+            buildCustomField({
+              title: '',
+              id: 'estate.estateMembers',
+              component: 'EstateMembersRepeater',
+            }),
+            buildDescriptionField({
+              id: 'space0',
+              title: '',
+              space: 'containerGutter',
             }),
           ],
         }),
-        testamentInfo,
       ],
+    }),
+    buildSection({
+      id: 'testamentInfo',
+      title: m.willsAndAgreements,
+      children: [testamentInfo],
     }),
     buildSection({
       id: 'estateProperties',
@@ -133,11 +129,22 @@ export const form: Form = buildForm({
                   description: m.vehiclesDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.vehicles',
-                  component: 'VehiclesRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.vehicles',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'vehicles',
+                    texts: {
+                      assetTitle: m.vehiclesTitle,
+                      assetNumber: m.vehicleNumberLabel,
+                      assetType: m.vehicleTypeLabel,
+                      addAsset: m.addVehicle,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -157,11 +164,22 @@ export const form: Form = buildForm({
                   description: m.gunsDescription,
                   titleVariant: 'h3',
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.guns',
-                  component: 'GunsRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.guns',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'guns',
+                    texts: {
+                      assetTitle: m.gunTitle,
+                      assetNumber: m.gunNumberLabel,
+                      assetType: m.gunTypeLabel,
+                      addAsset: m.addGun,
+                    },
+                  },
+                ),
               ],
             }),
           ],
@@ -295,7 +313,7 @@ export const form: Form = buildForm({
                       {
                         title: m.stocksValue.defaultMessage,
                         id: 'value',
-                        color: 'white',
+                        backgroundColor: 'white',
                         readOnly: true,
                       },
                     ],
@@ -400,6 +418,10 @@ export const form: Form = buildForm({
                     format: '######-####',
                   },
                   {
+                    title: m.debtsLoanIdentity.defaultMessage,
+                    id: 'loanIdentity',
+                  },
+                  {
                     title: m.debtsBalance.defaultMessage,
                     id: 'balance',
                     currency: true,
@@ -422,11 +444,16 @@ export const form: Form = buildForm({
           title: m.representativeTitle,
           description: m.representativeDescription,
           children: [
-            buildCustomField({
-              title: '',
-              id: 'representative',
-              component: 'LookupPerson',
-            }),
+            buildCustomField(
+              {
+                title: '',
+                id: 'representative',
+                component: 'LookupPerson',
+              },
+              {
+                requiredNationalId: false,
+              },
+            ),
             buildTextField({
               id: 'representative.phone',
               title: m.phone,

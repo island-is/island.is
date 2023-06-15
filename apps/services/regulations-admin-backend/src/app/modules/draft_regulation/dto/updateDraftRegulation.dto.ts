@@ -1,6 +1,6 @@
 import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Appendix,
   HTMLText,
@@ -12,6 +12,7 @@ import {
   RegulationType,
   URLString,
 } from '@island.is/regulations'
+import { AppendixModel } from '../models/appendix.model'
 
 export class UpdateDraftRegulationDto {
   @IsString()
@@ -20,7 +21,7 @@ export class UpdateDraftRegulationDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly name?: RegName
 
   @IsString()
@@ -33,12 +34,12 @@ export class UpdateDraftRegulationDto {
 
   @IsOptional()
   @IsArray()
-  @ApiProperty()
-  readonly appendixes?: Appendix[]
+  @ApiPropertyOptional({ type: [AppendixModel] })
+  readonly appendixes?: AppendixModel[]
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly comments?: HTMLText
 
   @IsString()
@@ -47,51 +48,51 @@ export class UpdateDraftRegulationDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly idealPublishDate?: ISODate
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly ministry?: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly signatureDate?: ISODate
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly signatureText?: HTMLText
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly effectiveDate?: ISODate
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly type?: RegulationType
 
   @IsOptional()
   @IsArray()
-  @ApiProperty()
+  @ApiPropertyOptional()
   authors?: Kennitala[]
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly signedDocumentUrl?: URLString
 
   @IsOptional()
   @IsArray()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly lawChapters?: LawChapterSlug[]
 
   @IsOptional()
   @IsBoolean()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly fastTrack?: boolean
 }

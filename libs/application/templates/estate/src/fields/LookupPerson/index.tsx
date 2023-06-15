@@ -2,7 +2,6 @@ import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import * as nationalId from 'kennitala'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '@island.is/application/types'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -10,21 +9,31 @@ import { useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
 import { IDENTITY_QUERY } from '../../graphql'
 
-export const LookupPerson: FC<FieldBaseProps> = ({ field, error }) => {
+type LookupProps = {
+  field: {
+    id: string
+    props?: {
+      requiredNationalId: boolean
+    }
+  }
+  error: Record<string, string> | any
+}
+
+export const LookupPerson: FC<LookupProps> = ({ field, error }) => {
   const { formatMessage } = useLocale()
-  const { id } = field
+  const { id, props } = field
   const { setValue, watch, clearErrors } = useFormContext()
 
   const personNationalId: string = watch(`${id}.nationalId`)
   const personName: string = watch(`${id}.name`)
-  const e = error as Record<string, string> | undefined
 
-  const [
-    getIdentity,
-    { loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(IDENTITY_QUERY, {
+  const [getIdentity, { loading: queryLoading }] = useLazyQuery<
+    Query,
+    { input: IdentityInput }
+  >(IDENTITY_QUERY, {
     onCompleted: (data) => {
       setValue(`${id}.name`, data.identity?.name ?? '')
+      clearErrors(`${id}.name`)
     },
     fetchPolicy: 'network-only',
   })
@@ -43,8 +52,10 @@ export const LookupPerson: FC<FieldBaseProps> = ({ field, error }) => {
       }
     } else if (personNationalId?.length === 0) {
       clearErrors(`${id}.name`)
+      clearErrors(`${id}.nationalId`)
+      setValue(`${id}.name`, '')
     }
-  }, [personName, personNationalId, getIdentity, setValue])
+  }, [personName, personNationalId, getIdentity, setValue, clearErrors, id])
 
   return (
     <Box>
@@ -55,12 +66,10 @@ export const LookupPerson: FC<FieldBaseProps> = ({ field, error }) => {
             name={`${id}.nationalId`}
             label={formatMessage(m.nationalId)}
             format="######-####"
-            defaultValue=""
             backgroundColor="blue"
             loading={queryLoading}
-            error={
-              queryError ? e?.name : e?.nationalId ? e?.nationalId : undefined
-            }
+            required={props?.requiredNationalId ?? true}
+            error={error?.nationalId || error?.name}
           />
         </GridColumn>
         <GridColumn span="6/12">
@@ -69,8 +78,7 @@ export const LookupPerson: FC<FieldBaseProps> = ({ field, error }) => {
             name={`${id}.name`}
             label={formatMessage(m.name)}
             readOnly
-            defaultValue=""
-            error={e?.name ? e?.name : undefined}
+            error={error?.name ? error?.name : undefined}
           />
         </GridColumn>
       </GridRow>

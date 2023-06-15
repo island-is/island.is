@@ -21,7 +21,7 @@ type GivenWhenThen = (
   defenderNationalId?: string,
 ) => Promise<Then>
 
-describe('InternalNotificationController - Send appeal to court of appeals notification', () => {
+describe('InternalNotificationController - Send appeal to court of appeals notifications', () => {
   const userId = uuid()
   const caseId = uuid()
   const prosecutorName = uuid()
@@ -90,7 +90,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
-          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins í <a href="http://localhost:4200/verjandi/krafa/${caseId}">Réttarvörslugátt</a> með rafrænum skilríkjum.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

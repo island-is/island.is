@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildForm,
@@ -11,6 +12,7 @@ import { m } from '../../lib/messages'
 import { announcerInfo } from '../sharedSections/announcerInfo'
 import { dataCollection } from '../sharedSections/dataCollection'
 import { overviewSection } from './overviewSection'
+import { YES } from '../../lib/constants'
 
 export const form: Form = buildForm({
   id: 'estateWithoutProperty',
@@ -34,6 +36,11 @@ export const form: Form = buildForm({
               title: '',
               id: 'estate.estateMembers',
               component: 'EstateMembersRepeater',
+            }),
+            buildDescriptionField({
+              id: 'space0',
+              title: '',
+              space: 'containerGutter',
             }),
           ],
         }),
@@ -82,11 +89,22 @@ export const form: Form = buildForm({
                   titleVariant: 'h3',
                   description: m.vehiclesDescription,
                 }),
-                buildCustomField({
-                  title: '',
-                  id: 'estate.vehicles',
-                  component: 'VehiclesRepeater',
-                }),
+                buildCustomField(
+                  {
+                    title: '',
+                    id: 'estate.vehicles',
+                    component: 'AssetsRepeater',
+                  },
+                  {
+                    assetName: 'vehicles',
+                    texts: {
+                      assetTitle: m.vehiclesTitle,
+                      assetNumber: m.vehicleNumberLabel,
+                      assetType: m.vehicleTypeLabel,
+                      addAsset: m.addVehicle,
+                    },
+                  },
+                ),
               ],
             }),
           ],

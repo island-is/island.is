@@ -1,34 +1,34 @@
 import { json, ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { settings } from '../../../infra/src/dsl/settings'
 import {
+  AdrAndMachine,
   Base,
+  ChargeFjsV2,
   Client,
+  CriminalRecord,
+  Disability,
   DrivingLicense,
+  DrivingLicenseBook,
   Education,
   Finance,
+  Firearm,
+  FishingLicense,
   HealthInsurance,
+  JudicialAdministration,
   Labor,
+  MunicipalitiesFinancialAid,
   NationalRegistry,
   Passports,
   Payment,
-  Properties,
   PaymentSchedule,
-  CriminalRecord,
+  Properties,
   RskCompanyInfo,
-  DrivingLicenseBook,
-  FishingLicense,
-  MunicipalitiesFinancialAid,
-  Vehicles,
-  AdrAndMachine,
-  JudicialAdministration,
-  Firearm,
-  Disability,
-  VehicleServiceFjsV1,
   TransportAuthority,
-  ChargeFjsV2,
   UniversityOfIceland,
+  Vehicles,
+  VehicleServiceFjsV1,
+  IcelandicGovernmentInstitutionVacancies,
 } from '../../../infra/src/dsl/xroad'
-import { settings } from '../../../infra/src/dsl/settings'
-import { MissingSetting } from '../../../infra/src/dsl/types/input-types'
 
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
@@ -126,12 +126,12 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
       REGULATIONS_ADMIN_URL: ref(
-        (h) => `http://${h.svc(services.regulationsAdminBackend)}/api`,
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
       ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
-      XROAD_PROPERTIES_TIMEOUT: '20000',
+      XROAD_PROPERTIES_TIMEOUT: '35000',
       SYSLUMENN_TIMEOUT: '40000',
       XROAD_DRIVING_LICENSE_BOOK_TIMEOUT: '20000',
       XROAD_FINANCES_TIMEOUT: '20000',
@@ -175,7 +175,7 @@ export const serviceSetup = (services: {
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
-        prod: 'https://samradapi-test.devland.is',
+        prod: 'https://samradapi.island.is',
       },
       NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
@@ -200,6 +200,11 @@ export const serviceSetup = (services: {
           staging: 'https://identity-server.staging01.devland.is/backend',
           production: 'https://innskra.island.is/backend',
         }),
+      },
+      AUTH_IDS_API_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
       },
     })
 
@@ -321,6 +326,7 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       UniversityOfIceland,
+      IcelandicGovernmentInstitutionVacancies,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

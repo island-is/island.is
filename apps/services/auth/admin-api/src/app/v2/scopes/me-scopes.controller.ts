@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
@@ -6,10 +14,18 @@ import {
   AdminScopeDTO,
   MeTenantGuard,
   ClientCreateScopeDTO,
+  AdminPatchScopeDto,
+  AdminClientDto,
 } from '@island.is/auth-api-lib'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { idsAdminScopes } from '@island.is/auth/scopes'
-import { Audit } from '@island.is/nest/audit'
+import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth/admin-api/v2/scopes'
@@ -24,7 +40,10 @@ const namespace = '@island.is/auth/admin-api/v2/scopes'
 })
 @Audit({ namespace })
 export class MeScopesController {
-  constructor(private readonly adminScopeService: AdminScopeService) {}
+  constructor(
+    private readonly auditService: AuditService,
+    private readonly adminScopeService: AdminScopeService,
+  ) {}
 
   @Get()
   @Documentation({
@@ -69,5 +88,34 @@ export class MeScopesController {
     @Body() input: ClientCreateScopeDTO,
   ): Promise<AdminScopeDTO> {
     return this.adminScopeService.createScope(tenantId, input)
+  }
+
+  @Patch(':scopeName')
+  @Documentation({
+    description: 'Update a scope with partial set of properties.',
+    response: { status: 200, type: AdminScopeDTO },
+  })
+  update(
+    @CurrentUser() user: User,
+    @Param('tenantId') tenantId: string,
+    @Param('scopeName') scopeName: string,
+    @Body() input: AdminPatchScopeDto,
+  ): Promise<AdminScopeDTO> {
+    return this.auditService.auditPromise<AdminScopeDTO>(
+      {
+        namespace,
+        auth: user,
+        action: 'update',
+        resources: (scope) => scope.name,
+        meta: {
+          fields: Object.keys(input),
+        },
+      },
+      this.adminScopeService.updateScope({
+        tenantId,
+        scopeName,
+        input,
+      }),
+    )
   }
 }

@@ -20,7 +20,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
-import { YES } from '../../lib/constants'
+import { JA, NEI, YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
@@ -50,7 +50,7 @@ export const overview = buildSection({
         buildDividerField({}),
         buildDescriptionField({
           id: 'overviewEstateMembersHeader',
-          title: m.estateMembers,
+          title: m.estateMembersTitle,
           titleVariant: 'h3',
           space: 'gutter',
         }),
@@ -64,7 +64,9 @@ export const overview = buildSection({
           {
             cards: ({ answers }: Application) =>
               (
-                ((answers.estate as unknown) as EstateInfo).estateMembers ?? []
+                ((answers.estate as unknown) as EstateInfo).estateMembers.filter(
+                  (member) => member.enabled,
+                ) ?? []
               ).map((member) => ({
                 title: member.name,
                 description: [
@@ -78,16 +80,25 @@ export const overview = buildSection({
               })),
           },
         ),
+        buildDescriptionField({
+          id: 'space1',
+          title: '',
+          space: 'gutter',
+        }),
         buildKeyValueField({
           label: m.doesWillExist,
           value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.wills'),
+            getValueViaPath(answers, 'estate.testament.wills') === YES
+              ? JA
+              : NEI,
           width: 'half',
         }),
         buildKeyValueField({
           label: m.doesAgreementExist,
           value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.agreement'),
+            getValueViaPath(answers, 'estate.testament.agreement') === YES
+              ? JA
+              : NEI,
           width: 'half',
         }),
         buildDescriptionField({
@@ -106,7 +117,22 @@ export const overview = buildSection({
             getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
         }),
         buildDescriptionField({
-          id: 'space1',
+          id: 'space2',
+          title: '',
+          space: 'gutter',
+        }),
+        buildKeyValueField({
+          label: m.additionalInfo,
+          value: ({ answers }) =>
+            getValueViaPath(answers, 'estate.testament.additionalInfo'),
+          condition: (answers) =>
+            !!getValueViaPath<string>(
+              answers,
+              'estate.testament.additionalInfo',
+            ),
+        }),
+        buildDescriptionField({
+          id: 'space3',
           title: '',
           space: 'gutter',
         }),
@@ -127,19 +153,21 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              (((answers.estate as unknown) as EstateInfo).assets ?? []).map(
-                (asset) => ({
-                  title: asset.description,
-                  description: [
-                    `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
-                    m.overviewMarketValue.defaultMessage +
-                      ': ' +
-                      (asset.marketValue
-                        ? formatCurrency(asset.marketValue)
-                        : '0 kr.'),
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo).assets.filter(
+                  (asset) => asset.enabled,
+                ) ?? []
+              ).map((asset) => ({
+                title: asset.description,
+                description: [
+                  `${m.propertyNumber.defaultMessage}: ${asset.assetNumber}`,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (asset.marketValue
+                      ? formatCurrency(asset.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
           },
         ),
         buildDividerField({}),
@@ -157,6 +185,8 @@ export const overview = buildSection({
             getValueViaPath<string>(application.answers, 'inventory.info'),
           titleVariant: 'h4',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'inventory.info') !== '',
         }),
         buildDescriptionField({
           id: 'overviewInventoryValue',
@@ -164,12 +194,21 @@ export const overview = buildSection({
           description: (application: Application) => {
             const value =
               getValueViaPath<string>(application.answers, 'inventory.value') ??
-              ''
+              '0'
             return formatCurrency(value)
           },
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'inventory.value') !== '',
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
+        }),
+        buildCustomField({
+          id: 'inventoryNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'inventory.value') === '',
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -188,21 +227,21 @@ export const overview = buildSection({
           },
           {
             cards: ({ answers }: Application) =>
-              (((answers.estate as unknown) as EstateInfo)?.vehicles ?? []).map(
-                (vehicle) => ({
-                  title: vehicle.description,
-                  description: [
-                    m.propertyNumber.defaultMessage +
-                      ': ' +
-                      vehicle.assetNumber,
-                    m.overviewMarketValue.defaultMessage +
-                      ': ' +
-                      (vehicle.marketValue
-                        ? formatCurrency(vehicle.marketValue)
-                        : '0 kr.'),
-                  ],
-                }),
-              ),
+              (
+                ((answers.estate as unknown) as EstateInfo)?.vehicles?.filter(
+                  (vehicle) => vehicle.enabled,
+                ) ?? []
+              ).map((vehicle) => ({
+                title: vehicle.description,
+                description: [
+                  m.propertyNumber.defaultMessage + ': ' + vehicle.assetNumber,
+                  m.overviewMarketValue.defaultMessage +
+                    ': ' +
+                    (vehicle.marketValue
+                      ? formatCurrency(vehicle.marketValue)
+                      : '0 kr.'),
+                ],
+              })),
           },
         ),
         buildDividerField({}),
@@ -245,7 +284,6 @@ export const overview = buildSection({
           title: m.estateBankInfo,
           description: m.estateBankInfoDescription,
           titleVariant: 'h3',
-          marginBottom: 'gutter',
           space: 'gutter',
         }),
         buildCustomField(
@@ -262,7 +300,7 @@ export const overview = buildSection({
                   title: formatBankInfo(account.accountNumber ?? ''),
                   description: [
                     `${m.bankAccountBalance.defaultMessage}: ${formatCurrency(
-                      account.balance ?? '',
+                      account.balance ?? '0',
                     )}`,
                   ],
                 }),
@@ -275,7 +313,6 @@ export const overview = buildSection({
           title: m.claimsTitle,
           description: m.claimsDescription,
           titleVariant: 'h3',
-          marginBottom: 'gutter',
           space: 'gutter',
         }),
         buildCustomField(
@@ -292,7 +329,7 @@ export const overview = buildSection({
                   title: claim.publisher,
                   description: [
                     `${m.claimsAmount.defaultMessage}: ${formatCurrency(
-                      claim.value ?? '',
+                      claim.value ?? '0',
                     )}`,
                   ],
                 }),
@@ -305,7 +342,6 @@ export const overview = buildSection({
           title: m.stocksTitle,
           description: m.stocksDescription,
           titleVariant: 'h3',
-          marginBottom: 'gutter',
           space: 'gutter',
         }),
         buildCustomField(
@@ -327,7 +363,7 @@ export const overview = buildSection({
                     `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
                     `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
                     `${m.stocksValue.defaultMessage}: ${formatCurrency(
-                      stock.value ?? '',
+                      stock.value ?? '0',
                     )}`,
                   ],
                 }),
@@ -344,11 +380,13 @@ export const overview = buildSection({
         }),
         buildDescriptionField({
           id: 'overviewOtherAssets',
-          title: m.moneyAndDepositText,
+          title: m.otherAssetsText,
           description: (application: Application) =>
             getValueViaPath<string>(application.answers, 'otherAssets.info'),
           titleVariant: 'h4',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'otherAssets.info') !== '',
         }),
         buildDescriptionField({
           id: 'overviewMOtherAssetsValue',
@@ -358,12 +396,21 @@ export const overview = buildSection({
               getValueViaPath<string>(
                 application.answers,
                 'otherAssets.value',
-              ) ?? ''
-            return formatCurrency(value)
+              ) ?? '0'
+            return formatCurrency(value === '' ? '0' : value)
           },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'otherAssets.value') !== '',
+        }),
+        buildCustomField({
+          id: 'otherAssetsNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'otherAssets.value') === '',
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -383,6 +430,8 @@ export const overview = buildSection({
             ),
           titleVariant: 'h4',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'moneyAndDeposit.info') !== '',
         }),
         buildDescriptionField({
           id: 'overviewMoneyAndDepositValue',
@@ -392,26 +441,30 @@ export const overview = buildSection({
               getValueViaPath<string>(
                 application.answers,
                 'moneyAndDeposit.value',
-              ) ?? ''
+              ) ?? '0'
 
             return formatCurrency(value)
           },
           titleVariant: 'h4',
           marginBottom: 'gutter',
           space: 'gutter',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'moneyAndDeposit.value') !== '',
+        }),
+        buildCustomField({
+          id: 'moneyAndDepositNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) =>
+            getValueViaPath<string>(answers, 'moneyAndDeposit.value') === '',
         }),
         buildDividerField({}),
-        buildDescriptionField({
-          id: 'space2',
-          title: '',
-          space: 'gutter',
-        }),
         buildDescriptionField({
           id: 'overviewDebtsTitle',
           title: m.debtsTitle,
           description: m.debtsDescription,
           titleVariant: 'h3',
-          marginBottom: 'gutter',
+          space: 'gutter',
         }),
         buildCustomField(
           {
@@ -429,14 +482,56 @@ export const overview = buildSection({
                     `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
                       debt.nationalId ?? '',
                     )}`,
+                    `${m.debtsLoanIdentity.defaultMessage}: ${
+                      debt.loanIdentity ?? ''
+                    }`,
                     `${m.debtsBalance.defaultMessage}: ${formatCurrency(
-                      debt.balance ?? '',
+                      debt.balance ?? '0',
                     )}`,
                   ],
                 }),
               ),
           },
         ),
+        buildDividerField({}),
+        buildDescriptionField({
+          id: 'overviewAttachments',
+          title: m.attachmentsTitle,
+          titleVariant: 'h3',
+          space: 'gutter',
+          marginBottom: 'gutter',
+        }),
+        buildKeyValueField({
+          label: '',
+          value: ({ answers }) => {
+            const attachments = getValueViaPath(
+              answers,
+              'estateAttachments',
+            ) as any
+            return attachments?.attached.file.map(
+              (f: { key: string; name: string }) => {
+                return f.name
+              },
+            )
+          },
+          condition: (answers) => {
+            const files = getValueViaPath(answers, 'estateAttachments') as {
+              attached: { file: { length: number } }
+            }
+            return files?.attached?.file?.length === 0
+          },
+        }),
+        buildCustomField({
+          id: 'attachmentsNotFilledOut',
+          title: '',
+          component: 'NotFilledOut',
+          condition: (answers) => {
+            const files = getValueViaPath(answers, 'estateAttachments') as {
+              attached: { file: { length: number } }
+            }
+            return files?.attached?.file?.length === 0
+          },
+        }),
         buildSubmitField({
           id: 'permitToPostponeEstateDivision.submit',
           title: '',

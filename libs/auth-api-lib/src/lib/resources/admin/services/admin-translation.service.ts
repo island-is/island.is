@@ -55,12 +55,24 @@ export class AdminTranslationService {
     return [
       {
         locale: 'is',
-        value: defaultValueIS,
+        value: defaultValueIS ?? '',
       },
       ...Array.from(translations || []).map(([locale, translation]) => ({
         locale,
         value: translation.get(key) ?? '',
       })),
     ]
+  }
+
+  /**
+   * Finds the translation by locale
+   */
+  findTranslationByLocale(
+    translatedValueDTO: TranslatedValueDto[],
+    locale: string,
+  ): TranslatedValueDto | undefined {
+    return translatedValueDTO.find(
+      (translatedValue) => translatedValue.locale === locale,
+    )
   }
 }

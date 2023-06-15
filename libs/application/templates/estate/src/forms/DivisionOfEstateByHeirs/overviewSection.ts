@@ -19,6 +19,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
+import { JA, NEI, YES } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overview = buildSection({
@@ -81,17 +82,21 @@ export const overview = buildSection({
         buildKeyValueField({
           label: m.doesWillExist,
           value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.wills'),
+            getValueViaPath(answers, 'estate.testament.wills') === YES
+              ? JA
+              : NEI,
           width: 'half',
         }),
         buildKeyValueField({
           label: m.doesAgreementExist,
           value: ({ answers }) =>
-            getValueViaPath(answers, 'estate.testament.agreement'),
+            getValueViaPath(answers, 'estate.testament.agreement') === YES
+              ? JA
+              : NEI,
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'space0',
+          id: 'space1',
           title: '',
           space: 'gutter',
         }),
@@ -99,10 +104,9 @@ export const overview = buildSection({
           label: m.additionalInfo,
           value: ({ answers }) =>
             getValueViaPath(answers, 'estate.testament.additionalInfo'),
-          width: 'half',
         }),
         buildDescriptionField({
-          id: 'space1',
+          id: 'space2',
           title: '',
           space: 'gutter',
         }),
@@ -427,6 +431,9 @@ export const overview = buildSection({
                     `${m.debtsNationalId.defaultMessage}: ${formatNationalId(
                       debt.nationalId ?? '',
                     )}`,
+                    `${m.debtsLoanIdentity.defaultMessage}: ${
+                      debt.loanIdentity ?? ''
+                    }`,
                     `${m.debtsBalance.defaultMessage}: ${formatCurrency(
                       debt.balance ?? '',
                     )}`,

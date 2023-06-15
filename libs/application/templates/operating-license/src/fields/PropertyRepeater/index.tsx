@@ -119,10 +119,14 @@ const PropertyItem = ({
 
   const [
     getProperty,
-    { loading: _queryLoading, error: _queryError },
+    { loading: queryLoading, error: _queryError },
   ] = useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
     onCompleted: (data) => {
-      setValue(addressField, data.getRealEstateAddress[0].name ?? '')
+      setValue(
+        addressField,
+        data.getRealEstateAddress[0]?.name ??
+          formatMessage(m.propertyNameNotFound),
+      )
     },
   })
 
@@ -176,8 +180,9 @@ const PropertyItem = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.propertyNumber}
+            loading={queryLoading}
             error={
-              hasPropertyNumberButEmptyAddress
+              hasPropertyNumberButEmptyAddress && !queryLoading
                 ? formatMessage(errorMsg.missingAddressForPropertyNumber)
                 : !propertyNumberInput
                 ? error

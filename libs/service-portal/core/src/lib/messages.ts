@@ -890,9 +890,30 @@ export const m = defineMessages({
     defaultMessage: 'Loftbrú',
     description: 'Airfare discount',
   },
+  airDiscountDescription: {
+    id: 'service.portal:air-discount-description',
+    defaultMessage: 'Lægri flug­fargjöld fyrir íbúa lands­byggð­arinnar',
+    description: 'Airfare discount',
+  },
   sessions: {
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
+  },
+  health: {
+    id: 'service.portal:health',
+    defaultMessage: 'Heilsa',
+  },
+  healthDescription: {
+    id: 'service.portal:health-description',
+    defaultMessage: 'Hér eru heilsugögn um þig',
+  },
+  therapies: {
+    id: 'service.portal:therapies',
+    defaultMessage: 'Þjálfun',
+  },
+  aidsAndNutrition: {
+    id: 'service.portal:aids-and-nutrition',
+    defaultMessage: 'Hjálpartæki og næring',
   },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',

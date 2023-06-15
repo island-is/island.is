@@ -345,9 +345,9 @@ export const notifications = {
   }),
   prisonRulingEmail: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.prison_ruling_email.subject',
-      defaultMessage:
-        'Úrskurður um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}',
+      id:
+        'judicial.system.backend:notifications.prison_ruling_email.subject_v2',
+      defaultMessage: 'Úrskurður í máli {courtCaseNumber}',
       description:
         'Fyrirsögn í pósti til fangeslis þegar vistunarseðill og þingbók eru send',
     },
@@ -644,6 +644,20 @@ export const notifications = {
       defaultMessage:
         'Greinargerð hefur borist vegna kæru í máli {courtCaseNumber}{appealCaseNumber, select, NONE {} other { (Landsréttarmál nr. {appealCaseNumber})}}. {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til aðila máls þegar greinargerð er send',
+    },
+  }),
+  caseAppealCompleted: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_appeal_completed.subject',
+      defaultMessage:
+        'Úrskurður í landsréttarmáli {appealCaseNumber} ({courtCaseNumber})',
+      description: 'Fyrirsögn í pósti til aðila máls þegar kæru er lokið',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_appeal_completed.body',
+      defaultMessage:
+        'Landsréttur hefur úrskurðað í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+      description: 'Texti í pósti til aðila máls þegar kæru er lokið',
     },
   }),
 }

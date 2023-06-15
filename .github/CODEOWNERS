@@ -82,6 +82,7 @@
 /libs/application/templates/inheritance-report/                                                          @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                      @island-is/juni
 /libs/api/domains/disability-license                                                                     @island-is/juni
+/libs/portals/admin/petition                                                                             @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -125,6 +126,9 @@
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
 /libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
+/libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
+/libs/api/domains/regulations-admin/                                                                     @island-is/hugsmidjan
+/libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
@@ -138,10 +142,11 @@
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
 /libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
+/libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
 /apps/services/license-api/                                                                              @island-is/hugsmidjan
-/libs/api/domains/regulations/                                                                           @island-is/hugsmidjan
 /libs/regulations/                                                                                       @island-is/hugsmidjan
 /libs/portals/admin/regulations-admin/                                                                   @island-is/hugsmidjan
+/libs/clients/icelandic-health-insurance/rights-portal/                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                                   @island-is/norda
 /libs/application/templates/institution-collaboration/                                                   @island-is/norda @island-is/fuglar
@@ -163,7 +168,7 @@
 /libs/application/templates/health-insurance/                                                            @island-is/norda
 /libs/clients/rsk/company-registry                                                                       @island-is/norda
 /libs/api/domains/company-registry                                                                       @island-is/norda
-/libs/clients/health-insurance-v2/                                                                       @island-is/norda
+/libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda                                                                       @island-is/norda
 /libs/clients/data-protection-complaint/                                                                 @island-is/norda
 /libs/clients/fishing-license/                                                                           @island-is/norda
 /libs/api/domains/fishing-license/                                                                       @island-is/norda
@@ -195,7 +200,6 @@
 /libs/api/domains/content-search/                                                                        @island-is/stefna @island-is/juni
 /libs/api/domains/syslumenn/                                                                             @island-is/stefna
 /libs/api/domains/email-signup/                                                                          @island-is/stefna
-/libs/api/domains/powerbi/                                                                               @island-is/stefna
 /libs/api/domains/electronic-registration-statistics/                                                    @island-is/stefna
 /libs/clients/electronic-registration-statistics/                                                        @island-is/stefna
 /libs/api/domains/fiskistofa/                                                                            @island-is/stefna
@@ -203,6 +207,8 @@
 /libs/clients/syslumenn/                                                                                 @island-is/stefna @island-is/juni
 /libs/shared/connected/                                                                                  @island-is/stefna
 /libs/api/domains/watson-assistant-chat/                                                                 @island-is/stefna
+/libs/clients/icelandic-government-institution-vacancies/                                                @island-is/stefna
+/libs/api/domains/icelandic-government-institution-vacancies/                                            @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 

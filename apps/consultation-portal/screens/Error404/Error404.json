@@ -1,0 +1,15 @@
+{
+  "Error404": {
+    "title": "Afsakið hlé.",
+    "notFoundText": "Síða eða skjal fannst ekki.",
+    "text": "Eftirfarandi ástæður geta verið fyrir því að síða/skjal fannst ekki",
+    "bulletOne": "Upplýsingar hafa verið fjarlægðar",
+    "bulletTwo": "Vefslóð er ekki rétt skrifuð",
+    "bulletThree": "Síðan er ekki lengur til",
+    "bulletFour": "Villa er á síðunni",
+    "textAfterBullets": "Þú getur einnig prófað að leita að efninu á forsíðu",
+    "linkText": "samráðsgáttarinnar",
+    "textAfterBreak": "Teljir þú að síða eða skjal eigi sannarlega að birtast má endilega senda ábendingu á netfangið",
+    "email": "samradsgatt@stjornarradid.is"
+  }
+}

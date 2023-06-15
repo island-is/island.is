@@ -28,7 +28,7 @@ describe('InternalCaseController - Deliver case files record to court guards', (
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as quard 1', () => {
+    it('should have CaseExistsGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -40,10 +40,10 @@ describe('InternalCaseController - Deliver case files record to court guards', (
       guard = guards[1]
     })
 
-    it('should have CaseTypeGuard as quard 2', () => {
+    it('should have CaseTypeGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
-        allowedCaseTypes: [...indictmentCases],
+        allowedCaseTypes: indictmentCases,
       })
     })
   })

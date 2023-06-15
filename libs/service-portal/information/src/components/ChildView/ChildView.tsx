@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC } from 'react'
 import { defineMessage } from 'react-intl'
 import { ApolloError } from '@apollo/client/errors'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -29,8 +29,6 @@ import ChildRegistrationModal from '../../screens/FamilyMember/ChildRegistration
 import * as styles from './ChildView.css'
 import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm, urls } from '../../lib/messages'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -78,8 +76,6 @@ const ChildView: FC<Props> = ({
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const [showTooltip, setShowTooltip] = useState(false)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
 
   const livingArrangment = (
     livingArrangementParents: Array<string> | undefined,
@@ -89,20 +85,6 @@ const ChildView: FC<Props> = ({
       ? formatMessage(m.yes)
       : formatMessage(m.no)
   }
-
-  /* Should show name breakdown tooltip? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalNameBreakdownEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setShowTooltip(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   if (!nationalId || error || (!loading && !person))
     return (
@@ -178,16 +160,13 @@ const ChildView: FC<Props> = ({
           <UserInfoLine
             title={formatMessage(m.myRegistration)}
             label={formatMessage(m.fullName)}
+            translate="no"
             content={person?.fullName || '...'}
-            tooltip={
-              showTooltip
-                ? formatNameBreaks(person ?? undefined, {
-                    givenName: formatMessage(spmm.givenName),
-                    middleName: formatMessage(spmm.middleName),
-                    lastName: formatMessage(spmm.lastName),
-                  })
-                : undefined
-            }
+            tooltip={formatNameBreaks(person ?? undefined, {
+              givenName: formatMessage(spmm.givenName),
+              middleName: formatMessage(spmm.middleName),
+              lastName: formatMessage(spmm.lastName),
+            })}
             loading={loading}
             editLink={
               !isChild
@@ -195,6 +174,7 @@ const ChildView: FC<Props> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editChild),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
@@ -223,6 +203,7 @@ const ChildView: FC<Props> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editResidenceChild),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }
@@ -263,6 +244,7 @@ const ChildView: FC<Props> = ({
                     title: editLink,
                     external: true,
                     url: formatMessage(urls.editChildReligion),
+                    skipOutboundTrack: true,
                   }
                 : undefined
             }

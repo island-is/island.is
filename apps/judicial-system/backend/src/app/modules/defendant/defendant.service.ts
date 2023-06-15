@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { MessageService } from '@island.is/judicial-system/message'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
@@ -121,6 +121,25 @@ export class DefendantService {
     return defendantsInCustody.some((d) => d.case)
   }
 
+  findLatestDefendantByDefenderNationalId(
+    nationalId: string,
+  ): Promise<Defendant | null> {
+    return this.defendantModel.findOne({
+      include: [
+        {
+          model: Case,
+          as: 'case',
+          where: {
+            state: { [Op.not]: CaseState.DELETED },
+            isArchived: false,
+          },
+        },
+      ],
+      where: { defenderNationalId: nationalId },
+      order: [['created', 'DESC']],
+    })
+  }
+
   async deliverDefendantToCourt(
     theCase: Case,
     defendant: Defendant,
@@ -131,11 +150,13 @@ export class DefendantService {
       !defendant.nationalId ||
       defendant.nationalId.replace('-', '').length !== 10
     ) {
-      // TODO: Uncomment when we are ready to send notifications
-      // await this.messageService.sendMessagesToQueue([{
-      //   type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
-      //   caseId: theCase.id,
-      // }])
+      await this.messageService.sendMessagesToQueue([
+        {
+          type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+          user,
+          caseId: theCase.id,
+        },
+      ])
 
       return { delivered: true }
     }

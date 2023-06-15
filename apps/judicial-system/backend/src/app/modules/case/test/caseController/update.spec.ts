@@ -5,8 +5,10 @@ import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   CaseState,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   restrictionCases,
   User,
@@ -288,6 +290,7 @@ describe('CaseController - Update', () => {
       mockFindById.mockResolvedValueOnce({
         id: prosecutorId,
         role: UserRole.PROSECUTOR,
+        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
       })
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
@@ -432,6 +435,7 @@ describe('CaseController - Update', () => {
       const updatedCase = {
         ...theCase,
         type,
+        origin: CaseOrigin.LOKE,
         caseModifiedExplanation: 'some explanation',
       }
 
@@ -449,6 +453,7 @@ describe('CaseController - Update', () => {
             user,
             caseId,
           },
+          { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
         ])
       })
     },
