@@ -260,10 +260,7 @@ const WorkMachinesOverview = () => {
               page={page}
               totalPages={10}
               renderLink={(page, className, children) => (
-                <button
-                  className={className}
-                  onClick={() => setPage(page - 1 + 1)}
-                >
+                <button className={className} onClick={() => setPage(page)}>
                   {children}
                 </button>
               )}
