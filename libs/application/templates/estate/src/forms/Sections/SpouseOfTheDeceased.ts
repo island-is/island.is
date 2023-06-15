@@ -20,7 +20,7 @@ export const deceasedSpouse = buildSection({
       children: [
         ...deceasedInfoFields,
         buildDescriptionField({
-          id: 'space0',
+          id: 'space',
           space: 'containerGutter',
           title: '',
         }),

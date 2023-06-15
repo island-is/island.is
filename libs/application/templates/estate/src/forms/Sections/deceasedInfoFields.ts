@@ -30,7 +30,7 @@ export const deceasedInfoFields = [
     width: 'half',
   }),
   buildDescriptionField({
-    id: 'spaceDIF',
+    id: 'space',
     space: 'gutter',
     title: '',
   }),

@@ -44,12 +44,12 @@ export const estateWithoutAssets = buildSection({
             ) === YES,
         }),
         buildDescriptionField({
-          id: 'space1',
+          id: 'space',
           title: '',
           space: 'containerGutter',
         }),
         buildDescriptionField({
-          id: 'test',
+          id: 'helper',
           title: '',
           condition: (answers) =>
             getValueViaPath(
@@ -60,10 +60,4 @@ export const estateWithoutAssets = buildSection({
       ],
     }),
   ],
-  condition: (answers) => {
-    return (
-      getValueViaPath(answers, 'selectedEstate') ===
-      EstateTypes.estateWithoutAssets
-    )
-  },
 })
