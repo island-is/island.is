@@ -57,15 +57,15 @@ test.describe('Admin portal access control', () => {
       ).toBeVisible()
     })
 
-    test.step('Update old endorsement list', async () => {
+    test.step('See locked lists are present', async () => {
       await granterPage.getByRole('button', { name: 'Til baka' }).click()
       await granterPage.getByRole('tab', { name: 'Læstir listar' }).click()
-      await expect(
-        granterPage.getByRole('row', { name: 'Læstir listar' }),
-      ).toHaveCountGreaterThan(1)
+      await expect(granterPage.getByText('Skoða lista')).toHaveCountGreaterThan(
+        1,
+      )
     })
 
-    test.step('Go bacck to overview', async () => {
+    test.step('Go back to overview', async () => {
       await granterPage.getByTestId('active-module-name').click()
       await granterPage.getByRole('button', { name: 'Yfirlit' }).click()
       await expect(
