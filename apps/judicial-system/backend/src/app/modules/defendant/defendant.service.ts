@@ -185,7 +185,7 @@ export class DefendantService {
   async delete(
     theCase: Case,
     defendantId: string,
-    user: TUser,
+    user: User,
   ): Promise<boolean> {
     const numberOfAffectedRows = await this.defendantModel.destroy({
       where: { id: defendantId, caseId: theCase.id },
@@ -208,7 +208,7 @@ export class DefendantService {
       await this.messageService.sendMessagesToQueue([
         this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
           theCase,
-          user.id,
+          user,
         ),
       ])
     }
