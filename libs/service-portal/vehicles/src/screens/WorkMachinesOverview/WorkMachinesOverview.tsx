@@ -174,6 +174,7 @@ const WorkMachinesOverview = () => {
                               const filter = activeFilters[key]
                               return (
                                 <Checkbox
+                                  key={index}
                                   id={`work-machine-filter-${index}`}
                                   label={filter.label}
                                   checked={filter.value}

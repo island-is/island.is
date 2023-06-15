@@ -77,6 +77,7 @@ const WorkMachinesDetail = () => {
   const createLinks = (links: Array<WorkMachinesLink>) => {
     const generateButton = (
       rel: WorkMachinesAction,
+      idx: number,
       title?: string,
       url?: string,
     ) => {
@@ -95,7 +96,13 @@ const WorkMachinesDetail = () => {
         </Button>
       )
 
-      return url ? <Link href={url}>{button}</Link> : button
+      return url ? (
+        <Link key={idx} href={url}>
+          {button}
+        </Link>
+      ) : (
+        button
+      )
     }
 
     const buttons: Array<React.ReactNode> = []
@@ -103,12 +110,17 @@ const WorkMachinesDetail = () => {
       .map((l) => l.rel)
       .filter((Boolean as unknown) as ExcludesFalse)
 
-    OrderedLinks.forEach((ol) => {
+    OrderedLinks.forEach((ol, index) => {
       if (keys.includes(ol)) {
         const link = links.find((link) => link.rel === ol)
         if (link) {
           buttons.push(
-            generateButton(ol, link.displayTitle ?? '', link.href ?? undefined),
+            generateButton(
+              ol,
+              index,
+              link.displayTitle ?? '',
+              link.href ?? undefined,
+            ),
           )
         }
       }
