@@ -16,11 +16,6 @@ export interface DriversLicense {
   name: string
   issued?: Date | null
   expires?: Date | null
-  photo?: {
-    noted?: Date | null
-    image?: string | null
-  }
-  location?: string | null
   categories: DriversLicenseCategory[]
   healthRemarks?: string[]
   disqualification?: Disqualification | null
