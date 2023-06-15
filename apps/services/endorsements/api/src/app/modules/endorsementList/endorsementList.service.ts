@@ -277,12 +277,11 @@ export class EndorsementListService {
     }
 
     try {
-      // return (await this.nationalRegistryApi.getUser(owner)).Fulltnafn
       const person = await this.nationalRegistryApiV2.getIndividual(owner)
       if (person?.fullName) {
-        return person?.fullName
+        return person.fullName
       } else {
-        return 'bob'
+        return ''
       }
     } catch (e) {
       if (e instanceof Error) {

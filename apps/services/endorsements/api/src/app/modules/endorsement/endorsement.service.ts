@@ -72,10 +72,6 @@ export class EndorsementService {
       where: { endorsementListId: listId },
     })
 
-    // MOVE TO FUNCTION
-    // REMOVE INTERCEPTORS
-    // WRITE A TEST SO NOBODY MESSES UP PRIVACY LOGIC
-
     // process endorsement data privacy display settings
     const requestFromListOwner = await this.isListOwner(nationanlId, listId)
     endorsements.data.map((endorsement) => {

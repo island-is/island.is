@@ -1,4 +1,5 @@
 import { ApolloProvider } from '@apollo/client'
+// temp stuff to trigger for #deploy-feature
 
 import { initializeClient } from '@island.is/application/graphql'
 import { LocaleProvider } from '@island.is/localization'

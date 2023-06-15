@@ -44,8 +44,6 @@ import { PaginationDto } from '@island.is/nest/pagination'
 import { PaginatedEndorsementListDto } from './dto/paginatedEndorsementList.dto'
 import { PaginatedEndorsementDto } from '../endorsement/dto/paginatedEndorsement.dto'
 import { SearchQueryDto } from './dto/searchQuery.dto'
-// import { EndorsementListInterceptor } from './interceptors/endorsementList.interceptor'
-// import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
 
@@ -78,7 +76,6 @@ export class EndorsementListController {
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get()
-  // @UseInterceptors(EndorsementListsInterceptor)
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Audit()
   async findByTags(
@@ -96,7 +93,6 @@ export class EndorsementListController {
   @ApiOperation({ summary: 'Gets General Petition Lists' })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('general-petition-lists')
-  // @UseInterceptors(EndorsementListsInterceptor)
   @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionLists(
     @Query() query: PaginationDto,
@@ -110,7 +106,6 @@ export class EndorsementListController {
   @ApiOkResponse({ type: EndorsementList })
   @ApiParam({ name: 'listId', type: 'string' })
   @Get('general-petition-list/:listId')
-  // @UseInterceptors(EndorsementListInterceptor)
   @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async getGeneralPetitionList(
     @Param('listId') listId: string,
@@ -146,7 +141,6 @@ export class EndorsementListController {
   })
   @ApiOkResponse({ type: PaginatedEndorsementListDto })
   @Get('/endorsementLists')
-  // @UseInterceptors(EndorsementListsInterceptor)
   @Audit<PaginatedEndorsementListDto>({
     resources: ({ data: endorsement }) => endorsement.map((e) => e.id),
     meta: ({ data: endorsement }) => ({ count: endorsement.length }),
@@ -170,7 +164,6 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Get(':listId')
-  // @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -193,7 +186,6 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Put(':listId/close')
-  // @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -218,7 +210,6 @@ export class EndorsementListController {
   @ApiBody({ type: ChangeEndorsmentListClosedDateDto })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Put(':listId/open')
-  // @UseInterceptors(EndorsementListInterceptor)
   @HasAccessGroup(AccessGroup.Owner)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
@@ -242,7 +233,6 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/lock')
-  // @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -264,7 +254,6 @@ export class EndorsementListController {
   @ApiParam({ name: 'listId', type: 'string' })
   @Scopes(AdminPortalScope.petitionsAdmin)
   @Put(':listId/unlock')
-  // @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
   })
@@ -314,7 +303,6 @@ export class EndorsementListController {
   @ApiBody({ type: EndorsementListDto })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @Post()
-  // @UseInterceptors(EndorsementListInterceptor)
   @Audit<EndorsementList>({
     resources: (endorsementList) => endorsementList.id,
     meta: (endorsementList) => ({
