@@ -1,4 +1,8 @@
-import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
+import {
+  DataValue,
+  Label,
+  ReviewGroup,
+} from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
@@ -10,7 +14,7 @@ export const Comment = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ comment }, setStateful] = useStatefulAnswers(application)
+  const [{ comment }] = useStatefulAnswers(application)
 
   const { formatMessage } = useLocale()
 
@@ -25,9 +29,8 @@ export const Comment = ({
             label={formatMessage(
               oldAgePensionFormMessage.shared.commentSection,
             )}
-            value=""
+            value={comment}
           />
-          <DataValue label="" value={comment} />
         </GridColumn>
       </GridRow>
     </ReviewGroup>

@@ -12,6 +12,7 @@ import { Period } from './review-groups/Period'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
 import { ResidenceHistory } from './review-groups/ResidenceHistory'
+import { useStatefulAnswers } from '../../hooks/useStatefulAnswers'
 
 interface ReviewScreenProps {
   application: Application
@@ -27,6 +28,7 @@ export const Review: FC<ReviewScreenProps> = ({
   goToScreen,
   errors,
 }) => {
+  const [{ comment }] = useStatefulAnswers(application)
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
 
@@ -64,7 +66,7 @@ export const Review: FC<ReviewScreenProps> = ({
       <ResidenceHistory {...childProps} />
       <Period {...childProps} />
       <Fishermen {...childProps} />
-      <Comment {...childProps} />
+      {comment && <Comment {...childProps} />}
       <Attachments {...childProps} />
     </>
   )

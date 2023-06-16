@@ -24,7 +24,7 @@ export const Period = ({
       <GridRow marginBottom={3}>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.fisher)}
+            label={formatMessage(oldAgePensionFormMessage.review.period)}
             value={`${selectedMonth} ${selectedYear}`}
           />
         </GridColumn>

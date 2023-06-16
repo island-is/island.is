@@ -37,7 +37,7 @@ export const ResidenceHistory = ({
               oldAgePensionFormMessage.shared.residenceHistoryTitle,
             )}
           </Label>
-          <Box paddingTop={6}>
+          <Box paddingTop={3}>
             <Table columns={columns} data={data} />
           </Box>
         </GridColumn>

@@ -508,7 +508,8 @@ export const coreErrorMessages = defineMessages({
     description: 'Not able to fetch birthplace',
   },
   nationalRegistryResidenceHistoryMissing: {
-    id: 'application.system:core.fetch.data.nationalRegistryResidenceHistoryMissing',
+    id:
+      'application.system:core.fetch.data.nationalRegistryResidenceHistoryMissing',
     defaultMessage: 'Náði ekki að sækja búsetusögu',
     description: 'Not able to fetch residence history',
   },
