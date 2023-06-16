@@ -1,11 +1,12 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { sleep } from '../../../../support/utils'
 
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord/`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-test.describe('Admin portal access control', () => {
+test.describe('Admin portal (Endorsements)', () => {
   let contextGranter: BrowserContext
 
   test.beforeAll(async ({ browser }) => {
@@ -45,12 +46,11 @@ test.describe('Admin portal access control', () => {
       await granterPage.getByRole('tab', { name: 'Liðnir listar' }).click()
       await granterPage.getByText('Skoða lista').first().click()
       await expect(granterPage.getByLabel('Heiti lista')).toBeVisible()
-      await expect(
-        granterPage.getByRole('heading', { name: 'Yfirlit undirskrifta' }),
-      ).toBeVisible()
+      await expect(granterPage.getByText('Yfirlit undirskrifta')).toBeVisible()
     })
 
     test.step('Update old endorsement list', async () => {
+      await sleep(500)
       await granterPage.getByRole('button', { name: 'Uppfæra lista' }).click()
       await expect(
         granterPage.getByRole('note', { name: 'Tókst að uppfæra lista' }),
@@ -67,7 +67,10 @@ test.describe('Admin portal access control', () => {
 
     test.step('Go back to overview', async () => {
       await granterPage.getByTestId('active-module-name').click()
-      await granterPage.getByRole('button', { name: 'Yfirlit' }).click()
+      await granterPage
+        .getByRole('menu', { name: 'Stjórnborðs valmynd' })
+        .getByRole('link', { name: 'Yfirlit' })
+        .click()
       await expect(
         granterPage.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
       ).toBeVisible()
