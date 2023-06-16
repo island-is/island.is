@@ -125,7 +125,7 @@ export const withAutoAuth = ({
       `Fetch (${name}): AutoAuth configured to use cache but no cache manager configured.`,
     )
   }
-//
+  //
   const innerFetch = createEnhancedFetch({
     fetch: rootFetch,
     logger,
