@@ -153,15 +153,7 @@ function constructRestrictionCourtRecordPdf(
     )
     addEmptyLines(doc)
 
-    if (theCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
-      addNormalJustifiedText(
-        doc,
-        formatMessage(courtRecord.nonePresentInSession),
-        'Times-Roman',
-      )
-    } else {
-      addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
-    }
+    addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
   }
 
   addEmptyLines(doc)
@@ -404,15 +396,7 @@ function constructInvestigationCourtRecordPdf(
     )
     addEmptyLines(doc)
 
-    if (theCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
-      addNormalJustifiedText(
-        doc,
-        formatMessage(courtRecord.nonePresentInSession),
-        'Times-Roman',
-      )
-    } else {
-      addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
-    }
+    addNormalJustifiedText(doc, theCase.courtAttendees, 'Times-Roman')
   }
 
   addEmptyLines(doc)

@@ -56,13 +56,6 @@ export const courtRecord = {
     defaultMessage: 'Mættir eru:',
     description: 'Notaður sem fyrirsögn á lista yfir viðstadda.',
   }),
-  nonePresentInSession: defineMessage({
-    id: 'judicial.system.backend:pdf.court_record.none_present_in_session',
-    defaultMessage:
-      'Með heimild í 1. mgr. 104. gr. laga nr. 88/2008 voru hvorki varnaraðili né sóknaraðili kvaddir til þinghaldsins.',
-    description:
-      'Texti undir mættir eru þegar krafa er tekin fyrir án boðunar í þinghaldi.',
-  }),
   courtDocuments: defineMessages({
     heading: {
       id: 'judicial.system.backend:pdf.court_record.court_documents.heading',
