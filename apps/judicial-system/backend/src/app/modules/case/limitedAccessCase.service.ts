@@ -257,7 +257,10 @@ export class LimitedAccessCaseService {
     // Return limited access case
     const updatedCase = await this.findById(theCase.id)
 
-    if (updatedCase.defendantStatementDate !== theCase.defendantStatementDate) {
+    if (
+      updatedCase.defendantStatementDate?.getTime() !==
+      theCase.defendantStatementDate?.getTime()
+    ) {
       messages.push({
         type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
         user,
