@@ -64,22 +64,31 @@ export const navigation = style({
   }),
 })
 
+const titleStyles = themeUtils.responsiveStyle({
+  md: {
+    marginLeft: -48,
+    marginTop: 0,
+  },
+  lg: {
+    width: '50%',
+    marginLeft: -80,
+    marginTop: -24,
+  },
+  xl: {
+    width: '50%',
+    marginLeft: -128,
+    marginTop: 24,
+  },
+})
+
 export const title = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      marginLeft: -48,
-      marginTop: -48,
-      width: '80%',
-    },
-    lg: {
-      width: '50%',
-      marginLeft: -80,
-      marginTop: -48,
-    },
-    xl: {
-      width: '50%',
+  ...titleStyles,
+  '@media': {
+    ...titleStyles?.['@media'],
+    'screen and (min-width: 2000px)': {
       marginLeft: -128,
-      marginTop: -48,
+      width: '70%',
+      marginTop: 24,
     },
-  }),
+  },
 })
