@@ -42,10 +42,7 @@ import {
   getStatementDeadline,
 } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
-import {
-  formatDate,
-  formatDefenderRoute,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 
 import {
   formatProsecutorCourtDateEmailNotification,
@@ -65,6 +62,7 @@ import {
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
+  formatDefenderRoute,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
@@ -802,7 +800,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRulingEmail.subject,
-      { caseType: theCase.type },
+      { courtCaseNumber: theCase.courtCaseNumber },
     )
     const html = this.formatMessage(notifications.prisonRulingEmail.body, {
       institutionName: theCase.court?.name,
@@ -863,7 +861,11 @@ export class NotificationService {
     const promises = [this.sendRulingEmailNotificationToProsecutor(theCase)]
 
     if (isIndictmentCase(theCase.type)) {
-      theCase.defendants?.forEach((defendant) => {
+      const uniqueDefendants = _uniqBy(
+        theCase.defendants ?? [],
+        (d: Defendant) => d.defenderEmail,
+      )
+      uniqueDefendants.forEach((defendant) => {
         if (defendant.defenderEmail) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(
@@ -1249,34 +1251,15 @@ export class NotificationService {
   private async sendDefenderAssignedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
+    // Only applies to indictment cases
     const promises: Promise<Recipient>[] = []
 
-    if (isIndictmentCase(theCase.type)) {
-      const uniqDefendants = _uniqBy(
-        theCase.defendants ?? [],
-        (d: Defendant) => d.defenderEmail,
-      )
-      for (const defendant of uniqDefendants) {
-        const { defenderEmail, defenderNationalId, defenderName } = defendant
-
-        const shouldSend = await this.shouldSendDefenderAssignedNotification(
-          theCase,
-          defenderEmail,
-        )
-
-        if (shouldSend === true) {
-          promises.push(
-            this.sendDefenderAssignedNotification(
-              theCase,
-              undefined && defenderNationalId, // Temporarily disable links in defender emails for indictments
-              defenderName,
-              defenderEmail,
-            ),
-          )
-        }
-      }
-    } else {
-      const { defenderEmail, defenderNationalId, defenderName } = theCase
+    const uniqDefendants = _uniqBy(
+      theCase.defendants ?? [],
+      (d: Defendant) => d.defenderEmail,
+    )
+    for (const defendant of uniqDefendants) {
+      const { defenderEmail, defenderNationalId, defenderName } = defendant
 
       const shouldSend = await this.shouldSendDefenderAssignedNotification(
         theCase,
@@ -1516,49 +1499,63 @@ export class NotificationService {
       },
     )
 
-    const html = this.formatMessage(notifications.caseAppealStatement.body, {
-      userHasAccessToRVG: true,
-      courtCaseNumber: theCase.courtCaseNumber,
-      appealCaseNumber: theCase.appealCaseNumber,
-      linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
-
     const promises = []
 
     if (theCase.appealCaseNumber) {
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.appealAssistant?.name,
-          theCase.appealAssistant?.email,
-        ),
+      const courtOfAppealsHtml = this.formatMessage(
+        notifications.caseAppealStatement.body,
+        {
+          userHasAccessToRVG: true,
+          courtCaseNumber: theCase.courtCaseNumber,
+          appealCaseNumber: theCase.appealCaseNumber,
+          linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkEnd: '</a>',
+        },
       )
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.appealJudge1?.name,
-          theCase.appealJudge1?.email,
-        ),
-      )
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.appealJudge2?.name,
-          theCase.appealJudge2?.email,
-        ),
-      )
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.appealJudge3?.name,
-          theCase.appealJudge3?.email,
-        ),
-      )
+
+      if (theCase.appealAssistant) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            courtOfAppealsHtml,
+            theCase.appealAssistant.name,
+            theCase.appealAssistant.email,
+          ),
+        )
+      }
+
+      if (theCase.appealJudge1) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            courtOfAppealsHtml,
+            theCase.appealJudge1.name,
+            theCase.appealJudge1.email,
+          ),
+        )
+      }
+
+      if (theCase.appealJudge2) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            courtOfAppealsHtml,
+            theCase.appealJudge2.name,
+            theCase.appealJudge2.email,
+          ),
+        )
+      }
+
+      if (theCase.appealJudge3) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            courtOfAppealsHtml,
+            theCase.appealJudge3.name,
+            theCase.appealJudge3.email,
+          ),
+        )
+      }
     }
 
     if (user.role === UserRole.DEFENDER) {
@@ -1607,6 +1604,11 @@ export class NotificationService {
           theCase.defenderEmail,
         ),
       )
+    }
+
+    if (promises.length === 0) {
+      // Nothing to send
+      return { notificationSent: true }
     }
 
     const recipients = await Promise.all(promises)

@@ -29,13 +29,13 @@ export class CaseDefenderGuard implements CanActivate {
 
     if (
       isIndictmentCase(theCase.type)
-        ? !theCase.defendants?.find(
+        ? !theCase.defendants?.some(
             (defendant) => defendant.defenderNationalId === user.nationalId,
           )
         : theCase.defenderNationalId !== user.nationalId
     ) {
       throw new ForbiddenException(
-        `User ${user.id} does not have read access to case ${theCase.id}`,
+        `User ${user.id} does not have access to case ${theCase.id}`,
       )
     }
 

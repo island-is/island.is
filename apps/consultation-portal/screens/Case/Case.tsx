@@ -27,6 +27,7 @@ import { useContext } from 'react'
 import UserContext from '../../context/UserContext'
 import localization from './Case.json'
 import { Layout } from '../../components'
+import Error404 from '../Error404/Error404'
 
 interface Props {
   chosenCase: Case
@@ -51,6 +52,14 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
     chosenCase?.statusName !== CaseStatuses.published
   const statusNameIsForReview =
     chosenCase?.statusName === CaseStatuses.forReview
+
+  const chosenCaseIsNull = Object.values(chosenCase).every((value) =>
+    Boolean(String(value).trim()),
+  )
+
+  if (chosenCaseIsNull) {
+    return <Error404 />
+  }
 
   return (
     <Layout

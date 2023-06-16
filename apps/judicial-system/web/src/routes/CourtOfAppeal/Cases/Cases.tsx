@@ -65,7 +65,7 @@ const CourtOfAppealCases = () => {
 
   const { data: appealedCases } = useQuery<{
     cases: AppealedCasesQueryResponse[]
-  }>(AppealedCasesQuery, { variables: { input } })
+  }>(AppealedCasesQuery, { variables: { input }, fetchPolicy: 'no-cache' })
 
   const appealedCasesColumns = [
     {

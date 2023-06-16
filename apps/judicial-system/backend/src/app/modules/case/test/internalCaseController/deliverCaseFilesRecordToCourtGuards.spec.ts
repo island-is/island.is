@@ -43,7 +43,7 @@ describe('InternalCaseController - Deliver case files record to court guards', (
     it('should have CaseTypeGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
-        allowedCaseTypes: [...indictmentCases],
+        allowedCaseTypes: indictmentCases,
       })
     })
   })

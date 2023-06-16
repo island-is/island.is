@@ -12,7 +12,7 @@ import { ShadowBox } from '../../../components/ShadowBox/ShadowBox'
 import { AddPermissions } from './AddPermissions/AddPermissions'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { useClient } from '../ClientContext'
-import { FormCard } from '../../../components/FormCard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface PermissionsProps {
   allowedScopes?: AuthAdminClientAllowedScope[]
@@ -112,13 +112,18 @@ function Permissions({ allowedScopes }: PermissionsProps) {
       customValidation={customValidation}
       intent={hasData ? ClientFormTypes.permissions : undefined}
       shouldSupportMultiEnvironment={false}
+      headerMarginBottom={3}
     >
       <Box
         marginBottom={hasData ? 5 : 0}
         display="flex"
         justifyContent="flexEnd"
       >
-        <Button size="small" onClick={handleModalOpen}>
+        <Button
+          size="small"
+          onClick={handleModalOpen}
+          dataTestId="add-permissions-button"
+        >
           {formatMessage(m.permissionsAdd)}
         </Button>
       </Box>
@@ -138,7 +143,7 @@ function Permissions({ allowedScopes }: PermissionsProps) {
             </T.Head>
             <T.Body>
               {permissions.map((item) => (
-                <T.Row key={item.name}>
+                <T.Row key={item.name} dataTestId="permission-row">
                   <T.Data>
                     <Box display="flex" columnGap={1} alignItems="center">
                       {item.domainName !== tenant && (
