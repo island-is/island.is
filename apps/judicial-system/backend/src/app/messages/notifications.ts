@@ -352,9 +352,9 @@ export const notifications = {
   }),
   prisonRulingEmail: defineMessages({
     subject: {
-      id: 'judicial.system.backend:notifications.prison_ruling_email.subject',
-      defaultMessage:
-        'Úrskurður um {caseType, select, ADMISSION_TO_FACILITY {vistun á viðeigandi stofnun} other {gæsluvarðhald}}',
+      id:
+        'judicial.system.backend:notifications.prison_ruling_email.subject_v2',
+      defaultMessage: 'Úrskurður í máli {courtCaseNumber}',
       description:
         'Fyrirsögn í pósti til fangeslis þegar vistunarseðill og þingbók eru send',
     },

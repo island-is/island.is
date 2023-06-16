@@ -320,6 +320,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                   name="filterInput"
                   value={searchTerm}
                   onChange={(value) => {
+                    setSelectedPage(1)
                     setSearchTerm(value)
                     searchTermHasBeenInitialized.current = true
                   }}
@@ -330,12 +331,14 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
             <FilterMultiChoice
               labelClear={n('clearSelection', 'Hreinsa val')}
               onChange={({ categoryId, selected }) => {
+                setSelectedPage(1)
                 setParameters((prevParameters) => ({
                   ...prevParameters,
                   [categoryId]: selected,
                 }))
               }}
               onClear={(categoryId) => {
+                setSelectedPage(1)
                 setParameters((prevParameters) => ({
                   ...prevParameters,
                   [categoryId]: [],
@@ -373,7 +376,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
           <Box marginBottom={6}>
             <Text>
               {filteredVacancies.length}{' '}
-              {filteredVacancies.length === 1
+              {filteredVacancies.length % 10 === 1
                 ? n('singleJobFound', 'starf fannst')
                 : n('jobsFound', 'störf fundust')}
             </Text>
