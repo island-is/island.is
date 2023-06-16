@@ -6,12 +6,11 @@ export function maskEndorsement(
 ): Endorsement {
   // always mask out nationalId and locality
   endorsement.endorser = 'xxxxxx-xxxx'
-  endorsement.meta.locality = ''
   // endorsement data display rules for everyone(public,users,admins) except owner who sees all
   if (!isListOwner) {
+    endorsement.meta.locality = ''
     if (!endorsement.meta.showName) {
       endorsement.meta.fullName = ''
-      
     }
   }
 
