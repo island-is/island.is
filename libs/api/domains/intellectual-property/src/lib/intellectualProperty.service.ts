@@ -35,6 +35,9 @@ export class IntellectualPropertyService {
       ssn: user.nationalId,
     })
 
+  getPatentByApplicationNumber = (appId: string) =>
+    this.patentSearchApi.apiPatentSearchSearchGet({ applicationNr: appId })
+
   getDesigns = (user: User): Promise<Design[] | null> =>
     this.designSearchApi.designSearchGetDesignBySSNGet({ ssn: user.nationalId })
 }

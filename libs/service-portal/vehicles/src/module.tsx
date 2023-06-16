@@ -16,6 +16,11 @@ const DrivingLessonsBook = lazy(() =>
   import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
+const IPOverview = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
+  ),
+)
 
 export const vehiclesModule: PortalModule = {
   name: 'Ökutæki',
@@ -59,6 +64,12 @@ export const vehiclesModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.internalProcuring),
       element: <Lookup />,
+    },
+    {
+      name: m.intellectualProperty,
+      path: VehiclePaths.AssetsIntellectualPropertiesOverview,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      element: <IPOverview />,
     },
   ],
 }

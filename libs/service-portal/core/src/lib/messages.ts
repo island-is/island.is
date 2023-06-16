@@ -915,6 +915,10 @@ export const m = defineMessages({
     id: 'service.portal:aids-and-nutrition',
     defaultMessage: 'Hjálpartæki og næring',
   },
+  intellectualProperty: {
+    id: 'service.portal:intellectual-property',
+    defaultMessage: 'Hugverkaréttindi',
+  },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',
     defaultMessage: 'Sundurliðun',

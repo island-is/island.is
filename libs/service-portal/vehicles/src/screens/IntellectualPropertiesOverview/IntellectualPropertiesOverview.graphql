@@ -1,0 +1,10 @@
+query GetPatents {
+  intellectualPropertyPatentCollection {
+    applicationNumber
+    registrationNumber
+    patentName
+    patentNameInOrgLanguage
+    statusText
+    applicationDate
+  }
+}

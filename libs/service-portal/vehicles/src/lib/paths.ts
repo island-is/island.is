@@ -5,4 +5,6 @@ export enum VehiclePaths {
   AssetsVehiclesLookup = '/okutaeki/leit',
   AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
   AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
+  AssetsIntellectualPropertiesOverview = '/okutaeki/hugverkarettindi',
+  AssetsIntellectualPropertiesDetail = '/okutaeki/hugverkarettindi/:id',
 }

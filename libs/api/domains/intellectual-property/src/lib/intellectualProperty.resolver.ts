@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import {
   IdsUserGuard,
@@ -13,6 +13,7 @@ import { IntellectualPropertyService } from './intellectualProperty.service'
 import { Trademark } from './models/getTrademark.model'
 import { Patent } from './models/getPatents.model'
 import { Design } from './models/getDesign.model'
+import { GetPatentInput } from './dto/getPatent.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -32,12 +33,25 @@ export class IntellectualPropertyResolver {
 
   @Scopes(ApiScope.internal)
   @Query(() => [Patent], {
-    name: 'intellectualPropertyPatents',
+    name: 'intellectualPropertyPatentCollection',
     nullable: true,
   })
   @Audit()
-  getIntellectualPropertyPatents(@CurrentUser() user: User) {
+  getIntellectualPropertyPatentCollection(@CurrentUser() user: User) {
     return this.ipService.getPatents(user)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => Patent, {
+    name: 'intellectualPropertyPatent',
+    nullable: true,
+  })
+  @Audit()
+  getIntellectualPropertyPatentByApplicationNumber(
+    @Args('input', { type: () => GetPatentInput })
+    input: GetPatentInput,
+  ) {
+    return this.ipService.getPatentByApplicationNumber(input.applicationId)
   }
 
   @Scopes(ApiScope.internal)

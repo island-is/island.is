@@ -628,6 +628,18 @@ export const messages = defineMessages({
   },
 })
 
+export const ipMessages = defineMessages({
+  title: {
+    id: 'sp.intellectual-property:title',
+    defaultMessage: 'Hugverkaréttindin mín',
+  },
+  description: {
+    id: 'sp.intellectual-property:description',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet consectetur. Arcu quam quis consequat tellus. Netus tristique molestie id cursus non sed. ',
+  },
+})
+
 export const urls = defineMessages({
   ownerChange: {
     id: 'sp.vehicles:url-owner-change',

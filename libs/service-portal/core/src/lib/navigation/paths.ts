@@ -98,6 +98,8 @@ export enum ServicePortalPath {
   AssetsVehiclesLookup = '/okutaeki/leit',
   AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
   AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
+  AssetsIntellectualProperties = '/okutaeki/hugverkarettindi',
+  AssetsIntellectualPropertiesDetail = '/okutaeki/hugverkarettindi/:id',
 
   // Messages
   MessagesRoot = '/skilabod',
