@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import fs from 'fs'
 
 import { TemplateApiModuleActionProps } from '../../../types'
 import { NationalRegistry, UploadData } from './types'
@@ -252,12 +253,24 @@ export class EstateTemplateService extends BaseTemplateApiService {
         ? {
             representative: {
               email: answers.representative.email ?? '',
-              name: answers.representative.name ?? '',
+              name: answers.representative.name,
               phoneNumber: answers.representative.phone ?? '',
               ssn: answers.representative.nationalId ?? '',
             },
           }
         : { representative: undefined }),
+      ...(answers.deceasedWithUndividedEstate?.spouse?.nationalId
+        ? {
+            deceasedWithUndividedEstate: {
+              spouse: {
+                name: answers.deceasedWithUndividedEstate.spouse.name ?? '',
+                nationalId:
+                  answers.deceasedWithUndividedEstate.spouse.nationalId,
+              },
+              selection: answers.deceasedWithUndividedEstate.selection ?? '',
+            },
+          }
+        : { deceasedWithUndividedEstate: undefined }),
     }
 
     const attachments: Attachment[] = []
@@ -267,6 +280,11 @@ export class EstateTemplateService extends BaseTemplateApiService {
       uploadData,
       application.id,
     )
+
+    //Save buffer to disk
+    const pdfPath = `/home/steini/Documents/estate.pdf`
+    fs.writeFileSync(pdfPath, pdfBuffer)
+
     attachments.push({
       name: `Form_data_${uploadData.caseNumber}.pdf`,
       content: pdfBuffer.toString('base64'),
