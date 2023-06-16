@@ -53,7 +53,7 @@
               "X-Pagination": {
                 "description": "Paging info",
                 "schema": {
-                  "type": "object",
+                  "type": "string",
                   "description": "Paging info",
                   "format": "{\"totalCount\":6,\"pageSize\":10,\"currentPage\":1,\"totalPages\":1}"
                 }
@@ -451,7 +451,18 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/LabelDto" },
             "nullable": true
-          }
+          },
+          "_pagination": { "$ref": "#/components/schemas/PaginationDto" }
+        },
+        "additionalProperties": false
+      },
+      "PaginationDto": {
+        "type": "object",
+        "properties": {
+          "totalCount": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" },
+          "currentPage": { "type": "integer", "format": "int32" },
+          "totalPages": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },

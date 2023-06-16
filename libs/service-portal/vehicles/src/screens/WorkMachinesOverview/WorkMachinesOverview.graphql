@@ -9,5 +9,8 @@ query GetWorkMachines($input: WorkMachinesWorkMachineCollectionInput) {
     links {
       rel
     }
+    pagination {
+      totalPages
+    }
   }
 }

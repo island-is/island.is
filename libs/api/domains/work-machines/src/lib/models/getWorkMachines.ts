@@ -16,6 +16,9 @@ export class WorkMachineCollection {
 
   @Field(() => [Label], { nullable: true })
   labels?: Array<Label> | null
+
+  @Field(() => Pagination, { nullable: true })
+  pagination?: Pagination | null
 }
 
 @ObjectType('WorkMachinesWorkMachine')
@@ -135,4 +138,18 @@ export class Label {
 
   @Field(() => String, { nullable: true })
   tooltip?: string | null
+}
+@ObjectType('WorkMachinesPagination')
+export class Pagination {
+  @Field(() => Number, { nullable: true })
+  totalCount?: number | null
+
+  @Field(() => Number, { nullable: true })
+  pageSize?: number | null
+
+  @Field(() => Number, { nullable: true })
+  currentPage?: number | null
+
+  @Field(() => Number, { nullable: true })
+  totalPages?: number | null
 }

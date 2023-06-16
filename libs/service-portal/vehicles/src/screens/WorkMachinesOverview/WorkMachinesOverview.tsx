@@ -258,13 +258,13 @@ const WorkMachinesOverview = () => {
 
       {!loading &&
         !error &&
-        data?.workMachinesWorkMachineCollection?.links?.find(
-          (l) => l.rel === WorkMachinesExternalLink.NEXT_PAGE,
-        ) && (
+        data?.workMachinesWorkMachineCollection?.pagination?.totalPages && (
           <Box>
             <Pagination
               page={page}
-              totalPages={10}
+              totalPages={
+                data.workMachinesWorkMachineCollection.pagination?.totalPages
+              }
               renderLink={(page, className, children) => (
                 <button className={className} onClick={() => setPage(page)}>
                   {children}
