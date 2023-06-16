@@ -217,7 +217,7 @@ export class OldPkPassClient {
       const ttl = this.parseTtlFromTokenExpiry(response.data?.EXPIRED_ON)
       if (this.cacheManager && ttl) {
         try {
-          await this.cacheManager.set(this.pkpassCacheKey, token, { ttl })
+          await this.cacheManager.set(this.pkpassCacheKey, token, ttl)
         } catch (e) {
           this.logger.warn('Unable to cache token for pkpass service', {
             category: LOG_CATEGORY,
