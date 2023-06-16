@@ -6,7 +6,19 @@ import { oldAgePensionFormMessage } from './messages'
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
+
 import { residenceHistory } from '../types'
+
+interface fileType {
+  key: string
+  name: string
+}
+
+interface earlyRetirementPensionfundFishermen {
+  earlyRetirement?: fileType[]
+  pension?: fileType[]
+  fishermen?: fileType[]
+}
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const pensionFundQuestion = getValueViaPath(
@@ -35,6 +47,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'onePaymentPerYear.question',
   ) as YesOrNo
 
+  const comment = getValueViaPath(answers, 'comment') as string
+
   return {
     pensionFundQuestion,
     isFishermen,
@@ -43,6 +57,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicantEmail,
     applicantPhonenumber,
     onePaymentPerYear,
+    comment,
   }
 }
 
@@ -225,4 +240,24 @@ export function getAgeBetweenTwoDates(
   const age = Math.abs(Math.floor(diffTime / (365.25 * 60 * 60 * 24 * 1000)))
 
   return age
+}
+
+export function getAttachments(answers: Application['answers']) {
+  const attachments: string[] = []
+
+  const getAttachmentsName = (attachmentsArr: fileType[] | undefined) => {
+    if (attachmentsArr && attachmentsArr.length > 0) {
+      attachmentsArr.map((attch) => {
+        attachments.push(attch.name)
+      })
+    }
+  }
+
+  // Early retirement, pension fund, fishermen
+  const earlyPenFisher = answers.fileUploadEarlyPenFisher as earlyRetirementPensionfundFishermen
+  getAttachmentsName(earlyPenFisher.pension)
+  getAttachmentsName(earlyPenFisher.earlyRetirement)
+  getAttachmentsName(earlyPenFisher.fishermen)
+
+  return attachments
 }

@@ -19,8 +19,7 @@ export const Period = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('period')}
-      isLast={true}
+      editAction={() => goToScreen?.('periodField')}
     >
       <GridRow marginBottom={3}>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>

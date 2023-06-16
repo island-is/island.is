@@ -463,11 +463,11 @@ export const OldAgePensionForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'comment',
-      title: oldAgePensionFormMessage.shared.commentSection,
-      children: [],
-    }),
+    // buildSection({
+    //   id: 'comment',
+    //   title: oldAgePensionFormMessage.shared.commentSection,
+    //   children: [],
+    // }),
     buildSection({
       id: 'confirm',
       title: oldAgePensionFormMessage.shared.confirmSectionTitle,
