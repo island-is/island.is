@@ -15,17 +15,6 @@ import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
-import type { User } from '@island.is/auth-nest-tools'
-import { REQUEST } from '@nestjs/core'
-import { Request } from 'express'
-
-interface EndorsementRequest extends Request {
-  auth: {
-    nationalId: string
-  }
-  cachedEndorsementList: EndorsementList
-}
-
 interface FindEndorsementInput {
   listId: string
   nationalId: string
@@ -65,13 +54,12 @@ export class EndorsementService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private readonly nationalRegistryApiV2: NationalRegistryClientService,
-    @Inject(REQUEST) private request: EndorsementRequest,
   ) {}
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.info(`Finding endorsements by list id "${listId}"`)
 
-    const endorsements = await paginate({
+    return await paginate({
       Model: this.endorsementModel,
       limit: query.limit || 10,
       after: query.after,
@@ -80,20 +68,6 @@ export class EndorsementService {
       orderOption: [['counter', 'DESC']],
       where: { endorsementListId: listId },
     })
-
-    // endorsement data display rules for everyone(public,users,admins) except owner ...
-    // ... list owner sees all data
-    const user = this.request.auth as User
-    const listOwnerNationalId = await this.getListOwnerNationalId(listId)
-    if (user?.nationalId != listOwnerNationalId) {
-      endorsements.data.map((endorsement) => {
-        if (!endorsement.meta.showName) {
-          endorsement.meta.fullName = ''
-          endorsement.meta.locality = ''
-        }
-      })
-    }
-    return endorsements
   }
 
   async getListOwnerNationalId(listId: string): Promise<string | null> {
