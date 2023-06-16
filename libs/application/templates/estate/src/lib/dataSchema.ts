@@ -305,12 +305,6 @@ export const estateSchema = z.object({
     )
     .optional(),
 
-  // is: Heimild til setu í óskiptu búi skv. erfðaskrá
-  undividedEstateResidencePermission: z.enum([YES, NO]),
-
-  // is: Hefur umsækjandi forræði á búi?
-  applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
-
   estateAttachments: z.object({
     attached: z.object({
       file: z.array(FileSchema),
