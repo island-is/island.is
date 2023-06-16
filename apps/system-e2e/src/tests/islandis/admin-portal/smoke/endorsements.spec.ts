@@ -1,4 +1,4 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
