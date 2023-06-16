@@ -1,9 +1,9 @@
-import { BrowserContext, expect, test } from '@playwright/test'
+import { BrowserContext, expect, Page, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { sleep } from '../../../../support/utils'
 
-const homeUrl = `${urls.islandisBaseUrl}/stjornbord/`
+const homeUrl = `${urls.islandisBaseUrl}/stjornbord`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Admin portal (Endorsements)', () => {
@@ -19,119 +19,127 @@ test.describe('Admin portal (Endorsements)', () => {
     })
   })
 
+  test.beforeEach(async ({ context, page }) => {
+    context.addCookies(await contextGranter.cookies())
+    await page.goto(icelandicAndNoPopupUrl(homeUrl + '/listar'))
+
+    // const state = await context.storageState()
+    // state.cookies = await contextGranter.cookies()
+    // state.origins = (await contextGranter.storageState()).origins
+
+    // context.addCookies(await contextGranter.cookies())
+
+
+  })
+
   test.afterAll(async () => {
     await contextGranter.close()
   })
 
-  test('access endorsement lists, access and edit a list', async () => {
-    // Arrange
-    const granterPage = await contextGranter.newPage()
 
-    await test.step('Open admin and see overview', async () => {
-      // Act
-      await granterPage.goto(icelandicAndNoPopupUrl(homeUrl))
+  test('Open admin and see overview', async ({ page }) => {
+    await page.goto(icelandicAndNoPopupUrl(homeUrl))
 
-      // Assert
-      await expect(
-        granterPage.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
-      ).toBeVisible()
-    })
+    // Assert
+    await expect(
+      page.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
+    ).toBeVisible()
+  })
 
-    test.step('Open old endorsement list', async () => {
-      await granterPage.getByTestId('active-module-name').click()
-      await granterPage
-        .getByRole('link', { name: 'Undirskriftalistar' })
-        .click()
+  test('Open old endorsement list', async ({ page }) => {
+    await page.getByTestId('active-module-name').click()
+    await page
+      .getByRole('link', { name: 'Undirskriftalistar' })
+      .click()
 
-      await granterPage.getByRole('tab', { name: 'Liðnir listar' }).click()
-      await granterPage.getByText('Skoða lista').first().click()
-      await expect(granterPage.getByLabel('Heiti lista')).toBeVisible()
-      await expect(granterPage.getByText('Yfirlit undirskrifta')).toBeVisible()
-    })
+    await page.getByRole('tab', { name: 'Liðnir listar' }).click()
+    await page.getByText('Skoða lista').first().click()
+    await expect(page.getByLabel('Heiti lista')).toBeVisible()
+    await expect(page.getByText('Yfirlit undirskrifta')).toBeVisible()
+  })
 
-    test.step('Update old endorsement list', async () => {
-      await sleep(500)
-      await granterPage.getByRole('button', { name: 'Uppfæra lista' }).click()
-      await expect(
-        granterPage.getByRole('note', { name: 'Tókst að uppfæra lista' }),
-      ).toBeVisible()
-    })
+  test('Update old endorsement list', async ({ page }) => {
+    await sleep(500)
+    await page.getByRole('button', { name: 'Uppfæra lista' }).click()
+    await expect(
+      page.getByRole('alert').filter({ hasText: 'Tókst að uppfæra lista' })
+    ).toBeVisible()
+  })
 
-    test.step('See locked lists are present', async () => {
-      await granterPage.getByRole('button', { name: 'Til baka' }).click()
-      await granterPage.getByRole('tab', { name: 'Læstir listar' }).click()
-      await expect(granterPage.getByText('Skoða lista')).toHaveCountGreaterThan(
-        1,
-      )
-    })
+  test('See locked lists are present', async ({ page }) => {
+    await page.getByRole('button', { name: 'Til baka' }).click()
+    await page.getByRole('tab', { name: 'Læstir listar' }).click()
+    await expect(page.getByText('Skoða lista')).toHaveCountGreaterThan(
+      1,
+    )
+  })
 
-    test.step('Go back to overview', async () => {
-      await granterPage.getByTestId('active-module-name').click()
-      await granterPage
-        .getByRole('menu', { name: 'Stjórnborðs valmynd' })
-        .getByRole('link', { name: 'Yfirlit' })
-        .click()
-      await expect(
-        granterPage.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
-      ).toBeVisible()
-    })
+  test('Go back to overview', async ({ page }) => {
+    await page.getByTestId('active-module-name').click()
+    await page
+      .getByRole('menu', { name: 'Stjórnborðs valmynd' })
+      .getByRole('link', { name: 'Yfirlit' })
+      .click()
+    await expect(
+      page.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
+    ).toBeVisible()
+  })
 
-    await test.step('access endorsement lists', async () => {
-      // Act
-      await granterPage
-        .getByRole('button', { name: 'Opna Stjórnborðs valmynd' })
-        .click()
-      await granterPage
-        .getByRole('menu', { name: 'Stjórnborðs valmynd' })
-        .getByRole('link', { name: 'Undirskriftalistar' })
-        .click()
+  test('access endorsement lists', async ({ page }) => {
+    // Act
+    await page
+      .getByRole('button', { name: 'Opna Stjórnborðs valmynd' })
+      .click()
+    await page
+      .getByRole('menu', { name: 'Stjórnborðs valmynd' })
+      .getByRole('link', { name: 'Undirskriftalistar' })
+      .click()
 
-      // Assert
-      await expect(
-        granterPage.getByRole('heading', { name: 'Undirskriftalistar' }),
-      ).toBeVisible()
-    })
-    await test.step('access and edit a list', async () => {
-      // Assert
-      await expect(
-        granterPage.locator('button:text("Liðnir listar")'),
-      ).toBeVisible()
+    // Assert
+    await expect(
+      page.getByRole('heading', { name: 'Undirskriftalistar' }),
+    ).toBeVisible()
+  })
+  test('access and edit a list', async ({ page }) => {
+    // Assert
+    await expect(
+      page.getByRole('tab', { name: "Liðnir listar" }),
+    ).toBeVisible()
 
-      //Act
-      await granterPage
-        .getByRole('button', { name: 'Skoða lista' })
-        .first()
-        .click()
-      const currentEndDate = await granterPage
-        .getByLabel('Tímabil til')
-        .last()
-        .inputValue()
-      const exampleDateInThePast = '13.05.2023'
-      await granterPage
-        .getByLabel('Tímabil til')
-        .last()
-        .fill(exampleDateInThePast)
-      await granterPage.keyboard.press('Enter')
-      await granterPage.click('button:text("Uppfæra lista")')
+    //Act
+    await page
+      .getByRole('button', { name: 'Skoða lista' })
+      .first()
+      .click()
+    const currentEndDate = await page
+      .getByLabel('Tímabil til')
+      .last()
+      .inputValue()
+    const exampleDateInThePast = '13.05.2023'
+    await page
+      .getByLabel('Tímabil til')
+      .last()
+      .fill(exampleDateInThePast)
+    await page.keyboard.press('Enter')
+    await page.click('button:text("Uppfæra lista")')
 
-      // Assert
-      let dateValue = await granterPage
-        .getByLabel('Tímabil til')
-        .last()
-        .inputValue()
-      await expect(dateValue).toBe(exampleDateInThePast)
+    // Assert
+    let dateValue = await page
+      .getByLabel('Tímabil til')
+      .last()
+      .inputValue()
+    await expect(dateValue).toBe(exampleDateInThePast)
 
-      // And lets end by setting the date back to what it was
-      await granterPage.getByLabel('Tímabil til').last().fill(currentEndDate)
-      await granterPage.keyboard.press('Enter')
-      await granterPage.click('button:text("Uppfæra lista")')
+    // And lets end by setting the date back to what it was
+    await page.getByLabel('Tímabil til').last().fill(currentEndDate)
+    await page.keyboard.press('Enter')
+    await page.click('button:text("Uppfæra lista")')
 
-      // Assert
-      dateValue = await granterPage
-        .getByLabel('Tímabil til')
-        .last()
-        .inputValue()
-      await expect(dateValue).toBe(currentEndDate)
-    })
+    // Assert
+    dateValue = await page
+      .getByLabel('Tímabil til')
+      .last()
+      .inputValue()
+    await expect(dateValue).toBe(currentEndDate)
   })
 })
