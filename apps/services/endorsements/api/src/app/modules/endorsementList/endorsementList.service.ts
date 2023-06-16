@@ -17,7 +17,6 @@ import { paginate } from '@island.is/nest/pagination'
 import environment, {
   ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
 } from '../../../environments/environment'
-// import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
@@ -36,7 +35,6 @@ export class EndorsementListService {
     private endorsementModel: typeof Endorsement,
     @InjectModel(EndorsementList)
     private readonly endorsementListModel: typeof EndorsementList,
-    // private readonly nationalRegistryApi: NationalRegistryApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     @Inject(EmailService)

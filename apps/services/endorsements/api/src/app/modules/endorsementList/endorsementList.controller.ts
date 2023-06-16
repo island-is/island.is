@@ -49,6 +49,7 @@ import { EndorsementListsInterceptor } from './interceptors/endorsementLists.int
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
 
+
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
   PaginationDto,

@@ -13,7 +13,6 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
-// import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 import type { User } from '@island.is/auth-nest-tools'
@@ -66,7 +65,6 @@ export class EndorsementService {
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    // private readonly nationalRegistryApi: NationalRegistryApi,
     private readonly nationalRegistryApiV2: NationalRegistryClientService,
     @Inject(REQUEST) private request: EndorsementRequest,
   ) {}
@@ -84,7 +82,8 @@ export class EndorsementService {
       where: { endorsementListId: listId },
     })
 
-    // endorsement data display settings for everyone except list owner
+    // endorsement data display rules for everyone(public,users,admins) except owner ...
+    // ... list owner sees all data
     const user = this.request.auth as User
     const listOwnerNationalId = await this.getListOwnerNationalId(listId)
     if(user?.nationalId != listOwnerNationalId){
