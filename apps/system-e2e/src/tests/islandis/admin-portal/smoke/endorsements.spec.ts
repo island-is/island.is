@@ -21,12 +21,6 @@ test.describe('Admin portal (Endorsements)', () => {
   test.beforeEach(async ({ context, page }) => {
     context.addCookies(await contextGranter.cookies())
     await page.goto(icelandicAndNoPopupUrl(homeUrl + '/listar'))
-
-    // const state = await context.storageState()
-    // state.cookies = await contextGranter.cookies()
-    // state.origins = (await contextGranter.storageState()).origins
-
-    // context.addCookies(await contextGranter.cookies())
   })
 
   test.afterAll(async () => {
