@@ -85,7 +85,10 @@ import {
   IcelandicNaturalDisasterInsuranceHeader,
   IcelandicNaturalDisasterInsuranceFooter,
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
-import { TransportAuthorityFooter } from './Themes/TransportAuthorityTheme'
+import {
+  TransportAuthorityFooter,
+  TransportAuthorityHeader,
+} from './Themes/TransportAuthorityTheme'
 
 import * as styles from './OrganizationWrapper.css'
 
@@ -271,6 +274,8 @@ export const OrganizationHeader: React.FC<HeaderProps> = ({
           organizationPage={organizationPage}
         />
       )
+    case 'samgongustofa':
+      return <TransportAuthorityHeader organizationPage={organizationPage} />
     default:
       return <DefaultHeader organizationPage={organizationPage} />
   }
