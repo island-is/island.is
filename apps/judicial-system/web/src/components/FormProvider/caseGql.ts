@@ -169,7 +169,7 @@ const CaseQuery = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction

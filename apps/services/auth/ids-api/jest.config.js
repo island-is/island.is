@@ -5,6 +5,7 @@ module.exports = {
   coverageDirectory: '<rootDir>/coverage/apps/services/auth/ids-api',
   setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
   moduleFileExtensions: ['ts', 'js', 'html', 'json'],
+  testTimeout: 10000,
   globals: {
     'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },

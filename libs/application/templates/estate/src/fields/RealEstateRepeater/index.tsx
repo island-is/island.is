@@ -21,7 +21,6 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
   field,
   errors,
 }) => {
-  console.log(application.answers)
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
