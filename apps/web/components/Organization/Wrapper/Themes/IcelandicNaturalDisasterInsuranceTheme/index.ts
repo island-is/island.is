@@ -4,7 +4,7 @@ export const IcelandicNaturalDisasterInsuranceHeader = dynamic(
   () => import('./IcelandicNaturalDisasterInsuranceHeader'),
   { ssr: false },
 )
-export const IcelandicNaturalDisasterInsuranceHeaderFooter = dynamic(
+export const IcelandicNaturalDisasterInsuranceFooter = dynamic(
   () => import('./IcelandicNaturalDisasterInsuranceFooter'),
   { ssr: false },
 )

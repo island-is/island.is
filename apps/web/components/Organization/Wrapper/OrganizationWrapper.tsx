@@ -83,7 +83,7 @@ import {
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import {
   IcelandicNaturalDisasterInsuranceHeader,
-  IcelandicNaturalDisasterInsuranceHeaderFooter,
+  IcelandicNaturalDisasterInsuranceFooter,
 } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
 
 import * as styles from './OrganizationWrapper.css'
@@ -523,7 +523,7 @@ export const OrganizationFooter: React.FC<FooterProps> = ({
       break
     case 'nti':
       OrganizationFooterComponent = (
-        <IcelandicNaturalDisasterInsuranceHeaderFooter
+        <IcelandicNaturalDisasterInsuranceFooter
           footerItems={organization.footerItems}
           namespace={namespace}
         />
