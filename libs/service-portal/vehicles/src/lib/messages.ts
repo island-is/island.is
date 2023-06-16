@@ -42,21 +42,9 @@ export const messages = defineMessages({
     id: 'sp.vehicles:category',
     defaultMessage: 'flokkur',
   },
-  mainCategory: {
-    id: 'sp.vehicles:main-category',
-    defaultMessage: 'Yfirflokkur',
-  },
-  subCategory: {
-    id: 'sp.vehicles:sub-category',
-    defaultMessage: 'Undirflokkur',
-  },
   type: {
     id: 'sp.vehicles:type',
     defaultMessage: 'Tegund',
-  },
-  make: {
-    id: 'sp.vehicles:make',
-    defaultMessage: 'Gerð',
   },
   subType: {
     id: 'sp.vehicles:subtype',
@@ -65,10 +53,6 @@ export const messages = defineMessages({
   numberPlate: {
     id: 'sp.vehicles:number-plate',
     defaultMessage: 'Skráningarnúmer',
-  },
-  registrationDate: {
-    id: 'sp.vehicles:registration-date',
-    defaultMessage: 'Skráningardagur',
   },
   capacity: {
     id: 'sp.vehicles:capacity',
@@ -89,10 +73,6 @@ export const messages = defineMessages({
   baseInfoTitle: {
     id: 'sp.vehicles:basic-info-vehicle',
     defaultMessage: 'Grunnupplýsingar ökutækis',
-  },
-  baseInfoWorkMachineTitle: {
-    id: 'sp.vehicles:basic-info-work-machine',
-    defaultMessage: 'Grunnupplýsingar tækis',
   },
   inspectionTitle: {
     id: 'sp.vehicles:insp-title',
@@ -134,25 +114,9 @@ export const messages = defineMessages({
     id: 'sp.vehicles:pre-reg-year',
     defaultMessage: 'Framleiðsluár',
   },
-  productNumber: {
-    id: 'sp.vehicles:production-number',
-    defaultMessage: 'Framleiðslunúmer',
-  },
-  productCountry: {
-    id: 'sp.vehicles:production-country',
-    defaultMessage: 'Framleiðsluland',
-  },
   preCountry: {
     id: 'sp.vehicles:pre-country',
     defaultMessage: 'Fyrra skráningarland',
-  },
-  insurer: {
-    id: 'sp.vehicles:insurer',
-    defaultMessage: 'Tryggingafélag',
-  },
-  importer: {
-    id: 'sp.vehicles:importer',
-    defaultMessage: 'Innflytjandi',
   },
   importStatus: {
     id: 'sp.vehicles:import-status',
@@ -674,6 +638,10 @@ export const messages = defineMessages({
     id: 'sp.work-machines:description',
     defaultMessage:
       'Hér finnur þú upplýsingar um þínar vinnuvélar úr skrá Vinnueftirlit ríkisins. Einnig er hægt að sjá yfirlit yfir eigendaskipti.',
+  },
+  baseInfoWorkMachineTitle: {
+    id: 'sp.work-machines:base-info',
+    defaultMessage: 'Grunnupplýsingar tækis',
   },
   showDeregisteredWorkMachines: {
     id: 'sp.work-machines:show-deregistered',

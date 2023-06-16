@@ -128,6 +128,17 @@ const WorkMachinesDetail = () => {
     return buttons
   }
 
+  //transform from [{columnName: string, displayTitle: string}] => { columnName: displayTitle}
+  const labels: Record<string, string> = (
+    workMachine?.labels?.filter((l) => l.columnName && l.displayTitle) ?? []
+  ).reduce(
+    (acc, label) => ({
+      ...acc,
+      [label.columnName ?? '']: label.displayTitle ?? '',
+    }),
+    {} as Record<string, string>,
+  )
+
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -151,37 +162,31 @@ const WorkMachinesDetail = () => {
             {formatMessage(messages.baseInfoWorkMachineTitle)}
           </Text>
           <UserInfoLine
-            label={formatMessage(messages.type)}
-            content={workMachine?.type ? workMachine.type.split(' ')[0] : ''}
+            label={labels.type ?? ''}
+            content={workMachine?.type ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.make)}
-            content={workMachine?.type ? workMachine.type.split(' ')[1] : ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={formatMessage(messages.mainCategory)}
+            label={labels.category ?? ''}
             content={workMachine?.category ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.subCategory)}
+            label={labels.subCategory ?? ''}
             content={workMachine?.subCategory ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.registrationDate)}
+            label={labels.registrationDate ?? ''}
             content={formatDate(workMachine?.registrationDate ?? '')}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.status)}
+            label={labels.status ?? ''}
             content={workMachine?.status ?? ''}
             loading={loading}
           />
@@ -194,47 +199,43 @@ const WorkMachinesDetail = () => {
           dataArray={chunk(
             [
               workMachine?.type && {
-                title: formatMessage(messages.type),
-                value: workMachine.type.split(' ')[0],
+                title: labels.type,
+                value: workMachine.type,
               },
               workMachine?.status && {
-                title: formatMessage(messages.status),
+                title: labels.status,
                 value: workMachine.status,
               },
-              workMachine?.type && {
-                title: formatMessage(messages.make),
-                value: workMachine.type.split(' ')[1],
-              },
               workMachine?.category && {
-                title: formatMessage(messages.mainCategory),
+                title: labels.category,
                 value: workMachine.category,
               },
               workMachine?.productionNumber && {
-                title: formatMessage(messages.productNumber),
+                title: labels.productionNumber,
                 value: workMachine.productionNumber,
               },
               workMachine?.subCategory && {
-                title: formatMessage(messages.subCategory),
+                title: labels.subCategory,
                 value: workMachine.subCategory,
               },
               workMachine?.productionCountry && {
-                title: formatMessage(messages.productCountry),
+                title: labels.productionCountry,
                 value: workMachine.productionCountry,
               },
               workMachine?.productionYear && {
-                title: formatMessage(messages.productYear),
+                title: labels.productionYear,
                 value: workMachine.productionYear.toString(),
               },
               workMachine?.importer && {
-                title: formatMessage(messages.importer),
+                title: labels.importer,
                 value: workMachine.importer,
               },
               workMachine?.insurer && {
-                title: formatMessage(messages.insurer),
+                title: labels.insurer,
                 value: workMachine.insurer,
               },
               workMachine?.registrationDate && {
-                title: formatMessage(messages.registrationDate),
+                title: labels.registrationDate,
                 value: formatDate(workMachine.registrationDate),
               },
             ].filter((Boolean as unknown) as ExcludesFalse),
@@ -246,28 +247,28 @@ const WorkMachinesDetail = () => {
       <Box marginBottom={[2, 2, 6]}>
         <Stack space={2}>
           <Text variant="eyebrow" color="purple400">
-            {formatMessage(messages.owner)}
+            {labels.owner}
           </Text>
           <UserInfoLine
-            label={formatMessage(messages.name)}
+            label={labels.ownerName}
             content={workMachine?.ownerName ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.nationalId)}
+            label={labels.ownerNationalId}
             content={format(workMachine?.ownerNationalId ?? '')}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.address)}
+            label={labels.ownerAddress}
             content={workMachine?.ownerAddress ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.postalCode)}
+            label={labels.ownerPostcode}
             content={workMachine?.ownerPostcode ?? ''}
             loading={loading}
           />
@@ -279,25 +280,25 @@ const WorkMachinesDetail = () => {
             {formatMessage(messages.operator)}
           </Text>
           <UserInfoLine
-            label={formatMessage(messages.name)}
+            label={labels.supervisorName}
             content={workMachine?.supervisorName ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.nationalId)}
+            label={labels.supervisorNationalId}
             content={format(workMachine?.supervisorNationalId ?? '')}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.address)}
+            label={labels.supervisorAddress}
             content={workMachine?.supervisorAddress ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(messages.subCategory)}
+            label={labels.supervisorPostcode}
             content={workMachine?.supervisorPostcode ?? ''}
             loading={loading}
           />
