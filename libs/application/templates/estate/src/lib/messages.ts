@@ -600,7 +600,7 @@ export const m = defineMessages({
   uploadDescription: {
     id: 'es.application:uploadDescription',
     defaultMessage:
-      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf, .heic',
+      'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf',
     description: '',
   },
 
