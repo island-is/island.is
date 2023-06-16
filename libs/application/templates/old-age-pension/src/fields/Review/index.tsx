@@ -51,13 +51,13 @@ export const Review: FC<ReviewScreenProps> = ({
         {/* <PrintButton /> */}
         <Box marginBottom={2}>
           <Text variant="h2">
-            {formatMessage(oldAgePensionFormMessage.shared.confirmationTitle)}
+            {formatMessage(oldAgePensionFormMessage.review.confirmSectionTitle)}
           </Text>
         </Box>
         <Box marginBottom={10}>
           <Text variant="default">
             {formatMessage(
-              oldAgePensionFormMessage.shared.confirmationDescription,
+              oldAgePensionFormMessage.review.confirmationDescription,
             )}
           </Text>
         </Box>

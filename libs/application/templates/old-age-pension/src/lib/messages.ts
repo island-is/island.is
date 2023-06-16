@@ -18,6 +18,24 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Umsókn',
       description: 'Application',
     },
+    yes: {
+      id: 'oal.application:yes',
+      defaultMessage: 'Já',
+      description: 'Yes',
+    },
+    no: {
+      id: 'oal.application:no',
+      defaultMessage: 'Nei',
+      description: 'No',
+    },
+    arrangementSection: {
+      id: 'oal.application:arrangement.section',
+      defaultMessage: 'Tilhögun',
+      description: 'Arrangement',
+    },
+  }),
+
+  pre: defineMessages({
     prerequisitesSection: {
       id: 'oap.application:prerequisites.section',
       defaultMessage: 'Forsendur',
@@ -58,21 +76,27 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Information about email address, phone number and bank account will be retrieved from your account at Ísland.is.',
     },
-    confirmationTitle: {
-      id: 'oap.application:confirmation.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Review and submit',
-    },
-    confirmationDescription: {
-      id: 'oap.application:confirmation.description',
-      defaultMessage:
-        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
-      description: 'Please review the application before submitting.',
+    startApplication: {
+      id: 'oal.application.start.application',
+      defaultMessage: 'Hefja umsókn',
+      description: 'Start application',
     },
     questionTitle: {
       id: 'oap.application:question.title',
       defaultMessage: 'Spurningar',
       description: 'Questions',
+    },
+    pensionFundAlertTitle: {
+      id: 'oap.application:pension.fund.alert.title',
+      defaultMessage: 'Lífeyrissjóðir',
+      description: 'Pension funds',
+    },
+    pensionFundAlertDescription: {
+      id: 'oap.application:pension.fund.alert.description',
+      defaultMessage:
+        'Þú verður að byrja á því að hafa samband við þá lífeyrissjóði sem þú hefur greitt í áður en þú getur sótt um ellilífeyrir.',
+      description:
+        'You must start by contacting the pension funds you have paid into before you can apply for a old age pension.',
     },
     pensionFundQuestionTitle: {
       id: 'oap.application:pension.fund.question.title',
@@ -84,60 +108,13 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Sækirðu um ellilífeyri sjómanna?',
       description: 'Are you applying for fishermen old-age pension?',
     },
-    yes: {
-      id: 'oal.application:yes',
-      defaultMessage: 'Já',
-      description: 'Yes',
-    },
-    no: {
-      id: 'oal.application:no',
-      defaultMessage: 'Nei',
-      description: 'No',
-    },
-    startApplication: {
-      id: 'oal.application.start.application',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Start application',
-    },
+  }),
+
+  applicant: defineMessages({
     applicantSection: {
       id: 'oal.application:applicant.section',
       defaultMessage: 'Almennar upplýsingar',
       description: 'Applicant information',
-    },
-    arrangementSection: {
-      id: 'oal.application:arrangement.section',
-      defaultMessage: 'Tilhögun',
-      description: 'Arrangement',
-    },
-    relatedApplicationsSection: {
-      id: 'oap.application:related.applications.section',
-      defaultMessage: 'Tengdar umsóknir',
-      description: 'Related applications',
-    },
-    relatedApplicationsSectionDescription: {
-      id: 'oap.application:related.applications.section.description',
-      defaultMessage: 'Hér eru tengdar umsóknir sem þú gætir átt rétt á. Hakaðu í þær umsóknir sem þú vilt sækja um.',
-      description: 'Here are related applications you may be eligible for. Check the applications you want to apply for.',
-    },
-    homeAllowance: {
-      id: 'oap.application:related.applications.homeAllowance',
-      defaultMessage: 'Heimilisuppbót',
-      description: 'Home allowance',
-    },
-    childSupport: {
-      id: 'oap.application:related.applications.childSupport',
-      defaultMessage: 'Barnalífeyri',
-      description: 'Child support',
-    },
-    commentSection: {
-      id: 'oap.application:comment.section',
-      defaultMessage: 'Athugasemd',
-      description: 'Comment',
-    },
-    confirmationSection: {
-      id: 'oap.application:confirmation.section',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirmation',
     },
     applicantInfoSubSectionTitle: {
       id: 'oap.application:applicant.info.sub.section.title',
@@ -201,6 +178,59 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Nafn maka',
       description: `Spouse's name`,
     },
+  }),
+
+  onePaymentPerYear: defineMessages({
+    onePaymentPerYearTitle: {
+      id: 'oap.application:one.payment.per.year.title',
+      defaultMessage: 'Ein greiðsla á ári',
+      description: 'One payment per year',
+    },
+    onePaymentPerYearDescription: {
+      id: 'oap.application:one.payment.per.year.description',
+      defaultMessage:
+        'Vilt þú óska eftir að fá greiddan lífeyri einu sinni á ári? Þá eru réttindin reiknuð út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
+      description: 'description',
+    },
+    onePaymentPerYearAlertTitle: {
+      id: 'oap.application:one.payment.per.year.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
+    onePaymentPerYearAlertDescription: {
+      id: 'oap.application:one.payment.per.year.alert.description',
+      defaultMessage:
+        'Að óska eftir að fá greiddan lífeyri einu sinni á ári hefur áhrif á allar þínar lífeyrisgreiðslur frá Tryggingastofnun og mánaðargreiðslur þínar munu stöðvast.',
+      description: 'description',
+    },
+  }),
+
+  connectedApplications: defineMessages({
+    homeAllowance: {
+      id: 'oap.application:related.applications.homeAllowance',
+      defaultMessage: 'Heimilisuppbót',
+      description: 'Home allowance',
+    },
+    childSupport: {
+      id: 'oap.application:related.applications.childSupport',
+      defaultMessage: 'Barnalífeyri',
+      description: 'Child support',
+    },
+    relatedApplicationsSection: {
+      id: 'oap.application:related.applications.section',
+      defaultMessage: 'Tengdar umsóknir',
+      description: 'Related applications',
+    },
+    relatedApplicationsSectionDescription: {
+      id: 'oap.application:related.applications.section.description',
+      defaultMessage:
+        'Hér eru tengdar umsóknir sem þú gætir átt rétt á. Hakaðu í þær umsóknir sem þú vilt sækja um.',
+      description:
+        'Here are related applications you may be eligible for. Check the applications you want to apply for.',
+    },
+  }),
+
+  residence: defineMessages({
     residenceHistoryTitle: {
       id: 'oap.application:residence.history.title',
       defaultMessage: 'Búsetusaga',
@@ -232,50 +262,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:residence.history.period.to.table.header',
       defaultMessage: 'Tímabil til',
       description: 'Period to',
-    },
-    onePaymentPerYearTitle: {
-      id: 'oap.application:one.payment.per.year.title',
-      defaultMessage: 'Ein greiðsla á ári',
-      description: 'One payment per year',
-    },
-    onePaymentPerYearDescription: {
-      id: 'oap.application:one.payment.per.year.description',
-      defaultMessage:
-        'Vilt þú óska eftir að fá greiddan lífeyri einu sinni á ári? Þá eru réttindin reiknuð út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
-      description: 'description',
-    },
-    onePaymentPerYearAlertTitle: {
-      id: 'oap.application:one.payment.per.year.alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
-    },
-    onePaymentPerYearAlertDescription: {
-      id: 'oap.application:one.payment.per.year.alert.description',
-      defaultMessage:
-        'Að óska eftir að fá greiddan lífeyri einu sinni á ári hefur áhrif á allar þínar lífeyrisgreiðslur frá Tryggingastofnun og mánaðargreiðslur þínar munu stöðvast.',
-      description: 'description',
-    },
-    pensionFundAlertTitle: {
-      id: 'oap.application:pension.fund.alert.title',
-      defaultMessage: 'Lífeyrissjóðir',
-      description: 'Pension funds',
-    },
-    pensionFundAlertDescription: {
-      id: 'oap.application:pension.fund.alert.description',
-      defaultMessage:
-        'Þú verður að byrja á því að hafa samband við þá lífeyrissjóði sem þú hefur greitt í áður en þú getur sótt um ellilífeyrir.',
-      description:
-        'You must start by contacting the pension funds you have paid into before you can apply for a old age pension.',
-    },
-    confirmSectionTitle: {
-      id: 'oap.application:confirmation.section.title',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirm',
-    },
-    confirmTitle: {
-      id: 'oap.application:confirmation.title',
-      defaultMessage: 'Senda inn umsókn',
-      description: 'Submit application',
     },
   }),
 
@@ -324,6 +310,22 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:review.fishermen',
       defaultMessage: 'Ellilífeyri sjómanna',
       description: `Fishermen`,
+    },
+    confirmSectionTitle: {
+      id: 'oap.application:confirmation.section.title',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirm',
+    },
+    confirmTitle: {
+      id: 'oap.application:confirmation.title',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Submit application',
+    },
+    confirmationDescription: {
+      id: 'oap.application:confirmation.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Please review the application before submitting.',
     },
   }),
 
@@ -512,6 +514,11 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   comment: defineMessages({
+    commentSection: {
+      id: 'oap.application:comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
     description: {
       id: 'oap.application:comment.description',
       defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',

@@ -27,7 +27,7 @@ export const Comment = ({
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <DataValue
             label={formatMessage(
-              oldAgePensionFormMessage.shared.commentSection,
+              oldAgePensionFormMessage.comment.commentSection,
             )}
             value={comment}
           />

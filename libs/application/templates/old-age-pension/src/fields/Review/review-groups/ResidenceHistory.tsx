@@ -34,7 +34,7 @@ export const ResidenceHistory = ({
         >
           <Label>
             {formatMessage(
-              oldAgePensionFormMessage.shared.residenceHistoryTitle,
+              oldAgePensionFormMessage.residence.residenceHistoryTitle,
             )}
           </Label>
           <Box paddingTop={3}>
@@ -44,7 +44,7 @@ export const ResidenceHistory = ({
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
           <DataValue
             label={formatMessage(
-              oldAgePensionFormMessage.shared.residenceHistoryQuestion,
+              oldAgePensionFormMessage.residence.residenceHistoryQuestion,
             )}
             value={residenceHistoryQuestion}
           />
