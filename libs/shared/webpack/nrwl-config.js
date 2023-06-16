@@ -110,7 +110,7 @@ const addNodeModulesPolyfill = (config) => {
  */
 module.exports = function (config, context) {
   // Call @nrwl/react plugin for default webpack config
-  getWebpackConfig(config, context)
+  //getWebpackConfig(config, context)
 
   setApiMocks(config)
   addNodeModulesPolyfill(config)
@@ -122,6 +122,32 @@ module.exports = function (config, context) {
 
   // Disable stats for child compilations
   config.stats.children = false
+
+  const rules = config.module.rules
+  rules.pop()
+  rules.push({
+    test: /\.svg$/,
+    type: 'asset/inline',
+    //issuer: /\.[jt]sx?$/,
+    use: [
+      { loader: require.resolve('@svgr/webpack'), options: { svgo: false } },
+    ],
+  })
+  const svgRule = rules.find((rule) => rule.test.toString().includes('svg'))
+  // svgRule.use.splice(1, 1)
+  // svgRule.use.push({
+  //   loader:
+  //     '/Users/saevar/git/island.is/island.is/node_modules/url-loader/dist/cjs.js',
+  //   options: { limit: 10000, name: '[name].[hash:7].[ext]', esModule: false },
+  // })
+
+  console.log({
+    rules,
+    svgRule,
+    svgRuleUse: svgRule.use,
+    //svgrOptions: svgRule.use[0].options,
+    //fileOptions: svgRule.use[1].options,
+  })
 
   return config
 }
