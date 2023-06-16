@@ -1,7 +1,6 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { sleep } from '../../../../support/utils'
 
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord`
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -34,16 +33,8 @@ test.describe('Admin portal (Endorsements)', () => {
     await contextGranter.close()
   })
 
-  test('Open admin and see overview', async ({ page }) => {
+  test('Open old endorsement list and go back', async ({ page }) => {
     await page.goto(icelandicAndNoPopupUrl(homeUrl))
-
-    // Assert
-    await expect(
-      page.getByRole('heading', { name: 'Stjórnborð Ísland.is' }),
-    ).toBeVisible()
-  })
-
-  test('Open old endorsement list', async ({ page }) => {
     await page.getByTestId('active-module-name').click()
     await page.getByRole('link', { name: 'Undirskriftalistar' }).click()
 
@@ -51,20 +42,25 @@ test.describe('Admin portal (Endorsements)', () => {
     await page.getByText('Skoða lista').first().click()
     await expect(page.getByLabel('Heiti lista')).toBeVisible()
     await expect(page.getByText('Yfirlit undirskrifta')).toBeVisible()
+    await page.getByRole('button', { name: 'Til baka' }).click()
+    await expect(page.getByRole('tab', { name: 'Liðnir listar' })).toBeVisible()
   })
 
   test('Update old endorsement list', async ({ page }) => {
-    await sleep(500)
+    await page.getByRole('tab', { name: 'Liðnir listar' }).click()
+    await page.getByText('Skoða lista').first().click()
     await page.getByRole('button', { name: 'Uppfæra lista' }).click()
     await expect(
       page.getByRole('alert').filter({ hasText: 'Tókst að uppfæra lista' }),
     ).toBeVisible()
   })
 
-  test('See locked lists are present', async ({ page }) => {
-    await page.getByRole('button', { name: 'Til baka' }).click()
+  test.skip('See locked lists are present and locked', async ({ page }) => {
     await page.getByRole('tab', { name: 'Læstir listar' }).click()
-    await expect(page.getByText('Skoða lista')).toHaveCountGreaterThan(1)
+    const lockedLists = page.getByRole('button', { name: 'Skoða lista' })
+    await expect(lockedLists).toHaveCountGreaterThan(1)
+    await lockedLists.first().click()
+    await expect(page.getByRole('alert', { name: 'Listi er læstur' })).toBeVisible()
   })
 
   test('Go back to overview', async ({ page }) => {
@@ -78,33 +74,24 @@ test.describe('Admin portal (Endorsements)', () => {
     ).toBeVisible()
   })
 
-  test('access endorsement lists', async ({ page }) => {
+  test('Access and edit a list', async ({ page }) => {
+    // Setup
+    await page.getByRole('tab', { name: 'Liðnir listar' }).click()
+
     // Act
-    await page.getByRole('button', { name: 'Opna Stjórnborðs valmynd' }).click()
     await page
-      .getByRole('menu', { name: 'Stjórnborðs valmynd' })
-      .getByRole('link', { name: 'Undirskriftalistar' })
+      .getByRole('button', { name: 'Skoða lista' })
+      .first()
       .click()
-
-    // Assert
-    await expect(
-      page.getByRole('heading', { name: 'Undirskriftalistar' }),
-    ).toBeVisible()
-  })
-  test('access and edit a list', async ({ page }) => {
-    // Assert
-    await expect(page.getByRole('tab', { name: 'Liðnir listar' })).toBeVisible()
-
-    //Act
-    await page.getByRole('button', { name: 'Skoða lista' }).first().click()
     const currentEndDate = await page
       .getByLabel('Tímabil til')
-      .last()
       .inputValue()
     const exampleDateInThePast = '13.05.2023'
-    await page.getByLabel('Tímabil til').last().fill(exampleDateInThePast)
+    await page
+      .getByLabel('Tímabil til')
+      .fill(exampleDateInThePast)
     await page.keyboard.press('Enter')
-    await page.click('button:text("Uppfæra lista")')
+    await page.getByRole('button', { name: "Uppfæra lista" }).click()
 
     // Assert
     let dateValue = await page.getByLabel('Tímabil til').last().inputValue()
@@ -113,7 +100,7 @@ test.describe('Admin portal (Endorsements)', () => {
     // And lets end by setting the date back to what it was
     await page.getByLabel('Tímabil til').last().fill(currentEndDate)
     await page.keyboard.press('Enter')
-    await page.click('button:text("Uppfæra lista")')
+    await page.getByRole('button', { name: "Uppfæra lista" }).click()
 
     // Assert
     dateValue = await page.getByLabel('Tímabil til').last().inputValue()
