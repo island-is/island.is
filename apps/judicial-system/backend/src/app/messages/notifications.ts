@@ -186,13 +186,6 @@ export const notifications = {
       description:
         'Notaður sem texti í pósti sem tilgreinir hvenær fyrirtaka fer fram',
     },
-    nonePresentSession: {
-      id:
-        'judicial.system.backend:notifications.prosecutor_court_date_email.none_present_sessione',
-      defaultMessage: 'Krafan verður tekin fyrir án boðunar í þinghald.',
-      description:
-        'Notaður sem texti í pósti til að láta vita að krafa verður tekin fyrir án boðunar í þinghald.',
-    },
     subject: {
       id:
         'judicial.system.backend:notifications.prosecutor_court_date_email.subject',
@@ -205,7 +198,7 @@ export const notifications = {
       id:
         'judicial.system.backend:notifications.prosecutor_court_date_email.body',
       defaultMessage:
-        '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, PROSECUTOR_PRESENT {} other {<br /><br />{defenderText}.}}',
+        '{scheduledCaseText}<br /><br />{courtDateText}<br /><br />{courtRoomText}<br /><br />{judgeText}{registrarText, select, NONE {} other {<br /><br />{registrarText}}}{sessionArrangements, select, PROSECUTOR_PRESENT {<br /><br /> Krafan verður tekin fyrir án boðunar í þinghald.}, NONE_PRESENT {}, other {<br /><br />{defenderText}.}}',
       description:
         'Notaður fyrir beinagrind á pósti til sækjanda þegar fyrirtökutími er staðfestur',
     },

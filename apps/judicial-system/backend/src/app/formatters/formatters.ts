@@ -256,8 +256,6 @@ export function formatProsecutorCourtDateEmailNotification(
     courtRoom: courtRoom || 'NONE',
   })
 
-  const nonePresentCourtRoom = formatMessage(cf.nonePresentSession)
-
   const judgeText = formatMessage(notifications.judge, {
     judgeName: judgeName || 'NONE',
   })
@@ -274,14 +272,6 @@ export function formatProsecutorCourtDateEmailNotification(
         scheduledCaseText,
         courtDateText,
         courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-      })
-    : sessionArrangements === SessionArrangements.NONE_PRESENT
-    ? formatMessage(cf.body, {
-        scheduledCaseText,
-        courtDateText,
-        nonePresentCourtRoom,
         judgeText,
         registrarText: registrarText || 'NONE',
       })
