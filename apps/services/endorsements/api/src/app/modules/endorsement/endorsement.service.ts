@@ -178,7 +178,6 @@ export class EndorsementService {
     if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
-    // const fullName = showName ? await this.getEndorserInfo(nationalId) : ''
     const person = await this.nationalRegistryApiV2.getIndividual(nationalId)
     const endorsement = {
       endorser: nationalId,
@@ -237,21 +236,4 @@ export class EndorsementService {
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
   }
-
-  // private async getEndorserInfo(nationalId: string) {
-  //   this.logger.info(`Finding fullName of Endorser "${nationalId}" by id`)
-
-  //   try {
-  //     return (await this.nationalRegistryApi.getUser(nationalId)).Fulltnafn
-  //   } catch (e) {
-  //     if (e instanceof Error) {
-  //       this.logger.warn(
-  //         `Occured when fetching endorser name from NationalRegistryApi v1 ${e.message} \n${e.stack}`,
-  //       )
-  //       return ''
-  //     } else {
-  //       throw e
-  //     }
-  //   }
-  // }
 }
