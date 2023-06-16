@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Inline } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../../../utils/helpers'
 import { ReactNode, useState } from 'react'
 import { Area } from '../../../../types/enums'
@@ -79,9 +79,12 @@ export const SubscriptionCard = ({
         isToggled={isOpen}
         onToggle={onClick}
       >
-        <Box style={{ minHeight: '24px' }}>{titleColumn}</Box>
-
-        {children}
+          <Box style={{ paddingRight: '8px' }}>
+            {titleColumn}
+          </Box>
+          <Box display="flex" alignItems="center">
+            {children}
+          </Box>
       </CardGridContainer>
       {!isOpen && toggleAble && (
         <Box paddingTop={3}>
