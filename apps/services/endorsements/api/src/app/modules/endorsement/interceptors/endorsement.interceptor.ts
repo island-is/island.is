@@ -27,7 +27,6 @@ export class EndorsementInterceptor implements NestInterceptor {
     const isListOwner = user?.nationalId === listOwnerNationalId
     return next.handle().pipe(
       map((retEndorsement: Endorsement) => {
-        console.log('EndorsementInterceptor: retEndorsement: ', retEndorsement)
         return maskEndorsement(retEndorsement, isListOwner)
       }),
     )
