@@ -20,11 +20,11 @@ const SubscriptionTableHeader = ({ currentTab }: TableHeaderProps) => {
     <Head>
       <Row>
         <HeadData
-          width="10"
           key={'tableHeaderKey_checkmark'}
           box={{
             background: 'transparent',
             borderColor: 'transparent',
+            className: styles.paddingRightZero
           }}
         >
           <Icon
@@ -47,7 +47,6 @@ const SubscriptionTableHeader = ({ currentTab }: TableHeaderProps) => {
         ) : mdBreakpoint ? (
           <>
             <HeadData
-              width="120"
               text={{ variant: 'h4' }}
               box={{
                 background: 'transparent',
