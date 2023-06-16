@@ -15,7 +15,6 @@ import {
 } from '../../../../../../types/interfaces'
 import localization from '../../../../Subscriptions.json'
 import { tableRowBackgroundColor } from '../../../../utils'
-// import { Checkbox } from '../../../../../../components'
 import cn from 'classnames'
 
 interface Props {
