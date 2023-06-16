@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { INews } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
@@ -21,19 +22,19 @@ export class News {
   @Field({ nullable: true })
   intro!: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image!: Image
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
 
   @Field()
   date!: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   content: Array<typeof SliceUnion> = []
 
-  @Field(() => [GenericTag])
+  @CacheField(() => [GenericTag])
   genericTags: GenericTag[] = []
 
   @Field(() => Boolean, { nullable: true })

@@ -24,7 +24,7 @@ const SubscriptionTableHeader = ({ currentTab }: TableHeaderProps) => {
           box={{
             background: 'transparent',
             borderColor: 'transparent',
-            className: styles.paddingRightZero
+            className: styles.paddingRightZero,
           }}
         >
           <Icon

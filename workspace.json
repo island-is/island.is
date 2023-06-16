@@ -255,6 +255,7 @@
     "nest-core": "libs/nest/core",
     "nest-dataloader": "libs/nest/dataloader",
     "nest-feature-flags": "libs/nest/feature-flags",
+    "nest-graphql": "libs/nest/graphql",
     "nest-pagination": "libs/nest/pagination",
     "nest-problem": "libs/nest/problem",
     "nest-sequelize": "libs/nest/sequelize",

@@ -79,10 +79,8 @@ export const SubscriptionCard = ({
         isToggled={isOpen}
         onToggle={onClick}
       >
-          <Box style={{ paddingRight: '8px' }}>
-            {titleColumn}
-          </Box>
-            {children}
+        <Box style={{ paddingRight: '8px' }}>{titleColumn}</Box>
+        {children}
       </CardGridContainer>
       {!isOpen && toggleAble && (
         <Box paddingTop={3}>
