@@ -17,7 +17,6 @@ export const spouseOfTheDeceased = buildSection({
     buildMultiField({
       id: 'deceased',
       title: m.theDeceased,
-      description: 'Trolo',
       children: [
         ...deceasedInfoFields,
         buildDescriptionField({
