@@ -1,4 +1,5 @@
 import { Response } from 'express'
+
 import {
   Body,
   Controller,
@@ -530,7 +531,7 @@ export class CaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...indictmentCases]),
+    new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
   @RolesRules(

@@ -1,4 +1,3 @@
-export { default as CopyLinkForDefenderButton } from './CopyLinkForDefenderButton/CopyLinkForDefenderButton'
 export { default as DefendantInfo } from './DefendantInfo/DefendantInfo'
 export { default as PoliceCaseFiles } from './PoliceCaseFiles/PoliceCaseFiles'
 export { default as PoliceCaseFilesMessageBox } from './PoliceCaseFilesMessageBox/PoliceCaseFilesMessageBox'

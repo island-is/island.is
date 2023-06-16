@@ -44,6 +44,7 @@ export const attributes: (keyof Case)[] = [
   'defenderNationalId',
   'defenderEmail',
   'defenderPhoneNumber',
+  'sendRequestToDefender',
   'courtId',
   'leadInvestigator',
   'requestedCustodyRestrictions',
@@ -64,7 +65,7 @@ export const attributes: (keyof Case)[] = [
   'courtRecordSignatureDate',
   'parentCaseId',
   'caseModifiedExplanation',
-  'seenByDefender',
+  'openedByDefender',
   'caseResentExplanation',
   'appealState',
   'accusedAppealDecision',
@@ -81,12 +82,16 @@ export const attributes: (keyof Case)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealReceivedByCourtDate',
+  'openedByDefender',
 ]
 
 export interface LimitedAccessUpdateCase
   extends Pick<
     Case,
-    'accusedPostponedAppealDate' | 'appealState' | 'defendantStatementDate'
+    | 'accusedPostponedAppealDate'
+    | 'appealState'
+    | 'defendantStatementDate'
+    | 'openedByDefender'
   > {}
 
 export const include: Includeable[] = [
@@ -134,6 +139,12 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
+        CaseFileCategory.COURT_RECORD,
+        CaseFileCategory.COVER_LETTER,
+        CaseFileCategory.INDICTMENT,
+        CaseFileCategory.CRIMINAL_RECORD,
+        CaseFileCategory.COST_BREAKDOWN,
+        CaseFileCategory.CASE_FILE,
       ],
     },
   },
@@ -186,13 +197,6 @@ export class LimitedAccessCaseService {
 
     if (!theCase) {
       throw new NotFoundException(`Case ${caseId} does not exist`)
-    }
-
-    if (!theCase.seenByDefender) {
-      await this.caseModel.update(
-        { ...theCase, seenByDefender: nowFactory() },
-        { where: { id: caseId } },
-      )
     }
 
     return theCase
@@ -253,7 +257,10 @@ export class LimitedAccessCaseService {
     // Return limited access case
     const updatedCase = await this.findById(theCase.id)
 
-    if (updatedCase.defendantStatementDate !== theCase.defendantStatementDate) {
+    if (
+      updatedCase.defendantStatementDate?.getTime() !==
+      theCase.defendantStatementDate?.getTime()
+    ) {
       messages.push({
         type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
         user,
@@ -261,7 +268,9 @@ export class LimitedAccessCaseService {
       })
     }
 
-    await this.messageService.sendMessagesToQueue(messages)
+    if (messages.length > 0) {
+      await this.messageService.sendMessagesToQueue(messages)
+    }
 
     return updatedCase
   }

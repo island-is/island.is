@@ -135,7 +135,7 @@ export const AdditionalRealEstate = ({
           <InputController
             id={marketValueField}
             name={marketValueField}
-            label={formatMessage(m.marketValueTitle)}
+            label={formatMessage(m.realEstateValueTitle)}
             defaultValue={field.marketValue}
             placeholder={'0 kr.'}
             error={error?.marketValue}

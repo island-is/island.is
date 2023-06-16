@@ -4,9 +4,9 @@ import { AccordionCard, Input, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 import { m } from '../../../lib/messages'
-import ContentCard from '../../../components/ContentCard'
 import { AuthAdminClientSecret } from '../Client.loader'
 import { useCopyToClipboard } from '../../../hooks/useCopyToClipboard'
+import { FormCard } from '../../../components/FormCard/FormCard'
 
 interface BasicInfoProps {
   clientId: string
@@ -37,7 +37,7 @@ export const BasicInfo = ({
   const isLegacySecret = hasClientSecrets && !secret
 
   return (
-    <ContentCard title={formatMessage(m.basicInfo)}>
+    <FormCard title={formatMessage(m.basicInfo)}>
       <Stack space={3}>
         <Input
           ref={clientIdRef}
@@ -50,7 +50,7 @@ export const BasicInfo = ({
           buttons={[
             {
               name: 'copy',
-              label: formatMessage(m.copy),
+              label: `${formatMessage(m.copy)} ${formatMessage(m.clientId)}`,
               type: 'outline',
               onClick: () => copyToClipboard(clientIdRef),
             },
@@ -82,7 +82,9 @@ export const BasicInfo = ({
                   name: 'copy',
                   type: 'outline',
                   onClick: () => copyToClipboard(clientSecretRef),
-                  label: formatMessage(m.copy),
+                  label: `${formatMessage(m.copy)} ${formatMessage(
+                    m.clientSecret,
+                  )}`,
                   disabled: isLegacySecret,
                 },
               ]}
@@ -105,7 +107,7 @@ export const BasicInfo = ({
           buttons={[
             {
               name: 'copy',
-              label: formatMessage(m.copy),
+              label: `${formatMessage(m.copy)} ${formatMessage(m.idsUrl)}`,
               type: 'outline',
               onClick: () => copyToClipboard(issuerUrlRef),
             },
@@ -224,6 +226,6 @@ export const BasicInfo = ({
           </Stack>
         </AccordionCard>
       </Stack>
-    </ContentCard>
+    </FormCard>
   )
 }

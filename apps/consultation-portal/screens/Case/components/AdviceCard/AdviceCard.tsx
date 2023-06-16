@@ -25,7 +25,9 @@ interface LocProps {
   loc: typeof localization['adviceCard']
 }
 
-interface RenderAdviceProps extends Props, LocProps {}
+interface RenderAdviceProps extends Props, LocProps {
+  isOpen?: boolean
+}
 
 interface LinkProps extends LocProps {
   children: ReactNode
@@ -44,7 +46,7 @@ const Link = ({ loc, children }: LinkProps) => {
   )
 }
 
-const RenderAdvice = ({ advice, loc }: RenderAdviceProps) => {
+const RenderAdvice = ({ advice, loc, isOpen = false }: RenderAdviceProps) => {
   if (advice?.isPrivate) {
     return loc['privateContent']
   }
@@ -56,7 +58,8 @@ const RenderAdvice = ({ advice, loc }: RenderAdviceProps) => {
     retComp.push('.')
     return retComp
   }
-  return advice?.content
+  const content = advice?.content
+  return isOpen ? <div className={styles.divStyle}>{content}</div> : content
 }
 
 export const AdviceCard = ({ advice }: Props) => {
@@ -84,7 +87,7 @@ export const AdviceCard = ({ advice }: Props) => {
             {getShortDate(advice.created)}
           </Text>
           {scrollHeight > REVIEW_CARD_SCROLL_HEIGHT && (
-            <FocusableBox onClick={() => setOpen(!open)}>
+            <FocusableBox component="button" onClick={() => setOpen(!open)}>
               <Icon
                 icon={open ? 'remove' : 'add'}
                 type="outline"
@@ -99,7 +102,7 @@ export const AdviceCard = ({ advice }: Props) => {
           {!advice?.isPrivate && !advice?.isHidden && advice?.participantName}
         </Text>
         <Text variant="default" truncate={!open} ref={ref}>
-          {RenderAdvice({ advice: advice, loc: loc })}
+          {RenderAdvice({ advice: advice, loc: loc, isOpen: open })}
         </Text>
         {!advice?.isPrivate &&
           !advice?.isHidden &&
