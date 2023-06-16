@@ -25,7 +25,6 @@ import {
 } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { useDebounce } from 'react-use'
-import { WorkMachinesExternalLink } from '@island.is/api/schema'
 
 type FilterValue = {
   label: string
