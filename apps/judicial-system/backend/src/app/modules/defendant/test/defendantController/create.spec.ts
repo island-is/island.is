@@ -12,10 +12,10 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case) => Promise<Then>
+type GivenWhenThen = (courtCaseNumber?: string) => Promise<Then>
 
 describe('DefendantController - Create', () => {
-  const userId = uuid()
+  const user = { id: uuid() } as User
   const caseId = uuid()
   const theCase = { id: caseId } as Case
   const defendantToCreate = {
@@ -44,11 +44,16 @@ describe('DefendantController - Create', () => {
     const mockCreate = mockDefendantModel.create as jest.Mock
     mockCreate.mockResolvedValue(createdDefendant)
 
-    givenWhenThen = async (theCase: Case) => {
+    givenWhenThen = async (courtCaseNumber?: string) => {
       const then = {} as Then
 
       await defendantController
-        .create(theCase.id, { id: userId } as User, theCase, defendantToCreate)
+        .create(
+          theCase.id,
+          user,
+          { ...theCase, courtCaseNumber } as Case,
+          defendantToCreate,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -60,7 +65,7 @@ describe('DefendantController - Create', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(theCase)
+      then = await givenWhenThen()
     })
 
     it('should create a defendant', () => {
@@ -81,21 +86,16 @@ describe('DefendantController - Create', () => {
 
   describe('defendant created after case is delivered to court', () => {
     beforeEach(async () => {
-      await givenWhenThen({ ...theCase, courtCaseNumber: uuid() } as Case)
+      await givenWhenThen(uuid())
     })
 
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
-          caseId,
-          userId,
-        },
-        {
           type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          user,
           caseId,
           defendantId,
-          userId,
         },
       ])
     })
@@ -108,7 +108,7 @@ describe('DefendantController - Create', () => {
       const mockCreate = mockDefendantModel.create as jest.Mock
       mockCreate.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(theCase)
+      then = await givenWhenThen()
     })
 
     it('should throw Error', () => {

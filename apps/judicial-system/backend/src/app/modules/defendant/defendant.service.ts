@@ -14,11 +14,7 @@ import {
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
-import {
-  CaseState,
-  CaseType,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
@@ -37,7 +33,7 @@ export class DefendantService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
+  private getMessageForSendDefendantsNotUpdatedAtCourtNotification(
     theCase: Case,
     user: User,
   ): CaseMessage {
@@ -103,14 +99,11 @@ export class DefendantService {
       caseId: theCase.id,
     })
 
-    if (!isIndictmentCase(theCase.type) && theCase.courtCaseNumber) {
+    if (theCase.courtCaseNumber) {
+      // This should only happen to non-indictment cases.
       // A defendant is added after the case has been received by the court.
-      // Attempt to add the new defendant, but also ask the court to verify defendants.
+      // Attempt to add the new defendant to the court case.
       await this.messageService.sendMessagesToQueue([
-        this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase,
-          user,
-        ),
         this.getMessageForDeliverDefendantToCourt(defendant, user),
       ])
     }
@@ -162,21 +155,34 @@ export class DefendantService {
       theCase.id,
     )
 
-    if (
-      !isIndictmentCase(theCase.type) &&
-      theCase.courtCaseNumber &&
-      (updatedDefendant.noNationalId !== defendant.noNationalId ||
-        updatedDefendant.nationalId !== defendant.nationalId)
-    ) {
-      // A defendant is replaced after the case has been received by the court.
-      // Attempt to add the new defendant, but also ask the court to verify defendants.
-      await this.messageService.sendMessagesToQueue([
-        this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
-          theCase,
-          user,
-        ),
-        this.getMessageForDeliverDefendantToCourt(defendant, user),
-      ])
+    if (theCase.courtCaseNumber) {
+      // A defendant is updated after the case has been received by the court.
+      if (updatedDefendant.noNationalId !== defendant.noNationalId) {
+        // This should only happen to non-indictment cases.
+        // A defendant nationalId is added or removed. Attempt to add the defendant to the court case.
+        // In case there is no national id, the court will be notified.
+        await this.messageService.sendMessagesToQueue([
+          this.getMessageForDeliverDefendantToCourt(defendant, user),
+        ])
+      } else if (updatedDefendant.nationalId !== defendant.nationalId) {
+        // This should only happen to non-indictment cases.
+        // A defendant is replaced. Attempt to add the defendant to the court case,
+        // but also ask the court to verify defendants.
+        await this.messageService.sendMessagesToQueue([
+          this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
+            theCase,
+            user,
+          ),
+          this.getMessageForDeliverDefendantToCourt(defendant, user),
+        ])
+      } else if (updatedDefendant.defenderEmail !== defendant.defenderEmail) {
+        // This should only happen to indictment cases.
+        // A defendant's defender email is updated.
+        // Attempt to update the defendant in the court case.
+        await this.messageService.sendMessagesToQueue([
+          this.getMessageForDeliverDefendantToCourt(defendant, user),
+        ])
+      }
     }
 
     return updatedDefendant
@@ -202,11 +208,12 @@ export class DefendantService {
       )
     }
 
-    if (!isIndictmentCase(theCase.type) && theCase.courtCaseNumber) {
+    if (theCase.courtCaseNumber) {
+      // This should only happen to non-indictment cases.
       // A defendant is removed after the case has been received by the court.
       // Ask the court to verify defendants.
       await this.messageService.sendMessagesToQueue([
-        this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
+        this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
           theCase,
           user,
         ),
@@ -273,7 +280,7 @@ export class DefendantService {
       defendant.nationalId.replace('-', '').length !== 10
     ) {
       await this.messageService.sendMessagesToQueue([
-        this.getMessagesForSendDefendantsNotUpdatedAtCourtNotification(
+        this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(
           theCase,
           user,
         ),

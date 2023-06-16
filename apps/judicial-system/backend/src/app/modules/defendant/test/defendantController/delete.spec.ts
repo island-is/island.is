@@ -13,12 +13,11 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case) => Promise<Then>
+type GivenWhenThen = (courtCaseNumber?: string) => Promise<Then>
 
 describe('DefendantController - Delete', () => {
-  const userId = uuid()
+  const user = { id: uuid() } as User
   const caseId = uuid()
-  const theCase = { id: caseId } as Case
   const defendantId = uuid()
 
   let mockMessageService: MessageService
@@ -36,17 +35,17 @@ describe('DefendantController - Delete', () => {
     mockDefendantModel = defendantModel
 
     const mockDestroy = mockDefendantModel.destroy as jest.Mock
-    mockDestroy.mockResolvedValue(1)
+    mockDestroy.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async (theCase: Case) => {
+    givenWhenThen = async (courtCaseNumber?: string) => {
       const then = {} as Then
 
       try {
         then.result = await defendantController.delete(
           caseId,
           defendantId,
-          { id: userId } as User,
-          theCase,
+          user,
+          { id: caseId, courtCaseNumber } as Case,
         )
       } catch (error) {
         then.error = error as Error
@@ -60,35 +59,35 @@ describe('DefendantController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(theCase)
+      const mockDestroy = mockDefendantModel.destroy as jest.Mock
+      mockDestroy.mockResolvedValue(1)
+
+      then = await givenWhenThen()
     })
 
-    it('should delete the defendant', () => {
+    it('should delete the defendant without queuing', () => {
       expect(mockDefendantModel.destroy).toHaveBeenCalledWith({
         where: { id: defendantId, caseId },
       })
-    })
-
-    it('should return number of deleted defendants', () => {
       expect(then.result).toEqual({ deleted: true })
-    })
-
-    it('should not queue any messages', () => {
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 
   describe('defendant removed after case is delivered to court', () => {
     beforeEach(async () => {
-      await givenWhenThen({ ...theCase, courtCaseNumber: uuid() } as Case)
+      const mockDestroy = mockDefendantModel.destroy as jest.Mock
+      mockDestroy.mockResolvedValue(1)
+
+      await givenWhenThen(uuid())
     })
 
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+          user,
           caseId,
-          userId,
         },
       ])
     })
@@ -98,10 +97,7 @@ describe('DefendantController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockDefendantModel.destroy as jest.Mock
-      mockDestroy.mockRejectedValueOnce(new Error('Some error'))
-
-      then = await givenWhenThen(theCase)
+      then = await givenWhenThen()
     })
 
     it('should throw Error', () => {

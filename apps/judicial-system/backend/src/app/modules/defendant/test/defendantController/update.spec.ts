@@ -4,6 +4,7 @@ import { User } from '@island.is/judicial-system/types'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 
 import { Case } from '../../../case'
+import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
 import { Defendant } from '../../models/defendant.model'
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
@@ -12,17 +13,21 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (theCase: Case, defendant: Defendant) => Promise<Then>
+type GivenWhenThen = (
+  defendantUpdate: UpdateDefendantDto,
+  courtCaseNumber?: string,
+) => Promise<Then>
 
 describe('DefendantController - Update', () => {
-  const userId = uuid()
+  const user = { id: uuid() } as User
   const caseId = uuid()
-  const theCase = { id: caseId } as Case
   const defendantId = uuid()
-  const nationalId = uuid()
-  const defendant = { id: defendantId, caseId, nationalId } as Defendant
-  const defendantToUpdate = { name: 'John Doe' }
-  const updatedDefendant = { id: defendantId, caseId, nationalId }
+  const defendant = {
+    id: defendantId,
+    caseId,
+    nationalId: uuid(),
+    defenderEmail: uuid(),
+  } as Defendant
 
   let mockMessageService: MessageService
   let mockDefendantModel: typeof Defendant
@@ -39,19 +44,22 @@ describe('DefendantController - Update', () => {
     mockDefendantModel = defendantModel
 
     const mockUpdate = mockDefendantModel.update as jest.Mock
-    mockUpdate.mockResolvedValue([1, [updatedDefendant]])
+    mockUpdate.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async (theCase: Case, defendant: Defendant) => {
+    givenWhenThen = async (
+      defendantUpdate: UpdateDefendantDto,
+      courtCaseNumber?: string,
+    ) => {
       const then = {} as Then
 
       await defendantController
         .update(
-          theCase.id,
-          defendant.id,
-          { id: userId } as User,
-          theCase,
+          caseId,
+          defendantId,
+          user,
+          { id: caseId, courtCaseNumber } as Case,
           defendant,
-          defendantToUpdate,
+          defendantUpdate,
         )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -61,51 +69,112 @@ describe('DefendantController - Update', () => {
   })
 
   describe('defendant updated', () => {
+    const defendantUpdate = { noNationalId: true }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(theCase, defendant)
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+
+      then = await givenWhenThen(defendantUpdate)
     })
 
-    it('should update the defendant', () => {
-      expect(mockDefendantModel.update).toHaveBeenCalledWith(
-        defendantToUpdate,
-        {
-          where: { id: defendantId, caseId },
-          returning: true,
-        },
-      )
-    })
-
-    it('should return defendant', () => {
+    it('should update the defendant without queuing', () => {
+      expect(mockDefendantModel.update).toHaveBeenCalledWith(defendantUpdate, {
+        where: { id: defendantId, caseId },
+        returning: true,
+      })
       expect(then.result).toBe(updatedDefendant)
-    })
-
-    it('should not queue any messages', () => {
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 
-  describe('defendant changed after case is delivered to court', () => {
+  describe('defendant updated after case is delivered to court', () => {
+    const defendantUpdate = { name: 'John Doe' }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
     beforeEach(async () => {
-      await givenWhenThen(
-        { ...theCase, courtCaseNumber: uuid() } as Case,
-        { ...defendant, nationalId: uuid() } as Defendant,
-      )
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+
+      await givenWhenThen(defendantUpdate, uuid())
+    })
+
+    it('should not queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('defendant nationalId removed after case is delivered to court', () => {
+    const defendantUpdate = { noNationalId: true }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+
+      await givenWhenThen(defendantUpdate, uuid())
+    })
+
+    it('should queue messages', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          user,
+          caseId,
+          defendantId,
+        },
+      ])
+    })
+  })
+
+  describe('defendant nationalId changed after case is delivered to court', () => {
+    const defendantUpdate = { nationalId: uuid() }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+
+      await givenWhenThen(defendantUpdate, uuid())
     })
 
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+          user,
           caseId,
-          userId,
         },
         {
           type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          user,
           caseId,
           defendantId,
-          userId,
+        },
+      ])
+    })
+  })
+
+  describe(`defendant's defender email changed after case is delivered to court`, () => {
+    const defendantUpdate = { defenderEmail: uuid() }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    beforeEach(async () => {
+      const mockUpdate = mockDefendantModel.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce([1, [updatedDefendant]])
+
+      await givenWhenThen(defendantUpdate, uuid())
+    })
+
+    it('should queue messages', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          user,
+          caseId,
+          defendantId,
         },
       ])
     })
@@ -115,10 +184,7 @@ describe('DefendantController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdate = mockDefendantModel.update as jest.Mock
-      mockUpdate.mockRejectedValueOnce(new Error('Some error'))
-
-      then = await givenWhenThen(theCase, defendant)
+      then = await givenWhenThen({})
     })
 
     it('should throw Error', () => {
