@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Application, YesOrNo } from '@island.is/application/types'
 import { MONTHS } from './constants'
 import { oldAgePensionFormMessage } from './messages'
@@ -6,8 +6,10 @@ import { oldAgePensionFormMessage } from './messages'
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
-
-import { residenceHistory } from '../types'
+import { residenceHistory, combinedResidenceHistory } from '../types'
+import React from 'react'
+import { useLocale } from '@island.is/localization'
+import { getCountryByCode } from '@island.is/shared/utils'
 
 interface fileType {
   key: string
@@ -42,6 +44,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicantInfo.phonenumber',
   ) as string
 
+  const residenceHistoryQuestion = getValueViaPath(
+    answers,
+    'residenceHistory.question',
+  ) as YesOrNo
+
   const onePaymentPerYear = getValueViaPath(
     answers,
     'onePaymentPerYear.question',
@@ -56,6 +63,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selectedMonth,
     applicantEmail,
     applicantPhonenumber,
+    residenceHistoryQuestion,
     onePaymentPerYear,
     comment,
   }
@@ -260,4 +268,100 @@ export function getAttachments(answers: Application['answers']) {
   getAttachmentsName(earlyPenFisher.fishermen)
 
   return attachments
+}
+
+// return combine residence history if the applicant had domestic transport
+export function getCombinedResidenceHistory(
+  residenceHistory: residenceHistory[],
+): combinedResidenceHistory[] {
+  let combinedResidenceHistory: combinedResidenceHistory[] = []
+
+  residenceHistory.map((history) => {
+    if (combinedResidenceHistory.length === 0) {
+      return combinedResidenceHistory.push(residenceMapper(history))
+    }
+
+    const priorResidence = combinedResidenceHistory.at(-1)
+    if (priorResidence?.country !== history.country) {
+      combinedResidenceHistory.at(-1)!.periodTo = history.dateOfChange
+
+      return combinedResidenceHistory.push(residenceMapper(history))
+    }
+  })
+
+  return [...combinedResidenceHistory].reverse()
+}
+
+function residenceMapper(history: residenceHistory): combinedResidenceHistory {
+  const residence = {} as combinedResidenceHistory
+  residence.country = history.country
+  residence.periodFrom = history.dateOfChange
+  residence.periodTo = '-'
+
+  return residence
+}
+
+export function residenceHistoryTableData(application: Application) {
+  const { lang, formatMessage } = useLocale()
+  const { residenceHistory } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  const combinedResidenceHistory = getCombinedResidenceHistory(
+    [...residenceHistory].reverse(),
+  )
+
+  const formattedData =
+    combinedResidenceHistory.map((history) => {
+      return {
+        country:
+          lang === 'is'
+            ? getCountryByCode(history.country)?.name_is
+            : getCountryByCode(history.country)?.name,
+        periodFrom: new Date(history.periodFrom).toLocaleDateString(),
+        periodTo:
+          history.periodTo !== '-'
+            ? new Date(history.periodTo).toLocaleDateString()
+            : '-',
+        // lengthOfStay: 0//history.periodTo !== '-' ? formatDistance(history.periodTo as Date, history.periodFrom) : '-' //lengthOfStay(history.periodTo as Date, history.periodFrom)
+      }
+    }) ?? []
+
+  const data = React.useMemo(() => [...formattedData], [formattedData])
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: formatText(
+          oldAgePensionFormMessage.shared.residenceHistoryCountryTableHeader,
+          application,
+          formatMessage,
+        ),
+        accessor: 'country',
+      } as const,
+      {
+        Header: formatText(
+          oldAgePensionFormMessage.shared.residenceHistoryPeriodFromTableHeader,
+          application,
+          formatMessage,
+        ),
+        accessor: 'periodFrom',
+      } as const,
+      {
+        Header: formatText(
+          oldAgePensionFormMessage.shared.residenceHistoryPeriodToTableHeader,
+          application,
+          formatMessage,
+        ),
+        accessor: 'periodTo',
+      } as const,
+      // {
+      //   Header: formatText('Dvalartími (16-67 ára)', application, formatMessage),
+      //   accessor: 'lengthOfStay',
+      // } as const,
+    ],
+    [application, formatMessage],
+  )
+
+  return { data, columns }
 }

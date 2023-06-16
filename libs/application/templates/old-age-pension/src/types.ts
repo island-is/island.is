@@ -8,3 +8,9 @@ export interface residenceHistory {
   country: string
   dateOfChange: Date
 }
+
+export interface combinedResidenceHistory {
+  country: string
+  periodFrom: Date
+  periodTo: Date | string
+}

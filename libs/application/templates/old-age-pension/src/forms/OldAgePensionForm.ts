@@ -18,8 +18,6 @@ import {
   FormModes,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
-  NO,
-  YES,
 } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
 
@@ -31,6 +29,8 @@ import {
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
   FILE_SIZE_LIMIT,
+  NO,
+  YES,
 } from '../lib/constants'
 import {
   getAgeBetweenTwoDates,
@@ -178,7 +178,6 @@ export const OldAgePensionForm: Form = buildForm({
                     const { maritalStatus } = getApplicationExternalData(
                       externalData,
                     )
-                    console.log('MAR STATUS ', maritalStatus)
                     if (maritalStatus) return true
                     return false
                   },
@@ -241,6 +240,14 @@ export const OldAgePensionForm: Form = buildForm({
                   doesNotRequireAnswer: true,
                   title: '',
                   component: 'ResidenceHistoryTable',
+                  condition: (answers, externalData) => {
+                    const { residenceHistory } = getApplicationExternalData(
+                      externalData,
+                    )
+                    // if no residence history returned, dont show the table
+                    if (residenceHistory.length === 0) return false
+                    return true
+                  },
                 }),
                 buildRadioField({
                   id: 'residenceHistory.question',
@@ -252,15 +259,14 @@ export const OldAgePensionForm: Form = buildForm({
                   ],
                   width: 'half',
                   largeButtons: true,
-                  // required: true,
-                  condition: (answers, externalData) => {
-                    const { residenceHistory } = getApplicationExternalData(
-                      externalData,
-                    )
-                    // check if no res history or?? or if only res history is iceland?
-                    if (residenceHistory.length === 0) return true
-                    return false
-                  },
+                  // condition: (answers, externalData) => {
+                  //   const { residenceHistory } = getApplicationExternalData(
+                  //     externalData,
+                  //   )
+                  //   // check if no res history or?? or if only res history is iceland?
+                  //   if (residenceHistory.length === 0) return true
+                  //   return false
+                  // },
                 }),
               ],
             }),

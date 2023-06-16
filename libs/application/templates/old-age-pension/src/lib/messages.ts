@@ -203,6 +203,21 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Hefur þú búið erlendis fyrir árið 1987?',
       description: 'Have you live abroad before 1987?',
     },
+    residenceHistoryCountryTableHeader: {
+      id: 'oap.application:residence.history.country.table.header',
+      defaultMessage: 'Land',
+      description: 'Country',
+    },
+    residenceHistoryPeriodFromTableHeader: {
+      id: 'oap.application:residence.history.period.from.table.header',
+      defaultMessage: 'Tímabil frá',
+      description: 'Period from',
+    },
+    residenceHistoryPeriodToTableHeader: {
+      id: 'oap.application:residence.history.period.to.table.header',
+      defaultMessage: 'Tímabil til',
+      description: 'Period to',
+    },
     onePaymentPerYearTitle: {
       id: 'oap.application:one.payment.per.year.title',
       defaultMessage: 'Ein greiðsla á ári',

@@ -72,7 +72,6 @@ export const BaseInformation = ({
                   oldAgePensionFormMessage.review.phonenumber,
                 )}
                 onChange={(e) => {
-                  console.log('value--- ', e.target)
                   setStateful((prev: any) => ({
                     ...prev,
                     applicantPhonenumber: e.target.value,

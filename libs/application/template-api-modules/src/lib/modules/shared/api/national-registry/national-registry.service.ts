@@ -284,7 +284,16 @@ export class NationalRegistryService extends BaseTemplateApiService {
       auth.nationalId,
     )
 
-    // vantar villumeðhöndlun?
+    if (!residenceHistory) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+        },
+        404,
+      )
+    }
+
     console.log('res his ', residenceHistory)
     return residenceHistory
   }

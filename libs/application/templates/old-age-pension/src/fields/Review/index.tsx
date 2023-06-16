@@ -11,6 +11,7 @@ import { Fishermen } from './review-groups/Fishermen'
 import { Period } from './review-groups/Period'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
+import { ResidenceHistory } from './review-groups/ResidenceHistory'
 
 interface ReviewScreenProps {
   application: Application
@@ -60,6 +61,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       </Box>
       <BaseInformation {...childProps} />
+      <ResidenceHistory {...childProps} />
       <Period {...childProps} />
       <Fishermen {...childProps} />
       <Comment {...childProps} />

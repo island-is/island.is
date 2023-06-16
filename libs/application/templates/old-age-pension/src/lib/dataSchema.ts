@@ -26,6 +26,9 @@ export const dataSchema = z.object({
       { params: oldAgePensionFormMessage.errors.phonenumber },
     ),
   }),
+  residenceHistory: z.object({
+    question: z.enum([YES, NO]),
+  }),
   period: z.object({
     year: z.string(),
     month: z.string(),
