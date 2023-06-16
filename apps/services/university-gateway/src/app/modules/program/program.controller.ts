@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common'
-import { MajorService } from './major.service'
+import { ProgramService } from './program.service'
 import {
   ApiOkResponse,
   ApiOperation,
@@ -7,15 +7,15 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger'
-import { MajorDetailsResponse, MajorResponse } from './model'
+import { ProgramDetailsResponse, ProgramResponse } from './model'
 import { DegreeType, Season } from './types'
 
-@ApiTags('Major')
+@ApiTags('Program')
 @Controller()
-export class MajorController {
-  constructor(private readonly majorService: MajorService) {}
+export class ProgramController {
+  constructor(private readonly programService: ProgramService) {}
 
-  @Get('majors')
+  @Get('programs')
   @ApiQuery({
     name: 'limit',
     required: false,
@@ -38,7 +38,7 @@ export class MajorController {
     name: 'active',
     required: false,
     description:
-      'If true, will return only active majors. If false, will return only inactive majors. If undefined, will return both active and inactive.',
+      'If true, will return only active programs. If false, will return only inactive programs. If undefined, will return both active and inactive.',
   })
   @ApiQuery({
     name: 'year',
@@ -63,13 +63,13 @@ export class MajorController {
     enum: DegreeType,
   })
   @ApiOkResponse({
-    type: MajorResponse,
-    description: 'Returns all majors for the selected filtering',
+    type: ProgramResponse,
+    description: 'Returns all programs for the selected filtering',
   })
   @ApiOperation({
-    summary: 'Get all majors',
+    summary: 'Get all programs',
   })
-  async getMajors(
+  async getPrograms(
     @Query('limit') limit: number,
     @Query('before') before: string,
     @Query('after') after: string,
@@ -78,8 +78,8 @@ export class MajorController {
     @Query('season') season: Season,
     @Query('universityId') universityId: string,
     @Query('degreeType') degreeType: DegreeType,
-  ): Promise<MajorResponse> {
-    return this.majorService.getMajors(
+  ): Promise<ProgramResponse> {
+    return this.programService.getPrograms(
       { after, before, limit },
       active,
       year,
@@ -89,23 +89,23 @@ export class MajorController {
     )
   }
 
-  @Get('majors/:id')
+  @Get('programs/:id')
   @ApiParam({
     name: 'id',
     required: true,
     allowEmptyValue: false,
-    description: 'Major ID',
+    description: 'Program ID',
   })
   @ApiOkResponse({
-    type: MajorDetailsResponse,
-    description: 'Returns the major by ID',
+    type: ProgramDetailsResponse,
+    description: 'Returns the program by ID',
   })
   @ApiOperation({
-    summary: 'Get major (and courses) by ID',
+    summary: 'Get program (and courses) by ID',
   })
-  async getMajorDetails(
+  async getProgramDetails(
     @Param('id') id: string,
-  ): Promise<MajorDetailsResponse> {
-    return this.majorService.getMajorDetails(id)
+  ): Promise<ProgramDetailsResponse> {
+    return this.programService.getProgramDetails(id)
   }
 }

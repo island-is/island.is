@@ -34,9 +34,9 @@ export class CourseController {
       'The client provides the value of endCursor from the previous response to query the next page of limit number of data items.',
   })
   @ApiQuery({
-    name: 'majorId',
+    name: 'programId',
     required: false,
-    description: 'Major ID',
+    description: 'Program ID',
   })
   @ApiQuery({
     name: 'universityId',
@@ -54,12 +54,12 @@ export class CourseController {
     @Query('limit') limit: number,
     @Query('before') before: string,
     @Query('after') after: string,
-    @Query('majorId') majorId: string,
+    @Query('programId') programId: string,
     @Query('universityId') universityId: string,
   ): Promise<CourseResponse> {
     return this.courseService.getCourses(
       { after, before, limit },
-      majorId,
+      programId,
       universityId,
     )
   }

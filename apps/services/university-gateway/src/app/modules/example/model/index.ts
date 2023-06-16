@@ -1,1 +1,1 @@
-export * from './exampleMajor'
+export * from './exampleProgram'

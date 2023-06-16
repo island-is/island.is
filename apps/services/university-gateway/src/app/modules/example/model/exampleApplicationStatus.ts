@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { ApplicationStatus } from '../../application/types'
 
-export class ExampleApplicationStatus {
+export class ExampleApplication {
   @ApiProperty({
     description: 'Application status',
     example: ApplicationStatus.IN_REVIEW,
@@ -10,10 +10,10 @@ export class ExampleApplicationStatus {
   status!: ApplicationStatus
 }
 
-export class ExampleApplicationStatusResponse {
+export class ExampleApplicationResponse {
   @ApiProperty({
     description: 'Application status data',
-    type: ExampleApplicationStatus,
+    type: ExampleApplication,
   })
-  data!: ExampleApplicationStatus
+  data!: ExampleApplication
 }

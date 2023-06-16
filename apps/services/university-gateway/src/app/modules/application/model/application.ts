@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { StudyType, ApplicationStatus } from '../types'
+import { ApplicationStatus } from '../types'
+import { ModeOfDelivery } from '../../program/types'
 
 export class Application {
   @ApiProperty({
@@ -15,17 +16,17 @@ export class Application {
   universityId!: string
 
   @ApiProperty({
-    description: 'Major ID',
+    description: 'Program ID',
     example: '00000000-0000-0000-0000-000000000000',
   })
-  majorId!: string
+  programId!: string
 
   @ApiProperty({
-    description: 'What kind of study type was selected in the application',
-    example: StudyType.ON_SITE,
-    enum: StudyType,
+    description: 'What mode of delivery was selected in the application',
+    example: ModeOfDelivery.ON_SITE,
+    enum: ModeOfDelivery,
   })
-  studyType!: StudyType
+  modeOfDelivery!: ModeOfDelivery
 
   @ApiProperty({
     description: 'Application status',

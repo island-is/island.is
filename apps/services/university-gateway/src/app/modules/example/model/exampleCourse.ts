@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { Season } from '../../major/types'
+import { Season } from '../../program/types'
 
 export class ExampleCourse {
   @ApiProperty({
@@ -21,7 +21,7 @@ export class ExampleCourse {
   nameEn!: string
 
   @ApiProperty({
-    description: 'Whether the course is required to take within the major',
+    description: 'Whether the course is required to take within the program',
     example: true,
   })
   required!: boolean
@@ -33,10 +33,10 @@ export class ExampleCourse {
   // universityId!: string
 
   // @ApiProperty({
-  //   description: 'Major ID',
+  //   description: 'Program ID',
   //   example: '00000000-0000-0000-0000-000000000000',
   // })
-  // majorId!: string
+  // programId!: string
 
   @ApiProperty({
     description: 'Number of course credits (in ECTS)',
