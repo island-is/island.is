@@ -6,7 +6,7 @@ export class EndorsementMetadata {
 
   @ApiProperty()
   locality!: string
-  
+
   @ApiProperty()
   showName!: boolean
 }

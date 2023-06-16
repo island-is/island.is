@@ -276,7 +276,7 @@ export class EndorsementListService {
 
     try {
       const person = await this.nationalRegistryApiV2.getIndividual(owner)
-      return (person?.fullName ? person.fullName : '')
+      return person?.fullName ? person.fullName : ''
     } catch (e) {
       if (e instanceof Error) {
         this.logger.warn(

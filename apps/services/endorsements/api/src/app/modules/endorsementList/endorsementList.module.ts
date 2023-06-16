@@ -9,7 +9,6 @@ import { environment } from '../../../environments'
 import { EmailModule } from '@island.is/email-service'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 
-
 @Module({
   imports: [
     NationalRegistryClientModule,
@@ -17,9 +16,7 @@ import { NationalRegistryClientModule } from '@island.is/clients/national-regist
     EmailModule.register(environment.emailOptions),
   ],
   controllers: [EndorsementListController],
-  providers: [
-    EndorsementListService,
-  ],
+  providers: [EndorsementListService],
   exports: [EndorsementListService],
 })
 export class EndorsementListModule {}

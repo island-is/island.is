@@ -19,7 +19,6 @@ import type { User } from '@island.is/auth-nest-tools'
 import { REQUEST } from '@nestjs/core'
 import { Request } from 'express'
 
-
 interface EndorsementRequest extends Request {
   auth: {
     nationalId: string
@@ -86,7 +85,7 @@ export class EndorsementService {
     // ... list owner sees all data
     const user = this.request.auth as User
     const listOwnerNationalId = await this.getListOwnerNationalId(listId)
-    if(user?.nationalId != listOwnerNationalId){
+    if (user?.nationalId != listOwnerNationalId) {
       endorsements.data.map((endorsement) => {
         if (!endorsement.meta.showName) {
           endorsement.meta.fullName = ''
@@ -97,7 +96,7 @@ export class EndorsementService {
     return endorsements
   }
 
-  async getListOwnerNationalId(listId: string): Promise<string|null> {
+  async getListOwnerNationalId(listId: string): Promise<string | null> {
     const endorsementList = await this.endorsementListModel.findOne({
       where: {
         id: listId,
