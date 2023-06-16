@@ -60,7 +60,9 @@ test.describe('Admin portal (Endorsements)', () => {
     const lockedLists = page.getByRole('button', { name: 'Skoða lista' })
     await expect(lockedLists).toHaveCountGreaterThan(1)
     await lockedLists.first().click()
-    await expect(page.getByRole('alert', { name: 'Listi er læstur' })).toBeVisible()
+    await expect(
+      page.getByRole('alert', { name: 'Listi er læstur' }),
+    ).toBeVisible()
   })
 
   test('Go back to overview', async ({ page }) => {
@@ -79,19 +81,12 @@ test.describe('Admin portal (Endorsements)', () => {
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
 
     // Act
-    await page
-      .getByRole('button', { name: 'Skoða lista' })
-      .first()
-      .click()
-    const currentEndDate = await page
-      .getByLabel('Tímabil til')
-      .inputValue()
+    await page.getByRole('button', { name: 'Skoða lista' }).first().click()
+    const currentEndDate = await page.getByLabel('Tímabil til').inputValue()
     const exampleDateInThePast = '13.05.2023'
-    await page
-      .getByLabel('Tímabil til')
-      .fill(exampleDateInThePast)
+    await page.getByLabel('Tímabil til').fill(exampleDateInThePast)
     await page.keyboard.press('Enter')
-    await page.getByRole('button', { name: "Uppfæra lista" }).click()
+    await page.getByRole('button', { name: 'Uppfæra lista' }).click()
 
     // Assert
     let dateValue = await page.getByLabel('Tímabil til').last().inputValue()
@@ -100,7 +95,7 @@ test.describe('Admin portal (Endorsements)', () => {
     // And lets end by setting the date back to what it was
     await page.getByLabel('Tímabil til').last().fill(currentEndDate)
     await page.keyboard.press('Enter')
-    await page.getByRole('button', { name: "Uppfæra lista" }).click()
+    await page.getByRole('button', { name: 'Uppfæra lista' }).click()
 
     // Assert
     dateValue = await page.getByLabel('Tímabil til').last().inputValue()
