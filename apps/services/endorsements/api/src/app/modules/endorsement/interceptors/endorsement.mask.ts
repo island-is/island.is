@@ -4,11 +4,13 @@ export function maskEndorsement(
   endorsement: Endorsement,
   isListOwner: boolean,
 ): Endorsement {
-  // always mask out nationalId and locality
+  // endorsement data display rules
+  // always mask out nationalId for all
   endorsement.endorser = 'xxxxxx-xxxx'
-  // endorsement data display rules for everyone(public,users,admins) except owner who sees all
   if (!isListOwner) {
+    // only owner sees locality
     endorsement.meta.locality = ''
+    // public and admins see name if endorser sets it to be shown
     if (!endorsement.meta.showName) {
       endorsement.meta.fullName = ''
     }
