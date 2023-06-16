@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
@@ -28,6 +29,7 @@ import * as kennitala from 'kennitala'
 import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
+  connectedApplications,
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
   FILE_SIZE_LIMIT,
@@ -53,6 +55,30 @@ export const OldAgePensionForm: Form = buildForm({
       id: 'applicant',
       title: oldAgePensionFormMessage.shared.applicantSection,
       children: [
+        buildSubSection({
+          id: 'connectedApplicationsSection',
+          title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
+          children: [
+            buildCheckboxField({
+              id: 'connectedApplications',
+              title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
+              description: oldAgePensionFormMessage.shared.relatedApplicationsSectionDescription,
+              large: true,
+              doesNotRequireAnswer: true,
+              defaultValue: '',
+              options: [
+                {
+                  label: oldAgePensionFormMessage.shared.homeAllowance,
+                  value: connectedApplications.HOMEALLOWANCE,
+                },
+                {
+                  label: oldAgePensionFormMessage.shared.childSupport,
+                  value: connectedApplications.CHILDSUPPORT,
+                },
+              ],
+            }),
+          ],
+        }),
         buildSubSection({
           id: 'info',
           title: oldAgePensionFormMessage.shared.applicantInfoSubSectionTitle,

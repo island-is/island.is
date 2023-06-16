@@ -112,7 +112,22 @@ export const oldAgePensionFormMessage: MessageDir = {
     relatedApplicationsSection: {
       id: 'oap.application:related.applications.section',
       defaultMessage: 'Tengdar umsóknir',
-      description: '...',
+      description: 'Related applications',
+    },
+    relatedApplicationsSectionDescription: {
+      id: 'oap.application:related.applications.section.description',
+      defaultMessage: 'Hér eru tengdar umsóknir sem þú gætir átt rétt á. Hakaðu í þær umsóknir sem þú vilt sækja um.',
+      description: 'Here are related applications you may be eligible for. Check the applications you want to apply for.',
+    },
+    homeAllowance: {
+      id: 'oap.application:related.applications.homeAllowance',
+      defaultMessage: 'Heimilisuppbót',
+      description: 'Home allowance',
+    },
+    childSupport: {
+      id: 'oap.application:related.applications.childSupport',
+      defaultMessage: 'Barnalífeyri',
+      description: 'Child support',
     },
     commentSection: {
       id: 'oap.application:comment.section',

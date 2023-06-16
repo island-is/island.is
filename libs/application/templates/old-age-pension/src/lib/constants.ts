@@ -35,3 +35,8 @@ export enum States {
   DRAFT = 'draft',
   DONE = 'done',
 }
+
+export enum connectedApplications {
+  HOMEALLOWANCE = 'homeAllowance',
+  CHILDSUPPORT = 'childSupport',
+}
