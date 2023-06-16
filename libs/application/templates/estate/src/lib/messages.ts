@@ -119,6 +119,18 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Spouse of the deceased
+  isDeceasedWithUndividedEstate: {
+    id: 'es.application:isDeceasedWithUndividedEstate',
+    defaultMessage: 'Sat hinn látni í óskiptu búi?',
+    description: '',
+  },
+  spouseOfTheDeceased: {
+    id: 'es.application:spouseOfTheDeceased',
+    defaultMessage: 'Maki hins látna',
+    description: '',
+  },
+
   // Applicant
   announcer: {
     id: 'es.application:announcer',
@@ -589,6 +601,18 @@ export const m = defineMessages({
     id: 'es.application:uploadDescription',
     defaultMessage:
       'Tekið er við skjölum með endingunum: .pdf, .doc, .docx, .rtf, .heic',
+    description: '',
+  },
+
+  // No assets
+  doAssetsExist: {
+    id: 'es.application:doAssetsExist',
+    defaultMessage: 'Eru eignir til staðar?',
+    description: '',
+  },
+  doDebtsExist: {
+    id: 'es.application:doDebtsExist',
+    defaultMessage: 'Eru skuldir til staðar?',
     description: '',
   },
 

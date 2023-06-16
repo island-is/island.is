@@ -10,16 +10,16 @@ import { JA, YES, NEI, NO } from '../../lib/constants'
 
 export const estateWithoutAssets = buildSection({
   id: 'estateAssetsExist',
-  title: 'Eru eignir til staðar?',
+  title: m.doAssetsExist,
   children: [
     buildMultiField({
       id: 'estateAssetsExist',
-      title: 'Eru eignir til staðar?',
-      description: 'Eru eignir til staðar?',
+      title: m.doAssetsExist,
+      description: '',
       children: [
         buildRadioField({
           id: 'estateWithoutAssets.estateAssetsExist',
-          title: 'Eru eignir til staðar?',
+          title: m.doAssetsExist,
           width: 'half',
           largeButtons: false,
           options: [
@@ -29,7 +29,7 @@ export const estateWithoutAssets = buildSection({
         }),
         buildRadioField({
           id: 'estateWithoutAssets.estateDebtsExist',
-          title: 'Eru skuldir til staðar?',
+          title: m.doDebtsExist,
           width: 'half',
           largeButtons: false,
           space: 'containerGutter',

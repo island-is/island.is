@@ -2,10 +2,10 @@ import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { dataCollection } from './Sections/dataCollection'
 import { announcerInfo } from './Sections/announcerInfo'
-import { deceasedSpouse } from './Sections/SpouseOfTheDeceased'
+import { spouseOfTheDeceased } from './Sections/spouseOfTheDeceased'
 import { estateMembers } from './Sections/estateMembers'
 import { testamentInfo } from './Sections/testamentInfo'
-import { estateAssets } from './Sections/estateProperties'
+import { estateAssets } from './Sections/estateAssets'
 import { estateDebts } from './Sections/estateDebts'
 import { attachments } from './Sections/attachments'
 import { representative } from './Sections/representative'
@@ -24,7 +24,7 @@ export const privateDivisionForm: Form = buildForm({
   children: [
     dataCollection,
     announcerInfo,
-    deceasedSpouse,
+    spouseOfTheDeceased,
     estateMembers,
     testamentInfo,
     estateAssets,
@@ -76,6 +76,8 @@ export const estateWithoutAssetsForm: Form = buildForm({
     overview,
   ],
 })
+
+/* OPINBER SKIPTI */
 
 export const officialDivisionForm: Form = buildForm({
   id: 'officialDivisionForm',

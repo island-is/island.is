@@ -8,14 +8,15 @@ import {
 } from '@island.is/application/core'
 import { JA, YES, NEI, NO } from '../../lib/constants'
 import { deceasedInfoFields } from './deceasedInfoFields'
+import { m } from '../../lib/messages'
 
-export const deceasedSpouse = buildSection({
-  id: 'deceasedSpouse',
-  title: 'Hinn látni',
+export const spouseOfTheDeceased = buildSection({
+  id: 'spouseOfTheDeceased',
+  title: m.theDeceased,
   children: [
     buildMultiField({
       id: 'deceased',
-      title: 'Hinn látni',
+      title: m.theDeceased,
       description: 'Trolo',
       children: [
         ...deceasedInfoFields,
@@ -26,7 +27,7 @@ export const deceasedSpouse = buildSection({
         }),
         buildRadioField({
           id: 'deceasedWithUndividedEstate.selection',
-          title: 'Sat hinn látni í óskiptu búi?',
+          title: m.isDeceasedWithUndividedEstate,
           width: 'half',
           largeButtons: false,
           options: [
@@ -35,9 +36,9 @@ export const deceasedSpouse = buildSection({
           ],
         }),
         buildDescriptionField({
-          id: 'deceasedSpouse',
+          id: 'spouseOfTheDeceased',
           space: 'containerGutter',
-          title: 'Maki hins látna',
+          title: m.spouseOfTheDeceased,
           titleVariant: 'h4',
           marginBottom: 2,
           condition: (answers) =>

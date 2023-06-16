@@ -5,7 +5,6 @@ import {
   buildSection,
   buildRadioField,
   buildSubmitField,
-  buildDividerField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
