@@ -51,6 +51,7 @@ const staging01: EnvironmentConfig = {
   awsAccountRegion: 'eu-west-1',
   global: {
     global: {
+      grantNamespacesEnabled: false,
       env: {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
