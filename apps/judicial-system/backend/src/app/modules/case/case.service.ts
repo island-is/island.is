@@ -846,18 +846,19 @@ export class CaseService {
       }
     }
 
+    if (
+      updatedCase.prosecutorStatementDate?.getTime() !==
+      theCase.prosecutorStatementDate?.getTime()
+    ) {
+      await this.addMessagesForAppealStatementToQueue(updatedCase, user)
+    }
+
     if (isRestrictionCase(updatedCase.type)) {
       if (
         updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
       ) {
         // Case to dates modified
         await this.addMessagesForModifiedCaseToQueue(updatedCase, user)
-      }
-
-      if (
-        updatedCase.prosecutorStatementDate !== theCase.prosecutorStatementDate
-      ) {
-        await this.addMessagesForAppealStatementToQueue(updatedCase, user)
       }
     }
 
