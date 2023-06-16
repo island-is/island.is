@@ -800,7 +800,7 @@ export class NotificationService {
   ): Promise<Recipient> {
     const subject = this.formatMessage(
       notifications.prisonRulingEmail.subject,
-      { caseType: theCase.type },
+      { courtCaseNumber: theCase.courtCaseNumber },
     )
     const html = this.formatMessage(notifications.prisonRulingEmail.body, {
       institutionName: theCase.court?.name,
@@ -861,7 +861,11 @@ export class NotificationService {
     const promises = [this.sendRulingEmailNotificationToProsecutor(theCase)]
 
     if (isIndictmentCase(theCase.type)) {
-      theCase.defendants?.forEach((defendant) => {
+      const uniqueDefendants = _uniqBy(
+        theCase.defendants ?? [],
+        (d: Defendant) => d.defenderEmail,
+      )
+      uniqueDefendants.forEach((defendant) => {
         if (defendant.defenderEmail) {
           promises.push(
             this.sendRulingEmailNotificationToDefender(
@@ -1495,49 +1499,63 @@ export class NotificationService {
       },
     )
 
-    const html = this.formatMessage(notifications.caseAppealStatement.body, {
-      userHasAccessToRVG: true,
-      courtCaseNumber: theCase.courtCaseNumber,
-      appealCaseNumber: theCase.appealCaseNumber,
-      linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
-
     const promises = []
 
     if (theCase.appealCaseNumber) {
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.appealAssistant?.name,
-          theCase.appealAssistant?.email,
-        ),
+      const courtOfAppealsHtml = this.formatMessage(
+        notifications.caseAppealStatement.body,
+        {
+          userHasAccessToRVG: true,
+          courtCaseNumber: theCase.courtCaseNumber,
+          appealCaseNumber: theCase.appealCaseNumber,
+          linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
+          linkEnd: '</a>',
+        },
       )
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.appealJudge1?.name,
-          theCase.appealJudge1?.email,
-        ),
-      )
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.appealJudge2?.name,
-          theCase.appealJudge2?.email,
-        ),
-      )
-      promises.push(
-        this.sendEmail(
-          subject,
-          html,
-          theCase.appealJudge3?.name,
-          theCase.appealJudge3?.email,
-        ),
-      )
+
+      if (theCase.appealAssistant) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            courtOfAppealsHtml,
+            theCase.appealAssistant.name,
+            theCase.appealAssistant.email,
+          ),
+        )
+      }
+
+      if (theCase.appealJudge1) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            courtOfAppealsHtml,
+            theCase.appealJudge1.name,
+            theCase.appealJudge1.email,
+          ),
+        )
+      }
+
+      if (theCase.appealJudge2) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            courtOfAppealsHtml,
+            theCase.appealJudge2.name,
+            theCase.appealJudge2.email,
+          ),
+        )
+      }
+
+      if (theCase.appealJudge3) {
+        promises.push(
+          this.sendEmail(
+            subject,
+            courtOfAppealsHtml,
+            theCase.appealJudge3.name,
+            theCase.appealJudge3.email,
+          ),
+        )
+      }
     }
 
     if (user.role === UserRole.DEFENDER) {
@@ -1586,6 +1604,11 @@ export class NotificationService {
           theCase.defenderEmail,
         ),
       )
+    }
+
+    if (promises.length === 0) {
+      // Nothing to send
+      return { notificationSent: true }
     }
 
     const recipients = await Promise.all(promises)

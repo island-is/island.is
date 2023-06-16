@@ -131,9 +131,11 @@ export class LicenseServiceService {
     }
 
     try {
-      await this.cacheManager.set(cacheKey, JSON.stringify(dataWithFetch), {
-        ttl,
-      })
+      await this.cacheManager.set(
+        cacheKey,
+        JSON.stringify(dataWithFetch),
+        ttl * 1000,
+      )
     } catch (e) {
       this.logger.warn('Unable to cache data for license', {
         license,

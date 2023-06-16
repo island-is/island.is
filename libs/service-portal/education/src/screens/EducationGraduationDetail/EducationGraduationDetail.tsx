@@ -189,6 +189,7 @@ export const EducationGraduationDetail = () => {
             label={m.fullName}
             loading={loading}
             content={studentInfo?.name}
+            translate="no"
           />
           <Divider />
           <UserInfoLine
