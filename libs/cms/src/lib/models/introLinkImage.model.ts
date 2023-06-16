@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IIntroLinkImage } from '../generated/contentfulTypes'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 import { Html, mapHtml } from './html.model'
@@ -9,10 +10,10 @@ export class IntroLinkImage {
   @Field()
   title?: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   intro?: Html
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
   @Field(() => Boolean)
@@ -21,7 +22,7 @@ export class IntroLinkImage {
   @Field()
   linkTitle?: string
 
-  @Field(() => ReferenceLink, { nullable: true })
+  @CacheField(() => ReferenceLink, { nullable: true })
   link?: ReferenceLink | null
 
   @Field(() => Boolean)

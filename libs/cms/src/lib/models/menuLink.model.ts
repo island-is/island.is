@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IMenuLink } from '../generated/contentfulTypes'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
@@ -7,7 +8,7 @@ export class MenuLink {
   @Field()
   title!: string
 
-  @Field(() => ReferenceLink)
+  @CacheField(() => ReferenceLink)
   link?: ReferenceLink | null
 }
 

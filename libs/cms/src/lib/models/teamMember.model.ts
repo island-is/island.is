@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { ITeamMember } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 
@@ -10,10 +11,10 @@ export class TeamMember {
   @Field()
   title!: string
 
-  @Field(() => Image)
+  @CacheField(() => Image)
   image!: Image
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   imageOnSelect?: Image | null
 }
 
