@@ -1,5 +1,6 @@
+import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const iconStyle = style({
-  marginLeft: 7,
+  marginLeft: theme.spacing[1],
 })
