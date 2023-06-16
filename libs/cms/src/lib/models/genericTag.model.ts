@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IGenericTag } from '../generated/contentfulTypes'
 import { GenericTagGroup, mapGenericTagGroup } from './genericTagGroup.model'
 
@@ -13,7 +14,7 @@ export class GenericTag {
   @Field()
   slug!: string
 
-  @Field(() => GenericTagGroup, { nullable: true })
+  @CacheField(() => GenericTagGroup, { nullable: true })
   genericTagGroup!: GenericTagGroup | null
 }
 
