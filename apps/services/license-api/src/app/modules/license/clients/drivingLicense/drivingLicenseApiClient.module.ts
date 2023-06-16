@@ -1,4 +1,5 @@
-import { CacheModule, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { CacheModule } from '@island.is/cache'
 import { DrivingLicenseApiClientService } from './drivingLicenseApiClient.service'
 import { SmartSolutionsApiClientModule } from '@island.is/clients/smartsolutions'
 import { ConfigType } from '@nestjs/config'
