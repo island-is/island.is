@@ -33,36 +33,35 @@ export const PrerequisitesForm: Form = buildForm({
   children: [
     buildSection({
       id: 'prerequisites',
-      title: oldAgePensionFormMessage.shared.prerequisitesSection,
+      title: oldAgePensionFormMessage.pre.prerequisitesSection,
       children: [
         buildSubSection({
           id: 'externalData',
-          title: oldAgePensionFormMessage.shared.externalDataSubSection,
+          title: oldAgePensionFormMessage.pre.externalDataSubSection,
           children: [
             buildExternalDataProvider({
               id: 'approveExternalData',
-              title: oldAgePensionFormMessage.shared.externalDataSubSection,
-              checkboxLabel: oldAgePensionFormMessage.shared.checkboxProvider,
+              title: oldAgePensionFormMessage.pre.externalDataSubSection,
+              checkboxLabel: oldAgePensionFormMessage.pre.checkboxProvider,
               dataProviders: [
                 buildDataProviderItem({
                   provider: UserProfileApi,
                   title:
-                    oldAgePensionFormMessage.shared.userProfileInformationTitle,
+                    oldAgePensionFormMessage.pre.userProfileInformationTitle,
                   subTitle:
-                    oldAgePensionFormMessage.shared
-                      .userProfileInformationSubTitle,
+                    oldAgePensionFormMessage.pre.userProfileInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryUserApi,
-                  title: oldAgePensionFormMessage.shared.skraInformationTitle,
+                  title: oldAgePensionFormMessage.pre.skraInformationTitle,
                   subTitle:
-                    oldAgePensionFormMessage.shared.skraInformationSubTitle,
+                    oldAgePensionFormMessage.pre.skraInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistrySpouseApi,
-                  title: oldAgePensionFormMessage.shared.skraInformationTitle,
+                  title: oldAgePensionFormMessage.pre.skraInformationTitle,
                   subTitle:
-                    oldAgePensionFormMessage.shared.skraInformationSubTitle,
+                    oldAgePensionFormMessage.pre.skraInformationSubTitle,
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryResidenceHistoryApi,
@@ -75,16 +74,15 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'questions',
-          title: oldAgePensionFormMessage.shared.questionTitle,
+          title: oldAgePensionFormMessage.pre.questionTitle,
           children: [
             buildMultiField({
               id: 'questions',
-              title: oldAgePensionFormMessage.shared.questionTitle,
+              title: oldAgePensionFormMessage.pre.questionTitle,
               children: [
                 buildRadioField({
                   id: 'questions.pensionFund',
-                  title:
-                    oldAgePensionFormMessage.shared.pensionFundQuestionTitle,
+                  title: oldAgePensionFormMessage.pre.pensionFundQuestionTitle,
                   description: '',
                   options: [
                     { value: YES, label: oldAgePensionFormMessage.shared.yes },
@@ -95,12 +93,10 @@ export const PrerequisitesForm: Form = buildForm({
                 buildCustomField(
                   {
                     id: 'question.pensionFundAlert',
-                    title:
-                      oldAgePensionFormMessage.shared.pensionFundAlertTitle,
+                    title: oldAgePensionFormMessage.pre.pensionFundAlertTitle,
                     component: 'FieldAlertMessage',
                     description:
-                      oldAgePensionFormMessage.shared
-                        .pensionFundAlertDescription,
+                      oldAgePensionFormMessage.pre.pensionFundAlertDescription,
                     doesNotRequireAnswer: true,
                     condition: (answers) => {
                       const { pensionFundQuestion } = getApplicationAnswers(
@@ -114,7 +110,7 @@ export const PrerequisitesForm: Form = buildForm({
                 ),
                 buildRadioField({
                   id: 'questions.fishermen',
-                  title: oldAgePensionFormMessage.shared.fishermenQuestionTitle,
+                  title: oldAgePensionFormMessage.pre.fishermenQuestionTitle,
                   description: '',
                   options: [
                     { value: YES, label: oldAgePensionFormMessage.shared.yes },
@@ -124,12 +120,12 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildSubmitField({
                   id: 'toDraft',
-                  title: oldAgePensionFormMessage.shared.confirmationTitle,
+                  title: oldAgePensionFormMessage.pre.confirmationTitle,
                   refetchApplicationAfterSubmit: true,
                   actions: [
                     {
                       event: DefaultEvents.SUBMIT,
-                      name: oldAgePensionFormMessage.shared.startApplication,
+                      name: oldAgePensionFormMessage.pre.startApplication,
                       type: 'primary',
                       condition: (answers) => {
                         const { pensionFundQuestion } = getApplicationAnswers(
@@ -156,7 +152,7 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'applicant',
-      title: oldAgePensionFormMessage.shared.applicantSection,
+      title: oldAgePensionFormMessage.applicant.applicantSection,
       children: [],
     }),
     buildSection({
@@ -166,17 +162,19 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'relatedApplications',
-      title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
+      title:
+        oldAgePensionFormMessage.connectedApplications
+          .relatedApplicationsSection,
       children: [],
     }),
     buildSection({
       id: 'comment',
-      title: oldAgePensionFormMessage.shared.commentSection,
+      title: oldAgePensionFormMessage.comment.commentSection,
       children: [],
     }),
     buildSection({
       id: 'confirmation',
-      title: oldAgePensionFormMessage.shared.confirmationSection,
+      title: oldAgePensionFormMessage.review.confirmSectionTitle,
       children: [],
     }),
   ],

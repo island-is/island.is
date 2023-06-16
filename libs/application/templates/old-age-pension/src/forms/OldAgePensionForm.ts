@@ -48,52 +48,86 @@ export const OldAgePensionForm: Form = buildForm({
   children: [
     buildSection({
       id: 'prerequisites',
-      title: oldAgePensionFormMessage.shared.prerequisitesSection,
+      title: oldAgePensionFormMessage.pre.prerequisitesSection,
       children: [],
     }),
     buildSection({
       id: 'applicant',
-      title: oldAgePensionFormMessage.shared.applicantSection,
+      title: oldAgePensionFormMessage.applicant.applicantSection,
       children: [
         buildSubSection({
           id: 'connectedApplicationsSection',
-          title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
+          title:
+            oldAgePensionFormMessage.connectedApplications
+              .relatedApplicationsSection,
           children: [
             buildCheckboxField({
               id: 'connectedApplications',
-              title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
-              description: oldAgePensionFormMessage.shared.relatedApplicationsSectionDescription,
+              title:
+                oldAgePensionFormMessage.connectedApplications
+                  .relatedApplicationsSection,
+              description:
+                oldAgePensionFormMessage.connectedApplications
+                  .relatedApplicationsSectionDescription,
               large: true,
               doesNotRequireAnswer: true,
               defaultValue: '',
               options: [
                 {
-                  label: oldAgePensionFormMessage.shared.homeAllowance,
+                  label:
+                    oldAgePensionFormMessage.connectedApplications
+                      .homeAllowance,
                   value: connectedApplications.HOMEALLOWANCE,
                 },
                 {
-                  label: oldAgePensionFormMessage.shared.childSupport,
+                  label:
+                    oldAgePensionFormMessage.connectedApplications.childSupport,
                   value: connectedApplications.CHILDSUPPORT,
                 },
               ],
             }),
           ],
         }),
+        // buildSubSection({
+        //   id: 'connectedApplications.childSupport',
+        //   title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
+        //   children: [
+        //     buildCheckboxField({
+        //       id: 'connectedApplications',
+        //       title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
+        //       description: oldAgePensionFormMessage.shared.relatedApplicationsSectionDescription,
+        //       large: true,
+        //       doesNotRequireAnswer: true,
+        //       defaultValue: '',
+        //       options: [
+        //         {
+        //           label: oldAgePensionFormMessage.shared.homeAllowance,
+        //           value: connectedApplications.HOMEALLOWANCE,
+        //         },
+        //         {
+        //           label: oldAgePensionFormMessage.shared.childSupport,
+        //           value: connectedApplications.CHILDSUPPORT,
+        //         },
+        //       ],
+        //     }),
+        //   ],
+        // }),
         buildSubSection({
           id: 'info',
-          title: oldAgePensionFormMessage.shared.applicantInfoSubSectionTitle,
+          title:
+            oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle,
           children: [
             buildMultiField({
               id: 'applicantInfo',
               title:
-                oldAgePensionFormMessage.shared.applicantInfoSubSectionTitle,
+                oldAgePensionFormMessage.applicant.applicantInfoSubSectionTitle,
               description:
-                oldAgePensionFormMessage.shared
+                oldAgePensionFormMessage.applicant
                   .applicantInfoSubSectionDescription,
               children: [
                 buildTextField({
                   id: 'applicantInfo.name',
-                  title: oldAgePensionFormMessage.shared.applicantInfoName,
+                  title: oldAgePensionFormMessage.applicant.applicantInfoName,
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
@@ -104,7 +138,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.ID',
-                  title: oldAgePensionFormMessage.shared.applicantInfoId,
+                  title: oldAgePensionFormMessage.applicant.applicantInfoId,
                   format: '######-####',
                   width: 'half',
                   backgroundColor: 'white',
@@ -114,7 +148,8 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.address',
-                  title: oldAgePensionFormMessage.shared.applicantInfoAddress,
+                  title:
+                    oldAgePensionFormMessage.applicant.applicantInfoAddress,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -127,7 +162,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.postcode',
                   title:
-                    oldAgePensionFormMessage.shared.applicantInfoPostalcode,
+                    oldAgePensionFormMessage.applicant.applicantInfoPostalcode,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -140,7 +175,8 @@ export const OldAgePensionForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.municipality',
                   title:
-                    oldAgePensionFormMessage.shared.applicantInfoMunicipality,
+                    oldAgePensionFormMessage.applicant
+                      .applicantInfoMunicipality,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -152,7 +188,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.email',
-                  title: oldAgePensionFormMessage.shared.applicantInfoEmail,
+                  title: oldAgePensionFormMessage.applicant.applicantInfoEmail,
                   width: 'half',
                   variant: 'email',
                   required: true,
@@ -165,7 +201,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title:
-                    oldAgePensionFormMessage.shared.applicantInfoPhonenumber,
+                    oldAgePensionFormMessage.applicant.applicantInfoPhonenumber,
                   width: 'half',
                   placeholder: '000-0000',
                   required: true,
@@ -180,7 +216,8 @@ export const OldAgePensionForm: Form = buildForm({
                   space: 'containerGutter',
                   titleVariant: 'h5',
                   title:
-                    oldAgePensionFormMessage.shared.applicantInfoMaritalTitle,
+                    oldAgePensionFormMessage.applicant
+                      .applicantInfoMaritalTitle,
                   condition: (answers, externalData) => {
                     const { hasSpouse } = getApplicationExternalData(
                       externalData,
@@ -192,7 +229,8 @@ export const OldAgePensionForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.maritalStatus',
                   title:
-                    oldAgePensionFormMessage.shared.applicantInfoMaritalStatus,
+                    oldAgePensionFormMessage.applicant
+                      .applicantInfoMaritalStatus,
                   backgroundColor: 'white',
                   disabled: true,
                   defaultValue: (application: Application) => {
@@ -211,7 +249,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildTextField({
                   id: 'applicantInfo.spouseName',
                   title:
-                    oldAgePensionFormMessage.shared.applicantInfoSpouseName,
+                    oldAgePensionFormMessage.applicant.applicantInfoSpouseName,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -230,7 +268,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'applicantInfo.spouseID',
-                  title: oldAgePensionFormMessage.shared.applicantInfoId,
+                  title: oldAgePensionFormMessage.applicant.applicantInfoId,
                   width: 'half',
                   backgroundColor: 'white',
                   disabled: true,
@@ -253,13 +291,13 @@ export const OldAgePensionForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'residence',
-          title: oldAgePensionFormMessage.shared.residenceHistoryTitle,
+          title: oldAgePensionFormMessage.residence.residenceHistoryTitle,
           children: [
             buildMultiField({
               id: 'residenceHistory',
-              title: oldAgePensionFormMessage.shared.residenceHistoryTitle,
+              title: oldAgePensionFormMessage.residence.residenceHistoryTitle,
               description:
-                oldAgePensionFormMessage.shared.residenceHistoryDescription,
+                oldAgePensionFormMessage.residence.residenceHistoryDescription,
               children: [
                 buildCustomField({
                   id: 'residenceHistory.table',
@@ -278,7 +316,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildRadioField({
                   id: 'residenceHistory.question',
                   title:
-                    oldAgePensionFormMessage.shared.residenceHistoryQuestion,
+                    oldAgePensionFormMessage.residence.residenceHistoryQuestion,
                   options: [
                     { value: YES, label: oldAgePensionFormMessage.shared.yes },
                     { value: NO, label: oldAgePensionFormMessage.shared.no },
@@ -406,17 +444,20 @@ export const OldAgePensionForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'onePaymentPerYear',
-          title: oldAgePensionFormMessage.shared.onePaymentPerYearTitle,
+          title:
+            oldAgePensionFormMessage.onePaymentPerYear.onePaymentPerYearTitle,
           children: [
             buildMultiField({
               id: 'onePaymentPerYear',
-              title: oldAgePensionFormMessage.shared.onePaymentPerYearTitle,
+              title:
+                oldAgePensionFormMessage.onePaymentPerYear
+                  .onePaymentPerYearTitle,
               children: [
                 buildRadioField({
                   id: 'onePaymentPerYear.question',
                   title: '',
                   description:
-                    oldAgePensionFormMessage.shared
+                    oldAgePensionFormMessage.onePaymentPerYear
                       .onePaymentPerYearDescription,
                   options: [
                     {
@@ -435,11 +476,11 @@ export const OldAgePensionForm: Form = buildForm({
                   {
                     id: 'onePaymentPerYear.alert',
                     title:
-                      oldAgePensionFormMessage.shared
+                      oldAgePensionFormMessage.onePaymentPerYear
                         .onePaymentPerYearAlertTitle,
                     component: 'FieldAlertMessage',
                     description:
-                      oldAgePensionFormMessage.shared
+                      oldAgePensionFormMessage.onePaymentPerYear
                         .onePaymentPerYearAlertDescription,
                     condition: (answers) => {
                       const { onePaymentPerYear } = getApplicationAnswers(
@@ -481,11 +522,11 @@ export const OldAgePensionForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'commentSection',
-          title: oldAgePensionFormMessage.shared.commentSection,
+          title: oldAgePensionFormMessage.comment.commentSection,
           children: [
             buildTextField({
               id: 'comment',
-              title: oldAgePensionFormMessage.shared.commentSection,
+              title: oldAgePensionFormMessage.comment.commentSection,
               variant: 'textarea',
               rows: 10,
               description: oldAgePensionFormMessage.comment.description,
@@ -495,14 +536,9 @@ export const OldAgePensionForm: Form = buildForm({
         }),
       ],
     }),
-    // buildSection({
-    //   id: 'comment',
-    //   title: oldAgePensionFormMessage.shared.commentSection,
-    //   children: [],
-    // }),
     buildSection({
       id: 'confirm',
-      title: oldAgePensionFormMessage.shared.confirmSectionTitle,
+      title: oldAgePensionFormMessage.review.confirmSectionTitle,
       children: [
         buildSubSection({
           title: '',
@@ -515,7 +551,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildCustomField(
                   {
                     id: 'confirmScreen',
-                    title: oldAgePensionFormMessage.shared.confirmTitle,
+                    title: oldAgePensionFormMessage.review.confirmTitle,
                     component: 'Review',
                   },
                   {
@@ -525,11 +561,11 @@ export const OldAgePensionForm: Form = buildForm({
                 buildSubmitField({
                   id: 'submit',
                   placement: 'footer',
-                  title: oldAgePensionFormMessage.shared.confirmationTitle,
+                  title: oldAgePensionFormMessage.review.confirmTitle,
                   actions: [
                     {
                       event: DefaultEvents.SUBMIT,
-                      name: oldAgePensionFormMessage.shared.confirmationTitle,
+                      name: oldAgePensionFormMessage.review.confirmTitle,
                       type: 'primary',
                     },
                   ],

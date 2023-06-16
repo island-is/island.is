@@ -333,7 +333,7 @@ export function residenceHistoryTableData(application: Application) {
     () => [
       {
         Header: formatText(
-          oldAgePensionFormMessage.shared.residenceHistoryCountryTableHeader,
+          oldAgePensionFormMessage.residence.residenceHistoryCountryTableHeader,
           application,
           formatMessage,
         ),
@@ -341,7 +341,8 @@ export function residenceHistoryTableData(application: Application) {
       } as const,
       {
         Header: formatText(
-          oldAgePensionFormMessage.shared.residenceHistoryPeriodFromTableHeader,
+          oldAgePensionFormMessage.residence
+            .residenceHistoryPeriodFromTableHeader,
           application,
           formatMessage,
         ),
@@ -349,7 +350,8 @@ export function residenceHistoryTableData(application: Application) {
       } as const,
       {
         Header: formatText(
-          oldAgePensionFormMessage.shared.residenceHistoryPeriodToTableHeader,
+          oldAgePensionFormMessage.residence
+            .residenceHistoryPeriodToTableHeader,
           application,
           formatMessage,
         ),
