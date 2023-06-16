@@ -1,5 +1,5 @@
 import { Box } from '@island.is/island-ui/core'
-import Grieving from '../../assets/Grieving'
+import Grieving from './assets/Grieving'
 
 export const DoneImage = () => {
   return (

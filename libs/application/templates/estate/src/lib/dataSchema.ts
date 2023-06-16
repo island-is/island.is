@@ -64,9 +64,9 @@ export const estateSchema = z.object({
   }),
 
   selectedEstate: z.enum([
-    EstateTypes.divisionOfEstate,
+    EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
-    EstateTypes.permitToPostponeEstateDivision,
+    EstateTypes.permitForUndividedEstate,
     EstateTypes.divisionOfEstateByHeirs,
   ]),
 
@@ -114,6 +114,26 @@ export const estateSchema = z.object({
       })
       .optional(),
   }),
+
+  // is: Maki hins látna
+  deceasedWithUndividedEstate: z
+    .object({
+      selection: z.enum([YES, NO]),
+      spouse: z
+        .object({
+          name: z.string().optional(),
+          nationalId: z.string().optional(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ selection, spouse }) => {
+        return selection === YES ? !!spouse?.nationalId : true
+      },
+      {
+        path: ['spouse', 'nationalId'],
+      },
+    ),
 
   // is: Innbú
   inventory: z
@@ -285,17 +305,28 @@ export const estateSchema = z.object({
     )
     .optional(),
 
-  // is: Heimild til setu í óskiptu búi skv. erfðaskrá
-  undividedEstateResidencePermission: z.enum([YES, NO]),
-
-  // is: Hefur umsækjandi forræði á búi?
-  applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
-
-  readTerms: z.array(z.enum([YES])).length(1),
-
   estateAttachments: z.object({
     attached: z.object({
       file: z.array(FileSchema),
     }),
   }),
+
+  // is: Eignalaust bú
+  estateWithoutAssets: z
+    .object({
+      estateAssetsExist: z.enum([YES, NO]),
+      estateDebtsExist: z.enum([YES, NO]).optional(),
+    })
+    .refine(
+      ({ estateAssetsExist, estateDebtsExist }) => {
+        return estateAssetsExist === YES
+          ? estateDebtsExist === YES || estateDebtsExist === NO
+          : true
+      },
+      {
+        path: ['estateDebtsExist'],
+      },
+    ),
+
+  confirmAction: z.array(z.enum([YES])).length(1),
 })
