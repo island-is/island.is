@@ -4,10 +4,13 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import get from 'lodash/get'
 import has from 'lodash/has'
+
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { BaseInformation } from './review-groups/BaseInformation'
 import { Fishermen } from './review-groups/Fishermen'
 import { Period } from './review-groups/Period'
+import { Comment } from './review-groups/Comment'
+import { Attachments } from './review-groups/Attachments'
 
 interface ReviewScreenProps {
   application: Application
@@ -59,6 +62,8 @@ export const Review: FC<ReviewScreenProps> = ({
       <BaseInformation {...childProps} />
       <Period {...childProps} />
       <Fishermen {...childProps} />
+      <Comment {...childProps} />
+      <Attachments {...childProps} />
     </>
   )
 }

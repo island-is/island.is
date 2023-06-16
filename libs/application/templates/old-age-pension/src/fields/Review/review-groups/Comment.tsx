@@ -5,19 +5,29 @@ import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 
-export const Fishermen = ({ application }: ReviewGroupProps) => {
-  const [{ isFishermen }, setStateful] = useStatefulAnswers(application)
+export const Comment = ({
+  application,
+  editable,
+  goToScreen,
+}: ReviewGroupProps) => {
+  const [{ comment }, setStateful] = useStatefulAnswers(application)
 
   const { formatMessage } = useLocale()
 
   return (
-    <ReviewGroup>
+    <ReviewGroup
+      isEditable={editable}
+      editAction={() => goToScreen?.('comment')}
+    >
       <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <DataValue
-            label={formatMessage(oldAgePensionFormMessage.review.fishermen)}
-            value={isFishermen}
+            label={formatMessage(
+              oldAgePensionFormMessage.shared.commentSection,
+            )}
+            value=""
           />
+          <DataValue label="" value={comment} />
         </GridColumn>
       </GridRow>
     </ReviewGroup>
