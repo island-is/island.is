@@ -123,7 +123,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getContentSlug(input)
   }
 
-  @CacheControl(defaultCache)
+  @CacheControl({ maxAge: 0 })
   @Query(() => AlertBanner, { nullable: true })
   getAlertBanner(
     @Args('input') input: GetAlertBannerInput,
