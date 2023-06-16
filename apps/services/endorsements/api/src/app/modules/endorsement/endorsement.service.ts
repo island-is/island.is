@@ -21,7 +21,7 @@ import { REQUEST } from '@nestjs/core'
 import { Request } from 'express'
 
 
-export interface EndorsementRequest extends Request {
+interface EndorsementRequest extends Request {
   auth: {
     nationalId: string
   }
@@ -74,13 +74,6 @@ export class EndorsementService {
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
     this.logger.info(`Finding endorsements by list id "${listId}"`)
 
-
-    ////////////// 
-
-    /////////////
-
-
-
     const endorsements = await paginate({
       Model: this.endorsementModel,
       limit: query.limit || 10,
@@ -91,38 +84,30 @@ export class EndorsementService {
       where: { endorsementListId: listId },
     })
 
-
-    // PUBLIC REQUEST
-    // USER REQUEST
-    // OWNER REQUEST
+    // endorsement data display settings for everyone except list owner
     const user = this.request.auth as User
-    console.log("************************",user,typeof(user),"bobo",user?.nationalId)
-
-    const requestFromListOwner = false //await this.isListOwner(nationanlId, listId)
-    endorsements.data.map((endorsement) => {
-      // always mask endorsement nationalId
-      endorsement.endorser = 'xxxxxx-xxxx'
-      // owner sees all endorser info, otherwise filtered out for public and admins
-      if (!requestFromListOwner)
+    const listOwnerNationalId = await this.getListOwnerNationalId(listId)
+    if(user?.nationalId != listOwnerNationalId){
+      endorsements.data.map((endorsement) => {
         if (!endorsement.meta.showName) {
           endorsement.meta.fullName = ''
           endorsement.meta.locality = ''
         }
-    })
-
+      })
+    }
     return endorsements
   }
 
-  async isListOwner(nationalId: string, listId: string) {
+  async getListOwnerNationalId(listId: string): Promise<string|null> {
     const endorsementList = await this.endorsementListModel.findOne({
       where: {
         id: listId,
       },
     })
     if (endorsementList) {
-      return nationalId == endorsementList.owner
+      return endorsementList.owner
     } else {
-      return NotFoundException
+      return null
     }
   }
 
