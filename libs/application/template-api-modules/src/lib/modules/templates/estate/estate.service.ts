@@ -280,11 +280,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
       uploadData,
       application.id,
     )
-
-    //Save buffer to disk
-    const pdfPath = `/home/steini/Documents/estate.pdf`
-    fs.writeFileSync(pdfPath, pdfBuffer)
-
     attachments.push({
       name: `Form_data_${uploadData.caseNumber}.pdf`,
       content: pdfBuffer.toString('base64'),
