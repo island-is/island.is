@@ -16,5 +16,5 @@ export const tableRowRight = style({
 })
 
 export const paddingRightZero = style({
-  paddingRight: 'unset'
+  paddingRight: 'unset',
 })
