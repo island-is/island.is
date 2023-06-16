@@ -82,9 +82,7 @@ export const SubscriptionCard = ({
           <Box style={{ paddingRight: '8px' }}>
             {titleColumn}
           </Box>
-          <Box display="flex" alignItems="center">
             {children}
-          </Box>
       </CardGridContainer>
       {!isOpen && toggleAble && (
         <Box paddingTop={3}>
