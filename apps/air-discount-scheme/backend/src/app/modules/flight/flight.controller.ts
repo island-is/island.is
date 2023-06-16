@@ -76,7 +76,7 @@ export class PublicFlightController {
     flightLegs: FlightLeg[],
   ): Promise<string> {
     const flightLegCount = flightLegs.length
-
+    debugger
     const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
       discount.connectionDiscountCodes,
       discountCode,
@@ -199,10 +199,10 @@ export class PublicFlightController {
     @Body() flight: CreateFlightBody,
     @Req() request: HttpRequest,
   ): Promise<FlightViewModel> {
+    debugger
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
-
     if (!discount) {
       throw new BadRequestException('Discount code is invalid')
     }

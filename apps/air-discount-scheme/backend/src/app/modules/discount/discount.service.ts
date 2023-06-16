@@ -12,6 +12,7 @@ import { User } from '../user/user.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { UserService } from '../user/user.service'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
+import { number } from 'yargs'
 
 interface CachedDiscount {
   user: User
@@ -87,6 +88,7 @@ export class DiscountService {
     user: User,
     nationalId: string,
     connectableFlights: Flight[],
+    numberOfDaysUntilExpiration = 1,
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
     const cacheId = CACHE_KEYS.discount(uuid())
@@ -159,15 +161,23 @@ export class DiscountService {
       discountCode,
       connectionDiscountCodes,
     })
-    await this.setCache<string>(CACHE_KEYS.discountCode(discountCode), cacheId)
-    await this.setCache<string>(CACHE_KEYS.user(nationalId), cacheId)
+    await this.setCache<string>(
+      CACHE_KEYS.discountCode(discountCode),
+      cacheId,
+      ONE_DAY * numberOfDaysUntilExpiration,
+    )
+    await this.setCache<string>(
+      CACHE_KEYS.user(nationalId),
+      cacheId,
+      ONE_DAY * numberOfDaysUntilExpiration,
+    )
 
     return new Discount(
       user,
       discountCode,
       connectionDiscountCodes,
       nationalId,
-      ONE_DAY,
+      numberOfDaysUntilExpiration * ONE_DAY,
     )
   }
 
@@ -177,6 +187,7 @@ export class DiscountService {
     postalCode: number,
     employeeId: string,
     comment: string,
+    numberOfDaysUntilExpiration: number,
     unConnectedFlights: Flight[],
   ): Promise<Discount | null> {
     const user = await this.userService.getUserInfoByNationalId(
@@ -196,6 +207,7 @@ export class DiscountService {
       },
       nationalId,
       unConnectedFlights,
+      numberOfDaysUntilExpiration,
     )
 
     // Create record of the explicit code
@@ -209,8 +221,16 @@ export class DiscountService {
     // Flag the discount as explicit in the cache
     const cacheId = discount.discountCode
     const cacheKey = CACHE_KEYS.explicitCode(discount.discountCode)
-    await this.setCache<string>(cacheKey, cacheId) // cacheId pointer
-    await this.setCache<string>(cacheId, discount.discountCode) // cache value
+    await this.setCache<string>(
+      cacheKey,
+      cacheId,
+      numberOfDaysUntilExpiration * ONE_DAY,
+    ) // cacheId pointer
+    await this.setCache<string>(
+      cacheId,
+      discount.discountCode,
+      numberOfDaysUntilExpiration * ONE_DAY,
+    ) // cache value
 
     return discount
   }
