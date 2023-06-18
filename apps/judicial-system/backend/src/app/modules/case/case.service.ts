@@ -24,6 +24,7 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
+  CaseAppealDecision,
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
@@ -715,6 +716,14 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
+    // If case was appealed in court we don't need to send these messages
+    if (
+      theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
+      theCase.prosecutorAppealDecision === CaseAppealDecision.ACCEPT
+    ) {
+      return Promise.resolve()
+    }
+
     const messages: CaseMessage[] =
       theCase.caseFiles
         ?.filter(
@@ -837,18 +846,19 @@ export class CaseService {
       }
     }
 
+    if (
+      updatedCase.prosecutorStatementDate?.getTime() !==
+      theCase.prosecutorStatementDate?.getTime()
+    ) {
+      await this.addMessagesForAppealStatementToQueue(updatedCase, user)
+    }
+
     if (isRestrictionCase(updatedCase.type)) {
       if (
         updatedCase.caseModifiedExplanation !== theCase.caseModifiedExplanation
       ) {
         // Case to dates modified
         await this.addMessagesForModifiedCaseToQueue(updatedCase, user)
-      }
-
-      if (
-        updatedCase.prosecutorStatementDate !== theCase.prosecutorStatementDate
-      ) {
-        await this.addMessagesForAppealStatementToQueue(updatedCase, user)
       }
     }
 

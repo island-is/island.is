@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { ILinkGroup } from '../generated/contentfulTypes'
 
@@ -12,10 +13,10 @@ export class LinkGroup {
   @Field()
   name!: string
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   primaryLink!: Link | null
 
-  @Field(() => [Link])
+  @CacheField(() => [Link])
   childrenLinks?: Array<Link>
 }
 

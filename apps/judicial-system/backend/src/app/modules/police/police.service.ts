@@ -171,11 +171,7 @@ export class PoliceService {
       .then(async (res: Response) => {
         if (res.ok) {
           if (this.config.policeCaseApiV2Available) {
-            const response = await res
-              .json()
-              .then((result) =>
-                typeof result === 'string' ? JSON.parse(result) : result,
-              )
+            const response = await res.json()
 
             return (
               response.skjol?.map(

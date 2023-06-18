@@ -14,11 +14,11 @@ server {
         add_header Cache-Control "no-store, no-cache, must-revalidate";
     }
 
-    location ~ "^$BASEPATH(.+\.[0-9a-f]{20}\..+)$" {
+    location ~ "^$BASEPATH(.+\.[0-9a-f]{16,20}\..+)$" {
         # Serving all cache busting assets
         alias   /usr/share/nginx/html/$1;
         add_header Cache-Control "public, max-age=31536000, immutable";
-        access_log off;        
+        access_log off;
         # We don't want to redirect to localhost:3333
         absolute_redirect off;
     }
