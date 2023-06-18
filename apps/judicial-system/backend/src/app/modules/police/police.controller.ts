@@ -33,6 +33,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 @UseGuards(
   JwtAuthGuard,
@@ -65,6 +66,24 @@ export class PoliceController {
     this.logger.debug(`Getting all police files for case ${caseId}`)
 
     return this.policeService.getAllPoliceCaseFiles(theCase.id, user)
+  }
+
+  @RolesRules(prosecutorRule)
+  @UseInterceptors(CaseOriginalAncestorInterceptor)
+  @Get('policeCaseInfo')
+  @ApiOkResponse({
+    type: [PoliceCaseInfo],
+    isArray: true,
+    description: 'Gets info for a police case',
+  })
+  getPoliceCaseInfo(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<PoliceCaseInfo[]> {
+    this.logger.debug(`Getting info for police case ${caseId}`)
+
+    return this.policeService.getPoliceCaseInfo(theCase.id, user)
   }
 
   @RolesRules(prosecutorRule)

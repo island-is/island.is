@@ -35,6 +35,7 @@ import type {
   UpdateDefendant,
   DeleteDefendantResponse,
   CaseListEntry,
+  PoliceCaseInfo,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
@@ -227,6 +228,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
+    return this.get(`case/${caseId}/policeCaseInfo`)
   }
 
   uploadPoliceFile(

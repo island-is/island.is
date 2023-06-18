@@ -31,6 +31,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 @Injectable()
 export class PoliceService {
@@ -246,6 +247,87 @@ export class PoliceService {
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case files for case ${caseId}`,
+          detail: reason.message,
+        })
+      })
+  }
+
+  async getPoliceCaseInfo(
+    caseId: string,
+    user: User,
+  ): Promise<PoliceCaseInfo[]> {
+    const promise = this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
+    )
+
+    return promise
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response = await res
+            .json()
+            .then((result) =>
+              typeof result === 'string' ? JSON.parse(result) : result,
+            )
+
+          const cases: PoliceCaseInfo[] = [{ caseNumber: response.malsnumer }]
+
+          response.skjol?.map((info: { malsnumer: string }) => {
+            if (!cases.some((item) => item.caseNumber === info.malsnumer)) {
+              cases.push({ caseNumber: info.malsnumer })
+            }
+          })
+
+          response.malseinings?.forEach(
+            (info: { upprunalegtMalsnumer: string }) => {
+              if (
+                !cases.some(
+                  (item) => item.caseNumber === info.upprunalegtMalsnumer,
+                )
+              ) {
+                cases.push({ caseNumber: info.upprunalegtMalsnumer })
+              }
+            },
+          )
+
+          return cases
+        }
+
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a police case does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Police case info for case ${caseId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case info for case ${caseId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police case numbers',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get police case info for case ${caseId}`,
           detail: reason.message,
         })
       })
