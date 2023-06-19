@@ -16,8 +16,7 @@ test.describe('Endorsements', () => {
     context = await session({
       browser,
       storageState: 'service-portal-faereyjar.json',
-      homeUrl: '/undirskriftalistar',
-      authUrl: '/minarsidur',
+      homeUrl: '/minarsidur',
       phoneNumber: '0102399',
       delegation: '65° Arctic ehf',
     })

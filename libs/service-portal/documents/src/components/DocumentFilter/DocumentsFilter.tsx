@@ -231,6 +231,7 @@ const DocumentsFilter = ({
               <Text
                 variant="eyebrow"
                 as="h3"
+                dataTestId="doc-found-text"
               >{`${documentsLength} ${formatMessage(
                 documentsFoundText(),
               )}`}</Text>

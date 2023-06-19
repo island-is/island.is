@@ -164,7 +164,7 @@ export const AdviceForm = ({
         )
         const objToSend = {
           caseId: caseId,
-          caseAdviceCommand: {
+          postCaseAdviceCommand: {
             content: review,
             fileUrls: mappedFileList,
             privateAdvice: privateAdvice,
