@@ -660,6 +660,7 @@
       "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
       "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
+      "@island.is/nest/graphql": ["libs/nest/graphql/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],

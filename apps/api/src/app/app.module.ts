@@ -8,7 +8,6 @@ import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-sch
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
-//import responseCachePlugin from 'apollo-server-plugin-response-cache'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import {
@@ -117,15 +116,11 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 
 import { getConfig } from './environments'
-import { maskOutFieldsMiddleware } from './graphql.middleware'
+import { GraphqlOptionsFactory } from './graphql-options.factory'
 import { HealthController } from './health.controller'
+import { GraphQLConfig } from './graphql.config'
 
-const debug = process.env.NODE_ENV === 'development'
-const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const environment = getConfig
-const autoSchemaFile = environment.production
-  ? true
-  : 'apps/api/src/api.graphql'
 
 @Module({
   controllers: [HealthController],
@@ -136,25 +131,9 @@ const autoSchemaFile = environment.production
     },
   ],
   imports: [
-    GraphQLModule.forRoot({
+    GraphQLModule.forRootAsync({
       driver: ApolloDriver,
-      debug,
-      playground,
-      autoSchemaFile,
-      path: '/api/graphql',
-      buildSchemaOptions: {
-        fieldMiddleware: [maskOutFieldsMiddleware],
-      },
-      plugins: [
-        // This was causing problems since graphql upgrade, gives us issues like:
-        // Error: overallCachePolicy.policyIfCacheable is not a function
-        // responseCachePlugin({
-        //   shouldReadFromCache: ({ request: { http } }) => {
-        //     const bypassCacheKey = http?.headers.get('bypass-cache-key')
-        //     return bypassCacheKey !== process.env.BYPASS_CACHE_KEY
-        //   },
-        // }),
-      ],
+      useClass: GraphqlOptionsFactory,
     }),
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),
@@ -300,6 +279,7 @@ const autoSchemaFile = environment.production
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
         GenericDisabilityLicenseConfig,
+        GraphQLConfig,
         VehiclesClientConfig,
         RightsPortalClientConfig,
         AuthPublicApiClientConfig,

@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IVidspyrnaFlokkur } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { AdgerdirPage, mapAdgerdirPage } from './adgerdirPage.model'
@@ -21,10 +22,10 @@ export class AdgerdirGroupSlice {
   @Field({ nullable: true })
   description!: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => [AdgerdirPage])
+  @CacheField(() => [AdgerdirPage])
   pages!: AdgerdirPage[]
 }
 
