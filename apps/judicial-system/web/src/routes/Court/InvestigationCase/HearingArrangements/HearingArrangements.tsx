@@ -15,10 +15,9 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  NotificationType,
-  SessionArrangements,
-} from '@island.is/judicial-system/types'
+import { NotificationType } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import {
   useCase,
   useOnceOn,
