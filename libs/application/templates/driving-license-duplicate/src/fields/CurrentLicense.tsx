@@ -65,6 +65,7 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
                 borderWidth="standard"
                 paddingX={[3, 3, 4]}
                 paddingY={3}
+                marginY={2}
               >
                 <Box
                   alignItems={['flexStart', 'center']}
