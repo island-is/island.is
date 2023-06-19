@@ -18,7 +18,7 @@ import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
 import { ScopeResolver } from './scope.resolver'
 import { ScopeService } from './scope.service'
-import { AdminScopeDTO, ClientCreateScopeDTO } from '@island.is/auth-api-lib'
+import { AdminScopeDTO, AdminCreateScopeDto } from '@island.is/auth-api-lib'
 import { ScopesPayload } from './dto/scopes.payload'
 import { Scope } from './models/scope.model'
 
@@ -69,7 +69,7 @@ const createFindAllScopesMock = (environment: Environment, len = 3) =>
   }))
 
 const createMockAdminApi = (
-  createData: ClientCreateScopeDTO,
+  createData: AdminCreateScopeDto,
   findAllData: AdminScopeDTO[],
   findByNameData: AdminScopeDTO,
 ) => ({

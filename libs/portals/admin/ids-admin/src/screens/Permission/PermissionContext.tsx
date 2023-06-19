@@ -1,4 +1,4 @@
-import { createContext, FC, useContext } from 'react'
+import { createContext, FC, useContext, useState } from 'react'
 import { useActionData, useLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
@@ -7,6 +7,7 @@ import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 import { PermissionLoaderResult } from './Permission.loader'
 import { EditPermissionResult } from './EditPermission.action'
 import { PermissionFormTypes } from './EditPermission.schema'
+import { PublishData } from '../../types/publishData'
 
 type PermissionContextProps = {
   /**
@@ -26,6 +27,7 @@ type PermissionContextProps = {
    */
   intent: keyof typeof PermissionFormTypes
   onEnvironmentChange(environment: AuthAdminEnvironment): void
+  publishData: PublishData
 }
 
 const PermissionContext = createContext<PermissionContextProps | undefined>(
@@ -35,18 +37,35 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
 export const PermissionProvider: FC = ({ children }) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
   const actionData = useActionData() as EditPermissionResult
-  const { environment, updateEnvironment } = useEnvironmentQuery(
-    permissionResult.environments,
-  )
+  const [publishData, setPublishData] = useState<PublishData>({
+    toEnvironment: null,
+    fromEnvironment: null,
+  })
+  const {
+    environment: selectedPermission,
+    updateEnvironment,
+  } = useEnvironmentQuery(permissionResult.environments)
+
+  const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
+    const toEnvironment = updateEnvironment(environment)
+
+    if (!toEnvironment) {
+      setPublishData({
+        toEnvironment: selectedPermission.environment,
+        fromEnvironment: environment,
+      })
+    }
+  }
 
   return (
     <PermissionContext.Provider
       value={{
         permission: permissionResult,
-        selectedPermission: environment,
-        onEnvironmentChange: updateEnvironment,
+        selectedPermission,
+        onEnvironmentChange,
         actionData,
         intent: actionData?.intent,
+        publishData,
       }}
     >
       {children}

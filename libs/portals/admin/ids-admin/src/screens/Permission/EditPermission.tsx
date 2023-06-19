@@ -7,8 +7,8 @@ import { EnvironmentProvider } from '../../context/EnvironmentContext'
 import { usePermission } from './PermissionContext'
 
 export const EditPermission = () => {
-  const { selectedPermission, permission } = usePermission()
-
+  const { selectedPermission, permission, publishData } = usePermission()
+  console.log({ publishData })
   return (
     <EnvironmentProvider
       selectedEnvironment={selectedPermission.environment}

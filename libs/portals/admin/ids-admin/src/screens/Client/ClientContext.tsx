@@ -21,21 +21,13 @@ import { AuthAdminClient, AuthAdminClientEnvironment } from './Client.loader'
 import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
 import { IDSAdminPaths } from '../../lib/paths'
 import { EditClientResult } from './EditClient.action'
-import { useSearchParam } from 'react-use'
-
-type PublishData = {
-  toEnvironment: AuthAdminEnvironment | null
-  fromEnvironment: AuthAdminEnvironment | null
-}
+import { PublishData } from '../../types/publishData'
 
 export type ClientContextType = {
   client: AuthAdminClient
   selectedEnvironment: AuthAdminClientEnvironment
   availableEnvironments: AuthAdminEnvironment[] | null
-  publishData: {
-    toEnvironment?: AuthAdminEnvironment | null
-    fromEnvironment?: AuthAdminEnvironment | null
-  }
+  publishData: PublishData
   setPublishData: Dispatch<SetStateAction<PublishData>>
   onEnvironmentChange(environment: AuthAdminEnvironment): void
   /**
