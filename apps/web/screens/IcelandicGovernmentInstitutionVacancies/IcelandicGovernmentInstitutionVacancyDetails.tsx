@@ -107,7 +107,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
   const { linkResolver } = useLinkResolver()
 
   const n = useNamespace(namespace)
-  console.log(vacancy)
+
   return (
     <SidebarLayout
       sidebarContent={
@@ -234,11 +234,13 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
 
         {vacancy.applicationHref && (
           <Inline>
-            <LinkV2 href={vacancy.applicationHref} pureChildren={true}>
-              <Button size="small" as="div">
-                {n('applyForJob', 'Sækja um starf')}
-              </Button>
-            </LinkV2>
+            <Box marginBottom={[0, 0, 5]}>
+              <LinkV2 href={vacancy.applicationHref} pureChildren={true}>
+                <Button size="small" as="div">
+                  {n('applyForJob', 'Sækja um starf')}
+                </Button>
+              </LinkV2>
+            </Box>
           </Inline>
         )}
 
