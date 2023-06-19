@@ -67,11 +67,11 @@ test.describe('MS - Pósthólf overview', () => {
 
       // Act
       await page
-        .getByRole('button', { name: `${label(m.openFilter)}` })
+        .getByRole('button', { name: label(m.openFilter) })
         .first()
         .click()
       await page
-        .getByRole('button', { name: `${label(messages.institutionLabel)}` })
+        .getByRole('button', { name: label(messages.institutionLabel) })
         .first()
         .click()
       await page.mouse.wheel(0, 50)
@@ -84,7 +84,7 @@ test.describe('MS - Pósthólf overview', () => {
       await expect(page.getByRole('main')).toContainText(label(messages.found))
       await expect(
         page
-          .getByRole('button', { name: `${institution}` })
+          .getByRole('button', { name: institution })
           .locator(`[data-testid="icon-close"]`),
       ).toBeVisible()
     })
