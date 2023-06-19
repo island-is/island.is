@@ -61,6 +61,8 @@ export function getPlasticExpiryDate(resp: CardResponse): Date | undefined {
     const obj = resp.cards?.find((x) => x.isPlastic)
     if (obj && obj.expiryDate) {
       return new Date(obj.expiryDate as Date)
+    } else {
+      return undefined
     }
   } catch {
     return undefined
