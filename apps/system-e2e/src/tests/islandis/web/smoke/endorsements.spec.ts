@@ -39,7 +39,9 @@ test.describe('Endorsements', () => {
     // Act
     await page.getByRole('button', { name: 'Skoða lista' }).click()
     const popupPromise = page.waitForEvent('popup')
-    await page.getByRole('button', { name: 'Setja nafn mitt á þennan lista' }).click()
+    await page
+      .getByRole('button', { name: 'Setja nafn mitt á þennan lista' })
+      .click()
 
     // Assert
     const popupPage = await popupPromise

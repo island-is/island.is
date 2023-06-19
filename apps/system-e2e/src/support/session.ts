@@ -108,12 +108,12 @@ export async function session({
   phoneNumber?: string
   authUrl?: string
   idsLoginOn?:
-  | boolean
-  | {
-    nextAuth?: {
-      nextAuthRoot: string
-    }
-  }
+    | boolean
+    | {
+        nextAuth?: {
+          nextAuthRoot: string
+        }
+      }
   delegation?: string
   storageState?: string
   authTriggerUrl?: string
@@ -123,7 +123,7 @@ export async function session({
   const storageStatePath = join(
     sessionsPath,
     storageState ??
-    `sessions/${phoneNumber}x${delegation ?? phoneNumber}/${homeUrl}`,
+      `sessions/${phoneNumber}x${delegation ?? phoneNumber}/${homeUrl}`,
   )
   const context = existsSync(storageStatePath)
     ? await browser.newContext({ storageState: storageStatePath })
