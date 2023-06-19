@@ -15,7 +15,7 @@ export const announcerInfo = buildSection({
     application.answers.selectedEstate === EstateTypes.estateWithoutAssets
       ? m.announcerNoAssets
       : application.answers.selectedEstate ===
-        EstateTypes.permitToPostponeEstateDivision
+        EstateTypes.permitForUndividedEstate
       ? m.announcerPTP
       : m.announcer,
   children: [
@@ -25,7 +25,7 @@ export const announcerInfo = buildSection({
         application.answers.selectedEstate === EstateTypes.estateWithoutAssets
           ? m.announcerNoAssets
           : application.answers.selectedEstate ===
-            EstateTypes.permitToPostponeEstateDivision
+            EstateTypes.permitForUndividedEstate
           ? m.announcerPermitToPostpone
           : m.announcer,
       description: m.applicantsInfoSubtitle,

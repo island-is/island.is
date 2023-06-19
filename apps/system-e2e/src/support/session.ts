@@ -136,6 +136,7 @@ export async function session({
       homeUrl,
       phoneNumber,
       authUrlPrefix,
+      delegation,
     )
   }
   await page.close()
