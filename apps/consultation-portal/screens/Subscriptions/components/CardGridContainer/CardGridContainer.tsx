@@ -37,7 +37,7 @@ const CardGridContainer = ({
         </Column>
 
         <Column>
-          <Inline collapseBelow="md" alignY={'center'}>
+          <Inline collapseBelow="md" alignY="center">
             {children}
           </Inline>
         </Column>
