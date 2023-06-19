@@ -19,6 +19,7 @@ test.describe('Endorsements', () => {
       homeUrl: '/undirskriftalistar',
       phoneNumber: '0102399',
       delegation: '65° Arctic ehf',
+      authTriggerUrl: '/minarsidur',
     })
   })
 

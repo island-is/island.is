@@ -52,7 +52,7 @@ async function ensureIDSsession(
   phoneNumber: string,
   authUrlPrefix: string,
   delegation?: string,
-  authTriggerUrl = '/minarsidur',
+  authTriggerUrl = homeUrl,
 ) {
   if (typeof idsLoginOn === 'object' && idsLoginOn.nextAuth) {
     const idsSessionValidation = await page.request.get(
@@ -101,6 +101,7 @@ export async function session({
   idsLoginOn = true,
   delegation = '',
   storageState = `playwright-sessions-${homeUrl}-${phoneNumber}`,
+  authTriggerUrl,
 }: {
   browser: Browser
   homeUrl?: string
@@ -115,6 +116,7 @@ export async function session({
   }
   delegation?: string
   storageState?: string
+  authTriggerUrl?: string
 }) {
   // Browser context storage
   // default: sessions/phone x delegation/url
@@ -138,6 +140,7 @@ export async function session({
       phoneNumber,
       authUrlPrefix,
       delegation,
+      authTriggerUrl,
     )
   }
   await page.close()
