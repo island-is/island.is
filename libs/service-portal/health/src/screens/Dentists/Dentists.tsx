@@ -67,7 +67,7 @@ const Dentists = () => {
         intro={formatMessage(messages.dentistsDescription)}
       />
 
-      {!loading && !data && (
+      {!loading && !data?.rightsPortalDentists && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />

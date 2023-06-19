@@ -49,7 +49,7 @@ export class RightsPortalResolver {
     return this.rightsPortalService.getAidsAndNutrition(user)
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.health)
   @Query(() => Dentists, {
     name: 'rightsPortalDentists',
     nullable: true,
@@ -70,7 +70,7 @@ export class RightsPortalResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.health)
   @Query(() => HealthCenterHistory, {
     name: 'rightsPortalHealthCenterHistory',
     nullable: true,
