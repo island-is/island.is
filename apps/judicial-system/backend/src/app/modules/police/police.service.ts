@@ -268,7 +268,7 @@ export class PoliceService {
           const cases: PoliceCaseInfo[] = [{ caseNumber: response.malsnumer }]
 
           response.skjol?.map((info: { malsnumer: string }) => {
-            if (!cases.some((item) => item.caseNumber === info.malsnumer)) {
+            if (!cases.find((item) => item.caseNumber === info.malsnumer)) {
               cases.push({ caseNumber: info.malsnumer })
             }
           })
@@ -279,25 +279,17 @@ export class PoliceService {
               vettvangur: string
               brotFra: string
             }) => {
-              if (
-                !cases.some(
-                  (item) => item.caseNumber === info.upprunalegtMalsnumer,
-                )
-              ) {
+              const foundCase = cases.find(
+                (item) => item.caseNumber === info.upprunalegtMalsnumer,
+              )
+              if (!foundCase) {
                 cases.push({ caseNumber: info.upprunalegtMalsnumer })
               } else {
-                const foundCase = cases.find(
-                  (item) => item.caseNumber === info.upprunalegtMalsnumer,
-                )
-
-                if (foundCase) {
-                  foundCase.crimeScene = info.vettvangur
-                  foundCase.crimeDate = info.brotFra
-                }
+                foundCase.crimeScene = info.vettvangur
+                foundCase.crimeDate = info.brotFra
               }
             },
           )
-
           return cases
         }
 
