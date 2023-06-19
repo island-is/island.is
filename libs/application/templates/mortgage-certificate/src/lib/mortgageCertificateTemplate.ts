@@ -186,7 +186,6 @@ const template: ApplicationTemplate<
               displayStatus: 'warning',
             },
             historyLogs: [
-              // is it possible to make this added to history only if target state is States.PAYMENT_INFO?
               {
                 logMessage: m.historyLogSyslumennHasFixedKMarking,
                 onEvent: DefaultEvents.SUBMIT,

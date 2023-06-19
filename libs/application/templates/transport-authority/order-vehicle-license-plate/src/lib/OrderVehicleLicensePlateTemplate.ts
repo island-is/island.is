@@ -11,11 +11,13 @@ import {
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { application as applicationMessage } from './messages'
+import { application, application as applicationMessage } from './messages'
 import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
@@ -67,6 +69,12 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -110,6 +118,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardPayment,
               variant: 'red',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
           },
           progress: 0.8,
           lifecycle: pruneAfterDays(1 / 24),
@@ -147,6 +170,10 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: application.pendingActionOrderReceivedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [
