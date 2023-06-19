@@ -82,7 +82,7 @@ describe('PoliceController - Get police case info', () => {
         {
           caseNumber: '007-2021-000001',
           crimeScene: 'Testgata 1, 101',
-          crimeDate: '2021-02-23T13:17:00',
+          crimeDate: new Date('2021-02-23T13:17:00'),
         },
         { caseNumber: '007-2020-000103' },
         { caseNumber: '007-2020-000057' },

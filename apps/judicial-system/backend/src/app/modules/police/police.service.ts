@@ -287,6 +287,8 @@ export class PoliceService {
               } else {
                 foundCase.crimeScene = info.vettvangur
                 foundCase.crimeDate = info.brotFra
+                  ? new Date(info.brotFra)
+                  : undefined
               }
             },
           )

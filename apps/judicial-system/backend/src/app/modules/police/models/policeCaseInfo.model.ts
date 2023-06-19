@@ -6,5 +6,5 @@ export class PoliceCaseInfo {
   @ApiProperty()
   crimeScene?: string
   @ApiProperty()
-  crimeDate?: string
+  crimeDate?: Date
 }
