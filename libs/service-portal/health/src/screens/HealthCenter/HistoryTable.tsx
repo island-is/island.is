@@ -14,7 +14,8 @@ const HistoryTable: FC<Props> = ({ history }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box width="full" marginTop={[1, 1, 4]}>
+    <Box width="full" marginTop={[2, 2, 6]}>
+      <Text variant="h5">{formatMessage(m.registrationHistory)}</Text>
       <Box marginTop={2}>
         <T.Table>
           <T.Head>
@@ -39,7 +40,6 @@ const HistoryTable: FC<Props> = ({ history }: Props) => {
                   {formatMessage(messages.doctor)}
                 </Text>
               </T.HeadData>
-              <T.HeadData />
             </T.Row>
           </T.Head>
           <T.Body>

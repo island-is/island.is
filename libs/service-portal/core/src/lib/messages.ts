@@ -392,6 +392,10 @@ export const m = defineMessages({
     id: 'service.portal:my-registration',
     defaultMessage: 'Mín skráning',
   },
+  registrationHistory: {
+    id: 'service.portal:registration-history',
+    defaultMessage: 'Skráningarsaga',
+  },
   baseInfo: {
     id: 'service.portal:base-info',
     defaultMessage: 'Grunnupplýsingar',
