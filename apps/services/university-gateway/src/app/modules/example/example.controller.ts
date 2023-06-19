@@ -66,4 +66,6 @@ export class ExampleController {
   ): Promise<string> {
     throw Error('Dummy endpoint')
   }
+
+  // TODOx vantar PATCH status
 }
