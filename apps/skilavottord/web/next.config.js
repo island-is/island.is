@@ -1,4 +1,5 @@
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
+const { withNx, composePlugins } = require('@nx/next')
 const withVanillaExtract = createVanillaExtractPlugin()
 
 const {
@@ -14,7 +15,10 @@ const {
 
 const graphqlPath = '/graphql'
 
-module.exports = withVanillaExtract({
+/**
+ * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
+ **/
+const nextConfig = {
   webpack: (config, options) => {
     return config
   },
@@ -42,4 +46,12 @@ module.exports = withVanillaExtract({
       },
     ]
   },
-})
+}
+
+const plugins = [
+  // Add more Next.js plugins to this list if needed.
+  withNx,
+  withVanillaExtract,
+]
+
+module.exports = composePlugins(...plugins)(nextConfig)
