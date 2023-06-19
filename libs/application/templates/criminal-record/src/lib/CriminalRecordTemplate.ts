@@ -55,7 +55,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 logMessage: coreHistoryMessages.paymentStarted,
-                onEvent: DefaultEvents.PAYMENT,
+                onEvent: DefaultEvents.SUBMIT,
               },
             ],
           },
@@ -70,7 +70,7 @@ const template: ApplicationTemplate<
                 ),
               actions: [
                 {
-                  event: DefaultEvents.PAYMENT,
+                  event: DefaultEvents.SUBMIT,
                   name: 'Staðfesta',
                   type: 'primary',
                 },
@@ -86,9 +86,6 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: {
-            target: States.PAYMENT,
-          },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
@@ -140,7 +137,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          [DefaultEvents.PAYMENT]: { target: States.DRAFT },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {

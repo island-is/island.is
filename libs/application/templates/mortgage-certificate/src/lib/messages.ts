@@ -394,6 +394,12 @@ export const m = defineMessages({
   },
   pendingActionTryingToSubmitRequestToSyslumennTitle: {
     id: 'mc.application:pendingActionTryingToSubmitRequestToSyslumennTitle',
+    defaultMessage: 'Senda sýslumanni beiðni',
+    description: 'Trying to submit request to syslumenn title',
+  },
+  pendingActionTryingToSubmitRequestToSyslumennDescription: {
+    id:
+      'mc.application:pendingActionTryingToSubmitRequestToSyslumennDescription',
     defaultMessage:
       'Það er verið að reyna að senda sýslumanni beiðni um lagfæringu á veðbókarvottorði',
     description: 'Trying to submit request to syslumenn description',
@@ -406,6 +412,12 @@ export const m = defineMessages({
   },
   pendingActionCheckIfSyslumennHasFixedKMarkingTitle: {
     id: 'mc.application:pendingActionCheckIfSyslumennHasFixedKMarkingTitle',
+    defaultMessage: 'Lagfæring á veðbókarvottorði í vinnslu',
+    description: 'Check if syslumenn has fixed k marking title',
+  },
+  pendingActionCheckIfSyslumennHasFixedKMarkingDescription: {
+    id:
+      'mc.application:pendingActionCheckIfSyslumennHasFixedKMarkingDescription',
     defaultMessage:
       'Ef þú hefur fengið póst um að búið sé að lagfæra veðbókarvottorð, þarf að opna umsókn aftur og klára ferlið',
     description: 'Check if syslumenn has fixed k marking description',

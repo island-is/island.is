@@ -73,7 +73,7 @@ const template: ApplicationTemplate<
             historyLogs: [
               {
                 logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.PAYMENT,
+                onEvent: DefaultEvents.SUBMIT,
               },
             ],
           },
@@ -134,6 +134,8 @@ const template: ApplicationTemplate<
             },
             pendingAction: {
               title: m.pendingActionTryingToSubmitRequestToSyslumennTitle,
+              content:
+                m.pendingActionTryingToSubmitRequestToSyslumennDescription,
               displayStatus: 'info',
             },
             historyLogs: [
@@ -179,14 +181,17 @@ const template: ApplicationTemplate<
             },
             pendingAction: {
               title: m.pendingActionCheckIfSyslumennHasFixedKMarkingTitle,
+              content:
+                m.pendingActionCheckIfSyslumennHasFixedKMarkingDescription,
               displayStatus: 'warning',
             },
-            // historyLogs: [
-            //   {
-            //     logMessage: m.historyLogSyslumennHasFixedKMarking,
-            //     onEvent: DefaultEvents.SUBMIT,
-            //   },
-            // ],
+            historyLogs: [
+              // is it possible to make this added to history only if target state is States.PAYMENT_INFO?
+              {
+                logMessage: m.historyLogSyslumennHasFixedKMarking,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
@@ -249,7 +254,6 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
@@ -300,8 +304,8 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.DRAFT },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          [DefaultEvents.ABORT]: { target: States.DRAFT },
         },
       },
       [States.COMPLETED]: {
