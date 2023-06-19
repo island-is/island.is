@@ -53,19 +53,22 @@ describe('PoliceController - Get police case info', () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          malsnumer: '007-2021-000007',
+          malsnumer: '007-2021-000001',
           skjol: [
-            { malsnumer: '007-2021-000007' },
+            { malsnumer: '007-2021-000001' },
             { malsnumer: '007-2020-000103' },
-            { malsnumer: '007-2019-000057' },
-            { malsnumer: '008-2018-000039' },
-            { malsnumer: '008-2018-000039' },
+            { malsnumer: '007-2020-000057' },
+            { malsnumer: '008-2013-000033' },
+            { malsnumer: '008-2013-000033' },
           ],
           malseinings: [
             {
-              upprunalegtMalsnumer: '007-2021-000007',
+              upprunalegtMalsnumer: '007-2021-000001',
               brotFra: '2021-02-23T13:17:00',
-              vettvangur: 'Hverfisgata 113, 101',
+              vettvangur: 'Testgata 1, 101',
+            },
+            {
+              upprunalegtMalsnumer: '007-2020-000103',
             },
           ],
         }),
@@ -77,13 +80,13 @@ describe('PoliceController - Get police case info', () => {
     it('should return police case info without duplicates', () => {
       expect(then.result).toEqual([
         {
-          caseNumber: '007-2021-000007',
-          crimeScene: 'Hverfisgata 113, 101',
+          caseNumber: '007-2021-000001',
+          crimeScene: 'Testgata 1, 101',
           crimeDate: '2021-02-23T13:17:00',
         },
         { caseNumber: '007-2020-000103' },
-        { caseNumber: '007-2019-000057' },
-        { caseNumber: '008-2018-000039' },
+        { caseNumber: '007-2020-000057' },
+        { caseNumber: '008-2013-000033' },
       ])
     })
   })
