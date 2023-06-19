@@ -15,7 +15,10 @@ import {
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system/types'
+import {
+  NotificationType,
+  SessionArrangements,
+} from '@island.is/judicial-system/types'
 import {
   useCase,
   useOnceOn,
@@ -27,7 +30,6 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
