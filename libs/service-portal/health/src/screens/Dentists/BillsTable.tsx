@@ -58,7 +58,6 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
                   {formatMessage(messages.amountRefundedByInsurance)}
                 </Text>
               </T.HeadData>
-              <T.HeadData />
             </T.Row>
           </T.Head>
           <T.Body>
