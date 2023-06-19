@@ -249,6 +249,7 @@ describe('DiscountController', () => {
         postalcode,
         auth.nationalId,
         comment,
+        numberOfDaysUntilExpiration,
         [],
       )
       expect(result).toEqual(discount)
