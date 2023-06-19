@@ -1,36 +1,28 @@
-import { Box, Button, Checkbox, Input, Stack } from '@island.is/island-ui/core'
-import { SyntheticEvent } from 'react'
-import localization from '../../Case.json'
+import { Box, Button, Input, Stack } from '@island.is/island-ui/core'
+import { BaseSyntheticEvent } from 'react'
 
-interface Button {
+interface ButtonProps {
   label: string
-  onClick?: () => void
+  onClick?(): void
   isDisabled?: boolean
   isLoading?: boolean
 }
 
-interface Selection {
+interface InputProps {
+  name: string
   label: string
-  checked?: boolean
-  onChange?: (label: string) => void
+  placeholder: string
+  value?: string
+  onChange?(e: BaseSyntheticEvent): void
   isDisabled?: boolean
 }
 
 interface Props {
-  button?: Array<Button>
-  selection?: Array<Selection>
-  input?: {
-    name: string
-    label: string
-    placeholder: string
-    value?: string
-    onChange?: (e: SyntheticEvent) => void
-    isDisabled?: boolean
-  }
+  button?: ButtonProps
+  input?: InputProps
 }
 
-const CaseEmailActionBox = ({ button, input, selection }: Props) => {
-  const loc = localization['caseEmailActionBox']
+const CaseEmailActionBox = ({ button, input }: Props) => {
   return (
     <Box>
       <div>
@@ -46,40 +38,17 @@ const CaseEmailActionBox = ({ button, input, selection }: Props) => {
               disabled={input.isDisabled}
             />
           )}
-          {selection &&
-            selection.map((sel, idx) => {
-              return (
-                <Checkbox
-                  key={idx}
-                  name={sel.label}
-                  label={sel.label}
-                  checked={sel.checked}
-                  onChange={() => sel.onChange(sel.label)}
-                  disabled={sel.isDisabled}
-                />
-              )
-            })}
-          {button &&
-            button.map((btn, index) => {
-              return (
-                <Box paddingTop={index === 0 ? 1 : 0} key={index}>
-                  <Button
-                    fluid
-                    nowrap
-                    colorScheme={index > 0 ? 'destructive' : 'default'}
-                    variant={
-                      btn.label === loc.buttonLabel ? 'ghost' : 'primary'
-                    }
-                    size="small"
-                    onClick={btn.onClick}
-                    disabled={btn.isDisabled}
-                    loading={btn.isLoading}
-                  >
-                    {btn.label}
-                  </Button>
-                </Box>
-              )
-            })}
+          {button && (
+            <Button
+              fluid
+              nowrap
+              onClick={button.onClick}
+              disabled={button.isDisabled}
+              loading={button.isLoading}
+            >
+              {button.label}
+            </Button>
+          )}
         </Stack>
       </div>
     </Box>

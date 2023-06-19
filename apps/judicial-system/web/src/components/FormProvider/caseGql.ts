@@ -169,8 +169,7 @@ const CaseQuery = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
-      subpoenaType
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction

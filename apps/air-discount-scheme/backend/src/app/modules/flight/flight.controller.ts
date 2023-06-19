@@ -1,3 +1,4 @@
+import { Cache as CacheManager } from 'cache-manager'
 import {
   Get,
   HttpCode,

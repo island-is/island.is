@@ -3,6 +3,7 @@ import { ISectionWithImage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Html, mapHtml } from './html.model'
 import { SystemMetadata } from '@island.is/shared/types'
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class SectionWithImage {
@@ -12,10 +13,10 @@ export class SectionWithImage {
   @Field()
   title?: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   html?: Html | null
 }
 

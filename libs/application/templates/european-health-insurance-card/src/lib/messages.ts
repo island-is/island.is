@@ -14,6 +14,19 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
   }),
 
+  form: defineMessages({
+    applicationName: {
+      id: 'ehic.application:form.name',
+      defaultMessage: 'Umsókn um Evrópska sjúkratryggingakortið',
+      description: 'Application for European Health Insurance Card',
+    },
+    institutionName: {
+      id: 'ehic.application:form.institutionName',
+      defaultMessage: 'Sjúkratryggingar',
+      description: 'Application for collaboration institution name',
+    },
+  }),
+
   introScreen: defineMessages({
     formName: {
       id: 'ehic.application:introScreen.form.name',
@@ -198,6 +211,11 @@ export const europeanHealthInsuranceCardApplicationMessages = {
       defaultMessage:
         'Einstaklingar sem eiga bráðabirgðaskírteini í gildi í stafrænu pósthólfi',
       description: 'Label that indicates a user already has a PDF',
+    },
+    sectionPlasticExpiryDate: {
+      id: 'ehic.application:temp.plasticExpiryDate',
+      defaultMessage: 'Rennur út',
+      description: 'Sublabel that states the expiry date of a plastic card',
     },
   }),
 

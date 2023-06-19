@@ -1,5 +1,6 @@
 import { uuid } from 'uuidv4'
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Cache as CacheManager } from 'cache-manager'
 
 import { Discount, ExplicitCode } from './discount.model'
 import { Flight } from '../flight/flight.model'
@@ -72,13 +73,13 @@ export class DiscountService {
     value: T,
     ttl: number = ONE_DAY,
   ): Promise<void> {
-    return this.cacheManager.set(key, value, { ttl })
+    return this.cacheManager.set(key, value, ttl * 1000)
   }
 
-  private async getCache<T>(cacheKey: string): Promise<T | null> {
-    const cacheId = await this.cacheManager.get(cacheKey)
+  private async getCache<T>(cacheKey: string): Promise<T | undefined> {
+    const cacheId = await this.cacheManager.get<string>(cacheKey)
     if (!cacheId) {
-      return null
+      return
     }
 
     return this.cacheManager.get(cacheId)
@@ -251,7 +252,7 @@ export class DiscountService {
       return null
     }
 
-    const ttl = await this.cacheManager.ttl(cacheKey)
+    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
 
     return new Discount(
       cacheValue.user,
@@ -272,7 +273,7 @@ export class DiscountService {
       return await this.getDiscountByConnectionDiscountCode(discountCode)
     }
 
-    const ttl = await this.cacheManager.ttl(cacheKey)
+    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
     return new Discount(
       cacheValue.user,
       discountCode,
@@ -301,7 +302,7 @@ export class DiscountService {
       return null
     }
 
-    const ttl = await this.cacheManager.ttl(cacheKey)
+    const ttl = (await this.cacheManager.store.ttl(cacheKey)) / 1000
     return new Discount(
       cacheValue.user,
       cacheValue.discountCode,
@@ -365,7 +366,7 @@ export class DiscountService {
     } else {
       const discountCacheKey = CACHE_KEYS.discountCode(discountCode)
 
-      const cacheId = await this.cacheManager.get(discountCacheKey)
+      const cacheId = await this.cacheManager.get<string>(discountCacheKey)
       await this.cacheManager.del(discountCacheKey)
 
       const explicitCacheKey = CACHE_KEYS.explicitCode(discountCode)
@@ -387,8 +388,10 @@ export class DiscountService {
         await this.cacheManager.del(explicitCacheKey)
       }
 
-      const ttl = await this.cacheManager.ttl(cacheId)
-      await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
+      if (cacheId) {
+        const ttl = (await this.cacheManager.store.ttl(cacheId)) / 1000
+        await this.setCache<string>(CACHE_KEYS.flight(flightId), cacheId, ttl)
+      }
     }
   }
 
@@ -398,18 +401,18 @@ export class DiscountService {
   // cancelled before the ttl on the discount code expires.
   async reactivateDiscount(flightId: string): Promise<void> {
     const usedDiscountCacheKey = CACHE_KEYS.flight(flightId)
-    const cacheId = await this.cacheManager.get(usedDiscountCacheKey)
+    const cacheId = await this.cacheManager.get<string>(usedDiscountCacheKey)
     if (!cacheId) {
       return
     }
     await this.cacheManager.del(usedDiscountCacheKey)
 
-    const cacheValue: CachedDiscount = await this.cacheManager.get(cacheId)
+    const cacheValue = await this.cacheManager.get<CachedDiscount>(cacheId)
     if (!cacheValue) {
       return
     }
 
-    const ttl = await this.cacheManager.ttl(cacheId)
+    const ttl = (await this.cacheManager.store.ttl(cacheId)) / 1000
 
     // Point the discount code back to the old cache
     await this.setCache<CachedDiscount>(cacheId, cacheValue)

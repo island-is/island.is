@@ -1,4 +1,5 @@
 import { Response } from 'express'
+
 import {
   Body,
   Controller,
@@ -52,6 +53,7 @@ import {
   representativeRule,
   staffRule,
   assistantRule,
+  defenderRule,
 } from '../../guards'
 import { nowFactory } from '../../factories'
 import { UserService } from '../user'
@@ -332,6 +334,7 @@ export class CaseController {
     registrarRule,
     assistantRule,
     staffRule,
+    defenderRule,
   )
   @Get('cases')
   @ApiOkResponse({
@@ -528,7 +531,7 @@ export class CaseController {
     JwtAuthGuard,
     RolesGuard,
     CaseExistsGuard,
-    new CaseTypeGuard([...indictmentCases]),
+    new CaseTypeGuard(indictmentCases),
     CaseReadGuard,
   )
   @RolesRules(

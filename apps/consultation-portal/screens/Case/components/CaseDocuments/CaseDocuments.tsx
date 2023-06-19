@@ -1,8 +1,6 @@
 import { CardSkeleton } from '../../../../components'
 import { Document } from '../../../../types/interfaces'
-import { LinkV2 } from '@island.is/island-ui/core'
-import env from '../../../../lib/environment'
-import { Stacked } from '../../components'
+import { DocFileName, Stacked } from '../../components'
 
 interface Props {
   title: string
@@ -13,18 +11,8 @@ export const CaseDocuments = ({ title, documents }: Props) => {
   return (
     <CardSkeleton>
       <Stacked title={title}>
-        {documents.map((document, index) => {
-          return (
-            <LinkV2
-              href={`${env.backendDownloadUrl}${document.id}`}
-              color="blue400"
-              underline="normal"
-              underlineVisibility="always"
-              key={index}
-            >
-              {document.fileName}
-            </LinkV2>
-          )
+        {documents.map((doc, index) => {
+          return <DocFileName doc={doc} key={index} />
         })}
       </Stacked>
     </CardSkeleton>

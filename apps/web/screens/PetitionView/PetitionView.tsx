@@ -24,6 +24,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { useI18n } from '@island.is/web/i18n'
+import PetitionSkeleton from './PetitionSkeleton'
 
 interface PetitionViewProps {
   namespace?: Record<string, string>
@@ -42,7 +43,9 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
 
-  const { list, error } = useGetPetitionList(router.query.slug as string)
+  const { list, loading, error } = useGetPetitionList(
+    router.query.slug as string,
+  )
 
   const listEndorsements = useGetPetitionListEndorsements(
     router.query.slug as string,
@@ -58,7 +61,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
         ? 'http://localhost:4242'
         : window.location.origin
 
-    return `${baseUrl}/umsoknir/undirskriftalisti/`
+    return `${baseUrl}/umsoknir/undirskriftalisti`
   }
 
   const handlePagination = (page, petitions) => {
@@ -146,7 +149,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
             }}
           />
         </Box>
-        {!error ? (
+        {!loading && !error ? (
           <Box>
             <Stack space={2}>
               <Text variant="h1" as="h1">
@@ -157,9 +160,9 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
               </Text>
             </Stack>
             <GridRow>
-              <GridColumn span="5/12">
+              <GridColumn span="4/12">
                 <Text variant="h4" marginBottom={0}>
-                  {n('listOpenFromTil', 'Tímabil lista:')}
+                  {n('listOpenFromTil', 'Gildistímabil lista:')}
                 </Text>
                 <Text variant="default">
                   {formatDate(list.openedDate) +
@@ -167,13 +170,11 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                     formatDate(list.closedDate)}
                 </Text>
               </GridColumn>
-              <GridColumn span="7/12">
+              <GridColumn span="4/12">
                 <Text variant="h4">{n('listOwner', 'Ábyrgðarmaður:')}</Text>
                 <Text variant="default">{list.ownerName}</Text>
               </GridColumn>
-            </GridRow>
-            <GridRow marginTop={2}>
-              <GridColumn span="6/12">
+              <GridColumn span="4/12">
                 <Text variant="h4">
                   {n('signedPetitions', 'Fjöldi undirskrifta:')}
                 </Text>
@@ -183,7 +184,8 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
             <Box marginTop={6} marginBottom={8}>
               <Button
                 variant="primary"
-                icon="arrowForward"
+                iconType="outline"
+                icon="open"
                 onClick={() =>
                   window?.open(`${getBaseUrl()}/${list.meta.applicationId}`)
                 }
@@ -202,8 +204,10 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
                 {pagePetitions?.map((petition) => {
                   return (
                     <T.Row key={petition.id}>
-                      <T.Data>{formatDate(list.created)}</T.Data>
-                      <T.Data>
+                      <T.Data text={{ variant: 'medium' }}>
+                        {formatDate(list.created)}
+                      </T.Data>
+                      <T.Data text={{ variant: 'medium' }}>
                         {petition.meta.fullName
                           ? petition.meta.fullName
                           : n('noName', 'Nafn ótilgreint')}
@@ -243,6 +247,8 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
               </Text>
             )}
           </Box>
+        ) : loading ? (
+          <PetitionSkeleton />
         ) : (
           <Text marginY={7} variant="h3">
             {n('listDoesntExist', 'Undirskriftalisti er ekki til')}
@@ -260,7 +266,7 @@ PetitionView.getInitialProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'PetitionViews',
+            namespace: 'PetitionView',
             lang: locale,
           },
         },

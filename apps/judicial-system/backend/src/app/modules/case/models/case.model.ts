@@ -24,7 +24,6 @@ import {
   SessionArrangements,
   CourtDocument,
   CaseOrigin,
-  SubpoenaType,
   CaseAppealState,
 } from '@island.is/judicial-system/types'
 import type {
@@ -912,18 +911,7 @@ export class Case extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional()
-  seenByDefender?: Date
-
-  /**********
-   * A indictment subpeona type. Either ARREST_SUMMONS or ABSENCE_SUMMONS
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(SubpoenaType),
-  })
-  @ApiPropertyOptional({ enum: SubpoenaType })
-  subpoenaType?: SubpoenaType
+  openedByDefender?: Date
 
   /**********
    * Indicates whether the defendant waives her right to counsel

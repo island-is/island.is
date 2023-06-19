@@ -252,6 +252,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Áfram',
     description: 'Button text for form builder component, go to service portal',
   },
+  copyLinkSuccessToast: {
+    id: 'application.system:copyLinkSuccessToast',
+    defaultMessage: 'Hlekkur afritaður',
+    description: 'Copy link success toast',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -398,6 +403,35 @@ export const coreErrorMessages = defineMessages({
     description:
       'Error message when age restriciton from national registry is not met',
   },
+  nationalRegistryHasNoChildrenTitle: {
+    id: 'application.system:core.fetch.data.nationalRegistryHasNoChildrenTitle',
+    defaultMessage: 'Engin börn í þinni forsjá',
+    description:
+      'Error message title when a user has no children in their custody',
+  },
+  nationalRegistryHasNoChildrenSummary: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryHasNoChildrenSummary',
+    defaultMessage:
+      'Samkvæmt gögnum úr Þjóðskrá Ísland eru engin börn skráð í þinni forsjá. Þessi umsókn er aðeins fyrir foreldra með sameiginlega forsjá. Við bendum á að hægt er að senda beiðni um breytt lögheimili barna til Sýslumanna.',
+    description:
+      'Error message summary when a user has no children in their custody',
+  },
+  nationalRegistryHasNoJointCustodyTitle: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryHasNoJointCustodyTitle',
+    defaultMessage: 'Þú átt engin börn í sameiginlegri forsjá',
+    description:
+      'Error message title when a user has no children in joint custody',
+  },
+  nationalRegistryHasNoJointCustodySummary: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryHasNoJointCustodySummary',
+    defaultMessage:
+      'Uppfletting í gögnum hjá Þjóðskrá Íslands skilaði eingöngu börnum sem eru alfarið í þinni forsjá.\n\nÞessi umsókn er ætluð foreldrum sem fara sameiginlega með forsjá barna sinna.',
+    description:
+      'Error message summary when a user has no children in joint custody',
+  },
   drivingLicenseNoTeachingRightsTitle: {
     id:
       'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
@@ -451,6 +485,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með lögheimili á Íslandi',
     description: 'You do not have a domicile in Iceland',
   },
+  nationalRegistryCitizenshipNotIcelandic: {
+    id:
+      'application.system:core.fetch.data.nationalRegistryCitizenshipNotIcelandic',
+    defaultMessage: 'Þú ert ekki með íslenskt ríkisfang',
+    description: 'You do not have a domicile in Iceland',
+  },
   nationalRegistryAgeNotValid: {
     id: 'application.system:core.fetch.data.nationalRegistryAgeNotValid',
     defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
@@ -486,7 +526,25 @@ export const coreErrorMessages = defineMessages({
       'Ekki tókst að sækja gögn úr Þjóðskrá fyrir þessa kennitölu.',
     description: 'Not able to fetch data from national registry description',
   },
+  paymentCreateChargeFailedStillInProgressTitle: {
+    id:
+      'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressTitle',
+    defaultMessage: 'Greiðsla ennþá í vinnslu',
+    description: 'Not able to create payment title',
+  },
+  paymentCreateChargeFailedStillInProgressSummary: {
+    id:
+      'application.system:core.fetch.data.paymentCreateChargeFailedStillInProgressSummary',
+    defaultMessage: 'Greiðsla er enn í vinnslu. Vinsamlega reynið aftur síðar.',
+    description: 'Not able to create payment description',
+  },
+  copyLinkErrorToast: {
+    id: 'application.system:copyLink.copyLinkErrorToast',
+    defaultMessage: 'Tókst ekki að afrita hlekk',
+    description: 'Copy link error toast',
+  },
 })
+
 export const coreDelegationsMessages = defineMessages({
   delegationPersons: {
     id: 'application.system:core.delegations.delegationPersons',
