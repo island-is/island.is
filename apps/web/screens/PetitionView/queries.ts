@@ -38,6 +38,7 @@ const GetGeneralPetitionListEndorsements = gql`
         created
         meta {
           fullName
+          locality
         }
       }
     }
