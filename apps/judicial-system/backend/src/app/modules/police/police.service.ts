@@ -319,7 +319,7 @@ export class PoliceService {
         }
 
         this.eventService.postErrorEvent(
-          'Failed to get police case numbers',
+          'Failed to get police case info',
           {
             caseId,
             actor: user.name,
