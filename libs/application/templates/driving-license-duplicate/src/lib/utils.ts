@@ -3,7 +3,7 @@ import { MessageDescriptor } from 'react-intl'
 import { ExternalData } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { YES } from './constants'
+import { NO, YES } from './constants'
 
 type CurrentRightsMessages = {
   title: MessageDescriptor
@@ -45,6 +45,9 @@ export const requirementsMet = (
     { ...externalData, ...answers },
     signaturePath,
   )
+  if(allowFakeCondition(YES)) {
+    return photo === NO || signature === NO
+  }
   return !!photo && !!signature
 }
 
