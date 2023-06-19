@@ -13,7 +13,6 @@ import {
   Box,
   Stack,
   LinkV2,
-  Icon,
   Breadcrumbs,
   Button,
   Inline,
@@ -112,14 +111,17 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
     <SidebarLayout
       sidebarContent={
         <Stack space={3}>
-          <LinkV2
-            href={linkResolver('vacancies').href}
-            underlineVisibility="always"
-            underline="normal"
-            color="blue400"
-          >
-            <Icon size="small" icon="arrowBack" />
-            {n('goBack', 'Til baka')}
+          <LinkV2 {...linkResolver('vacancies')} skipTab>
+            <Button
+              preTextIcon="arrowBack"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+              truncate
+            >
+              {n('goBack', 'Til baka')}
+            </Button>
           </LinkV2>
           <InformationPanel namespace={namespace} vacancy={vacancy} />
         </Stack>
@@ -136,14 +138,17 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<IcelandicGovernmentIn
           ]}
         />
         <Hidden above="sm">
-          <LinkV2
-            href={linkResolver('vacancies').href}
-            underlineVisibility="always"
-            underline="normal"
-            color="blue400"
-          >
-            <Icon size="small" icon="arrowBack" />
-            {n('goBack', 'Til baka')}
+          <LinkV2 {...linkResolver('vacancies')} skipTab>
+            <Button
+              preTextIcon="arrowBack"
+              preTextIconType="filled"
+              size="small"
+              type="button"
+              variant="text"
+              truncate
+            >
+              {n('goBack', 'Til baka')}
+            </Button>
           </LinkV2>
         </Hidden>
         <Text variant="h1">{vacancy.title}</Text>
