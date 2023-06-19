@@ -278,7 +278,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   const selectedFilters = extractFilterTags(filterCategories)
 
   const title = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
-  console.log(vacancies)
+
   return (
     <Box paddingTop={[0, 0, 8]}>
       <HeadWithSocialSharing
