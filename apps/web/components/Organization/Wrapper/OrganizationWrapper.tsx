@@ -129,6 +129,7 @@ export const lightThemes = [
   'hsa',
   'haskolanam',
   'nti',
+  'samgongustofa',
 ]
 export const footerEnabled = [
   'syslumenn',

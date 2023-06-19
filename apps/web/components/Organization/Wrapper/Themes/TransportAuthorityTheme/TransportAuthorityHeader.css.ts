@@ -2,9 +2,7 @@ import { style } from '@vanilla-extract/css'
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
-  height: 385,
-  marginTop: -130,
-  paddingTop: 130,
+  height: 275,
 })
 
 export const iconCircle = style({
@@ -39,10 +37,6 @@ export const headerBorder = style({
   }),
 })
 
-export const headerWrapper = style({
-  marginTop: -20,
-})
-
 export const headerLogo = style({
   width: 70,
   maxHeight: 70,
@@ -60,6 +54,20 @@ export const navigation = style({
       paddingLeft: 24,
       paddingRight: 24,
       paddingTop: 32,
+    },
+  }),
+})
+
+export const title = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      marginLeft: -80,
+    },
+    lg: {
+      marginLeft: -108,
+    },
+    xl: {
+      marginLeft: 0,
     },
   }),
 })
