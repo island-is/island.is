@@ -152,6 +152,10 @@ export class NotificationService {
     )
   }
 
+  private getCourtEmail(courtId?: string) {
+    return (courtId && this.config.email.courtsEmails[courtId]) ?? undefined
+  }
+
   private async sendSms(
     smsText: string,
     mobileNumbers?: string,
@@ -411,7 +415,7 @@ export class NotificationService {
       subject,
       body,
       theCase.court?.name,
-      theCase.court?.notificationEmail,
+      this.getCourtEmail(theCase.courtId),
     )
   }
 
