@@ -56,6 +56,17 @@ export function getFullName(
   return null
 }
 
+export function getPlasticExpiryDate(resp: CardResponse): Date | undefined {
+  try {
+    const obj = resp.cards?.find((x) => x.isPlastic)
+    if (obj && obj.expiryDate) {
+      return new Date(obj.expiryDate as Date)
+    }
+  } catch {
+    return undefined
+  }
+}
+
 export function getEhicApplicants(
   formValues: Application<FormValue>,
   cardType: string | null,
