@@ -11,6 +11,12 @@ export enum States {
   PAYMENT = 'payment',
   DECLINED = 'declined',
 }
+
+export enum ApplicationReasons {
+  STOLEN = 'stolen',
+  LOST = 'lost',
+}
+
 export enum Roles {
   APPLICANT = 'applicant',
   ACTOR = 'actor',

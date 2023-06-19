@@ -10,7 +10,7 @@ import { HasQualityPhotoData } from '../fields/QualityPhoto/hooks/useQualityPhot
 import { HasQualitySignatureData } from '../fields/QualitySignature/hooks/useQualitySignature'
 import { m } from '../lib/messages'
 import { allowFakeCondition, requirementsMet } from '../lib/utils'
-import { YES } from '../lib/constants'
+import { NO, YES } from '../lib/constants'
 
 export const declined: Form = buildForm({
   id: 'declined',
@@ -50,10 +50,11 @@ export const declined: Form = buildForm({
             component: 'Alert',
             condition: (answers, externalData) => {
               if (allowFakeCondition(YES)) {
-                return !getValueViaPath<boolean>(
+                const hasQualityPhoto = getValueViaPath<boolean>(
                   answers,
-                  'fakeData.hasQualityPhoto',
+                  'fakeData.qualityPhoto',
                 )
+                return !hasQualityPhoto
               }
               return (
                 (externalData.qualityPhoto as HasQualityPhotoData)?.data
@@ -72,7 +73,14 @@ export const declined: Form = buildForm({
             id: 'qSignatureRejetedAlert',
             title: '',
             component: 'Alert',
-            condition: (_, externalData) => {
+            condition: (answers, externalData) => {
+              if (allowFakeCondition(YES)) {
+                const hasQualitySig = getValueViaPath<boolean>(
+                  answers,
+                  'fakeData.qualitySignature',
+                )
+                return !hasQualitySig
+              }
               return (
                 (externalData.qualitySignature as HasQualitySignatureData)?.data
                   ?.hasQualitySignature === false

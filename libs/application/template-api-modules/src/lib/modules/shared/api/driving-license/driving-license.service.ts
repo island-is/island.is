@@ -205,7 +205,27 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
   async qualitySignature({
     auth,
+    application,
   }: TemplateApiModuleActionProps): Promise<QualitySignature | null> {
+    // If running locally or on dev allow for fake data
+    const useFakeData = getValueViaPath<'yes' | 'no'>(
+      application.answers,
+      'fakeData.useFakeData',
+    )
+
+    if (useFakeData === 'yes') {
+      const hasQualitySignature = getValueViaPath<'yes' | 'no'>(
+        application.answers,
+        'fakeData.qualitySignature',
+      )
+      if (hasQualitySignature === 'yes') {
+        return {
+          data: '',
+        }
+      } else {
+        return null
+      }
+    }
     return this.drivingLicenseService.getQualitySignature({
       nationalId: auth.nationalId,
     })

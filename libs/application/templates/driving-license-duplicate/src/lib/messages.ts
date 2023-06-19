@@ -261,6 +261,34 @@ export const m = defineMessages({
     description: 'National id label',
   },
 
+  /* Reason Section */
+  reasonSectionTitle: {
+    id: 'dld.application:reasonSectionTitle',
+    defaultMessage: 'Ástæða umsóknar',
+    description: 'Title for reason section',
+  },
+  reasonTitle: {
+    id: 'dld.application:reasonTtitle',
+    defaultMessage: 'Ástæða',
+    description: 'Title for reason section',
+  },
+  reasonDescription: {
+    id: 'dld.application:reasonDescription#markdown',
+    defaultMessage:
+      '**Vinsamlegast tilgreinið ástæðu umsóknarinnar.**\n\nAthugið: Saknæmt er að gefa rangar eða ósannar upplýsingar um að ökuskírteini hafi skemmst eða glatast. Finnist glataða skírteinið skal skila því inn til sýslumanns eða lögreglu. Afhenda skal lögreglu eða sýslumanni ökuskírteini sem eru skemmd, af eldri gerð eða EES gerð þegar óskað er eftir samriti.',
+    description: 'Description for reason section',
+  },
+  reasonLostOption: {
+    id: 'dld.application:reasonLostOption',
+    defaultMessage: 'Glatað ökuskírteini',
+    description: 'Lost option',
+  },
+  reasonStolenOption: {
+    id: 'dld.application:reasonStolenOption',
+    defaultMessage: 'Stolið ökuskírteini',
+    description: 'Stolen option',
+  },
+
   /* Quality Photo Section */
   qualityPhotoTitle: {
     id: 'dld.application:qualityPhotoSectionTitle',

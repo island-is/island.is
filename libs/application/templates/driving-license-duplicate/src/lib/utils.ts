@@ -37,8 +37,8 @@ export const requirementsMet = (
   let photoPath = 'qualityPhoto.data.hasQualityPhoto'
   let signaturePath = 'qualitySignature.data.hasQualitySignature'
   if (allowFakeCondition(YES)) {
-    photoPath = 'fakeData.hasQualityPhoto'
-    signaturePath = 'fakeData.hasQualitySignature'
+    photoPath = 'fakeData.qualityPhoto'
+    signaturePath = 'fakeData.qualitySignature'
   }
   const photo = getValueViaPath({ ...externalData, ...answers }, photoPath)
   const signature = getValueViaPath(

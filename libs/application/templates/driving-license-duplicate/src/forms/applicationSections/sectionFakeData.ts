@@ -80,7 +80,7 @@ export const sectionFakeData = buildSubSection({
           },
         }),
         buildRadioField({
-          id: 'fakeData.hasQualityPhoto',
+          id: 'fakeData.qualityPhoto',
           title: 'Með gilt QualityPhoto?',
           width: 'half',
           condition: allowFakeCondition(YES),
@@ -96,7 +96,7 @@ export const sectionFakeData = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'fakeData.hasQualitySignature',
+          id: 'fakeData.qualitySignature',
           title: 'Með gilt QualitySignature?',
           width: 'half',
           condition: allowFakeCondition(YES),
