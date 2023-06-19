@@ -1,6 +1,7 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { SystemMetadata } from 'api-cms-domain'
 import GraphQLJSON from 'graphql-type-json'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { IEmailSignup } from '../generated/contentfulTypes'
 import { FormField, mapFormField } from './formField.model'
 
@@ -15,7 +16,7 @@ export class EmailSignup {
   @Field({ nullable: true })
   description?: string
 
-  @Field(() => [FormField], { nullable: true })
+  @CacheField(() => [FormField], { nullable: true })
   formFields?: FormField[]
 
   @Field({ nullable: true })

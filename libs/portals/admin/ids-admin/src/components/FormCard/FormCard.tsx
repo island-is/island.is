@@ -151,6 +151,7 @@ export const FormCard = <Intent extends string>({
     // Reset dirty state if form is not submitting, prev and current form data are the same and if form is already dirty
     if (
       !isSubmitting &&
+      isLoading &&
       dirty &&
       formRef.current &&
       prevFormData.current &&

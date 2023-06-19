@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IFrontpage } from '../generated/contentfulTypes'
 import { Featured, mapFeatured } from './featured.model'
 import { FrontpageSlider, mapFrontpageSlider } from './frontpageSlider.model'
@@ -21,31 +22,31 @@ export class Frontpage {
   @Field({ nullable: true })
   imageAlternativeText!: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => [Image], { nullable: true })
+  @CacheField(() => [Image], { nullable: true })
   videos?: Array<Image>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   imageMobile?: Image | null
 
-  @Field(() => [Image], { nullable: true })
+  @CacheField(() => [Image], { nullable: true })
   videosMobile?: Array<Image>
 
-  @Field(() => [Featured])
+  @CacheField(() => [Featured])
   featured?: Array<Featured>
 
-  @Field(() => [FrontpageSlider])
+  @CacheField(() => [FrontpageSlider])
   slides?: Array<FrontpageSlider>
 
-  @Field(() => Namespace, { nullable: true })
+  @CacheField(() => Namespace, { nullable: true })
   namespace!: Namespace | null
 
-  @Field(() => [LifeEventPage])
+  @CacheField(() => [LifeEventPage])
   lifeEvents?: Array<LifeEventPage>
 
-  @Field(() => LinkList, { nullable: true })
+  @CacheField(() => LinkList, { nullable: true })
   linkList?: LinkList | null
 }
 
