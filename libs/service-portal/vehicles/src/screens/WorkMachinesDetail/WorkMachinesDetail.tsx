@@ -141,13 +141,10 @@ const WorkMachinesDetail = () => {
 
   return (
     <>
-      <Box marginBottom={[2, 2, 6]}>
-        <IntroHeader
-          title={workMachine?.type ?? ''}
-          intro={workMachine?.registrationNumber ?? ''}
-        />
+      <Box marginBottom={[1, 1, 3]}>
+        <IntroHeader title={workMachine?.type ?? ''} />
       </Box>
-      <GridRow marginTop={[2, 2, 6]}>
+      <GridRow marginBottom={2}>
         <GridColumn span="12/12">
           <Box marginBottom={3} paddingRight={2}>
             <Inline space={2}>
@@ -161,6 +158,12 @@ const WorkMachinesDetail = () => {
           <Text variant="eyebrow" color="purple400">
             {formatMessage(messages.baseInfoWorkMachineTitle)}
           </Text>
+          <UserInfoLine
+            label={labels.registrationNumber ?? ''}
+            content={workMachine?.registrationNumber ?? ''}
+            loading={loading}
+          />
+          <Divider />
           <UserInfoLine
             label={labels.type ?? ''}
             content={workMachine?.type ?? ''}

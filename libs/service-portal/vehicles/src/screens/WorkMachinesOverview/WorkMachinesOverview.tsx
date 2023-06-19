@@ -238,12 +238,13 @@ const WorkMachinesOverview = () => {
                 cta={{
                   label: formatMessage(m.seeDetails),
                   variant: 'text',
-                  url: wm.id
-                    ? ServicePortalPath.AssetsWorkMachinesDetail.replace(
-                        ':id',
-                        wm.id,
-                      )
-                    : undefined,
+                  url:
+                    wm.id && wm.registrationNumber
+                      ? ServicePortalPath.AssetsWorkMachinesDetail.replace(
+                          ':regNumber',
+                          wm.registrationNumber,
+                        ).replace(':id', wm.id)
+                      : undefined,
                 }}
                 tag={{
                   variant: 'blue',

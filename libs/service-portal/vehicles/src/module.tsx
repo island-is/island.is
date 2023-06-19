@@ -69,14 +69,13 @@ export const vehiclesModule: PortalModule = {
     {
       name: m.workMachines,
       path: VehiclePaths.AssetsWorkMachines,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-      loader: translationLoader({ userInfo, client }),
+      enabled: userInfo.scopes.includes(ApiScope.workMachines),
       element: <WorkMachinesOverview />,
     },
     {
       name: m.workMachines,
       path: VehiclePaths.AssetsWorkMachinesDetail,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
+      enabled: userInfo.scopes.includes(ApiScope.workMachines),
       element: <WorkMachinesDetail />,
     },
   ],
