@@ -26,8 +26,8 @@ const SortButton: React.FC<Props> = (props) => {
       <Text fontWeight="regular">{title}</Text>
       <Box
         className={cn(styles.sortIcon, {
-          [styles.sortAccusedNameAsc]: sortAsc,
-          [styles.sortAccusedNameDes]: sortDes,
+          [styles.sortAsc]: sortAsc,
+          [styles.sortDes]: sortDes,
         })}
         marginLeft={1}
         component="span"

@@ -102,22 +102,12 @@ export const sortIcon = style({
   },
 })
 
-export const sortCreatedAsc = style({
+export const sortAsc = style({
   opacity: 1,
   transform: 'rotate(180deg)',
 })
 
-export const sortCreatedDes = style({
+export const sortDes = style({
   opacity: 1,
   transform: 'rotate(0deg)',
-})
-
-export const sortAccusedNameAsc = style({
-  opacity: 1,
-  transform: 'rotate(0deg)',
-})
-
-export const sortAccusedNameDes = style({
-  opacity: 1,
-  transform: 'rotate(180deg)',
 })
