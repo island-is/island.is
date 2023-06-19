@@ -98,7 +98,7 @@ export const pdfStyles = StyleSheet.create({
   body: {
     paddingVertical: 50,
     paddingHorizontal: 60,
-    fontFamily: 'Open Sans',
+    fontFamily: 'IBM Plex Sans',
     fontSize: 10,
   },
   title: {
@@ -145,7 +145,7 @@ export const pdfStyles = StyleSheet.create({
 })
 
 Font.register({
-  family: 'Open Sans',
+  family: 'IBM Plex Sans',
   fonts: [
     {
       src: './assets/fonts/ibm-plex-sans-v7-latin-regular.ttf',
