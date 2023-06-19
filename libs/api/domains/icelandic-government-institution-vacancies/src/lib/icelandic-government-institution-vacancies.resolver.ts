@@ -34,7 +34,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     })) as DefaultApiVacanciesListItem[]
 
     return {
-      vacancies: mapIcelandicGovernmentInstitutionVacanciesResponse(data),
+      vacancies: await mapIcelandicGovernmentInstitutionVacanciesResponse(data),
     }
   }
 

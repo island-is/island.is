@@ -2,6 +2,7 @@ import showdown from 'showdown'
 import { JSDOM } from 'jsdom'
 import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
 
@@ -59,12 +60,13 @@ export interface DefaultApiVacancyDetails {
   starfsauglysing: DefaultApiVacanciesListItem
 }
 
-const convertHtmlToPlainText = (html: string) => {
+const convertHtmlToPlainText = async (html: string) => {
   if (!html) return ''
-  return html.replace(/<[^>]+>/g, ' ')
+  const contentfulRichText = await convertHtmlToContentfulRichText(html)
+  return documentToPlainTextString(contentfulRichText.document)
 }
 
-const shortenText = (text: string, maxLength: number) => {
+const shortenText = (text: string | undefined, maxLength: number) => {
   if (!text) return ''
   if (text.length > maxLength) {
     if (text[text.length - 1] === ' ') {
@@ -147,25 +149,39 @@ const mapContacts = (item: DefaultApiVacanciesListItem) => {
   return contacts
 }
 
-export const mapIcelandicGovernmentInstitutionVacanciesResponse = (
+export const mapIcelandicGovernmentInstitutionVacanciesResponse = async (
   data: DefaultApiVacanciesListItem[],
 ) => {
   const mappedData: IcelandicGovernmentInstitutionVacanciesResponse['vacancies'] = []
 
+  const introPromises: Promise<string>[] = []
+
   for (const item of data) {
     const locations = mapLocations(item)
+    const introHtml = item.inngangur ?? ''
+    introPromises.push(convertHtmlToPlainText(introHtml))
     mappedData.push({
       id: item.id,
       title: item.fyrirsogn,
       applicationDeadlineFrom: item.umsoknarfrestur_fra,
       applicationDeadlineTo: item.umsoknarfrestur_til,
-      intro: shortenText(convertHtmlToPlainText(item.inngangur ?? ''), 80),
+      intro: introHtml.replace(/<[^>]+>/g, ' '),
       fieldOfWork: item.starfssvid,
       institutionName: item.stofnunHeiti,
       logoUrl: item.logoURL,
       locations,
     })
   }
+
+  const intros = await Promise.all(introPromises)
+
+  for (let i = 0; i < mappedData.length; i += 1) {
+    if (intros[i]) {
+      mappedData[i].intro = intros[i]
+    }
+    mappedData[i].intro = shortenText(mappedData[i].intro, 80)
+  }
+
   return mappedData
 }
 

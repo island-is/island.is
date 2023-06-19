@@ -31,7 +31,7 @@ import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/Icela
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
-import { FilterTag } from '@island.is/web/components'
+import { FilterTag, HeadWithSocialSharing } from '@island.is/web/components'
 import { sortAlpha } from '@island.is/shared/utils'
 import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -210,9 +210,12 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   useEffect(() => {
     const updatedQuery = { ...query }
 
+    let shouldScroll = false
+
     if (!selectedPage) {
       if ('page' in updatedQuery) delete updatedQuery['page']
     } else {
+      shouldScroll = updatedQuery.page !== selectedPage.toString()
       updatedQuery.page = selectedPage.toString()
     }
 
@@ -246,7 +249,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
         query: updatedQuery,
       },
       undefined,
-      { shallow: true },
+      { shallow: true, scroll: shouldScroll },
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parameters, searchTerm, selectedPage])
@@ -274,15 +277,28 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
 
   const selectedFilters = extractFilterTags(filterCategories)
 
+  const title = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
+
   return (
     <Box paddingTop={[0, 0, 8]}>
+      <HeadWithSocialSharing
+        title={title}
+        description={n(
+          'ogDescription',
+          'Á Starfatorginu er að finna upplýsingar um laus störf hjá ríkinu.',
+        )}
+        imageUrl={n(
+          'ogImageUrl',
+          'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+        )}
+      />
       <GridContainer>
         <Box>
           <GridRow marginBottom={[5, 5, 5, 0]}>
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
               <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-              <Text marginTop={2} variant="h1">
-                {n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')}
+              <Text marginTop={2} variant="h1" as="h1">
+                {title}
               </Text>
             </GridColumn>
             <GridColumn span="1/2">
@@ -376,7 +392,8 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
           <Box marginBottom={6}>
             <Text>
               {filteredVacancies.length}{' '}
-              {filteredVacancies.length % 10 === 1
+              {filteredVacancies.length % 10 === 1 &&
+              filteredVacancies.length !== 11
                 ? n('singleJobFound', 'starf fannst')
                 : n('jobsFound', 'störf fundust')}
             </Text>

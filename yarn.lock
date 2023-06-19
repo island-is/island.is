@@ -5441,6 +5441,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@contentful/rich-text-plain-text-renderer@npm:16.0.5":
+  version: 16.0.5
+  resolution: "@contentful/rich-text-plain-text-renderer@npm:16.0.5"
+  dependencies:
+    "@contentful/rich-text-types": ^16.2.0
+  checksum: b5ffdc62508df5a891312104067c729ab6c60db77d81a0b51a3d53022b63de7fe9e86ff24f9337a3cf8d84bddd66bca59b440fcaf7dd3949fa1a08d4480fe8ac
+  languageName: node
+  linkType: hard
+
 "@contentful/rich-text-react-renderer@npm:15.16.5":
   version: 15.16.5
   resolution: "@contentful/rich-text-react-renderer@npm:15.16.5"
@@ -30553,6 +30562,7 @@ __metadata:
     "@contentful/react-apps-toolkit": 1.2.15
     "@contentful/rich-text-from-markdown": 15.16.6
     "@contentful/rich-text-html-renderer": 15.13.1
+    "@contentful/rich-text-plain-text-renderer": 16.0.5
     "@contentful/rich-text-react-renderer": 15.16.5
     "@contentful/rich-text-types": 16.2.0
     "@datadog/browser-rum": 4.36.0

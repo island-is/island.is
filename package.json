@@ -79,6 +79,7 @@
     "@contentful/react-apps-toolkit": "1.2.15",
     "@contentful/rich-text-from-markdown": "15.16.6",
     "@contentful/rich-text-html-renderer": "15.13.1",
+    "@contentful/rich-text-plain-text-renderer": "16.0.5",
     "@contentful/rich-text-react-renderer": "15.16.5",
     "@contentful/rich-text-types": "16.2.0",
     "@datadog/browser-rum": "4.36.0",

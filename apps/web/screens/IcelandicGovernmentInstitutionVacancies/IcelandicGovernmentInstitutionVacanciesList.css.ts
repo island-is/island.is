@@ -1,3 +1,4 @@
+import { themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const filterTagRow = style({
@@ -7,7 +8,11 @@ export const filterTagRow = style({
 })
 
 export const filterInput = style({
-  width: '480px',
+  ...themeUtils.responsiveStyle({
+    md: {
+      width: '480px',
+    },
+  }),
 })
 
 export const logo = style({
