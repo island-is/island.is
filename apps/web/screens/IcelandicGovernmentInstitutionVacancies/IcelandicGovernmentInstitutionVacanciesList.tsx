@@ -515,27 +515,7 @@ IcelandicGovernmentInstitutionVacanciesList.getInitialProps = async ({
     vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
 
   return {
-    vacancies: [...vacancies].sort((a, b) => {
-      if (!a?.applicationDeadlineFrom || !b?.applicationDeadlineFrom) return 0
-
-      const [dayA, monthA, yearA] = a.applicationDeadlineFrom.split('.')
-      if (!dayA || !monthA || !yearA) return 0
-
-      const [dayB, monthB, yearB] = b.applicationDeadlineFrom.split('.')
-      if (!dayB || !monthB || !yearB) return 0
-
-      const dateA = new Date(Number(yearA), Number(monthA), Number(dayA))
-      const dateB = new Date(Number(yearB), Number(monthB), Number(dayB))
-
-      if (dateA < dateB) {
-        return 1
-      }
-      if (dateA > dateB) {
-        return -1
-      }
-
-      return 0
-    }),
+    vacancies,
     namespace,
   }
 }
