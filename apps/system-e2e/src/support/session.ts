@@ -52,6 +52,7 @@ async function ensureIDSsession(
   phoneNumber: string,
   authUrlPrefix: string,
   delegation?: string,
+  authTriggerUrl = '/minarsidur',
 ) {
   if (typeof idsLoginOn === 'object' && idsLoginOn.nextAuth) {
     const idsSessionValidation = await page.request.get(
@@ -83,8 +84,8 @@ async function ensureIDSsession(
       sessionObject.expiresIn < 5 * 60
     ) {
       const idsPage = await context.newPage()
-      await idsPage.goto(homeUrl)
-      await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
+      await idsPage.goto(authTriggerUrl)
+      await idsLogin(idsPage, phoneNumber, authTriggerUrl, delegation)
       await idsPage.close()
     } else {
       debug(`IDS session exists`)
@@ -106,12 +107,12 @@ export async function session({
   phoneNumber?: string
   authUrl?: string
   idsLoginOn?:
-    | boolean
-    | {
-        nextAuth?: {
-          nextAuthRoot: string
-        }
-      }
+  | boolean
+  | {
+    nextAuth?: {
+      nextAuthRoot: string
+    }
+  }
   delegation?: string
   storageState?: string
 }) {
@@ -120,7 +121,7 @@ export async function session({
   const storageStatePath = join(
     sessionsPath,
     storageState ??
-      `sessions/${phoneNumber}x${delegation ?? phoneNumber}/${homeUrl}`,
+    `sessions/${phoneNumber}x${delegation ?? phoneNumber}/${homeUrl}`,
   )
   const context = existsSync(storageStatePath)
     ? await browser.newContext({ storageState: storageStatePath })
