@@ -843,15 +843,14 @@ export class CaseService {
     if (updatedCase.courtCaseNumber) {
       if (updatedCase.courtCaseNumber !== theCase.courtCaseNumber) {
         // New court case number
-        isIndictmentCase(updatedCase.type)
-          ? await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
-              updatedCase,
-              user,
-            )
-          : await this.addMessagesForCourtCaseConnectionToQueue(
-              updatedCase,
-              user,
-            )
+        if (isIndictmentCase(updatedCase.type)) {
+          await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
+            updatedCase,
+            user,
+          )
+        } else {
+          await this.addMessagesForCourtCaseConnectionToQueue(updatedCase, user)
+        }
       } else {
         if (updatedCase.prosecutorId !== theCase.prosecutorId) {
           // New prosecutor
