@@ -274,13 +274,26 @@ export class PoliceService {
           })
 
           response.malseinings?.forEach(
-            (info: { upprunalegtMalsnumer: string }) => {
+            (info: {
+              upprunalegtMalsnumer: string
+              vettvangur: string
+              brotFra: string
+            }) => {
               if (
                 !cases.some(
                   (item) => item.caseNumber === info.upprunalegtMalsnumer,
                 )
               ) {
                 cases.push({ caseNumber: info.upprunalegtMalsnumer })
+              } else {
+                const foundCase = cases.find(
+                  (item) => item.caseNumber === info.upprunalegtMalsnumer,
+                )
+
+                if (foundCase) {
+                  foundCase.crimeScene = info.vettvangur
+                  foundCase.crimeDate = info.brotFra
+                }
               }
             },
           )

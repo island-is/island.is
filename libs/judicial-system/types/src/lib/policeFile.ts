@@ -13,7 +13,3 @@ export interface UploadPoliceCaseFileResponse {
   key: string
   size: number
 }
-
-export interface PoliceCaseInfo {
-  caseNumber: string
-}

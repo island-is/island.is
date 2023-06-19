@@ -35,7 +35,6 @@ import type {
   UpdateDefendant,
   DeleteDefendantResponse,
   CaseListEntry,
-  PoliceCaseInfo,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
@@ -47,6 +46,7 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../modules/indictment-count'
+import { PoliceCaseInfo } from '../modules/police/models/policeCaseInfo.model'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {

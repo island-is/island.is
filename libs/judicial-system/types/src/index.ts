@@ -94,7 +94,6 @@ export type {
   PoliceCaseFile,
   UploadPoliceCaseFile,
   UploadPoliceCaseFileResponse,
-  PoliceCaseInfo,
 } from './lib/policeFile'
 
 export {

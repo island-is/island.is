@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { PoliceCaseInfo as TPoliceCaseInfo } from '@island.is/judicial-system/types'
-
-export class PoliceCaseInfo implements TPoliceCaseInfo {
+export class PoliceCaseInfo {
   @ApiProperty()
   caseNumber!: string
+  @ApiProperty()
+  crimeScene?: string
+  @ApiProperty()
+  crimeDate?: string
 }
