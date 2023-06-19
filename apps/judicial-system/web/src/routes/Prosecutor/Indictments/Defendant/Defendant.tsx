@@ -362,6 +362,7 @@ const Defendant: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
+            description={formatMessage(defendant.policeCaseNumbersDescription)}
           />
           <AnimatePresence>
             {policeCases.map((policeCase, index) => (
