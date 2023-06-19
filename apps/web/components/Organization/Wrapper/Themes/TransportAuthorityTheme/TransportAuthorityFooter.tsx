@@ -49,20 +49,32 @@ const TransportAuthorityFooter = ({
         />
 
         <GridRow>
-          {footerItems.map((item, index) => (
-            <GridColumn span={shouldWrap ? '1/1' : undefined} key={index}>
-              <Box
-                marginBottom={shouldWrap ? 3 : 0}
-                marginLeft={[10, 10, 7, 10]}
-                marginRight={shouldWrap ? null : 12}
-              >
-                <Box marginBottom={2}>
-                  <Text fontWeight="semiBold">{item.title}</Text>
+          {footerItems.map((item, index) => {
+            if (!shouldWrap) {
+              return (
+                <Box
+                  key={index}
+                  marginLeft={index === 0 ? 12 : 0}
+                  marginRight={8}
+                >
+                  <Box marginBottom={2}>
+                    <Text fontWeight="semiBold">{item.title}</Text>
+                  </Box>
+                  {webRichText(item.content as SliceType[])}
                 </Box>
-                {webRichText(item.content as SliceType[])}
-              </Box>
-            </GridColumn>
-          ))}
+              )
+            }
+            return (
+              <GridColumn span={'1/1'} key={index}>
+                <Box marginBottom={3} marginLeft={[10, 10, 7, 10]}>
+                  <Box marginBottom={2}>
+                    <Text fontWeight="semiBold">{item.title}</Text>
+                  </Box>
+                  {webRichText(item.content as SliceType[])}
+                </Box>
+              </GridColumn>
+            )
+          })}
         </GridRow>
       </GridContainer>
     </footer>
