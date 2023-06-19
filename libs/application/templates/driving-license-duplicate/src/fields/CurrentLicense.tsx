@@ -6,7 +6,6 @@ import { getValueViaPath, formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import format from 'date-fns/format'
 import { m } from '../lib/messages'
-import { getApplicationInfo } from '../lib/utils'
 
 export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()

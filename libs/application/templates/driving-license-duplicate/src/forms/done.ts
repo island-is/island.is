@@ -30,15 +30,6 @@ export const done: Form = buildForm({
           },
         ),
         buildDescriptionField({
-          id: 'applicationNr',
-          title: m.congratulationsApplicationNumber,
-          titleVariant: 'h3',
-          description: (application: Application) =>
-            (application.externalData.submitApplication?.data as SubmitResponse)
-              ?.orderId,
-          space: 'gutter',
-        }),
-        buildDescriptionField({
           id: 'nextStepsDescription',
           title: m.congratulationsNextStepsTitle,
           titleVariant: 'h3',

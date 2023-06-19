@@ -387,7 +387,7 @@ export const m = defineMessages({
   congratulationsTitleSuccess: {
     id: 'dld.application:congratulationsTitleSuccess',
     defaultMessage:
-      'Umsókn þín um samrit af ökuskírteini hefur verið móttekin og skírteinið pantað. ',
+      'Umsókn þín um samrit af ökuskírteini hefur verið móttekin og skírteini pantað.',
     description: 'Your application for P-sign was successful.',
   },
   congratulationsTitle: {
@@ -408,7 +408,7 @@ export const m = defineMessages({
   congratulationsNextStepsDescription: {
     id: 'dld.application:congratulations.nextSteps.description#markdown',
     defaultMessage:
-      '* Þú færð senda tilkynningu á Mínar síður þegar samrit ökuskírteinis er tilbúið og hvenær hægt verður að sækja það á þann afhendingarstað sem þú valdir. \n\n * Mundu að hafa meðferðis löggild skilríki með mynd við afhendingu.',
+      '* Ökuskírteinið verður tilbúið til afhendingar eftir þrjár vikur hjá því sýslumannsembætti sem þú valdir í umsókninni.\n\n* Á meðan getur þú notað [ökuskírteini í símanum](https://island.is/okuskirteini). Athugið að uppfæra þarf stafræna skírteinið ef þú ert þegar með það í símanum.',
     description: 'Congratulations Next steps title',
   },
   errorDataProvider: {
