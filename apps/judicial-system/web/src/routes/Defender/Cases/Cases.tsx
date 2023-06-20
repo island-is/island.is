@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 import { useQuery } from '@apollo/client'
@@ -10,22 +10,20 @@ import {
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import {
-  PageHeader,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
+import { PageHeader } from '@island.is/judicial-system-web/src/components'
 import { titles, errors } from '@island.is/judicial-system-web/messages'
 import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import TableSkeleton from '@island.is/judicial-system-web/src/routes/Shared/Cases/TableSkeleton'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 
-import DefenderCasesTable from './DefenderCasesTable'
+import DefenderCasesTable from './components/DefenderCasesTable'
+import FilterCheckboxes from './components/FilterCheckboxes'
+import useFilterCases, { Filters } from './hooks/useFilterCases'
+
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
 export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
-  const { user } = useContext(UserContext)
 
   const availableTabs = ['active', 'completed']
 
@@ -45,6 +43,7 @@ export const Cases: React.FC = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+
   const cases = data?.cases
 
   const [activeCases, completedCases]: [
@@ -64,6 +63,22 @@ export const Cases: React.FC = () => {
     })
   }, [cases])
 
+  const {
+    filteredCases: activeFilteredCases,
+    filters,
+    toggleFilter: toggleActiveFilter,
+  } = useFilterCases(activeCases)
+  const {
+    filteredCases: completedFilteredCases,
+    toggleFilter: toggleCompletedFilter,
+  } = useFilterCases(completedCases)
+
+  // We want to toggle both tables so that when we switch tabs, the filters are the same
+  const toggleFilters = (filter: keyof Filters) => {
+    toggleActiveFilter(filter)
+    toggleCompletedFilter(filter)
+  }
+
   return (
     <SharedPageLayout>
       <PageHeader title={formatMessage(titles.defender.cases)} />
@@ -78,8 +93,6 @@ export const Cases: React.FC = () => {
             type="error"
           />
         </div>
-      ) : loading || !user ? (
-        <TableSkeleton />
       ) : (
         <Box marginBottom={5}>
           <Text as="h1" variant="h1" marginBottom={1}>
@@ -101,16 +114,34 @@ export const Cases: React.FC = () => {
           {
             id: 'active',
             label: formatMessage(m.activeCasesTabLabel),
-            content: <DefenderCasesTable cases={activeCases} />,
+            content: (
+              <Box>
+                <FilterCheckboxes
+                  filters={filters}
+                  toggleFilter={toggleFilters}
+                />
+                <DefenderCasesTable
+                  cases={activeFilteredCases}
+                  loading={loading}
+                />
+              </Box>
+            ),
           },
           {
             id: 'completed',
             label: formatMessage(m.completedCasesTabLabel),
             content: (
-              <DefenderCasesTable
-                cases={completedCases}
-                showingCompletedCases={true}
-              />
+              <Box>
+                <FilterCheckboxes
+                  filters={filters}
+                  toggleFilter={toggleFilters}
+                />
+                <DefenderCasesTable
+                  cases={completedFilteredCases}
+                  showingCompletedCases={true}
+                  loading={loading}
+                />
+              </Box>
             ),
           },
         ]}

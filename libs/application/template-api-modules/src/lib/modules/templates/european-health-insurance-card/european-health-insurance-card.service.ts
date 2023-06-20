@@ -29,6 +29,11 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
     super(ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD)
   }
 
+  /** Returns unique values of an array */
+  onlyUnique(value: string, index: number, array: string[]) {
+    return array.indexOf(value) === index
+  }
+
   /** Helper function. Get's applicants by type. If no type is provided then it returns from national registry */
   getApplicants(
     application: ApplicationWithAttachments,
@@ -55,15 +60,15 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
       for (let i = 0; i < custodyData?.length; i++) {
         nridArr.push(custodyData[i].nationalId)
       }
-      return nridArr
+      return nridArr.filter(this.onlyUnique)
     }
 
     if (applyType === FormApplyType.APPLYING_FOR_PLASTIC) {
       const ans = (application.answers as unknown) as Answer
-      return ans.delimitations.applyForPlastic
+      return ans.delimitations.applyForPlastic?.filter(this.onlyUnique)
     }
 
-    return application.answers[applyType] as string[]
+    return (application.answers[applyType] as string[])?.filter(this.onlyUnique)
   }
 
   toCommaDelimitedList(arr: string[]) {
@@ -106,11 +111,14 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
               (x) => x.isPlastic === true,
             )
             if (plasticCard) {
-              pdfApplicantArr.push({
-                cardNumber: plasticCard.cardNumber ?? '',
-                nationalId: applicants[i],
-              })
-              continue
+              if (
+                !pdfApplicantArr.some((x) => x.nationalId === applicants[i])
+              ) {
+                pdfApplicantArr.push({
+                  cardNumber: plasticCard.cardNumber ?? '',
+                  nationalId: applicants[i],
+                })
+              }
             }
           }
         }
@@ -123,10 +131,12 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
             (x) => x.isPlastic === true,
           )
           if (plasticCard) {
-            pdfApplicantArr.push({
-              cardNumber: plasticCard?.cardNumber ?? '',
-              nationalId: applicants[i],
-            })
+            if (!pdfApplicantArr.some((x) => x.nationalId === applicants[i])) {
+              pdfApplicantArr.push({
+                cardNumber: plasticCard?.cardNumber ?? '',
+                nationalId: applicants[i],
+              })
+            }
           }
         }
       }
@@ -137,21 +147,26 @@ export class EuropeanHealthInsuranceCardService extends BaseTemplateApiService {
 
   async getCardResponse({ auth, application }: TemplateApiModuleActionProps) {
     const nridArr = this.getApplicants(application)
-    try {
-      const resp = await this.ehicApi
-        .withMiddleware(new AuthMiddleware(auth as Auth))
-        .cardStatus({
-          applicantnationalids: this.toCommaDelimitedList(nridArr),
-        })
+    if (nridArr?.length > 0) {
+      try {
+        const resp = await this.ehicApi
+          .withMiddleware(new AuthMiddleware(auth as Auth))
+          .cardStatus({
+            applicantnationalids: this.toCommaDelimitedList(nridArr),
+          })
 
-      if (!resp) {
-        this.logger.error('EHIC.API response empty from getCardResponse', resp)
+        if (!resp) {
+          this.logger.error(
+            'EHIC.API response empty from getCardResponse',
+            resp,
+          )
+        }
+
+        return resp
+      } catch (error) {
+        this.logger.error('EHIC.API error getCardResponse', error)
+        throw error
       }
-
-      return resp
-    } catch (error) {
-      this.logger.error('EHIC.API error getCardResponse', error)
-      throw error
     }
   }
 

@@ -240,6 +240,9 @@
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
+      "@island.is/application/templates/children-residence-change-v2": [
+        "libs/application/templates/family-matters/children-residence-change-v2/src/index.ts"
+      ],
       "@island.is/application/templates/complaints-to-althingi-ombudsman": [
         "libs/application/templates/complaints-to-althingi-ombudsman/src/index.ts"
       ],
@@ -657,6 +660,7 @@
       "@island.is/nest/core": ["libs/nest/core/src/index.ts"],
       "@island.is/nest/dataloader": ["libs/nest/dataloader/src/index.ts"],
       "@island.is/nest/feature-flags": ["libs/nest/feature-flags/src/index.ts"],
+      "@island.is/nest/graphql": ["libs/nest/graphql/src/index.ts"],
       "@island.is/nest/pagination": ["libs/nest/pagination/src/index.ts"],
       "@island.is/nest/problem": ["libs/nest/problem/src/index.ts"],
       "@island.is/nest/sequelize": ["libs/nest/sequelize/src/index.ts"],
@@ -685,6 +689,9 @@
       ],
       "@island.is/portals/admin/regulations-admin": [
         "libs/portals/admin/regulations-admin/src/index.ts"
+      ],
+      "@island.is/portals/admin/service-desk": [
+        "libs/portals/admin/service-desk/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [

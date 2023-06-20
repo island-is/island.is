@@ -268,6 +268,7 @@ api:
     AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
+    APOLLO_CACHE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
     AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend"}'
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
@@ -414,6 +415,7 @@ api:
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
+    APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
@@ -872,6 +874,7 @@ consultation-portal:
   enabled: true
   env:
     API_URL: 'http://web-api.islandis.svc.cluster.local'
+    BACKEND_DL_URL: 'https://samradapi-test.devland.is/api/Documents/'
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
