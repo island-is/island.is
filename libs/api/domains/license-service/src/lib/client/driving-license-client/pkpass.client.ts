@@ -5,8 +5,6 @@ import { Cache as CacheManager } from 'cache-manager'
 import type { Logger } from '@island.is/logging'
 
 import {
-  PkPassPayload,
-  PkPassServiceDriversLicenseResponse,
   PkPassServiceErrorResponse,
   PkPassServiceTokenResponse,
   PkPassServiceVerifyDriversLicenseResponse,
@@ -95,7 +93,17 @@ export class PkPassClient {
       return null
     }
 
-    const cached = await this.cacheManager.get(this.pkpassCacheKey)
+    let cached
+
+    try {
+      cached = await this.cacheManager.get(this.pkpassCacheKey)
+    } catch (e) {
+      this.logger.warn({
+        exception: e.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     if (cached && typeof cached === 'string') {
       return cached
