@@ -11,6 +11,7 @@ import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import { useState } from 'react'
 import HistoryTable from './HistoryTable'
+import addYears from 'date-fns/addYears'
 
 interface CurrentInfo {
   healthCenter: string
@@ -20,18 +21,13 @@ interface CurrentInfo {
 const HealthCenter = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
-
-  const [selectedDateFrom, setSelectedDateFrom] = useState(
-    new Date('2010-11-03'),
-  )
-  const [selectedDateTo, setSelectedDateTo] = useState(new Date('2017-09-22'))
   const [currentInfo, setCurrentInfo] = useState<CurrentInfo>()
 
   const { loading, error, data } = useGetHealthCenterQuery({
     variables: {
       input: {
-        dateFrom: selectedDateFrom,
-        dateTo: selectedDateTo,
+        dateFrom: addYears(new Date(), -5),
+        dateTo: new Date(),
       },
     },
   })
