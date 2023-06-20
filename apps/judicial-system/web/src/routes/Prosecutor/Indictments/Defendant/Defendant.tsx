@@ -363,9 +363,10 @@ const Defendant: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(defendant.policeCaseNumbersHeading)}
-            description={formatMessage(defendant.policeCaseNumbersDescription)}
+            // description={formatMessage(defendant.policeCaseNumbersDescription)}
           />
-          <LokeNumberList />
+          {/* TODO Add when feature is ready */}
+          {/* <LokeNumberList /> */}
           <AnimatePresence>
             {policeCases.map((policeCase, index) => (
               <motion.div
