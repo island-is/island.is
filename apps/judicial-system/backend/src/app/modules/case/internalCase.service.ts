@@ -459,7 +459,7 @@ export class InternalCaseService {
           { transaction },
         )
         .then((theCase) =>
-          this.defendantService.create(
+          this.defendantService.createForNewCase(
             theCase.id,
             {
               nationalId: caseToCreate.accusedNationalId,
@@ -531,7 +531,7 @@ export class InternalCaseService {
         )
         defendantsArchive.push(defendantArchive)
 
-        await this.defendantService.update(
+        await this.defendantService.updateForArcive(
           theCase.id,
           defendant.id,
           clearedDefendantProperties,
