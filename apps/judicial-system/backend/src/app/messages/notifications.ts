@@ -631,6 +631,13 @@ export const notifications = {
         'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til {statementDeadline}. {userHasAccessToRVG, select, true {Hægt er að skila greinargerð og nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Hægt er að skila greinargerð og nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til aðila máls þegar að kæra er móttekin',
     },
+    courtOfAppealsBody: {
+      id:
+        'judicial.system.backend:notifications.case_appeal_received_by_court.court_of_appeals_body',
+      defaultMessage:
+        'Kæra í máli {courtCaseNumber} hefur borist Landsrétti. Hægt er að nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum.',
+      description: 'Texti í pósti til Landsréttar þegar að kæra er móttekin',
+    },
   }),
   caseAppealStatement: defineMessages({
     subject: {
@@ -658,6 +665,23 @@ export const notifications = {
       defaultMessage:
         'Landsréttur hefur úrskurðað í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins í {linkStart}Réttarvörslugátt{linkEnd} með rafrænum skilríkjum} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
       description: 'Texti í pósti til aðila máls þegar kæru er lokið',
+    },
+  }),
+  emailNames: defineMessages({
+    prison: {
+      id: 'judicial.system.backend:notifications.email_names.prison',
+      defaultMessage: 'Gæsluvarðhaldsfangelsi',
+      description: 'Nafn á gæsluvarðhaldsfangelsi í tölvupóstum',
+    },
+    prisonAdmin: {
+      id: 'judicial.system.backend:notifications.email_names.prison_admin',
+      defaultMessage: 'Fangelsismálastofnun',
+      description: 'Nafn á Fangelsismálastofnun í tölvupóstum',
+    },
+    courtOfAppeals: {
+      id: 'judicial.system.backend:notifications.email_names.court_of_appeals',
+      defaultMessage: 'Landsréttur',
+      description: 'Nafn á Landsrétti í tölvupóstum',
     },
   }),
 }
