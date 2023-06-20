@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { TerminusModule } from '@nestjs/terminus'
 import { ElasticService } from '@island.is/content-search-toolkit'
@@ -18,7 +19,7 @@ import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
 
 @Module({
-  imports: [TerminusModule, PowerBiConfig.registerOptional()],
+  imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
   providers: [
     CmsResolver,
     ArticleResolver,
