@@ -331,13 +331,6 @@ export class EndorsementListController {
     })
   }
 
-  @ApiParam({ name: 'ssn', type: 'string' })
-  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
-  @Get('whoDis/:ssn')
-  async whoDis(@Param('ssn') ssn: string): Promise<any> {
-    return await this.endorsementListService.whoDis(ssn)
-  }
-
   @ApiOperation({ summary: 'Fetches owner info from national registry' })
   @ApiOkResponse({
     description: 'Create an endorsements list',

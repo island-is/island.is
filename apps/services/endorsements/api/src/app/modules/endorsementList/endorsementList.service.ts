@@ -57,10 +57,6 @@ export class EndorsementListService {
     return false
   }
 
-  async whoDis(ssn: string): Promise<IndividualDto | null> {
-    const res = this.nationalRegistryApiV2.getIndividual(ssn)
-    return res
-  }
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     this.logger.info(`Finding endorsement lists`)
