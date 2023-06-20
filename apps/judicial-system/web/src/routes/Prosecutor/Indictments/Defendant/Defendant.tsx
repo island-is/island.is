@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles, core, errors } from '@island.is/judicial-system-web/messages'
-import { Box, Button, Checkbox, toast } from '@island.is/island-ui/core'
+import { Box, Button, toast } from '@island.is/island-ui/core'
 import {
   Defendant as TDefendant,
   UpdateDefendant,
@@ -32,8 +32,8 @@ import * as constants from '@island.is/judicial-system/consts'
 
 import { DefendantInfo } from '../../components'
 import { defendant } from './Defendant.strings'
-import { PoliceCaseInfo } from './PoliceCaseInfo'
-import { LokeNumberList } from './LokeNumberList'
+import { LokeNumberList } from './LokeNumberList/LokeNumberList'
+import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 
 interface PoliceCase {
   number: string
