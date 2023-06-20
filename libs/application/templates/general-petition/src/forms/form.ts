@@ -170,7 +170,7 @@ export const form: Form = buildForm({
               value: ({ answers }) => {
                 const phone = removeCountryCode(answers.phone as string)
                 return formatPhoneNumber(phone)
-              }
+              },
             }),
             buildKeyValueField({
               label: m.email,
