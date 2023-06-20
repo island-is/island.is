@@ -4,7 +4,6 @@ import getConfig from 'next/config'
 import { BatchHttpLink } from '@apollo/client/link/batch-http'
 import { Locale } from '@island.is/shared/types'
 import { defaultLanguage } from '@island.is/shared/constants'
-// Dummy change
 import possibleTypes from './fragmentTypes.json'
 
 const { publicRuntimeConfig = {}, serverRuntimeConfig = {} } = getConfig() ?? {}
