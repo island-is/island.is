@@ -19,12 +19,14 @@ import {
 const ListSignersTable = (data: {
   listId: string
   petition: EndorsementList
-  petitions: PaginatedEndorsementResponse
+  petitionSigners: PaginatedEndorsementResponse
 }) => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const [listOfPetitions, setPetitions] = useState(data.petitions?.data ?? [])
+  const [listOfPetitions, setPetitions] = useState(
+    data.petitionSigners?.data ?? [],
+  )
 
   const handlePagination = (page: number, petitions: Endorsement[]) => {
     setPage(page)
@@ -33,8 +35,8 @@ const ListSignersTable = (data: {
   }
 
   useEffect(() => {
-    setPetitions(data.petitions?.data ?? [])
-    handlePagination(1, data.petitions?.data ?? [])
+    setPetitions(data.petitionSigners?.data ?? [])
+    handlePagination(1, data.petitionSigners?.data ?? [])
   }, [data])
 
   return (
@@ -43,7 +45,7 @@ const ListSignersTable = (data: {
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         <ExportList
           petition={data.petition}
-          petitions={data.petitions}
+          petitionSigners={data.petitionSigners}
           petitionId={data.listId}
           onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
         />
@@ -88,7 +90,9 @@ const ListSignersTable = (data: {
               <Box
                 cursor="pointer"
                 className={className}
-                onClick={() => handlePagination(page, data.petitions?.data)}
+                onClick={() =>
+                  handlePagination(page, data.petitionSigners?.data)
+                }
               >
                 {children}
               </Box>

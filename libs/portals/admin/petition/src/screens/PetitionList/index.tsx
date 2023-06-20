@@ -190,7 +190,7 @@ const PetitionList = () => {
             </Stack>
           </Form>
           <ListSignersTable
-            petitions={endorsements as PaginatedEndorsementResponse}
+            petitionSigners={endorsements as PaginatedEndorsementResponse}
             petition={petition as EndorsementList}
             listId={listId}
           />

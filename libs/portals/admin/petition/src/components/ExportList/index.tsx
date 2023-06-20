@@ -13,7 +13,7 @@ import { usePDF } from '@react-pdf/renderer'
 
 interface Props {
   petition: EndorsementList
-  petitions: PaginatedEndorsementResponse
+  petitionSigners: PaginatedEndorsementResponse
   petitionId: string
   onGetCSV: () => void
   dropdownItems?: {
@@ -40,7 +40,7 @@ export const getCSV = async (data: any[], fileName: string) => {
 
 export const ExportList: FC<Props> = ({
   petition,
-  petitions,
+  petitionSigners,
   petitionId,
   onGetCSV,
   dropdownItems = [],
@@ -48,7 +48,9 @@ export const ExportList: FC<Props> = ({
   const { formatMessage } = useLocale()
 
   const [document] = usePDF({
-    document: <MyPdfDocument petition={petition} petitionSigners={petitions} />,
+    document: (
+      <MyPdfDocument petition={petition} petitionSigners={petitionSigners} />
+    ),
   })
 
   if (document.error) {
