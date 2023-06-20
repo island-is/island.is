@@ -18,7 +18,7 @@ import {
 import { CaseData, LimitedAccessCaseData, TempCase as Case } from '../../types'
 import { UserContext } from '../UserProvider/UserProvider'
 import LimitedAccessCaseQuery from './limitedAccessCaseGql'
-import CaseQuery from './caseGql'
+import CaseQuery from './caseGql.graphql'
 
 type ProviderState =
   | 'fetch'
