@@ -33,11 +33,11 @@ import {
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
 
-import * as styles from '../../screens/Finance.css'
 import { billsFilter } from '../../utils/simpleFilter'
 import { DocumentsListItemTypes } from './DocumentScreen.types'
 import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
+import * as styles from '../../screens/Finance.css'
 
 const ITEMS_ON_PAGE = 20
 
