@@ -14910,13 +14910,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/showdown@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@types/showdown@npm:2.0.1"
-  checksum: 75078b292d645bb6adbda7d440415fa06f37433225ba097d8f56391fc6f1234beaeb7339baf01c4093b5f1be51fa285f81b32d11055892758294bb63de92fb01
-  languageName: node
-  linkType: hard
-
 "@types/sinonjs__fake-timers@npm:8.1.1":
   version: 8.1.1
   resolution: "@types/sinonjs__fake-timers@npm:8.1.1"
@@ -21951,10 +21944,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-what@npm:5.0.1":
-  version: 5.0.1
-  resolution: "css-what@npm:5.0.1"
-  checksum: 7a3de33a1c130d32d711cce4e0fa747be7a9afe6b5f2c6f3d56bc2765f150f6034f5dd5fe263b9359a1c371c01847399602d74b55322c982742b336d998602cd
+"css-what@npm:6.1.0":
+  version: 6.1.0
+  resolution: "css-what@npm:6.1.0"
+  checksum: b975e547e1e90b79625918f84e67db5d33d896e6de846c9b584094e529f0c63e2ab85ee33b9daffd05bff3a146a1916bec664e18bb76dd5f66cbff9fc13b2bbe
   languageName: node
   linkType: hard
 
@@ -30665,7 +30658,6 @@ __metadata:
     "@types/react-table": 7.0.24
     "@types/request": 2.48.5
     "@types/sanitize-html": 2.9.0
-    "@types/showdown": 2.0.1
     "@types/smoothscroll-polyfill": 0.3.1
     "@types/stream-buffers": 3.0.3
     "@types/supertest": 2.0.11
