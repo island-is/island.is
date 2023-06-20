@@ -3,9 +3,9 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 @ObjectType()
 export class PoliceCaseInfo {
   @Field(() => ID)
-  readonly caseNumber!: string
+  readonly policeCaseNumber!: string
   @Field(() => String, { nullable: true })
-  readonly crimeScene?: string
+  readonly place?: string
   @Field(() => Date, { nullable: true })
-  readonly crimeDate?: Date
+  readonly date?: Date
 }

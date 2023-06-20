@@ -259,17 +259,17 @@ export class PoliceService {
     return promise
       .then(async (res: Response) => {
         if (res.ok) {
-          const response = await res
-            .json()
-            .then((result) =>
-              typeof result === 'string' ? JSON.parse(result) : result,
-            )
+          const response = await res.json()
 
-          const cases: PoliceCaseInfo[] = [{ caseNumber: response.malsnumer }]
+          const cases: PoliceCaseInfo[] = [
+            { policeCaseNumber: response.malsnumer },
+          ]
 
           response.skjol?.map((info: { malsnumer: string }) => {
-            if (!cases.find((item) => item.caseNumber === info.malsnumer)) {
-              cases.push({ caseNumber: info.malsnumer })
+            if (
+              !cases.find((item) => item.policeCaseNumber === info.malsnumer)
+            ) {
+              cases.push({ policeCaseNumber: info.malsnumer })
             }
           })
 
@@ -280,13 +280,13 @@ export class PoliceService {
               brotFra: string
             }) => {
               const foundCase = cases.find(
-                (item) => item.caseNumber === info.upprunalegtMalsnumer,
+                (item) => item.policeCaseNumber === info.upprunalegtMalsnumer,
               )
               if (!foundCase) {
-                cases.push({ caseNumber: info.upprunalegtMalsnumer })
+                cases.push({ policeCaseNumber: info.upprunalegtMalsnumer })
               } else {
-                foundCase.crimeScene = info.vettvangur
-                foundCase.crimeDate = info.brotFra
+                foundCase.place = info.vettvangur
+                foundCase.date = info.brotFra
                   ? new Date(info.brotFra)
                   : undefined
               }

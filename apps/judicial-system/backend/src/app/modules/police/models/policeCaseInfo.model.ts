@@ -2,9 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 
 export class PoliceCaseInfo {
   @ApiProperty()
-  caseNumber!: string
+  policeCaseNumber!: string
   @ApiProperty()
-  crimeScene?: string
+  place?: string
   @ApiProperty()
-  crimeDate?: Date
+  date?: Date
 }
