@@ -1,4 +1,4 @@
-import { createContext, FC, useContext, useState } from 'react'
+import { createContext, FC, useContext, useEffect, useState } from 'react'
 import { useActionData, useLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
@@ -26,8 +26,10 @@ type PermissionContextProps = {
    * This is the intent of the permission action, i.e. specific section of the form
    */
   intent: keyof typeof PermissionFormTypes
+  publishData: PublishData | null
+  updatePublishData(publishData: PublishData): void
   onEnvironmentChange(environment: AuthAdminEnvironment): void
-  publishData: PublishData
+  changeEnvironment(environment: AuthAdminEnvironment): void
 }
 
 const PermissionContext = createContext<PermissionContextProps | undefined>(
@@ -37,25 +39,46 @@ const PermissionContext = createContext<PermissionContextProps | undefined>(
 export const PermissionProvider: FC = ({ children }) => {
   const permissionResult = useLoaderData() as PermissionLoaderResult
   const actionData = useActionData() as EditPermissionResult
-  const [publishData, setPublishData] = useState<PublishData>({
-    toEnvironment: null,
-    fromEnvironment: null,
-  })
+  const [publishData, setPublishData] = useState<PublishData | null>(null)
+
   const {
     environment: selectedPermission,
     updateEnvironment,
   } = useEnvironmentQuery(permissionResult.environments)
 
-  const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
-    const toEnvironment = updateEnvironment(environment)
+  const [
+    currentEnvironment,
+    setCurrentEnvironment,
+  ] = useState<AuthAdminEnvironment>(selectedPermission.environment)
 
-    if (!toEnvironment) {
+  const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
+    const newEnvironment = updateEnvironment(environment)
+
+    if (!newEnvironment) {
       setPublishData({
-        toEnvironment: selectedPermission.environment,
-        fromEnvironment: environment,
+        toEnvironment: environment,
+        fromEnvironment: selectedPermission.environment,
       })
     }
   }
+
+  const changeEnvironment = (environment: AuthAdminEnvironment) => {
+    setCurrentEnvironment(environment)
+    updateEnvironment(environment)
+  }
+
+  const updatePublishData = (publishData: PublishData) => {
+    setPublishData(publishData)
+  }
+
+  useEffect(() => {
+    if (
+      permissionResult &&
+      selectedPermission.environment !== currentEnvironment
+    ) {
+      updateEnvironment(currentEnvironment)
+    }
+  }, [permissionResult])
 
   return (
     <PermissionContext.Provider
@@ -66,6 +89,8 @@ export const PermissionProvider: FC = ({ children }) => {
         actionData,
         intent: actionData?.intent,
         publishData,
+        updatePublishData,
+        changeEnvironment,
       }}
     >
       {children}

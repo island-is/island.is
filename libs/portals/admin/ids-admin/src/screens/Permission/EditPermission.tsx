@@ -5,10 +5,11 @@ import { PermissionContent } from './components/PermissionContent'
 import { PermissionAccessControl } from './components/PermissionAccessControl'
 import { EnvironmentProvider } from '../../context/EnvironmentContext'
 import { usePermission } from './PermissionContext'
+import { PublishPermission } from './PublishPermission/PublishPermission'
 
 export const EditPermission = () => {
-  const { selectedPermission, permission, publishData } = usePermission()
-  console.log({ publishData })
+  const { selectedPermission, permission } = usePermission()
+
   return (
     <EnvironmentProvider
       selectedEnvironment={selectedPermission.environment}
@@ -18,6 +19,7 @@ export const EditPermission = () => {
         <PermissionBasicInfo />
         <PermissionContent />
         <PermissionAccessControl />
+        <PublishPermission />
       </Box>
     </EnvironmentProvider>
   )

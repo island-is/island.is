@@ -1,83 +1,62 @@
-import React, { useEffect } from 'react'
-import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
+import { FormEvent } from 'react'
+import { Form } from 'react-router-dom'
+import { MessageDescriptor } from 'react-intl'
 
 import {
+  AlertMessage,
   Box,
   Button,
   RadioButton,
   Text,
-  toast,
 } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/react/components'
 import { useLocale } from '@island.is/localization'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
 
-import { m } from '../../../lib/messages'
-import { IDSAdminPaths } from '../../../lib/paths'
-import { PublishEnvironmentResult } from './PublishClient.action'
-import { useClient } from '../ClientContext'
+import { m } from '../lib/messages'
+import { PublishData } from '../types/publishData'
 
-export default function PublishClient() {
-  const navigate = useNavigate()
+type PublishPermissionFormProps = {
+  description: MessageDescriptor
+  isVisible: boolean
+  availableEnvironments: AuthAdminEnvironment[]
+  publishData: PublishData | null
+  error: boolean
+  loading: boolean
+  onClose(): void
+  onSubmit(e: FormEvent<HTMLFormElement>): void
+  onChange(env: AuthAdminEnvironment): void
+}
+
+export const PublishPermissionForm = ({
+  description,
+  isVisible,
+  onClose,
+  availableEnvironments,
+  publishData,
+  onSubmit,
+  error,
+  loading,
+  onChange,
+}: PublishPermissionFormProps) => {
   const { formatMessage } = useLocale()
-  const params = useParams()
-  const {
-    publishData,
-    availableEnvironments,
-    updatePublishData,
-    selectedEnvironment,
-  } = useClient()
-  const actionData = useActionData() as PublishEnvironmentResult
-  const { isLoading, isSubmitting } = useSubmitting()
-
-  useEffect(() => {
-    if (actionData?.globalError && !isLoading && !isSubmitting)
-      toast.error(formatMessage(m.errorPublishingEnvironment))
-  }, [actionData?.globalError, isSubmitting, isLoading])
-
-  const cancel = () => {
-    navigate(
-      replaceParams({
-        href: IDSAdminPaths.IDSAdminClient,
-        params: { tenant: params['tenant'], client: params['client'] },
-      }),
-      { preventScrollReset: true },
-    )
-  }
-
-  const onChange = (env: AuthAdminEnvironment) => {
-    updatePublishData({
-      ...(publishData
-        ? publishData
-        : { toEnvironment: selectedEnvironment.environment }),
-      fromEnvironment: env,
-    })
-  }
-
-  // If there is no publishData, we should close the modal since we can't publish
-  useEffect(() => {
-    if (!publishData?.toEnvironment) {
-      cancel()
-    }
-  }, [publishData?.toEnvironment])
 
   return (
     <Modal
-      id="publish-client"
-      isVisible
+      id="publish-permission"
+      isVisible={isVisible}
       title={formatMessage(m.publishEnvironment, {
         environment: publishData?.toEnvironment,
       })}
       label={formatMessage(m.publishEnvironment, {
         environment: publishData?.toEnvironment,
       })}
-      onClose={cancel}
+      onClose={onClose}
       closeButtonLabel={formatMessage(m.closeModal)}
     >
-      <Form method="post">
+      <Form method="post" onSubmit={onSubmit}>
         <Box paddingTop={3}>
-          <Text>{formatMessage(m.publishClientEnvDesc)}</Text>
+          <Text>{formatMessage(description)}</Text>
           <Text paddingTop={4} variant="h4">
             {formatMessage(m.chooseEnvironmentToCopyFrom)}
           </Text>
@@ -117,16 +96,24 @@ export default function PublishClient() {
             name="targetEnvironment"
             value={publishData?.toEnvironment ?? ''}
           />
+          {error && (
+            <Box marginTop={3}>
+              <AlertMessage
+                type="error"
+                message={formatMessage(m.errorDefault)}
+              />
+            </Box>
+          )}
           <Box
             display="flex"
             flexDirection="row"
             justifyContent="spaceBetween"
             paddingTop={7}
           >
-            <Button onClick={cancel} variant="ghost">
+            <Button onClick={onClose} variant="ghost">
               {formatMessage(m.cancel)}
             </Button>
-            <Button loading={isSubmitting || isLoading} type="submit">
+            <Button loading={loading} type="submit">
               {formatMessage(m.publish)}
             </Button>
           </Box>

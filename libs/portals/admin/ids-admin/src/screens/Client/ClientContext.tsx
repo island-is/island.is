@@ -27,13 +27,13 @@ export type ClientContextType = {
   client: AuthAdminClient
   selectedEnvironment: AuthAdminClientEnvironment
   availableEnvironments: AuthAdminEnvironment[] | null
-  publishData: PublishData
-  setPublishData: Dispatch<SetStateAction<PublishData>>
-  onEnvironmentChange(environment: AuthAdminEnvironment): void
   /**
    * This is the result of the client action
    */
   actionData: EditClientResult | undefined
+  publishData: PublishData | null
+  updatePublishData(publishData: PublishData): void
+  onEnvironmentChange(environment: AuthAdminEnvironment): void
 }
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined)
@@ -44,10 +44,7 @@ export const ClientProvider: FC = ({ children }) => {
   const [searchParams] = useSearchParams()
   const client = useLoaderData() as AuthAdminClient
   const actionData = useActionData() as EditClientResult
-  const [publishData, setPublishData] = useState<PublishData>({
-    toEnvironment: null,
-    fromEnvironment: null,
-  })
+  const [publishData, setPublishData] = useState<PublishData | null>(null)
   const {
     environment: selectedEnvironment,
     updateEnvironment,
@@ -79,13 +76,17 @@ export const ClientProvider: FC = ({ children }) => {
     }
   }
 
+  const updatePublishData = (publishData: PublishData) => {
+    setPublishData(publishData)
+  }
+
   return (
     <ClientContext.Provider
       value={{
         client,
         selectedEnvironment,
         publishData,
-        setPublishData,
+        updatePublishData,
         onEnvironmentChange,
         availableEnvironments: client.environments.map(
           (env) => env.environment,

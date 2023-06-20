@@ -7,7 +7,6 @@ import {
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
 import { RouterActionRedirect, WrappedActionFn } from '@island.is/portals/core'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import {
   PublishClientDocument,
@@ -15,14 +14,10 @@ import {
   PublishClientMutationVariables,
 } from './PublishClient.generated'
 import { IDSAdminPaths } from '../../../lib/paths'
-
-const schema = z.object({
-  targetEnvironment: z.nativeEnum(AuthAdminEnvironment),
-  sourceEnvironment: z.nativeEnum(AuthAdminEnvironment),
-})
+import { publishSchema } from '../../../utils/schemas'
 
 export type PublishEnvironmentResult = RouterActionRedirect<
-  ValidateFormDataResult<typeof schema>['errors']
+  ValidateFormDataResult<typeof publishSchema>['errors']
 >
 
 export const publishClientAction: WrappedActionFn = ({ client }) => async ({
@@ -36,7 +31,7 @@ export const publishClientAction: WrappedActionFn = ({ client }) => async ({
   if (!clientId) throw new Error('Client id not found')
 
   const formData = await request.formData()
-  const result = await validateFormData({ formData, schema })
+  const result = await validateFormData({ formData, schema: publishSchema })
 
   if (result.errors || !result.data) {
     return {

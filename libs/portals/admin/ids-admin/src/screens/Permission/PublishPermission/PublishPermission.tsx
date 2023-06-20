@@ -1,130 +1,117 @@
-import React, { useEffect } from 'react'
-import { Form, useActionData, useNavigate, useParams } from 'react-router-dom'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
+import { useNavigate, useParams, useRevalidator } from 'react-router-dom'
 
-import {
-  Box,
-  Button,
-  RadioButton,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
-import { Modal } from '@island.is/react/components'
-import { useLocale } from '@island.is/localization'
+import { replaceParams, validateFormData } from '@island.is/react-spa/shared'
+
+import { usePublishPermissionMutation } from './PublishPermission.generated'
+import { publishSchema } from '../../../utils/schemas'
+import { PublishPermissionForm } from '../../../components/PublishPermissionForm'
+import { usePermission } from '../PermissionContext'
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { replaceParams, useSubmitting } from '@island.is/react-spa/shared'
+import { m } from '@island.is/portals/admin/ids-admin'
 
-import { m } from '../../../lib/messages'
-import { IDSAdminPaths } from '../../../lib/paths'
-import { PublishEnvironmentResult } from './PublishClient.action'
-import { useClient } from '../ClientContext'
-
-export default function PublishPermission() {
+export const PublishPermission = () => {
   const navigate = useNavigate()
-  const { formatMessage } = useLocale()
-  const params = useParams()
-  // const { publishData, availableEnvironments, setPublishData } = useClient()
-  const actionData = useActionData() as PublishEnvironmentResult
-  const { isLoading, isSubmitting } = useSubmitting()
+  const { tenant: tenantId, permission: permissionId } = useParams() as {
+    tenant: string
+    permission: string
+  }
+  const { revalidate } = useRevalidator()
+  const {
+    permission: { availableEnvironments },
+    publishData,
+    selectedPermission,
+    updatePublishData,
+    changeEnvironment,
+  } = usePermission()
+  const [
+    publishPermission,
+    { data, loading, error: publishError },
+  ] = usePublishPermissionMutation()
+  const [error, setError] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
 
-  // useEffect(() => {
-  //   if (actionData?.globalError && !isLoading && !isSubmitting)
-  //     toast.error(formatMessage(m.errorPublishingEnvironment))
-  // }, [actionData?.globalError, isSubmitting, isLoading])
-  //
-  // const cancel = () => {
-  //   navigate(
-  //     replaceParams({
-  //       href: IDSAdminPaths.IDSAdminClient,
-  //       params: { tenant: params['tenant'], client: params['client'] },
-  //     }),
-  //     { preventScrollReset: true },
-  //   )
-  // }
-  //
-  // const onChange = (env: AuthAdminEnvironment) => {
-  //   setPublishData?.((prev) => ({
-  //     ...prev,
-  //     fromEnvironment: env,
-  //   }))
-  // }
-  //
-  // // If there is no publishData, we should close the modal since we can't publish
-  // useEffect(() => {
-  //   if (!publishData?.toEnvironment) {
-  //     cancel()
-  //   }
-  // }, [publishData?.toEnvironment])
+  const onSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      setError(false)
+
+      const formData = new FormData(e.target as HTMLFormElement)
+      const { data, errors } = await validateFormData({
+        formData,
+        schema: publishSchema,
+      })
+
+      if (errors || !data) {
+        setError(true)
+        return
+      }
+
+      try {
+        await publishPermission({
+          variables: {
+            input: {
+              scopeName: permissionId,
+              tenantId,
+              targetEnvironment: data.targetEnvironment,
+              sourceEnvironment: data.sourceEnvironment,
+            },
+          },
+        })
+      } catch (e) {
+        setError(true)
+      }
+    },
+    [publishPermission, tenantId],
+  )
+
+  const onChange = useCallback((env: AuthAdminEnvironment) => {
+    updatePublishData({
+      ...(publishData
+        ? publishData
+        : { toEnvironment: selectedPermission.environment }),
+      fromEnvironment: env,
+    })
+  }, [])
+
+  const onClose = useCallback(() => {
+    setIsVisible(false)
+  }, [])
+
+  useEffect(() => {
+    if (publishData) {
+      setIsVisible(true)
+    }
+  }, [publishData])
+
+  useEffect(() => {
+    const env = data?.publishAuthAdminScope?.environment
+
+    if (env) {
+      changeEnvironment(data.publishAuthAdminScope.environment)
+      // Be sure to re-fetch the permission if permission was published
+      revalidate()
+      onClose()
+    }
+  }, [data, revalidate])
+
+  useEffect(() => {
+    if (publishError) {
+      setError(true)
+    }
+  }, [publishError])
 
   return (
-    <Modal
-      id="publish-permission"
-      isVisible
-      title={formatMessage(m.publishEnvironment, {
-        environment: publishData?.toEnvironment,
-      })}
-      label={formatMessage(m.publishEnvironment, {
-        environment: publishData?.toEnvironment,
-      })}
-      onClose={cancel}
-      closeButtonLabel={formatMessage(m.closeModal)}
-    >
-      <Form method="post">
-        <Box paddingTop={3}>
-          <Text>{formatMessage(m.publishEnvironmentDescription)}</Text>
-          <Text paddingTop={4} variant="h4">
-            {formatMessage(m.chooseEnvironmentToCopyFrom)}
-          </Text>
-          <Box
-            width="full"
-            display="flex"
-            flexDirection={['column', 'column', 'row']}
-            justifyContent="spaceBetween"
-            columnGap={3}
-            rowGap={3}
-            paddingTop={3}
-          >
-            {availableEnvironments?.map((env) => (
-              <Box key={env} width={'full'}>
-                <RadioButton
-                  backgroundColor="blue"
-                  label={env}
-                  id={`publish-environment-${env}`}
-                  large
-                  name="publish-environment"
-                  value={env}
-                  checked={publishData?.fromEnvironment === env}
-                  onChange={() => {
-                    onChange(env as AuthAdminEnvironment)
-                  }}
-                />
-              </Box>
-            ))}
-          </Box>
-          <input
-            type="hidden"
-            name="sourceEnvironment"
-            value={publishData?.fromEnvironment ?? ''}
-          />
-          <input
-            type="hidden"
-            name="targetEnvironment"
-            value={publishData?.toEnvironment ?? ''}
-          />
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="spaceBetween"
-            paddingTop={7}
-          >
-            <Button onClick={cancel} variant="ghost">
-              {formatMessage(m.cancel)}
-            </Button>
-            <Button loading={isSubmitting || isLoading} type="submit">
-              {formatMessage(m.publish)}
-            </Button>
-          </Box>
-        </Box>
-      </Form>
-    </Modal>
+    <PublishPermissionForm
+      isVisible={isVisible}
+      onSubmit={onSubmit}
+      onClose={onClose}
+      publishData={publishData}
+      availableEnvironments={availableEnvironments}
+      onChange={onChange}
+      error={error}
+      loading={loading}
+      description={m.publishPermissionEnvDesc}
+    />
   )
 }
