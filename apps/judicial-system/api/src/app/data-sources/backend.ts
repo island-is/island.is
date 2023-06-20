@@ -39,7 +39,7 @@ import type {
 
 import { environment } from '../../environments'
 import { UpdateFilesResponse } from '../modules/file'
-import { PoliceCaseInfo } from '../modules/police/models/policeCaseInfo.model'
+import { PoliceCaseInfo } from '../modules/police'
 
 import {
   CreateIndictmentCountInput,
