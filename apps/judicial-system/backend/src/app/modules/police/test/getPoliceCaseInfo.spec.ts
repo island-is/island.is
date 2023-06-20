@@ -80,13 +80,13 @@ describe('PoliceController - Get police case info', () => {
     it('should return police case info without duplicates', () => {
       expect(then.result).toEqual([
         {
-          caseNumber: '007-2021-000001',
-          crimeScene: 'Testgata 1, 101',
-          crimeDate: new Date('2021-02-23T13:17:00'),
+          policeCaseNumber: '007-2021-000001',
+          place: 'Testgata 1, 101',
+          time: new Date('2021-02-23T13:17:00'),
         },
-        { caseNumber: '007-2020-000103' },
-        { caseNumber: '007-2020-000057' },
-        { caseNumber: '008-2013-000033' },
+        { policeCaseNumber: '007-2020-000103' },
+        { policeCaseNumber: '007-2020-000057' },
+        { policeCaseNumber: '008-2013-000033' },
       ])
     })
   })
