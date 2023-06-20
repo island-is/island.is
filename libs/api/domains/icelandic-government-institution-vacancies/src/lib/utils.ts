@@ -1,5 +1,4 @@
-import showdown from 'showdown'
-import { JSDOM } from 'jsdom'
+import { NodeHtmlMarkdown } from 'node-html-markdown'
 import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
@@ -79,12 +78,7 @@ const shortenText = (text: string | undefined, maxLength: number) => {
 
 const convertHtmlToContentfulRichText = async (html: string) => {
   const sanitizedHtml = sanitizeHtml(html)
-  const virtualDom = new JSDOM(sanitizedHtml)
-  const converter = new showdown.Converter()
-  const markdown = converter.makeMarkdown(
-    sanitizedHtml,
-    virtualDom.window.document,
-  )
+  const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
   return {
     __typename: 'Html',
