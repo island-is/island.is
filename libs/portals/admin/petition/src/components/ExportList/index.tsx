@@ -9,6 +9,7 @@ import {
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
 import MyPdfDocument from './MyPdfDocument'
+import { usePDF } from '@react-pdf/renderer'
 
 interface Props {
   petition: EndorsementList
@@ -37,7 +38,7 @@ export const getCSV = async (data: any[], fileName: string) => {
   await downloadCSV(name, ['Dagsetning', 'Nafn'], dataArray)
 }
 
-const ExportList: FC<Props> = ({
+export const ExportList: FC<Props> = ({
   petition,
   petitions,
   petitionId,
@@ -84,9 +85,4 @@ const ExportList: FC<Props> = ({
       />
     </Box>
   )
-}
-
-export default ExportList
-function usePDF(arg0: { document: JSX.Element }): [any] {
-  throw new Error('Function not implemented.')
 }

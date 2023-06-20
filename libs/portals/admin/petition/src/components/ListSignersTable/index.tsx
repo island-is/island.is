@@ -9,7 +9,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils/utils'
 import { m } from '../../lib/messages'
-import ExportList, { getCSV } from '../ExportList'
+import { ExportList, getCSV } from '../ExportList'
 import {
   Endorsement,
   EndorsementList,

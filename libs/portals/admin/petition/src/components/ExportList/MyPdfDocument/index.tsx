@@ -7,13 +7,13 @@ import {
   Font,
   StyleSheet,
 } from '@react-pdf/renderer'
-import { formatDate } from '../../../../lib/utils'
 import {
   Endorsement,
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
 import { dark200 } from '@island.is/island-ui/theme'
+import { formatDate } from '../../../lib/utils/utils'
 
 const MyPdfDocument = (data: {
   petition?: EndorsementList
