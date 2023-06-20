@@ -15,7 +15,6 @@ import StackedTitleAndDescription from '../Stacked/Stacked'
 import { CardSkeleton } from '../../../../components'
 import { RelatedCase, Stakeholder } from '../../../../types/interfaces'
 import localization from '../../Case.json'
-import { useRouter } from 'next/router'
 
 interface Props {
   list: Array<Stakeholder> | Array<RelatedCase>
@@ -24,14 +23,9 @@ interface Props {
 
 export const BlowoutList = ({ list, isStakeholder }: Props) => {
   const [showList, setShowList] = useState(false)
-  const router = useRouter()
   const loc = isStakeholder
     ? localization['stakeholders']
     : localization['relatedCases']
-
-  const handleOnClick = (id: number) => {
-    router.push(`/mal/${id}`)
-  }
 
   return (
     <Box display="block">
@@ -66,6 +60,7 @@ export const BlowoutList = ({ list, isStakeholder }: Props) => {
                               <LinkV2
                                 href={`/mal/${item.id}`}
                                 color="blue400"
+                                underline="small"
                                 underlineVisibility="hover"
                               >
                                 {item.caseNumber}

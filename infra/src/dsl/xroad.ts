@@ -117,8 +117,13 @@ export const DrivingLicense = new XroadConf({
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
+    XROAD_DRIVING_LICENSE_V4_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4',
+    },
     XROAD_DRIVING_LICENSE_V5_PATH: {
-      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5',
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5',
       staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
     },
