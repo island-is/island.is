@@ -126,6 +126,11 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  locality: {
+    id: 'admin-portal.petition:locality',
+    defaultMessage: 'Sveitarfélag',
+    description: '',
+  },
   noName: {
     id: 'admin-portal.petition:noName',
     defaultMessage: 'Nafn ekki skráð',

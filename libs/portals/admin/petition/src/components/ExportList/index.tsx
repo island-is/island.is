@@ -10,6 +10,7 @@ import {
 } from '@island.is/api/schema'
 import MyPdfDocument from './MyPdfDocument'
 import { usePDF } from '@react-pdf/renderer'
+import { formatDate } from '../../lib/utils/utils'
 
 interface Props {
   petition: EndorsementList
@@ -31,11 +32,12 @@ interface Props {
 export const getCSV = async (data: any[], fileName: string) => {
   const name = `${fileName}`
   const dataArray = data.map((item: any) => [
-    item.created ?? '',
+    formatDate(item.created) ?? '',
     item.meta.fullName ?? '',
+    item.meta.locality ?? '',
   ])
 
-  await downloadCSV(name, ['Dagsetning', 'Nafn'], dataArray)
+  await downloadCSV(name, ['Dagsetning', 'Nafn', 'Sveitarfélag'], dataArray)
 }
 
 export const ExportList: FC<Props> = ({
