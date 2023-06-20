@@ -1,16 +1,15 @@
-import compareAsc from 'date-fns/compareAsc'
 import fetch, { Response } from 'node-fetch'
 
 import * as kennitala from 'kennitala'
 import format from 'date-fns/format'
 import { Cache as CacheManager } from 'cache-manager'
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable, Inject, CACHE_MANAGER } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
 import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 
-import { GenericDrivingLicenseResponse } from './genericDrivingLicense.type'
-import { parseDrivingLicensePayload } from './drivingLicenseMappers'
+import { OldGenericDrivingLicenseResponse } from './oldGenericDrivingLicense.type'
+import { parseDrivingLicensePayload } from './oldDrivingLicenseMappers'
 import {
   GenericLicenseClient,
   GenericLicenseLabels,
@@ -20,10 +19,10 @@ import {
   PkPassVerification,
   PkPassVerificationError,
 } from '../../licenceService.type'
-import { PkPassClient } from './pkpass.client'
-import { PkPassPayload } from './pkpass.type'
+import { OldPkPassClient } from './oldPkpass.client'
+import { OldPkPassPayload } from './oldPkpass.type'
 import { Locale } from '@island.is/shared/types'
-import { GenericDrivingLicenseConfig } from './genericDrivingLicense.config'
+import { OldGenericDrivingLicenseConfig } from './oldGenericDrivingLicense.config'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 /** Category to attach each log message to */
@@ -46,20 +45,19 @@ const dateToPkpassDate = (date: string): string => {
 }
 
 @Injectable()
-export class GenericDrivingLicenseApi
-  implements GenericLicenseClient<GenericDrivingLicenseResponse> {
+export class OldGenericDrivingLicenseApi
+  implements GenericLicenseClient<OldGenericDrivingLicenseResponse> {
   private readonly xroadApiUrl: string
   private readonly xroadClientId: string
   private readonly xroadPath: string
   private readonly xroadSecret: string
 
-  private pkpassClient: PkPassClient
+  private pkpassClient: OldPkPassClient
 
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @Inject(XRoadConfig.KEY)
+    private logger: Logger,
     private xroadConfig: ConfigType<typeof XRoadConfig>,
-    private config: ConfigType<typeof GenericDrivingLicenseConfig>,
+    private config: ConfigType<typeof OldGenericDrivingLicenseConfig>,
     private cacheManager?: CacheManager | null,
   ) {
     // TODO inject the actual RLS x-road client
@@ -72,13 +70,13 @@ export class GenericDrivingLicenseApi
     this.cacheManager = cacheManager
 
     // TODO this should be injected by nest
-    this.pkpassClient = new PkPassClient(config, logger, cacheManager)
+    this.pkpassClient = new OldPkPassClient(config, logger, cacheManager)
   }
 
   private headers() {
     return {
-      'X-Road-Client': this.xroadClientId,
-      SECRET: this.xroadSecret,
+      'X-Road-Client': this.xroadConfig.xRoadClient,
+      SECRET: this.config.xroad.secret,
       Accept: 'application/json',
     }
   }
@@ -87,7 +85,7 @@ export class GenericDrivingLicenseApi
     let res: Response | null = null
 
     try {
-      res = await fetch(`${this.xroadApiUrl}/${url}`, {
+      res = await fetch(`${this.xroadConfig.xRoadBasePath}/${url}`, {
         headers: this.headers(),
         timeout: this.config.fetch.timeout,
       })
@@ -125,9 +123,9 @@ export class GenericDrivingLicenseApi
 
   private async requestFromXroadApi(
     nationalId: string,
-  ): Promise<GenericDrivingLicenseResponse[] | null> {
+  ): Promise<OldGenericDrivingLicenseResponse[] | null> {
     const response = await this.requestApi(
-      `${this.xroadPath}/api/Okuskirteini/${nationalId}`,
+      `${this.config.xroad.path}/api/Okuskirteini/${nationalId}`,
     )
 
     if (!response) {
@@ -144,15 +142,15 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    const licenses = response as GenericDrivingLicenseResponse[]
+    const licenses = response as OldGenericDrivingLicenseResponse[]
 
     // If we get more than one license, sort in descending order so we can pick the first one as the
     // newest license later on
     // TODO(osk): This is a bug, fixed in v2 of the service (see https://www.notion.so/R-kisl-greglustj-ri-60f22ab2789e4e0296f5fe6e25fa19cf)
     licenses.sort(
       (
-        a?: GenericDrivingLicenseResponse,
-        b?: GenericDrivingLicenseResponse,
+        a?: OldGenericDrivingLicenseResponse,
+        b?: OldGenericDrivingLicenseResponse,
       ) => {
         const timeA = a?.utgafuDagsetning
           ? new Date(a.utgafuDagsetning).getTime()
@@ -173,8 +171,8 @@ export class GenericDrivingLicenseApi
   }
 
   private drivingLicenseToPkpassPayload(
-    license: GenericDrivingLicenseResponse,
-  ): PkPassPayload {
+    license: OldGenericDrivingLicenseResponse,
+  ): OldPkPassPayload {
     return {
       nafn: license.nafn,
       gildirTil: dateToPkpassDate(license.gildirTil ?? ''),
@@ -208,7 +206,7 @@ export class GenericDrivingLicenseApi
   }
 
   static licenseIsValidForPkpass(
-    license: GenericDrivingLicenseResponse,
+    license: OldGenericDrivingLicenseResponse,
   ): GenericUserLicensePkPassStatus {
     if (!license || license.mynd === undefined) {
       return GenericUserLicensePkPassStatus.Unknown
@@ -227,10 +225,13 @@ export class GenericDrivingLicenseApi
    */
   private async notifyPkPassCreated(nationalId: string) {
     try {
-      await fetch(`${this.xroadApiUrl}/api/Okuskirteini/${nationalId}`, {
-        method: 'POST',
-        headers: this.headers(),
-      })
+      await fetch(
+        `${this.xroadConfig.xRoadBasePath}/api/Okuskirteini/${nationalId}`,
+        {
+          method: 'POST',
+          headers: this.headers(),
+        },
+      )
     } catch (e) {
       this.logger.info('Unable to notify RLS of pkpass creation', {
         exception: e,
@@ -254,7 +255,7 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    if (!GenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
+    if (!OldGenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
       this.logger.info('License is not valid for pkpass generation', {
         category: LOG_CATEGORY,
       })
@@ -291,7 +292,7 @@ export class GenericDrivingLicenseApi
       return null
     }
 
-    if (!GenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
+    if (!OldGenericDrivingLicenseApi.licenseIsValidForPkpass(license)) {
       this.logger.info('License is not valid for pkpass generation', {
         category: LOG_CATEGORY,
       })
@@ -336,7 +337,7 @@ export class GenericDrivingLicenseApi
       GenericUserLicensePkPassStatus.Unknown
 
     if (payload) {
-      pkpassStatus = GenericDrivingLicenseApi.licenseIsValidForPkpass(
+      pkpassStatus = OldGenericDrivingLicenseApi.licenseIsValidForPkpass(
         licenses[0],
       )
     }
@@ -397,7 +398,7 @@ export class GenericDrivingLicenseApi
     }
 
     let response:
-      | Record<string, string | null | GenericDrivingLicenseResponse['mynd']>
+      | Record<string, string | null | OldGenericDrivingLicenseResponse['mynd']>
       | undefined = undefined
 
     if (result.nationalId) {

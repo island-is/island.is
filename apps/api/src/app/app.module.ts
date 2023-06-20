@@ -45,6 +45,7 @@ import {
   GenericDrivingLicenseConfig,
   GenericFirearmLicenseConfig,
   GenericMachineLicenseConfig,
+  OldGenericDrivingLicenseConfig,
   LicenseServiceModule,
 } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
@@ -278,6 +279,7 @@ const environment = getConfig
         GenericMachineLicenseConfig,
         GenericAdrLicenseConfig,
         GenericDrivingLicenseConfig,
+        OldGenericDrivingLicenseConfig,
         GenericDisabilityLicenseConfig,
         GraphQLConfig,
         VehiclesClientConfig,
