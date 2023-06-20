@@ -57,8 +57,8 @@ export const CaseOverview = ({ chosenCase }: CaseOverviewProps) => {
         )}
       <Stack space={[3, 3, 3, 4, 4]}>
         <Box>
-          <Text variant="h4">{loc.announcementTitle}</Text>
-          <Text variant="default">{chosenCase?.announcementText}</Text>
+          <Text variant="h4">{loc.shortDescriptionTitle}</Text>
+          <Text variant="default">{chosenCase?.shortDescription}</Text>
         </Box>
         <Box>
           <Text variant="h4">{loc.detailedDescriptionTitle}</Text>
