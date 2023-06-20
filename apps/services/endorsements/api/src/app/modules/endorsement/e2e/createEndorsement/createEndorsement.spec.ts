@@ -67,7 +67,7 @@ describe('createEndorsement', () => {
       statusCode: 405,
     })
   })
-  // commented out due to nationalRegistryV2 service being called
+  // // commented out due to nationalRegistryV2 service being called
   // it(`POST /endorsement-list/:listId/endorsement should create a new endorsement and populate metadata`, async () => {
   //   const app = await getAuthenticatedApp({
   //     nationalId: authNationalId,
