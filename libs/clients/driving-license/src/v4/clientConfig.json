@@ -4,7 +4,7 @@
     "title": "RLS driver licence Rest API",
     "description": "RESTFul services for driver licences. Programmed in ASP.NET Core 3 API ",
     "contact": { "name": "TMD", "email": "tmd@tmd.is" },
-    "version": "5.0"
+    "version": "4.0"
   },
   "paths": {
     "/api/codetables/deprivations": {
@@ -17,14 +17,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -64,14 +64,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -111,14 +111,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -164,14 +164,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -201,16 +201,17 @@
         }
       }
     },
-    "/api/drivinglicense/v5": {
+    "/api/drivinglicense/v4/{SSN}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get for person driver licence",
-        "operationId": "GetCurrentLicenseV5",
+        "operationId": "GetCurrentLicenseV4",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -218,14 +219,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -258,17 +259,16 @@
             }
           }
         }
-      }
-    },
-    "/api/drivinglicense/v5/digitallicensecreated": {
+      },
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Create record of digital licence created",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -276,14 +276,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -305,11 +305,18 @@
         }
       }
     },
-    "/api/drivinglicense/v5/canapplyfor/{category}/full": {
+    "/api/drivinglicense/v4/{SSN}/canapplyfor/{category}/full": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person can apply for full drivers license for a specific category",
         "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
           {
             "name": "category",
             "in": "path",
@@ -318,24 +325,18 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
-            "schema": { "type": "string" }
-          },
-          {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -362,7 +363,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/new/{category}": {
+    "/api/drivinglicense/v4/applications/new/{category}": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Apply for drivers license for a category",
@@ -379,14 +380,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "requestBody": {
@@ -429,7 +430,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/new/collaborative": {
+    "/api/drivinglicense/v4/applications/new/collaborative": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Apply for new collaborative of old license (Samrit)",
@@ -439,14 +440,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "requestBody": {
@@ -489,15 +490,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/deprivation": {
+    "/api/drivinglicense/v4/{SSN}/deprivation": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get for current deprivation",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -505,14 +507,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -533,7 +535,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/new/temporary": {
+    "/api/drivinglicense/v4/applications/new/temporary": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Apply for drivers license for a category",
@@ -543,14 +545,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "requestBody": {
@@ -605,7 +607,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/temporarytestfinished": {
+    "/api/drivinglicense/v4/applications/temporarytestfinished": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Endpoint to tell system that person has finished learning for temporary license and license can be ordered",
@@ -616,14 +618,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "requestBody": {
@@ -680,15 +682,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/penaltypoints": {
+    "/api/drivinglicense/v4/{SSN}/penaltypoints": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get traffic violation points for person",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -696,14 +699,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -724,14 +727,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/all": {
+    "/api/drivinglicense/v4/{SSN}/all": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get for all persons driver licences",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -739,14 +744,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -796,15 +801,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/hasteachingrights": {
+    "/api/drivinglicense/v4/{SSN}/hasteachingrights": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person has rights to be a driving instructor",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -812,14 +818,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -840,16 +846,17 @@
         }
       }
     },
-    "/api/drivinglicense/v5/canapplyfor/temporary": {
+    "/api/drivinglicense/v4/{SSN}/canapplyfor/temporary": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person can apply for temporary B drivers license",
         "description": "Checks :\r\n - Is in national registry\r\n - Does not have B category license already\r\n - Has a deprivation exeeding next 30 days\r\n - Is at least 16 years of age",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -857,14 +864,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -891,15 +898,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/hasqualityphoto": {
+    "/api/drivinglicense/v4/{SSN}/hasqualityphoto": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -907,14 +915,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -935,15 +943,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/hasqualitysignature": {
+    "/api/drivinglicense/v4/{SSN}/hasqualitysignature": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person has quality marked photo",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -951,14 +960,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -979,15 +988,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/getqualityphoto": {
+    "/api/drivinglicense/v4/{SSN}/getqualityphoto": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person id number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -995,14 +1005,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1022,15 +1032,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/getqualitysignature": {
+    "/api/drivinglicense/v4/{SSN}/getqualitysignature": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get quality marked photo for person",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -1038,14 +1049,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1065,14 +1076,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/hasfinisheddrivingschool3": {
+    "/api/drivinglicense/v4/{SSN}/hasfinisheddrivingschool3": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Has person finised driving school 3",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -1080,14 +1093,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1114,7 +1127,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/drivingassessment": {
+    "/api/drivinglicense/v4/drivingassessment": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Create a new driver assessment",
@@ -1124,14 +1137,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "requestBody": {
@@ -1161,15 +1174,18 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/drivingassessment": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check if person has driving assessment",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -1177,14 +1193,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1225,24 +1241,24 @@
         }
       }
     },
-    "/api/drivinglicense/v5/drivinginstructors": {
+    "/api/drivinglicense/v4/drivinginstructors": {
       "get": {
         "tags": ["Okuskirteini"],
-        "summary": "Get driving teachers",
+        "summary": "Get driving teacherse",
         "parameters": [
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1272,11 +1288,10 @@
         }
       }
     },
-    "/api/drivinglicense/v5/{licenseid}/status": {
+    "/api/drivinglicense/v4/{licenseid}/status": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check current license status",
-        "operationId": "GetLicenseById",
         "parameters": [
           {
             "name": "licenseid",
@@ -1290,14 +1305,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1318,11 +1333,18 @@
         }
       }
     },
-    "/api/drivinglicense/v5/categoryvalid/{category}/{drivinglicenseid}": {
+    "/api/drivinglicense/v4/{SSN}/categoryvalid/{category}/{drivinglicenseid}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Check status of license and category",
         "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
           {
             "name": "category",
             "in": "path",
@@ -1338,24 +1360,18 @@
             "schema": { "type": "integer", "format": "int32" }
           },
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
-            "schema": { "type": "string" }
-          },
-          {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1376,11 +1392,18 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/unfinished/{categoryid}": {
+    "/api/drivinglicense/v4/applications/{SSN}/unfinished/{categoryid}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get latest unfinished/unpublished license with requested categorie and person id",
         "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
           {
             "name": "categoryid",
             "in": "path",
@@ -1389,24 +1412,18 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
-            "schema": { "type": "string" }
-          },
-          {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1433,15 +1450,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/practicepermit": {
+    "/api/drivinglicense/v4/applications/{SSN}/practicepermit": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Post practice permit",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Social security number of applicant",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -1449,14 +1467,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "requestBody": {
@@ -1499,15 +1517,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/canapplyfor/practicepermit": {
+    "/api/drivinglicense/v4/{SSN}/canapplyfor/practicepermit": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Post practice permit",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with national id",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person's social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -1515,14 +1534,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "requestBody": {
@@ -1565,20 +1584,15 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/{SSN}/renewal65": {
+    "/api/drivinglicense/v4/applications/{SSN}/renewal65": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Post renewal request for people 65 year old or older",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "Token with person social security number",
-            "schema": { "type": "string" }
-          },
-          {
             "name": "SSN",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": { "type": "string" }
           },
@@ -1587,14 +1601,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "requestBody": {
@@ -1637,7 +1651,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/statistics/temporarylicenses/created/detailed/{yearfrom}/{monthfrom}": {
+    "/api/drivinglicense/v4/statistics/temporarylicenses/created/detailed/{yearfrom}/{monthfrom}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get a list of temporary licenses created from year/month",
@@ -1661,14 +1675,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1704,7 +1718,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/statistics/temporarylicenses/created/grouped/{yearfrom}/{monthfrom}": {
+    "/api/drivinglicense/v4/statistics/temporarylicenses/created/grouped/{yearfrom}/{monthfrom}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get a grouped list (year/month/count) of temporary licenses created",
@@ -1728,14 +1742,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1771,7 +1785,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/statistics/licenses/created/detailed/{yearfrom}/{monthfrom}": {
+    "/api/drivinglicense/v4/statistics/licenses/created/detailed/{yearfrom}/{monthfrom}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get a list of full licenses created from year/month",
@@ -1795,14 +1809,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1838,7 +1852,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/statistics/licenses/created/grouped/{yearfrom}/{monthfrom}": {
+    "/api/drivinglicense/v4/statistics/licenses/created/grouped/{yearfrom}/{monthfrom}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get a grouped list (year/month/count) of full licenses created",
@@ -1862,14 +1876,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1905,7 +1919,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/statistics/drivingassessments/created/detailed/{yearfrom}/{monthfrom}": {
+    "/api/drivinglicense/v4/statistics/drivingassessments/created/detailed/{yearfrom}/{monthfrom}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get a list of driving assessments created",
@@ -1929,14 +1943,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -1972,7 +1986,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/statistics/drivingassessments/created/grouped/{yearfrom}/{monthfrom}": {
+    "/api/drivinglicense/v4/statistics/drivingassessments/created/grouped/{yearfrom}/{monthfrom}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get a grouped list (year/month/count) of driving ass licenses created",
@@ -1996,14 +2010,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -2039,15 +2053,16 @@
         }
       }
     },
-    "/api/drivinglicense/v5/licenseactions/{licenseid}": {
+    "/api/drivinglicense/v4/{SSN}/licenseactions/{licenseid}": {
       "get": {
         "tags": ["Okuskirteini"],
         "summary": "Get all license actions",
         "parameters": [
           {
-            "name": "jwttoken",
-            "in": "header",
-            "description": "jwt token",
+            "name": "SSN",
+            "in": "path",
+            "description": "Person's social security number",
+            "required": true,
             "schema": { "type": "string" }
           },
           {
@@ -2062,14 +2077,14 @@
             "in": "header",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
             "required": true,
-            "schema": { "type": "string", "default": "5.0" }
+            "schema": { "type": "string", "default": "4.0" }
           }
         ],
         "responses": {
@@ -2585,19 +2600,19 @@
         "properties": {
           "ssn": {
             "type": "string",
-            "description": "Public identity number",
+            "description": "Social security number",
             "nullable": true
           },
           "name": { "type": "string", "description": "Name", "nullable": true },
           "driverLicenseId": {
             "type": "integer",
-            "description": "Númer ökuskírteinis ökukennara",
+            "description": "Instructors license id",
             "format": "int32",
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Driving teacher data transfer object"
+        "description": "Driving instructor data transfer object"
       },
       "LatestUnfinishedLicenseDto": {
         "type": "object",
