@@ -79,6 +79,7 @@ const uploadToS3 = (
     request.open('POST', presignedPost.url)
     request.send(createFormData(presignedPost, file))
   })
+
   return promise
 }
 
@@ -190,6 +191,8 @@ export const useS3Upload = (caseId: string) => {
             handleUIUpdate({
               id,
               name: file.name,
+              type: file.type,
+              size: file.size,
               percent,
               status: 'uploading',
               category,
@@ -207,6 +210,8 @@ export const useS3Upload = (caseId: string) => {
             {
               id,
               name: file.name,
+              type: file.type,
+              size: file.size,
               percent: 100,
               status: 'done',
               category,
@@ -218,6 +223,8 @@ export const useS3Upload = (caseId: string) => {
           handleUIUpdate({
             id,
             name: file.name,
+            type: file.type,
+            size: file.size,
             status: 'error',
             category,
           })
@@ -375,7 +382,7 @@ export const useS3Upload = (caseId: string) => {
       upload(
         [
           [
-            { name: file.name, type: file.type ?? '' } as File,
+            { name: file.name, type: file.type ?? '', size: file.size } as File,
             file.id ?? file.name,
           ],
         ],
@@ -414,15 +421,15 @@ export const useS3Upload = (caseId: string) => {
   const generateSingleFileUpdate = useCallback(
     (prevFiles: UploadFile[], displayFile: UploadFile, newId?: string) => {
       const index = prevFiles.findIndex((f) => f.id === displayFile.id)
-      const displayFileWithId = {
-        ...displayFile,
-        id: newId ?? displayFile.id,
-      }
 
       if (index === -1) {
         return prevFiles
       }
 
+      const displayFileWithId = {
+        ...displayFile,
+        id: newId ?? displayFile.id,
+      }
       const next = [...prevFiles]
       next[index] = displayFileWithId
       return next
