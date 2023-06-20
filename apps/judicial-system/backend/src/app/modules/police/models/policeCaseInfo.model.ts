@@ -1,12 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class EndorsementMetadata {
+export class PoliceCaseInfo {
   @ApiProperty()
-  fullName!: string
-
+  policeCaseNumber!: string
   @ApiProperty()
-  locality!: string
-
+  place?: string
   @ApiProperty()
-  showName!: boolean
+  date?: Date
 }
