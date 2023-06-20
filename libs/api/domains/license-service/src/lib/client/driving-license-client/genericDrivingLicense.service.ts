@@ -124,18 +124,18 @@ export class GenericDrivingLicenseService
     }
 
     //slice out headers from base64 image string
-    //const image = data.licenseInfo?.licenseImgBase64
+    const image = licenseData[0]?.photo?.image
 
     if (!inputValues) return null
     //Fetch template from api?
     const payload: PassDataInput = {
       inputFieldValues: inputValues,
       expirationDate: licenseData[0]?.dateValidTo?.toISOString(),
-      /*thumbnail: image
+      thumbnail: image
         ? {
             imageBase64String: image.substring(image.indexOf(',') + 1).trim(),
           }
-        : null,*/
+        : null,
     }
 
     const pass = await this.smartApi.generatePkPass(

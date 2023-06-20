@@ -9,6 +9,7 @@ import { getLabel } from '../../utils/translations'
 import {
   RemarkCode,
   DriverLicenseDto as DriversLicense,
+  CategoryDto,
 } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
 import { info, format as formatSsn } from 'kennitala'
@@ -16,6 +17,46 @@ import { info, format as formatSsn } from 'kennitala'
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
 export const formatNationalId = (nationalId: string) => formatSsn(nationalId)
+
+const mapCategoryToRight = (
+  category: CategoryDto,
+  remarks?: Array<RemarkCode> | null,
+) => {
+  let right = `
+  Réttindaflokkur ${category.nr}, ${category.categoryName}\n  - Gildir til ${
+    category.dateTo ? format(category.dateTo, 'dd-MM-yyyy') : ''
+  }\n`
+
+  if (category.comment) {
+    right += `  - Tákntala: ${category.comment}`
+
+    if (remarks?.length) {
+      const commentName = remarks.find((r) => r.index === '78')?.name
+
+      right += commentName ? ` - ${commentName ?? ''}` : ''
+    }
+
+    right += '\n'
+  }
+
+  return right
+}
+
+const formatRights = (
+  categories: Array<CategoryDto> | null,
+  remarks?: Array<RemarkCode> | null,
+) => {
+  if (!categories) {
+    return
+  }
+
+  const rights = categories.reduce<string>(
+    (acc, curr) => `${acc} ${mapCategoryToRight(curr, remarks)}`,
+    '',
+  )
+
+  return rights ?? 'Engin réttindi'
+}
 
 export const createPkPassDataInput = (
   license?: DriversLicense | null,
@@ -67,28 +108,7 @@ export const createPkPassDataInput = (
     },
     {
       identifier: 'rettindi',
-      value: license.categories
-        ? license.categories?.reduce(
-            (acc, curr) =>
-              `${acc} Réttindaflokkur ${curr.nr}, ${
-                curr.categoryName
-              }\n - Gildir til ${
-                curr.dateTo ? format(curr.dateTo, 'dd-MM-yyy') : ''
-              } \n${
-                curr.comment
-                  ? ' - Tákntölur: ' +
-                    curr.comment +
-                    ' : ' +
-                    (remarks.length
-                      ? remarks.find((r) => r.index === curr.comment)?.name ??
-                        ''
-                      : '') +
-                    '\n'
-                  : ''
-              }\n`,
-            '',
-          )
-        : '',
+      value: formatRights(license.categories ?? null, remarks),
     },
     {
       identifier: 'athugasemdir',
