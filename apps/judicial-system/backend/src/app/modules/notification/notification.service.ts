@@ -552,7 +552,10 @@ export class NotificationService {
       theCase.defenderName,
       theCase.sessionArrangements,
     )
-    const calendarInvite = this.createICalAttachment(theCase)
+    const calendarInvite =
+      theCase.sessionArrangements === SessionArrangements.NONE_PRESENT
+        ? undefined
+        : this.createICalAttachment(theCase)
 
     return this.sendEmail(
       subject,
