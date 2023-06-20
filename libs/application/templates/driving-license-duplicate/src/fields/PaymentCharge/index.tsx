@@ -5,14 +5,29 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
-import { getCurrencyString } from '../../lib/utils'
+import { allowFakeCondition, getCurrencyString } from '../../lib/utils'
 import { PaymentCatalogItem } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
+import { YES } from '../../lib/constants'
+import { info } from 'kennitala'
 
 export const PaymentCharge: FC<FieldBaseProps> = ({ application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
-  const chargeCode = 'AY110'
+
+  // Change price based on age
+  let chargeCode = 'AY110'
+  let age = info(application.applicant).age
+  if (allowFakeCondition(YES)(application.answers)) {
+    age = parseInt(
+      getValueViaPath<string>(application.answers, 'fakeData.age') ?? '25',
+      10,
+    )
+  }
+  if (age > 65) {
+    chargeCode = 'AY113'
+  }
+
   const chargeItems = getValueViaPath(
     application.externalData,
     'payment.data',

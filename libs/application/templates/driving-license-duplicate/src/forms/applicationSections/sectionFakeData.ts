@@ -58,12 +58,12 @@ export const sectionFakeData = buildSubSection({
           condition: allowFakeCondition(YES),
           options: [
             {
-              value: 'none',
-              label: 'Engin',
-            },
-            {
               value: 'B-full',
               label: 'B réttindi',
+            },
+            {
+              value: 'none',
+              label: 'Engin',
             },
           ],
         }),
@@ -108,6 +108,22 @@ export const sectionFakeData = buildSubSection({
             {
               value: NO,
               label: 'Nei',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.age',
+          title: 'Aldur umsækjanda',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          options: [
+            {
+              value: '80',
+              label: '65 ára eða eldri',
+            },
+            {
+              value: '25',
+              label: 'Yngri en 65 ára',
             },
           ],
         }),
