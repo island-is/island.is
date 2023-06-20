@@ -9969,16 +9969,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/axios@npm:0.0.7":
-  version: 0.0.7
-  resolution: "@nestjs/axios@npm:0.0.7"
-  dependencies:
-    axios: 0.26.0
+"@nestjs/axios@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@nestjs/axios@npm:2.0.0"
   peerDependencies:
-    "@nestjs/common": ^7.0.0 || ^8.0.0
+    "@nestjs/common": ^7.0.0 || ^8.0.0 || ^9.0.0
+    axios: ^1.3.1
     reflect-metadata: ^0.1.12
     rxjs: ^6.0.0 || ^7.0.0
-  checksum: e07a6606f1f4ad6d19e2c39531b29e16cb8d10a68dcf6c4d2204eb6d27c15f7aba5c2d43062e0d019fa06c6c79061e14bcafc3080b39862e1e87932162049982
+  checksum: bfadc38c3eed5aa78a39fa62b3026a99ea019a759f1da299c3efb667b07b1129b9c2eaa74a4a5bd2793983c94e9a77ce6cc3802e2399a8861dad8c14d9705be1
   languageName: node
   linkType: hard
 
@@ -10225,18 +10224,55 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/terminus@npm:7.0.1":
-  version: 7.0.1
-  resolution: "@nestjs/terminus@npm:7.0.1"
+"@nestjs/terminus@npm:9.2.2":
+  version: 9.2.2
+  resolution: "@nestjs/terminus@npm:9.2.2"
   dependencies:
-    check-disk-space: 2.1.0
-    deprecate: ^1.1.1
+    boxen: 5.1.2
+    check-disk-space: 3.3.1
   peerDependencies:
-    "@nestjs/common": ^7.0.0
-    "@nestjs/core": ^7.0.0
-    reflect-metadata: ^0.1.13
-    rxjs: ^6.5.4
-  checksum: 8302835eda6b55a74edf46ec41c49ed666d7ee75513b7132283a24ac699ae8b9d7ca2b3ee57e7b968d4a61aa4c198b075ad6d57260d1570fb51636b0c9c8b57b
+    "@grpc/grpc-js": "*"
+    "@grpc/proto-loader": "*"
+    "@mikro-orm/core": "*"
+    "@mikro-orm/nestjs": "*"
+    "@nestjs/axios": "*"
+    "@nestjs/common": 9.x
+    "@nestjs/core": 9.x
+    "@nestjs/microservices": "*"
+    "@nestjs/mongoose": "*"
+    "@nestjs/sequelize": "*"
+    "@nestjs/typeorm": "*"
+    mongoose: "*"
+    reflect-metadata: 0.1.x
+    rxjs: 7.x
+    sequelize: "*"
+    typeorm: "*"
+  peerDependenciesMeta:
+    "@grpc/grpc-js":
+      optional: true
+    "@grpc/proto-loader":
+      optional: true
+    "@mikro-orm/core":
+      optional: true
+    "@mikro-orm/nestjs":
+      optional: true
+    "@nestjs/axios":
+      optional: true
+    "@nestjs/microservices":
+      optional: true
+    "@nestjs/mongoose":
+      optional: true
+    "@nestjs/sequelize":
+      optional: true
+    "@nestjs/typeorm":
+      optional: true
+    mongoose:
+      optional: true
+    sequelize:
+      optional: true
+    typeorm:
+      optional: true
+  checksum: c511dc30f70ffb00aa09c4524b38715c366aed3e075048adff6635e7206aeaf70d1728ae0de36fe0e7f3789b3cfe70100e2c571c00aa301e7bf2163cc6ee16cd
   languageName: node
   linkType: hard
 
@@ -20451,7 +20487,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"boxen@npm:^5.1.2":
+"boxen@npm:5.1.2, boxen@npm:^5.1.2":
   version: 5.1.2
   resolution: "boxen@npm:5.1.2"
   dependencies:
@@ -21439,10 +21475,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"check-disk-space@npm:2.1.0":
-  version: 2.1.0
-  resolution: "check-disk-space@npm:2.1.0"
-  checksum: dc52d22cd2db5f7012de71b07792461a8b85d70a114fefba5ee4a52d231354d9a9fa8ef9e89806c9be0defddcbb4e32554a01df79e4a88c5d9e750a8a921a453
+"check-disk-space@npm:3.3.1":
+  version: 3.3.1
+  resolution: "check-disk-space@npm:3.3.1"
+  checksum: 90b7b77ab932be0c0a24c5f68778d3c0e9179686282b04d84b1272a511a1c55b9f184c98f12b1a1628b832934971d66e63acaa9e3c82f14d9d221a4848b4cf8b
   languageName: node
   linkType: hard
 
@@ -24700,13 +24736,6 @@ __metadata:
   version: 0.11.0
   resolution: "dependency-graph@npm:0.11.0"
   checksum: 477204beaa9be69e642bc31ffe7a8c383d0cf48fa27acbc91c5df01431ab913e65c154213d2ef83d034c98d77280743ec85e5da018a97a18dd43d3c0b78b28cd
-  languageName: node
-  linkType: hard
-
-"deprecate@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "deprecate@npm:1.1.1"
-  checksum: ca55dce4611fd1dda5bb669fdc073377336780ffcc0796495b7ac0cda46f1af34bd0d0b375a0dd3f2f3780ff9ddc56ef23215893df7b11001e13cdeeb5f2e9fc
   languageName: node
   linkType: hard
 
@@ -32655,7 +32684,7 @@ __metadata:
     "@island.is/regulations-tools": 0.7.9
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@nestjs/apollo": 10.1.0
-    "@nestjs/axios": 0.0.7
+    "@nestjs/axios": 2.0.0
     "@nestjs/bull": 0.1.2
     "@nestjs/common": 9.4.2
     "@nestjs/config": 0.5.0
@@ -32667,7 +32696,7 @@ __metadata:
     "@nestjs/schematics": 9.2.0
     "@nestjs/sequelize": 9.0.2
     "@nestjs/swagger": 6.3.0
-    "@nestjs/terminus": 7.0.1
+    "@nestjs/terminus": 9.2.2
     "@nestjs/testing": 9.4.2
     "@nrwl/js": 16.3.2
     "@nx/cypress": 16.3.2
@@ -32787,7 +32816,7 @@ __metadata:
     aws-elasticsearch-connector: 9.0.0
     aws-sdk: 2.814.0
     aws4: 1.11.0
-    axios: 0.21.4
+    axios: 1.4.0
     babel-jest: 29.4.3
     babel-loader: 8.2.5
     babel-plugin-transform-class-properties: 6.24.1
