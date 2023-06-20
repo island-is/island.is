@@ -38,10 +38,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     service.name,
   )
   const serviceDef = service
-  const {
-    namespace,
-    securityContext,
-  } = serviceDef
+  const { namespace, securityContext } = serviceDef
   const result: HelmService = {
     enabled: true,
     namespace: namespace,
@@ -74,13 +71,11 @@ const serializeService: SerializeMethod<HelmService> = async (
   }
 
   // hack - fix root cause in calico on staging
-  if (serviceDef.grantNamespacesEnabled && env1.type == "staging" ) {
-    result.grantNamespaces = [],
-    result.grantNamespacesEnabled = false
-  }
-  else {
-    result.grantNamespaces = serviceDef.grantNamespaces,
-    result.grantNamespacesEnabled = serviceDef.grantNamespacesEnabled
+  if (serviceDef.grantNamespacesEnabled && env1.type == 'staging') {
+    ;(result.grantNamespaces = []), (result.grantNamespacesEnabled = false)
+  } else {
+    ;(result.grantNamespaces = serviceDef.grantNamespaces),
+      (result.grantNamespacesEnabled = serviceDef.grantNamespacesEnabled)
   }
   // command and args
   if (serviceDef.cmds) {
