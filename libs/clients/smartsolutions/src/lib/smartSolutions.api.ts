@@ -356,6 +356,7 @@ export class SmartSolutionsApi {
   async generatePkPass(
     payload: PassDataInput,
     nationalId: string,
+    onCreateCallback?: () => Promise<void>,
   ): Promise<Result<Pass>> {
     const findPassRes = await this.findPass(nationalId)
 
@@ -393,7 +394,13 @@ export class SmartSolutionsApi {
     })
 
     //Create the pass
-    return await this.postPass(payload)
+    const createdPass = await this.postPass(payload)
+
+    if (createdPass.ok && onCreateCallback) {
+      onCreateCallback()
+    }
+
+    return createdPass
   }
 
   async revokePkPass(nationalId: string): Promise<Result<RevokePassData>> {
