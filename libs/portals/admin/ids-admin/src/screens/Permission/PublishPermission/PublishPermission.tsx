@@ -2,13 +2,13 @@ import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { useParams, useRevalidator } from 'react-router-dom'
 
 import { validateFormData } from '@island.is/react-spa/shared'
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import { usePublishPermissionMutation } from './PublishPermission.generated'
 import { publishSchema } from '../../../utils/schemas'
 import { PublishPermissionForm } from '../../../components/PublishPermissionForm'
 import { usePermission } from '../PermissionContext'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { m } from '@island.is/portals/admin/ids-admin'
+import { m } from '../../../lib/messages'
 
 export const PublishPermission = () => {
   const { tenant: tenantId, permission: permissionId } = useParams() as {
