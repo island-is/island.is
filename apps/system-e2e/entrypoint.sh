@@ -27,11 +27,11 @@ cat <<EOF
 To access the detailed report (with any failure traces), download it from the command
 line like this, extract and open 'index.html':
 
-  aws s3 cp $TEST_RESULTS_S3 ./tesults-results.zip
+  aws s3 cp ${TEST_RESULTS_S3:-'<s3-bucket-name>'} ./tesults-results.zip
   unzip ./tesults-results.zip
   firefox ./tesults-results/index.html
 
-Additionally a web-based overview (experimental) can be found at
+Additionally a web-based overview can be found at
   https://www.tesults.com/digital-iceland/monorepo
 EOF
 
