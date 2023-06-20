@@ -1,6 +1,5 @@
 const DefinePlugin = require('webpack/lib/DefinePlugin')
 const { VanillaExtractPlugin } = require('@vanilla-extract/webpack-plugin')
-const { getWebpackConfig } = require('@nx/react/plugins/webpack')
 const webpack = require('webpack')
 
 /**
@@ -104,16 +103,36 @@ const addNodeModulesPolyfill = (config) => {
 }
 
 /**
+ * NX's withReact loads svg's as React components when imported from js/ts files.
+ * But it doesn't work when dynamically imported like this: import(`./svg/${dynamic}.svg`)
+ *
+ * This pattern is currently used in financial-aid to load logos. It also loads them in an <img> tag, so it expects
+ * URLs rather than react components. Ideally we can devise a better way to manage these logos and get rid of this
+ * hack in the future.
+ *
+ * UPGRADE WARNING: This is designed to catch SVGs which are unhandled by withReact.
+ * @param config
+ */
+function addFallbackSvgLoader(config) {
+  config.module.rules.push({
+    test: /\.svg$/,
+    issuer: { not: /\.(js|ts|md)x?$/ },
+    loader: require.resolve('file-loader'),
+    options: {
+      name: `[name].[contenthash:20].[ext]`,
+    },
+  })
+}
+
+/**
  * Adds common web related configs to webpack
  * @param {*} config Webpack config object
  * @param {*} context  NxWebpackExecutionContext
  */
-module.exports = function (config, context) {
-  // Call @nrwl/react plugin for default webpack config
-  //getWebpackConfig(config, context)
-
+module.exports = function (config) {
   setApiMocks(config)
   addNodeModulesPolyfill(config)
+  addFallbackSvgLoader(config)
 
   fixPostcss(config)
 
@@ -122,32 +141,6 @@ module.exports = function (config, context) {
 
   // Disable stats for child compilations
   config.stats.children = false
-
-  const rules = config.module.rules
-  rules.pop()
-  rules.push({
-    test: /\.svg$/,
-    type: 'asset/inline',
-    //issuer: /\.[jt]sx?$/,
-    use: [
-      { loader: require.resolve('@svgr/webpack'), options: { svgo: false } },
-    ],
-  })
-  const svgRule = rules.find((rule) => rule.test.toString().includes('svg'))
-  // svgRule.use.splice(1, 1)
-  // svgRule.use.push({
-  //   loader:
-  //     '/Users/saevar/git/island.is/island.is/node_modules/url-loader/dist/cjs.js',
-  //   options: { limit: 10000, name: '[name].[hash:7].[ext]', esModule: false },
-  // })
-
-  console.log({
-    rules,
-    svgRule,
-    svgRuleUse: svgRule.use,
-    //svgrOptions: svgRule.use[0].options,
-    //fileOptions: svgRule.use[1].options,
-  })
 
   return config
 }
