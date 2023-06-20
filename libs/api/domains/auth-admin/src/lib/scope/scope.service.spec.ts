@@ -28,8 +28,18 @@ const mockCreateScopes = {
   scope1: {
     tenantId: TENANT_ID,
     name: '@island.is/scope',
-    displayName: 'Scope display name',
-    description: 'Scope description',
+    displayName: [
+      {
+        locale: 'is',
+        value: 'Scope display name',
+      },
+    ],
+    description: [
+      {
+        locale: 'is',
+        value: 'Scope description',
+      },
+    ],
   },
 }
 
@@ -158,6 +168,8 @@ describe('ScopeService', () => {
     it('should create scope for specific tenant for all environments', async () => {
       const scopeResponses = await scopeService.createScope(currentUser, {
         ...mockCreateScopes.scope1,
+        description: mockCreateScopes.scope1.description[0].value,
+        displayName: mockCreateScopes.scope1.displayName[0].value,
         environments: [
           Environment.Development,
           Environment.Staging,
@@ -187,6 +199,8 @@ describe('ScopeService', () => {
     it('should create scope for specific tenant for one environment', async () => {
       const scopeResponses = await scopeService.createScope(currentUser, {
         ...mockCreateScopes.scope1,
+        description: mockCreateScopes.scope1.description[0].value,
+        displayName: mockCreateScopes.scope1.displayName[0].value,
         environments: [Environment.Production],
       })
 
