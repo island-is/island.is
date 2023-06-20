@@ -23,9 +23,7 @@ print_build_usage() {
 parse_build_args() {
   local target="output-playwright"
   local dockerfile="Dockerfile"
-  local publish=""
   local tag="latest"
-  local cache_from="local"
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
