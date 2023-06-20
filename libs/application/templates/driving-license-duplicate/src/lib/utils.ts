@@ -45,8 +45,12 @@ export const requirementsMet = (
     { ...externalData, ...answers },
     signaturePath,
   )
-  if(allowFakeCondition(YES)) {
-    return photo === NO || signature === NO
+  if (allowFakeCondition(YES)) {
+    console.log({
+      photo,
+      signature,
+    })
+    return !(photo === NO || signature === NO)
   }
   return !!photo && !!signature
 }

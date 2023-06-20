@@ -50,11 +50,11 @@ export const declined: Form = buildForm({
             component: 'Alert',
             condition: (answers, externalData) => {
               if (allowFakeCondition(YES)) {
-                const hasQualityPhoto = getValueViaPath<boolean>(
+                const hasQualityPhoto = getValueViaPath<string>(
                   answers,
                   'fakeData.qualityPhoto',
                 )
-                return !hasQualityPhoto
+                return hasQualityPhoto === NO
               }
               return (
                 (externalData.qualityPhoto as HasQualityPhotoData)?.data
@@ -75,11 +75,11 @@ export const declined: Form = buildForm({
             component: 'Alert',
             condition: (answers, externalData) => {
               if (allowFakeCondition(YES)) {
-                const hasQualitySig = getValueViaPath<boolean>(
+                const hasQualitySig = getValueViaPath<string>(
                   answers,
                   'fakeData.qualitySignature',
                 )
-                return !hasQualitySig
+                return hasQualitySig === NO
               }
               return (
                 (externalData.qualitySignature as HasQualitySignatureData)?.data
