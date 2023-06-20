@@ -1,18 +1,14 @@
-{
-  "id": "2ef92dea-2e9c-40b6-adda-57bccfb16c0b",
-  "expirationDate": "2028-01-01T12:00:00Z",
-  "inputFieldValues": [
-    {
-      "identifier": "gildir",
-      "value": "15.01.2024"
-    },
-    {
-      "identifier": "name",
-      "value": "BINGG"
-    },
-    {
-      "identifier": "kennitala",
-      "value": "0102491479"
-    }
-  ]
-}
+[
+  {
+    "identifier": "gildir",
+    "value": "15.01.2024"
+  },
+  {
+    "identifier": "name",
+    "value": "BINGG"
+  },
+  {
+    "identifier": "kennitala",
+    "value": "0102491479"
+  }
+]
