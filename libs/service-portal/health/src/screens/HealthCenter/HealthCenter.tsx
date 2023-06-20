@@ -45,8 +45,6 @@ const HealthCenter = () => {
     })
   }
 
-  console.log(JSON.stringify(data?.rightsPortalHealthCenterHistory))
-
   if (error && !loading) {
     return (
       <ErrorScreen
