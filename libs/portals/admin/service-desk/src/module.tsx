@@ -3,9 +3,11 @@ import { m } from './lib/messages'
 import { ServiceDeskPaths } from './lib/paths'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { lazy } from 'react'
+import { GetCompaniesAction } from './screens/Companies/GetCompanies.action'
+import { procurersLoader } from './screens/Procurers/Procurers.loader'
 
-const ServiceDesk = lazy(() => import('./screens/service-desk'))
-
+const Companies = lazy(() => import('./screens/Companies/Companies'))
+const Procures = lazy(() => import('./screens/Procurers/Procurers'))
 export const serviceDeskModule: PortalModule = {
   name: m.serviceDesk,
   layout: 'full',
@@ -15,7 +17,15 @@ export const serviceDeskModule: PortalModule = {
     {
       name: m.serviceDesk,
       path: ServiceDeskPaths.Root,
-      element: <ServiceDesk />,
+      element: <Companies />,
+      action: GetCompaniesAction(props),
+    },
+    {
+      name: m.procures,
+      path: ServiceDeskPaths.Procurers,
+      element: <Procures />,
+      loader: procurersLoader(props),
+      navHide: true,
     },
   ],
 }

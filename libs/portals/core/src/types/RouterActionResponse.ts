@@ -6,12 +6,15 @@ interface CommonActionErrorFields<Errors> {
   globalError?: boolean
 }
 
-export type RouterActionResponse<Data, Errors, Intent extends string> = {
+export type RawRouterActionResponse<Data, Errors> = {
   data: Data | null
+} & CommonActionErrorFields<Errors>
+
+export type RouterActionResponse<Data, Errors, Intent extends string> = {
   /**
    * Intent of the form
    */
   intent: Intent
-} & CommonActionErrorFields<Errors>
+} & RawRouterActionResponse<Data, Errors>
 
 export type RouterActionRedirect<Errors> = CommonActionErrorFields<Errors>

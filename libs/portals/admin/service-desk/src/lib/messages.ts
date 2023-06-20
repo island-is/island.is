@@ -25,4 +25,16 @@ export const m = defineMessages({
     id: 'service.portal:search-by-national-id',
     defaultMessage: 'Leita eftir kennitölu',
   },
+  listProcurers: {
+    id: 'service.portal:list-procurers',
+    defaultMessage: 'Listi af prókúruhöfum:',
+  },
+  back: {
+    id: 'service.portal:back',
+    defaultMessage: 'Til baka',
+  },
+  viewProcures: {
+    id: 'service.portal:view-procures',
+    defaultMessage: 'Skoða nánar',
+  },
 })
