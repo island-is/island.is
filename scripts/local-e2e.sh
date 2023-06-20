@@ -2,25 +2,33 @@
 
 set -euo pipefail
 
+. "./scripts/ci/_common.sh"
+. "./scripts/utils.sh"
+
+export APP="${APP:-system-e2e}"
+export DOCKER_TAG="${DOCKER_TAG:-latest}"
+export CI=""
+export PUBLISH=local
+
 print_build_usage() {
   echo "Usage: build-container.sh [OPTIONS]"
   echo "Options:"
   echo "  -t, --target            Set the target build stage"
   echo "  -f, --dockerfile        Specify the Dockerfile to use (default: Dockerfile)"
   echo "  -p, --publish           Publish the image to a registry with the specified tag"
-  echo "  -c, --cache-from        Cache images from the specified source (defaut: localhost)"
+  # echo "  -c, --cache-from        Cache images from the specified source (defaut: localhost)"
   echo "  -h, --help              Show this help message"
 }
 
 parse_build_args() {
-  local target="localrun"
+  local target="output-playwright"
   local dockerfile="Dockerfile"
   local publish=""
   local tag="latest"
   local cache_from="local"
 
   while [[ $# -gt 0 ]]; do
-    case $1 in
+    case "$1" in
     -t | --target)
       target="$2"
       shift 2
@@ -30,11 +38,7 @@ parse_build_args() {
       shift 2
       ;;
     -p | --publish)
-      publish="$2"
-      shift 2
-      ;;
-    -c | --cache-from)
-      cache_from="$2"
+      export PUBLISH=true
       shift 2
       ;;
     --tag)
@@ -46,54 +50,13 @@ parse_build_args() {
       exit 0
       ;;
     *)
-      echo "Unknown option: $1"
+      error "Unknown option: $1"
       exit 1
       ;;
     esac
   done
 
-  build_container "$dockerfile" "$target" "$tag" "$publish" "$cache_from"
-}
-
-build_container() {
-  local dockerfile=$1
-  local target=$2
-  local tag=$3
-  local _publish=$4
-  local cache_from=$5
-
-  local build_cmd=""
-  if command -v podman &>/dev/null; then
-    build_cmd="podman build"
-    if [[ -n $cache_from ]]; then
-      build_cmd+=" --cache-from $cache_from"
-    fi
-  elif command -v docker &>/dev/null; then
-    build_cmd="DOCKER_BUILDKIT=1 docker build"
-    if [[ -n $cache_from ]]; then
-      build_cmd+=" --cache-from $cache_from"
-    fi
-  else
-    echo "Neither Podman nor Docker is installed. Please install one of them."
-    exit 1
-  fi
-
-  if [[ -n $tag ]]; then
-    build_cmd+=" --tag $target:$tag"
-  fi
-
-  if [[ -n $target ]]; then
-    build_cmd+=" --target $target"
-  fi
-
-  if [[ -n $dockerfile ]]; then
-    build_cmd+=" --file $dockerfile"
-  fi
-
-  build_cmd+=" ."
-
-  echo "Building container using: $build_cmd"
-  $build_cmd
+  ./scripts/ci/_podman.sh "$dockerfile" "$target"
 }
 
 print_run_usage() {
@@ -101,19 +64,29 @@ print_run_usage() {
   echo "Options:"
   # echo "  -v, --volume <directory>   Mount the specified directory as a volume for caching"
   # echo "  -c, --cache                Use yarn cache in current directory"
-  echo "  -i, --image <name>         Specify the name of the container image (default: localrun)"
+  echo "  -i, --image <name>         Specify the name of the container image (default: output-playwright)"
   echo "  -t, --tag <tag>            Specify the tag of the container image (default: latest)"
   echo "  -h, --help                 Show this help message"
 }
 
 parse_run_args() {
-  local image="localhost/localrun"
+  local image="localhost/$APP"
   local yarn_args=""
+  local run_args=""
   local tag="latest"
-  # local volume="${image##*/}-cache"
+  local env=()
+  local secrets_files=(".env.secret" "$HOME/.env.secret")
+  local dryrun=false
+  local secrets_out_file=".env.local-e2e"
+  local volumes=()
 
   while [[ $# -gt 0 ]]; do
-    case $1 in
+    case "$1" in
+    --)
+      shift
+      run_args="$*"
+      break
+      ;;
     -h | --help)
       print_run_usage
       exit 0
@@ -122,12 +95,36 @@ parse_run_args() {
       image="$2"
       shift 2
       ;;
-    -t | --tag)
-
+    -v | --volume)
+      volumes+=("$2")
       shift 2
       ;;
+    -t | --tag)
+      shift 2
+      ;;
+    --ci)
+      info "Running in CI mode"
+      export CI=true
+      shift
+      ;;
+    -e | --env)
+      env+=("$2")
+      shift 2
+      ;;
+    --secrets-file)
+      secrets_files+=("$2")
+      shift 2
+      ;;
+    --secrets-out-file)
+      secrets_out_file="$2"
+      shift 2
+      ;;
+    -n | --dry)
+      dryrun=true
+      shift
+      ;;
     -*)
-      echo "Unknown option: $1"
+      error "Unknown option: $1"
       exit 1
       ;;
     run | yarn)
@@ -140,13 +137,6 @@ parse_run_args() {
     esac
   done
 
-  run_container "$image" "$tag" "$yarn_args"
-}
-
-run_container() {
-  local image=$1
-  local tag=$2
-  local yarn_args=$3
   local container_name=${image##*/}
 
   local run_cmd=""
@@ -155,24 +145,64 @@ run_container() {
   elif command -v docker &>/dev/null; then
     run_cmd="docker run"
   else
-    echo "Neither Podman nor Docker is installed. Please install one of them."
+    error "Neither Podman nor Docker is installed. Please install one of them."
     exit 1
   fi
 
+  # Container runner arguments
   run_cmd+=" --rm"
   run_cmd+=" -it"
   run_cmd+=" --name ${container_name##*/}"
   run_cmd+=" --publish-all"
 
-  run_cmd+=" --volume $PWD:/data:z"
+  # If volumes array is not empty
+  if [[ "${#volumes[@]}" -gt 0 ]]; then
+    for volume in "${volumes[@]}"; do
+      run_cmd+=" --volume $volume:/data:z"
+    done
+  fi
 
+  for e in "${env[@]}"; do
+    run_cmd+=" --env $e"
+  done
+
+  debug "Loading secrets from secrets files"
+  for secrets_file in "${secrets_files[@]}"; do
+    # local secrets_out_file_looped="$secrets_out_file-$(sha1sum "$secrets_out_file" | head -c 8)"
+    if ! [[ -f "$secrets_file" ]]; then continue; fi
+    info "Loading secrets from $secrets_file"
+    # Parse secrets
+    while read -r secret; do
+      secret="${secret#export }"
+      # Only accept key-value pairs
+      if [[ -z "$secret" ]] || [[ "$secret" != *=* ]] || [[ "$secret" == \#* ]]; then continue; fi
+      local key="${secret%%=*}"
+      local value="${secret#*=}"
+      export "${key}"="${value}" || error "Failed setting secret $secret"
+      debug "Loaded secret $key=${value//?/*}"
+      echo "${secret%=*}=${secret##*=}" >>"$secrets_out_file"
+    done <"$secrets_file"
+  done
+  run_cmd+=" --env-file $secrets_out_file"
+
+  # Image to use
   run_cmd+=" $image:$tag"
 
-  if [[ -n $yarn_args ]]; then
+  # Image/program arguments
+  if [[ -n "$yarn_args" ]]; then
     run_cmd+=" yarn $yarn_args"
   fi
 
-  echo "Running container using: $run_cmd"
+  if [[ -n "$run_args" ]]; then
+    run_cmd+=" $run_args"
+  fi
+
+  info "Running container using: $run_cmd"
+  if [[ "$dryrun" == true ]]; then
+    info "Running in dry mode"
+    echo "$run_cmd"
+    return
+  fi
   $run_cmd
 }
 
@@ -185,7 +215,7 @@ print_general_usage() {
 
 parse_arguments() {
   while [[ $# -gt 0 ]]; do
-    case $1 in
+    case "$1" in
     build)
       shift
       parse_build_args "$@"
@@ -201,7 +231,7 @@ parse_arguments() {
       exit 0
       ;;
     *)
-      echo "Unknown command: $1"
+      error "Unknown command: $1"
       print_general_usage
       exit 1
       ;;
