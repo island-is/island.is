@@ -14,7 +14,7 @@ test.describe('Admin portal access control', () => {
       storageState: 'service-portal-faereyjar.json',
       homeUrl,
       phoneNumber: '0102399',
-      delegation: '65° Arctic ehf',
+      delegation: '65° Artic ehf',
     })
   })
 
@@ -112,7 +112,7 @@ test.describe('Admin portal access control', () => {
         browser,
         homeUrl,
         phoneNumber: '0103019',
-        delegation: '65° Arctic ehf',
+        delegation: '65° Artic ehf',
       })
       const receiverPage = await contextReceiver.newPage()
       await receiverPage.goto(homeUrl)
