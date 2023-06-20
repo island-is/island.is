@@ -165,7 +165,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesResponse = async (
       title: item.fyrirsogn,
       applicationDeadlineFrom: item.umsoknarfrestur_fra,
       applicationDeadlineTo: item.umsoknarfrestur_til,
-      intro: introHtml.replace(/<[^>]+>/g, ' '),
+      intro: '',
       fieldOfWork: item.starfssvid,
       institutionName: item.stofnunHeiti,
       logoUrl: item.logoURL,
@@ -177,9 +177,8 @@ export const mapIcelandicGovernmentInstitutionVacanciesResponse = async (
 
   for (let i = 0; i < mappedData.length; i += 1) {
     if (intros[i]) {
-      mappedData[i].intro = intros[i]
+      mappedData[i].intro = shortenText(intros[i], 80)
     }
-    mappedData[i].intro = shortenText(mappedData[i].intro, 80)
   }
 
   mappedData.sort((a, b) => {

@@ -99,9 +99,9 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   const searchTermHasBeenInitialized = useRef(false)
 
   const filteredVacancies = vacancies.filter((vacancy) => {
-    const searchTermMatches = vacancy.title
-      ?.toLowerCase()
-      ?.includes(searchTerm.toLowerCase())
+    const searchTermMatches =
+      vacancy.title?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+      vacancy.institutionName?.toLowerCase()?.includes(searchTerm.toLowerCase())
 
     let shouldBeShown = searchTermMatches
 
