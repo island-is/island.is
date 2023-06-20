@@ -101,7 +101,7 @@ export class OldPkPassClient {
       cached = await this.cacheManager.get(this.pkpassCacheKey)
     } catch (e) {
       this.logger.warn({
-        ...e,
+        exception: e.message,
         category: LOG_CATEGORY,
       })
       return null
