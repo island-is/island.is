@@ -40,6 +40,16 @@
             "schema": { "type": "boolean" }
           },
           {
+            "name": "supervisorRegistered",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "onlyInOwnerChangeProcess",
+            "in": "query",
+            "schema": { "type": "boolean" }
+          },
+          {
             "name": "locale",
             "in": "query",
             "description": "",

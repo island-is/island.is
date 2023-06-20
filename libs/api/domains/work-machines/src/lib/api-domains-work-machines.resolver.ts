@@ -31,7 +31,7 @@ export class WorkMachinesResolver {
     >,
   ) {}
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.workMachines)
   @Query(() => WorkMachineCollection, {
     name: 'workMachinesWorkMachineCollection',
     nullable: true,

@@ -29,6 +29,16 @@ export class GetWorkMachineCollectionInput {
   showDeregisteredMachines?: boolean
 
   @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  supervisorRegistered?: boolean
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  onlyInOwnerChangeProcess?: boolean
+
+  @Field({ nullable: true })
   @IsString()
   @IsOptional()
   locale?: string

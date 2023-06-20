@@ -653,7 +653,7 @@ export const messages = defineMessages({
   },
   showOwnerSupervisorRegisteredWorkMachines: {
     id: 'sp.work-machines:show-supervisor',
-    defaultMessage: 'Tæki með skráðann umráðamann',
+    defaultMessage: 'Með skráðann umráðamann',
   },
   workMachinesSearchPlaceholder: {
     id: 'sp.work-machines:search-placeholder',

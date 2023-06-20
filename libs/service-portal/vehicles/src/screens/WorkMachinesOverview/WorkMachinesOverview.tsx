@@ -82,6 +82,8 @@ const WorkMachinesOverview = () => {
         searchQuery: activeSearch,
         orderBy: DEFAULT_ORDER_BY,
         showDeregisteredMachines: activeFilters.deregistered.value,
+        supervisorRegistered: activeFilters.registeredSupervisor.value,
+        onlyInOwnerChangeProcess: activeFilters.ownerChange.value,
       },
     },
   })
