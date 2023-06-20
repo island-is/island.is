@@ -8,6 +8,8 @@ import { AirDiscountSchemeModule } from '@island.is/api/domains/air-discount-sch
 import { ApiCatalogueModule } from '@island.is/api/domains/api-catalogue'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { AssetsModule } from '@island.is/api/domains/assets'
+import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
+import { SessionsModule } from '@island.is/api/domains/sessions'
 import { AuthModule as AuthDomainModule } from '@island.is/api/domains/auth'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
