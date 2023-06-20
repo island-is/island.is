@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IStory } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 
@@ -10,7 +11,7 @@ export class Story {
   @Field()
   title!: string
 
-  @Field(() => Image)
+  @CacheField(() => Image)
   logo!: Image
 
   @Field()

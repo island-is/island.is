@@ -1,4 +1,4 @@
-import { Box, FocusableBox } from '@island.is/island-ui/core'
+import { Box, Inline } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../../../utils/helpers'
 import { ReactNode, useState } from 'react'
 import { Area } from '../../../../types/enums'
@@ -79,13 +79,7 @@ export const SubscriptionCard = ({
         isToggled={isOpen}
         onToggle={onClick}
       >
-        <FocusableBox
-          component="button"
-          onClick={onClick}
-          style={{ minHeight: '24px' }}
-        >
-          {titleColumn}
-        </FocusableBox>
+        <Box style={{ paddingRight: '8px' }}>{titleColumn}</Box>
         {children}
       </CardGridContainer>
       {!isOpen && toggleAble && (

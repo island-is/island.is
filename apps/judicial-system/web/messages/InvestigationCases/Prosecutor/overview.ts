@@ -16,20 +16,20 @@ export const icOverview = {
         'Notaður sem skilaboð í upplýsingarboxi á yfirlits skrefi í rannsóknarheimildum.',
     },
   }),
-  seenByDefenderAlert: defineMessages({
+  openedByDefenderAlert: defineMessages({
     title: {
       id:
-        'judicial.system.investigation_cases:overview.sections.seen_by_defender_alert.title',
-      defaultMessage: 'Krafa sótt af verjanda',
+        'judicial.system.investigation_cases:overview.sections.opened_by_defender_alert.title',
+      defaultMessage: 'Mál opnað af verjanda',
       description:
-        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
+        'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
     },
     text: {
       id:
-        'judicial.system.investigation_cases:overview.sections.seen_by_defender_alert.text',
-      defaultMessage: 'Verjandi skráði sig inn til að sækja kröfuskjal {when}.',
+        'judicial.system.investigation_cases:overview.sections.opened_by_defender_alert.text',
+      defaultMessage: 'Verjandi hefur opnað málið í Réttarvörslugátt {when}.',
       description:
-        'Notaður sem titill fyrir "Krafa sótt af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
+        'Notaður sem titill fyrir "Mál opnað af verjanda" hluta á yfirlitsskrefi í rannsóknarheimildum.',
     },
   }),
   heading: defineMessage({
