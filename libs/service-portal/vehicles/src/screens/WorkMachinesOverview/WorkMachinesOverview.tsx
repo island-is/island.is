@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  useGetWorkMachineDocumentLazyQuery,
   useGetWorkMachineDocumentQuery,
   useGetWorkMachinesQuery,
 } from './WorkMachinesOverview.generated'
@@ -73,6 +74,11 @@ const WorkMachinesOverview = () => {
 
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)
 
+  const [
+    getDocumentExport,
+    { data: fileData },
+  ] = useGetWorkMachineDocumentLazyQuery()
+
   const { loading, error, data } = useGetWorkMachinesQuery({
     variables: {
       input: {
@@ -87,23 +93,6 @@ const WorkMachinesOverview = () => {
       },
     },
   })
-
-  const { data: csvData } = useGetWorkMachineDocumentQuery({
-    variables: {
-      input: {
-        fileType: WorkMachinesFileType.CSV,
-      },
-    },
-  })
-
-  const { data: excelData } = useGetWorkMachineDocumentQuery({
-    variables: {
-      input: {
-        fileType: WorkMachinesFileType.EXCEL,
-      },
-    },
-  })
-
   useDebounce(
     () => {
       setActiveSearch(searchTerm)
@@ -111,6 +100,24 @@ const WorkMachinesOverview = () => {
     500,
     [searchTerm],
   )
+
+  useEffect(() => {
+    if (fileData?.workMachinesWorkMachineCollectionDocument?.downloadUrl) {
+      formSubmit(
+        fileData.workMachinesWorkMachineCollectionDocument?.downloadUrl,
+      )
+    }
+  }, [fileData])
+
+  const getFileExport = (fileType: WorkMachinesFileType) => {
+    getDocumentExport({
+      variables: {
+        input: {
+          fileType: fileType,
+        },
+      },
+    })
+  }
 
   const onFilterChange = (key: keyof FilterValues, value: FilterValue) => {
     setActiveFilters({
@@ -135,11 +142,6 @@ const WorkMachinesOverview = () => {
       />
     )
   }
-
-  const csvDownloadUrl =
-    csvData?.workMachinesWorkMachineCollectionDocument?.downloadUrl ?? ''
-  const excelDownloadUrl =
-    excelData?.workMachinesWorkMachineCollectionDocument?.downloadUrl ?? ''
 
   return (
     <Box marginBottom={[6, 6, 10]}>
@@ -216,11 +218,11 @@ const WorkMachinesOverview = () => {
                   icon="download"
                   items={[
                     {
-                      onClick: () => formSubmit(csvDownloadUrl),
+                      onClick: () => getFileExport(WorkMachinesFileType.CSV),
                       title: formatMessage(m.getAsCsv),
                     },
                     {
-                      onClick: () => formSubmit(excelDownloadUrl),
+                      onClick: () => getFileExport(WorkMachinesFileType.EXCEL),
                       title: formatMessage(m.getAsExcel),
                     },
                   ]}
