@@ -154,8 +154,6 @@ export class OldPkPassClient {
         throw new Error('null from getPkPassToken')
       }
 
-      this.logger.debug('token gotten')
-
       const res = await fetchToPerform(token)
 
       if (res?.status !== 401) {
@@ -176,7 +174,6 @@ export class OldPkPassClient {
   }
 
   private async getPkPassToken(force = false): Promise<string | null> {
-    this.logger.debug('in getpkpasstoken')
     let res: Response | null = null
 
     if (!force) {
@@ -228,7 +225,6 @@ export class OldPkPassClient {
 
     if (response.status === 1 && token) {
       const ttl = this.parseTtlFromTokenExpiry(response.data?.EXPIRED_ON)
-      this.logger.debug('paring ttl token')
       if (this.cacheManager && ttl) {
         try {
           await this.cacheManager.set(this.pkpassCacheKey, token, ttl)
