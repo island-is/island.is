@@ -5,17 +5,15 @@ import {
   LinkV2,
   Stack,
   Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import { CardSkeleton } from '../../../../components/'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import * as styles from './AdviceCard.css'
 import { getShortDate } from '../../../../utils/helpers/dateFunctions'
-import env from '../../../../lib/environment'
 import { REVIEW_CARD_SCROLL_HEIGHT } from '../../../../utils/consts/consts'
-import { renderDocFileName } from '../../utils'
 import localization from '../../Case.json'
 import { AdviceResult } from '../../../../types/interfaces'
+import DocFileName from '../DocFileName/DocFileName'
 
 interface Props {
   advice: AdviceResult
@@ -109,35 +107,7 @@ export const AdviceCard = ({ advice }: Props) => {
           advice?.adviceDocuments &&
           advice?.adviceDocuments.length > 0 &&
           advice?.adviceDocuments.map((doc, index) => {
-            return (
-              <Tooltip
-                placement="right"
-                as="span"
-                text={doc.fileName}
-                key={index}
-                fullWidth
-              >
-                <span>
-                  <LinkV2
-                    href={`${env.backendDownloadUrl}${doc.id}`}
-                    color="blue400"
-                    underline="normal"
-                    underlineVisibility="always"
-                    newTab
-                    key={index}
-                  >
-                    {renderDocFileName(doc.fileName)}
-                    <Icon
-                      size="small"
-                      aria-hidden="true"
-                      icon="document"
-                      type="outline"
-                      className={styles.iconStyle}
-                    />
-                  </LinkV2>
-                </span>
-              </Tooltip>
-            )
+            return <DocFileName doc={doc} key={index} isAdvice />
           })}
       </Stack>
     </CardSkeleton>

@@ -1,7 +1,9 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { INumberBulletSection } from '../generated/contentfulTypes'
 import { NumberBullet, mapNumberBullet } from './numberBullet.model'
-import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class NumberBulletGroup {
@@ -11,7 +13,7 @@ export class NumberBulletGroup {
   @Field(() => Int)
   defaultVisible!: number
 
-  @Field(() => [NumberBullet])
+  @CacheField(() => [NumberBullet])
   bullets!: NumberBullet[]
 }
 
