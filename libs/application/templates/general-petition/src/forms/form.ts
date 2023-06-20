@@ -10,6 +10,7 @@ import {
   buildKeyValueField,
   buildDividerField,
   buildDescriptionField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -107,15 +108,17 @@ export const form: Form = buildForm({
             }),
             buildDescriptionField({
               id: 'space',
-              title: '',
+              title: m.listOwner,
+              titleVariant: 'h3',
               space: 'containerGutter',
             }),
-            buildTextField({
+            buildPhoneField({
               id: 'phone',
-              title: m.phoneLabel,
+              title: m.phone,
               width: 'half',
-              format: '###-####',
+              disableDropdown: true,
               backgroundColor: 'white',
+              allowedCountryCodes: ['IS'],
               defaultValue: (application: Application) => {
                 const phone =
                   (application.externalData.userProfile?.data as {
@@ -127,7 +130,7 @@ export const form: Form = buildForm({
             }),
             buildTextField({
               id: 'email',
-              title: m.emailLabel,
+              title: m.email,
               width: 'half',
               backgroundColor: 'white',
               defaultValue: ({ externalData }: Application) => {
@@ -164,8 +167,10 @@ export const form: Form = buildForm({
             }),
             buildKeyValueField({
               label: m.phone,
-              value: ({ answers }) =>
-                formatPhoneNumber(answers.phone as string),
+              value: ({ answers }) => {
+                const phone = removeCountryCode(answers.phone as string)
+                return formatPhoneNumber(phone)
+              }
             }),
             buildKeyValueField({
               label: m.email,
