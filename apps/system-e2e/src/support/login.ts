@@ -44,7 +44,7 @@ export async function idsLogin(
   delegation?: string,
 ) {
   await page.waitForURL(`${urls.authUrl}/**`, { timeout: 15000 })
-  const input = await page.locator('#phoneUserIdentifier')
+  const input = page.locator('#phoneUserIdentifier')
   await input.type(phoneNumber, { delay: 100 })
 
   const btn = page.locator('button[id="submitPhoneNumber"]')
