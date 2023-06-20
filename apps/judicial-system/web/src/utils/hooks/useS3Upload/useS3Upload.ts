@@ -196,6 +196,7 @@ export const useS3Upload = (caseId: string) => {
               percent,
               status: 'uploading',
               category,
+              policeCaseNumber,
             })
           })
 
@@ -215,6 +216,7 @@ export const useS3Upload = (caseId: string) => {
               percent: 100,
               status: 'done',
               category,
+              policeCaseNumber,
             },
             // We need to set the id so we are able to delete the file later
             rvgFileId,
@@ -227,6 +229,7 @@ export const useS3Upload = (caseId: string) => {
             size: file.size,
             status: 'error',
             category,
+            policeCaseNumber,
           })
         }
       })
@@ -265,6 +268,7 @@ export const useS3Upload = (caseId: string) => {
             id: id,
             type: file.type,
             category,
+            policeCaseNumber,
           }),
         ),
         ...previous,
@@ -320,9 +324,11 @@ export const useS3Upload = (caseId: string) => {
           {
             id: file.id,
             name: file.name,
+            type: 'application/pdf',
             percent: 100,
             status: 'done',
             category: file.category,
+            policeCaseNumber: file.policeCaseNumber,
           },
           // We need to set the id so we are able to delete the file later
           data2.data.createFile.id,
@@ -371,6 +377,8 @@ export const useS3Upload = (caseId: string) => {
     (
       file: UploadFile,
       handleUIUpdate: (file: TUploadFile, newId?: string) => void,
+      category?: CaseFileCategory,
+      policeCaseNumber?: string,
     ) => {
       handleUIUpdate({
         name: file.name,
@@ -378,15 +386,23 @@ export const useS3Upload = (caseId: string) => {
         percent: 1,
         status: 'uploading',
         type: file.type,
+        category,
+        policeCaseNumber,
       })
       upload(
         [
           [
-            { name: file.name, type: file.type ?? '', size: file.size } as File,
+            {
+              name: file.name,
+              type: file.type ?? '',
+              size: file.size,
+            } as File,
             file.id ?? file.name,
           ],
         ],
         handleUIUpdate,
+        category,
+        policeCaseNumber,
       )
     },
     [upload],
