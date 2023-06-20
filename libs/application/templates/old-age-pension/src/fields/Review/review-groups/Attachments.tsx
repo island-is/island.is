@@ -1,8 +1,4 @@
-import {
-  DataValue,
-  Label,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import {
   GridColumn,
   GridRow,
@@ -31,9 +27,9 @@ export const Attachments = ({ application }: ReviewGroupProps) => {
                 {formatMessage(oldAgePensionFormMessage.fileUpload.title)}
               </Label>
               <BulletList type="ul">
-                {attachments.map((attch) => {
+                {attachments.map((attch, index) => {
                   return (
-                    <Bullet>
+                    <Bullet key={index}>
                       <Text>{attch}</Text>
                     </Bullet>
                   )

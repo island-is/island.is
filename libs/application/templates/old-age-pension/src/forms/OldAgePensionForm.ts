@@ -27,10 +27,11 @@ import * as kennitala from 'kennitala'
 import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
-  connectedApplications,
+  ConnectedApplications,
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
   FILE_SIZE_LIMIT,
+  HomeAllowanceHousing,
   NO,
   YES,
 } from '../lib/constants'
@@ -38,6 +39,7 @@ import {
   getAgeBetweenTwoDates,
   getApplicationAnswers,
   getApplicationExternalData,
+  isExistsCohabitantOlderThan25,
 } from '../lib/oldAgePensionUtils'
 
 export const OldAgePensionForm: Form = buildForm({
@@ -55,39 +57,6 @@ export const OldAgePensionForm: Form = buildForm({
       id: 'applicant',
       title: oldAgePensionFormMessage.applicant.applicantSection,
       children: [
-        buildSubSection({
-          id: 'connectedApplicationsSection',
-          title:
-            oldAgePensionFormMessage.connectedApplications
-              .relatedApplicationsSection,
-          children: [
-            buildCheckboxField({
-              id: 'connectedApplications',
-              title:
-                oldAgePensionFormMessage.connectedApplications
-                  .relatedApplicationsSection,
-              description:
-                oldAgePensionFormMessage.connectedApplications
-                  .relatedApplicationsSectionDescription,
-              large: true,
-              doesNotRequireAnswer: true,
-              defaultValue: '',
-              options: [
-                {
-                  label:
-                    oldAgePensionFormMessage.connectedApplications
-                      .homeAllowance,
-                  value: connectedApplications.HOMEALLOWANCE,
-                },
-                {
-                  label:
-                    oldAgePensionFormMessage.connectedApplications.childSupport,
-                  value: connectedApplications.CHILDSUPPORT,
-                },
-              ],
-            }),
-          ],
-        }),
         // buildSubSection({
         //   id: 'connectedApplications.childSupport',
         //   title: oldAgePensionFormMessage.shared.relatedApplicationsSection,
@@ -493,6 +462,152 @@ export const OldAgePensionForm: Form = buildForm({
                   { type: 'warning' },
                 ),
               ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'connectedApplicationsSection',
+          title:
+            oldAgePensionFormMessage.connectedApplications
+              .relatedApplicationsSection,
+          children: [
+            buildCheckboxField({
+              id: 'connectedApplications',
+              title:
+                oldAgePensionFormMessage.connectedApplications
+                  .relatedApplicationsSection,
+              description:
+                oldAgePensionFormMessage.connectedApplications
+                  .relatedApplicationsSectionDescription,
+              large: true,
+              doesNotRequireAnswer: true,
+              defaultValue: '',
+              options: [
+                {
+                  label: oldAgePensionFormMessage.shared.homeAllowance,
+                  value: ConnectedApplications.HOMEALLOWANCE,
+                },
+                {
+                  label:
+                    oldAgePensionFormMessage.connectedApplications.childSupport,
+                  value: ConnectedApplications.CHILDSUPPORT,
+                },
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'homeAllowanceSection',
+          title: oldAgePensionFormMessage.shared.homeAllowance,
+          children: [
+            buildMultiField({
+              id: 'homeAllowance',
+              title: oldAgePensionFormMessage.shared.homeAllowance,
+              description: oldAgePensionFormMessage.homeAllowance.description,
+              condition: (answers) => {
+                const { connectedApplications } = getApplicationAnswers(answers)
+
+                return connectedApplications?.includes(
+                  ConnectedApplications.HOMEALLOWANCE,
+                )
+              },
+              children: [
+                buildCustomField(
+                  {
+                    id: 'homeAllowance.alert',
+                    title: oldAgePensionFormMessage.homeAllowance.alertTitle,
+                    component: 'FieldAlertMessage',
+                    description:
+                      oldAgePensionFormMessage.homeAllowance.alertDescription,
+                    condition: (_, externalData) => {
+                      return isExistsCohabitantOlderThan25(externalData)
+                    },
+                  },
+                  { type: 'warning' },
+                ),
+                buildRadioField({
+                  id: 'homeAllowance.housing',
+                  title: oldAgePensionFormMessage.homeAllowance.housing,
+                  options: [
+                    {
+                      value: HomeAllowanceHousing.HOUSEOWNER,
+                      label:
+                        oldAgePensionFormMessage.homeAllowance.housingOwner,
+                    },
+                    {
+                      value: HomeAllowanceHousing.RENTER,
+                      label:
+                        oldAgePensionFormMessage.homeAllowance.housingRenter,
+                    },
+                  ],
+                  width: 'half',
+                }),
+                buildRadioField({
+                  id: 'homeAllowance.children',
+                  title:
+                    oldAgePensionFormMessage.homeAllowance
+                      .childrenBetween18And25,
+                  options: [
+                    {
+                      value: YES,
+                      label: oldAgePensionFormMessage.shared.yes,
+                    },
+                    {
+                      value: NO,
+                      label: oldAgePensionFormMessage.shared.no,
+                    },
+                  ],
+                  width: 'half',
+                }),
+              ],
+            }),
+            buildFileUploadField({
+              id: 'fileUploadHomeAllowance.leaseAgreement',
+              title: oldAgePensionFormMessage.fileUpload.homeAllowanceTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload.homeAllowanceLeaseAgreement,
+              introduction:
+                oldAgePensionFormMessage.fileUpload.homeAllowanceLeaseAgreement,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+              condition: (answers) => {
+                const { homeAllowanceHousing } = getApplicationAnswers(answers)
+
+                return homeAllowanceHousing === HomeAllowanceHousing.RENTER
+              },
+            }),
+            buildFileUploadField({
+              id: 'fileUploadHomeAllowance.schoolConfirmation',
+              title: oldAgePensionFormMessage.fileUpload.homeAllowanceTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload
+                  .homeAllowanceSchoolConfirmation,
+              introduction:
+                oldAgePensionFormMessage.fileUpload
+                  .homeAllowanceSchoolConfirmation,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+              condition: (answers) => {
+                const { homeAllowanceChildren } = getApplicationAnswers(answers)
+
+                return homeAllowanceChildren === YES
+              },
             }),
           ],
         }),
