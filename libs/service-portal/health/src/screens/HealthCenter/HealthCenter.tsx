@@ -18,16 +18,20 @@ interface CurrentInfo {
   doctor: string
 }
 
+const DEFAULT_DATE_TO = new Date()
+const DEFAULT_DATE_FROM = addYears(DEFAULT_DATE_TO, -5)
+
 const HealthCenter = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+
   const [currentInfo, setCurrentInfo] = useState<CurrentInfo>()
 
   const { loading, error, data } = useGetHealthCenterQuery({
     variables: {
       input: {
-        dateFrom: addYears(new Date(), -5),
-        dateTo: new Date(),
+        dateFrom: DEFAULT_DATE_FROM,
+        dateTo: DEFAULT_DATE_TO,
       },
     },
   })
@@ -40,6 +44,8 @@ const HealthCenter = () => {
       doctor: healthCenterData.current.doctor ?? '',
     })
   }
+
+  console.log(JSON.stringify(data?.rightsPortalHealthCenterHistory))
 
   if (error && !loading) {
     return (
