@@ -1,25 +1,16 @@
 import React, {
   createContext,
-  Dispatch,
   FC,
-  SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from 'react'
-import {
-  useActionData,
-  useLoaderData,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom'
+import { useActionData, useLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { replaceParams } from '@island.is/react-spa/shared'
 
 import { AuthAdminClient, AuthAdminClientEnvironment } from './Client.loader'
 import { useEnvironmentQuery } from '../../hooks/useEnvironmentQuery'
-import { IDSAdminPaths } from '../../lib/paths'
 import { EditClientResult } from './EditClient.action'
 import { PublishData } from '../../types/publishData'
 
@@ -34,64 +25,65 @@ export type ClientContextType = {
   publishData: PublishData | null
   updatePublishData(publishData: PublishData): void
   onEnvironmentChange(environment: AuthAdminEnvironment): void
+  changeEnvironment(environment: AuthAdminEnvironment): void
 }
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined)
 
 export const ClientProvider: FC = ({ children }) => {
-  const navigate = useNavigate()
-  const params = useParams()
-  const [searchParams] = useSearchParams()
-  const client = useLoaderData() as AuthAdminClient
+  const clientResult = useLoaderData() as AuthAdminClient
   const actionData = useActionData() as EditClientResult
   const [publishData, setPublishData] = useState<PublishData | null>(null)
   const {
     environment: selectedEnvironment,
     updateEnvironment,
-  } = useEnvironmentQuery(client.environments)
+  } = useEnvironmentQuery(clientResult.environments)
 
-  const openPublishModal = (to: AuthAdminEnvironment) => {
-    setPublishData({
-      toEnvironment: to,
-      fromEnvironment: selectedEnvironment.environment,
-    })
-
-    const env = searchParams.get('env')
-    const href = replaceParams({
-      href: IDSAdminPaths.IDSAdminClientPublish,
-      params: {
-        tenant: params['tenant'],
-        client: selectedEnvironment.clientId,
-      },
-    })
-
-    navigate(env ? `${href}?env=${env}` : href, { preventScrollReset: true })
-  }
+  const [
+    currentEnvironment,
+    setCurrentEnvironment,
+  ] = useState<AuthAdminEnvironment>(selectedEnvironment.environment)
 
   const onEnvironmentChange = (environment: AuthAdminEnvironment) => {
     const newEnvironment = updateEnvironment(environment)
 
     if (!newEnvironment) {
-      openPublishModal(environment)
+      setPublishData({
+        toEnvironment: environment,
+        fromEnvironment: selectedEnvironment.environment,
+      })
     }
+  }
+
+  const changeEnvironment = (environment: AuthAdminEnvironment) => {
+    setCurrentEnvironment(environment)
+    updateEnvironment(environment)
   }
 
   const updatePublishData = (publishData: PublishData) => {
     setPublishData(publishData)
   }
 
+  useEffect(() => {
+    if (
+      clientResult &&
+      selectedEnvironment.environment !== currentEnvironment
+    ) {
+      updateEnvironment(currentEnvironment)
+    }
+  }, [clientResult])
+
   return (
     <ClientContext.Provider
       value={{
-        client,
+        client: clientResult,
         selectedEnvironment,
         publishData,
-        updatePublishData,
         onEnvironmentChange,
-        availableEnvironments: client.environments.map(
-          (env) => env.environment,
-        ),
+        availableEnvironments: clientResult.availableEnvironments,
         actionData,
+        updatePublishData,
+        changeEnvironment,
       }}
     >
       {children}

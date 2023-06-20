@@ -2,6 +2,7 @@ import { FormEvent } from 'react'
 import { Form } from 'react-router-dom'
 import { MessageDescriptor } from 'react-intl'
 
+import { AuthAdminEnvironment } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -11,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/react/components'
 import { useLocale } from '@island.is/localization'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 
 import { m } from '../lib/messages'
 import { PublishData } from '../types/publishData'

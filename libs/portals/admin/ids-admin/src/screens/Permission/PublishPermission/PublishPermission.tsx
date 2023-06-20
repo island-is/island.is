@@ -1,7 +1,7 @@
 import { FormEvent, useCallback, useEffect, useState } from 'react'
-import { useNavigate, useParams, useRevalidator } from 'react-router-dom'
+import { useParams, useRevalidator } from 'react-router-dom'
 
-import { replaceParams, validateFormData } from '@island.is/react-spa/shared'
+import { validateFormData } from '@island.is/react-spa/shared'
 
 import { usePublishPermissionMutation } from './PublishPermission.generated'
 import { publishSchema } from '../../../utils/schemas'
@@ -11,7 +11,6 @@ import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { m } from '@island.is/portals/admin/ids-admin'
 
 export const PublishPermission = () => {
-  const navigate = useNavigate()
   const { tenant: tenantId, permission: permissionId } = useParams() as {
     tenant: string
     permission: string
