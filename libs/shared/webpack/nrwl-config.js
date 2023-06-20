@@ -103,6 +103,22 @@ const addNodeModulesPolyfill = (config) => {
 }
 
 /**
+ * Ignore warnings for broken source maps inside node_modules.
+ * @param {*} config Webpack config object
+ */
+function ignoreSourceMapWarnings(config) {
+  config.ignoreWarnings ??= []
+  config.ignoreWarnings.push(function ignoreSourcemapsLoaderWarnings(warning) {
+    return (
+      warning.module &&
+      warning.module.resource.includes('node_modules') &&
+      warning.details &&
+      warning.details.includes('source-map-loader')
+    )
+  })
+}
+
+/**
  * NX's withReact loads svg's as React components when imported from js/ts files.
  * But it doesn't work when dynamically imported like this: import(`./svg/${dynamic}.svg`)
  *
@@ -132,6 +148,7 @@ function addFallbackSvgLoader(config) {
 module.exports = function (config) {
   setApiMocks(config)
   addNodeModulesPolyfill(config)
+  ignoreSourceMapWarnings(config)
   addFallbackSvgLoader(config)
 
   fixPostcss(config)
