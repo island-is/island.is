@@ -119,7 +119,7 @@ export class ScopeService extends MultiEnvironmentService {
       throw new Error(`Scope ${input.scopeName} not found`)
     }
 
-    // If the scope does not exist in the target environment, then create it
+    // If the source scope environment exists then create replica environment in the target environment.
     const newScope = await this.adminApiByEnvironmentWithAuth(
       input.targetEnvironment,
       user,

@@ -113,8 +113,7 @@ export class AdminScopeService {
       throw new BadRequestException(`Scope name "${input.name}" already exists`)
     }
 
-    // Since we are reusing the same dto for create and publish,
-    // then we need to manually validate displayName and description.
+    // We need to manually validate displayName and description, since we reuse the same dto for both create and publish
     const translatedValuesErrorMsg =
       'Scope displayName and description are required'
 
