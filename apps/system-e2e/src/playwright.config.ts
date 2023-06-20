@@ -67,7 +67,6 @@ const config: PlaywrightTestConfig = {
   },
 
   /* Configure our test targets */
-  // Current thought is to use {smoke,acceptance},{main,release} + judicial-system
   projects: [
     { name: 'judicial-system', testMatch: 'judicial-system/**/*.spec.[tj]s' },
     { name: 'islandis', testMatch: 'islandis/**/*.spec.[tj]s' },
