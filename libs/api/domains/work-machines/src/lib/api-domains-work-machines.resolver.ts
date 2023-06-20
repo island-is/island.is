@@ -48,7 +48,7 @@ export class WorkMachinesResolver {
     return this.workMachinesService.getWorkMachines(user, input)
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.workMachines)
   @Query(() => Document, {
     name: 'workMachinesWorkMachineCollectionDocument',
     nullable: true,
@@ -70,7 +70,7 @@ export class WorkMachinesResolver {
     }
   }
 
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.workMachines)
   @Query(() => WorkMachine, { name: 'workMachinesWorkMachine', nullable: true })
   @Audit()
   async getWorkMachineById(
