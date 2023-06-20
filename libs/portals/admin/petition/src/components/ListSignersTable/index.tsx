@@ -10,14 +10,23 @@ import { useLocale } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils/utils'
 import { m } from '../../lib/messages'
 import ExportList, { getCSV } from '../ExportList'
+import {
+  Endorsement,
+  EndorsementList,
+  PaginatedEndorsementResponse,
+} from '@island.is/api/schema'
 
-const ListSignersTable = (data: any) => {
+const ListSignersTable = (data: {
+  listId: string
+  petition: EndorsementList
+  petitions: PaginatedEndorsementResponse
+}) => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
   const [listOfPetitions, setPetitions] = useState(data.petitions?.data ?? [])
 
-  const handlePagination = (page: number, petitions: any) => {
+  const handlePagination = (page: number, petitions: Endorsement[]) => {
     setPage(page)
     setTotalPages(pages(petitions?.length))
     setPetitions(paginate(petitions, PAGE_SIZE, page))
@@ -33,6 +42,9 @@ const ListSignersTable = (data: any) => {
       <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         <ExportList
+          petition={data.petition}
+          petitions={data.petitions}
+          petitionId={data.listId}
           onGetCSV={() => getCSV(listOfPetitions, 'Undirskriftalisti')}
         />
       </Box>
@@ -48,7 +60,7 @@ const ListSignersTable = (data: any) => {
             </T.Row>
           </T.Head>
           <T.Body>
-            {listOfPetitions?.map((petition: any) => {
+            {listOfPetitions?.map((petition: Endorsement) => {
               return (
                 <T.Row key={petition.id}>
                   <T.Data text={{ variant: 'medium' }}>
