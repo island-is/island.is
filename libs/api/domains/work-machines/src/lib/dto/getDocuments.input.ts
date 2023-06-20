@@ -4,9 +4,9 @@ import { IsEnum, IsOptional } from 'class-validator'
 
 registerEnumType(FileType, { name: 'WorkMachinesFileType' })
 
-@InputType('WorkMachinesDocumentsInput')
+@InputType('WorkMachinesWorkMachineCollectionDocumentInput')
 export class GetDocumentsInput {
-  @Field(() => FileType)
+  @Field(() => FileType, { nullable: true })
   @IsEnum(FileType)
   @IsOptional()
   fileType?: FileType

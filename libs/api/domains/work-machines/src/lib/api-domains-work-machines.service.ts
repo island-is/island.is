@@ -94,6 +94,6 @@ export class WorkMachinesService {
     }
   }
 
-  getDocuments = (user: User, input: GetDocumentsInput): Promise<void> =>
+  getDocuments = (user: User, input: GetDocumentsInput): Promise<Blob> =>
     this.machineService.getDocuments(user, input)
 }

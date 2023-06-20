@@ -14,3 +14,11 @@ query GetWorkMachines($input: WorkMachinesWorkMachineCollectionInput) {
     }
   }
 }
+
+query GetWorkMachineDocument(
+  $input: WorkMachinesWorkMachineCollectionDocumentInput
+) {
+  workMachinesWorkMachineCollectionDocument(input: $input) {
+    downloadUrl
+  }
+}

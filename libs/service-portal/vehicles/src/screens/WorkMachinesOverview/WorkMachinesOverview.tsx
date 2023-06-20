@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useGetWorkMachinesQuery } from './WorkMachinesOverview.generated'
+import {
+  useGetWorkMachineDocumentQuery,
+  useGetWorkMachinesQuery,
+} from './WorkMachinesOverview.generated'
 import {
   m,
   ErrorScreen,
@@ -8,6 +11,7 @@ import {
   CardLoader,
   ServicePortalPath,
   ActionCard,
+  formSubmit,
 } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
 import {
@@ -25,6 +29,7 @@ import {
 } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { useDebounce } from 'react-use'
+import { WorkMachinesFileType } from '@island.is/api/schema'
 
 type FilterValue = {
   label: string
@@ -81,6 +86,22 @@ const WorkMachinesOverview = () => {
     },
   })
 
+  const { data: csvData } = useGetWorkMachineDocumentQuery({
+    variables: {
+      input: {
+        fileType: WorkMachinesFileType.CSV,
+      },
+    },
+  })
+
+  const { data: excelData } = useGetWorkMachineDocumentQuery({
+    variables: {
+      input: {
+        fileType: WorkMachinesFileType.EXCEL,
+      },
+    },
+  })
+
   useDebounce(
     () => {
       setActiveSearch(searchTerm)
@@ -88,14 +109,6 @@ const WorkMachinesOverview = () => {
     500,
     [searchTerm],
   )
-
-  const onGetCsv = () => {
-    console.log('get csv')
-  }
-
-  const onGetExcel = () => {
-    console.log('get Excel')
-  }
 
   const onFilterChange = (key: keyof FilterValues, value: FilterValue) => {
     setActiveFilters({
@@ -121,13 +134,17 @@ const WorkMachinesOverview = () => {
     )
   }
 
+  const csvDownloadUrl =
+    csvData?.workMachinesWorkMachineCollectionDocument?.downloadUrl ?? ''
+  const excelDownloadUrl =
+    excelData?.workMachinesWorkMachineCollectionDocument?.downloadUrl ?? ''
+
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
         title={formatMessage(messages.workMachinesTitle)}
         intro={formatMessage(messages.workMachinesDescription)}
       />
-
       <GridRow marginTop={[2, 2, 6]}>
         <GridColumn span="12/12">
           <Box
@@ -197,11 +214,11 @@ const WorkMachinesOverview = () => {
                   icon="download"
                   items={[
                     {
-                      onClick: () => onGetCsv(),
+                      onClick: () => formSubmit(csvDownloadUrl),
                       title: formatMessage(m.getAsCsv),
                     },
                     {
-                      onClick: () => onGetExcel(),
+                      onClick: () => formSubmit(excelDownloadUrl),
                       title: formatMessage(m.getAsExcel),
                     },
                   ]}
@@ -211,14 +228,13 @@ const WorkMachinesOverview = () => {
           </Box>
         </GridColumn>
       </GridRow>
-
       {loading && (
         <Box marginBottom={2}>
           <CardLoader />
         </Box>
       )}
 
-      {!loading && !data?.workMachinesWorkMachineCollection?.value && (
+      {!loading && !data?.workMachinesWorkMachineCollection?.value?.length && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
             <EmptyState />
@@ -228,7 +244,7 @@ const WorkMachinesOverview = () => {
 
       {!loading &&
         !error &&
-        data?.workMachinesWorkMachineCollection?.value &&
+        !!data?.workMachinesWorkMachineCollection?.value &&
         data.workMachinesWorkMachineCollection.value.map((wm, index) => {
           return (
             <Box marginBottom={3} key={index}>
@@ -255,10 +271,9 @@ const WorkMachinesOverview = () => {
             </Box>
           )
         })}
-
       {!loading &&
         !error &&
-        data?.workMachinesWorkMachineCollection?.pagination?.totalPages && (
+        !!data?.workMachinesWorkMachineCollection?.pagination?.totalPages && (
           <Box>
             <Pagination
               page={page}

@@ -309,7 +309,14 @@
           }
         ],
         "responses": {
-          "200": { "description": "Success" },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/octet-stream": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {

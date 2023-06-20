@@ -5,7 +5,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
@@ -13,12 +13,23 @@ import { WorkMachine, WorkMachineCollection } from './models/getWorkMachines'
 import { WorkMachinesService } from './api-domains-work-machines.service'
 import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
+import { GetDocumentsInput } from './dto/getDocuments.input'
+import { Document } from './models/getDocuments'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@island.is/nest/config'
+import { FileType } from './api-domains-work-machines.types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/workMachines' })
 export class WorkMachinesResolver {
-  constructor(private readonly workMachinesService: WorkMachinesService) {}
+  constructor(
+    private readonly workMachinesService: WorkMachinesService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
+  ) {}
 
   @Scopes(ApiScope.internal)
   @Query(() => WorkMachineCollection, {
@@ -35,6 +46,28 @@ export class WorkMachinesResolver {
     input: GetWorkMachineCollectionInput,
   ) {
     return this.workMachinesService.getWorkMachines(user, input)
+  }
+
+  @Scopes(ApiScope.internal)
+  @Query(() => Document, {
+    name: 'workMachinesWorkMachineCollectionDocument',
+    nullable: true,
+  })
+  @Audit()
+  async getWorkMachinesCollectionDocument(
+    @Args('input', {
+      type: () => GetDocumentsInput,
+      nullable: true,
+    })
+    input: GetDocumentsInput,
+  ) {
+    const downloadServiceURL = `${
+      this.downloadServiceConfig.baseUrl
+    }/download/v1/workMachines/export/${input.fileType ?? FileType.EXCEL}`
+
+    return {
+      downloadUrl: downloadServiceURL,
+    }
   }
 
   @Scopes(ApiScope.internal)
