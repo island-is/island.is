@@ -22,7 +22,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { IndividualDto, NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -54,6 +54,9 @@ export class EndorsementListService {
     return false
   }
 
+  async whoDis(ssn:string): Promise<IndividualDto | null> {
+    return this.nationalRegistryApiV2.getIndividual(ssn)
+  }
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     this.logger.info(`Finding endorsement lists`)
