@@ -82,7 +82,10 @@ export class RightsPortalService {
 
       if (!res) return null
       return {
-        current: res[0],
+        current: {
+          ...res[0],
+          name: res[0].healthCenter,
+        },
         history: res[1],
       }
     } catch (e) {
