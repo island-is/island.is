@@ -42,7 +42,11 @@ type Vacancy = IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][numb
 
 const ITEMS_PER_PAGE = 8
 
-const mapVacanciesField = (vacancies: Vacancy[], fieldName: keyof Vacancy) => {
+const mapVacanciesField = (
+  vacancies: Vacancy[],
+  fieldName: keyof Vacancy,
+  remoteLocationText?: string,
+) => {
   const fieldSet = new Set<string | number>()
   for (const vacancy of vacancies) {
     const field = vacancy[fieldName]
@@ -61,6 +65,20 @@ const mapVacanciesField = (vacancies: Vacancy[], fieldName: keyof Vacancy) => {
   }))
 
   vacanciesFieldArray.sort(sortAlpha('label'))
+
+  // Make sure the no location filter option is at the top
+  if (fieldName === 'locations' && remoteLocationText) {
+    const index = vacanciesFieldArray.findIndex(
+      (item) => item.label === remoteLocationText,
+    )
+    if (index >= 0) {
+      vacanciesFieldArray.splice(index, 1)
+      vacanciesFieldArray.unshift({
+        label: remoteLocationText,
+        value: remoteLocationText,
+      })
+    }
+  }
 
   return vacanciesFieldArray
 }
@@ -133,7 +151,13 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   )
 
   const locationOptions = useMemo(
-    () => mapVacanciesField(vacancies, 'locations'),
+    () =>
+      mapVacanciesField(
+        vacancies,
+        'locations',
+        n('remoteLocation', 'Án staðsetningar') as string,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [vacancies],
   )
 

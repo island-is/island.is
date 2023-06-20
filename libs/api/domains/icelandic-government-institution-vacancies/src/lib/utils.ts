@@ -65,15 +65,25 @@ const convertHtmlToPlainText = async (html: string) => {
   return documentToPlainTextString(contentfulRichText.document)
 }
 
-const shortenText = (text: string | undefined, maxLength: number) => {
-  if (!text) return ''
-  if (text.length > maxLength) {
-    if (text[text.length - 1] === ' ') {
-      maxLength -= 1
-    }
-    return text.slice(0, maxLength).concat('...')
+const shortenText = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) {
+    return text
   }
-  return text
+
+  const shortenedText = text.slice(0, maxLength)
+
+  if (text[maxLength] === ' ') {
+    return `${shortenedText}...`
+  }
+
+  // Search for the nearest space before the maxLength
+  const spaceIndex = shortenedText.lastIndexOf(' ')
+
+  if (spaceIndex < 0) {
+    return `${shortenedText}...`
+  }
+
+  return `${text.slice(0, spaceIndex)}...`
 }
 
 const convertHtmlToContentfulRichText = async (html: string) => {
@@ -212,10 +222,14 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = async (
     intro,
     qualificationRequirements,
     tasksAndResponsibilities,
+    description,
+    salaryTerms,
   ] = await Promise.all([
     convertHtmlToContentfulRichText(item.inngangur ?? ''),
     convertHtmlToContentfulRichText(item.haefnikrofur ?? ''),
     convertHtmlToContentfulRichText(item.verkefni ?? ''),
+    convertHtmlToContentfulRichText(item.undirtexti ?? ''),
+    convertHtmlToContentfulRichText(item.launaskilmaliFull ?? ''),
   ])
 
   return {
@@ -235,5 +249,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = async (
     applicationHref: item.weblink?.url,
     qualificationRequirements,
     tasksAndResponsibilities,
+    description,
+    salaryTerms,
   }
 }
