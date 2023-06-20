@@ -18,15 +18,15 @@ function _log() {
   local timestamp=""
   if [[ -n "${SHOW_TIMESTAMP}" ]]; then timestamp="$(date +"%Y-%m-%d %H:%M:%S.%3N %:z") "; fi
   echo "$msg" | while read -r line; do
-    printf "${timestamp}${color}%10s '%s'${RESET}\n" "[$level]:" "${line}"
+    printf "${timestamp}${color}%10s %s${RESET}\n" "[$level]:" "${line}"
   done
 }
 
+function debug() { [[ -z "${DEBUG:-}" ]] || _log "${GRAY}" "debug" "${*}"; }
 function info() { _log "${LBLUE}" "info" "${*}"; }
 function success() { _log "${GREEN}" "success" "${*}"; }
 function error() { _log "${RED}" "error" "${*}"; }
 function warning() { _log "${YELLOW}" "warn" "${*}"; }
-function debug() { _log "${GRAY}" "debug" "${*}"; }
 
 function log() {
   local argv=("$@")
