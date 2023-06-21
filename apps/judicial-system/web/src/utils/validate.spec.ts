@@ -185,7 +185,7 @@ describe('Validate phonenumber format', () => {
 
 describe('Validate court case number', () => {
   beforeAll(() => {
-    jest.useFakeTimers()
+    jest.useFakeTimers({ now: new Date('2020-01-01') })
   })
   afterAll(() => {
     jest.useRealTimers()

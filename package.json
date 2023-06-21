@@ -357,7 +357,7 @@
     "@testing-library/cypress": "8.0.3",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "14.0.0",
-    "@testing-library/user-event": "12.1.5",
+    "@testing-library/user-event": "14.4.3",
     "@types/aws-sdk": "2.7.0",
     "@types/aws4": "1.5.1",
     "@types/bull": "3.14.2",

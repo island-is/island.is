@@ -14053,14 +14053,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:12.1.5":
-  version: 12.1.5
-  resolution: "@testing-library/user-event@npm:12.1.5"
-  dependencies:
-    "@babel/runtime": ^7.10.2
+"@testing-library/user-event@npm:14.4.3":
+  version: 14.4.3
+  resolution: "@testing-library/user-event@npm:14.4.3"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 89dfe1b1a690a2e18cc647b05e0be87e9edd0f97bba2c9e8d08d30e485b4d837b9d0d581ca02e60fde6e3e67f1384164c5b6a79d1f822dab4db825d889f88690
+  checksum: 852c48ea6db1c9471b18276617c84fec4320771e466cd58339a732ca3fd73ad35e5a43ae14f51af51a8d0a150dcf60fcaab049ef367871207bea8f92c4b8195e
   languageName: node
   linkType: hard
 
@@ -31084,7 +31082,7 @@ __metadata:
     "@testing-library/cypress": 8.0.3
     "@testing-library/jest-dom": 5.16.5
     "@testing-library/react": 14.0.0
-    "@testing-library/user-event": 12.1.5
+    "@testing-library/user-event": 14.4.3
     "@types/aws-sdk": 2.7.0
     "@types/aws4": 1.5.1
     "@types/bull": 3.14.2
