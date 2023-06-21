@@ -41,6 +41,28 @@ import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 type Vacancy = IcelandicGovernmentInstitutionVacanciesResponse['vacancies'][number]
 
 const ITEMS_PER_PAGE = 8
+const VACANCY_INTRO_MAX_LENGTH = 80
+
+const shortenText = (text: string, maxLength: number) => {
+  if (text.length <= maxLength) {
+    return text
+  }
+
+  const shortenedText = text.slice(0, maxLength)
+
+  if (text[maxLength] === ' ') {
+    return `${shortenedText}...`
+  }
+
+  // Search for the nearest space before the maxLength
+  const spaceIndex = shortenedText.lastIndexOf(' ')
+
+  if (spaceIndex < 0) {
+    return `${shortenedText}...`
+  }
+
+  return `${text.slice(0, spaceIndex)}...`
+}
 
 const mapVacanciesField = (
   vacancies: Vacancy[],
@@ -119,7 +141,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
   const filteredVacancies = vacancies.filter((vacancy) => {
     const searchTermMatches =
       vacancy.title?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-      vacancy.institutionName?.toLowerCase()?.includes(searchTerm.toLowerCase())
+      vacancy.institutionName
+        ?.toLowerCase()
+        ?.includes(searchTerm.toLowerCase()) ||
+      vacancy.intro?.toLowerCase()?.includes(searchTerm.toLowerCase())
 
     let shouldBeShown = searchTermMatches
 
@@ -447,7 +472,9 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<IcelandicGovernmentIns
                       <Text color="blue400" variant="h3">
                         {vacancy.title}
                       </Text>
-                      <Text>{vacancy.intro}</Text>
+                      <Text>
+                        {shortenText(vacancy.intro, VACANCY_INTRO_MAX_LENGTH)}
+                      </Text>
                       <Inline space={1}>
                         {vacancy.institutionName && (
                           <Tag outlined={true} disabled={true}>

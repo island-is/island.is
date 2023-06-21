@@ -65,34 +65,14 @@ const convertHtmlToPlainText = async (html: string) => {
   return documentToPlainTextString(contentfulRichText.document)
 }
 
-const shortenText = (text: string, maxLength: number) => {
-  if (text.length <= maxLength) {
-    return text
-  }
-
-  const shortenedText = text.slice(0, maxLength)
-
-  if (text[maxLength] === ' ') {
-    return `${shortenedText}...`
-  }
-
-  // Search for the nearest space before the maxLength
-  const spaceIndex = shortenedText.lastIndexOf(' ')
-
-  if (spaceIndex < 0) {
-    return `${shortenedText}...`
-  }
-
-  return `${text.slice(0, spaceIndex)}...`
-}
-
-const convertHtmlToContentfulRichText = async (html: string) => {
+const convertHtmlToContentfulRichText = async (html: string, id?: string) => {
   const sanitizedHtml = sanitizeHtml(html)
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
   return {
     __typename: 'Html',
     document: richText,
+    id,
   }
 }
 
@@ -181,7 +161,7 @@ export const mapIcelandicGovernmentInstitutionVacanciesResponse = async (
 
   for (let i = 0; i < mappedData.length; i += 1) {
     if (intros[i]) {
-      mappedData[i].intro = shortenText(intros[i], 80)
+      mappedData[i].intro = intros[i]
     }
   }
 
@@ -225,11 +205,20 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponse = async (
     description,
     salaryTerms,
   ] = await Promise.all([
-    convertHtmlToContentfulRichText(item.inngangur ?? ''),
-    convertHtmlToContentfulRichText(item.haefnikrofur ?? ''),
-    convertHtmlToContentfulRichText(item.verkefni ?? ''),
-    convertHtmlToContentfulRichText(item.undirtexti ?? ''),
-    convertHtmlToContentfulRichText(item.launaskilmaliFull ?? ''),
+    convertHtmlToContentfulRichText(item.inngangur ?? '', 'intro'),
+    convertHtmlToContentfulRichText(
+      item.haefnikrofur ?? '',
+      'qualificationRequirements',
+    ),
+    convertHtmlToContentfulRichText(
+      item.verkefni ?? '',
+      'tasksAndResponsibilities',
+    ),
+    convertHtmlToContentfulRichText(item.undirtexti ?? '', 'description'),
+    convertHtmlToContentfulRichText(
+      item.launaskilmaliFull ?? '',
+      'salaryTerms',
+    ),
   ])
 
   return {
