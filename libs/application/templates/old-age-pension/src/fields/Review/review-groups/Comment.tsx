@@ -19,20 +19,24 @@ export const Comment = ({
   const { formatMessage } = useLocale()
 
   return (
-    <ReviewGroup
-      isEditable={editable}
-      editAction={() => goToScreen?.('comment')}
-    >
-      <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-          <DataValue
-            label={formatMessage(
-              oldAgePensionFormMessage.comment.commentSection,
-            )}
-            value={comment}
-          />
-        </GridColumn>
-      </GridRow>
-    </ReviewGroup>
+    <>
+      {comment && (
+        <ReviewGroup
+          isEditable={editable}
+          editAction={() => goToScreen?.('comment')}
+        >
+          <GridRow marginBottom={3}>
+            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+              <DataValue
+                label={formatMessage(
+                  oldAgePensionFormMessage.comment.commentSection,
+                )}
+                value={comment}
+              />
+            </GridColumn>
+          </GridRow>
+        </ReviewGroup>
+      )}
+    </>
   )
 }

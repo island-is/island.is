@@ -33,6 +33,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Tilhögun',
       description: 'Arrangement',
     },
+    homeAllowance: {
+      id: 'oap.application:related.applications.homeAllowance',
+      defaultMessage: 'Heimilisuppbót',
+      description: 'Home allowance',
+    },
   }),
 
   pre: defineMessages({
@@ -206,11 +211,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   connectedApplications: defineMessages({
-    homeAllowance: {
-      id: 'oap.application:related.applications.homeAllowance',
-      defaultMessage: 'Heimilisuppbót',
-      description: 'Home allowance',
-    },
     childSupport: {
       id: 'oap.application:related.applications.childSupport',
       defaultMessage: 'Barnalífeyri',
@@ -511,6 +511,25 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
     },
+    homeAllowanceTitle: {
+      id: 'oap.application:fileUppload.homeAllowance.title',
+      defaultMessage: 'Fylgiskjöl Heimilisuppbóta',
+      description: 'Home allowance additional files',
+    },
+    homeAllowanceLeaseAgreement: {
+      id: 'oap.application:fileUppload.homeAllowance.leaseAgreement',
+      defaultMessage:
+        'Hér getur þú skilað undirritaðum leigusamningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can upload the signed rental agreement. Note that the document must be in .pdf format.',
+    },
+    homeAllowanceSchoolConfirmation: {
+      id: 'oap.application:fileUppload.homeAllowance.schoolConfirmation',
+      defaultMessage:
+        'Hér getur þú skilað vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        "Here you can upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
+    },
   }),
 
   comment: defineMessages({
@@ -528,6 +547,50 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:comment.placeholder',
       defaultMessage: 'Skrifaðu hér athugasemd',
       description: 'Your comment',
+    },
+  }),
+
+  homeAllowance: defineMessages({
+    description: {
+      id: 'oap.application:homeAllowance.description',
+      defaultMessage:
+        'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
+      description:
+        'To be eligible for housing allowance, the applicant must be single and live alone. It is also permitted to pay household allowance to the pensioner if the spouse stays in an institution for the elderly. There are two exceptions to this: lives with a child/children under the age of 18 or a young person aged 18-25 who is studying or if a young person under the age of 25 has a temporary residence away from their legal residence due to studies.',
+    },
+    housing: {
+      id: 'oap.application:homeAllowance.housing',
+      defaultMessage: 'Hvar býrð þú?',
+      description: 'Where do you live?',
+    },
+    housingOwner: {
+      id: 'oap.application:homeAllowance.housing.owner',
+      defaultMessage: 'Bý í eigin húsnæði',
+      description: 'Live in own place',
+    },
+    housingRenter: {
+      id: 'oap.application:homeAllowance.housing.renter',
+      defaultMessage: 'Bý í leiguhúsnæði',
+      description: 'Live in a rented place',
+    },
+    childrenBetween18And25: {
+      id: 'oap.application:homeAllowance.children.betweem18And25',
+      defaultMessage:
+        'Býr ungmenni á aldrinum 18-25 ára á heimilinu sem er í námi?',
+      description:
+        'Does a young person aged 18-25 live in the household who is studying?',
+    },
+    alertTitle: {
+      id: 'oap.application:homeAllowance.alert.title',
+      defaultMessage: 'Athuga',
+      description: 'Attention',
+    },
+    alertDescription: {
+      id: 'oap.application:homeAllowance.alert.description',
+      defaultMessage:
+        'Samkvæmt uppflettingu í Þjóðskrá býr einstaklingur eldri en 25 ára á sama lögheimili og þú. Ef þú telur þetta vera vitlaust skaltu hafa samband við Þjóðskrá til að laga þetta. Þegar þú ert búinn að gera viðeigandi breytingar hjá Þjóðskrá getur þú haldið áfram með umsóknina og skila inn skjali því til staðfestingar hér aftar í ferlinu.',
+      description:
+        'According National Register, a person older than 25 lives in the same legal address as yours. If you think this is wrong, contact the National Registry to fix it. When you have made the appropriate changes at the National Register, you can continue with the application and submit the document for confirmation later in the process.',
     },
   }),
 

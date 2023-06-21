@@ -11,3 +11,9 @@ export const NationalRegistryResidenceHistoryApi = defineTemplateApi({
   externalDataId: 'nationalRegistryResidenceHistory',
   namespace: 'NationalRegistry',
 })
+
+export const NationalRegistryCohabitantsApi = defineTemplateApi({
+  action: 'getCohabitants',
+  externalDataId: 'nationalRegistryCohabitants',
+  namespace: 'NationalRegistry',
+})

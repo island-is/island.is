@@ -23,7 +23,10 @@ import Logo from '../assets/Logo'
 import { NO, YES } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { getApplicationAnswers } from '../lib/oldAgePensionUtils'
-import { NationalRegistryResidenceHistoryApi } from '../dataProviders'
+import {
+  NationalRegistryResidenceHistoryApi,
+  NationalRegistryCohabitantsApi,
+} from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'OldAgePensionPrerequisites',
@@ -67,6 +70,11 @@ export const PrerequisitesForm: Form = buildForm({
                   provider: NationalRegistryResidenceHistoryApi,
                   title: 'Búsetusaga',
                   subTitle: 'Búsetusaga frá Þjóðskrá.',
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistryCohabitantsApi,
+                  title: 'Samíbúar',
+                  subTitle: 'Samíbúar frá Þjóðskrá.',
                 }),
               ],
             }),

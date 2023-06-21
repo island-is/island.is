@@ -1,6 +1,10 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { Application, YesOrNo } from '@island.is/application/types'
-import { MONTHS } from './constants'
+import {
+  MONTHS,
+  ConnectedApplications,
+  HomeAllowanceHousing,
+} from './constants'
 import { oldAgePensionFormMessage } from './messages'
 
 import * as kennitala from 'kennitala'
@@ -20,6 +24,11 @@ interface earlyRetirementPensionfundFishermen {
   earlyRetirement?: fileType[]
   pension?: fileType[]
   fishermen?: fileType[]
+}
+
+interface leaseAgreementSchoolConfirmation {
+  leaseAgreement?: fileType[]
+  schoolConfirmation?: fileType[]
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
@@ -56,6 +65,21 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const connectedApplications = getValueViaPath(
+    answers,
+    'connectedApplications',
+  ) as ConnectedApplications[]
+
+  const homeAllowanceHousing = getValueViaPath(
+    answers,
+    'homeAllowance.housing',
+  ) as HomeAllowanceHousing
+
+  const homeAllowanceChildren = getValueViaPath(
+    answers,
+    'homeAllowance.children',
+  ) as YesOrNo
+
   return {
     pensionFundQuestion,
     isFishermen,
@@ -66,6 +90,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     residenceHistoryQuestion,
     onePaymentPerYear,
     comment,
+    connectedApplications,
+    homeAllowanceHousing,
+    homeAllowanceChildren,
   }
 }
 
@@ -77,6 +104,12 @@ export function getApplicationExternalData(
     'nationalRegistryResidenceHistory.data',
     [],
   ) as residenceHistory[]
+
+  const cohabitants = getValueViaPath(
+    externalData,
+    'nationalRegistryCohabitants.data',
+    [],
+  ) as string[]
 
   const applicantName = getValueViaPath(
     externalData,
@@ -127,6 +160,7 @@ export function getApplicationExternalData(
 
   return {
     residenceHistory,
+    cohabitants,
     applicantName,
     applicantNationalId,
     applicantAddress,
@@ -267,6 +301,11 @@ export function getAttachments(answers: Application['answers']) {
   getAttachmentsName(earlyPenFisher.earlyRetirement)
   getAttachmentsName(earlyPenFisher.fishermen)
 
+  // leaseAgreement, schoolAgreement
+  const leaseAgrSchoolConf = answers.fileUploadHomeAllowance as leaseAgreementSchoolConfirmation
+  getAttachmentsName(leaseAgrSchoolConf.leaseAgreement)
+  getAttachmentsName(leaseAgrSchoolConf.schoolConfirmation)
+
   return attachments
 }
 
@@ -290,6 +329,25 @@ export function getCombinedResidenceHistory(
   })
 
   return [...combinedResidenceHistory].reverse()
+}
+
+export function isExistsCohabitantOlderThan25(
+  externalData: Application['externalData'],
+) {
+  const { cohabitants, applicantNationalId } = getApplicationExternalData(
+    externalData,
+  )
+
+  let isOlderThan25 = false
+  cohabitants.forEach((cohabitant) => {
+    if (cohabitant !== applicantNationalId) {
+      if (kennitala.info(cohabitant).age > 25) {
+        isOlderThan25 = true
+      }
+    }
+  })
+
+  return isOlderThan25
 }
 
 function residenceMapper(history: residenceHistory): combinedResidenceHistory {

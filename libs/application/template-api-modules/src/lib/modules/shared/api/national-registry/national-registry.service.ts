@@ -294,7 +294,26 @@ export class NationalRegistryService extends BaseTemplateApiService {
       )
     }
 
-    console.log('res his ', residenceHistory)
     return residenceHistory
+  }
+
+  async getCohabitants({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string[] | null> {
+    const cohabitants:
+      | string[]
+      | null = await this.nationalRegistryApi.getCohabitants(auth.nationalId)
+
+    if (!cohabitants) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+        },
+        404,
+      )
+    }
+
+    return cohabitants
   }
 }

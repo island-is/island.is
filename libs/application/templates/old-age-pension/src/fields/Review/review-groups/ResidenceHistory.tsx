@@ -1,6 +1,6 @@
 import {
-  DataValue,
   Label,
+  RadioValue,
   ReviewGroup,
   Table,
 } from '@island.is/application/ui-components'
@@ -9,7 +9,6 @@ import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
-import React from 'react'
 import { residenceHistoryTableData } from '../../../lib/oldAgePensionUtils'
 
 export const ResidenceHistory = ({
@@ -42,7 +41,7 @@ export const ResidenceHistory = ({
           </Box>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <DataValue
+          <RadioValue
             label={formatMessage(
               oldAgePensionFormMessage.residence.residenceHistoryQuestion,
             )}

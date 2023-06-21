@@ -36,7 +36,18 @@ export enum States {
   DONE = 'done',
 }
 
-export enum connectedApplications {
+export enum ConnectedApplications {
   HOMEALLOWANCE = 'homeAllowance',
   CHILDSUPPORT = 'childSupport',
+}
+
+export enum HomeAllowanceHousing {
+  HOUSEOWNER = 'houseOwner',
+  RENTER = 'renter',
+}
+
+export enum AnswerValidationConstants {
+  PERIOD = 'period',
+  FILEUPLOADPENEARLYFISHER = 'fileUploadEarlyPenFisher',
+  FILEUPLOADHOMEALLOWANCE = 'fileUploadHomeAllowance',
 }
