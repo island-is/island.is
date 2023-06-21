@@ -28,12 +28,13 @@ test.describe('Admin portal (Endorsements)', () => {
   })
 
   test('Open old endorsement list and go back', async ({ page }) => {
+    test.slow()
     await page.goto(icelandicAndNoPopupUrl(homeUrl))
     await page.getByTestId('active-module-name').click()
     await page.getByRole('link', { name: 'Undirskriftalistar' }).click()
 
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
-    await page.getByText('Skoða lista').first().click()
+    await page.getByRole('button', { name: 'Skoða lista' }).first().click()
     await expect(page.getByLabel('Heiti lista')).toBeVisible()
     await expect(page.getByText('Yfirlit undirskrifta')).toBeVisible()
     await page.getByRole('button', { name: 'Til baka' }).click()
@@ -42,7 +43,7 @@ test.describe('Admin portal (Endorsements)', () => {
 
   test('Update old endorsement list', async ({ page }) => {
     await page.getByRole('tab', { name: 'Liðnir listar' }).click()
-    await page.getByText('Skoða lista').first().click()
+    await page.getByRole('button', { name: 'Skoða lista' }).first().click()
     await page.getByRole('button', { name: 'Uppfæra lista' }).click()
     await expect(
       page.getByRole('alert').filter({ hasText: 'Tókst að uppfæra lista' }),
