@@ -146,7 +146,7 @@ export const pdfStyles = StyleSheet.create({
 })
 
 Font.register({
-  family: 'Open Sans',
+  family: 'IBM Plex Sans',
   fonts: [
     {
       src: './assets/fonts/ibm-plex-sans-v7-latin-regular.ttf',
