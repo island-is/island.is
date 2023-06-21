@@ -11,4 +11,12 @@ export default {
   globals: {},
   displayName: 'application-system-api',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }

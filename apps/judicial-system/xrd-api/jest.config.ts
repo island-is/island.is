@@ -8,4 +8,12 @@ export default {
   coverageDirectory: '<rootDir>/coverage/apps/judicial-system/xrd-api',
   displayName: 'judicial-system-xrd-api',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }

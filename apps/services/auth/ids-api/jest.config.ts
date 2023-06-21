@@ -9,4 +9,12 @@ export default {
   globals: {},
   displayName: 'services-auth-ids-api',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }

@@ -7,4 +7,12 @@ export default {
   globals: {},
   displayName: 'services-auth-admin-api',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }

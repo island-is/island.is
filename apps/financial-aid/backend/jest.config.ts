@@ -10,4 +10,12 @@ export default {
   globals: {},
   displayName: 'financial-aid-backend',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }

@@ -8,4 +8,12 @@ export default {
   coverageDirectory: '<rootDir>/coverage/apps/judicial-system/api',
   displayName: 'judicial-system-api',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }

@@ -9,4 +9,12 @@ export default {
   testEnvironment: 'node',
   coverageDirectory:
     '<rootDir>/coverage/libs/application/templates/no-debt-certificate',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }
