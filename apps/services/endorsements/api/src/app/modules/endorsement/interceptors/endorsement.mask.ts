@@ -14,9 +14,10 @@ export function maskEndorsement(
     endorsement.endorser = 'xxxxxx-xxxx'
   } else {
     endorsement.endorser = 'xxxxxx-xxxx'
+    endorsement.meta.locality = ''
     if (!endorsement.meta.showName) {
       endorsement.meta.fullName = ''
-      endorsement.meta.locality = ''
+      
     }
   }
   return endorsement
