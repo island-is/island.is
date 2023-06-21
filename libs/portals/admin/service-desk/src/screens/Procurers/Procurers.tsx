@@ -1,5 +1,4 @@
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import { Company } from '../mockProcures'
 import { IntroHeader } from '@island.is/portals/core'
 import { useNationalId } from '../../hooks/useNationalId'
 import {
@@ -14,12 +13,13 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import React from 'react'
 import { ServiceDeskPaths } from '../../lib/paths'
+import { CompanyProcurerResult } from './Procurers.loader'
 
 const Procurers = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { formatNationalId } = useNationalId()
-  const company = useLoaderData() as Company
+  const company = useLoaderData() as CompanyProcurerResult
 
   return (
     <Stack space="containerGutter">
@@ -37,8 +37,8 @@ const Procurers = () => {
       </Button>
       <div>
         <IntroHeader
-          title={company?.name}
-          intro={formatNationalId(company?.nationalId)}
+          title={company.name}
+          intro={formatNationalId(company.nationalId)}
         />
         <Box marginTop={[3, 3, 6]}>
           <Text marginBottom={2} variant="h4">
@@ -46,8 +46,8 @@ const Procurers = () => {
           </Text>
           <GridContainer>
             <Stack space={3}>
-              {company.procurers?.map((procurer) => (
-                <GridRow key={`procure-${procurer.nationalId}`}>
+              {company.procurers?.map(({ nationalId, name }) => (
+                <GridRow key={`procure-${nationalId}`}>
                   <Box
                     display={'flex'}
                     borderRadius={'large'}
@@ -60,9 +60,9 @@ const Procurers = () => {
                   >
                     <Box>
                       <Stack space={1}>
-                        <Text variant="h3">{procurer.name}</Text>
+                        <Text variant="h3">{name}</Text>
                         <Text variant={'default'}>
-                          {formatNationalId(procurer.nationalId)}
+                          {formatNationalId(nationalId)}
                         </Text>
                       </Stack>
                     </Box>
