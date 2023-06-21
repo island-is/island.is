@@ -18,8 +18,14 @@ import { Document } from './models/getDocuments'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 import { FileType } from './api-domains-work-machines.types'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.servicePortalWorkMachinesModule)
 @Resolver()
 @Audit({ namespace: '@island.is/api/workMachines' })
 export class WorkMachinesResolver {
