@@ -30,7 +30,7 @@ import { Locale } from '@island.is/shared/types'
 import { PkPassClient } from './pkpass.client'
 
 /** Category to attach each log message to */
-const LOG_CATEGORY = 'drivinglicense-service'
+const LOG_CATEGORY = 'driving-license-service'
 
 @Injectable()
 export class GenericDrivingLicenseService

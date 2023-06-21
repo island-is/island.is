@@ -35,25 +35,32 @@ export const icHearingArrangements = {
       options: {
         allPresent: defineMessage({
           id:
-            'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.options.all_present',
-          defaultMessage: 'Fulltrúar málsaðila mæta',
+            'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.options.all_present_v1',
+          defaultMessage: 'Fulltrúar málsaðila boðaðir',
           description:
-            'Notaður sem texti fyrir valmöguleikann "Fulltrúar málsaðila mæta" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+            'Notaður sem texti fyrir valmöguleikann "Fulltrúar málsaðila boðaðir" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
         }),
         allPresentSpokesperson: defineMessage({
           id:
-            'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.options.all_present_spokesperson',
+            'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.options.all_present_spokesperson_v1',
           defaultMessage:
-            'Fulltrúi ákæruvalds mætir og dómari kallar til talsmann',
+            'Fulltrúi ákæruvalds boðaður og dómari kallar til talsmann',
           description:
-            'Notaður sem texti fyrir valmöguleikann "Fulltrúi ákæruvalds mætir og dómari kallar til talsmann" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+            'Notaður sem texti fyrir valmöguleikann "Fulltrúi ákæruvalds boðaður og dómari kallar til talsmann" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
         }),
         prosecutorPresent: defineMessage({
           id:
-            'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.options.prosecutor_present',
-          defaultMessage: 'Fulltrúi ákæruvalds mætir',
+            'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.options.prosecutor_present_v1',
+          defaultMessage: 'Fulltrúi ákæruvalds boðaður',
           description:
-            'Notaður sem texti fyrir valmöguleikann "Fulltrúi ákæruvalds mætir" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+            'Notaður sem texti fyrir valmöguleikann "Fulltrúi ákæruvalds boðaður" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
+        }),
+        nonePresent: defineMessage({
+          id:
+            'judicial.system.core:investigation_cases_hearing_arrangements.session_arrangements.options.none_present',
+          defaultMessage: 'Krafa tekin fyrir án boðunar í þinghald',
+          description:
+            'Notaður sem texti fyrir valmöguleikann "Krafa tekin fyrir án boðunar í þinghald" á fyrirtöku skrefi í dómaraflæði í rannsóknarheimildum',
         }),
       },
     },
@@ -115,7 +122,7 @@ export const icHearingArrangements = {
       defaultMessage:
         '{courtDateHasChanged, select, true {Fyrirtökutíma hefur verið breytt. } other {}}Tilkynning um fyrirtöku verður send á saksóknara og talsmann, hafi talsmaður verið skráður.',
       description:
-        'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef fulltrúi ákæruvalds mætir og dómari kallar til talsmann.',
+        'Notaður sem texti í tilkynningaglugganum á fyrirtöku skrefi í rannsóknarheimildum ef Fulltrúi ákæruvalds boðaður og dómari kallar til talsmann.',
     },
     prosecutorPresentText: {
       id:

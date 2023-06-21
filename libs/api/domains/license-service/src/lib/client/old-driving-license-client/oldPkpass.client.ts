@@ -95,7 +95,17 @@ export class OldPkPassClient {
       return null
     }
 
-    const cached = await this.cacheManager.get(this.pkpassCacheKey)
+    let cached
+
+    try {
+      cached = await this.cacheManager.get(this.pkpassCacheKey)
+    } catch (e) {
+      this.logger.warn({
+        exception: e.message,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
 
     if (cached && typeof cached === 'string') {
       return cached
@@ -374,7 +384,7 @@ export class OldPkPassClient {
       )
     } catch (e) {
       this.logger.warn('Unable to verify pkpass drivers license', {
-        exception: e,
+        exception: e.message,
         category: LOG_CATEGORY,
       })
       return null
