@@ -264,8 +264,8 @@ export class ApplicationTemplateHelper<
     application: Application,
     currentRole: ApplicationRole,
     formatMessage: FormatMessage,
-    stateKey: string = this.application.state,
     nationalId: string,
+    stateKey: string = this.application.state,
   ): PendingAction {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
