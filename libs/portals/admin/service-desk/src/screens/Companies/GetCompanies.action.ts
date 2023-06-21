@@ -3,18 +3,19 @@ import {
   WrappedActionFn,
 } from '@island.is/portals/core'
 import { z } from 'zod'
-import { companiesMock, Company } from '../mockProcures'
 import {
   validateFormData,
   ValidateFormDataResult,
 } from '@island.is/react-spa/shared'
 
+import { GetCompaniesDocument, GetCompaniesQuery } from './Procures.generated'
+
 const schema = z.object({
-  companyId: z.string().nonempty(),
+  searchQuery: z.string().nonempty(),
 })
 
 export type GetCompaniesResult = RawRouterActionResponse<
-  Company[],
+  GetCompaniesQuery['authAdminProcureGetCompanies'],
   ValidateFormDataResult<typeof schema>['errors']
 >
 
@@ -32,23 +33,25 @@ export const GetCompaniesAction: WrappedActionFn = ({ client }) => async ({
     return {
       errors,
       data: null,
-      globalError: false,
     }
   }
 
   try {
-    // Replace this with a call to the backend
-    const companies = companiesMock.filter((company) => {
-      return (
-        company.nationalId.includes(data.companyId) ||
-        company.name.toLowerCase().includes(data.companyId.toLowerCase())
-      )
+    const res = await client.query<GetCompaniesQuery>({
+      query: GetCompaniesDocument,
+      fetchPolicy: 'network-only',
+      variables: {
+        search: data.searchQuery,
+      },
     })
+
+    if (res.error) {
+      throw res.error
+    }
 
     return {
       errors: null,
-      data: companies,
-      globalError: false,
+      data: res.data.authAdminProcureGetCompanies,
     }
   } catch (e) {
     return {

@@ -1,19 +1,34 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
-import { companiesMock, Company } from '../mockProcures'
+
+import {
+  GetCompanyProcurersDocument,
+  GetCompanyProcurersQuery,
+} from './Procurers.generated'
+
+export type CompanyProcurerResult = GetCompanyProcurersQuery['authAdminGetCompanyProcurers']
 
 export const procurersLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params }): Promise<Company> => {
-    if (!params['companyId']) {
-      throw new Error('Tenant not found')
+  return async ({ params }): Promise<CompanyProcurerResult> => {
+    const nationalId = params['nationalId']
+
+    if (!nationalId) throw new Error('Company not found')
+
+    const res = await client.query<GetCompanyProcurersQuery>({
+      query: GetCompanyProcurersDocument,
+      fetchPolicy: 'network-only',
+      variables: {
+        nationalId,
+      },
+    })
+
+    if (res.error) {
+      throw res.error
     }
 
-    // Replace this with a call to server
-    const company = companiesMock.find((p) => p.id === params['companyId'])
-
-    if (!company) {
-      throw new Error('Procurers not found')
+    if (!res.data?.authAdminGetCompanyProcurers) {
+      throw new Error('Company procurers not found')
     }
 
-    return company
+    return res.data.authAdminGetCompanyProcurers
   }
 }

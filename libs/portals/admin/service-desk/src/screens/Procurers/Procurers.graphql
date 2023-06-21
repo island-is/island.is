@@ -1,0 +1,10 @@
+query GetCompanyProcurers($nationalId: String!) {
+  authAdminGetCompanyProcurers(nationalId: $nationalId) {
+    name
+    nationalId
+    procurers {
+      name
+      nationalId
+    }
+  }
+}

@@ -1,0 +1,7 @@
+query GetCompanies($search: String!) {
+  authAdminProcureGetCompanies(search: $search) {
+    id
+    name
+    nationalId
+  }
+}
