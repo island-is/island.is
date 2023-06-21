@@ -1965,10 +1965,7 @@ service-portal:
     SI_PUBLIC_GRAPHQL_API: '/api/graphql'
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'islandis'
-    - 'user-notification'
-    - 'identity-server'
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
