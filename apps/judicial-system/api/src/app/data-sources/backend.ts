@@ -39,6 +39,8 @@ import type {
 
 import { environment } from '../../environments'
 import { UpdateFilesResponse } from '../modules/file'
+import { PoliceCaseInfo } from '../modules/police'
+
 import {
   CreateIndictmentCountInput,
   DeleteIndictmentCountInput,
@@ -227,6 +229,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
+    return this.get(`case/${caseId}/policeCaseInfo`)
   }
 
   uploadPoliceFile(
