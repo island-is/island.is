@@ -8,11 +8,14 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  PendingAction,
 } from '@island.is/application/types'
 import {
   getValueViaPath,
   pruneAfterDays,
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { ApiActions, OperatorInformation, UserInformation } from '../shared'
@@ -23,11 +26,12 @@ import {
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
-import { application as applicationMessage } from './messages'
+import { application, application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { isRemovingOperatorOnly } from '../utils'
+import { hasReviewerApproved, isRemovingOperatorOnly } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { useAuth } from '@island.is/auth/react'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -46,6 +50,28 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   return {
     name: applicationMessage.name,
     value: plate ? `- ${plate}` : '',
+  }
+}
+
+const reviewStatePendingAction = (
+  application: Application,
+  role: string,
+): PendingAction => {
+  const { userInfo } = useAuth()
+  const nationalId = userInfo?.profile?.nationalId
+
+  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.youNeedToReviewDescription,
+      displayStatus: 'info',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.waitingForReviewDescription,
+      displayStatus: 'info',
+    }
   }
 }
 
@@ -78,6 +104,12 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -124,6 +156,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardPayment,
               variant: 'red',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentAccepted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.paymentCancelled,
+                onEvent: DefaultEvents.ABORT,
+              },
+            ],
+            pendingAction: {
+              title: corePendingActionMessages.paymentPendingTitle,
+              content: corePendingActionMessages.paymentPendingDescription,
+              displayStatus: 'warning',
+            },
           },
           progress: 0.8,
           lifecycle: pruneAfterDays(1 / 24),
@@ -167,6 +214,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: application.historyLogApprovedByReviewer,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
+            pendingAction: reviewStatePendingAction,
           },
           progress: 0.65,
           lifecycle: {
@@ -256,6 +318,10 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: corePendingActionMessages.applicationReceivedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [
