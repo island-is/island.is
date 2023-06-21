@@ -211,6 +211,7 @@ describe('DiscountService', () => {
     const postalCode = 600
     const comment = 'This is a comment'
     const unConnectedFlights: Flight[] = []
+    const numberOfDaysUntilExpiration = 1
 
     it('should create an explicit discount and cache it', async () => {
       const cacheManagerSpy = jest.spyOn(cacheManager, 'set')
@@ -221,6 +222,7 @@ describe('DiscountService', () => {
         postalCode,
         employeeId,
         comment,
+        numberOfDaysUntilExpiration,
         unConnectedFlights,
       )
 
@@ -247,6 +249,7 @@ describe('DiscountService', () => {
         postalCode,
         employeeId,
         comment,
+        numberOfDaysUntilExpiration,
         unConnectedFlights,
       )
       expect(explicitCodeSpy).toBeCalledTimes(1)
@@ -262,6 +265,7 @@ describe('DiscountService', () => {
         postalCode,
         employeeId,
         comment,
+        numberOfDaysUntilExpiration,
         unConnectedFlights,
       )
       expect(result).toBe(null)
@@ -289,6 +293,7 @@ describe('DiscountService', () => {
         postalCode,
         employeeId,
         comment,
+        numberOfDaysUntilExpiration,
         unConnectedFlights,
       )
 
