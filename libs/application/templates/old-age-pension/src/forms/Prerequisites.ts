@@ -12,6 +12,7 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import {
+  ChildrenCustodyInformationApi,
   DefaultEvents,
   Form,
   FormModes,
@@ -68,6 +69,11 @@ export const PrerequisitesForm: Form = buildForm({
                   title: oldAgePensionFormMessage.pre.skraInformationTitle,
                   subTitle:
                     oldAgePensionFormMessage.pre.skraInformationSubTitle,
+                }),
+                buildDataProviderItem({
+                  provider: ChildrenCustodyInformationApi,
+                  title: 'Forsjá',
+                  subTitle: 'Forsjá',
                 }),
                 buildDataProviderItem({
                   provider: NationalRegistryResidenceHistoryApi,

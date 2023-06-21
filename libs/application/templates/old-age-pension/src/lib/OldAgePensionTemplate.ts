@@ -13,6 +13,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   NationalRegistrySpouseApi,
+  ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
 import { pruneAfterDays } from '@island.is/application/core'
 
@@ -75,6 +76,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistrySpouseApi,
                 NationalRegistryResidenceHistoryApi,
                 NationalRegistryCohabitantsApi,
+                ChildrenCustodyInformationApi,
               ],
               delete: true,
             },

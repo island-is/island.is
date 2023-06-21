@@ -1,4 +1,5 @@
 export { FieldAlertMessage } from './AlertMessage'
 export { Period } from './Period'
 export { ResidenceHistoryTable } from './ResidenceHistory'
+export { ChildCustodyTable } from './ChildCustody'
 export { Review } from './Review'

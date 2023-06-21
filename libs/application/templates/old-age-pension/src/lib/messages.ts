@@ -257,11 +257,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   connectedApplications: defineMessages({
-    childSupport: {
-      id: 'oap.application:related.applications.childSupport',
-      defaultMessage: 'Barnalífeyri',
-      description: 'Child support',
-    },
     relatedApplicationsSection: {
       id: 'oap.application:related.applications.section',
       defaultMessage: 'Tengdar umsóknir',
@@ -274,6 +269,36 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Here are related applications you may be eligible for. Check the applications you want to apply for.',
     },
+    homeAllowance: {
+      id: 'oap.application:related.applications.homeAllowance',
+      defaultMessage: 'Heimilisuppbót',
+      description: 'Home allowance',
+    },
+    childSupport: {
+      id: 'oap.application:related.applications.childSupport',
+      defaultMessage: 'Barnalífeyri vegna ellilífeyris',
+      description: 'Child support for old age pension',
+    },
+    childSupportDescription: {
+      id: 'oap.application:related.applications.childSupport.description',
+      defaultMessage: 'Barnalífeyri vegna ellilífeyris er greiddur með börnum yngri en 18 ára. Ath að lífeyrisþegar sem eru meðlagsskyldir og meðlagið greiðist af TR fá barnalífeyri ekki greiddan beint til sín heldur rennur hann upp í meðlagsgreiðslurnar.',
+      description: 'Child support due to old age pension is paid with children under 18 years of age. Please note that pensioners who are liable for child support and the child support is paid by TR, do not receive child pension directly but instead it is added to the child support payments.',
+    },
+    childSupportKidsTitle: {
+      id: 'oap.application:related.applications.childSupport.kids.title',
+      defaultMessage: 'Börn í þinni forsjá',
+      description: 'Children in your care',
+    },
+    childSupportKidsDescription: {
+      id: 'oap.application:related.applications.childSupport.kids.description',
+      defaultMessage: 'Samkvæmt uppflettingu í þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef barn er ekki með sama lögheimili og þú verður þú að skila inn skjali sem staðfestir að þú sért með barn/börn á framfærlsu. ATH ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá og koma svo aftur til að klára umsóknina.',
+      description: 'translation..',
+    },
+    addChildButton: {
+      id: 'oap.application:add.child.button',
+      defaultMessage: 'Bæta við barni',
+      description: 'Add child',
+    }
   }),
 
   residence: defineMessages({
@@ -587,6 +612,16 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Hér getur þú skilað vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         "Here you can upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
+    },
+    childSupportNotLivesWithApplicantTitle: {
+      id: 'oap.application:fileUpload.child.support.not.lives.with.applicant.title',
+      defaultMessage: 'Samningur um meðlag',
+      description: 'Child support agreement',
+    },
+    childSupportNotLivesWithApplicantDescription: {
+      id: 'oap.application:fileUpload.child.support.not.lives.with.applicant.description',
+      defaultMessage: 'Hér getur þú skilað meðlagssamingi vegna barns sem er ekki með lögheimili hjá þér. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description: 'english translation',
     },
   }),
 

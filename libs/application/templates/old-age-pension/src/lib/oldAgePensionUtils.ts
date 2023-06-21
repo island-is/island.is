@@ -1,5 +1,4 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
-import { Application, Option, YesOrNo } from '@island.is/application/types'
 import {
   MONTHS,
   ConnectedApplications,
@@ -12,13 +11,20 @@ import {
   NO,
   ApplicationType,
 } from './constants'
+import {
+  ApplicantChildCustodyInformation,
+  Option,
+  Application,
+  NationalRegistryResidenceHistory,
+  YesOrNo,
+} from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
 
 import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { residenceHistory, combinedResidenceHistory } from '../types'
+import { combinedResidenceHistory } from '../types'
 import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { getCountryByCode } from '@island.is/shared/utils'
@@ -114,7 +120,13 @@ export function getApplicationExternalData(
     externalData,
     'nationalRegistryResidenceHistory.data',
     [],
-  ) as residenceHistory[]
+  ) as NationalRegistryResidenceHistory[]
+
+  const custodyInformation = getValueViaPath(
+    externalData,
+    'childrenCustodyInformation.data',
+    [],
+  ) as ApplicantChildCustodyInformation[]
 
   const cohabitants = getValueViaPath(
     externalData,
@@ -172,6 +184,7 @@ export function getApplicationExternalData(
   return {
     residenceHistory,
     cohabitants,
+    custodyInformation,
     applicantName,
     applicantNationalId,
     applicantAddress,
@@ -421,7 +434,7 @@ export function getAttachments(application: Application) {
 
 // return combine residence history if the applicant had domestic transport
 export function getCombinedResidenceHistory(
-  residenceHistory: residenceHistory[],
+  residenceHistory: NationalRegistryResidenceHistory[],
 ): combinedResidenceHistory[] {
   let combinedResidenceHistory: combinedResidenceHistory[] = []
 
@@ -432,7 +445,7 @@ export function getCombinedResidenceHistory(
 
     const priorResidence = combinedResidenceHistory.at(-1)
     if (priorResidence?.country !== history.country) {
-      combinedResidenceHistory.at(-1)!.periodTo = history.dateOfChange
+      combinedResidenceHistory.at(-1)!.periodTo = history.dateOfChange!
 
       return combinedResidenceHistory.push(residenceMapper(history))
     }
@@ -474,10 +487,12 @@ export function isExistsCohabitantOlderThan25(
   return isOlderThan25
 }
 
-function residenceMapper(history: residenceHistory): combinedResidenceHistory {
+function residenceMapper(
+  history: NationalRegistryResidenceHistory,
+): combinedResidenceHistory {
   const residence = {} as combinedResidenceHistory
-  residence.country = history.country
-  residence.periodFrom = history.dateOfChange
+  residence.country = history.country!
+  residence.periodFrom = history.dateOfChange!
   residence.periodTo = '-'
 
   return residence
@@ -543,6 +558,39 @@ export function residenceHistoryTableData(application: Application) {
       //   Header: formatText('Dvalartími (16-67 ára)', application, formatMessage),
       //   accessor: 'lengthOfStay',
       // } as const,
+    ],
+    [application, formatMessage],
+  )
+
+  return { data, columns }
+}
+
+export function childCustodyTableData(application: Application) {
+  const { formatMessage } = useLocale()
+  const { custodyInformation } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  const formattedData =
+    custodyInformation.map((info) => {
+      return {
+        name: info.fullName,
+        nationalId: kennitala.format(info.nationalId),
+      }
+    }) ?? []
+
+  const data = React.useMemo(() => [...formattedData], [formattedData])
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: formatText('Nafn', application, formatMessage),
+        accessor: 'name',
+      } as const,
+      {
+        Header: formatText('Kennitala', application, formatMessage),
+        accessor: 'nationalId',
+      } as const,
     ],
     [application, formatMessage],
   )
