@@ -82,7 +82,7 @@ const WorkMachinesDetail = () => {
       url?: string,
     ) => {
       const icon: IconMapIcon =
-        rel === WorkMachinesAction.CHANGE_STATUS ? 'removeCircle' : 'document'
+        rel === WorkMachinesAction.CHANGE_STATUS ? 'removeCircle' : 'open'
 
       const button = (
         <Button
