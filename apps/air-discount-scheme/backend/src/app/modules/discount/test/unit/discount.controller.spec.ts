@@ -221,6 +221,7 @@ describe('DiscountController', () => {
       const discountCode = 'ABCDEFG'
       const postalcode = 600
       const comment = 'This is a comment'
+      const numberOfDaysUntilExpiration = 1
       const discount = new Discount(
         createTestUser(),
         discountCode,
@@ -237,6 +238,7 @@ describe('DiscountController', () => {
           comment,
           nationalId,
           postalcode,
+          numberOfDaysUntilExpiration,
         },
         auth,
       )
@@ -247,6 +249,7 @@ describe('DiscountController', () => {
         postalcode,
         auth.nationalId,
         comment,
+        numberOfDaysUntilExpiration,
         [],
       )
       expect(result).toEqual(discount)

@@ -17,12 +17,15 @@ import { paginate } from '@island.is/nest/pagination'
 import environment, {
   ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS,
 } from '../../../environments/environment'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
 import type { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
+import {
+  IndividualDto,
+  NationalRegistryClientService,
+} from '@island.is/clients/national-registry-v2'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -35,11 +38,11 @@ export class EndorsementListService {
     private endorsementModel: typeof Endorsement,
     @InjectModel(EndorsementList)
     private readonly endorsementListModel: typeof EndorsementList,
-    private readonly nationalRegistryApi: NationalRegistryApi,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     @Inject(EmailService)
     private emailService: EmailService,
+    private readonly nationalRegistryApiV2: NationalRegistryClientService,
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -275,7 +278,8 @@ export class EndorsementListService {
     }
 
     try {
-      return (await this.nationalRegistryApi.getUser(owner)).Fulltnafn
+      const person = await this.nationalRegistryApiV2.getIndividual(owner)
+      return person?.fullName ? person.fullName : ''
     } catch (e) {
       if (e instanceof Error) {
         this.logger.warn(
