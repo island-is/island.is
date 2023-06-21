@@ -100,6 +100,12 @@ export const core = defineMessages({
     defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
+  sessionArrangementsNonePresent: {
+    id: 'judicial.system.core:session_arrangements_none_present',
+    defaultMessage:
+      'Með heimild í 1. mgr. 104. gr. laga nr. 88/2008 voru hvorki varnaraðili né sóknaraðili kvaddir til þinghaldsins.',
+    description: 'Notað fyrir þingbók undir mættir eru.',
+  },
   indictmentDefendant: {
     id: 'judicial.system.core:indictment_defendant_v2',
     defaultMessage:

@@ -152,6 +152,10 @@ export class NotificationService {
     )
   }
 
+  private getCourtEmail(courtId?: string) {
+    return (courtId && this.config.email.courtsEmails[courtId]) ?? undefined
+  }
+
   private async sendSms(
     smsText: string,
     mobileNumbers?: string,
@@ -411,7 +415,7 @@ export class NotificationService {
       subject,
       body,
       theCase.court?.name,
-      theCase.court?.notificationEmail,
+      this.getCourtEmail(theCase.courtId),
     )
   }
 
@@ -552,7 +556,10 @@ export class NotificationService {
       theCase.defenderName,
       theCase.sessionArrangements,
     )
-    const calendarInvite = this.createICalAttachment(theCase)
+    const calendarInvite =
+      theCase.sessionArrangements === SessionArrangements.NONE_PRESENT
+        ? undefined
+        : this.createICalAttachment(theCase)
 
     return this.sendEmail(
       subject,
@@ -606,7 +613,7 @@ export class NotificationService {
     return this.sendEmail(
       subject,
       html,
-      'Gæsluvarðhaldsfangelsi',
+      this.formatMessage(notifications.emailNames.prison),
       this.config.email.prisonEmail,
     )
   }
@@ -812,7 +819,7 @@ export class NotificationService {
     return this.sendEmail(
       subject,
       html,
-      'Gæsluvarðhaldsfangelsi',
+      this.formatMessage(notifications.emailNames.prison),
       this.config.email.prisonEmail,
     )
   }
@@ -830,7 +837,7 @@ export class NotificationService {
     return this.sendEmail(
       subject,
       body,
-      'Fangelsismálastofnun',
+      this.formatMessage(notifications.emailNames.prisonAdmin),
       this.config.email.prisonAdminEmail,
     )
   }
@@ -850,7 +857,7 @@ export class NotificationService {
     return this.sendEmail(
       subject,
       body,
-      'Gæsluvarðhaldsfangelsi',
+      this.formatMessage(notifications.emailNames.prison),
       this.config.email.prisonEmail,
     )
   }
@@ -979,7 +986,7 @@ export class NotificationService {
       this.sendEmail(
         subject,
         html,
-        'Fangelsismálastofnun',
+        this.formatMessage(notifications.emailNames.prisonAdmin),
         this.config.email.prisonAdminEmail,
       ),
     ]
@@ -993,7 +1000,7 @@ export class NotificationService {
         this.sendEmail(
           subject,
           html,
-          'Gæsluvarðhaldsfangelsi',
+          this.formatMessage(notifications.emailNames.prison),
           this.config.email.prisonEmail,
         ),
       )
@@ -1095,7 +1102,7 @@ export class NotificationService {
     return this.sendEmail(
       subject,
       html,
-      'Gæsluvarðhaldsfangelsi',
+      this.formatMessage(notifications.emailNames.prison),
       this.config.email.prisonEmail,
     )
   }
@@ -1373,6 +1380,17 @@ export class NotificationService {
       this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
     ]
 
+    if (theCase.registrar) {
+      promises.push(
+        this.sendEmail(
+          subject,
+          html,
+          theCase.registrar.name,
+          theCase.registrar.email,
+        ),
+      )
+    }
+
     if (user.role === UserRole.DEFENDER) {
       promises.push(
         this.sendEmail(
@@ -1428,11 +1446,29 @@ export class NotificationService {
       },
     )
 
+    const html = this.formatMessage(
+      notifications.caseAppealReceivedByCourt.courtOfAppealsBody,
+      {
+        courtCaseNumber: theCase.courtCaseNumber,
+        linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
+
+    const promises = [
+      this.sendEmail(
+        subject,
+        html,
+        this.formatMessage(notifications.emailNames.courtOfAppeals),
+        this.getCourtEmail(this.config.courtOfAppealsId),
+      ),
+    ]
+
     const statementDeadline =
       theCase.appealReceivedByCourtDate &&
       getStatementDeadline(theCase.appealReceivedByCourtDate)
 
-    const html = this.formatMessage(
+    const prosecutorHtml = this.formatMessage(
       notifications.caseAppealReceivedByCourt.body,
       {
         userHasAccessToRVG: true,
@@ -1443,14 +1479,14 @@ export class NotificationService {
       },
     )
 
-    const promises = [
+    promises.push(
       this.sendEmail(
         subject,
-        html,
+        prosecutorHtml,
         theCase.prosecutor?.name,
         theCase.prosecutor?.email,
       ),
-    ]
+    )
 
     if (theCase.defenderEmail) {
       const url =
@@ -1657,7 +1693,7 @@ export class NotificationService {
         this.sendEmail(
           subject,
           html,
-          'Fangelsismálastofnun',
+          this.formatMessage(notifications.emailNames.prisonAdmin),
           this.config.email.prisonAdminEmail,
         ),
       )
@@ -1676,7 +1712,7 @@ export class NotificationService {
           this.sendEmail(
             subject,
             html,
-            'Gæsluvarðhaldsfangelsi',
+            this.formatMessage(notifications.emailNames.prison),
             this.config.email.prisonEmail,
           ),
         )
