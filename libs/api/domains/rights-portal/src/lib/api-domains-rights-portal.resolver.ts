@@ -49,6 +49,7 @@ export class RightsPortalResolver {
     return this.rightsPortalService.getAidsAndNutrition(user)
   }
 
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
   @Query(() => Dentists, {
     name: 'rightsPortalDentists',
@@ -70,6 +71,7 @@ export class RightsPortalResolver {
     )
   }
 
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
   @Scopes(ApiScope.health)
   @Query(() => HealthCenterHistory, {
     name: 'rightsPortalHealthCenterHistory',

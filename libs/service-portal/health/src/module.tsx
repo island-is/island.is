@@ -41,12 +41,14 @@ export const healthModule: PortalModule = {
     {
       name: 'Tannlæknar',
       path: HealthPaths.HealthDentists,
+      key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Dentists />,
     },
     {
       name: 'Heilsugæsla',
       path: HealthPaths.HealthCenter,
+      key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthCenter />,
     },
