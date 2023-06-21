@@ -11,4 +11,12 @@ export default {
   globals: {},
   displayName: 'services-user-profile',
   testEnvironment: 'node',
+  transform: {
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: `${__dirname}/tsconfig.spec.json`,
+      },
+    ],
+  },
 }
