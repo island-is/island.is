@@ -76,9 +76,9 @@ export class EndorsementService {
         id: listId,
       },
     })
-    console.log("endorsementList ---", endorsementList)
+    console.log('endorsementList ---', endorsementList)
     if (endorsementList) {
-      console.log("endorsementList --- ---", endorsementList.owner)
+      console.log('endorsementList --- ---', endorsementList.owner)
       return endorsementList.owner
     } else {
       return null

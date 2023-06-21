@@ -16,8 +16,8 @@ import { User } from '@island.is/auth-nest-tools'
 export class EndorsementInterceptor implements NestInterceptor {
   constructor(
     private endorsementService: EndorsementService,
-    private endorsementListService: EndorsementListService
-    ) {}
+    private endorsementListService: EndorsementListService,
+  ) {}
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -32,7 +32,6 @@ export class EndorsementInterceptor implements NestInterceptor {
     const isAdmin = this.endorsementListService.hasAdminScope(user as User)
     return next.handle().pipe(
       map((retEndorsement: Endorsement) => {
-
         return maskEndorsement(retEndorsement, isListOwner, isAdmin)
       }),
     )

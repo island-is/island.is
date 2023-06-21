@@ -8,9 +8,9 @@ export function maskEndorsement(
   // endorsement data display rules
   // always mask out nationalId for all user groups
 
-  if(isListOwner){
+  if (isListOwner) {
     endorsement.endorser = 'xxxxxx-xxxx'
-  } else if(isAdmin){
+  } else if (isAdmin) {
     endorsement.endorser = 'xxxxxx-xxxx'
   } else {
     endorsement.endorser = 'xxxxxx-xxxx'

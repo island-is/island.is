@@ -18,8 +18,8 @@ import { EndorsementListService } from '../../endorsementList/endorsementList.se
 export class PaginatedEndorsementInterceptor implements NestInterceptor {
   constructor(
     private endorsementService: EndorsementService,
-    private endorsementListService: EndorsementListService
-    ) {}
+    private endorsementListService: EndorsementListService,
+  ) {}
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -30,7 +30,7 @@ export class PaginatedEndorsementInterceptor implements NestInterceptor {
     const listOwnerNationalId = await this.endorsementService.getListOwnerNationalId(
       listId,
     )
-    const isListOwner:boolean = (user.nationalId === listOwnerNationalId)
+    const isListOwner: boolean = user.nationalId === listOwnerNationalId
     const isAdmin = this.endorsementListService.hasAdminScope(user as User)
 
     return next.handle().pipe(
