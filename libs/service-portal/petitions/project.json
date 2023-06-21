@@ -16,10 +16,10 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/eligibility/jest.config.js",
+        "jestConfig": "libs/service-portal/petitions/jest.config.js",
         "passWithNoTests": true
       },
-      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/eligibility"]
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/petitions"]
     },
     "schemas/codegen": {
       "executor": "nx:run-commands",
