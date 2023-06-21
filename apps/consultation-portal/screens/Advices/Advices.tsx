@@ -8,49 +8,27 @@ import {
   DropdownMenu,
   FocusableBox,
 } from '@island.is/island-ui/core'
-import Layout from '../../components/Layout/Layout'
-import BreadcrumbsWithMobileDivider from '../../components/BreadcrumbsWithMobileDivider/BreadcrumbsWithMobileDivider'
-import { useLogIn, useUser, useAdviceFilters } from '../../utils/helpers'
-import { Card, SubscriptionActionCard } from '../../components/Card'
+import {
+  Breadcrumbs,
+  ActionCard,
+  Card,
+  EmptyState,
+  Pagination,
+  Layout,
+  SearchAndSortPartial,
+} from '../../components'
+import { useLogIn, useUser, useAdviceFilters } from '../../hooks'
 import { useState } from 'react'
-import EmptyState from '../../components/EmptyState/EmptyState'
-import { UserAdvice } from '../../types/interfaces'
-import Pagination from '../../components/Pagination/Pagination'
-import SearchAndSortPartialData from '../../components/SearchAndSort/SearchAndSortPartialData'
-
-const CARDS_PER_PAGE = 12
-
-export const AdvicesLayout = ({ children }) => {
-  return (
-    <Layout seo={{ title: 'umsagnir', url: 'umsagnir' }}>
-      <BreadcrumbsWithMobileDivider
-        items={[
-          { title: 'Samráðsgátt', href: '/' },
-          { title: 'Mínar umsagnir' },
-        ]}
-      />
-      <GridContainer>
-        <Stack space={[3, 3, 3, 5, 5]}>
-          <Stack space={3}>
-            <Text variant="h1">Mínar umsagnir</Text>
-            <Text variant="default">
-              Hér er hægt að fylgjast með þeim áskriftum sem þú ert skráð(ur) í
-              ásamt því að sjá allar umsagnir sem þú ert búin að skrifa í gegnum
-              tíðina.
-            </Text>
-          </Stack>
-          {children}
-        </Stack>
-      </GridContainer>
-    </Layout>
-  )
-}
+import { AdviceFilter, UserAdvice } from '../../types/interfaces'
+import env from '../../lib/environment'
+import { CARDS_PER_PAGE, FILTERS_ADVICE_KEY } from '../../utils/consts/consts'
+import localization from './Advices.json'
 
 export const AdvicesScreen = () => {
   const LogIn = useLogIn()
   const { isAuthenticated, userLoading } = useUser()
-  const [page, setPage] = useState(0)
   const [dropdownState, setDropdownState] = useState('')
+  const loc = localization['advices']
 
   const handleDropdown = (id: string) => {
     setDropdownState((prev) => {
@@ -64,22 +42,10 @@ export const AdvicesScreen = () => {
     getAdvicesLoading,
     filters,
     setFilters,
-  } = useAdviceFilters({ cards_per_page: CARDS_PER_PAGE, page: page })
-
-  if (!userLoading && !isAuthenticated) {
-    return (
-      <AdvicesLayout>
-        <SubscriptionActionCard
-          heading="Mínar umsagnir"
-          text="Þú verður að vera skráð(ur) inn til þess að geta séð þínar umsagnir."
-          button={[{ label: 'Skrá mig inn', onClick: LogIn }]}
-        />
-      </AdvicesLayout>
-    )
-  }
+  } = useAdviceFilters({ isAuthenticated: isAuthenticated })
 
   const renderCards = () => {
-    if (getAdvicesLoading) {
+    if (userLoading || getAdvicesLoading) {
       return (
         <Box
           display="flex"
@@ -92,11 +58,9 @@ export const AdvicesScreen = () => {
         </Box>
       )
     }
-
     if (!getAdvicesLoading && advices?.length === 0) {
       return <EmptyState />
     }
-
     return (
       <>
         {advices && (
@@ -104,7 +68,7 @@ export const AdvicesScreen = () => {
             {advices.map((item: UserAdvice, index: number) => {
               const card = {
                 id: item.caseId,
-                title: item.participantName,
+                title: item._case?.name,
                 tag: item._case?.statusName,
                 published: item.created,
                 processEnds: item._case?.processEnds,
@@ -115,17 +79,17 @@ export const AdvicesScreen = () => {
                 item.adviceDocuments?.length !== 0 ? (
                   <FocusableBox
                     onClick={() => handleDropdown(item.id)}
-                    component="div"
+                    component="button"
                   >
                     <DropdownMenu
-                      title="Viðhengi"
+                      title={loc.card.dropdownMenuTitle}
                       icon={
                         dropdownState === item.id ? 'chevronUp' : 'chevronDown'
                       }
                       items={item.adviceDocuments?.map((item) => {
                         return {
                           title: item.fileName,
-                          href: `https://samradapi-test.devland.is/api/Documents/${item.id}`,
+                          href: `${env.backendDownloadUrl}${item.id}`,
                         }
                       })}
                     />
@@ -143,7 +107,7 @@ export const AdvicesScreen = () => {
                 >
                   <Stack space={2}>
                     <Text variant="eyebrow" color="dark400">
-                      Þín umsögn
+                      {loc.card.eyebrowText}
                     </Text>
                     <Box
                       style={{
@@ -163,23 +127,50 @@ export const AdvicesScreen = () => {
           </Tiles>
         )}
         <Pagination
-          page={page}
-          setPage={(page: number) => setPage(page)}
+          filters={filters}
+          setFilters={(arr: AdviceFilter) => setFilters(arr)}
           totalPages={Math.ceil(total / CARDS_PER_PAGE)}
+          localStorageId={FILTERS_ADVICE_KEY}
         />
       </>
     )
   }
 
   return (
-    <AdvicesLayout>
-      <SearchAndSortPartialData
-        filters={filters}
-        setFilters={setFilters}
-        loading={getAdvicesLoading}
+    <Layout seo={{ title: loc.seo.title, url: loc.seo.url }}>
+      <Breadcrumbs
+        items={[
+          { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
+          { title: loc.breadcrumbs[1].title },
+        ]}
       />
-      {renderCards()}
-    </AdvicesLayout>
+      <GridContainer>
+        <Stack space={[3, 3, 3, 5, 5]}>
+          <Stack space={3}>
+            <Text variant="h1">{loc.intro.title}</Text>
+            <Text variant="default">{loc.intro.text}</Text>
+          </Stack>
+          {!userLoading && !isAuthenticated && (
+            <ActionCard
+              heading={loc.subscriptionActionCard.heading}
+              text={loc.subscriptionActionCard.text}
+              button={[
+                {
+                  label: loc.subscriptionActionCard.buttonLabel,
+                  onClick: LogIn,
+                },
+              ]}
+            />
+          )}
+          {!userLoading && isAuthenticated && (
+            <>
+              <SearchAndSortPartial filters={filters} setFilters={setFilters} />
+              {renderCards()}
+            </>
+          )}
+        </Stack>
+      </GridContainer>
+    </Layout>
   )
 }
 

@@ -1,7 +1,5 @@
 export default {
   production: false,
-  bypassCacheKey: process.env.BYPASS_CACHE_KEY,
-  cacheTime: process.env.CACHE_TIME || 300,
   indexableTypes: [
     'article',
     'subArticle',
@@ -76,6 +74,7 @@ export default {
     'price',
     'teamList',
     'teamMember',
+    'sliceDropdown',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

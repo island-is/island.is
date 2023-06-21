@@ -16,24 +16,19 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NotificationType } from '@island.is/judicial-system/types'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+
 import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { titles } from '@island.is/judicial-system-web/messages'
-import {
-  AlertMessage,
-  RadioButton,
-  Box,
-  Tooltip,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, RadioButton, Box, Text } from '@island.is/island-ui/core'
 import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import * as constants from '@island.is/judicial-system/consts'
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
@@ -72,7 +67,7 @@ const HearingArrangements = () => {
       [
         {
           sessionArrangements: workingCase.defenderName
-            ? SessionArrangements.AllPresent
+            ? SessionArrangements.ALL_PRESENT
             : undefined,
         },
       ],
@@ -177,9 +172,6 @@ const HearingArrangements = () => {
                   <Text as="span" color="red600" fontWeight="semiBold">
                     *
                   </Text>
-                  <Tooltip
-                    text={formatMessage(m.sections.sessionArrangements.tooltip)}
-                  />
                 </Text>
               </Box>
               <BlueBox>
@@ -191,17 +183,18 @@ const HearingArrangements = () => {
                       m.sections.sessionArrangements.options.allPresent,
                     )}
                     checked={
-                      checkedRadio === SessionArrangements.AllPresent ||
+                      checkedRadio === SessionArrangements.ALL_PRESENT ||
                       (!checkedRadio &&
                         workingCase.sessionArrangements ===
-                          SessionArrangements.AllPresent)
+                          SessionArrangements.ALL_PRESENT)
                     }
                     onChange={() => {
-                      setCheckedRadio(SessionArrangements.AllPresent)
+                      setCheckedRadio(SessionArrangements.ALL_PRESENT)
                       setAndSendCaseToServer(
                         [
                           {
-                            sessionArrangements: SessionArrangements.AllPresent,
+                            sessionArrangements:
+                              SessionArrangements.ALL_PRESENT,
                             force: true,
                           },
                         ],
@@ -223,20 +216,51 @@ const HearingArrangements = () => {
                     )}
                     checked={
                       checkedRadio ===
-                        SessionArrangements.AllPresentSpokesperson ||
+                        SessionArrangements.ALL_PRESENT_SPOKESPERSON ||
                       (!checkedRadio &&
                         workingCase.sessionArrangements ===
-                          SessionArrangements.AllPresentSpokesperson)
+                          SessionArrangements.ALL_PRESENT_SPOKESPERSON)
                     }
                     onChange={() => {
                       setCheckedRadio(
-                        SessionArrangements.AllPresentSpokesperson,
+                        SessionArrangements.ALL_PRESENT_SPOKESPERSON,
                       )
                       setAndSendCaseToServer(
                         [
                           {
                             sessionArrangements:
-                              SessionArrangements.AllPresentSpokesperson,
+                              SessionArrangements.ALL_PRESENT_SPOKESPERSON,
+                            force: true,
+                          },
+                        ],
+                        workingCase,
+                        setWorkingCase,
+                      )
+                    }}
+                    large
+                    backgroundColor="white"
+                  />
+                </Box>
+                <Box marginBottom={2}>
+                  <RadioButton
+                    name="session-arrangements-prosecutor-present"
+                    id="session-arrangements-prosecutor-present"
+                    label={formatMessage(
+                      m.sections.sessionArrangements.options.prosecutorPresent,
+                    )}
+                    checked={
+                      checkedRadio === SessionArrangements.PROSECUTOR_PRESENT ||
+                      (!checkedRadio &&
+                        workingCase.sessionArrangements ===
+                          SessionArrangements.PROSECUTOR_PRESENT)
+                    }
+                    onChange={() => {
+                      setCheckedRadio(SessionArrangements.PROSECUTOR_PRESENT)
+                      setAndSendCaseToServer(
+                        [
+                          {
+                            sessionArrangements:
+                              SessionArrangements.PROSECUTOR_PRESENT,
                             force: true,
                           },
                         ],
@@ -249,24 +273,23 @@ const HearingArrangements = () => {
                   />
                 </Box>
                 <RadioButton
-                  name="session-arrangements-prosecutor-present"
-                  id="session-arrangements-prosecutor-present"
+                  name="session-arrangements-none-present"
+                  id="session-arrangements-none-present"
                   label={formatMessage(
-                    m.sections.sessionArrangements.options.prosecutorPresent,
+                    m.sections.sessionArrangements.options.nonePresent,
                   )}
                   checked={
-                    checkedRadio === SessionArrangements.ProsecutorPresent ||
+                    checkedRadio === SessionArrangements.NONE_PRESENT ||
                     (!checkedRadio &&
                       workingCase.sessionArrangements ===
-                        SessionArrangements.ProsecutorPresent)
+                        SessionArrangements.NONE_PRESENT)
                   }
                   onChange={() => {
-                    setCheckedRadio(SessionArrangements.ProsecutorPresent)
+                    setCheckedRadio(SessionArrangements.NONE_PRESENT)
                     setAndSendCaseToServer(
                       [
                         {
-                          sessionArrangements:
-                            SessionArrangements.ProsecutorPresent,
+                          sessionArrangements: SessionArrangements.NONE_PRESENT,
                           force: true,
                         },
                       ],
@@ -295,9 +318,9 @@ const HearingArrangements = () => {
               </Box>
             </Box>
             {(workingCase.sessionArrangements ===
-              SessionArrangements.AllPresent ||
+              SessionArrangements.ALL_PRESENT ||
               workingCase.sessionArrangements ===
-                SessionArrangements.AllPresentSpokesperson) && (
+                SessionArrangements.ALL_PRESENT_SPOKESPERSON) && (
               <Box component="section" marginBottom={8}>
                 <DefenderInfo
                   workingCase={workingCase}
@@ -322,10 +345,10 @@ const HearingArrangements = () => {
               title={formatMessage(m.modal.heading)}
               text={formatMessage(
                 workingCase.sessionArrangements ===
-                  SessionArrangements.AllPresent
+                  SessionArrangements.ALL_PRESENT
                   ? m.modal.allPresentText
                   : workingCase.sessionArrangements ===
-                    SessionArrangements.AllPresentSpokesperson
+                    SessionArrangements.ALL_PRESENT_SPOKESPERSON
                   ? m.modal.allPresentSpokespersonText
                   : m.modal.prosecutorPresentText,
                 { courtDateHasChanged },

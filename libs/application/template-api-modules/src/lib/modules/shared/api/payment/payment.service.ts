@@ -64,7 +64,6 @@ export class PaymentService extends BaseTemplateApiService {
     if (!response?.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
-
     return response
   }
 

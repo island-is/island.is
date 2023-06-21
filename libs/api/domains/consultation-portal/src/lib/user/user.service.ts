@@ -4,18 +4,42 @@ import {
   ApiUserSubscriptionsPostRequest,
   UserApi,
 } from '@island.is/clients/consultation-portal'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { GetUserAdvicesInput } from '../dto/userAdvices.input'
 import { UserAdviceAggregate } from '../models/userAdviceAggregate.model'
 import { UserEmailResult } from '../models/userEmailResult.model'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
 import { PostEmailCommand } from '../models/postEmailCommand.model'
-import { UserSubscriptionsCommand } from '../models/userSubscriptionsCommand.model'
+import { PostUserSubscriptionsCommand } from '../models/postUserSubscriptionsCommand.model'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { ApolloError } from '@apollo/client'
 
 @Injectable()
 export class UserService {
-  constructor(private userApi: UserApi) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+    private userApi: UserApi,
+  ) {}
+
+  handleError(error: any, errorDetail?: string): ApolloError | null {
+    const err = {
+      error: JSON.stringify(error),
+      category: 'user_service',
+    }
+    this.logger.error(errorDetail || 'User Service Error', err)
+
+    throw new ApolloError(error.message)
+  }
+
+  private handle4xx(error: any, errorDetail?: string): ApolloError | null {
+    if (error.status === 403 || error.status === 404) {
+      return null
+    }
+    return this.handleError(error, errorDetail)
+  }
 
   private userApiWithAuth(auth: User) {
     return this.userApi.withMiddleware(new AuthMiddleware(auth))
@@ -32,40 +56,72 @@ export class UserService {
       pageSize: input.pageSize,
     }
 
-    const advicesResponse = await this.userApiWithAuth(auth).apiUserAdvicesGet(
-      request,
-    )
-    return advicesResponse
+    const response = await this.userApiWithAuth(auth)
+      .apiUserAdvicesGet(request)
+      .catch((e) => this.handle4xx(e, 'failed to get user advices'))
+
+    if (!response || response instanceof ApolloError) {
+      return {}
+    }
+
+    return response
   }
 
   async getUserEmail(auth: User): Promise<UserEmailResult> {
-    const emailResponse = await this.userApiWithAuth(auth).apiUserEmailGet()
-    return emailResponse
+    const response = await this.userApiWithAuth(auth)
+      .apiUserEmailGet()
+      .catch((e) => this.handle4xx(e, 'failed to get user email'))
+
+    if (!response || response instanceof ApolloError) {
+      return {}
+    }
+
+    return response
   }
 
   async getUserSubscriptions(auth: User): Promise<UserSubscriptionsAggregate> {
-    const response = await this.userApiWithAuth(auth).apiUserSubscriptionsGet()
+    const response = await this.userApiWithAuth(auth)
+      .apiUserSubscriptionsGet()
+      .catch((e) => this.handle4xx(e, 'failed to get user supscriptions'))
+
+    if (!response || response instanceof ApolloError) {
+      return {}
+    }
+
     return response
   }
 
   async postUserSubscriptions(
     auth: User,
-    userSubscriptionsCommand: UserSubscriptionsCommand,
+    input: PostUserSubscriptionsCommand,
   ): Promise<void> {
     const request: ApiUserSubscriptionsPostRequest = {
-      userSubscriptionsCommand: userSubscriptionsCommand,
+      postUserSubscriptionsCommand: input,
     }
 
-    const response = await this.userApiWithAuth(auth).apiUserSubscriptionsPost(
-      request,
-    )
+    const response = await this.userApiWithAuth(auth)
+      .apiUserSubscriptionsPost(request)
+      .catch((e) => this.handle4xx(e, 'failed to post user subscriptions'))
+
+    if (!response || response instanceof ApolloError) {
+      return void 0
+    }
+
     return response
   }
   async postUserEmail(auth: User, input: PostEmailCommand): Promise<void> {
     const request: ApiUserEmailPostRequest = {
       postEmailCommand: input,
     }
-    const response = await this.userApiWithAuth(auth).apiUserEmailPost(request)
+
+    const response = await this.userApiWithAuth(auth)
+      .apiUserEmailPost(request)
+      .catch((e) => this.handle4xx(e, 'failed to post user email'))
+
+    if (!response || response instanceof ApolloError) {
+      return void 0
+    }
+
     return response
   }
 }

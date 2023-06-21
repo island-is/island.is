@@ -27,6 +27,7 @@ import { ClientClaimDTO } from './dto/client-claim.dto'
 import { ClientPostLogoutRedirectUriDTO } from './dto/client-post-logout-redirect-uri.dto'
 import { ClientSecretDTO } from './dto/client-secret.dto'
 import { ClientsTranslationService } from './clients-translation.service'
+import { BulkCreateOptions, DestroyOptions } from 'sequelize'
 
 @Injectable()
 export class ClientsService {
@@ -80,7 +81,7 @@ export class ClientsService {
       where: {
         ...(clientIds && clientIds.length > 0 ? { clientId: clientIds } : {}),
       },
-      attributes: ['clientId', 'clientName'],
+      attributes: ['clientId', 'clientName', 'domainName'],
     })
 
     if (lang) {
@@ -448,6 +449,32 @@ export class ClientsService {
     return await this.clientAllowedScope.create({ ...clientAllowedScope })
   }
 
+  /**
+   * Adds multiple allowed scopes to client
+   * @param scopeNames - Unique scope names
+   * @param clientId - Client ID
+   * @param options - Bulk create options
+   */
+  async addAllowedScopes(
+    scopeNames: string[],
+    clientId: string,
+    options: BulkCreateOptions = {},
+  ): Promise<ClientAllowedScope[]> {
+    this.logger.debug(
+      `Adding allowed scopes - [${scopeNames
+        .map((scopeName) => scopeName)
+        .join(', ')}] to client - "${clientId}"`,
+    )
+
+    return this.clientAllowedScope.bulkCreate(
+      scopeNames.map((scopeName) => ({
+        clientId,
+        scopeName,
+      })),
+      options,
+    )
+  }
+
   /** Removes an allowed scope from client */
   async removeAllowedScope(
     clientId: string,
@@ -461,8 +488,37 @@ export class ClientsService {
       throw new BadRequestException('scopeName and clientId must be provided')
     }
 
-    return await this.clientAllowedScope.destroy({
-      where: { clientId: clientId, scopeName: scopeName },
+    return this.clientAllowedScope.destroy({
+      where: {
+        clientId: clientId,
+        scopeName: scopeName,
+      },
+    })
+  }
+
+  /**
+   * Removes multiple allowed scopes from client
+   * @param scopeNames - Unique scope names
+   * @param clientId - Client ID
+   * @param options - Destroy options
+   */
+  async removeAllowedScopes(
+    scopeNames: string[],
+    clientId: string,
+    options: DestroyOptions = {},
+  ): Promise<number> {
+    this.logger.debug(
+      `Removing scopes - [${scopeNames
+        .map((scopeName) => scopeName)
+        .join(', ')}] from client - "${clientId}"`,
+    )
+
+    return this.clientAllowedScope.destroy({
+      where: {
+        clientId: clientId,
+        scopeName: scopeNames,
+      },
+      ...options,
     })
   }
 
@@ -479,7 +535,7 @@ export class ClientsService {
     return await this.clientClaim.create({ ...claim })
   }
 
-  /** Removes an claim from client */
+  /** Removes a claim from client */
   async removeClaim(
     clientId: string,
     claimType: string,

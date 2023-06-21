@@ -57,6 +57,13 @@ export class FixtureFactory {
     apiScopes = [],
     organisationLogoKey,
   }: CreateDomain): Promise<Domain> {
+    // Create the global identity resources as createDomain is always called first when test data is created.
+    await Promise.all(
+      ['openid', 'profile'].map((name) =>
+        this.createIdentityResource({ name }),
+      ),
+    )
+
     const domain = await this.get(Domain).create({
       name: name ?? faker.random.word(),
       description: description ?? faker.lorem.sentence(),
@@ -121,6 +128,20 @@ export class FixtureFactory {
         .filter(isDefined) ?? [],
     )
 
+    createdClient.allowedScopes = (
+      await Promise.all(
+        client?.allowedScopes?.map((allowedScope) =>
+          this.createClientAllowedScope(allowedScope),
+        ) ?? [],
+      )
+    ).map(
+      ({ scopeName, clientId }) =>
+        ({
+          scopeName,
+          clientId,
+        } as ClientAllowedScope),
+    )
+
     return createdClient
   }
 
@@ -131,19 +152,22 @@ export class FixtureFactory {
   }
 
   async createIdentityResource(
-    identityResource: CreateIdentityResource = {},
+    createIdentityResource: CreateIdentityResource = {},
   ): Promise<IdentityResource> {
-    return this.get(IdentityResource).create({
-      enabled: identityResource.enabled ?? true,
-      name: identityResource.name ?? faker.random.word(),
-      displayName: identityResource.displayName ?? faker.random.word(),
-      description: identityResource.description ?? faker.random.word(),
-      showInDiscoveryDocument: identityResource.showInDiscoveryDocument ?? true,
-      required: identityResource.required ?? false,
-      emphasize: identityResource.emphasize ?? false,
+    const [identityResource, _] = await this.get(IdentityResource).upsert({
+      enabled: createIdentityResource.enabled ?? true,
+      name: createIdentityResource.name ?? faker.random.word(),
+      displayName: createIdentityResource.displayName ?? faker.random.word(),
+      description: createIdentityResource.description ?? faker.random.word(),
+      showInDiscoveryDocument:
+        createIdentityResource.showInDiscoveryDocument ?? true,
+      required: createIdentityResource.required ?? false,
+      emphasize: createIdentityResource.emphasize ?? false,
       automaticDelegationGrant:
-        identityResource.automaticDelegationGrant ?? false,
+        createIdentityResource.automaticDelegationGrant ?? false,
     })
+
+    return identityResource
   }
 
   async createClientRedirectUri({

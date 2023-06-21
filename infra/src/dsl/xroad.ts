@@ -117,10 +117,15 @@ export const DrivingLicense = new XroadConf({
         'r1/IS/GOV/5309672079/Logreglan-Protected/RafraentOkuskirteini-v2',
       prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v1',
     },
+    XROAD_DRIVING_LICENSE_V4_PATH: {
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v4',
+    },
     XROAD_DRIVING_LICENSE_V5_PATH: {
-      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/okuskirteini-v5',
-      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5',
-      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/okuskirteini-v5',
+      dev: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5',
+      staging: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
+      prod: 'r1/IS/GOV/5309672079/Logreglan-Protected/Okuskirteini-v5',
     },
   },
   secrets: {
@@ -139,6 +144,11 @@ export const HealthInsurance = new XroadConf({
       dev: 'IS-DEV/GOV/10007/SJUKRA-Protected',
       staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected',
       prod: 'IS/GOV/4804080550/SJUKRA-Protected',
+    },
+    XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: {
+      dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur',
+      staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/minarsidur',
+      prod: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur',
     },
   },
   secrets: {
@@ -261,6 +271,16 @@ export const Disability = new XroadConf({
       dev: 'IS-DEV/GOV/10008/TR-Protected/oryrki-v1',
       staging: 'IS-TEST/GOV/5012130120/TR-Protected/oryrki-v1',
       prod: 'IS/GOV/5012130120/TR-Protected/oryrki-v1',
+    },
+  },
+})
+
+export const EHIC = new XroadConf({
+  env: {
+    EHIC_XROAD_PROVIDER_ID: {
+      dev: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic',
+      staging: 'IS-TEST/GOV/4804080550/SJUKRA-Protected/ehic',
+      prod: 'IS/GOV/4804080550/SJUKRA-Protected/ehic',
     },
   },
 })
@@ -494,10 +514,11 @@ export const TransportAuthority = new XroadConf({
         'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOrdering-V1',
     },
     XROAD_VEHICLE_PLATE_RENEWAL_PATH: {
-      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
       staging:
-        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
-      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateRenewal-V1',
+        'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
+      prod:
+        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-PlateOwnership-V1',
     },
     XROAD_VEHICLE_PRINTING_PATH: {
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Printing-V1',
@@ -509,5 +530,21 @@ export const TransportAuthority = new XroadConf({
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1',
     },
+  },
+})
+
+export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
+  env: {
+    XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Protected/recruitment-v1',
+      prod: 'IS/GOV/5402697509/FJS-Protected/recruitment-v1',
+    },
+  },
+  secrets: {
+    ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME:
+      '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_USERNAME',
+    ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD:
+      '/k8s/xroad/client/ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PASSWORD',
   },
 })

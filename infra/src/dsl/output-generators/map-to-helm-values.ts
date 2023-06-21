@@ -38,16 +38,9 @@ const serializeService: SerializeMethod<HelmService> = async (
     service.name,
   )
   const serviceDef = service
-  const {
-    grantNamespaces,
-    grantNamespacesEnabled,
-    namespace,
-    securityContext,
-  } = serviceDef
+  const { namespace, securityContext } = serviceDef
   const result: HelmService = {
     enabled: true,
-    grantNamespaces: grantNamespaces,
-    grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
       repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
@@ -77,6 +70,13 @@ const serializeService: SerializeMethod<HelmService> = async (
     securityContext,
   }
 
+  // hack - fix root cause in calico on staging
+  if (serviceDef.grantNamespacesEnabled && env1.type == 'staging') {
+    ;(result.grantNamespaces = []), (result.grantNamespacesEnabled = false)
+  } else {
+    ;(result.grantNamespaces = serviceDef.grantNamespaces),
+      (result.grantNamespacesEnabled = serviceDef.grantNamespacesEnabled)
+  }
   // command and args
   if (serviceDef.cmds) {
     result.command = [serviceDef.cmds]
@@ -253,6 +253,9 @@ const serializeService: SerializeMethod<HelmService> = async (
     : { type: 'error', errors: allErrors }
 }
 
+export const getPostgresExtensions = (extensions: string[] | undefined) =>
+  extensions ? extensions.join(',') : ''
+
 export const resolveDbHost = (
   service: ServiceDefinitionForEnv,
   env: EnvironmentConfig,
@@ -297,6 +300,11 @@ function serializePostgres(
   const errors: string[] = []
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
+  if (serviceDef.initContainers?.postgres?.extensions) {
+    env['DB_EXTENSIONS'] = getPostgresExtensions(
+      serviceDef.initContainers.postgres.extensions,
+    )
+  }
   try {
     const { reader, writer } = resolveDbHost(service, envConf, postgres.host)
     env['DB_HOST'] = writer

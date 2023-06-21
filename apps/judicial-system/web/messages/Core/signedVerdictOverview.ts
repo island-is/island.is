@@ -2,33 +2,6 @@ import { defineMessage, defineMessages } from 'react-intl'
 
 // Strings on signed verdict overview screen
 export const signedVerdictOverview = {
-  dismissedTitle: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.dismissed_title',
-    defaultMessage: 'Kröfu vísað frá',
-    description:
-      'Notaður sem titill á yfirlitsskjá afgreiddra mála þegar máli er vísað frá.',
-  }),
-  validToDateInThePast: defineMessage({
-    id:
-      'judicial.system.core:signed_verdict_overview.valid_to_date_in_the_past',
-    defaultMessage:
-      '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun} TRAVEL_BAN {Farbanni} other {Gæsluvarðhaldi}} lokið',
-    description:
-      'Notaður sem titil á yfirlitsskjá afreiddra mála þegar dagsetning gæslu/vistunar/farbanni er liðin.',
-  }),
-  restrictionActive: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.restriction_active',
-    defaultMessage:
-      '{caseType, select, ADMISSION_TO_FACILITY {Vistun á viðeigandi stofnun virk} TRAVEL_BAN {Farbann virkt} other {Gæsluvarðhald virkt}}',
-    description:
-      'Notaður sem titil á yfirlitsskjá afreiddra mála þegar dagsetning gæslu/vistunar/farbanni er liðin.',
-  }),
-  investigationAccepted: defineMessage({
-    id: 'judicial.system.core:signed_verdict_overview.investigation_accepted',
-    defaultMessage: 'Krafa um rannsóknarheimild samþykkt',
-    description:
-      'Notaður sem titil á yfirlitsskjá afreiddra mála krafa um rannsóknarheimild samþykkt.',
-  }),
   caseDocuments: defineMessage({
     id: 'judicial.system.core:signed_verdict_overview.case_documents',
     defaultMessage: 'Skjöl málsins',
@@ -260,6 +233,29 @@ export const signedVerdictOverview = {
         defaultMessage: 'Hætta við',
         description:
           'Notaður sem texti í Hætta við takka í modal glugga þegar kært er eftir að kærufrestur rennur út.',
+      },
+    }),
+    appealReceived: defineMessages({
+      title: {
+        id:
+          'judicial.system.core:signed_verdict_overview.appeal_received.title',
+        defaultMessage: 'Tilkynningar sendar á málsaðila',
+        description:
+          'Notaður sem titill í upplýsingaboxi sem birtist þegar að héraðsdómur hefur móttekið kæru.',
+      },
+      text: {
+        id: 'judicial.system.core:signed_verdict_overview.appeal_received.text',
+        defaultMessage:
+          'Tilkynning um móttöku kæru hefur verið send Landsrétti, sækjanda og verjanda.',
+        description:
+          'Notaður sem texti í upplýsingaboxi sem birtist þegar að héraðsdómur hefur móttekið kæru.',
+      },
+      primaryButtonText: {
+        id:
+          'judicial.system.core:signed_verdict_overview.appeal_received.primary_button_text',
+        defaultMessage: 'Loka glugga',
+        description:
+          'Notaður sem texti á takka sem lokar upplýsingaboxi eftir að héraðsdómur hefur móttekið kæru.',
       },
     }),
     modifyDatesInfo: defineMessages({

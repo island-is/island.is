@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IAccordionSlice } from '../generated/contentfulTypes'
 import { SystemMetadata } from 'api-cms-domain'
@@ -15,7 +16,7 @@ export class AccordionSlice {
   @Field()
   type!: string
 
-  @Field(() => [OneColumnText], { nullable: true })
+  @CacheField(() => [OneColumnText], { nullable: true })
   accordionItems?: Array<OneColumnText>
 
   @Field(() => Boolean, { nullable: true })

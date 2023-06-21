@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { ITimelineEvent } from '../generated/contentfulTypes'
 import { Html, mapHtml } from './html.model'
 
@@ -22,7 +23,7 @@ export class TimelineEvent {
   @Field()
   label?: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   body?: Html | null
 
   @Field(() => [String], { nullable: true })

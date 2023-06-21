@@ -8,12 +8,23 @@ import {
   isValidVskNr,
   validateApplicationInfoCategory,
 } from './utils'
+import { m } from './messages'
 
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
   url: z.string().optional(),
 })
+
+const checkIfFilledOut = (arr: Array<string | undefined>) => {
+  if (arr.every((v) => v === '')) {
+    return false
+  } else if (arr.every((v) => v !== '')) {
+    return true
+  } else {
+    return false
+  }
+}
 
 const Properties = z
   .object({
@@ -22,15 +33,18 @@ const Properties = z
     spaceNumber: z.string(),
     customerCount: z.string(),
   })
-  .array()
   .refine(
-    (arr) => {
-      return !arr.some((item) => {
-        return item.propertyNumber.length > 0 && item.address.length === 0
-      })
+    ({ propertyNumber, address, spaceNumber, customerCount }) => {
+      return checkIfFilledOut([
+        propertyNumber,
+        address,
+        spaceNumber,
+        customerCount,
+      ])
     },
-    { params: error.missingAddressForPropertyNumber },
+    { params: error.invalidValue },
   )
+  .array()
 
 const TimeRefine = z.object({
   from: z.string().refine((x) => (x ? isValid24HFormatTime(x) : false), {
@@ -130,7 +144,7 @@ export const dataSchema = z.object({
     operationName: z.string().min(1),
     vskNr: z
       .string()
-      .refine((v) => isValidVskNr(v), { params: error.invalidValue }),
+      .refine((v) => isValidVskNr(v), { params: m.vskNrInvalid }),
     email: z
       .string()
       .refine((v) => isValidEmail(v), { params: error.invalidValue }),

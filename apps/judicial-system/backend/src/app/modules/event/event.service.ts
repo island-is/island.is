@@ -48,6 +48,9 @@ const caseEvent = {
   DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
   REOPEN: ':construction: Opnað aftur',
+  APPEAL: ':judge: Kæra',
+  RECEIVE_APPEAL: ':eyes: Kæra móttekin',
+  COMPLETE_APPEAL: ':white_check_mark: Kæru lokið',
 }
 
 export enum CaseEvent {
@@ -66,6 +69,9 @@ export enum CaseEvent {
   DISMISS = 'DISMISS',
   ARCHIVE = 'ARCHIVE',
   REOPEN = 'REOPEN',
+  APPEAL = 'APPEAL',
+  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
+  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
 }
 
 @Injectable()

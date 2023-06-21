@@ -25,6 +25,9 @@ import { ClientsService } from './clients.service'
 import { CreateClientInput } from './dto/create-client.input'
 import { PatchClientInput } from './dto/patch-client.input'
 import { AdminClientDto } from '@island.is/auth-api-lib'
+import { PublishClientInput } from './dto/publish-client.input'
+import { RotateSecretInput } from './dto/rotate-secret.input'
+import { ClientSecret } from './models/client-secret.model'
 
 const baseResponse: AdminClientDto = {
   clientId: 'test-client-id',
@@ -53,6 +56,12 @@ const baseResponse: AdminClientDto = {
   customClaims: [{ type: 'string', value: 'test' }],
 }
 
+const secretResponse: ClientSecret = {
+  clientId: baseResponse.clientId,
+  secretId: 'secret-id',
+  decryptedValue: 'secret-value',
+}
+
 const createMockAdminApi = () => ({
   withMiddleware: jest.fn().mockReturnThis(),
   meClientsControllerUpdate: jest.fn().mockImplementation((data) => {
@@ -62,9 +71,22 @@ const createMockAdminApi = () => ({
       ...adminPatchClientDto,
     }
   }),
-  meClientsControllerCreate: jest
+  meClientsControllerFindByTenantIdAndClientId: jest
     .fn()
-    .mockResolvedValue({ clientId: 'test-client-id' }),
+    .mockResolvedValue(baseResponse),
+  meClientsControllerCreate: jest.fn().mockResolvedValue(baseResponse),
+  meClientSecretsControllerCreate: jest.fn().mockImplementation((data) => {
+    const { clientId } = data
+    return {
+      ...secretResponse,
+      clientId,
+    }
+  }),
+  meClientSecretsControllerFindAll: jest.fn().mockResolvedValue([
+    { ...secretResponse, secretId: '1' },
+    { ...secretResponse, secretId: '2' },
+  ]),
+  meClientSecretsControllerDelete: jest.fn(),
 })
 
 const mockAdminDevApi = createMockAdminApi()
@@ -179,6 +201,40 @@ describe('ClientsService', () => {
       ])
     })
 
+    it('should publish the client from Staging to Development', async function () {
+      const publishClientInput: PublishClientInput = {
+        clientId: 'test-client-id',
+        tenantId: 'test-tenant-id',
+        sourceEnvironment: Environment.Staging,
+        targetEnvironment: Environment.Development,
+      }
+
+      const response = await clientsService.publishClient(
+        currentUser,
+        publishClientInput,
+      )
+
+      expect(mockAdminDevApi.meClientsControllerCreate).toBeCalledTimes(1)
+      expect(mockAdminStagingApi.meClientsControllerCreate).toBeCalledTimes(0)
+      expect(mockAdminProdApi.meClientsControllerCreate).toBeCalledTimes(0)
+
+      expect(
+        mockAdminDevApi.meClientsControllerFindByTenantIdAndClientId,
+      ).toBeCalledTimes(0)
+      expect(
+        mockAdminStagingApi.meClientsControllerFindByTenantIdAndClientId,
+      ).toBeCalledTimes(1)
+      expect(
+        mockAdminProdApi.meClientsControllerFindByTenantIdAndClientId,
+      ).toBeCalledTimes(0)
+
+      expect(response).toEqual({
+        ...baseResponse,
+        id: 'test-client-id#development',
+        environment: Environment.Development,
+      })
+    })
+
     it('should throw an error because no value was provided', async function () {
       const patchClientsInput: PatchClientInput = {
         clientId: 'test-application-id',
@@ -289,6 +345,78 @@ describe('ClientsService', () => {
           ],
         },
       ])
+    })
+
+    it('should only rotate secret in a single target environment', async function () {
+      // Arrange
+      const rotateSecretInput: RotateSecretInput = {
+        clientId: 'test-application-id',
+        tenantId: 'test-tenant-id',
+        environment: Environment.Development,
+      }
+
+      // Act
+      const response = await clientsService.rotateSecret(
+        currentUser,
+        rotateSecretInput,
+      )
+
+      // Assert
+      expect(mockAdminDevApi.meClientSecretsControllerCreate).toBeCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meClientSecretsControllerCreate,
+      ).toBeCalledTimes(0)
+      expect(mockAdminProdApi.meClientSecretsControllerCreate).toBeCalledTimes(
+        0,
+      )
+      expect(response).toEqual({
+        ...secretResponse,
+        clientId: rotateSecretInput.clientId,
+      })
+    })
+
+    it('should revoke old secrets and create new secret in a single environment', async function () {
+      // Arrange
+      const rotateSecretInput: RotateSecretInput = {
+        clientId: 'test-application-id',
+        tenantId: 'test-tenant-id',
+        environment: Environment.Development,
+        revokeOldSecrets: true,
+      }
+
+      // Act
+      const response = await clientsService.rotateSecret(
+        currentUser,
+        rotateSecretInput,
+      )
+
+      // Assert
+      expect.assertions(12)
+      expect(mockAdminDevApi.meClientSecretsControllerFindAll).toBeCalledTimes(
+        1,
+      )
+      expect(mockAdminDevApi.meClientSecretsControllerDelete).toBeCalledTimes(2)
+      expect(mockAdminDevApi.meClientSecretsControllerDelete).nthCalledWith(1, {
+        clientId: rotateSecretInput.clientId,
+        tenantId: rotateSecretInput.tenantId,
+        secretId: '1',
+      })
+      expect(mockAdminDevApi.meClientSecretsControllerDelete).nthCalledWith(2, {
+        clientId: rotateSecretInput.clientId,
+        tenantId: rotateSecretInput.tenantId,
+        secretId: '2',
+      })
+      expect(mockAdminDevApi.meClientSecretsControllerCreate).toBeCalledTimes(1)
+      ;[mockAdminStagingApi, mockAdminProdApi].map((api) => {
+        expect(api.meClientSecretsControllerFindAll).toBeCalledTimes(0)
+        expect(api.meClientSecretsControllerDelete).toBeCalledTimes(0)
+        expect(api.meClientSecretsControllerCreate).toBeCalledTimes(0)
+      })
+
+      expect(response).toEqual({
+        ...secretResponse,
+        clientId: rotateSecretInput.clientId,
+      })
     })
   })
 

@@ -10,18 +10,20 @@ interface Props {
   title: string
   pdfType?:
     | 'ruling'
-    | 'caseFiles'
+    | 'caseFilesRecord'
     | 'courtRecord'
     | 'request'
     | 'custodyNotice'
+    | 'indictment'
     | 'limitedAccess/ruling'
+    | 'limitedAccess/caseFilesRecord'
     | 'limitedAccess/courtRecord'
     | 'limitedAccess/request'
-    | 'indictment'
+    | 'limitedAccess/indictment'
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType is caseFiles
+  policeCaseNumber?: string // Only used if pdfType ends with caseFilesRecord
 }
 
 const PdfButton: React.FC<Props> = ({
@@ -35,8 +37,9 @@ const PdfButton: React.FC<Props> = ({
   policeCaseNumber,
 }) => {
   const handlePdfClick = async () => {
-    const newPdfType =
-      pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
+    const newPdfType = pdfType?.endsWith('caseFilesRecord')
+      ? `${pdfType}/${policeCaseNumber}`
+      : pdfType
     const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
 
     window.open(url, '_blank')
@@ -57,8 +60,20 @@ const PdfButton: React.FC<Props> = ({
   ) : (
     <Box
       data-testid={`${pdfType || ''}PDFButton`}
-      className={styles.pdfRow}
-      onClick={handleClick ? handleClick : pdfType ? handlePdfClick : undefined}
+      className={`${styles.pdfRow} ${disabled ? '' : styles.cursor}`}
+      onClick={() => {
+        if (disabled) {
+          return
+        }
+
+        if (handleClick) {
+          return handleClick()
+        }
+
+        if (pdfType) {
+          return handlePdfClick()
+        }
+      }}
     >
       <Text color="blue400" variant="h4">
         {title}

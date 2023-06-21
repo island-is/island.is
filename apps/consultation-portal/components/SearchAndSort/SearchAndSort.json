@@ -1,0 +1,16 @@
+{
+  "searchAndSort": {
+    "debouncedSearchLabel": {
+      "notMobile": "Leit",
+      "mobile": "Leit og röðun"
+    },
+    "label": "Röðun"
+  },
+  "searchAndSortPartialData": {
+    "debouncedSearchLabel": {
+      "notMobile": "Leit",
+      "mobile": "Leit og röðun"
+    },
+    "label": "Röðun"
+  }
+}
